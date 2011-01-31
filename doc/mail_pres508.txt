@@ -1,0 +1,20 @@
+Titolo:
+Nulla dies sine linea.
+
+Presentazione:
+Questo rilascio e' dovuto quasi esclusivamente al completamento funzionale del componente per Joomla! cui ho dato il nome di GAzieCart. Come accennato nella precedente versione esso non e' un ecommerce indipendente e completo che potrebbe funzionare senza l'ausilio dei dati forniti da remoto da GAzie. In pratica e' una vetrina con carrello per fare gli ordini e spedirli in ditta attraverso l'email; e' stato pensato per non avere dati dei clienti sul CMS e quindi sulla webfarm. Il visitatore del sito può ordinare il materiale in catalogo senza necessariamente loggarsi, questo evita i problemi con la privacy. 
+Tranne che per i parametri di configurazione non si appoggia alla base dati di Joomla!, il catalogo del materiale e' contenuto in gaziecart.xml e aggiorato attraverso FTP dal gestionale (normalmente sulla LAN aziendale). 
+GAzie, per lo scopo prevede un'apposito listino che permette, eventualmente, di differenziare i prezzi e le unita' di misura del catalogo online rispetto a quello delle vendite dirette.
+Qualcosa sulla tecnica: ho realizzato questo componente prendendo di tanto in tanto "a calci" sia il paradigma MVC che il framework di Joomla!, framework che fino ad un mese fa non conoscevo affatto. Ho anche dovuto integrarci simpleCart.js che a sua volta ho dovuto modificare in alcune parti; anche il captcha.php non e' frutto del mio lavoro ma il suo adattamento all'ambiente di lavoro si.
+Pare che l'accrocchio funzioni egregiamente, l'email generata allega un file xml per facilitare una futura importazione automatica in GAzie, questa funzionalità (lato GAzie) la ritengo molto utile ma comunque non l'ho ancora realizzato.
+GAzieCart e' una versione beta, i test fatti in locale sono tutti andati a buon fine, attendo vostre segnalazioni-consigli e prove di installazione su CMS online gia' operativi.
+Spero che attratti da GAzieCart per Joomla! altri creino (sic) estensioni equivalenti per altri CMS (Magento, Drupal, OpenCart, Wordpress, ecc) 
+ 
+Modifiche appportate:
+- corretto errore (bug ID: 3077759) segnalato da davidegala e relativo al mancato inserimento di un nuovo utente.
+- corretto errore segnalato sul forum da Costantini F. (j65feb) in data 20.09.2010 e relativo all'intestazione. sbagliata delle stampe dei bilanci nelle installazioni multiaziendali, in pratica stampava sempre l'intestazione dell'azienda n.1.
+- corretto errore di controllo dei codici postali olandesi segnalato sul forum da spino78 in data 19.10.2010.
+- soddisfatta la richiesta di dg7 (Feature Request ID: 3091353) relativa alla stampa dei nomi dei clienti e fornitori sulla stampa dei partitari.
+
+
+Antonio de Vincentiis, Montesilvano, 22 Ottobre 2010.

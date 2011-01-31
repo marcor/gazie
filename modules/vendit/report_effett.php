@@ -1,0 +1,204 @@
+<?php
+ /* $Id: report_effett.php,v 1.29 2011/01/01 11:07:53 devincen Exp $
+ --------------------------------------------------------------------------
+                            Gazie - Gestione Azienda
+    Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
+                                (www.devincentiis.it)
+                        <http://gazie.sourceforge.net>
+ --------------------------------------------------------------------------
+    Questo programma e` free software;   e` lecito redistribuirlo  e/o
+    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+    come e` pubblicata dalla Free Software Foundation; o la versione 2
+    della licenza o (a propria scelta) una versione successiva.
+    Questo programma  e` distribuito nella speranza  che sia utile, ma
+    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+    Generica GNU insieme a   questo programma; in caso  contrario,  si
+    scriva   alla   Free  Software Foundation,  Inc.,   59
+    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
+ --------------------------------------------------------------------------
+*/
+require("../../library/include/datlib.inc.php");
+$admin_aziend=checkAdmin();
+if (isset($_GET['auxil'])) {
+   $auxil = $_GET['auxil'];
+} else {
+   $auxil = 1;
+}
+
+if (isset($_GET['progre'])) {
+   if ($_GET['progre'] > 0) {
+      $progressivo = intval($_GET['progre']);
+      $auxil = $_GET['auxil']."&progre=".$progressivo;
+      $where = "progre = '$progressivo'";
+      $passo = 1;
+   }
+}  else {
+   $progressivo ='';
+}
+
+if (isset($_GET['all'])) {
+   $where = " 1 ";
+   $auxil = $_GET['auxil']."&all=yes";
+   $passo = 100000;
+   $progressivo ='';
+}
+require("../../library/include/header.php");
+$script_transl = HeadMain('','','select_effett');
+if ( !isset($_GET['field']) || empty($_GET['field']) ) {
+        $orderby = "scaden DESC, numfat DESC";
+}
+
+?>
+<table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
+<tr>
+<td class="FacetFormHeaderFont"><a href="genera_effett.php" accesskey="f">
+<?php echo $script_transl['link_1']; ?></a></td>
+<td class="FacetFormHeaderFont"><a href="admin_effett.php?Insert">
+<?php echo $script_transl['link_2']; ?></a></td>
+</tr>
+<tr>
+<td class="FacetFormHeaderFont"><a href="contab_effett.php" accesskey="c">
+<?php echo $script_transl['link_3']; ?></a></td>
+<td class="FacetFormHeaderFont"><a href="select_effett.php" accesskey="x">
+<?php echo $script_transl['link_4']; ?></a></td>
+</tr>
+<tr>
+<td class="FacetFormHeaderFont"><a href="distin_effett.php" accesskey="d">
+<?php echo $script_transl['link_5']; ?></a></td>
+<td class="FacetFormHeaderFont"><a href="select_filerb.php" accesskey="g">
+<?php echo $script_transl['link_6']; ?></a></td>
+</tr>
+</table>
+<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
+<?php
+$recordnav = new recordnav($gTables['effett'], $where, $limit, $passo);
+$recordnav -> output();
+?>
+<form method="GET">
+<table class="Tlarge">
+<input type="hidden" name="auxil" value="<?php print substr($auxil,0,1); ?>">
+<tr>
+<td></td>
+<td class="FacetFieldCaptionTD">Num.:
+<input type="text" name="progre" value="<?php if (isset($progressivo)) print $progressivo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+</td>
+<td>
+<input type="submit" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
+</td>
+<td>
+<input type="submit" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
+</td>
+</tr>
+<?php
+$headers_banapp = array  (
+              'ID' => "id_tes",
+              $script_transl['progre'] => "progre",
+              $script_transl['date_emi'] => "datemi",
+              $script_transl['type'] => "tipeff",
+              $script_transl['date_exp'] => "scaden",
+              $script_transl['clfoco'] => "clfoco",
+              $script_transl['impeff'] => "impeff",
+              $script_transl['salacc'] => "salacc",
+              $script_transl['banapp'] => "banapp",
+              "Status" => "",
+              $script_transl['print'] => "",
+              $script_transl['delete'] => ""
+              );
+$linkHeaders = new linkHeaders($headers_banapp);
+$linkHeaders -> output();
+?>
+   </tr>
+<?php
+$result = gaz_dbi_dyn_query ('*', $gTables['effett'], $where, $orderby, $limit, $passo);
+$anagrafica = new Anagrafica();
+while ($r = gaz_dbi_fetch_array($result)) {
+    $cliente = $anagrafica->getPartner($r['clfoco']);
+    $banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$r['banapp']);
+    echo "<tr>";
+    echo "<td class=\"FacetDataTD\" align=\"right\"><a href=\"admin_effett.php?Update&id=".$r["id_tes"]."\">".$r["id_tes"]."</a> &nbsp</td>";
+    echo "<td class=\"FacetDataTD\" align=\"right\"><a href=\"admin_effett.php?Update&id=".$r["id_tes"]."\">".$r["progre"]."</a> &nbsp</td>";
+    echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_date($r["datemi"])."</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".$r["tipeff"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["scaden"])." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" title=\"".$script_transl['date_doc'].": ".gaz_format_date($r["datfat"])." n.".$r["numfat"]."/".$r["seziva"].' '.$money[1]." ".gaz_format_number($r["totfat"])."\">".$cliente["ragso1"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r["impeff"])." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['salacc_value'][$r["salacc"]]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\">".$banapp["descri"]." &nbsp;</td>";
+    if ($r["status"] == "DISTINTATO")
+      {
+        if ($r["id_con"] > 0)
+          {
+            //
+            // Interroga la tabella gaz_XXXtesmov per trovare
+            // il numero della registrazione (id_tes) con cui
+            // risulta contabilizzato l'effetto (id_con).
+            //
+            $tesmov_result = gaz_dbi_dyn_query ('*',
+                                                $gTables['tesmov'],
+                                                "id_tes = ".$r["id_con"],
+                                                'id_tes DESC',
+                                                $limit,
+                                                $passo);
+            //
+            $tesmov_r = gaz_dbi_fetch_array ($tesmov_result);
+            //
+            // Se il numero di registrazione non esiste nella
+            // tabella gaz_XXXtesmov, questo viene azzerato
+            // nella tabella dell'effetto, diventando così
+            // contabilizzabile nuovamente.
+            //
+            if ($tesmov_r["id_tes"] == $r["id_con"])
+              {
+                //
+                // L'effetto risulta contabilizzato regolarmente.
+                //
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont. n.".$r["id_con"]."</a></td>";
+              }
+            else
+              {
+                //
+                // vado a modificare l'effetto azzerando il
+                // riferimento alla registrazione contabile
+                //
+                gaz_dbi_put_row ($gTables['effett'],
+                                 "id_tes",$r["id_tes"],"id_con",0);
+                //
+                // Mostro che l'effetto è da contabilizzare nuovamente.
+                //
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
+              }
+          }
+        else
+          {
+            //
+            // L'effetto è da contabilizzare.
+            //
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
+          }
+      }
+    else
+      {
+        if ($r["tipeff"] == "T")
+          {
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a></td>";
+          }
+        else if ($r["tipeff"] == "B")
+          {
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerb.php\">file RiBa</a></td>";
+          }
+        else
+          {
+            echo "<td class=\"FacetDataTD\" align=\"center\">".$r["status"]."</td>";
+          }
+      }
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_effett.php?id_tes=".$r["id_tes"]."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_effett.php?id_tes=".$r["id_tes"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+    echo "</tr>";
+}
+?>
+ </table>
+</body>
+</html>

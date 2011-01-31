@@ -1,0 +1,30 @@
+Titolo:
+Quibus sunt verba sine penu et pecunia.
+
+Presentazione:
+Quasi tutto il lavoro fatto per questo rilascio e' stato rivolto a facilitare la possibilita' di usare GAzie anche in altri idiomi, in particolare creandosi una base dati con il nome della lingua es: install_5.2.english.sql; per il momento questo e' possibile oltre che per l'inglese anche per lo spagnolo in quanto l'interfaccia e' stata tradotta da Dante Becerra Lagos.
+Per una traduzione completa anche delle stampe e' necessario metter mano al codice e ai templates, ma se ci fosse qualcuno interessato a farlo otterrebbe dei buoni risultati con poca fatica.
+In particolare sarebbe interessante, a livello di base dati, tradurre la descrizione degli articoli quando i partner sono diversi dalla nazionalita' dell'azienda e produrre dei documenti con le descrizioni in diverse lingue.  
+Certi bachi fastidiosi sono stati segnalati e alcuni corretti direttamente dagli stessi utenti che per questo ringrazio.
+Inoltre, sono stati aggiunti altri due tipi di rigo (Solo DdT e Solo Fatt) di testo sui documenti di vendita, questo per dare la possibilita' di scegliere se e su quale documento di vendita, DdT o fattura essi devono essere eventualmente stampati.
+Anche il foglio di stile save_enery.css puo' essere interessante come termine di paragone con quello normale (stylesheet.css) ed esempio per chi volesse un minimo di personalizzazione dell'interfaccia senza essere un programmatore professionista.
+In futuro vorrei dedicarmi alla sincronizzazione del gestionale con almeno uno degli ecommerce liberi piu' famosi; ma sono molto indeciso su quale di questi mettermi al lavoro, ho ricevuto diverse opinioni chi a favore di Virtuemart chi di Magento senza dimenticare Zencart e Oscommerce, si dovrebbe mettere una pagina sul sito per votare, forse, a volte la democrazia...
+
+Modifiche appportate:
+- corretto errore Resi su acquisti, Resi su vendite (ID: 2619972) segnalato da dg7 sulla selezione dei costi/ricavi delle note di credito.
+- eliminato il controllo della Partita IVA e/o Codice Fiscale per i partner commerciali non italiani, ma chi volesse implementare un controllo per altre nazioni puo' farlo modificando il file library/include/check.inc.php
+- corretto errore di ridichiarazione classe sul controllo dei codici fiscali dei vettori
+- corretto errore di mancata riapertura dei conti segnalato da Francesco Boldrini sulla mailing list
+- recepita traduzione in spagnolo-cileno fatta da Dante Becerra Lagos
+- corretto errore di eliminazione degli agenti di vendita segnalato sul forum da Alex Bardari
+- corretto errore segnalato da pelassa (ID: 2971808) sul reinserimento automatico del partner non omogeneo
+- recepita patch(ID: 2972492) di Francesco Pelassa che implementa il driver per i registratori di cassa con protocollo xon-xoff
+- corretta errata intestazione azienda sulle stampe dei partitari, segnalato sul forum da italb
+- recepita la correzione di errore fatta sul forum da j65feb in data 25.03.2010 e ralativa alla mancata stampa delle descrizioni dei conti sui registri IVA in contabilita' semplificata 
+- aggiunto un nuovo foglio di stile save_energy.css con dominante nera per la salvaguardia delle batterie nei portatili
+- aggiunti altri due tipi di rigo testo sui documenti di vendita per distinguere quando un rigo testo deve interessare solo il DdT solo la Fattura o entrambi (come in precedenza)
+
+Approfondimenti:
+<<Sognai talmente forte che mi usci' il sangue dal naso>>
+
+Antonio de Vincentiis, Montesilvano, 29 Marzo 2010.

@@ -1,0 +1,17 @@
+Titolo:
+
+Presentazione:
+ 
+Modifiche apportate:
+- corretto bug (ID: 3153438) sui prezzi in listino o sul catalogo segnalato da alfiozeta.
+- corretto bug (ID: 3158865) segnalato da Filippone Pierluigi e ralativo al problema con l'introduzione di P.Iva Estera.
+- sulla lista dei movimenti contabili e' stata aggiunto un link al documento che ha dato l'origine ad esso
+- recepita patch di dg7 che corregge la mancanza di conto di ricavo sugli ordini/preventivi
+- nello script di aggiornamento tramite FTP di GAzieCart sono stati portati i tentativi di upload dei file da 1 a 4 prima di restiturire un errore definitivo, inoltre, alla fine viene stampato un report delle operazioni eseguite.
+- corretto errore segnalato sul forum da dtruffo in data 18.01.2011 sulla numerazione delle fatture quando queste erano generate dai contratti. 
+- recepite modifiche apportate da dg7 sui link con gli effetti generati dalle fatture.
+- recepita patch ID: 3163861 di danelsan relativo alla lista delle fatture d'acquisto che erroneamente scriveva "Cliente" anziche' "Fornitore".
+- corrette le modalita' di valorizzazione di magazzino WMA,FIFO,LIFO, inoltre da questa versione le colonne esistenza e valore di gaz_XXXartico non verranno piu' usate in quanto ogni volta che e' necessario essi verranno calcolati al volo dai movimenti, con lo stesso sistema usato per la contabilita' economica questo evita disallineamenti e mantiene gli archivi sotto il controllo diretto degli utenti.    
+Approfondimenti:
+
+Antonio de Vincentiis, Montesilvano, 5 Febbraio 2011.

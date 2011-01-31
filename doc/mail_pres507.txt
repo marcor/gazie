@@ -1,0 +1,22 @@
+Titolo:
+Et ventis adversis!
+
+Presentazione:
+Basandomi sul tutorial per la creazione di componenti per Joomla! sul sito ufficiale a questo indirizzo:
+http://docs.joomla.org/Developing_a_Model-View-Controller_Component_-_Part_1
+e sbirciando sui tanti lavori dello stesso genere ho creato GAzieCart, un componente che al momento ha la sola funzione di visualizzare il Catalogo dei prodotti selezionando la categoria merceologica voluta, ma c'e' l'intenzione di aggiungervi un carrello della spesa in javascript per permettere gli ordini a chiunque, anche agli utenti non registrati.
+L'aggiornamento ERP_on_the_LAN -> SITE_on_the_WEBFARM è fatto attraverso il protocollo FTP che sovrascrive un file XML (gaziecart.xml) presente sul componente e che funziona da base dati, anche le relative immagini vengono sovrascritte tramite l'apposita interfaccia aggiunta a GAzie.
+Ho preferito scrivere un componente dedicato anziche' usare componenti gia' pronti (Virtuemart,Tienda,ecc) perche' sincronizzare le loro basi dati con quello di GAzie sarebbe stato veramente difficoltoso. Facendo cosi' ho perso molte funzionalita' proprie di questi ecommerce, ma interessava che Joomla fosse solo l'interfaccia e che facesse da tramite per i dati che devono comunque restare SOLO SULLA LAN aziendale. Anche quando verranno implementati gli ordini essi dovranno essere stipati solo momentaneamente sulla webfarm, o non stipati affatto se spediti immediatamente tramite email protetta da captcha.
+Come avrete modo di vedere il componente è essenziale ma funzionante seppure in versione iniziale 0.1 (alpha).
+
+Modifiche appportate:
+- corretto bug ID: 3032585 segnalato in data 21.07.2010 da pelassa e relativo al mancato inserimento delle partite IVA con lettere (straniere).
+- aggiunto un alert per avvisare quando si emette uno scontrino senza aver eseguito la chiusura/contabilizzazione degli scontrini emessi in data precedente 
+- aggiunti i controlli dei codici postali di tutte le nazioni elencate nella tabella gaz_country standard
+- corretto errore nella visualizzazione dei valori dell'anteprima della liquidazione IVA periodica (la stampa era comunque giusta).
+- aggiunta l'interfaccia per aggiornare GAzieCart, componente appositamente creato per pubblicare gli articoli di magazzino di GAzie.
+   
+Approfondimenti:
+<<Egli aveva in se i germi di tutte le infezioni. Corrompendosi, corrompeva.>>
+
+Antonio de Vincentiis, Montesilvano, 22 Settembre 2010.

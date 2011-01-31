@@ -1,0 +1,25 @@
+Titolo:
+Pertransiit benefaciendo.
+
+Presentazione:
+L'implementazione saliente di questa nuova versione e' senza dubbio l'interfaccia per l'importazione degli ordini arrivati sulla casella di posta elettronica e provenienti dal componente di Joomla GAzieCart. Per poter accedere alla casella e-mail il PHP deve avere a disposizione il modulo di estensione PHP_IMAP, questo normalmente non e' attivato in Wampserver, ma basta spuntarlo nell'apposita lista per vederlo attivo, di solito nemmeno le installazioni LAMP lo attivano di default, pertanto basta andare sul repository della propria distribuzione ed installarlo. Non meno importanti sono le migliorie e le correzioni degli errori rilevati durante i 46 giorni trascorsi dal precedente rilascio, il piu' fastidioso bug corretto e' senza dubbio quello relativo al pessima gestione degli accessi degli utenti diversi da quello di default.
+Approfitto per augurare a tutti BUONE FESTE! 
+
+ 
+Modifiche apportate:
+- soddisfatta la richiesta di dg7 (Feature Request ID: 3091351) relativa alla stampa delle cambiali-tratte a partire da una immagine reale del documento.
+- segnalato e corretto da emafer errore di update codice articolo (bug ID: 3100311).
+- corretto errore segnalato da Giovanni Scudeller e relativo alla destinazione verso partner aziendali.
+- da questa versione i movimenti IVA possono essere inseriti anche con valori negativi.
+- risolto bug segnalato sul forum da andreadf in data 05.11.2010 riguardante il mancato login di utenti diversi da 'amministratore'.
+- implementato un moltiplicatore/divisore per i prezzi degli articoli da pubblicare su GAzieCart, serve ad esempio per permettere di pubblicare online listini con unita' di misura diversi da quelli usati nella vendita diretta ma con risultato identico.
+- soddisfatta la richiesta di dg7 (Feature Request ID: 3107213) relativa alla stampa del piano dei conti. 
+- corretto bug relativo al rigo testo perso in fase di spostamento e segnalato sul forum da spino78 in data 23-11-2010.
+- recepita la richiesta di dg7 (Feature Request ID: 3119813) relativa all'aggiunta di un javascript di alert sulle maiuscole dei campi password.
+- corretto errore segnalato da dg7 (Bugs ID: 3122160) per la mancata rilevazione di errore in caso di data precedente a quella dell'ultimo ddt emesso.
+- corretta la mancata visualizzazione dell'immagine nella maschera di amministazione degli articoli.
+- aggiunta la possibilita' di importare gli ordini ricevuti sulla casella di posta elettronica e provenienti dal componente per Joomla GAzieCart.
+- aggiunta a GAzieCart la possibilita' di avere le aliquote IVA distinte per articoli. 
+
+
+Antonio de Vincentiis, Montesilvano, 7 Dicembre 2010.

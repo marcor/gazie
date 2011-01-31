@@ -1,0 +1,20 @@
+Titolo:
+Per aspera sic itur ad astra.
+
+Presentazione:
+L'aver fatto diventare GAzie multiaziendale e con le anagrafiche dei partner comuni a tutte le aziende dell'installazione credevo che mi facesse cadere in molti errori... per fortuna questo non si e' verificato nella quantita' e nell'importanza ipotizzata, pero' qualcosa che non andava c'era. Allora una versione rilasciata per l'eliminare i pochi malfunzionamenti della versione precedente si impone anche se non aggiunge nulla alle funzionalita'.
+Mi rallegra l'apprezzamento del pubblico che, stando alle statistiche di Sourceforge, questo software sta avendo, ancor di più la classifica in base al "Rating". Come potete vedere cliccando su "Show poject details" e scegliendo Topic: Accountig oppure ERP e selezionando Sort by: "Rating". 
+Non di meno i download che sono sempre numerosi, seppure Sourceforge sembra avere delle difficolta' (comprensibili) a rilevarle in tempo reale.
+Si potrebbe anche immaginare cosa accadrebbe se si implementasse un sincronismo del database con un ecommerce, magari il piu' diffuso tra quelli liberi?!?!
+Buon lavoro a tutti.   
+
+Modifiche appportate:
+- corretto bug sull'inserimento effetti ( ID: 2978604 ) segnalato da lellosoft.
+- corretto errore sui nomi dei mesi nelle installazioni linux ( ID: 2980077) segnalato da soscudeller. 
+- recepita correzione fatta sul forum da j65feb in data 02.04.2010 e relativa agli errori di stampa del castelletto dei conti sui registri IVA trimestrali.
+- corretta la mancata ristampa dei documenti che prevedono l'apertura del cassetto del registratore di cassa.
+
+Approfondimenti:
+<<La stupidità degli altri mi affascina, ma preferisco la mia.>>
+
+Antonio de Vincentiis, Montesilvano, 09 Aprile 2010.

@@ -1,0 +1,155 @@
+<?php
+/* $Id: admin_banapp.php,v 1.7 2011/01/01 11:07:28 devincen Exp $
+ --------------------------------------------------------------------------
+                            Gazie - Gestione Azienda
+    Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
+                                (www.devincentiis.it)
+                        <http://gazie.sourceforge.net>
+ --------------------------------------------------------------------------
+    Questo programma e` free software;   e` lecito redistribuirlo  e/o
+    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+    come e` pubblicata dalla Free Software Foundation; o la versione 2
+    della licenza o (a propria scelta) una versione successiva.
+
+    Questo programma  e` distribuito nella speranza  che sia utile, ma
+    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+
+    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+    Generica GNU insieme a   questo programma; in caso  contrario,  si
+    scriva   alla   Free  Software Foundation,  Inc.,   59
+    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
+ --------------------------------------------------------------------------
+*/
+require("../../library/include/datlib.inc.php");
+$admin_aziend=checkAdmin();
+$msg = '';
+
+
+if (isset($_POST['Update']) || isset($_GET['Update'])) {
+    $toDo = 'update';
+} else {
+    $toDo = 'insert';
+}
+
+if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
+    $form['ritorno'] = $_POST['ritorno'];
+    $form['codice'] = intval($_POST['codice']);
+    $form['descri'] = substr($_POST['descri'],0,50);
+    $form['codabi'] = intval($_POST['codabi']);
+    $form['codcab'] = intval($_POST['codcab']);
+    $form['locali'] = substr($_POST['locali'],0,50);
+    $form['codpro'] = substr($_POST['codpro'],0,2);
+    $form['annota'] = substr($_POST['annota'],0,50);
+    if (isset($_POST['Submit'])) { // conferma tutto
+       //eseguo i controlli formali
+       $code_exist = gaz_dbi_dyn_query('codice',$gTables['banapp'],"codice = ".$form['codice'],'codice DESC',0,1);
+       $code = gaz_dbi_fetch_array($code_exist);
+       if ($code and $toDo == 'insert') {
+          $msg .= "1+";
+       }
+       if (empty($form['descri'])) {
+          $msg .= "2+";
+       }
+       if ($form['codice'] <= 0 || $form['codice'] > 999) {
+          $msg .= "0+";
+       }
+       if ($form['codabi'] <= 0) {
+          $msg .= "3+";
+       }
+       if ($form['codcab'] <= 0) {
+          $msg .= "4+";
+       }
+       if (empty($msg)) { // nessun errore
+          // aggiorno il db
+          if ($toDo == 'insert') {
+             gaz_dbi_table_insert('banapp',$form);
+          } elseif ($toDo == 'update') {
+             gaz_dbi_table_update('banapp',$form['codice'],$form);
+          }
+          header("Location: report_banapp.php");
+          exit;
+       }
+    } elseif (isset($_POST['Return'])) { // torno indietro
+          header("Location: ".$form['ritorno']);
+          exit;
+    }
+} elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
+    $form = gaz_dbi_get_row($gTables['banapp'], 'codice', intval($_GET['codice']));
+    $form['ritorno']=$_SERVER['HTTP_REFERER'];
+} elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
+    $form['ritorno']=$_SERVER['HTTP_REFERER'];
+    $rs_last = gaz_dbi_dyn_query('codice',$gTables['banapp'],1,'codice DESC',0,1);
+    $last = gaz_dbi_fetch_array($rs_last);
+    $form['codice'] = $last['codice']+1;
+    $form['descri'] = '';
+    $form['codabi'] = 0;
+    $form['codcab'] = 0;
+    $form['locali'] = '';
+    $form['codpro'] = '';
+    $form['annota'] = '';
+}
+
+require("../../library/include/header.php");
+$script_transl = HeadMain();
+echo "<form method=\"POST\">";
+echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
+echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
+$gForm = new GAzieForm();
+if ($toDo == 'insert') {
+   echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
+} else {
+   echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." '".$form['codice']."'</div>\n";
+   echo "<input type=\"hidden\" value=\"".$form['codice']."\" name=\"codice\" />\n";
+}
+echo "<table class=\"Tmiddle\">\n";
+if (!empty($msg)) {
+    echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
+}
+if ($toDo == 'insert') {
+   echo "<tr>\n";
+   echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['codice']."* </td>\n";
+   echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" align=\"right\" maxlength=\"3\" size=\"3\" /></td>\n";
+   echo "</tr>\n";
+}
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."* </td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
+      <input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "</tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['codabi']."*</td>
+     <td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "\t<input type=\"text\" name=\"codabi\" value=\"".$form['codabi']."\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">\n";
+echo "</td></tr>";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['codcab']."*</td>
+     <td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "\t<input type=\"text\" name=\"codcab\" value=\"".$form['codcab']."\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">\n";
+echo "</td></tr>";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['locali']."</td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
+      <input type=\"text\" name=\"locali\" value=\"".$form['locali']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "</tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['codpro']."</td>
+     <td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "\t<input type=\"text\" name=\"codpro\" value=\"".$form['codpro']."\" maxlength=\"20\" size=\"20\" class=\"FacetInput\">\n";
+echo "</td></tr>";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['annota']."</td>
+     <td class=\"FacetDataTD\" colspan=\"2\">\n";
+echo "\t<input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"20\" size=\"20\" class=\"FacetInput\">\n";
+echo "</td></tr>";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
+echo "\t </td>\n";
+echo "\t<td  class=\"FacetDataTD\">\n";
+echo '<input name="Return" type="submit" value="'.$script_transl['return'].'!">';
+echo "\t </td>\n";
+echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
+echo '<input name="Submit" type="submit" value="'.strtoupper($script_transl[$toDo]).'!">';
+echo "\t </td>\n";
+echo "</tr>\n";
+?>
+</table>
+</form>
+</body>
+</html>

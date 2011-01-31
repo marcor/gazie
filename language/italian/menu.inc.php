@@ -1,0 +1,71 @@
+<?php
+/* $Id: menu.inc.php,v 1.41 2011/01/01 11:07:11 devincen Exp $
+ --------------------------------------------------------------------------
+                            Gazie - Gestione Azienda
+    Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
+                                (www.devincentiis.it)
+                        <http://gazie.sourceforge.net>
+ --------------------------------------------------------------------------
+    Questo programma e` free software;   e` lecito redistribuirlo  e/o
+    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+    come e` pubblicata dalla Free Software Foundation; o la versione 2
+    della licenza o (a propria scelta) una versione successiva.
+
+    Questo programma  e` distribuito nella speranza  che sia utile, ma
+    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+
+    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+    Generica GNU insieme a   questo programma; in caso  contrario,  si
+    scriva   alla   Free  Software Foundation,  Inc.,   59
+    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
+ --------------------------------------------------------------------------
+*/
+$strCommon = array(  'cancel' => " Annulla ",
+                     'return' => " Indietro ",
+                     'submit' => " CONFERMA ",
+                     'view'   => " ANTEPRIMA ",
+                     'print'  => " STAMPA ",
+                     'search' => " Cerca ",
+                     'change' => " Cambia ",
+                     'all'=>'Tutti',
+                     'none'=>'Nessuno',
+                     'vall'   => " Mostra tutti ",
+                     'delete' => " Elimina ",
+                     'first'  => "Primo",
+                     'prev'   => "precedente",
+                     'next'   => "successivo",
+                     'last'   => "Ultimo",
+                     'order'  => "ordina per ",
+                     'selall' => "Seleziona tutto",
+                     'error'=>"ERRORE",
+                     'warning'=>"ATTENZIONE",
+                     'cancel'=>"Annulla ",
+                     'update'=>"Modifica ",
+                     'insert'=>"Inserisci ",
+                     'notfound'=>" non trovato ",
+                     'minins'=>" inserire min. ",
+                     'charat'=>" carattere/i ",
+                     'changedate'=>"Cambia la data",
+                     'pullup'=>"Tira su il rigo",
+                     'thisrow'=>" questo rigo",
+                     'insrow'=>"Righi inseriti",
+                     'addrow'=>"Aggiungi rigo",
+                     'delrow'=>"Elimina rigo",
+                     'safe'=>" se sei sicuro clicca su ",
+                     'youdel'=>" Stai eliminando",
+                     'yes'=>"Si",
+                     'no'=>"No",
+                     'page'=> "pagina ",
+                     'of'=>" di ",
+                     'sqn'=>"I campi contrassegnati con * sono obbligatori!",
+                     'canc'=>"Annulla le modifiche apportate alla schermata",
+                     'ins'=>"Accetta tutto e inserisci",
+                     'upd'=>"Accetta tutto e modifica",
+                     'caps'=>"Blocco maiuscole attivato!",
+                     'typerow'=>array(0=>'Normale',1=>'Forfait',2=>'Descrittivo',3=>'Var.totale fatt',6=>'Testo',7=>'Solo su DdT',8=>'Solo su Fatt'),
+                     'search_item'=>array('C'=>'Codice articolo','B'=>'Codice a barre','D'=>'Descrizione'),
+                     'tipiva'=>array('I'=>'Imponibile','N'=>'Non Imponibile','E'=>'Esente','S'=>'Non Soggetto','C'=>'Escluso','D'=>'Indetraibile','P'=>'In sospensione')
+           );
+?>

@@ -1,0 +1,255 @@
+/* ThemeGazieMenu Style Sheet */
+
+.ThemeGazieMenu ,.ThemeGazieSubMenuTable
+{
+	font-family:	verdana, arial, sans-serif;
+	font-size:	13px;
+	padding:	0;
+	white-space:	nowrap;
+	cursor:		default;
+}
+
+/* patch by Antonio De Vincentiis for GAZIE */ 
+.ThemeGazieMenu td,
+.ThemeGazieMenuH td,
+.ThemeGazieMenuV td,
+.ThemeGazieSubMenuTable td {
+  font-size:14px;
+}
+/* end patch*/
+
+.ThemeGazieSubMenu
+{
+	position:	absolute;
+	visibility:	hidden;
+	overflow:	hidden;
+
+	padding:	1px 1px 1px 1px;
+
+	background:	#F6F6F6 url(menubg.png) repeat-y scroll 0%;
+	background-position:	left;
+
+	border:		1px solid #002D96;
+}
+
+.ThemeGazieSubMenuTable
+{
+	overflow:	hidden;
+}
+
+.ThemeGazieMainItem,.ThemeGazieMainItemHover,.ThemeGazieMainItemActive,
+.ThemeGazieMenuItem,.ThemeGazieMenuItemHover,.ThemeGazieMenuItemActive
+{
+	border:		0;
+	cursor:		default;
+	white-space:	nowrap;
+}
+
+.ThemeGazieMenuItem
+{
+	background-color:	transparent;
+}
+
+/* horizontal main menu */
+
+.ThemeGazieMainItem
+{
+	padding:	1px;
+	border:		0;
+}
+
+td.ThemeGazieMainItemHover,td.ThemeGazieMainItemActive
+{
+	padding:	0px;
+	border:		1px solid #000080;
+}
+
+.ThemeGazieMainFolderLeft,.ThemeGazieMainItemLeft,
+.ThemeGazieMainFolderText,.ThemeGazieMainItemText,
+.ThemeGazieMainFolderRight,.ThemeGazieMainItemRight
+{
+	background-color:	inherit;
+}
+
+/* vertical main menu sub components */
+
+td.ThemeGazieMainFolderLeft,
+td.ThemeGazieMainFolderLeft,
+td.ThemeGazieMainItemLeft,
+td.ThemeGazieMainItemLeft
+{
+	padding:	1px 2px 1px 1px;
+
+	border:		0;
+	background-color:	inherit;
+}
+
+td.ThemeGazieMainFolderText,
+td.ThemeGazieMainFolderText,
+td.ThemeGazieMainItemText,
+td.ThemeGazieMainItemText
+{
+	padding:	1px 5px 1px 5px;
+
+	border:		0;
+	background-color:	inherit;
+}
+
+td.ThemeGazieMainItemRight,
+td.ThemeGazieMainFolderRight
+{
+	padding:	1px 1px 1px 0px;
+
+	border:		0;
+
+	background-color:	inherit;
+}
+
+
+tr.ThemeGazieMainItemHover td.ThemeGazieMainFolderLeft,
+tr.ThemeGazieMainItemActive td.ThemeGazieMainFolderLeft,
+tr.ThemeGazieMainItemHover td.ThemeGazieMainItemLeft,
+tr.ThemeGazieMainItemActive td.ThemeGazieMainItemLeft
+{
+	padding:	0px 2px 0px 0px;
+
+	border-width:	1px 0px 1px 1px;
+	border-style:	solid;
+	border-color:	#000080;
+
+	background-color:	inherit;
+}
+
+tr.ThemeGazieMainItemHover td.ThemeGazieMainFolderText,
+tr.ThemeGazieMainItemActive td.ThemeGazieMainFolderText,
+tr.ThemeGazieMainItemHover td.ThemeGazieMainItemText,
+tr.ThemeGazieMainItemActive td.ThemeGazieMainItemText
+{
+	padding:	0px 5px 0px 5px;
+
+	border-width:	1px 0px 1px 0px;
+	border-style:	solid;
+	border-color:	#000080;
+
+	background-color:	inherit;
+}
+
+tr.ThemeGazieMainItemHover td.ThemeGazieMainFolderRight,
+tr.ThemeGazieMainItemActive td.ThemeGazieMainFolderRight,
+tr.ThemeGazieMainItemHover td.ThemeGazieMainItemRight,
+tr.ThemeGazieMainItemActive td.ThemeGazieMainItemRight
+{
+	padding:	0px;
+
+	border-width:	1px 1px 1px 0px;
+	border-style:	solid;
+	border-color:	#000080;
+
+	background-color:	inherit;
+}
+
+/* sub menu sub components */
+
+.ThemeGazieMenuFolderLeft,.ThemeGazieMenuItemLeft,
+.ThemeGazieMenuFolderText,.ThemeGazieMenuItemText,
+.ThemeGazieMenuFolderRight,.ThemeGazieMenuItemRight
+{
+	border:		0;
+	white-space:	nowrap;
+	background-color:	inherit;
+}
+
+
+.ThemeGazieMenuFolderLeft,
+.ThemeGazieMenuItemLeft
+{
+	padding:	3px 3px 3px 2px;
+}
+
+.ThemeGazieMenuFolderText,
+.ThemeGazieMenuItemText
+{
+	padding:	3px 5px 3px 5px;
+	white-space:	nowrap;
+}
+
+.ThemeGazieMenuFolderRight,
+.ThemeGazieMenuItemRight
+{
+	padding:	3px 1px 3px 0px;
+}
+
+.ThemeGazieMenuItemHover .ThemeGazieMenuFolderLeft,
+.ThemeGazieMenuItemActive .ThemeGazieMenuFolderLeft,
+.ThemeGazieMenuItemHover .ThemeGazieMenuItemLeft,
+.ThemeGazieMenuItemActive .ThemeGazieMenuItemLeft
+{
+	padding:	2px 3px 2px 1px;
+
+	border-width:	1px 0px 1px 1px;
+	border-style:	solid;
+	border-color:	#000080;
+}
+
+.ThemeGazieMenuItemHover .ThemeGazieMenuFolderText,
+.ThemeGazieMenuItemActive .ThemeGazieMenuFolderText,
+.ThemeGazieMenuItemHover .ThemeGazieMenuItemText,
+.ThemeGazieMenuItemActive .ThemeGazieMenuItemText
+{
+	padding:	2px 5px 2px 5px;
+
+	border-width:	1px 0px 1px 0px;
+	border-style:	solid;
+	border-color:	#000080;
+}
+
+.ThemeGazieMenuItemHover .ThemeGazieMenuFolderRight,
+.ThemeGazieMenuItemActive .ThemeGazieMenuFolderRight,
+.ThemeGazieMenuItemHover .ThemeGazieMenuItemRight,
+.ThemeGazieMenuItemActive .ThemeGazieMenuItemRight
+{
+	padding:	2px 0px 2px 0px;
+
+	border-width:	1px 1px 1px 0px;
+	border-style:	solid;
+	border-color:	#000080;
+}
+
+/* menu splits */
+
+.ThemeGazieMenuSplit
+{
+	margin:		2px;
+	height:		1px;
+	overflow:	hidden;
+	background-color:	inherit;
+	border-top:	1px solid #6A8CCB;
+}
+
+/* image shadow animation */
+
+/*
+	seq1:	image for normal
+	seq2:	image for hover and active
+
+	To use, in the icon field, input the following:
+	<img class="seq1" src="normal.gif" /><img class="seq2" src="hover.gif" />
+*/
+
+.ThemeGazieMenuItem img.seq1
+{
+	display:	inline;
+}
+
+.ThemeGazieMenuItemHover seq2,
+.ThemeGazieMenuItemActive seq2
+{
+	display:	inline;
+}
+
+.ThemeGazieMenuItem .seq2,
+.ThemeGazieMenuItemHover .seq1,
+.ThemeGazieMenuItemActive .seq1
+{
+	display:	none;
+}

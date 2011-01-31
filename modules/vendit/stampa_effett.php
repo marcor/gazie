@@ -1,0 +1,178 @@
+<?php
+/*$Id: stampa_effett.php,v 1.23 2011/01/01 11:07:53 devincen Exp $
+ --------------------------------------------------------------------------
+                            Gazie - Gestione Azienda
+    Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
+                                (www.devincentiis.it)
+                        <http://gazie.sourceforge.net>
+ --------------------------------------------------------------------------
+    Questo programma e` free software;   e` lecito redistribuirlo  e/o
+    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+    come e` pubblicata dalla Free Software Foundation; o la versione 2
+    della licenza o (a propria scelta) una versione successiva.
+
+    Questo programma  e` distribuito nella speranza  che sia utile, ma
+    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+
+    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+    Generica GNU insieme a   questo programma; in caso  contrario,  si
+    scriva   alla   Free  Software Foundation,  Inc.,   59
+    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
+ --------------------------------------------------------------------------
+*/
+require("../../library/include/datlib.inc.php");
+$admin_aziend=checkAdmin();
+require("../../library/include/ciftolet.inc.php");
+require('../../library/tcpdf/tcpdf.php');
+
+$bolli = new Compute;
+
+if (! isset($_GET['id_tes'])){
+    header("Location: report_effett.php");
+    exit;
+}
+
+if ($_GET['id_tes'] == 'SEL') {
+    $where = "scaden BETWEEN '".intval($_GET['scaini'])."' AND '".intval($_GET['scafin'])."' AND progre BETWEEN '".intval($_GET['proini'])."' AND '".intval($_GET['profin'])."'";
+} else {
+    $where = "id_tes = ".intval($_GET['id_tes']);
+}
+
+$logo=$admin_aziend['image'];
+$result = gaz_dbi_dyn_query("*", $gTables['effett'], $where,"tipeff, id_tes");
+$pdf=new TCPDF();
+$pdf->Open();
+$pdf->setPrintHeader(false);
+$pdf->setPrintFooter(false);
+$pdf->SetAutoPageBreak(1,1);
+$pdf->AliasNbPages();
+$pdf->AddPage();
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
+$nuw = new numberstowords_it();
+//azzero il contatore di effetti
+$numefftot = 0;
+$passo=100;
+$anagrafica = new Anagrafica();
+while ($effetto = gaz_dbi_fetch_array($result))
+    {
+    $client = $anagrafica->getPartner($effetto['clfoco']);
+    $banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$effetto['banapp']);
+    $banacc = $anagrafica->getPartner($effetto['banacc']);
+    $impwords = $nuw->euro2assegno($effetto['impeff']);
+    if ($effetto['salacc'] == 'S')
+        $salcon = 'a SALDO della Ns. Fattura N. ';
+    else    $salcon = 'in CONTO della Ns. Fattura N. ';
+    if ($client['pariva'] > 0)
+        $cfpiva = 'P.I. '.$client['pariva'];
+    elseif (! empty ($client['codfis']))
+        $cfpiva = 'C.F. '.$client['codfis'];
+    else    $cfpiva = '';
+    //formatto le date
+    $scadenza = substr($effetto['scaden'],8,2).'-'.substr($effetto['scaden'],5,2).'-'.substr($effetto['scaden'],0,4);
+    $datafatt = substr($effetto['datfat'],8,2).'-'.substr($effetto['datfat'],5,2).'-'.substr($effetto['datfat'],0,4);
+    if ($numefftot == 3)
+        {
+        $pdf->AddPage();
+        $numefftot = 0;
+        }
+    //a secondo del tipo di effetto stampo il relativo modulo
+    switch($effetto['tipeff'])
+    {
+    //questo � il modulo delle ricevute bancarie
+    case "B":
+        $pdf->SetFont('freesans','',7);
+        $pdf->Rect(5,5+$passo*$numefftot,200,50);
+        $pdf->Rect(5,60+$passo*$numefftot,65,30);
+        $pdf->Rect(71,60+$passo*$numefftot,85,30);
+        $pdf->Rect(157,60+$passo*$numefftot,48,30);
+        $pdf->Rect(75,20+$passo*$numefftot,125,10,'DF');
+        $pdf->SetY(30+$numefftot*$passo);
+        $pdf->MemImage($logo,6,6+$passo*$numefftot,30,0);
+        $pdf->Cell(50,3,$admin_aziend['ragso1'],0,2,'L');
+        $pdf->Cell(50,3,$admin_aziend['ragso2'],0,2,'L');
+        $pdf->Cell(50,3,$admin_aziend['indspe'].' Tel.'.$admin_aziend['telefo'],0,2,'L');
+        $pdf->Cell(50,3,$admin_aziend['capspe'].' '.$admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')',0,2,'L');
+        $pdf->Cell(50,3,'P.I. '.$admin_aziend['pariva'],0,2,'L');
+        $pdf->Cell(50,3,'C.F. '.$admin_aziend['codfis'],0,0,'L');
+        $pdf->SetXY(70,5+$numefftot*$passo);
+        $pdf->SetFont('freesans','B',10);
+        $pdf->Cell(50,10,'RICEVUTA N. '.$effetto['progre'],0,0,'L');
+        $pdf->SetFont('freesans','',8);
+        $pdf->MultiCell(22,10,'Data di pagamento','LTB','L',1);
+        $pdf->SetXY(140,5+$numefftot*$passo);
+        $pdf->SetFont('freesans','B',10);
+        $pdf->Cell(20,10,$scadenza.' ','RTB',0,'R',1);
+        $pdf->Cell(10,10,'euro',0,0,'C');
+        $pdf->Cell(5,10,'€','LTB',0,'C',1);
+        $pdf->Cell(25,10,$effetto['impeff'],'RTB',1,'R',1);
+        $pdf->SetFont('freesans','',8);
+        $pdf->SetXY(75,20+$numefftot*$passo);
+        $pdf->Cell(25,3,'riceviamo la somma di ',0,2,'L');
+        $pdf->SetFont('freesans','B',10);
+        $pdf->Cell(25,7,$impwords,0,2,'L');
+        $pdf->SetFont('freesans','',8);
+        $pdf->Cell(25,3,'',0,2);
+        $pdf->Cell(25,12,'versata a mezzo ',0,0,'L');
+        $pdf->SetFont('freesans','',10);
+        $pdf->Cell(50,12,$banacc['ragso1'],0,1,'L');
+        $pdf->Cell(170,8,$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],0,1,'R');
+        $pdf->SetFont('freesans','',7);
+        $pdf->Cell(50,10,'INCASSARE TRAMITE',0,0,'C');
+        $pdf->Cell(60,10,'EGR.SIG./SPETT.LE',0,1,'R');
+        $pdf->SetFont('freesans','',8);
+        $pdf->Cell(60,5,substr($banapp['descri'],0,33),0,0,'L');
+        $pdf->Cell(2,5);
+        $pdf->Cell(80,5,$client['ragso1'],0,1,'L');
+        $pdf->Cell(60,5,'ABI '.$banapp['codabi'],0,0,'L');
+        $pdf->Cell(2,5);
+        $pdf->Cell(80,5,$client['ragso2'],0,1,'L');
+        $pdf->Cell(60,5,'CAB '.$banapp['codcab'],0,0,'L');
+        $pdf->Cell(2,5);
+        $pdf->Cell(90,5,$client['indspe'],0,0,'L');
+        $pdf->Cell(80,5,'__________________',0,1,'L');
+        $pdf->Cell(60,5,$banapp['locali'].' ('.$banapp['codpro'].')',0,0,'L');
+        $pdf->Cell(2,5);
+        $pdf->Cell(90,5,$client['capspe'].' '.$client['citspe'].' ('.$client['prospe'].')',0,0,'L');
+        $pdf->Cell(35,5,' firma ',0,1,'C');
+        $pdf->Cell(62,5);
+        $pdf->Cell(80,5,$cfpiva,0,1,'L');
+    break;
+    //questo � il modulo delle cambiali tratte
+    case "T":
+        $impbol = $bolli->stampTax($effetto['impeff'],$admin_aziend['perbol']);
+        $pdf->Image('cambiale-tratta.jpg',0,5+$passo*$numefftot,210);
+        $pdf->SetXY(67,9+$numefftot*$passo);
+        $pdf->SetFont('freeserif','',14);
+        $pdf->Cell(60,10,$admin_aziend['citspe'].', '.$datafatt);
+        $pdf->SetXY(165,12+$numefftot*$passo);
+        $pdf->Cell(67,10,gaz_format_number($effetto['impeff']));
+        $pdf->SetXY(85,21+$numefftot*$passo);
+        $pdf->Cell(50,10,$scadenza);
+        $pdf->SetXY(76,34+$numefftot*$passo);
+        $pdf->Cell(120,10,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2']);
+        $pdf->SetXY(90,45+$numefftot*$passo);
+        $pdf->Cell(140,10,substr($impwords,4,99));
+        $pdf->SetXY(5,60+$numefftot*$passo);
+        $pdf->SetFont('freesans','B',7);
+        $pdf->Cell(71,6,substr($banapp['descri'],0,34));
+        $pdf->Cell(80,6,$client['ragso1'].' '.$client['ragso2'],0,1,'L');
+        $pdf->SetX(5);
+        $pdf->Cell(71,6,'ABI: '.$banapp['codabi']);
+        $pdf->Cell(80,6,$client['codfis'],0,1,'L');
+        $pdf->SetX(5);
+        $pdf->Cell(71,6,'CAB: '.$banapp['codcab']);
+        $pdf->Cell(80,6,$client['indspe'],0,1,'L');
+        $pdf->SetX(5);
+        $pdf->Cell(71,6,$banapp['locali'].' ('.$banapp['codpro'].')');
+        $pdf->Cell(80,6,$client['capspe'].' '.$client['citspe'].' ('.$client['prospe'].')',0,1,'L');
+        $pdf->SetXY(5,90+$numefftot*$passo);
+        $pdf->Cell(165,4,'Cambiale-tratta n.'.$effetto['progre'].' emessa '.$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],'LTB');
+        $pdf->Cell(37,4,'bolli a tergo €  '.gaz_format_number($impbol),'RTB',1,'R');
+    break;
+    }
+    $numefftot++;
+    }
+$pdf->Output();
+?>
