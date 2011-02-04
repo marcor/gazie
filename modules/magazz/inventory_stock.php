@@ -125,7 +125,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     }
 }
 require("../../library/include/header.php");
-$script_transl=HeadMain(0);
+$script_transl=HeadMain(0,array('jquery/jquery-1.4.2.min','boxover/boxover'));
 ?>
 <SCRIPT LANGUAGE="JavaScript" ID="datapopup">
 function toggle(boxID, toggleID) {
@@ -133,6 +133,17 @@ function toggle(boxID, toggleID) {
   var toggle = document.getElementById(toggleID);
   updateToggle = box.checked ? toggle.disabled=false : toggle.disabled=true;
 }
+
+$( function() {
+  $( '.checkAll' ).live( 'change', function() {
+    $( '.jq_chk' ).attr( 'checked', $( this ).is( ':checked' ) ? 'checked' : '' );
+  });
+  $( '.invertSelection' ).live( 'click', function() {
+    $( '.jq_chk' ).each( function() {
+      $( this ).attr( 'checked', $( this ).is( ':checked' ) ? '' : 'checked' );
+    }).trigger( 'change' );
+  });
+});
 </SCRIPT>
 <?php
 echo "<form method=\"POST\" name=\"maschera\">\n";
@@ -159,6 +170,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['select']."</td>
          </tr>\n";
 $ctrl_cm=0;
 if (isset($form['a'])) {
+   $elem_n=0;
    foreach($form['a'] as $k=>$v) {
         //ini default value
         $title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['i_a']."] body=[<center><img src='../root/view.php?table=artico&value=".$k."'>] fade=[on] fadespeed=[0.03] \"";
@@ -167,15 +179,18 @@ if (isset($form['a'])) {
         if ($ctrl_cm <> $v['i_g']) {
             $cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_a']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
             echo "<tr>\n";
-            echo "<td></td>";
-            echo "<td $cm_title class=\"FacetFieldCaptionTD\" colspan=\"8\" align=\"left\">".$v['i_g'].' - '.$v['g_d']."</td>\n";
+            if ($ctrl_cm == 0) {
+                echo "<td><input type=\"checkbox\" class=\"checkAll\" title=\"".$script_transl['selall']."\" /><br /><a href=\"javascript:void(0);\" class=\"invertSelection\" title=\"".$script_transl['invsel']."\" > <img src=\"../../library/images/recy.gif\" width=\"14\" border=\"0\"/></a></td>";
+            } else {
+                echo "<td></td>";
+            }echo "<td $cm_title class=\"FacetFieldCaptionTD\" colspan=\"8\" align=\"left\">".$v['i_g'].' - '.$v['g_d']."</td>\n";
             echo "</tr>\n";
         }
         echo "<tr>\n";
         if (!isset($form['check_'.$k])){
            $form['check_'.$k]='';
         }
-        echo "<td class=\"FacetFieldCaptionTD\" align=\"center\">\n<input type=\"checkbox\" name=\"check_$k\" ".$form['check_'.$k]." ></td>\n";
+        echo "<td class=\"FacetFieldCaptionTD\" align=\"center\">\n<input class=\"jq_chk\" type=\"checkbox\" name=\"check_$k\" ".$form['check_'.$k]." ></td>\n";
         echo "<td $title $class align=\"left\">".$k."</td>\n";
         echo "<td $title $class align=\"left\">".$v['i_d']."</td>\n";
         echo "<td $class align=\"center\">".$v['i_u']."</td>\n";
@@ -188,6 +203,7 @@ if (isset($form['a'])) {
         echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['l_e'],0,$admin_aziend['decimal_quantity'])."</td>\n";
         echo "</tr>\n";
         $ctrl_cm = $v['i_g'];
+        $elem_n++;
    }
    echo "<tr>
       <td  colspan=\"2\" class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">&nbsp;</td>
