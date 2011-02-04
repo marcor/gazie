@@ -385,7 +385,7 @@ return $structArray;
             echo $msg['gi_lang'].': <select name="lang" class="FacetSelect" onchange="this.form.submit();">';
             if ($handle = opendir('../../language')) {
               while ($dir = readdir($handle)) {
-                  if(($dir == ".") || ($dir == "..") || ($dir == "CVS")) continue;
+                  if(($dir == ".") || ($dir == "..") || ($dir == ".svn")) continue;
                      $selected="";
                      if ($form['lang'] == $dir) {
                         $selected = " selected ";

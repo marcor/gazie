@@ -260,7 +260,7 @@ echo '<select name="lang" class="FacetSelect">';
 $relativePath = '../../language';
 if ($handle = opendir($relativePath)) {
     while ($file = readdir($handle)) {
-        if(($file == ".") or ($file == "..") or ($file == "CVS")) continue;
+        if(($file == ".") or ($file == "..") or ($file == ".svn")) continue;
         $selected="";
         if ($form["lang"] == $file) {
             $selected = " selected ";
@@ -279,7 +279,7 @@ echo '<select name="style" class="FacetSelect">';
 $relativePath = '../../library/style';
 if ($handle = opendir($relativePath)) {
     while ($file = readdir($handle)) {
-        if(($file == ".") or ($file == "..") or ($file == "CVS")) continue;
+        if(($file == ".") or ($file == "..") or ($file == ".svn")) continue;
         $selected="";
         if ($form["style"] == $file) {
             $selected = " selected ";
@@ -325,7 +325,7 @@ if ($user_data["Abilit"] == 9) {
           while ($exist_mod = readdir($handle)) {
              if( $exist_mod == "."
                  || $exist_mod == ".."
-                 || $exist_mod == "CVS"
+                 || $exist_mod == ".svn"
                  || $exist_mod == "root" ) continue;
                  $rs_mod = gaz_dbi_dyn_query(" am.access ,am.moduleid, module.name", $gTables['admin_module'].' AS am LEFT JOIN '.$gTables['module'].
                                ' AS module ON module.id=am.moduleid ',
