@@ -1,10 +1,10 @@
 <?php
-/*$Id: backup.php,v 1.24 2011/01/01 11:07:40 devincen Exp $
+/*
  --------------------------------------------------------------------------
-                            Gazie - Gestione Azienda
+                            GAzie - Gestione Azienda
     Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
-                        <http://gazie.sourceforge.net>
+                        <http://gazie.altervista.org>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -42,7 +42,7 @@ if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
 
 echo "-- GAzie SQL Dump\n";
 echo "-- version: ".$versSw."\n";
-echo "-- http://gazie.sourceforge.net\n";
+echo "-- http://gazie.altervista.org\n";
 echo "-- Date: ".date("d-m-Y H:i:s")."\n";
 echo "-- OS: ".PHP_OS."\n";
 echo "-- Host: ".$_SERVER["HTTP_HOST"]."\n";

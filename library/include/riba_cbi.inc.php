@@ -1,10 +1,10 @@
 <?php
-/* $Id: riba_cbi.inc.php,v 1.3 2009/01/30 10:22:47 devincen Exp $
+/*
  --------------------------------------------------------------------------
-                            Gazie - Gestione Azienda
+                            GAzie - Gestione Azienda
     Copyright (C) 2006 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
-                        <http://gazie.sourceforge.net>
+                        <http://gazie.altervista.org>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU

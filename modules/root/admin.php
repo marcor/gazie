@@ -1,10 +1,10 @@
 <?php
-/* $Id: admin.php,v 1.34 2011/01/01 11:07:47 devincen Exp $
+/*
  --------------------------------------------------------------------------
-                            Gazie - Gestione Azienda
+                            GAzie - Gestione Azienda
     Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
-                        <http://gazie.sourceforge.net>
+                        <http://gazie.altervista.org>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -117,7 +117,7 @@ echo "<tr><td colspan=\"3\">Software Open Source (lic. GPL ver.2) ".$script_tran
 echo "</td></tr>\n";
 echo "<tr><td colspan=\"3\">".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://www.devincentiis.it\"> www.devincentiis.it </a>\n";
 echo "</td></tr>\n";
-echo "<tr><td colspan=\"3\">".$script_transl['devel']."<a  target=\"_new\" title=\"Sourceforge.net\" href=\"http://gazie.sourceforge.net\">  gazie.sourceforge.net </a>\n";
+echo "<tr><td colspan=\"3\">".$script_transl['devel']."<a  target=\"_new\" title=\"Sourceforge.net\" href=\"http://gazie.altervista.org\">  gazie.altervista.org </a>\n";
 echo "</td></tr>\n";
 echo "<tr align=\"center\"><td colspan=\"3\">\n";
 foreach ($script_transl['strBottom'] as $value){

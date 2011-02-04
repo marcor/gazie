@@ -1,10 +1,10 @@
 <?php
-/* $Id: lang.italian.php,v 1.15 2011/01/01 11:07:46 devincen Exp $
+/*
  --------------------------------------------------------------------------
-                            Gazie - Gestione Azienda
+                            GAzie - Gestione Azienda
     Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
-                        <http://gazie.sourceforge.net>
+                        <http://gazie.altervista.org>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -154,27 +154,21 @@ $strScript = array ("report_statis.php" =>
                            "(2) perch&egrave; non ci sono movimenti di acquisto nel ",
                            "Non ci sono articoli movimentati!"),
                     "inventory_stock.php" =>
-                   array(  "Inventario fisico di magazzino",
-                           "Sel.",
-                           "Codice",
-                           "Descrizione articolo",
-                           "U.M.",
-                           "Esistenza articolo",
-                           "Movim. fino al ",
-                           "Movim. dopo il ",
-                           "Quantit&agrave; reale",
-                           "Categoria merceologica inizio",
-                           "Categoria merceologica fine",
-                           "al",
-                           "cambia la data!",
-                           "Categoria merceologica: ",
-                           "Negativa!",
-                           "Categoria iniziale maggiore di quella finale",
-                           "Esistenza negativa",
-                           "Non ci sono articoli nell'intervallo selezionato",
-                           " RIGO: ",
-                           " introdotto un valore negativo",
-                           " avrebbe un totale generale con valore negativo"
+                   array(  'title'=>"Inventario fisico di magazzino",
+                           'del'=>"del",
+                           'catmer'=>"Categoria Merceologica ",
+                           'select'=>"Sel.",
+                           'code'=>"Codice",
+                           'descri'=>"Descrizione articolo",
+                           'mu'=>"U.M.",
+                           'v_a'=>"Valore attuale",
+                           'v_r'=>"Valore reale",
+                           'g_a'=>"Giacenza attuale",
+                           'g_r'=>"Giacenza reale",
+                           'g_v'=>"Valore giacenza",
+                           'errors'=>array("Non ci sono articoli nell'intervallo selezionato",
+                                           " introdotto un valore negativo",
+                                           " avrebbe un totale generale con valore negativo")
                            ),
                     "select_schart.php" =>
                     array( 0=>'Stampa schedari di magazzino',

@@ -1,10 +1,10 @@
 <?php
-/* $Id: fattura_immediata.php,v 1.21 2011/01/01 11:07:11 devincen Exp $
+/*
  --------------------------------------------------------------------------
-                            Gazie - Gestione Azienda
+                            GAzie - Gestione Azienda
     Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
-                        <http://gazie.sourceforge.net>
+                        <http://gazie.altervista.org>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU

@@ -1,10 +1,10 @@
 <?php
-/* $Id: function.inc.php,v 1.73 2011/01/01 11:07:17 devincen Exp $
+/*
  --------------------------------------------------------------------------
-                            Gazie - Gestione Azienda
+                            GAzie - Gestione Azienda
     Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
-                        <http://gazie.sourceforge.net>
+                        <http://gazie.altervista.org>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -736,6 +736,43 @@ class GAzieForm
         return $message;
     }
 
+  function Calendar($name,$day,$month,$year,$class='FacetSelect',$refresh='')
+    {
+        if (!empty($refresh)){
+            $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
+        }
+
+        echo "\t <select name=\"".$name."_D\" id=\"".$name."_D\" class=\"$class\" $refresh>\n";
+        for( $i = 1; $i <= 31; $i++ ) {
+            $selected = "";
+            if($i == $day) {
+                $selected = "selected";
+            }
+            echo "\t\t <option value=\"$i\" $selected >$i</option>\n";
+        }
+        echo "\t </select>\n";
+        echo "\t <select name=\"".$name."_M\" id=\"".$name."_M\" class=\"$class\" $refresh>\n";
+        for( $i = 1; $i <= 12; $i++ ) {
+            $selected = "";
+            if($i == $month) {
+                $selected = "selected";
+            }
+            $month_name = ucwords(strftime("%B", mktime (0,0,0,$i,1,0)));
+            echo "\t\t <option value=\"$i\"  $selected >$month_name</option>\n";
+        }
+        echo "\t </select>\n";
+        echo "\t <select name=\"".$name."_Y\" id=\"".$name."_Y\" class=\"$class\" $refresh>\n";
+        for( $i = $year-10; $i <= $year+10; $i++ ) {
+            $selected = "";
+            if($i == $year) {
+                $selected = "selected";
+            }
+            echo "\t\t <option value=\"$i\"  $selected >$i</option>\n";
+        }
+        echo "\t </select>\n";
+    }
+
+
   function CalendarPopup($name,$day,$month,$year,$class='FacetSelect',$refresh='')
     {
         global $script_transl;
@@ -766,6 +803,7 @@ class GAzieForm
         echo "\t <A HREF=\"#\" onClick=\"setDate('$name'); return false;\" TITLE=\"".$script_transl['changedate']."\" NAME=\"anchor\" ID=\"anchor\">\n";
         echo "\t<img border=\"0\" src=\"../../library/images/cal.png\"></A>\n";
     }
+
 
   function variousSelect($name,$transl,$sel,$class='FacetSelect',$bridge=true,$refresh='')
     {
@@ -825,7 +863,7 @@ class GAzieForm
         echo "</select>\n";
     }
 
-    function selectFromDB($table,$name,$key,$val,$order=false,$empty=false,$bridge='',$key2='',$val_hiddenReq='',$class='FacetSelect')
+    function selectFromDB($table,$name,$key,$val,$order=false,$empty=false,$bridge='',$key2='',$val_hiddenReq='',$class='FacetSelect',$addOption=null)
     {
         global $gTables;
         $refresh ='';
@@ -852,6 +890,13 @@ class GAzieForm
             } else {
                 echo substr($r[$key],0,28).$bridge.substr($r[$key2],0,35)."</option>\n";
             }
+        }
+        if ($addOption) {
+            echo "\t\t <option value=\"".$addOption['value']."\"";
+            if($addOption['value'] == $val) {
+                echo " selected ";
+            }
+            echo ">".$addOption['descri']."</option>\n";
         }
         echo "\t </select>\n";
     }

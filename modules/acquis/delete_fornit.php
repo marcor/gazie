@@ -1,10 +1,10 @@
 <?php
-/* $Id: delete_fornit.php,v 1.19 2011/01/01 11:07:17 devincen Exp $
+/*
  --------------------------------------------------------------------------
-                            Gazie - Gestione Azienda
+                            GAzie - Gestione Azienda
     Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
                              (www.devincentiis.it)
-                         <http://gazie.sourceforge.net>
+                         <http://gazie.altervista.org>
 
                       OSCAT - Gestione Centri Ass. Tecnica
                   Copyright (C) 2005 - Maurizio Lapini Pistoia (PT)
