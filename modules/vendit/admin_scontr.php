@@ -422,7 +422,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             } else {
                $form['rows'][$old_key]['prelis'] = number_format($artico['preve1'],$admin_aziend['decimal_price'],'.','');
             }
-            $form['rows'][$old_key]['scorta'] = $artico['esiste'] - $artico['scorta'];
+            $magval=array_pop($magazz->getStockValue(false,$form['in_codart'],$form['datemi_Y'].'-'.$form['datemi_M'].'-'.$form['datemi_D'],$admin_aziend['stock_eval_method']));
+            $form['rows'][$old_key]['scorta'] = $magval['q_g'] - $artico['scorta'];
          } elseif ($form['in_tiprig'] == 1) { //rigo forfait
             $form['rows'][$old_key]['codart'] = "";
             $form['rows'][$old_key]['unimis'] = "";
@@ -487,7 +488,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                $form['rows'][$next_row]['codric'] = $admin_aziend['impven'];
                $form['in_codric'] = $admin_aziend['impven'];
             }
-            $form['rows'][$next_row]['scorta'] = $artico['esiste'] - $artico['scorta'];
+            $magval=array_pop($magazz->getStockValue(false,$form['in_codart'],$form['datemi_Y'].'-'.$form['datemi_M'].'-'.$form['datemi_D'],$admin_aziend['stock_eval_method']));
+            $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $artico['scorta'];
          } elseif ($form['in_tiprig'] == 1) { //forfait
             $form['rows'][$next_row]['codart'] = "";
             $form['rows'][$next_row]['annota'] = "";
@@ -626,7 +628,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        $form['rows'][$next_row]['provvigione'] = $r['provvigione'];
        $form['rows'][$next_row]['id_mag'] = $r['id_mag'];
        $form['rows'][$next_row]['annota'] = $articolo['annota'];
-       $form['rows'][$next_row]['scorta'] = $articolo['esiste'] - $articolo['scorta'];
+       $magval=array_pop($magazz->getStockValue(false,$r['codart'],$form['datemi_Y'].'-'.$form['datemi_M'].'-'.$form['datemi_D'],$admin_aziend['stock_eval_method']));
+       $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $articolo['scorta'];
        $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
        $form['rows'][$next_row]['status'] = "UPDATE";
        $next_row++;
