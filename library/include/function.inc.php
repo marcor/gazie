@@ -718,7 +718,7 @@ class selectvettor extends SelectBox
 // classe per la generazione dinamica dei form di amministrazione
 class GAzieForm
 {
-  function outputErrors($idxMsg,$transl_errors)
+  function outputErrors($idxMsg,$transl_errors,$ref=false)
     {
         global $script_transl;
         $message='';
@@ -729,6 +729,11 @@ class GAzieForm
                    $rsval = explode('-',chop($value));
                    foreach ($rsval as $valmsg){
                            $message .= $transl_errors[$valmsg].' ';
+                           if ($ref) { // per specificare quale dato presenta l'errore
+                              if (isset($ref[$valmsg])) {
+                                 $message .= $ref[$valmsg];
+                              }
+                           }
                    }
                    $message .= "<br />";
            }

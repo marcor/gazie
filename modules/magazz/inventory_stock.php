@@ -53,14 +53,15 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
               $form['a'][$r['codice']]['t_e'] = $magval['q_g'];
               $form['check'.$r['codice']] = '';
               if ($magval['q_g'] < 0 ){
-                 $form['check_'.$r['codice']] = ' checked ';
+                 $form['a'][$r['codice']]['chk_on'] = ' checked ';
                  $form['a'][$r['codice']]['col'] = 'red';
                  $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
               } elseif ($magval['q_g']>0) {
-                 $form['check_'.$r['codice']] = ' checked ';
+                 $form['a'][$r['codice']]['chk_on'] = ' checked ';
                  $form['a'][$r['codice']]['col'] = '';
                  $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
               } else {
+                 $form['a'][$r['codice']]['chk_on'] = '';
                  $form['a'][$r['codice']]['col'] = '';
                  $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
               }
@@ -76,16 +77,17 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     $form['date_M'] = intval($_POST['date_M']);
     $form['date_D'] = intval($_POST['date_D']);
     $form['catmer'] = intval($_POST['catmer']);
-    $utsdate= mktime(0,0,0,$form['date_M'],$form['date_D'],$form['date_Y']);
-    $date = date("Y-m-d",$utsdate);
-    $where="catmer = ".$form["catmer"];
-    if ($form['catmer']==100){
-      $where=1;
-    }
-    $ctrl_cm=0;
-    $result = gaz_dbi_dyn_query($gTables['artico'].'.*, '.$gTables['catmer'].'.descri AS descat,'.$gTables['catmer'].'.annota AS anncat', $gTables['artico'].' LEFT JOIN '.$gTables['catmer'].' ON catmer = '.$gTables['catmer'].'.codice', $where,'catmer ASC, '.$gTables['artico'].'.codice ASC');
-    if ($result) {
-       while ($r = gaz_dbi_fetch_array($result)) {
+    if ($_POST['hidden_req'] == 'catmer' || $_POST['hidden_req'] == 'date') {
+      $utsdate= mktime(0,0,0,$form['date_M'],$form['date_D'],$form['date_Y']);
+      $date = date("Y-m-d",$utsdate);
+      $where="catmer = ".$form["catmer"];
+      if ($form['catmer']==100){
+        $where=1;
+      }
+      $ctrl_cm=0;
+      $result = gaz_dbi_dyn_query($gTables['artico'].'.*, '.$gTables['catmer'].'.descri AS descat,'.$gTables['catmer'].'.annota AS anncat', $gTables['artico'].' LEFT JOIN '.$gTables['catmer'].' ON catmer = '.$gTables['catmer'].'.codice', $where,'catmer ASC, '.$gTables['artico'].'.codice ASC');
+      if ($result) {
+         while ($r = gaz_dbi_fetch_array($result)) {
            if ($r['catmer']<>$ctrl_cm ){
              set_time_limit (30);
              $ctrl_cm=$r['catmer'];
@@ -103,25 +105,30 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
            $form['a'][$r['codice']]['t_e'] = $magval['q_g'];
            $form['check'.$r['codice']] = '';
            if ($magval['q_g'] < 0 ){
-              $form['check_'.$r['codice']] = ' checked ';
+              $form['a'][$r['codice']]['chk_on'] = ' checked ';
               $form['a'][$r['codice']]['col'] = 'red';
               $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
            } else {
+              $form['a'][$r['codice']]['chk_on'] = '';
               $form['a'][$r['codice']]['col'] = '';
               $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
            }
-       }
-    }
-    if (isset($_POST['insert'])) {  //in caso di conferma
-        $val=0;
+         }
+      }
+    } elseif (isset($_POST['insert'])) {  //in caso di conferma
+        $form=$_POST;
+        $ref=false; // in $ref i riferimenti al rigo per lo stesso errore
         foreach ($_POST as $k=>$v) { //controllo sui dati inseriti e flaggati
-           if (substr($k,0,6) == 'check_') {
-           } else continue;
-        }
-           if (empty($msg)) {  //se non ci sono errori
-              header("Location: report_movmag.php");
-              exit;
+           if ($v=='a') {
+              foreach ($v as $ki=>$vi) {
+                 if (isset($form['a'][$ki]['chk']) && $form['a'][$ki]['chk']=='on' ) $form['a'][$ki]['chk_on'] = ' checked ';
+              }
            }
+        }
+        if (empty($msg)) {  //se non ci sono errori
+//              header("Location: report_movmag.php");
+//              exit;
+        }
     }
 }
 require("../../library/include/header.php");
@@ -152,11 +159,11 @@ echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$_POST['ritorno']."\" />
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl['title'])." ". $script_transl['del'];
 $gForm->Calendar('date',$form['date_D'],$form['date_M'],$form['date_Y'],'FacetSelect','date');
 echo $script_transl['catmer'];
-$gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,1,'-','descri','catmer','FacetSelect',array('value'=>100,'descri'=>'*** '.$script_transl['all'].' ***'));
+$gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,false,'-','descri','catmer','FacetSelect',array('value'=>100,'descri'=>'*** '.$script_transl['all'].' ***'));
 echo "</div>\n";
 echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
-    echo '<tr><td colspan="6" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
+    echo '<tr><td colspan="6" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'],$ref)."</td></tr>\n";
 }
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['select']."</td>
          <td class=\"FacetFieldCaptionTD\">".$script_transl['code']."</td>
@@ -178,6 +185,7 @@ if (isset($form['a'])) {
         // end default value
         if ($ctrl_cm <> $v['i_g']) {
             $cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_a']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
+            echo "<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">\n";
             echo "<tr>\n";
             if ($ctrl_cm == 0) {
                 echo "<td><input type=\"checkbox\" class=\"checkAll\" title=\"".$script_transl['selall']."\" /><br /><a href=\"javascript:void(0);\" class=\"invertSelection\" title=\"".$script_transl['invsel']."\" > <img src=\"../../library/images/recy.gif\" width=\"14\" border=\"0\"/></a></td>";
@@ -186,11 +194,19 @@ if (isset($form['a'])) {
             }echo "<td $cm_title class=\"FacetFieldCaptionTD\" colspan=\"8\" align=\"left\">".$v['i_g'].' - '.$v['g_d']."</td>\n";
             echo "</tr>\n";
         }
+
+        echo "<input type=\"hidden\" value=\"".$v['chk_on']."\" name=\"a[$k][chk_on]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['i_a']."\" name=\"a[$k][i_a]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['col']."\" name=\"a[$k][col]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['i_g']."\" name=\"a[$k][i_g]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['i_d']."\" name=\"a[$k][i_d]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['i_u']."\" name=\"a[$k][i_u]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['v_a']."\" name=\"a[$k][v_a]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['p_e']."\" name=\"a[$k][p_e]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['l_e']."\" name=\"a[$k][l_e]\">\n";
+
         echo "<tr>\n";
-        if (!isset($form['check_'.$k])){
-           $form['check_'.$k]='';
-        }
-        echo "<td class=\"FacetFieldCaptionTD\" align=\"center\">\n<input class=\"jq_chk\" type=\"checkbox\" name=\"check_$k\" ".$form['check_'.$k]." ></td>\n";
+        echo "<td class=\"FacetFieldCaptionTD\" align=\"center\">\n<input class=\"jq_chk\" type=\"checkbox\" name=\"a[$k][chk]\" ".$form['a'][$k]['chk_on']." ></td>\n";
         echo "<td $title $class align=\"left\">".$k."</td>\n";
         echo "<td $title $class align=\"left\">".$v['i_d']."</td>\n";
         echo "<td $class align=\"center\">".$v['i_u']."</td>\n";
@@ -207,7 +223,7 @@ if (isset($form['a'])) {
    }
    echo "<tr>
       <td  colspan=\"2\" class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">&nbsp;</td>
-      <td align=\"right\" colspan=\"7\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"preview\" value=\"".$script_transl['view']."!\">&nbsp;</td>
+      <td align=\"right\" colspan=\"7\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"insert\" value=\"".$script_transl['view']."!\">&nbsp;</td>
       </tr>\n";
 } else {
    echo "<tr>
