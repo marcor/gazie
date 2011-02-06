@@ -166,9 +166,10 @@ $strScript = array ("report_statis.php" =>
                            'g_a'=>"Giacenza attuale",
                            'g_r'=>"Giacenza reale",
                            'g_v'=>"Valore giacenza",
-                           'errors'=>array("Non ci sono articoli nell'intervallo selezionato",
-                                           " introdotto un valore negativo",
-                                           " avrebbe un totale generale con valore negativo")
+                           'noitem'=>"Non sono stati trovati articoli in questa categoria merceologica",
+                           'errors'=>array(" La giacenza reale non pu&ograve; essere negativa",
+                                           " Il valore reale non pu&ograve; essere negativo o uguale a zero"),
+                           'preview_title'=>'Confermando le scelte fatte si registreranno i seguenti movimenti di magazzino:'
                            ),
                     "select_schart.php" =>
                     array( 0=>'Stampa schedari di magazzino',
