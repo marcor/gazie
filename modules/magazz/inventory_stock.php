@@ -44,26 +44,23 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
               $form['a'][$r['codice']]['i_d'] = $r['descri'];
               $form['a'][$r['codice']]['i_u'] = $r['unimis'];
               $form['a'][$r['codice']]['v_a'] = $magval['v'];
+              $form['a'][$r['codice']]['v_r'] = $magval['v'];
               $form['a'][$r['codice']]['i_a'] = $r['annota'];
               $form['a'][$r['codice']]['i_g'] = $r['catmer'];
               $form['a'][$r['codice']]['g_d'] = $r['descat'];
-              $form['a'][$r['codice']]['g_a'] = $r['anncat'];
-              $form['a'][$r['codice']]['p_e'] = $magval['q_g'];
-              $form['a'][$r['codice']]['l_e'] = $magval['v_g'];
-              $form['a'][$r['codice']]['t_e'] = $magval['q_g'];
-              $form['check'.$r['codice']] = '';
+              $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
+              $form['a'][$r['codice']]['g_r'] = $magval['q_g'];
+              $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
+              $form['vac_on'.$r['codice']] = '';
               if ($magval['q_g'] < 0 ){
-                 $form['a'][$r['codice']]['chk_on'] = ' checked ';
+                 $form['chk_on'.$r['codice']] = ' checked ';
                  $form['a'][$r['codice']]['col'] = 'red';
-                 $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
               } elseif ($magval['q_g']>0) {
-                 $form['a'][$r['codice']]['chk_on'] = ' checked ';
+                 $form['chk_on'.$r['codice']] = ' checked ';
                  $form['a'][$r['codice']]['col'] = '';
-                 $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
               } else {
-                 $form['a'][$r['codice']]['chk_on'] = '';
+                 $form['chk_on'.$r['codice']] = '';
                  $form['a'][$r['codice']]['col'] = '';
-                 $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
               }
         }
     } else {
@@ -96,34 +93,60 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
            $form['a'][$r['codice']]['i_d'] = $r['descri'];
            $form['a'][$r['codice']]['i_u'] = $r['unimis'];
            $form['a'][$r['codice']]['v_a'] = $magval['v'];
+           $form['a'][$r['codice']]['v_r'] = $magval['v'];
            $form['a'][$r['codice']]['i_a'] = $r['annota'];
            $form['a'][$r['codice']]['i_g'] = $r['catmer'];
            $form['a'][$r['codice']]['g_d'] = $r['descat'];
-           $form['a'][$r['codice']]['g_a'] = $r['anncat'];
-           $form['a'][$r['codice']]['p_e'] = $magval['q_g'];
-           $form['a'][$r['codice']]['l_e'] = $magval['v_g'];
-           $form['a'][$r['codice']]['t_e'] = $magval['q_g'];
-           $form['check'.$r['codice']] = '';
+           $form['a'][$r['codice']]['g_r'] = $magval['q_g'];
+           $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
+           $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
+           $form['vac_on'.$r['codice']] = '';
            if ($magval['q_g'] < 0 ){
-              $form['a'][$r['codice']]['chk_on'] = ' checked ';
-              $form['a'][$r['codice']]['col'] = 'red';
-              $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
+                 $form['chk_on'.$r['codice']] = ' checked ';
+                 $form['a'][$r['codice']]['col'] = 'red';
+           } elseif ($magval['q_g']>0) {
+                 $form['chk_on'.$r['codice']] = ' checked ';
+                 $form['a'][$r['codice']]['col'] = '';
            } else {
-              $form['a'][$r['codice']]['chk_on'] = '';
-              $form['a'][$r['codice']]['col'] = '';
-              $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
+                 $form['chk_on'.$r['codice']] = '';
+                 $form['a'][$r['codice']]['col'] = '';
            }
          }
       }
-    } elseif (isset($_POST['insert'])) {  //in caso di conferma
-        $form=$_POST;
-        $ref=false; // in $ref i riferimenti al rigo per lo stesso errore
+    } elseif (isset($_POST['preview']) || isset($_POST['insert'])) {  //in caso di conferma
+        $form['date_Y'] = $_POST['date_Y'];
+        $form['date_M'] = $_POST['date_M'];
+        $form['date_D'] = $_POST['date_D'];
+        $form['catmer'] = $_POST['catmer'];
         foreach ($_POST as $k=>$v) { //controllo sui dati inseriti e flaggati
-           if ($v=='a') {
-              foreach ($v as $ki=>$vi) {
-                 if (isset($form['a'][$ki]['chk']) && $form['a'][$ki]['chk']=='on' ) $form['a'][$ki]['chk_on'] = ' checked ';
-              }
+           if ($k=='a') {
+             foreach ($v as $ka=>$va) { // ciclo delle singole righe (a)
+                 $form['chk_on'.$ka] = '';
+                 if (isset($_POST['chk'.$ka])) { // se l'articolo e' da inventariare lo controllo
+                    $form['chk_on'.$ka] = ' checked ';
+                    if ($va['g_r']<0) {
+                       $msg .= $ka.'-0+';
+                    }
+                    if ($va['v_r']<=0) {
+                       $msg .= $ka.'-1+';
+                    }
+                 }
+                 $form['vac_on'.$ka] = '';
+                 if (isset($_POST['vac'.$ka])) $form['vac_on'.$ka] = ' checked ';
+                 $form['a'][$ka]['i_d'] = $va['i_d'];
+                 $form['a'][$ka]['i_u'] = $va['i_u'];
+                 $form['a'][$ka]['v_a'] = $va['v_a'];
+                 $form['a'][$ka]['v_r'] = $va['v_r'];
+                 $form['a'][$ka]['i_a'] = $va['i_a'];
+                 $form['a'][$ka]['i_g'] = $va['i_g'];
+                 $form['a'][$ka]['g_d'] = $va['g_d'];
+                 $form['a'][$ka]['g_r'] = $va['g_r'];
+                 $form['a'][$ka]['g_a'] = $va['g_a'];
+                 $form['a'][$ka]['v_g'] = $va['v_g'];
+                 $form['a'][$ka]['col'] = $va['col'];
+            }
            }
+
         }
         if (empty($msg)) {  //se non ci sono errori
 //              header("Location: report_movmag.php");
@@ -163,7 +186,7 @@ $gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,false,'-',
 echo "</div>\n";
 echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
-    echo '<tr><td colspan="6" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'],$ref)."</td></tr>\n";
+    echo '<tr><td colspan="9" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['select']."</td>
          <td class=\"FacetFieldCaptionTD\">".$script_transl['code']."</td>
@@ -184,7 +207,7 @@ if (isset($form['a'])) {
         $class= ' class="FacetDataTD'.$v['col'].'" ';
         // end default value
         if ($ctrl_cm <> $v['i_g']) {
-            $cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_a']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
+            $cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_d']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
             echo "<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">\n";
             echo "<tr>\n";
             if ($ctrl_cm == 0) {
@@ -195,39 +218,45 @@ if (isset($form['a'])) {
             echo "</tr>\n";
         }
 
-        echo "<input type=\"hidden\" value=\"".$v['chk_on']."\" name=\"a[$k][chk_on]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['i_a']."\" name=\"a[$k][i_a]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['col']."\" name=\"a[$k][col]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['i_g']."\" name=\"a[$k][i_g]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['i_d']."\" name=\"a[$k][i_d]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['i_u']."\" name=\"a[$k][i_u]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['v_a']."\" name=\"a[$k][v_a]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['p_e']."\" name=\"a[$k][p_e]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['l_e']."\" name=\"a[$k][l_e]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['v_r']."\" name=\"a[$k][v_r]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['g_a']."\" name=\"a[$k][g_a]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['v_g']."\" name=\"a[$k][v_g]\">\n";
 
         echo "<tr>\n";
-        echo "<td class=\"FacetFieldCaptionTD\" align=\"center\">\n<input class=\"jq_chk\" type=\"checkbox\" name=\"a[$k][chk]\" ".$form['a'][$k]['chk_on']." ></td>\n";
+        echo "<td class=\"FacetFieldCaptionTD\" align=\"center\">\n
+             <input class=\"jq_chk\" name=\"chk$k\" ".$form['chk_on'.$k]." type=\"checkbox\" /></td>\n";
         echo "<td $title $class align=\"left\">".$k."</td>\n";
         echo "<td $title $class align=\"left\">".$v['i_d']."</td>\n";
         echo "<td $class align=\"center\">".$v['i_u']."</td>\n";
-        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_quantity'])."</td>\n";
+        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price'])."</td>\n";
         echo "<td $class align=\"right\">
-              <input id=\"v_achk_$k\" name=\"v_achk_$k\" onClick=\"toggle('v_achk_$k', 'a[$k][v_r]')\" type=\"checkbox\" />
-              <input type=\"text\" size=\"10\" style=\"text-align:right\" onchange=\"document.maschera.check_$k.checked=true\" id=\"a[$k][v_r]\" name=\"a[$k][v_r]\" value=\"".$v['v_a']."\" disabled ></td>\n";
-        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['p_e'],0,$admin_aziend['decimal_quantity'])."</td>\n";
-        echo "<td $class align=\"right\"><input type=\"text\" style=\"text-align:right\" onchange=\"document.maschera.check_$k.checked=true\" name=\"a[$k][g_a]\" value=\"".$v['g_a']."\"></td>\n";
-        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['l_e'],0,$admin_aziend['decimal_quantity'])."</td>\n";
+              <input id=\"vac$k\" name=\"vac$k\"  ".$form['vac_on'.$k]." onClick=\"toggle('vac$k', 'a[$k][v_r]')\" type=\"checkbox\" />
+              <input type=\"text\" size=\"10\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" id=\"a[$k][v_r]\" name=\"a[$k][v_r]\" value=\"".gaz_format_quantity($v['v_r'],0,$admin_aziend['decimal_price'])."\" disabled ></td>\n";
+        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'])."</td>\n";
+        echo "<td $class align=\"right\"><input type=\"text\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" name=\"a[$k][g_r]\" value=\"".$v['g_r']."\"></td>\n";
+        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_g'],0,$admin_aziend['decimal_price'])."</td>\n";
         echo "</tr>\n";
         $ctrl_cm = $v['i_g'];
         $elem_n++;
    }
    echo "<tr>
       <td  colspan=\"2\" class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">&nbsp;</td>
-      <td align=\"right\" colspan=\"7\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"insert\" value=\"".$script_transl['view']."!\">&nbsp;</td>
+      <td align=\"right\" colspan=\"7\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"preview\" value=\"".$script_transl['view']."!\">&nbsp;</td>
       </tr>\n";
+   if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
+       echo "</table><table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+       echo "<tr><td colspan=\"9\" class=\"FacetFormHeaderFont\">".$script_transl['preview_title']."</td></tr>\n";
+   }
 } else {
    echo "<tr>
-      <td colspan=\"8\" class=\"FacetFormHeaderFont\">".$script_transl[17]."</td>
+      <td colspan=\"9\" class=\"FacetDataTDred\">".$script_transl['noitem']."</td>
       </tr>\n";
 
 }
