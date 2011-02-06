@@ -718,8 +718,13 @@ class selectvettor extends SelectBox
 // classe per la generazione dinamica dei form di amministrazione
 class GAzieForm
 {
-  function outputErrors($idxMsg,$transl_errors,$ref=false)
-    {
+  function outputErrors($idxMsg,$transl_errors)
+     {
+        /* In questa funzione si deve passare una striga dove il "+"
+           serve a separare i diversi indici di errori e il "-" separa il riferimento
+           all'errore es. "fa150-3+" dara' un risultato del genere:
+               ERRORE! -> introdotto un valore negativo »fa150
+        */
         global $script_transl;
         $message='';
         if (!empty($idxMsg)) {
@@ -727,13 +732,10 @@ class GAzieForm
            foreach ($rsmsg as $value){
                    $message .= $script_transl['error']."! -> ";
                    $rsval = explode('-',chop($value));
+                   $k=array_pop($rsval);
+                   $message .= $transl_errors[$k].' ';
                    foreach ($rsval as $valmsg){
-                           $message .= $transl_errors[$valmsg].' ';
-                           if ($ref) { // per specificare quale dato presenta l'errore
-                              if (isset($ref[$valmsg])) {
-                                 $message .= $ref[$valmsg];
-                              }
-                           }
+                                 $message .= ' &raquo;'.$valmsg;
                    }
                    $message .= "<br />";
            }
