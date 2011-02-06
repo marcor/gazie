@@ -415,7 +415,7 @@ class magazzForm extends GAzieForm
             movmagUpdate($id,$row_movmag);
             // detraggo il valore del movimento precedente dall'esistente dell'articolo precedente
             $upd_old_art_exist_value =  $old_movmag['quanti']*$old_movmag['operat']*$old_caumag['upesis'];
-            gaz_dbi_query ("UPDATE ".$gTables['artico']." SET esiste = esiste - ".$upd_old_art_exist_value." WHERE `codice` = '".$old_movmag['artico']."';");
+            //gaz_dbi_query ("UPDATE ".$gTables['artico']." SET esiste = esiste - ".$upd_old_art_exist_value." WHERE `codice` = '".$old_movmag['artico']."';");
             // poi aggiungo il nuovo
             $upd_art_exist_value = $quantita*$operat*$new_caumag['upesis'];
         }
