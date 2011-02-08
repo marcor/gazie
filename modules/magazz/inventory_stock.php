@@ -63,7 +63,6 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                  $form['a'][$r['codice']]['col'] = '';
               }
         }
-    } else {
     }
 } else { //nelle  successive entrate
     if (isset($_POST['Return'])) {
@@ -114,6 +113,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
          }
       }
     } elseif (isset($_POST['preview']) || isset($_POST['insert'])) {  //in caso di conferma
+        $cau99 = gaz_dbi_get_row($gTables['caumag'],'codice',99);
+        $cau98 = gaz_dbi_get_row($gTables['caumag'],'codice',98);
         $form['date_Y'] = $_POST['date_Y'];
         $form['date_M'] = $_POST['date_M'];
         $form['date_D'] = $_POST['date_D'];
@@ -126,6 +127,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     $form['chk_on'.$ka] = ' checked ';
                     if ($va['g_r']<0) {
                        $msg .= $ka.'-0+';
+                    } elseif($va['g_r']==0 && $va['g_a']==0) { //inutile fare l'inventario di una cosa che non c'era e non c'e'
+                       $msg .= $ka.'-2+';
                     }
                     if ($va['v_r']<=0) {
                        $msg .= $ka.'-1+';
@@ -133,24 +136,65 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                  }
                  $form['vac_on'.$ka] = '';
                  if (isset($_POST['vac'.$ka])) $form['vac_on'.$ka] = ' checked ';
-                 $form['a'][$ka]['i_d'] = $va['i_d'];
-                 $form['a'][$ka]['i_u'] = $va['i_u'];
-                 $form['a'][$ka]['v_a'] = $va['v_a'];
-                 $form['a'][$ka]['v_r'] = $va['v_r'];
+                 $form['a'][$ka]['i_d'] = substr($va['i_d'],0,30);
+                 $form['a'][$ka]['i_u'] = substr($va['i_u'],0,3);
+                 $form['a'][$ka]['v_a'] = gaz_format_quantity($va['v_a'],0,$admin_aziend['decimal_price']);
+                 $form['a'][$ka]['v_r'] = gaz_format_quantity($va['v_r'],0,$admin_aziend['decimal_price']);
                  $form['a'][$ka]['i_a'] = $va['i_a'];
                  $form['a'][$ka]['i_g'] = $va['i_g'];
                  $form['a'][$ka]['g_d'] = $va['g_d'];
                  $form['a'][$ka]['g_r'] = $va['g_r'];
-                 $form['a'][$ka]['g_a'] = $va['g_a'];
-                 $form['a'][$ka]['v_g'] = $va['v_g'];
+                 $form['a'][$ka]['g_a'] = gaz_format_quantity($va['g_a'],0,$admin_aziend['decimal_quantity']);
+                 $form['a'][$ka]['v_g'] = gaz_format_quantity($va['v_g'],0,$admin_aziend['decimal_price']);
                  $form['a'][$ka]['col'] = $va['col'];
-            }
+             }
            }
-
         }
-        if (empty($msg)) {  //se non ci sono errori
-//              header("Location: report_movmag.php");
-//              exit;
+        if (isset($_POST['insert']) && empty($msg)) { // se devo inserire e non ho errori rifaccio il ciclo dei righi per inserire i movimenti
+             foreach ($form['a'] as $k=>$v) { // ciclo delle singole righe (a)
+               if ($form['chk_on'.$k] == ' checked ') {   // e' un rigo da movimentare
+                 if ($v['g_a']>$v['g_r']) { // in caso di giacenza reale minore
+                    // devo fare prima uno storno per scaricare
+                    $mq=$v['g_a']-$v['g_r'];
+                    movmagInsert(array('caumag'=>98,
+                                       'operat'=>-1,
+                                       'datreg'=>$form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D'],
+                                       'tipdoc'=>'INV',
+                                       'desdoc'=>$cau98['descri'],
+                                       'datdoc'=>$form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D'],
+                                       'artico'=>$k,
+                                       'quanti'=>$mq,
+                                       'prezzo'=>$v['v_r']
+                                        ));
+                 } elseif ($v['g_a']<$v['g_r']) { // se maggiore carico
+                    // devo fare prima uno storno per caricare
+                    $mq=$v['g_r']-$v['g_a'];
+                    movmagInsert(array('caumag'=>98,
+                                       'operat'=>1,
+                                       'datreg'=>$form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D'],
+                                       'tipdoc'=>'INV',
+                                       'desdoc'=>$cau98['descri'],
+                                       'datdoc'=>$form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D'],
+                                       'artico'=>$k,
+                                       'quanti'=>$mq,
+                                       'prezzo'=>$v['v_r'],
+                                        ));
+                 }
+                 // inserisco il rigo con causale 99
+                 movmagInsert(array('caumag'=>99,
+                                    'operat'=>1,
+                                    'datreg'=>$form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D'],
+                                    'tipdoc'=>'INV',
+                                    'desdoc'=>$cau99['descri'],
+                                    'datdoc'=>$form['date_Y'].'-'.$form['date_M'].'-'.$form['date_D'],
+                                    'artico'=>$k,
+                                    'quanti'=>$v['g_r'],
+                                    'prezzo'=>$v['v_r'],
+                                     ));
+               }
+             }
+             header("Location: report_movmag.php");
+             exit;
         }
     }
 }
@@ -184,7 +228,7 @@ $gForm->Calendar('date',$form['date_D'],$form['date_M'],$form['date_Y'],'FacetSe
 echo $script_transl['catmer'];
 $gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,false,'-','descri','catmer','FacetSelect',array('value'=>100,'descri'=>'*** '.$script_transl['all'].' ***'));
 echo "</div>\n";
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
+echo "<table class=\"Tlarge\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="9" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
@@ -237,7 +281,7 @@ if (isset($form['a'])) {
         echo "<td $class align=\"center\">".$v['i_u']."</td>\n";
         echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price'])."</td>\n";
         echo "<td $class align=\"right\">
-              <input id=\"vac$k\" name=\"vac$k\"  ".$form['vac_on'.$k]." onClick=\"toggle('vac$k', 'a[$k][v_r]')\" type=\"checkbox\" />
+              <input id=\"vac$k\" name=\"vac$k\" ".$form['vac_on'.$k]." onClick=\"toggle('vac$k', 'a[$k][v_r]')\" type=\"checkbox\" />
               <input type=\"text\" size=\"10\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" id=\"a[$k][v_r]\" name=\"a[$k][v_r]\" value=\"".gaz_format_quantity($v['v_r'],0,$admin_aziend['decimal_price'])."\" disabled ></td>\n";
         echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'])."</td>\n";
         echo "<td $class align=\"right\"><input type=\"text\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" name=\"a[$k][g_r]\" value=\"".$v['g_r']."\"></td>\n";
@@ -251,8 +295,62 @@ if (isset($form['a'])) {
       <td align=\"right\" colspan=\"7\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"preview\" value=\"".$script_transl['view']."!\">&nbsp;</td>
       </tr>\n";
    if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
-       echo "</table><table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
-       echo "<tr><td colspan=\"9\" class=\"FacetFormHeaderFont\">".$script_transl['preview_title']."</td></tr>\n";
+       echo "</table><table class=\"Tlarge\">\n";
+       echo "<tr><td colspan=\"8\" class=\"FacetFormHeaderFont\">".$script_transl['preview_title']."</td></tr>\n";
+       echo "<tr><td class=\"FacetFieldCaptionTD\"></td>
+         <td class=\"FacetFieldCaptionTD\">".$script_transl['code']."</td>
+         <td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>
+         <td class=\"FacetFieldCaptionTD\">".$script_transl['mu']."</td>
+         <td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['load']."</td>
+         <td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['unload']."</td>
+         <td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['v_r']."</td>
+         <td class=\"FacetFieldCaptionTD\">".$script_transl['value']."</td>
+         </tr>\n";
+       foreach ($form['a'] as $k=>$v) { // ciclo delle singole righe (a)
+         if ($form['chk_on'.$k] == ' checked ') {   // e' un rigo da movimentare
+           $load='';
+           $unload='';
+           if ($v['g_a']>$v['g_r']) { // in caso di giacenza reale minore
+             // devo fare prima uno storno per scaricare
+             $mq=$v['g_a']-$v['g_r'];
+             echo "<tr>\n";
+             echo "<td class=\"FacetDataTD\">98-".$cau98['descri']."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"left\">".$k."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>\n";
+             echo "<td class=\"FacetDataTD\"></td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity'])."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price'])."</td>\n";
+             echo "</tr>\n";
+
+           } elseif ($v['g_a']<$v['g_r']) { // se maggiore carico
+             // devo fare prima uno storno per caricare
+             $mq=$v['g_r']-$v['g_a'];
+             echo "<tr>\n";
+             echo "<td class=\"FacetDataTD\">98-".$cau98['descri']."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"left\">".$k."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity'])."</td>\n";
+             echo "<td class=\"FacetDataTD\"></td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>\n";
+             echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price'])."</td>\n";
+             echo "</tr>\n";
+           }
+           echo "<tr>\n";
+           echo "<td class=\"FacetDataTD\">99-".$cau99['descri']."</td>\n";
+           echo "<td class=\"FacetDataTD\" align=\"left\">".$k."</td>\n";
+           echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>\n";
+           echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>\n";
+           echo "<td class=\"FacetDataTD\" align=\"right\">".$v['g_r']."</td>\n";
+           echo "<td class=\"FacetDataTD\"></td>\n";
+           echo "<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>\n";
+           echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$v['g_r'],0,$admin_aziend['decimal_price'])."</td>\n";
+           echo "</tr>\n";
+         }
+       }
+       echo "<tr><td align=\"right\" colspan=\"8\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"insert\" value=\"".$script_transl['submit']."!\">&nbsp;</td></tr>\n";
    }
 } else {
    echo "<tr>

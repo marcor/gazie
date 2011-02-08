@@ -143,9 +143,9 @@ class magazzForm extends GAzieForm
          return array('q'=>0,'v'=>0,'q_g'=>0,'v_g'=>0);
       } elseif (!$id_mov && !empty($item_code)) {    // ho il codice articolo  senza id
          if ($date){ // ho anche la data
-            $rs_last_mov = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '".$item_code."' AND datreg <= '$date'","datreg DESC, id_mov ASC",0,1);
+            $rs_last_mov = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '".$item_code."' AND datreg <= '$date'","datreg DESC, id_mov DESC",0,1);
          } else {   // non ho la data limite
-            $rs_last_mov = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '".$item_code."'","datreg DESC, id_mov ASC",0,1);
+            $rs_last_mov = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '".$item_code."'","datreg DESC, id_mov DESC",0,1);
          }
          $last_mov = gaz_dbi_fetch_array($rs_last_mov);
          if ($last_mov) {
@@ -162,7 +162,7 @@ class magazzForm extends GAzieForm
       if (!$stock_eval_method) {
         $stock_eval_method = $this->getStockEvalMethod();
       }
-      $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "datreg <= '".$date."' AND artico = '$item_code' AND caumag = 99","datreg DESC",0,1);
+      $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$item_code' AND caumag = 99 AND (datreg < '".$date."' OR (datreg = '".$date."' AND id_mov <= $id_mov ))","datreg DESC, id_mov DESC",0,1);
       $last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
       if ($last_inventory) {
         $last_invDate =$last_inventory['datreg'];
@@ -183,7 +183,7 @@ class magazzForm extends GAzieForm
       switch ($stock_eval_method) { //calcolo il nuovo valore in base al metodo scelto in configurazione azienda
             case "0": //standard
             case "3": // FIFO
-                 $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where." AND caumag < 99",$orderby);
+                 $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'],"caumag < 99 AND ". $where,$orderby);
                  // Qui metto i valori dell'ultimo inventario
                  $accumulatore[0]=array('q'=>$last_invQuanti,'v'=>$last_invPrice);
                  $giacenza=array('q_g'=>$last_invQuanti,'v_g'=>$last_invPrice*$last_invQuanti);
@@ -250,7 +250,8 @@ class magazzForm extends GAzieForm
             case "1": // WMA
                  $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where." AND caumag < 99",$orderby);
                  $giacenza=array('q_g'=>$last_invQuanti,'v_g'=>$last_invPrice*$last_invQuanti);
-                 $return_val[0] = array('q'=>$last_invQuanti,'v'=>$last_invPrice);
+                 $return_val[0] = array('q'=>$last_invQuanti,'v'=>$last_invPrice,
+                                      'q_g'=>$giacenza['q_g'],'v_g'=>$giacenza['v_g']);
                  while ($r = gaz_dbi_fetch_array($rs_movmag)) {
                     if ($r['operat']==1) { //carico
                           $row_val=CalcolaImportoRigo(1,$r['prezzo'],array($r['scorig'],$r['scochi']));
@@ -258,18 +259,22 @@ class magazzForm extends GAzieForm
                           $giacenza['v_g']+=$r['quanti']*$row_val;
                     } elseif ($r['operat']==-1) { //scarico
                           if ($giacenza['q_g']<=0) {
+                             $giacenza['v_g']=0;
                              $row_val=0;
                           } else {
                              $row_val=$giacenza['v_g']/$giacenza['q_g'];
                           }
+                          if ($giacenza['q_g']<=$r['quanti']){
+                             $row_val=0;
+                          }
                           $giacenza['q_g']-=$r['quanti'];
                           $giacenza['v_g']-=$r['quanti']*$row_val;
                     }
-                    $return_val[0]['q']=$r['quanti'];
-                    $return_val[0]['v']=$row_val;
+                    if ($r['id_mov']==$id_mov) { // e' il movimento che voglio valorizzare
+                          $return_val[0] = array('q'=>$r['quanti'],'v'=>$row_val,
+                                              'q_g'=>$giacenza['q_g'],'v_g'=>$giacenza['v_g']);
+                    }
                  }
-                 $return_val[0]['q_g']=$giacenza['q_g'];
-                 $return_val[0]['v_g']=$giacenza['v_g'];
             break;
             case "2": // LIFO
                  $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where." AND caumag < 99",$orderby);

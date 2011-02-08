@@ -161,6 +161,9 @@ $strScript = array ("report_statis.php" =>
                            'code'=>"Codice",
                            'descri'=>"Descrizione articolo",
                            'mu'=>"U.M.",
+                           'load'=>"Carico",
+                           'unload'=>"Scarico",
+                           'value'=>"Nuovo valore giacenza",
                            'v_a'=>"Valore attuale",
                            'v_r'=>"Valore reale",
                            'g_a'=>"Giacenza attuale",
@@ -168,7 +171,8 @@ $strScript = array ("report_statis.php" =>
                            'g_v'=>"Valore giacenza",
                            'noitem'=>"Non sono stati trovati articoli in questa categoria merceologica",
                            'errors'=>array(" La giacenza reale non pu&ograve; essere negativa",
-                                           " Il valore reale non pu&ograve; essere negativo o uguale a zero"),
+                                           " Il valore reale non pu&ograve; essere negativo o uguale a zero",
+                                           " Si st&agrave; tentando di fare l'inventario con giacienza attuale e reale entrambe a zero"),
                            'preview_title'=>'Confermando le scelte fatte si registreranno i seguenti movimenti di magazzino:'
                            ),
                     "select_schart.php" =>
