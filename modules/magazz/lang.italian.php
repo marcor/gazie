@@ -172,7 +172,7 @@ $strScript = array ("report_statis.php" =>
                            'noitem'=>"Non sono stati trovati articoli in questa categoria merceologica",
                            'errors'=>array(" La giacenza reale non pu&ograve; essere negativa",
                                            " Il valore reale non pu&ograve; essere negativo o uguale a zero",
-                                           " Si st&agrave; tentando di fare l'inventario con giacienza attuale e reale entrambe a zero"),
+                                           " Si st&agrave; tentando di fare l'inventario con giacenza attuale e reale entrambe a zero"),
                            'preview_title'=>'Confermando le scelte fatte si registreranno i seguenti movimenti di magazzino:'
                            ),
                     "select_schart.php" =>

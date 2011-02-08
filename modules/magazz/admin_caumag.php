@@ -61,7 +61,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        if (empty($form['descri'])){  //descrizione vuota
              $msg .= "16+";
        }
-       if ($form['codice']>98) {  //descrizione vuota
+       if ($form['codice']>=98) {  //descrizione vuota
              $msg .= "17+";
        }
        if ($msg == "") {// nessun errore
