@@ -639,6 +639,8 @@ $strScript = array ("admin_client.php" =>
                            'ins_this'=>'Issue bill of exchange to:',
                            'upd_this'=>'Update bill of exchange to: ',
                            'del_this'=>'Delete bill of exchange',
+                           'sourcedoc'=>'Document source of bill',
+                           'source'=>'Source',
                            'link_1'=>'Create bills from Invoice',
                            'link_2'=>'Issue new bill of exchange',
                            'link_3'=>'Accounting bills',

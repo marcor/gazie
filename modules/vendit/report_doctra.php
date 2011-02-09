@@ -43,6 +43,7 @@ if (isset($_GET['numdoc'])) {
    }
 }
 if (isset($_GET['all'])) {
+   set_time_limit (240);
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;
    $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil'";
@@ -93,6 +94,7 @@ $headers_tesdoc = array  (
               "Cliente" => "ragso1",
               "Status" => "",
               "Stampa" => "",
+              "Origine" => "",
               "Cancella" => ""
               );
 $linkHeaders = new linkHeaders($headers_tesdoc);
@@ -107,7 +109,10 @@ if ($ultimo_documento)
 else
     $ultimoddt = 1;
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'].".*,".$gTables['anagra'].".ragso1", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra", $where, $orderby,$limit, $passo);
+$result = gaz_dbi_dyn_query($gTables['tesdoc'].".*,".$gTables['anagra'].".ragso1", $gTables['tesdoc']."
+                            LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice
+                            LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra",
+                            $where, $orderby,$limit, $passo);
 while ($r = gaz_dbi_fetch_array($result)) {
     switch($r['tipdoc']) {
     case "DDT":
@@ -120,13 +125,19 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if ($r["id_con"] > 0) {
             echo ", <a title=\"visualizza la registrazione contabile della fattura differita\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">cont. n.".$r["id_con"]."</a>";
         }
-        echo "";
-#       echo "<td class=\"FacetDataTD\" align=\"center\">FATT.N. ".$r["numfat"]." &nbsp;</td>";
     } else {
-#       echo "<td class=\"FacetDataTD\" align=\"center\">".$r["status"]." &nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\"><a title=\"fattuazione da d.d.t.\" href=\"emissi_fatdif.php\">da fatturare</a></td>";
     }
     echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">";
+    $rigbro_result = gaz_dbi_dyn_query ('*',$gTables['rigbro'],"id_doc = ".$r['id_tes']." GROUP BY id_doc",'id_tes');
+    while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {
+          $r_d = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$rigbro_r["id_tes"]);
+          if ($r_d["id_tes"] > 0) {
+             echo " <input type=\"button\" style=\"font-size:10px;\" value=\"Ord ".$r_d['numdoc']."\" onclick=\"window.open('stampa_ordcli.php?id_tes=".$r_d['id_tes']."')\">\n";
+          }
+    }
+    echo "</td>";
     if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
        echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_docven.php?id_tes=".$r["id_tes"]."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
     else
@@ -141,6 +152,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTDred\">".$r["ragso1"]."&nbsp;</td>";
     echo "<td class=\"FacetDataTDred\" align=\"center\">D.d.T. a Fornitore &nbsp;</td>";
     echo "<td class=\"FacetDataTDred\" align=\"center\"><a href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"></td>";
     if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
        echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_docven.php?id_tes=".$r["id_tes"]."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
     else
@@ -159,12 +171,21 @@ while ($r = gaz_dbi_fetch_array($result)) {
     }
     echo "</td>";
 
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a title=\"stampa il documento di trasporto n. ".$r["numdoc"]."\" href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a title=\"stampa il documento di trasporto n. ".$r["numdoc"]."\" href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">";
+    $rigbro_result = gaz_dbi_dyn_query ('*',$gTables['rigbro'],"id_doc = ".$r['id_tes']." GROUP BY id_doc",'id_tes');
+    while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {
+          $r_d = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$rigbro_r["id_tes"]);
+          if ($r_d["id_tes"] > 0) {
+             echo " <input type=\"button\" style=\"font-size:10px;\" value=\"Ord ".$r_d['numdoc']."\" onclick=\"window.open('stampa_ordcli.php?id_tes=".$r_d['id_tes']."')\">\n";
+          }
+    }
+    echo "</td>";
+    echo "<td class=\"FacetDataTD\"></td>";
     echo "</tr>\n";
     break;
     }
-    }
+}
 ?>
 </form>
 </table>

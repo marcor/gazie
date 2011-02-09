@@ -105,6 +105,7 @@ $headers_banapp = array  (
               $script_transl['banapp'] => "banapp",
               "Status" => "",
               $script_transl['print'] => "",
+              $script_transl['source'] => "",
               $script_transl['delete'] => ""
               );
 $linkHeaders = new linkHeaders($headers_banapp);
@@ -194,7 +195,30 @@ while ($r = gaz_dbi_fetch_array($result)) {
             echo "<td class=\"FacetDataTD\" align=\"center\">".$r["status"]."</td>";
           }
       }
+    // Colonna "Stampa"
     echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_effett.php?id_tes=".$r["id_tes"]."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+    // Colonna "Origine"
+    echo "<td class=\"FacetDataTD\" align=\"center\">";
+    //
+    // Se id_doc ha un valore diverso da zero, cerca la fattura nella tabella gazXXX_tesdoc.
+    //
+    if ($r["id_doc"] != 0) {
+        //
+        $tesdoc_result = gaz_dbi_dyn_query ('*',$gTables['tesdoc'],
+                                                "id_tes = ".$r["id_doc"],
+                                                'id_tes',0,1);
+        //
+        $tesdoc_r = gaz_dbi_fetch_array ($tesdoc_result);
+        if ($tesdoc_r["tipdoc"] == "FAI") {
+            // Fattura immediata
+            echo "<a title=\"".$script_transl['sourcedoc']."\" href=\"../vendit/stampa_docven.php?id_tes=".$tesdoc_r["id_tes"]."\">ft ".$tesdoc_r["numfat"]."</a>";
+        } elseif ($tesdoc_r["tipdoc"] == "FAD") {
+            // Fattura differita
+            echo "<a title=\"".$script_transl['sourcedoc']."\" href=\"../vendit/stampa_docven.php?td=2&si=".$tesdoc_r["seziva"]."&pi=".$tesdoc_r['protoc']."&pf=".$tesdoc_r['protoc']."&di=".$tesdoc_r["datfat"]."&df=".$tesdoc_r["datfat"]."\">ft ".$tesdoc_r["numfat"]."</a>";
+        }
+    }
+    echo "</td>";
+    // Colonna "Elimina"
     echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_effett.php?id_tes=".$r["id_tes"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
     echo "</tr>";
 }

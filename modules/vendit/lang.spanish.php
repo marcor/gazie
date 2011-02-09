@@ -643,6 +643,8 @@ $strScript = array ("admin_client.php" =>
                            'ins_this'=>'Issue bill of exchange to:',
                            'upd_this'=>'Update bill of exchange to: ',
                            'del_this'=>'Borrar cuenta de cambio',
+                           'sourcedoc'=>'Documento de origen',
+                           'source'=>'Origen',
                            'link_1'=>'Crear cuenta desde Facturas',
                            'link_2'=>'Nueva cuenta de cambio',
                            'link_3'=>'Cuentas de contabildad para cambio',

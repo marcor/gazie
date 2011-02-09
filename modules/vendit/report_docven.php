@@ -44,6 +44,7 @@ if (isset($_GET['protoc'])) {
    $protocollo ='';
 }
 if (isset($_GET['all'])) {
+   set_time_limit (240);
    $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;
@@ -133,6 +134,7 @@ $headers_tesdoc = array  (
             "Cliente" => "ragso1",
             "Status" => "",
             "Stampa" => "",
+            "Origine" => "",
             "Cancella" => ""
             );
 $linkHeaders = new linkHeaders($headers_tesdoc);
@@ -186,7 +188,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if ($r["id_con"] > 0) {
-           echo "<a href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont. n.".$r["id_con"]."</a> ";
+           echo "<a href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">MoCo ".$r["id_con"]."</a> ";
         } else {
            echo "<a href=\"accounting_documents.php?type=F&vat_section=".substr($auxil,0,1)."&last=".$r["protoc"]."\">Contabilizza</a>";
         }
@@ -220,6 +222,24 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "</td>";
         // Colonna "Stampa"
         echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"".$modulo."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+        // Colonna "Origine"
+        if ($r["tipdoc"]=='FAD'){
+           $ddt_result = gaz_dbi_dyn_query ('*',$gTables['tesdoc'],"tipdoc = '".$r["tipdoc"]."' AND numfat = ".$r["numfat"]." AND datfat = '".$r["datfat"]."'",'datemi DESC');
+           echo "<td class=\"FacetDataTD\" align=\"center\">";
+           while ($r_d = gaz_dbi_fetch_array ($ddt_result)){
+             echo " <input type=\"button\" style=\"font-size:10px;\" value=\"DdT ".$r_d['numdoc']."\" onclick=\"window.open('stampa_docven.php?id_tes=".$r_d['id_tes']."&template=DDT')\">\n";
+           }
+           echo "</td>";
+        } elseif($r["id_contract"]>0) {
+           $con_result = gaz_dbi_dyn_query ('*',$gTables['contract'],"id_contract = ".$r["id_contract"],'datemi DESC');
+           echo "<td class=\"FacetDataTD\" align=\"center\">";
+           while ($r_d = gaz_dbi_fetch_array ($con_result)){
+             echo " <input type=\"button\" style=\"font-size:10px;\" value=\"Contr ".$r_d['numdoc']."\" onclick=\"window.open('print_contract.php?id_contract=".$r_d['id_contract']."')\">\n";
+           }
+           echo "</td>";
+        } else {
+           echo "<td class=\"FacetDataTD\"></td>";
+        }
         // Colonna "Cancella"
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if ($ultimo_documento['id_tes'] == $r["id_tes"] ) {

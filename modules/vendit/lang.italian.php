@@ -641,6 +641,8 @@ $strScript = array ("admin_client.php" =>
                            'ins_this'=>'Emetti un effetto a:',
                            'upd_this'=>'Modifica l\'effetto di ',
                            'del_this'=>'Elimina l\'effetto',
+                           'sourcedoc'=>'Documento che ha originato l\'effetto',
+                           'source'=>'Origine',
                            'link_1'=>'Genera effetti da fatture',
                            'link_2'=>'Emetti un nuovo effetto',
                            'link_3'=>'Contabilizzazione effetti',
