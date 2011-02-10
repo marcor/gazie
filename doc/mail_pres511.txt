@@ -1,6 +1,11 @@
 Titolo:
+Tempus edax rerum.
 
 Presentazione:
+Questo rilascio e' frutto, soprattutto, di un pesante lavoro sui metodi di calcolo delle valorizzazioni di magazzino (FIFO,LIFO,WMA), onere imposto dal cattivo funzionamento dei primi due. 
+Altrettanto importante e' l'aggiunta del report prodotto dall'interfaccia per l'aggiornamento di GAzieCart/Joomla! adesso esso mostra l'esito dell'upload dei file sul sito web e solo dopo aver fatto almeno 4 tentativi per ognuno restituisce un errore definitivo.
+Comodissimi sono i link aggiunti da Daniele Giacomini sui report dei documenti di vendita, sugli effetti e sui movimenti contabili, essi mettono in luce il quadro completo della situazione e lo stato degli stessi.
+Altri contributi e segnalazioni li potrete vedere nella solita lista di sotto che scrivo ad ogni nuova versione. 
  
 Modifiche apportate:
 - corretto bug (ID: 3153438) sui prezzi in listino o sul catalogo segnalato da alfiozeta.
@@ -11,7 +16,11 @@ Modifiche apportate:
 - corretto errore segnalato sul forum da dtruffo in data 18.01.2011 sulla numerazione delle fatture quando queste erano generate dai contratti. 
 - recepite modifiche apportate da dg7 sui link con gli effetti generati dalle fatture.
 - recepita patch ID: 3163861 di danelsan relativo alla lista delle fatture d'acquisto che erroneamente scriveva "Cliente" anziche' "Fornitore".
-- corrette le modalita' di valorizzazione di magazzino WMA,FIFO,LIFO, inoltre da questa versione le colonne esistenza e valore di gaz_XXXartico non verranno piu' usate in quanto ogni volta che e' necessario essi verranno calcolati al volo dai movimenti, con lo stesso sistema usato per la contabilita' economica questo evita disallineamenti e mantiene gli archivi sotto il controllo diretto degli utenti.    
+- corrette le modalita' di valorizzazione di magazzino WMA,FIFO,LIFO, inoltre da questa versione le colonne esistenza e valore di gaz_XXXartico non verranno piu' usate in quanto ogni volta che e' necessario essi verranno calcolati al volo dai movimenti, con lo stesso sistema usato per la contabilita' economica questo evita disallineamenti e mantiene gli archivi sotto il controllo diretto degli utenti. 
+- chiuso (ID: 3174766) bug segnalato da dg7 bilancio CEE senza dicitura "stato patrimoniale". 
+- recepite modifiche di dg7 sulle liste dei documenti di vendita, esse aggiungono la colonna "Origine" dalla quale si possono visualizzare gli eventuali ordini, contratti, ddt che hanno originato la fattura. 
+ 
 Approfondimenti:
+<<E' sempre la storia di Socrate, di Cristo e di Colombo! Ed il mondo rimane sempre preda delle miserabili nullita' che lo sanno ingannare.>>
 
-Antonio de Vincentiis, Montesilvano, 5 Febbraio 2011.
+Antonio de Vincentiis, Montesilvano, 10 Febbraio 2011.
