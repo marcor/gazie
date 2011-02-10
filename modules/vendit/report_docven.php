@@ -188,24 +188,24 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if ($r["id_con"] > 0) {
-           echo "<a href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">MoCo ".$r["id_con"]."</a> ";
+           echo " <a style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont.".$r["id_con"]."</a> ";
         } else {
-           echo "<a href=\"accounting_documents.php?type=F&vat_section=".substr($auxil,0,1)."&last=".$r["protoc"]."\">Contabilizza</a>";
+           echo " <a href=\"accounting_documents.php?type=F&vat_section=".substr($auxil,0,1)."&last=".$r["protoc"]."\">Contabilizza</a>";
         }
         $effett_result = gaz_dbi_dyn_query ('*',$gTables['effett'],"id_doc = ".$r["reftes"],'progre');
         while ($r_e = gaz_dbi_fetch_array ($effett_result)){
            // La fattura ha almeno un effetto emesso
            $n_e++;
            if ($r_e["tipeff"] == "B") {
-                        echo " <a title=\"visualizza la ricevuta bancaria generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
-                        echo "RiBa ".$r_e["progre"];
+                        echo " <a style=\"font-size:10px;\" title=\"visualizza la ricevuta bancaria generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo "RiBa".$r_e["progre"];
                         echo "</a>";
            } elseif ($r_e["tipeff"] == "T")  {
-                        echo " <a title=\"visualizza la cambiale tratta generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
-                        echo "Tratta ".$r_e["progre"];
+                        echo " <a style=\"font-size:10px;\" title=\"visualizza la cambiale tratta generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo "Tratta".$r_e["progre"];
                         echo "</a>";
            }  else {
-                        echo " <a title=\"visualizza l'effetto\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a style=\"font-size:10px;\" title=\"visualizza l'effetto\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo $r_e["tipeff"].$r_e["progre"];
                         echo "</a>";
            }
@@ -227,14 +227,14 @@ while ($r = gaz_dbi_fetch_array($result)) {
            $ddt_result = gaz_dbi_dyn_query ('*',$gTables['tesdoc'],"tipdoc = '".$r["tipdoc"]."' AND numfat = ".$r["numfat"]." AND datfat = '".$r["datfat"]."'",'datemi DESC');
            echo "<td class=\"FacetDataTD\" align=\"center\">";
            while ($r_d = gaz_dbi_fetch_array ($ddt_result)){
-             echo " <input type=\"button\" style=\"font-size:10px;\" value=\"DdT ".$r_d['numdoc']."\" onclick=\"window.open('stampa_docven.php?id_tes=".$r_d['id_tes']."&template=DDT')\">\n";
+             echo " <a title=\"visualizza il DdT\" href=\"stampa_docven.php?id_tes=".$r_d['id_tes']."&template=DDT\" style=\"font-size:10px;\">DdT".$r_d['numdoc']."</a>\n";
            }
            echo "</td>";
         } elseif($r["id_contract"]>0) {
-           $con_result = gaz_dbi_dyn_query ('*',$gTables['contract'],"id_contract = ".$r["id_contract"],'datemi DESC');
+           $con_result = gaz_dbi_dyn_query ('*',$gTables['contract'],"id_contract = ".$r["id_contract"],'conclusion_date DESC');
            echo "<td class=\"FacetDataTD\" align=\"center\">";
            while ($r_d = gaz_dbi_fetch_array ($con_result)){
-             echo " <input type=\"button\" style=\"font-size:10px;\" value=\"Contr ".$r_d['numdoc']."\" onclick=\"window.open('print_contract.php?id_contract=".$r_d['id_contract']."')\">\n";
+             echo " <a title=\"visualizza il contratto\" href=\"print_contract.php?id_contract=".$r_d['id_contract']."\" style=\"font-size:10px;\">Contr.".$r_d['doc_number']."</a>\n";
            }
            echo "</td>";
         } else {

@@ -134,7 +134,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {
           $r_d = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$rigbro_r["id_tes"]);
           if ($r_d["id_tes"] > 0) {
-             echo " <input type=\"button\" style=\"font-size:10px;\" value=\"Ord ".$r_d['numdoc']."\" onclick=\"window.open('stampa_ordcli.php?id_tes=".$r_d['id_tes']."')\">\n";
+             echo " <a title=\"visualizza l'Ordine\" href=\"stampa_ordcli.php?id_tes=".$r_d['id_tes']."\" style=\"font-size:10px;\">Ord.".$r_d['numdoc']."</a>\n";
           }
     }
     echo "</td>";
@@ -165,9 +165,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
 
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a title=\"stampa la fattura differita n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\">fatt. n. ".$r["numfat"]."</a>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a title=\"stampa la fattura differita n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\">Fat ".$r["numfat"]."</a>";
     if ($r["id_con"] > 0) {
-        echo ", <a title=\"visualizza la registrazione contabile della fattura differita\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">cont. n.".$r["id_con"]."</a>";
+        echo ", <a title=\"visualizza la registrazione contabile della fattura differita\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont ".$r["id_con"]."</a>";
     }
     echo "</td>";
 
@@ -177,7 +177,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {
           $r_d = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$rigbro_r["id_tes"]);
           if ($r_d["id_tes"] > 0) {
-             echo " <input type=\"button\" style=\"font-size:10px;\" value=\"Ord ".$r_d['numdoc']."\" onclick=\"window.open('stampa_ordcli.php?id_tes=".$r_d['id_tes']."')\">\n";
+             echo "<a title=\"visualizza l'Ordine\" href=\"stampa_ordcli.php?id_tes=".$r_d['id_tes']."\" style=\"font-size:10px;\">Ord.".$r_d['numdoc']."</a>\n";
           }
     }
     echo "</td>";
