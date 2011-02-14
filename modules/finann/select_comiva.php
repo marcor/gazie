@@ -160,7 +160,8 @@ if (isset($_POST['Return'])) {
    }
    //eseguo i controlli formali
    if (empty($msg)) { //non ci sono errori formali -> mando l'output al browser per il download del file
-      $A = array("IVC",intval(substr($form['annimp'],-2)+1),$form['codfis']);
+      $year=intval(substr($form['annimp'],-2));
+      $A = array("IVC",$year,$form['codfis']);
       $B = array($form['codfis'],$form['pariva'],$form['ragsoc'],$form['cognom'],$form['nome'],$form['annimp'],
                  $form['pariva'],$form['codatt'],$cont,$sogr,$even,$form['cfcont'],
                  $form['codcar'],$form['cfdich'],$form['totatt'],$form['attnim'],$form['attese'],$form['attint'],$form['attben'],
@@ -168,7 +169,7 @@ if (isset($_POST['Return'])) {
                  $form['rotimp'],$form['rotiva'],$form['ivaatt'],$form['ivapas'],$ivadebit,$ivacredit );
       // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
       header('Content-Type: text/x-ivc');
-      header("Content-Disposition: attachment; filename=".$form['codfis']."_".$A[0].date("y").".ivc");
+      header("Content-Disposition: attachment; filename=".$form['codfis']."_".date("y").'_'.$A[0].$year.".ivc");
       header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
       if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
          header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
