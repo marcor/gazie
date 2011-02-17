@@ -465,12 +465,14 @@ $strScript = array ("admin_client.php" =>
                                                    ),
                            'type'=>'Type',
                            'type_value'=>array('B'=>' Bank Receipt',
-                                               'T'=>' Draft'
+                                               'T'=>' Draft',
+                                               'V'=>' Payment against notice'
                                                ),
                            'customer'=>'customer',
                            'tot'=>'Total',
                            'total_value'=>array('B'=>'Total Receipts Banking',
-                                                'T'=>'Total Drafts'
+                                                'T'=>'Total Drafts',
+                                                'V'=>'Total Payment against notice'
                                                ),
                            'gen'=>'will generate',
                            'end'=>'ending '
@@ -497,7 +499,7 @@ $strScript = array ("admin_client.php" =>
                            'reprint'=>'Badged',
                            'reprint_value'=>array('S'=>'Yes','N'=>'No'),
                            'type'=>'Type of bill: ',
-                           'type_value'=>array('B'=>'Bank receipt','T'=>'Bill'),
+                           'type_value'=>array('B'=>'Bank receipt','T'=>'Bill','V'=>'MAV'),
                            'tot'=>'Total of list'
                            ),
                     "select_filerb.php" =>

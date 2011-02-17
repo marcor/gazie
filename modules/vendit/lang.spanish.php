@@ -469,12 +469,14 @@ $strScript = array ("admin_client.php" =>
                                                    ),
                            'type'=>'Tipo',
                            'type_value'=>array('B'=>' Recibo Bancario',
-                                               'T'=>' Giro'
+                                               'T'=>' Giro',
+                                               'V'=>' Payment against notice'
                                                ),
                            'customer'=>'Cliente',
                            'tot'=>'Total',
                            'total_value'=>array('B'=>'Total Recibos Banco',
-                                                'T'=>'Total Giros'
+                                                'T'=>'Total Giros',
+                                                'V'=>' Total Payment against notice'
                                                ),
                            'gen'=>'generara',
                            'end'=>'finalizando '
@@ -501,7 +503,7 @@ $strScript = array ("admin_client.php" =>
                            'reprint'=>'Rotulados',
                            'reprint_value'=>array('S'=>'Si','N'=>'No'),
                            'type'=>'Tipo de cuenta: ',
-                           'type_value'=>array('B'=>'Recibo Bancario','T'=>'Cuenta'),
+                           'type_value'=>array('B'=>'Recibo Bancario','T'=>'Cuenta','V'=>'MAV'),
                            'tot'=>'Total of list'
                            ),
                     "select_filerb.php" =>

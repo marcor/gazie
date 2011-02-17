@@ -171,6 +171,38 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(165,4,'Cambiale-tratta n.'.$effetto['progre'].' emessa '.$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],'LTB');
         $pdf->Cell(37,4,'bolli a tergo €  '.gaz_format_number($impbol),'RTB',1,'R');
     break;
+    //questo � il modulo delle cambiali tratte
+    case "V":
+        $impbol = $bolli->stampTax($effetto['impeff'],$admin_aziend['perbol']);
+        $pdf->Image('mav.jpg',0,5+$passo*$numefftot,210);
+        $pdf->SetXY(67,9+$numefftot*$passo);
+        $pdf->SetFont('freeserif','',14);
+        $pdf->Cell(60,10,$admin_aziend['citspe'].', '.$datafatt);
+        $pdf->SetXY(165,12+$numefftot*$passo);
+        $pdf->Cell(67,10,gaz_format_number($effetto['impeff']));
+        $pdf->SetXY(85,21+$numefftot*$passo);
+        $pdf->Cell(50,10,$scadenza);
+        $pdf->SetXY(76,34+$numefftot*$passo);
+        $pdf->Cell(120,10,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2']);
+        $pdf->SetXY(90,45+$numefftot*$passo);
+        $pdf->Cell(140,10,substr($impwords,4,99));
+        $pdf->SetXY(5,60+$numefftot*$passo);
+        $pdf->SetFont('freesans','B',7);
+        $pdf->Cell(71,6,substr($banapp['descri'],0,34));
+        $pdf->Cell(80,6,$client['ragso1'].' '.$client['ragso2'],0,1,'L');
+        $pdf->SetX(5);
+        $pdf->Cell(71,6,'ABI: '.$banapp['codabi']);
+        $pdf->Cell(80,6,$client['codfis'],0,1,'L');
+        $pdf->SetX(5);
+        $pdf->Cell(71,6,'CAB: '.$banapp['codcab']);
+        $pdf->Cell(80,6,$client['indspe'],0,1,'L');
+        $pdf->SetX(5);
+        $pdf->Cell(71,6,$banapp['locali'].' ('.$banapp['codpro'].')');
+        $pdf->Cell(80,6,$client['capspe'].' '.$client['citspe'].' ('.$client['prospe'].')',0,1,'L');
+        $pdf->SetXY(5,90+$numefftot*$passo);
+        $pdf->Cell(165,4,'Cambiale-tratta n.'.$effetto['progre'].' emessa '.$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],'LTB');
+        $pdf->Cell(37,4,'bolli a tergo €  '.gaz_format_number($impbol),'RTB',1,'R');
+    break;
     }
     $numefftot++;
     }

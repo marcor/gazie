@@ -116,7 +116,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
             $descreff = 'CAMBIALI TRATTE ';
             break;
             case "V":
-            $descreff = 'RICHIESTE DI VERSAMENTO ';
+            $descreff = 'MAV ';
             break;
             }
     }

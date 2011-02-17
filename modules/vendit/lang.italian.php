@@ -522,12 +522,14 @@ $strScript = array ("admin_client.php" =>
                                                    ),
                            'type'=>'Tipo effetto',
                            'type_value'=>array('B'=>' la Ricevuta Bancaria',
-                                               'T'=>' la Tratta'
+                                               'T'=>' la Tratta',
+                                               'V'=>' il MAV'
                                                ),
                            'customer'=>'Cliente',
                            'tot'=>'Totale',
                            'total_value'=>array('B'=>' Totale delle Ricevute Bancarie',
-                                               'T'=>' Totale delle Tratte'
+                                               'T'=>' Totale delle Tratte',
+                                               'V'=>' Totale dei MAV'
                                                ),
                            'gen'=>'generer&agrave;',
                            'end'=>'con scadenza '
@@ -554,7 +556,7 @@ $strScript = array ("admin_client.php" =>
                            'reprint'=>'Distintato',
                            'reprint_value'=>array('S'=>'Si','N'=>'No'),
                            'type'=>'Tipo effetti: ',
-                           'type_value'=>array('B'=>'Ricevute Bancarie','T'=>'Tratte'),
+                           'type_value'=>array('B'=>'Ricevute Bancarie','T'=>'Tratte','V'=>'MAV'),
                            'tot'=>'Totale della distinta'
                            ),
                     "select_filerb.php" =>

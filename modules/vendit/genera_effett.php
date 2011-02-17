@@ -38,7 +38,7 @@ function getDocumentsBill($upd=false)
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN '.$gTables['anagra'].' AS anagraf
              ON anagraf.id=customer.id_anagra';
-    $where = "(tippag = 'B' OR tippag = 'T') AND geneff = '' AND tipdoc LIKE 'FA_'";
+    $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V') AND geneff = '' AND tipdoc LIKE 'FA_'";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
@@ -57,7 +57,8 @@ function getDocumentsBill($upd=false)
                 $spese_incasso=0;
                 $rit=0;
                 if (($tes['tippag'] == 'B' ||
-                    $tes['tippag'] == 'T') && $tes['addebitospese'] == 'S' ) {
+                    $tes['tippag'] == 'T' ||
+                    $tes['tippag'] == 'V') && $tes['addebitospese'] == 'S' ) {
                     $spese_incasso=$tes['numrat']*$tes['speban'] ;
                 } elseif ($tes['tippag'] == 'R') { // il pagamento prevede una imposta di bollo fissa
                     if (!isset($cast_vat[$admin_aziend['ivabol']]['import'])) {
@@ -145,6 +146,11 @@ function getReceiptNumber($date)
     $result = gaz_dbi_dyn_query('*',$gTables['effett'],$where,$orderby,0,1);
     $last = gaz_dbi_fetch_array($result);
     $first['T'] = 1+$last['progre'];
+    $where = "tipeff = 'V' AND YEAR(datemi) = ".substr($date,0,4);
+    $orderby = "datemi DESC, progre DESC";
+    $result = gaz_dbi_dyn_query('*',$gTables['effett'],$where,$orderby,0,1);
+    $last = gaz_dbi_fetch_array($result);
+    $first['V'] = 1+$last['progre'];
     return $first;
 }
 
@@ -261,7 +267,7 @@ if (isset($_POST['preview'])) {
          <th class=\"FacetFieldCaptionTD\">".$script_transl['customer']."</th>
          <th class=\"FacetFieldCaptionTD\">".$script_transl['tot']."</th>\n";
    $ctrl_date='';
-   $tot_type=array('B'=>0,'T'=>0);
+   $tot_type=array('B'=>0,'T'=>0,'V'=>0);
    foreach($rs as $k=>$v) {
          if($ctrl_date <> substr($v['tes']['datemi'],0,4)) {
             $n=getReceiptNumber($v['tes']['datemi']);
