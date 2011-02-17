@@ -172,7 +172,7 @@
                            "Tipo di rate",
                            "C/C bancario d'accredito",
                            "Annotazioni",
-                           array('C' => 'contanti','D' => 'rimessa diretta','B' => 'ricevuta bancaria','R' => 'ricevuta con bollo','T' => 'cambiale-tratta','V' => 'richiesta di versamento'),
+                           array('C' => 'contanti','D' => 'rimessa diretta','B' => 'ricevuta bancaria','R' => 'ricevuta con bollo','T' => 'cambiale-tratta','V' => 'mediante avviso(MAV)'),
                            array('S' => 'Si','N' => 'No'),
                            array('D'=>'data fattura', 'G'=>'giorno fisso','F'=>'fine mese'),
                            array('Q' => 'quindicinali','M' => 'mensili','B' => 'bimestrali','T' => 'trimestrali','U' => 'quadrimestrali','S' => 'semestrali','A' => 'annuali'),

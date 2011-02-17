@@ -92,7 +92,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        $new_pag = gaz_dbi_get_row($gTables['pagame'],"codice",$form['pagame']);
        if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
               $old_header = gaz_dbi_get_row($gTables['tesdoc'],"id_tes",$form['id_tes']);
-              if ($cliente['speban'] == "S" && ($new_pag['tippag']=='T' || $new_pag['tippag']=='B')) {
+              if ($cliente['speban'] == "S" && ($new_pag['tippag']=='T' || $new_pag['tippag']=='B'  || $new_pag['tippag']=='V')) {
                  if ($old_header['speban'] > 0) {
                     $form['speban'] = $old_header['speban'];
                  } else {
@@ -102,7 +102,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                    $form['speban'] = 0.00;
               }
        } else { //altrimenti, se previste,  mi avvalgo delle nuove dell'azienda
-              if ($cliente['speban'] == "S" && ($new_pag['tippag']=='B' || $new_pag['tippag']=='T')) {
+              if ($cliente['speban'] == "S" && ($new_pag['tippag']=='B' || $new_pag['tippag']=='T' || $new_pag['tippag']=='V')) {
                  $form['speban'] = $admin_aziend['sperib'];
               } else {
                  $form['speban'] = 0;
