@@ -62,12 +62,15 @@ if (! isset ($_POST["profin"])) {
 }
 
 //controllo se ci sono effetti da contabilizzare nell'anno selezionato.
-if($_POST['cktipo'] == 0)
+if($_POST['cktipo'] == 0){
     $querytip = "";
-if($_POST['cktipo'] == 1)
+} elseif($_POST['cktipo'] == 1) {
     $querytip = " and tipeff = \"B\" ";
-if($_POST['cktipo'] == 2)
+} elseif($_POST['cktipo'] == 2){
     $querytip = " and tipeff = \"T\" ";
+} elseif($_POST['cktipo'] == 3) {
+    $querytip = " and tipeff = \"V\" ";
+}
 
 $result = gaz_dbi_dyn_query("*", $gTables['effett'], "YEAR(datemi) = ".intval($_POST['annexe'])." AND id_con = 0 AND banacc > 0 $querytip",'id_tes asc',0,1);
 $ctrldoc = gaz_dbi_fetch_array($result);
@@ -80,7 +83,7 @@ if (!checkdate( $_POST['mesexe'], $_POST['gioexe'], $_POST['annexe']))
 
 if ($_POST['ckdata'] == 1) {
     //recupero l'ultimo protocollo da contabilizzare
-    $rs_ultimdoc = gaz_dbi_dyn_query("*", $gTables['effett'], "YEAR(datemi) = ".$_POST['annexe']." and id_con = 0 and progre between '{$_POST['proini']}' and '{$_POST['profin']}' ",'progre desc',0,1);
+    $rs_ultimdoc = gaz_dbi_dyn_query("*", $gTables['effett'], "YEAR(datemi) = ".$_POST['annexe']." and id_con = 0 and progre between '".intval($_POST['proini'])."' and '".intval($_POST['profin'])."' ",'progre desc',0,1);
     $dataultimdoc = gaz_dbi_fetch_array($rs_ultimdoc);
     $giofin = substr($dataultimdoc['datfat'],8,2);
     $mesfin = substr($dataultimdoc['datfat'],5,2);
@@ -137,6 +140,24 @@ if (isset($_POST['genera'])and $message == "") {
             //inserisco i due righi
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'A','codcon'=>$effett['clfoco'],'import'=>$effett['impeff']));
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$admin_aziend['cotrat'],'import'=>$effett['impeff']));
+        }
+        if ($effett['tipeff'] == 'V') {
+            //inserisco la testata
+            $newValue=array('caucon'=>'MAV',
+                           'descri'=>'EMESSO MAV',
+                           'datreg'=>$effett['datemi'],
+                           'seziva'=>$effett['seziva'],
+                           'protoc'=>$effett['id_tes'],
+                           'numdoc'=>$effett['progre'],
+                           'datdoc'=>$effett['datemi'],
+                           'clfoco'=>$effett['clfoco']
+                           );
+            tesmovInsert($newValue);
+            //recupero l'id assegnato dall'inserimento
+            $ultimo_id = gaz_dbi_last_id();
+            //inserisco i due righi
+            rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'A','codcon'=>$effett['clfoco'],'import'=>$effett['impeff']));
+            rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$effett['banacc'],'import'=>$effett['impeff']));
         }
         //vado a modificare l'effetto cambiando il numero di riferimento al movimento
         gaz_dbi_put_row($gTables['effett'], "id_tes",$effett["id_tes"],"id_con",$ultimo_id);
@@ -218,26 +239,37 @@ $script_transl=HeadMain();
     <td class="FacetDataTD">
         <?php
         if($_POST['cktipo'] == 0) {
-            $checked0 = "checked";
-            $checked1 = "";
+            $checked3 = "";
             $checked2 = "";
+            $checked1 = "";
+            $checked0 = "checked";
             $querytip = "";
         }
         if($_POST['cktipo'] == 1) {
+            $checked3 = "";
+            $checked2 = "";
             $checked1 = "checked";
             $checked0 = "";
-            $checked2 = "";
             $querytip = " and tipeff = \"B\" ";
         }
         if($_POST['cktipo'] == 2) {
+            $checked3 = "";
             $checked2 = "checked";
             $checked1 = "";
             $checked0 = "";
             $querytip = " and tipeff = \"T\" ";
         }
+        if($_POST['cktipo'] == 3) {
+            $checked3 = "checked";
+            $checked2 = "";
+            $checked1 = "";
+            $checked0 = "";
+            $querytip = " and tipeff = \"V\" ";
+        }
         echo "\t\t <input type=\"radio\" name=\"cktipo\" value=0 $checked0 onclick=\"this.form.submit()\"> TUTTE \n";
         echo "\t\t <input type=\"radio\" name=\"cktipo\" value=1 $checked1 onclick=\"this.form.submit()\"> R.B. \n";
         echo "\t\t <input type=\"radio\" name=\"cktipo\" value=2 $checked2 onclick=\"this.form.submit()\"> TRATTE \n";
+        echo "\t\t <input type=\"radio\" name=\"cktipo\" value=3 $checked3 onclick=\"this.form.submit()\"> MAV \n";
 
         ?>
   </tr>
@@ -261,7 +293,7 @@ $script_transl=HeadMain();
 //mostro l'anteprima
 if (isset($_POST['anteprima']) and $message == "") {
     //recupero i documenti da contabilizzare
-    $result = gaz_dbi_dyn_query("*", $gTables['effett'], "datemi like '{$_POST['annexe']}%' and id_con = 0  and banacc > 0 and progre between ".$_POST['proini'].' and '.$_POST['profin'].' '.$querytip,'tipeff asc, scaden asc');
+    $result = gaz_dbi_dyn_query("*", $gTables['effett'], "datemi like '".intval($_POST['annexe'])."%' and id_con = 0  and banacc > 0 and progre between ".$_POST['proini'].' and '.$_POST['profin'].' '.$querytip,'tipeff asc, scaden asc');
     echo "<div><center><b>ANTEPRIMA CONTABILIZZAZIONE </b></div>";
     echo "<table class=\"Tlarge\">";
     echo "<th class=\"FacetFieldCaptionTD\">Scadenza</th><th class=\"FacetFieldCaptionTD\">Emissione</th><th class=\"FacetFieldCaptionTD\">Tipo</th><th class=\"FacetFieldCaptionTD\">Progr.</th><th class=\"FacetFieldCaptionTD\">Cliente</th><th class=\"FacetFieldCaptionTD\">Importo</th><th class=\"FacetFieldCaptionTD\">Saldo<br />Conto</th><th class=\"FacetFieldCaptionTD\">N.Fatt.</th><th class=\"FacetFieldCaptionTD\">Data Fattura</th>";

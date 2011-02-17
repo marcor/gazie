@@ -128,21 +128,14 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r["impeff"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['salacc_value'][$r["salacc"]]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$banapp["descri"]." &nbsp;</td>";
-    if ($r["status"] == "DISTINTATO")
-      {
-        if ($r["id_con"] > 0)
-          {
+    if ($r["status"] == "DISTINTATO") {
+        if ($r["id_con"] > 0) {
             //
             // Interroga la tabella gaz_XXXtesmov per trovare
             // il numero della registrazione (id_tes) con cui
             // risulta contabilizzato l'effetto (id_con).
             //
-            $tesmov_result = gaz_dbi_dyn_query ('*',
-                                                $gTables['tesmov'],
-                                                "id_tes = ".$r["id_con"],
-                                                'id_tes DESC',
-                                                $limit,
-                                                $passo);
+            $tesmov_result = gaz_dbi_dyn_query ('*',$gTables['tesmov'],"id_tes = ".$r["id_con"],'id_tes');
             //
             $tesmov_r = gaz_dbi_fetch_array ($tesmov_result);
             //
@@ -151,50 +144,37 @@ while ($r = gaz_dbi_fetch_array($result)) {
             // nella tabella dell'effetto, diventando così
             // contabilizzabile nuovamente.
             //
-            if ($tesmov_r["id_tes"] == $r["id_con"])
-              {
+            if ($tesmov_r["id_tes"] == $r["id_con"]){
                 //
                 // L'effetto risulta contabilizzato regolarmente.
                 //
                 echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont. n.".$r["id_con"]."</a></td>";
-              }
-            else
-              {
+            } else {
                 //
                 // vado a modificare l'effetto azzerando il
                 // riferimento alla registrazione contabile
                 //
-                gaz_dbi_put_row ($gTables['effett'],
-                                 "id_tes",$r["id_tes"],"id_con",0);
+                gaz_dbi_put_row ($gTables['effett'],"id_tes",$r["id_tes"],"id_con",0);
                 //
                 // Mostro che l'effetto è da contabilizzare nuovamente.
                 //
                 echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
-              }
-          }
-        else
-          {
+             }
+        } else {
             //
             // L'effetto è da contabilizzare.
             //
             echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
-          }
-      }
-    else
-      {
-        if ($r["tipeff"] == "T")
-          {
+        }
+    } else {
+        if ($r["tipeff"] == "T") {
             echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a></td>";
-          }
-        else if ($r["tipeff"] == "B")
-          {
+        } elseif ($r["tipeff"] == "B") {
             echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerb.php\">file RiBa</a></td>";
-          }
-        else
-          {
+        } else {
             echo "<td class=\"FacetDataTD\" align=\"center\">".$r["status"]."</td>";
-          }
-      }
+        }
+    }
     // Colonna "Stampa"
     echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_effett.php?id_tes=".$r["id_tes"]."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
     // Colonna "Origine"

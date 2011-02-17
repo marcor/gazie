@@ -204,15 +204,19 @@ while ($r = gaz_dbi_fetch_array($result)) {
                         echo " <a style=\"font-size:10px;\" title=\"visualizza la cambiale tratta generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo "Tratta".$r_e["progre"];
                         echo "</a>";
+           } elseif ($r_e["tipeff"] == "V")  {
+                        echo " <a style=\"font-size:10px;\" title=\"visualizza il pagamento mediante avviso generato per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo "MAV".$r_e["progre"];
+                        echo "</a>";
            }  else {
                         echo " <a style=\"font-size:10px;\" title=\"visualizza l'effetto\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo $r_e["tipeff"].$r_e["progre"];
                         echo "</a>";
            }
         }
-        if ($n_e==0 && ($r["tippag"]=='B' || $r["tippag"]=='T')) {
+        if ($n_e==0 && ($r["tippag"]=='B' || $r["tippag"]=='T' || $r["tippag"]=='V')) {
               echo " <a title=\"genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
-              if (strtoupper($r["tippag"])=='S'){
+              if (strtoupper($r["geneff"])=='S'){
                     // Gli effetti della fattura sono stati generati in passato, ma poi
                     // sono stati rimossi tutti.
                     gaz_dbi_put_row ($gTables['tesdoc'],"id_tes",$r["id_tes"],"geneff","");

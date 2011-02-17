@@ -200,8 +200,8 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(71,6,$banapp['locali'].' ('.$banapp['codpro'].')');
         $pdf->Cell(80,6,$client['capspe'].' '.$client['citspe'].' ('.$client['prospe'].')',0,1,'L');
         $pdf->SetXY(5,90+$numefftot*$passo);
-        $pdf->Cell(165,4,'Cambiale-tratta n.'.$effetto['progre'].' emessa '.$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],'LTB');
-        $pdf->Cell(37,4,'bolli a tergo €  '.gaz_format_number($impbol),'RTB',1,'R');
+        $pdf->Cell(165,4,'MAV n.'.$effetto['progre'].' emesso '.$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],'LTB');
+        $pdf->Cell(37,4,'','RTB',1,'R');
     break;
     }
     $numefftot++;
