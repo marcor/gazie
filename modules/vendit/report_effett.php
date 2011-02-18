@@ -58,18 +58,24 @@ if ( !isset($_GET['field']) || empty($_GET['field']) ) {
 <?php echo $script_transl['link_1']; ?></a></td>
 <td class="FacetFormHeaderFont"><a href="admin_effett.php?Insert">
 <?php echo $script_transl['link_2']; ?></a></td>
-</tr>
-<tr>
 <td class="FacetFormHeaderFont"><a href="contab_effett.php" accesskey="c">
 <?php echo $script_transl['link_3']; ?></a></td>
-<td class="FacetFormHeaderFont"><a href="select_effett.php" accesskey="x">
-<?php echo $script_transl['link_4']; ?></a></td>
 </tr>
 <tr>
+<td class="FacetFormHeaderFont"><a href="select_effett.php" accesskey="x">
+<?php echo $script_transl['link_4']; ?></a></td>
 <td class="FacetFormHeaderFont"><a href="distin_effett.php" accesskey="d">
 <?php echo $script_transl['link_5']; ?></a></td>
 <td class="FacetFormHeaderFont"><a href="select_filerb.php" accesskey="g">
 <?php echo $script_transl['link_6']; ?></a></td>
+</tr>
+<tr>
+<td class="FacetFormHeaderFont"><a href="select_filemav.php" accesskey="v">
+<?php echo $script_transl['link_7']; ?></a></td>
+<td>
+</td>
+<td>
+</td>
 </tr>
 </table>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>

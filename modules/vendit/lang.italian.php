@@ -674,6 +674,7 @@ $strScript = array ("admin_client.php" =>
                            'link_4'=>'Stampa effetti generati',
                            'link_5'=>'Distinta per banca',
                            'link_6'=>'Genera file Ri.Ba.',
+                           'link_7'=>'Genera file MAV',
                            'report'=>'Lista degli effetti',
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 2 caratteri!',

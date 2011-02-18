@@ -676,6 +676,7 @@ $strScript = array ("admin_client.php" =>
                            'link_4'=>'Imprimir Cuenta de cambio',
                            'link_5'=>'Cuentas para reporte de cambio',
                            'link_6'=>'Crear archivo Ri.Ba.',
+                           'link_7'=>'Crear archivo MAV',
                            'report'=>'Lista de cuentas de cambio',
                            'mesg'=>array('La busqueda no dio resultados!',
                                          'Inserte al menos 2 caracteres!',

@@ -672,6 +672,7 @@ $strScript = array ("admin_client.php" =>
                            'link_4'=>'Print bills of exchange',
                            'link_5'=>'List for bank',
                            'link_6'=>'Create file Ri.Ba.',
+                           'link_7'=>'Create file MAV',
                            'report'=>'Bills of exchange list',
                            'mesg'=>array('The search yielded no results!',
                                          'Insert at least 2 characters!',

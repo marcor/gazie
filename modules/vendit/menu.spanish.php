@@ -68,6 +68,7 @@ $transl['vendit'] = array('name' => "Ventas",
                                          26=>array("Cerrar caja registradora diaria","Cerrar ECR diaria"),
                                          27=>array("Emitir nueva Cuenta","Emitir Cuenta"),
                                          28=>array("Importación desde el sitio web","importaci&oacute;n desde el web"),
-                                         )
+                                         29=>array("Crear archivo MAV estandar CBI","Crear archivo MAV")
+                                       )
                           );
 ?>
