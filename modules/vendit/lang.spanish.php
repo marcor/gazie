@@ -529,6 +529,29 @@ $strScript = array ("admin_client.php" =>
                            'reprint_value'=>array('S'=>'Si','N'=>'No'),
                            'tot'=>'Total del contenido del archivo'
                            ),
+                    "select_filemav.php" =>
+                    array( 'title'=>'Creacion de Archivo MAV (formato CBI)',
+                           'errors'=>array('No hay efectos en el l&iacute;mite seleccionado',
+                                           'Fecha incorracta',
+                                           'La fecha de inicio es posterior a la final',
+                                           'La fecha de emisi&oacute;n es posterior a la inicial'
+                                          ),
+                           'preview'=>'Vista previa de contenido archivo MAV ( formato CBI)',
+                           'header'=>array('Num'=>'','Tipo'=>'','Fecha de Expiracion'=>'','Cantidad'=>'',
+                                            'cliente/V.R.' =>'','Factura/Cantidad'=>'','Banco/ABI-CAB'=>''
+                                           ),
+                           'date_emi'=>'Fecha de lista',
+                           'bank'=>'Credito Bancario',
+                           'date_ini'=>'Fecha de Expiracion Inicial',
+                           'date_fin'=>'Fecha de Expiracion Final',
+                           'num_ini'=>'Numero Inicial',
+                           'num_fin'=>'Numero Final',
+                           'period'=>'Seleccione plazos proximos',
+                           'period_value'=>'Plazos proximos',
+                           'reprint'=>'Rutulados',
+                           'reprint_value'=>array('S'=>'Si','N'=>'No'),
+                           'tot'=>'Total del contenido del archivo'
+                           ),
                     "error_msg.php" =>
                     array( 'admin_scontr'=>array(0=>'Advertencia!<br />No tiene privilegios para enviar datos a la caja registradora (ECR), p&oacute;ngase en contacto con su administrador para cambiar la configuraci&oacute;n de la tabla gaz_cash_register')
                           ),

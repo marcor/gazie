@@ -525,6 +525,29 @@ $strScript = array ("admin_client.php" =>
                            'reprint_value'=>array('S'=>'Yes','N'=>'No'),
                            'tot'=>'Total of file content'
                            ),
+                    "select_filemav.php" =>
+                    array( 'title'=>'File MAV creation (format CBI)',
+                           'errors'=>array('There aren\'t effects in the selected limit',
+                                           'Incorrect Date',
+                                           'The start date is later than the final',
+                                           'The issue date is later than the initial'
+                                          ),
+                           'preview'=>'Preview of file MAV content ( CBI format)',
+                           'header'=>array('Num'=>'','Type'=>'','Expiry date'=>'','Amount'=>'',
+                                            'customer/V.R.' =>'','Invoice/Amount'=>'','Bank/ABI-CAB'=>''
+                                           ),
+                           'date_emi'=>'List Date',
+                           'bank'=>'Bank credit',
+                           'date_ini'=>'Initial expiry date',
+                           'date_fin'=>'Final expiry date',
+                           'num_ini'=>'Initial number',
+                           'num_fin'=>'Final number',
+                           'period'=>'Select upcoming deadlines',
+                           'period_value'=>'Upcoming deadlines',
+                           'reprint'=>'Badged',
+                           'reprint_value'=>array('S'=>'Yes','N'=>'No'),
+                           'tot'=>'Total of file content'
+                           ),
                     "error_msg.php" =>
                     array( 'admin_scontr'=>array(0=>'WARNING!<br />She is not entitled to send data on the cash register (ECR), contact your administrator to change settings on the table gaz_cash_register.')
                           ),

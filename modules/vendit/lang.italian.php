@@ -582,6 +582,29 @@ $strScript = array ("admin_client.php" =>
                            'reprint_value'=>array('S'=>'Si','N'=>'No'),
                            'tot'=>'Totali del contenuto del file'
                            ),
+                    "select_filemav.php" =>
+                    array( 'title'=>'Generazione File dei MAV in formato CBI',
+                           'errors'=>array('Non ci sono effetti da distintare nell\'intervallo selezionato',
+                                           'Data non corretta',
+                                           'La data di inizio &egrave; successiva a quella finale',
+                                           'La data di emissione &egrave; successiva a quella iniziale'
+                                          ),
+                           'preview'=>'Anteprima del contenuto del file MAV in formato CBI',
+                           'header'=>array('Num'=>'','Tipo'=>'','Scadenza'=>'','Importo'=>'',
+                                            'Cliente/P.I.' =>'','Fattura/Importo'=>'','Appoggio/ABI-CAB'=>''
+                                           ),
+                           'date_emi'=>'Data della distinta',
+                           'bank'=>'Banca d\'accredito',
+                           'date_ini'=>'Data di scadenza inizio',
+                           'date_fin'=>'Data di scadenza fine',
+                           'num_ini'=>'Numero inizio',
+                           'num_fin'=>'Numero fine',
+                           'period'=>'Imposta prossime scadenze',
+                           'period_value'=>'Scadenze prossime',
+                           'reprint'=>'Distintato',
+                           'reprint_value'=>array('S'=>'Si','N'=>'No'),
+                           'tot'=>'Totali del contenuto del file'
+                           ),
                     "error_msg.php" =>
                     array( 'admin_scontr'=>array(0=>'ATTENZIONE! <BR />Lei non risulta abilitato all\'invio di dati sul registratore di cassa (ECR), contattare l\'amministratore per modificare le impostazioni sulla tabella gaz_cash_register.')
                           ),

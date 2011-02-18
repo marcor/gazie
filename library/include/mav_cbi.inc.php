@@ -387,6 +387,25 @@ class MavAbiCbi {
         return trim(substr($text, $start - 1, $end - $start + 1));
     }
 
+// funzione per GAzie
+    function creaFile($intestazione,$records)
+             {
+             $accumulatore = $this->RecordIM($intestazione['sia_mittente'], $intestazione['abi_assuntrice'], $intestazione['data_creazione'], $intestazione['nome_supporto']);
+             foreach ($records as $value) { //estraggo i record dall'array
+                     $this->progressivo ++;
+                     $accumulatore .= $this->Record14(false, $value['scadenza'], $value['importo'], $intestazione['cab_assuntrice'], $intestazione['conto'], $intestazione['sia_ordinante'], $value['tipo_codice'], $value['codice_cliente']);
+                     $accumulatore .= $this->Record20($intestazione['ragione_soc1_creditore'], $intestazione['ragione_soc2_creditore'], $intestazione['indirizzo_creditore'], $intestazione['cap_citta_prov_creditore']);
+                     $accumulatore .= $this->Record30($value['nome_debitore'], $value['codice_fiscale_debitore']);
+                     $accumulatore .= $this->Record40($value['indirizzo_debitore'], $value['cap_debitore'], $value['comune_provincia_debitore'], $value['descrizione_domiciliataria']);
+                     $accumulatore .= $this->Record50($value['descrizione_debito']);
+                     $accumulatore .= $this->Record51($value['numero_disposizione']);
+                     $accumulatore .= $this->Record70($value['tipo_bollettino']);
+             }
+             $accumulatore .= $this->RecordEF(false);
+             return $accumulatore;
+             }
+// fine funzione per GAzie
+
 }
 
 ?>
