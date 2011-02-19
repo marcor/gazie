@@ -695,7 +695,7 @@ $strScript = array ("admin_client.php" =>
                                           ),
                            'progre'=>'Number',
                            'type'=>'Tipo',
-                           'type_pay'=>array('B'=>'Bank receipt','T'=>'Promissory','V'=>'Payment request'),
+                           'type_pay'=>array('B'=>'Bank receipt','T'=>'Promissory','V'=>'MAV'),
                            'clfoco'=>'Cliente',
                            'date_emi'=>'Date of Issue',
                            'numfat'=>'Number of invoice',
@@ -714,7 +714,7 @@ $strScript = array ("admin_client.php" =>
                            'date_ini'=>'Fecha de vencimiento inicial ',
                            'num_fin'=>'Numero de cuenta final',
                            'date_fin'=>'Fecha de vencimiento final ',
-                           'type_value'=>array('B'=>'Recibos bancarios','T'=>'Giros-cuentas'),
+                           'type_value'=>array('B'=>'Recibos bancarios','T'=>'Giros-cuentas','V'=>'MAV'),
                            'header'=>array('Num'=>'','Fecha de vencimiento'=>'','Cantidad'=>'',
                                             'Cliente' =>'','Factura'=>'','Banco'=>''
                                            )

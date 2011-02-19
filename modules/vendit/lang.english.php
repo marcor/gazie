@@ -691,7 +691,7 @@ $strScript = array ("admin_client.php" =>
                                           ),
                            'progre'=>'Number',
                            'type'=>'Type',
-                           'type_pay'=>array('B'=>'Bank receipt','T'=>'Promissory','V'=>'Payment request'),
+                           'type_pay'=>array('B'=>'Bank receipt','T'=>'Promissory','V'=>'MAV'),
                            'clfoco'=>'Customer',
                            'date_emi'=>'Date of Issue',
                            'numfat'=>'Number of invoice',
@@ -710,7 +710,7 @@ $strScript = array ("admin_client.php" =>
                            'date_ini'=>'Initial expiry date ',
                            'num_fin'=>'Final bill number ',
                            'date_fin'=>'Final expiry date ',
-                           'type_value'=>array('B'=>'Bank receipts','T'=>'Drafts-bills'),
+                           'type_value'=>array('B'=>'Bank receipts','T'=>'Drafts-bills','V'=>'MAV'),
                            'header'=>array('Num'=>'','Expiry date'=>'','Amount'=>'',
                                             'Customer' =>'','Invoice'=>'','Bank'=>''
                                            )

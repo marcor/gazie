@@ -692,7 +692,7 @@ $strScript = array ("admin_client.php" =>
                                           ),
                            'progre'=>'Numero',
                            'type'=>'Tipo',
-                           'type_pay'=>array('B'=>'Ri.Ba.','T'=>'Tratta','V'=>'Richiesta Versamento'),
+                           'type_pay'=>array('B'=>'Ri.Ba.','T'=>'Tratta','V'=>'Mediante Avviso (MAV)'),
                            'clfoco'=>'Cliente',
                            'date_emi'=>'Data di Emissione',
                            'numfat'=>'Numero della Fattura',
@@ -711,7 +711,7 @@ $strScript = array ("admin_client.php" =>
                            'date_ini'=>'Data scadenza inizio  ',
                            'num_fin'=>'Numero effetto fine ',
                            'date_fin'=>'Data scadenza fine ',
-                           'type_value'=>array('B'=>'Ricevute Bancarie','T'=>'Tratte'),
+                           'type_value'=>array('B'=>'Ricevute Bancarie','T'=>'Tratte','V'=>'MAV'),
                            'header'=>array('Num'=>'','Scadenza'=>'','Importo'=>'',
                                             'Cliente' =>'','Fattura'=>'','Appoggio'=>''
                                            )
