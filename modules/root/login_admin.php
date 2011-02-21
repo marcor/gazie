@@ -26,9 +26,10 @@ require("../../library/include/datlib.inc.php");
 $message = "";
 $newpass = false;
 $config = new Config;
-if (isset ($_POST['actionflag'])) {
+if (isset($_POST['actionflag'])) {
+    $form['Login']=filter_var(substr($_POST['Login'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
     // checkUser();
-    $result = gaz_dbi_get_row ($gTables['admin'], "Login", $_POST['Login']);
+    $result = gaz_dbi_get_row ($gTables['admin'], "Login", $form['Login']);
     if (!empty ($result['lang'])){
           $lang = $result['lang'];
     } else {
@@ -53,8 +54,8 @@ if (isset ($_POST['actionflag'])) {
                     $_POST['Confepass'] = '';
                 }
                 if($_POST['Password'] != $_POST['Nuovapass'] and $_POST['Nuovapass'] == $_POST['Confepass'] and  strlen($_POST['Nuovapass']) >= $config->getValue('psw_min_length') ) {
-                    gaz_dbi_put_row($gTables['admin'], "Login",$_POST['Login'],"datpas",date("Y%-m%-d H:i:s"));
-                    gaz_dbi_put_row($gTables['admin'], "Login",$_POST['Login'],"Password",$_POST['Nuovapass']);
+                    gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"datpas",date("Y%-m%-d H:i:s"));
+                    gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"Password",$_POST['Nuovapass']);
                     cleanMemberSession($result["Abilit"], $result["Login"], $_POST["Nuovapass"], $result["Access"], $result['enterprise_id']);
                     header("Location: ../root/admin.php");
                     exit;
@@ -71,8 +72,9 @@ if (isset ($_POST['actionflag'])) {
     if (!empty($_POST['Login']) and $newpass == false) {
         $message .= $script_transl[3];
     }
+} else {
+    $form['Login']='';
 }
-
 if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ($_SESSION['Abilit'] == false and $_SESSION["Login"] != 'Null')) {
     $result = gaz_dbi_get_row($gTables['admin'], "Login", $_SESSION['Login']);
     if (!empty ($result['lang'])){
@@ -131,7 +133,7 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 <!-- END Error -->
 <tr><td class="FacetDataTD" rowspan="2"><img src="../../library/images/gazie.gif" width="51"></td>
 <td class="FacetFieldCaptionTD">User </td>
-<td class="FacetDataTD"><input type="text" name="Login" value="<?php if (isset($_POST['Login'])) echo $_POST['Login']; ?>" maxlength="100" size="20" class="FacetInput"> </td>
+<td class="FacetDataTD"><input type="text" name="Login" value="<?php if (isset($_POST['Login'])) echo $form['Login']; ?>" maxlength="30" size="20" class="FacetInput"> </td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD">Password </td>
