@@ -2,7 +2,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $return_arr = array();
-$term =  filter_var($_GET['term'],FILTER_SANITIZE_STRING);
+$term =  filter_var(substr($_GET['term'],0,20),FILTER_SANITIZE_MAGIC_QUOTES);
 if(strlen($term) >2) {
         $result = gaz_dbi_dyn_query("UPPER(".$gTables['municipalities'].".name) AS citspe,".$gTables['municipalities'].".postal_code AS capspe,".$gTables['provinces'].".abbreviation AS prospe, ".$gTables['regions'].".name AS region, ".$gTables['country'].".name AS nation, ".$gTables['country'].".iso AS country",
                                     $gTables['municipalities']." LEFT JOIN ".$gTables['provinces']." ON ".$gTables['municipalities'].".id_province = ".$gTables['provinces'].".id

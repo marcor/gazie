@@ -2,7 +2,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $return_arr = array();
-$term =  filter_var($_GET['term'],FILTER_SANITIZE_STRING);
+$term =  filter_var(substr($_GET['term'],0,20),FILTER_SANITIZE_MAGIC_QUOTES);
 if(strlen($term) >1) {
         $result = gaz_dbi_dyn_query("id,ragso1,citspe",$gTables['anagra'],"ragso1 LIKE '%".$term."%'",'ragso1');
         while($row = gaz_dbi_fetch_array($result)) {
