@@ -52,7 +52,8 @@ $strScript = array("admin_fornit.php" =>
                                            'Es una persona, introduzca el c&oacute;digo de impuestos',
                                            'Existe un registro con el mismo IVA',
                                            'Existe un registro con el mismo c&oacute;digo impuestos',
-                                           'Usted debe elegir la forma pago'
+                                           'Usted debe elegir la forma pago',
+                                           'El c&oacute;digo de proveedor ya est&aacute; ah&iacute;, intentar la entrada con la que se propone (m&aacute;s 1)'
                                           ),
                            'link_anagra'=>' Haga clic a continuaci&oacute;n para introducir sus datos personales en la tabla existente de cuentas',
                            'codice'=>"Codigo ",

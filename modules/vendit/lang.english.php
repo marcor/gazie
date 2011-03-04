@@ -48,7 +48,8 @@ $strScript = array ("admin_client.php" =>
                                            'Is an individual, enter the Tax Code',
                                            'Is there a registry with the same VAT registration number',
                                            'Is there a registry with the same Tax code',
-                                           'You must choose your payment method'
+                                           'You must choose your payment method',
+                                           'The customer code is already there, try the entry with the one proposed (plus 1)'
                                           ),
                            'link_anagra'=>' Click below to enter the existing registry on the your chart of accounts',
                            'codice'=>"Code ",

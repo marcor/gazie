@@ -47,6 +47,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        // inizio controllo campi
        $real_code=$admin_aziend['masfor']*1000000+$form['codice'];
        require("../../library/include/check.inc.php");
+       $rs_same_code=gaz_dbi_dyn_query('*',$gTables['clfoco']," codice = ".$real_code,"codice",0,1);
+       $same_code=gaz_dbi_fetch_array($rs_same_code);
+       if ($same_code) { // c'è già uno stesso codice
+          $form['codice']++; // lo aumento di 1
+          $msg .= "18+";
+       }
        if (strlen($form["ragso1"]) < 4) {
           $msg.='0+';
        }
