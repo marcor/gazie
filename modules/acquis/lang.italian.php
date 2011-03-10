@@ -74,7 +74,7 @@ $strScript = array("admin_fornit.php" =>
                            'e_mail'=>'e mail',
                            'cosric'=>'Conto di costo',
                            'codpag'=>'Modalit&agrave; di pagamento *',
-                           'sconto'=>'% Sconto da apllicare',
+                           'sconto'=>'% Sconto da applicare',
                            'banapp'=>'Banca d\'appoggio',
                            'portos'=>'Porto - Resa',
                            'spediz'=>'Spedizione',
