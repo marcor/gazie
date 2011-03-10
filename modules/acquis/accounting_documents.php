@@ -31,7 +31,7 @@ $msg = '';
 function getExtremeDocs($type='_',$vat_section=1,$date=false)
 {
     global $gTables;
-    $type = substr($type,0,1);
+    $type = substr($type,0,2);
     $docs=array();
     if ($date){
        $date=' AND datfat <= '.$date;
@@ -39,7 +39,7 @@ function getExtremeDocs($type='_',$vat_section=1,$date=false)
        $date='';
     }
     $from =  $gTables['tesdoc'];
-    $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type"."__' $date";
+    $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type"."_' $date";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('*',$from,$where,$orderby,0,1);
     $row = gaz_dbi_fetch_array($result);
@@ -54,7 +54,7 @@ function getExtremeDocs($type='_',$vat_section=1,$date=false)
 function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=999999999)
 {
     global $gTables,$admin_aziend;
-    $type = substr($type,0,1);
+    $type = substr($type,0,2);
     if ($date){
        $p=' AND (YEAR(datfat)*1000000+protoc) <= '.(substr($date,0,4)*1000000+$protoc);
        $d=' AND datfat <= '.$date;
@@ -69,7 +69,7 @@ function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=9999
              ON tesdoc.clfoco=customer.codice
              LEFT JOIN '.$gTables['anagra'].' AS anagraf
              ON customer.id_anagra=anagraf.id';
-    $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type"."__' $d $p";
+    $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type"."_' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.incaut,
@@ -211,11 +211,7 @@ function computeTot($data,$carry,$stamp_percent=false,$round=5)
 
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
-    if (isset($_GET['type'])){
-       $form['type']=substr($_GET['type'],0,1);
-    } else {
-       $form['type']='F';
-    }
+    $form['type']='AF';
     if (isset($_GET['vat_section'])){
        $form['vat_section']=intval($_GET['vat_section']);
     } else {
@@ -240,7 +236,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['year_fin']=substr($extreme['fin']['date'],0,4);
     $form['hidden_req'] = '';
 } else {    // accessi successivi
-    $form['type'] = substr($_POST['type'],0,1);
+    $form['type'] = substr($_POST['type'],0,2);
     $form['vat_section']=intval($_POST['vat_section']);
     $form['this_date_Y']=intval($_POST['this_date_Y']);
     $form['this_date_M']=intval($_POST['this_date_M']);
