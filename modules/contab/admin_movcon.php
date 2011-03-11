@@ -634,8 +634,16 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/jquery-1.4.2.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
+                                  'jquery/ui/jquery.ui.mouse',
+                                  'jquery/ui/jquery.ui.button',
+                                  'jquery/ui/jquery.ui.autocomplete',
+                                  'jquery/ui/jquery.ui.dialog',
                                   'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.autocomplete'));
+                                  'jquery/ui/jquery.ui.draggable',
+                                  'jquery/ui/jquery.ui.resizable',
+                                  'jquery/ui/jquery.effects.core',
+                                  'jquery/ui/jquery.effects.scale',
+                                  'jquery/modal_form.js'));
 echo '<SCRIPT type="text/javascript">
       $(function() {
             $( "#search_insert_conto" ).autocomplete({
@@ -648,6 +656,87 @@ for ($i=0; $i<$_POST['rigcon']; $i++ ) {
             minLength: 2,
             });';
 }
+echo '
+    $( "#dialog:ui-dialog" ).dialog( "destroy" );
+    var expiry = $( "#expiry" ),
+        amount = $( "#amount" ),
+        allFields = $( [] ).add( expiry ).add( amount ),
+        tips = $( ".validateTips" );
+
+    function getResults(term_val)
+    {
+    $.get("expiry.php",{term:term_val},
+       function(data){
+       $("#resultsContainer").text(data);
+    });
+    }
+
+    function updateTips( t ) {
+      tips
+        .text( t )
+        .addClass( "ui-state-highlight" );
+      setTimeout(function() {
+        tips.removeClass( "ui-state-highlight", 1500 );
+      }, 500 );
+    }
+
+    function checkLength( o, n, min, max ) {
+      if ( o.val().length > max || o.val().length < min ) {
+        o.addClass( "ui-state-error" );
+        updateTips( "Length of " + n + " must be between " +
+          min + " and " + max + "." );
+        return false;
+      } else {
+        return true;
+      }
+    }
+
+    function checkRegexp( o, regexp, n ) {
+      if ( !( regexp.test( o.val() ) ) ) {
+        o.addClass( "ui-state-error" );
+        updateTips( n );
+        return false;
+      } else {
+        return true;
+      }
+    }
+    $( "#dialog-form" ).dialog({
+      autoOpen: false,
+      show: "scale",
+      width: 300,
+      modal: true,
+      buttons: {
+        "Create an account": function() {
+          var bValid = true;
+          allFields.removeClass( "ui-state-error" );
+
+          bValid = bValid && checkLength( expiry, "userexpiry", 3, 16 );
+          bValid = bValid && checkLength( amount, "amount", 6, 80 );
+          bValid = bValid && checkRegexp( expiry, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
+          bValid = bValid && checkRegexp( amount, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
+
+          if ( bValid ) {
+            $( "#users tbody" ).append( "<tr>" +
+              "<td>" + expiry.val() + "</td>" +
+              "<td>" + amount.val() + "</td>" +
+            "</tr>" );
+            updateTips( "" );
+          }
+        },
+        Cancel: function() {
+          $( this ).dialog( "close" );
+        }
+      },
+      close: function() {
+        allFields.val( "" ).removeClass( "ui-state-error" );
+      }
+    });
+    $( "#open-items" )
+      .button()
+      .click(function() {
+        $( "#dialog-form" ).dialog( "open" );
+        getResults("120000111");
+      });';
 echo '});
       </SCRIPT>';
 echo "<SCRIPT type=\"text/javascript\">\n";
@@ -879,6 +968,37 @@ if ($toDo == 'insert') {
 }
 ?>
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+<!--
+
+Questa e' una prova (che non viene visualizzato) di interazione tra database e dialog di jquery
+
+<tr><td colspan="2">
+
+<div id="dialog-form" title="Partite Aperte">
+  <p class="validateTips"></p>
+  <div id="users-contain" class="ui-widget">
+    <table id="users" class="ui-widget ui-widget-content">
+     <tbody>
+    <tr><td>
+     <label for="expiry">Scadenza</label>
+    </td><td>
+     <label for="name">Importo</label>
+    </td></tr>
+    <tr><td>
+    <input type="text" name="expiry" id="expiry" class="text ui-widget-content ui-corner-all" />
+    </td><td>
+    <input type="text" name="amount" id="amount" class="text ui-widget-content ui-corner-all" />
+    </td></tr>
+    <tr><td colspan="2">
+    <DIV name="resultsContainer" id="resultsContainer" class="text ui-widget-content ui-corner-all">__RISULTATO_</DIV>
+    </td></tr>
+     </tbody>
+    </table>
+  </div>
+</div>
+<a href="#" id="open-items">&weierp;</a>
+</td></tr>
+-->
 <?php
 if (!empty($msg)) {
     echo '<tr><td colspan="6" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";

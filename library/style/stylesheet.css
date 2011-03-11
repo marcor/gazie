@@ -1,3 +1,5 @@
+@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
+
 BODY {
      background-image : url("../../library/images/sfondo.png");
      background-attachment : fixed;
