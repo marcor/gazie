@@ -79,8 +79,8 @@ function getData($date_ini,$date_fin,$num_ini,$num_fin,$reprint='N')
         $orderby="tipeff, scaden, progre";
         $rs=gaz_dbi_dyn_query($gTables['effett'].".*,".
                      $gTables['anagra'].".pariva,
-                     CONCAT (".$gTables['anagra'].".ragso1,' ',".$gTables['anagra'].".ragso2) AS customer,
-                     CONCAT (".$gTables['banapp'].".codabi,' - ',".$gTables['banapp'].".codcab) AS coordi,
+                     CONCAT(".$gTables['anagra'].".ragso1,' ',".$gTables['anagra'].".ragso2) AS customer,
+                     CONCAT(".$gTables['banapp'].".codabi,' - ',".$gTables['banapp'].".codcab) AS coordi,
                      ".$gTables['banapp'].".descri AS desban ",
                      $gTables['effett']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['effett'].".clfoco = ".$gTables['clfoco'].".codice
                      LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra

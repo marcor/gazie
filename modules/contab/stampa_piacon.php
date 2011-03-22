@@ -42,7 +42,7 @@ function convNum($n=0){
 $luogo_data=$admin_aziend['citspe'].", lì ";
 $luogo_data .=ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
 $where = " 1 ";
-$what = $gTables['clfoco'].".*, CONCAT (".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc ";
+$what = $gTables['clfoco'].".*, CONCAT(".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc ";
 $table = $gTables['clfoco']." LEFT JOIN ".$gTables['anagra']." ON (".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id)";
 $result = gaz_dbi_dyn_query ($what, $table,$where,"codice ASC");
 $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),

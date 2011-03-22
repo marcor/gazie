@@ -53,7 +53,7 @@ $datafine = date("Ymd",$utsfin);
 //recupero tutti i movimenti IVA del conto insieme alle relative testate
 $what = $gTables['tesmov'].".*, ".
         $gTables['rigmoi'].".*,
-        CONCAT (".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc, ".
+        CONCAT(".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc, ".
         $gTables['aliiva'].".descri AS desiva "
         ;
 $table = $gTables['rigmoi']." LEFT JOIN ".$gTables['tesmov']." ON (".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes)

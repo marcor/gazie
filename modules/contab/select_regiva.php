@@ -54,7 +54,7 @@ function getMovements($vat_section,$vat_reg,$date_ini,$date_fin)
         $rs=gaz_dbi_dyn_query("YEAR(datreg) AS ctrl_sr,
                       DATE_FORMAT(datdoc,'%d-%m-%Y') AS dd,
                       DATE_FORMAT(datreg,'%d-%m-%Y') AS dr,
-                      CONCAT (".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc,clfoco,codiva,
+                      CONCAT(".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc,clfoco,codiva,
                       protoc,numdoc,datreg,caucon,regiva,operat,imponi,impost,periva,
                       ".$gTables['tesmov'].".descri AS descri,
                       ".$gTables['aliiva'].".descri AS desvat,
