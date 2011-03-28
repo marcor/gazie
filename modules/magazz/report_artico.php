@@ -72,7 +72,7 @@ $headers_artico = array  (
               "U.M." => "unimis",
               "Prezzo 1" => "preve1",
               "Prezzo<br>acquisto" => "preacq",
-              "Giacenza" => "esiste");
+              "Giacenza" => "");
 if ($admin_aziend['conmag']>0) {
    $headers_artico = array_merge($headers_artico,array(
               "Visualizza<br>e/o stampa"=>'',
