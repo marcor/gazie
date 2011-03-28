@@ -220,7 +220,7 @@ echo '<script type="text/javascript">
       </script>';
 ?>
 
-<form method="POST" enctype="multipart/form-data">
+<form method="POST" enctype="multipart/form-data"  autocomplete="off">
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno'];?>">
 <?php
 if ($toDo == 'insert') {

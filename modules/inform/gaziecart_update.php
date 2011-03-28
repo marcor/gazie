@@ -101,7 +101,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-echo "<form method=\"POST\">";
+echo "<form method=\"POST\" autocomplete=\"off\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 $gForm = new GAzieForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title']."</div>\n";
