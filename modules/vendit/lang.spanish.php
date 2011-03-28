@@ -706,6 +706,7 @@ $strScript = array ("admin_client.php" =>
                            'salacc'=>'Dep&oacute;sito y el Equilibrio',
                            'salacc_value'=>array('C'=>'Dep&oacute;sito','S'=>'El equilibrio'),
                            'impeff'=>'Cuenta amount',
+                           'status'=>'Estado',
                            'date_exp'=>'Expiry date',
                            'account_id'=>'Contabilidad nombre',
                            'pagame'=>'Metodo de pago',

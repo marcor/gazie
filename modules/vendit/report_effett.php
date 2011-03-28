@@ -109,7 +109,7 @@ $headers_banapp = array  (
               $script_transl['impeff'] => "impeff",
               $script_transl['salacc'] => "salacc",
               $script_transl['banapp'] => "banapp",
-              "Status" => "",
+              $script_transl['status'] => "",
               $script_transl['print'] => "",
               $script_transl['source'] => "",
               $script_transl['delete'] => ""
@@ -168,7 +168,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
              }
         } else {
             //
-            // L'effetto è da contabilizzare.
+            // L'effetto e' da contabilizzare.
             //
             echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"contab_effett.php\">Contabilizza</a></td>";
         }
@@ -177,6 +177,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
             echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a></td>";
         } elseif ($r["tipeff"] == "B") {
             echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerb.php\">file RiBa</a></td>";
+        } elseif ($r["tipeff"] == "V") {
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filemav.php\">file MAV</a></td>";
         } else {
             echo "<td class=\"FacetDataTD\" align=\"center\">".$r["status"]."</td>";
         }

@@ -702,6 +702,7 @@ $strScript = array ("admin_client.php" =>
                            'salacc'=>'Deposit / Balance',
                            'salacc_value'=>array('C'=>'Deposit','S'=>'Balance'),
                            'impeff'=>'Bill amount',
+                           'status'=>'State',
                            'date_exp'=>'Expiry date',
                            'account_id'=>'Account record number',
                            'pagame'=>'Payment method',
