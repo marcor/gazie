@@ -382,6 +382,7 @@ function setDate(name) {
 
 echo "<form method=\"POST\" name=\"accounting\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
+echo "<input type=\"hidden\" value=\"".$form['type']."\" name=\"type\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['proini']."\" name=\"proini\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['year_ini']."\" name=\"year_ini\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['year_fin']."\" name=\"year_fin\" />\n";
@@ -396,11 +397,6 @@ if (!empty($msg)) {
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['type']." </td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('type',$script_transl['type_value'],$form['type'],'FacetSelect',0,'type');
-echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['proini']."</td>\n";
