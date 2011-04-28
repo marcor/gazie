@@ -209,7 +209,7 @@ while ($mov = gaz_dbi_fetch_array($result)) {
                $pdf->Cell(50,4,$righi_cont['codcon']."-".substr($righi_cont['descri'],0,23),'L');
                $pdf->Cell(1,4,$money[1]);
                $maxY = $pdf->GetY();
-               $pdf->Cell(15,4,$righi_cont['import'],'R',1,'R');
+               $pdf->Cell(15,4,gaz_format_number($righi_cont['import']),'R',1,'R');
                $pdf->SetFont('freesans','',8);
                if (!isset($castelconti[$codcon])) {
                    $castelconti[$codcon] = array('value'=>0,'ds'=>0);
@@ -288,9 +288,6 @@ if ($_GET['mt']==1) {
      $pdf->Cell(20,5,$key,1,0,'C');
      $pdf->Cell(75,5,$value['ds'],1,0,'L');
      $pdf->Cell(25,5,gaz_format_number($value['value']),1,1,'R');
-   }
-   if ($pdf->GetY() > $finTot) {
-      $finTot = $pdf->GetY();
    }
 }
 
