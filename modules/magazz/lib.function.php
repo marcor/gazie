@@ -400,12 +400,10 @@ class magazzForm extends GAzieForm
            $ultimo_id_mm = gaz_dbi_last_id(); //id del rigo movimento magazzino
            //gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $id_rigo_doc, 'id_mag', gaz_dbi_last_id());
            gaz_dbi_query ("UPDATE ".$gTables['rigdoc']." SET id_mag = ". gaz_dbi_last_id()." WHERE `id_rig` = $id_rigo_doc ");
-           $upd_art_exist_value = $quantita*$operat*$new_caumag['upesis'];
         } elseif ($id_rigo_doc==='DEL') {                 // si deve eliminare un movimento esistente
             $old_movmag = gaz_dbi_get_row($gTables['movmag'],'id_mov',$id_movmag);
             $old_caumag = gaz_dbi_get_row($gTables['caumag'],'codice',$old_movmag['caumag']);
             gaz_dbi_del_row($gTables['movmag'], 'id_mov', $id_movmag);
-            $upd_art_exist_value =  - $old_movmag['quanti']*$old_movmag['operat']*$old_caumag['upesis'];
             $codart = $old_movmag['artico'] ;
         } else {   // si deve modificare un movimento esistente
             $old_movmag = gaz_dbi_get_row($gTables['movmag'],'id_mov',$id_movmag);
@@ -418,11 +416,6 @@ class magazzForm extends GAzieForm
                $old_caumag['operat'] = 0;
             }
             movmagUpdate($id,$row_movmag);
-            // detraggo il valore del movimento precedente dall'esistente dell'articolo precedente
-            $upd_old_art_exist_value =  $old_movmag['quanti']*$old_movmag['operat']*$old_caumag['upesis'];
-            //gaz_dbi_query ("UPDATE ".$gTables['artico']." SET esiste = esiste - ".$upd_old_art_exist_value." WHERE `codice` = '".$old_movmag['artico']."';");
-            // poi aggiungo il nuovo
-            $upd_art_exist_value = $quantita*$operat*$new_caumag['upesis'];
         }
     }
 }

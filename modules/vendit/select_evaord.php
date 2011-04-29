@@ -294,7 +294,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                      $upd_mm->uploadMag($last_rigdoc_id,
                                     $form['tipdoc'],
                                     $form['numdoc'],
-                                    $form['protoc'].'/'.$form['seziva'],
+                                    $form['seziva'],
                                     $dataemiss,
                                     $form['clfoco'],
                                     $form['sconto'],
@@ -312,7 +312,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                }
                if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
                      //controllo se ci sono ancora righi inevasi
-                     $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes and id_doc = 0 and tiprig between 0 and 1","id_rig",0,1);
+                     $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1","id_rig",0,1);
                      $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
                      if (!$inevasi) {  //se non ci sono + righi da evadere
                         //modifico lo status della testata dell'ordine solo se completamente evaso
@@ -322,7 +322,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                $ctrl_tes = $v['id_tes'];
            }
            //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-           $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes and id_doc = 0 and tiprig between 0 and 1","id_rig",0,1);
+           $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1","id_rig",0,1);
            $inevasi="";
            $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
            if (!$inevasi) {  //se non ci sono + righi da evadere
@@ -431,7 +431,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                      $upd_mm->uploadMag($last_rigdoc_id,
                                     $form['tipdoc'],
                                     $form['numdoc'],
-                                    $form['protoc'].'/'.$form['seziva'],
+                                    $form['seziva'],
                                     $dataemiss,
                                     $form['clfoco'],
                                     $form['sconto'],
@@ -449,7 +449,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                }
                if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
                      //controllo se ci sono ancora righi inevasi
-                     $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes and id_doc = 0 and tiprig between 0 and 1","id_rig",0,1);
+                     $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1","id_rig",0,1);
                      $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
                      if (!$inevasi) {  //se non ci sono + righi da evadere
                         //modifico lo status della testata dell'ordine solo se completamente evaso
@@ -459,7 +459,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                $ctrl_tes = $v['id_tes'];
            }
            //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-           $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes and id_doc = 0 and tiprig between 0 and 1","id_rig",0,1);
+           $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1","id_rig",0,1);
            $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
            if (!$inevasi) {  //se non ci sono + righi da evadere
               //modifico lo status della testata dell'ordine solo se completamente evaso
@@ -608,7 +608,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                      $upd_mm->uploadMag($last_rigdoc_id,
                                     $form['tipdoc'],
                                     $form['numdoc'],
-                                    $form['protoc'].'/'.$form['seziva'],
+                                    $form['seziva'],
                                     $dataemiss,
                                     $form['clfoco'],
                                     $form['sconto'],
@@ -626,7 +626,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                }
                if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
                      //controllo se ci sono ancora righi inevasi
-                     $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes and id_doc = 0 and tiprig between 0 and 1","id_rig",0,1);
+                     $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1","id_rig",0,1);
                      $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
                      if (!$inevasi) {  //se non ci sono + righi da evadere
                         //modifico lo status della testata dell'ordine solo se completamente evaso
@@ -636,7 +636,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                $ctrl_tes = $v['id_tes'];
            }
            //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-           $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes and id_doc = 0 and tiprig between 0 and 1","id_rig",0,1);
+           $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1","id_rig",0,1);
            $inevasi="";
            $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
            if (!$inevasi) {  //se non ci sono + righi da evadere
@@ -845,8 +845,8 @@ if (! empty ($form['righi'])) {
    </tr>";
    $ctrl_tes = 0;
    $total_order = 0;
-   $checkin = ' disabled ';
    foreach ($form['righi'] as $k => $v) {
+        $checkin = ' disabled ';
         $imprig = 0;
         //calcolo importo rigo
         switch($v['tiprig']) {
@@ -865,8 +865,10 @@ if (! empty ($form['righi'])) {
                     }
                break;
                case "2":
+                    $checkin = '';
                break;
                case "3":
+                    $checkin = '';
                break;
                case "6":
                     $body_text = gaz_dbi_get_row($gTables['body_text'],'id_body',$v['id_body_text']);

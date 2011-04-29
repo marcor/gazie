@@ -37,7 +37,7 @@ if (isset($_POST['Delete'])) {
     $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes =". intval($_POST['id_tes']),"id_tes DESC");
     while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
            gaz_dbi_del_row($gTables['rigbro'], "id_rig", $a_row['id_rig']);
-           gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
+           gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref ",$a_row['id_rig']);
            }
     header("Location: ".$_POST['ritorno']);
     exit;
@@ -49,8 +49,8 @@ if (isset($_POST['Return'])) {
     }
 
 //recupero i documenti non contabilizzati
-$result = gaz_dbi_dyn_query("*", $gTables['tesbro'], "id_tes = '{$_GET['id_tes']}'" ,"id_tes desc");
-$rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = '{$_GET['id_tes']}'" ,"id_tes desc");
+$result = gaz_dbi_dyn_query("*", $gTables['tesbro'], "id_tes = ".intval($_GET['id_tes']) ,"id_tes desc");
+$rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = ".intval($_GET['id_tes']) ,"id_tes desc");
 $numrig = gaz_dbi_num_rows($rs_righi);
 $form = gaz_dbi_fetch_array($result);
     switch($form['tipdoc']) {

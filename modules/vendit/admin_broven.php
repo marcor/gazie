@@ -140,6 +140,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
+    $form['in_id_doc'] = $_POST['in_id_doc'];
     $form['in_artsea'] = $_POST['in_artsea'];
     $form['in_codart'] = $_POST['in_codart'];
     $form['in_pervat'] = $_POST['in_pervat'];
@@ -169,6 +170,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             }
             $form['rows'][$next_row]['descri'] = substr($v['descri'],0,50);
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
+            $form['rows'][$next_row]['id_doc'] = intval($v['id_doc']);
             $form['rows'][$next_row]['codart'] = substr($v['codart'],0,15);
             $form['rows'][$next_row]['pervat'] = preg_replace("/\,/",'.',$v['pervat']);
             $form['rows'][$next_row]['tipiva'] = strtoupper(substr($v['tipiva'],0,1));
@@ -539,6 +541,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
+         $form['rows'][$old_key]['id_doc'] = $form['in_id_doc'];
          $form['rows'][$old_key]['descri'] = $form['in_descri'];
          $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
          $form['rows'][$old_key]['status'] = "UPDATE";
@@ -598,6 +601,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
          ksort($form['rows']);
     } else { //se è un rigo da inserire
          $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
+         $form['rows'][$next_row]['id_doc'] = $form['in_id_doc'];
          $form['rows'][$next_row]['descri'] = $form['in_descri'];
          $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
          $form['rows'][$next_row]['status'] = "INSERT";
@@ -785,6 +789,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
+    $form['in_id_doc'] = 0;
     $form['in_artsea'] = $admin_aziend['artsea'];
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
@@ -868,6 +873,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        }
        $form['rows'][$next_row]['descri'] = $rigo['descri'];
        $form['rows'][$next_row]['tiprig'] = $rigo['tiprig'];
+       $form['rows'][$next_row]['id_doc'] = $rigo['id_doc'];
        $form['rows'][$next_row]['codart'] = $rigo['codart'];
        $form['rows'][$next_row]['pervat'] = $rigo['pervat'];
        $iva_row = gaz_dbi_get_row($gTables['aliiva'],'codice',$rigo['codvat']);
@@ -906,6 +912,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
+    $form['in_id_doc'] = 0;
     $form['in_artsea'] = $admin_aziend['artsea'];
     $form['in_codart'] = "";
     $form['in_pervat'] = "";
@@ -1140,6 +1147,7 @@ echo "<input type=\"hidden\" value=\"".$form['in_ritenuta']."\" name=\"in_ritenu
 echo "<input type=\"hidden\" value=\"".$form['in_unimis']."\" name=\"in_unimis\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['in_prelis']."\" name=\"in_prelis\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['in_id_mag']."\" name=\"in_id_mag\" />\n";
+echo "<input type=\"hidden\" value=\"".$form['in_id_doc']."\" name=\"in_id_doc\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['in_annota']."\" name=\"in_annota\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['in_scorta']."\" name=\"in_scorta\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['in_pesosp']."\" name=\"in_pesosp\" />\n";
@@ -1228,6 +1236,7 @@ foreach ($form['rows'] as $k => $v) {
         echo "<input type=\"hidden\" value=\"".$v['codart']."\" name=\"rows[$k][codart]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['status']."\" name=\"rows[$k][status]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['tiprig']."\" name=\"rows[$k][tiprig]\">\n";
+        echo "<input type=\"hidden\" value=\"".$v['id_doc']."\" name=\"rows[$k][id_doc]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['codvat']."\" name=\"rows[$k][codvat]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['pervat']."\" name=\"rows[$k][pervat]\">\n";
         echo "<input type=\"hidden\" value=\"".$v['tipiva']."\" name=\"rows[$k][tipiva]\">\n";

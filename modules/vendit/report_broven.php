@@ -150,9 +150,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\">".$r["numdoc"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
-    $remains_atleastone = false; // Almeno un rigo è rimasto da evadere.
-    $processed_atleastone = false; // Almeno un rigo è già stato evaso.
-    $rigbro_result = gaz_dbi_dyn_query ('*',$gTables['rigbro'],"id_tes = ".$r["id_tes"],'id_tes DESC');
+    $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
+    $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
+    $rigbro_result = gaz_dbi_dyn_query ('*',$gTables['rigbro'],"id_tes = ".$r["id_tes"]." AND tiprig <=1 ",'id_tes DESC');
     while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {
         if ($rigbro_r["id_doc"] == 0) {
             $remains_atleastone = true;
@@ -163,11 +163,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if ($rigbro_r["id_doc"] != $tesdoc_r["id_tes"]) {
             //
             // Azzera il numero documento nel rigo dell'ordine, dato
-            // che non è più valido.
+            // che non e' piu' valido.
             //
             gaz_dbi_put_row ($gTables['rigbro'],"id_tes",$rigbro_r["id_tes"],"id_doc",0);
             //
-            // Il rigo è da evadere.
+            // Il rigo e' da evadere.
             //
             $remains_atleastone = true;
         } else {
@@ -178,12 +178,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
     }
     //
-    // Se l'ordine è da evadere completamente, verifica lo status ed
+    // Se l'ordine e' da evadere completamente, verifica lo status ed
     // eventualmente lo aggiorna.
     //
     if ($remains_atleastone && !$processed_atleastone) {
         //
-        // L'ordine è completamente da evadere.
+        // L'ordine e' completamente da evadere.
         //
         if ($r["status"] != "GENERATO") {
             gaz_dbi_put_row ($gTables['tesbro'],"id_tes",$r["id_tes"],"status","RIGENERATO");
@@ -274,11 +274,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
     }
     echo "<td class=\"FacetDataTD\"><a href=\"".$modulo."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
     echo "<td class=\"FacetDataTD\">";
-    if ($remains_atleastone && !$processed_atleastone) {
-        //
-        // L'ordine non è mai stato evaso, oppure è stato rigenerato,
-        // pertanto può essere cancellato.
-        //
+    if (!$remains_atleastone || !$processed_atleastone) {
+        //possono essere cancellati solo gli ordini inevasi o completamente evasi
         echo "<a href=\"delete_broven.php?id_tes=".$r['id_tes']."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a>";
     }
     echo "</td>";
