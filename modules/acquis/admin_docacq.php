@@ -238,6 +238,17 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
              if ($result and ($form['numdoc'] > $result['numdoc'])) {
                 $msg .= "41+";
              }
+          } elseif ($form['tipdoc'] == 'ADT') { //se è un DDT acquisto
+            $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = ".$form['annemi']." and datemi < '$datemi' and tipdoc = 'ADT' and seziva = $sezione","protoc desc",0,1);
+            $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
+            if ($result && ($form['protoc'] < $result['protoc'])) {
+               $msg .= "42+";
+            }
+            $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = ".$form['annemi']." and datemi > '$datemi' and tipdoc = 'ADT' and seziva = $sezione","protoc asc",0,1);
+            $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
+            if ($result && ($form['protoc'] > $result['protoc'])) {
+                $msg .= "43+";
+            }
           } else { //se sono altri documenti
             $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = ".$form['annemi']." and datemi < '$datemi' and tipdoc like '".substr($form['tipdoc'],0,1)."__' and seziva = $sezione","protoc desc",0,1);
             $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
