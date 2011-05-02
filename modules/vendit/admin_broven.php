@@ -509,6 +509,13 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['speban'] = 0.00;
             $form['numrat'] = 1;
     }
+    if ($pagame['tippag'] == 'T' && $form['stamp']==0) {  //se il pagamento prevede il bollo
+            $form['stamp'] = $admin_aziend['perbol'];
+            $form['round_stamp'] = $admin_aziend['round_bol'];
+    } elseif ($pagame['tippag'] != 'T') {
+           $form['stamp'] = 0;
+           $form['round_stamp'] = 0;
+    }
     $form['hidden_req']='';
   }
 
