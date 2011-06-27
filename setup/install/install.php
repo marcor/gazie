@@ -171,31 +171,20 @@ function getNextSqlFileName($currentDbVersion, $sqlFiles)
 
 function executeQueryFileInstall($sqlFile,$Database,$table_prefix)
 {
-    // Luigi Rambaldi 13 Ottobre 2005
+    // Luigi Rambaldi 13 Ottobre 2005 - last rev. Antonio de Vincentiis 27 Giugno 2011
     global $Database,$link;
     // Inizializzazione accumulatore
-    $sql = "";
     $tmpSql=file_get_contents( "../../setup/install/". $sqlFile );
     $tmpSql = preg_replace("/gaz_/", $table_prefix.'_', $tmpSql);  //sostituisco gaz_ con il prefisso personalizzato
     $tmpSql = preg_replace("/CREATE DATABASE IF NOT EXISTS gazie/", "CREATE DATABASE IF NOT EXISTS ".$Database, $tmpSql);
     $tmpSql = preg_replace("/USE gazie/", "USE ".$Database, $tmpSql);
     // Iterazione per ciascuna linea del file.
-    $lineArray = explode("\n",$tmpSql);
-    foreach($lineArray as $line){
-        $sql .= $line;
-        // Il punto e virgola indica la fine di ciascuna istruzione SQL , ciascuna di esse viene accumulata
-        if (! preg_match("/;/", $sql)) {
-            continue;
+    $lineArray = explode(";\n",$tmpSql);
+    foreach($lineArray as $l){
+        $l=ltrim($l);
+        if (!empty($l)) {
+           gaz_dbi_query($l);
         }
-        // Elimina il punto e virgola .
-        $sql = preg_replace("/;/", "", $sql);
-        // Esegue ciascuna istruzione.
-        if (!gaz_dbi_query($sql)) { // si collega la DB
-            echo "Installation Query failed! <br /> Query di Istallazione Fallita";
-            exit;
-        }
-        // ripristino dell'accumulatore a seguito dell'istruzione
-        $sql = "";
     }
     return true;
 }
