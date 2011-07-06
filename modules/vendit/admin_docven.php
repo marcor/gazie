@@ -1162,9 +1162,10 @@ function setMultipleValues(y,m,d) {
   document.docven.mestra.value=LZ(m);
   document.docven.giotra.value=LZ(d);
   }
+}
 </SCRIPT>
 <?php
-echo "<form method=\"POST\" name=\"docven\">\n";
+echo "<form method=\"POST\" name=\"docven\" >\n";
 $gForm = new venditForm();
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"".$form['id_tes']."\" name=\"id_tes\">\n";
@@ -1626,7 +1627,7 @@ if ($next_row > 0) {
               <td align=\"right\">".gaz_format_number($totivafat)."</td>
               <td align=\"right\">".gaz_format_number($stamp)."</td>
               <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($totimpfat+$totivafat+$stamp)."</td>\n";
-        echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input name="ins" type="submit" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
+        echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
         if ($rit > 0) {
             echo "<tr>";
             echo "<td colspan=\"7\" align=\"right\">".$script_transl['ritenuta']."</td>";

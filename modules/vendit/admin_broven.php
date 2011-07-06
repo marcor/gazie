@@ -1462,9 +1462,9 @@ if ($next_row > 0) {
               <td align=\"right\">".gaz_format_number($stamp)."</td>
               <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($totimpfat+$totivafat+$stamp)."</td>\n";
         if ($toDo == 'update') {
-           echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" accesskey="m" name="ins" value="MODIFICA !"></td></tr>';
+           echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !"></td></tr>';
         } else {
-           echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" accesskey="i" name="ins" value="INSERISCI !"></td></tr>';
+           echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !"></td></tr>';
         }
         if ($rit > 0) {
             echo "<tr>";

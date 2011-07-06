@@ -1258,7 +1258,7 @@ echo $diffV.' '.$script_transl['tot_a'].' :';
 echo "<input type=\"button\" $a_but value=\"".number_format($form['tot_A'],2,'.','')."\" ID=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
 echo "</td>\n";
 echo '<td align="right">';
-echo '<input name="ins" type="submit" '.$i_but.' tabindex="99" value="'.strtoupper($script_transl[$toDo]).'!">';
+echo '<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" '.$i_but.' tabindex="99" value="'.strtoupper($script_transl[$toDo]).'!">';
 echo "\n</td></tr></table>";
 ?>
 </form>

@@ -129,7 +129,7 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false)
      echo "<body>\n";
      echo '<div id="GazieMenuID"></div>';
      echo '<script type="text/javascript">';
-     echo "cmDraw('GazieMenuID', myMenu, 'hbr', cmThemeGazie)\n";
+     echo "cmDraw('GazieMenuID', myMenu, 'hbr', cmThemeGazie);\n";
      echo '</script>';
   }
   if (!isset($translated_script)){
@@ -140,6 +140,20 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false)
      }
   }
   require("../../language/".$admin_aziend['lang']."/menu.inc.php");
+  echo '<script type="text/javascript">
+     countclick = 0;
+     function chkSubmit() {
+        if(countclick > 0) {
+            alert("'.$strCommon['wait_al'].'");
+            document.getElementById(\'preventDuplicate\').disabled=true;
+            return false;
+        } else {
+            countclick++;
+            document.getElementById(\'preventDuplicate\').value=\''.$strCommon['wait'].'...\';
+            return true;
+        }
+     }
+     </script>';
   return ($strCommon+$translated_script);
 }
 

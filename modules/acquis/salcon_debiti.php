@@ -436,7 +436,7 @@ if($_POST['num_rigo'] > 0) {
     if ($toDo == 'update') {
         echo '<input title="Modifica il movimento contabile e la ricevuta di pagamento" type="submit" value="MODIFICA !" accesskey="i" name="upd">';
     } else {
-        echo '<input title="Inserisci il movimento contabile e la ricevut di pagamento" type="submit" value="INSERISCI !" accesskey="i" name="ins">';
+        echo '<input title="Inserisci il movimento contabile e la ricevuta di pagamento" type="submit" value="INSERISCI !" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();">';
     }
     echo "</td></tr>\n";
 }

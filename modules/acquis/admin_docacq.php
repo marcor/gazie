@@ -1299,9 +1299,9 @@ if ($next_row > 0) {
                <td align=\"right\">".$quatot."</td>
                <td align=\"right\">".number_format (($totimpfat+$totivafat),2, '.', '')."</td>\n";
         if ($toDo == 'update') {
-           echo '<td class="FacetFieldCaptionTD" align="right"><input type="submit" accesskey="m" name="ins" value="MODIFICA !"></td></tr>';
+           echo '<td class="FacetFieldCaptionTD" align="right"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !"></td></tr>';
         } else {
-           echo '<td class="FacetFieldCaptionTD" align="right"><input type="submit" accesskey="i" name="ins" value="INSERISCI !"></td></tr>';
+           echo '<td class="FacetFieldCaptionTD" align="right"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !"></td></tr>';
         }
 }
 echo "</table><br />";

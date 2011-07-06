@@ -353,9 +353,9 @@ foreach ($form['righi'] as $key => $value) {
 }
 // fine righi inseriti
 if ($toDo == 'update') {
-   echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" accesskey="m" name="ins" value="MODIFICA !"></td></tr>';
+   echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !"></td></tr>';
 } else {
-   echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" accesskey="i" name="ins" value="INSERISCI !"></td></tr>';
+   echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !"></td></tr>';
 }
 echo "</table>";
 ?>

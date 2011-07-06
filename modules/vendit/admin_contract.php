@@ -604,7 +604,7 @@ if ($next_row>0) {
     }
 }
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo '<td colspan="6" align="right"> <input type="submit" accesskey="i" name="ins" value="';
+echo '<td colspan="6" align="right"> <input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="';
 echo $script_transl['submit'];
 echo '" tabindex="100" >';
 echo "\t </td>\n";
