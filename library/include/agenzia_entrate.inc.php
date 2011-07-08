@@ -336,5 +336,358 @@ class AgenziaEntrate
                return $accumulatore;
                }
 // --- FINE FUNZIONI ELENCO CLIENTI E FORNITORI (ECF)
+
+
+
+
+
+/****** creaFileART21 - COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA
+      $testa = array monodimensionale con i seguenti index:
+              [codfis] = Codice Fiscale del contribuente 16 alfanumerico o 11 numerico
+              [pariva] = Partita IVA del contribuente 11 numerico
+              [nome] = Nome del Contribuente 26 alfanumerico
+              [cognome] = Cognome del Contribuente 25 alfanumerico
+              [sesso] = Sesso se Persona Fisica (d'ora in poi PF) 1 alfanumerico (MF)
+              [datnas] = Data di nascita contribuente se PF formato GGMMAAAA
+              [luonas] = Comune o stato estero di nascita contribuente se PF 40 alfanumerico
+              [pronas] = Provincia o stato estero (EE) di nascita contribuente se PF 2 alfanumerico
+              [ragsoc] = Ragione sociale contribuente se Persona Giuridica (d'ora in poi PG) 70 alfanumerico
+              [segleg] = Comune della sede legale se PG 40 alfanumerico
+              [proleg] = Provincia della sede legale se PG 2 alfanumerico
+              [anno] = Anno fornitura 4 numerico
+      $dati = array bidimensionale con i seguenti index posti anche in questo ordine:
+              [tipo] = Tipo di Record 1 numerico (1=SOGGETTI NON TITOLARI DI PARTITA IVA,2=SOGGETTI TITOLARI DI PARTITA IVA,3=SOGGETTI NON RESIDENTI)
+              [codfis] = Codice Fiscale del cliente 16 alfanumerico
+              [pariva] = Partita IVA del cliente/fornitore 11 numerico
+              [imponibile] = Imponibile o corrispettivo in caso di [tipo] = 1
+              [imposta] = Imposta applicata
+              [tipoimponibile] = Tipologia Imponibile (1=Imponibile,2 = Non imponibile,3 = Esente,4 = Imponibile con IVA non esposta in fattura )
+              [tipooperazione] = Tipologia dell'operazione (1 = Cessione di beni,2 = Prestazione di servizi,3 = Acquisto di beni,4 = Acquisto di servizi )
+              [cognome] = Cognome in caso di [tipo] = 3
+              [nome] = Nome in caso di [tipo] = 3
+              [datnas] = Data di Nascita in caso di [tipo] = 3   (se non valorizzato discrimina viene considerata una persona non fisica)
+              [luonas] = Comune o Stato estero di nascita in caso di [tipo] = 3
+              [pronas] = Provincia di nascita in caso di [tipo] = 3 (in caso di Stato estero, indicare "EE")
+              [stato] = Stato estero del domicilio fiscale in caso di [tipo] = 3 (Indicare uno dei codici, corrispondente allo Stato di residenza della controparte, di
+                                                                                 cui all'Elenco dei Paesi e Territori esteri contenuto nelle istruzioni per la compilazione
+                                                                                 del modello UNICO di dichiarazione dei redditi.)
+              [indirizzo] = Indirizzo estero del domicilio fiscale in caso di [tipo] = 3  (se non valorizzato discrimina viene considerata una persona fisica)
+     $totali = array bidimensionale (prima dimensione:index [1] =clienti, index[2] = fornitori)  la seconda dimensione deve avere i seguenti index:
+              [numero] = Numero di clienti/fornitori 8 numerico
+              [imponibile] = Imponibile
+              [imposta] = Imposta applicata
+              [esente] = Esente
+              [nonimp] = Non imponibile
+*/
+      function Record0($T) // TRACCIATO RECORD DI TESTA
+               {
+               $this->CFContribuente = substr(str_pad($T['codfis'],16,' '),0,16);
+               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
+               if (isset($T['sesso'])){
+                  $this->AltriDati = substr(str_pad($T['cognome'],26,' '),0,26).
+                                  substr(str_pad($T['nome'],25,' '),0,25).
+                                  substr($T['sesso'],0,1).
+                                  substr(str_pad($T['datnas'],8,' '),0,8).
+                                  substr(str_pad($T['luonas'],40,' '),0,40).
+                                  substr(str_pad($T['pronas'],2,' '),0,2).str_repeat(' ',112);
+               } else {
+                  $this->AltriDati = str_repeat(' ',102).
+                                   substr(str_pad($T['ragsoc'],70,' '),0,70).
+                                   substr(str_pad($T['sedleg'],40,' '),0,40).
+                                   substr(str_pad($T['proleg'],2,' '),0,2);
+               }
+               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
+               return "0ART2147".$this->CFContribuente.$this->PIContribuente.$this->AltriDati.
+                      str_repeat(' ',16).$this->Anno.str_repeat('0',8).str_repeat(' ',16).
+                      str_repeat('0',14).str_repeat(' ',1490)."A\r\n";
+
+               }
+
+      function Record1($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI NON TITOLARI DI PARTITA IVA
+               {
+               function CreaElemento($k,$v,$t){
+                      $acc = '';
+                      if ($t == 1) { // clienti
+                           $tipo = 'CL';
+                           switch ($k) {
+                                  case 'progressivo':
+                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'codfis':
+                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'pariva':
+                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'imponibile':
+                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'imposta':
+                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'nonimp':
+                                  $acc = $tipo.'005001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'esente':
+                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                           }
+                      } else { //fornitori
+                           $tipo = 'FR';
+                           switch ($k) {
+                                  case 'progressivo':
+                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'codfis':
+                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
+                                  break;                                                                   case 'pariva':
+                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'imponibile':
+                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'imposta':
+                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'nonimp':
+                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'esente':
+                                  $acc = $tipo.'007001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                           }
+                  }
+                  return $acc;
+               }
+               $n_elements = 0;
+               $ctrl_tipo = 0;
+               foreach ($D as $ElementsData){
+                       if ($ctrl_tipo < $ElementsData['tipo'] and $ctrl_tipo != 0) { // non è lo stesso partner precedente e non è il primo
+                          $diff_to_end = (70-$n_elements)*24 + 116;
+                          $acc .= str_repeat(' ',$diff_to_end)."A\r\n".$ElementsData['tipo'];
+                          $n_elements = 0;
+                       } elseif ($ctrl_tipo == 0) {
+                          $acc = $ElementsData['tipo'];
+                       }
+                       foreach ($ElementsData as $key=>$value){
+                           $rs_elemento = CreaElemento($key,$value,$ElementsData['tipo']);
+                           if (!empty($rs_elemento)){ // se è un elemento valido
+                              $acc .= $rs_elemento;
+                              $n_elements++;
+                           }
+                           if ($n_elements == 70 ){
+                              // salta sulla riga successiva
+                              $acc .= str_repeat(' ',116)."A\r\n".$ElementsData['tipo'];
+                              $n_elements = 0;
+                           }
+                       }
+                       $ctrl_tipo = $ElementsData['tipo'];
+               }
+               $diff_to_end = (70-$n_elements)*24 + 116;
+               $acc .= str_repeat(' ',$diff_to_end)."A\r\n";
+               return $acc;
+               }
+
+      function Record2($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI TITOLARI DI PARTITA IVA
+               {
+               function CreaElemento($k,$v,$t){
+                      $acc = '';
+                      if ($t == 1) { // clienti
+                           $tipo = 'CL';
+                           switch ($k) {
+                                  case 'progressivo':
+                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'codfis':
+                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'pariva':
+                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'imponibile':
+                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'imposta':
+                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'nonimp':
+                                  $acc = $tipo.'005001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'esente':
+                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                           }
+                      } else { //fornitori
+                           $tipo = 'FR';
+                           switch ($k) {
+                                  case 'progressivo':
+                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'codfis':
+                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
+                                  break;                                                                   case 'pariva':
+                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'imponibile':
+                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'imposta':
+                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'nonimp':
+                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'esente':
+                                  $acc = $tipo.'007001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                           }
+                  }
+                  return $acc;
+               }
+               $n_elements = 0;
+               $ctrl_tipo = 0;
+               foreach ($D as $ElementsData){
+                       if ($ctrl_tipo < $ElementsData['tipo'] and $ctrl_tipo != 0) { // non è lo stesso partner precedente e non è il primo
+                          $diff_to_end = (70-$n_elements)*24 + 116;
+                          $acc .= str_repeat(' ',$diff_to_end)."A\r\n".$ElementsData['tipo'];
+                          $n_elements = 0;
+                       } elseif ($ctrl_tipo == 0) {
+                          $acc = $ElementsData['tipo'];
+                       }
+                       foreach ($ElementsData as $key=>$value){
+                           $rs_elemento = CreaElemento($key,$value,$ElementsData['tipo']);
+                           if (!empty($rs_elemento)){ // se è un elemento valido
+                              $acc .= $rs_elemento;
+                              $n_elements++;
+                           }
+                           if ($n_elements == 70 ){
+                              // salta sulla riga successiva
+                              $acc .= str_repeat(' ',116)."A\r\n".$ElementsData['tipo'];
+                              $n_elements = 0;
+                           }
+                       }
+                       $ctrl_tipo = $ElementsData['tipo'];
+               }
+               $diff_to_end = (70-$n_elements)*24 + 116;
+               $acc .= str_repeat(' ',$diff_to_end)."A\r\n";
+               return $acc;
+               }
+
+      function Record3($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI NON RESIDENTI PRIVI DI CODICE FISCALE
+               {
+               function CreaElemento($k,$v,$t){
+                      $acc = '';
+                      if ($t == 1) { // clienti
+                           $tipo = 'CL';
+                           switch ($k) {
+                                  case 'progressivo':
+                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'codfis':
+                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'pariva':
+                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'imponibile':
+                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'imposta':
+                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'nonimp':
+                                  $acc = $tipo.'005001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'esente':
+                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                           }
+                      } else { //fornitori
+                           $tipo = 'FR';
+                           switch ($k) {
+                                  case 'progressivo':
+                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'codfis':
+                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
+                                  break;                                                                   case 'pariva':
+                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
+                                  break;
+                                  case 'imponibile':
+                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'imposta':
+                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'nonimp':
+                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                                  case 'esente':
+                                  $acc = $tipo.'007001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
+                                  break;
+                           }
+                  }
+                  return $acc;
+               }
+               $n_elements = 0;
+               $ctrl_tipo = 0;
+               foreach ($D as $ElementsData){
+                       if ($ctrl_tipo < $ElementsData['tipo'] and $ctrl_tipo != 0) { // non è lo stesso partner precedente e non è il primo
+                          $diff_to_end = (70-$n_elements)*24 + 116;
+                          $acc .= str_repeat(' ',$diff_to_end)."A\r\n".$ElementsData['tipo'];
+                          $n_elements = 0;
+                       } elseif ($ctrl_tipo == 0) {
+                          $acc = $ElementsData['tipo'];
+                       }
+                       foreach ($ElementsData as $key=>$value){
+                           $rs_elemento = CreaElemento($key,$value,$ElementsData['tipo']);
+                           if (!empty($rs_elemento)){ // se è un elemento valido
+                              $acc .= $rs_elemento;
+                              $n_elements++;
+                           }
+                           if ($n_elements == 70 ){
+                              // salta sulla riga successiva
+                              $acc .= str_repeat(' ',116)."A\r\n".$ElementsData['tipo'];
+                              $n_elements = 0;
+                           }
+                       }
+                       $ctrl_tipo = $ElementsData['tipo'];
+               }
+               $diff_to_end = (70-$n_elements)*24 + 116;
+               $acc .= str_repeat(' ',$diff_to_end)."A\r\n";
+               return $acc;
+               }
+
+      function Record9($T) //TRACCIATO RECORD DI CODA
+               {
+               $this->CFContribuente = substr(str_pad($T['codfis'],16,' '),0,16);
+               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
+               if (isset($T['sesso'])){
+                  $this->AltriDati = substr(str_pad($T['cognome'],26,' '),0,26).
+                                  substr(str_pad($T['nome'],25,' '),0,25).
+                                  substr($T['sesso'],0,1).
+                                  substr(str_pad($T['datnas'],8,' '),0,8).
+                                  substr(str_pad($T['luonas'],40,' '),0,40).
+                                  substr(str_pad($T['pronas'],2,' '),0,2).str_repeat(' ',112);
+               } else {
+                  $this->AltriDati = str_repeat(' ',102).
+                                   substr(str_pad($T['ragsoc'],70,' '),0,70).
+                                   substr(str_pad($T['sedleg'],40,' '),0,40).
+                                   substr(str_pad($T['proleg'],2,' '),0,2);
+               }
+               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
+               return "0ART2147".$this->CFContribuente.$this->PIContribuente.$this->AltriDati.
+                      str_repeat(' ',16).$this->Anno.str_repeat('0',8).str_repeat(' ',16).
+                      str_repeat('0',14).str_repeat(' ',1490)."A\r\n";
+
+               }
+
+      function creaFileART21($testa,$dati,$totali)
+               {
+               $accumulatore = '0'.$this->Record09($testa).$this->Record12($dati).
+                               $this->Record3($totali).'9'.$this->Record09($testa);
+               return $accumulatore;
+               }
+// --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21)
       }
 ?>
