@@ -89,6 +89,8 @@ $strScript = array("admin_fornit.php" =>
                            'speban'=>'Addebito spese bancarie',
                            'spefat'=>'Addebito spese di fatturazione',
                            'stapre'=>'Stampa prezzi su D.d.T.',
+                           'op_type'=>'Tipologia operazioni',
+                           'op_type_value'=>array(3=>'Acquisto di beni',4=>'Acquisto di servizi'),
                            'allegato'=>'Allegato IVA - Elenco fornitori',
                            'yn_value'=>array('S'=>'Si','N'=>'No'),
                            'aliiva'=>'Riduzione I.V.A.',

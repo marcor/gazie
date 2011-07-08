@@ -90,6 +90,8 @@ $strScript = array ("admin_client.php" =>
                            'speban'=>'Costos bancarias de débito ',
                            'spefat'=>'Costes de facturaci&oacute;n de débito',
                            'stapre'=>'Los precios de impresion sobre el DDT ',
+                           'op_type'=>'Tipos de operaciones',
+                           'op_type_value'=>array(1=>'Venta de bienes',2=>'Venta de servicios'),
                            'allegato'=>'Anexo IVA - Clientes',
                            'yn_value'=>array('S'=>'Si','N'=>'No'),
                            'aliiva'=>'Reduccion de I.V.A.',
@@ -410,7 +412,8 @@ $strScript = array ("admin_client.php" =>
                                            'El total of recibibles no puede ser cero',
                                            'No se puede cobrar el pago automaticamente con un cliente anonimo',
                                            'Codigo fiscal incorrecto ' ,
-                                           'QUE NO HAN HECHO EL DIARIO DE CONTABILIDAD DE CAJA REGISTRADORA'
+                                           'QUE NO HAN HECHO EL DIARIO DE CONTABILIDAD DE CAJA REGISTRADORA',
+                                           'La cantidad no emite un documento de venta de forma anonima'
                                           ),
                            'customer'=>'Cliente',
                            'search_customer'=>array('No encontrado!',

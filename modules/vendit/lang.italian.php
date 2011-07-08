@@ -85,6 +85,8 @@ $strScript = array ("admin_client.php" =>
                            'speban'=>'Addebito spese bancarie',
                            'spefat'=>'Addebito spese di fatturazione',
                            'stapre'=>'Stampa prezzi su D.d.T.',
+                           'op_type'=>'Tipologia operazioni',
+                           'op_type_value'=>array(1=>'Cessione di beni',2=>'Prestazione di servizi'),
                            'allegato'=>'Allegato IVA - Elenco Clienti',
                            'yn_value'=>array('S'=>'Si','N'=>'No'),
                            'aliiva'=>'Riduzione I.V.A.',
@@ -463,7 +465,8 @@ $strScript = array ("admin_client.php" =>
                                            'Il totale dello scontrino non pu&ograve; essere zero',
                                            'Il pagamento non pevede l\'incasso automatico pur essendo un cliente anonimo',
                                            'Il codice fiscale &egrave; formalmente errato',
-                                           'NON HAI ESEGUITO LA CHIUSURA GIORNALIERA DEL REGISTRATORE DI CASSA<BR /> FALLO PRIMA DI EMETTERNE UNO!!!'
+                                           'NON HAI ESEGUITO LA CHIUSURA GIORNALIERA DEL REGISTRATORE DI CASSA<BR /> FALLO PRIMA DI EMETTERNE UNO!!!',
+                                           'L\'importo non consente di emettere un documento di vendita anonimo'
                                           ),
                            'customer'=>'Cliente',
                            'search_customer'=>array('La ricerca non ha dato risultati!',

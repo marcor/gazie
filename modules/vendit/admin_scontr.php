@@ -184,6 +184,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        }
        //controllo dei righi e del totale
        $tot=0;
+       $tim=0;
        foreach ($form['rows'] as $i=>$v) {
             if (empty($v['descri']) && $v['quanti']>0) {
                 $msg .= "3+";
@@ -193,15 +194,22 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             }
             if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
                if ($v['tiprig'] == 0) { // tipo normale
+                   $tim_row = CalcolaImportoRigo($v['quanti'], $v['prelis'],array($v['sconto'],$form['sconto']));
                    $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'],array($v['sconto'],$form['sconto'],-$v['pervat']));
                } else {                 // tipo forfait
+                   $tim_row = CalcolaImportoRigo($v['quanti'], $v['prelis'],0);
                    $tot_row = CalcolaImportoRigo(1,$v['prelis'],-$v['pervat']);
                }
                $tot+=$tot_row;
+               $tim+=$tim_row;
             }
        }
        if ($tot==0) {  //il totale e' zero
           $msg .= "5+";
+       } elseif($tim>=3000) { // se il totale supera i 3600 euro
+          if($form["clfoco"]==$admin_aziend['mascli']) {
+              $msg .= "9+";
+          }
        }
        if (!empty($form['fiscal_code'])) {  // controllo codice fiscale
           require("../../library/include/check.inc.php");

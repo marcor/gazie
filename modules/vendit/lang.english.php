@@ -86,6 +86,8 @@ $strScript = array ("admin_client.php" =>
                            'speban'=>'Charge the bank expenses',
                            'spefat'=>'Charge the cost of billing',
                            'stapre'=>'Print prices on shipping documents',
+                           'op_type'=>'Operation type',
+                           'op_type_value'=>array(1=>'Sale of goods',2=>'Selling services'),
                            'allegato'=>'Attached VAT - Customers report',
                            'yn_value'=>array('S'=>'Yes','N'=>'No'),
                            'aliiva'=>'VAT reduction',
@@ -406,7 +408,8 @@ $strScript = array ("admin_client.php" =>
                                            'The total of receivable can not be zero',
                                            'Payment is not expected to be collected automatically while an anonymous customer',
                                            'Incorrect fiscal code ',
-                                           'YOU DO NOT HAVE DONE THE DAILY ACCOUNTING/CLOSURE OF CASH REGISTER'
+                                           'YOU DO NOT HAVE DONE THE DAILY ACCOUNTING/CLOSURE OF CASH REGISTER',
+                                           'The amount does not issue a sales document anonymously'
                                           ),
                            'customer'=>'customer',
                            'search_customer'=>array('Noto found!',

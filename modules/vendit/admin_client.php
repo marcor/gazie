@@ -426,6 +426,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"ritenuta\" value=\"".$form['ritenuta']."\" align=\"right\" maxlength=\"4\" size=\"4\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['op_type']."</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+$gForm->variousSelect('op_type',$script_transl['op_type_value'],$form['op_type'],'FacetSelect',false);
+echo "\t </td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['allegato']."</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
 $gForm->selectNumber('allegato',$form['allegato'],true);
 echo "\t </td>\n";
