@@ -379,7 +379,7 @@ class AgenziaEntrate
               [esente] = Esente
               [nonimp] = Non imponibile
 */
-      function Record0($T) // TRACCIATO RECORD DI TESTA
+      function Record_0($T) // TRACCIATO RECORD DI TESTA
                {
                $this->CFContribuente = substr(str_pad($T['codfis'],16,' '),0,16);
                $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
@@ -403,7 +403,7 @@ class AgenziaEntrate
 
                }
 
-      function Record1($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI NON TITOLARI DI PARTITA IVA
+      function Record_1($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI NON TITOLARI DI PARTITA IVA
                {
                function CreaElemento($k,$v,$t){
                       $acc = '';
@@ -488,7 +488,7 @@ class AgenziaEntrate
                return $acc;
                }
 
-      function Record2($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI TITOLARI DI PARTITA IVA
+      function Record_2($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI TITOLARI DI PARTITA IVA
                {
                function CreaElemento($k,$v,$t){
                       $acc = '';
@@ -573,7 +573,7 @@ class AgenziaEntrate
                return $acc;
                }
 
-      function Record3($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI NON RESIDENTI PRIVI DI CODICE FISCALE
+      function Record_3($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI NON RESIDENTI PRIVI DI CODICE FISCALE
                {
                function CreaElemento($k,$v,$t){
                       $acc = '';
@@ -658,7 +658,7 @@ class AgenziaEntrate
                return $acc;
                }
 
-      function Record9($T) //TRACCIATO RECORD DI CODA
+      function Record_9($T) //TRACCIATO RECORD DI CODA
                {
                $this->CFContribuente = substr(str_pad($T['codfis'],16,' '),0,16);
                $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);

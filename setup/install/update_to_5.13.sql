@@ -95,7 +95,7 @@ INSERT INTO `gaz_country` (`iso`, `name`, `iso3`, `IBAN_prefix`, `IBAN_lenght`, 
 ('CY', 'CYPRUS', 'CYP', 'CY', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11, 315, 'Cipro', '.cy', 'CY'),
 ('CZ', 'CZECH REPUBLIC', 'CZE', 'CZ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11, 257, 'Ceca, Repubblica', '.cz', 'CZ'),
 ('DJ', 'DJIBOUTI', 'DJI', 'DJ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23, 424, 'Gibuti', '.dj', ' '),
-('DM', 'DOMINICA ', 'DMA', 'DM', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42, 515, 'Dominica', '.dm', 'WD'),
+('DM', 'DOMINICA', 'DMA', 'DM', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42, 515, 'Dominica', '.dm', 'WD'),
 ('DO', 'DOMINICAN REPUBLIC', 'DOM', 'DO', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42, 516, 'Dominicana, Repubblica', '.do', 'DOM'),
 ('EC', 'ECUADOR', 'ECU', 'EC', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42, 609, 'Ecuador', '.ec', 'EC'),
 ('EG', 'EGYPT', 'EGY', 'EG', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 21, 419, 'Egitto', '.eg', 'ET'),
@@ -111,7 +111,7 @@ INSERT INTO `gaz_country` (`iso`, `name`, `iso3`, `IBAN_prefix`, `IBAN_lenght`, 
 ('GH', 'GHANA', 'GHA', 'GH', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 22, 423, 'Ghana', '.gh', 'GH'),
 ('GD', 'GRENADA', 'GRD', 'GD', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42, 519, 'Grenada', '.gd', 'WG'),
 ('GT', 'GUATEMALA', 'GTM', 'GT', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42, 523, 'Guatemala', '.gt', 'GCA'),
-('GN', 'GUINEA,', 'GIN', 'GN', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 22, 425, 'Guinea', '.gn', 'RG'),
+('GN', 'GUINEA', 'GIN', 'GN', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 22, 425, 'Guinea', '.gn', 'RG'),
 ('GW', 'GUINEA-BISSAU', 'GNB', 'GW', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 22, 426, 'Guinea Bissau', '.gw', ' '),
 ('GY', 'GUYANA', 'GUY', 'GY', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42, 612, 'Guyana', '.gy', 'GUY'),
 ('HT', 'HAITI', 'HTI', 'HT', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 4, 42, 524, 'Haiti', '.ht', 'RH'),
@@ -143,7 +143,7 @@ INSERT INTO `gaz_country` (`iso`, `name`, `iso3`, `IBAN_prefix`, `IBAN_lenght`, 
 ('MW', 'MALAWI', 'MWI', 'MW', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23, 434, 'Malawi', '.mw', 'MW'),
 ('MY', 'MALAYSIA', 'MYS', 'MY', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 33, 340, 'Malaysia', '.my', 'MAL'),
 ('MV', 'MALDIVES', 'MDV', 'MV', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3, 32, 339, 'Maldive', '.mv', ' '),
-('ML', 'MALI,', 'MLI', 'ML', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 22, 435, 'Mali', '.ml', 'RMM'),
+('ML', 'MALI', 'MLI', 'ML', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 22, 435, 'Mali', '.ml', 'RMM'),
 ('MT', 'MALTA', 'MLT', 'MT', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 11, 227, 'Malta', '.mt', 'M'),
 ('MH', 'MARSHALL ISLANDS', 'MHL', 'MH', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5, 50, 712, 'Marshall, Isole', '.mh', ' '),
 ('MR', 'MAURITANIA', 'MRT', 'MR', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 22, 437, 'Mauritania', '.mr', 'RIM'),
@@ -224,7 +224,7 @@ INSERT INTO `gaz_country` (`iso`, `name`, `iso3`, `IBAN_prefix`, `IBAN_lenght`, 
 ('ZM', 'ZAMBIA (formerly Northern Rhodesia)', 'ZMB', 'ZM', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23, 464, 'Zambia', '.zm', 'RNR'),
 ('ZW', 'ZIMBABWE', 'ZWE', 'ZW', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23, 465, 'Zimbabwe (ex Rhodesia)', '.zw', 'ZW');
 ALTER TABLE `gaz_anagra` CHANGE `country` `country` VARCHAR( 3 ) NOT NULL ;
-INSERT IGNORE INTO `gaz_menu_module` (`id`, `id_module`, `link`, `icon`, `class`, `translate_key`, `accesskey`, `weight`) VALUES ('55', '6', 'select_comopril.php', '', '', '7', '', '7');
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '6', 'select_comopril.php', '', '', '7', '', '7'  FROM `gaz_menu_module`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXclfoco` ADD `op_type` INT NOT NULL AFTER `ritenuta`; 
 -- STOP_WHILE( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query seguenti su tutte le aziende dell'installazione)
