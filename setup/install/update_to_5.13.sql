@@ -224,6 +224,7 @@ INSERT INTO `gaz_country` (`iso`, `name`, `iso3`, `IBAN_prefix`, `IBAN_lenght`, 
 ('ZM', 'ZAMBIA (formerly Northern Rhodesia)', 'ZMB', 'ZM', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23, 464, 'Zambia', '.zm', 'RNR'),
 ('ZW', 'ZIMBABWE', 'ZWE', 'ZW', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23, 465, 'Zimbabwe (ex Rhodesia)', '.zw', 'ZW');
 ALTER TABLE `gaz_anagra` CHANGE `country` `country` VARCHAR( 3 ) NOT NULL ;
+ALTER TABLE `gaz_anagra` ADD `counas` VARCHAR( 3 ) NOT NULL AFTER `pronas` ;
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '6', 'select_comopril.php', '', '', '7', '', '7'  FROM `gaz_menu_module`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXclfoco` ADD `op_type` INT NOT NULL AFTER `ritenuta`; 

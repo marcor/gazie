@@ -29,6 +29,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form=array_merge(gaz_dbi_parse_post('clfoco'),gaz_dbi_parse_post('anagra'));
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = $_POST['hidden_req'];
+    $form['datnas_Y'] = intval($_POST['datnas_Y']);
+    $form['datnas_M'] = intval($_POST['datnas_M']);
+    $form['datnas_D'] = intval($_POST['datnas_D']);
     foreach($_POST['search'] as $k=>$v){
        $form['search'][$k]=$v;
     }
@@ -138,8 +141,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           }
        }
 
+       $uts_datnas = mktime(0,0,0,$form['datnas_M'],$form['datnas_D'],$form['datnas_Y']);
+       if (!checkdate($form['datnas_M'],$form['datnas_D'],$form['datnas_Y'])) {
+          $msg .= "19+";
+       }
+
        if (empty($msg)) { // nessun errore
           $form['codice']=$real_code;
+          $form['datnas']=date("Ymd", $uts_datnas );
           if ($toDo == 'insert') {
             if ($form['id_anagra']>0) {
                 gaz_dbi_table_insert('clfoco',$form);
@@ -166,6 +175,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['search']['id_des']='';
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
+    $form['datnas_Y'] = substr($form['datnas'],0,4);
+    $form['datnas_M'] = substr($form['datnas'],5,2);
+    $form['datnas_D'] = substr($form['datnas'],8,2);
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $anagrafica = new Anagrafica();
     $last=$anagrafica->queryPartners('*',"codice BETWEEN ".$admin_aziend['mascli']."000000 AND ".$admin_aziend['mascli']."999999" ,"codice DESC",0,1);
@@ -174,6 +186,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $toDo = 'insert';
     $form['search']['id_des']='';
     $form['country']=$admin_aziend['country'];
+    $form['datnas_Y'] =1900;
+    $form['datnas_M'] =1;
+    $form['datnas_D'] =1;
+    $form['counas']=$admin_aziend['country'];
     $form['codpag']=1;
     $form['spefat']='N';
     $form['stapre']='N';
@@ -183,7 +199,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('jquery/jquery-1.4.2.min',
+$script_transl = HeadMain(0,array('jquery/jquery-1.4.2.min','calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
@@ -202,8 +218,25 @@ echo "function toggleContent(currentContent) {
          document.form.id_anagra.value=currentValue;
          document.form.hidden_req.value='toggle';
          document.form.submit();
-      }\n";
-echo "</script>\n";
+      }
+var cal = new CalendarPopup();
+var calName = '';
+function setMultipleValues(y,m,d) {
+     document.getElementById(calName+'_Y').value=y;
+     document.getElementById(calName+'_M').selectedIndex=m*1-1;
+     document.getElementById(calName+'_D').selectedIndex=d*1-1;
+}
+function setDate(name) {
+  calName = name.toString();
+  var year = document.getElementById(calName+'_Y').value.toString();
+  var month = document.getElementById(calName+'_M').value.toString();
+  var day = document.getElementById(calName+'_D').value.toString();
+  var mdy = month+'/'+day+'/'+year;
+  cal.setReturnFunction('setMultipleValues');
+  cal.showCalendar('anchor', mdy);
+}
+</script>
+";
 echo "<form method=\"POST\" name=\"form\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
@@ -294,6 +327,26 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sedleg']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <textarea name=\"sedleg\" rows=\"2\" cols=\"30\" maxlength=\"100\" size=\"50\">".$form['sedleg']."</textarea></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['datnas']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->CalendarPopup('datnas',$form['datnas_D'],$form['datnas_M'],$form['datnas_Y']);
+echo "\t</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['luonas']." </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"luonas\" value=\"".$form['luonas']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pronas']." </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"pronas\" value=\"".$form['pronas']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['counas']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->selectFromDB('country','counas','iso',$form['counas'],'iso',0,' - ','name');
+echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['telefo']." </td>\n";

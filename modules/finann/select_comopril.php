@@ -31,12 +31,12 @@ require("../../library/include/check.inc.php");
 
 if (!isset($_GET['anno'])) { //al primo accesso allo script suppongo che si debba produrre l'elenco per l'anno precedente
     $_GET['anno'] = date("Y")-1;
-    $_GET['partner'] = 3;
+    $_GET['min_limit'] = 3;
 }
 
-function printPartners($partner,$error)
+function printTransact($transact,$error)
 {
-          global $script_transl;
+          global $script_transl,$admin_aziend;
           echo "<tr>\n
                <td class=\"FacetFormHeaderFont\" align=\"center\" colspan=\"10\">".$script_transl[2]."</td>
                </tr>\n";
@@ -49,7 +49,7 @@ function printPartners($partner,$error)
           echo "</tr>\n";
           echo "<tr>";
           echo "<td align=\"right\" class=\"FacetDataTD\" ></td>";
-          echo "<td align=\"center\" class=\"FacetDataTD\" >PF</td>";
+          echo "<td align=\"center\" class=\"FacetDataTD\" >Tipo Operazione</td>";
           echo "<td class=\"FacetDataTD\" >Codice Fiscale Partita I.V.A.</td>";
           echo "<td class=\"FacetDataTD\" >N.Doc.</td>";
           echo "<td align=\"right\" class=\"FacetDataTD\" >Imponibile</td>";
@@ -58,7 +58,7 @@ function printPartners($partner,$error)
           echo "<td align=\"right\" class=\"FacetDataTD\" >Esente</td>";
           echo "<td align=\"right\" class=\"FacetDataTD\" >Totale</td>";
           echo "</tr>\n";
-          foreach ($partner as $key=>$value ) {
+          foreach ($transact as $key=>$value ) {
                if (isset($error[$key])){
                   $class = ' class="FacetDataTDred" ';
                } else {
@@ -69,15 +69,15 @@ function printPartners($partner,$error)
                                            $value['operazioni_nonimp']+
                                            $value['operazioni_esente']);
                echo "<tr>";
-               echo "<td align=\"right\" $class>".$value['Progressivo']."</td>";
+               echo "<td align=\"right\" $class>".$value['Date_Documenti']."</td>";
                echo "<td colspan=\"3\" $class>".$value['Rag_Sociale']."</td>";
-               echo "<td colspan=\"3\" $class>".$value['Indirizzo']."</td>";
-               echo "<td colspan=\"2\" $class>".$value['Comune']."</td>";
-               echo "<td $class>".$value['Provincia']."</td>";
+               echo "<td colspan=\"3\" $class></td>";
+               echo "<td colspan=\"2\" $class></td>";
+               echo "<td $class></td>";
                echo "</tr>\n";
                echo "<tr>";
                echo "<td align=\"right\" $class></td>";
-               echo "<td align=\"right\" $class>".$value['persona_fisica']." </td>";
+               echo "<td align=\"right\" $class>".$value['Tipologia']." </td>";
                echo "<td $class>".$value['Codice_Fiscale']." ".$value['Partita_IVA']."</td>";
                echo "<td $class>".$value['Num_Documenti']."</td>";
                echo "<td align=\"right\" $class>".gaz_format_number($value['operazioni_imponibili'])."</td>";
@@ -86,16 +86,16 @@ function printPartners($partner,$error)
                echo "<td align=\"right\" $class>".gaz_format_number($value['operazioni_esente'])."</td>";
                echo "<td align=\"right\" $class>$totale</td>";
                echo "</tr>\n";
-               if (isset($error[$key])){
-                  foreach ($error[$key] as $value ) {
+               if (isset($error[$key])) {
+                  foreach ($error[$key] as $val_err ) {
                           echo "<tr>";
-                          echo "<td class=\"FacetDataTDred\" colspan=\"10\">".$value;
-                          if ( $tipo == 1){
+                          echo "<td class=\"FacetDataTDred\" colspan=\"10\">".$val_err;
+                          if (substr($value['Cod_Partner'],0,3) == $admin_aziend['mascli']) {
                              echo ", <a href='../vendit/admin_client";
                           } else {
                              echo ", <a href='../acquis/admin_fornit";
                           }
-                          echo ".php?codice=".substr($key,-6)."&Update' target='_NEW'>$script_transl[20]</a><br /></td>
+                          echo ".php?codice=".substr($value['Cod_Partner'],3,6)."&Update' target='_NEW'> $script_transl[20]</a><br /></td>
                                </tr>\n";
                   }
                }
@@ -187,7 +187,7 @@ function getHeaderData()
 function createRowsAndErrors($min_limit){
     global $gTables,$admin_aziend,$script_transl;
     $sqlquery= "SELECT ".$gTables['rigmoi'].".*, CONCAT(ragso1,' ',ragso2) AS ragsoc, sedleg,sexper,indspe,
-               citspe,prospe,codfis,pariva,allegato,clfoco, numdoc,
+               citspe,prospe,codfis,pariva,clfoco, numdoc, datreg, op_type,
                operat, SUM(impost - impost*2*(caucon LIKE '_NC')) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
                SUM(imponi - imponi*2*(caucon LIKE '_NC')) AS imponibile FROM ".$gTables['rigmoi']."
                LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
@@ -196,10 +196,10 @@ function createRowsAndErrors($min_limit){
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
                WHERE YEAR(datdoc) = ".intval($_GET['anno'])." AND ( clfoco LIKE '".$admin_aziend['masfor']."%' OR clfoco LIKE '".$admin_aziend['mascli']."%')
                GROUP BY id_tes, tipiva
-               ORDER BY regiva, ragsoc";
+               ORDER BY regiva, datreg";
     $result = gaz_dbi_query($sqlquery);
-    $castel_partners= array();
-    $error_partners= array();
+    $castel_transact= array();
+    $error_transact= array();
     if (gaz_dbi_num_rows($result) > 0 ) {
        // inizio creazione array righi ed errori
        $progressivo = 0;
@@ -219,9 +219,9 @@ function createRowsAndErrors($min_limit){
          }
          if ($ctrl_id <> $row['idtes']) {
             // se il precedente movimento non ha raggiunto l'importo lo elimino
-            if (isset($castel_partners[$ctrl_id]) && $castel_partners[$ctrl_id]['operazioni_imponibili'] < $min_limit ) {
-               unset ($castel_partners[$ctrl_id]);
-               unset ($error_partners[$ctrl_id]);
+            if (isset($castel_transact[$ctrl_id]) && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit ) {
+               unset ($castel_transact[$ctrl_id]);
+               unset ($error_transact[$ctrl_id]);
             }
                  // inizio controlli su CF e PI
                  $nuw = new check_VATno_TAXcode();
@@ -229,89 +229,93 @@ function createRowsAndErrors($min_limit){
                  if( strlen(trim($row['codfis'])) == 11) {
                      $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
                      if (intval($row['codfis']) == 0) {
-                        $error_partners[$row['idtes']][] = $script_transl[7];
+                        $error_transact[$row['idtes']][] = $script_transl[7];
                      } elseif ($row['sexper'] != 'G') {
-                        $error_partners[$row['idtes']][] = $script_transl[8];
+                        $error_transact[$row['idtes']][] = $script_transl[8];
                      }
                  } else {
                      $resultcf = $nuw->check_TAXcode($row['codfis']);
                      if (empty($row['codfis'])) {
-                         $error_partners[$row['idtes']][] = $script_transl[9];
+                         $error_transact[$row['idtes']][] = $script_transl[9];
                      } elseif ($row['sexper'] == 'G' and
                          empty($resultcf)) {
-                        $error_partners[$row['idtes']][] = $script_transl[10];
+                        $error_transact[$row['idtes']][] = $script_transl[10];
                      } elseif ($row['sexper'] == 'M' and
                          empty($resultcf) and
                          (intval(substr($row['codfis'],9,2)) > 31 or
                          intval(substr($row['codfis'],9,2)) < 1) ) {
-                         $error_partners[$row['idtes']][] = $script_transl[11];
+                         $error_transact[$row['idtes']][] = $script_transl[11];
                      } elseif ($row['sexper'] == 'F' and
                          empty($resultcf) and
                          (intval(substr($row['codfis'],9,2)) > 71 or
                          intval(substr($row['codfis'],9,2)) < 41) ) {
-                         $error_partners[$row['idtes']][] = $script_transl[12];
+                         $error_transact[$row['idtes']][] = $script_transl[12];
                      } elseif (! empty ($resultcf)) {
-                         $error_partners[$row['idtes']][] = $script_transl[13];
+                         $error_transact[$row['idtes']][] = $script_transl[13];
                      }
                  }
                  if (! empty ($resultpi)) {
-                    $error_partners[$row['idtes']][] = $script_transl[14];
-                    $error_partners['fatal_error'] = '';
+                    $error_transact[$row['idtes']][] = $script_transl[14];
+                    $error_transact['fatal_error'] = '';
                  } elseif (empty($row['pariva'])) {
-                    $error_partners[$row['idtes']][] = $script_transl[15];
-                    $error_partners['fatal_error'] = '';
+                    $error_transact[$row['idtes']][] = $script_transl[15];
+                    $error_transact['fatal_error'] = '';
                  }
                  // fine controlli su CF e PI
-                 $castel_partners[$row['idtes']] = array(
+                 $castel_transact[$row['idtes']] = array(
                       'Cod_Partner'=> $row['clfoco'],
                       'Progressivo'=> $row['idtes'],
                       'Num_Documenti'=> $row['numdoc'],
+                      'Date_Documenti'=> gaz_format_date($row['datreg']),
                       'Rag_Sociale'=> $row['ragsoc'],
-                      'Indirizzo'=> $row['indspe'],
-                      'Comune'=> $row['citspe'],
-                      'Provincia'=> $row['prospe'] ,
                       'Partita_IVA'=> $row['pariva'],
+                      'Tipologia'=> $row['op_type'],
                       'Codice_Fiscale'=> $row['codfis']
                  );
                  if ($row['sexper'] == 'G'){
-                        $castel_partners[$row['idtes']]['persona_fisica'] = '';
+                        $castel_transact[$row['idtes']]['persona_fisica'] = '';
                  } else {
-                        $castel_partners[$row['idtes']]['persona_fisica'] = 'X';
+                        $castel_transact[$row['idtes']]['persona_fisica'] = 'X';
+                 }
+                 if ($row['op_type'] == 0 && substr($row['clfoco'],0,3) == $admin_aziend['masfor'] ){
+                     $castel_transact[$row['idtes']]['Tipologia'] = 3;
+                 } elseif ($row['op_type'] == 0 && substr($row['clfoco'],0,3) == $admin_aziend['mascli'] ) {
+                     $castel_transact[$row['idtes']]['Tipologia'] = 1;
                  }
                  if (!empty($row['sedleg'])){
                      if ( preg_match("/([\w\,\.\s]+)([0-9]{5})[\s]+([\w\s\']+)\(([\w]{2})\)/",$row['sedleg'],$regs)) {
-                        $castel_partners[$row['idtes']]['Indirizzo'] = $regs[1];
-                        $castel_partners[$row['idtes']]['Comune'] = $regs[3];
-                        $castel_partners[$row['idtes']]['Provincia'] = $regs[4];
+                        $castel_transact[$row['idtes']]['Indirizzo'] = $regs[1];
+                        $castel_transact[$row['idtes']]['Comune'] = $regs[3];
+                        $castel_transact[$row['idtes']]['Provincia'] = $regs[4];
                      } else {
-                       $error_partners[$row['idtes']][] = $script_transl[16];
+                       $error_transact[$row['idtes']][] = $script_transl[16];
                      }
                  }
                  // inizio valorizzazione imponibile,imposta,senza_iva,art8
-                 $castel_partners[$row['idtes']]['operazioni_imponibili'] = 0;
-                 $castel_partners[$row['idtes']]['imposte_addebitate'] = 0;
-                 $castel_partners[$row['idtes']]['operazioni_esente'] = 0;
-                 $castel_partners[$row['idtes']]['operazioni_nonimp'] = 0;
+                 $castel_transact[$row['idtes']]['operazioni_imponibili'] = 0;
+                 $castel_transact[$row['idtes']]['imposte_addebitate'] = 0;
+                 $castel_transact[$row['idtes']]['operazioni_esente'] = 0;
+                 $castel_transact[$row['idtes']]['operazioni_nonimp'] = 0;
                  switch ($row['tipiva']) {
                         case 'I':
                         case 'D':
-                             $castel_partners[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
-                             $castel_partners[$row['idtes']]['imposte_addebitate'] = $value_impost;
+                             $castel_transact[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
+                             $castel_transact[$row['idtes']]['imposte_addebitate'] = $value_impost;
                              if ($value_impost == 0){  //se non c'è imposta il movimento è sbagliato
-                                $error_partners[$row['idtes']][] = $script_transl[17];
+                                $error_transact[$row['idtes']][] = $script_transl[17];
                              }
                         break;
                         case 'E':
-                             $castel_partners[$row['idtes']]['operazioni_esente'] = $value_imponi;
+                             $castel_transact[$row['idtes']]['operazioni_esente'] = $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
-                                $error_partners[$row['idtes']][] = $script_transl[18];
+                                $error_transact[$row['idtes']][] = $script_transl[18];
                              }
                         break;
                         case 'N':
                         //case 'C':
-                             $castel_partners[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
+                             $castel_transact[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
-                                $error_partners[$row['idtes']][] = $script_transl[18];
+                                $error_transact[$row['idtes']][] = $script_transl[18];
                              }
                         break;
                  }
@@ -320,23 +324,23 @@ function createRowsAndErrors($min_limit){
                  switch ($row['tipiva']) {
                         case 'I':
                         case 'D':
-                             $castel_partners[$row['idtes']]['operazioni_imponibili'] += $value_imponi;
-                             $castel_partners[$row['idtes']]['imposte_addebitate'] += $value_impost;
+                             $castel_transact[$row['idtes']]['operazioni_imponibili'] += $value_imponi;
+                             $castel_transact[$row['idtes']]['imposte_addebitate'] += $value_impost;
                              if ($value_impost == 0){  //se non c'è imposta il movimento è sbagliato
-                                $error_partners[$row['idtes']][] = $script_transl[17];
+                                $error_transact[$row['idtes']][] = $script_transl[17];
                              }
                         break;
                         case 'E':
-                             $castel_partners[$row['idtes']]['operazioni_esente'] = $value_imponi;
+                             $castel_transact[$row['idtes']]['operazioni_esente'] = $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
-                                $error_partners[$row['idtes']][] = $script_transl[18];
+                                $error_transact[$row['idtes']][] = $script_transl[18];
                              }
                         break;
                         case 'N':
                         //case 'C':
-                             $castel_partners[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
+                             $castel_transact[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
-                                $error_partners[$row['idtes']][] = $script_transl[18];
+                                $error_transact[$row['idtes']][] = $script_transl[18];
                              }
                         break;
                  }
@@ -347,10 +351,10 @@ function createRowsAndErrors($min_limit){
 
        }
     } else {
-              $error_partners[0] = $script_transl[21];
+              $error_transact[0] = $script_transl[21];
     }
     // fine creazione array righi ed errori
-    return array($castel_partners,$error_partners);
+    return array($castel_transact,$error_transact);
 }
 
 if (isset($_GET['pdf'])) {
@@ -418,7 +422,7 @@ if (isset($_GET['file_agenzia'])) {
       // --- preparo gli array da passare alla classe AgenziaEntrate a secondo della scelta effettuata
       $Testa = getHeaderData();
       $agenzia = new AgenziaEntrate;
-      $content = $agenzia->creaFileECF($Testa,$Dati);
+      $content = $agenzia->creaFileART21($Testa,$Dati);
       print $content;
       exit;
 }
@@ -473,11 +477,9 @@ echo "<tr>\n
      </tr>\n";
 echo "</table>\n";
 if (isset($_GET['view'])) {
-      $queryData = createRowsAndErrors(3000);
-      $caste_clienti = $queryData[0];
-      $error_partners = $queryData[1];
+   $queryData = createRowsAndErrors(3000);
    $Testa = getHeaderData();
-   if (!isset ($error_partners[0])) {
+   if (!isset ($error_transact[0])) {
        echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['view']."</div>";
        echo "<table class=\"Tlarge\">";
        echo "<tr>";
@@ -549,7 +551,7 @@ if (isset($_GET['view'])) {
           echo "<td colspan=\"3\"></td>";
           echo "</tr>\n";
        }
-       if (!empty($error_partners) and $_GET['anno'] > 2007){
+       if (!empty($error_transact) and $_GET['anno'] > 2007){
                echo "<tr>\n
                     <td class=\"FacetDataTDred\" colspan=\"10\">$script_transl[19]:</td>
                     </tr>\n";
@@ -561,13 +563,13 @@ if (isset($_GET['view'])) {
        } else {
               echo "<tr>\n
                    <td align=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"4\"><input type=\"submit\" name=\"pdf\" value=\"PDF\"></td>\n
-                   <td align=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"6\"><input type=\"submit\" name=\"file_agenzia\" value=\"File Internet (ECF)\"></td>\n
+                   <td a7lign=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"6\"><input type=\"submit\" name=\"file_agenzia\" value=\"File Internet (ECF)\"></td>\n
                    </tr>\n";
        }
-       printPartners($caste_clienti,$error_partners,1);
+       printTransact($queryData[0],$queryData[1]);
        echo "</table>";
    } else {
-       echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$error_partners[0]."</div>";
+       echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$error_transact[0]."</div>";
    }
 }
 ?>
