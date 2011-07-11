@@ -196,7 +196,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('jquery/jquery-1.4.2.min',
+$script_transl = HeadMain(0,array('jquery/jquery-1.4.2.min','calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
@@ -215,7 +215,24 @@ echo "function toggleContent(currentContent) {
          document.form.id_anagra.value=currentValue;
          document.form.hidden_req.value='toggle';
          document.form.submit();
-      }\n";
+      }\n
+var cal = new CalendarPopup();
+var calName = '';
+function setMultipleValues(y,m,d) {
+     document.getElementById(calName+'_Y').value=y;
+     document.getElementById(calName+'_M').selectedIndex=m*1-1;
+     document.getElementById(calName+'_D').selectedIndex=d*1-1;
+}
+function setDate(name) {
+  calName = name.toString();
+  var year = document.getElementById(calName+'_Y').value.toString();
+  var month = document.getElementById(calName+'_M').value.toString();
+  var day = document.getElementById(calName+'_D').value.toString();
+  var mdy = month+'/'+day+'/'+year;
+  cal.setReturnFunction('setMultipleValues');
+  cal.showCalendar('anchor', mdy);
+}
+";
 echo "</script>\n";
 echo "<form method=\"POST\" name=\"form\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
