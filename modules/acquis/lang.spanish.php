@@ -78,6 +78,7 @@ $strScript = array("admin_fornit.php" =>
                            'codfis'=>'Codigo Tributario',
                            'pariva'=>'Coincidir I.V.A.',
                            'e_mail'=>'email',
+                           'cosric'=>'Cost Account',
                            'id_agente'=>'Agente',
                            'codpag'=>'Modo de pago *',
                            'sconto'=>'% Descuento a aplicar',
