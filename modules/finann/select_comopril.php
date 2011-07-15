@@ -37,6 +37,14 @@ if (!isset($_GET['anno'])) { //al primo accesso allo script suppongo che si debb
     } else {
       $_GET['min_limit'] = 3000;
     }
+    $Testa = getHeaderData();
+    if ($admin_aziend['sexper'] != 'G') { // le persone fisiche hanno due campi separati
+      $_GET['ragso1'] = $Testa['cognome'];
+      $_GET['ragso2'] = $Testa['nome'];
+    } else {
+      $_GET['ragso1'] = strtoupper($admin_aziend['ragso1']);
+      $_GET['ragso2'] = strtoupper($admin_aziend['ragso2']);
+    }
 }
 
 function getDocRef($data){
@@ -92,10 +100,15 @@ function printTransact($transact,$error)
           echo "<td align=\"center\" class=\"FacetDataTD\" >".$script_transl['imptype']."</td>";
           echo "</tr>\n";
           foreach ($transact as $key=>$value ) {
+               $class = ' ';
+               if ($value['soggetto_type']==3) {
+                  $class = 'style="color:#4305F1; background-color: #FF8888;"';
+                
+               } elseif($value['soggetto_type']==1) {
+                  $class = 'style="color:#0543A1; background-color: #88FF88;" ';
+               } 
                if (isset($error[$key])){
                   $class = ' class="FacetDataTDred" ';
-               } else {
-                  $class = ' ';
                }
                $totale = gaz_format_number($value['operazioni_imponibili']+$value['imposte_addebitate']+$value['operazioni_nonimp']+$value['operazioni_esente']);
                echo "<tr>";
@@ -108,7 +121,13 @@ function printTransact($transact,$error)
                }
                echo "</td>";
                echo "<td align=\"center\" $class>".$script_transl['soggetto_type_value'][$value['soggetto_type']]."</td>";
-               echo "<td align=\"center\" $class>".$script_transl['op_type_value'][$value['op_type']]."</td>";
+               echo "<td align=\"center\" ";
+               if ($value['op_type']>2) {
+                  echo 'style="color:#000000; background-color: #AFC8D8;"';
+               } else {
+                  echo 'style="color:#000000; background-color: #B3CFA8;" ';
+               } 
+               echo ">".$script_transl['op_type_value'][$value['op_type']]."</td>";
                echo "</tr>\n";
                echo "<tr>";
                echo "<td align=\"center\" $class>".gaz_format_date($value['datreg'])."</td>";
@@ -137,26 +156,26 @@ function getHeaderData()
 {
       global $admin_aziend;
       // preparo il nome dell'azienda e faccio i controlli di errore
-      $Testa['anno'] = $_GET['anno'];
+      $Testa['anno'] = intval($_GET['anno']);
       $Testa['pariva'] = $admin_aziend['pariva'];
       $Testa['codfis'] = $admin_aziend['codfis'];
       if ($admin_aziend['sexper'] == 'G') {
          // persona giuridica
          if (strlen($Testa['codfis']) <> 11) {
-            $Testa['fatal_error'] = '';
+            $Testa['fatal_error'] = 'codfis';
          }
          if (empty($admin_aziend['ragso1']) and empty($admin_aziend['ragso2'])) {
-            $Testa['fatal_error'] = '';
+            $Testa['fatal_error'] = 'ragsoc';
          } else {
             $Testa['ragsoc'] = strtoupper($admin_aziend['ragso1']." ".$admin_aziend['ragso2']);
          }
          if (empty($admin_aziend['citspe'])) {
-            $Testa['fatal_error'] = '';
+            $Testa['fatal_error'] = 'citspe';
          } else {
             $Testa['sedleg'] = strtoupper($admin_aziend['citspe']);
          }
          if (strlen(trim($admin_aziend['prospe'])) < 2) {
-            $Testa['fatal_error'] = '';
+            $Testa['fatal_error'] = 'prospe';
          } else {
             $Testa['proleg'] = strtoupper($admin_aziend['prospe']);
          }
@@ -166,7 +185,7 @@ function getHeaderData()
         if (($admin_aziend['sexper'] == 'M' and ($gn < 1 or $gn > 31))
             or
            ($admin_aziend['sexper'] == 'F' and ($gn < 41 or $gn > 71))) {
-            $Testa['fatal_error'] = '';
+            $Testa['fatal_error'] = 'sexper';
         }
         $Testa['sesso'] = strtoupper($admin_aziend['sexper']);
         if (!empty($admin_aziend['legrap'])) {
@@ -189,15 +208,15 @@ function getHeaderData()
             $Testa['cognome'] = strtoupper($admin_aziend['ragso1']);
             $Testa['nome'] = strtoupper($admin_aziend['ragso2']);
         } else {
-            $Testa['fatal_error'] = '';
+            $Testa['fatal_error'] = 'legrap';
         }
         if (empty($admin_aziend['luonas'])) {
-                $Testa['fatal_error'] = '';
+                $Testa['fatal_error'] = 'luonas';
         } else {
             $Testa['luonas'] = strtoupper($admin_aziend['luonas']);
         }
         if (strlen(trim($admin_aziend['pronas'])) < 2) {
-                $Testa['fatal_error'] = '';
+                $Testa['fatal_error'] = 'pronas';
         } else {
             $Testa['pronas'] = strtoupper($admin_aziend['pronas']);
         }
@@ -205,12 +224,12 @@ function getHeaderData()
         $m=substr($admin_aziend['datnas'],5,2);
         $Y=substr($admin_aziend['datnas'],0,4);
         if (checkdate($m, $d, $Y)) {
-            $Testa['datnas'] = $d.$m.$Y;
+            $Testa['datnas'] = $admin_aziend['datnas'];
         } else {
-            $Testa['fatal_error'] = '';
+            $Testa['fatal_error'] = 'datnas';
         }
       } else {
-        $Testa['fatal_error'] = '';
+        $Testa['fatal_error'] = 'nosexper';
       }
       return $Testa;
 }
@@ -254,17 +273,24 @@ function createRowsAndErrors($min_limit){
                unset ($castel_transact[$ctrl_id]);
                unset ($error_transact[$ctrl_id]);
             }
-                 // inizio controlli su CF e PI
-                 $nuw = new check_VATno_TAXcode();
-                 $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
-                 if( strlen(trim($row['codfis'])) == 11) {
+               // inizio controlli su CF e PI
+               $nuw = new check_VATno_TAXcode();
+               $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
+               if ($admin_aziend['country'] != $row['country']) { // Ã¨ uno non residente (caso 3)
+                     if (!empty($row['datnas'])) { // Ã¨ un persona fisica straniera
+                        if (empty($row['pronas']) || empty($row['luonas']) || empty($row['counas'])) {
+                            $error_transact[$row['idtes']][] = $script_transl['errors'][9];
+                        }
+                     }                
+               } elseif (empty($resultpi) && !empty($row['pariva'])) { // ha la partita IVA ed Ã¨ giusta (caso 2) 
+                 if( strlen(trim($row['codfis'])) == 11) { // Ã¨ una persona giuridica
                      $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
                      if (intval($row['codfis']) == 0) {
                         $error_transact[$row['idtes']][] = $script_transl['errors'][1];
                      } elseif ($row['sexper'] != 'G') {
                         $error_transact[$row['idtes']][] = $script_transl['errors'][2];
                      }
-                 } else {
+                 } else {           // Ã¨ una una persona fisica
                      $resultcf = $nuw->check_TAXcode($row['codfis']);
                      if (empty($row['codfis'])) {
                          $error_transact[$row['idtes']][] = $script_transl['errors'][3];
@@ -282,20 +308,31 @@ function createRowsAndErrors($min_limit){
                          $error_transact[$row['idtes']][] = $script_transl['errors'][7];
                      }
                  }
-                 if (! empty ($resultpi)) {
-                    $error_transact[$row['idtes']][] = $script_transl['errors'][8];
-                    $error_transact['fatal_error'] = '';
-                 } elseif (empty($row['pariva'])) {
-                    $error_transact[$row['idtes']][] = $script_transl['errors'][9];
-                    $error_transact['fatal_error'] = '';
-                 }
+               } else {        // Ã¨ un soggetto con codice fiscale senza partita IVA (caso 1)
+                     $resultcf = $nuw->check_TAXcode($row['codfis']);
+                     if (empty($row['codfis'])) {
+                         $error_transact[$row['idtes']][] = $script_transl['errors'][3];
+                     } elseif ($row['sexper'] == 'G' and empty($resultcf)) {
+                        $error_transact[$row['idtes']][] = $script_transl['errors'][4];
+                     } elseif ($row['sexper'] == 'M' and empty($resultcf) and
+                         (intval(substr($row['codfis'],9,2)) > 31 or
+                         intval(substr($row['codfis'],9,2)) < 1) ) {
+                         $error_transact[$row['idtes']][] = $script_transl['errors'][5];
+                     } elseif ($row['sexper'] == 'F' and empty($resultcf) and
+                         (intval(substr($row['codfis'],9,2)) > 71 or
+                         intval(substr($row['codfis'],9,2)) < 41) ) {
+                         $error_transact[$row['idtes']][] = $script_transl['errors'][6];
+                     } elseif (!empty ($resultcf)) {
+                         $error_transact[$row['idtes']][] = $script_transl['errors'][7];
+                     }
+               }
                  // fine controlli su CF e PI
 
                  $castel_transact[$row['idtes']] = $row;
 
                  if ($row['pariva'] >0){
                         $castel_transact[$row['idtes']]['soggetto_type'] = 2;
-                 } elseif ($row['pariva'] > 0 && empty($row['codfis'])){
+                 } elseif ($admin_aziend['country'] != $row['country']){
                         $castel_transact[$row['idtes']]['soggetto_type'] = 3;
                  } else {
                         $castel_transact[$row['idtes']]['soggetto_type'] = 1;
@@ -325,14 +362,14 @@ function createRowsAndErrors($min_limit){
                         case 'D':
                              $castel_transact[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
                              $castel_transact[$row['idtes']]['imposte_addebitate'] = $value_impost;
-                             if ($value_impost == 0){  //se non c'è imposta il movimento è sbagliato
+                             if ($value_impost == 0){  //se non c'Ã¨ imposta il movimento Ã¨ sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][11];
                              }
                         break;
                         case 'E':
                              $castel_transact[$row['idtes']]['tipiva'] = 3;
                              $castel_transact[$row['idtes']]['operazioni_esente'] = $value_imponi;
-                             if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
+                             if ($value_impost != 0){  //se c'Ã¨ imposta il movimento Ã¨ sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][12];
                              }
                         break;
@@ -340,7 +377,7 @@ function createRowsAndErrors($min_limit){
                         //case 'C':
                              $castel_transact[$row['idtes']]['tipiva'] = 2;
                              $castel_transact[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
-                             if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
+                             if ($value_impost != 0){  //se c'Ã¨ imposta il movimento Ã¨ sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][12];
                              }
                         break;
@@ -352,20 +389,20 @@ function createRowsAndErrors($min_limit){
                         case 'D':
                              $castel_transact[$row['idtes']]['operazioni_imponibili'] += $value_imponi;
                              $castel_transact[$row['idtes']]['imposte_addebitate'] += $value_impost;
-                             if ($value_impost == 0){  //se non c'è imposta il movimento è sbagliato
+                             if ($value_impost == 0){  //se non c'Ã¨ imposta il movimento Ã¨ sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][11];
                              }
                         break;
                         case 'E':
                              $castel_transact[$row['idtes']]['operazioni_esente'] = $value_imponi;
-                             if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
+                             if ($value_impost != 0){  //se c'Ã¨ imposta il movimento Ã¨ sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][12];
                              }
                         break;
                         case 'N':
                         //case 'C':
                              $castel_transact[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
-                             if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
+                             if ($value_impost != 0){  //se c'Ã¨ imposta il movimento Ã¨ sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][12];
                              }
                         break;
@@ -382,14 +419,14 @@ function createRowsAndErrors($min_limit){
            unset ($error_transact[$ctrl_id]);
        }
     } else {
-              $error_transact[0] = $script_transl[21];
+              $error_transact[0] = $script_transl['errors'][15];
     }
     // fine creazione array righi ed errori
     return array($castel_transact,$error_transact);
 }
 
 if (isset($_GET['pdf'])) {
-    header("Location: stampa_comopril.php?anno=".$_GET['anno']."&partner=".$_GET['partner']);
+    header("Location: stampa_comopril.php?anno=".$_GET['anno']."&min_limit=".$_GET['min_limit']);
     exit;
 }
 
@@ -440,10 +477,10 @@ if (isset($_GET['file_agenzia'])) {
                return array($acc,$tipo => $tot);
       }
       $annofornitura = date("y");
-      // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
+      // Impostazione degli header per l'opozione "save as" dello standard input che verrÃ  generato
       header('Content-Type: text/x-a21');
       header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$_GET['anno'].".a21");
-      header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
+      header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up piÃ¹ volte.
       if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
          header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
          header('Pragma: public');
@@ -480,6 +517,12 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['limit']."</td>
      <td class=\"FacetDataTD\">\n";
 echo "<input type=\"text\" name=\"min_limit\" value=\"".$_GET['min_limit']."\" align=\"right\" maxlength=\"10\" size=\"10\" /></td>\n";
 echo "</tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['ragso1']."</td>
+     <td class=\"FacetDataTD\"><input type=\"text\" value=\"".$_GET['ragso1']."\" maxlength=\"50\" size=\"40\" name=\"ragso1\"></td></td></tr>\n";
+echo "</tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['ragso2']."</td>
+     <td class=\"FacetDataTD\"><input type=\"text\" value=\"".$_GET['ragso2']."\" maxlength=\"50\" size=\"40\" name=\"ragso2\"></td></tr>\n";
+echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['year']."</td><td class=\"FacetDataTD\" colspan=\"3\">";
 echo "\t <select name=\"anno\" class=\"FacetSelect\" >\n";
 for( $counter =  date("Y")-10; $counter <=  date("Y")+10; $counter++ ){
@@ -497,7 +540,7 @@ echo "</table>\n";
 if (isset($_GET['view'])) {
    $queryData = createRowsAndErrors(intval($_GET['min_limit']));
    $Testa = getHeaderData();
-   if (!isset ($error_transact[0])) {
+   if (!isset ($queryData[1][0])) { // nessun errore sulle impostazioni aziendali
        echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['view']."</div>";
        echo "<table class=\"Tlarge\">";
        echo "<tr>";
@@ -510,28 +553,22 @@ if (isset($_GET['view'])) {
        echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['pariva']."</td>";
        echo "<td colspan=\"2\" class=\"FacetDataTD\">".$Testa['pariva']."</td>";
        echo "</tr>\n";
-       if (!isset($Testa['sesso'])){ // è una persona giuridica
+       echo "<tr>";
+       echo "<td colspan=\"1\"></td>";
+       echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['sex']."</td>";
+       echo "<td colspan=\"2\" class=\"FacetDataTD\">".$admin_aziend['sexper']."</td>";
+       if (!isset($Testa['sesso'])){ // Ã¨ una persona giuridica
           echo "<tr>";
           echo "<td colspan=\"1\"></td>";
-          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['soggetto']."</td>";
-          echo "<td colspan=\"2\" class=\"FacetDataTD\">".$Testa['ragsoc']."</td>";
-          echo "</tr>\n";
-          echo "<tr>";
-          echo "<td colspan=\"1\"></td>";
-          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['soggetto_type']."</td>";
+          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['sedleg']."</td>";
           echo "<td colspan=\"2\" class=\"FacetDataTD\">".$Testa['sedleg']."</td>";
           echo "</tr>\n";
           echo "<tr>";
           echo "<td colspan=\"1\"></td>";
-          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['soggetto_type']."</td>";
+          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['proleg']."</td>";
           echo "<td colspan=\"2\" class=\"FacetDataTD\">".$Testa['proleg']."</td>";
           echo "</tr>\n";
        } else {     // persona fisica
-          echo "<tr>";
-          echo "<td colspan=\"1\"></td>";
-          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['soggetto']."</td>";
-          echo "<td colspan=\"2\" class=\"FacetDataTD\">".$Testa['cognome']." ".$Testa['nome']."</td>";
-          echo "</tr>\n";
           echo "<tr>";
           echo "<td colspan=\"1\"></td>";
           echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['sex']."</td>";
@@ -539,28 +576,28 @@ if (isset($_GET['view'])) {
           echo "</tr>\n";
           echo "<tr>";
           echo "<td colspan=\"1\"></td>";
-          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\"></td>";
-          echo "<td colspan=\"2\" class=\"FacetDataTD\">".$Testa['datnas']."</td>";
+          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['datnas']."</td>";
+          echo "<td colspan=\"2\" class=\"FacetDataTD\">".gaz_format_date($Testa['datnas'])."</td>";
           echo "</tr>\n";
           echo "<tr>";
           echo "<td colspan=\"1\"></td>";
-          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\"></td>";
+          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['luonas']."</td>";
           echo "<td colspan=\"2\" class=\"FacetDataTD\">".$Testa['luonas']."</td>";
           echo "</tr>\n";
           echo "<tr>";
           echo "<td colspan=\"1\"></td>";
-          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\"></td>";
+          echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">".$script_transl['pronas']."</td>";
           echo "<td colspan=\"2\" class=\"FacetDataTD\">".$Testa['pronas']."</td>";
           echo "</tr>\n";
        }
-       if (!empty($error_transact)){
+       if (!empty($queryData[1]) ){ // ci sono errori tra i movimenti
                echo "<tr>\n
                     <td class=\"FacetDataTDred\" colspan=\"5\">".$script_transl['errors'][13].":</td>
                     </tr>\n";
        } elseif (isset($Testa['fatal_error'])) {
               echo "<tr>\n
                    <td align=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"2\"><input type=\"submit\" name=\"pdf\" value=\"PDF\"></td>\n
-                   <td align=\"center\" class=\"FacetDataTDred\" colspan=\"3\">".$script_transl['errors'][23]."</td>\n
+                   <td align=\"center\" class=\"FacetDataTDred\" colspan=\"3\">".$script_transl['errors'][15]."</td>\n
                    </tr>\n";
        } else {
               echo "<tr>\n
@@ -571,7 +608,7 @@ if (isset($_GET['view'])) {
        printTransact($queryData[0],$queryData[1]);
        echo "</table>";
    } else {
-       echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$error_transact[0]."</div>";
+       echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$queryData[1][0]."</div>";
    }
 }
 ?>
