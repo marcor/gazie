@@ -26,7 +26,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("./lang.".$admin_aziend['lang'].".php");
 $script_transl = $strScript["select_elencf.php"];
-$admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', 1);
 if (!isset($_GET['partner']) or
     !isset($_GET['anno'])) {
     header("Location: select_elencf.php");
