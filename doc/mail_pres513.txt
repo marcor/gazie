@@ -1,0 +1,20 @@
+Titolo:
+Omnia mea mecum porto.
+
+Presentazione:
+Dopo oltre due mesi di code freeze e pochi errori segnalati, nessuno di essi grave, vi presento una nuova versione frutto del lavoro di questi ultimi giorni.
+Ero abituato a ben altri ritmi, ma oramai sono alcuni mesi che mi cullo sugli allori con tanto piacere!
+    
+Modifiche apportate:
+- risolto bug sui server senza --sql-mode=IGNORE_SPACE e CONCAT segnalato sul forum da dtruffo e gvalentino.
+- corretto bug(ID: 3213885) segnalato da Gibertini (scionn) su ordinamento nella pagina articoli.
+- corretto bug segnalato da gioia339 sul forum in data 28.04.2011 relativo alla stampa dei registri IVA trimestrali
+- corretto bug segnalato da lellosoft sul forum in data 27.04.2011 relativo alla perdita di riferimento al documento di vendita sugli ordini dei clienti
+- corretto bug(ID: 3294947) segnalato da lellosoft sul mancato addebito bolli in ordine cliente.
+- recepita correzione bug(ID: 3282037) segnalato da markz00 sul controllo di coerenza data e numerazione dei DdT d'acquisto
+- corretto bug segnalato da jbrazz sul forum in data 25.06.2011 relativo ai caratteri UTF8 corrotti sul file di installazione install_5.12.sql
+- aggiunto un controllo javascript per prevenire gli inserimenti multipli e scongiurare la clonazione delle registrazioni dovute ai click multipli.
+- aggiunto uno script per poter ottemperare alla disposizione di legge che ha introdotto la comunicazione delle operazioni rilevanti (>3000€) ai fini IVA.
+- per chi installa per la prima volta si troverà con il database gia' popolato dalle citta' italiane e con tutti dati delle nazioni del mondo.
+
+Antonio de Vincentiis, Montesilvano, 20 Luglio 2011.
