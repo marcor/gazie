@@ -82,7 +82,7 @@ class Standard_template extends TCPDF
     {
        $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
        if (isset($this->cover)) { // se viene passata la copertina
-           $this->Image('@'.$this->logo,80,80,40,0);
+           $this->Image('@'.$this->logo,80,80,40,0,'',$this->link);
            $this->SetFont('freesans','',18);
            $this->SetXY(10,130);
            $this->Cell(190,6,$this->intesta1,0,2,'C');

@@ -706,7 +706,7 @@ echo '
       width: 300,
       modal: true,
       buttons: {
-        "Create an account": function() {
+        "Conferma": function() {
           var bValid = true;
           allFields.removeClass( "ui-state-error" );
 
@@ -723,7 +723,7 @@ echo '
             updateTips( "" );
           }
         },
-        Cancel: function() {
+        "Annulla": function() {
           $( this ).dialog( "close" );
         }
       },
@@ -735,7 +735,7 @@ echo '
       .button()
       .click(function() {
         $( "#dialog-form" ).dialog( "open" );
-        getResults("120000111");
+        getResults("120001238");
       });';
 echo '});
       </SCRIPT>';
@@ -968,9 +968,6 @@ if ($toDo == 'insert') {
 }
 ?>
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
-<!--
-
-Questa e' una prova (che non viene visualizzato) di interazione tra database e dialog di jquery
 
 <tr><td colspan="2">
 
@@ -998,7 +995,6 @@ Questa e' una prova (che non viene visualizzato) di interazione tra database e d
 </div>
 <a href="#" id="open-items">&weierp;</a>
 </td></tr>
--->
 <?php
 if (!empty($msg)) {
     echo '<tr><td colspan="6" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";

@@ -69,6 +69,7 @@ $gTables['imball'] = $table_prefix.'_'.$id.'imball';
 $gTables['letter'] = $table_prefix.'_'.$id.'letter';
 $gTables['movmag'] = $table_prefix.'_'.$id.'movmag';
 $gTables['pagame'] = $table_prefix.'_'.$id.'pagame';
+$gTables['paymov'] = $table_prefix.'_'.$id.'paymov';
 $gTables['portos'] = $table_prefix.'_'.$id.'portos';
 $gTables['provvigioni'] = $table_prefix.'_'.$id.'provvigioni';
 $gTables['rigbro'] = $table_prefix.'_'.$id.'rigbro';
