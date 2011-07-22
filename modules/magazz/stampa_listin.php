@@ -91,20 +91,20 @@ $title=array('luogo_data'=>$luogo_data,
                              array('lun' => 70,'nam'=>'Annotazioni')
                              )
             );
-
+$gForm = new magazzForm();
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title,'L');
-$config = new Config;
-$pdf->SetPageFormat($config->getValue('page_format'));
 $pdf->setAuthor($admin_aziend['ragso1'].' '.$_SESSION['Login']);
 $pdf->setTitle($title['title']);
 $pdf->SetTopMargin(39);
-$pdf->StartPageGroup();
+$pdf->setFooterMargin(10);
 $pdf->AddPage('L');
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $ctrlcatmer=0;
 while ($row = gaz_dbi_fetch_array($result)) {
-      $pdf->SetFont('freesans','',10);
-      switch($_GET['li']) {
+       $magval=array_pop($gForm->getStockValue(false,$row['codice']));
+       $pdf->SetFont('freesans','',10);
+       switch($_GET['li']) {
         case '0':
         $price = $row['preacq'];
         break;
@@ -123,13 +123,14 @@ while ($row = gaz_dbi_fetch_array($result)) {
         break;
       }
       if ($row["catmer"] <> $ctrlcatmer) {
+        set_time_limit (30);
         $pdf->Cell(120,5,'Categoria Merceologica n.'.$row['codcat'].' = '.$row['descat'],1,1,'L',1);
       }
       $pdf->Cell(35,5,$row['codart'],1);
       $pdf->Cell(85,5,$row['desart'],1);
       $pdf->Cell(15,5,$row['unimis'],1,0,'C');
       $pdf->Cell(25,5,number_format($price,$admin_aziend['decimal_price'],',','.'),1,0,'R');
-      $pdf->Cell(25,5,gaz_format_quantity($row['esiste'],$admin_aziend['decimal_quantity']),1,0,'R');
+      $pdf->Cell(25,5,$magval['q_g'],1,0,'R');
       $pdf->Cell(15,5,$row['aliquo'],1,0,'C');
       $pdf->Cell(70,5,$row['annota'],1,1,'C');
       $ctrlcatmer=$row["catmer"];

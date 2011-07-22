@@ -89,7 +89,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Rect(157,60+$passo*$numefftot,48,30);
         $pdf->Rect(75,20+$passo*$numefftot,125,10,'DF');
         $pdf->SetY(30+$numefftot*$passo);
-        $pdf->MemImage($logo,6,6+$passo*$numefftot,30,0);
+        $pdf->Image('@'.$logo,6,6+$passo*$numefftot,30,0);
         $pdf->Cell(50,3,$admin_aziend['ragso1'],0,2,'L');
         $pdf->Cell(50,3,$admin_aziend['ragso2'],0,2,'L');
         $pdf->Cell(50,3,$admin_aziend['indspe'].' Tel.'.$admin_aziend['telefo'],0,2,'L');

@@ -90,6 +90,7 @@ $pdf->SetTopMargin(39);
 $pdf->SetFooterMargin(20);
 $config = new Config;
 $pdf->AddPage('P',$config->getValue('page_format'));
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 
 $ctrlcli=0;
 $nummov = 0;

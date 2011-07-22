@@ -133,7 +133,6 @@ while ($row = gaz_dbi_fetch_array($result)) {
          $pdf->setRiporti('');
          $pdf->setPageTitle('Agente: '.$agente['ragso1'].' '.$agente['ragso2']);
          $pdf->setItemGroup($item_head);
-         $pdf->StartPageGroup();
          $pdf->AddPage('P',$config->getValue('page_format'));
       }
       if ($row['tipdoc'] == 'FNC') {

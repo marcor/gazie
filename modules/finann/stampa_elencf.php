@@ -254,7 +254,7 @@ $aRiportare = array('top'=>array(array('lun' => 88,'nam'=>'da riporto : '),
                     );
 $pdf->setVars($admin_aziend,$title);
 $config = new Config;
-$pdf->SetPageFormat($config->getValue('page_format'));
+//$pdf->SetPageFormat($config->getValue('page_format'));
 $pdf->setAuthor($admin_aziend['ragso1'].' '.$_SESSION['Login']);
 $pdf->setTitle($title['title']);
 $pdf->SetTopMargin(43);
@@ -311,7 +311,6 @@ foreach ($aRiportare['bot'] as $key=>$value){
 }
 $pdf->setRiporti('');
 $pdf->setPageTitle($script_transl[4].' '.$script_transl[3].' - '.$script_transl[5].' '.$_GET['anno']);
-$pdf->StartPageGroup();
 $pdf->AddPage();
 if ($_GET['partner'] == 2 or $_GET['partner'] == 3){
     $aRiportare['top'][1]['nam'] = 0;

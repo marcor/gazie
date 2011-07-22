@@ -88,7 +88,7 @@ class Template extends TCPDF
         $this->Cell(130,4,$this->intesta2,0,2,'L');
         $this->Cell(130,4,$this->intesta3,0,2,'L');
         $this->Cell(130,4,$this->intesta4,0,0,'L');
-        $this->MemImage($this->logo,140,5,40,0,$this->link);
+        $this->Image('@'.$this->logo,140,5,40,0,$this->link);
         $this->Line(0,93,3,93); //questa marca la linea d'aiuto per la piegatura del documento
         $this->Line(0,143,3,143); //questa marca la linea d'aiuto per la foratura del documento
         $this->Ln($interlinea);

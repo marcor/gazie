@@ -25,7 +25,6 @@
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
-$admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', 1);
 require("../../config/templates/report_template.php");
 if (!isset($_GET['code'])) {
     header("Location: report_artico.php");
@@ -53,11 +52,9 @@ $item_head['bot']= array(array('lun' => 21,'nam'=>$article['codice']),
 $pdf = new report_Template();
 $pdf->setVars($admin_aziend);
 $config = new Config;
-$pdf->SetPageFormat($config->getValue('page_format'));
 $pdf->setAuthor($admin_aziend['ragso1'].' '.$_SESSION['Login']);
 $pdf->setTitle('Stampa codici a barre');
 $pdf->SetTopMargin(40);
-$pdf->StartPageGroup();
 if (empty($article['image'])){
    $pdf->setItemGroup($item_head);
    $n=4;
@@ -67,15 +64,15 @@ if (empty($article['image'])){
 }
 $pdf->AddPage();
 $pdf->SetFont('freesans','',9);
-$pdf->Ln(3);
+$pdf->Ln(2);
 $x=10 ;
 $y = $pdf->GetY();
-for ($m = 0; $m < 12; $m++) {
+for ($m = 0; $m < 10; $m++) {
    for ($i = 0; $i < $n; $i++) {
         if ($article['barcode'] > 0){
-            $pdf->EAN13($x+($i*49),$y+($m*18),$article['barcode'],12);
+            $pdf->EAN13($x+($i*49),$y+($m*22),$article['barcode'],12);
         } else {
-            $pdf->text($x+($i*49),$y+($m*18),'SENZA BARCODE EAN13');
+            $pdf->text($x+($i*49),$y+($m*22),'SENZA BARCODE EAN13');
         }
      }
    $n=4;

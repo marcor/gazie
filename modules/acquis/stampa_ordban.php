@@ -31,8 +31,7 @@ require('../../library/tcpdf/tcpdf.php');
 
 $nuw = new numberstowords_it();
 
-$aziend = gaz_dbi_get_row($gTables['aziend'],"codice","1");
-$testat = $_GET['id_tes'];
+$testat = intval($_GET['id_tes']);
 
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$testat);
 //se non e' il tipo di documento stampabile da questo modulo ... va a casa
@@ -64,25 +63,28 @@ $banca1=$bancadd['ragso1'];
 $banca2=$bancadd['indspe'];
 $banca3=sprintf("%05d",$bancadd['capspe'])." ".$bancadd['citspe']." (".$bancadd['prospe'].")";
 $emissione =$tesbro['numdoc'].' del '.substr($tesbro['datemi'],8,2).'/'.substr($tesbro['datemi'],5,2).'/'.substr($tesbro['datemi'],0,4);
-$intesta1=$aziend['ragso1'].' '.$aziend['ragso2'];
-$intesta2=$aziend['indspe'].' '.sprintf("%05d", $aziend['capspe']).' '.$aziend['citspe'].' ('.$aziend['prospe'].')';
-$intesta3='Tel.'.$aziend['telefo'].' C.F. '.$aziend['codfis'].' P.I. '.$aziend['pariva'];
-$intesta4=$aziend['e_mail'];
-$logo=$aziend['image'];
-$datafirma=$aziend['citspe']." lì ".substr($tesbro['datemi'],8,2).'/'.substr($tesbro['datemi'],5,2).'/'.substr($tesbro['datemi'],0,4);
+$intesta1=$admin_aziend['ragso1'].' '.$admin_aziend['ragso2'];
+$intesta2=$admin_aziend['indspe'].' '.sprintf("%05d", $admin_aziend['capspe']).' '.$admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')';
+$intesta3='Tel.'.$admin_aziend['telefo'].' C.F. '.$admin_aziend['codfis'].' P.I. '.$admin_aziend['pariva'];
+$intesta4=$admin_aziend['e_mail'];
+$logo=$admin_aziend['image'];
+$datafirma=$admin_aziend['citspe']." lì ".substr($tesbro['datemi'],8,2).'/'.substr($tesbro['datemi'],5,2).'/'.substr($tesbro['datemi'],0,4);
 $fornitore1=$fornitor['ragso1'];
 $fornitore2=$fornitor['ragso2'];
 $fornitore3=$fornitor['indspe'];
 $fornitore4=sprintf("%05d", $fornitor['capspe']).' '.$fornitor['citspe'].' ('.$fornitor['prospe'].')';
+$colore=$admin_aziend['colore'];
 
 class PDF extends TCPDF
 {
     function Header()
     {
-        global $logo,$descridoc,$intesta1,$intesta2,$intesta3,$intesta4,$fornitore1,$fornitore2,$fornitore3,$fornitore4,$banca1,$banca2,$banca3,$emissione;
+        global $logo,$descridoc,$intesta1,$intesta2,$intesta3,$intesta4,$fornitore1,$fornitore2,$fornitore3,$fornitore4,$banca1,$banca2,$banca3,$emissione,$colore;
         //Logo
+        $this->colore=$colore;
+        $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $posiz=$this->GetY();
-        $this->MemImage($logo,150,$posiz,30,0,'Logo aziendale');
+        $this->Image('@'.$logo,150,$posiz,30,0,'Logo aziendale');
         $this->SetFont('freeserif','B',16);
         $this->Cell(130,6,$intesta1,0,1,'L');
         $this->SetFont('freesans','',9);
@@ -131,7 +133,7 @@ $pdf=new PDF();
 $pdf->AliasNbPages();
 $pdf->SetTopMargin(65);
 $pdf->SetHeaderMargin(5);
-$pdf->SetFillColor(hexdec(substr($aziend['colore'],0,2)),hexdec(substr($aziend['colore'],2,2)),hexdec(substr($aziend['colore'],4,2)));
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $pdf->AddPage();
 $_POST['giofat'] = substr($tesbro['datfat'],8,2);
 $_POST['mesfat'] = substr($tesbro['datfat'],5,2);

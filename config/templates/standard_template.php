@@ -30,6 +30,7 @@ class Standard_template extends TCPDF
     {
        $this->title = $title;
        $this->logo=$admin_aziend['image'];
+       $this->colore=$admin_aziend['colore'];
        if (!empty($admin_aziend['web_url'])){
            $this->link=$admin_aziend['web_url'];
        } else {
@@ -54,8 +55,8 @@ class Standard_template extends TCPDF
        $this->SetTopMargin(44);
        $this->SetFooterMargin(23);
        $this->StartPageGroup();
-       $this->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
-    }
+       $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
+   }
 
     public function setCover($cover_data=false)
     {
@@ -79,8 +80,9 @@ class Standard_template extends TCPDF
 
     public function Header()
     {
+       $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
        if (isset($this->cover)) { // se viene passata la copertina
-           $this->MemImage($this->logo,80,80,40,0,$this->link);
+           $this->Image('@'.$this->logo,80,80,40,0);
            $this->SetFont('freesans','',18);
            $this->SetXY(10,130);
            $this->Cell(190,6,$this->intesta1,0,2,'C');
@@ -91,7 +93,7 @@ class Standard_template extends TCPDF
            $this->SetFont('freesans','',30);
            $this->MultiCell(100,16,$this->cover,1,'C',1);
        } else {
-          $this->MemImage($this->logo,15,8,30,0,$this->link);
+          $this->Image('@'.$this->logo,15,8,30,0,'',$this->link);
           $this->Cell(40,4);
           $this->SetFont('freeserif','B',12);
           $this->Cell(118,5,$this->intesta1,0,0,'L');
@@ -157,6 +159,7 @@ class Standard_template extends TCPDF
 
     public function Footer()
     {
+       $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
        if (isset($this->cover)) { // se viene passata la copertina
            unset($this->cover);
        } else {

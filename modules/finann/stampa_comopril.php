@@ -274,13 +274,11 @@ $title = array('title'=>$script_transl['title'].' - '.intval($_GET['anno']),
               );
 
 $pdf->setVars($admin_aziend,$title);
-$config = new Config;
-$pdf->SetPageFormat($config->getValue('page_format'));
 $pdf->setAuthor($admin_aziend['ragso1'].' '.$_SESSION['Login']);
 $pdf->setTitle($title['title']);
 $pdf->SetTopMargin(43);
 $pdf->SetFooterMargin(20);
-$pdf->StartPageGroup();
+//$pdf->StartPageGroup();
 $pdf->AddPage();
 
 if ($_GET['anno'] >2000 && $_GET['min_limit'] > 0){
@@ -304,6 +302,6 @@ if ($_GET['anno'] >2000 && $_GET['min_limit'] > 0){
       $pdf->Cell(33,3,$script_transl['imptype_value'][$value['tipiva']],'B',1,'R');
     }
 }
-$pdf->Ln(1);
+
 $pdf->Output();
 ?>

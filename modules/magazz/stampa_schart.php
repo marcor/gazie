@@ -130,6 +130,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       if ($ctrlArtico != $mv['artico']) {
          set_time_limit (30);
          if (!empty($ctrlArtico)) {
+                   $pdf->StartPageGroup();
                    $pdf->SetFont('freesans','B',8);
                    $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].strftime("%d-%m-%Y",$utsrf).' : ',1,0,'R');
                    $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
@@ -152,7 +153,6 @@ while ($mv = gaz_dbi_fetch_array($result)) {
            $pdf->setItemGroup($item_head,$mv['image'],$mv['web_url']);
         }
         $pdf->setRiporti('');
-        $pdf->StartPageGroup();
         $pdf->AddPage('L',$config->getValue('page_format'));
       }
 

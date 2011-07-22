@@ -325,7 +325,7 @@ function createDocument($testata, $templateName, $gTables,$rows='rigdoc')
     $docVars->setVars($gTables, $testata, $testata['id_tes'], $rows, $ecr);
     $pdf->setVars($docVars,$templateName);
     $pdf->setTesDoc();
-    $pdf->SetPageFormat($config->getValue('page_format'));
+    //$pdf->SetPageFormat($config->getValue('page_format'));
     $pdf->setCreator(PDF_CREATOR);
     $pdf->setTitle($templateName);
     $pdf->setTopMargin(79);
@@ -361,7 +361,7 @@ function createMultiDocument($results, $templateName, $gTables)
     require("../../config/templates".($configTemplate->template ? '.'.$configTemplate->template : '').'/'.$templates[$templateName].'.php');
     $pdf = new $templateName();
     $docVars = new DocContabVars();
-    $pdf->SetPageFormat($config->getValue('page_format'));
+    //$pdf->SetPageFormat($config->getValue('page_format'));
     $pdf->setCreator(PDF_CREATOR);
     $pdf->SetTitle($templateName);
     $pdf->SetTopMargin(79);
@@ -405,7 +405,7 @@ function createInvoiceFromDDT($result,$gTables) {
     require("../../config/templates".($configTemplate->template ? '.'.$configTemplate->template : '').'/fattura_semplice.php');
     $pdf = new FatturaSemplice();
     $docVars = new DocContabVars();
-    $pdf->SetPageFormat($config->getValue('page_format'));
+    //$pdf->SetPageFormat($config->getValue('page_format'));
     $pdf->setCreator(PDF_CREATOR);
     $pdf->SetTitle('Fatture Differite da DDT');
     $pdf->SetTopMargin(79);

@@ -70,6 +70,7 @@ class Depliant extends  Report_template
 function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',$barcode='',$link=false,$vat='')
 {
    global $money,$admin_aziend;
+   $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
    $this->SetFont('freesans','',9);
    if (floatval($price)<0.00001){
      $price='';
@@ -92,7 +93,7 @@ function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',
         if (!$link) {
            $link='admin_artico.php?codice='.$code.'&Update';
         }
-        $this->MemImage($image,$x+72,$y,20,20,$link);
+        $this->Image('@'.$image,$x+72,$y,20,20,'',$link);
         $this->Cell(93,5,$code,'LTR',2);
         $this->Cell(93,5,$description,'LR',2);
         if ($un > 0){
@@ -138,6 +139,7 @@ function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',
 
 function printGroupItem($code,$description,$image='',$link=false)
 {
+   $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
    $x=$this->GetX();
    $y=$this->GetY();
    $this->SetFont('freesans','',10);
@@ -151,7 +153,7 @@ function printGroupItem($code,$description,$image='',$link=false)
         if (!$link) {
            $link='admin_catmer.php?codice='.$code.'&Update';
         }
-        $this->MemImage($image,$x+120,$y+1,0,19,$link);
+        $this->Image('@'.$image,$x+120,$y+1,0,19,'',$link);
         $this->Cell(120,20,'Cat.Merceologica: '.$code.' - '.$description,'T',1,'L',1);
    }
 }
@@ -187,8 +189,6 @@ $result = gaz_dbi_dyn_query($gTables['artico'].".codice AS codart,".
 $pdf = new Depliant();
 $pdf->setVars($admin_aziend,$title);
 $pdf->Open();
-$config = new Config;
-$pdf->SetPageFormat($config->getValue('page_format'));
 $pdf->SetTopMargin(32);
 $pdf->setFooterMargin(10);
 $pdf->AddPage();

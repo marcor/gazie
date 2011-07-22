@@ -80,7 +80,7 @@ class Standard_template extends TCPDF
     public function Header()
     {
        if (isset($this->cover)) { // se viene passata la copertina
-           $this->MemImage($this->logo,80,80,40,0,$this->link);
+           $this->Image('@'.$this->logo,80,80,40,0,$this->link);
            $this->SetFont('freesans','',18);
            $this->SetXY(10,130);
            $this->Cell(190,6,$this->intesta1,0,2,'C');
@@ -91,7 +91,7 @@ class Standard_template extends TCPDF
            $this->SetFont('freesans','',30);
            $this->MultiCell(100,16,$this->cover,1,'C',1);
        } else {
-          $this->MemImage($this->logo,15,8,30,0,$this->link);
+          $this->Image('@'.$this->logo,15,8,30,0,$this->link);
           $this->Cell(40,4);
           $this->SetFont('freeserif','B',12);
           $this->Cell(118,5,$this->intesta1,0,0,'L');

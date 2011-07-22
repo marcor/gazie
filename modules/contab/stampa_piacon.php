@@ -64,6 +64,7 @@ $pdf->SetFooterMargin(22);
 $config = new Config;
 $pdf->SetFont('freesans','',7);
 $pdf->AddPage('P',$config->getValue('page_format'));
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $ctrl_mas = 0;
 $max_y = 0;
 while ($row = gaz_dbi_fetch_array($result)) {

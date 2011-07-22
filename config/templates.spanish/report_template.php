@@ -87,7 +87,7 @@ class Report_template extends TCPDF
             $this->printCover();
         } else {
             $this->SetFont('freesans','',9);
-            $this->MemImage($this->logo,15,8,30,0,'Logo aziendale');
+            $this->Image('@'.$this->logo,15,8,30,0,'Logo aziendale');
             $this->Cell(40,4);
             $this->Cell(118,4,$this->intesta1,0,0,'L');
             if (isset($this->altri_dati['page'])){ // è stato passato il valore di pagina da stampare
@@ -101,7 +101,7 @@ class Report_template extends TCPDF
             $this->Cell(118,4,$this->intesta4,0,0,'L');
             $this->Cell(30,4,$this->luogo,0,1,'R');
             if (!empty($this->item_image)){ //C'è una immagine associata
-               $this->MemImage($this->item_image,177,28,0,20,$this->item_link);
+               $this->Image('@'.$this->item_image,177,28,0,20,$this->item_link);
                $this->Ln(4);
             }
             if (isset($this->intesta_item_group) and is_array($this->intesta_item_group)){ // c'è una descrizione dell'articolo
@@ -175,7 +175,7 @@ class Report_template extends TCPDF
 
     function printCover()
     {
-           $this->MemImage($this->logo,80,80,40,0,'Logo de la empresa');
+           $this->Image('@'.$this->logo,80,80,40,0,'Logo de la empresa');
            $this->SetFont('freesans','',18);
            $this->SetXY(10,130);
            $this->Cell(190,6,$this->intesta1,0,2,'C');

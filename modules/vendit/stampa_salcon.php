@@ -66,7 +66,7 @@ function Header()
     global $logo,$intesta1,$intesta2,$intesta3,$intesta4,$cliente1,$cliente2,$cliente3,$cliente4,$dataluogo;
     //Logo
     $posiz=$this->GetY();
-    $this->MemImage($logo,8,$posiz,40,0,'Logo aziendale');
+    $this->Image('@'.$logo,8,$posiz,40,0,'Logo aziendale');
     $this->Cell(50,4);
     $this->SetFont('freeserif','',16);
     $this->Cell(150,5,$intesta1,0,2,'L');

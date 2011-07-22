@@ -86,7 +86,6 @@ class PDF extends TCPDF
 
 $config = new Config;
 $pdf=new PDF();
-$pdf->SetPageFormat($config->getValue('page_format'));
 $pdf->setLang($admin_aziend['lang']);
 $pdf->SetTopMargin(10);
 $pdf->SetFooterMargin(10);
@@ -109,7 +108,7 @@ $pdf->Cell(35,8);
 $pdf->Cell(73,8,'','B',1,'C');
 $pdf->StartPageGroup();
 $pdf->AddPage();
-$pdf->MemImage($admin_aziend['image'],15,8,20,0);
+$pdf->Image('@'.$admin_aziend['image'],15,8,20,0);
 $pdf->Cell(40,4);
 $pdf->SetFont('freeserif','B',12);
 $pdf->Cell(130,5,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2'],0,2,'L');

@@ -36,6 +36,7 @@ class Report_template extends TCPDF
        } else {
            $this->link='../config/admin_aziend.php';
        }
+       $this->colore=$admin_aziend['colore'];
        $this->intesta1 = $admin_aziend['ragso1'].' '.$admin_aziend['ragso2'];
        $this->intesta2 = $admin_aziend['indspe'].' '.sprintf("%05d",$admin_aziend['capspe']).' '.$admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')';
        $this->intesta3 = 'Tel.'.$admin_aziend['telefo'].' C.F.:'.$admin_aziend['codfis'].' P.I.:'.$admin_aziend['pariva'];
@@ -53,7 +54,6 @@ class Report_template extends TCPDF
        $this->SetHeaderMargin(7);
        $this->SetTopMargin(44);
        $this->SetFooterMargin(23);
-       $this->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
        $this->StartPageGroup();
        $this->altri_dati = $altri_dati;
     }
@@ -87,12 +87,13 @@ class Report_template extends TCPDF
 
     function Header()
     {
+       $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         if (isset($this->altri_dati['cover']) and !empty($this->altri_dati['cover']) ){ // è stato passato il valore di pagina da stampare
             $this->descri_cover = $this->altri_dati['cover'];
             $this->printCover();
         } else {
             $this->SetFont('freesans','',9);
-            $this->MemImage($this->logo,15,8,30,0,$this->link);
+            $this->Image('@'.$this->logo,15,8,30,0,'',$this->link);
             $this->Cell(40,4);
             $this->Cell(118,4,$this->intesta1,0,0,'L');
             if (isset($this->altri_dati['page'])){ // è stato passato il valore di pagina da stampare
@@ -106,7 +107,7 @@ class Report_template extends TCPDF
             $this->Cell(118,4,$this->intesta4,0,0,'L');
             $this->Cell(30,4,$this->luogo,0,1,'R');
             if (!empty($this->item_image)){ //C'è una immagine associata
-               $this->MemImage($this->item_image,177,28,0,20,$this->item_link);
+               $this->Image('@'.$this->item_image,177,28,0,20,'',$this->item_link);
                $this->Ln(4);
             }
             if (isset($this->intesta_item_group) and is_array($this->intesta_item_group)){ // c'è una descrizione dell'articolo
@@ -157,6 +158,7 @@ class Report_template extends TCPDF
 
     function Footer()
     {
+        $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         if (isset($this->altri_dati['cover']) and !empty($this->altri_dati['cover']) ){ // è stato passato il valore di pagina da stampare
             $this->altri_dati['cover']='';
         } else {
@@ -180,7 +182,7 @@ class Report_template extends TCPDF
 
     function printCover()
     {
-           $this->MemImage($this->logo,80,80,40,0,$this->link);
+           $this->Image('@'.$this->logo,80,80,40,0,'',$this->link);
            $this->SetFont('freesans','',18);
            $this->SetXY(10,130);
            $this->Cell(190,6,$this->intesta1,0,2,'C');
