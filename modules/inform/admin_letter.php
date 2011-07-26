@@ -106,7 +106,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req']='';
-    $lettera = gaz_dbi_get_row($gTables['letter'],'id_let',$_GET['id_let']);
+    $lettera = gaz_dbi_get_row($gTables['letter'],'id_let',intval($_GET['id_let']));
     if ($lettera['adminid'] != $_SESSION['Login']) { //non è l'utente che ha scritto la lettera
        header("Location: report_letter.php");
        exit;

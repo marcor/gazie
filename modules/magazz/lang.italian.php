@@ -23,7 +23,15 @@
  --------------------------------------------------------------------------
 */
 
-$strScript = array ("report_statis.php" =>
+$strScript = array ("browse_document.php" =>
+                   array('title'=>"Lista dei Documenti/Certificati",
+                         'item'=>"Articolo di riferimento",
+                         'table_name_ref'=>"Tabella di riferimento",
+                         'note'=>"Didascalia/Appunti/Note",
+                         'ext'=>"Estensione",
+                         'select'=>"Sel.",
+                         'code'=>"Codice"),
+                    "report_statis.php" =>
                    array(  "statistica ",
                            "vendite",
                            "acquisti",

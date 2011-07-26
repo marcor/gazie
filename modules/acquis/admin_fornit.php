@@ -342,7 +342,7 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['counas']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectFromDB('country','counas','iso',$form['counas'],'iso',0,' - ','name');
+$gForm->selectFromDB('country','counas','iso',$form['counas'],'iso',1,' - ','name');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
