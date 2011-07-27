@@ -27,7 +27,8 @@ $admin_aziend=checkAdmin();
 $msg = "";
 
 require("../../library/include/header.php");
-$script_transl = HeadMain();
+$script_transl = HeadMain(0,array('tiny_mce/tiny_mce',
+                                  'boxover/boxover'));
 
 if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
@@ -53,7 +54,7 @@ if (!isset($_GET['flag_order'])) {
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title']."</div>\n";
 print "<form method=\"GET\">";
 print '<table class="Tlarge">';
-$result = gaz_dbi_dyn_query ('*',$gTables['files'], $where, $orderby, $limit, $passo);
+$result = gaz_dbi_dyn_query ('*',$gTables['files']." LEFT JOIN ".$gTables['artico']." ON ".$gTables['files'].".item_ref = ".$gTables['artico'].".codice", $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
             "ID" => "id_doc",
@@ -69,9 +70,14 @@ $linkHeaders -> output();
 $recordnav = new recordnav($gTables['files'], $where, $limit, $passo);
 $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
+    if(!isset($_GET['all']) and !empty($a_row["image"])){
+         $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$a_rowr['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
+    } else {
+         $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$a_row['annota']."]  fade=[on] fadespeed=[0.03] \"";
+    }
     print "<tr>\n";
     print "<td class=\"FacetDataTD\" align=\"right\"><a href=\"admin_document.php?id_doc=".$a_row["id_doc"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\">".$a_row["id_doc"]."</a> &nbsp</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["item_ref"]."</td>\n";
+    print "<td class=\"FacetDataTD\" align=\"center\" $boxover >".$a_row["item_ref"]."</td>\n";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["table_name_ref"]."</td>\n";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["title"]."</td>\n";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["extension"]."</td>\n";

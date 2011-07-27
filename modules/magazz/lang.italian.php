@@ -25,6 +25,10 @@
 
 $strScript = array ("browse_document.php" =>
                    array('title'=>"Lista dei Documenti/Certificati",
+                         'errors'=>array('Il formato del file non è stato accettato!',
+                                         'Il file è troppo grande!',
+                                         'Il file è vuoto!'),
+                         'admin'=>"Modifica Documenti/Certificati",
                          'item'=>"Articolo di riferimento",
                          'table_name_ref'=>"Tabella di riferimento",
                          'note'=>"Didascalia/Appunti/Note",
