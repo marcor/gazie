@@ -1,0 +1,5 @@
+UPDATE `gaz_config` SET `cvalue` = '74' WHERE `id` =2;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, '23', 'browse_document.php', '', '', '10', '', '5'  FROM `gaz_menu_script`;
+-- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
+CREATE TABLE IF NOT EXISTS `gaz_XXXfiles` (  `id_doc` int(9) unsigned NOT NULL AUTO_INCREMENT,  `table_name_ref` varchar(50) NOT NULL DEFAULT '',  `id_ref` int(9) NOT NULL DEFAULT '0',  `item_ref` varchar(15) NOT NULL,  `extension` varchar(4) NOT NULL,  `title` varchar(255) NOT NULL,  `adminid` varchar(20) NOT NULL,  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,  PRIMARY KEY (`id_doc`)) ENGINE=MyISAM  DEFAULT CHARSET=utf8; 
+-- STOP_WHILE( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query seguenti su tutte le aziende dell'installazione)

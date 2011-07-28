@@ -41,7 +41,8 @@ $transl['magazz'] = array('name' => "Warehouse",
                                          6 =>array("Create warehouse movements from documents","Create warehouse movements"),
                                          7 =>array("Insert new warehouse causal","New warehouse causal"),
                                          8 =>array("Item existing revaluation","Existing revaluation"),
-                                         9 =>array("Inventory stock","Inventory stock")
+                                         9 =>array("Inventory stock","Inventory stock"),
+                                         10 =>array("Documents and / or certification of products","Documents and/or certification")
                                       )
                           );
 ?>

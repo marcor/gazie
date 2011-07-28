@@ -34,7 +34,7 @@ if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
 } else {
    $auxil = "";
-   $where = "table_name_ref LIKE '$auxil%' ";
+   $where = "item_ref LIKE '".addslashes($auxil)."%' ";
 }
 
 if (isset($_GET['all'])) {
@@ -43,17 +43,25 @@ if (isset($_GET['all'])) {
    $passo = 100000;
 } else {
    if (isset($_GET['auxil'])) {
-      $where = "table_name_ref LIKE '".addslashes($auxil)."%'";
+      $where = "item_ref LIKE '".addslashes($auxil)."%'";
    }
 }
 
 if (!isset($_GET['flag_order'])) {
-   $orderby = " table_name_ref DESC";
+   $orderby = " id_doc DESC";
 }
 
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title']."</div>\n";
 print "<form method=\"GET\">";
 print '<table class="Tlarge">';
+echo "<tr><td></td><td class=\"FacetFieldCaptionTD\" >".$script_transl['item'].":\n";
+echo "<input type=\"text\" name=\"auxil\" value=\"";
+if ($auxil != "&all=yes"){
+    echo $auxil;
+}
+echo "\" maxlength=\"6\" size=\"3\" tabindex=\"1\" class=\"FacetInput\"></td>\n";
+echo "<td><input type=\"submit\" name=\"search\" value=\"".$script_transl['search']."\" tabindex=\"1\" onClick=\"javascript:document.report.all.value=1;\"></td>\n";
+echo "<td><input type=\"submit\" name=\"all\" value=\"".$script_transl['vall']."\" onClick=\"javascript:document.report.all.value=1;\"></td></tr>\n";
 $result = gaz_dbi_dyn_query ('*',$gTables['files']." LEFT JOIN ".$gTables['artico']." ON ".$gTables['files'].".item_ref = ".$gTables['artico'].".codice", $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
