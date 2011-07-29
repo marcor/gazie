@@ -46,7 +46,7 @@ $strScript = array ("admin_aziend.php" =>
                            'codice'=>"Code ",
                            'ragso1'=>"Company name 1",
                            'ragso2'=>"Company name 2",
-                           'image'=>"Enterprise logo<br />(only PNG format, around 400x400 max 64kb)",
+                           'image'=>"Company logo<br />(jpg,png,gif) around 400x400px max 64kb",
                            'sedleg'=>"Legal address",
                            'legrap'=>"Legal representative ",
                            'sexper'=>"Sex or legal person ",

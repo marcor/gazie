@@ -48,7 +48,12 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
        if (! empty($_FILES['userfile']['name'])) {
-          if (!( $_FILES['userfile']['type'] == "image/png" || $_FILES['userfile']['type'] == "image/x-png"))
+          if (!( $_FILES['userfile']['type'] == "image/png" ||
+               $_FILES['userfile']['type'] == "image/x-png" ||
+               $_FILES['userfile']['type'] == "image/jpeg" ||
+               $_FILES['userfile']['type'] == "image/jpg" ||
+               $_FILES['userfile']['type'] == "image/gif" ||
+               $_FILES['userfile']['type'] == "image/x-gif"))
               $msg .= '8+';
               // controllo che il file non sia pi&ugrave; grande di 10kb
           if ( $_FILES['userfile']['size'] > 10999)

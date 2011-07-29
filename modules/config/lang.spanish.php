@@ -50,7 +50,7 @@ $strScript = array ("admin_aziend.php" =>
                            'codice'=>"Codigo ",
                            'ragso1'=>"Nombre de la empresa 1",
                            'ragso2'=>"Nombre de la empresa 2",
-                           'image'=>"Logotipo de la empresa<br />(solo formato PNG, aprox. 400x400 max 64kb)",
+                           'image'=>"Logotipo de la empresa<br />(jpg,png,gif) aprox. 400x400px max 64kb",
                            'sedleg'=>"Domicilio legal",
                            'legrap'=>"Representante legal ",
                            'sexper'=>"Genero de la persona jur&iacute;dica ",

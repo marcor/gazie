@@ -46,7 +46,7 @@
                            'codice'=>"Codice ",
                            'ragso1'=>"Ragione Sociale 1",
                            'ragso2'=>"Ragione Sociale 2",
-                           'image'=>"Immagine <br />(solo in formato PNG, circa 400x400 max 64kb)",
+                           'image'=>"Logo Aziendale<br /> (jpg,png,gif) circa 400x400px max 64kb",
                            'sedleg'=>"Sede legale",
                            'legrap'=>"Legale rappresentante ",
                            'sexper'=>"Sesso/pers.giuridica ",

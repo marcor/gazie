@@ -48,7 +48,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        $chk = new check_VATno_TAXcode();
        $cf=trim($form['codfis']);
        if (! empty($_FILES['userfile']['name'])) {
-          if (!( $_FILES['userfile']['type']=="image/png" || $_FILES['userfile']['type']=="image/x-png"))
+          if (!( $_FILES['userfile']['type'] == "image/png" ||
+               $_FILES['userfile']['type'] == "image/x-png" ||
+               $_FILES['userfile']['type'] == "image/jpeg" ||
+               $_FILES['userfile']['type'] == "image/jpg" ||
+               $_FILES['userfile']['type'] == "image/gif" ||
+               $_FILES['userfile']['type'] == "image/x-gif"))
               $msg .= "11+";
           if ( $_FILES['userfile']['size']>63999)
               $msg .= "12+";
