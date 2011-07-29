@@ -42,18 +42,21 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
         }
         $form['extension']=$matches[1];
-        //print_r($_FILES);
+        print_r($_FILES);
         if ( $_FILES['userfile']['type'] == "image/png" ||
              $_FILES['userfile']['type'] == "image/x-png" ||
              $_FILES['userfile']['type'] == "application/pdf" ||
              $_FILES['userfile']['type'] == "image/pjpeg" ||
              $_FILES['userfile']['type'] == "image/jpeg" ||
+             $_FILES['userfile']['type'] == "text/richtext" ||
              $_FILES['userfile']['type'] == "text/plain" ||
+             $_FILES['userfile']['type'] == "application/vnd.oasis.opendocument.text" ||
              $_FILES['userfile']['type'] == "application/msword" ||
              $_FILES['userfile']['type'] == "image/tiff" ||
              $_FILES['userfile']['type'] == "application/doc" ||
              $_FILES['userfile']['type'] == "application/rtf" || (
              $_FILES['userfile']['type'] == "application/octet-stream" && ($form['extension']=='odt' ||
+                                                                           $form['extension']=='doc' ||
                                                                            $form['extension']=='docx'))
              ) {
         } else {
