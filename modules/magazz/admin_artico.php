@@ -42,6 +42,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve2"] = number_format($form['preve2'],$admin_aziend['decimal_price'],'.','');
     $form["preve3"] = number_format($form['preve3'],$admin_aziend['decimal_price'],'.','');
     $form["web_price"] = number_format($form['web_price'],$admin_aziend['decimal_price'],'.','');
+    $form['rows'] = array();
+    // inizio documenti/certificati
+    $next_row = 0;
+    if (isset($_POST['rows'])) {
+       foreach ($_POST['rows'] as $next_row => $value) {
+            $form['rows'][$next_row]['id_doc'] = intval($value['id_doc']);
+            $form['rows'][$next_row]['extension'] = substr($value['extension'],0,5);
+            $form['rows'][$next_row]['title'] = substr($value['title'],0,255);
+            $next_row++;
+       }
+    }
+    // fine documenti/certificati
 
     if (isset($_POST['Submit'])) { // conferma tutto
        if ($toDo == 'update') {  // controlli in caso di modifica
@@ -66,7 +78,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        if (! empty($_FILES['userfile']['name'])) {
         if (!( $_FILES['userfile']['type'] == "image/png" || $_FILES['userfile']['type'] == "image/x-png"))
            $msg .= "3+";
-           // controllo che il file non sia piu' grande di 10kb
+           // controllo che il file non sia piu' grande di circa 10kb
         if ( $_FILES['userfile']['size'] > 10999)
            $msg .= "4+";
        }
@@ -77,7 +89,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        if (empty($msg)) { // nessun errore
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
              $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
-          } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
+          } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se Ã¨ una modifica
              $oldimage = gaz_dbi_get_row($gTables['artico'],'codice',$form['ref_code']);
              $form['image'] = $oldimage['image'];
           } else {
@@ -106,6 +118,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve2"] = number_format($form['preve2'],$admin_aziend['decimal_price'],'.','');
     $form["preve3"] = number_format($form['preve3'],$admin_aziend['decimal_price'],'.','');
     $form["web_price"] = number_format($form['web_price'],$admin_aziend['decimal_price'],'.','');
+    $form['rows'] = array();
+    // inizio documenti/certificati
+    $next_row = 0;
+    $rs_row = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '".$form['codice']."'","id_doc DESC");
+    while ($row = gaz_dbi_fetch_array($rs_row)) {
+           $form['rows'][$next_row] = $row;
+           $next_row++;
+    }
+    // fine documenti/certificati
+
 } else { //se e' il primo accesso per INSERT
     $form=gaz_dbi_fields('artico');
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
@@ -252,6 +274,27 @@ echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['annota']."</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
+if ($toDo == 'update') {
+  echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['document']." :</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+  if ($next_row>0) {
+    echo "<table>\n";
+    foreach ($form['rows'] as $k=>$val) {
+            echo "<input type=\"hidden\" value=\"".$val['id_doc']."\" name=\"rows[$k][id_doc]\">\n";
+            echo "<input type=\"hidden\" value=\"".$val['extension']."\" name=\"rows[$k][extension]\">\n";
+            echo "<input type=\"hidden\" value=\"".$val['title']."\" name=\"rows[$k][title]\">\n";
+            echo "<tr class=\"FacetFieldCaptionTD\">\n";
+            echo "<td>data/files/".$val['id_doc'].".".$val['extension']."</td>\n";
+            echo "<td><a href=\"../root/retrieve.php?id_doc=".$val["id_doc"]."\"><img src=\"../../library/images/vis.gif\" title=\"".$script_transl['view']."!\" border=\"0\"></a></td>";
+            echo "<td>".$val['title']."</td>\n";
+            echo "<td align=\"right\" ><input type=\"button\" value=\"".ucfirst($script_transl['update'])." \" onclick=\"location.href='admin_document.php?id_doc=".$val['id_doc']."&Update';\"></td>";
+            echo "\t </tr>\n";
+    }
+    echo "<tr><td align=\"right\" colspan=\"4\"><input type=\"button\" value=\"".ucfirst($script_transl['insert'])." \" onclick=\"location.href='admin_document.php?item_ref=".$form['codice']."&Insert';\"></td></tr>\n";
+    echo "\t </table></td></tr>\n";
+  } else {
+    echo "\t <input type=\"button\" value=\"".ucfirst($script_transl['insert'])." \" onclick=\"location.href='admin_document.php?item_ref=".$form['codice']."&Insert';\"></td></tr>\n";
+  }
+}
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_mu']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">

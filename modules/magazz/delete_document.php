@@ -26,7 +26,7 @@ if (isset($_POST['Delete'])) {
     gaz_dbi_del_row($gTables['files'], "id_doc", intval($_POST['id_doc']));
     $fn="../../data/files/".intval($_POST['id_doc']).'.'.substr($_POST['ext'],0,4);
     unlink($fn);
-    //header("Location: browse_document.php");
+    header("Location: browse_document.php");
     exit;
 }
 

@@ -42,6 +42,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
         }
         $form['extension']=$matches[1];
+        //print_r($_FILES);
         if ( $_FILES['userfile']['type'] == "image/png" ||
              $_FILES['userfile']['type'] == "image/x-png" ||
              $_FILES['userfile']['type'] == "application/pdf" ||
@@ -50,6 +51,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
              $_FILES['userfile']['type'] == "text/plain" ||
              $_FILES['userfile']['type'] == "application/msword" ||
              $_FILES['userfile']['type'] == "image/tiff" ||
+             $_FILES['userfile']['type'] == "application/doc" ||
              $_FILES['userfile']['type'] == "application/rtf" || (
              $_FILES['userfile']['type'] == "application/octet-stream" && ($form['extension']=='odt' ||
                                                                            $form['extension']=='docx'))
@@ -63,6 +65,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         } elseif($_FILES['userfile']['size'] == 0)  {
            $msg .= "2+";
         }
+       } else {
+           $msg .= "3+";
        }
        if (empty($msg)) { // nessun errore
           // aggiorno il solo db
@@ -120,6 +124,7 @@ if ($toDo == 'insert') {
 }
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 echo "<input type=\"hidden\" name=\"extension\" value=\"".$form['extension']."\">\n";
+echo "<input type=\"hidden\" name=\"item_ref\" value=\"".$form['item_ref']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
 echo "<table class=\"Tmiddle\">\n";
 if (!empty($msg)) {

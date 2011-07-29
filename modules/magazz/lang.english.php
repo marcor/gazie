@@ -23,7 +23,21 @@
  --------------------------------------------------------------------------
 */
 
-$strScript = array ("report_statis.php" =>
+$strScript = array ("browse_document.php" =>
+                   array('title'=>"List of Documents / Certificates",
+                         'errors'=>array('The file format was not accepted!',
+                                         'The file is too big!',
+                                         'The file is empty!',
+                                         'No file selected'),
+                         'ins_this'=>"Insert a document and / or Certificate",
+                         'upd_this'=>"Edit Document and / or Certificate",
+                         'item'=>"Item reference",
+                         'table_name_ref'=>"Reference Table",
+                         'note'=>"Caption / Notes ",
+                         'ext'=>"Extension",
+                         'select'=>"Sel.",
+                         'code'=>"Code"),
+                    "report_statis.php" =>
                    array(  "statistic ",
                            "sales",
                            "purchases",
@@ -316,6 +330,7 @@ $strScript = array ("report_statis.php" =>
                            'codcon'=>'Account of income from sales',
                            'id_cost'=>'Account of cost on purchases',
                            'annota'=>'Note (also published on the website)',
+                           'document'=>'Documents and / or certification',
                            'web_mu'=>'Measurement Units on the website',
                            'web_price'=>'Selling price on the website',
                            'web_multiplier'=>'Web price multiplier',

@@ -170,7 +170,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                    }
                    $i++;
              }
-             //qualora i nuovi rows fossero di più dei vecchi inserisco l'eccedenza
+             //qualora i nuovi rows fossero di piÃ¹ dei vecchi inserisco l'eccedenza
              for ($i = $i; $i <= $count; $i++) {
                 $form['rows'][$i]['id_contract'] = $form['id_contract'];
                 contractRowUpdate($form['rows'][$i]);
@@ -225,7 +225,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 
   // Se viene inviata la richiesta di conferma rigo
   if (isset($_POST['in_submit_x'])) {
-    if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
+    if (substr($form['in_status'],0,6) == "UPDROW"){ //se Ã¨ un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['rows'][$old_key]['status'] = "UPDATE";
          $form['rows'][$old_key]['descri'] = $form['in_descri'];
@@ -242,7 +242,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
          } else {   // rigo di testo
          }
          ksort($form['rows']);
-    } else { //se è un rigo da inserire
+    } else { //se Ã¨ un rigo da inserire
          $form['rows'][$next_row]['status'] = 'INSERT';
          $form['rows'][$next_row]['descri'] = $form['in_descri'];
          $form['rows'][$next_row]['unimis'] = $form['in_unimis'];

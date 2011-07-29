@@ -79,7 +79,7 @@ $recordnav = new recordnav($gTables['files'], $where, $limit, $passo);
 $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
     if(!isset($_GET['all']) and !empty($a_row["image"])){
-         $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$a_rowr['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
+         $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$a_row['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$a_row['item_ref']."'>] fade=[on] fadespeed=[0.03] \"";
     } else {
          $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$a_row['annota']."]  fade=[on] fadespeed=[0.03] \"";
     }

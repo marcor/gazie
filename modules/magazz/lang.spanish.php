@@ -27,7 +27,21 @@
  -- TRANSLATED BY : Dante Becerra Lagos (softenglish@gmail.com)
 */
 
-$strScript = array ("report_statis.php" =>
+$strScript = array ("browse_document.php" =>
+                   array('title'=>"Lista de documentos / certificados",
+                         'errors'=>array('El formato de archivo no fue aceptada!',
+                                         'El archivo es muy grande!',
+                                         'El archivo está vacío!',
+                                         'No existe el fichero se ha seleccionado'),
+                         'ins_this'=>"Insertar un documento y / o Certificado",
+                         'upd_this'=>"Editar el documento y / o Certificado",
+                         'item'=>"El producto de referencia",
+                         'table_name_ref'=>"Tabla de referencia",
+                         'note'=>"Leyenda / Notas",
+                         'ext'=>"Extensión",
+                         'select'=>"Sel.",
+                         'code'=>"Codigo"),
+                    "report_statis.php" =>
                    array(  "estatistico ",
                            "ventas",
                            "compras",
@@ -320,6 +334,7 @@ $strScript = array ("report_statis.php" =>
                            'codcon'=>'Account of income from sales',
                            'id_cost'=>'Account of cost on purchases',
                            'annota'=>'Note (also published on the website)',
+                           'document'=>'documentos y/o certificaciones',
                            'web_mu'=>'Measurement Units on the website',
                            'web_price'=>'Selling price on the website',
                            'web_multiplier'=>'Web precio multiplicador',

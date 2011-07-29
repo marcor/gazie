@@ -968,7 +968,7 @@ if ($toDo == 'insert') {
 }
 ?>
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
-
+<!--
 <tr><td colspan="2">
 
 <div id="dialog-form" title="Partite Aperte">
@@ -995,6 +995,7 @@ if ($toDo == 'insert') {
 </div>
 <a href="#" id="open-items">&weierp;</a>
 </td></tr>
+--!>
 <?php
 if (!empty($msg)) {
     echo '<tr><td colspan="6" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
