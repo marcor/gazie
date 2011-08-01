@@ -1,0 +1,12 @@
+Titolo:
+Nec aspera terrent.
+
+Presentazione:
+Questa è la prima versione di GAzie rilasciata senza aver fatto debug, per il semplice motivo che non sono stati rilevati errori! Ho voluto mettere un'altra pietra migliare sullo sviluppo perchè è stata integrata l'ultima versione di TCPDF tal quale, senza patch o modifiche di alcun genere. L'operazione è stata possibile, e soprattutto facile, perchè la funzione Image() da qualche mese, grazie al lavoro del suo autore (Nicola Asuni) rende anche le immagini provenienti da stream che per GAzie sono i campi blob del database; oltretutto vengono accettate pure le immagini con trasparenze. Pertato la vecchia funzione MemImage è stata sostituita da quella citata rendendo inutilizzabili i vostri template personalizzati e non sovrascritti dall'aggiornamento stesso. Però potrete ovviare a questo sostituendo la vecchia funzione con la nuova su tutti i vostri template, è una operazione tutto sommato semplice; oppure utilizzare quelli originali di GAzie. Un'altra feature di cui ci si può avvalere dalla 5.14 è quella della memorizzazione dei documenti relativi agli articoli in magazzino in modo da permettere l'archiviazione sul filesystem del server ( in ./data/files/ ) dei file di documentazione, certificazione, schede tecniche degli articoli; i formati accettati sono jpg,png,pdf,tif,doc,docx,odt,rtf. Il database è stato concepito per permettere, in futuro, di legare i singoli documenti ai singoli righi dei documenti di acquisto.
+   
+Modifiche apportate:
+- recepito TCPDF versione 5.9.103 originale, allineando di fatto lo sviluppo di GAzie a quello di TCPDF.
+- implemantato un sistema di archiviazione su filesystem dei documenti/certificazione/schede tecniche dei prodotti di magazzino.
+
+
+Antonio de Vincentiis, Montesilvano, 1 Agosto 2011.
