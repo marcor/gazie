@@ -149,7 +149,7 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false)
             return false;
         } else {
             countclick++;
-            document.getElementById(\'preventDuplicate\').value=\''.$strCommon['wait'].'...\';
+            document.getElementById(\'preventDuplicate\').hidden=true;
             return true;
         }
      }
