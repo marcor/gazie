@@ -159,6 +159,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         }
     $ctrltipo = $a_row["tipeff"];
 }
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $pdf->setRiporti();
 $pdf->Cell(190,4,$totnumtipo.' '.$descreff.' per un totale di € '.gaz_format_number($totaletipo),1,1,'R',1);
 $pdf->SetFont('freesans','B',12);
