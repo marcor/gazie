@@ -118,7 +118,7 @@ $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(51);
 $config = new Config;
 $gForm = new magazzForm();
-$pdf->SetFont('freesans','',7);
+$pdf->SetFont('helvetica','',7);
 $ctrlArtico = "";
 $ctrl_id=0;
 $mval['q_g']=0;
@@ -131,11 +131,11 @@ while ($mv = gaz_dbi_fetch_array($result)) {
          set_time_limit (30);
          if (!empty($ctrlArtico)) {
                    $pdf->StartPageGroup();
-                   $pdf->SetFont('freesans','B',8);
+                   $pdf->SetFont('helvetica','B',8);
                    $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].strftime("%d-%m-%Y",$utsrf).' : ',1,0,'R');
                    $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
                    $pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
-                   $pdf->SetFont('freesans','',7);
+                   $pdf->SetFont('helvetica','',7);
          }
          $aRiportare['top'][1]['nam'] = 0;
          $aRiportare['bot'][1]['nam'] = 0;
@@ -191,11 +191,11 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       }
       $ctrlArtico = $mv['artico'];
 }
-$pdf->SetFont('freesans','B',8);
+$pdf->SetFont('helvetica','B',8);
 $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].strftime("%d-%m-%Y",$utsrf).' : ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
 $pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
-$pdf->SetFont('freesans','',7);
+$pdf->SetFont('helvetica','',7);
 $pdf->setRiporti('');
 $pdf->Output();
 ?>

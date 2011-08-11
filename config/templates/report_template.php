@@ -92,7 +92,7 @@ class Report_template extends TCPDF
             $this->descri_cover = $this->altri_dati['cover'];
             $this->printCover();
         } else {
-            $this->SetFont('freesans','',9);
+            $this->SetFont('helvetica','',9);
             $this->Image('@'.$this->logo,15,8,30,0,'',$this->link);
             $this->Cell(40,4);
             $this->Cell(118,4,$this->intesta1,0,0,'L');
@@ -111,7 +111,7 @@ class Report_template extends TCPDF
                $this->Ln(4);
             }
             if (isset($this->intesta_item_group) and is_array($this->intesta_item_group)){ // c'è una descrizione dell'articolo
-               $this->SetFont('freesans','',9);
+               $this->SetFont('helvetica','',9);
                $this->Cell(40);
                foreach ($this->intesta_item_group['top'] as $key=>$value){
                    $this->Cell($value['lun'],4,$value['nam'],1,0,'C',1);
@@ -122,31 +122,31 @@ class Report_template extends TCPDF
                    $this->Cell($value['lun'],4,$value['nam'],1,0,'C');
                }
                $this->Cell(1,4,'',0,1);
-               $this->SetFont('freesans','',8);
+               $this->SetFont('helvetica','',8);
             }
             if (is_array($this->altri_dati) and isset($this->altri_dati['title'])){ // è una intestazione con titolo e testata tabella
                $this->Cell(40);
-               $this->SetFont('freesans','',12);
+               $this->SetFont('helvetica','',12);
                $this->Cell(130,12,$this->altri_dati['title'],0,1);
-               $this->SetFont('freesans','',9);
+               $this->SetFont('helvetica','',9);
                foreach ($this->altri_dati['hile'] as $key=>$value){
                  $this->Cell($value['lun'],4,$value['nam'],1,0,'C',1);
                }
                $this->Cell(1,4,'',0,1);
-               $this->SetFont('freesans','',8);
+               $this->SetFont('helvetica','',8);
             } elseif (is_string($this->altri_dati) and !empty($this->altri_dati)) {  //solo con titolo
                $this->Cell(40);
-               $this->SetFont('freesans','',12);
+               $this->SetFont('helvetica','',12);
                $this->Cell(130,12,$this->altri_dati,0,1);
-               $this->SetFont('freesans','',8);
+               $this->SetFont('helvetica','',8);
             }
             if (isset($this->intesta_riporti) and is_array($this->intesta_riporti)){ // c'è un riporto da pagina precedente
-               $this->SetFont('freesans','B',8);
+               $this->SetFont('helvetica','B',8);
                foreach ($this->intesta_riporti['top'] as $key=>$value){
                    $this->Cell($value['lun'],4,$value['nam'],1,0,'R');
                }
                $this->Cell(1,4,'',0,1);
-               $this->SetFont('freesans','',8);
+               $this->SetFont('helvetica','',8);
             }
             if (isset($this->free_header) and is_array($this->free_header)) {
                foreach ($this->free_header as $value){
@@ -164,7 +164,7 @@ class Report_template extends TCPDF
         } else {
           //Page footer
           if (isset($this->intesta_riporti) and is_array($this->intesta_riporti)){ // c'è un riporto da pagina precedente
-             $this->SetFont('freesans','B',8);
+             $this->SetFont('helvetica','B',8);
              foreach ($this->intesta_riporti['bot'] as $key=>$value){
                    $this->Cell($value['lun'],4,$value['nam'],1,0,'R');
              }
@@ -175,7 +175,7 @@ class Report_template extends TCPDF
                }
              }
           }
-          $this->SetFont('freesans','',8);
+          $this->SetFont('helvetica','',8);
           $this->MultiCell($this->getPageWidth()-15,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4,0,'C');
         }
     }
@@ -183,14 +183,14 @@ class Report_template extends TCPDF
     function printCover()
     {
            $this->Image('@'.$this->logo,80,80,40,0,'',$this->link);
-           $this->SetFont('freesans','',18);
+           $this->SetFont('helvetica','',18);
            $this->SetXY(10,130);
            $this->Cell(190,6,$this->intesta1,0,2,'C');
-           $this->SetFont('freesans','',12);
+           $this->SetFont('helvetica','',12);
            $this->Cell(190,6,$this->intesta2,0,2,'C');
            $this->Cell(190,6,$this->intesta3,0,2,'C');
            $this->SetXY(55,160);
-           $this->SetFont('freesans','',30);
+           $this->SetFont('helvetica','',30);
            $this->MultiCell(100,16,$this->descri_cover,1,'C',1);
            $this->AddPage();
     }

@@ -109,7 +109,7 @@ $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(47);
 $pdf->SetFooterMargin(18);
 $config = new Config;
-$pdf->SetFont('freesans','',7);
+$pdf->SetFont('helvetica','',7);
 
 $ctrlAgente = 0;
 $ctrlDoc = 0;
@@ -118,10 +118,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $pdf -> setRiporti($aRiportare);
       if ($ctrlAgente != $row['id_agente']) {
          if ($ctrlAgente > 0) {
-             $pdf->SetFont('freesans','B',8);
+             $pdf->SetFont('helvetica','B',8);
              $pdf->Cell($aRiportare['top'][0]['lun'],4,'Totale provvigioni: ',1,0,'R');
              $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
-             $pdf->SetFont('freesans','',8);
+             $pdf->SetFont('helvetica','',8);
          }
          $agente = getNewAgente($row['id_agente']);
          $item_head['bot']= array(array('lun' => 50,'nam'=>$agente['indspe']),
@@ -163,10 +163,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $ctrlAgente = $row['id_agente'];
       $ctrlDoc = $row['id_tes'];
 }
-$pdf->SetFont('freesans','B',8);
+$pdf->SetFont('helvetica','B',8);
 $pdf->Cell($aRiportare['top'][0]['lun'],4,'Totale provvigioni: ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
-$pdf->SetFont('freesans','',8);
+$pdf->SetFont('helvetica','',8);
 $pdf->setRiporti('');
 $pdf->Output();
 ?>

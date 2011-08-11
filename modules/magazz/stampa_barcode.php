@@ -63,7 +63,7 @@ if (empty($article['image'])){
    $n=3;
 }
 $pdf->AddPage();
-$pdf->SetFont('freesans','',9);
+$pdf->SetFont('helvetica','',9);
 $pdf->Ln(2);
 $x=10 ;
 $y = $pdf->GetY();

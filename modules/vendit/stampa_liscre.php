@@ -113,9 +113,9 @@ foreach ($conti as $value) {
                                "datreg");
     while ($movimenti = gaz_dbi_fetch_array($result)) {
         if($ctrlcli != $movimenti["codcon"]){
-            $pdf->SetFont('freeserif','B',11);
+            $pdf->SetFont('times','B',11);
             $pdf->Cell(187,6,$movimenti['ragso1'].' Tel. '.$movimenti['telefo'].' cell. '.$movimenti['cell'],1,1,'L',1);
-            $pdf->SetFont('freesans','',9);
+            $pdf->SetFont('helvetica','',9);
             $saldo = 0.00;
         }
         $giomov = substr($movimenti['datreg'],8,2);

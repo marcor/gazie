@@ -77,9 +77,9 @@ class Template extends TCPDF
 
        } else {
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-        $this->SetFont('freeserif','B',14);
+        $this->SetFont('times','B',14);
         $this->Cell(130,6,$this->intesta1,0,1,'L');
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $interlinea = 14;
         if (!empty($this->intesta1bis))  {
            $this->Cell(130,4,$this->intesta1bis,0,2,'L');
@@ -92,7 +92,7 @@ class Template extends TCPDF
         $this->Line(0,93,3,93); //questa marca la linea d'aiuto per la piegatura del documento
         $this->Line(0,143,3,143); //questa marca la linea d'aiuto per la foratura del documento
         $this->Ln($interlinea);
-        $this->SetFont('freesans','',11);
+        $this->SetFont('helvetica','',11);
         $this->Cell(110,5,$this->tipdoc,1,1,'L',1);
         if ($this->tesdoc['tipdoc'] == 'NOP') {
            $this->Cell(30,5);
@@ -102,7 +102,7 @@ class Template extends TCPDF
         $this->Ln(6);
         $interlinea = $this->GetY();
         $this->Ln(6);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         if (!empty ($this->destinazione)) {
             if (is_array($this->destinazione)){ //quando si vuole indicare un titolo diverso da destinazione si deve passare un array con titolo index 0 e descrizione index 1
                 $this->Cell(80,5,$this->destinazione[0],'LTR',2,'L',1);
@@ -112,7 +112,7 @@ class Template extends TCPDF
                 $this->MultiCell(80,4,$this->destinazione,'LBR','L');
             }
         }
-        $this->SetFont('freesans','',10);
+        $this->SetFont('helvetica','',10);
         $this->SetXY(110,$interlinea+3);
         $this->Cell(15,5,'Spett.le ',0,0,'R');
         $this->Cell(75,5,$this->cliente1,0,1,'L');
@@ -120,20 +120,20 @@ class Template extends TCPDF
             $this->Cell(115);
             $this->Cell(75,5,$this->cliente2,0,1,'L');
         }
-        $this->SetFont('freesans','',10);
+        $this->SetFont('helvetica','',10);
         $this->Cell(115);
         $this->Cell(75,5,$this->cliente3,0,1,'L');
         $this->Cell(115);
         $this->Cell(75,5,$this->cliente4,0,1,'L');
-        $this->SetFont('freesans','',7);
+        $this->SetFont('helvetica','',7);
         $this->Cell(115);
         $this->Cell(75,5,$this->cliente5,0,1,'L');
         if (!empty ($this->c_Attenzione)) {
-            $this->SetFont('freesans','',10);
+            $this->SetFont('helvetica','',10);
             $this->Cell(115,8,'alla C.A.',0,0,'R');
             $this->Cell(75,8,$this->c_Attenzione,0,1);
         }
-        $this->SetFont('freesans','',7);
+        $this->SetFont('helvetica','',7);
         if (!empty ($this->clientSedeLegale)) {
             $this->Cell(115,8,'Sede legale: ',0,0,'R');
             $this->Cell(75,8,$this->clientSedeLegale,0,1);

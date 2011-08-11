@@ -53,7 +53,7 @@ class FatturaAcquisto extends Template
 
     function newPage() {
         $this->AddPage();
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(25,6,'Codigo',1,0,'C',1);
         $this->Cell(80,6,'Descripcion',1,0,'C',1);
         $this->Cell(7, 6,'U.M.',1,0,'C',1);
@@ -82,10 +82,10 @@ class FatturaAcquisto extends Template
         while (list($key, $rigo) = each($lines)) {
             if ($this->GetY() >= 185) {
                 $this->Cell(186,6,'','T',1);
-                $this->SetFont('freesans', '', 20);
+                $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- CONTINUA EN LA PAGINA SIGUIENTE --- >>> ',1,1,'R');
-                $this->SetFont('freesans', '', 9);
+                $this->SetFont('helvetica', '', 9);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- VIENE DE LA PAGINA ANTERIOR --- <<< ',0,1);
             }
@@ -132,12 +132,12 @@ class FatturaAcquisto extends Template
         $this->Cell(186,6,'','T',1);
         //stampo il castelletto
         $this->SetY(180);
-        $this->SetFont('freesans','B',48);
+        $this->SetFont('helvetica','B',48);
         $this->SetTextColor(255,150,150);
         $this->Cell(186,20,'N O    F I S C A L',0,1,'C');
         $this->SetTextColor(0,0,0);
         $this->SetY(212);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->Cell(62,6,'Pago','LTR',0,'C',1);
         $this->Cell(68,6,'Resumen Tasas I.V.A.','LTR',0,'C',1);
         $this->Cell(56,6,'T O T A L    F A C T U R A','LTR',1,'C',1);
@@ -193,7 +193,7 @@ class FatturaAcquisto extends Template
         //stampo i totali
         $this->SetY(200);
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-        $this->SetFont('freesans', '', 9);
+        $this->SetFont('helvetica', '', 9);
         $this->Cell(36, 6,'Totale merce','LTR',0,'C',1);
         $this->Cell(16, 6,'% Sconto','LTR',0,'C',1);
         $this->Cell(24, 6,'Spese Incasso','LTR',0,'C',1);
@@ -239,10 +239,10 @@ class FatturaAcquisto extends Template
         $this->SetY(218);
         $this->Cell(130);
         $totale = $totimpfat + $totivafat + $impbol;
-        $this->SetFont('freesans','B',18);
+        $this->SetFont('helvetica','B',18);
         $this->Cell(56, 24, '€ '.gaz_format_number($totale),'LBR', 1, 'C');
         $this->SetY(224);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(62, 6, 'Banco de Apoyo','LTR',1,'C',1);
         $this->Cell(62, 6, $this->banapp['descri'],'LR',1,'L');
         if (!empty($this->banapp['descri'])) {
@@ -288,7 +288,7 @@ class FatturaAcquisto extends Template
     {
         //Document footer
         $this->SetY(-20);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->MultiCell(184,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
     }
 }

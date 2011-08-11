@@ -99,7 +99,7 @@ $pdf->SetTopMargin(39);
 $pdf->SetFooterMargin(20);
 $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
-$pdf->SetFont('freesans','',7);
+$pdf->SetFont('helvetica','',7);
 if (sizeof($result) > 0) {
   while (list($key, $row) = each($result)) {
       $datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);

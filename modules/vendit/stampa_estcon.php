@@ -64,7 +64,7 @@ $totmovpre =0.00;
 $totmovsuc =0.00;
 $ctrlmopre = 0;
 $saldo = 0.00;
-$pdf->SetFont('freesans','',8);
+$pdf->SetFont('helvetica','',8);
 
 while ($movimenti = gaz_dbi_fetch_array($result)){
     $giomov = substr($movimenti['datreg'],8,2);

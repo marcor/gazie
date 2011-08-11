@@ -46,7 +46,7 @@ class Lettera extends Template
     function newPage() {
         $this->SetTopMargin(90);
         $this->AddPage();
-        $this->SetFont('freesans','',10);
+        $this->SetFont('helvetica','',10);
     }
 
     function pageHeader() {
@@ -78,7 +78,7 @@ class Lettera extends Template
     {
         //Document footer
         $this->SetY(-20);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->Cell(184,1,'','B',1);
         $this->MultiCell(184,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
     }

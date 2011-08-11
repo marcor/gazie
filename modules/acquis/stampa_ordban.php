@@ -85,18 +85,18 @@ class PDF extends TCPDF
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $posiz=$this->GetY();
         $this->Image('@'.$logo,150,$posiz,30,0,'Logo aziendale');
-        $this->SetFont('freeserif','B',16);
+        $this->SetFont('times','B',16);
         $this->Cell(130,6,$intesta1,0,1,'L');
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(130,4,$intesta2,0,2,'L');
         $this->Cell(130,4,$intesta3,0,2,'L');
         $this->Cell(130,4,$intesta4,0,0,'L');
         $this->Ln(5);
-        $this->SetFont('freesans','',14);
+        $this->SetFont('helvetica','',14);
         $this->Cell(95,6,'Ordine di '.$descridoc.' n.'.$emissione,1,1,'L',1);
-        $this->SetFont('freesans','',10);
+        $this->SetFont('helvetica','',10);
         $this->Cell(95,4,'a favore di :',0,1,'L');
-        $this->SetFont('freesans','',12);
+        $this->SetFont('helvetica','',12);
         $this->Cell(95,5,$fornitore1,0,0,'L');
         $this->Cell(20,5,'Spett.le ',0,0,'R');
         $this->Cell(130,5,$banca1,0,1,'L');
@@ -121,9 +121,9 @@ class PDF extends TCPDF
         global $descridoc,$piede,$datafirma;
         //Page footer
         $this->SetY(-14);
-        $this->SetFont('freesans','',12);
+        $this->SetFont('helvetica','',12);
         $this->Cell(190,5,$datafirma.' _____________________________________',0,1,'R');
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->Cell(90,4,'Copia '.$descridoc.' '.$piede,0,0,'R');
         $this->Cell(70,4,'firma',0,0,'R');
     }
@@ -171,17 +171,17 @@ while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
 $impwords = $nuw->euro2assegno($totale);
 $pdf->Cell(190,1,'','B',1);
 $pdf->Cell(50,6,'PER UN TOTALE DI',0,0,'L');
-$pdf->SetFont('freesans','',14);
+$pdf->SetFont('helvetica','',14);
 $pdf->Cell(110,6,$impwords,'BTL',0,'R',1);
 $pdf->Cell(30,6,gaz_format_number($totale),'BTR',1,'R',1);
-$pdf->SetFont('freesans','',12);
+$pdf->SetFont('helvetica','',12);
 $pdf->MultiCell(190,6,$text2,0,'L',0);
 $piede='ad uso interno';
 if ($pdf->GetY() <= 133) {
     $pdf->SetY(136);
-    $pdf->SetFont('freesans','',12);
+    $pdf->SetFont('helvetica','',12);
     $pdf->Cell(190,5,$datafirma.' _____________________________________',0,1,'R');
-    $pdf->SetFont('freesans','',8);
+    $pdf->SetFont('helvetica','',8);
     $pdf->Cell(90,4,'Copia '.$descridoc.' ad uso interno',0,0,'R');
     $pdf->Cell(70,4,'firma',0,0,'R');
     $pdf->Line(0,149,210,149);
@@ -210,10 +210,10 @@ while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
 $impwords = $nuw->euro2assegno($totale);
 $pdf->Cell(190,1,'','B',1);
 $pdf->Cell(50,6,'PER UN TOTALE DI',0,0,'L');
-$pdf->SetFont('freesans','',14);
+$pdf->SetFont('helvetica','',14);
 $pdf->Cell(110,6,$impwords,'BTL',0,'R',1);
 $pdf->Cell(30,6,gaz_format_number($totale),'BTR',1,'R',1);
-$pdf->SetFont('freesans','',12);
+$pdf->SetFont('helvetica','',12);
 $pdf->MultiCell(190,6,$text2,0,'L',0);
 $piede='per la banca';
 $pdf->Output();

@@ -100,7 +100,7 @@ $pdf->AddPage();
 $ctrltipo="";
 $totaleff=0.00;
 $totnumeff=0;
-$pdf->SetFont('freesans','',8);
+$pdf->SetFont('helvetica','',8);
 while ($a_row = gaz_dbi_fetch_array($result)) {
     if ($a_row["tipeff"] <> $ctrltipo){
         if (isset($totaletipo))
@@ -162,7 +162,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $pdf->setRiporti();
 $pdf->Cell(190,4,$totnumtipo.' '.$descreff.' per un totale di € '.gaz_format_number($totaletipo),1,1,'R',1);
-$pdf->SetFont('freesans','B',12);
+$pdf->SetFont('helvetica','B',12);
 $pdf->Cell(80);
 $pdf->Cell(80,10,'TOTALE DEGLI EFFETTI VERSATI    € ',1,0,'L');
 $pdf->Cell(30,10,gaz_format_number($totaleff),1,1,'R',1);

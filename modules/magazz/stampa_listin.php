@@ -103,7 +103,7 @@ $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($ad
 $ctrlcatmer=0;
 while ($row = gaz_dbi_fetch_array($result)) {
        $magval=array_pop($gForm->getStockValue(false,$row['codice']));
-       $pdf->SetFont('freesans','',10);
+       $pdf->SetFont('helvetica','',10);
        switch($_GET['li']) {
         case '0':
         $price = $row['preacq'];

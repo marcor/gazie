@@ -103,11 +103,11 @@ while ($row = gaz_dbi_fetch_array($result)) {
       if ($ctrlConto != $row['codcon']) {
          $movSaldo = 0.00;
          if (!empty($ctrlConto)) {
-                   $pdf->SetFont('freesans','B',7);
+                   $pdf->SetFont('helvetica','B',7);
                    $pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
                    $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
          }
-         $pdf->SetFont('freesans','',7);
+         $pdf->SetFont('helvetica','',7);
          $aRiportare['top'][1]['nam'] = 0;
          $aRiportare['bot'][1]['nam'] = 0;
          $item_head['bot']= array(array('lun' => 80,'nam'=>$row['descri']),
@@ -130,7 +130,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $aRiportare['bot'][1]['nam'] = gaz_format_number($movSaldo);
       $pdf->Cell(18,4,$datareg,1,0,'C');
       if (!empty($row['partner']) || !empty($row['numdoc'])){
-          $pdf->SetFont('freesans','',6);
+          $pdf->SetFont('helvetica','',6);
           $row['tesdes'].=' ('.substr($row['partner'],0,30);
           if (!empty($row['numdoc'])){
              $row['tesdes'] .= ' n.'.$row['numdoc'].' del '.$datadoc;
@@ -141,13 +141,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
           $row['tesdes'].=')';
       }
       $pdf->Cell(108,4,$row['tesdes'],'LTB');
-      $pdf->SetFont('freesans','',7);
+      $pdf->SetFont('helvetica','',7);
       $pdf->Cell(20,4,$dare,1,0,'R');
       $pdf->Cell(20,4,$avere,1,0,'R');
       $pdf->Cell(20,4,gaz_format_number($movSaldo),1,1,'R');
       $ctrlConto = $row['codcon'];
 }
-$pdf->SetFont('freesans','B',8);
+$pdf->SetFont('helvetica','B',8);
 $pdf->Cell($aRiportare['top'][0]['lun'],4,'SALDO al '.$descrDatafin.' : ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
 $pdf->setRiporti('');

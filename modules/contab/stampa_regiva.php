@@ -115,7 +115,7 @@ $pdf->setTopBar($top);
 $pdf->AddPage();
 $pdf->setFooterMargin(21);
 $pdf->setTopMargin(44);
-$pdf->SetFont('freesans','',8);
+$pdf->SetFont('helvetica','',8);
 $castelconti = array();
 $totimponi =0.00;
 $totimpost =0.00;
@@ -205,12 +205,12 @@ while ($mov = gaz_dbi_fetch_array($result)) {
                                       "id_rig asc");
             while ($righi_cont = gaz_dbi_fetch_array($rs_righicontabili)) {
                $codcon = $righi_cont['codcon'];
-               $pdf->SetFont('freesans','',7);
+               $pdf->SetFont('helvetica','',7);
                $pdf->Cell(50,4,$righi_cont['codcon']."-".substr($righi_cont['descri'],0,23),'L');
                $pdf->Cell(1,4,$money[1]);
                $maxY = $pdf->GetY();
                $pdf->Cell(15,4,gaz_format_number($righi_cont['import']),'R',1,'R');
-               $pdf->SetFont('freesans','',8);
+               $pdf->SetFont('helvetica','',8);
                if (!isset($castelconti[$codcon])) {
                    $castelconti[$codcon] = array('value'=>0,'ds'=>0);
                    $castelconti[$codcon]['ds'] = $righi_cont['descri'];
@@ -248,7 +248,7 @@ while ($mov = gaz_dbi_fetch_array($result)) {
 $pdf->setTopCarryBar('');
 $pdf->setBotCarryBar('');
 $pdf->Cell(190,1,'','T');
-$pdf->SetFont('freesans','B',10);
+$pdf->SetFont('helvetica','B',10);
 $pdf->Ln(6);
 $pdf->Cell(190,6,'RIEPILOGO TOTALI PER ALIQUOTE',1,1,'C',1);
 $pdf->Cell(20,5,'cod'.$key,1,0,'C');
@@ -267,7 +267,7 @@ foreach ($castelimponi as $key => $value) {
      $pdf->Cell(30,5,gaz_format_number($castelimpost[$key]),1,0,'R');
      $pdf->Cell(30,5,gaz_format_number($value + $castelimpost[$key]),1,1,'R');
 }
-$pdf->SetFont('freesans','B',10);
+$pdf->SetFont('helvetica','B',10);
 $pdf->Cell(80,5,'TOTALE GENERALE',1,0,'C',1);
 $pdf->Cell(30,5,gaz_format_number($totimponi),1,0,'R',1);
 $pdf->Cell(20,5);
@@ -276,13 +276,13 @@ $pdf->Cell(30,5,gaz_format_number($totale),1,1,'R',1);
 
 if ($_GET['mt']==1) {
    $pdf->Ln(6);
-   $pdf->SetFont('freesans','B',10);
+   $pdf->SetFont('helvetica','B',10);
    $pdf->Cell(35);
    $pdf->Cell(120,6,'RIEPILOGO TOTALI CONTI',1,2,'C',1);
    $pdf->Cell(20,5,'codice',1,0,'C');
    $pdf->Cell(75,5,'descrizione',1,0,'C');
    $pdf->Cell(25,5,'importo',1,1,'R');
-   $pdf->SetFont('freesans','',8);
+   $pdf->SetFont('helvetica','',8);
    foreach ($castelconti as $key => $value) {
      $pdf->Cell(35);
      $pdf->Cell(20,5,$key,1,0,'C');

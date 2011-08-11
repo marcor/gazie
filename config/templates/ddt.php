@@ -48,7 +48,7 @@ class DDT extends Template_con_scheda
     function newPage() {
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(30,6,'Codice',1,0,'L',1);
         $this->Cell(82,6,'Descrizione',1,0,'L',1);
         $this->Cell(10,6,'U.m.',1,0,'L',1);
@@ -69,10 +69,10 @@ class DDT extends Template_con_scheda
         while (list($key, $rigo) = each($lines)) {
             if ($this->GetY() >= 215) {
                 $this->Cell(155,6,'','T',1);
-                $this->SetFont('freesans', '', 20);
+                $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
                 $this->Cell(185,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
-                $this->SetFont('freesans', '', 9);
+                $this->SetFont('helvetica', '', 9);
                 $this->newPage();
                 $this->Cell(185,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
@@ -102,7 +102,7 @@ class DDT extends Template_con_scheda
         $y = $this->GetY();
         $this->Rect(10,$y,187,220-$y); //questa marca le linee dx e sx del documento
         $this->SetY(220);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(83, 5,'Agente','LTR',0,'C',1);
         $this->Cell(26, 5,'Peso netto','LTR',0,'C',1);
         $this->Cell(26, 5,'Peso lordo','LTR',0,'C',1);
@@ -175,12 +175,12 @@ class DDT extends Template_con_scheda
               unset($this->appendix);
           } else {
            $this->SetY(-20);
-           $this->SetFont('freesans','',8);
+           $this->SetFont('helvetica','',8);
            $this->MultiCell(184,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
           }
         } else {
            $this->SetY(-20);
-           $this->SetFont('freesans','',8);
+           $this->SetFont('helvetica','',8);
            $this->MultiCell(184,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
         }
     }

@@ -82,7 +82,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
     {
     //questo � il modulo delle ricevute bancarie
     case "B":
-        $pdf->SetFont('freesans','',7);
+        $pdf->SetFont('helvetica','',7);
         $pdf->Rect(5,5+$passo*$numefftot,200,50);
         $pdf->Rect(5,60+$passo*$numefftot,65,30);
         $pdf->Rect(71,60+$passo*$numefftot,85,30);
@@ -97,31 +97,31 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(50,3,'P.I. '.$admin_aziend['pariva'],0,2,'L');
         $pdf->Cell(50,3,'C.F. '.$admin_aziend['codfis'],0,0,'L');
         $pdf->SetXY(70,5+$numefftot*$passo);
-        $pdf->SetFont('freesans','B',10);
+        $pdf->SetFont('helvetica','B',10);
         $pdf->Cell(50,10,'RICEVUTA N. '.$effetto['progre'],0,0,'L');
-        $pdf->SetFont('freesans','',8);
+        $pdf->SetFont('helvetica','',8);
         $pdf->MultiCell(22,10,'Data di pagamento','LTB','L',1);
         $pdf->SetXY(140,5+$numefftot*$passo);
-        $pdf->SetFont('freesans','B',10);
+        $pdf->SetFont('helvetica','B',10);
         $pdf->Cell(20,10,$scadenza.' ','RTB',0,'R',1);
         $pdf->Cell(10,10,'euro',0,0,'C');
         $pdf->Cell(5,10,'€','LTB',0,'C',1);
         $pdf->Cell(25,10,$effetto['impeff'],'RTB',1,'R',1);
-        $pdf->SetFont('freesans','',8);
+        $pdf->SetFont('helvetica','',8);
         $pdf->SetXY(75,20+$numefftot*$passo);
         $pdf->Cell(25,3,'riceviamo la somma di ',0,2,'L');
-        $pdf->SetFont('freesans','B',10);
+        $pdf->SetFont('helvetica','B',10);
         $pdf->Cell(25,7,$impwords,0,2,'L');
-        $pdf->SetFont('freesans','',8);
+        $pdf->SetFont('helvetica','',8);
         $pdf->Cell(25,3,'',0,2);
         $pdf->Cell(25,12,'versata a mezzo ',0,0,'L');
-        $pdf->SetFont('freesans','',10);
+        $pdf->SetFont('helvetica','',10);
         $pdf->Cell(50,12,$banacc['ragso1'],0,1,'L');
         $pdf->Cell(170,8,$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di € '.$effetto['totfat'],0,1,'R');
-        $pdf->SetFont('freesans','',7);
+        $pdf->SetFont('helvetica','',7);
         $pdf->Cell(50,10,'INCASSARE TRAMITE',0,0,'C');
         $pdf->Cell(60,10,'EGR.SIG./SPETT.LE',0,1,'R');
-        $pdf->SetFont('freesans','',8);
+        $pdf->SetFont('helvetica','',8);
         $pdf->Cell(60,5,substr($banapp['descri'],0,33),0,0,'L');
         $pdf->Cell(2,5);
         $pdf->Cell(80,5,$client['ragso1'],0,1,'L');
@@ -144,7 +144,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $impbol = $bolli->stampTax($effetto['impeff'],$admin_aziend['perbol']);
         $pdf->Image('cambiale-tratta.jpg',0,5+$passo*$numefftot,210);
         $pdf->SetXY(67,9+$numefftot*$passo);
-        $pdf->SetFont('freeserif','',14);
+        $pdf->SetFont('times','',14);
         $pdf->Cell(60,10,$admin_aziend['citspe'].', '.$datafatt);
         $pdf->SetXY(165,12+$numefftot*$passo);
         $pdf->Cell(67,10,gaz_format_number($effetto['impeff']));
@@ -155,7 +155,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->SetXY(90,45+$numefftot*$passo);
         $pdf->Cell(140,10,substr($impwords,4,99));
         $pdf->SetXY(5,60+$numefftot*$passo);
-        $pdf->SetFont('freesans','B',7);
+        $pdf->SetFont('helvetica','B',7);
         $pdf->Cell(71,6,substr($banapp['descri'],0,34));
         $pdf->Cell(80,6,$client['ragso1'].' '.$client['ragso2'],0,1,'L');
         $pdf->SetX(5);
@@ -176,7 +176,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $impbol = $bolli->stampTax($effetto['impeff'],$admin_aziend['perbol']);
         $pdf->Image('mav.jpg',0,5+$passo*$numefftot,210);
         $pdf->SetXY(51,13+$numefftot*$passo);
-        $pdf->SetFont('freesans','B',7);
+        $pdf->SetFont('helvetica','B',7);
         $pdf->Cell(57,3,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2']);
         $pdf->Cell(24,3,gaz_format_number($effetto['impeff']));
         $pdf->Cell(57,3,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2']);

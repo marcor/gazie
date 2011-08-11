@@ -42,7 +42,7 @@ class FatturaImmediata extends Template_con_scheda
     function newPage() {
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->AddPage();
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(25,6,'Codice',1,0,'L',1);
         $this->Cell(80,6,'Descrizione',1,0,'L',1);
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
@@ -65,10 +65,10 @@ class FatturaImmediata extends Template_con_scheda
         while (list($key, $rigo) = each($lines)) {
             if ($this->GetY() >= 185) {
                 $this->Cell(186,6,'','T',1);
-                $this->SetFont('freesans', '', 20);
+                $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
-                $this->SetFont('freesans', '', 9);
+                $this->SetFont('helvetica', '', 9);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
@@ -134,7 +134,7 @@ class FatturaImmediata extends Template_con_scheda
         $this->Cell(62,6, 'Pagamento','LTR',0,'C',1);
         $this->Cell(68,6, 'Castelletto    I.V.A.','LTR',0,'C',1);
         $this->Cell(56,6, 'T O T A L E    F A T T U R A','LTR',1,'C',1);
-        $this->SetFont('freesans', '', 8);
+        $this->SetFont('helvetica', '', 8);
         $this->Cell(62,6, $this->pagame['descri'],'LR',0,'C');
         $this->Cell(18,4, 'Imponibile','LR',0,'C',1);
         $this->Cell(32,4, 'Aliquota','LR',0,'C',1);
@@ -185,7 +185,7 @@ class FatturaImmediata extends Template_con_scheda
 
         //stampo i totali
         $this->SetY(188);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(82, 5,'Agente','LTR',0,'C',1);
         $this->Cell(26, 5,'Peso netto','LTR',0,'C',1);
         $this->Cell(26, 5,'Peso lordo','LTR',0,'C',1);
@@ -260,20 +260,20 @@ class FatturaImmediata extends Template_con_scheda
         $totale = $totimpfat + $totivafat + $impbol;
         if ($this->tesdoc['id_tes'] > 0) {
            if ($ritenuta>0) {
-               $this->SetFont('freesans','B',11);
+               $this->SetFont('helvetica','B',11);
                $this->Cell(56, 6, '€ '.gaz_format_number($totale),'LBR', 2, 'R');
-               $this->SetFont('freesans', '', 11);
+               $this->SetFont('helvetica', '', 11);
                $this->Cell(56, 4,'Totale ritenute: € '.gaz_format_number($ritenuta),'LR', 2, 'R');
                $this->Cell(56, 6,'Totale a pagare: € '.gaz_format_number($totale-$ritenuta),'LBR', 1, 'R');
            } else {
-               $this->SetFont('freesans','B',18);
+               $this->SetFont('helvetica','B',18);
                $this->Cell(56, 16, '€ '.gaz_format_number($totale),'LBR', 1, 'C');
            }
         } else {
            $this->Cell(56, 24,'','LBR',1);
         }
         $this->SetY(220);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         if (!empty($this->banapp['descri']) and $this->pagame['tippag'] != 'D') {
            $this->Cell(62, 5, 'Banca d\'appoggio','LTR',1,'C',1);
            $this->Cell(62, 5, $this->banapp['descri'],'LR',1);
@@ -356,12 +356,12 @@ class FatturaImmediata extends Template_con_scheda
               unset($this->appendix);
           } else {
            $this->SetY(-20);
-           $this->SetFont('freesans','',8);
+           $this->SetFont('helvetica','',8);
            $this->MultiCell(186,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
           }
         } else {
            $this->SetY(-20);
-           $this->SetFont('freesans','',8);
+           $this->SetFont('helvetica','',8);
            $this->MultiCell(186,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
         }
     }

@@ -156,16 +156,16 @@ $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
 $pdf->AddPage();
 $pdf->Cell(186,6,'STATO PATRIMONIALE AL '.date("d-m-Y",$utsfin),'LTR',1,'C');
-$pdf->SetFont('freesans','B',12);
+$pdf->SetFont('helvetica','B',12);
 $pdf->SetTextColor(0,0,255);
 $pdf->Cell(186,6,'ATTIVO','LTR',1,'C');
 $pdf->SetTextColor(0,0,0);
-$pdf->SetFont('freesans','',8);
+$pdf->SetFont('helvetica','',8);
 foreach ($attivo as $keylet => $vallet) {
         if (! key_exists($keylet,$attdesc)) $keylet = "non class.";
-           $pdf->SetFont('freesans','B',8);
+           $pdf->SetFont('helvetica','B',8);
            $pdf->Cell(186,4,$keylet.$attdesc[$keylet]['Titolo'],'LR',1);
-           $pdf->SetFont('freesans','',8);
+           $pdf->SetFont('helvetica','',8);
         foreach ($vallet as $keyrom => $valrom) {
                 $pdf->Cell(15,4,'','LR');
                 $pdf->Cell(50,4,$nromani[intval($keyrom)].$attdesc[$keylet][intval($keyrom)],'R',0,'R');
@@ -205,14 +205,14 @@ foreach ($attivo as $keylet => $vallet) {
                 $totrom=0.00;
      }
      if($totlet > 0) $stampaval = gaz_format_number($totlet); else $stampaval = "(".gaz_format_number(-$totlet).")";
-     $pdf->SetFont('freesans','B',8);
+     $pdf->SetFont('helvetica','B',8);
      $pdf->Cell(145,4,"Totale ".$keylet,'LB',0,'R');
      $pdf->Cell(10,4,$money[0],1,0,'C');
      $pdf->Cell(31,4,$stampaval,1,1,'R');
-     $pdf->SetFont('freesans','',8);
+     $pdf->SetFont('helvetica','',8);
      $totlet=0.00;
 }
-$pdf->SetFont('freesans','B',12);
+$pdf->SetFont('helvetica','B',12);
 $pdf->SetTextColor(0,0,255);
 $pdf->Cell(155,6,"TOTALE DELL'ATTIVO ",1,0,'R');
 $pdf->Cell(31,6,gaz_format_number($totale),1,1,'R');
@@ -221,12 +221,12 @@ $pdf->Ln(6);
 $pdf->SetTextColor(127,64,64);
 $pdf->Cell(186,6,'PASSIVO','LTR',1,'C');
 $pdf->SetTextColor(0,0,0);
-$pdf->SetFont('freesans','',8);
+$pdf->SetFont('helvetica','',8);
 foreach ($passivo as $keylet => $vallet) {
         if (! key_exists($keylet,$pasdesc)) $keylet = "non class.";
-           $pdf->SetFont('freesans','B',8);
+           $pdf->SetFont('helvetica','B',8);
            $pdf->Cell(186,4,$keylet.$pasdesc[$keylet]['Titolo'],'LR',1);
-           $pdf->SetFont('freesans','',8);
+           $pdf->SetFont('helvetica','',8);
         foreach ($vallet as $keyrom => $valrom) {
                 $pdf->Cell(15,4,'','LR');
                 $pdf->Cell(50,4,$nromani[intval($keyrom)].@$pasdesc[$keylet][intval($keyrom)],'R',0,'R');
@@ -266,14 +266,14 @@ foreach ($passivo as $keylet => $vallet) {
                 $totrom=0.00;
      }
      if($totlet > 0) $stampaval = gaz_format_number($totlet); else $stampaval = "(".gaz_format_number(-$totlet).")";
-     $pdf->SetFont('freesans','B',8);
+     $pdf->SetFont('helvetica','B',8);
      $pdf->Cell(145,4,"Totale ".$keylet,'LB',0,'R');
      $pdf->Cell(10,4,$money[0],1,0,'C');
      $pdf->Cell(31,4,$stampaval,1,1,'R');
-     $pdf->SetFont('freesans','',8);
+     $pdf->SetFont('helvetica','',8);
      $totlet=0.00;
 }
-$pdf->SetFont('freesans','B',12);
+$pdf->SetFont('helvetica','B',12);
 $pdf->SetTextColor(127,64,64);
 $pdf->Cell(155,6,"TOTALE DEL PASSIVO ",1,0,'R');
 $pdf->Cell(31,6,gaz_format_number($totale),1,1,'R');
@@ -282,12 +282,12 @@ $pdf->Ln(6);
 $pdf->SetTextColor(255,150,50);
 $pdf->Cell(186,6,'CONTO ECONOMICO DAL '.date("d-m-Y",$utsini).' AL '.date("d-m-Y",$utsfin),'LTR',1,'C');
 $pdf->SetTextColor(0,0,0);
-$pdf->SetFont('freesans','',8);
+$pdf->SetFont('helvetica','',8);
 foreach ($risulta as $keylet => $vallet) {
         if (! key_exists($keylet,$ecodesc)) $keylet = "non class.";
-           $pdf->SetFont('freesans','B',8);
+           $pdf->SetFont('helvetica','B',8);
            $pdf->Cell(186,4,$keylet.$ecodesc[$keylet]['Titolo'],'LR',1);
-           $pdf->SetFont('freesans','',8);
+           $pdf->SetFont('helvetica','',8);
         foreach ($vallet as $keyrom => $valrom) {
                 $pdf->Cell(15,4,'','LR');
                 $pdf->Cell(50,4,$nromani[intval($keyrom)].@$ecodesc[$keylet][intval($keyrom)],'R',0,'R');
@@ -327,14 +327,14 @@ foreach ($risulta as $keylet => $vallet) {
                 $totrom=0.00;
      }
      if($totlet > 0) $stampaval = gaz_format_number($totlet); else $stampaval = "(".gaz_format_number(-$totlet).")";
-     $pdf->SetFont('freesans','B',8);
+     $pdf->SetFont('helvetica','B',8);
      $pdf->Cell(145,4,"Totale ".$keylet,'LB',0,'R');
      $pdf->Cell(10,4,$money[0],1,0,'C');
      $pdf->Cell(31,4,$stampaval,1,1,'R');
-     $pdf->SetFont('freesans','',8);
+     $pdf->SetFont('helvetica','',8);
      $totlet=0.00;
 }
-$pdf->SetFont('freesans','B',12);
+$pdf->SetFont('helvetica','B',12);
 $pdf->SetTextColor(255,150,50);
 $pdf->Cell(155,6,"UTILE (PERDITA) D'ESERCIZIO ",1,0,'R');
 if($totale > 0) $stampaval = gaz_format_number($totale); else $stampaval = "(".gaz_format_number(-$totale).")";

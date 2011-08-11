@@ -43,7 +43,7 @@ class Received extends Template
 
     function newPage() {
         $this->AddPage();
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(105,6,'Descripcion',1,0,'L',1);
         $this->Cell(7, 6,'U.M.',1,0,'C',1);
         $this->Cell(16,6,'Cantidad',1,0,'C',1);
@@ -71,10 +71,10 @@ class Received extends Template
         while (list($key, $rigo) = each($lines)) {
             if ($this->GetY() >= 195) {
                 $this->Cell(186,6,'','T',1);
-                $this->SetFont('freesans','',14);
+                $this->SetFont('helvetica','',14);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- CONTINUA EN LA PAGINA SIGUIENTE --- >>> ',1,1,'R');
-                $this->SetFont('freesans','',9);
+                $this->SetFont('helvetica','',9);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- VIENE DE LA PAGINA ANTERIOR --- <<< ',0,1);
             }
@@ -114,7 +114,7 @@ class Received extends Template
         $this->SetY(212);
         $this->Cell(62,6,'Pago','LTR',0,'C',1);
         $this->Cell(68,6,'Resumen Tasas I.V.A.','LTR',1,'C',1);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->Cell(62,6,$this->pagame['descri'],'LBR',0,'L');
         $this->Cell(18,4,'Imponible','LR',0,'C',1);
         $this->Cell(32,4,'Tasa','LR',0,'C',1);
@@ -172,7 +172,7 @@ class Received extends Template
         }
         //stampo i totali
         $this->SetXY(140,212);
-        $this->SetFont('freesans', '', 8);
+        $this->SetFont('helvetica', '', 8);
         $this->Cell(56, 4,'Gasto en efectivo','LTR',2,'C',1);
         if ($speseincasso > 0) {
            $this->Cell(56, 3, gaz_format_number($speseincasso),'LBR',2,'C');
@@ -201,7 +201,7 @@ class Received extends Template
         $this->Cell(130);
         $totale = $totimpfat + $totivafat + $impbol;
         $this->SetY(224);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         if (!empty($this->banapp['descri']) and $this->pagame['tippag'] != 'D') {
            $this->Cell(62, 6, 'Banco de apoyo','LTR',1,'C',1);
            $this->Cell(62, 6, $this->banapp['descri'],'LR',1);
@@ -221,14 +221,14 @@ class Received extends Template
         $this->Cell(33, 6, $ratpag['giorno']['1'].'-'.$ratpag['mese']['1'].'-'.$ratpag['anno']['1'],'LR',0,'C');
         $this->Cell(32, 6, $ratpag['giorno']['2'].'-'.$ratpag['mese']['2'].'-'.$ratpag['anno']['2'],'LR',0,'C');
         $this->Cell(33, 6, $ratpag['giorno']['3'].'-'.$ratpag['mese']['3'].'-'.$ratpag['anno']['3'],'LR',0,'C');
-        $this->SetFont('freesans','B',18);
+        $this->SetFont('helvetica','B',18);
         if ($this->tesdoc['id_tes'] > 0) {
            $this->Cell(56, 12, '$ '.gaz_format_number($totale),'LBR', 1, 'C');
         } else {
            $this->Cell(56, 12,'','LBR',1);
         }
         $this->Ln(-6);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         if ($ratpag['import']['0'] != 0) {
             $this->Cell(32, 6, gaz_format_number($ratpag['import']['0']),'LBR',0,'C');
             } else {
@@ -255,7 +255,7 @@ class Received extends Template
     {
         //Document footer
         $this->SetY(-20);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->MultiCell(184,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
     }
 }

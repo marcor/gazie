@@ -40,7 +40,7 @@ class OrdineCliente extends Template
     function newPage() {
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(25,6,'Codigo',1,0,'L',1);
         $this->Cell(80,6,'Descripcion',1,0,'L',1);
         $this->Cell(7, 6,'U.M.',1,0,'C',1);
@@ -63,10 +63,10 @@ class OrdineCliente extends Template
         while (list($key, $rigo) = each($lines)) {
             if ($this->GetY() >= 185) {
                 $this->Cell(186,6,'','T',1);
-                $this->SetFont('freesans', '', 20);
+                $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- CONTINUA EN LA PAGINA SIGUIENTE --- >>> ',1,1,'R');
-                $this->SetFont('freesans', '', 9);
+                $this->SetFont('helvetica', '', 9);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- VIENE DE LA PAGINA ANTERIOR --- <<< ',0,1);
             }
@@ -126,7 +126,7 @@ class OrdineCliente extends Template
         $this->Cell(62,6, 'Pago',1,0,'C',1);
         $this->Cell(68,6, 'Resumen Tasas I.V.A.',1,0,'C',1);
         $this->Cell(56,6, 'T O T A L ',1,1,'C',1);
-        $this->SetFont('freesans', '', 8);
+        $this->SetFont('helvetica', '', 8);
         $this->Cell(62,6, $this->pagame['descri'],1,0,'C');
         $this->Cell(25,4, 'Imponible',1,0,'C',1);
         $this->Cell(18,4, 'Tasa',1,0,'C',1);
@@ -152,7 +152,7 @@ class OrdineCliente extends Template
         }
         //stampo i totali
         $this->SetY(200);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(36, 6,'Tot. Cuerpo',1,0,'C',1);
         $this->Cell(16, 6,'% Descuento',1,0,'C',1);
         $this->Cell(24, 6,'Gasto en efectivo',1,0,'C',1);
@@ -170,10 +170,10 @@ class OrdineCliente extends Template
         $this->Cell(22, 6, '',1,0,'C');
         $this->SetY(218);
         $this->Cell(130);
-        $this->SetFont('freesans','B',18);
+        $this->SetFont('helvetica','B',18);
         $this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol), 1, 1, 'C');
         $this->SetY(224);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(62, 6,'Envio',1,1,'C',1);
         $this->Cell(62, 6,$this->tesdoc['spediz'],1,1,'C');
         $this->Cell(62, 6,'Transportista',1,1,'C',1);
@@ -188,7 +188,7 @@ class OrdineCliente extends Template
     {
         //Page footer
         $this->SetY(-20);
-        $this->SetFont('freesans', '', 8);
+        $this->SetFont('helvetica', '', 8);
         $this->MultiCell(186, 4, $this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ', 0, 'C', 0);
     }
 }

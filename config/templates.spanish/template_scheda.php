@@ -30,16 +30,16 @@ class Template_con_scheda extends Template
     public function SchedaTrasporto()
     {
         $this->SetXY(10,10);
-        $this->SetFont('freeserif','B',14);
+        $this->SetFont('times','B',14);
         $this->Cell(184,6,'JUNTA DE TRANSPORTE',0,1,'C');
-        $this->SetFont('freeserif','I',8);
+        $this->SetFont('times','I',8);
         $this->Cell(184,4,'(a rellenar por el cliente y mantener la compañía en el vehículo: el articulo. 7-bis del decreto-ley no. 286/2005)',0,1,'C');
 
-        $this->SetFont('freeserif','B',11);
+        $this->SetFont('times','B',11);
         $this->Cell(46,8,'A- DATOS DEL TRANPORTISTA');
-        $this->SetFont('freeserif','I',8);
+        $this->SetFont('times','I',8);
         $this->Cell(138,8,'(art. 2, parrafo 1, let. b - D.Lgs. 286/2005)',0,1);
-        $this->SetFont('freeserif','',8);
+        $this->SetFont('times','',8);
         $this->Cell(62,4,'Título (1) Nombre de la empresa','LT');
         $this->Cell(122,4,$this->docVars->vettor['ragione_sociale'],'LTR',1);
         $this->Cell(62,4,'Dirección y Sede Empresa','L');
@@ -51,11 +51,11 @@ class Template_con_scheda extends Template
         $this->Cell(62,4,'Número de Registro de los conductores',1);
         $this->Cell(122,4,$this->docVars->vettor['n_albo'],1,1);
 
-        $this->SetFont('freeserif','B',11);
+        $this->SetFont('times','B',11);
         $this->Cell(62,8,'B - DATOS DEL CONTRATISTA');
-        $this->SetFont('freeserif','I',8);
+        $this->SetFont('times','I',8);
         $this->Cell(122,8,'(art. 2, parrafo 1, let. c - D.Lgs. 286/2005)',0,1);
-        $this->SetFont('freeserif','',8);
+        $this->SetFont('times','',8);
         $this->Cell(62,4,'Título (1) Nombre de la empresa','LT');
         $this->Cell(122,4,$this->intesta1.' '.$this->intesta1bis,'LTR',1);
         $this->Cell(62,4,'Dirección y Sede Empresa','L');
@@ -65,11 +65,11 @@ class Template_con_scheda extends Template
         $this->Cell(62,4,'Partida IVA / Codigo Fiscal',1);
         $this->Cell(122,4,$this->intesta4,1,1);
 
-        $this->SetFont('freeserif','B',11);
+        $this->SetFont('times','B',11);
         $this->Cell(60,8,'C - DATOS DEL CARGADOR');
-        $this->SetFont('freeserif','I',8);
+        $this->SetFont('times','I',8);
         $this->Cell(124,8,'(art. 2, parrafo 1, let. d - D.Lgs. 286/2005)',0,1);
-        $this->SetFont('freeserif','',8);
+        $this->SetFont('times','',8);
         $this->Cell(62,4,'Título (1) Nombre de la empresa','LT');
         $this->Cell(122,4,$this->intesta1.' '.$this->intesta1bis,'LTR',1);
         $this->Cell(62,4,'Dirección y Sede Empresa','L');
@@ -79,11 +79,11 @@ class Template_con_scheda extends Template
         $this->Cell(62,4,'Partida IVA / Codigo Fiscal',1);
         $this->Cell(122,4,$this->intesta4,1,1);
 
-        $this->SetFont('freeserif','B',11);
+        $this->SetFont('times','B',11);
         $this->Cell(86,8,'D - DATOS DEL PROPRIETARIO DE LA MERCADERIA');
-        $this->SetFont('freeserif','I',8);
+        $this->SetFont('times','I',8);
         $this->Cell(98,8,'(art. 2, parrafo 1, let. e - D.Lgs. 286/2005)',0,1);
-        $this->SetFont('freeserif','',8);
+        $this->SetFont('times','',8);
         $this->Cell(62,4,'Título (1) Nombre de la empresa','LT');
         $this->Cell(122,4,$this->cliente1.' '.$this->cliente2,'LTR',1);
         $this->Cell(62,4,'Dirección y Sede Empresa','L');
@@ -98,13 +98,13 @@ class Template_con_scheda extends Template
         $this->Cell(122,4,$this->cliente5,1,1);
 
         $this->Ln(4);
-        $this->SetFont('freeserif','B',10);
+        $this->SetFont('times','B',10);
         $this->Cell(184,8,'Eventuales declaraciones (2)','LTR',1);
         $this->Cell(184,14,'','LBR',1);
 
         $this->Ln(4);
         $this->Cell(62,5,'E - DATOS MERCANCIA TRANSPORTADA',1,1);
-        $this->SetFont('freeserif','',8);
+        $this->SetFont('times','',8);
         $this->Cell(62,4,'Tipo','LT');
         $this->Cell(122,4,'Ver '.$this->tipdoc,'LTR',1);
         $this->Cell(62,4,'Cantidad / Peso','LT');
@@ -118,7 +118,7 @@ class Template_con_scheda extends Template
            $this->Cell(122,4,$this->cliente3.' '.$this->cliente4,1,1);
         }
         $this->Ln(5);
-        $this->SetFont('freeserif','B',10);
+        $this->SetFont('times','B',10);
         $this->Cell(184,8,'Observaciones varias (3)','LTR',1);
         $this->Cell(184,10,'','LBR',1);
 
@@ -128,7 +128,7 @@ class Template_con_scheda extends Template
 
         $this->Ln(4);
         $this->Cell(52,5,'Lugar y fecha compilación',1,1);
-        $this->SetFont('freeserif','',8);
+        $this->SetFont('times','',8);
         $this->Cell(52,4,'Lugar y fecha',1);
         $this->Cell(66,4,'Datos del compilador (5)',1);
         $this->Cell(66,4,'Firma del compilador',1,1);
@@ -137,7 +137,7 @@ class Template_con_scheda extends Template
         $this->Cell(66,12,'',1,1);
 
         $this->Cell(67,3,'-----------------------------------------------------------',0,1);
-        $this->SetFont('freeserif','',7);
+        $this->SetFont('times','',7);
         $this->Cell(184,3,"(1) Usar el nombre de las empresas de capital, a nombre de las empresas y las personas de la empresa para empresarios individuales",0,1);
         $this->Cell(184,3,"(2) Para ser completado en los casos en los que no se puede indicar la figura del dueño",0,1);
         $this->Cell(184,3,"(3) Para ser completado por el transportista o su conductor cuando hay variaciones en las indicaciones originales de esta ",0,1);

@@ -71,7 +71,7 @@ function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',
 {
    global $money,$admin_aziend;
    $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-   $this->SetFont('freesans','',9);
+   $this->SetFont('helvetica','',9);
    if (floatval($price)<0.00001){
      $price='';
      $vat='';
@@ -125,14 +125,14 @@ function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',
         $this->SetX(10);
         $this->Cell(27,5,$code,1,0,'L');
         if (strlen(trim($description))>36) {
-            $this->SetFont('freesans','',8);
+            $this->SetFont('helvetica','',8);
             $this->Cell(63,5,$description,1,0,'L');
-            $this->SetFont('freesans','',9);
+            $this->SetFont('helvetica','',9);
         } else {
             $this->Cell(63,5,$description,1,0,'L');
         }
         $this->Cell(49,5,$price.' '.$money[1].'/'.$um.' '.$vat,1,0,'R');
-        $this->SetFont('freesans','',7);
+        $this->SetFont('helvetica','',7);
         $this->Cell(47,5,$note,1,1,'R');
    }
 }
@@ -142,7 +142,7 @@ function printGroupItem($code,$description,$image='',$link=false)
    $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
    $x=$this->GetX();
    $y=$this->GetY();
-   $this->SetFont('freesans','',10);
+   $this->SetFont('helvetica','',10);
    if ($x > 20){
        $this->SetY($y+5);
        $this->SetX(10);

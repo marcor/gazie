@@ -86,7 +86,7 @@ if (($tot_avere+$tot_dare)> 0.01){
 $pdf->AddPage();
 $pdf->setFooterMargin(21);
 $pdf->setTopMargin(44);
-$pdf->SetFont('freesans','',7);
+$pdf->SetFont('helvetica','',7);
 $ctrlmopre = 0;
 $numrig=1;
 

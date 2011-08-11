@@ -269,7 +269,7 @@ if ($_GET['partner'] == 1 or $_GET['partner'] == 3){
                 $value['operazioni_nonimp']+
                 $value['operazioni_esente']+
                 $value['imposte_addebitate'];
-      $pdf->SetFont('freesans','',7);
+      $pdf->SetFont('helvetica','',7);
       //$pdf->setRiporti($aRiportare);
       $pdf->Cell(8,3,$value['Progressivo'],'LTR',0,'R');
       $pdf->Cell(80,3,$value['Rag_Sociale'],'T');
@@ -301,7 +301,7 @@ if ($_GET['partner'] == 1 or $_GET['partner'] == 3){
     }
 }
 $pdf->Ln(1);
-$pdf->SetFont('freesans','B',8);
+$pdf->SetFont('helvetica','B',8);
 $aRiportare['bot'][0]['nam'] = ' TOTALI : ';
 foreach ($aRiportare['bot'] as $key=>$value){
            if ($key > 0 and $key < 6) {
@@ -331,7 +331,7 @@ if ($_GET['partner'] == 2 or $_GET['partner'] == 3){
                 $value['operazioni_nonimp']+
                 $value['operazioni_esente']+
                 $value['imposte_addebitate'];
-      $pdf->SetFont('freesans','',7);
+      $pdf->SetFont('helvetica','',7);
       //$pdf->setRiporti($aRiportare);
       $pdf->Cell(8,3,$value['Progressivo'],'LTR',0,'R');
       $pdf->Cell(80,3,$value['Rag_Sociale'],'T');
@@ -363,7 +363,7 @@ if ($_GET['partner'] == 2 or $_GET['partner'] == 3){
     }
 }
 $pdf->Ln(1);
-$pdf->SetFont('freesans','B',8);
+$pdf->SetFont('helvetica','B',8);
 $aRiportare['bot'][0]['nam'] = ' TOTALI : ';
 foreach ($aRiportare['bot'] as $key=>$value){
            if ($key > 0 and $key < 6) {

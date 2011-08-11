@@ -132,7 +132,7 @@ require("../../config/templates/standard_template.php");
 $pdf = new Standard_template();
 $pdf->setVars($admin_aziend,$title,0,1);
 $pdf->AddPage();
-$pdf->SetFont('freesans','',10);
+$pdf->SetFont('helvetica','',10);
 $totatt=0;
 $conti = ValoriConti($datainizio,$datafine,$datadopo);
 if ($conti) {
@@ -167,9 +167,9 @@ if ($conti) {
         $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
         $pdf->Cell(20,5,substr($key,3,6),'L',0,'R');
         if (strlen($descri['descri'])>40){
-           $pdf->SetFont('freesans','',8);
+           $pdf->SetFont('helvetica','',8);
            $pdf->Cell(80,5,substr($descri['descri'],0,55));
-           $pdf->SetFont('freesans','',10);
+           $pdf->SetFont('helvetica','',10);
         } else {
            $pdf->Cell(80,5,$descri['descri']);
         }

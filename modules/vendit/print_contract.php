@@ -75,7 +75,7 @@ class PDF extends TCPDF
     function Footer()
       {
         if (!isset($this->foot)){
-           $this->SetFont('freesans','',7);
+           $this->SetFont('helvetica','',7);
            $this->Cell(186,5,$this->transl_page.$this->getGroupPageNo().$this->transl_of.$this->getPageGroupAlias(),0,0,'C');
         } else {
            $this->Cell(186,5,$this->foot,0,0,'C');
@@ -110,15 +110,15 @@ $pdf->StartPageGroup();
 $pdf->AddPage();
 $pdf->Image('@'.$admin_aziend['image'],15,8,20,0);
 $pdf->Cell(40,4);
-$pdf->SetFont('freeserif','B',12);
+$pdf->SetFont('times','B',12);
 $pdf->Cell(130,5,$admin_aziend['ragso1'].' '.$admin_aziend['ragso2'],0,2,'L');
-$pdf->SetFont('freesans','',9);
+$pdf->SetFont('helvetica','',9);
 $pdf->Cell(130,4,$admin_aziend['indspe'].' '.sprintf("%05d",$admin_aziend['capspe']).' '.$admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')',0,2,'L');
 $pdf->Cell(130,4,'Tel.'.$admin_aziend['telefo'].' C.F. '.$admin_aziend['codfis'].' P.I. '.$admin_aziend['pariva'],0,2,'L');
 $pdf->Cell(130,4,$admin_aziend['e_mail'],0,1,'L');
-$pdf->SetFont('freesans','B',10);
+$pdf->SetFont('helvetica','B',10);
 $pdf->Cell(186,4,$script_transl['append'],1,1,'C',1);
-$pdf->SetFont('freesans','',9);
+$pdf->SetFont('helvetica','',9);
 $pdf->Ln(4);
 $pdf->Cell(50,4,$script_transl['customer'],'LTB',0);
 $pdf->Cell(11,4,':','TB',0,'R');

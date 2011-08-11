@@ -68,9 +68,9 @@ function Header()
     $posiz=$this->GetY();
     $this->Image('@'.$logo,8,$posiz,40,0,'Logo aziendale');
     $this->Cell(50,4);
-    $this->SetFont('freeserif','',16);
+    $this->SetFont('times','',16);
     $this->Cell(150,5,$intesta1,0,2,'L');
-    $this->SetFont('freesans','',10);
+    $this->SetFont('helvetica','',10);
     $this->Cell(130,4,$intesta2,0,2,'L');
     $this->Cell(130,4,$intesta3,0,2,'L');
     $this->Cell(130,4,$intesta4,0,1,'L');
@@ -78,7 +78,7 @@ function Header()
     $this->Cell(50,10);
     $this->Cell(70,10,$dataluogo,0,0,'L');
     $this->Cell(70,10,'Pagina '.$this->PageNo().' di '.$this->getAliasNbPages(),0,1,'R');
-    $this->SetFont('freesans','',12);
+    $this->SetFont('helvetica','',12);
     $this->Cell(102,5,'Riscossione credito verso ',0,0,'R');
     $this->Cell(80,5,$cliente1,0,1);
     if (!empty($cliente2)) {
@@ -97,7 +97,7 @@ function Footer()
     global $piede;
     //Page footer
     $this->SetY(-10);
-    $this->SetFont('freesans','',8);
+    $this->SetFont('helvetica','',8);
     $this->MultiCell(190,4,'Copia '.$piede,0,'C',0);
     }
     }
@@ -129,7 +129,7 @@ $pdf->Cell(40,8,gaz_format_number($importo),1,1,'R',1);
 if ($pdf->GetY() <= 135)
     {
     $pdf->SetY(140);
-    $pdf->SetFont('freesans','',8);
+    $pdf->SetFont('helvetica','',8);
     $pdf->MultiCell(190,4,'Copia per il cliente',0,'C',0);
     $pdf->Ln(8);
     $pdf->Line(0,145,210,145);

@@ -49,7 +49,7 @@ class CartaIntestata extends Template
         $this->SetY(-25);
         $this->Line(10,260,197,260);
         $this->Line(10,270,197,270);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->MultiCell(186,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
     }
 }

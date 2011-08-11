@@ -62,7 +62,7 @@ $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(39);
 $pdf->SetFooterMargin(22);
 $config = new Config;
-$pdf->SetFont('freesans','',7);
+$pdf->SetFont('helvetica','',7);
 $pdf->AddPage('P',$config->getValue('page_format'));
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $ctrl_mas = 0;
@@ -80,7 +80,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
             if (isset($note[1])){ // ma se ho una nota del mastro precedente la devo stampare
                 $pdf->AddPage('P',$config->getValue('page_format'));
                 $pdf->Cell(135);
-                $pdf->SetFont('freesans','',7);
+                $pdf->SetFont('helvetica','',7);
                 $pdf->MultiCell(51,4,$note[1],1,'L',true);
                 $y=$pdf->GetY();
                 $max_str=intval(13*(254-$y));
@@ -92,16 +92,16 @@ while ($row = gaz_dbi_fetch_array($result)) {
                 $start_y=$max_y;
             }
             $note = str_split($row['annota'],$max_str);
-            $pdf->SetFont('freesans','B',7);
+            $pdf->SetFont('helvetica','B',7);
             $pdf->Cell(15,4,$mas,1,0,'C',1);
             $pdf->Cell(120,4,$row['descri'],'LTB',0,'L',1);
-            $pdf->SetFont('freesans','',7);
+            $pdf->SetFont('helvetica','',7);
             $pdf->MultiCell(51,4,$note[0],1,'L',true);
             $pdf->SetY($start_y+4); // mi riposiziono all'inizio
         } else {   //conti
             $pdf->Cell(15,4,$row['codice'],'L',0,'C');
             $pdf->Cell(55,4,$row['descri'],'L');
-            $pdf->SetFont('freesans','',6);
+            $pdf->SetFont('helvetica','',6);
             $cee='';
             $ce_d=trim($row['ceedar']);
             if (isset($data[$ce_d]) && !empty($data[$ce_d])) {
@@ -166,7 +166,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
             $ly=$pdf->GetY();
             $pdf->Line(10,$ly,10,$y);
             $pdf->Line(25,$ly,25,$y);
-            $pdf->SetFont('freesans','',7);
+            $pdf->SetFont('helvetica','',7);
 
         }
     } else {
@@ -175,7 +175,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
            if (isset($note[1])){
                $y=$pdf->GetY();
                $pdf->Cell(135);
-               $pdf->SetFont('freesans','',7);
+               $pdf->SetFont('helvetica','',7);
                $pdf->MultiCell(51,4,$note[1],1,'L',true);
                $max_y=$pdf->GetY();
                unset($note);

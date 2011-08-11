@@ -42,7 +42,7 @@ class FatturaAllegata extends Template
 
     function newPage() {
         $this->AddPage();
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->Cell(100);
         $this->Cell(62,5,'Agente','LTR',0,'C',1);
         $this->Cell(4);
@@ -83,10 +83,10 @@ class FatturaAllegata extends Template
         while (list($key, $rigo) = each($lines)) {
             if ($this->GetY() >= 195) {
                 $this->Cell(186,6,'','T',1);
-                $this->SetFont('freesans','',14);
+                $this->SetFont('helvetica','',14);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- CONTINUA EN LA PAGINA SIGUIENTE --- >>> ',1,1,'R');
-                $this->SetFont('freesans','',9);
+                $this->SetFont('helvetica','',9);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- VIENE DE LA PAGINA ANTERIOR --- <<< ',0,1);
             }
@@ -150,7 +150,7 @@ class FatturaAllegata extends Template
         $this->Cell(62,6,'Pago','LTR',0,'C',1);
         $this->Cell(68,6,'Resumen Tasas I.V.A.','LTR',0,'C',1);
         $this->Cell(56,6,'T O T A L     F A C T U R A','LTR',1,'C',1);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->Cell(62,6,$this->pagame['descri'],'LBR',0,'L');
         $this->Cell(18,4,'Imponible','LR',0,'C',1);
         $this->Cell(32,4,'Tasa','LR',0,'C',1);
@@ -167,11 +167,11 @@ class FatturaAllegata extends Template
                 }
         }
         $this->SetY(218);
-        $this->SetFont('freesans','B',16);
+        $this->SetFont('helvetica','B',16);
         $this->Cell(130);
         $this->Cell(56,12,'$ '.gaz_format_number($this->docVars->totale),'LR',1,'C');
         $this->SetY(224);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         if (!empty($this->banacc['iban'])){
            $this->Cell(62, 6, 'Banco de abono','LTR',1,'C',1);
            $this->Cell(62, 5, $this->banacc['ragso1'],'LR',1);
@@ -207,7 +207,7 @@ class FatturaAllegata extends Template
            $this->Cell(33, 6,'','LBR',1);
         }
         $this->SetXY(140,230);
-        $this->SetFont('freesans','',10);
+        $this->SetFont('helvetica','',10);
         $this->MultiCell(56,30,"\n adjunta el recibo n.".$this->tesdoc['numdoc'].
                                " expedido el mismo dia con las cajas registradoras:\n\n".
                                $this->docVars->ecr['descri'],'LBR',1,'J');
@@ -217,7 +217,7 @@ class FatturaAllegata extends Template
     {
         //Document footer
         $this->SetY(-20);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->MultiCell(184,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
     }
 }

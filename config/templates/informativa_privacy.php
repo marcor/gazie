@@ -57,7 +57,7 @@ class InformativaPrivacy extends Template
 
     function newPage() {
         $this->AddPage();
-        $this->SetFont('freesans','',11);
+        $this->SetFont('helvetica','',11);
     }
 
     function pageHeader() {
@@ -104,13 +104,13 @@ ucfirst($this->descriAzienda)." ".$this->intesta1." ".$this->intesta1bis." sogge
  a)per motivi legittimi al trattamento dei dati personali che lo riguardano, ancorchè pertinenti allo scopo della raccolta;
  b)al trattamento di dati personali che lo riguardano a fini di invio di materiale pubblicitario o di vendita diretta o per il compimento di ricerche di mercato o di comunicazione commerciale.";
     $this->Ln(4);
-    $this->SetFont('freesans','B',14);
+    $this->SetFont('helvetica','B',14);
     $this->Cell(184,6,'DECRETO LEGISLATIVO N. 196/2003 (Tutela della privacy)',0,1,'C');
-    $this->SetFont('freesans','',8);
+    $this->SetFont('helvetica','',8);
     $this->MultiCell(184,4,$testo,0,'L');
-    $this->SetFont('freesans','B',10);
+    $this->SetFont('helvetica','B',10);
     $this->Cell(184,4,'ARTICOLO 7 - Diritto di accesso ai dati personali ed altri diritti',0,1,'C');
-    $this->SetFont('freesans','',7);
+    $this->SetFont('helvetica','',7);
     $this->MultiCell(184,3,$diritti,0,'L');
     $this->Ln(6);
     $this->Cell(120,6,"Firma per accettazione _________________________");

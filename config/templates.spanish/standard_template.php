@@ -81,21 +81,21 @@ class Standard_template extends TCPDF
     {
        if (isset($this->cover)) { // se viene passata la copertina
            $this->Image('@'.$this->logo,80,80,40,0,$this->link);
-           $this->SetFont('freesans','',18);
+           $this->SetFont('helvetica','',18);
            $this->SetXY(10,130);
            $this->Cell(190,6,$this->intesta1,0,2,'C');
-           $this->SetFont('freesans','',12);
+           $this->SetFont('helvetica','',12);
            $this->Cell(190,6,$this->intesta2,0,2,'C');
            $this->Cell(190,6,$this->intesta3,0,2,'C');
            $this->SetXY(55,160);
-           $this->SetFont('freesans','',30);
+           $this->SetFont('helvetica','',30);
            $this->MultiCell(100,16,$this->cover,1,'C',1);
        } else {
           $this->Image('@'.$this->logo,15,8,30,0,$this->link);
           $this->Cell(40,4);
-          $this->SetFont('freeserif','B',12);
+          $this->SetFont('times','B',12);
           $this->Cell(118,5,$this->intesta1,0,0,'L');
-          $this->SetFont('freesans','',9);
+          $this->SetFont('helvetica','',9);
           if ($this->n_page === 1) { // se viene passato a 1 stampo luogo_data di systema
              $this->Cell(38,5,'Pagina '.$this->getGroupPageNo().' de '.$this->getPageGroupAlias(),0,1,'R');
           }  elseif(is_array($this->n_page) and isset($this->n_page['year'])) {  // se è un array contenente l'anno
@@ -114,7 +114,7 @@ class Standard_template extends TCPDF
           if (isset($this->title)) {
              $this->Ln(4);
              $this->Cell(40,4);
-             $this->SetFont('freesans','B',12);
+             $this->SetFont('helvetica','B',12);
              $this->Cell(150,5,$this->title,1,1,'L',1);
           } else {
              $this->Cell(1,5,'',0,1);
@@ -123,9 +123,9 @@ class Standard_template extends TCPDF
           if (isset($this->top_bar)){
              if (is_array($this->top_bar) ) { // se viene passato l'array della barra di testa
                 if (isset($this->top_bar[0]['font'])) {
-                   $this->SetFont('freesans','',intval($this->top_bar[0]['font']));
+                   $this->SetFont('helvetica','',intval($this->top_bar[0]['font']));
                 } else {
-                   $this->SetFont('freesans','',10);
+                   $this->SetFont('helvetica','',10);
                 }
                 foreach ($this->top_bar as $value){
                    $this->Cell($value['lenght'],5,$value['name'],$value['frame'],0,'R',$value['fill']);
@@ -140,9 +140,9 @@ class Standard_template extends TCPDF
           if (isset($this->top_carry_bar)){
              if(is_array($this->top_carry_bar)) { // se viene passato l'array della barra di riporto
                 if (isset($this->top_carry_bar[0]['font'])) {
-                   $this->SetFont('freesans','',intval($this->top_carry_bar[0]['font']));
+                   $this->SetFont('helvetica','',intval($this->top_carry_bar[0]['font']));
                 } else {
-                   $this->SetFont('freesans','',10);
+                   $this->SetFont('helvetica','',10);
                 }
                 foreach ($this->top_carry_bar as $value){
                    $this->Cell($value['lenght'],5,$value['name'],$value['frame'],0,'R',$value['fill']);
@@ -163,9 +163,9 @@ class Standard_template extends TCPDF
          if (isset($this->bot_carry_bar)){
            if (is_array($this->bot_carry_bar)) { // se viene passato l'array della barra di riporto
              if (isset($this->bot_carry_bar[0]['font'])) {
-                $this->SetFont('freesans','',intval($this->bot_carry_bar[0]['font']));
+                $this->SetFont('helvetica','',intval($this->bot_carry_bar[0]['font']));
              } else {
-                $this->SetFont('freesans','',10);
+                $this->SetFont('helvetica','',10);
              }
              foreach ($this->bot_carry_bar as $value){
                    $this->Cell($value['lenght'],5,$value['name'],$value['frame'],0,'R',$value['fill']);
@@ -177,7 +177,7 @@ class Standard_template extends TCPDF
          } else {
            $this->Ln(4);
          }
-         $this->SetFont('freesans','',8);
+         $this->SetFont('helvetica','',8);
          $this->MultiCell(190,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
     }
     }

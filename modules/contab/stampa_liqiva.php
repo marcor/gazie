@@ -88,7 +88,7 @@ $pdf->setTopMargin(44);
 
 $ctrl_sezione = 0;
 $ctrl_registro = 0;
-$pdf->SetFont('freesans','',10);
+$pdf->SetFont('helvetica','',10);
 $totale_iva_registro = 0.00;
 $saldo_totale = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
@@ -109,7 +109,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
              $pdf->Cell(24,6,gaz_format_number($totale_iva_registro),1,1,'R',1);
          }
          $pdf->Cell(70,6,$script_transl['regiva_value'][$row['regiva']],1,1,'L',1);
-         $pdf->SetFont('freesans','',8);
+         $pdf->SetFont('helvetica','',8);
          $pdf->Cell(10,4,$script_transl['code'],1,0,'C');
          $pdf->Cell(60,4,$script_transl['descri'],1,0,'C');
          $pdf->Cell(29,4,$script_transl['imp'],1,0,'C');
@@ -117,7 +117,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
          $pdf->Cell(24,4,$script_transl['iva'],1,0,'C');
          $pdf->Cell(22,4,$script_transl['ind'],1,0,'C');
          $pdf->Cell(27,4,$script_transl['tot'],1,1,'R');
-         $pdf->SetFont('freesans','',10);
+         $pdf->SetFont('helvetica','',10);
          $totale_iva_registro = 0.00;
          $ctrl_registro = $row['regiva'];
       }
@@ -171,19 +171,19 @@ if ($saldo_totale < 0) {
        $pdf->Cell(24,6,gaz_format_number($interessi),1,1,'R');
        $pdf->Ln(2);
        $pdf->Cell(31,6);
-       $pdf->SetFont('freesans','B',12);
+       $pdf->SetFont('helvetica','B',12);
        $pdf->Cell(72,6,strtoupper($script_transl['tot'].$script_transl['pay']),'LTB',0,'L',1);
        $pdf->Cell(5,6,$money[1],'TB',0,'L',1);
        $pdf->Cell(30,6,gaz_format_number($saldo_totale+$interessi),'RTB',1,'R',1);
     } else {
        $pdf->Ln(2);
        $pdf->Cell(31,6);
-       $pdf->SetFont('freesans','B',12);
+       $pdf->SetFont('helvetica','B',12);
        $pdf->Cell(72,6,strtoupper($script_transl['tot'].$script_transl['pay']),'LTB',0,'L',1);
        $pdf->Cell(5,6,$money[1],'TB',0,'L',1);
        $pdf->Cell(30,6,gaz_format_number($saldo_totale),'RTB',1,'R',1);
     }
-    $pdf->SetFont('freesans','',8);
+    $pdf->SetFont('helvetica','',8);
     $pdf->Ln(6);
     $pdf->Cell(50,6,$script_transl['pay_date'],0,0,'L');
     $pdf->Cell(60,6,$script_transl['co'],0,0,'L');

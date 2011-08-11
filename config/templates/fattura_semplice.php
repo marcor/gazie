@@ -52,7 +52,7 @@ class FatturaSemplice extends Template
 
     function newPage() {
         $this->AddPage();
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         $this->Cell(25,6,'Codice',1,0,'C',1);
         $this->Cell(80,6,'Descrizione',1,0,'C',1);
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
@@ -77,10 +77,10 @@ class FatturaSemplice extends Template
         $this->tottraspo += $this->trasporto;
         $dataddt = substr($this->tesdoc['datemi'],8,2).'-'.substr($this->tesdoc['datemi'],5,2).'-'.substr($this->tesdoc['datemi'],0,4);
         if ($this->tesdoc['tipdoc'] == 'FAD') {
-            $this->SetFont('freesans','B',9);
+            $this->SetFont('helvetica','B',9);
             $this->Cell(105,6,' DA D.d.T. n. '.$this->tesdoc['numdoc'].' del '.$dataddt,1,0,'L');
             $this->Cell(81,6,'','BR',1);
-            $this->SetFont('freesans','',9);
+            $this->SetFont('helvetica','',9);
         }
         $this->body();
 
@@ -92,10 +92,10 @@ class FatturaSemplice extends Template
         while (list($key, $rigo) = each($lines)) {
             if ($this->GetY() >= 195) {
                 $this->Cell(186,6,'','T',1);
-                $this->SetFont('freesans','',14);
+                $this->SetFont('helvetica','',14);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
-                $this->SetFont('freesans','',9);
+                $this->SetFont('helvetica','',9);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
@@ -155,7 +155,7 @@ class FatturaSemplice extends Template
         $this->Cell(62,6,'Pagamento','LTR',0,'C',1);
         $this->Cell(68,6,'Castelletto I.V.A.','LTR',0,'C',1);
         $this->Cell(56,6,'T O T A L E    F A T T U R A','LTR',1,'C',1);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->Cell(62,6,$this->pagame['descri'],'LBR',0,'L');
         $this->Cell(18,4,'Imponibile','LR',0,'C',1);
         $this->Cell(32,4,'Aliquota','LR',0,'C',1);
@@ -215,7 +215,7 @@ class FatturaSemplice extends Template
         //stampo i totali
         $this->SetY(200);
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-        $this->SetFont('freesans', '', 9);
+        $this->SetFont('helvetica', '', 9);
         $this->Cell(36, 6,'Tot. Corpo','LTR',0,'C',1);
         $this->Cell(16, 6,'% Sconto','LTR',0,'C',1);
         $this->Cell(24, 6,'Spese Incasso','LTR',0,'C',1);
@@ -263,23 +263,23 @@ class FatturaSemplice extends Template
         $totale = $totimpfat + $totivafat + $impbol;
         if ($this->tesdoc['id_tes'] > 0) {
            if ($ritenuta>0) {
-               $this->SetFont('freesans','B',12);
+               $this->SetFont('helvetica','B',12);
                $this->Cell(56, 6, '€ '.gaz_format_number($totale),'LBR', 2, 'R');
-               $this->SetFont('freesans', '', 12);
+               $this->SetFont('helvetica', '', 12);
                $this->Cell(56, 6,'Totale ritenute: € '.gaz_format_number($ritenuta),'LR', 2, 'R');
-               $this->SetFont('freesans', '', 9);
+               $this->SetFont('helvetica', '', 9);
                $this->Cell(56, 6,'T O T A L E   A   P A G A R E','LTR', 2, 'C',1);
-               $this->SetFont('freesans','B',12);
+               $this->SetFont('helvetica','B',12);
                $this->Cell(56, 6, '€ '.gaz_format_number($totale-$ritenuta),'LBR', 1, 'R');
            } else {
-               $this->SetFont('freesans','B',18);
+               $this->SetFont('helvetica','B',18);
                $this->Cell(56, 24, '€ '.gaz_format_number($totale),'LBR', 1, 'C');
            }
         } else {
            $this->Cell(56, 24,'','LBR',1);
         }
         $this->SetY(224);
-        $this->SetFont('freesans','',9);
+        $this->SetFont('helvetica','',9);
         if (!empty($this->banapp['descri']) and $this->pagame['tippag'] != 'D') {
            $this->Cell(62, 6, 'Banca d\'appoggio','LTR',1,'C',1);
            $this->Cell(62, 6, $this->banapp['descri'],'LR',1);
@@ -334,7 +334,7 @@ class FatturaSemplice extends Template
     {
         //Document footer
         $this->SetY(-20);
-        $this->SetFont('freesans','',8);
+        $this->SetFont('helvetica','',8);
         $this->MultiCell(184,4,$this->intesta1.' '.$this->intesta2.' '.$this->intesta3.' '.$this->intesta4.' ',0,'C',0);
     }
 }
