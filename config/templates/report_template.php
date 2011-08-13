@@ -46,11 +46,11 @@ class Report_template extends TCPDF
        } else {  // altrimenti uso quello di default
           $this->luogo = $admin_aziend['citspe'].", lì ".date("d ").ucfirst(strftime("%B", mktime (0,0,0,date("m")))).date(" Y");
        }
-       $this->SetCreator(PDF_CREATOR);
+       $this->SetCreator('GAzie - '.$this->intesta1);
        if (isset($altri_dati['title'])) { // se viene passato il titolo
             $this->SetTitle($altri_dati['title']);
        }
-       $this->SetAuthor($this->intesta1.' '.PDF_AUTHOR);
+       $this->SetAuthor($this->intesta4);
        $this->SetHeaderMargin(7);
        $this->SetTopMargin(44);
        $this->SetFooterMargin(23);

@@ -326,7 +326,8 @@ function createDocument($testata, $templateName, $gTables,$rows='rigdoc')
     $pdf->setVars($docVars,$templateName);
     $pdf->setTesDoc();
     //$pdf->SetPageFormat($config->getValue('page_format'));
-    $pdf->setCreator(PDF_CREATOR);
+    $pdf->setCreator('GAzie - '.$docVars->intesta1);
+    $pdf->setAuthor($docVars->user['Cognome'].' '.$docVars->user['Nome']);
     $pdf->setTitle($templateName);
     $pdf->setTopMargin(79);
     $pdf->setHeaderMargin(5);
@@ -362,7 +363,6 @@ function createMultiDocument($results, $templateName, $gTables)
     $pdf = new $templateName();
     $docVars = new DocContabVars();
     //$pdf->SetPageFormat($config->getValue('page_format'));
-    $pdf->setCreator(PDF_CREATOR);
     $pdf->SetTitle($templateName);
     $pdf->SetTopMargin(79);
     $pdf->SetHeaderMargin(5);
@@ -382,7 +382,8 @@ function createMultiDocument($results, $templateName, $gTables)
             $pdf->setVars($docVars,$templateName);
             $pdf->setTesDoc();
             if ($ctrlprotoc == 0) {
-                $pdf->SetAuthor($docVars->intesta1.' '.$_SESSION['Login']);
+                $pdf->setCreator('GAzie - '.$docVars->intesta1);
+                $pdf->setAuthor($docVars->user['Cognome'].' '.$docVars->user['Nome']);
                 $pdf->Open();
             }
             //aggiungo una pagina
@@ -406,7 +407,6 @@ function createInvoiceFromDDT($result,$gTables) {
     $pdf = new FatturaSemplice();
     $docVars = new DocContabVars();
     //$pdf->SetPageFormat($config->getValue('page_format'));
-    $pdf->setCreator(PDF_CREATOR);
     $pdf->SetTitle('Fatture Differite da DDT');
     $pdf->SetTopMargin(79);
     $pdf->SetHeaderMargin(5);
@@ -431,7 +431,8 @@ function createInvoiceFromDDT($result,$gTables) {
             $pdf->setVars($docVars);
             $pdf->setTesDoc();
             if ($ctrlprotoc == 0) {
-                $pdf->SetAuthor($docVars->intesta1.' '.$_SESSION['Login']);
+                $pdf->setCreator('GAzie - '.$docVars->intesta1);
+                $pdf->setAuthor($docVars->user['Cognome'].' '.$docVars->user['Nome']);
                 $pdf->Open();
             }
             //aggiungo una pagina

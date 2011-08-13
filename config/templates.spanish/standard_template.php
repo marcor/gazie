@@ -47,9 +47,9 @@ class Standard_template extends TCPDF
        }  else {  // altrimenti non lo stampo
           $this->luogo = '';
        }
-       $this->SetCreator(PDF_CREATOR);
+       $this->SetCreator('GAzie - '.$this->intesta1);
        $this->SetTitle($this->title);
-       $this->SetAuthor($this->intesta1.' '.PDF_AUTHOR);
+       $this->SetAuthor($this->intesta4);
        $this->SetHeaderMargin(7);
        $this->SetTopMargin(44);
        $this->SetFooterMargin(23);
