@@ -24,7 +24,17 @@
 */
 require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
-$errors=array();
+$err=array();
+
+// alcune directory devono essere scrivibili da Apache/PHP (www-data)
+if (!dir_writable('../../data/files/')) { //questa per archiviare i documenti
+    $err[] = 'no_data_files_writable';
+}
+if (!dir_writable('../../library/tcpdf/cache/')) { //questa per permettere a TCPDF di inserire le immagini
+    $err[] = 'no_tcpdf_cache_writable'; 
+}
+// fine controllo directory scrivibili
+
 if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
     $form['hidden_req'] = '';
     $form['lang'] = 'italian';
@@ -32,11 +42,9 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
       $form['install_upgrade'] = 'upgrade';
       $form['lang'] = getLang();
       if (databaseIsAlign()) {               // la base dati e' aggiornata!
-         $form['install_upgrade'] = 'error';
          $err[] = 'is_align';
       }
     } elseif (!connectIsOk()) {              // non si connette al server
-      $form['install_upgrade'] = 'error';
       $err[] = 'no_conn';
     } else {                                 // se si connette ma non trova la base dati allora prova ad installarla
       $form['install_upgrade'] = 'install';
@@ -48,9 +56,8 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
     $form['install_upgrade'] = substr($_POST['install_upgrade'],0,16);
     if (isset($_POST['upgrade'])) {              // AGGIORNO
       if (databaseIsAlign()) {               // la base dati e' aggiornata!
-         $form['install_upgrade'] = 'error';
          $err[] = 'is_align';
-      } else {
+      } else { 
          connectToDB ();
          executeQueryFileUpgrade($table_prefix);
       }
@@ -66,7 +73,6 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
             $form['lang'] = getLang();
             if (databaseIsAlign()) {               // la base dati e' aggiornata!
                $form['lang'] = getLang();
-               $form['install_upgrade'] = 'error';
                $err[] = 'is_align';
             }
         }
@@ -195,7 +201,7 @@ function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestio
     // Inizializzazione accumulatore
     $sql = "";
     $currentDbVersion=getDbVersion();
-    $nextDbVersion =  $currentDbVersion + 1; // versione del'upgrade da individuare per l'aggiornamento corrente (contiguità nella numerazione delle versioni).
+    $nextDbVersion =  $currentDbVersion + 1; // versione del'upgrade da individuare per l'aggiornamento corrente (contiguitÃ  nella numerazione delle versioni).
     $stopDbVersion = $currentDbVersion + 2;
     $sqlFile = getNextSqlFileName($currentDbVersion,getSqlFiles());
     // trovo l'ultima  sottosezione (individuabile a partire dalla versione corrente del Database)
@@ -347,6 +353,12 @@ if ($handle = opendir($relativePath)) {
     }
 return $structArray;
 }
+
+function dir_writable($folder)
+{
+    $isw = substr(sprintf('%o', fileperms($folder)), -3) >= 755 ? "true" : "false";
+    return $isw;
+}
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -404,7 +416,7 @@ return $structArray;
         <tr>
             <td colspan="3" class="FacetDataTD" align="center">
             <?php
-            if ($form['install_upgrade']!='error') {
+            if (count($err)==0) {
                echo '<input name="'.$form['install_upgrade'].'" type="submit" value="'.strtoupper($msg[$form['install_upgrade']]).'!">';
             } else {
                foreach ($err as $v){
