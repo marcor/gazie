@@ -25,6 +25,8 @@
 $errors                  = Array();
 $errors['is_align']      = "Database is aligned with last version";
 $errors['no_conn']       = "The database connection is not successful.<br /> Correctly set username, password and database name <br />in the config/config/gconfig.php file";
+$errors['no_data_files_writable']  = "The server does not have permission (min. 666) to store the documents in the directory /data/files";
+$errors['no_tcpdf_cache_writable'] = "TCPDF can't generate PDF files without required permission (min. 666)  for  /library/tcpdf/cache directory";
 
 $msg                     = Array();
 $msg['title']            = "Install or Upgrade GAzie Database";

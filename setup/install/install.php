@@ -356,7 +356,12 @@ return $structArray;
 
 function dir_writable($folder)
 {
-    $isw = substr(sprintf('%o', fileperms($folder)), -3) >= 755 ? "true" : "false";
+    $isw=false;
+    $perm=substr(sprintf('%o', fileperms($folder)),-2);
+    //echo $folder . "  -->> ".$perm . " <br>" ;
+    if ($perm>=66) {
+        $isw = true;
+    }
     return $isw;
 }
 ?>
@@ -420,10 +425,12 @@ function dir_writable($folder)
                echo '<input name="'.$form['install_upgrade'].'" type="submit" value="'.strtoupper($msg[$form['install_upgrade']]).'!">';
             } else {
                foreach ($err as $v){
-                 echo $errors[$v]." <br />";
-                 if ($v=='is_align'){
-                    echo '<input  onClick="location.href=\'../../modules/root/admin.php\'" name="'.$form['install_upgrade'].'" type="button" value="'.$msg['gi_is_align'].'">';
-                    echo "\n <br />".$msg['gi_usr_psw']." <br />";
+                  echo $errors[$v]." <br />";
+                  if ($v=='is_align'){
+                     echo '<input  onClick="location.href=\'../../modules/root/admin.php\'" name="'.$form['install_upgrade'].'" type="button" value="'.$msg['gi_is_align'].'">';
+                     echo "\n <br />".$msg['gi_usr_psw']." <br />";
+                  } else {
+                     echo '<img src="../../library/images/x.gif" ><br /> ';
                  }
                }
             }
