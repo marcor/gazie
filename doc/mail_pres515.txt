@@ -1,0 +1,16 @@
+Titolo:
+Melius re perpensa.
+
+Presentazione:
+Chi ha installato GAzie 5.14 su un server linux si sarà accorto che per generare i file PDF è strettamente necessario permettere alla classe TCPDF di accedere con tutti i permessi alla subdirectory /library/tcpdf/cache per poter inserire in essa le immagini; lo stesso problema si è presentato per /data/files dove, sempre dalla passata versione, vengono archiviati i file dei documenti/certificati. Per evitare di non dare i permessi minimi questa versione avverte del problema già in fase di installazione/aggiornamento o comunque eseguendo il file /setup/install/install.php.
+
+Modifiche apportate:
+- corretta la stampa della distinta degli effetti che aveva il rigo dei totali completamente nero. 
+- la prevenzione degli inserimenti multipli è stata radicalizzata nascondendo i pulsanti attraverso javascript.
+- nei template standard di GAzie sono stati sostituiti tutti i caratteri embedded con quelli di PDF core fonts allegerendo di molto il peso dei pdf generati.
+- in fase di installazione, o aggiornamento, o comunque eseguendo il file /setup/install/install.php viene fatto il controllo per vedere se il server web ha i permessi minimi per scrivere i file nei direttori  /data/files e /library/tcpdf/cache.
+
+Approfondimenti:
+"Ogni eccesso è breve; e l'uomo si ritrova esausto, quasi direi disseccato, più che mai convinto della propria impotenza, corporalmente stupido e triste, d'innanzi alla realtà impassibile."
+
+Antonio de Vincentiis, Montesilvano, 26 Agosto 2011.

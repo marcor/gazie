@@ -117,7 +117,7 @@ echo "<tr><td colspan=\"3\">Software Open Source (lic. GPL ver.2) ".$script_tran
 echo "</td></tr>\n";
 echo "<tr><td colspan=\"3\">".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://www.devincentiis.it\"> www.devincentiis.it </a>\n";
 echo "</td></tr>\n";
-echo "<tr><td colspan=\"3\">".$script_transl['devel']."<a  target=\"_new\" title=\"Sourceforge.net\" href=\"http://gazie.altervista.org\">  gazie.altervista.org </a>\n";
+echo "<tr><td colspan=\"3\">".$script_transl['devel']."<a  target=\"_new\" title=\"Sourceforge.net\" href=\"http://gazie.it\">  gazie.it </a>\n";
 echo "</td></tr>\n";
 echo "<tr align=\"center\"><td colspan=\"3\">\n";
 foreach ($script_transl['strBottom'] as $value){
