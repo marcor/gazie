@@ -25,57 +25,21 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = '';
 
-function getItems($cm_ini,$cm_fin,$art_ini,$art_fin) {
+function getItems($rate_oby,$cm_ini,$cm_fin,$art_ini,$art_fin) {
         global $gTables,$admin_aziend;
         $m=array();
         if ($art_fin=='') {
               $art_fin='zzzzzzzzzzzzzzz';
         }
-        $where="codice BETWEEN '$art_ini' AND '$art_fin' AND catmer BETWEEN $cm_ini AND ".$cm_fin;
+        $where=$gTables['artico'].".codice BETWEEN '$art_ini' AND '$art_fin' AND catmer BETWEEN $cm_ini AND ".$cm_fin.' AND aliiva = '.$rate_oby;
         //recupero gli articoli in base alle scelte impostate
-        $rs=gaz_dbi_dyn_query ('*',$gTables['artico'],$where,"catmer ASC, codice ASC");
+        $rs=gaz_dbi_dyn_query ($gTables['artico'].'.*, '.$gTables['aliiva'].'.descri AS desiva',
+                               $gTables['artico'].' LEFT JOIN '.$gTables['aliiva'].' ON '.$gTables['artico'].".aliiva = ".$gTables['aliiva'].'.codice',
+                               $where,'catmer, '.$gTables['artico'].'.codice');
         while ($r = gaz_dbi_fetch_array($rs)) {
             $m[] = $r;
         }
         return $m;
-}
-function compute_new_price($base_price,$obj_price=0,$value=0,$mode='C',$round=3) {
-/* calcolo del nuovo prezzo in base ai valori passati come referenza:
-
-$base_price è il prezzo del listino preso a base di calcolo, ovvero il prezzo vecchio
-$obj_price è il prezzo del listino da modificare, ovvero il prezzo vecchio (default=0)
-$value è il valore di incremento/decremento o percentuale (default=0)
-$mode è il tipo di modifica da effettuare e può assumere i seguenti valori:
-      A = sostituzione;
-      B = somma in percentuale
-      C = somma valore  (default)
-      D = moltiplicazione per valore
-      E = divisione per valore
-      F = azzeramento e somma in percentuale
-$round è il numero di decimali per l'arrotondamento (default valore scelto in anagrafica azienda)
-
-*/
-    switch ($mode) {
-           case 'A': //sostituzione
-           $new_price = round($value,$round);
-           break;
-           case 'B': //somma in percentuale
-           $new_price = round($obj_price+$base_price*$value/100,$round);
-           break;
-           case 'C': //somma valore
-           $new_price = round($obj_price+$value,$round);
-           break;
-           case 'D': //moltiplicazione per valore
-           $new_price = round($obj_price*$value,$round);
-           break;
-           case 'E': //divisione per valore
-           $new_price = round($obj_price/$value,$round);
-           break;
-           case 'F': //azzeramento e somma in percentuale
-           $new_price = round($base_price+$base_price*$value/100,$round);
-           break;
-    }
-    return $new_price;
 }
 
 function getExtremeValue($table_name,$min_max='MIN')
@@ -88,11 +52,8 @@ function getExtremeValue($table_name,$min_max='MIN')
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $form['mode']='C';
-    $form['valore']='0';
-    $form['lis_bas']=1;
-    $form['lis_obj']=1;
-    $form['round_mode']=$admin_aziend['decimal_price'];
+    $form['rate_new']=1;
+    $form['rate_obj']=1;
     if (isset($_GET['id'])) {
        $item=gaz_dbi_get_row($gTables['artico'],'codice',substr($_GET['id'],0,15));
        $form['art_ini']=$item['codice'];
@@ -126,11 +87,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
-    $form['lis_bas']=substr($_POST['lis_bas'],0,3);
-    $form['lis_obj']=substr($_POST['lis_obj'],0,3);
-    $form['mode']=substr($_POST['mode'],0,1);
-    $form['valore']=floatval(preg_replace("/\,/",'.',$_POST['valore']));
-    $form['round_mode']=intval($_POST['round_mode']);
+    $form['rate_new']=substr($_POST['rate_new'],0,3);
+    $form['rate_obj']=substr($_POST['rate_obj'],0,3);
     $form['cm_ini']=intval($_POST['cm_ini']);
     $form['cm_fin']=intval($_POST['cm_fin']);
     $form['art_ini']=substr($_POST['art_ini'],0,15);
@@ -145,9 +103,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 }
 
 //controllo i campi
-if ($form['valore']==0 && ($form['mode']=='D' || $form['mode']=='E')) {
-    $msg .='0+';
-}
 if (strcasecmp($form['art_ini'],$form['art_fin'])>0) {
     $msg .='1+';
 }
@@ -157,27 +112,12 @@ if ($form['cm_ini'] > $form['cm_fin']) {
 // fine controlli
 
 if (isset($_POST['submit']) && $msg=='') {
-  //Modifico i prezzi di tutti gli articoli selezionati...
-  $m=getItems($form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
+  //Modifico l'aliquota IVA di tutti gli articoli selezionati...
+  $m=getItems($form['rate_obj'],$form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
   if (sizeof($m) > 0) {
-        if ($form['lis_bas']=='0') {
-           $name_bas='preacq';
-        } elseif ($form['lis_bas']=='web') {
-           $name_bas='web_price';
-        } else {
-           $name_bas='preve'.$form['lis_bas'];
-        }
-        if ($form['lis_obj']=='0') {
-           $name_obj='preacq';
-        } elseif ($form['lis_obj']=='web') {
-           $name_obj='web_price';
-        } else {
-           $name_obj='preve'.$form['lis_obj'];
-        }
         while (list($key, $mv) = each($m)) {
-            $new_price=compute_new_price($mv[$name_bas],$mv[$name_obj],$form['valore'],$form['mode'],$form['round_mode']);
             // questo e' troppo lento: gaz_dbi_put_row($gTables['artico'],'codice',$mv['codice'],$name_obj,$new_price);
-            gaz_dbi_query ("UPDATE ".$gTables['artico']." SET ".$name_obj." = ".$new_price." WHERE codice = '".$mv['codice']."';");
+            gaz_dbi_query ("UPDATE ".$gTables['artico']." SET aliiva = ".$form['rate_new']." WHERE codice = '".$mv['codice']."';");
         }
         header("Location:report_artico.php");
         exit;
@@ -186,7 +126,6 @@ if (isset($_POST['submit']) && $msg=='') {
 
 require("../../library/include/header.php");
 $script_transl=HeadMain();
-
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
@@ -198,8 +137,8 @@ if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['lis_obj']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('lis_obj',$script_transl['listino_value'],$form['lis_obj'],'FacetSelect',false);
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['rate_obj']."</td><td  class=\"FacetDataTD\">\n";
+$gForm->selectFromDB('aliiva','rate_obj','codice',$form['rate_obj'],false,false,'-','descri','rate_obj');
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cm_ini']."</td><td  class=\"FacetDataTD\">\n";
@@ -218,20 +157,8 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['art_fin']."</td><td  c
 $gForm->selItem('art_fin',$form['art_fin'],$form['search']['art_fin'],$script_transl['mesg'],$form['hidden_req']);
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['lis_bas']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('lis_bas',$script_transl['listino_value'],$form['lis_bas'],'FacetSelect',false);
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['mode']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('mode',$script_transl['mode_value'],$form['mode'],'FacetSelect',false);
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['valore']."</td>\n";
-echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"valore\" value=\"".$form['valore']."\" align=\"right\" maxlength=\"9\" size=\"3\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['round_mode']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('round_mode',$script_transl['round_mode_value'],$form['round_mode'],'FacetSelect',false);
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['rate_new']."</td><td  class=\"FacetDataTD\">\n";
+$gForm->selectFromDB('aliiva','rate_new','codice',$form['rate_new'],false,false,'-','descri','rate_new');
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
@@ -243,22 +170,23 @@ echo "\t </tr>\n";
 echo "</table>\n";
 
 if (isset($_POST['preview']) and $msg=='') {
-  $m=getItems($form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
+  $m=getItems($form['rate_obj'],$form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
+  $new = gaz_dbi_get_row($gTables['aliiva'],'codice',$form['rate_new']);
   echo "<table class=\"Tlarge\">";
   if (sizeof($m) > 0) {
-        if ($form['lis_bas']=='0') {
+        if ($form['rate_new']=='0') {
            $name_bas='preacq';
-        } elseif ($form['lis_bas']=='web') {
+        } elseif ($form['rate_new']=='web') {
            $name_bas='web_price';
         } else {
-           $name_bas='preve'.$form['lis_bas'];
+           $name_bas='preve'.$form['rate_new'];
         }
-        if ($form['lis_obj']=='0') {
+        if ($form['rate_obj']=='0') {
            $name_obj='preacq';
-        } elseif ($form['lis_obj']=='web') {
+        } elseif ($form['rate_obj']=='web') {
            $name_obj='web_price';
         } else {
-           $name_obj='preve'.$form['lis_obj'];
+           $name_obj='preve'.$form['rate_obj'];
         }
         echo "<tr>";
         $linkHeaders=new linkHeaders($script_transl['header']);
@@ -273,11 +201,9 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "<tr><td></td>\n";
             echo "<td class=\"FacetDataTD\">".$mv['codice']." &nbsp;</td>";
             echo "<td class=\"FacetDataTD\">".$mv['descri']." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv[$name_bas],$admin_aziend['decimal_price'],',','')." &nbsp;</td>\n";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".
-                 number_format(compute_new_price($mv[$name_bas],$mv[$name_obj],$form['valore'],$form['mode'],$form['round_mode']),$admin_aziend['decimal_price'],',','')." &nbsp;</td>";
-            echo "</tr>\n";
+            echo "<td align=\"center\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
+            echo "<td align=\"center\" class=\"FacetDataTD\">".$mv['desiva']."</td>\n";
+            echo "<td align=\"center\" class=\"FacetDataTD\">".$new['descri']."</tr>\n";
             $ctr_mv=$mv['catmer'];
          }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
@@ -288,6 +214,8 @@ if (isset($_POST['preview']) and $msg=='') {
          echo "\t </tr>\n";
   }
   echo "</table>";
+  $form['hidden_req']='';
+
 }
 ?>
 </form>
