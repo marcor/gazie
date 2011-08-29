@@ -47,7 +47,8 @@ $transl['magazz'] = array('name' => "Bodega",
                                          7 =>array("Insertar nueva causal de bodega","Nueva causal de bodega"),
                                          8 =>array("Reevaluacion de articulos existentes","Reevaluacion existencias"),
                                          9 =>array("Inventario de Existencias","Inventario de Existencias"),
-                                         10 =>array("Documentos y / o certificación de productos","Documentos y/o certificación")
+                                         10 =>array("Documentos y / o certificación de productos","Documentos y/o certificación"),
+                                         11 =>array("Cambio de la tasa del IVA de los Articulos","Cambio IVA articulos")
                                       )
                           );
 ?>

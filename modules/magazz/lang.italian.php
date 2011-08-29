@@ -266,6 +266,26 @@ $strScript = array ("browse_document.php" =>
                            'listino'=>'Listino',
                            'listino_value'=>array(0=>'d\'Acquisto',1=>' di Vendita 1',2=>' di Vendita 2',3=>' di Vendita 3','web'=>' di Vendita Online')
                            ),
+                   "update_vatrate.php" =>
+                   array( 'title'=>'Modifica aliquota IVA degli articoli',
+                           'mesg'=>array('La ricerca non ha dato risultati!',
+                                         'Inserire almeno 1 carattere!',
+                                         'Cambia articolo'
+                                          ),
+                           'errors'=>array('Errore nullo',
+                                           'L\'articolo iniziale non pu&ograve; avere un codice successivo a quello finale!',
+                                           'La categoria merceologica iniziale non pu&ograve; avere un codice successivo a quello finale!'
+                                          ),
+                           'cm_ini'=>'Categoria merceologica inizio ',
+                           'art_ini'=>'Articolo inizio ',
+                           'cm_fin'=>'Categoria merceologica fine ',
+                           'art_fin'=>'Articolo fine ',
+                           'rate_obj'=>'Aliquota oggetto della modifica',
+                           'rate_new'=>'Nuova aliquota',
+                           'header'=>array('Cat.Merceologica'=>'','Codice'=>'','Descrizione'=>'','U.M.'=>'',
+                                            'Aliquota vecchia'=>'','Aliquota nuova'=>''
+                                          )
+                           ),
                    "update_prezzi.php" =>
                    array( 'title'=>'Modifica prezzi di listino',
                            'mesg'=>array('La ricerca non ha dato risultati!',

@@ -293,6 +293,26 @@ $strScript = array ("browse_document.php" =>
                                             'Prezzo vecchio'=>'','Prezzo nuovo'=>''
                                           )
                            ),
+                   "update_vatrate.php" =>
+                   array( 'title'=>'Changing the VAT rate of Items',
+                           'mesg'=>array('The search gave no results!',
+                                         'Enter at least 1 character!',
+                                         'Change item'
+                                          ),
+                           'errors'=>array('Errore nullo',
+                                           'The initial item may not have a code following the final code!',
+                                           'The initial item group can not have a code following the final!'
+                                          ),
+                           'cm_ini'=>'Initial item group ',
+                           'art_ini'=>'Initial item ',
+                           'cm_fin'=>'Final item group ',
+                           'art_fin'=>'Final item ',
+                           'rate_obj'=>'VAT rate to change',
+                           'rate_new'=>'New VAT rate',
+                           'header'=>array('Item group'=>'','Code'=>'','Description'=>'','M.U.'=>'',
+                                            'Old VAT rate'=>'','New VAT rate'=>''
+                                          )
+                           ),
                     "admin_artico.php" =>
                    array(  'title'=>'Management of products',
                            'ins_this'=>'Add product',

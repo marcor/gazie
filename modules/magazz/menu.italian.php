@@ -42,7 +42,8 @@ $transl['magazz'] = array('name' => "Magazzino",
                                          7 =>array("Inserisci una nuova causale di magazzino","Nuova causale di magazzino"),
                                          8 =>array("Rivalutazione esistente articoli","Rivalutazione esistente"),
                                          9 =>array("Inventario di magazzino","Inventario di magazzino"),
-                                         10 =>array("Documenti e/o certificazioni prodotti","Documenti e/o certificazioni")
+                                         10 =>array("Documenti e/o certificazioni prodotti","Documenti e/o certificazioni"),
+                                         11 =>array("Modifica aliquota IVA degli articoli","Cambio IVA articoli")
 
                                       )
                           );

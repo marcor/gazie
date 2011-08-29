@@ -297,6 +297,26 @@ $strScript = array ("browse_document.php" =>
                                             'Precio anterior'=>'','Precio nuevo'=>''
                                           )
                            ),
+                   "update_vatrate.php" =>
+                   array( 'title'=>'Cambio de la tasa del IVA de los Articulos',
+                           'mesg'=>array('La búsqueda no dio resultados!',
+                                         'Indicar al menos 1 carácter!',
+                                         'Actualizar artículo'
+                                          ),
+                           'errors'=>array('Errore nullo',
+                                           'El punto inicial puede no tener un código que sigue al final del código!',
+                                           'El grupo de artículos iniciales no puede tener un código después de la última!'
+                                          ),
+                           'cm_ini'=>'Categoria de mercaderia inicio ',
+                           'art_ini'=>'Articulo inicio ',
+                           'cm_fin'=>'Categoria de mercaderia final ',
+                           'art_fin'=>'Articulo final ',
+                           'rate_obj'=>'Tipo de IVA a cambio',
+                           'rate_new'=>'Nueva tasa del IVA',
+                           'header'=>array('Categoria de mercaderia'=>'','Codigo'=>'','Descripción'=>'','U.M.'=>'',
+                                            'Tasa del IVA de edad'=>'','Nueva tasa del IVA'=>''
+                                          )
+                           ),
                     "admin_artico.php" =>
                    array(  'title'=>'Management of products',
                            'ins_this'=>'Add product',
