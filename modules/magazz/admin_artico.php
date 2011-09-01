@@ -289,7 +289,7 @@ if ($toDo == 'update') {
             echo "<input type=\"hidden\" value=\"".$val['title']."\" name=\"rows[$k][title]\">\n";
             echo "<tr class=\"FacetFieldCaptionTD\">\n";
             echo "<td>data/files/".$val['id_doc'].".".$val['extension']."</td>\n";
-            echo "<td><a href=\"../root/retrieve.php?id_doc=".$val["id_doc"]."\"><img src=\"../../library/images/vis.gif\" title=\"".$script_transl['view']."!\" border=\"0\"></a></td>";
+            echo "<td><a href=\"../root/retrieve.php?id_doc=".$val["id_doc"]."\"><img src=\"../../library/images/doc.png\" title=\"".$script_transl['view']."!\" border=\"0\"></a></td>";
             echo "<td>".$val['title']."</td>\n";
             echo "<td align=\"right\" ><input type=\"button\" value=\"".ucfirst($script_transl['update'])." \" onclick=\"location.href='admin_document.php?id_doc=".$val['id_doc']."&Update';\"></td>";
             echo "\t </tr>\n";

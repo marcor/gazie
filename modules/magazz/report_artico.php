@@ -23,8 +23,20 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend=checkAdmin();
+
+function getLastDoc($item_code)
+   {
+      global $gTables;
+      $rs=false;
+      $rs_last_doc = gaz_dbi_dyn_query("*", $gTables['files'], " item_ref ='".$item_code."'",'id_doc',0,1);
+      $last_doc = gaz_dbi_fetch_array($rs_last_doc);
+      // se e' il primo documento dell'anno, resetto il contatore
+      if ($last_doc) {
+         $rs=$last_doc;
+      }
+      return $rs;
+   }
 
 $search_field_Array = array('C'=>array('codice','Codice'), 'D'=>array('descri','Descrizione'),'B'=>array('barcode','Codice a barre'));
 echo "<script src=\"../../js/boxover/boxover.js\"></script>";
@@ -68,6 +80,7 @@ $result = gaz_dbi_dyn_query ('*', $gTables['artico'], $where, $orderby, $limit, 
 $headers_artico = array  (
               "Codice" => "codice",
               "Descrizione" => "descri",
+              "Doc." => "",
               "Categoria<br>merceologica" => "catmer",
               "U.M." => "unimis",
               "Prezzo 1" => "preve1",
@@ -95,6 +108,7 @@ $recordnav -> output();
 $gForm = new magazzForm();
 while ($r = gaz_dbi_fetch_array($result)) {
        set_time_limit (30);
+       $lastdoc=getLastDoc($r["codice"]);
        $magval=array_pop($gForm->getStockValue(false,$r['codice']));
        if(!isset($_GET['all']) and !empty($r["image"])){
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
@@ -105,6 +119,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
        echo "<tr>";
        echo "<td class=\"FacetDataTD\" $boxover><a href=\"admin_artico.php?codice=".$r["codice"]."&Update\">".$r["codice"]."</a> </td>";
        echo "<td class=\"FacetDataTD\" $boxover>".$r["descri"]." </td>";
+       echo "<td class=\"FacetDataTD\" align=\"center\" title=\"\">";
+       if ($lastdoc){
+         echo "<a href=\"../root/retrieve.php?id_doc=".$lastdoc["id_doc"]."\"><img src=\"../../library/images/doc.png\" title=\"Ultimo certificato e/o documentazione disponibile\" border=\"0\"></a>";
+       }
+       echo "</td>\n";
        echo "<td class=\"FacetDataTD\" align=\"center\">".$r["catmer"]." </td>";
        echo "<td class=\"FacetDataTD\" align=\"center\">".$r["unimis"]." </td>";
        echo "<td class=\"FacetDataTD\" align=\"right\">".number_format($r["preve1"],$admin_aziend['decimal_price'],',','.')." </td>";
