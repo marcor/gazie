@@ -1,0 +1,13 @@
+Titolo:
+Concordia civium murus urbium.
+
+Presentazione:
+Come tutti sanno c'è stato un consiglio dei ministri che doveva decidere un aumento dell'aliquota IVA, ma così non è stato... però forse ci sarà lo stesso! Senza addentrarmi in riflessioni pubbliche di politica macroeconomica ho provveduto contestualmente ad aggiungere a GAzie uno script per agevolare la modifica dell'IVA degli articoli di magazzino, in modo da permettervi di aumentare l'inflazione con estrema facilità.  
+
+Modifiche apportate:
+- aggiunta procedura per modificare l'aliquota IVA degli articoli di magazzino.
+- aggiunto link all'ultimo certificato/documento sulla lista degli articoli.
+
+Approfondimenti:
+
+Antonio de Vincentiis, Montesilvano, 01 Settembre 2011.
