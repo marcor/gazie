@@ -81,6 +81,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $rs_ultimo = gaz_dbi_dyn_query('codice',$gTables['aliiva'],'1','codice DESC',0,1);
     $ultimo = gaz_dbi_fetch_array($rs_ultimo);
     $form['codice'] = $ultimo['codice']+1;
+    $form['tipiva'] = 'I';
     $form['descri'] = '';
     $form['aliquo'] = '';
     $form['annota'] = '';
