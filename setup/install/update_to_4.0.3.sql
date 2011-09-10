@@ -155,7 +155,7 @@ CREATE TABLE `gaz_contract` (
   `adminid` varchar(20) NOT NULL default '',
   `last_modified` timestamp NOT NULL default CURRENT_TIMESTAMP on update CURRENT_TIMESTAMP,
   PRIMARY KEY  (`id_contract`)
-) TYPE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;
 
 CREATE TABLE `gaz_contract_row` (
   `id_row` int(9) NOT NULL auto_increment,
