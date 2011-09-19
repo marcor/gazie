@@ -1,0 +1,12 @@
+Titolo:
+Qualis rex, talis grex.
+ 
+Presentazione:
+Questa versione è stata rilasciata solo per adeguare la base dati installata inizialmente alla aliquota IVA del 21%.
+La piccola modifica di cui sotto si è resa necessaria per evitare i problemi di distrazione per tutti coloro che eseguono un aggiornamento del software senza fare l'installazione da zero.
+ 
+Modifiche apportate:
+- durante il caricamento dei nuovi articoli di magazzino adesso viene proposta l'aliquota preminente al posto della prima in archivio.
+ 
+ 
+Antonio de Vincentiis, Montesilvano, 18 Settembre 2011.
