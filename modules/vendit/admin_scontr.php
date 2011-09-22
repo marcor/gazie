@@ -977,7 +977,7 @@ if ($next_row>0) {
                                     <td>".$form['units']."</td>
                                     <td>".gaz_format_number($form['volume'])."</td>
                                     <td style=\"font-weight:bold;\">".gaz_format_number($tot)."</td>
-                                    <td align=\"right\"><input type=\"submit\" name=\"ins\" value=\"".$script_transl['submit']."\" /></td></tr>\n";
+                                    <td align=\"right\"><input onClick=\"chkSubmit();\" id=\"preventDuplicate\" onClick=\"chkSubmit();\" type=\"submit\" name=\"ins\" value=\"".$script_transl['submit']."\" /></td></tr>\n";
       } else {
          echo "<tr align=\"right\"><td>".gaz_format_number($impcast)."</td>
                                    <td align=\"center\">".$r['descri']."</td>

@@ -1116,14 +1116,9 @@ if($form["registroiva"] > 0) {
            $form['codiva_ri'][$i] = "";
         }
         $rigoi = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['codiva_ri'][$i]);
-        $errore = "";
-        $ctrlimpost =  number_format(round(preg_replace("/\,/",'.',$form['imponi_ri'][$i]) * $rigoi['aliquo'])/ 100,2, '.', '');
-        if ($ctrlimpost <> preg_replace("/\,/",'.',$form['impost_ri'][$i])) {
-           $errore = " * non congruo";
-        }
         echo "<td class=\"FacetDataTD\"><input type=\"text\" align=\"right\" name=\"imponi_ri[$i]\" value=\"".sprintf("%01.2f",preg_replace("/\,/",'.',$form['imponi_ri'][$i]))."\" maxlength=\"13\" size=\"13\"></td>\n";
         echo "<td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id_rig_ri[$i]\" value=\"{$form['id_rig_ri'][$i]}\"><input type=\"hidden\" name=\"codiva_ri[$i]\" value=\"{$form['codiva_ri'][$i]}\">".$rigoi['descri']."</td>\n";
-        echo "<td class=\"FacetDataTDred\"><input type=\"text\" align=\"right\" name=\"impost_ri[$i]\" value=\"".sprintf("%01.2f",preg_replace("/\,/",'.',$form['impost_ri'][$i]))."\" maxlength=\"13\" size=\"13\">".$errore."</td>\n";
+        echo "<td class=\"FacetDataTDred\"><input type=\"text\" align=\"right\" name=\"impost_ri[$i]\" value=\"".sprintf("%01.2f",preg_replace("/\,/",'.',$form['impost_ri'][$i]))."\" maxlength=\"13\" size=\"13\"></td>\n";
         echo "<TD  class=\"FacetDataTD\" align=\"right\"><input type=\"image\" name=\"dei[$i]\"  src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delrow']."!\" ><br></td></tr>\n";
         echo "</tr>";
     }

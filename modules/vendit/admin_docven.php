@@ -1627,7 +1627,7 @@ if ($next_row > 0) {
               <td align=\"right\">".gaz_format_number($totivafat)."</td>
               <td align=\"right\">".gaz_format_number($stamp)."</td>
               <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($totimpfat+$totivafat+$stamp)."</td>\n";
-        echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
+        echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
         if ($rit > 0) {
             echo "<tr>";
             echo "<td colspan=\"7\" align=\"right\">".$script_transl['ritenuta']."</td>";
