@@ -10,10 +10,7 @@ $(function() {
 				$( "#search_location" ).val( ui.item.value );
 				$( "#search_location-capspe" ).val( ui.item.capspe );
 				$( "#search_location-prospe" ).val( ui.item.prospe );
-				//$( "#country opt.value='"+val( ui.item.country )+"'").attr('selected','selected');  
-				/*    pensavo che si facesse così ma la scarsa conoscenza di jquery non mi permette di riuscire nell'intendo...
-				        se qualcuno lo sa fare o vuole impegnarsi in tal senso me lo faccia sapere
-				*/
+				$( "#country").val( ui.item.country );  //grazie ad Emanuele Ferrarini
 				return false;
 			}
 		})
