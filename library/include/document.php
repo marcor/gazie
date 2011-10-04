@@ -257,7 +257,6 @@ class DocContabVars
         $acc_val=$somma_spese;
         foreach ($this->castel as $k=>$v) {
             $vat = gaz_dbi_get_row($this->gTables['aliiva'],"codice",$k);
-            $last--;
             if (isset($this->decalc_castle[$k])) {
                if ($last == 0) {
                   $v += $acc_val;
@@ -268,6 +267,7 @@ class DocContabVars
                   $this->totimpfat += $decalc;
                   $acc_val-=$decalc;
                }
+               $last--;
             }
             $ivacast = round($v*$vat['aliquo'])/ 100;
             $this->totivafat += $ivacast;

@@ -51,7 +51,7 @@ function getExtremeDocs($type='_',$vat_section=1,$date=false)
     return $docs;
 }
 
-function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=999999999)
+function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999999999)
 {
     global $gTables,$admin_aziend;
     $type = substr($type,0,1);
@@ -84,6 +84,7 @@ function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=9999
                 $carry=0;
                 $cast_vat=array();
                 $cast_acc=array();
+                $somma_spese=0;
                 $totimpdoc=0;
                 $totimp_decalc=0.00;
                 $n_vat_decalc=0;
@@ -163,13 +164,18 @@ function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=9999
                  $carry += $r['prelis'] ;
               }
            }
-           // aggiungo i valori della testata al castelletto IVA
-           $somma_spese = $tes['traspo'] + $spese_incasso + $tes['spevar'];
+           $doc[$tes['protoc']]['tes']=$tes;
+           $doc[$tes['protoc']]['acc']=$cast_acc;
+           $doc[$tes['protoc']]['car']=$carry;
+           $doc[$tes['protoc']]['rit']=$rit;
+           $ctrlp=$tes['protoc'];
+           $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
+           // ricostruisco il castelletto IVA
+           $new_cast_vat=array();
            $last=count($cast_vat);
            $acc_val=$somma_spese;
            foreach ($cast_vat as $k=> $v) {
                    if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                      $last--;
                       if ($last == 0) {
                          $v['imponi'] += $acc_val;
                          $totimpdoc += $acc_val;
@@ -179,16 +185,14 @@ function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=9999
                          $totimpdoc += $decalc;
                          $acc_val-=$decalc;
                       }
+                      $last--;
                    }
-                   $cast_vat[$k]['imponi'] = $v['imponi']  ;
+                   $new_cast_vat[$k]['imponi']=$v['imponi'];
+                   $new_cast_vat[$k]['periva']=$v['periva'];
+                   $new_cast_vat[$k]['tipiva']=$v['tipiva'];
            }
+           $doc[$tes['protoc']]['vat']=$new_cast_vat;
            // fine aggiunta spese non documentate al castelletto IVA
-           $doc[$tes['protoc']]['tes']=$tes;
-           $doc[$tes['protoc']]['vat']=$cast_vat;
-           $doc[$tes['protoc']]['acc']=$cast_acc;
-           $doc[$tes['protoc']]['car']=$carry;
-           $doc[$tes['protoc']]['rit']=$rit;
-           $ctrlp=$tes['protoc'];
     }
     return $doc;
 }
@@ -274,7 +278,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $uts_this_date = mktime(0,0,0,$form['this_date_M'],$form['this_date_D'],$form['this_date_Y']);
     if (isset($_POST['submit'])&& empty($msg)) {   //confermo la contabilizzazione
-       $rs=getDocumentsAcconts($form['type'],$form['vat_section'],strftime("%Y%m%d",$uts_this_date),$form['profin']);
+       $rs=getDocumentsAccounts($form['type'],$form['vat_section'],strftime("%Y%m%d",$uts_this_date),$form['profin']);
        if (count($rs>0)) {
           require("lang.".$admin_aziend['lang'].".php");
           $script_transl=$strScript['accounting_documents.php'];
@@ -429,7 +433,7 @@ echo "</table>\n";
 
 //mostro l'anteprima
 if (isset($_POST['preview'])) {
-   $rs=getDocumentsAcconts($form['type'],$form['vat_section'],strftime("%Y%m%d",$uts_this_date),$form['profin']);
+   $rs=getDocumentsAccounts($form['type'],$form['vat_section'],strftime("%Y%m%d",$uts_this_date),$form['profin']);
    echo "<div align=\"center\"><b>".$script_transl['preview']."</b></div>";
    echo "<table class=\"Tlarge\">";
    echo "<th class=\"FacetFieldCaptionTD\">".$script_transl['date_reg']."</th>
