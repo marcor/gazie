@@ -50,6 +50,7 @@ function getDocumentsBill($upd=false)
     while ($tes = gaz_dbi_fetch_array($result)) {
            if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
                 $carry=0;
+                $somma_spese=0;
                 $cast_vat=array();
                 $totimp_decalc=0.00;
                 $n_vat_decalc=0;
@@ -100,13 +101,17 @@ function getDocumentsBill($upd=false)
                  $carry += $r['prelis'] ;
               }
            }
+           $doc[$tes['protoc']]['tes']=$tes;
+           $doc[$tes['protoc']]['car']=$carry;
+           $doc[$tes['protoc']]['rit']=$rit;
+           $ctrlp=$tes['protoc'];
            // aggiungo i valori della testata al castelletto IVA
-           $somma_spese = $tes['traspo'] + $spese_incasso + $tes['spevar'];
+           $new_cast_vat=array();
+           $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
            $last=count($cast_vat);
            $acc_val=$somma_spese;
            foreach ($cast_vat as $k=> $v) {
                    if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                      $last--;
                       if ($last == 0) {
                          $v['import'] += $acc_val;
                          $totimpdoc += $acc_val;
@@ -116,17 +121,15 @@ function getDocumentsBill($upd=false)
                          $totimpdoc += $decalc;
                          $acc_val-=$decalc;
                       }
+                      $last--;
                    }
-                   $cast_vat[$k]['import'] = $v['import']  ;
+                   $new_cast_vat[$k]['import']=$v['import'];
+                   $new_cast_vat[$k]['periva']=$v['periva'];
+                   $new_cast_vat[$k]['tipiva']=$v['tipiva'];
            }
+           $doc[$tes['protoc']]['vat']=$new_cast_vat;
            // fine aggiunta spese non documentate al castelletto IVA
-           $doc[$tes['protoc']]['tes']=$tes;
-           $doc[$tes['protoc']]['vat']=$cast_vat;
-           $doc[$tes['protoc']]['car']=$carry;
-           $doc[$tes['protoc']]['rit']=$rit;
-           $ctrlp=$tes['protoc'];
            if ($upd) {
-            // questo e' troppo lento: gaz_dbi_put_row($gTables['tesdoc'],'id_tes',$tes['id_tes'],'geneff','S');
             gaz_dbi_query ("UPDATE ".$gTables['tesdoc']." SET geneff = 'S' WHERE id_tes = ".$tes['id_tes'].";");
            }
     }
