@@ -253,7 +253,7 @@ class DocContabVars
         $this->totimpfat = $this->totimp_doc;
         $this->totimp_doc = 0;
         $somma_spese = $totTrasporto + $this->speseincasso + $this->tesdoc['spevar'];
-        $last=count($this->decalc_castle);
+        $last=count($this->castel);
         $acc_val=$somma_spese;
         foreach ($this->castel as $k=>$v) {
             $vat = gaz_dbi_get_row($this->gTables['aliiva'],"codice",$k);
@@ -262,7 +262,7 @@ class DocContabVars
                   $v += $acc_val;
                   $this->totimpfat += $acc_val;
                } else {
-                  $decalc=round($somma_spese*$v/$this->totimp_decalc,2);
+                  $decalc=round($somma_spese*$v/$this->totimpmer,2);
                   $v += $decalc;
                   $this->totimpfat += $decalc;
                   $acc_val-=$decalc;
