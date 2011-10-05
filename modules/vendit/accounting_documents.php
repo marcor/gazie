@@ -176,7 +176,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
            $acc_val=$somma_spese;
            foreach ($cast_vat as $k=> $v) {
                    if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                      if ($last == 0) {
+                      if ($last == 1) {
                          $v['imponi'] += $acc_val;
                          $totimpdoc += $acc_val;
                       } else {

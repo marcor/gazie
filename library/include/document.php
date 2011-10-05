@@ -258,7 +258,7 @@ class DocContabVars
         foreach ($this->castel as $k=>$v) {
             $vat = gaz_dbi_get_row($this->gTables['aliiva'],"codice",$k);
             if (isset($this->decalc_castle[$k])) {
-               if ($last == 0) {
+               if ($last == 1) {
                   $v += $acc_val;
                   $this->totimpfat += $acc_val;
                } else {
