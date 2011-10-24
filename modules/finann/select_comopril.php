@@ -431,52 +431,17 @@ if (isset($_GET['pdf'])) {
 }
 
 if (isset($_GET['file_agenzia'])) {
+      $queryData = createRowsAndErrors(intval($_GET['min_limit']));
       require("../../library/include/agenzia_entrate.inc.php");
-      function prepareAgenziaEntrateData($data,$tipo)
-      {
-               $pr = 1;
-               $el = 2;
-               $tot['imponibile'] = 0;
-               $tot['imposta'] = 0;
-               $tot['nonimp'] = 0;
-               $tot['esente'] = 0;
-               foreach ($data as $value){
-                       $acc[$pr]['tipo'] = $tipo;
-                       $acc[$pr]['progressivo'] = $pr;
-                       if (!empty($value['Codice_Fiscale'])) {
-                          $acc[$pr]['codfis'] = strtoupper($value['Codice_Fiscale']);
-                          $el ++;
-                       }
-                       $acc[$pr]['pariva'] = $value['Partita_IVA'];
-                       if ($value['operazioni_imponibili'] <> 0) {
-                          $acc[$pr]['imponibile'] = round($value['operazioni_imponibili']);
-                          $tot['imponibile'] += $acc[$pr]['imponibile'];
-                          $el ++;
-                       }
-                       if ($value['imposte_addebitate'] <> 0) {
-                          $acc[$pr]['imposta'] = round($value['imposte_addebitate']);
-                          $tot['imposta'] += $acc[$pr]['imposta'];
-                          $el ++;
-                       }
-                       if ($value['operazioni_nonimp'] <> 0) {
-                          $acc[$pr]['nonimp'] = round($value['operazioni_nonimp']);
-                          $tot['nonimp'] += $acc[$pr]['nonimp'];
-                          $el ++;
-                       }
-                       if ($value['operazioni_esente'] <> 0) {
-                          $acc[$pr]['esente'] = round($value['operazioni_esente']);
-                          $tot['esente'] += $acc[$pr]['esente'];
-                          $el ++;
-                       }
-                       $acc[$pr]['elementi'] = $el;
-                       $el = 2;
-                       $tot['numero'] = $pr;
-                       $pr ++;
-               }
-               // --- fine preparazione
-               return array($acc,$tipo => $tot);
-      }
       $annofornitura = date("y");
+      // --- preparo gli array da passare alla classe AgenziaEntrate a secondo della scelta effettuata
+      $Testa = getHeaderData();
+      $agenzia = new AgenziaEntrate;
+      print '<br>testa: - ';
+      print_r($Testa);
+      print '<br>dati: - ';
+      print_r($queryData);
+/*
       // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
       header('Content-Type: text/x-a21');
       header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$_GET['anno'].".a21");
@@ -487,12 +452,9 @@ if (isset($_GET['file_agenzia'])) {
       } else {
          header('Pragma: no-cache');
       }
-      // --- preparo gli array da passare alla classe AgenziaEntrate a secondo della scelta effettuata
-      $Testa = getHeaderData();
-      $agenzia = new AgenziaEntrate;
       $content = $agenzia->creaFileART21($Testa,$Dati);
       print $content;
-      exit;
+      exit;*/
 }
 
 require("../../library/include/header.php");

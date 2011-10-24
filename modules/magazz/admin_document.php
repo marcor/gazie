@@ -42,6 +42,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['title']='Original name: '.$_FILES["userfile"]["name"]; // modifico pure il titolo
         }
         $form['extension']=$matches[1];
+        print $_FILES['userfile']['type'];
         if ( $_FILES['userfile']['type'] == "image/png" ||
              $_FILES['userfile']['type'] == "image/x-png" ||
              $_FILES['userfile']['type'] == "application/pdf" ||
@@ -56,7 +57,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
              $_FILES['userfile']['type'] == "application/rtf" || (
              substr($_FILES['userfile']['type'],0,11) == "application" && ($form['extension']=='odt' ||
                                                                            $form['extension']=='doc' ||
-                                                                           $form['extension']=='docx'))) {
+                                                                           $form['extension']=='docx'||
+                                                                           $form['extension']=='pdf'))) {
            // vado avanti...
         } else {
            $msg .= "0+";
