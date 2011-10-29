@@ -160,10 +160,10 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
       $r_span=count($magval);
       foreach ($magval as $mval) {
-         $aRiportare['top'][1]['nam'] = $mval['q_g'];
-         $aRiportare['bot'][1]['nam'] = $mval['q_g'];
-         $aRiportare['top'][2]['nam'] = $mval['v_g'];
-         $aRiportare['bot'][2]['nam'] = $mval['v_g'];
+         $aRiportare['top'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
+         $aRiportare['bot'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
+         $aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
+         $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
          if ($ctrl_id <> $mv['id_mov']) {
               $pdf->Cell(16,4,gaz_format_date($mv['datdoc']),'LTR',0,'C');
               $pdf->Cell(30,4,$mv['caumag'].'-'.substr($mv['descri'],0,17),'TR');
