@@ -65,8 +65,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["Abilit"] = intval($_POST['Abilit']);
     $form["Access"] = intval($_POST['Access']);
     $form["Login"] = substr($_POST['Login'],0,15);
-    $form["Password"] = substr($_POST['Password'],0,15);
-    $form["confpass"] = substr($_POST['confpass'],0,15);
+    $form["Password"] = substr($_POST['Password'],0,20);
+    $form["confpass"] = substr($_POST['confpass'],0,20);
     if ($toDo == 'insert') {
         $ricerca = $_POST["Login"];
         $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "Login = '".$form['Login']."'","Login DESC",0,1);

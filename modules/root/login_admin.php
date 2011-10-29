@@ -137,7 +137,7 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD">Password </td>
-<td class="FacetDataTD"><input type="password" name="Password" value="" maxlength="32" size="20" class="FacetInput" id="ppass"><div class="FacetDataTDred" id="pmsg"></div></td>
+<td class="FacetDataTD"><input type="password" name="Password" value="" maxlength="20" size="20" class="FacetInput" id="ppass"><div class="FacetDataTDred" id="pmsg"></div></td>
 </tr>
 <?php
     if ($newpass == true) {
