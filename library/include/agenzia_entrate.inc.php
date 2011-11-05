@@ -403,259 +403,30 @@ class AgenziaEntrate
 
                }
 
-      function Record_1($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI NON TITOLARI DI PARTITA IVA
+      function Record_12345($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI 
                {
-               function CreaElemento($k,$v,$t){
-                      $acc = '';
-                      if ($t == 1) { // clienti
-                           $tipo = 'CL';
-                           switch ($k) {
-                                  case 'progressivo':
-                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'codfis':
-                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'pariva':
-                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'imponibile':
-                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'imposta':
-                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'nonimp':
-                                  $acc = $tipo.'005001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'esente':
-                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                           }
-                      } else { //fornitori
-                           $tipo = 'FR';
-                           switch ($k) {
-                                  case 'progressivo':
-                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'codfis':
-                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
-                                  break;                                                                   case 'pariva':
-                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'imponibile':
-                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'imposta':
-                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'nonimp':
-                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'esente':
-                                  $acc = $tipo.'007001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                           }
-                  }
-                  return $acc;
-               }
-               $n_elements = 0;
+               $acc='';
                $ctrl_tipo = 0;
-               foreach ($D as $ElementsData){
-                       if ($ctrl_tipo < $ElementsData['tipo'] and $ctrl_tipo != 0) { // non è lo stesso partner precedente e non è il primo
-                          $diff_to_end = (70-$n_elements)*24 + 116;
-                          $acc .= str_repeat(' ',$diff_to_end)."A\r\n".$ElementsData['tipo'];
-                          $n_elements = 0;
-                       } elseif ($ctrl_tipo == 0) {
-                          $acc = $ElementsData['tipo'];
-                       }
-                       foreach ($ElementsData as $key=>$value){
-                           $rs_elemento = CreaElemento($key,$value,$ElementsData['tipo']);
-                           if (!empty($rs_elemento)){ // se è un elemento valido
-                              $acc .= $rs_elemento;
-                              $n_elements++;
-                           }
-                           if ($n_elements == 70 ){
-                              // salta sulla riga successiva
-                              $acc .= str_repeat(' ',116)."A\r\n".$ElementsData['tipo'];
-                              $n_elements = 0;
-                           }
-                       }
-                       $ctrl_tipo = $ElementsData['tipo'];
-               }
-               $diff_to_end = (70-$n_elements)*24 + 116;
-               $acc .= str_repeat(' ',$diff_to_end)."A\r\n";
-               return $acc;
-               }
-
-      function Record_2($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI TITOLARI DI PARTITA IVA
-               {
-               function CreaElemento($k,$v,$t){
-                      $acc = '';
-                      if ($t == 1) { // clienti
-                           $tipo = 'CL';
-                           switch ($k) {
-                                  case 'progressivo':
-                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'codfis':
-                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'pariva':
-                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'imponibile':
-                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'imposta':
-                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'nonimp':
-                                  $acc = $tipo.'005001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'esente':
-                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                           }
-                      } else { //fornitori
-                           $tipo = 'FR';
-                           switch ($k) {
-                                  case 'progressivo':
-                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'codfis':
-                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
-                                  break;                                                                   case 'pariva':
-                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'imponibile':
-                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'imposta':
-                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'nonimp':
-                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'esente':
-                                  $acc = $tipo.'007001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                           }
-                  }
-                  return $acc;
-               }
-               $n_elements = 0;
-               $ctrl_tipo = 0;
-               foreach ($D as $ElementsData){
-                       if ($ctrl_tipo < $ElementsData['tipo'] and $ctrl_tipo != 0) { // non è lo stesso partner precedente e non è il primo
-                          $diff_to_end = (70-$n_elements)*24 + 116;
-                          $acc .= str_repeat(' ',$diff_to_end)."A\r\n".$ElementsData['tipo'];
-                          $n_elements = 0;
-                       } elseif ($ctrl_tipo == 0) {
-                          $acc = $ElementsData['tipo'];
-                       }
-                       foreach ($ElementsData as $key=>$value){
-                           $rs_elemento = CreaElemento($key,$value,$ElementsData['tipo']);
-                           if (!empty($rs_elemento)){ // se è un elemento valido
-                              $acc .= $rs_elemento;
-                              $n_elements++;
-                           }
-                           if ($n_elements == 70 ){
-                              // salta sulla riga successiva
-                              $acc .= str_repeat(' ',116)."A\r\n".$ElementsData['tipo'];
-                              $n_elements = 0;
-                           }
-                       }
-                       $ctrl_tipo = $ElementsData['tipo'];
-               }
-               $diff_to_end = (70-$n_elements)*24 + 116;
-               $acc .= str_repeat(' ',$diff_to_end)."A\r\n";
-               return $acc;
-               }
-
-      function Record_3($D) // TRACCIATO RECORD DI DETTAGLIO OPERAZIONI CON SOGGETTI NON RESIDENTI PRIVI DI CODICE FISCALE
-               {
-               function CreaElemento($k,$v,$t){
-                      $acc = '';
-                      if ($t == 1) { // clienti
-                           $tipo = 'CL';
-                           switch ($k) {
-                                  case 'progressivo':
-                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'codfis':
-                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'pariva':
-                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'imponibile':
-                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'imposta':
-                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'nonimp':
-                                  $acc = $tipo.'005001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'esente':
-                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                           }
-                      } else { //fornitori
-                           $tipo = 'FR';
-                           switch ($k) {
-                                  case 'progressivo':
-                                  $acc = $tipo.'001001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'codfis':
-                                  $acc = $tipo.'002001'.substr(str_pad($v,16,' '),0,16);
-                                  break;                                                                   case 'pariva':
-                                  $acc = $tipo.'003001'.substr(str_pad($v,16,' '),0,16);
-                                  break;
-                                  case 'imponibile':
-                                  $acc = $tipo.'004001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'imposta':
-                                  $acc = $tipo.'004002'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'nonimp':
-                                  $acc = $tipo.'006001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                                  case 'esente':
-                                  $acc = $tipo.'007001'.substr(str_pad($v,16,' ',STR_PAD_LEFT),0,16);
-                                  break;
-                           }
-                  }
-                  return $acc;
-               }
-               $n_elements = 0;
-               $ctrl_tipo = 0;
-               foreach ($D as $ElementsData){
-                       if ($ctrl_tipo < $ElementsData['tipo'] and $ctrl_tipo != 0) { // non è lo stesso partner precedente e non è il primo
-                          $diff_to_end = (70-$n_elements)*24 + 116;
-                          $acc .= str_repeat(' ',$diff_to_end)."A\r\n".$ElementsData['tipo'];
-                          $n_elements = 0;
-                       } elseif ($ctrl_tipo == 0) {
-                          $acc = $ElementsData['tipo'];
-                       }
-                       foreach ($ElementsData as $key=>$value){
-                           $rs_elemento = CreaElemento($key,$value,$ElementsData['tipo']);
-                           if (!empty($rs_elemento)){ // se è un elemento valido
-                              $acc .= $rs_elemento;
-                              $n_elements++;
-                           }
-                           if ($n_elements == 70 ){
-                              // salta sulla riga successiva
-                              $acc .= str_repeat(' ',116)."A\r\n".$ElementsData['tipo'];
-                              $n_elements = 0;
-                           }
-                       }
-                       $ctrl_tipo = $ElementsData['tipo'];
-               }
-               $diff_to_end = (70-$n_elements)*24 + 116;
-               $acc .= str_repeat(' ',$diff_to_end)."A\r\n";
-               return $acc;
+               foreach ($D as $ElementsData) {
+                        switch ($ElementsData['soggetto_type']) {
+                            case '1': // SOGGETTI RESIDENTI NON TITOLARI DI PARTITA IVA
+                                $acc .= '1'.substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16).
+                                        substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
+                                        .'';
+                            break;
+                            case '2': // SOGGETTI RESIDENTI TITOLARI DI PARTITA IVA
+                            break;
+                            case '3': // SOGGETTI NON RESIDENTI 
+                            break;
+                            case '4': // SOGGETTI RESIDENTI - NOTE DI VARIAZIONE
+                            break;
+                            case '5': // SOGGETTI NON RESIDENTI - NOTE DI VARIAZIONE
+                            break;
+                        }
+                       print_r($ElementsData);
+                       print "<br>";
+                    }
+                return $acc;
                }
 
       function Record_9($T) //TRACCIATO RECORD DI CODA
@@ -682,10 +453,10 @@ class AgenziaEntrate
 
                }
 
-      function creaFileART21($testa,$dati,$totali)
+      function creaFileART21($testa,$dati)
                {
-               $accumulatore = '0'.$this->Record09($testa).$this->Record12($dati).
-                               $this->Record3($totali).'9'.$this->Record09($testa);
+               $accumulatore = '0'.$this->Record_0($testa).$this->Record_12345($dati).
+                               '9'.$this->Record_9($testa);
                return $accumulatore;
                }
 // --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21)

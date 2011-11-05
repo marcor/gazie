@@ -237,15 +237,17 @@ function getHeaderData()
 function createRowsAndErrors($min_limit){
     global $gTables,$admin_aziend,$script_transl;
     $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,
-               citspe,prospe,country,codfis,pariva,clfoco,protoc,numdoc,datdoc,seziva,caucon,datreg,op_type,datnas,luonas,pronas,counas,
-               operat, SUM(impost - impost*2*(caucon LIKE '_NC')) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
-               SUM(imponi - imponi*2*(caucon LIKE '_NC')) AS imponibile FROM ".$gTables['rigmoi']."
+               citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
+               ".$gTables['tesmov'].".numdoc,".$gTables['tesmov'].".datdoc,".$gTables['tesmov'].".seziva,
+               ".$gTables['tesmov'].".caucon,datreg,op_type,datnas,luonas,pronas,counas,id_doc,
+               operat, SUM(impost - impost*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
+               SUM(imponi - imponi*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imponibile FROM ".$gTables['rigmoi']."
                LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
                LEFT JOIN ".$gTables['aliiva']." ON ".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
-               WHERE YEAR(datdoc) = ".intval($_GET['anno'])." AND ( clfoco LIKE '".$admin_aziend['masfor']."%' OR clfoco LIKE '".$admin_aziend['mascli']."%')
-               GROUP BY id_tes, tipiva
+               WHERE YEAR(datdoc) = ".intval($_GET['anno'])." AND ( ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['masfor']."%' OR ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['mascli']."%')
+               GROUP BY ".$gTables['rigmoi'].".id_tes, tipiva
                ORDER BY regiva, datreg";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact= array();
@@ -256,6 +258,8 @@ function createRowsAndErrors($min_limit){
        $ctrl_id = 0;
        $value_imponi = 0.00;
        $value_impost = 0.00;
+
+
        while ($row = gaz_dbi_fetch_array($result)) {
          if ($row['operat'] == 1) {
                 $value_imponi = $row['imponibile'];
@@ -326,9 +330,24 @@ function createRowsAndErrors($min_limit){
                          $error_transact[$row['idtes']][] = $script_transl['errors'][7];
                      }
                }
-                 // fine controlli su CF e PI
 
-                 $castel_transact[$row['idtes']] = $row;
+                // fine controlli su CF e PI
+
+                $castel_transact[$row['idtes']] = $row;
+
+                $castel_transact[$row['idtes']]['n_rate'] = 1;
+                // ricerco gli eventuali contratti che hanno generato la transazione
+                if ($row['id_doc'] > 0 ) {
+                    $payquery= "SELECT ".$gTables['tesdoc'].".*, ".$gTables['pagame'].".numrat FROM ".$gTables['tesdoc']."
+                                LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice 
+                                WHERE id_tes = ".$row['id_doc'];
+                    $result_pay = gaz_dbi_query($payquery);
+                    if (gaz_dbi_num_rows($result_pay) > 0 ) {
+                        $pay_r=gaz_dbi_fetch_array($result_pay);
+                        $castel_transact[$row['idtes']]['n_rate'] = $pay_r['numrat'];
+                    }
+                }
+                // fine ricerca contratti
 
                  if ($row['pariva'] >0){
                         $castel_transact[$row['idtes']]['soggetto_type'] = 2;
@@ -437,11 +456,11 @@ if (isset($_GET['file_agenzia'])) {
       // --- preparo gli array da passare alla classe AgenziaEntrate a secondo della scelta effettuata
       $Testa = getHeaderData();
       $agenzia = new AgenziaEntrate;
-      print '<br>testa: - ';
+/*      print '<br>testa: - ';
       print_r($Testa);
       print '<br>dati: - ';
       print_r($queryData);
-/*
+
       // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
       header('Content-Type: text/x-a21');
       header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$_GET['anno'].".a21");
@@ -452,9 +471,10 @@ if (isset($_GET['file_agenzia'])) {
       } else {
          header('Pragma: no-cache');
       }
-      $content = $agenzia->creaFileART21($Testa,$Dati);
-      print $content;
-      exit;*/
+*/
+    $content = $agenzia->creaFileART21($Testa,$queryData[0]);
+    print $content;
+    exit;
 }
 
 require("../../library/include/header.php");
