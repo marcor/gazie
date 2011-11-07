@@ -101,7 +101,7 @@ function printTransact($transact,$error)
           echo "</tr>\n";
           foreach ($transact as $key=>$value ) {
                $class = ' ';
-               if ($value['soggetto_type']==3) {
+               if ($value['soggetto_type']>=3) {
                   $class = 'style="color:#4305F1; background-color: #FF8888;"';
                 
                } elseif($value['soggetto_type']==1) {
@@ -272,11 +272,16 @@ function createRowsAndErrors($min_limit){
                 $value_impost = 0;
          }
          if ($ctrl_id <> $row['idtes']) {
+        
             // se il precedente movimento non ha raggiunto l'importo lo elimino
-            if (isset($castel_transact[$ctrl_id]) && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit ) {
+            if (isset($castel_transact[$ctrl_id])
+                && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit
+                && $castel_transact[$ctrl_id]['contract'] < $min_limit) {
                unset ($castel_transact[$ctrl_id]);
                unset ($error_transact[$ctrl_id]);
             }
+
+
                // inizio controlli su CF e PI
                $nuw = new check_VATno_TAXcode();
                $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
@@ -335,27 +340,48 @@ function createRowsAndErrors($min_limit){
 
                 $castel_transact[$row['idtes']] = $row;
 
-                $castel_transact[$row['idtes']]['n_rate'] = 1;
-                // ricerco gli eventuali contratti che hanno generato la transazione
-                if ($row['id_doc'] > 0 ) {
-                    $payquery= "SELECT ".$gTables['tesdoc'].".*, ".$gTables['pagame'].".numrat FROM ".$gTables['tesdoc']."
-                                LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice 
-                                WHERE id_tes = ".$row['id_doc'];
-                    $result_pay = gaz_dbi_query($payquery);
-                    if (gaz_dbi_num_rows($result_pay) > 0 ) {
-                        $pay_r=gaz_dbi_fetch_array($result_pay);
-                        $castel_transact[$row['idtes']]['n_rate'] = $pay_r['numrat'];
-                    }
+            // determino il tipo di soggetto residente all'estero
+            $castel_transact[$row['idtes']]['istat_country'] = 0;
+            if ($row['country'] <> 'IT' ) { // non residente
+                $nation=gaz_dbi_get_row($gTables['country'], 'iso', $row['country']);
+                $castel_transact[$row['idtes']]['istat_country']=$nation['istat_country']; 
+                $castel_transact[$row['idtes']]['soggetto_type'] = 3;
+                if (substr($row['caucon'],-2) == 'NC'){
+                        $castel_transact[$row['idtes']]['soggetto_type'] = 5;
                 }
-                // fine ricerca contratti
-
-                 if ($row['pariva'] >0){
+                if (!empty($row['pariva'])){ // è una azienda straniera quindi forzo l'eliminazione azzerando i valori
+                    $value_imponi = 0;
+                    $value_impost = 0;
+                }
+            } else {
+                 if ($row['pariva'] >0){ // residente
                         $castel_transact[$row['idtes']]['soggetto_type'] = 2;
-                 } elseif ($admin_aziend['country'] != $row['country']){
-                        $castel_transact[$row['idtes']]['soggetto_type'] = 3;
                  } else {
                         $castel_transact[$row['idtes']]['soggetto_type'] = 1;
                  }
+                if (substr($row['caucon'],-2) == 'NC'){
+                        $castel_transact[$row['idtes']]['soggetto_type'] = 4;
+                } 
+            }
+
+            // ricerco gli eventuali contratti che hanno generato la transazione
+            $castel_transact[$row['idtes']]['n_rate'] = 1;
+            $castel_transact[$row['idtes']]['contract'] = 0;
+            if ($row['id_doc'] > 0 ) {
+                $contr_query= "SELECT ".$gTables['tesdoc'].".*,".$gTables['contract'].".* FROM ".$gTables['tesdoc']."
+                            LEFT JOIN ".$gTables['contract']." ON ".$gTables['tesdoc'].".id_contract = ".$gTables['contract'].".id_contract 
+                            WHERE id_tes = ".$row['id_doc']." AND (".$gTables['tesdoc'].".id_contract > 0 AND tipdoc NOT LIKE 'VCO')";
+                $result_contr = gaz_dbi_query($contr_query);
+
+                if (gaz_dbi_num_rows($result_contr) > 0 ) {
+                    $contr_r=gaz_dbi_fetch_array($result_contr);
+                    // devo ottenere l'importo totale del contratto
+                    $castel_transact[$row['idtes']]['contract']=$contr_r['current_fee']*$contr_r['months_duration'];
+                    $castel_transact[$row['idtes']]['n_rate'] = 2;
+                }
+            }
+            // fine ricerca contratti
+
                  if ($row['op_type'] == 0 && substr($row['clfoco'],0,3) == $admin_aziend['masfor'] ){
                      $castel_transact[$row['idtes']]['op_type'] = 3;
                  } elseif ($row['op_type'] == 0 && substr($row['clfoco'],0,3) == $admin_aziend['mascli'] ) {
@@ -432,8 +458,11 @@ function createRowsAndErrors($min_limit){
               $ctrl_id = $row['idtes'];
 
        }
+
        // se il precedente movimento non ha raggiunto l'importo lo elimino
-       if (isset($castel_transact[$ctrl_id]) && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit ) {
+       if (isset($castel_transact[$ctrl_id])
+           && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit
+           && $castel_transact[$ctrl_id]['contract'] < $min_limit) {
            unset ($castel_transact[$ctrl_id]);
            unset ($error_transact[$ctrl_id]);
        }
@@ -450,28 +479,23 @@ if (isset($_GET['pdf'])) {
 }
 
 if (isset($_GET['file_agenzia'])) {
-      $queryData = createRowsAndErrors(intval($_GET['min_limit']));
-      require("../../library/include/agenzia_entrate.inc.php");
-      $annofornitura = date("y");
-      // --- preparo gli array da passare alla classe AgenziaEntrate a secondo della scelta effettuata
-      $Testa = getHeaderData();
-      $agenzia = new AgenziaEntrate;
-/*      print '<br>testa: - ';
-      print_r($Testa);
-      print '<br>dati: - ';
-      print_r($queryData);
+    $queryData = createRowsAndErrors(intval($_GET['min_limit']));
+    require("../../library/include/agenzia_entrate.inc.php");
+    $annofornitura = date("y");
+    // --- preparo gli array da passare alla classe AgenziaEntrate a secondo della scelta effettuata
+    $Testa = getHeaderData();
+    $agenzia = new AgenziaEntrate;
 
-      // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
-      header('Content-Type: text/x-a21');
-      header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$_GET['anno'].".a21");
-      header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
-      if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
-         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-         header('Pragma: public');
-      } else {
-         header('Pragma: no-cache');
-      }
-*/
+    // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
+    header('Content-Type: text/x-a21');
+    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$_GET['anno'].".a21");
+    header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
+    if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
+       header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+       header('Pragma: public');
+    } else {
+       header('Pragma: no-cache');
+    }
     $content = $agenzia->creaFileART21($Testa,$queryData[0]);
     print $content;
     exit;

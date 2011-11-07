@@ -387,7 +387,7 @@ class AgenziaEntrate
                   $this->AltriDati = substr(str_pad($T['cognome'],26,' '),0,26).
                                   substr(str_pad($T['nome'],25,' '),0,25).
                                   substr($T['sesso'],0,1).
-                                  substr(str_pad($T['datnas'],8,' '),0,8).
+                                  substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
                                   substr(str_pad($T['luonas'],40,' '),0,40).
                                   substr(str_pad($T['pronas'],2,' '),0,2).str_repeat(' ',112);
                } else {
@@ -410,21 +410,60 @@ class AgenziaEntrate
                foreach ($D as $ElementsData) {
                         switch ($ElementsData['soggetto_type']) {
                             case '1': // SOGGETTI RESIDENTI NON TITOLARI DI PARTITA IVA
-                                $acc .= '1'.substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16).
-                                        substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
-                                        .'';
+                                $acc .= '1'.substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16)
+                                        .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
+                                        .$ElementsData['n_rate']
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9)
+                                        .str_repeat(' ',1762)."A\r\n";
                             break;
                             case '2': // SOGGETTI RESIDENTI TITOLARI DI PARTITA IVA
+                                $acc .= '2'.substr(str_pad($ElementsData['pariva'],11,'0',STR_PAD_LEFT),0,11)
+                                        .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
+                                        .substr(str_pad(round($ElementsData['numdoc']),15,' ',STR_PAD_LEFT),0,15)
+                                        .$ElementsData['n_rate']
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']),9,' ',STR_PAD_LEFT),0,9)
+                                        .substr(str_pad(round($ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9);
+                                        if ($ElementsData['op_type']>2){ //acquisto
+                                             $acc .= '2';
+                                        } else { // vendita
+                                             $acc .= '1';
+                                        }
+                                $acc .= str_repeat(' ',1742)."A\r\n";
                             break;
                             case '3': // SOGGETTI NON RESIDENTI 
+                                $acc .= '3';
+                                if ($ElementsData['sexper']=='G'){ //persona giuridica
+                                    $acc .= str_repeat(' ',97)
+                                        .substr(str_pad($ElementsData['ragso1'].' '.$ElementsData['ragso2'],60,' ',STR_PAD_RIGHT),0,60)
+                                        .substr(str_pad($ElementsData['citspe'],40,' ',STR_PAD_RIGHT),0,40)
+                                        .substr(str_pad($ElementsData['istat_country'],3,' ',STR_PAD_LEFT),0,3)
+                                        .substr(str_pad($ElementsData['indspe'],40,' ',STR_PAD_RIGHT),0,40);
+                                } else { // persona fisica
+                                    $acc .= substr(str_pad($ElementsData['cognome'],24,' ',STR_PAD_RIGHT),0,24)
+                                        .substr(str_pad($ElementsData['nome'],20,' ',STR_PAD_RIGHT),0,20)
+                                        .substr($ElementsData['datnas'],8,2).substr($ElementsData['datnas'],5,2).substr($ElementsData['datnas'],0,4)
+                                        .substr(str_pad($ElementsData['luonas'],40,' ',STR_PAD_RIGHT),0,40)
+                                        .substr(str_pad($ElementsData['pronas'],2,' ',STR_PAD_RIGHT),0,2)
+                                        .substr(str_pad($ElementsData['istat_country'],3,' ',STR_PAD_LEFT),0,3)
+                                        .str_repeat(' ',143);
+                                }
+                                $acc .= substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
+                                        .substr(str_pad(round($ElementsData['numdoc']),15,' ',STR_PAD_LEFT),0,15)
+                                        .$ElementsData['n_rate']
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']),9,' ',STR_PAD_LEFT),0,9)
+                                        .substr(str_pad(round($ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9);
+                                if ($ElementsData['op_type']>2){ //acquisto
+                                    $acc .= '2';
+                                } else { // vendita
+                                    $acc .= '1';
+                                }
+                                $acc .= str_repeat(' ',1513)."A\r\n";
                             break;
                             case '4': // SOGGETTI RESIDENTI - NOTE DI VARIAZIONE
                             break;
                             case '5': // SOGGETTI NON RESIDENTI - NOTE DI VARIAZIONE
                             break;
                         }
-                       print_r($ElementsData);
-                       print "<br>";
                     }
                 return $acc;
                }
@@ -437,7 +476,7 @@ class AgenziaEntrate
                   $this->AltriDati = substr(str_pad($T['cognome'],26,' '),0,26).
                                   substr(str_pad($T['nome'],25,' '),0,25).
                                   substr($T['sesso'],0,1).
-                                  substr(str_pad($T['datnas'],8,' '),0,8).
+                                  substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
                                   substr(str_pad($T['luonas'],40,' '),0,40).
                                   substr(str_pad($T['pronas'],2,' '),0,2).str_repeat(' ',112);
                } else {
@@ -447,7 +486,7 @@ class AgenziaEntrate
                                    substr(str_pad($T['proleg'],2,' '),0,2);
                }
                $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
-               return "0ART2147".$this->CFContribuente.$this->PIContribuente.$this->AltriDati.
+               return "9ART2147".$this->CFContribuente.$this->PIContribuente.$this->AltriDati.
                       str_repeat(' ',16).$this->Anno.str_repeat('0',8).str_repeat(' ',16).
                       str_repeat('0',14).str_repeat(' ',1490)."A\r\n";
 
@@ -455,8 +494,9 @@ class AgenziaEntrate
 
       function creaFileART21($testa,$dati)
                {
-               $accumulatore = '0'.$this->Record_0($testa).$this->Record_12345($dati).
-                               '9'.$this->Record_9($testa);
+               $accumulatore = $this->Record_0($testa).
+                               $this->Record_12345($dati).
+                               $this->Record_9($testa);
                return $accumulatore;
                }
 // --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21)

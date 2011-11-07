@@ -64,6 +64,7 @@ $gTables['caucon'] = $table_prefix.'_'.$id.'caucon';
 $gTables['caumag'] = $table_prefix.'_'.$id.'caumag';
 $gTables['clfoco'] = $table_prefix.'_'.$id.'clfoco';
 $gTables['company_config'] = $table_prefix.'_'.$id.'config';
+$gTables['contract'] = $table_prefix.'_'.$id.'contract';
 $gTables['effett'] = $table_prefix.'_'.$id.'effett';
 $gTables['files'] = $table_prefix.'_'.$id.'files';
 $gTables['imball'] = $table_prefix.'_'.$id.'imball';

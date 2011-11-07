@@ -65,7 +65,7 @@ echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$strScript['report_contract.php']['customer']."</td><td class=\"FacetDataTD\">\n";
-echo $customer['ragso1'].' '.$customer['ragso2'];
+echo $customer['descri'];
 echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "<tr>\n";

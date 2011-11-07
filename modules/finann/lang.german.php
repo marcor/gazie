@@ -187,7 +187,7 @@ $strScript = array ("select_comiva.php" =>
                           'luonas'=>'Birthplace',
                           'pronas'=>'Province of birth',
                           'soggetto_type'=>"Subject Type",
-                          'soggetto_type_value'=>array(1=>'Person without VAT number',2=>'Company with VAT number',3=>'Non-resident without the Tax Code'),
+                          'soggetto_type_value'=>array(1=>'Person without VAT number',2=>'Company with VAT number',3=>'Non-resident',4=>'VAT Update-Resident',5=>'VAT-Update-Non-resident'),
                           'imptype'=>"Tipologia imponibile",
                           'imptype_value'=>array(1=>'Taxable',2=>'NO Taxable',3=>'Free',4=>'Taxable with VAT unexposed'),
                           'amount'=>"Amount of consideration",

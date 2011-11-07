@@ -189,7 +189,7 @@ $strScript = array ("select_comiva.php" =>
                           'luonas'=>'Luogo di nascita',
                           'pronas'=>'Provincia di nascita',
                           'soggetto_type'=>"Tipo soggetto",
-                          'soggetto_type_value'=>array(1=>'Privato senza Partita IVA',2=>'Titolare di Partita IVA',3=>'Non residente senza Codice Fiscale'),
+                          'soggetto_type_value'=>array(1=>'Privato senza Partita IVA',2=>'Titolare di Partita IVA',3=>'Non residente',4=>'Nota variazione-Residenti',5=>'NotaVariazione-Non Residenti'),
                           'imptype'=>"Tipologia imponibile",
                           'imptype_value'=>array(1=>'Imponibile',2=>'NON Imponibile',3=>'Esente',4=>'Imponibile con IVA non esposta'),
                           'amount'=>"Corrispettivo",
