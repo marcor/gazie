@@ -379,27 +379,29 @@ class AgenziaEntrate
               [esente] = Esente
               [nonimp] = Non imponibile
 */
-      function Record_0($T) // TRACCIATO RECORD DI TESTA
+      function Record_09($T) // TRACCIATO RECORD DI TESTA - CODA
                {
-               $this->CFContribuente = substr(str_pad($T['codfis'],16,' '),0,16);
+               $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
                $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
-               if (isset($T['sesso'])){
-                  $this->AltriDati = substr(str_pad($T['cognome'],26,' '),0,26).
-                                  substr(str_pad($T['nome'],25,' '),0,25).
-                                  substr($T['sesso'],0,1).
-                                  substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
-                                  substr(str_pad($T['luonas'],40,' '),0,40).
-                                  substr(str_pad($T['pronas'],2,' '),0,2).str_repeat(' ',112);
-               } else {
-                  $this->AltriDati = str_repeat(' ',102).
-                                   substr(str_pad($T['ragsoc'],70,' '),0,70).
-                                   substr(str_pad($T['sedleg'],40,' '),0,40).
-                                   substr(str_pad($T['proleg'],2,' '),0,2);
+               if (isset($T['sesso'])){  // PERSONA FISICA
+                  $this->AltriDati= str_repeat(' ',102).
+                                    substr(str_pad($T['cognome'],24,' '),0,24).
+                                    substr(str_pad($T['nome'],20,' '),0,20).
+                                    substr($T['sesso'],0,1).
+                                    substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
+                                    substr(str_pad($T['luonas'],40,' '),0,40).
+                                    substr(str_pad($T['pronas'],2,' '),0,2);
+               } else {    // PERSONA GIURIDICA
+                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
+                                    substr(str_pad($T['sedleg'],40,' '),0,40).
+                                    substr(str_pad($T['proleg'],2,' '),0,2).
+                                    str_repeat(' ',95);
                }
                $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
-               return "0ART2147".$this->CFContribuente.$this->PIContribuente.$this->AltriDati.
-                      str_repeat(' ',16).$this->Anno.str_repeat('0',8).str_repeat(' ',16).
-                      str_repeat('0',14).str_repeat(' ',1490)."A\r\n";
+               return "ART21470".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
+                      $this->AltriDati.
+                      $this->Anno.'0   1   1'.
+                      str_repeat(' ',1528)."A\r\n";
 
                }
 
@@ -468,35 +470,11 @@ class AgenziaEntrate
                 return $acc;
                }
 
-      function Record_9($T) //TRACCIATO RECORD DI CODA
-               {
-               $this->CFContribuente = substr(str_pad($T['codfis'],16,' '),0,16);
-               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
-               if (isset($T['sesso'])){
-                  $this->AltriDati = substr(str_pad($T['cognome'],26,' '),0,26).
-                                  substr(str_pad($T['nome'],25,' '),0,25).
-                                  substr($T['sesso'],0,1).
-                                  substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
-                                  substr(str_pad($T['luonas'],40,' '),0,40).
-                                  substr(str_pad($T['pronas'],2,' '),0,2).str_repeat(' ',112);
-               } else {
-                  $this->AltriDati = str_repeat(' ',102).
-                                   substr(str_pad($T['ragsoc'],70,' '),0,70).
-                                   substr(str_pad($T['sedleg'],40,' '),0,40).
-                                   substr(str_pad($T['proleg'],2,' '),0,2);
-               }
-               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
-               return "9ART2147".$this->CFContribuente.$this->PIContribuente.$this->AltriDati.
-                      str_repeat(' ',16).$this->Anno.str_repeat('0',8).str_repeat(' ',16).
-                      str_repeat('0',14).str_repeat(' ',1490)."A\r\n";
-
-               }
-
       function creaFileART21($testa,$dati)
                {
-               $accumulatore = $this->Record_0($testa).
+               $accumulatore = '0'.$this->Record_09($testa).
                                $this->Record_12345($dati).
-                               $this->Record_9($testa);
+                               '9'.$this->Record_09($testa);
                return $accumulatore;
                }
 // --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21)

@@ -72,15 +72,17 @@ function getDocRef($data){
 function createRowsAndErrors($min_limit){
     global $gTables,$admin_aziend,$script_transl;
     $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,
-               citspe,prospe,country,codfis,pariva,clfoco,protoc,numdoc,datdoc,seziva,caucon,datreg,op_type,datnas,luonas,pronas,counas,
-               operat, SUM(impost - impost*2*(caucon LIKE '_NC')) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
-               SUM(imponi - imponi*2*(caucon LIKE '_NC')) AS imponibile FROM ".$gTables['rigmoi']."
+               citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
+               ".$gTables['tesmov'].".numdoc,".$gTables['tesmov'].".datdoc,".$gTables['tesmov'].".seziva,
+               ".$gTables['tesmov'].".caucon,datreg,op_type,datnas,luonas,pronas,counas,id_doc,
+               operat, SUM(impost - impost*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
+               SUM(imponi - imponi*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imponibile FROM ".$gTables['rigmoi']."
                LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
                LEFT JOIN ".$gTables['aliiva']." ON ".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
-               WHERE YEAR(datdoc) = ".intval($_GET['anno'])." AND ( clfoco LIKE '".$admin_aziend['masfor']."%' OR clfoco LIKE '".$admin_aziend['mascli']."%')
-               GROUP BY id_tes, tipiva
+               WHERE YEAR(datdoc) = ".intval($_GET['anno'])." AND ( ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['masfor']."%' OR ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['mascli']."%')
+               GROUP BY ".$gTables['rigmoi'].".id_tes, tipiva
                ORDER BY regiva, datreg";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact= array();
@@ -91,6 +93,8 @@ function createRowsAndErrors($min_limit){
        $ctrl_id = 0;
        $value_imponi = 0.00;
        $value_impost = 0.00;
+
+
        while ($row = gaz_dbi_fetch_array($result)) {
          if ($row['operat'] == 1) {
                 $value_imponi = $row['imponibile'];
@@ -103,11 +107,16 @@ function createRowsAndErrors($min_limit){
                 $value_impost = 0;
          }
          if ($ctrl_id <> $row['idtes']) {
+        
             // se il precedente movimento non ha raggiunto l'importo lo elimino
-            if (isset($castel_transact[$ctrl_id]) && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit ) {
+            if (isset($castel_transact[$ctrl_id])
+                && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit
+                && $castel_transact[$ctrl_id]['contract'] < $min_limit) {
                unset ($castel_transact[$ctrl_id]);
                unset ($error_transact[$ctrl_id]);
             }
+
+
                // inizio controlli su CF e PI
                $nuw = new check_VATno_TAXcode();
                $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
@@ -161,17 +170,53 @@ function createRowsAndErrors($min_limit){
                          $error_transact[$row['idtes']][] = $script_transl['errors'][7];
                      }
                }
-                 // fine controlli su CF e PI
 
-                 $castel_transact[$row['idtes']] = $row;
+                // fine controlli su CF e PI
 
-                 if ($row['pariva'] >0){
+                $castel_transact[$row['idtes']] = $row;
+
+            // determino il tipo di soggetto residente all'estero
+            $castel_transact[$row['idtes']]['istat_country'] = 0;
+            if ($row['country'] <> 'IT' ) { // non residente
+                $nation=gaz_dbi_get_row($gTables['country'], 'iso', $row['country']);
+                $castel_transact[$row['idtes']]['istat_country']=$nation['istat_country']; 
+                $castel_transact[$row['idtes']]['soggetto_type'] = 3;
+                if (substr($row['caucon'],-2) == 'NC'){
+                        $castel_transact[$row['idtes']]['soggetto_type'] = 5;
+                }
+                if (!empty($row['pariva'])){ // è una azienda straniera quindi forzo l'eliminazione azzerando i valori
+                    $value_imponi = 0;
+                    $value_impost = 0;
+                }
+            } else {
+                 if ($row['pariva'] >0){ // residente
                         $castel_transact[$row['idtes']]['soggetto_type'] = 2;
-                 } elseif ($admin_aziend['country'] != $row['country']){
-                        $castel_transact[$row['idtes']]['soggetto_type'] = 3;
                  } else {
                         $castel_transact[$row['idtes']]['soggetto_type'] = 1;
                  }
+                if (substr($row['caucon'],-2) == 'NC'){
+                        $castel_transact[$row['idtes']]['soggetto_type'] = 4;
+                } 
+            }
+
+            // ricerco gli eventuali contratti che hanno generato la transazione
+            $castel_transact[$row['idtes']]['n_rate'] = 1;
+            $castel_transact[$row['idtes']]['contract'] = 0;
+            if ($row['id_doc'] > 0 ) {
+                $contr_query= "SELECT ".$gTables['tesdoc'].".*,".$gTables['contract'].".* FROM ".$gTables['tesdoc']."
+                            LEFT JOIN ".$gTables['contract']." ON ".$gTables['tesdoc'].".id_contract = ".$gTables['contract'].".id_contract 
+                            WHERE id_tes = ".$row['id_doc']." AND (".$gTables['tesdoc'].".id_contract > 0 AND tipdoc NOT LIKE 'VCO')";
+                $result_contr = gaz_dbi_query($contr_query);
+
+                if (gaz_dbi_num_rows($result_contr) > 0 ) {
+                    $contr_r=gaz_dbi_fetch_array($result_contr);
+                    // devo ottenere l'importo totale del contratto
+                    $castel_transact[$row['idtes']]['contract']=$contr_r['current_fee']*$contr_r['months_duration'];
+                    $castel_transact[$row['idtes']]['n_rate'] = 2;
+                }
+            }
+            // fine ricerca contratti
+
                  if ($row['op_type'] == 0 && substr($row['clfoco'],0,3) == $admin_aziend['masfor'] ){
                      $castel_transact[$row['idtes']]['op_type'] = 3;
                  } elseif ($row['op_type'] == 0 && substr($row['clfoco'],0,3) == $admin_aziend['mascli'] ) {
@@ -248,8 +293,11 @@ function createRowsAndErrors($min_limit){
               $ctrl_id = $row['idtes'];
 
        }
+
        // se il precedente movimento non ha raggiunto l'importo lo elimino
-       if (isset($castel_transact[$ctrl_id]) && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit ) {
+       if (isset($castel_transact[$ctrl_id])
+           && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit
+           && $castel_transact[$ctrl_id]['contract'] < $min_limit) {
            unset ($castel_transact[$ctrl_id]);
            unset ($error_transact[$ctrl_id]);
        }
