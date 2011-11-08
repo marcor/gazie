@@ -93,6 +93,7 @@ $strScript = array ("select_liqiva.php" =>
                            'master_fin'=>'Mastro fine ',
                            'account_fin'=>'Conto fine ',
                            'date_fin'=>'Data registrazione fine ',
+                           'selfin'=>'Copia conto iniziale',
                            'header1'=>array('Conto'=>'','Num.Mov.'=>'','Descrizione'=>'',
                                             'Dare'=>'','Avere'=>'','Saldo<br />progressivo'=>''
                                            ),

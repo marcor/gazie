@@ -97,6 +97,7 @@ $strScript = array ("select_liqiva.php" =>
                            'master_fin'=>'Terminar Cuenta Maestra ',
                            'account_fin'=>'Terminar Sub Cuenta ',
                            'date_fin'=>'Fecha de Termino ',
+                           'selfin' => 'Copia cuenta iniciar',
                            'header1'=>array('Cuenta'=>'','Num.Mov.'=>'','Descripcion'=>'',
                                             'Deuda'=>'','Credito'=>'','Progressivo<br />balance'=>''
                                            ),

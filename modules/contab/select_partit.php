@@ -35,8 +35,8 @@ function getMovements($account_ini,$account_fin,$date_ini,$date_fin)
               $account_fin=$account_ini;
             }
             $where = " codcon = $account_ini AND datreg BETWEEN $date_ini AND $date_fin";
-            $orderby = " datreg ASC ";
-            $select = $gTables['tesmov'].".id_tes,".$gTables['tesmov'].".descri AS tesdes,datreg,codice,numdoc,datdoc,".$gTables['clfoco'].".descri,import*(darave='D') AS dare,import*(darave='A') AS avere";
+            $orderby = " datreg, id_tes ASC ";
+            $select = $gTables['tesmov'].".id_tes,".$gTables['tesmov'].".descri AS tesdes,datreg,codice,protoc,numdoc,datdoc,".$gTables['clfoco'].".descri,import*(darave='D') AS dare,import*(darave='A') AS avere";
         } else {
             $where = $gTables['clfoco'].".codice BETWEEN $account_ini AND $account_fin AND datreg BETWEEN $date_ini AND $date_fin GROUP BY ".$gTables['clfoco'].".codice";
             $orderby = " codice ASC ";
@@ -146,6 +146,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
           $form['account_fin'] = $extreme_account['max'];
        }
     }
+    if (isset($_POST['selfin'])) {
+       $form['master_fin']=$form['master_ini'];
+       $form['account_fin']=$form['account_ini'];
+    }
     if (isset($_POST['return'])) {
         header("Location: ".$form['ritorno']);
         exit;
@@ -207,6 +211,22 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
+
+// nuova funzione inserita da Zanella69 per la copia delle select conti iniziali sui conti finali
+
+function copy(conto){
+	var fr=conto.form;
+  fr.master_fin.value=fr.master_ini.value;
+	fr.account_fin.options.length=0;
+	var master=fr.account_ini.options;
+	for (i=0; i<master.length; i++){
+    if (fr.account_ini.selectedIndex==i) {
+  		fr.account_fin.options[i]=new Option(master[i].text, master[i].value, false, true)
+    } else {
+  		fr.account_fin.options[i]=new Option(master[i].text, master[i].value, false, false)
+		}
+	}
+}
 </script>
 ";
 echo "<form method=\"POST\" name=\"select\">\n";
@@ -229,7 +249,7 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['master_ini']."</td><td class=\"FacetDataTD\">\n";
 $gForm->selMasterAcc('master_ini',$form['master_ini'],'master_ini');
 echo "</td>\n";
-echo "<td rowspan=\"4\" class=\"FacetDataTD\">";
+echo "<td rowspan=\"2\" class=\"FacetDataTD\">";
 echo '<input type="submit" name="selall" value="';
 echo $script_transl['selall'];
 echo '">';
@@ -244,6 +264,11 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['master_fin']."</td><td class=\"FacetDataTD\">\n";
 $gForm->selMasterAcc('master_fin',$form['master_fin'],'master_fin');
+echo "</td>\n";
+echo "<td rowspan=\"2\" class=\"FacetDataTD\">";
+echo '<input type="button" onclick="copy(this)" value="';
+echo $script_transl['selfin'];
+echo '">';
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
@@ -294,7 +319,7 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['dare'] - $mv['avere'])." &nbsp;</td></tr>";
         }
      } else {
-        $span=8;
+        $span=9;
         echo "<tr>";
         $linkHeaders = new linkHeaders($script_transl['header2']);
         $linkHeaders -> output();
@@ -306,10 +331,11 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "<td align=\"center\" class=\"FacetDataTD\"><a href=\"admin_movcon.php?id_tes=".$mv["id_tes"]."&Update\">".$mv["id_tes"]."</a> &nbsp</td>";
             echo "<td class=\"FacetDataTD\">".$mv["tesdes"]." &nbsp;</td>";
             if (!empty($mv['numdoc'])){
+                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["protoc"]." &nbsp;</td>";
                 echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["numdoc"]." &nbsp;</td>";
                 echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["datdoc"]." &nbsp;</td>";
             } else {
-                echo "<td class=\"FacetDataTD\" colspan=\"2\"></td>";
+                echo "<td class=\"FacetDataTD\" colspan=\"3\"></td>";
             }
             echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['dare'])." &nbsp;</td>";
             echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['avere'])." &nbsp;</td>";

@@ -96,6 +96,7 @@ $strScript = array ("select_liqiva.php" =>
                            'master_fin'=>'End Master Account ',
                            'account_fin'=>'End Sub Account ',
                            'date_fin'=>'End Date ',
+                           'selfin' => 'Copy initial account',
                            'header1'=>array('Account'=>'','Num.Mov.'=>'',''=>'Beschreibung',
                                             'Debt'=>'','Kredit'=>'','Progressive <br /> Gleichgewicht'=>''
                                            ),
