@@ -108,7 +108,7 @@ echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td><img src=\"../../library/images/gazie.gif\" border=\"0\"><br />Version: $versSw </td>\n";
 echo "<td align=\"center\">".$script_transl['logout']."<br /><input name=\"logout\" type=\"submit\" value=\" Logout \"><br />\n";
-echo "<br /><A href=\"../config/admin_utente.php?Login=".$admin_aziend['Login']."&Update\"><img src=\"view.php?table=admin&field=Login&value=".$admin_aziend['Login']."\"  alt=\"".$admin_aziend['Cognome'].' '.$admin_aziend['Nome']."\" height=100 width=100 title=\"".$script_transl['change_usr']."\" border=\"2\"></a></td>\n";
+echo "<br /><A href=\"../config/admin_utente.php?Login=".$admin_aziend['Login']."&Update\"><img src=\"view.php?table=admin&field=Login&value=".$admin_aziend['Login']."\"  alt=\"".$admin_aziend['Cognome'].' '.$admin_aziend['Nome']."\" width=100 title=\"".$script_transl['change_usr']."\" border=\"2\"></a></td>\n";
 echo "<td align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['company']."<br />\n";
 echo selectCompany('enterprise_id',$form['enterprise_id'],$form['search']['enterprise_id'],$form['hidden_req'],$script_transl['mesg_co']);
 echo "<br /><br /><a href=\"../config/admin_aziend.php\"><img src=\"view.php?table=aziend&value=".$form['enterprise_id']."\" width=\"200\" alt=\"Logo\" border=\"0\" title=\"".$script_transl['upd_company']."\"></a></td>\n";
