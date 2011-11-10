@@ -235,6 +235,7 @@ function getHeaderData()
 }
 
 function createRowsAndErrors($min_limit){
+    set_time_limit (240);                
     global $gTables,$admin_aziend,$script_transl;
     $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,
                citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
@@ -272,16 +273,13 @@ function createRowsAndErrors($min_limit){
                 $value_impost = 0;
          }
          if ($ctrl_id <> $row['idtes']) {
-        
             // se il precedente movimento non ha raggiunto l'importo lo elimino
             if (isset($castel_transact[$ctrl_id])
                 && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit
                 && $castel_transact[$ctrl_id]['contract'] < $min_limit) {
                unset ($castel_transact[$ctrl_id]);
-               unset ($error_transact[$ctrl_id]);
+                unset ($error_transact[$ctrl_id]);
             }
-
-
                // inizio controlli su CF e PI
                $nuw = new check_VATno_TAXcode();
                $resultpi = $nuw->check_VAT_reg_no($row['pariva']);

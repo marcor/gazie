@@ -197,6 +197,7 @@ function executeQueryFileInstall($sqlFile,$Database,$table_prefix)
 
 function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestione delle sottosezioni
 {
+    set_time_limit (300);                
     // Luigi Rambaldi 13 Ottobre 2005
     // Inizializzazione accumulatore
     $sql = "";
