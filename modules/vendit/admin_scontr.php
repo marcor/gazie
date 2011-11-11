@@ -829,7 +829,7 @@ echo "<input type=\"text\" value=\"".$form['in_sconto']."\" maxlength=\"4\" size
 echo $script_transl['provvigione']."\n";
 echo "<input type=\"text\" value=\"".$form['in_provvigione']."\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">\n";
 echo $script_transl['codvat']."\n";
-$gForm->selectFromDB('aliiva','in_codvat','codice',$form['in_codvat'],'codice',false,'-','descri');
+$gForm->selectFromDB('aliiva','in_codvat','codice',$form['in_codvat'],'codice',true,'-','descri');
 echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "</table>\n";
