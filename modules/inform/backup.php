@@ -29,10 +29,10 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     set_time_limit (120);
 }
 
-// Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
+// Impostazione degli header per l'opozione "save as" dello standard input che verra` generato
 header('Content-Type: text/x-sql; charset=utf-8');
 header("Content-Disposition: attachment; filename=".$Database.date("YmdHi").'.sql');
-header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
+header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up pi— volte.
 if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
     header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
     header('Pragma: public');
@@ -49,16 +49,70 @@ echo "-- Host: ".$_SERVER["HTTP_HOST"]."\n";
      $myvers=gaz_dbi_fetch_array(gaz_dbi_query('SELECT version();'));
 echo "-- MySQL: ".$myvers[0]."\n";
 echo "-- PHP: ".phpversion()."\n";
-echo "-- Browser: ".$_SERVER['HTTP_USER_AGENT']."\n\n";
-
+echo "-- Browser: ".$_SERVER['HTTP_USER_AGENT']."\n";
+echo "--\n";
+echo "--\n";
+echo "-- ATTENZIONE: la codifica di questo file dovrebbe essere UTF-8;\n";
+echo "--             tuttavia, puo` darsi che il risultato che si ottiene\n";
+echo "--             sia codificato in modo ®anomalo¯. Prima di utilizzare\n";
+echo "--             questo file, e` necessario controllare che le lettere\n";
+echo "--             accentate siano visualizzate correttamete. In caso\n";
+echo "--             contrario si puo` tentare di convertirlo con un programma\n";
+echo "--             come `recode' che si trova normalmente in un sistema\n";
+echo "--             GNU (ma prima di usarlo occorre fare una copia di sicurezza del file):\n";
+echo "--\n";
+echo "--             $ recode latin..utf8 file.sql\n";
+echo "--\n";
+echo "--             oppure, se non funziona:\n";
+echo "--\n";
+echo "--             $ recode utf8..latin1 file.sql\n";
+echo "--\n";
+echo "\n";
+//
+// Si imposta la codifica interna a UTF-8.
+//
+mb_internal_encoding ("UTF-8");
+//
+//
+//
 $query = "SHOW  TABLES from " . $Database;
 //lettura delle informazioni (struttura + dati) dal database:
 // ottiene tutti i nomi delle tabelle del database in uso
 $result = gaz_dbi_query ($query);// ottengo le tabelle in un unico array associativo
-echo "CREATE DATABASE IF NOT EXISTS $Database;\n\nUSE $Database;\n\n";
+//
+echo "--\n";
+echo "-- Se lo si ritiene necessario, e` possibile utilizzare le istruzioni\n";
+echo "-- seguenti per la creazione della base di dati e per il suo utilizzo.\n";
+echo "-- Tuttavia, in condizioni normali cio` non dovrebbe essere conveniente,\n";
+echo "-- dato che Gazie potrebbe utilizzare una base di dati condivisa con\n";
+echo "-- altri programmi o con altre gestioni indipendenti di Gazie.\n";
+echo "--\n";
+echo "-- CREATE DATABASE IF NOT EXISTS $Database;\n";
+echo "-- USE $Database;\n";
+echo "--\n";
+//
 while ($a_row = gaz_dbi_fetch_array($result)) {// navigazione tra gli elementi dell'array associativo (navigazione tra ciascuna delle tabelle ottenute dalla query di cui sopra)
     list ($key , $nome_tabella) = each($a_row); // conversione di ciascun elemento dell'array associativo nelle variabili chiave e valore corrispondenti (nomi tabelle).
+    //
+    // Verifica che si tratti di una tabella del gruppo appartenente a questa gestione di Gazie.
+    //
+    if (preg_match ("/^" . $table_prefix . "_/", $nome_tabella))
+      {
+        //
+        // Ok.
+        //
+        ;
+      }
+    else
+      {
+        //
+        // Il prefisso del nome della tabella non coincide: saltare.
+        //
+        continue;
+      }
+    //
     // creazione della struttura della tabella corrente.
+    //
     echo "DROP TABLE IF EXISTS `".$nome_tabella."`;\n";
     createTable($nome_tabella);
     // riempimento della tabella corrente
@@ -70,7 +124,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {// navigazione tra gli elementi d
           for ($j = 0; $j < $field_meta['num']; $j++) {
               $head_query_insert .="`".$field_meta['data'][$j]->name."`,";
           }
-          $head_query_insert = preg_replace("/,$/",'', $head_query_insert);// elimina l'ultima virgola dalla stringa(se esiste)
+          // elimina l'ultima virgola dalla stringa (se esiste)
+          $head_query_insert = preg_replace("/,$/",'', $head_query_insert);
+          //
           $head_query_insert .= ") VALUES (";
           $query_insert = $head_query_insert;
           $c=0;
@@ -78,7 +134,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {// navigazione tra gli elementi d
             $c++;
             if ($c==50){ //ogni 50 righi viene riscritto l'head dell'inserimento
                $c=0;
-               $query_insert = preg_replace("/,\($/",'', $query_insert).";\n\n";// elimina l'ultima virgola e parentesi dalla stringa(se esiste)
+               // elimina l'ultima virgola e parentesi dalla stringa (se esiste)
+               $query_insert = preg_replace("/,\($/",'', $query_insert).";\n\n";
+               //
                echo $query_insert;
                $query_insert = $head_query_insert;
             }
@@ -91,7 +149,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {// navigazione tra gli elementi d
               } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp'){
                 $query_insert .= $val[$j];
               } else {
-                $query_insert .="'".addslashes($val[$j])."'";
+                //
+                // Premesso che inizialmente Š stata inserita l'istruzione
+                // mb_internal_encoding ("UTF-8"), si ottiene un file
+                // codificato correttamente convertendo i campi con utf8_decode(),
+                // anche se non ho capito il perch‚.
+                //
+                $query_insert .="'".addslashes(utf8_decode($val[$j]))."'";
               }
             }
             $first = True;
