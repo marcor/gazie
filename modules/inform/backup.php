@@ -41,6 +41,9 @@ if ($do_backup != 1)
     //
     // Mostra il modulo form e poi termina la visualizzazione.
     //
+    require("../../library/include/header.php");
+    echo "</head>\n";
+    echo "<body>\n";
     echo "<form action=\"backup.php\" method=\"post\">";
     echo "<p><strong>Aggiunge le istruzioni seguenti:</strong></p>";
     echo "<p><input type=\"checkbox\" name=\"create_database\" value=\"1\" checked=\"checked\"> CREATE DATABASE IF NOT EXISTS $Database;</p>";
