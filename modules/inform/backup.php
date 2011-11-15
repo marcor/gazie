@@ -35,11 +35,13 @@ if (isset($_POST["do_backup"])) {
 	$create_database=$_POST["create_database"];
 	$use_database=$_POST["use_database"];
 	$table_selection=$_POST["table_selection"];
+	$text_encoding=$_POST["text_encoding"];
 	$do_backup=$_POST["do_backup"];
 } else {
 	$create_database='';
 	$use_database='';
 	$table_selection='';
+	$text_encoding='';
 	$do_backup=0;
 }
 
@@ -60,6 +62,10 @@ if ($do_backup != 1)
     echo "<input type=\"radio\" name=\"table_selection\" value=\"1\" checked=\"checked\"> le sole tabelle con prefisso \"$table_prefix\"</p>";
     echo "<input type=\"radio\" name=\"table_selection\" value=\"0\"> tutte le tabelle della base di dati \"$Database\"</p>";
     echo "<hr>";
+    echo "<p><strong>Codifica:</strong></p>";
+    echo "<input type=\"radio\" name=\"text_encoding\" value=\"0\" checked=\"checked\"> UTF-8</p>";
+    echo "<input type=\"radio\" name=\"text_encoding\" value=\"1\"> ISO-8859-1 (Latin-1)</p>";
+    echo "<hr>";
     //
     echo "<input type=\"hidden\" name=\"do_backup\" value=\"1\">";
     echo "<p><input type=\"submit\" name=\"submit\" value=\"genera il file di backup\"></p>";
@@ -75,7 +81,7 @@ else
     // Impostazione degli header per l'opozione "save as" dello standard input che verra` generato
     header('Content-Type: text/x-sql; charset=utf-8');
     header("Content-Disposition: attachment; filename=".$Database.date("YmdHi").'.sql');
-    header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up pi— volte.
+    header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up piÃ¹ volte.
     if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
         header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
         header('Pragma: public');
@@ -100,7 +106,7 @@ else
     echo "--\n";
     echo "-- ATTENZIONE: la codifica di questo file dovrebbe essere UTF-8;\n";
     echo "--             tuttavia, puo` darsi che il risultato che si ottiene\n";
-    echo "--             sia codificato in modo ®anomalo¯. Prima di utilizzare\n";
+    echo "--             sia codificato in modo Â«anomaloÂ». Prima di utilizzare\n";
     echo "--             questo file, e` necessario controllare che le lettere\n";
     echo "--             accentate siano visualizzate correttamete. In caso\n";
     echo "--             contrario si puo` tentare di convertirlo con un programma\n";
@@ -214,12 +220,16 @@ else
                     $query_insert .= $val[$j];
                   } else {
                     //
-                    // Premesso che inizialmente Š stata inserita l'istruzione
-                    // mb_internal_encoding ("UTF-8"), si ottiene un file
-                    // codificato correttamente convertendo i campi con utf8_decode(),
-                    // anche se non ho capito il perch‚.
+                    // Scelta della codifica.
                     //
-                    $query_insert .="'".addslashes(utf8_decode($val[$j]))."'";
+                    if ($text_encoding == 1)
+                      {
+                        $query_insert .="'".addslashes(utf8_decode($val[$j]))."'";
+                      }
+                    else
+                      {
+                        $query_insert .="'".addslashes($val[$j])."'";
+                      }
                   }
                 }
                 $first = True;
