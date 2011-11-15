@@ -328,3 +328,4 @@ $file='dejavuserifcondensedb.z';
 $ctg='dejavuserifcondensedb.ctg.z';
 $originalsize=316440;
 // --- EOF ---
+?>

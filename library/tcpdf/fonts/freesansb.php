@@ -252,3 +252,4 @@ $file='freesansb.z';
 $ctg='freesansb.ctg.z';
 $originalsize=359272;
 // --- EOF ---
+?>

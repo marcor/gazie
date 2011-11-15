@@ -1767,3 +1767,5 @@ $enc='UniJIS-UTF16-H';
 $cidinfo=array('Registry'=>'Adobe','Ordering'=>'Japan1','Supplement'=>5);
 include(dirname(__FILE__).'/uni2cid_aj16.php');
 // --- EOF ---
+
+?>

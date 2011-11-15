@@ -328,3 +328,4 @@ $file='dejavuserifbi.z';
 $ctg='dejavuserifbi.ctg.z';
 $originalsize=332036;
 // --- EOF ---
+?>

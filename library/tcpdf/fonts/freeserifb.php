@@ -306,3 +306,4 @@ $file='freeserifb.z';
 $ctg='freeserifb.ctg.z';
 $originalsize=615292;
 // --- EOF ---
+?>

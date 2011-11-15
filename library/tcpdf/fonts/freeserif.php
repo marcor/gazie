@@ -569,3 +569,4 @@ $file='freeserif.z';
 $ctg='freeserif.ctg.z';
 $originalsize=1687516;
 // --- EOF ---
+?>

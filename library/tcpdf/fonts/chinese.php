@@ -13,3 +13,5 @@ $enc='UniGB-UTF16-H';
 $cidinfo=array('Registry'=>'Adobe', 'Ordering'=>'GB1','Supplement'=>2);
 include(dirname(__FILE__).'/uni2cid_ag15.php');
 // --- EOF ---
+
+?>

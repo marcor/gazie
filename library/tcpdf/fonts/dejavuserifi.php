@@ -341,3 +341,4 @@ $file='dejavuserifi.z';
 $ctg='dejavuserifi.ctg.z';
 $originalsize=338776;
 // --- EOF ---
+?>

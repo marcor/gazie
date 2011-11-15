@@ -260,3 +260,4 @@ $file='dejavusansmonobi.z';
 $ctg='dejavusansmonobi.ctg.z';
 $originalsize=235848;
 // --- EOF ---
+?>

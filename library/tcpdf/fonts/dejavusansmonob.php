@@ -317,3 +317,4 @@ $file='dejavusansmonob.z';
 $ctg='dejavusansmonob.ctg.z';
 $originalsize=313856;
 // --- EOF ---
+?>

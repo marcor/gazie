@@ -531,3 +531,4 @@ $file='dejavusanscondensed.z';
 $ctg='dejavusanscondensed.ctg.z';
 $originalsize=643852;
 // --- EOF ---
+?>

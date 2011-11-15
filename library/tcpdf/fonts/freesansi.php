@@ -255,3 +255,4 @@ $file='freesansi.z';
 $ctg='freesansi.ctg.z';
 $originalsize=441432;
 // --- EOF ---
+?>

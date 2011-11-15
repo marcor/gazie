@@ -273,3 +273,4 @@ $file='freeserifi.z';
 $ctg='freeserifi.ctg.z';
 $originalsize=691448;
 // --- EOF ---
+?>

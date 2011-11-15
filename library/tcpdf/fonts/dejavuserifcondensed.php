@@ -342,3 +342,4 @@ $file='dejavuserifcondensed.z';
 $ctg='dejavuserifcondensed.ctg.z';
 $originalsize=330012;
 // --- EOF ---
+?>

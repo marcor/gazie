@@ -100,3 +100,5 @@ $file='almohanad.z';
 $ctg='almohanad.ctg.z';
 $originalsize=227760;
 // --- EOF ---
+
+?>
