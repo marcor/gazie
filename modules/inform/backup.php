@@ -31,10 +31,17 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
 //
 // Verifica i parametri della chiamata.
 //
-$create_database=$_POST["create_database"];
-$use_database=$_POST["use_database"];
-$table_selection=$_POST["table_selection"];
-$do_backup=$_POST["do_backup"];
+if (isset($_POST["do_backup"])) {
+	$create_database=$_POST["create_database"];
+	$use_database=$_POST["use_database"];
+	$table_selection=$_POST["table_selection"];
+	$do_backup=$_POST["do_backup"];
+} else {
+	$create_database='';
+	$use_database='';
+	$table_selection='';
+	$do_backup=0;
+}
 
 if ($do_backup != 1)
   {
