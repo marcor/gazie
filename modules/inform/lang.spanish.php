@@ -83,6 +83,15 @@ $strScript = array ("report_letter.php" =>
                            'path'=>'Joomla directorio ra&iacute;z Ejemplo: joomla/ o nada',
                            'listin'=>'Lista',
                            'listin_value'=>array(1=>' de venta 1',2=>' de venta 2',3=>' de venta 3','web'=>' de venta en l&iacute;nea')
-                         )
+                         ),
+                    "backup.php" =>
+                   array(  'title' => "Store up data to avoid losing work!",
+                           'errors'=>array(),
+                           'instructions'=>'Add the following statements',
+                           'table_selection'=>'Backup of',
+                           'table_selection_value'=>array(0=>' all tables of database ',1=>' only tables with prefix '),
+                           'text_encoding'=>'Encoding',
+                           'sql_submit'=>'Generate sql file',
+                        )
                     );
 ?>

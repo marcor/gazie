@@ -23,7 +23,8 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-checkAdmin(9);
+$admin_aziend=checkAdmin(9);
+
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
     set_time_limit (120);
@@ -31,50 +32,67 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
 //
 // Verifica i parametri della chiamata.
 //
-if (isset($_POST["do_backup"])) {
-	$create_database=$_POST["create_database"];
-	$use_database=$_POST["use_database"];
-	$table_selection=$_POST["table_selection"];
-	$text_encoding=$_POST["text_encoding"];
-	$do_backup=$_POST["do_backup"];
-} else {
-	$create_database='';
-	$use_database='';
-	$table_selection='';
-	$text_encoding='';
-	$do_backup=0;
+if (isset($_POST['hidden_req'])) { // accessi successivi allo script
+    $form['hidden_req'] = $_POST["hidden_req"];
+    $form['ritorno'] = $_POST['ritorno'];
+    $form['create_database']=$_POST["create_database"];
+    $form['use_database']=$_POST["use_database"];
+    $form['table_selection']=$_POST["table_selection"];
+    $form['text_encoding']=$_POST["text_encoding"];
+    $form['do_backup']=$_POST["do_backup"];
+} else {  // al primo accesso allo script
+    $form['hidden_req'] = '';
+    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    $form['create_database']='';
+    $form['use_database']='';
+    $form['table_selection']='';
+    $form['text_encoding']='';
+    $form['do_backup']=0;
 }
 
-if ($do_backup != 1)
+if ($form['do_backup'] != 1)
   {
     //
     // Mostra il modulo form e poi termina la visualizzazione.
     //
     require("../../library/include/header.php");
-    echo "</head>\n";
-    echo "<body>\n";
-    echo "<form action=\"backup.php\" method=\"post\">";
-    echo "<p><strong>Aggiunge le istruzioni seguenti:</strong></p>";
-    echo "<p><input type=\"checkbox\" name=\"create_database\" value=\"1\" checked=\"checked\"> CREATE DATABASE IF NOT EXISTS $Database;</p>";
-    echo "<p><input type=\"checkbox\" name=\"use_database\" value=\"1\" checked=\"checked\"> USE $Database;</p>";
-    echo "<hr>";
-    echo "<p><strong>Backup di:</strong></p>";
-    echo "<input type=\"radio\" name=\"table_selection\" value=\"1\" checked=\"checked\"> le sole tabelle con prefisso \"$table_prefix\"</p>";
-    echo "<input type=\"radio\" name=\"table_selection\" value=\"0\"> tutte le tabelle della base di dati \"$Database\"</p>";
-    echo "<hr>";
-    echo "<p><strong>Codifica:</strong></p>";
-    echo "<input type=\"radio\" name=\"text_encoding\" value=\"0\" checked=\"checked\"> UTF-8</p>";
-    echo "<input type=\"radio\" name=\"text_encoding\" value=\"1\"> ISO-8859-1 (Latin-1)</p>";
-    echo "<hr>";
-    //
+    $script_transl=HeadMain();
+    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
+    echo "</div>\n";
+    echo "<form method=\"POST\">";
     echo "<input type=\"hidden\" name=\"do_backup\" value=\"1\">";
-    echo "<p><input type=\"submit\" name=\"submit\" value=\"genera il file di backup\"></p>";
+    echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
+    echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
+    echo "<table class=\"Tsmall\">\n";
+    echo "<tr><td colspan=\"2\"><strong>".$script_transl['instructions'].":</strong></td></tr>";
+    echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"checkbox\" name=\"create_database\" value=\"1\" checked=\"checked\"></td>
+              <td class=\"FacetDataTD\"> CREATE DATABASE IF NOT EXISTS $Database;</td></tr>";
+    echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"checkbox\" name=\"use_database\" value=\"1\" checked=\"checked\"></td>
+              <td class=\"FacetDataTD\"> USE $Database;</td></tr>";
+    echo "<tr><td colspan=\"2\"><hr></td></tr>";
+    echo "<tr><td colspan=\"2\"><strong>".$script_transl['table_selection'].":</strong></p>";
+    echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"table_selection\" value=\"1\" checked=\"checked\"></td>
+              <td class=\"FacetDataTD\"> ".$script_transl['table_selection_value'][1]." \"$table_prefix\"</td></tr>";
+    echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"table_selection\" value=\"0\"></td>
+              <td class=\"FacetDataTD\"> ".$script_transl['table_selection_value'][0]." \"$Database\"</td></tr>";
+    echo "<tr><td colspan=\"2\"><hr></td></tr>";
+    echo "<tr><td colspan=\"2\"><strong>".$script_transl['text_encoding'].":</strong></td></tr>";
+    echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"text_encoding\" value=\"0\" checked=\"checked\"></td>
+              <td class=\"FacetDataTD\">UTF-8</td></tr>";
+    echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"text_encoding\" value=\"1\"></td>
+              <td class=\"FacetDataTD\">ISO-8859-1 (Latin-1)</td></tr>";
+    echo "<tr><td colspan=\"2\"><hr></td></tr>";
+    echo "<tr><td></td><td align=\"right\"><strong>".$script_transl['sql_submit'].":</strong></td></tr>";
+    echo "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\"></td>
+              <td class=\"FacetDataTD\" align=\"right\"><input type=\"submit\" name=\"submit\" value=\"".$script_transl['submit']."\"></td></tr>";
     echo "</form>";
     echo "</body>";
     echo "</html>";
-  }
-else
-  {
+} else {
+    if (isset($_POST['return'])) {
+        header("Location: ".$form['ritorno']);
+        exit;
+    }
     //
     // Esegue il backup.
     //
@@ -99,9 +117,9 @@ else
     echo "-- PHP: ".phpversion()."\n";
     echo "-- Browser: ".$_SERVER['HTTP_USER_AGENT']."\n";
     echo "--\n";
-    echo "-- Opzioni: create_database=$create_database\n";
-    echo "--          use_database=$use_database\n";
-    echo "--          table_selection=$table_selection\n";
+    echo "-- Opzioni: create_database=".$form['create_database']."\n";
+    echo "--          use_database=".$form['use_database']."\n";
+    echo "--          table_selection=".$form['table_selection']."\n";
     echo "--\n";
     echo "--\n";
     echo "-- ATTENZIONE: la codifica di questo file dovrebbe essere UTF-8;\n";
@@ -137,7 +155,7 @@ else
     echo "-- originaria e di selezionarla prima di procedere con il recupero\n";
     echo "-- delle tabelle.\n";
     echo "--\n";
-    if ($create_database == 1)
+    if ($form['create_database'] == 1)
       {
         echo "CREATE DATABASE IF NOT EXISTS $Database;\n";
       }
@@ -145,7 +163,7 @@ else
       {
         echo "-- CREATE DATABASE IF NOT EXISTS $Database;\n";
       }
-    if ($use_database == 1)
+    if ($form['use_database'] == 1)
       {
         echo "USE $Database;\n";
       }
@@ -162,24 +180,20 @@ else
         //
         // Verifica che si tratti di una tabella del gruppo appartenente a questa gestione di Gazie.
         //
-        if (preg_match ("/^" . $table_prefix . "_/", $nome_tabella))
-          {
+        if (preg_match ("/^" . $table_prefix . "_/", $nome_tabella)){
             //
             // Ok.
             //
             ;
-          }
-        else
-          {
+        } else {
             //
             // Il prefisso del nome della tabella non coincide: si salta se sono state richieste
             // solo le tabelle della gestione in corso.
             //
-            if ($table_selection == 1)
-              {
+            if ($form['table_selection'] == 1) {
                 continue;
-              }
-          }
+            }
+        }
         //
         // creazione della struttura della tabella corrente.
         //
@@ -222,14 +236,11 @@ else
                     //
                     // Scelta della codifica.
                     //
-                    if ($text_encoding == 1)
-                      {
+                    if ($form['text_encoding'] == 1) {
                         $query_insert .="'".addslashes(utf8_decode($val[$j]))."'";
-                      }
-                    else
-                      {
+                    } else {
                         $query_insert .="'".addslashes($val[$j])."'";
-                      }
+                    }
                   }
                 }
                 $first = True;
