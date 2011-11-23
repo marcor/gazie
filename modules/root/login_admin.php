@@ -23,7 +23,6 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-$tp='';
 $message = "";
 $newpass = false;
 $config = new Config;
@@ -43,7 +42,7 @@ if (isset($_POST['actionflag'])) {
         $crypt = new Crypt_HMAC($result["Password"], 'md5');
         $hmacPass = $crypt->hash($_COOKIE[session_name()]);
         if ($hmacPass == $_POST['Password']) {
-            cleanMemberSession($result["Abilit"], $result["Login"], $result["Password"], $result["Access"], $result['enterprise_id'],$table_prefix);
+            cleanMemberSession($result["Abilit"], $result["Login"], $result["Password"], $result["Access"], $result['enterprise_id']);
             $utspas = mktime(0,0,0, substr($result['datpas'],5,2), substr($result['datpas'],8,2), substr($result['datpas'], 0, 4));
             $utsoggi = mktime(0,0,0,date("m"),date("d"),date("Y")) - $config->getValue('giornipass') * 86400;
             if($utspas < $utsoggi) {
@@ -57,7 +56,7 @@ if (isset($_POST['actionflag'])) {
                 if($_POST['Password'] != $_POST['Nuovapass'] and $_POST['Nuovapass'] == $_POST['Confepass'] and  strlen($_POST['Nuovapass']) >= $config->getValue('psw_min_length') ) {
                     gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"datpas",date("Y%-m%-d H:i:s"));
                     gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"Password",$_POST['Nuovapass']);
-                    cleanMemberSession($result["Abilit"], $result["Login"], $_POST["Nuovapass"], $result["Access"], $result['enterprise_id'],$table_prefix);
+                    cleanMemberSession($result["Abilit"], $result["Login"], $_POST["Nuovapass"], $result["Access"], $result['enterprise_id']);
                     header("Location: ../root/admin.php");
                     exit;
                 } else {

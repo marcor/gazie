@@ -25,30 +25,18 @@
 
 require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
-
-/*  la gestione di default ha il prefisso delle tabelle uguale a quello scritto in
-    gconfig.php di norma "gaz", ma è possibile richiedere un prefisso di tabelle
-    diverso di 3 caratteri passandolo al momento del login indicadolo
-    come variabile GET di nome "tp" es:
-    http://localhost/gazie/modules/root/login_admin.php?tp=exa
-    in questo caso di esempio il login prenderà in considerazioni le sole tabelle
-    con prefisso "exa"
-*/
-if (isset($_SESSION['table_prefix'])) {
-  $table_prefix=str_pad($_SESSION['table_prefix'],4,'_');
-} elseif (isset($_GET['tp'])) {
-  $table_prefix=str_pad(substr($_GET['tp'],0,3),4,'_');
-} else {
-  $table_prefix .='_';
-}
-
-
-// tabelle comuni alle aziende della stessa gestione
-$tn=array('admin','admin_module','anagra','aziend','config','country',
-          'regions','provinces','municipalities','menu_module','module','menu_script');
-foreach ($tn as $v){
-  $gTables[$v]= $table_prefix.$v;
-}
+$gTables['admin'] = $table_prefix."_admin";
+$gTables['admin_module'] = $table_prefix."_admin_module";
+$gTables['anagra'] = $table_prefix."_anagra";
+$gTables['aziend'] = $table_prefix."_aziend";
+$gTables['config'] = $table_prefix."_config";
+$gTables['country'] = $table_prefix."_country";
+$gTables['regions'] = $table_prefix."_regions";
+$gTables['provinces'] = $table_prefix."_provinces";
+$gTables['municipalities'] = $table_prefix."_municipalities";
+$gTables['menu_module'] = $table_prefix."_menu_module";
+$gTables['module'] = $table_prefix."_module";
+$gTables['menu_script'] = $table_prefix."_menu_script";
 
 require("../../library/include/function.inc.php");
 
@@ -65,13 +53,34 @@ if(@file_exists('./lib.data.php') ) {
     require('./lib.data.php');
 }
 
-//tabelle aziendali
-$tn=array('aliiva','agenti','artico','banapp','body_text','cash_register','catmer',
-          'caucon','caumag','clfoco','company_config','contract','effett','files',
-          'imball','letter','movmag','pagame','paymov','portos','provvigioni','rigbro',
-          'rigdoc','rigmoc','rigmoi','spediz','tesbro','tesdoc','tesmov','vettor');
-foreach ($tn as $v){
-  $gTables[$v]= $table_prefix.$id.$v;
-}
-
+$gTables['aliiva'] = $table_prefix.'_'.$id.'aliiva';
+$gTables['agenti'] = $table_prefix.'_'.$id.'agenti';
+$gTables['artico'] = $table_prefix.'_'.$id.'artico';
+$gTables['banapp'] = $table_prefix.'_'.$id.'banapp';
+$gTables['body_text'] = $table_prefix.'_'.$id."body_text";
+$gTables['cash_register'] = $table_prefix.'_'.$id.'cash_register';
+$gTables['catmer'] = $table_prefix.'_'.$id.'catmer';
+$gTables['caucon'] = $table_prefix.'_'.$id.'caucon';
+$gTables['caumag'] = $table_prefix.'_'.$id.'caumag';
+$gTables['clfoco'] = $table_prefix.'_'.$id.'clfoco';
+$gTables['company_config'] = $table_prefix.'_'.$id.'config';
+$gTables['contract'] = $table_prefix.'_'.$id.'contract';
+$gTables['effett'] = $table_prefix.'_'.$id.'effett';
+$gTables['files'] = $table_prefix.'_'.$id.'files';
+$gTables['imball'] = $table_prefix.'_'.$id.'imball';
+$gTables['letter'] = $table_prefix.'_'.$id.'letter';
+$gTables['movmag'] = $table_prefix.'_'.$id.'movmag';
+$gTables['pagame'] = $table_prefix.'_'.$id.'pagame';
+$gTables['paymov'] = $table_prefix.'_'.$id.'paymov';
+$gTables['portos'] = $table_prefix.'_'.$id.'portos';
+$gTables['provvigioni'] = $table_prefix.'_'.$id.'provvigioni';
+$gTables['rigbro'] = $table_prefix.'_'.$id.'rigbro';
+$gTables['rigdoc'] = $table_prefix.'_'.$id.'rigdoc';
+$gTables['rigmoc'] = $table_prefix.'_'.$id.'rigmoc';
+$gTables['rigmoi'] = $table_prefix.'_'.$id.'rigmoi';
+$gTables['spediz'] = $table_prefix.'_'.$id.'spediz';
+$gTables['tesbro'] = $table_prefix.'_'.$id.'tesbro';
+$gTables['tesdoc'] = $table_prefix.'_'.$id.'tesdoc';
+$gTables['tesmov'] = $table_prefix.'_'.$id.'tesmov';
+$gTables['vettor'] = $table_prefix.'_'.$id.'vettor';
 ?>
