@@ -26,6 +26,13 @@ require("../../library/include/datlib.inc.php");
 $message = "";
 $newpass = false;
 $config = new Config;
+if (isset($_POST['tp'])) {
+    $tp=$_POST['tp'];
+} elseif(isset($_GET['tp'])) {
+    $tp=$_GET['tp'];
+} else {
+    $tp=$table_prefix;
+}
 if (isset($_POST['actionflag'])) {
     $form['Login']=filter_var(substr($_POST['Login'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
     // checkUser();
@@ -42,7 +49,7 @@ if (isset($_POST['actionflag'])) {
         $crypt = new Crypt_HMAC($result["Password"], 'md5');
         $hmacPass = $crypt->hash($_COOKIE[session_name()]);
         if ($hmacPass == $_POST['Password']) {
-            cleanMemberSession($result["Abilit"], $result["Login"], $result["Password"], $result["Access"], $result['enterprise_id']);
+            cleanMemberSession($result["Abilit"], $result["Login"], $result["Password"], $result["Access"], $result['enterprise_id'],$tp);
             $utspas = mktime(0,0,0, substr($result['datpas'],5,2), substr($result['datpas'],8,2), substr($result['datpas'], 0, 4));
             $utsoggi = mktime(0,0,0,date("m"),date("d"),date("Y")) - $config->getValue('giornipass') * 86400;
             if($utspas < $utsoggi) {
@@ -56,7 +63,7 @@ if (isset($_POST['actionflag'])) {
                 if($_POST['Password'] != $_POST['Nuovapass'] and $_POST['Nuovapass'] == $_POST['Confepass'] and  strlen($_POST['Nuovapass']) >= $config->getValue('psw_min_length') ) {
                     gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"datpas",date("Y%-m%-d H:i:s"));
                     gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"Password",$_POST['Nuovapass']);
-                    cleanMemberSession($result["Abilit"], $result["Login"], $_POST["Nuovapass"], $result["Access"], $result['enterprise_id']);
+                    cleanMemberSession($result["Abilit"], $result["Login"], $_POST["Nuovapass"], $result["Access"], $result['enterprise_id'],$tp);
                     header("Location: ../root/admin.php");
                     exit;
                 } else {
@@ -122,6 +129,7 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 </head>
 <body background="../../library/images/sfondo.png">
 <form method="post" onsubmit="document.forms[0].Password.value=hex_hmac_md5(document.forms[0].Password.value, GetCookie('<?php echo session_name(); ?>'));" action="<?php echo "login_admin.php"; ?> ">
+<input type="hidden" name="tp" value="<?php echo $tp; ?>" />
 <div align="center" class="FacetFormHeaderFont" >Authentication</div>
 <table align="center" border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE">
 <!-- BEGIN Error -->

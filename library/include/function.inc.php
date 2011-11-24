@@ -39,20 +39,6 @@ if(strlen($radix) > 1){
 }
 session_start();
 
-if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
-    $local=gaz_dbi_get_row($gTables['config'],'variable','win_locale');
-} else {
-    $local=gaz_dbi_get_row($gTables['config'],'variable','lin_locale');
-}
-setlocale(LC_TIME, $local['cvalue']);
-
-// funzione che controlla se l'azienda e' stata configurata
-function checkaziend()
-{
-    global $gTables;
-    $config = gaz_dbi_get_row($gTables['aziend'],'codice',1);
-    return $config;
-}
 
 function gaz_format_number($number=0)
 {
@@ -1113,7 +1099,7 @@ class linkHeaders
     }
 }
 
-function cleanMemberSession($abilit, $login, $password, $count, $enterprise_id)
+function cleanMemberSession($abilit, $login, $password, $count, $enterprise_id, $table_prefix)
 {
     global $gTables;
     $_SESSION["Abilit"] = true;
@@ -1121,6 +1107,7 @@ function cleanMemberSession($abilit, $login, $password, $count, $enterprise_id)
     $_SESSION["Password"] = $password;
     $_SESSION["logged_in"] = true;
     $_SESSION["enterprise_id"] = $enterprise_id;
+    $_SESSION["table_prefix"] = substr($table_prefix,0,3);
     $count++;
     //incremento il contatore d'accessi
     gaz_dbi_put_row($gTables['admin'], "Login",$login,"Access",$count);
@@ -1130,13 +1117,13 @@ function cleanMemberSession($abilit, $login, $password, $count, $enterprise_id)
 
 function checkAdmin($Livaut=0)
 {
-    global $gTables,$module;
+    global $gTables,$module,$table_prefix;
     $_SESSION["logged_in"] = false;
     $_SESSION["Abilit"] = false;
     // Se utente non è loggato lo mandiamo alla pagina di login
     if ((! isset ($_SESSION["Login"])) or ($_SESSION["Login"] == "Null")) {
         $_SESSION["Login"]= "Null";
-        header("Location: ../root/login_admin.php");
+        header("Location: ../root/login_admin.php?tp=".$table_prefix);
         exit;
     }
     if (checkAccessRights($_SESSION['Login'],$module,$_SESSION['enterprise_id']) == 0) {
@@ -1147,14 +1134,14 @@ function checkAdmin($Livaut=0)
     }
     $admin_aziend = gaz_dbi_get_row($gTables['admin'].' LEFT JOIN '.$gTables['aziend'].' ON '.$gTables['admin'].'.enterprise_id = '.$gTables['aziend'].'.codice', "Login", $_SESSION["Login"]);
     if ($Livaut > $admin_aziend["Abilit"]) {
-        header("Location: ../root/login_admin.php");
+        header("Location: ../root/login_admin.php?tp=".$table_prefix);
         exit;
     } else {
         $_SESSION["Abilit"] = true;
     }
 
     if (!$admin_aziend || $admin_aziend["Password"] != $_SESSION["Password"]) {
-        header("Location: ../root/login_admin.php");
+        header("Location: ../root/login_admin.php?tp=".$table_prefix);
         exit;
     }
     $_SESSION["logged_in"] = true;

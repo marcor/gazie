@@ -31,8 +31,7 @@ if (!isset($_POST['hidden_req'])){
     $form['search']['enterprise_id']='';
 } else {
   if (isset($_POST['logout'])) {
-      session_destroy();
-      header("Location: admin.php");
+      header("Location: logout.php");
       exit;
   }
   $form['hidden_req']=$_POST['hidden_req'];
