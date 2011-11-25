@@ -27,12 +27,13 @@ $message = "";
 $newpass = false;
 $config = new Config;
 if (isset($_POST['tp'])) {
-    $tp=$_POST['tp'];
+    $tp=str_pad(substr($_POST['tp'],0,5),6,'_');
 } elseif(isset($_GET['tp'])) {
-    $tp=$_GET['tp'];
+    $tp=str_pad(substr($_GET['tp'],0,5),6,'_');
 } else {
     $tp=$table_prefix;
 }
+
 if (isset($_POST['actionflag'])) {
     $form['Login']=filter_var(substr($_POST['Login'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
     // checkUser();
@@ -128,7 +129,7 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 </script>
 </head>
 <body background="../../library/images/sfondo.png">
-<form method="post" onsubmit="document.forms[0].Password.value=hex_hmac_md5(document.forms[0].Password.value, GetCookie('<?php echo session_name(); ?>'));" action="<?php echo "login_admin.php"; ?> ">
+<form method="post" onsubmit="document.forms[0].Password.value=hex_hmac_md5(document.forms[0].Password.value, GetCookie('<?php echo session_name(); ?>'));" action="<?php echo "login_admin.php?tp=".$tp; ?> ">
 <input type="hidden" name="tp" value="<?php echo $tp; ?>" />
 <div align="center" class="FacetFormHeaderFont" >Authentication</div>
 <table align="center" border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE">

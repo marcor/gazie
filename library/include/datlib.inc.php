@@ -28,11 +28,11 @@ require('../../library/include/'.$NomeDB.'.lib.php');
 require("../../library/include/function.inc.php");
 
 if (isset($_SESSION['table_prefix'])) {
-  $table_prefix=str_pad($_SESSION['table_prefix'],4,'_');
+  $table_prefix=str_pad($_SESSION['table_prefix'],6,'_');
 } elseif (isset($_GET['tp'])) {
-  $table_prefix=str_pad(substr($_GET['tp'],0,3),4,'_');
+  $table_prefix=str_pad(substr($_GET['tp'],0,5),6,'_');
 } else {
-  $table_prefix .='_';
+  $table_prefix=str_pad($table_prefix,6,'_');;
 }
 
 
