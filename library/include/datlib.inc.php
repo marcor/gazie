@@ -28,11 +28,11 @@ require('../../library/include/'.$NomeDB.'.lib.php');
 require("../../library/include/function.inc.php");
 
 if (isset($_SESSION['table_prefix'])) {
-  $table_prefix=str_pad($_SESSION['table_prefix'],6,'_');
+  $table_prefix=$_SESSION['table_prefix'];
 } elseif (isset($_GET['tp'])) {
-  $table_prefix=str_pad(substr($_GET['tp'],0,5),6,'_');
+  $table_prefix=$_GET['tp'];
 } else {
-  $table_prefix=str_pad($table_prefix,6,'_');;
+  $table_prefix=$table_prefix;
 }
 
 
@@ -41,7 +41,7 @@ if (isset($_SESSION['table_prefix'])) {
 $tn=array('admin','admin_module','anagra','aziend','config','country',
           'regions','provinces','municipalities','menu_module','module','menu_script');
 foreach ($tn as $v){
-  $gTables[$v]= $table_prefix.$v;
+  $gTables[$v]= $table_prefix."_".$v;
 }
 
 if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
@@ -70,6 +70,6 @@ $tn=array('aliiva','agenti','artico','banapp','body_text','cash_register','catme
           'imball','letter','movmag','pagame','paymov','portos','provvigioni','rigbro',
           'rigdoc','rigmoc','rigmoi','spediz','tesbro','tesdoc','tesmov','vettor');
 foreach ($tn as $v){
-  $gTables[$v]= $table_prefix.$id.$v;
+  $gTables[$v]= $table_prefix."_".$id.$v;
 }
 ?>

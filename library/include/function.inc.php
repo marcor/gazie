@@ -1107,7 +1107,7 @@ function cleanMemberSession($abilit, $login, $password, $count, $enterprise_id, 
     $_SESSION["Password"] = $password;
     $_SESSION["logged_in"] = true;
     $_SESSION["enterprise_id"] = $enterprise_id;
-    $_SESSION["table_prefix"] = substr($table_prefix,0,5);
+    $_SESSION["table_prefix"] = $table_prefix;
     $count++;
     //incremento il contatore d'accessi
     gaz_dbi_put_row($gTables['admin'], "Login",$login,"Access",$count);

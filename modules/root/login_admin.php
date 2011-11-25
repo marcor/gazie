@@ -27,9 +27,9 @@ $message = "";
 $newpass = false;
 $config = new Config;
 if (isset($_POST['tp'])) {
-    $tp=str_pad(substr($_POST['tp'],0,5),6,'_');
+    $tp=$_POST['tp'];
 } elseif(isset($_GET['tp'])) {
-    $tp=str_pad(substr($_GET['tp'],0,5),6,'_');
+    $tp=$_GET['tp'];
 } else {
     $tp=$table_prefix;
 }
