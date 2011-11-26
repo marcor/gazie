@@ -29,13 +29,21 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\','/',__FILE__) == $_S
 $versSw = '5.18';
 
 //array con le descrizioni della valuta utilizzata
-$money = array("euro","€","€");
+$money = array("euro","é¼","é¼");
 
 //nome DBMS usato per la libreria specifica (MySQL=mysql.lib, SQLite=sqlite.lib, ecc)
 //per il momento disponibile solo la libreria mysql.lib
 $NomeDB = "mysql";
 
+//
 // Parametri di accesso: server, db, utente, passwd e prefisso per le tabelle
+//
+// ATTENZIONE: il prefisso delle tabelle predefinito è "gaz". Eventualmente, si
+// possono usare altri prefissi, ma composti sempre dai primi tre caratteri
+// "gaz" e seguiti da un massimo di nove caratteri, costituiti da lettere
+// minuscole e cifre numeriche. Per esempio, "gaz123" è valido, mentre "gaga1"
+// o "gaz_123" non sono validi.
+//
 $Host     = "localhost";
 $Database = "gazie";
 $User     = "root";
