@@ -88,6 +88,71 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal=2)
    return round($quantita * ($prezzo - $prezzo * $res),$decimal);
 }
 
+//
+// La funzione table_prefix_ok() serve a determinare se il prefisso
+// delle tabelle è valido, secondo lo schema di Gazie, oppure no.
+// In pratica, si verifica che inizi con la stringa `gaz' e può
+// continuare con lettere minuscole e cifre numeriche, fino
+// a un massimo di ulteriori nove caratteri 
+//
+function table_prefix_ok ($table_prefix)
+{
+  if (preg_match ("/^[g][a][z][a-z0-9]{0,9}$/", $table_prefix) == 1)
+    {
+      return TRUE;
+    }
+  else
+    {
+      return FALSE;
+    }
+}
+
+//
+// La funzione table_prefix_get() serve a estrapolare il prefisso
+// del nome di una tabella di Gazie, usando le stesse regole
+// della funzione table_prefix_ok() per tale individuazione.
+// Il riconoscimenti si basa soprattutto sul fatto che il prefisso
+// dei nomi delle tabelle non possa contenere il trattino basso.
+//
+// ATTENZIONE: il funzionamento corretto di questa funzione
+//             è ancora da verificare e viene aggiunta solo
+//             come suggerimento, in abbinamento alla funzione
+//             table_prefix_ok().
+//
+function table_prefix_get ($table_name)
+{
+  $matches;
+  if (preg_match ("/^([g][a][z][a-z0-9]{0,9})[_]/", $table_name, $matches) == 1)
+    {
+      return $matches[1];
+    }
+  else
+    {
+      return "";
+    }
+}
+
+//
+// Una funzione per segnalare errori fatali in modo molto semplice.
+//
+function message_fatal_error ($text)
+{
+  echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//IT\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
+  echo "<html>\n";
+  echo "<head>\n";
+  echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
+  echo "<meta name=\"author\" content=\"Antonio De Vincentiis www.devincentiis.it\">\n";
+  echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../../library/style/stylesheet.css\">\n";
+  echo "<link rel=\"shortcut icon\" href=\"../../library/images/favicon.ico\">\n";
+  echo "<title>Fatal error</title>\n";
+  echo "</head>\n";
+  echo "<body>\n";
+  echo "<h1>Fatal error</h1>\n";
+  echo "<p><strong>$text</strong></p>\n";
+  echo "</body>\n";
+  echo "</html>\n";
+}
+
 class Config
 {
     function Config()
@@ -709,7 +774,7 @@ class GAzieForm
         /* In questa funzione si deve passare una striga dove il "+"
            serve a separare i diversi indici di errori e il "-" separa il riferimento
            all'errore es. "fa150-3+" dara' un risultato del genere:
-               ERRORE! -> introdotto un valore negativo �fa150
+               ERRORE! -> introdotto un valore negativo ¯fa150
         */
         global $script_transl;
         $message='';
@@ -1120,7 +1185,7 @@ function checkAdmin($Livaut=0)
     global $gTables,$module,$table_prefix;
     $_SESSION["logged_in"] = false;
     $_SESSION["Abilit"] = false;
-    // Se utente non � loggato lo mandiamo alla pagina di login
+    // Se utente non  loggato lo mandiamo alla pagina di login
     if ((! isset ($_SESSION["Login"])) or ($_SESSION["Login"] == "Null")) {
         $_SESSION["Login"]= "Null";
         header("Location: ../root/login_admin.php?tp=".$table_prefix);

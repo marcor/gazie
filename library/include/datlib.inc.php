@@ -35,7 +35,15 @@ if (isset($_SESSION['table_prefix'])) {
   $table_prefix=$table_prefix;
 }
 
-
+if (!table_prefix_ok ($table_prefix)) {
+  //
+  // Il prefisso delle tabelle non è valido: che si fa?
+  //
+  // Per ora non lo so cosa si può fare, quindi non
+  // faccio nulla e faccio finta di nulla...
+  //
+  ;
+}
 
 // tabelle comuni alle aziende della stessa gestione
 $tn=array('admin','admin_module','anagra','aziend','config','country',

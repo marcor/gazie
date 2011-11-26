@@ -34,6 +34,15 @@ if (isset($_POST['tp'])) {
     $tp=$table_prefix;
 }
 
+if (!table_prefix_ok ($tp)) {
+  //
+  // Ahia...
+  //
+  message_fatal_error ("Il prefisso delle tabelle non è valido: \"$tp\"");
+  exit;
+}
+
+
 if (isset($_POST['actionflag'])) {
     $form['Login']=filter_var(substr($_POST['Login'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
     // checkUser();
