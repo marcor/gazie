@@ -291,7 +291,7 @@ class DocContabVars
 }
 
 
-function createDocument($testata, $templateName, $gTables,$rows='rigdoc')
+function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest=false)
 {
     $templates = array('Received' => 'received',
                        'CartaIntestata' => 'carta_intestata',
@@ -336,7 +336,11 @@ function createDocument($testata, $templateName, $gTables,$rows='rigdoc')
     $pdf->pageHeader();
     $pdf->compose();
     $pdf->pageFooter();
-    $pdf->Output();
+    if ($dest){
+       $pdf->Output($docVars->intesta1.'_tesdoc_id_'.$docVars->tesdoc['id_tes'].'.pdf',$dest);
+    } else {
+       $pdf->Output();
+    }
 }
 
 function createMultiDocument($results, $templateName, $gTables)
@@ -400,7 +404,7 @@ function createMultiDocument($results, $templateName, $gTables)
     $pdf->Output();
 }
 
-function createInvoiceFromDDT($result,$gTables) {
+function createInvoiceFromDDT($result,$gTables,$dest=false) {
     $config = new Config;
     $configTemplate = new configTemplate;
     require("../../config/templates".($configTemplate->template ? '.'.$configTemplate->template : '').'/fattura_semplice.php');
@@ -444,6 +448,10 @@ function createInvoiceFromDDT($result,$gTables) {
         $pdf->compose();
     }
     $pdf->pageFooter();
-    $pdf->Output();
+    if ($dest){
+       $pdf->Output($docVars->intesta1.'_tesdoc_id_'.$docVars->tesdoc['id_tes'].'.pdf',$dest);
+    } else {
+       $pdf->Output();
+    }
 }
 ?>

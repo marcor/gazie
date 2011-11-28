@@ -27,11 +27,11 @@ $message = "";
 $newpass = false;
 $config = new Config;
 if (isset($_POST['tp'])) {
-    $tp=$_POST['tp'];
+    $tp=filter_var(substr($_POST['tp'],0,12),FILTER_SANITIZE_MAGIC_QUOTES);
 } elseif(isset($_GET['tp'])) {
-    $tp=$_GET['tp'];
+    $tp=filter_var(substr($_GET['tp'],0,12),FILTER_SANITIZE_MAGIC_QUOTES);
 } else {
-    $tp=$table_prefix;
+    $tp=filter_var(substr($table_prefix,0,12),FILTER_SANITIZE_MAGIC_QUOTES);
 }
 
 if (!table_prefix_ok ($tp)) {

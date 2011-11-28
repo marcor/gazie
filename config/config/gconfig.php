@@ -26,7 +26,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\','/',__FILE__) == $_S
     exit('Accesso diretto non consentito') ;
 }
 //versione software
-$versSw = '5.18';
+$versSw = '5.19';
 
 //array con le descrizioni della valuta utilizzata
 $money = array("euro","€","€");
@@ -36,18 +36,20 @@ $money = array("euro","€","€");
 $NomeDB = "mysql";
 
 //
-// Parametri di accesso: server, db, utente, passwd e prefisso per le tabelle
+// Parametri di accesso: server, db, utente, passwd
 //
+$Host     = "localhost";
+$Database = "gazie";
+$User     = "root";
+$Password = "";
+
+// Prefisso delle tabelle
 // ATTENZIONE: il prefisso delle tabelle predefinito è "gaz". Eventualmente, si
 // possono usare altri prefissi, ma composti sempre dai primi tre caratteri
 // "gaz" e seguiti da un massimo di nove caratteri, costituiti da lettere
 // minuscole e cifre numeriche. Per esempio, "gaz123" è valido, mentre "gaga1"
 // o "gaz_123" non sono validi.
 //
-$Host     = "localhost";
-$Database = "gazie";
-$User     = "root";
-$Password = "";
 $table_prefix = "gaz";
 
 // definisce il nome della sessione ma solo in caso di uso dei domini di livello superiore al secondo, in
