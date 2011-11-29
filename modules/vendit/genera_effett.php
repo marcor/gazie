@@ -48,7 +48,9 @@ function getDocumentsBill($upd=false)
     $doc=array();
     $ctrlp=0;
     while ($tes = gaz_dbi_fetch_array($result)) {
-           if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
+           //il numero di protocollo contiene anche l'anno nei primi 4 numeri
+           $year_prot=intval(substr($tes['datfat'],0,4))*1000000+$tes['protoc'];
+           if ($year_prot <> $ctrlp) { // la prima testata della fattura
                 $carry=0;
                 $somma_spese=0;
                 $cast_vat=array();
@@ -101,10 +103,10 @@ function getDocumentsBill($upd=false)
                  $carry += $r['prelis'] ;
               }
            }
-           $doc[$tes['protoc']]['tes']=$tes;
-           $doc[$tes['protoc']]['car']=$carry;
-           $doc[$tes['protoc']]['rit']=$rit;
-           $ctrlp=$tes['protoc'];
+           $doc[$year_prot]['tes']=$tes;
+           $doc[$year_prot]['car']=$carry;
+           $doc[$year_prot]['rit']=$rit;
+           $ctrlp=$year_prot;
            // aggiungo i valori della testata al castelletto IVA
            $new_cast_vat=array();
            $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
@@ -127,7 +129,7 @@ function getDocumentsBill($upd=false)
                    $new_cast_vat[$k]['periva']=$v['periva'];
                    $new_cast_vat[$k]['tipiva']=$v['tipiva'];
            }
-           $doc[$tes['protoc']]['vat']=$new_cast_vat;
+           $doc[$year_prot]['vat']=$new_cast_vat;
            // fine aggiunta spese non documentate al castelletto IVA
            if ($upd) {
             gaz_dbi_query ("UPDATE ".$gTables['tesdoc']." SET geneff = 'S' WHERE id_tes = ".$tes['id_tes'].";");
