@@ -66,12 +66,12 @@ function getLimit($reprint=false)
     return $acc;
 }
 
-function getData($date_ini,$date_fin,$num_ini,$num_fin,$reprint='N')
+function getData($date_ini,$date_fin,$num_ini,$num_fin,$reprint='N',$banacc)
 {
         global $gTables,$admin_aziend;
         $m=array();
         if ($reprint=='S'){
-           $where='';
+           $where=$gTables['effett'].".banacc = $banacc AND ";
         } else {
            $where=$gTables['effett'].".status <> 'DISTINTATO' AND ";
         }
@@ -290,7 +290,7 @@ echo "</table>\n";
 if (isset($_POST['preview']) and $msg=='') {
   $date_ini =  sprintf("%04d%02d%02d",$form['date_ini_Y'],$form['date_ini_M'],$form['date_ini_D']);
   $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$form['date_fin_D']);
-  $r=getData($date_ini,$date_fin,$form['num_ini'],$form['num_fin'],$form['reprint']);
+  $r=getData($date_ini,$date_fin,$form['num_ini'],$form['num_fin'],$form['reprint'],$form['bank']);
   echo "<table class=\"Tlarge\">";
   if (sizeof($r['data'])>0) {
         echo "<tr>";
