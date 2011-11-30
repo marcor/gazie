@@ -169,7 +169,7 @@ function computeTot($data,$carry,$stamp_percent=false,$round=5)
           $vat += round($v['import']*$v['periva'])/ 100;
    }
    $tot=$vat+$tax;
-   if ($stamp_percent) { // è stata passata la percentuale
+   if ($stamp_percent) { // Ã¨ stata passata la percentuale
           $v_stamp = new Compute;
           $sta = $v_stamp->stampTax($tot+$carry,$stamp_percent,$round);
           $tot+=$sta;
@@ -274,8 +274,8 @@ if (isset($_POST['preview'])) {
    $ctrl_date='';
    $tot_type=array('B'=>0,'T'=>0,'V'=>0);
    foreach($rs as $k=>$v) {
-         if($ctrl_date <> substr($v['tes']['datemi'],0,4)) {
-            $n=getReceiptNumber($v['tes']['datemi']);
+         if($ctrl_date <> substr($v['tes']['datfat'],0,4)) {
+            $n=getReceiptNumber($v['tes']['datfat']);
          }
          // calcolo i totali
          $stamp=false;
