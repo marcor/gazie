@@ -29,7 +29,7 @@ $admin_aziend=checkAdmin();
 
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
-    set_time_limit (240);
+    gaz_set_time_limit (240);
 }
 
 if (!isset($_GET['ri']) or
@@ -56,7 +56,7 @@ function getMovements($date_ini,$date_fin)
     }
 
 
-$luogo_data=$admin_aziend['citspe'].", lì ";
+$luogo_data=$admin_aziend['citspe'].", lÃ¼ ";
 
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);

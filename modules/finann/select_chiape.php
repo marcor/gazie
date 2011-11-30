@@ -27,7 +27,7 @@ $admin_aziend=checkAdmin();
 $msg='';
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
-    set_time_limit (240);
+    gaz_set_time_limit (240);
 }
 
 function accountValue($last_closing,$date_closing) //funzione per la creazione dell'array dei conti con saldo diverso da 0 e ordinati per tipo e numero di conto

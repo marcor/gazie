@@ -43,7 +43,7 @@ if (isset($_GET['numdoc'])) {
    }
 }
 if (isset($_GET['all'])) {
-   set_time_limit (240);
+   gaz_set_time_limit (240);
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;
    $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil'";

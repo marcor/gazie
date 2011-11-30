@@ -44,7 +44,7 @@ if (isset($_GET['protoc'])) {
    $protocollo ='';
 }
 if (isset($_GET['all'])) {
-   set_time_limit (240);
+   gaz_set_time_limit (240);
    $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;

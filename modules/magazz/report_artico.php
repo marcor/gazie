@@ -107,7 +107,7 @@ $recordnav = new recordnav($gTables['artico'], $where, $limit, $passo);
 $recordnav -> output();
 $gForm = new magazzForm();
 while ($r = gaz_dbi_fetch_array($result)) {
-       set_time_limit (30);
+       gaz_set_time_limit (30);
        $lastdoc=getLastDoc($r["codice"]);
        $magval=array_pop($gForm->getStockValue(false,$r['codice']));
        if(!isset($_GET['all']) and !empty($r["image"])){

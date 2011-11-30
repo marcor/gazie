@@ -85,7 +85,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       if ($result) {
          while ($r = gaz_dbi_fetch_array($result)) {
            if ($r['catmer']<>$ctrl_cm ){
-             set_time_limit (30);
+             gaz_set_time_limit (30);
              $ctrl_cm=$r['catmer'];
            }
            $magval=array_pop($gForm->getStockValue(false,$r['codice'],$date));

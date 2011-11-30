@@ -27,7 +27,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
-    set_time_limit (240);
+    gaz_set_time_limit (240);
 }
 $msg = "";
 
@@ -72,7 +72,7 @@ if (isset($_GET['insert']) and $msg == "") {  //in caso di conferma
              if (!empty($row['artico'])) {
                    $n++;
                    if ($n > 15) {
-                      set_time_limit (40); // azzero il tempo altrimenti vado in fatal_error
+                      gaz_set_time_limit (40); // azzero il tempo altrimenti vado in fatal_error
                       $n=0;
                    }
                    $upd_mm->uploadMag($row['id_rif'],

@@ -35,7 +35,7 @@ function getConfig($var)
 
 function updateGAzieCart($server,$user,$pass,$data,$filename)
 {
-    set_time_limit (30); // azzero il tempo altrimenti vado in fatal_error
+    gaz_set_time_limit (30); // azzero il tempo altrimenti vado in fatal_error
     $fn_exp = explode("/", $filename);
     $filename=array_pop($fn_exp);
     // set up a connection or die
@@ -164,7 +164,7 @@ if (isset($_POST['Submit'])) { // conferma
             if (!empty($item['image'])) {
                for ($i = 1; $i <= $attempts; $i++) {  // cicli per i tentativi di upload ftp
                   $msg = updateGAzieCart($form['server'],$form['user'],$form['pass'],$item['image'],$form['path'].'components/com_gaziecart/images/artico/'.preg_replace('/\//','_',$item['cod']).'.png');
-                  if (!$msg){ // è andato a buon fine
+                  if (!$msg){ // ÂŠ andato a buon fine
                       $i=9;
                       echo '<tr><td class="FacetDataTD">File:  artico/'.$item['cod'].".png uploaded!</td></tr>\n";
                   } else {
@@ -180,7 +180,7 @@ if (isset($_POST['Submit'])) { // conferma
          if (!empty($item['image'])) {
              for ($i = 1; $i <= $attempts; $i++) {  // cicli per i tentativi di upload ftp
                  $msg = updateGAzieCart($form['server'],$form['user'],$form['pass'],$item['image'],$form['path'].'components/com_gaziecart/images/catmer/'.$item['codice'].'.png');
-                 if (!$msg){ // è andato a buon fine
+                 if (!$msg){ // ÂŠ andato a buon fine
                       $i=9;
                       echo "<tr><td class=\"FacetDataTD\">File:  catmer/".$item['codice'].".png uploaded!</td></tr>\n";
                  } else {
@@ -192,7 +192,7 @@ if (isset($_POST['Submit'])) { // conferma
    $xml.="</gazie>";
              for ($i = 1; $i <= $attempts; $i++) {  // cicli per i tentativi di upload ftp
                  $msg = updateGAzieCart($form['server'],$form['user'],$form['pass'],$xml,$form['path'].'components/com_gaziecart/gaziecart.xml');
-                 if (!$msg){ // è andato a buon fine
+                 if (!$msg){ // ÂŠ andato a buon fine
                       $i=9;
                       echo '<tr><td class="FacetDataTD">File: gaziecart.xml uploaded!</td></tr>';
                  } else {

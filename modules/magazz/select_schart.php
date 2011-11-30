@@ -262,7 +262,7 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "</tr>";
         while (list($key, $mv) = each($m)) {
             if ($ctr_mv != $mv['artico']) {
-               set_time_limit (30);
+               gaz_set_time_limit (30);
                if (!empty($ctr_mv)) {
                   echo "\t<tr>\n";
                   echo "\t<td colspan=\"10\" align=\"right\"></td>\n";

@@ -52,6 +52,18 @@ $Password = "";
 //
 $table_prefix = "gaz";
 
+//
+// Gazie utilizza la funzione PHP set_time_limit() per consentire il completamento
+// di elaborazioni che richiedono più tempo del normale.
+// In condizioni normali, la variabile $disable_set_time_limit deve avere corrispondere
+// a FALSE. La modifica del valore a TRUE serve solo in situazioni eccezionali,
+// per esempio quando si vuole installare Gazie presso un servizio che vieta
+// l'uso della funzione set_time_limit(), sapendo però che ciò pregiudica il funzionamento
+// corretto di Gazie.
+//
+$disable_set_time_limit = FALSE;
+
+
 // definisce il nome della sessione ma solo in caso di uso dei domini di livello superiore al secondo, in
 // caso di installazione su domini di secondo livello viene attribuito automaticamente
 // il nome del direttorio di installazione che normalmente e', appunto:  gazie

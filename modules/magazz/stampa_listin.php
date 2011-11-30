@@ -39,7 +39,7 @@ if (empty ($_GET['af'])) {
     $_GET['af'] = 'zzzzzzzzzzzzzzz';
 }
 
-$luogo_data=$admin_aziend['citspe'].", lì ";
+$luogo_data=$admin_aziend['citspe'].", lÃ¼ ";
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);
    $messta = substr($_GET['ds'],2,2);
@@ -123,7 +123,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         break;
       }
       if ($row["catmer"] <> $ctrlcatmer) {
-        set_time_limit (30);
+        gaz_set_time_limit (30);
         $pdf->Cell(120,5,'Categoria Merceologica n.'.$row['codcat'].' = '.$row['descat'],1,1,'L',1);
       }
       $pdf->Cell(35,5,$row['codart'],1);

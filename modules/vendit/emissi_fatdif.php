@@ -24,7 +24,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
-    set_time_limit (240);
+    gaz_set_time_limit (240);
 }
 
 function FattureDaDdt($period,$sezione=1,$cliente=0,$excludeDdt=array())
@@ -75,7 +75,7 @@ function FattureDaDdt($period,$sezione=1,$cliente=0,$excludeDdt=array())
        $ctrld = 0;
        $totale_imponibile = 0;
        while ($row = gaz_dbi_fetch_array($result)) {
-             if (in_array($row['id_tes'],$excludeDdt) and $ctrld != $row['id_tes']) { // se è tra gli esclusi vado avanti ma mantengo il riferimento
+             if (in_array($row['id_tes'],$excludeDdt) and $ctrld != $row['id_tes']) { // se ÂŠ tra gli esclusi vado avanti ma mantengo il riferimento
                 $fatture['no'][] = array('id'=>$row['id_tes'],
                                                    'ragionesociale'=>$row['ragsoc'],
                                                    'numero'=>$row['numdoc'],
@@ -84,8 +84,8 @@ function FattureDaDdt($period,$sezione=1,$cliente=0,$excludeDdt=array())
                                                    );
                 continue;
              }
-             if ($row['clfoco'] != $ctrlc or $row['pagame'] != $ctrlp or ($row['id_tes'] != $ctrld and $row['ragdoc'] == 'N')) {  //se è un'altro cliente o il cliente ha un pagamento diverso dal precedente
-                    if ($ctrlc > 0 and $ctrlp > 0)  {  //se non è la prima fattura pongo il totale della precedente nell'array
+             if ($row['clfoco'] != $ctrlc or $row['pagame'] != $ctrlp or ($row['id_tes'] != $ctrld and $row['ragdoc'] == 'N')) {  //se ÂŠ un'altro cliente o il cliente ha un pagamento diverso dal precedente
+                    if ($ctrlc > 0 and $ctrlp > 0)  {  //se non ÂŠ la prima fattura pongo il totale della precedente nell'array
                        $fatture['yes'][$last_pr]['totale'] = $totale_imponibile;
                     }
                     $totale_imponibile = 0;
@@ -96,7 +96,7 @@ function FattureDaDdt($period,$sezione=1,$cliente=0,$excludeDdt=array())
                     $fatture['yes'][$last_pr]['speseincasso'] = $row['numrat']*$row['speban'];
                     //$totale_imponibile += $fatture['yes'][$last_pr]['speseincasso'];
              }
-             if ($row['id_tes'] != $ctrld) {  //se è un'altro ddt
+             if ($row['id_tes'] != $ctrld) {  //se ÂŠ un'altro ddt
                    if ($row['clfoco'] == $ctrlc and $row['pagame'] != $ctrlp){
                         $fatture['yes'][$last_pr]['righi'][] = array('codice'=>'_MSG_',
                                                    'descrizione'=>' Cliente con diversi pagamenti! '

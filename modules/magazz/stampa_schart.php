@@ -44,7 +44,7 @@ if (empty($_GET['af'])){
 $_GET['af'] = 'zzzzzzzzzzzzzzzzz';
 }
 
-$luogo_data=$admin_aziend['citspe'].", lì ";
+$luogo_data=$admin_aziend['citspe'].", lÃ¼ ";
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);
    $messta = substr($_GET['ds'],2,2);
@@ -128,7 +128,7 @@ $mval['v_g']=0;
 while ($mv = gaz_dbi_fetch_array($result)) {
       $pdf->setRiporti($aRiportare);
       if ($ctrlArtico != $mv['artico']) {
-         set_time_limit (30);
+         gaz_set_time_limit (30);
          if (!empty($ctrlArtico)) {
                    $pdf->StartPageGroup();
                    $pdf->SetFont('helvetica','B',8);
