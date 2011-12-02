@@ -327,7 +327,7 @@ if (isset($_POST['preview']) and $msg=='') {
         while (list($key, $mv) = each($m)) {
             $saldo += $mv['dare'];
             $saldo -= $mv['avere'];
-            echo "<tr><td class=\"FacetDataTD\">".$mv["datreg"]." &nbsp;</td>";
+            echo "<tr><td class=\"FacetDataTD\">".gaz_format_date($mv["datreg"])." &nbsp;</td>";
             echo "<td align=\"center\" class=\"FacetDataTD\"><a href=\"admin_movcon.php?id_tes=".$mv["id_tes"]."&Update\">".$mv["id_tes"]."</a> &nbsp</td>";
             echo "<td class=\"FacetDataTD\">".$mv["tesdes"]." &nbsp;</td>";
             if (!empty($mv['numdoc'])){
