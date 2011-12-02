@@ -333,7 +333,7 @@ if (isset($_POST['preview']) and $msg=='') {
             if (!empty($mv['numdoc'])){
                 echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["protoc"]." &nbsp;</td>";
                 echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["numdoc"]." &nbsp;</td>";
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["datdoc"]." &nbsp;</td>";
+                echo "<td align=\"center\" class=\"FacetDataTD\">".gaz_format_date($mv["datdoc"])." &nbsp;</td>";
             } else {
                 echo "<td class=\"FacetDataTD\" colspan=\"3\"></td>";
             }

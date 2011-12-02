@@ -97,8 +97,8 @@ $strScript = array ("select_liqiva.php" =>
                            'header1'=>array('Conto'=>'','Num.Mov.'=>'','Descrizione'=>'',
                                             'Dare'=>'','Avere'=>'','Saldo<br />progressivo'=>''
                                            ),
-                           'header2'=>array('Data'=>'','ID'=>'','Descrizione'=>'','N.Doc.'=>'',
-                                            'Data Doc.' =>'','Dare'=>'','Avere'=>'',
+                           'header2'=>array('Data'=>'','ID'=>'','Descrizione'=>'','N.Prot.'=>'',
+                                            'N.Doc.'=>'','Data Doc.' =>'','Dare'=>'','Avere'=>'',
                                             'Saldo<br />progressivo'=>''
                                            )
                            ),
