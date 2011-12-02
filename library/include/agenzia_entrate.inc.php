@@ -400,7 +400,7 @@ class AgenziaEntrate
                $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
                return "ART21470".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
                       $this->AltriDati.
-                      $this->Anno.'0   1   1'.
+                      $this->Anno.'000010001'.
                       str_repeat(' ',1528)."A\r\n";
 
                }
@@ -415,16 +415,16 @@ class AgenziaEntrate
                                 $acc .= '1'.substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16)
                                         .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
                                         .$ElementsData['n_rate']
-                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9)
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['imposte_addebitate']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
                                         .str_repeat(' ',1762)."A\r\n";
                             break;
                             case '2': // SOGGETTI RESIDENTI TITOLARI DI PARTITA IVA
                                 $acc .= '2'.substr(str_pad($ElementsData['pariva'],11,'0',STR_PAD_LEFT),0,11)
                                         .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
-                                        .substr(str_pad(round($ElementsData['numdoc']),15,' ',STR_PAD_LEFT),0,15)
+                                        .substr(str_pad(round($ElementsData['numdoc']),15,' '),0,15)
                                         .$ElementsData['n_rate']
-                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']),9,' ',STR_PAD_LEFT),0,9)
-                                        .substr(str_pad(round($ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9);
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,'0',STR_PAD_LEFT),0,9)
+                                        .substr(str_pad(round($ElementsData['imposte_addebitate']),9,'0',STR_PAD_LEFT),0,9);
                                         if ($ElementsData['op_type']>2){ //acquisto
                                              $acc .= '2';
                                         } else { // vendita
@@ -450,9 +450,9 @@ class AgenziaEntrate
                                         .str_repeat(' ',143);
                                 }
                                 $acc .= substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
-                                        .substr(str_pad(round($ElementsData['numdoc']),15,' ',STR_PAD_LEFT),0,15)
+                                        .substr(str_pad(round($ElementsData['numdoc']),15,' '),0,15)
                                         .$ElementsData['n_rate']
-                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']),9,' ',STR_PAD_LEFT),0,9)
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
                                         .substr(str_pad(round($ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9);
                                 if ($ElementsData['op_type']>2){ //acquisto
                                     $acc .= '2';

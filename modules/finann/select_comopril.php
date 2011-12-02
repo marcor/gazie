@@ -100,17 +100,18 @@ function printTransact($transact,$error)
           echo "<td align=\"center\" class=\"FacetDataTD\" >".$script_transl['imptype']."</td>";
           echo "</tr>\n";
           foreach ($transact as $key=>$value ) {
+               $totale = 'Imp. '.gaz_format_number($value['operazioni_imponibili']+$value['operazioni_nonimp']+$value['operazioni_esente']);
                $class = ' ';
                if ($value['soggetto_type']>=3) {
                   $class = 'style="color:#4305F1; background-color: #FF8888;"';
                 
                } elseif($value['soggetto_type']==1) {
                   $class = 'style="color:#0543A1; background-color: #88FF88;" ';
+                  $totale = 'Corr. '.gaz_format_number($value['operazioni_imponibili']+$value['imposte_addebitate']+$value['operazioni_nonimp']+$value['operazioni_esente']);
                } 
                if (isset($error[$key])){
                   $class = ' class="FacetDataTDred" ';
                }
-               $totale = gaz_format_number($value['operazioni_imponibili']+$value['imposte_addebitate']+$value['operazioni_nonimp']+$value['operazioni_esente']);
                echo "<tr>";
                echo "<td align=\"center\" $class><a href=\"../contab/admin_movcon.php?id_tes=".$value['id_tes']."&Update\">".$value['id_tes']."</a></td>";
                echo "<td $class>".$value['ragso1'].' '.$value['ragso2']."</td>";
@@ -130,7 +131,7 @@ function printTransact($transact,$error)
                echo ">".$script_transl['op_type_value'][$value['op_type']]."</td>";
                echo "</tr>\n";
                echo "<tr>";
-               echo "<td align=\"center\" $class>".gaz_format_date($value['datreg'])."</td>";
+               echo "<td align=\"center\" $class>N.".$value['numdoc'].' del '.gaz_format_date($value['datreg'])."</td>";
                echo "<td $class>".$value['codfis']." ".$value['pariva']."</td>";
                echo "<td align=\"right\" $class>$totale</td>";
                echo "<td align=\"right\" $class>".gaz_format_number($value['imposte_addebitate'])."</td>";
@@ -485,8 +486,8 @@ if (isset($_GET['file_agenzia'])) {
     $agenzia = new AgenziaEntrate;
 
     // Impostazione degli header per l'opozione "save as" dello standard input che verrÃá generato
-    header('Content-Type: text/x-a21');
-    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$_GET['anno'].".a21");
+    header('Content-Type: text/x-art21');
+    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$_GET['anno'].".Art21");
     header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up piÃ¹ volte.
     if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');

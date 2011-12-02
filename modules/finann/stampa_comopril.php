@@ -331,13 +331,16 @@ $pdf->AddPage();
 if ($_GET['anno'] >2000 && $_GET['min_limit'] > 0){
     $queryData = createRowsAndErrors(intval($_GET['min_limit']));
     foreach ($queryData[0] as $key=>$value ) {
-      $totale = gaz_format_number($value['operazioni_imponibili']+$value['imposte_addebitate']+$value['operazioni_nonimp']+$value['operazioni_esente']);
+      $totale = 'Imp. '.gaz_format_number($value['operazioni_imponibili']+$value['operazioni_nonimp']+$value['operazioni_esente']);
+      if($value['soggetto_type']==1) {
+         $totale = 'Corr. '.gaz_format_number($value['operazioni_imponibili']+$value['imposte_addebitate']+$value['operazioni_nonimp']+$value['operazioni_esente']);
+      } 
       $docref=getDocRef($value);
       if (!empty($docref)){
          $docref=$value['caucon']." N.".$value['numdoc']." date ".gaz_format_date($value['datdoc']);
       }
       $pdf->SetFont('helvetica','',7);
-      $pdf->Cell(18,3,$value['id_tes'],'LTR',0,'R');
+      $pdf->Cell(18,3,$value['numdoc'],'LTR',0,'R');
       $pdf->Cell(70,3,$value['ragso1'].' '.$value['ragso2'],'T');
       $pdf->Cell(33,3,$docref,'T');
       $pdf->Cell(33,3,$script_transl['soggetto_type_value'][$value['soggetto_type']],'T');
