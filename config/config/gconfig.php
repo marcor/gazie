@@ -73,7 +73,8 @@ $Password = "";
 $table_prefix = "gaz";
 //
 // Fuso orario, per la rappresentazione corretta delle date, indipendentemente
-// dalla collocazione del server HTTP+PHP.
+// dalla collocazione del server HTTP+PHP. MA NON FUNZIONA, perché MySQL aggiorna
+// in modo indipendente le date di accesso alle tabelle.
 //
 $Timezone = "Europe/Rome";
 //
@@ -86,12 +87,6 @@ $Timezone = "Europe/Rome";
 // corretto di Gazie.
 //
 $disable_set_time_limit = FALSE;
-//
-// Fuso orario, per la rappresentazione corretta delle date, indipendentemente
-// dalla collocazione del server HTTP+PHP. MA NON FUNZIONA, perché MySQL aggiorna
-// in modo indipendente le date di accesso alle tabelle.
-//
-$Timezone = "Europe/Rome";
 ////////////////////////////////////////////////////////////////////////
 
 
