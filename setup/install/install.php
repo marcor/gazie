@@ -24,6 +24,7 @@
 */
 require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
+require("../../library/include/function.inc.php");
 $err=array();
 
 // alcune directory devono essere scrivibili da Apache/PHP (www-data)
@@ -197,12 +198,12 @@ function executeQueryFileInstall($sqlFile,$Database,$table_prefix)
 
 function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestione delle sottosezioni
 {
-    set_time_limit (300);                
+    gaz_set_time_limit (300);
     // Luigi Rambaldi 13 Ottobre 2005
     // Inizializzazione accumulatore
     $sql = "";
     $currentDbVersion=getDbVersion();
-    $nextDbVersion =  $currentDbVersion + 1; // versione del'upgrade da individuare per l'aggiornamento corrente (contiguità nella numerazione delle versioni).
+    $nextDbVersion =  $currentDbVersion + 1; // versione del'upgrade da individuare per l'aggiornamento corrente (contiguitÃá nella numerazione delle versioni).
     $stopDbVersion = $currentDbVersion + 2;
     $sqlFile = getNextSqlFileName($currentDbVersion,getSqlFiles());
     // trovo l'ultima  sottosezione (individuabile a partire dalla versione corrente del Database)
@@ -441,4 +442,5 @@ function dir_writable($folder)
 </tbody>
 </table>
 </form>
-</body></html>
+</body>
+</html>

@@ -35,15 +35,35 @@ $money = array("euro","€","€");
 //per il momento disponibile solo la libreria mysql.lib
 $NomeDB = "mysql";
 
+////////////////////////////////////////////////////////////////////////
 //
 // Parametri di accesso: server, db, utente, passwd
 //
+////////////////////////////////////////////////////////////////////////
+//
+// Server MySQL. Si può specificare anche la porta per connettersi a
+// MySQL, per esempio:
+//
+// $Host = "mysql.2freehosting.com:3306";
+//
 $Host     = "localhost";
+//
+// Nome della base di dati a cui ci si connette.
+//
 $Database = "gazie";
+//
+// Utente della base di dati che ha il permesso di accedervi con tutti
+// i privilegi necessari.
+//
 $User     = "root";
+//
+// Parola d'ordine necessaria per accedere alla base di dati
+// in qualità di utente $User.
+//
 $Password = "";
-
-// Prefisso delle tabelle
+//
+// Prefisso delle tabelle di Gazie.
+//
 // ATTENZIONE: il prefisso delle tabelle predefinito è "gaz". Eventualmente, si
 // possono usare altri prefissi, ma composti sempre dai primi tre caratteri
 // "gaz" e seguiti da un massimo di nove caratteri, costituiti da lettere
@@ -51,7 +71,11 @@ $Password = "";
 // o "gaz_123" non sono validi.
 //
 $table_prefix = "gaz";
-
+//
+// Fuso orario, per la rappresentazione corretta delle date, indipendentemente
+// dalla collocazione del server HTTP+PHP.
+//
+$Timezone = "Europe/Rome";
 //
 // Gazie utilizza la funzione PHP set_time_limit() per consentire il completamento
 // di elaborazioni che richiedono più tempo del normale.
@@ -62,6 +86,13 @@ $table_prefix = "gaz";
 // corretto di Gazie.
 //
 $disable_set_time_limit = FALSE;
+//
+// Fuso orario, per la rappresentazione corretta delle date, indipendentemente
+// dalla collocazione del server HTTP+PHP. MA NON FUNZIONA, perché MySQL aggiorna
+// in modo indipendente le date di accesso alle tabelle.
+//
+$Timezone = "Europe/Rome";
+////////////////////////////////////////////////////////////////////////
 
 
 // definisce il nome della sessione ma solo in caso di uso dei domini di livello superiore al secondo, in

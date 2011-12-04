@@ -45,6 +45,16 @@ if (!table_prefix_ok ($table_prefix)) {
   ;
 }
 
+//
+// Imposto il fuso orario, in base alla configurazione.
+// Ma non funziona, perché MySQL gestisce il fuso orario
+// in modo indipendente e alcune date vengono inserite
+// da MySQL stesso, nel momento dell'accesso alle tabelle.
+//
+//if (isset ($Timezone)) {
+//    date_default_timezone_set ($Timezone);
+//}
+
 // tabelle comuni alle aziende della stessa gestione
 $tn=array('admin','admin_module','anagra','aziend','config','country',
           'regions','provinces','municipalities','menu_module','module','menu_script');
