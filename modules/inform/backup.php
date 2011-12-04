@@ -37,7 +37,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     $form['ritorno'] = $_POST['ritorno'];
     $form['create_database']=$_POST["create_database"];
     $form['use_database']=$_POST["use_database"];
-    $form['table_selection']=$_POST["table_selection"];
+    //$form['table_selection']=$_POST["table_selection"];
     $form['text_encoding']=$_POST["text_encoding"];
     $form['do_backup']=$_POST["do_backup"];
 } else {  // al primo accesso allo script
@@ -45,7 +45,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['create_database']='';
     $form['use_database']='';
-    $form['table_selection']='';
+    //$form['table_selection']='';
     $form['text_encoding']='';
     $form['do_backup']=0;
 }
@@ -70,12 +70,14 @@ if ($form['do_backup'] != 1)
     echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"checkbox\" name=\"use_database\" value=\"1\" checked=\"checked\"></td>
               <td class=\"FacetDataTD\"> USE $Database;</td></tr>";
     echo "<tr><td colspan=\"2\"><hr></td></tr>";
-    echo "<tr><td colspan=\"2\"><strong>".$script_transl['table_selection'].":</strong></p>";
-    echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"table_selection\" value=\"1\" checked=\"checked\"></td>
-              <td class=\"FacetDataTD\"> ".$script_transl['table_selection_value'][1]." \"$table_prefix\"</td></tr>";
-    echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"table_selection\" value=\"0\"></td>
-              <td class=\"FacetDataTD\"> ".$script_transl['table_selection_value'][0]." \"$Database\"</td></tr>";
-    echo "<tr><td colspan=\"2\"><hr></td></tr>";
+
+    //echo "<tr><td colspan=\"2\"><strong>".$script_transl['table_selection'].":</strong></p>";
+    //echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"table_selection\" value=\"1\" checked=\"checked\"></td>
+    //          <td class=\"FacetDataTD\"> ".$script_transl['table_selection_value'][1]." \"$table_prefix\"</td></tr>";
+    //echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"table_selection\" value=\"0\"></td>
+    //          <td class=\"FacetDataTD\"> ".$script_transl['table_selection_value'][0]." \"$Database\"</td></tr>";
+    //echo "<tr><td colspan=\"2\"><hr></td></tr>";
+
     echo "<tr><td colspan=\"2\"><strong>".$script_transl['text_encoding'].":</strong></td></tr>";
     echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"radio\" name=\"text_encoding\" value=\"0\" checked=\"checked\"></td>
               <td class=\"FacetDataTD\">UTF-8</td></tr>";
@@ -119,7 +121,8 @@ if ($form['do_backup'] != 1)
     echo "--\n";
     echo "-- Opzioni: create_database=".$form['create_database']."\n";
     echo "--          use_database=".$form['use_database']."\n";
-    echo "--          table_selection=".$form['table_selection']."\n";
+    //echo "--          table_selection=".$form['table_selection']."\n";
+    echo "--          text_encoding=".$form['text_encoding']."\n";
     echo "--\n";
     echo "--\n";
     echo "-- ATTENZIONE: la codifica di questo file dovrebbe essere UTF-8;\n";
@@ -186,13 +189,18 @@ if ($form['do_backup'] != 1)
             //
             ;
         } else {
+            ////
+            //// Il prefisso del nome della tabella non coincide: si salta se sono state richieste
+            //// solo le tabelle della gestione in corso.
+            ////
+            //if ($form['table_selection'] == 1) {
+            //    continue;
+            //}
+
             //
-            // Il prefisso del nome della tabella non coincide: si salta se sono state richieste
-            // solo le tabelle della gestione in corso.
+            // Si fa il backup delle sole tabelle della gestione in corso!
             //
-            if ($form['table_selection'] == 1) {
-                continue;
-            }
+            continue;
         }
         //
         // creazione della struttura della tabella corrente.
