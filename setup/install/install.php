@@ -24,7 +24,6 @@
 */
 require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
-require("../../library/include/function.inc.php");
 $err=array();
 
 // alcune directory devono essere scrivibili da Apache/PHP (www-data)
@@ -198,7 +197,10 @@ function executeQueryFileInstall($sqlFile,$Database,$table_prefix)
 
 function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestione delle sottosezioni
 {
-    gaz_set_time_limit (300);
+    global $disable_set_time_limit;
+    if (!$disable_set_time_limit) {
+        set_time_limit (300);
+    }
     // Luigi Rambaldi 13 Ottobre 2005
     // Inizializzazione accumulatore
     $sql = "";

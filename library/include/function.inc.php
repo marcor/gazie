@@ -76,10 +76,9 @@ function gaz_format_quantity($number,$comma=false,$decimal=false)
 
 function gaz_set_time_limit ($time)
 {
-  global $disable_set_time_limit;
-  if (!$disable_set_time_limit)
-    {
-      set_time_limit ($time);
+    global $disable_set_time_limit;
+    if (!$disable_set_time_limit) {
+        set_time_limit ($time);
     }
 }
 
