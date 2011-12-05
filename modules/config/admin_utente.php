@@ -148,9 +148,9 @@ if (isset($_POST['Submit'])) {
                     if (!empty($mod_data)) {
                          updateAccessRights($form['Login'],$mod_data['id'],$value,$user_data['enterprise_id']);
                     }
-                } elseif (preg_match("/^([0-9]{3})new_/",$key,$id) && $value==3) { // il nuovo modulo non è presente in gaz_module
+                } elseif (preg_match("/^([0-9]{3})new_/",$key,$id) && $value==3) { // il nuovo modulo non ÂŠ presente in gaz_module
                     $name = preg_replace("/^[0-9]{3}new_/",'',$key);
-                    // includo il file dei dati per creazione del menù
+                    // includo il file dei dati per creazione del menÂ—
                     require("../../modules/".$name."/menu.creation_data.php");
                     // trovo l'ultimo peso assegnato ai moduli esistenti e lo accodo
                     $rs_last = gaz_dbi_dyn_query("MAX(weight)+1 AS max_we", $gTables['module'],'id > 1');
@@ -323,10 +323,11 @@ if ($user_data["Abilit"] == 9) {
        $relativePath = '../../modules';
        if ($handle = opendir($relativePath)) {
           while ($exist_mod = readdir($handle)) {
-             if( $exist_mod == "."
+             if ($exist_mod == "."
                  || $exist_mod == ".."
                  || $exist_mod == ".svn"
                  || $exist_mod == "root" ) continue;
+             if (!is_dir ($exist_mod)) continue;
                  $rs_mod = gaz_dbi_dyn_query(" am.access ,am.moduleid, module.name", $gTables['admin_module'].' AS am LEFT JOIN '.$gTables['module'].
                                ' AS module ON module.id=am.moduleid ',
                                " am.adminid = '".$login."' AND module.name = '$exist_mod' AND am.enterprise_id = '$enterprise_id'","am.adminid",0,1);
