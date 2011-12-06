@@ -29,7 +29,7 @@ function getLastDoc($item_code)
    {
       global $gTables;
       $rs=false;
-      $rs_last_doc = gaz_dbi_dyn_query("*", $gTables['files'], " item_ref ='".$item_code."'",'id_doc',0,1);
+      $rs_last_doc = gaz_dbi_dyn_query("*", $gTables['files'], " item_ref ='".$item_code."'",'id_doc DESC',0,1);
       $last_doc = gaz_dbi_fetch_array($rs_last_doc);
       // se e' il primo documento dell'anno, resetto il contatore
       if ($last_doc) {
