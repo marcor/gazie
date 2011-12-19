@@ -25,16 +25,30 @@
 require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
 $err=array();
-
-// alcune directory devono essere scrivibili da Apache/PHP (www-data)
+//
+// Ottiene in qualche modo il prefisso delle tabelle.
+//
+if (isset($_SESSION['table_prefix'])) {
+   $table_prefix=substr($_SESSION['table_prefix'],0,12);
+} elseif (isset($_POST['tp'])) {
+    $table_prefix=filter_var(substr($_POST['tp'],0,12),FILTER_SANITIZE_MAGIC_QUOTES);
+} elseif(isset($_GET['tp'])) {
+    $table_prefix=filter_var(substr($_GET['tp'],0,12),FILTER_SANITIZE_MAGIC_QUOTES);
+} else {
+    $table_prefix=filter_var(substr($table_prefix,0,12),FILTER_SANITIZE_MAGIC_QUOTES);
+}
+//
+// Alcune directory devono essere scrivibili dal servente HTTP/PHP (www-data).
+//
 if (!dir_writable('../../data/files/')) { //questa per archiviare i documenti
     $err[] = 'no_data_files_writable';
 }
 if (!dir_writable('../../library/tcpdf/cache/')) { //questa per permettere a TCPDF di inserire le immagini
     $err[] = 'no_tcpdf_cache_writable'; 
 }
+//
 // fine controllo directory scrivibili
-
+//
 if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
     $form['hidden_req'] = '';
     $form['lang'] = 'italian';
@@ -211,14 +225,14 @@ function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestio
     // trovo l'ultima  sottosezione (individuabile a partire dalla versione corrente del Database)
     // Iterazione per ciascuna linea del file.
     $lineArray = file($sqlFile);
-    $parsingFlag = False; // flag per individuare cisacuna sottosezione, corrispondente a cisacuna versione del DB
+    $parsingFlag = False; // flag per individuare ciascuna sottosezione, corrispondente a cisacuna versione del DB
     $numberOfCompanies=getCompanyNumber();
     $activateWhile = False; // flag per attivare il ciclo while
     foreach($lineArray as $line) {
-        if (preg_match("/UPDATE[ \n\r\t\x0B]+(`){0,1}".$table_prefix."_config(`){0,1}[ \n\r\t\x0B]+SET[ \n\r\t\x0B]+(`){0,1}cvalue(`){0,1}[ \n\r\t\x0B]*=[ \n\r\t\x0B]*\'$nextDbVersion\'/i", $line)) {
+        if (preg_match("/UPDATE[ \n\r\t\x0B]+(`){0,1}gaz_config(`){0,1}[ \n\r\t\x0B]+SET[ \n\r\t\x0B]+(`){0,1}cvalue(`){0,1}[ \n\r\t\x0B]*=[ \n\r\t\x0B]*\'$nextDbVersion\'/i", $line)) {
             $parsingFlag = True;
         }
-        if (preg_match("/UPDATE[ \n\r\t\x0B]+(`){0,1}".$table_prefix."_config(`){0,1}[ \n\r\t\x0B]+SET[ \n\r\t\x0B]+(`){0,1}cvalue(`){0,1}[ \n\r\t\x0B]*=[ \n\r\t\x0B]*\'$stopDbVersion\'/i", $line)) {
+        if (preg_match("/UPDATE[ \n\r\t\x0B]+(`){0,1}gaz_config(`){0,1}[ \n\r\t\x0B]+SET[ \n\r\t\x0B]+(`){0,1}cvalue(`){0,1}[ \n\r\t\x0B]*=[ \n\r\t\x0B]*\'$stopDbVersion\'/i", $line)) {
             $parsingFlag = False;
             break;
         }
@@ -381,9 +395,10 @@ function dir_writable($folder)
 <body>
     <br /><br /><br />
     <form method="POST">
-    <input type="hidden" value="<?php echo $form['hidden_req'];?>" name="hidden_req">
+    <input type="hidden" value="<?php echo $form['hidden_req'];?>"      name="hidden_req">
     <input type="hidden" value="<?php echo $form['install_upgrade'];?>" name="install_upgrade">
-    <input type="hidden" value="<?php echo $form['lang'];?>" name="lang">
+    <input type="hidden" value="<?php echo $form['lang'];?>"            name="lang">
+    <input type="hidden" value="<?php echo $table_prefix; ?>"           name="tp">
     <table align="center">
     <tbody>
         <tr>
