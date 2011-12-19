@@ -53,7 +53,7 @@ if (isset($_GET['li'])) {
    }
 }
 
-$luogo_data=$admin_aziend['citspe'].", lÃ¼ ";
+$luogo_data=$admin_aziend['citspe'].", lì ";
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);
    $messta = substr($_GET['ds'],2,2);

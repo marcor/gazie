@@ -56,7 +56,7 @@ function getMovements($date_ini,$date_fin)
     }
 
 
-$luogo_data=$admin_aziend['citspe'].", lÃ¼ ";
+$luogo_data=$admin_aziend['citspe'].", lì ";
 
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);

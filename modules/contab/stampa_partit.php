@@ -49,7 +49,7 @@ $dataini = date("Ymd",$utsini);
 $datafin = date("Ymd",$utsfin);
 $descrDataini = date("d-m-Y",$utsini);
 $descrDatafin = date("d-m-Y",$utsfin);
-$luogo_data=$admin_aziend['citspe'].", lÃ¼ ";
+$luogo_data=$admin_aziend['citspe'].", lì ";
 if (isset($_GET['ds'])) {
    $giosta = substr($_GET['ds'],0,2);
    $messta = substr($_GET['ds'],2,2);
