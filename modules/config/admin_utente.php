@@ -327,7 +327,6 @@ if ($user_data["Abilit"] == 9) {
                  || $exist_mod == ".."
                  || $exist_mod == ".svn"
                  || $exist_mod == "root" ) continue;
-             if (!is_dir ($exist_mod)) continue;
                  $rs_mod = gaz_dbi_dyn_query(" am.access ,am.moduleid, module.name", $gTables['admin_module'].' AS am LEFT JOIN '.$gTables['module'].
                                ' AS module ON module.id=am.moduleid ',
                                " am.adminid = '".$login."' AND module.name = '$exist_mod' AND am.enterprise_id = '$enterprise_id'","am.adminid",0,1);
