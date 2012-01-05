@@ -337,7 +337,7 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     $pdf->compose();
     $pdf->pageFooter();
     if ($dest){
-       $pdf->Output($docVars->intesta1.'_tesdoc_id_'.$docVars->tesdoc['id_tes'].'.pdf',$dest);
+       return $pdf->Output($docVars->intesta1.'_tesdoc_id_'.$docVars->tesdoc['id_tes'].'.pdf',$dest);
     } else {
        $pdf->Output();
     }
