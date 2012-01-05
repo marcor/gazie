@@ -4,7 +4,7 @@
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2011 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
-                        <http://gazie.altervista.org>
+                        <http://gazie.it>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -57,30 +57,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['doc_type'] = strtoupper(substr($_POST['doc_type'],0,3));
     $form['customer'] = substr($_POST['customer'],0,13);
     $form['vat_section'] = intval($_POST['vat_section']);
-    $form['doc_number'] = intval($_POST['doc_number']);
-    $form['conclusion_date_Y'] = intval($_POST['conclusion_date_Y']);
-    $form['conclusion_date_M'] = intval($_POST['conclusion_date_M']);
-    $form['conclusion_date_D'] = intval($_POST['conclusion_date_D']);
-    $form['start_date_Y'] = intval($_POST['start_date_Y']);
-    $form['start_date_M'] = intval($_POST['start_date_M']);
-    $form['start_date_D'] = intval($_POST['start_date_D']);
-    $form['months_duration'] = intval($_POST['months_duration']);
-    $form['initial_fee'] = floatval(preg_replace("/\,/",'.',$_POST['initial_fee']));
-    $form['periodic_reassessment'] = intval($_POST['periodic_reassessment']);
-    $form['bank'] = intval($_POST['bank']);
-    $form['payment_method'] = intval($_POST['payment_method']);
-    $form['periodicity'] = intval($_POST['periodicity']);
-    $form['tacit_renewal'] = intval($_POST['tacit_renewal']);
-    $form['current_fee'] = floatval(preg_replace("/\,/",'.',$_POST['current_fee']));
-    $form['cod_revenue'] = intval($_POST['cod_revenue']);
-    $form['vat_code'] = intval($_POST['vat_code']);
-    $form['id_body_text'] = intval($_POST['id_body_text']);
-    $form['body_text'] = $_POST['body_text'];
-    $form['last_reassessment_Y'] = intval($_POST['last_reassessment_Y']);
-    $form['last_reassessment_M'] = intval($_POST['last_reassessment_M']);
-    $form['last_reassessment_D'] = intval($_POST['last_reassessment_D']);
-    $form['id_agente'] = intval($_POST['id_agente']);
-    $form['provvigione'] = floatval(preg_replace("/\,/",'.',$_POST['provvigione']));
 
     // inizio rigo di input
     $form['in_status'] = $_POST['in_status'];
@@ -279,31 +255,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['customer'] = $send_mail['customer'];
     $form['search']['customer']=substr($cliente['ragso1'],0,10);
     $form['vat_section'] = $send_mail['vat_section'];
-    $form['doc_number'] = $send_mail['doc_number'];
-    $form['conclusion_date_Y'] = substr($send_mail['conclusion_date'],0,4);
-    $form['conclusion_date_M'] = substr($send_mail['conclusion_date'],5,2);
-    $form['conclusion_date_D'] = substr($send_mail['conclusion_date'],8,2);
-    $form['start_date_Y'] = substr($send_mail['start_date'],0,4);
-    $form['start_date_M'] = substr($send_mail['start_date'],5,2);
-    $form['start_date_D'] = substr($send_mail['start_date'],8,2);
-    $form['months_duration'] = $send_mail['months_duration'];
-    $form['initial_fee'] = $send_mail['initial_fee'];
-    $form['periodic_reassessment'] = $send_mail['periodic_reassessment'];
-    $form['bank'] = $send_mail['bank'];
-    $form['payment_method'] = $send_mail['payment_method'];
-    $form['tacit_renewal'] = $send_mail['tacit_renewal'];
-    $form['current_fee'] = $send_mail['current_fee'];
-    $form['vat_code'] = $send_mail['vat_code'];
-    $form['cod_revenue'] = $send_mail['cod_revenue'];
-    $form['id_body_text'] = $send_mail['id_body_text'];
-    $bodytext = gaz_dbi_get_row($gTables['body_text'],"id_body",$send_mail['id_body_text']);
-    $form['body_text'] = $bodytext['body_text'];
-    $form['last_reassessment_Y'] = substr($send_mail['last_reassessment'],0,4);
-    $form['last_reassessment_M'] = substr($send_mail['last_reassessment'],5,2);
-    $form['last_reassessment_D'] = substr($send_mail['last_reassessment'],8,2);
-    $form['periodicity'] = $send_mail['periodicity'];
-    $form['provvigione'] = $send_mail['provvigione'];
-    $form['id_agente'] = $send_mail['id_agente'];
 
     // inizio rigo di input
     $form['in_status'] = "INSERT";
@@ -341,49 +292,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     }
     $cliente['indspe'] = '';
     $form['search']['customer']='';
-    if (!isset($_GET['vat_section'])) {
-        $rs_last = gaz_dbi_dyn_query("vat_section,doc_type", $gTables['send_mail'], 1,"id_send_mail DESC",0,1);
-        $last = gaz_dbi_fetch_array($rs_last);
-                if ($last){
-                   $form['vat_section'] = $last['vat_section'];
-                } else {
-                   $form['vat_section'] = 1;
-                }
-    } else {
-        $form['vat_section'] = intval($_GET['vat_section']);
-    }
-    // trovo l'ultimo numero di contratto
-    $rs_last = gaz_dbi_dyn_query("*", $gTables['send_mail'], "YEAR(conclusion_date)=".date("Y"),"conclusion_date DESC",0,1);
-    $last = gaz_dbi_fetch_array($rs_last);
-    $form['doc_number'] = $last['doc_number']+1;
-    $form['conclusion_date_Y'] = date("Y");
-    $form['conclusion_date_M'] = date("m");
-    $form['conclusion_date_D'] = date("d");
-    $form['start_date'] = date("d-m-Y");
-    $form['start_date_Y'] = date("Y");
-    $form['start_date_M'] = date("m");
-    $form['start_date_D'] = date("d");
-    $form['months_duration'] = 12;
-    $form['initial_fee'] = 0.00;
-    $form['periodic_reassessment'] = 1;
-    $form['payment_method'] = 0;
-    $form['bank'] = 0;
-    $form['periodicity'] = 0;
-    $form['tacit_renewal'] = 1;
-    $form['current_fee'] = 0.00;
-    $form['cod_revenue'] = $admin_aziend['impven'];
-    $form['id_body_text'] = 0;
-    $form['vat_code'] = $admin_aziend['alliva'];
-    $form['body_text'] = '';
-    $form['last_reassessment'] = '';
-    $form['last_reassessment_Y'] = date("Y");
-    $form['last_reassessment_M'] = date("m");
-    $form['last_reassessment_D'] = date("d");
-    $form['id_agente'] = 0;
-    $form['provvigione'] = 0.00;
-    $form['rows'] = array();
-    $next_row = 0;
-    $rows_text ='body_text';
     $form['hidden_req'] = '';
     // inizio rigo di input
     $form['in_status'] = "INSERT";
