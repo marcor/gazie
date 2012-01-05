@@ -450,9 +450,11 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
         $pdf->compose();
     }
     $pdf->pageFooter();
-    if ($dest){
-       $pdf->Output($docVars->intesta1.'_tesdoc_id_'.$docVars->tesdoc['id_tes'].'.pdf',$dest);
-    } else {
+    if ($dest && $dest=='E'){ // è stata richiesta una e-mail
+       $content=$pdf->Output($docVars->intesta1.'_FatturaDifferita_n.'.$docVars->tesdoc['numfat'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf',$dest);
+       $gMail = new GAzieMail();
+       $gMail->sendMail($docVars->azienda,$docVars->user,$content,$docVars->client);
+    } else { // va all'interno del browser
        $pdf->Output();
     }
 }

@@ -227,7 +227,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         // Colonna "Stampa"
         echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"".$modulo."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
         if (!empty($r["e_mail"])) {
-            echo " <-> <a title=\"maito: ".$r["e_mail"]."\" href=\"".$modulo."&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
+            echo " <-> <a title=\"mailto: ".$r["e_mail"]."\" href=\"".$modulo."&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
 
         }  
         echo "</td>";

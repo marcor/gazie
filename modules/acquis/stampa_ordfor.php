@@ -33,5 +33,9 @@ if ($tesbro['tipdoc'] <> 'AOR') {
     header("Location: report_broacq.php");
     exit;
 }
-createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro');
-?>
+if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
+    createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro','E');
+} else {
+    createDocument($tesbro, 'OrdineFornitore',$gTables,'rigbro');
+}
+    ?>

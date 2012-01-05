@@ -27,7 +27,11 @@ $admin_aziend=checkAdmin();
 require("../../library/include/document.php");
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", intval($_GET['id_tes']));
 if ($tesbro['tipdoc']=='VOR') {
-    createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro');
+    if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
+        createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro','E');
+    } else {
+        createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro');
+    }
 } elseif ($tesbro['tipdoc']=='VOW'){
     createDocument($tesbro, 'OrdineWeb',$gTables,'rigbro');
 } else {

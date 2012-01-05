@@ -26,7 +26,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\','/',__FILE__) == $_S
     exit('Accesso diretto non consentito') ;
 }
 //versione software
-$versSw = '5.19';
+$versSw = '5.20';
 
 //array con le descrizioni della valuta utilizzata
 $money = array("euro","€","€");

@@ -32,5 +32,9 @@ if ($tesbro['tipdoc'] <> 'VPR') {
     header("Location: report_broven.php");
     exit;
 }
-createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro');
+if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
+     createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro','E');
+} else {
+     createDocument($tesbro, 'PreventivoCliente',$gTables,'rigbro');
+}
 ?>

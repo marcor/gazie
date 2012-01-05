@@ -129,7 +129,7 @@ $linkHeaders -> output();
 if (!isset($_GET['flag_order']))
        $orderby = "datemi DESC, numdoc DESC";
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesbro'].".*,".$gTables['anagra'].".ragso1", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice  LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby,$limit, $passo);
+$result = gaz_dbi_dyn_query($gTables['tesbro'].".*,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice  LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby,$limit, $passo);
 $ctrlprotoc = "";
 while ($r = gaz_dbi_fetch_array($result)) {
     if ($r["tipdoc"] == 'VPR') {
@@ -272,7 +272,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         echo "</td>";
     }
-    echo "<td class=\"FacetDataTD\"><a href=\"".$modulo."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\"><a href=\"".$modulo."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
+    if (!empty($r["e_mail"])) {
+        echo " <-> <a title=\"mailto: ".$r["e_mail"]."\" href=\"".$modulo."&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
+
+    }  
+    echo "</td>";
     echo "<td class=\"FacetDataTD\">";
     if (!$remains_atleastone || !$processed_atleastone) {
         //possono essere cancellati solo gli ordini inevasi o completamente evasi

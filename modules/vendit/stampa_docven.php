@@ -77,7 +77,11 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
                                                  numfat BETWEEN ".intval($_GET['ni'])." AND ".intval($_GET['nf'])." AND
                                                  protoc BETWEEN ".intval($_GET['pi'])." AND ".intval($_GET['pf']).
                                                  $cliente,"datfat ASC, protoc ASC, id_tes ASC");
-   createInvoiceFromDDT($testate, $gTables);
+   if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
+       createInvoiceFromDDT($testate, $gTables,'E');
+   } else {
+       createInvoiceFromDDT($testate, $gTables);
+   }
 } else { // in tutti gli altri casi
    if (!isset($_GET['pi']) or !isset($_GET['td'])) {
       header("Location: report_docven.php");

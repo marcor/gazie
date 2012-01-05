@@ -77,21 +77,26 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         $modulo="stampa_ordfor.php?id_tes=".$a_row['id_tes'];
         $modifi="admin_broacq.php?id_tes=".$a_row['id_tes']."&Update";
     }
-    $cliente = $anagrafica->getPartner($a_row['clfoco']);
-    print "<tr>";
+    $fornitore = $anagrafica->getPartner($a_row['clfoco']);
+    echo "<tr>";
     if (! empty ($modifi)) {
-       print "<td class=\"FacetDataTD\"><a href=\"".$modifi."\">".$a_row["id_tes"]."</td>";
+       echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\">".$a_row["id_tes"]."</td>";
     } else {
-       print "<td class=\"FacetDataTD\">".$a_row["id_tes"]." &nbsp;</td>";
+       echo "<td class=\"FacetDataTD\">".$a_row["id_tes"]." &nbsp;</td>";
     }
-    print "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\">".$a_row["numdoc"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\">".gaz_format_date($a_row["datemi"])." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\">".$cliente["ragso1"]."&nbsp;</td>";
-    print "<td class=\"FacetDataTD\">".$a_row["status"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\"><a href=\"".$modulo."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
-    print "<td class=\"FacetDataTD\"><a href=\"delete_broacq.php?id_tes=".$a_row['id_tes']."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
-    print "</tr>";
+    echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\">".$a_row["numdoc"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\">".gaz_format_date($a_row["datemi"])." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\">".$fornitore["ragso1"]."&nbsp;</td>";
+    echo "<td class=\"FacetDataTD\">".$a_row["status"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\"><a href=\"".$modulo."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
+    if (!empty($fornitore["e_mail"])) {
+        echo " <-> <a title=\"mailto: ".$fornitore["e_mail"]."\" href=\"".$modulo."&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
+
+    }  
+    echo "</td>";
+    echo "<td class=\"FacetDataTD\"><a href=\"delete_broacq.php?id_tes=".$a_row['id_tes']."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+    echo "</tr>";
 }
 ?>
 </table>
