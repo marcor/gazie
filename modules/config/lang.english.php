@@ -41,7 +41,8 @@ $strScript = array ("admin_aziend.php" =>
                                            'The picture has a size greater than 64kb',
                                            'The color you choose has a brightness of less than 408 (hex88 +88 +88)',
                                            'You must enter a picture for the company logo',
-                                           'Invalid postal code'
+                                           'Invalid postal code',
+                                           'Email address formally wrong'
                                     ),
                            'codice'=>"Code ",
                            'ragso1'=>"Company name 1",

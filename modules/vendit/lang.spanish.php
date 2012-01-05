@@ -54,7 +54,8 @@ $strScript = array ("admin_client.php" =>
                                            'Existe un registro con el mismo c&oacute;digo fiscal',
                                            'Usted debe elegir el metodo de pago',
                                            'El c&oacute;digo de cliente ya est&aacute; ah&iacute;, intentar la entrada con la que se propone (m&aacute;s 1)',
-                                           'The date of birth is wrong'
+                                           'The date of birth is wrong',
+                                           'Email formalmente mal la dirección'
                                           ),
                            'link_anagra'=>' Haga clic a continuaci&oacute;n para introducir sus datos personales en la tabla existente de cuentas',
                            'codice'=>"Codigo ",

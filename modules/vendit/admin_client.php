@@ -29,6 +29,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form=array_merge(gaz_dbi_parse_post('clfoco'),gaz_dbi_parse_post('anagra'));
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = $_POST['hidden_req'];
+    $form['e_mail'] = trim($form['e_mail']);
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
@@ -144,6 +145,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        $uts_datnas = mktime(0,0,0,$form['datnas_M'],$form['datnas_D'],$form['datnas_Y']);
        if (!checkdate($form['datnas_M'],$form['datnas_D'],$form['datnas_Y']) && ($admin_aziend['country'] != $form['country'] )) {
           $msg .= "19+";
+       }
+       if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL)){
+          $msg .= "20+";
        }
 
        if (empty($msg)) { // nessun errore

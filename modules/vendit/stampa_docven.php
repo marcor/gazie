@@ -41,7 +41,11 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
    } else {
       $template = 'FatturaImmediata';
    }
-   createDocument($testata, $template, $gTables);
+   if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
+       createDocument($testata, $template, $gTables,'rigdoc','E');
+   } else {
+       createDocument($testata, $template, $gTables);
+   }
 } elseif(isset($_GET['td']) and $_GET['td'] == 2) {  //se viene richiesta la stampa di fattura/e differita/e appartenenti ad un periodo
    if (!isset($_GET['pi'])) {
       header("Location: report_docven.php");

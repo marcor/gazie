@@ -336,9 +336,11 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     $pdf->pageHeader();
     $pdf->compose();
     $pdf->pageFooter();
-    if ($dest){
-       return $pdf->Output($docVars->intesta1.'_tesdoc_id_'.$docVars->tesdoc['id_tes'].'.pdf',$dest);
-    } else {
+    if ($dest && $dest=='E'){ // è stata richiesta una e-mail
+       $content=$pdf->Output($docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numdoc'].'_del_'.gaz_format_date($docVars->tesdoc['datemi']).'.pdf',$dest);
+       $gMail = new GAzieMail();
+       $gMail->sendMail($docVars->azienda,$docVars->user,$content,$docVars->client);
+    } else { // va all'interno del browser
        $pdf->Output();
     }
 }

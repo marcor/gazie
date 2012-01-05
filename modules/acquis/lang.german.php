@@ -52,7 +52,8 @@ $strScript = array("admin_fornit.php" =>
                                            'Gibt es eine Registrierung mit dem gleichen Steuerkennzeichen',
                                            'Sie müssen wählen Sie Ihre Zahlungsweise',
                                            'Der Lieferanten-Code ist bereits vorhanden, versuchen Sie die Eingabe mit der einen vorgeschlagen (plus 1)',
-                                           'The date of birth is wrong'
+                                           'The date of birth is wrong',
+                                           'Email address formally wrong'
                                           ),
                            'link_anagra'=>'Klicken Sie unten, um die vorhandene Registrierung auf der Sie Ihre Kontenplan eingeben ',
                            'codice'=>"Code ",

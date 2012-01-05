@@ -50,7 +50,8 @@ $strScript = array ("admin_client.php" =>
                                            'Is there a registry with the same Tax code',
                                            'You must choose your payment method',
                                            'The customer code is already there, try the entry with the one proposed (plus 1)',
-                                           'The date of birth is wrong'
+                                           'The date of birth is wrong',
+                                           'Email address formally wrong'
                                           ),
                            'link_anagra'=>' Click below to enter the existing registry on the your chart of accounts',
                            'codice'=>"Code ",

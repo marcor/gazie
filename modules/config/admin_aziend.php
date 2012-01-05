@@ -37,6 +37,7 @@ if ($exist_true) {
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form=gaz_dbi_parse_post('aziend');
     $form['ritorno'] = $_POST['ritorno'];
+    $form['e_mail'] = trim($form['e_mail']);
     $form['mascli'] = intval(substr($_POST['mascli'],0,3));
     $form['masfor'] = intval(substr($_POST['masfor'],0,3));
     $form['masban'] = intval(substr($_POST['masban'],0,3));
@@ -112,6 +113,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        $cap= new postal_code;
        if ($cap->check_postal_code($form["capspe"],$form["country"])) {
           $msg.='15+';
+       }
+       if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL)){
+          $msg .= "16+";
        }
        if (empty($msg)) { // nessun errore
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer

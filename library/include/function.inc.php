@@ -774,6 +774,45 @@ class selectvettor extends SelectBox
     }
 }
 
+// classe per l'invio di documenti allegati ad una e-mail 
+class GAzieMail
+{
+  function sendMail($admin_data,$user,$content,$partner)
+    {
+        global $gTables;
+        // definisco il server SMTP e il mittente 
+        $config = gaz_dbi_get_row($gTables['company_config'],'var','smtp_server');
+        ini_set("SMTP",$config['val']);
+        ini_set('sendmail_from', $admin_data['e_mail']);
+        // se non è possibile usare ini_set allora la mail verrà trasmessa usando i
+        // dati attinti su php.ini
+        $body_text = gaz_dbi_get_row($gTables['body_text'],'table_name_ref','body_send_doc_email');
+        $mailto = $partner['e_mail']; //recipient
+        $subject = $admin_data['ragso1']." ".$admin_data['ragso2']."-Trasmissione documenti"; //subject
+        $uid = md5(uniqid(time()));
+        $headers = "\nMIME-Version: 1.0\n" .
+        "Content-Type: multipart/mixed;\n" .
+        " boundary=\"{$uid}\""; 
+        $msg_content = "--".$uid."\r\n".
+                "Content-type:text/html; charset=utf8\r\n".
+                "Content-Transfer-Encoding: 7bit\r\n\r\n".
+                $body_text['body_text']."<h3><span style=\"color: #000000;
+                background-color: #".$admin_data['colore'].";\">Company: ".$admin_data['ragso1']." ".$admin_data['ragso2']."</span></h3>
+                <address><span style=\"color: #".$admin_data['colore'].";\">User: ".$user['Nome']." ".$user['Cognome']."</span><br /></address>\r\n\r\n".
+                "--".$uid."\r\n".
+                "--".$uid."\r\n".
+                $content.
+                "--".$uid."--";
+        echo 'mailto: '.$mailto.'<br /> from:'.$admin_data['e_mail'].'<br /> SMTP: '.$config['val'].'<br />';
+        if (mail($mailto, $subject,$msg_content,$headers)) {
+            echo "invio e-mail riuscito... <b>OK</b><br />mail send has been successful... <b>OK</b>"; // or use booleans here
+        } else {
+            echo "invio e-mail <b style=\"color: #ff0000;\">NON riuscito... ERROR!</b><br />mail send has<b style=\"color: #ff0000;\"> NOT been successful... ERROR!</b> ";
+        }
+ }
+}
+
+
 // classe per la generazione dinamica dei form di amministrazione
 class GAzieForm
 {

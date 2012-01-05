@@ -45,7 +45,8 @@ $strScript = array ("admin_aziend.php" =>
                                            'La imagen debe estar en PNG',
                                            'La imagen tiene un tama&ntilde;o mayor a 64kb',
                                            'El color que usted elija tiene una luminosidad de menos de 408 (hex88 +88 +88)',
-                                           'Debe introducir una imagen para el logotipo de la empresa'
+                                           'Debe introducir una imagen para el logotipo de la empresa',
+                                           'Email formalmente mal la dirección'
                                     ),
                            'codice'=>"Codigo ",
                            'ragso1'=>"Nombre de la empresa 1",

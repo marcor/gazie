@@ -53,7 +53,8 @@ $strScript = array("admin_fornit.php" =>
                                            'Esiste una anagrafica con lo stesso Codice Fiscale',
                                            '&Egrave; necessario scegliere la modalit&agrave; di pagamnto',
                                            'Il codice del fornitore &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
-                                           'La data di nascita &egrave; sbagliata'
+                                           'La data di nascita &egrave; sbagliata',
+                                           'Indirizzo email formalmente sbagliato'
                                           ),
                            'link_anagra'=>' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
                            'codice'=>"Codice ",

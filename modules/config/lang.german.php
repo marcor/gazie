@@ -43,7 +43,8 @@ $strScript = array ("admin_aziend.php" =>
                                            'Das Bild hat eine Größe 64kb Greater Than',
                                            'Die gewählte Farbe hat eine Helligkeit von weniger als 408  (hex88 +88 +88)',
                                            'Sie müssen ein Bild für das Firmen-Logo',
-                                           'Ungültige Postleitzahl'
+                                           'Ungültige Postleitzahl',
+                                           'Email address formally wrong'
                                     ),
                            'codice'=>"Code ",
                            'ragso1'=>"Firmenname 1",
