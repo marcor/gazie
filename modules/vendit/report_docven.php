@@ -145,7 +145,7 @@ $linkHeaders -> output();
 $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,'datfat DESC, protoc DESC',0,1);
 $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'].".*, MAX(".$gTables['tesdoc'].".id_tes) AS reftes,".$gTables['anagra'].".ragso1,".$gTables['pagame'].".tippag", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id  LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice", $where, $orderby,$limit, $passo);
+$result = gaz_dbi_dyn_query($gTables['tesdoc'].".*, MAX(".$gTables['tesdoc'].".id_tes) AS reftes,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail,".$gTables['pagame'].".tippag", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id  LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice", $where, $orderby,$limit, $passo);
 $ctrl_doc = "";
 $ctrl_eff = 999999;
 while ($r = gaz_dbi_fetch_array($result)) {
@@ -225,7 +225,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         echo "</td>";
         // Colonna "Stampa"
-        echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"".$modulo."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+        echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"".$modulo."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
+        if (!empty($r["e_mail"])) {
+            echo " <-> <a title=\"maito: ".$r["e_mail"]."\" href=\"".$modulo."&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
+
+        }  
+        echo "</td>";
         // Colonna "Origine"
         if ($r["tipdoc"]=='FAD'){
            $ddt_result = gaz_dbi_dyn_query ('*',$gTables['tesdoc'],"tipdoc = '".$r["tipdoc"]."' AND numfat = ".$r["numfat"]." AND datfat = '".$r["datfat"]."'",'datemi DESC');
