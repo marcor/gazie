@@ -798,6 +798,7 @@ class GAzieMail
                 "Content-Transfer-Encoding: 7bit\r\n\r\n".
                 $body_text['body_text']."<h3><span style=\"color: #000000;
                 background-color: #".$admin_data['colore'].";\">Company: ".$admin_data['ragso1']." ".$admin_data['ragso2']."</span></h3>
+                <h4><span style=\"color: #000000;\">Web: <a href=\"".$admin_data['web_url']."\">".$admin_data['web_url']."</a></span></h4>
                 <address><span style=\"color: #".$admin_data['colore'].";\">User: ".$user['Nome']." ".$user['Cognome']."</span><br /></address>\r\n\r\n".
                 "--".$uid."\r\n".
                 "--".$uid."\r\n".
