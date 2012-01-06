@@ -44,7 +44,8 @@ $strScript = array ("admin_aziend.php" =>
                                            'Die gewählte Farbe hat eine Helligkeit von weniger als 408  (hex88 +88 +88)',
                                            'Sie müssen ein Bild für das Firmen-Logo',
                                            'Ungültige Postleitzahl',
-                                           'Email address formally wrong'
+                                           'Email address formally wrong',
+                                           'Web address formally wrong'
                                     ),
                            'codice'=>"Code ",
                            'ragso1'=>"Firmenname 1",

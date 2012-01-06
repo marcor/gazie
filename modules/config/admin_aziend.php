@@ -38,6 +38,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form=gaz_dbi_parse_post('aziend');
     $form['ritorno'] = $_POST['ritorno'];
     $form['e_mail'] = trim($form['e_mail']);
+    $form['web_url'] = trim($form['web_url']);
     $form['mascli'] = intval(substr($_POST['mascli'],0,3));
     $form['masfor'] = intval(substr($_POST['masfor'],0,3));
     $form['masban'] = intval(substr($_POST['masban'],0,3));
@@ -116,6 +117,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        }
        if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL)){
           $msg .= "16+";
+       }
+       if (!filter_var($form['web_url'], FILTER_VALIDATE_URL)) {
+          $msg .= "17+";
        }
        if (empty($msg)) { // nessun errore
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer

@@ -42,7 +42,8 @@
                                            'Il colore che hai scelto ha una luminosit&agrave; minore di 408 (hex88+88+88)',
                                            'Devi inserire una immagine per il logo aziendale',
                                            'Il codice di avviamento postale (CAP) &egrave; sbagliato',
-                                           'Indirizzo email formalmente sbagliato'
+                                           'Indirizzo email formalmente sbagliato',
+                                           'Indirizzo web formalmente sbagliato'
                                           ),
                            'codice'=>"Codice ",
                            'ragso1'=>"Ragione Sociale 1",
