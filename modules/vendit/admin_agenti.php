@@ -82,6 +82,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                    unset($_POST['in_submit_x']);
             }
             // fine controllo impedimento inserimento codici esistenti
+            $form['righi'][$next_row]['id_provvigione'] = intval($value['id_provvigione']);
             $form['righi'][$next_row]['cod_articolo'] = substr($value['cod_articolo'],0,15);
             $form['righi'][$next_row]['cod_catmer'] = intval($value['cod_catmer']);
             $form['righi'][$next_row]['percentuale'] = floatval(preg_replace("/\,/",'.',$value['percentuale']));
@@ -107,12 +108,14 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
    if ((!empty($form['in_cod_articolo']) || $form['in_cod_catmer'] > 0) && $form['in_percentuale'] > 0) {
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
+         $form['righi'][$old_key]['id_provvigione'] = $form['id_provvigione'];
          $form['righi'][$old_key]['cod_articolo'] = $form['in_cod_articolo'];
          $form['righi'][$old_key]['cod_catmer'] = $form['in_cod_catmer'];
          $form['righi'][$old_key]['percentuale'] = $form['in_percentuale'];
          $form['righi'][$old_key]['status'] = "UPDATE";
          ksort($form['righi']);
     } else { //se è un rigo da inserire
+         $form['righi'][$next_row]['id_provvigione'] = 0;
          $form['righi'][$next_row]['cod_articolo'] = $form['in_cod_articolo'];
          $form['righi'][$next_row]['cod_catmer'] = $form['in_cod_catmer'];
          $form['righi'][$next_row]['percentuale'] = $form['in_percentuale'];
@@ -214,6 +217,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['base_percent'] = $agenti['base_percent'];
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+         $form['righi'][$next_row]['id_provvigione'] = $rigo['id_provvigione'];
          $form['righi'][$next_row]['cod_articolo'] = $rigo['cod_articolo'];
          $form['righi'][$next_row]['cod_catmer'] = $rigo['cod_catmer'];
          $form['righi'][$next_row]['percentuale'] = $rigo['percentuale'];
@@ -334,6 +338,7 @@ echo "<tr><td colspan=\"5\"><hr></td></tr>\n";
 // inizio righi già inseriti
 foreach ($form['righi'] as $key => $value) {
         echo "<input type=\"hidden\" value=\"".$value['status']."\" name=\"righi[$key][status]\">\n";
+        echo "<input type=\"hidden\" value=\"".$value['id_provvigione']."\" name=\"righi[$key][id_provvigione]\">\n";
         echo "<tr>\n";
         if  ($value['cod_catmer']>0){
             $catmer = gaz_dbi_get_row($gTables['catmer'],'codice',$value['cod_catmer']);
