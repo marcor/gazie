@@ -53,7 +53,47 @@ if (isset($_GET['all'])) {
 
 $titolo="Documenti di vendita a clienti";
 require("../../library/include/header.php");
-$script_transl=HeadMain();
+$script_transl=HeadMain(0,array('jquery/jquery-1.4.2.min',
+                                  'jquery/ui/jquery.ui.core',
+                                  'jquery/ui/jquery.ui.widget',
+                                  'jquery/ui/jquery.ui.mouse',
+                                  'jquery/ui/jquery.ui.button',
+                                  'jquery/ui/jquery.ui.dialog',
+                                  'jquery/ui/jquery.ui.position',
+                                  'jquery/ui/jquery.ui.draggable',
+                                  'jquery/ui/jquery.ui.resizable',
+                                  'jquery/ui/jquery.effects.core',
+                                  'jquery/ui/jquery.effects.scale',
+                                  'jquery/modal_form.js'));
+echo '<script>
+$(function() {
+   $( "#dialog" ).dialog({
+      autoOpen: false
+   });
+});
+function confirMail(link){
+   tes_id = link.id.replace("doc", "");
+   $.fx.speeds._default = 500;
+   targetUrl = $("#doc"+tes_id).attr("url");
+   //alert (targetUrl);
+   $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
+   $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
+   $( "#dialog" ).dialog({
+         modal: "true",
+      show: "blind",
+      hide: "explode",
+         buttons: {
+                      " '.$script_transl['submit'].' ": function() {
+                         window.location.href = targetUrl;
+                      },
+                      " '.$script_transl['cancel'].' ": function() {
+                        $(this).dialog("close");
+                      }
+                  }
+         });
+   $("#dialog" ).dialog( "open" );
+}
+</script>';
 switch($admin_aziend['fatimm']) {
     case "1":
         $sezfatimm = 1;
@@ -93,6 +133,14 @@ switch($admin_aziend['fatimm']) {
 </tr>
 </table>
 <form method="GET" >
+
+<div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+      <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+      <p class="ui-state-highlight" id="mail_adrs"></p>
+      <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
+      <p class="ui-state-highlight" id="mail_attc"></p>
+</div>
+
 <div align="center"><font class="FacetFormHeaderFont">Documenti di vendita della sezione
 <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
 <?php
@@ -134,6 +182,7 @@ $headers_tesdoc = array  (
             "Cliente" => "ragso1",
             "Status" => "",
             "Stampa" => "",
+            "Mail" => "",
             "Origine" => "",
             "Cancella" => ""
             );
@@ -226,9 +275,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "</td>";
         // Colonna "Stampa"
         echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"".$modulo."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
+        echo "</td>";
+        // Colonna "Mail"
+        echo "<td class=\"FacetDataTD\" align=\"center\">";
         if (!empty($r["e_mail"])) {
-            echo " <-> <a title=\"mailto: ".$r["e_mail"]."\" href=\"".$modulo."&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
-
+            echo '<a onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+            mail="'.$r["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numfat"].' del '.gaz_format_date($r["datfat"]).'"><img src="../../library/images/email.gif" border="0"></a>';
         }  
         echo "</td>";
         // Colonna "Origine"

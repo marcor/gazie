@@ -106,7 +106,12 @@ $strScript = array("admin_fornit.php" =>
                            'annota'=>'Annotazioni'
                          ),
                    "report_broacq.php" =>
-                   array('Nuovo Preventivo','Nuovo Ordine'),
+                   array('Nuovo Preventivo','Nuovo Ordine',
+                         'title'=>'Preventivi e ordini',
+                         'mail_alert0'=>'Invio documento con email',
+                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                         'mail_alert2'=>'con allegato il seguente documento:',
+                        ),
                    "report_debiti.php" =>
                    array(  'title'=>'Lista dei debiti verso i fornitori',
                            'start_date'=>'Anno inizio',

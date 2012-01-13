@@ -103,20 +103,11 @@ $strScript = array ("admin_client.php" =>
                            'annota'=>'Annotazioni'
                          ),
                    "report_docven.php" =>
-                   array(  "statistica ",
-                           "vendite",
-                           "acquisti",
-                           "anno",
-                           "ordinato per ",
-                           " da: ",
-                           " a: ",
-                           "Ultimo acquisto il ",
-                           "Ultima vendita il ",
-                           " dell'anno ",
-                           " Categoria merc. ",
-                           " Quantit&agrave; ",
-                           " Valore in $money[0] ",
-                           " Fuori "),
+                   array('title'=>'Lista dei documenti di vendita',
+                         'mail_alert0'=>'Invio documento con email',
+                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                         'mail_alert2'=>'con allegato il seguente documento di vendita:'
+                         ),
                     "admin_agenti.php" =>
                    array(  "Agenti di vendita ",
                            "Agente di vendita",
@@ -420,7 +411,10 @@ $strScript = array ("admin_client.php" =>
                            ),
                     "report_broven.php" =>
                     array( 'title'=>'Preventivi e ordini',
-                           'title_value'=>array('VPR'=>'Preventivi a clienti',
+                         'mail_alert0'=>'Invio documento con email',
+                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                         'mail_alert2'=>'con allegato il seguente documento:',
+                         'title_value'=>array('VPR'=>'Preventivi a clienti',
                                           'VOR'=>'Ordini dei clienti',
                                           'VOW'=>'Ordini dal web'),
                            'link_title' =>array('VPR'=>'Nuovo Preventivo a cliente',

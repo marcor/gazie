@@ -104,20 +104,11 @@ $strScript = array ("admin_client.php" =>
                            'annota'=>'Note'
                          ),
                    "report_docven.php" =>
-                   array(  "statistic ",
-                           "sales",
-                           "purchases",
-                           "year",
-                           "Order by ",
-                           " from: ",
-                           " to: ",
-                           "Last purchase at ",
-                           "Last sales at ",
-                           " of the year ",
-                           " Item group ",
-                           " Quantity ",
-                           " Amount in $money[0] ",
-                           " Out "),
+                   array('title'=>'Lista dei documenti di vendita',
+                         'mail_alert0'=>'Invio documento con email',
+                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                         'mail_alert2'=>'con allegato il seguente documento di vendita:'
+                         ),
                     "admin_agenti.php" =>
                    array(  "Sales agents ",
                            "Sales agent",
@@ -577,6 +568,9 @@ $strScript = array ("admin_client.php" =>
                            ),
                     "report_broven.php" =>
                     array( 'title'=>'Quotes and orders',
+                         'mail_alert0'=>'Invio documento con email',
+                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                         'mail_alert2'=>'con allegato il seguente documento:',
                            'title_value'=>array('VPR'=>'Quotations to customers',
                                           'VOR'=>'Customer orders',
                                           'VOW'=>'Orders from the web'),

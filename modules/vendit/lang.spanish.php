@@ -107,20 +107,11 @@ $strScript = array ("admin_client.php" =>
                            'annota'=>'Anotaciones'
                          ),
                    "report_docven.php" =>
-                   array(  "estadistica ",
-                           "ventas",
-                           "compras",
-                           "a&ntilde;o",
-                           "derdenar por ",
-                           " desde: ",
-                           " hasta: ",
-                           "Ultima compra en ",
-                           "Ultima venta en ",
-                           " del a&ntilde;o ",
-                           " Grupo de Itemes ",
-                           " Cantidad ",
-                           " Monto en $money[0] ",
-                           " de "),
+                   array('title'=>'Lista dei documenti di vendita',
+                         'mail_alert0'=>'Invio documento con email',
+                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                         'mail_alert2'=>'con allegato il seguente documento di vendita:'
+                         ),
                     "admin_agenti.php" =>
                    array(  "Agentes de venta ",
                            "Agentes de venta",
@@ -580,6 +571,9 @@ $strScript = array ("admin_client.php" =>
                            ),
                     "report_broven.php" =>
                     array( 'title'=>'Las cotizaciones y pedidos',
+                         'mail_alert0'=>'Invio documento con email',
+                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                         'mail_alert2'=>'con allegato il seguente documento:',
                            'title_value'=>array('VPR'=>'Las citas a los clientes',
                                           'VOR'=>'Pedidos de los clientes',
                                           'VOW'=>'Los pedidos de la p&aacute;gina web'),

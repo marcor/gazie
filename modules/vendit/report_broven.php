@@ -69,7 +69,47 @@ if (isset($_GET['all'])) {
 }
 
 require("../../library/include/header.php");
-$script_transl=HeadMain();
+$script_transl=HeadMain(0,array('jquery/jquery-1.4.2.min',
+                                  'jquery/ui/jquery.ui.core',
+                                  'jquery/ui/jquery.ui.widget',
+                                  'jquery/ui/jquery.ui.mouse',
+                                  'jquery/ui/jquery.ui.button',
+                                  'jquery/ui/jquery.ui.dialog',
+                                  'jquery/ui/jquery.ui.position',
+                                  'jquery/ui/jquery.ui.draggable',
+                                  'jquery/ui/jquery.ui.resizable',
+                                  'jquery/ui/jquery.effects.core',
+                                  'jquery/ui/jquery.effects.scale',
+                                  'jquery/modal_form.js'));
+echo '<script>
+$(function() {
+   $( "#dialog" ).dialog({
+      autoOpen: false
+   });
+});
+function confirMail(link){
+   tes_id = link.id.replace("doc", "");
+   $.fx.speeds._default = 500;
+   targetUrl = $("#doc"+tes_id).attr("url");
+   //alert (targetUrl);
+   $("p#mail_adrs").html($("#doc"+tes_id).attr("mail"));
+   $("p#mail_attc").html($("#doc"+tes_id).attr("namedoc"));
+   $( "#dialog" ).dialog({
+         modal: "true",
+      show: "blind",
+      hide: "explode",
+         buttons: {
+                      " '.$script_transl['submit'].' ": function() {
+                         window.location.href = targetUrl;
+                      },
+                      " '.$script_transl['cancel'].' ": function() {
+                        $(this).dialog("close");
+                      }
+                  }
+         });
+   $("#dialog" ).dialog( "open" );
+}
+</script>';
 $a=substr($auxil,0,3);
 ?>
 <table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
@@ -95,6 +135,14 @@ $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <form method="GET" >
+
+<div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+      <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+      <p class="ui-state-highlight" id="mail_adrs"></p>
+      <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
+      <p class="ui-state-highlight" id="mail_attc"></p>
+</div>
+
 <table class="Tlarge">
 <tr>
 <td colspan="3" class="FacetFieldCaptionTD"><?php echo $script_transl['number'];?>:&nbsp;
@@ -119,6 +167,7 @@ $headers_tesbro = array  (
               "Cliente" => "clfoco",
               $script_transl['status'] => "status",
               $script_transl['print'] => "",
+              "Mail" => "",
               $script_transl['delete'] => ""
               );
 $linkHeaders = new linkHeaders($headers_tesbro);
@@ -273,9 +322,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "</td>";
     }
     echo "<td class=\"FacetDataTD\"><a href=\"".$modulo."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
+    echo "</td>";
+     // Colonna "Mail"
+    echo "<td class=\"FacetDataTD\" align=\"center\">";
     if (!empty($r["e_mail"])) {
-        echo " <-> <a title=\"mailto: ".$r["e_mail"]."\" href=\"".$modulo."&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
-
+        echo '<a onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+        mail="'.$r["e_mail"].'" namedoc="'.$script_transl['type_value'][$r["tipdoc"]].' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><img src="../../library/images/email.gif" border="0"></a>';
     }  
     echo "</td>";
     echo "<td class=\"FacetDataTD\">";

@@ -129,10 +129,6 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"FacetDataTD\" align=\"center\"><a title=\"fattuazione da d.d.t.\" href=\"emissi_fatdif.php\">da fatturare</a></td>";
     }
     echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
-    if (!empty($r["e_mail"])) {
-      echo " <-> <a title=\"mailto: ".$r["e_mail"]."\" href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
-
-    }  
     echo "</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     $rigbro_result = gaz_dbi_dyn_query ('*',$gTables['rigbro'],"id_doc = ".$r['id_tes']." GROUP BY id_doc",'id_tes');
@@ -176,12 +172,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     }
     echo "</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">
-    <a title=\"stampa il documento di trasporto n. ".$r["numdoc"]."\" href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
-    if (!empty($r["e_mail"])) {
-      echo " <-> <a title=\"mailto: ".$r["e_mail"]."\" href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT&dest=E\"><img src=\"../../library/images/email.gif\" alt=\"Invia e-mail\" border=\"0\"></a>";
-
-    }  
-    echo "</td>";
+    <a title=\"stampa il documento di trasporto n. ".$r["numdoc"]."\" href=\"stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";    echo "</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     $rigbro_result = gaz_dbi_dyn_query ('*',$gTables['rigbro'],"id_doc = ".$r['id_tes']." GROUP BY id_doc",'id_tes');
     while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {
