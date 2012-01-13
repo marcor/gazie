@@ -1,0 +1,14 @@
+Titolo:
+Obsequium amicos, veritas odium parit.
+
+Presentazione:
+Questa nuova versione porta con se una utilità che sarà sicuramente molto apprezzata da tutti gli utenti: la possibilità di inviare ai partner commerciali i documenti in PDF via e-mail, quando un cliente o un fornitore ha l'indirizzo memorizzato sull'anagrafica nella lista dei documenti appare una icona cliccabile della e-mail, cliccandoci su appare una finestra di dialogo (scritta avvalendosi di jquery) per la conferma; se si va oltre il documento prescelto viene allegato ad una apposita e-mail che richiederà la ricevuta di ritorno al ricevente. Ritorno che avverrà sull'indirizzo e-mail scritto in configurazione azienda. Da tener presente che al momento nessuna traccia dell'invio effettuato viene tenuta da GAzie, pertanto ci si deve fidare della eventuale ricevuta accettata dal cliente/fornitore.
+In ogni caso per poter far funzionare l'invio si deve modificare la tabella gaz_001company_config all'indirizzo del server per la posta in uscita (SMTP) che attualmente è "localhost", alternativamente lo si può fare con l'apposita direttiva su php.ini.
+ 
+Modifiche apportate:
+- corretto errore sulla mancata possibilità di gestione dei moduli sull'interfaccia di manutenzione utenti.
+- corretto nome della tabella di configurazione delle singole aziende (gaz_001company_config) che impediva l'interfacciamento con gaziecart.
+- corretto errore sui righi delle provvigioni degli agenti segnalato il 13.01.2012 da angelo983 sul forum.
+- aggiunta la possibilità di inviare tutti i documenti direttamente ai clienti o ai fornitori tramite e-mail.  
+
+Antonio de Vincentiis, Montesilvano, 13 gennaio 2012 
