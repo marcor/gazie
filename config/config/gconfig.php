@@ -78,6 +78,15 @@ $table_prefix = "gaz";
 //
 $Timezone = "Europe/Rome";
 //
+// È ammesso inviare messaggi di posta elettronica?
+//
+$email_enabled = TRUE;
+//
+// Testo da aggiungere eventualmente ai messaggi di posta elettronica, sistematicamente,
+// per qualche motivo.
+//
+$email_disclaimer = "";
+//
 // Gazie utilizza la funzione PHP set_time_limit() per consentire il completamento
 // di elaborazioni che richiedono più tempo del normale.
 // In condizioni normali, la variabile $disable_set_time_limit deve avere corrispondere

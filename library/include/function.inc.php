@@ -780,6 +780,19 @@ class GAzieMail
   function sendMail($admin_data,$user,$content,$partner)
     {
         global $gTables;
+        global $email_enabled;
+        global $email_disclaimer;
+        //
+        // Se è possibile usare la posta elettronica, si procede.
+        //
+        if (!$email_enabled)
+          {
+            echo "invio e-mail <b style=\"color: #ff0000;\">disabilitato... ERROR!</b><br />mail send is <b style=\"color: #ff0000;\">disabled... ERROR!</b> ";
+            return;
+          }
+        //
+        // Si procede con la costruzione del messaggio.
+        //
         // definisco il server SMTP e il mittente 
         $config_smtp = gaz_dbi_get_row($gTables['company_config'],'var','smtp_server');
         $config_notif = gaz_dbi_get_row($gTables['company_config'],'var','return_notification');
@@ -803,7 +816,9 @@ class GAzieMail
                 $body_text['body_text']."<h3><span style=\"color: #000000;
                 background-color: #".$admin_data['colore'].";\">Company: ".$admin_data['ragso1']." ".$admin_data['ragso2']."</span></h3>
                 <h4><span style=\"color: #000000;\">Web: <a href=\"".$admin_data['web_url']."\">".$admin_data['web_url']."</a></span></h4>
-                <address><span style=\"color: #".$admin_data['colore'].";\">User: ".$user['Nome']." ".$user['Cognome']."</span><br /></address>\r\n\r\n".
+                <address><span style=\"color: #".$admin_data['colore'].";\">User: ".$user['Nome']." ".$user['Cognome']."</span><br /></address>\r\n".
+                "<hr><p>".$email_disclaimer."</p>\r\n".
+                "\r\n".
                 "--".$uid."\r\n".
                 "--".$uid."\r\n".
                 $content.
