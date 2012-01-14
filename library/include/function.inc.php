@@ -804,7 +804,7 @@ class GAzieMail
         $mailto = $partner['e_mail']; //recipient
         $subject = $admin_data['ragso1']." ".$admin_data['ragso2']."-Trasmissione documenti"; //subject
         $uid = md5(uniqid(time()));
-        $headers = "\nMIME-Version: 1.0\n";
+        $headers = "MIME-Version: 1.0\n";
         if ($config_notif['val']=='yes'){
             $headers .= "Disposition-notification-to: ".$admin_data['e_mail']."\n";
         }
@@ -819,7 +819,6 @@ class GAzieMail
                 <address><span style=\"color: #".$admin_data['colore'].";\">User: ".$user['Nome']." ".$user['Cognome']."</span><br /></address>\r\n".
                 "<hr><p>".$email_disclaimer."</p>\r\n".
                 "\r\n".
-                "--".$uid."\r\n".
                 "--".$uid."\r\n".
                 $content.
                 "--".$uid."--";
