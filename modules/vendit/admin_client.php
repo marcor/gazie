@@ -146,7 +146,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        if (!checkdate($form['datnas_M'],$form['datnas_D'],$form['datnas_Y']) && ($admin_aziend['country'] != $form['country'] )) {
           $msg .= "19+";
        }
-       if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL)){
+       if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])){
           $msg .= "20+";
        }
 

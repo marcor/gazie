@@ -115,10 +115,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        if ($cap->check_postal_code($form["capspe"],$form["country"])) {
           $msg.='15+';
        }
-       if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL)){
+       if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])){
           $msg .= "16+";
        }
-       if (!filter_var($form['web_url'], FILTER_VALIDATE_URL)) {
+       if (!filter_var($form['web_url'], FILTER_VALIDATE_URL) && !empty($form['e_mail'])) {
           $msg .= "17+";
        }
        if (empty($msg)) { // nessun errore
