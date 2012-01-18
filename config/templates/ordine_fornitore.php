@@ -62,7 +62,7 @@ class OrdineFornitore extends Template
     {
         $lines = $this->docVars->getRigo();
         while (list($key, $rigo) = each($lines)) {
-            if ($this->GetY() >= 185) {
+            if ($this->GetY() >= 205) {
                 $this->Cell(186,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
