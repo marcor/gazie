@@ -26,7 +26,36 @@
 function connectToDB ()
 {
     global $link, $Host, $Database, $User, $Password;
-    $link = mysql_connect($Host, $User, $Password);
+    $count;
+    //
+    // Salva il valore precedente di error_reporting().
+    //
+    $level = error_reporting();
+    //
+    // Tenta per almeno tre volte di eseguire la connessione.
+    //
+    for ($count = 3; $count > 0; $count--)
+      {
+        //
+        // Per i primi due tentativi non mostra gli avvertimenti.
+        //
+        if ($count > 1)
+          error_reporting (E_ERROR | E_PARSE | E_NOTICE);
+        $link = mysql_connect($Host, $User, $Password);
+        //
+        // Riprisinta la modalità precedente di segnalazione degli
+        // errori.
+        //
+        error_reporting ($level);
+        //
+        // Se non è riuscito a connettersi, attende un po' e poi riprova;
+        // altrimenti esce.
+        //
+        if (!$link)
+          sleep (rand (3, 5));
+        else
+          break;
+      }
     mysql_set_charset('utf8');
     if (!$link) die (" Can't connect to MySQL<br />Impossibile connettersi a MySql <br />No se puede conectar a MySQL");
     mysql_select_db($Database,$link) or die (
