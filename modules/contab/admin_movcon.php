@@ -646,17 +646,21 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/modal_form.js'));
 echo '<SCRIPT type="text/javascript">
       $(function() {
-            $( "#search_insert_conto" ).autocomplete({
-            source: "../../modules/root/search.php",
-            minLength: 2,
-            });';
+           $( "#dialog" ).dialog({
+              autoOpen: false
+           });
+
+           $( "#search_insert_conto" ).autocomplete({
+           source: "../../modules/root/search.php",
+           minLength: 2,
+           });';
 for ($i=0; $i<$_POST['rigcon']; $i++ ) {
-  echo '    $( "#search_conto_rc'.$i.'" ).autocomplete({
-            source: "../../modules/root/search.php",
-            minLength: 2,
-            });';
+  echo '   $( "#search_conto_rc'.$i.'" ).autocomplete({
+           source: "../../modules/root/search.php",
+           minLength: 2,
+           });';
 }
-echo '
+/*echo '
     $( "#dialog:ui-dialog" ).dialog( "destroy" );
     var expiry = $( "#expiry" ),
         amount = $( "#amount" ),
@@ -736,9 +740,87 @@ echo '
       .click(function() {
         $( "#dialog-form" ).dialog( "open" );
         getResults("120001238");
-      });';
+      });';*/
 echo '});
-      </SCRIPT>';
+      function dialogSchedule(partner){
+        clfoco = partner.id.replace("partner", "");
+        alert (clfoco);
+        getResults(clfoco);
+        $.fx.speeds._default = 500;
+        var expiry = $( "#expiry" ),
+            amount = $( "#amount" ),
+            allFields = $( [] ).add( expiry ).add( amount ),
+            tips = $( ".validateTips" );
+
+        function getResults(term_val) {
+           $.get("expiry.php",{term:term_val},
+                function(data){
+                   $("#resultsContainer").text(data);
+                });
+        }
+
+        function updateTips( t ) {
+           tips
+           .text( t )
+           .addClass( "ui-state-highlight" );
+           setTimeout(function() {
+                tips.removeClass( "ui-state-highlight", 1500 );
+           }, 500 );
+        }
+
+        function checkLength( o, n, min, max ) {
+            if ( o.val().length > max || o.val().length < min ) {
+                o.addClass( "ui-state-error" );
+                updateTips( "Length of " + n + " must be between " +
+                min + " and " + max + "." );
+                return false;
+           } else {
+                return true;
+           }
+        }
+
+        function checkRegexp( o, regexp, n ) {
+           if ( !( regexp.test( o.val() ) ) ) {
+                o.addClass( "ui-state-error" );
+                updateTips( n );
+                return false;
+           } else {
+                return true;
+           }
+        }
+
+        $( "#dialog" ).dialog({
+          autoOpen: false,
+          show: "scale",
+          width: 300,
+          modal: true,
+          buttons: {
+           "Conferma": function() {
+                var bValid = true;
+                allFields.removeClass( "ui-state-error" );
+                bValid = bValid && checkLength( expiry, "userexpiry", 3, 16 );
+                bValid = bValid && checkLength( amount, "amount", 6, 80 );
+                bValid = bValid && checkRegexp( expiry, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
+                bValid = bValid && checkRegexp( amount, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
+                if ( bValid ) {
+                    $( "#users tbody" ).append( "<tr>" +
+                       "<td>" + expiry.val() + "</td>" +
+                       "<td>" + amount.val() + "</td>" +
+                       "</tr>" );
+                updateTips( "" );
+                }
+            },
+            "Annulla": function() {
+                $( this ).dialog( "close" );
+            }
+          },
+          close: function() {
+            allFields.val( "" ).removeClass( "ui-state-error" );
+          }
+        });
+        $("#dialog" ).dialog( "open" );
+    }
+</SCRIPT>';
 echo "<SCRIPT type=\"text/javascript\">\n";
 
 
@@ -967,11 +1049,7 @@ if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." n.".$form['id_testata']."</div>\n";
 }
 ?>
-<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
-<!--
-<tr><td colspan="2">
-
-<div id="dialog-form" title="Partite Aperte">
+<div id="dialog" title="Partite Aperte">
   <p class="validateTips"></p>
   <div id="users-contain" class="ui-widget">
     <table id="users" class="ui-widget ui-widget-content">
@@ -993,9 +1071,10 @@ if ($toDo == 'insert') {
     </table>
   </div>
 </div>
-<a href="#" id="open-items">&weierp;</a>
-</td></tr>
---!>
+
+<table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
+
+
 <?php
 if (!empty($msg)) {
     echo '<tr><td colspan="6" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
