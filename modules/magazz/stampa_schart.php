@@ -165,7 +165,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
          $aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
          $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
          if ($ctrl_id <> $mv['id_mov']) {
-              $pdf->Cell(16,4,gaz_format_date($mv['datdoc']),'LTR',0,'C');
+              $pdf->Cell(16,4,gaz_format_date($mv['datreg']),'LTR',0,'C');
               $pdf->Cell(30,4,$mv['caumag'].'-'.substr($mv['descri'],0,17),'TR');
               $pdf->Cell(100,4,substr($mv['desdoc'].' '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,80),'TR');
               $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');
