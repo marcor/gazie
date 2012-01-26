@@ -24,6 +24,9 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$mastroclienti = $admin_aziend['mascli']."000000";
+$mastrofornitori = $admin_aziend['masfor']."000000";
+
 $msg = "";
 
 if (!isset($_POST['ritorno'])) {
@@ -291,6 +294,11 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['mastro_rc'][$i] = substr($row['codcon'],0,3).'000000';
         $form['conto_rc'.$i] = $row['codcon'];
         $form['search']['conto_rc'.$i]='';
+        // creo l'array contenente i partner per la gestione delle partite aperte
+        if (($form['mastro_rc'][$i] == $mastroclienti || $form['mastro_rc'][$i] == $mastrofornitori)
+            && $form['conto_rc'.$i] > 0 ) {  
+            $form['partner'][$row['codcon']] = array();
+        }
         $form['darave_rc'][$i] = $row['darave'];
         $form['importorc'][$i] = $row['import'];
         $i++;
@@ -347,8 +355,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['conto_rc'.$i] = $_POST['conto_rc'.$i];
         $form['darave_rc'][$i] = $_POST['darave_rc'][$i];
         $form['importorc'][$i] = $_POST['importorc'][$i];
-        $mastroclienti = $admin_aziend['mascli']."000000";
-        $mastrofornitori = $admin_aziend['masfor']."000000";
         if (($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) && $_POST['conto_rc'.$i] > 0) {
            //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
            if  ($_POST['cod_partner'] == 0 and $form['conto_rc'.$i] > 0) {
@@ -375,6 +381,12 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['imponi_ri'][$i] = $_POST['imponi_ri'][$i];
         $form['impost_ri'][$i] = $_POST['impost_ri'][$i];
     }
+
+    //ricarico i registri per il form delle partite aperte dei clienti/fornitori
+    foreach($_POST['partner'] as $k=>$v) {
+        $form['partner'][$k] = intval($v);
+    }
+
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
     if (isset($_POST['inscau_x'])) {
        // Se la descrizione è vuota e la causale è stata selezionata
@@ -488,6 +500,11 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       $form['search']['conto_rc'.$rigo]='';
       $form['darave_rc'][$rigo] = $_POST['insert_darave'];
       $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);;
+      // e accodo anche all'array contenente i partner per la gestione delle partite aperte
+      if (($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori)
+          && $form['conto_rc'.$rigo] > 0 ) {  
+          $form['partner'][$form['conto_rc'.$rigo]] = array();
+      }
       $_POST['rigcon']++;
    }
 
@@ -600,7 +617,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['date_doc_D'] = date("d");
     $form['date_doc_M'] = date("m");
     $form['date_doc_Y'] = date("Y");
-    $form['cod_partner'] = "";
     $form['inserimdoc'] = 0;
     $form['registroiva'] = 0;
     $form['operatore'] = 0;
@@ -608,6 +624,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['insert_mastro'] = 0;
     $form['insert_conto'] = 0;
     $form['search']['insert_conto']='';
+    $form['partner']=array();
     $form['insert_darave'] = "A";
     //registri per il form del rigo di inserimento iva
     $form['insert_imponi'] = 0;
@@ -646,10 +663,6 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/modal_form.js'));
 echo '<SCRIPT type="text/javascript">
       $(function() {
-           $( "#dialog" ).dialog({
-              autoOpen: false
-           });
-
            $( "#search_insert_conto" ).autocomplete({
            source: "../../modules/root/search.php",
            minLength: 2,
@@ -658,93 +671,22 @@ for ($i=0; $i<$_POST['rigcon']; $i++ ) {
   echo '   $( "#search_conto_rc'.$i.'" ).autocomplete({
            source: "../../modules/root/search.php",
            minLength: 2,
-           });';
+           });
+           $( "#dialog'.$i.'").dialog({
+              autoOpen: false
+           });
+        ';
 }
-/*echo '
-    $( "#dialog:ui-dialog" ).dialog( "destroy" );
-    var expiry = $( "#expiry" ),
-        amount = $( "#amount" ),
-        allFields = $( [] ).add( expiry ).add( amount ),
-        tips = $( ".validateTips" );
-
-    function getResults(term_val)
-    {
-    $.get("expiry.php",{term:term_val},
-       function(data){
-       $("#resultsContainer").text(data);
-    });
-    }
-
-    function updateTips( t ) {
-      tips
-        .text( t )
-        .addClass( "ui-state-highlight" );
-      setTimeout(function() {
-        tips.removeClass( "ui-state-highlight", 1500 );
-      }, 500 );
-    }
-
-    function checkLength( o, n, min, max ) {
-      if ( o.val().length > max || o.val().length < min ) {
-        o.addClass( "ui-state-error" );
-        updateTips( "Length of " + n + " must be between " +
-          min + " and " + max + "." );
-        return false;
-      } else {
-        return true;
-      }
-    }
-
-    function checkRegexp( o, regexp, n ) {
-      if ( !( regexp.test( o.val() ) ) ) {
-        o.addClass( "ui-state-error" );
-        updateTips( n );
-        return false;
-      } else {
-        return true;
-      }
-    }
-    $( "#dialog-form" ).dialog({
-      autoOpen: false,
-      show: "scale",
-      width: 300,
-      modal: true,
-      buttons: {
-        "Conferma": function() {
-          var bValid = true;
-          allFields.removeClass( "ui-state-error" );
-
-          bValid = bValid && checkLength( expiry, "userexpiry", 3, 16 );
-          bValid = bValid && checkLength( amount, "amount", 6, 80 );
-          bValid = bValid && checkRegexp( expiry, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
-          bValid = bValid && checkRegexp( amount, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
-
-          if ( bValid ) {
-            $( "#users tbody" ).append( "<tr>" +
-              "<td>" + expiry.val() + "</td>" +
-              "<td>" + amount.val() + "</td>" +
-            "</tr>" );
-            updateTips( "" );
-          }
-        },
-        "Annulla": function() {
-          $( this ).dialog( "close" );
-        }
-      },
-      close: function() {
-        allFields.val( "" ).removeClass( "ui-state-error" );
-      }
-    });
-    $( "#open-items" )
-      .button()
-      .click(function() {
-        $( "#dialog-form" ).dialog( "open" );
-        getResults("120001238");
-      });';*/
+foreach($form['partner'] as $k=>$v) {
+  echo '   $( "#dialog'.$k.'").dialog({
+              autoOpen: false
+           });
+        ';
+}
 echo '});
       function dialogSchedule(partner){
         clfoco = partner.id.replace("partner", "");
-        alert (clfoco);
+        //alarm (clfoco);
         getResults(clfoco);
         $.fx.speeds._default = 500;
         var expiry = $( "#expiry" ),
@@ -789,7 +731,7 @@ echo '});
            }
         }
 
-        $( "#dialog" ).dialog({
+        $( "#dialog"+clfoco ).dialog({
           autoOpen: false,
           show: "scale",
           width: 300,
@@ -818,7 +760,7 @@ echo '});
             allFields.val( "" ).removeClass( "ui-state-error" );
           }
         });
-        $("#dialog" ).dialog( "open" );
+        $("#dialog"+clfoco ).dialog( "open" );
     }
 </SCRIPT>';
 echo "<SCRIPT type=\"text/javascript\">\n";
@@ -1048,8 +990,13 @@ if ($toDo == 'insert') {
 } else {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." n.".$form['id_testata']."</div>\n";
 }
-?>
-<div id="dialog" title="Partite Aperte">
+
+
+// creo i dialog form delle partite aperte dei clienti/fornitori
+foreach($form['partner'] as $k=>$v) {
+echo "<input type=\"hidden\" name=\"partner[$k]\" value=\"".$v."\">\n";
+
+echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$k.'">
   <p class="validateTips"></p>
   <div id="users-contain" class="ui-widget">
     <table id="users" class="ui-widget ui-widget-content">
@@ -1070,7 +1017,12 @@ if ($toDo == 'insert') {
      </tbody>
     </table>
   </div>
-</div>
+</div>';
+
+}
+
+?>
+
 
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
 
