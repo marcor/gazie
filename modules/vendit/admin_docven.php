@@ -1162,7 +1162,6 @@ function setMultipleValues(y,m,d) {
   document.docven.mestra.value=LZ(m);
   document.docven.giotra.value=LZ(d);
   }
-}
 </SCRIPT>
 <?php
 echo "<form method=\"POST\" name=\"docven\" >\n";
