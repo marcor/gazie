@@ -179,7 +179,7 @@ while ($row = gaz_dbi_fetch_array($rs_rows)) {
       $pdf->Cell(20,4,gaz_format_quantity($row['quanti'],1,$admin_aziend['decimal_quantity']),1,0,'R');
       $pdf->Cell(25,4,number_format($row['price'],$admin_aziend['decimal_price'],',',''),1,0,'R');
       $pdf->Cell(10,4,gaz_format_quantity($row['discount'],1,9),1,0,'R');
-      $pdf->Cell(30,4,number_format($importo,2,',',''),1,0,'R');
+      $pdf->Cell(30,4,number_format($importo,2,',',''),1,1,'R');
 }
 
 $pdf->Output();
