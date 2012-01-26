@@ -4,7 +4,7 @@
  * Various form utilitiy functions.
  *
  * @author Moxiecode
- * @copyright Copyright © 2004-2011, Moxiecode Systems AB, All rights reserved.
+ * @copyright Copyright © 2004-2012, Moxiecode Systems AB, All rights reserved.
  */
 
 var themeBaseURL = tinyMCEPopup.editor.baseURI.toAbsolute('themes/' + tinyMCEPopup.getParam("theme"));

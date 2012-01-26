@@ -2,7 +2,7 @@
  * $Id: del.js,v 1.4 2011/01/01 11:07:11 devincen Exp $
  *
  * @author Moxiecode - based on work by Andrew Tetlaw
- * @copyright Copyright © 2004-2011, Moxiecode Systems AB, All rights reserved.
+ * @copyright Copyright © 2004-2012, Moxiecode Systems AB, All rights reserved.
  */
 
 function init() {
