@@ -185,7 +185,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
             if (isset($v['provvigione'])) {
-               $form['rows'][$next_row]['provvigione'] = intval($v['provvigione']);
+               $form['rows'][$next_row]['provvigione'] = floatval($v['provvigione']);
             }
             $form['rows'][$next_row]['id_mag'] = intval($v['id_mag']);
             $form['rows'][$next_row]['annota'] = substr($v['annota'],0,50);
