@@ -32,12 +32,12 @@ function connectToDB ()
     //
     $level = error_reporting();
     //
-    // Tenta per almeno tre volte di eseguire la connessione.
+    // Tenta per almeno cinque volte di eseguire la connessione.
     //
-    for ($count = 3; $count > 0; $count--)
+    for ($count = 5; $count > 0; $count--)
       {
         //
-        // Per i primi due tentativi non mostra gli avvertimenti.
+        // Per i primi quattro tentativi non mostra gli avvertimenti.
         //
         if ($count > 1)
           error_reporting (E_ERROR | E_PARSE | E_NOTICE);
@@ -52,7 +52,7 @@ function connectToDB ()
         // altrimenti esce.
         //
         if (!$link)
-          sleep (rand (3, 5));
+          sleep (rand (3, 7));
         else
           break;
       }
