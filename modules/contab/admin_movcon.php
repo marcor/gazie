@@ -734,10 +734,17 @@ echo '});
         $( "#dialog"+clfoco ).dialog({
           autoOpen: false,
           show: "scale",
-          width: 330,
+          width: 360,
           modal: true,
           buttons: {
-           "Conferma": function() {
+            "Chiudi":function(){ $(this).dialog( "close" );}
+          },
+          close: function() {
+            allFields.val( "" ).removeClass( "ui-state-error" );
+          }
+        });
+        $("#dialog"+clfoco ).dialog( "open" );
+        $( "#rerun" ).click(function() {
                 var bValid = true;
                 allFields.removeClass( "ui-state-error" );
                 bValid = bValid && checkLength( expiry, "userexpiry", 3, 16 );
@@ -752,16 +759,7 @@ echo '});
                        "</tr>" );
                        updateTips( "" );
                 }
-            },
-            "Annulla": function() {
-                $( this ).dialog( "close" );
-            }
-          },
-          close: function() {
-            allFields.val( "" ).removeClass( "ui-state-error" );
-          }
         });
-        $("#dialog"+clfoco ).dialog( "open" );
     }
 </SCRIPT>';
 echo "<SCRIPT type=\"text/javascript\">\n";
@@ -1010,6 +1008,7 @@ echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$k.'">
     <tr>
     <td><input type="text" name="expiry" id="expiry" class="text ui-widget-content ui-corner-all" /></td>
     <td><input type="text" name="amount" id="amount" class="text ui-widget-content ui-corner-all" /></td>
+    <td><button id="rerun"><img src="../../library/images/v.gif" />  </button></td>
     <td></td>
     </tr>
     <tr><td colspan="3">
