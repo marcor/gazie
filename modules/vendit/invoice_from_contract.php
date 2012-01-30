@@ -64,23 +64,20 @@ function getBillableContracts($date_ref=false, $vat_section=1,$customer=0)
     if ($customer >0 ){
        $selected_customer = " AND tesdoc.clfoco = $customer";
     }
-    $field = 'contract.*,
+    $field =  $gTables['contract'].'.*,
               DATE_FORMAT(\''.$date_ref.'\',\'%Y\')*12 + DATE_FORMAT(\''.$date_ref.'\',\'%m\') AS this_month,
-              YEAR(tesdoc.datfat)*12 + MONTH(tesdoc.datfat) AS last_month,
-              YEAR(contract.start_date)*12 + MONTH(contract.start_date) AS start_month,
-              (contract.months_duration - PERIOD_DIFF(DATE_FORMAT(\''.$date_ref.'\',\'%Y%m\' ),
-              EXTRACT(YEAR_MONTH FROM contract.start_date))) AS months_at_end,
-              tesdoc.clfoco, tesdoc.datfat, CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,
-              PERIOD_ADD(EXTRACT(YEAR_MONTH FROM tesdoc.datfat),contract.periodicity) AS next_month';
-    $from = $gTables['contract'].' AS contract '.
-            'LEFT JOIN '.$gTables['tesdoc'].' AS tesdoc
-             ON contract.id_contract=(SELECT '.$gTables['tesdoc'].'.id_contract FROM '.$gTables['tesdoc'].' WHERE '.$gTables['tesdoc'].'.tipdoc=\'FAI\' OR '.$gTables['tesdoc'].'.tipdoc=\'VRI\' LIMIT 1 )
-             LEFT JOIN '.$gTables['clfoco'].' AS customer
-             ON customer.codice=contract.id_customer
-             LEFT JOIN '.$gTables['anagra'].' AS anagraf
-             ON customer.id_anagra=anagraf.id';
-    $where = "contract.vat_section = $vat_section $selected_customer";
-    $orderby = "contract.id_contract ASC, tesdoc.datfat ASC, tesdoc.protoc ASC";
+              YEAR('.$gTables['tesdoc'].'.datfat)*12 + MONTH('.$gTables['tesdoc'].'.datfat) AS last_month,
+              YEAR('.$gTables['contract'].'.start_date)*12 + MONTH('.$gTables['contract'].'.start_date) AS start_month,
+              ('.$gTables['contract'].'.months_duration - PERIOD_DIFF(DATE_FORMAT(\''.$date_ref.'\',\'%Y%m\' ),
+              EXTRACT(YEAR_MONTH FROM '.$gTables['contract'].'.start_date))) AS months_at_end,
+              '.$gTables['tesdoc'].'.clfoco, '.$gTables['tesdoc'].'.datfat AS df, CONCAT('.$gTables['anagra'].'.ragso1,\' \','.$gTables['anagra'].'.ragso2) AS ragsoc,
+              PERIOD_ADD(EXTRACT(YEAR_MONTH FROM '.$gTables['tesdoc'].'.datfat),'.$gTables['contract'].'.periodicity) AS next_month';
+    $from =  $gTables['contract'].' LEFT JOIN '.$gTables['tesdoc'].
+             ' ON '.$gTables['contract'].'.id_contract='.$gTables['tesdoc'].'.id_contract 
+              LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['clfoco'].'.codice='.$gTables['contract'].'.id_customer
+              LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra='.$gTables['anagra'].'.id';
+    $where = $gTables['contract'].".vat_section = $vat_section $selected_customer";
+    $orderby = $gTables['contract'].'.id_contract ASC, '.$gTables['tesdoc'].'.datfat ASC, '.$gTables['tesdoc'].'.protoc ASC';
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
     $billable=array();
     while ($row = gaz_dbi_fetch_array($result)) {
@@ -122,7 +119,7 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
        $first_protoc=0;
        $first_numdoc=0;
        foreach ($billable as $k=>$val) {
-          if (isset($_POST['check_'.$k])){ // se è stato selezionato il contratto da fatturare
+          if (isset($_POST['check_'.$k])){ // se Ã¨ stato selezionato il contratto da fatturare
               $last = lastDocNumber($form['this_date_Y'],$val['doc_type'],$form['vat_section']);
               if ($first_protoc==0) {
                   $first_protoc=$last['protoc'];
@@ -241,12 +238,13 @@ $uts_last['VRI'] = $VRI['uts'];
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
 require("lang.".$admin_aziend['lang'].".php");
+
 foreach ($billable as $k=>$val) {
             $form['rows'][$val['id_contract']]['doc_number'] = $val['doc_number'];
             $form['rows'][$val['id_contract']]['start_date'] = $val['start_date'];
             $form['rows'][$val['id_contract']]['ragsoc'] = $val['ragsoc'];
             $form['rows'][$val['id_contract']]['current_fee'] = $val['current_fee'];
-            $form['rows'][$val['id_contract']]['datfat'] = $val['datfat'];
+            $form['rows'][$val['id_contract']]['df'] = $val['df'];
             $form['rows'][$val['id_contract']]['months_at_end'] = $val['months_at_end'];
             $form['rows'][$val['id_contract']]['tacit_renewal'] = $val['tacit_renewal'];
             $form['rows'][$val['id_contract']]['doc_type'] = $val['doc_type'];
@@ -316,7 +314,7 @@ foreach ($form['rows'] as $k=>$val) {
             echo "<td align=\"center\">".gaz_format_date($val['start_date'])."</td>\n";
             echo "<td>".$val['ragsoc']."</td>\n";
             echo "<td align=\"right\">".gaz_format_number($val['current_fee'])."</td>\n";
-            echo "<td align=\"center\">".gaz_format_date($val['datfat'])."</td>\n";
+            echo "<td align=\"center\">".$val['df']."</td>\n";
             echo "<td align=\"center\">".$val['n_bill']."</td>\n";
             echo "<td align=\"center\">".$strScript['admin_contract.php']['doc_type_value'][$val['doc_type']]."</td>\n";
             if (empty($val['error'])) {

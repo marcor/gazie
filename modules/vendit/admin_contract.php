@@ -353,7 +353,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
         $form['vat_section'] = intval($_GET['vat_section']);
     }
     // trovo l'ultimo numero di contratto
-    $rs_last = gaz_dbi_dyn_query("*", $gTables['contract'], "YEAR(conclusion_date)=".date("Y"),"conclusion_date DESC",0,1);
+    $rs_last = gaz_dbi_dyn_query("*", $gTables['contract'], "YEAR(conclusion_date)=".date("Y"),"doc_number DESC",0,1);
     $last = gaz_dbi_fetch_array($rs_last);
     $form['doc_number'] = $last['doc_number']+1;
     $form['conclusion_date_Y'] = date("Y");

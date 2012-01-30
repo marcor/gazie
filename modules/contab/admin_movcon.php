@@ -686,12 +686,12 @@ foreach($form['partner'] as $k=>$v) {
 echo '});
       function dialogSchedule(partner){
         clfoco = partner.id.replace("partner", "");
-        //alarm (clfoco);
         getResults(clfoco);
         $.fx.speeds._default = 500;
         var expiry = $( "#expiry" ),
             amount = $( "#amount" ),
-            allFields = $( [] ).add( expiry ).add( amount ),
+            remrow = $( "#remrow" ),
+            allFields = $( [] ).add( expiry ).add( amount ).add( remrow ),
             tips = $( ".validateTips" );
 
         function getResults(term_val) {
@@ -734,7 +734,7 @@ echo '});
         $( "#dialog"+clfoco ).dialog({
           autoOpen: false,
           show: "scale",
-          width: 300,
+          width: 330,
           modal: true,
           buttons: {
            "Conferma": function() {
@@ -748,8 +748,9 @@ echo '});
                     $( "#users tbody" ).append( "<tr>" +
                        "<td>" + expiry.val() + "</td>" +
                        "<td>" + amount.val() + "</td>" +
+                       '."'<td><button><img src=\"../../library/images/x.gif\" /></button></td>'".' +
                        "</tr>" );
-                updateTips( "" );
+                       updateTips( "" );
                 }
             },
             "Annulla": function() {
@@ -1001,17 +1002,17 @@ echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$k.'">
   <div id="users-contain" class="ui-widget">
     <table id="users" class="ui-widget ui-widget-content">
      <tbody>
-    <tr><td>
-     <label for="expiry">Scadenza</label>
-    </td><td>
-     <label for="name">Importo</label>
-    </td></tr>
-    <tr><td>
-    <input type="text" name="expiry" id="expiry" class="text ui-widget-content ui-corner-all" />
-    </td><td>
-    <input type="text" name="amount" id="amount" class="text ui-widget-content ui-corner-all" />
-    </td></tr>
-    <tr><td colspan="2">
+    <tr>
+    <td><label for="expiry">Scadenza</label></td>
+    <td><label for="name">Importo</label></td>
+    <td><label for="remrow"></label></td>
+    </tr>
+    <tr>
+    <td><input type="text" name="expiry" id="expiry" class="text ui-widget-content ui-corner-all" /></td>
+    <td><input type="text" name="amount" id="amount" class="text ui-widget-content ui-corner-all" /></td>
+    <td></td>
+    </tr>
+    <tr><td colspan="3">
     <DIV name="resultsContainer" id="resultsContainer" class="text ui-widget-content ui-corner-all">__RISULTATO_</DIV>
     </td></tr>
      </tbody>
