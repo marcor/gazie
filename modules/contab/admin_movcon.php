@@ -364,11 +364,13 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
            }
            $form['cod_partner'] = $_POST['conto_rc'.$i];
         }
-        if ($loadCosRic == 1 and substr($form['conto_rc'.$i],0,1) == 4 and $partner['cosric'] > 0 ){  //e' un  cliente agisce sui ricavi
+        if ($loadCosRic == 1 && substr($form['conto_rc'.$i],0,1) == 4
+            && $partner['cosric'] > 0 && $form['registroiva'] > 0 ){  //e' un  cliente agisce sui ricavi
                 $form['mastro_rc'][$i] = substr($partner['cosric'],0,3)."000000";
                 $form['conto_rc'.$i] = $partner['cosric'];
                 $loadCosRic = 0;
-        } elseif ($loadCosRic == 2 and substr($form['conto_rc'.$i],0,1) == 3 and $partner['cosric'] > 0){ //è un fornitore  agisce sui costi
+        } elseif ($loadCosRic == 2 && substr($form['conto_rc'.$i],0,1) == 3
+            && $partner['cosric'] > 0 && $form['registroiva'] > 0 ){ //è un fornitore  agisce sui costi
                 $form['mastro_rc'][$i] = substr($partner['cosric'],0,3)."000000";
                 $form['conto_rc'.$i] = $partner['cosric'];
                 $loadCosRic = 0;
@@ -992,6 +994,7 @@ if ($toDo == 'insert') {
 
 
 // creo i dialog form delle partite aperte dei clienti/fornitori
+echo "<input type=\"hidden\" name=\"partner[0]\" value=\"\">\n";
 foreach($form['partner'] as $k=>$v) {
 echo "<input type=\"hidden\" name=\"partner[$k]\" value=\"".$v."\">\n";
 
