@@ -62,7 +62,7 @@ function getBillableContracts($date_ref=false, $vat_section=1,$customer=0)
     }
     $selected_customer='';
     if ($customer >0 ){
-       $selected_customer = " AND tesdoc.clfoco = $customer";
+       $selected_customer = " AND ".$gTables['tesdoc'].".clfoco = $customer";
     }
     $field =  $gTables['contract'].'.*,
               DATE_FORMAT(\''.$date_ref.'\',\'%Y\')*12 + DATE_FORMAT(\''.$date_ref.'\',\'%m\') AS this_month,
