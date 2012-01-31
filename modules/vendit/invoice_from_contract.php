@@ -73,7 +73,7 @@ function getBillableContracts($date_ref=false, $vat_section=1,$customer=0)
               '.$gTables['tesdoc'].'.clfoco, '.$gTables['tesdoc'].'.datfat AS df, CONCAT('.$gTables['anagra'].'.ragso1,\' \','.$gTables['anagra'].'.ragso2) AS ragsoc,
               PERIOD_ADD(EXTRACT(YEAR_MONTH FROM '.$gTables['tesdoc'].'.datfat),'.$gTables['contract'].'.periodicity) AS next_month';
     $from =  $gTables['contract'].' LEFT JOIN '.$gTables['tesdoc'].
-             ' ON '.$gTables['contract'].'.id_contract='.$gTables['tesdoc'].'.id_contract 
+             ' ON '.$gTables['contract'].'.id_contract=(SELECT '.$gTables['tesdoc'].'.id_contract FROM '.$gTables['tesdoc'].' WHERE '.$gTables['tesdoc'].'.tipdoc=\'FAI\' OR '.$gTables['tesdoc'].'.tipdoc=\'VRI\' LIMIT 1 ) 
               LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['clfoco'].'.codice='.$gTables['contract'].'.id_customer
               LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra='.$gTables['anagra'].'.id';
     $where = $gTables['contract'].".vat_section = $vat_section $selected_customer";
