@@ -803,6 +803,7 @@ class GAzieMail
         $body_text = gaz_dbi_get_row($gTables['body_text'],'table_name_ref','body_send_doc_email');
         $mailto = $partner['e_mail']; //recipient
         $subject = $admin_data['ragso1']." ".$admin_data['ragso2']."-Trasmissione documenti"; //subject
+		$email_disclaimer = ("".$email_disclaimer != "") ? "<p>".$email_disclaimer."</p>" : "";
         $uid = md5(uniqid(time()));
         $headers = "MIME-Version: 1.0\n";
         if ($config_notif['val']=='yes'){
@@ -817,7 +818,7 @@ class GAzieMail
                 background-color: #".$admin_data['colore'].";\">Company: ".$admin_data['ragso1']." ".$admin_data['ragso2']."</span></h3>
                 <h4><span style=\"color: #000000;\">Web: <a href=\"".$admin_data['web_url']."\">".$admin_data['web_url']."</a></span></h4>
                 <address><span style=\"color: #".$admin_data['colore'].";\">User: ".$user['Nome']." ".$user['Cognome']."</span><br /></address>\r\n".
-                "<hr><p>".$email_disclaimer."</p>\r\n".
+                "<hr>".$email_disclaimer."\r\n".
                 "\r\n".
                 "--".$uid."\r\n".
                 $content.
