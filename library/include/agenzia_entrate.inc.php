@@ -82,6 +82,11 @@ class AgenziaEntrate
       function RecordA($A) //record testa della fornitura comunicazione annuale dati IVA
                {
                $this->CodiceFornitura = substr(str_pad($A[0],3,' '),0,3);
+               /*
+			   // AGENZIA ENTRATE'S ERROR
+			   $this->AnnoFornitura = substr(str_pad($A[1],2,'0',STR_PAD_LEFT),0,2);
+			   // TEMP 2010
+			   */
                $this->AnnoFornitura = '10';
                $this->CFFornitore = substr(str_pad($A[2],16,' '),0,16);
                return "A".str_repeat(" ",14).$this->CodiceFornitura.$this->AnnoFornitura."01"
