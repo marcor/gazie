@@ -19,5 +19,5 @@ title="leggi la guida"
 href="http://appunti2.net/esercitazioni_con_gazie.pdf">
 <em>Esercitazioni con Gazie</em></a>. Si veda eventualmente anche questa
 <a title="leggi l'appendice"
-href="http://appunti2.net/gazie_non_e_un_giocattolo.pdf">appendice</a>
+href="http://appunti2.net/gazie_non_e_un_giocattolo.htm">appendice</a>
 se si cerca assistenza.</p>
