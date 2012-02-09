@@ -81,6 +81,7 @@ $strScript = array ("admin_aziend.php" =>
                            'mascli'=>'Cuenta Maestra de Clientes ',
                            'masfor'=>'Cuenta Maestra de Proveedores',
                            'masban'=>'Cuenta Maestra de Bancos',
+                           'mas_staff'=>'Cuenta Maestra de Empleados',
                            'cassa_'=>'Cuenta de Efectivo',
                            'ivaacq'=>'Cuenta de IVA Compras',
                            'ivaven'=>'Cuenta de IVA Ventas',

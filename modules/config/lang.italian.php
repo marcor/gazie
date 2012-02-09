@@ -77,6 +77,7 @@
                            'mascli'=>'Mastro clienti ',
                            'masfor'=>'Mastro fornitori',
                            'masban'=>'Mastro banche',
+                           'mas_staff'=>'Mastro collaboratori',
                            'cassa_'=>'Conto cassa',
                            'ivaacq'=>'Conto I.V.A. acquisti',
                            'ivaven'=>'Conto I.V.A. vendite',

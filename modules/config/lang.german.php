@@ -79,6 +79,7 @@ $strScript = array ("admin_aziend.php" =>
                            'mascli'=>'Master Konto Kunden ',
                            'masfor'=>'Master Lieferanten Konto',
                            'masban'=>'Master Banken Konto',
+                           'mas_staff'=>'Master Arbeitnehmer Konto',
                            'cassa_'=>'Cash-Konto',
                            'ivaacq'=>'Käufe MwSt-Konto',
                            'ivaven'=>'Zahlen MwSt. konto',

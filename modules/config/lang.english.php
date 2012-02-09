@@ -77,6 +77,7 @@ $strScript = array ("admin_aziend.php" =>
                            'mascli'=>'Master customers account ',
                            'masfor'=>'Master suppliers account',
                            'masban'=>'Master banks account',
+                           'mas_staff'=>'Master employees account',
                            'cassa_'=>'Cash account',
                            'ivaacq'=>'Purchases VAT account',
                            'ivaven'=>'Sales VAT account',
