@@ -2,6 +2,8 @@ UPDATE `gaz_config` SET `cvalue` = '79' WHERE `id` =2;
 
 CREATE TABLE IF NOT EXISTS `gaz_currency` ( `id` int(11) NOT NULL AUTO_INCREMENT, `Currency` varchar(50) DEFAULT NULL, `Cambio` double(11,4) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
 
+ALTER TABLE `gaz_aziend` ADD `mas_staff` INT( 3 ) NOT NULL AFTER `masban` ;
+
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXcontract_row` DROP PRIMARY KEY , ADD PRIMARY KEY ( `id_row` , `id_contract` );
 
