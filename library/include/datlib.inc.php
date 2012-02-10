@@ -86,7 +86,7 @@ if(@file_exists('./lib.data.php') ) {
 $tn=array('aliiva','agenti','artico','banapp','body_text','cash_register','catmer',
           'caucon','caumag','clfoco','company_config','contract','effett','files',
           'imball','letter','movmag','pagame','paymov','portos','provvigioni','rigbro',
-          'rigdoc','rigmoc','rigmoi','spediz','tesbro','tesdoc','tesmov','vettor');
+          'rigdoc','rigmoc','rigmoi','spediz','staff','staff_skills','tesbro','tesdoc','tesmov','vettor');
 foreach ($tn as $v){
   $gTables[$v]= $table_prefix."_".$id.$v;
 }
