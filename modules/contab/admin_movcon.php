@@ -930,7 +930,7 @@ echo "function updateTot(row,newva)
              if (Math.abs(difSUM) < elva ) {
                 document.getElementById('balbRC'+i).value='\u21D3';
                 document.getElementById('balbRC'+i).disabled=false;
-                document.getElementById('balbRC'+i).title=dtit + Math.abs(difSUM) + ' ".$money[1]."';
+                document.getElementById('balbRC'+i).title=dtit + Math.abs(difSUM) + ' ".$admin_aziend['symbol']."';
              } else {
                 document.getElementById('balbRC'+i).value='\u21D3';
                 document.getElementById('balbRC'+i).disabled=true;
@@ -938,7 +938,7 @@ echo "function updateTot(row,newva)
           } else if ((elda == 'D' && difSUM < 0) || (elda == 'A' && difSUM > 0)) {
              document.getElementById('balbRC'+i).value='\u21D1';
              document.getElementById('balbRC'+i).disabled=false;
-             document.getElementById('balbRC'+i).title='".$script_transl['addval']." ' + Math.abs(difSUM) + ' ".$money[1]."';
+             document.getElementById('balbRC'+i).title='".$script_transl['addval']." ' + Math.abs(difSUM) + ' ".$admin_aziend['symbol']."';
           } else {
              document.getElementById('balbRC'+i).value='\u21D4';
              document.getElementById('balbRC'+i).disabled=true;
@@ -962,7 +962,7 @@ echo "function updateTot(row,newva)
               document.myform.tot_D.title='".$script_transl['bal_title']."';
            }
            document.myform.ins.disabled=true;
-           document.myform.diffV.value='".$script_transl['diff']." ' + difSUM + ' ".$money[1]."';
+           document.myform.diffV.value='".$script_transl['diff']." ' + difSUM + ' ".$admin_aziend['symbol']."';
       } else if (sumA == 0 ) {
            document.myform.tot_A.style.backgroundColor='#FFAAAA';
            document.myform.tot_D.style.backgroundColor='#FFAAAA';
@@ -1248,13 +1248,13 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         $form['darave_rc'][$i] == 'A' && $form['tot_A'] > $form['tot_D'] ) {
         $r_but=' value="&dArr;" title="'.$script_transl['subval'].' ';
         if (abs($diffDA) < $form['importorc'][$i] ) {
-           $r_but=' value="&dArr;" title="'.$script_transl['subval'].' '.abs($diffDA)." $money[1]\" ";
+           $r_but=' value="&dArr;" title="'.$script_transl['subval'].' '.abs($diffDA)." ".$admin_aziend['symbol']."\" ";
         } else {
            $r_but=' value="&dArr;" disabled ';
         }
     } elseif ($form['darave_rc'][$i] == 'D' && $form['tot_D'] < $form['tot_A'] ||
         $form['darave_rc'][$i] == 'A' && $form['tot_A'] < $form['tot_D'] ) {
-        $r_but=' value="&uArr;" title="'.$script_transl['addval'].' '.abs($diffDA)." $money[1]\" ";
+        $r_but=' value="&uArr;" title="'.$script_transl['addval'].' '.abs($diffDA)." ".$admin_aziend['symbol']."\" ";
     } else {                                     //bilanciato
         $r_but=' value="&hArr;" disabled';
     }

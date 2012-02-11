@@ -50,7 +50,7 @@ $strScript = array ("browse_document.php" =>
                            " dell'anno ",
                            " Categoria merc. ",
                            " Quantit&agrave; ",
-                           " Valore in $money[0] ",
+                           " Valore in ".$admin_aziend['description'],
                            " Fuori "),
                     "report_movmag.php" =>
                    array(  "movimenti di magazzino ",
@@ -89,7 +89,7 @@ $strScript = array ("browse_document.php" =>
                            'operat_value'=>array(-1=>"Scarico",0=>"Non opera",1=>"Carico"),
                            'partner'=>'Cliente/Fornitore',
                            'del_this'=>'Elimina il movimento di magazzino',
-                           'amount'=>" Valore in $money[0] ",
+                           'amount'=>" Valore in ".$admin_aziend['description'],
                             ),
                     "report_caumag.php" =>
                    array(  "causali di magazzino ",
@@ -211,7 +211,7 @@ $strScript = array ("browse_document.php" =>
                            'date_fin'=>'Data registrazione fine ',
                            'header'=>array('Data'=>'','Causale'=>'','Descrizione<br \>documento'=>'',
                                             'Prezzo'=>'','UM' =>'','Quantit&agrave;'=>'',
-                                            $money[1].'<br \>carico'=>'',$money[1].'<br \> scarico'=>'',
+                                            $admin_aziend['symbol'].'<br \>carico'=>'',$admin_aziend['symbol'].'<br \> scarico'=>'',
                                             'Quantit&agrave;<br \>giacenza'=>'','Valore<br \>giacenza'=>''
                                            ),
                            'tot'=>'Consistenza'
@@ -223,7 +223,7 @@ $strScript = array ("browse_document.php" =>
                            'item_head'=>array('Codice','Cat.Merc','Descrizione','U.M.','ScortaMin.'),
                            'header'=>array('Data','Causale','Descrizione documento',
                                             'Prezzo','UM','Quantita',
-                                            $money[1].' carico',$money[1].' scarico',
+                                            $admin_aziend['symbol'].' carico',$admin_aziend['symbol'].' scarico',
                                             'Q.ta giacenza','Val. giacenza'
                                            ),
                            'tot'=>'Consistenza al '
@@ -308,7 +308,7 @@ $strScript = array ("browse_document.php" =>
                                                'D'=>'Moltiplicazione per valore','E'=>'Divisione per valore','F'=>'Azzeramento e somma percentuale'),
                            'valore'=>'Percentuale/valore',
                            'round_mode'=>'Arrotondamento matematico a',
-                           'round_mode_value'=>array('1 '.$money[0],'10 centesimi','1 centesimo','1 millesimo','0,1 millesimi','0,01 millesimi'),
+                           'round_mode_value'=>array('1 '.$admin_aziend['description'],'10 centesimi','1 centesimo','1 millesimo','0,1 millesimi','0,01 millesimi'),
                            'header'=>array('Cat.Merceologica'=>'','Codice'=>'','Descrizione'=>'','U.M.'=>'',
                                             'Prezzo vecchio'=>'','Prezzo nuovo'=>''
                                           )

@@ -207,7 +207,7 @@ while ($mov = gaz_dbi_fetch_array($result)) {
                $codcon = $righi_cont['codcon'];
                $pdf->SetFont('helvetica','',7);
                $pdf->Cell(50,4,$righi_cont['codcon']."-".substr($righi_cont['descri'],0,23),'L');
-               $pdf->Cell(1,4,$money[1]);
+               $pdf->Cell(1,4,$admin_aziend['symbol']);
                $maxY = $pdf->GetY();
                $pdf->Cell(15,4,gaz_format_number($righi_cont['import']),'R',1,'R');
                $pdf->SetFont('helvetica','',8);

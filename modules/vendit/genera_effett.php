@@ -306,7 +306,7 @@ if (isset($_POST['preview'])) {
                        <td align=\"right\" colspan=\"6\">";
                        echo $script_transl['gen'].$script_transl['type_value'][$v['tes']['tippag']].
                             ' n.'.$n[$n_type].' '.$script_transl['end'].$rate['giorno'][$k_r].'-'.$rate['mese'][$k_r].'-'.$rate['anno'][$k_r].
-                            ' '.$money[1];
+                            ' '.$admin_aziend['symbol'];
                        echo "</td>
                        <td align=\"right\">";
                        echo gaz_format_number($v_r);
@@ -324,7 +324,7 @@ if (isset($_POST['preview'])) {
                  echo $script_transl['total_value'][$k_t];
                  echo "</td>
                        <td align=\"right\">";
-                 echo $money[1].' '.gaz_format_number($v_t);
+                 echo $admin_aziend['symbol'].' '.gaz_format_number($v_t);
                  echo "\t </td>\n";
                  echo "\t </tr>\n";
               }

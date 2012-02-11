@@ -50,7 +50,7 @@ $strScript = array ("browse_document.php" =>
                            " of the year ",
                            " Item ",
                            " Quantity ",
-                           " Amount - $money[0] ",
+                           " Amount - ".$admin_aziend['description'],
                            "Out of warehouse"),
                     "report_movmag.php" =>
                    array(  "warehouse movements ",
@@ -89,7 +89,7 @@ $strScript = array ("browse_document.php" =>
                            'operat_value'=>array(-1=>"Unloading",0=>"Nop",1=>"Loading"),
                            'partner'=>'Partner',
                            'del_this'=>'Delete stock movement',
-                           'amount'=>" Amount - $money[0] ",
+                           'amount'=>" Amount - ".$admin_aziend['description'],
                            ),
                     "report_caumag.php" =>
                    array(  "warehouse causals ",
@@ -211,7 +211,7 @@ $strScript = array ("browse_document.php" =>
                            'date_fin'=>'Data registrazione fine ',
                            'header'=>array('Date'=>'','Causal'=>'','Document<br \>description'=>'',
                                             'Price'=>'','UM' =>'','Quantity'=>'',
-                                            $money[1].'<br \>loading'=>'',$money[1].'<br \>unloadig'=>'',
+                                            $admin_aziend['symbol'].'<br \>loading'=>'',$admin_aziend['symbol'].'<br \>unloadig'=>'',
                                             'Storage<br \>quantity'=>'','Storage<br \>value'=>''
                                            ),
                            'tot'=>'Consistenza'
@@ -223,7 +223,7 @@ $strScript = array ("browse_document.php" =>
                            'item_head'=>array('Code','Group','Description','MU','Min.Stock'),
                            'header'=>array('Date','Causal','Document description',
                                             'Price','MU','Quantity',
-                                            $money[1].' load',$money[1].' unload',
+                                            $admin_aziend['symbol'].' load',$admin_aziend['symbol'].' unload',
                                             'Q.ty stock','Val. stock'
                                            ),
                            'tot'=>'Consistency at '
@@ -288,9 +288,9 @@ $strScript = array ("browse_document.php" =>
                                                'D'=>'Moltiplicazione per valore','E'=>'Divisione per valore','F'=>'Azzeramento e somma percentuale'),
                            'valore'=>'Percentuale/valore',
                            'round_mode'=>'Arrotondamento matematico a',
-                           'round_mode_value'=>array('1 '.$money[0],'10 centesimi','1 centesimo','1 millesimo','0,1 millesimi','0,01 millesimi'),
+                           'round_mode_value'=>array('1 '.$admin_aziend['description'],'10 cents','1 cent','1 mils','0,1 mils','0,01 mils'),
                            'header'=>array('Cat.Merceologica'=>'','Codice'=>'','Descrizione'=>'','U.M.'=>'',
-                                            'Prezzo vecchio'=>'','Prezzo nuovo'=>''
+                                            'Old price'=>'','New price'=>''
                                           )
                            ),
                    "update_vatrate.php" =>

@@ -51,7 +51,7 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false)
               echo "\n<script type=\"text/javascript\" src=\"../../js/".$v.".js\"></script>";
       }
   }
-  global $money,$module,$admin_aziend,$radix,$scriptname;
+  global $module,$admin_aziend,$radix,$scriptname;
   $result = getAccessRights($_SESSION['Login'],$_SESSION['enterprise_id']);
   if (gaz_dbi_num_rows($result) > 0) {
      // creo l'array associativo per la generazione del menu con JSCookMenu

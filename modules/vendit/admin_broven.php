@@ -1405,7 +1405,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 }
 echo "</select></tr>\n";
 echo "<tr>\n";
-echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[28] $money[2]</td>\n";
+echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[28] ".$admin_aziend['symbol']."</td>\n";
 echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['traspo']."\" name=\"traspo\" maxlength=\"6\" size=\"3\" onchange=\"this.form.submit()\" ></td>\n";
 echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[52]</td>\n";
 echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['net_weight']."\" name=\"net_weight\" maxlength=\"9\" size=\"5\" ></td>\n";
@@ -1422,7 +1422,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</
           <td class=\"FacetFieldCaptionTD\" align=\"right\">%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"".$form["sconto"]."\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['stamp']."</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">$money[2] $script_transl[36]</td>\n";
+          <td class=\"FacetFieldCaptionTD\" align=\"right\">".$admin_aziend['symbol']." $script_transl[36]</td>\n";
 if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
     echo "<td><input type=\"submit\" accesskey=\"o\" name=\"ord\" value=\"GENERA ORDINE!\"></td>";
 }

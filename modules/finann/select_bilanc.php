@@ -245,7 +245,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
         $income = round($loss + $profit,2);
         echo "<table class=\"Tlarge\">";
         if ($ctrl_bal != 0 ) {
-          echo "<tr><td colspan=\"4\" class=\"FacetDataTDred\">".$script_transl['error']."! -> ".$money[2]." ".$ctrl_bal." ".$strScript['select_chiape.php'][14]." <a href=\"".$strMenu2[0][0]."\">".$strMenu2[0][1]."</a></td></tr>\n";
+          echo "<tr><td colspan=\"4\" class=\"FacetDataTDred\">".$script_transl['error']."! -> ".$admin_aziend['symbol']." ".$ctrl_bal." ".$strScript['select_chiape.php'][14]." <a href=\"".$strMenu2[0][0]."\">".$strMenu2[0][1]."</a></td></tr>\n";
         }
         echo "<tr><td colspan=\"4\" class=\"FacetDataTD\" align=\"center\">".$script_transl['view'].$script_transl[6]."</td></tr>\n";
         //------------- STATO PATRIMONIALE -------------------------

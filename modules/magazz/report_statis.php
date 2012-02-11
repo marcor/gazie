@@ -161,7 +161,7 @@ foreach ($castelletto_articoli as $key=>$value) {
         if ($i==27) $i=0;
         if ($form['ordine'] == 2) {
            $val_width = intval($value['valore']*400/$totali['max_valore']);
-           $val_unimis = $money[2];
+           $val_unimis = $admin_aziend['symbol'];
            $val_quanti = gaz_format_number($value['valore']);
            $val_title = $script_transl[11].$value['unimis']." ".intval($value['quanti']);
         } else {

@@ -1214,7 +1214,7 @@ if (substr($form['tipdoc'],0,1) == 'A') { //piede adatto ad un documento d'acqui
   echo "<td colspan=\"2\" class=\"FacetDataTD\"><input type=\"text\" name=\"spediz\" value=\"".$form["spediz"]."\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
   $select_spediz = new SelectValue("spedizione");
   $select_spediz -> output('spediz', 'spediz');
-  echo "</td><td class=\"FacetFieldCaptionTD\">$script_transl[28] $money[2]</td>\n";
+  echo "</td><td class=\"FacetFieldCaptionTD\">$script_transl[28] ".$admin_aziend['symbol']."</td>\n";
   echo "<td colspan=\"2\" class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['traspo']."\" name=\"traspo\" maxlength=\"6\" size=\"3\" onchange=\"this.form.submit()\" >\n";
   echo "</td></tr>\n";
   echo "<tr>";
@@ -1261,7 +1261,7 @@ if (substr($form['tipdoc'],0,1) == 'A') { //piede adatto ad un documento d'acqui
   echo "</select></tr>\n";
 }
 //fine piede
-echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"".$form["sconto"]."\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[35]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] $money[2]</td>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"".$form["sconto"]."\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[35]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] ".$admin_aziend['symbol']."</td>\n";
 $chk_add_iva_tes = 0;
 foreach ($castel as $key => $value) {
       $result = gaz_dbi_get_row($gTables['aliiva'],"codice",$key);

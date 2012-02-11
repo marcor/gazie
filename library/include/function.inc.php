@@ -1277,7 +1277,8 @@ function checkAdmin($Livaut=0)
         exit;
     }
     $_SESSION["logged_in"] = true;
-    return $admin_aziend;
+    $m=gaz_dbi_get_row($gTables['currency'],'id',1);
+    return array_merge($admin_aziend,$m);
 }
 
 function changeEnterprise($new_co=1)

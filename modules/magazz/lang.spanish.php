@@ -54,7 +54,7 @@ $strScript = array ("browse_document.php" =>
                            " del a&ntilde;o ",
                            " Item ",
                            " Cantidad ",
-                           " Cantidad - $money[0] ",
+                           " Cantidad - ".$admin_aziend['description'],
                            "Fuera de bodega"),
                     "report_movmag.php" =>
                    array(  "movimientos de bodega",
@@ -93,7 +93,7 @@ $strScript = array ("browse_document.php" =>
                            'operat_value'=>array(-1=>"Descarga",0=>"No",1=>"Subida"),
                            'partner'=>'Cliente/Proveedor',
                            'del_this'=>'Borrar el movimientos de bodega',
-                           'amount'=>" Cantidad -  $money[0] ",
+                           'amount'=>" Cantidad -  ".$admin_aziend['description'],
                            ),
                     "report_caumag.php" =>
                    array(  "Causales de bodega",
@@ -215,7 +215,7 @@ $strScript = array ("browse_document.php" =>
                            'date_fin'=>'Fecha registro termino ',
                            'header'=>array('Fecha'=>'','Causal'=>'','Documento<br \>descripcion'=>'',
                                             'Precio'=>'','UM' =>'','Cantidad'=>'',
-                                            $money[1].'<br \>carga'=>'',$money[1].'<br \>descarga'=>'',
+                                            $admin_aziend['symbol'].'<br \>carga'=>'',$admin_aziend['symbol'].'<br \>descarga'=>'',
                                             'Cantidad<br \>existencias'=>'','Existencias<br />valor'=>''
                                            ),
                            'tot'=>'Consistencia'
@@ -227,7 +227,7 @@ $strScript = array ("browse_document.php" =>
                            'item_head'=>array('Codigo','Cat.Merc','Descripcion','UM','Min.Exist.'),
                            'header'=>array('Fecha','Causal','Documento descripcion',
                                             'Precio','UM','Cantidad',
-                                            $money[1].' carga',$money[1].' descarga',
+                                            $admin_aziend['symbol'].' carga',$admin_aziend['symbol'].' descarga',
                                             'Cantid. exist.','Val. exist.'
                                            ),
                            'tot'=>'Consistencia de '
@@ -292,7 +292,7 @@ $strScript = array ("browse_document.php" =>
                                                'D'=>'Multiplicacion para valor','E'=>'Division por valor','F'=>'Ajuste a cero y suma percentual'),
                            'valore'=>'Porcentaje / Valor',
                            'round_mode'=>'Redondeo matem&aacute;tico a',
-                           'round_mode_value'=>array('1 '.$money[0],'10 centesimo','1 centesimo','1 milesima','0,1 milesima','0,01 milesima'),
+                           'round_mode_value'=>array('1 '.$admin_aziend['description'],'10 centesimo','1 centesimo','1 milesima','0,1 milesima','0,01 milesima'),
                            'header'=>array('Cat. Mercaderia'=>'','Codigo'=>'','Descripcion'=>'','U.M.'=>'',
                                             'Precio anterior'=>'','Precio nuevo'=>''
                                           )

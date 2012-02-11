@@ -145,19 +145,19 @@ if ($saldo_totale < 0) {
     $pdf->SetTextColor(255,0,0);
     $pdf->Cell(54,6);
     $pdf->Cell(55,6,strtoupper($script_transl['tot'].' '.$script_transl['t_neg']),'LTB',0,'L',1);
-    $pdf->Cell(5,6,$money[1],'TB',0,'L',1);
+    $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
     $pdf->Cell(24,6,gaz_format_number($saldo_totale),'RTB',1,'R',1);
     $pdf->SetTextColor(0);
 } else {
     $pdf->Cell(54,6);
     $pdf->Cell(55,6,strtoupper($script_transl['tot'].' '.$script_transl['t_pos']),'LTB',0,'L');
-    $pdf->Cell(5,6,$money[1],'TB',0,'L');
+    $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L');
     $pdf->Cell(24,6,gaz_format_number($saldo_totale),'RTB',1,'R',1);
     if ($_GET['cr']>0) { // se c'è un credito riportato dal periodo precedente
        $pdf->SetTextColor(255,0,0);
        $pdf->Cell(34,6);
        $pdf->Cell(75,6,$script_transl['carry'],'LTB',0,'R',1);
-       $pdf->Cell(5,6,$money[1],'TB',0,'L',1);
+       $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
        $pdf->Cell(24,6,'-'.gaz_format_number($_GET['cr']),'RTB',1,'R',1);
        $pdf->SetTextColor(0);
        $saldo_totale-=floatval($_GET['cr']);
@@ -173,14 +173,14 @@ if ($saldo_totale < 0) {
        $pdf->Cell(31,6);
        $pdf->SetFont('helvetica','B',12);
        $pdf->Cell(72,6,strtoupper($script_transl['tot'].$script_transl['pay']),'LTB',0,'L',1);
-       $pdf->Cell(5,6,$money[1],'TB',0,'L',1);
+       $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
        $pdf->Cell(30,6,gaz_format_number($saldo_totale+$interessi),'RTB',1,'R',1);
     } else {
        $pdf->Ln(2);
        $pdf->Cell(31,6);
        $pdf->SetFont('helvetica','B',12);
        $pdf->Cell(72,6,strtoupper($script_transl['tot'].$script_transl['pay']),'LTB',0,'L',1);
-       $pdf->Cell(5,6,$money[1],'TB',0,'L',1);
+       $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
        $pdf->Cell(30,6,gaz_format_number($saldo_totale),'RTB',1,'R',1);
     }
     $pdf->SetFont('helvetica','',8);

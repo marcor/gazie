@@ -225,7 +225,7 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['valore']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">$money[1] ";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">".$admin_aziend['symbol'];
 echo $magval['v_g'];
 echo "</td>\n";
 echo "</tr>\n";

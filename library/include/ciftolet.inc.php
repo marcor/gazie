@@ -93,23 +93,23 @@ class numberstowords_it{
         function euro2word($euro_val){
             list($euro, $centesimi) = explode('.', $euro_val);
             $centesimi = intval(substr((string) $centesimi, 0, 2));
-            $money = $this->n2w_it($euro);
-            $money .= ' euro';
+            $acc = $this->n2w_it($euro);
+            $acc .= ' euro';
             if( $centesimi > 0){
-                $money .= ' e ';
-                $money .= $this->n2w_it($centesimi);
-                $money .= ' centesimi';
+                $acc .= ' e ';
+                $acc .= $this->n2w_it($centesimi);
+                $acc .= ' centesimi';
             }
-            return($money);
+            return($acc);
         }
         function euro2assegno($euro_val){
             $euro_val = number_format($euro_val,2,'.','');
             list($euro, $centesimi) = explode('.',$euro_val);
             $centesimi = intval(substr((string) $centesimi, 0, 2));
-            $money = '€ ';
-            $money .= $this->n2w_it($euro);
-            $money .= '/'.sprintf("%02d", $centesimi);
-            return($money);
+            $acc = '€ ';
+            $acc .= $this->n2w_it($euro);
+            $acc .= '/'.sprintf("%02d", $centesimi);
+            return($acc);
         }
 }
 ?>

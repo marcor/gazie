@@ -352,7 +352,7 @@ class magazzForm extends GAzieForm
     function uploadMag($id_rigo_doc=0,$tipdoc,$numdoc,$seziva,$datdoc,$clfoco,$sconto_chiusura,$caumag,$codart,$quantita,$prezzo,$sconto_rigo,$id_movmag=0,$stock_eval_method=null,$data_from_admin_mov=false)  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
     {
         // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, id_rif)
-        global $gTables, $money,$admin_aziend;
+        global $gTables,$admin_aziend;
         $docOperat = $this->getOperators();
         if ($tipdoc == 'FAD'){  // per il magazzino una fattura differita è come dire DDT
             $tipdoc = 'DDT';

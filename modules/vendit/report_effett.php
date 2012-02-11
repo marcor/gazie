@@ -130,7 +130,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_date($r["datemi"])."</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$r["tipeff"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["scaden"])." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" title=\"".$script_transl['date_doc'].": ".gaz_format_date($r["datfat"])." n.".$r["numfat"]."/".$r["seziva"].' '.$money[1]." ".gaz_format_number($r["totfat"])."\">".$cliente["ragso1"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" title=\"".$script_transl['date_doc'].": ".gaz_format_date($r["datfat"])." n.".$r["numfat"]."/".$r["seziva"].' '.$admin_aziend['symbol']." ".gaz_format_number($r["totfat"])."\">".$cliente["ragso1"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r["impeff"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['salacc_value'][$r["salacc"]]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$banapp["descri"]." &nbsp;</td>";

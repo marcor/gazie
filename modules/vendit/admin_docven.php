@@ -1280,7 +1280,7 @@ $select_banapp -> addSelected($form["banapp"]);
 $select_banapp -> output();
 echo "</td></tr>\n";
 echo "<tr>\n";
-echo "<td align=\"right\" class=\"FacetFieldCaptionTD\" title=\"".$script_transl['traspo_title']."\">$script_transl[28] $money[2]</td>\n";
+echo "<td align=\"right\" class=\"FacetFieldCaptionTD\" title=\"".$script_transl['traspo_title']."\">$script_transl[28]".$admin_aziend['symbol']."</td>\n";
 echo "<td class=\"FacetDataTD\" title=\"".$script_transl['traspo_title']."\"><input type=\"text\" value=\"".$form['traspo']."\" name=\"traspo\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
 echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl[51]."</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"caumag\" class=\"FacetSelect\">\n";
@@ -1588,7 +1588,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['stamp']."</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] $money[2]</td>\n";
+          <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] ".$admin_aziend['symbol']."</td>\n";
 $somma_spese = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
 $last=count($decalc_castle);
 $acc_val=$somma_spese;

@@ -183,7 +183,7 @@ foreach ($attivo as $keylet => $vallet) {
                            $pdf->Cell(50,4,'','R');
                            $pdf->Cell(8,4,$conto.substr($key,7,1).")",'L',0,'R');
                            $pdf->Cell(72,4,$descrizio,'R');
-                           $pdf->Cell(10,4,$money[0],'LR',0,'C');
+                           $pdf->Cell(10,4,$admin_aziend['description'],'LR',0,'C');
                            $pdf->Cell(31,4,$stampaval,'LR',1,'R');
                         } else {
                            if ($value > 0) $stampaval = gaz_format_number($value); else $stampaval = "(".gaz_format_number(-$value).")";
@@ -192,7 +192,7 @@ foreach ($attivo as $keylet => $vallet) {
                            $pdf->Cell(50,4,'','R');
                            $pdf->Cell(8,4,$key.' - ','L',0,'R');
                            $pdf->Cell(72,4,$descricon.' non riclassificato','R');
-                           $pdf->Cell(10,4,$money[0],'LR',0,'C');
+                           $pdf->Cell(10,4,$admin_aziend['description'],'LR',0,'C');
                            $pdf->Cell(31,4,$stampaval,'LR',1,'R');
                         }
                 }
@@ -200,14 +200,14 @@ foreach ($attivo as $keylet => $vallet) {
                 $pdf->Cell(15,4,'','LR');
                 $pdf->Cell(50,4,'','B');
                 $pdf->Cell(80,4,"Totale ".$nromani[intval($keyrom)],'BTR',0,'R');
-                $pdf->Cell(10,4,$money[0],1,0,'C');
+                $pdf->Cell(10,4,$admin_aziend['description'],1,0,'C');
                 $pdf->Cell(31,4,$stampaval,1,1,'R');
                 $totrom=0.00;
      }
      if($totlet > 0) $stampaval = gaz_format_number($totlet); else $stampaval = "(".gaz_format_number(-$totlet).")";
      $pdf->SetFont('helvetica','B',8);
      $pdf->Cell(145,4,"Totale ".$keylet,'LB',0,'R');
-     $pdf->Cell(10,4,$money[0],1,0,'C');
+     $pdf->Cell(10,4,$admin_aziend['description'],1,0,'C');
      $pdf->Cell(31,4,$stampaval,1,1,'R');
      $pdf->SetFont('helvetica','',8);
      $totlet=0.00;
@@ -244,7 +244,7 @@ foreach ($passivo as $keylet => $vallet) {
                            $pdf->Cell(50,4,'','R');
                            $pdf->Cell(8,4,$conto.substr($key,7,1).")",'L',0,'R');
                            $pdf->Cell(72,4,$descrizio,'R');
-                           $pdf->Cell(10,4,$money[0],'LR',0,'C');
+                           $pdf->Cell(10,4,$admin_aziend['description'],'LR',0,'C');
                            $pdf->Cell(31,4,$stampaval,'LR',1,'R');
                         } else {
                            if ($value > 0) $stampaval = gaz_format_number($value); else $stampaval = "(".gaz_format_number(-$value).")";
@@ -253,7 +253,7 @@ foreach ($passivo as $keylet => $vallet) {
                            $pdf->Cell(50,4,'','R');
                            $pdf->Cell(8,4,$key.' - ','L',0,'R');
                            $pdf->Cell(72,4,$descricon.' non riclassificato','R');
-                           $pdf->Cell(10,4,$money[0],'LR',0,'C');
+                           $pdf->Cell(10,4,$admin_aziend['description'],'LR',0,'C');
                            $pdf->Cell(31,4,$stampaval,'LR',1,'R');
                         }
                 }
@@ -261,14 +261,14 @@ foreach ($passivo as $keylet => $vallet) {
                 $pdf->Cell(15,4,'','LR');
                 $pdf->Cell(50,4,'','B');
                 $pdf->Cell(80,4,"Totale ".$nromani[intval($keyrom)],'BTR',0,'R');
-                $pdf->Cell(10,4,$money[0],1,0,'C');
+                $pdf->Cell(10,4,$admin_aziend['description'],1,0,'C');
                 $pdf->Cell(31,4,$stampaval,1,1,'R');
                 $totrom=0.00;
      }
      if($totlet > 0) $stampaval = gaz_format_number($totlet); else $stampaval = "(".gaz_format_number(-$totlet).")";
      $pdf->SetFont('helvetica','B',8);
      $pdf->Cell(145,4,"Totale ".$keylet,'LB',0,'R');
-     $pdf->Cell(10,4,$money[0],1,0,'C');
+     $pdf->Cell(10,4,$admin_aziend['description'],1,0,'C');
      $pdf->Cell(31,4,$stampaval,1,1,'R');
      $pdf->SetFont('helvetica','',8);
      $totlet=0.00;
@@ -305,7 +305,7 @@ foreach ($risulta as $keylet => $vallet) {
                            $pdf->Cell(50,4,'','R');
                            $pdf->Cell(8,4,$conto.substr($key,7,1).")",'L',0,'R');
                            $pdf->Cell(72,4,$descrizio,'R');
-                           $pdf->Cell(10,4,$money[0],'LR',0,'C');
+                           $pdf->Cell(10,4,$admin_aziend['description'],'LR',0,'C');
                            $pdf->Cell(31,4,$stampaval,'LR',1,'R');
                         } else {
                            if ($value > 0) $stampaval = gaz_format_number($value); else $stampaval = "(".gaz_format_number(-$value).")";
@@ -314,7 +314,7 @@ foreach ($risulta as $keylet => $vallet) {
                            $pdf->Cell(50,4,'','R');
                            $pdf->Cell(8,4,$key.' - ','L',0,'R');
                            $pdf->Cell(72,4,$descricon.' non riclassificato','R');
-                           $pdf->Cell(10,4,$money[0],'LR',0,'C');
+                           $pdf->Cell(10,4,$admin_aziend['description'],'LR',0,'C');
                            $pdf->Cell(31,4,$stampaval,'LR',1,'R');
                         }
                 }
@@ -322,14 +322,14 @@ foreach ($risulta as $keylet => $vallet) {
                 $pdf->Cell(15,4,'','LR');
                 $pdf->Cell(50,4,'','B');
                 $pdf->Cell(80,4,"Totale ".$nromani[intval($keyrom)],'BTR',0,'R');
-                $pdf->Cell(10,4,$money[0],1,0,'C');
+                $pdf->Cell(10,4,$admin_aziend['description'],1,0,'C');
                 $pdf->Cell(31,4,$stampaval,1,1,'R');
                 $totrom=0.00;
      }
      if($totlet > 0) $stampaval = gaz_format_number($totlet); else $stampaval = "(".gaz_format_number(-$totlet).")";
      $pdf->SetFont('helvetica','B',8);
      $pdf->Cell(145,4,"Totale ".$keylet,'LB',0,'R');
-     $pdf->Cell(10,4,$money[0],1,0,'C');
+     $pdf->Cell(10,4,$admin_aziend['description'],1,0,'C');
      $pdf->Cell(31,4,$stampaval,1,1,'R');
      $pdf->SetFont('helvetica','',8);
      $totlet=0.00;

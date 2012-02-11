@@ -436,7 +436,7 @@ if ($form['artico']=='') {
    echo "\t<input type=\"hidden\" name=\"search_item\" value=\"".$form['search_item']."\">\n";
 }
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl[12]."</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"".$form['quanti']."\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis</td></tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[13]."</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"".$form['prezzo']."\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $money[2]</td>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[13]."</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"".$form['prezzo']."\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> ".$admin_aziend['symbol']."</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl[14]."</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"".$form['scorig']."\" maxlength=\"4\" size=\"4\" name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$strScript["report_movmag.php"][7]."</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"".$importo_totale."\" name=\"total\" size=\"20\" readonly />\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$strScript["admin_caumag.php"][4]."</td><td class=\"FacetDataTD\">\n";

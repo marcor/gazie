@@ -69,7 +69,7 @@ class Depliant extends  Report_template
 
 function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',$barcode='',$link=false,$vat='')
 {
-   global $money,$admin_aziend;
+   global $admin_aziend;
    $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
    $this->SetFont('helvetica','',9);
    if (floatval($price)<0.00001){
@@ -101,7 +101,7 @@ function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',
         } else {
          $un = '';
         }
-        $this->Cell(93,5,$price.' '.$money[1].'/'.$um.' '.$vat.' '.$un,'LR',2);
+        $this->Cell(93,5,$price.' '.$admin_aziend['symbol'].'/'.$um.' '.$vat.' '.$un,'LR',2);
         $this->Cell(73,5,$note,'LB',0,'R');
         $this->Cell(20,5,'','BR',$lf,'R');
    } elseif (!empty($barcode)) {
@@ -115,7 +115,7 @@ function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',
         $this->EAN13($x+40,$y+5,$barcode,10);
         $this->Cell(93,5,$code.' - '.$description,'LTR',2);
         $this->Cell(93,5,'','LR',2);
-        $this->Cell(93,5,$price.' '.$money[1].'/'.$um,'LR',2);
+        $this->Cell(93,5,$price.' '.$admin_aziend['symbol'].'/'.$um,'LR',2);
         $this->Cell(93,5,$vat,'LBR',$lf);
    } else {
         if ($x > 20){
@@ -131,7 +131,7 @@ function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',
         } else {
             $this->Cell(63,5,$description,1,0,'L');
         }
-        $this->Cell(49,5,$price.' '.$money[1].'/'.$um.' '.$vat,1,0,'R');
+        $this->Cell(49,5,$price.' '.$admin_aziend['symbol'].'/'.$um.' '.$vat,1,0,'R');
         $this->SetFont('helvetica','',7);
         $this->Cell(47,5,$note,1,1,'R');
    }

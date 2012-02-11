@@ -307,7 +307,7 @@ if (isset($_POST['preview']) and $msg=='') {
         $eco = $anagrafica->getPartner($form['economic_result']);
         echo "<table class=\"Tlarge\">";
         if ($ctrl_bal != 0 ) {
-          echo "<tr><td colspan=\"4\" class=\"FacetDataTDred\">".$script_transl['errors'][3]."! -> $money[2] $ctrl_bal <a href=\"".$strMenu2[0][0]."\">".$strMenu2[0][1]."</a></TD></TR>";
+          echo "<tr><td colspan=\"4\" class=\"FacetDataTDred\">".$script_transl['errors'][3]."! -> ".$admin_aziend['symbol']." $ctrl_bal <a href=\"".$strMenu2[0][0]."\">".$strMenu2[0][1]."</a></TD></TR>";
         }
         echo "<tr><TD><hr></TD><TD class=\"FacetFieldCaptionTD\" align=\"center\">".$script_transl['view'].$script_transl['closing'].$script_transl['of'].date("d-m-Y",$uts_date_closing)."</TD><td colspan=\"2\"><hr></TD></TR>";
         echo "<tr><td>".$script_transl['code']."</td><td>".$script_transl['descr']."</td><td align=\"right\">".$script_transl['entry']."</td><td align=\"right\">".$script_transl['exit']."</td><tr>";
