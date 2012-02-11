@@ -68,10 +68,12 @@ while ($r = gaz_dbi_fetch_array($tables)) {
             ;
         } else if (   ($r[0] == $table_prefix."_"."anagra")
                    || ($r[0] == $table_prefix."_"."aziend")
+                   || ($r[0] == $table_prefix."_"."country")
+                   || ($r[0] == $table_prefix."_"."currency")
+                   || ($r[0] == $table_prefix."_"."currency_history")
                    || ($r[0] == $table_prefix."_"."municipalities")
                    || ($r[0] == $table_prefix."_"."provinces")
-                   || ($r[0] == $table_prefix."_"."regions")
-                   || ($r[0] == $table_prefix."_"."country")) {
+                   || ($r[0] == $table_prefix."_"."regions")) {
             //
             // Si tratta di una tabella generale che si ritiene
             // utile poter modificare direttamente.
