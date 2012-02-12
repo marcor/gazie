@@ -154,7 +154,7 @@ if ($conti) {
            if ($ctrlmas != 0) {
               $pdf->Cell(100,5,'','L');
               $pdf->Cell(40,5,'','T');
-              $pdf->Cell(15,5,$admin_aziend['description'],'T');
+              $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
               $pdf->Cell(35,5,gaz_format_number($totmas),1,1,'R');
            }
            $pdf->setTopCarryBar('');
@@ -184,7 +184,7 @@ if ($conti) {
     $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$mas*1000000);
     $pdf->Cell(100,5,'','L');
     $pdf->Cell(40,5,'','T');
-    $pdf->Cell(15,5,$admin_aziend['description'],'T');
+    $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
     $pdf->Cell(35,5,gaz_format_number($totmas),1,1,"R");
     $totmas=0;
     $pdf->setTopCarryBar('');
@@ -210,7 +210,7 @@ if ($conti) {
            if ($ctrlmas != 0) {
               $pdf->Cell(100,5,'','L');
               $pdf->Cell(40,5,'','T');
-              $pdf->Cell(15,5,$admin_aziend['description'],'T');
+              $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
               $pdf->Cell(35,5,gaz_format_number(-$totmas),1,1,'R');
            }
            $pdf->setTopCarryBar('');
@@ -234,7 +234,7 @@ if ($conti) {
     $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$mas*1000000);
     $pdf->Cell(100,5,'','L');
     $pdf->Cell(40,5,'','T');
-    $pdf->Cell(15,5,$admin_aziend['description'],'T');
+    $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
     $pdf->Cell(35,5,gaz_format_number(-$totmas),1,1,'R');
     $totmas=0;
     $pdf->setTopCarryBar('');
@@ -263,7 +263,7 @@ if ($conti) {
            if ($ctrlmas != 0) {
               $pdf->Cell(100,5,'','L');
               $pdf->Cell(40,5,'','T');
-              $pdf->Cell(15,5,$admin_aziend['description'],'T');
+              $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
               $pdf->Cell(35,5,gaz_format_number(-$totmas),1,1,'R');
            }
            $pdf->setTopCarryBar('');
@@ -287,7 +287,7 @@ if ($conti) {
     $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$mas*1000000);
     $pdf->Cell(100,5,'','L');
     $pdf->Cell(40,5,'','T');
-    $pdf->Cell(15,5,$admin_aziend['description'],'T');
+    $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
     $pdf->Cell(35,5,gaz_format_number(-$totmas),1,1,'R');
     $totmas=0;
     $pdf->setTopCarryBar('');
@@ -313,7 +313,7 @@ if ($conti) {
            if ($ctrlmas != 0) {
               $pdf->Cell(100,5,'','L');
               $pdf->Cell(40,5,'','T');
-              $pdf->Cell(15,5,$admin_aziend['description'],'T');
+              $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
               $pdf->Cell(35,5,gaz_format_number($totmas),1,1,'R');
            }
            $totmas = 0;
@@ -337,7 +337,7 @@ if ($conti) {
     $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$mas*1000000);
     $pdf->Cell(100,5,'','L');
     $pdf->Cell(40,5,'','T');
-    $pdf->Cell(15,5,$admin_aziend['description'],'T');
+    $pdf->Cell(15,5,$admin_aziend['curr_name'],'T');
     $pdf->Cell(35,5,gaz_format_number($totmas),1,1,'R');
     $totmas=0;
     $pdf->setTopCarryBar('');

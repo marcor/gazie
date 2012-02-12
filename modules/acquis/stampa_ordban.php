@@ -157,11 +157,11 @@ while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
     $totale +=$rigo['prelis'];
     if ($pdf->GetY() <= 185) {
         $pdf->Cell(140,6,$rigo['descri'],0,0,'L');
-        $pdf->Cell(20,6,$admin_aziend['description'],0,0,'R');
+        $pdf->Cell(20,6,$admin_aziend['curr_name'],0,0,'R');
         $pdf->Cell(30,6,gaz_format_number($rigo['prelis']),0,1,'R');
     } else {
         $pdf->Cell(140,6,$rigo['descri'],0,0,'L');
-        $pdf->Cell(20,6,$admin_aziend['description'],0,0,'R');
+        $pdf->Cell(20,6,$admin_aziend['curr_name'],0,0,'R');
         $pdf->Cell(30,6,gaz_format_number($rigo['prelis']),0,1,'R');
         $pdf->SetY(277);
         $pdf->Cell(130,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>>',1,1,'C');
@@ -196,11 +196,11 @@ $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = '$testat'","id_te
 while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
     if ($pdf->GetY() <= 272) {
        $pdf->Cell(140,6,$rigo['descri'],0,0,'L');
-       $pdf->Cell(20,6,$admin_aziend['description'],0,0,'R');
+       $pdf->Cell(20,6,$admin_aziend['curr_name'],0,0,'R');
        $pdf->Cell(30,6,gaz_format_number($rigo['prelis']),0,1,'R');
     } else {
       $pdf->Cell(140,6,$rigo['descri'],0,0,'L');
-      $pdf->Cell(20,6,$admin_aziend['description'],0,0,'R');
+      $pdf->Cell(20,6,$admin_aziend['curr_name'],0,0,'R');
       $pdf->Cell(30,6,gaz_format_number($rigo['prelis']),0,1,'R');
       $pdf->SetY(277);
       $pdf->Cell(190,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>>',1,1,'C');

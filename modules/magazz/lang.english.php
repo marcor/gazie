@@ -50,7 +50,7 @@ $strScript = array ("browse_document.php" =>
                            " of the year ",
                            " Item ",
                            " Quantity ",
-                           " Amount - ".$admin_aziend['description'],
+                           " Amount - ".$admin_aziend['curr_name'],
                            "Out of warehouse"),
                     "report_movmag.php" =>
                    array(  "warehouse movements ",
@@ -89,7 +89,7 @@ $strScript = array ("browse_document.php" =>
                            'operat_value'=>array(-1=>"Unloading",0=>"Nop",1=>"Loading"),
                            'partner'=>'Partner',
                            'del_this'=>'Delete stock movement',
-                           'amount'=>" Amount - ".$admin_aziend['description'],
+                           'amount'=>" Amount - ".$admin_aziend['curr_name'],
                            ),
                     "report_caumag.php" =>
                    array(  "warehouse causals ",
@@ -288,7 +288,7 @@ $strScript = array ("browse_document.php" =>
                                                'D'=>'Moltiplicazione per valore','E'=>'Divisione per valore','F'=>'Azzeramento e somma percentuale'),
                            'valore'=>'Percentuale/valore',
                            'round_mode'=>'Arrotondamento matematico a',
-                           'round_mode_value'=>array('1 '.$admin_aziend['description'],'10 cents','1 cent','1 mils','0,1 mils','0,01 mils'),
+                           'round_mode_value'=>array('1 '.$admin_aziend['curr_name'],'10 cents','1 cent','1 mils','0,1 mils','0,01 mils'),
                            'header'=>array('Cat.Merceologica'=>'','Codice'=>'','Descrizione'=>'','U.M.'=>'',
                                             'Old price'=>'','New price'=>''
                                           )

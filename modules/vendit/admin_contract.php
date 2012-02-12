@@ -175,7 +175,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                 $form['rows'][$i]['id_contract'] = $form['id_contract'];
                 contractRowUpdate($form['rows'][$i]);
              }
-             bodytextUpdate(array('id_body',$form['id_body_text']),array('table_name_ref'=>'contract','id_ref'=>$form['id_contract'],'body_text'=>$form['body_text']));
+             bodytextUpdate(array('id_body',$form['id_body_text']),array('table_name_ref'=>'contract','id_ref'=>$form['id_contract'],'body_text'=>$form['body_text'],'lang_id'=>$admin_aziend['id_language']));
              contractUpdate($form, array('id_contract',$form['id_contract']));
              header("Location: ".$form['ritorno']);
              exit;
@@ -183,7 +183,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             contractUpdate($form);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
-            bodytextInsert(array('table_name_ref'=>'contract','id_ref'=>$ultimo_id,'body_text'=>$form['body_text']));
+            bodytextInsert(array('table_name_ref'=>'contract','id_ref'=>$ultimo_id,'body_text'=>$form['body_text'],'lang_id'=>$admin_aziend['id_language']));
             gaz_dbi_put_row($gTables['contract'], 'id_contract', $ultimo_id, 'id_body_text', gaz_dbi_last_id());
             //inserisco i rows
             foreach ($form['rows'] as $i=>$value) {

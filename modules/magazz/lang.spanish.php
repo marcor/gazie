@@ -54,7 +54,7 @@ $strScript = array ("browse_document.php" =>
                            " del a&ntilde;o ",
                            " Item ",
                            " Cantidad ",
-                           " Cantidad - ".$admin_aziend['description'],
+                           " Cantidad - ".$admin_aziend['curr_name'],
                            "Fuera de bodega"),
                     "report_movmag.php" =>
                    array(  "movimientos de bodega",
@@ -93,7 +93,7 @@ $strScript = array ("browse_document.php" =>
                            'operat_value'=>array(-1=>"Descarga",0=>"No",1=>"Subida"),
                            'partner'=>'Cliente/Proveedor',
                            'del_this'=>'Borrar el movimientos de bodega',
-                           'amount'=>" Cantidad -  ".$admin_aziend['description'],
+                           'amount'=>" Cantidad -  ".$admin_aziend['curr_name'],
                            ),
                     "report_caumag.php" =>
                    array(  "Causales de bodega",
@@ -292,7 +292,7 @@ $strScript = array ("browse_document.php" =>
                                                'D'=>'Multiplicacion para valor','E'=>'Division por valor','F'=>'Ajuste a cero y suma percentual'),
                            'valore'=>'Porcentaje / Valor',
                            'round_mode'=>'Redondeo matem&aacute;tico a',
-                           'round_mode_value'=>array('1 '.$admin_aziend['description'],'10 centesimo','1 centesimo','1 milesima','0,1 milesima','0,01 milesima'),
+                           'round_mode_value'=>array('1 '.$admin_aziend['curr_name'],'10 centesimo','1 centesimo','1 milesima','0,1 milesima','0,01 milesima'),
                            'header'=>array('Cat. Mercaderia'=>'','Codigo'=>'','Descripcion'=>'','U.M.'=>'',
                                             'Precio anterior'=>'','Precio nuevo'=>''
                                           )

@@ -56,8 +56,8 @@ if (!table_prefix_ok ($table_prefix)) {
 //}
 
 // tabelle comuni alle aziende della stessa gestione
-$tn=array('admin','admin_module','anagra','aziend','config','country','currency','currency_history',
-          'regions','provinces','municipalities','menu_module','module','menu_script');
+$tn=array('admin','admin_module','anagra','aziend','config','country','currencies','currency_history',
+          'languages','regions','provinces','municipalities','menu_module','module','menu_script');
 foreach ($tn as $v){
   $gTables[$v]= $table_prefix."_".$v;
 }

@@ -141,7 +141,7 @@ if (!isset($_POST['ritorno'])) { // al primo accesso allo script
                       rigbroInsert($data);
                       $dr['tiprig'] = 2;
                       $dr['id_tes'] =$ultimo_id;
-                      $dr['descri'] = '\'--> '.$script_transl['des1'].$vr['quanti'].' '.$vr['unimis'].' x '.$vr['prezzoweb'].' '.$admin_aziend['description'];
+                      $dr['descri'] = '\'--> '.$script_transl['des1'].$vr['quanti'].' '.$vr['unimis'].' x '.$vr['prezzoweb'].' '.$admin_aziend['curr_name'];
                       $dr['status'] = 'INSERT';
                       rigbroInsert($dr);
                   }

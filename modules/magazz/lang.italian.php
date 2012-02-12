@@ -50,7 +50,7 @@ $strScript = array ("browse_document.php" =>
                            " dell'anno ",
                            " Categoria merc. ",
                            " Quantit&agrave; ",
-                           " Valore in ".$admin_aziend['description'],
+                           " Valore in ".$admin_aziend['curr_name'],
                            " Fuori "),
                     "report_movmag.php" =>
                    array(  "movimenti di magazzino ",
@@ -89,7 +89,7 @@ $strScript = array ("browse_document.php" =>
                            'operat_value'=>array(-1=>"Scarico",0=>"Non opera",1=>"Carico"),
                            'partner'=>'Cliente/Fornitore',
                            'del_this'=>'Elimina il movimento di magazzino',
-                           'amount'=>" Valore in ".$admin_aziend['description'],
+                           'amount'=>" Valore in ".$admin_aziend['curr_name'],
                             ),
                     "report_caumag.php" =>
                    array(  "causali di magazzino ",
@@ -308,7 +308,7 @@ $strScript = array ("browse_document.php" =>
                                                'D'=>'Moltiplicazione per valore','E'=>'Divisione per valore','F'=>'Azzeramento e somma percentuale'),
                            'valore'=>'Percentuale/valore',
                            'round_mode'=>'Arrotondamento matematico a',
-                           'round_mode_value'=>array('1 '.$admin_aziend['description'],'10 centesimi','1 centesimo','1 millesimo','0,1 millesimi','0,01 millesimi'),
+                           'round_mode_value'=>array('1 '.$admin_aziend['curr_name'],'10 centesimi','1 centesimo','1 millesimo','0,1 millesimi','0,01 millesimi'),
                            'header'=>array('Cat.Merceologica'=>'','Codice'=>'','Descrizione'=>'','U.M.'=>'',
                                             'Prezzo vecchio'=>'','Prezzo nuovo'=>''
                                           )
