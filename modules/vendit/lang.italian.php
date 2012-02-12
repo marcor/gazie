@@ -69,6 +69,8 @@ $strScript = array ("admin_client.php" =>
                            'citspe'=>'Citt&agrave; - Provincia',
                            'prospe'=>'Provincia',
                            'country'=>'Nazione',
+                           'id_language'=>'Lingua',
+                           'id_currency'=>'Valuta',
                            'telefo'=>'Telefono',
                            'fax'=>'Fax',
                            'cell'=>'Cellulare',

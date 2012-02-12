@@ -71,6 +71,8 @@ $strScript = array("admin_fornit.php" =>
                            'capspe'=>'Postleitzahl',
                            'citspe'=>'City - Provinz',
                            'country'=>'Nation',
+                           'id_language'=>'Sprache',
+                           'id_currency'=>'Währung',
                            'telefo'=>'Telephone',
                            'fax'=>'Fax',
                            'cell'=>'Cellphone',

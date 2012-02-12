@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS `gaz_currency_history` ( `id_currency` int(9) NOT NUL
 ALTER TABLE `gaz_anagra` ADD `id_currency` INT( 3 ) NOT NULL AFTER `country`, ADD `id_language` INT( 3 ) NOT NULL AFTER `id_currency`; 
 ALTER TABLE `gaz_aziend` ADD `mas_staff` INT( 3 ) NOT NULL AFTER `masban`, ADD `id_currency` INT( 3 ) NOT NULL AFTER `country`, ADD `id_language` INT( 3 ) NOT NULL AFTER `id_currency`; 
 UPDATE `gaz_aziend` SET `id_currency` = '1', `id_language` = '1';
+UPDATE `gaz_anagra` SET `id_currency` = '1', `id_language` = '1';
 CREATE TABLE IF NOT EXISTS `gaz_languages` ( `lang_id` int(3) unsigned NOT NULL AUTO_INCREMENT, `lang_code` char(7) NOT NULL, `title` varchar(50) NOT NULL, `title_native` varchar(50) NOT NULL, `sef` varchar(50) NOT NULL, `image` varchar(50) NOT NULL, `description` varchar(512) NOT NULL, `metakey` text NOT NULL, `metadesc` text NOT NULL, `published` int(11) NOT NULL DEFAULT '0', `ordering` int(11) NOT NULL DEFAULT '0', PRIMARY KEY (`lang_id`) ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 INSERT INTO `gaz_languages` (`lang_id`, `lang_code`, `title`, `title_native`, `sef`, `image`, `description`, `metakey`, `metadesc`, `published`, `ordering`) VALUES (1, 'it-IT', 'Italiano (IT)', 'Italian (IT)', 'it', 'it', '', '', '', 1, 0),(2, 'en-GB', 'English (UK)', 'English (UK)', 'en', 'en', '', '', '', 1, 1),(3, 'es-CL', 'Español (CL)', 'Spanish (CL)', 'es', 'es', '', '', '', 1, 2);
 

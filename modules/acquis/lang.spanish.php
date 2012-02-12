@@ -73,6 +73,8 @@ $strScript = array("admin_fornit.php" =>
                            'capspe'=>'Codigo Postal',
                            'citspe'=>'Ciudad; - Region',
                            'country'=>'Pais',
+                           'id_language'=>'Lengua',
+                           'id_currency'=>'Moneda',
                            'telefo'=>'Telefono',
                            'fax'=>'Fax',
                            'cell'=>'Celular',
