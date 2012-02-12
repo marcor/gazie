@@ -42,7 +42,10 @@ session_start();
 
 function gaz_format_number($number=0)
 {
-    return number_format(floatval($number),2,',','.');
+    global $gTables;
+    $currency = gaz_dbi_get_row($gTables['admin'].' LEFT JOIN '.$gTables['aziend'].' ON '.$gTables['admin'].'.enterprise_id = '.$gTables['aziend'].'.codice
+                                                    LEFT JOIN '.$gTables['currencies'].' ON '.$gTables['currencies'].'.id = '.$gTables['aziend'].'.id_currency', "Login", $_SESSION["Login"]);
+    return number_format(floatval($number),$currency['decimal_place'],$currency['decimal_symbol'],$currency['thousands_symbol']);
 }
 
 function gaz_format_date($date)

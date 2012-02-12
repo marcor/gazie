@@ -1,6 +1,6 @@
 UPDATE `gaz_config` SET `cvalue` = '79' WHERE `id` =2;
 CREATE TABLE IF NOT EXISTS `gaz_currencies` ( `id` int(3) NOT NULL AUTO_INCREMENT, `curr_name` varchar(50) DEFAULT NULL, `symbol` varchar(3) NOT NULL, `html_symbol` varchar(10) NOT NULL, `decimal_place` char(4) DEFAULT NULL, `decimal_symbol` char(4) DEFAULT NULL, `thousands_symbol` char(4) DEFAULT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;
-INSERT INTO `gaz_currencies` (`id`, `curr_name`, `symbol`, `html_symbol`,`decimal_place`,`decimal_symbol`,`thousands_symbol`) VALUES (1, 'euro', '€ ', '&#8364; ',2,',','');
+INSERT INTO `gaz_currencies` (`id`, `curr_name`, `symbol`, `html_symbol`,`decimal_place`,`decimal_symbol`,`thousands_symbol`) VALUES (1, 'euro', '€ ', '&#8364; ',2,',','.');
 CREATE TABLE IF NOT EXISTS `gaz_currency_history` ( `id_currency` int(9) NOT NULL, `change_value` decimal(12,5) NOT NULL, `date_reference` date NOT NULL, `id_currency_obj` int(9) NOT NULL ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `gaz_anagra` ADD `id_currency` INT( 3 ) NOT NULL AFTER `country`, ADD `id_language` INT( 3 ) NOT NULL AFTER `id_currency`; 
 ALTER TABLE `gaz_aziend` ADD `mas_staff` INT( 3 ) NOT NULL AFTER `masban`, ADD `id_currency` INT( 3 ) NOT NULL AFTER `country`, ADD `id_language` INT( 3 ) NOT NULL AFTER `id_currency`; 
