@@ -63,6 +63,8 @@ $strScript = array ("admin_aziend.php" =>
                            'capspe'=>'Codigo postal',
                            'citspe'=>'Ciudad - Provincia',
                            'country'=>'Pais',
+                           'id_language'=>'Lengua',
+                           'id_currency'=>'Moneda',
                            'telefo'=>'Telefono',
                            'fax'=>'Fax',
                            'codfis'=>'Codigo de Impuesto',
