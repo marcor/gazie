@@ -1267,8 +1267,11 @@ function checkAdmin($Livaut=0)
         header("Location: ../root/access_error.php?module=".$module);
         exit;
     }
-    $admin_aziend = gaz_dbi_get_row($gTables['admin'].' LEFT JOIN '.$gTables['aziend'].' ON '.$gTables['admin'].'.enterprise_id = '.$gTables['aziend'].'.codice
-                                                        LEFT JOIN '.$gTables['currencies'].' ON '.$gTables['currencies'].'.id = '.$gTables['aziend'].'.id_currency', "Login", $_SESSION["Login"]);
+    $admin_aziend = gaz_dbi_get_row($gTables['admin'].' LEFT JOIN '.$gTables['aziend'].' ON '.$gTables['admin'].'.enterprise_id = '.$gTables['aziend'].'.codice', "Login", $_SESSION["Login"]);
+    $currency=array();
+    if (isset($admin_aziend['id_currency'])) {
+        $currency = gaz_dbi_get_row($gTables['currencies'], "id", $admin_aziend['id_currency']);
+    }
     if ($Livaut > $admin_aziend["Abilit"]) {
         header("Location: ../root/login_admin.php?tp=".$table_prefix);
         exit;
@@ -1281,7 +1284,7 @@ function checkAdmin($Livaut=0)
         exit;
     }
     $_SESSION["logged_in"] = true;
-    return $admin_aziend;
+    return array_merge($admin_aziend,$currency);
 }
 
 function changeEnterprise($new_co=1)
