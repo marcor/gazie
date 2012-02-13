@@ -68,7 +68,7 @@ class contabForm extends GAzieForm
                  echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
                  echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"".substr($partner['ragso1'],0,8)."\">\n";
                  echo "\t<input type=\"submit\" value=\"".$partner['ragso1']."\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n
-                         <input type=\"image\" onclick=\"dialogSchedule(this);return false;\" href=\"#\" id=\"partner".$val."\"  src=\"../../library/images/schedule.png\" />\n";
+                         <input type=\"image\" onclick=\"dialogSchedule(this);return false;\" href=\"#\" id=\"partner".$val.$name."\"  src=\"../../library/images/schedule.png\" />\n";
            } else {
              if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
                 echo "\t<select name=\"$name\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";

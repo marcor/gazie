@@ -687,7 +687,10 @@ foreach($form['partner'] as $k=>$v) {
 }
 echo '});
       function dialogSchedule(partner){
-        clfoco = partner.id.replace("partner", "");
+        clfoco = partner.id.substring(7,16);
+        nrow = partner.id.substring(24);
+        impo= document.getElementById("impoRC"+nrow).value.toString();
+        //alert(impo);
         getResults(clfoco);
         $.fx.speeds._default = 500;
         var expiry = $( "#expiry" ),
@@ -697,7 +700,7 @@ echo '});
             tips = $( ".validateTips" );
 
         function getResults(term_val) {
-           $.get("expiry.php",{term:term_val},
+           $.get("expiry.php",{clfoco:term_val},
                 function(data){
                    $("#resultsContainer").text(data);
                 });
