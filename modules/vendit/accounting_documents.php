@@ -72,7 +72,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
     $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type"."__' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
-                        pay.tippag,pay.numrat,pay.incaut,
+                        pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
                         customer.codice,
                         customer.speban AS addebitospese,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta',
@@ -208,7 +208,7 @@ function computeTot($data,$carry,$stamp_percent=false,$round=5)
           $vat += round($v['imponi']*$v['periva'])/ 100;
    }
    $tot=$vat+$tax;
-   if ($stamp_percent) { // è stata passata la percentuale
+   if ($stamp_percent) { // Ã¨ stata passata la percentuale
           $v_stamp = new Compute;
           $sta = $v_stamp->stampTax($tot+$carry,$stamp_percent,$round);
           $tot+=$sta;
@@ -294,6 +294,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     case 'AFD':$reg=6;$op=1;$da_c='D';$da_p='A';$kac=$admin_aziend['ivaacq'];break;
                     default:$reg=0;$op=0;break;
                   }
+                  // inizio calcolo i totali
                   $stamp=false;
                   $round=0;
                   if ($v['tes']['tippag']=='T') {
@@ -301,7 +302,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                      $round=$v['tes']['numrat']*$v['tes']['round_stamp'];
                   }
                   $tot=computeTot($v['vat'],$v['car']-$v['rit'],$stamp,$round);
-                  //inserisco la testata
+                  // fine calcolo totali
+                  // calcolo le rate al fine di inserire le partite aperte  
+                  $rate = CalcolaScadenze($tot['tot'],substr($v['tes']['datfat'],8,2),substr($v['tes']['datfat'],5,2),substr($v['tes']['datfat'],0,4),$v['tes']['tipdec'],$v['tes']['giodec'],$v['tes']['numrat'],$v['tes']['tiprat'],$v['tes']['mesesc'],$v['tes']['giosuc']);
+                  // inserisco la testata
                   $newValue=array('caucon'=>$v['tes']['tipdoc'],
                            'descri'=>$script_transl['doc_type_value'][$v['tes']['tipdoc']],
                            'id_doc'=>$v['tes']['id_tes'],
@@ -327,17 +331,19 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       rigmoiInsert($vv);
                   }
                   //inserisco i righi contabili nel db
-                  if ($v['tes']['tipdoc']=='VCO') {  // se è uno scontrino cassa anzichè scontrino
+                  if ($v['tes']['tipdoc']=='VCO') {  // se Ã¨ uno scontrino cassa anzichÃ¨ scontrino
                       $v['tes']['clfoco']=$admin_aziend['cassa_'];
                   }
                   rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$v['tes']['clfoco'],'import'=>($tot['tot']-$v['rit'])));
+                  // memorizzo l'id del cliente  
+                  $paymov_id = gaz_dbi_last_id();
                   foreach($v['acc'] as $acc_k=>$acc_v) {
                       if ($acc_v['import']>0){
                          rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$acc_k,'import'=>$acc_v['import']));
                       }
                   }
                   if ($tot['vat']>0){
-                     rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$kac,'import'=>$tot['vat']));
+                      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$kac,'import'=>$tot['vat']));
                   }
                   if ($tot['stamp']>0) { // se ho il bollo sulla tratta ci metto anch'esso
                       $stamp_vat = gaz_dbi_get_row($gTables['aliiva'],'codice',$admin_aziend['ivabol']);
@@ -357,9 +363,14 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                   if ($v['tes']['incaut']=='S') {  // se il pagamento prevede l'incasso automatico
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$v['tes']['clfoco'],'import'=>($tot['tot']-$v['rit'])));
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['cassa_'],'import'=>($tot['tot']-$v['rit'])));
+                  } else { // altrimenti inserisco le partite aperte
+                      foreach($rate['import'] as $k_rate=>$v_rate) {
+                          paymovInsert(array('id_docmovcon'=>$paymov_id,'amount'=>$v_rate,'expiry'=>$rate['anno'][$k_rate].'-'.$rate['mese'][$k_rate].'-'.$rate['giorno'][$k_rate]));
+                      }
                   }
                   // alla fine modifico le testate documenti introducendo il numero del movimento contabile
                   gaz_dbi_put_query($gTables['tesdoc'],"datfat = '".$v['tes']['datfat']."' AND seziva = ".$v['tes']['seziva']." AND protoc = ".$v['tes']['protoc'],"id_con",$tes_id);
+
           }
           header("Location: report_docven.php");
           exit;
