@@ -43,12 +43,12 @@ function connectToDB ()
           error_reporting (E_ERROR | E_PARSE | E_NOTICE);
         $link = mysql_connect($Host, $User, $Password);
         //
-        // Riprisinta la modalità precedente di segnalazione degli
+        // Riprisinta la modalitÃ  precedente di segnalazione degli
         // errori.
         //
         error_reporting ($level);
         //
-        // Se non è riuscito a connettersi, attende un po' e poi riprova;
+        // Se non Ã¨ riuscito a connettersi, attende un po' e poi riprova;
         // altrimenti esce.
         //
         if (!$link)
@@ -89,12 +89,16 @@ function databaseIsOk()
     return $result;
 }
 
-function gaz_dbi_query ($query)
+function gaz_dbi_query ($query,$ar=false)
 {
     global $link;
     $result = mysql_query($query, $link);
     if (!$result) die ("Error in gaz_dbi_query:".$query.mysql_error());
-    return $result;
+    if ($ar){
+        return mysql_affected_rows();
+    } else {
+        return $result;
+    }
 }
 
 function gaz_dbi_fetch_array ($resource)
@@ -369,8 +373,8 @@ function gaz_dbi_table_update($table,$id,$newValue)
            $query .= ", adminid = '".$_SESSION['Login']."'";
         }
     }
-    //   se in $id c'� un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
-    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verr� modificato
+    //   se in $id c'è un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
+    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
     if (is_array($id)){
         if (isset($id[2])){
             $query .= ", $id[0] = $quote_id$id[2]$quote_id";
@@ -410,8 +414,8 @@ function tableUpdate ($table, $column, $codice, $newValue)
         $first = False;
         $query .= (isset($newValue[$field]) ? addslashes($newValue[$field]) : '')."'";
     }
-    //   se in $codice c'� un array uso il nome del campo presente all'index [0],
-    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verr� modificato
+    //   se in $codice c'è un array uso il nome del campo presente all'index [0],
+    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
     if (is_array($codice)){
         if (isset($codice[2])){
             $query .= ", $codice[0] = '$codice[2]'";
@@ -450,7 +454,7 @@ function rigmocInsert($newValue)
 function paymovInsert($newValue)
 {
     $table = 'paymov';
-    $columns = array('id','id_paymovcon','id_docmovcon','amount','expiry');
+    $columns = array('id','id_tesdoc_ref','id_rigmoc_pay','id_rigmoc_doc','amount','expiry');
     tableInsert($table, $columns, $newValue);
 }
 

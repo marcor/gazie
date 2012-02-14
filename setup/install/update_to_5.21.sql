@@ -10,6 +10,9 @@ CREATE TABLE IF NOT EXISTS `gaz_languages` ( `lang_id` int(3) unsigned NOT NULL 
 INSERT INTO `gaz_languages` (`lang_id`, `lang_code`, `title`, `title_native`, `sef`, `image`, `description`, `metakey`, `metadesc`, `published`, `ordering`) VALUES (1, 'it-IT', 'Italiano (IT)', 'Italian (IT)', 'it', 'it', '', '', '', 1, 0),(2, 'en-GB', 'English (UK)', 'English (UK)', 'en', 'en', '', '', '', 1, 1),(3, 'es-CL', 'Español (CL)', 'Spanish (CL)', 'es', 'es', '', '', '', 1, 2);
 
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
+ALTER TABLE `gaz_XXXpaymov` ADD `id_tesdoc_ref` INT ( 9 ) NOT NULL AFTER `id` ;
+ALTER TABLE `gaz_XXXpaymov` CHANGE `id_paymovcon` `id_rigmoc_pay` INT( 9 ) NOT NULL ;
+ALTER TABLE `gaz_XXXpaymov` CHANGE `id_docmovcon` `id_rigmoc_doc` INT( 9 ) NOT NULL ;
 ALTER TABLE `gaz_XXXbody_text` CHANGE `iso3_country` `lang_id` INT( 3 ) NOT NULL;
 UPDATE `gaz_XXXbody_text` SET `lang_id` = 1;
 ALTER TABLE `gaz_XXXcontract_row` DROP PRIMARY KEY , ADD PRIMARY KEY ( `id_row` , `id_contract` );

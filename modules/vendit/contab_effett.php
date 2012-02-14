@@ -122,6 +122,8 @@ if (isset($_POST['genera'])and $message == "") {
             $ultimo_id = gaz_dbi_last_id();
             //inserisco i due righi
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'A','codcon'=>$effett['clfoco'],'import'=>$effett['impeff']));
+            // memorizzo l'id del cliente  
+            $paymov_id = gaz_dbi_last_id();
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$admin_aziend['coriba'],'import'=>$effett['impeff']));
         }
         if ($effett['tipeff'] == 'T') {
@@ -141,6 +143,8 @@ if (isset($_POST['genera'])and $message == "") {
             $ultimo_id = gaz_dbi_last_id();
             //inserisco i due righi
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'A','codcon'=>$effett['clfoco'],'import'=>$effett['impeff']));
+            // memorizzo l'id del cliente  
+            $paymov_id = gaz_dbi_last_id();
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$admin_aziend['cotrat'],'import'=>$effett['impeff']));
         }
         if ($effett['tipeff'] == 'V') {
@@ -160,11 +164,15 @@ if (isset($_POST['genera'])and $message == "") {
             $ultimo_id = gaz_dbi_last_id();
             //inserisco i due righi
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'A','codcon'=>$effett['clfoco'],'import'=>$effett['impeff']));
+            // memorizzo l'id del cliente  
+            $paymov_id = gaz_dbi_last_id();
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$effett['banacc'],'import'=>$effett['impeff']));
         }
+        // aggiungo un movimento alle partite aperte
+        paymovInsert(array('id_tesdoc_ref'=>$effett['id_doc'],'id_rigmoc_pay'=>$paymov_id,'amount'=>$effett['impeff'],'expiry'=>$effett['scaden']));
         //vado a modificare l'effetto cambiando il numero di riferimento al movimento
         gaz_dbi_put_row($gTables['effett'], "id_tes",$effett["id_tes"],"id_con",$ultimo_id);
-    }
+       }
     header("Location: report_effett.php");
     exit;
 }
