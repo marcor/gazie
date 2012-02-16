@@ -67,7 +67,12 @@ if ( strtoupper(substr(PHP_OS, 0, 3)) === 'WIN' ) {
 } else {
     $local=gaz_dbi_get_row($gTables['config'],'variable','lin_locale');
 }
-setlocale(LC_TIME, $local['cvalue']);
+
+if ($gazie_locale != "") {
+    setlocale(LC_TIME, $gazie_locale);
+} else {
+    setlocale(LC_TIME, $local['cvalue']);
+}
 
 $id=1;
 if (isset($_SESSION['enterprise_id'])) {

@@ -93,6 +93,11 @@ $email_disclaimer = "";
 // corretto di Gazie.
 //
 $disable_set_time_limit = FALSE;
+//
+// Se il servente HTTP-PHP non ha una configurazione locale corretta,
+// questa può essere impostata qui, espressamente.
+//
+$gazie_locale = "";
 ////////////////////////////////////////////////////////////////////////
 
 
