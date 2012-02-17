@@ -126,7 +126,7 @@ if (isset($_POST['ins'])) {
         }
     }
     if ($msg == "") { // nessun errore
-        //se è un update recupero i vecchi righi per trovare quelli da inserire/modificare/cancellare
+        //se Ã¨ un update recupero i vecchi righi per trovare quelli da inserire/modificare/cancellare
         //formatto le date
         $datareg = $_POST['date_reg_Y']."-".$_POST['date_reg_M']."-".$_POST['date_reg_D'];
         $datadoc = $_POST['date_doc_Y']."-".$_POST['date_doc_M']."-".$_POST['date_doc_D'];
@@ -136,7 +136,7 @@ if (isset($_POST['ins'])) {
               $_POST['numdocumen'] = "";
               $datadoc = 0;
         }
-        if ( $toDo == 'update') {  //se è una modifica
+        if ( $toDo == 'update') {  //se Ã¨ una modifica
            $vecchi_righcon = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = '".intval($_POST['id_testata'])."'","id_rig asc");
            $i=0;
            $count = count($_POST['id_rig_rc'])-1;
@@ -149,7 +149,7 @@ if (isset($_POST['ins'])) {
               }
               $i++;
            }
-           //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
+           //qualora i nuovi righi fossero di piÃ¹ dei vecchi inserisco l'eccedenza
            for ($i = $i; $i <= $count; $i++) {
                 rigmocInsert(array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
            }
@@ -178,7 +178,7 @@ if (isset($_POST['ins'])) {
               }
               $i++;
            }
-           //qualora i nuovi righi iva fossero di più dei vecchi inserisco l'eccedenza
+           //qualora i nuovi righi iva fossero di piÃ¹ dei vecchi inserisco l'eccedenza
            for ($i = $i; $i <= $count; $i++) {
                 $vv = gaz_dbi_get_row($gTables['aliiva'],'codice',intval($_POST['codiva_ri'][$i]));
                 //aggiungo i valori mancanti all'array
@@ -203,7 +203,7 @@ if (isset($_POST['ins'])) {
                            'operat'=>intval($_POST['operatore'])
                            );
            tesmovUpdate($codice,$newValue);
-        } else { //se è un'inserimento
+        } else { //se Ã¨ un'inserimento
            //inserisco la testata
            $newValue=array('caucon'=>substr($_POST['codcausale'],0,3),
                            'descri'=>substr($_POST['descrizion'],0,50),
@@ -269,6 +269,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['insert_mastro'] = '000000000';
     $form['insert_conto'] = '000000000';
     $form['search']['insert_conto']='';
+    $form['paymov']=array();
     $form['insert_darave'] = 'A';
     $form['insert_conto'] = '000000000';
     $form['insert_codiva'] = $admin_aziend['alliva'];
@@ -297,7 +298,13 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         // creo l'array contenente i partner per la gestione delle partite aperte
         if (($form['mastro_rc'][$i] == $mastroclienti || $form['mastro_rc'][$i] == $mastrofornitori)
             && $form['conto_rc'.$i] > 0 ) {  
-            $form['partner'][$row['codcon']] = array();
+            $form['paymov'][$i] = array('codcon'=>$row['codcon']);
+            $rs_paymov = gaz_dbi_dyn_query("*", $gTables['paymov'], "id_rigmoc_pay = ".$row['id_rig']." OR id_rigmoc_doc = ".$row['id_rig'],"id");
+            while ($r_pm = gaz_dbi_fetch_array($rs_paymov)) {
+                $form['paymov'][$i] = array_merge($r_pm,$row);
+   
+            }
+
         }
         $form['darave_rc'][$i] = $row['darave'];
         $form['importorc'][$i] = $row['import'];
@@ -347,7 +354,8 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['insert_codiva'] = $_POST['insert_codiva'];
         $form['insert_imponi'] = $_POST['insert_imponi'];
     }
-    //ricarico i registri per il form dei righi contabili già  immessi
+    $form['paymov']=array();
+    //ricarico i registri per il form dei righi contabili giÃ   immessi
     $loadCosRic = 0;
     for( $i = 0; $i < $_POST['rigcon']; $i++ ) {
         $form['id_rig_rc'][$i] = $_POST['id_rig_rc'][$i];
@@ -363,6 +371,11 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                $loadCosRic = substr($form['conto_rc'.$i],0,1);
            }
            $form['cod_partner'] = $_POST['conto_rc'.$i];
+           //ricarico i registri per il form delle partite aperte dei clienti/fornitori
+           foreach($_POST['paymov'][$i] as $k=>$v) {
+                $form['paymov'][$i][$k] = $v;  // devo fare il parsing
+           }
+           
         }
         if ($loadCosRic == 1 && substr($form['conto_rc'.$i],0,1) == 4
             && $partner['cosric'] > 0 && $form['registroiva'] > 0 ){  //e' un  cliente agisce sui ricavi
@@ -370,13 +383,13 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                 $form['conto_rc'.$i] = $partner['cosric'];
                 $loadCosRic = 0;
         } elseif ($loadCosRic == 2 && substr($form['conto_rc'.$i],0,1) == 3
-            && $partner['cosric'] > 0 && $form['registroiva'] > 0 ){ //è un fornitore  agisce sui costi
+            && $partner['cosric'] > 0 && $form['registroiva'] > 0 ){ //Ã¨ un fornitore  agisce sui costi
                 $form['mastro_rc'][$i] = substr($partner['cosric'],0,3)."000000";
                 $form['conto_rc'.$i] = $partner['cosric'];
                 $loadCosRic = 0;
         }
     }
-    //ricarico i registri per il form dei righi iva già  immessi
+    //ricarico i registri per il form dei righi iva giÃ   immessi
     for( $i = 0; $i < $_POST['rigiva']; $i++ ) {
         $form['id_rig_ri'][$i] = $_POST['id_rig_ri'][$i];
         $form['codiva_ri'][$i] = $_POST['codiva_ri'][$i];
@@ -384,14 +397,10 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['impost_ri'][$i] = $_POST['impost_ri'][$i];
     }
 
-    //ricarico i registri per il form delle partite aperte dei clienti/fornitori
-    foreach($_POST['partner'] as $k=>$v) {
-        $form['partner'][$k] = intval($v);
-    }
 
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
     if (isset($_POST['inscau_x'])) {
-       // Se la descrizione è vuota e la causale è stata selezionata
+       // Se la descrizione Ã¨ vuota e la causale Ã¨ stata selezionata
        if (!empty($form['codcausale']) and empty($form['descrizion'])) {
 
             function getLastNumber($type,$year,$sezione,$registro=6)  // questa funzione trova l'ultimo numero di protocollo
@@ -416,7 +425,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
             $causa = gaz_dbi_get_row($gTables['caucon'],'codice',$form['codcausale']);
             if ($causa['regiva'] > 0) { // trovo l'ultimo numero di protocollo e di documento
                $form['protocollo'] = getLastNumber(substr($form['codcausale'],0,1).'__',$form['date_reg_Y'],$form['sezioneiva'],$causa['regiva']);
-               if ($causa['regiva'] <= 5) { // il numero di documento solo se è di vendita
+               if ($causa['regiva'] <= 5) { // il numero di documento solo se Ã¨ di vendita
                   $form['numdocumen'] = getLastNumber($form['codcausale'],$form['date_reg_Y'],$form['sezioneiva'],$causa['regiva']);
                }
             }
@@ -497,15 +506,15 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
    if (isset($_POST['add_x'])) {
       $rigo = $_POST['rigcon'];
       $form['id_rig_rc'][$rigo] = "";
-      $form['mastro_rc'][$rigo] = $_POST['insert_mastro'];
-      $form['conto_rc'.$rigo] = $_POST['insert_conto'];
+      $form['mastro_rc'][$rigo] = intval($_POST['insert_mastro']);
+      $form['conto_rc'.$rigo] = intval($_POST['insert_conto']);
       $form['search']['conto_rc'.$rigo]='';
       $form['darave_rc'][$rigo] = $_POST['insert_darave'];
       $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);;
-      // e accodo anche all'array contenente i partner per la gestione delle partite aperte
+      // e accodo anche all'array contenente i paymov per la gestione delle partite aperte
       if (($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori)
           && $form['conto_rc'.$rigo] > 0 ) {  
-          $form['partner'][$form['conto_rc'.$rigo]] = array();
+            $form['paymov'][$rigo] = array('codcon'=>$form['conto_rc'.$rigo]);
       }
       $_POST['rigcon']++;
    }
@@ -532,7 +541,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
          $form['id_rig_ri'][$riiv] = "";
          $form['codiva_ri'][$riiv] = $_POST['insert_codiva'];
          $ivarigo = gaz_dbi_get_row($gTables['aliiva'],"codice",$_POST['insert_codiva']);
-         if ($form['registroiva'] == 4) { //se è un corrispettivo faccio lo scorporo
+         if ($form['registroiva'] == 4) { //se Ã¨ un corrispettivo faccio lo scorporo
             $form['imponi_ri'][$riiv] = number_format(round(preg_replace("/\,/",'.',$_POST['insert_imponi']) /(100 + $ivarigo['aliquo']) * 10000)/100 ,2, '.', '');
             $form['impost_ri'][$riiv] = number_format(preg_replace("/\,/",'.',$_POST['insert_imponi']) - $form['imponi_ri'][$riiv],2, '.', '');
          } else { //altrimenti calcolo solo l'iva
@@ -576,8 +585,8 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
    }
 
    /* Se viene inviata la richiesta di bilanciamento dei righi contabili
-      aggiungo il valore pasato al primo rigo. E' un pò rudimentale,
-      si potrebbe fare meglio e molto più intelligente, ma non ho tempo...
+      aggiungo il valore pasato al primo rigo. E' un pÃ² rudimentale,
+      si potrebbe fare meglio e molto piÃ¹ intelligente, ma non ho tempo...
    */
    if (isset($_POST['balb'])) {
         $bb=floatval($_POST['diffV']);
@@ -626,7 +635,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['insert_mastro'] = 0;
     $form['insert_conto'] = 0;
     $form['search']['insert_conto']='';
-    $form['partner']=array();
+    $form['paymov']=array();
     $form['insert_darave'] = "A";
     //registri per il form del rigo di inserimento iva
     $form['insert_imponi'] = 0;
@@ -650,7 +659,7 @@ $anagrafica = new Anagrafica();
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
-                                  'jquery/jquery-1.4.2.min',
+                                  'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.mouse',
@@ -679,18 +688,17 @@ for ($i=0; $i<$_POST['rigcon']; $i++ ) {
            });
         ';
 }
-foreach($form['partner'] as $k=>$v) {
+foreach($form['paymov'] as $k=>$v) {
   echo '   $( "#dialog'.$k.'").dialog({
               autoOpen: false
            });
         ';
 }
 echo '});
-      function dialogSchedule(partner){
-        clfoco = partner.id.substring(7,16);
-        nrow = partner.id.substring(24);
+      function dialogSchedule(paymov){
+        clfoco = paymov.id.substring(6,15);
+        nrow = paymov.id.substring(23);
         impo= document.getElementById("impoRC"+nrow).value.toString();
-        //alert(impo);
         getResults(clfoco);
         $.fx.speeds._default = 500;
         var expiry = $( "#expiry" ),
@@ -700,10 +708,19 @@ echo '});
             tips = $( ".validateTips" );
 
         function getResults(term_val) {
-           $.get("expiry.php",{clfoco:term_val},
-                function(data){
-                   $("#resultsContainer").text(data);
-                });
+           $.get("expiry.php",
+                 {clfoco:term_val},
+                 function(data) {
+                   var items=[];       
+                   $.each(data, function(i,value){
+                         $( "#users tbody" ).append( "<tr>" +
+                              "<td>" + value.expiry + "</td>" +
+                               "<td>" + value.amount + "</td>" +
+                               '."'<td><button><img src=\"../../library/images/x.gif\" /></button></td>'".' +
+                               "</tr>" );
+                   });
+                 },"json"
+                 );
         }
 
         function updateTips( t ) {
@@ -736,7 +753,7 @@ echo '});
            }
         }
 
-        $( "#dialog"+clfoco ).dialog({
+        $( "#dialog"+nrow ).dialog({
           autoOpen: false,
           show: "scale",
           width: 360,
@@ -748,7 +765,7 @@ echo '});
             allFields.val( "" ).removeClass( "ui-state-error" );
           }
         });
-        $("#dialog"+clfoco ).dialog( "open" );
+        $("#dialog"+nrow ).dialog( "open" );
         $( "#rerun" ).click(function() {
                 var bValid = true;
                 allFields.removeClass( "ui-state-error" );
@@ -997,13 +1014,15 @@ if ($toDo == 'insert') {
 
 
 // creo i dialog form delle partite aperte dei clienti/fornitori
-echo "<input type=\"hidden\" name=\"partner[0]\" value=\"\">\n";
-foreach($form['partner'] as $k=>$v) {
-echo "<input type=\"hidden\" name=\"partner[$k]\" value=\"".$v."\">\n";
 
-echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$k.'">
-  <p class="validateTips"></p>
-  <div id="users-contain" class="ui-widget">
+//print_r($form['paymov']);
+foreach($form['paymov'] as $k=>$v) {
+    foreach($form['paymov'][$k] as $k_r=>$v_r) {
+        echo "<input type=\"hidden\" name=\"paymov[$k][$k_r]\" value=\"".$v_r."\">\n";
+    }    
+    echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$v['codcon'].'">
+   <p class="validateTips"></p>
+   <div id="users-contain" class="ui-widget">
     <table id="users" class="ui-widget ui-widget-content">
      <tbody>
     <tr>
@@ -1022,8 +1041,8 @@ echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$k.'">
     </td></tr>
      </tbody>
     </table>
-  </div>
-</div>';
+   </div>
+  </div>';
 
 }
 
@@ -1184,7 +1203,7 @@ echo "<td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"a
 echo "<TR><td class=\"FacetColumnTD\" colspan=\"5\"><hr></td></tr>";
 //fine rigo inserimento
 
-// inizio righi già inseriti
+// inizio righi giÃ  inseriti
 // faccio un primo ciclo del form per sommare e analizzare gli sbilanciamenti
 $form['tot_D']=0.00;
 $form['tot_A']=0.00;
