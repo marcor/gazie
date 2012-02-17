@@ -361,7 +361,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                      $upd_mm->uploadMag($val_old_row['id_rig'],
                                     $form['tipdoc'],
                                     $form['numdoc'],
-                                    $form['protoc'].'/'.$form['seziva'],
+                                    $form['seziva'],
                                     $datemi,
                                     $form['clfoco'],
                                     $form['sconto'],
@@ -371,7 +371,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     $form['rows'][$i]['prelis'],
                                     $form['rows'][$i]['sconto'],
                                     $val_old_row['id_mag'],
-                                    $admin_aziend['stock_eval_method']
+                                    $admin_aziend['stock_eval_method'],
+                                    false,
+                                    $form['protoc']
                                     );
                  }
               } else { //altrimenti lo elimino
@@ -395,7 +397,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                    $upd_mm->uploadMag(gaz_dbi_last_id(),
                                     $form['tipdoc'],
                                     $form['numdoc'],
-                                    $form['protoc'].'/'.$form['seziva'],
+                                    $form['seziva'],
                                     $datemi,
                                     $form['clfoco'],
                                     $form['sconto'],
@@ -405,7 +407,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     $form['rows'][$i]['prelis'],
                                     $form['rows'][$i]['sconto'],
                                     0,
-                                    $admin_aziend['stock_eval_method']
+                                    $admin_aziend['stock_eval_method'],
+                                    false,
+                                    $form['protoc']
                                     );
                 }
              }
@@ -504,7 +508,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                      $upd_mm->uploadMag($last_rigdoc_id,
                                     $form['tipdoc'],
                                     $form['numdoc'],
-                                    $form['protoc'].'/'.$form['seziva'],
+                                    $form['seziva'],
                                     $datemi,
                                     $form['clfoco'],
                                     $form['sconto'],
@@ -514,7 +518,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     $form['rows'][$i]['prelis'],
                                     $form['rows'][$i]['sconto'],
                                     0,
-                                    $admin_aziend['stock_eval_method']
+                                    $admin_aziend['stock_eval_method'],
+                                    false,
+                                    $form['protoc']
                                     );
                   }
             }

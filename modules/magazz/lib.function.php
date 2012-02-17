@@ -349,7 +349,7 @@ class magazzForm extends GAzieForm
       return $return_val;
     }
 
-    function uploadMag($id_rigo_doc=0,$tipdoc,$numdoc,$seziva,$datdoc,$clfoco,$sconto_chiusura,$caumag,$codart,$quantita,$prezzo,$sconto_rigo,$id_movmag=0,$stock_eval_method=null,$data_from_admin_mov=false)  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+    function uploadMag($id_rigo_doc=0,$tipdoc,$numdoc,$seziva,$datdoc,$clfoco,$sconto_chiusura,$caumag,$codart,$quantita,$prezzo,$sconto_rigo,$id_movmag=0,$stock_eval_method=null,$data_from_admin_mov=false,$protoc='')  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
     {
         // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, id_rif)
         global $gTables,$admin_aziend;
@@ -369,8 +369,12 @@ class magazzForm extends GAzieForm
         }
         if (substr($tipdoc,0,1) == 'D' || $tipdoc == 'VCO'){
           $desdoc .= " n.".$numdoc;
+          if ($seziva != '') $desdoc .= "/".$seziva;
         } else {
-          $desdoc .= " n.".$numdoc." prot.".$seziva;
+          $desdoc .= " n.".$numdoc;
+          if ($seziva != '') $desdoc .= "/".$seziva;
+          $desdoc .= " prot.".$protoc;
+          if ($seziva != '') $desdoc .= "/".$seziva;
         }
         $new_caumag = gaz_dbi_get_row($gTables['caumag'],'codice',$caumag);
         $operat = $new_caumag['operat'];

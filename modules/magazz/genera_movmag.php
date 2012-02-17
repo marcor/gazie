@@ -78,7 +78,7 @@ if (isset($_GET['insert']) and $msg == "") {  //in caso di conferma
                    $upd_mm->uploadMag($row['id_rif'],
                                     $row['tipdoc'],
                                     $row['numdoc'],
-                                    $row['protoc'].'/'.$row['seziva'],
+                                    $row['seziva'],
                                     $row['datdoc'],
                                     $row['clfoco'],
                                     $row['scochi'],
@@ -88,7 +88,9 @@ if (isset($_GET['insert']) and $msg == "") {  //in caso di conferma
                                     $row['prezzo'],
                                     $row['scorig'],
                                     0,
-                                    $admin_aziend['stock_eval_method']
+                                    $admin_aziend['stock_eval_method'],
+                                    false,
+                                    $row['protoc']
                                     );
              }
        }
