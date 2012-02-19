@@ -659,7 +659,7 @@ $anagrafica = new Anagrafica();
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
-                                  'jquery/jquery-1.7.1.min',
+                                  'jquery/jquery-1.4.2.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.mouse',
@@ -682,9 +682,6 @@ for ($i=0; $i<$_POST['rigcon']; $i++ ) {
   echo '   $( "#search_conto_rc'.$i.'" ).autocomplete({
            source: "../../modules/root/search.php",
            minLength: 2,
-           });
-           $( "#dialog'.$i.'").dialog({
-              autoOpen: false
            });
         ';
 }
