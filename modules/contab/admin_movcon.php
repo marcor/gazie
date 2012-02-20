@@ -659,7 +659,7 @@ $anagrafica = new Anagrafica();
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
-                                  'jquery/jquery-1.4.2.min',
+                                  'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.mouse',
@@ -710,7 +710,7 @@ echo '});
                  function(data) {
                    var items=[];       
                    $.each(data, function(i,value){
-                         $( "#users tbody" ).append( "<tr>" +
+                         $( "#openitem"+ nrow + " tbody" ).append( "<tr>" +
                               "<td>" + value.expiry + "</td>" +
                                "<td>" + value.amount + "</td>" +
                                '."'<td><button><img src=\"../../library/images/x.gif\" /></button></td>'".' +
@@ -771,7 +771,7 @@ echo '});
                 bValid = bValid && checkRegexp( expiry, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
                 bValid = bValid && checkRegexp( amount, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
                 if ( bValid ) {
-                    $( "#users tbody" ).append( "<tr>" +
+                    $( "#openitem"+ nrow + " tbody" ).append( "<tr>" +
                        "<td>" + expiry.val() + "</td>" +
                        "<td>" + amount.val() + "</td>" +
                        '."'<td><button><img src=\"../../library/images/x.gif\" /></button></td>'".' +
@@ -1019,8 +1019,8 @@ foreach($form['paymov'] as $k=>$v) {
     }    
     echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$v['codcon'].'">
    <p class="validateTips"></p>
-   <div id="users-contain" class="ui-widget">
-    <table id="users" class="ui-widget ui-widget-content">
+   <div id="openitem-contain" class="ui-widget">
+    <table id="openitem'.$k.'" class="ui-widget ui-widget-content">
      <tbody>
     <tr>
     <td><label for="expiry">Scadenza</label></td>

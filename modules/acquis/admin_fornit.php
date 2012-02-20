@@ -202,7 +202,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('jquery/jquery-1.4.2.min','calendarpopup/CalendarPopup',
+$script_transl = HeadMain(0,array('jquery/jquery-1.7.1.min','calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',

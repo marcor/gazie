@@ -139,7 +139,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('jquery/jquery-1.4.2.min',
+$script_transl = HeadMain(0,array('jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',

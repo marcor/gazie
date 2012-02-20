@@ -199,7 +199,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     }
 }
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array('jquery/jquery-1.4.2.min','boxover/boxover'));
+$script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min','boxover/boxover'));
 ?>
 <SCRIPT LANGUAGE="JavaScript" ID="datapopup">
 function toggle(boxID, toggleID) {

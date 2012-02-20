@@ -638,7 +638,7 @@ require("./lang.".$admin_aziend['lang'].".php");
 $script_transl = $strScript["admin_docacq.php"]+HeadMain(0,array('tiny_mce/tiny_mce',
                                   'boxover/boxover',
                                   'calendarpopup/CalendarPopup',
-                                  'jquery/jquery-1.4.2.min',
+                                  'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
