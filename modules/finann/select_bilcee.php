@@ -781,12 +781,12 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"left\">Ammortamenti</td>";
         echo "<td align=\"right\">".$bil["Am"]."</td><td align=\"center\">Am</td></tr>\n";
         //
-        $bil["Cd"] = -$bil["pD"];
+        $bil["Cd"] = $bil["pD"];
         echo "<tr><td align=\"center\">passivo D</td>";
         echo "<td align=\"left\">Capitale di debito (totale dei debiti a breve, a media e a lunga scadenza)</td>";
         echo "<td align=\"right\">".$bil["Cd"]."</td><td align=\"center\">Cd</td></tr>\n";
         //
-        $bil["Cp"] = -($bil["pA"]-$bil["pA08"]-$bil["pA09"]);
+        $bil["Cp"] = ($bil["pA"]-$bil["pA08"]-$bil["pA09"]);
         echo "<tr><td align=\"center\">passivo A-AVIII-AIX</td>";
         echo "<td align=\"left\">Capitale proprio</td>";
         echo "<td align=\"right\">".$bil["Cp"]."</td><td align=\"center\">Cp</td></tr>\n";
@@ -795,7 +795,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"left\">Risultato economico d'esercizio</td>";
         echo "<td align=\"right\">".$bil["Re"]."</td><td align=\"center\">Re</td></tr>\n";
         //
-        $bil["Tf"] = -($bil["pA"]+$bil["pB"]+$bil["pC"]+$bil["pD"]);
+        $bil["Tf"] = ($bil["pA"]+$bil["pB"]+$bil["pC"]+$bil["pD"]);
         echo "<tr><td align=\"center\">passivo A+B+C+D</td>";
         echo "<td align=\"left\">Totale fonti</td>";
         echo "<td align=\"right\">".$bil["Tf"]."</td><td align=\"center\">Tf</td></tr>\n";
@@ -828,6 +828,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<table class=\"Tlarge\">";
         //
         $bil["ROE"] = ($bil["Cp"] == 0 ? 0 : $bil["Re"]/$bil["Cp"]);
+        $bil["ROE"] = round ($bil["ROE"], 4);
         echo "<tr><td align=\"center\">ROE (return on equity)</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>utile netto d'esercizio<p><hr><p>capitale netto</p></td>";
@@ -839,6 +840,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["ROE"]."</td>\n";
         //
         $bil["ROI"] = ($bil["Ti"] == 0 ? 0 : $bil["Ro"]/$bil["Ti"]);
+        $bil["ROI"] = round ($bil["ROI"], 4);
         echo "<tr><td align=\"center\">ROI (return on investments)</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>reddito operativo<p><hr><p>totale impieghi</p></td>";
@@ -850,6 +852,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["ROI"]."</td>\n";
         //
         $bil["ROD"] = ($bil["Cd"] == 0 ? 0 : $bil["Of"]/$bil["Cd"]);
+        $bil["ROD"] = round ($bil["ROD"], 4);
         echo "<tr><td align=\"center\">ROD (return on debts)</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>oneri finanziari totali<p><hr><p>capitale di debito</p></td>";
@@ -861,6 +864,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["ROD"]."</td>\n";
         //
         $bil["ROS"] = ($bil["Rv"] == 0 ? 0 : $bil["Ro"]/$bil["Rv"]);
+        $bil["ROS"] = round ($bil["ROS"], 4);
         echo "<tr><td align=\"center\">ROS (return on sales)</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>reddito operativo<p><hr><p>ricavi di vendita</p></td>";
@@ -872,6 +876,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["ROS"]."</td>\n";
         //
         $bil["RotImp"] = ($bil["Ti"] == 0 ? 0 : $bil["Rv"]/$bil["Ti"]);
+        $bil["RotImp"] = round ($bil["RotImp"], 4);
         echo "<tr><td align=\"center\">rotazione degli impieghi</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>ricavi di vendita<p><hr><p>totale impieghi</p></td>";
@@ -883,6 +888,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["RotImp"]."</td>\n";
         //
         $bil["Leverage"] = ($bil["Cp"] == 0 ? 0 : $bil["Ti"]/$bil["Cp"]);
+        $bil["Leverage"] = round ($bil["Leverage"], 4);
         echo "<tr><td align=\"center\">Leverage</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>totale impieghi<p><hr><p>capitale proprio</p></td>";
@@ -894,6 +900,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Leverage"]."</td>\n";
         //
         $bil["InGeNoCa"] = ($bil["Ro"] == 0 ? 0 : $bil["Re"]/$bil["Ro"]);
+        $bil["InGeNoCa"] = round ($bil["InGeNoCa"], 4);
         echo "<tr><td align=\"center\">indice della gestione non caratteristica</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>utile netto d'esercizio<p><hr><p>reddito operativo</p></td>";
@@ -915,6 +922,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<table class=\"Tlarge\">";
         //
         $bil["Va/Ti"] = ($bil["Ti"] == 0 ? 0 : $bil["Va"]/$bil["Ti"]);
+        $bil["Va/Ti"] = round ($bil["Va/Ti"], 4);
         echo "<tr><td align=\"center\">indice di produttività del capitale investito</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>valore aggiunto<p><hr><p>totale impieghi</p></td>";
@@ -926,6 +934,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Va/Ti"]."</td>\n";
         //
         $bil["Cl/Rv"] = ($bil["Rv"] == 0 ? 0 : $bil["Cl"]/$bil["Rv"]);
+        $bil["Cl/Rv"] = round ($bil["Cl/Rv"], 4);
         echo "<tr><td align=\"center\">incidenza del fattore lavoro</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>costo del personale<p><hr><p>ricavi netti di vendita</p></td>";
@@ -947,6 +956,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<table class=\"Tlarge\">";
         //
         $bil["Im/Ti"] = ($bil["Ti"] == 0 ? 0 : $bil["Im"]/$bil["Ti"]);
+        $bil["Im/Ti"] = round ($bil["Im/Ti"], 4);
         echo "<tr><td align=\"center\">rigidità degli impieghi</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>immobilizzazioni<p><hr><p>totale impieghi</p></td>";
@@ -958,6 +968,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Im/Ti"]."</td>\n";
         //
         $bil["Ac/Ti"] = ($bil["Ti"] == 0 ? 0 : $bil["Ac"]/$bil["Ti"]);
+        $bil["Ac/Ti"] = round ($bil["Ac/Ti"], 4);
         echo "<tr><td align=\"center\">elasticità degli impieghi</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>attivo corrente<p><hr><p>totale impieghi</p></td>";
@@ -969,6 +980,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Ac/Ti"]."</td>\n";
         //
         $bil["Ac/Im"] = ($bil["Im"] == 0 ? 0 : $bil["Ac"]/$bil["Im"]);
+        $bil["Ac/Im"] = round ($bil["Ac/Im"], 4);
         echo "<tr><td align=\"center\">indice di elasticità</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>attivo corrente<p><hr><p>immobilizzazioni</p></td>";
@@ -980,6 +992,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Ac/Im"]."</td>\n";
         //
         $bil["Cp/Ti"] = ($bil["Ti"] == 0 ? 0 : $bil["Cp"]/$bil["Ti"]);
+        $bil["Cp/Ti"] = round ($bil["Cp/Ti"], 4);
         echo "<tr><td align=\"center\">incidenza del capitale proprio (autonomia finanziaria)</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>capitale proprio<p><hr><p>totale impieghi</p></td>";
@@ -991,6 +1004,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Cp/Ti"]."</td>\n";
         //
         $bil["Cp/Cd"] = ($bil["Cd"] == 0 ? 0 : $bil["Cp"]/$bil["Cd"]);
+        $bil["Cp/Cd"] = round ($bil["Cp/Cd"], 4);
         echo "<tr><td align=\"center\">grado di capitalizzazione</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>capitale proprio<p><hr><p>capitale di debito complessivo</p></td>";
@@ -1012,6 +1026,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<table class=\"Tlarge\">";
         //
         $bil["Cp/Im"] = ($bil["Im"] == 0 ? 0 : $bil["Cp"]/$bil["Im"]);
+        $bil["Cp/Im"] = round ($bil["Cp/Im"], 4);
         echo "<tr><td align=\"center\">indice di autocopertura delle immobilizzazioni</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>capitale proprio<p><hr><p>immobilizzazioni</p></td>";
@@ -1023,6 +1038,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Cp/Im"]."</td>\n";
         //
         $bil["Rv/Ac"] = ($bil["Ac"] == 0 ? 0 : $bil["Rv"]/$bil["Ac"]);
+        $bil["Rv/Ac"] = round ($bil["Rv/Ac"], 4);
         echo "<tr><td align=\"center\">indice di rotazione dell'attivo circolante</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>ricavi di vendita<p><hr><p>attivo circolante</p></td>";
@@ -1034,6 +1050,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Rv/Ac"]."</td>\n";
         ////
         //$bil["Cv/Rm"] = ($bil["Rm"] == 0 ? 0 : $bil["Cv"]/$bil["Rm"]);
+        //$bil["Cv/Rm"] = round ($bil["Cv/Rm"], 4);
         //echo "<tr><td align=\"center\">indice di rotazione delle rimanenze</td>";
         //echo "<td align=\"center\">=</td>";
         //echo "<td align=\"center\"><p>costo del venduto<p><hr><p>rimanenze</p></td>";
@@ -1045,6 +1062,7 @@ if (isset($_GET['visualizza']) and $message == "")
         //echo "<td align=\"right\">".$bil["Cv/Rm"]."</td>\n";
         //
         $bil["Rv/Rm"] = ($bil["Rm"] == 0 ? 0 : $bil["Rv"]/$bil["Rm"]);
+        $bil["Rv/Rm"] = round ($bil["Rv/Rm"], 4);
         echo "<tr><td align=\"center\">indice di rotazione delle scorte al valore di vendita</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>ricavi di vendita<p><hr><p>rimanenze</p></td>";
