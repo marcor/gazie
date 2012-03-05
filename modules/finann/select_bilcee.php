@@ -1403,10 +1403,10 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"left\">rimanenze</td>";
         echo "<td align=\"right\">".$bil["Rm"]."</td><td align=\"center\">Rm</td></tr>\n";
         //
-        $bil["Aco"] = $bil["Dl"] + $bil["Df"] + $bil["Dm"];
+        $bil["Aco"] = $bil["Dl"] + $bil["Df"] + $bil["Rm"];
         echo "<tr><td align=\"center\"></td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Attivo corrente</strong></td>";
-        echo "<td align=\"right\">".$bil["Rm"]."</td><td align=\"center\">Aco</td></tr>\n";
+        echo "<td align=\"right\">".$bil["Aco"]."</td><td align=\"center\">Aco</td></tr>\n";
         //
         echo "<tr><td align=\"center\" colspan=\"5\">&nbsp;</td></tr>\n";
         //
