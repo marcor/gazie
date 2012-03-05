@@ -28,12 +28,14 @@ $transl['finann'] = array('name' => "Fine Anno",
                                          2 =>array("Procedure per il controllo formale degli archivi","Controlli"),
                                          3 =>array("Elenchi clienti e fornitori","Elenchi clienti e fornitori"),
                                          4 =>array("Procedura Automatica di chiusura e apertura conti","Chiusura-Apertura Conti"),
-                                         5 =>array("Visualizzazione e stampa Bilancio","Bilancio"),
-                                         6 =>array("Visualizzazione e stampa Bilancio IV direttiva CEE","Bilancio CEE"),
+                                         5 =>array("Gestione Bilanci","Bilanci"),
                                          7 =>array("Comunicazione operazioni rilevanti ai fini IVA","Comunic. Operazioni Rilevanti (ART21)"),
                                        ),
                           'm3' => array( 1 =>array("Controllo sbilancio dare-avere dei movimenti contabili","Controllo sbilancio movimenti contabili"),
                                          2 =>array("Controllo numerazione protocolli IVA","Controllo numerazione protocoli IVA"),
+                                         3 =>array("Visualizzazione e stampa Bilancio","Bilancio"),
+                                         4 =>array("Visualizzazione e stampa Bilancio IV direttiva CEE","Bilancio CEE"),
+                                         5 =>array("Informazioni per la rivalutazione di bilancio","Dati rivalutanzione bilancio"),
                                        )
                          );
 ?>

@@ -28,12 +28,14 @@ $transl['finann'] = array('name' => "Year End",
                                          2 =>array("Procedures for formal control of archives","Controls"),
                                          3 =>array("Report customers and suppliers","Report customers and suppliers"),
                                          4 =>array("Automatic procedure for opening and closing of accounts","Opening & closing accounts"),
-                                         5 =>array("View and print Balance","Balance"),
-                                         6 =>array("View and print Balance IV directive CEE","Balance CEE"),
+                                         5 =>array("Balance sheets","Balance sheets"),
                                          7 =>array("Report of significant transactions for VAT purposes","Report of significant VAT transactions"),
                                        ),
                           'm3' => array( 1 =>array("Checking imbalance credit-debit movements of accounting","Checking imbalance of accounting"),
                                          2 =>array("Control numbering protocols VAT","Control numbering protocols VAT"),
+                                         3 =>array("View and print Balance sheet","Balance sheet"),
+                                         4 =>array("View and print Balance sheet IV directive CEE","Balance sheet CEE"),
+                                         5 =>array("Data for the revaluation of balance sheet","Balance sheet revaluation data"),
                                        )
                          );
 ?>

@@ -31,11 +31,13 @@ $transl['finann'] = array('name' => "Ende Jahr",
                                          3 =>array("Report Kunden und Lieferanten","Report Kunden und Lieferanten"),
                                          4 =>array("Automatische Verfahren zur Öffnung und Schließung von Benutzer","Öffnen und Schließen Benutzer"),
                                          5 =>array("Anzeigen und Drucken von Balance","Balance"),
-                                         6 =>array("Anzeigen und ausdrucken Balance IV CEE-Richtlinie","Balance CEE"),
+                                         7 =>array("Report of significant transactions for VAT purposes","Report of significant VAT transactions"),
                                        ),
-                          'm3' => array( 1 =>array("Überprüfen Ungleichgewicht Bewegungen von Debit-Kredit-Rechnungslegung","Überprüfen Ungleichgewicht der Rechnungslegung
-"),
+                          'm3' => array( 1 =>array("Überprüfen Ungleichgewicht Bewegungen von Debit-Kredit-Rechnungslegung","Überprüfen Ungleichgewicht der Rechnungslegung"),
                                          2 =>array("Kontrol-Protokolle Nummerierung MwSt.","Control-Protokolle Nummerierung MwSt."),
+                                         3 =>array("Anzeigen und Drucken von Balance","Balance"),
+                                         4 =>array("Anzeigen und ausdrucken Balance IV CEE-Richtlinie","Balance CEE"),
+                                         5 =>array("Data for the revaluation of balance sheet","Balance sheet revaluation data"),
                                        )
                          );
 ?>

@@ -8,7 +8,11 @@ UPDATE `gaz_aziend` SET `id_currency` = '1', `id_language` = '1';
 UPDATE `gaz_anagra` SET `id_currency` = '1', `id_language` = '1';
 CREATE TABLE IF NOT EXISTS `gaz_languages` ( `lang_id` int(3) unsigned NOT NULL AUTO_INCREMENT, `lang_code` char(7) NOT NULL, `title` varchar(50) NOT NULL, `title_native` varchar(50) NOT NULL, `sef` varchar(50) NOT NULL, `image` varchar(50) NOT NULL, `description` varchar(512) NOT NULL, `metakey` text NOT NULL, `metadesc` text NOT NULL, `published` int(11) NOT NULL DEFAULT '0', `ordering` int(11) NOT NULL DEFAULT '0', PRIMARY KEY (`lang_id`) ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3 ;
 INSERT INTO `gaz_languages` (`lang_id`, `lang_code`, `title`, `title_native`, `sef`, `image`, `description`, `metakey`, `metadesc`, `published`, `ordering`) VALUES (1, 'it-IT', 'Italiano (IT)', 'Italian (IT)', 'it', 'it', '', '', '', 1, 0),(2, 'en-GB', 'English (UK)', 'English (UK)', 'en', 'en', '', '', '', 1, 1),(3, 'es-CL', 'Español (CL)', 'Spanish (CL)', 'es', 'es', '', '', '', 1, 2);
-
+DELETE FROM `gaz_menu_module` WHERE `link` = 'select_bilcee.php';
+UPDATE `gaz_menu_module` SET `link` = 'docume_bilanc.php' WHERE `link` = 'select_bilanc.php';
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, '35', 'select_bilanc.php', '', '', '3', '', '3'  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, '35', 'select_bilcee.php', '', '', '4', '', '4'  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, '35', 'extcon.php', '', '', '5', '', '5'  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXpaymov` ADD `id_tesdoc_ref` INT ( 9 ) NOT NULL AFTER `id` ;
 ALTER TABLE `gaz_XXXpaymov` CHANGE `id_paymovcon` `id_rigmoc_pay` INT( 9 ) NOT NULL ;

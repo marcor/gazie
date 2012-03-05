@@ -33,12 +33,14 @@ $transl['finann'] = array('name' => "Fin de A&ntilde;o",
                                          2 =>array("Procedimientos para el control oficial de los archivos","Controles"),
                                          3 =>array("Reporte de los clientes y proveedores","Reporte de los clientes y proveedores"),
                                          4 =>array("Procedimiento automatico para la apertura y cierre de cuentas","Apertura y cierre de cuentas"),
-                                         5 =>array("Ver e imprimir Balance","Balance"),
-                                         6 =>array("Ver e imprimir Balance IV directiva CEE","Balance CEE"),
+                                         5 =>array("Balance","Balance"),
                                          7 =>array("Reporte de las transacciones significativas a efectos del IVA","Report trans.significativas IVA"),
                                        ),
                           'm3' => array( 1 =>array("La comprobaci&oacute;n de descuadre de los movimientos cr&eacute;dito-debito de la contabilidad","Comprobaci&oacute;n de descuadre de la contabilidad"),
                                          2 =>array("Control de protocolos de numeracion de IVA","Control rotocolos de numeracion IVA"),
+                                         3 =>array("Ver e imprimir Balance","Balance"),
+                                         4 =>array("Ver e imprimir Balance IV directiva CEE","Balance CEE"),
+                                         5 =>array("Data for the revaluation of balance sheet","Balance sheet revaluation data"),
                                        )
                          );
 ?>
