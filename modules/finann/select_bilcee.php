@@ -831,12 +831,12 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"left\"><strong>Risultato economico al lordo delle imposte</strong></td>";
         echo "<td align=\"right\">".$bil["Rl"]."</td><td align=\"center\">Rl</td></tr>\n";
         //
-        $bil["Tx"] = $bil["e_0022"];
+        $bil["Tx"] = -$bil["e_0022"];
         echo "<tr><td align=\"center\">22</td><td align=\"center\">-</td>";
         echo "<td align=\"left\">imposte d'esercizio</td>";
-        echo "<td align=\"right\">".$bil["e_0022"]."</td><td align=\"center\">Tx</td></tr>\n";
+        echo "<td align=\"right\">".$bil["Tx"]."</td><td align=\"center\">Tx</td></tr>\n";
         //
-        $bil["Re"] = $bil["Rl"]-(-$bil["e_0022"]);
+        $bil["Re"] = $bil["Rl"]-$bil["Tx"];
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Utile o perdita d'esercizio</strong></td>";
         echo "<td align=\"right\">".$bil["Re"]."</td><td align=\"center\">Re</td></tr>\n";
@@ -1437,34 +1437,34 @@ if (isset($_GET['visualizza']) and $message == "")
         //
         echo "<tr><td align=\"center\" colspan=\"5\"><hr></td></tr>\n";
         //
-        $bil["Db"] = $bil["$pB002"] + $bil["$pB003"] + $bil["$pD__breve"] + $bil["$pE"];
+        $bil["Db"] = $bil["pB002"] + $bil["pB003"] + $bil["pD__breve"] + $bil["pE"];
         echo "<tr><td align=\"center\">passivo B2+B3+D+E<br>(D solo a breve)</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">debiti a breve scadenza</td>";
         echo "<td align=\"right\">".$bil["Db"]."</td><td align=\"center\">Db</td></tr>\n";
         //
-        $bil["Dc"] = $bil["$pB001"] + $bil["$pC"] + $bil["$pD__medio"] + $bil["$pD__lungo"];
+        $bil["Dc"] = $bil["pB001"] + $bil["pC"] + $bil["pD__medio"] + $bil["pD__lungo"];
         echo "<tr><td align=\"center\">passivo B1+C+D<br>(D a medio e lungo)</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">debiti a media e lunga scadenza</td>";
         echo "<td align=\"right\">".$bil["Dc"]."</td><td align=\"center\">Dc</td></tr>\n";
         //
-        $bil["Cd"] = $bil["$Dc"] + $bil["$Db"];
+        $bil["Cd"] = $bil["Dc"] + $bil["Db"];
         echo "<tr><td align=\"center\"></td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Capitale di debito complessivo</strong></td>";
         echo "<td align=\"right\">".$bil["Cd"]."</td><td align=\"center\">Cd</td></tr>\n";
         //
         echo "<tr><td align=\"center\" colspan=\"5\">&nbsp;</td></tr>\n";
         //
-        $bil["Cp"] = $bil["$pA"] - $bil["$pA08"] - $bil["$pA09"];
+        $bil["Cp"] = $bil["pA"] - $bil["pA08"] - $bil["pA09"];
         echo "<tr><td align=\"center\">passivo A-AVIII-AIX</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">capitale proprio</td>";
         echo "<td align=\"right\">".$bil["Cp"]."</td><td align=\"center\">Cp</td></tr>\n";
         //
-        $bil["Re"] = $bil["$pA08"] + $bil["$pA09"];
+        $bil["Re"] = $bil["pA08"] + $bil["pA09"];
         echo "<tr><td align=\"center\">passivo AVIII+AIX</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">utile o perdita d'esercizio</td>";
         echo "<td align=\"right\">".$bil["Re"]."</td><td align=\"center\">Re</td></tr>\n";
         //
-        $bil["Pn"] = $bil["$Cp"] + $bil["$Re"];
+        $bil["Pn"] = $bil["Cp"] + $bil["Re"];
         echo "<tr><td align=\"center\"></td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Patrimonio netto</strong></td>";
         echo "<td align=\"right\">".$bil["Pn"]."</td><td align=\"center\">Pn</td></tr>\n";
