@@ -980,7 +980,7 @@ if (isset($_GET['visualizza']) and $message == "")
     //
     if ($errore == "" && $ctrlnum > 0 && $anno !=0)
       {
-        echo "<div><center><b>COSTO DEL VENTUTO DELL'ANNO $anno</b></CENTER></div>\n";
+        echo "<div><center><b>COSTO DEL VENDUTO DELL'ANNO $anno</b></CENTER></div>\n";
         echo "<table class=\"Tlarge\">";
         //
         echo "<tr><td align=\"center\">c.e. B6</td><td align=\"center\">+</td>";
@@ -1005,15 +1005,19 @@ if (isset($_GET['visualizza']) and $message == "")
         //
         echo "<tr><td align=\"center\">c.e. B11</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">variazione rimanenze materie prime, sussidiarie, di consumo e merci</td>";
-        echo "<td align=\"right\">".-$bil["eB0011"]."</td><td align=\"center\">  </td></tr>\n";
+        echo "<td align=\"right\">".(-$bil["eB0011"])."</td><td align=\"center\">  </td></tr>\n";
         //
-        echo "<tr><td align=\"center\">attivo CI</td><td align=\"center\">-</td>";
-        echo "<td align=\"left\">rimanenze finali di materie prime, sussidiarie, di consumo, di merci, di prodotti in lavorazione, di semilavorati e di prodotti finiti</td>";
-        echo "<td align=\"right\">".$bil["aC01"]."</td><td align=\"center\">  </td></tr>\n";
+        echo "<tr><td align=\"center\">c.e. A2</td><td align=\"center\">-</td>";
+        echo "<td align=\"left\">variazione rimanenze prodotti in lavorazione, semilavorati e finiti</td>";
+        echo "<td align=\"right\">".(-$bil["eA002"])."</td><td align=\"center\">  </td></tr>\n";
+        //
+        echo "<tr><td align=\"center\">c.e. A3</td><td align=\"center\">-</td>";
+        echo "<td align=\"left\">variazione dei lavori in corso su ordinazione</td>";
+        echo "<td align=\"right\">".(-$bil["eA003"])."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. A4</td><td align=\"center\">-</td>";
         echo "<td align=\"left\">costi patrimonializzati per lavori interni</td>";
-        echo "<td align=\"right\">".-($bil["eA004"])."</td><td align=\"center\">  </td></tr>\n";
+        echo "<td align=\"right\">".(-$bil["eA004"])."</td><td align=\"center\">  </td></tr>\n";
         //
         $bil["Cv"] = (-$bil["eB006"]+$bil["eB007"]+$bil["eB009"]+$bil["eB0010"]-$bil["eB0010d"])-$bil["aC01"]-(-$bil["eA004"]);
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
