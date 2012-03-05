@@ -96,8 +96,8 @@ if (isset ($_POST["eB14__amm"]) && is_numeric ($_POST["eB14__amm"])) $eB14__amm 
 if (isset ($_POST["eB14__com"]) && is_numeric ($_POST["eB14__com"])) $eB14__com = $_POST["eB14__com"];
 if (isset ($_POST["num_dip"])   && is_numeric ($_POST["num_dip"]))   $num_dip   = $_POST["num_dip"];
 if (isset ($_POST["pD__breve"]) && is_numeric ($_POST["pD__breve"])) $pD__breve = $_POST["pD__breve"];
-if (isset ($_POST["pD__medio"]) && is_numeric ($_POST["pD__medio"])) $pD__breve = $_POST["pD__medio"];
-if (isset ($_POST["pD__lungo"]) && is_numeric ($_POST["pD__lungo"])) $pD__breve = $_POST["pD__lungo"];
+if (isset ($_POST["pD__medio"]) && is_numeric ($_POST["pD__medio"])) $pD__medio = $_POST["pD__medio"];
+if (isset ($_POST["pD__lungo"]) && is_numeric ($_POST["pD__lungo"])) $pD__lungo = $_POST["pD__lungo"];
 //
 // Cerca di leggere i dati relativi all'anno selezionato.
 //

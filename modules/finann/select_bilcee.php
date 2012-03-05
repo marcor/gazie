@@ -43,7 +43,11 @@ $ecodesc = array('A'=>array("Titolo"=>") Valore della produzione:"),'B'=>array("
 //
 $bil = array();
 $code = "";
-
+$anno;
+$query;
+$result;
+$extra;
+$extcon_sum = 0;
 //
 // Carica i dati del bilancio IV direttiva CEE
 // Legge le linee del file
@@ -72,18 +76,22 @@ if (!isset($_GET['annfin']))
     $_GET['annfin'] =  date("Y")-1;
 
 //controllo i campi
-if (!checkdate( $_GET['mesini'], $_GET['gioini'], $_GET['annini']))
+if (!checkdate( $_GET['mesini'], $_GET['gioini'], $_GET['annini'])) {
     $message .= "La data ".$_GET['gioini']."-".$_GET['mesini']."-".$_GET['annini']." non &egrave; corretta!<br>";
-if (!checkdate( $_GET['mesfin'], $_GET['giofin'], $_GET['annfin']))
+}
+if (!checkdate( $_GET['mesfin'], $_GET['giofin'], $_GET['annfin'])) {
     $message .= "La data ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']." non &egrave; corretta!<br>";
-    $utsini= mktime(0,0,0,$_GET['mesini'],$_GET['gioini'],$_GET['annini']);
-    $utsdop= mktime(0,0,0,$_GET['mesini'],$_GET['gioini']-1,$_GET['annini']+1);
-    $utsfin= mktime(0,0,0,$_GET['mesfin'],$_GET['giofin'],$_GET['annfin']);
-    $datainizio = date("Ymd",$utsini);
-    $datadopo = date("Ymd",$utsdop);
-    $datafine = date("Ymd",$utsfin);
-if ($utsini >= $utsfin)
+}
+$utsini= mktime(0,0,0,$_GET['mesini'],$_GET['gioini'],$_GET['annini']);
+$utsdop= mktime(0,0,0,$_GET['mesini'],$_GET['gioini']-1,$_GET['annini']+1);
+$utsfin= mktime(0,0,0,$_GET['mesfin'],$_GET['giofin'],$_GET['annfin']);
+$datainizio = date("Ymd",$utsini);
+$datadopo = date("Ymd",$utsdop);
+$datafine = date("Ymd",$utsfin);
+//
+if ($utsini >= $utsfin) {
     $message .="La data di inizio periodo dev'essere precedente alla data di fine periodo !<br>";
+}
 if (isset($_GET['stampa'])) {
     $locazione = "Location: stampa_bilcee.php?&bilini=".$datainizio."&bilfin=".$datafine;
     header($locazione);
@@ -587,6 +595,142 @@ if (isset($_GET['visualizza']) and $message == "")
     $bil["eD0018"] = $bil["eD0018a"] + $bil["eD0018b"] + $bil["eD0018c"];
     $bil["eD0019"] = $bil["eD0019a"] + $bil["eD0019b"] + $bil["eD0019c"];
     //
+    // Lettura della tabella extcon.
+    // Attenzione: si legge solo l'anno iniziale, quindi la rivalutazione vale
+    // solo se il bilancio riguarda un solo anno!
+    //
+    $anno = $_GET["annini"];
+    $query  = "SELECT * FROM " . $gTables['extcon'] . " WHERE year = \"".$anno."\"";
+    $result = gaz_dbi_query ($query);
+    $nrows  = gaz_dbi_num_rows ($result);
+    //
+    // Se l'anno non c'è, aggiunge una riga vuota e la rilegge.
+    //
+    if ($nrows == 0)
+      {
+        $query  = "INSERT INTO " . $gTables['extcon'] . " (`year`) VALUES (".$anno.")";
+        $result = gaz_dbi_query ($query);
+        $query  = "SELECT * FROM " . $gTables['extcon'] . " WHERE year = \"".$anno."\"";
+        $result = gaz_dbi_query ($query);
+      }
+    $extra = gaz_dbi_fetch_array ($result);
+    //
+    // Sistema i valori nell'array $bil[], adattandoli in proporzione.
+    //
+    $extcon_sum = $extra['cos_serv_ind'] + $extra['cos_serv_amm'] + $extra['cos_serv_com'];
+    if ($extcon_sum == 0)
+      {
+        $bil["eB7__ind"] = 0;
+        $bil["eB7__amm"] = 0;
+        $bil["eB7__com"] = 0;
+      }
+    else
+      {
+        $bil["eB7__ind"] = round (($extra['cos_serv_ind'] / $extcon_sum) * -$bil["eB007"]);
+        $bil["eB7__amm"] = round (($extra['cos_serv_amm'] / $extcon_sum) * -$bil["eB007"]);
+        $bil["eB7__com"] = round (($extra['cos_serv_com'] / $extcon_sum) * -$bil["eB007"]);
+      }
+    //
+    $extcon_sum = $extra['cos_godb_ind'] + $extra['cos_godb_amm'] + $extra['cos_godb_com'];
+    if ($extcon_sum == 0)
+      {
+        $bil["eB8__ind"] = 0;
+        $bil["eB8__amm"] = 0;
+        $bil["eB8__com"] = 0;
+      }
+    else
+      {
+        $bil["eB8__ind"] = round (($extra['cos_godb_ind'] / $extcon_sum) * -$bil["eB008"]);
+        $bil["eB8__amm"] = round (($extra['cos_godb_amm'] / $extcon_sum) * -$bil["eB008"]);
+        $bil["eB8__com"] = round (($extra['cos_godb_com'] / $extcon_sum) * -$bil["eB008"]);
+      }
+    //
+    $extcon_sum = $extra['cos_pers_ind'] + $extra['cos_pers_amm'] + $extra['cos_pers_com'];
+    if ($extcon_sum == 0)
+      {
+        $bil["eB9__ind"] = 0;
+        $bil["eB9__amm"] = 0;
+        $bil["eB9__com"] = 0;
+      }
+    else
+      {
+        $bil["eB9__ind"] = round (($extra['cos_pers_ind'] / $extcon_sum) * -$bil["eB009"]);
+        $bil["eB9__amm"] = round (($extra['cos_pers_amm'] / $extcon_sum) * -$bil["eB009"]);
+        $bil["eB9__com"] = round (($extra['cos_pers_com'] / $extcon_sum) * -$bil["eB009"]);
+      }
+    //
+    $extcon_sum = $extra['cos_amms_ind'] + $extra['cos_amms_amm'] + $extra['cos_amms_com'];
+    if ($extcon_sum == 0)
+      {
+        $bil["eB10__ind"] = 0;
+        $bil["eB10__amm"] = 0;
+        $bil["eB10__com"] = 0;
+      }
+    else
+      {
+        $bil["eB10__ind"] = round (($extra['cos_amms_ind'] / $extcon_sum) * -$bil["eB0010"]);
+        $bil["eB10__amm"] = round (($extra['cos_amms_amm'] / $extcon_sum) * -$bil["eB0010"]);
+        $bil["eB10__com"] = round (($extra['cos_amms_com'] / $extcon_sum) * -$bil["eB0010"]);
+      }
+    //
+    $extcon_sum = $extra['cos_accr_ind'] + $extra['cos_accr_amm'] + $extra['cos_accr_com'];
+    if ($extcon_sum == 0)
+      {
+        $bil["eB12__ind"] = 0;
+        $bil["eB12__amm"] = 0;
+        $bil["eB12__com"] = 0;
+      }
+    else
+      {
+        $bil["eB12__ind"] = round (($extra['cos_accr_ind'] / $extcon_sum) * -$bil["eB0012"]);
+        $bil["eB12__amm"] = round (($extra['cos_accr_amm'] / $extcon_sum) * -$bil["eB0012"]);
+        $bil["eB12__com"] = round (($extra['cos_accr_com'] / $extcon_sum) * -$bil["eB0012"]);
+      }
+    //
+    $extcon_sum = $extra['cos_acca_ind'] + $extra['cos_acca_amm'] + $extra['cos_acca_com'];
+    if ($extcon_sum == 0)
+      {
+        $bil["eB13__ind"] = 0;
+        $bil["eB13__amm"] = 0;
+        $bil["eB13__com"] = 0;
+      }
+    else
+      {
+        $bil["eB13__ind"] = round (($extra['cos_acca_ind'] / $extcon_sum) * -$bil["eB0013"]);
+        $bil["eB13__amm"] = round (($extra['cos_acca_amm'] / $extcon_sum) * -$bil["eB0013"]);
+        $bil["eB13__com"] = round (($extra['cos_acca_com'] / $extcon_sum) * -$bil["eB0013"]);
+      }
+    //
+    $extcon_sum = $extra['cos_divg_ind'] + $extra['cos_divg_amm'] + $extra['cos_divg_com'];
+    if ($extcon_sum == 0)
+      {
+        $bil["eB14__ind"] = 0;
+        $bil["eB14__amm"] = 0;
+        $bil["eB14__com"] = 0;
+      }
+    else
+      {
+        $bil["eB14__ind"] = round (($extra['cos_divg_ind'] / $extcon_sum) * -$bil["eB0014"]);
+        $bil["eB14__amm"] = round (($extra['cos_divg_amm'] / $extcon_sum) * -$bil["eB0014"]);
+        $bil["eB14__com"] = round (($extra['cos_divg_com'] / $extcon_sum) * -$bil["eB0014"]);
+      }
+    //
+    $extcon_sum = $extra['deb_breve'] + $extra['deb_medio'] + $extra['deb_lungo'];
+    if ($extcon_sum == 0)
+      {
+        $bil["pD__breve"] = 0;
+        $bil["pD__medio"] = 0;
+        $bil["pD__lungo"] = 0;
+      }
+    else
+      {
+        $bil["pD__breve"] = round (($extra['deb_breve'] / $extcon_sum) * $bil["pD"]);
+        $bil["pD__medio"] = round (($extra['deb_medio'] / $extcon_sum) * $bil["pD"]);
+        $bil["pD__lungo"] = round (($extra['deb_lungo'] / $extcon_sum) * $bil["pD"]);
+      }
+    //
+    $bil["num_dip"] = $extra['num_dip'];
+    //
     // Riclassificazione al valore aggiunto.
     //
     if ($errore == "" )
@@ -696,6 +840,128 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["Re"]."</td><td align=\"center\">Re</td></tr>\n";
         //
         echo "</table>\n";
+      }
+    //
+    // Informazioni extracontabili.
+    //
+    if ($errore == "" )
+      {
+        echo "<div><center><b>INFORMAZIONI EXTRACONTABILI DELL'ANNO $anno</b></CENTER></div>\n";
+        echo "<table class=\"Tlarge\">";
+        //
+        echo "<tr>";
+        echo "<th align=\"center\"></th>";
+        echo "<th align=\"center\"></td>";
+        echo "<th align=\"center\">quota costi industriali</td>";
+        echo "<th align=\"center\">quota costi amministrativi</td>";
+        echo "<th align=\"center\">quota costi commerciali</td>";
+        echo "<th align=\"center\">valore complessivo di bilancio</td>";
+        echo "</tr>";
+        if ($bil["eB7__ind"] || $bil["eB7__amm"] || $bil["eB7__com"])
+          {
+            echo "<tr>";
+            echo "<td align=\"center\">c.e. B7</td>";
+            echo "<td align=\"center\">costi per servizi</td>";
+            echo "<td align=\"right\">".$bil["eB7__ind"]."</td>";
+            echo "<td align=\"right\">".$bil["eB7__amm"]."</td>";
+            echo "<td align=\"right\">".$bil["eB7__com"]."</td>";
+            echo "<td align=\"right\">".-$bil["eB007"]."</td>";
+            echo "</tr>";
+          }
+        if ($bil["eB8__ind"] || $bil["eB8__amm"] || $bil["eB8__com"])
+          {
+            echo "<tr>";
+            echo "<td align=\"center\">c.e. B8</td>";
+            echo "<td align=\"center\">costi per godimento di beni di terzi</td>";
+            echo "<td align=\"right\">".$bil["eB8__ind"]."</td>";
+            echo "<td align=\"right\">".$bil["eB8__amm"]."</td>";
+            echo "<td align=\"right\">".$bil["eB8__com"]."</td>";
+            echo "<td align=\"right\">".-$bil["eB008"]."</td>";
+            echo "</tr>";
+          }
+        if ($bil["eB9__ind"] || $bil["eB9__amm"] || $bil["eB9__com"])
+          {
+            echo "<tr>";
+            echo "<td align=\"center\">c.e. B9</td>";
+            echo "<td align=\"center\">costi per il personale</td>";
+            echo "<td align=\"right\">".$bil["eB9__ind"]."</td>";
+            echo "<td align=\"right\">".$bil["eB9__amm"]."</td>";
+            echo "<td align=\"right\">".$bil["eB9__com"]."</td>";
+            echo "<td align=\"right\">".-$bil["eB009"]."</td>";
+            echo "</tr>";
+          }
+        if ($bil["eB10__ind"] || $bil["eB10__amm"] || $bil["eB10__com"])
+          {
+            echo "<tr>";
+            echo "<td align=\"center\">c.e. B10</td>";
+            echo "<td align=\"center\">ammortamenti e svalutazioni</td>";
+            echo "<td align=\"right\">".$bil["eB10__ind"]."</td>";
+            echo "<td align=\"right\">".$bil["eB10__amm"]."</td>";
+            echo "<td align=\"right\">".$bil["eB10__com"]."</td>";
+            echo "<td align=\"right\">".-$bil["eB0010"]."</td>";
+            echo "</tr>";
+          }
+        if ($bil["eB12__ind"] || $bil["eB12__amm"] || $bil["eB12__com"])
+          {
+            echo "<tr>";
+            echo "<td align=\"center\">c.e. B12</td>";
+            echo "<td align=\"center\">accantonamenti per rischi</td>";
+            echo "<td align=\"right\">".$bil["eB12__ind"]."</td>";
+            echo "<td align=\"right\">".$bil["eB12__amm"]."</td>";
+            echo "<td align=\"right\">".$bil["eB12__com"]."</td>";
+            echo "<td align=\"right\">".-$bil["eB0012"]."</td>";
+            echo "</tr>";
+          }
+        if ($bil["eB13__ind"] || $bil["eB13__amm"] || $bil["eB13__com"])
+          {
+            echo "<tr>";
+            echo "<td align=\"center\">c.e. B13</td>";
+            echo "<td align=\"center\">altri accantonamenti</td>";
+            echo "<td align=\"right\">".$bil["eB13__ind"]."</td>";
+            echo "<td align=\"right\">".$bil["eB13__amm"]."</td>";
+            echo "<td align=\"right\">".$bil["eB13__com"]."</td>";
+            echo "<td align=\"right\">".-$bil["eB0013"]."</td>";
+            echo "</tr>";
+          }
+        if ($bil["eB14__ind"] || $bil["eB14__amm"] || $bil["eB14__com"])
+          {
+            echo "<tr>";
+            echo "<td align=\"center\">c.e. B14</td>";
+            echo "<td align=\"center\">oneri diversi di gestione</td>";
+            echo "<td align=\"right\">".$bil["eB14__ind"]."</td>";
+            echo "<td align=\"right\">".$bil["eB14__amm"]."</td>";
+            echo "<td align=\"right\">".$bil["eB14__com"]."</td>";
+            echo "<td align=\"right\">".-$bil["eB0014"]."</td>";
+            echo "</tr>";
+          }
+        //
+        echo "<tr>";
+        echo "<td colspan=\"6\"><hr></td>";
+        echo "<tr>\n";
+        //
+        echo "<tr>";
+        echo "<th align=\"center\"></th>";
+        echo "<th align=\"center\"></td>";
+        echo "<th align=\"center\">a breve termine</td>";
+        echo "<th align=\"center\">a medio termine</td>";
+        echo "<th align=\"center\">a lungo termine</td>";
+        echo "<th align=\"center\">valore complessivo di bilancio</td>";
+        echo "</tr>";
+        if ($bil["pD__breve"] || $bil["pD__medio"] || $bil["pD__lungo"])
+          {
+            echo "<tr>";
+            echo "<td align=\"center\">passivo D</td>";
+            echo "<td align=\"center\">debiti</td>";
+            echo "<td align=\"right\">".$bil["pD__breve"]."</td>";
+            echo "<td align=\"right\">".$bil["pD__medio"]."</td>";
+            echo "<td align=\"right\">".$bil["pD__lungo"]."</td>";
+            echo "<td align=\"right\">".$bil["pD"]."</td>";
+            echo "</tr>";
+          }
+
+
+        echo "</table>";
+//!!!!!!!!!!!!!!!!!!!!!!
       }
     //
     //// Costo del venduto.
