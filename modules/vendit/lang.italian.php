@@ -318,7 +318,11 @@ $strScript = array ("admin_client.php" =>
                            'speban_title'=>'Spese incasso non documentate/rate',
                            'traspo_title'=>'Spese trasporto non documentate',
                            'stamp'=>'Bolli',
-                           'id_agente'=>"Agente di vendita"
+                           'id_agente'=>"Agente di vendita",
+                           'print_total'=>"Stampa totale",
+                           'print_total_value'=>array(0=>'No',1=>'Si'),
+                           'delivery_time'=>"Tempi di consegna",
+                           'day_of_validity'=>"Giorni di validità"
                            ),
                     "report_contract.php" =>
                     array( 'title'=>'Elenco dei contratti stipulati',

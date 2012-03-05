@@ -63,6 +63,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     foreach($_POST['search'] as $k=>$v){
        $form['search'][$k]=$v;
     }
+    $form['print_total'] = intval($_POST['print_total']);
+    $form['delivery_time'] = intval($_POST['delivery_time']);
+    $form['day_of_validity'] = intval($_POST['day_of_validity']);
     $form['cosear'] = $_POST['cosear'];
     $form['seziva'] = $_POST['seziva'];
     $form['tipdoc'] = $_POST['tipdoc'];
@@ -819,6 +822,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['rows'] = array();
     // ...e della testata
     $form['search']['clfoco']=substr($cliente['ragso1'],0,10);
+    $form['print_total'] = $tesbro['print_total'];
+    $form['delivery_time'] = $tesbro['delivery_time'];
+    $form['day_of_validity'] = $tesbro['day_of_validity'];
     $form['cosear'] = "";
     $form['seziva'] = $tesbro['seziva'];
     $form['tipdoc'] = $tesbro['tipdoc'];
@@ -941,6 +947,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 
     // fine rigo input
     $form['search']['clfoco']='';
+    $form['print_total'] = 0;
+    $form['delivery_time'] = 30;
+    $form['day_of_validity'] = 10;
     $form['cosear'] = "";
     if (isset($_GET['seziva'])) {
          $form['seziva'] = $_GET['seziva'];
@@ -1125,6 +1134,15 @@ $select_banapp = new selectbanapp("banapp");
 $select_banapp -> addSelected($form['banapp']);
 $select_banapp -> output();
 echo "</td></tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['print_total']."</td><td  class=\"FacetDataTD\">\n";
+$gForm->variousSelect('print_total',$script_transl['print_total_value'],$form['print_total']);
+echo "\t </td>\n";
+echo "<td class=\"FacetFieldCaptionTD\" title=\"".$script_transl['day_of_validity']."\">".$script_transl['day_of_validity']."</td>
+      <td class=\"FacetDataTD\" title=\"".$script_transl['day_of_validity']."\"><input type=\"text\" value=\"".$form['day_of_validity']."\" name=\"day_of_validity\" maxlength=\"3\" size=\"3\" /></td>\n";
+echo "<td class=\"FacetFieldCaptionTD\" title=\"".$script_transl['delivery_time']."\">".$script_transl['delivery_time']."</td>
+      <td class=\"FacetDataTD\" title=\"".$script_transl['delivery_time']."\"><input type=\"text\" value=\"".$form['delivery_time']."\" name=\"delivery_time\" maxlength=\"3\" size=\"3\" /></td>\n";
+echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\" title=\"".$script_transl['speban_title']."\">".$script_transl['speban']."</td>
       <td class=\"FacetDataTD\" title=\"".$script_transl['speban_title']."\"><input type=\"text\" value=\"".$form['speban']."\" name=\"speban\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /> x ".$form['numrat']."</td>\n";
