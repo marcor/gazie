@@ -89,7 +89,7 @@ if(@file_exists('./lib.data.php') ) {
 
 //tabelle aziendali
 $tn=array('aliiva','agenti','artico','banapp','body_text','cash_register','catmer',
-          'caucon','caumag','clfoco','company_config','contract','effett','files',
+          'caucon','caumag','clfoco','company_config','contract','effett','extges','files',
           'imball','letter','movmag','pagame','paymov','portos','provvigioni','rigbro',
           'rigdoc','rigmoc','rigmoi','spediz','staff','staff_skills','tesbro','tesdoc','tesmov','vettor');
 foreach ($tn as $v){
