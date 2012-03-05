@@ -24,7 +24,8 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-
+require("../../library/include/header.php");
+$script_transl = HeadMain();
 //
 // Anno predefinito.
 //
@@ -41,11 +42,11 @@ $extra;
 //
 // Salva i dati POST recepiti.
 //
-if (isset ($_POST["okdat"]))    $okdat    = $_POST["okdat"];
-if (isset ($_POST["year"]))     $year     = $_POST["year"];
-if (isset ($_POST["eB7__ind"])) $eB7__ind = $_POST["eB7__ind"];
-if (isset ($_POST["eB7__amm"])) $eB7__amm = $_POST["eB7__amm"];
-if (isset ($_POST["eB7__com"])) $eB7__com = $_POST["eB7__com"];
+if (isset ($_POST["okdat"])    && is_numeric $_POST["okdat"])    $okdat    = $_POST["okdat"];
+if (isset ($_POST["year"])     && is_numeric $_POST["year"])     $year     = $_POST["year"];
+if (isset ($_POST["eB7__ind"]) && is_numeric $_POST["eB7__ind"]) $eB7__ind = $_POST["eB7__ind"];
+if (isset ($_POST["eB7__amm"]) && is_numeric $_POST["eB7__amm"]) $eB7__amm = $_POST["eB7__amm"];
+if (isset ($_POST["eB7__com"]) && is_numeric $_POST["eB7__com"]) $eB7__com = $_POST["eB7__com"];
 //
 // Cerca di leggere i dati relativi all'anno selezionato.
 //
