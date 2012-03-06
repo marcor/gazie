@@ -1594,7 +1594,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>(Pn+Dc)<p><hr><p>Ai</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(".$bil["Pn"]."+".$bil["Dc"]."<p><hr><p>".$bil["Ai"]."</p></td>";
+        echo "<td align=\"center\"><p>(".$bil["Pn"]."+".$bil["Dc"].")<p><hr><p>".$bil["Ai"]."</p></td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"right\">".round (($bil["Pn"]+$bil["Dc"])/$bil["Ai"], 4)."</td>\n";
         //
@@ -1614,7 +1614,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>(Dl+Df)<p><hr><p>Db</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(".$bil["Dl"]."+".$bil["Df"]."<p><hr><p>".$bil["Db"]."</p></td>";
+        echo "<td align=\"center\"><p>(".$bil["Dl"]."+".$bil["Df"].")<p><hr><p>".$bil["Db"]."</p></td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"right\">".round (($bil["Dl"]+$bil["Df"])/$bil["Db"], 4)."</td>\n";
         //
