@@ -297,12 +297,13 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['search']['conto_rc'.$i]='';
         // creo l'array contenente i partner per la gestione delle partite aperte
         if (($form['mastro_rc'][$i] == $mastroclienti || $form['mastro_rc'][$i] == $mastrofornitori)
-            && $form['conto_rc'.$i] > 0 ) {  
-            $form['paymov'][$i] = array('codcon'=>$row['codcon']);
+            && $form['conto_rc'.$i] > 0 ) {
+            $j=0;
+            $form['paymov'][$i][0] = array('codcon'=>$row['codcon'],'expiry'=>0,'amount'=>0);
             $rs_paymov = gaz_dbi_dyn_query("*", $gTables['paymov'], "id_rigmoc_pay = ".$row['id_rig']." OR id_rigmoc_doc = ".$row['id_rig'],"id");
             while ($r_pm = gaz_dbi_fetch_array($rs_paymov)) {
-                $form['paymov'][$i] = array_merge($r_pm,$row);
-   
+                $form['paymov'][$i][$j] = array_merge($r_pm,$row);
+                $j++;
             }
 
         }
@@ -514,7 +515,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       // e accodo anche all'array contenente i paymov per la gestione delle partite aperte
       if (($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori)
           && $form['conto_rc'.$rigo] > 0 ) {  
-            $form['paymov'][$rigo] = array('codcon'=>$form['conto_rc'.$rigo]);
+            $form['paymov'][$rigo] = array('codcon'=>$form['conto_rc'.$rigo],'expiry'=>'','amount'=>0);
       }
       $_POST['rigcon']++;
    }
@@ -708,12 +709,12 @@ echo '});
            $.get("expiry.php",
                  {clfoco:term_val},
                  function(data) {
-                   var items=[];       
                    $.each(data, function(i,value){
-                         $( "#openitem"+ nrow + " tbody" ).append( "<tr>" +
+                   alert(value.expiry);
+                         $( "#db-item-contain"+ nrow ).replaceWith( "<tr>" +
                               "<td>" + value.expiry + "</td>" +
                                "<td>" + value.amount + "</td>" +
-                               '."'<td><button><img src=\"../../library/images/x.gif\" /></button></td>'".' +
+                               '."'<td><button><img src=\"../../library/images/v.gif\" /></button></td>'".' +
                                "</tr>" );
                    });
                  },"json"
@@ -760,10 +761,11 @@ echo '});
           },
           close: function() {
             allFields.val( "" ).removeClass( "ui-state-error" );
+            $("div").remove(".db-item-contain'.$k.'")
           }
         });
         $("#dialog"+nrow ).dialog( "open" );
-        $( "#rerun" ).click(function() {
+        $("#rerun").click(function() {
                 var bValid = true;
                 allFields.removeClass( "ui-state-error" );
                 bValid = bValid && checkLength( expiry, "userexpiry", 3, 16 );
@@ -1011,15 +1013,15 @@ if ($toDo == 'insert') {
 
 
 // creo i dialog form delle partite aperte dei clienti/fornitori
-
-//print_r($form['paymov']);
 foreach($form['paymov'] as $k=>$v) {
-    foreach($form['paymov'][$k] as $k_r=>$v_r) {
-        echo "<input type=\"hidden\" name=\"paymov[$k][$k_r]\" value=\"".$v_r."\">\n";
-    }    
-    echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$v['codcon'].'">
+    foreach($v as $k_j=>$v_j) {    
+        echo '<input type="hidden" name="paymov['.$k.']['.$k_j.'][expiry]" value="'.$form['paymov'][$k][$k_j]['expiry'].'" class="text ui-widget-content ui-corner-all" />
+              <input type="hidden" name="paymov['.$k.']['.$k_j.'][amount]" value="'.$form['paymov'][$k][$k_j]['amount'].'" class="text ui-widget-content ui-corner-all" />
+              <input type="hidden" name="paymov['.$k.']['.$k_j.'][codcon]" value="'.$form['paymov'][$k][$k_j]['codcon'].'" class="text ui-widget-content ui-corner-all" />';
+    }
+    echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$v[0]['codcon'].'">
    <p class="validateTips"></p>
-   <div id="openitem-contain" class="ui-widget">
+   <div id="user-contain'.$k.'" class="ui-widget">
     <table id="openitem'.$k.'" class="ui-widget ui-widget-content">
      <tbody>
     <tr>
@@ -1028,19 +1030,22 @@ foreach($form['paymov'] as $k=>$v) {
     <td><label for="remrow"></label></td>
     </tr>
     <tr>
-    <td><input type="text" name="expiry" id="expiry" class="text ui-widget-content ui-corner-all" /></td>
-    <td><input type="text" name="amount" id="amount" class="text ui-widget-content ui-corner-all" /></td>
-    <td><button id="rerun"><img src="../../library/images/v.gif" />  </button></td>
-    <td></td>
-    </tr>
-    <tr><td colspan="3">
-    <DIV name="resultsContainer" id="resultsContainer" class="text ui-widget-content ui-corner-all">__RISULTATO_</DIV>
-    </td></tr>
-     </tbody>
+        <td><input type="text" name="expiry" id="expiry" class="text ui-widget-content ui-corner-all" /></td>
+        <td><input type="text" name="amount" id="amount" class="text ui-widget-content ui-corner-all" /></td>
+        <td><button id="rerun"><img src="../../library/images/v.gif" /> </button></td>  
+    </tr>';
+    foreach($v as $k_j=>$v_j) {    
+    echo '<tr><td><input type="text" name="paymov'.$k.'_'.$k_j.'expiry" value="'.$form['paymov'][$k][$k_j]['expiry'].'" class="text ui-widget-content ui-corner-all" /></td>
+     <td><input type="text" name="paymov'.$k.'_'.$k_j.'amount" value="'.$form['paymov'][$k][$k_j]['amount'].'" class="text ui-widget-content ui-corner-all" /></td>
+     <td><button id="paymov'.$k.'_'.$k_j.'rerun"><img src="../../library/images/x.gif" />  </button></td></tr>';
+    }
+echo'
+<tr><td colspan="3">
+ 	<DIV name="resultsContainer" id="resultsContainer" class="text ui-widget-content ui-corner-all">__RISULTATO_</DIV>
+	</td > </tr>  </tbody>
     </table>
    </div>
   </div>';
-
 }
 
 ?>
