@@ -743,7 +743,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $bil["Rv"] = $bil["eA001"];
         echo "<tr><td align=\"center\">A1</td><td align=\"center\"> </td>";
         echo "<td align=\"left\"><strong>Ricavi netti di vendita</strong></td>";
-        echo "<td align=\"right\">".$bil["Rv"]."</td><td align=\"center\">Rv</td></tr>\n";
+        echo "<td align=\"right\"><strong>".$bil["Rv"]."</strong></td><td align=\"center\">Rv</td></tr>\n";
         //
         echo "<tr><td align=\"center\">A4</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">costi patrimonializzati per lavori interni</td>";
@@ -760,7 +760,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $bil["Vp"] = $bil["eA"];
         echo "<tr><td align=\"center\">A</td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Valore della produzione</strong></td>";
-        echo "<td align=\"right\">".$bil["Vp"]."</td><td align=\"center\">Vp</td></tr>\n";
+        echo "<td align=\"right\"><strong>".$bil["Vp"]."</strong></td><td align=\"center\">Vp</td></tr>\n";
         //
         echo "<tr><td align=\"center\">B6</td><td align=\"center\">-</td>";
         echo "<td align=\"left\">costi netti per l'acquisto di materie prime, sussidiarie e merci</td>";
@@ -781,7 +781,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $bil["Va"] = $bil["Vp"]-(-($bil["eB006"]+$bil["eB0011"]+$bil["eB007"]+$bil["eB008"]+$bil["eB0014"]));
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Valore aggiunto</strong></td>";
-        echo "<td align=\"right\">".$bil["Va"]."</td><td align=\"center\">Va</td></tr>\n";
+        echo "<td align=\"right\"><strong>".$bil["Va"]."</strong></td><td align=\"center\">Va</td></tr>\n";
         //
         echo "<tr><td align=\"center\">B9</td><td align=\"center\">-</td>";
         echo "<td align=\"left\">costi del personale</td>";
@@ -790,7 +790,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $bil["Mol"] = $bil["Va"]-(-$bil["eB009"]);
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Margine operativo lordo (EBITDA)</strong></td>";
-        echo "<td align=\"right\">".$bil["Mol"]."</td><td align=\"center\">Mol</td></tr>\n";
+        echo "<td align=\"right\"><strong>".$bil["Mol"]."</strong></td><td align=\"center\">Mol</td></tr>\n";
         //
         echo "<tr><td align=\"center\">B10a+B10b+B10c</td><td align=\"center\">-</td>";
         echo "<td align=\"left\">ammortamenti</td>";
@@ -820,7 +820,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $bil["Rego"] = $bil["Ro"]+($bil["eC"]+$bil["eD"]);
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Risultato economico della gestione ordinaria</strong></td>";
-        echo "<td align=\"right\">".$bil["Rego"]."</td><td align=\"center\"> </td></tr>\n";
+        echo "<td align=\"right\"><strong>".$bil["Rego"]."</strong></td><td align=\"center\"> </td></tr>\n";
         //
         echo "<tr><td align=\"center\">E19</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">risultato della gestione straordinaria</td>";
@@ -829,7 +829,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $bil["Rl"] = $bil["Rego"]+$bil["eE0019"];
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Risultato economico al lordo delle imposte</strong></td>";
-        echo "<td align=\"right\">".$bil["Rl"]."</td><td align=\"center\">Rl</td></tr>\n";
+        echo "<td align=\"right\"><strong>".$bil["Rl"]."</strong></td><td align=\"center\">Rl</td></tr>\n";
         //
         $bil["Tx"] = -$bil["e_0022"];
         echo "<tr><td align=\"center\">22</td><td align=\"center\">-</td>";
@@ -839,7 +839,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $bil["Re"] = $bil["Rl"]-$bil["Tx"];
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Utile o perdita d'esercizio</strong></td>";
-        echo "<td align=\"right\">".$bil["Re"]."</td><td align=\"center\">Re</td></tr>\n";
+        echo "<td align=\"right\"><strong>".$bil["Re"]."</strong></td><td align=\"center\">Re</td></tr>\n";
         //
         echo "</table>\n";
       }
@@ -1005,7 +1005,11 @@ if (isset($_GET['visualizza']) and $message == "")
         //
         echo "<tr><td align=\"center\">c.e. B11</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">variazione rimanenze materie prime, sussidiarie, di consumo e merci</td>";
-        echo "<td align=\"right\">".(-$bil["eB0011"])."</td><td align=\"center\">  </td></tr>\n";
+        echo "<td align=\"right\">".$bil["eB0011"]."</td><td align=\"center\">  </td></tr>\n";
+        //
+        echo "<tr><td align=\"center\">c.e. B14 (solo costi industriali)</td><td align=\"center\">+</td>";
+        echo "<td align=\"left\">costi del personale</td>";
+        echo "<td align=\"right\">".$bil["eB14__ind"]."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. A2</td><td align=\"center\">-</td>";
         echo "<td align=\"left\">variazione rimanenze prodotti in lavorazione, semilavorati e finiti</td>";
@@ -1019,10 +1023,10 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"left\">costi patrimonializzati per lavori interni</td>";
         echo "<td align=\"right\">".(-$bil["eA004"])."</td><td align=\"center\">  </td></tr>\n";
         //
-        $bil["Cv"] = (-$bil["eB006"]+$bil["eB007"]+$bil["eB009"]+$bil["eB0010"]-$bil["eB0010d"])-$bil["aC01"]-(-$bil["eA004"]);
+        $bil["Cv"] = (-$bil["eB006"])+$bil["eB7__ind"]+$bil["eB8__ind"]+$bil["eB9__ind"]+$bil["eB10__ind"]+$bil["eB14__ind"]+$bil["eB0011"]-(-$bil["eA002"])-(-$bil["eA003"])-(-$bil["eA004"]);
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
         echo "<td align=\"left\"><strong>Costo del venduto</strong></td>";
-        echo "<td align=\"right\">".$bil["Cv"]."</td><td align=\"center\">Cv</td></tr>\n";
+        echo "<td align=\"right\"><strong>".$bil["Cv"]."</strong></td><td align=\"center\">Cv</td></tr>\n";
         //
         echo "</table>\n";
       }
