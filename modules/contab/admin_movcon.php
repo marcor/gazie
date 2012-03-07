@@ -709,12 +709,11 @@ echo '});
            $.get("expiry.php",
                  {clfoco:term_val},
                  function(data) {
-                   $.each(data, function(i,value){
-                   alert(value.expiry);
-                         $( "#db-item-contain"+ nrow ).replaceWith( "<tr>" +
+                    $.each(data, function(i,value){
+                           $( "#db-contain"+ nrow + " tbody").append( "<tr>" +
                               "<td>" + value.expiry + "</td>" +
                                "<td>" + value.amount + "</td>" +
-                               '."'<td><button><img src=\"../../library/images/v.gif\" /></button></td>'".' +
+                               '."'<td><button><img src=\"../../library/images/upp.png\" /></button></td>'".' +
                                "</tr>" );
                    });
                  },"json"
@@ -761,7 +760,7 @@ echo '});
           },
           close: function() {
             allFields.val( "" ).removeClass( "ui-state-error" );
-            $("div").remove(".db-item-contain'.$k.'")
+            $( "#db-contain"+ nrow + " tbody").replaceWith("<tbody></tbody>");
           }
         });
         $("#dialog"+nrow ).dialog( "open" );
@@ -1021,8 +1020,7 @@ foreach($form['paymov'] as $k=>$v) {
     }
     echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$v[0]['codcon'].'">
    <p class="validateTips"></p>
-   <div id="user-contain'.$k.'" class="ui-widget">
-    <table id="openitem'.$k.'" class="ui-widget ui-widget-content">
+    <table id="openitem'.$k.'" class="ui-widget ui-widget-content ui-corner-all">
      <tbody>
     <tr>
     <td><label for="expiry">Scadenza</label></td>
@@ -1030,21 +1028,22 @@ foreach($form['paymov'] as $k=>$v) {
     <td><label for="remrow"></label></td>
     </tr>
     <tr>
-        <td><input type="text" name="expiry" id="expiry" class="text ui-widget-content ui-corner-all" /></td>
-        <td><input type="text" name="amount" id="amount" class="text ui-widget-content ui-corner-all" /></td>
+        <td><input type="text" name="expiry" id="expiry" /></td>
+        <td><input type="text" name="amount" id="amount" /></td>
         <td><button id="rerun"><img src="../../library/images/v.gif" /> </button></td>  
     </tr>';
     foreach($v as $k_j=>$v_j) {    
-    echo '<tr><td><input type="text" name="paymov'.$k.'_'.$k_j.'expiry" value="'.$form['paymov'][$k][$k_j]['expiry'].'" class="text ui-widget-content ui-corner-all" /></td>
-     <td><input type="text" name="paymov'.$k.'_'.$k_j.'amount" value="'.$form['paymov'][$k][$k_j]['amount'].'" class="text ui-widget-content ui-corner-all" /></td>
+    echo '<tr><td><input type="text" name="paymov'.$k.'_'.$k_j.'expiry" value="'.$form['paymov'][$k][$k_j]['expiry'].'" class="text ui-widget-content" /></td>
+     <td><input type="text" name="paymov'.$k.'_'.$k_j.'amount" value="'.$form['paymov'][$k][$k_j]['amount'].'" class="text ui-widget-content" /></td>
      <td><button id="paymov'.$k.'_'.$k_j.'rerun"><img src="../../library/images/x.gif" />  </button></td></tr>';
     }
 echo'
-<tr><td colspan="3">
- 	<DIV name="resultsContainer" id="resultsContainer" class="text ui-widget-content ui-corner-all">__RISULTATO_</DIV>
-	</td > </tr>  </tbody>
+     </tbody>
     </table>
-   </div>
+    <table id="db-contain'.$k.'" class="ui-widget ui-widget-content">
+     <tbody>
+     </tbody>
+    </table>
   </div>';
 }
 
