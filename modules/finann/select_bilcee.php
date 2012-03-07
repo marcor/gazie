@@ -749,8 +749,24 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"left\">costi patrimonializzati per lavori interni</td>";
         echo "<td align=\"right\">".$bil["eA004"]."</td><td align=\"center\">  </td></tr>\n";
         //
+        // Note di Paolo Del Romano
+        //
+        // 1) se indichiamo con i simboli "RI_m" e "RF_m"   le rimanenze iniziali e finali  di materie prime, materie di consumo e merci
+        // 2) indichiamo poi con i simboli "RI_p" e RF_p"   le rimanenze iniziali e finali  di materie prime, materie di consumo e merci
+        // 3) la variazione delle scorte è gestita nelle configurazioni a "valore aggiunto " e "conto econonomico civilistico" nel seguente modo:
+        // 3.1) nel "Valore della Produzione" si calcola facendo "RF_p" -  "RI_p"
+        // 3.2) nel "Costo della Produzione" si calcola facendo "RI_m" - "RF_m"
+        // 4) la variazione delle scorte è gestita nelle configurazioni a "costo del venduto" invece  nel seguente modo:
+        // 4.1) le rimanenze di materie e di prodotti vengono trattati allo stesso modo e quindi la formula è: (RI_m +RI_p) - (RF_m + RF_p)
+        //
+        // Tutto questo casino puo' essere spiegato:
+        // con un percorso logico-matematico ===>se io faccio "ValoreDellaProduzione" MENO "CostoDellaProduzione" e separo le rimanenze dei prodotti (che metto nel primo aggregato) dalle rimanenze di materie prime (che metto nel secondo aggregato) è naturale che io debba invertire il segno per le rimanenze di materie da quelle di prodotti
+        // con un ragionamento economico ====>se durante l'anno:
+        // mi si incrementano le scorte di prodotti è naturale che tale incremento debba concorrere positivamente a formare il valore della produzione (RF&minus;RI) 
+        // mi si incrementano le scorte di materie prime è naturale che io debba rettificare il costo della produzione (RI&minus;RF)
+        //
         echo "<tr><td align=\"center\">c.e. A2+A3</td><td align=\"center\">+</td>";
-        echo "<td align=\"left\">variazione delle rimanenze di prodotti finiti, semilavorati, prodotti in lavorazione, lavorazioni in corso su ordinazioni</td>";
+        echo "<td align=\"left\">variazione delle rimanenze di prodotti finiti, semilavorati, prodotti in lavorazione, lavorazioni in corso su ordinazioni (RF&minus;RI)</td>";
         echo "<td align=\"right\">".($bil["eA002"]+$bil["eA003"])."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. A5</td><td align=\"center\">+</td>";
@@ -767,7 +783,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".-$bil["eB006"]."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. B11</td><td align=\"center\">&minus;</td>";
-        echo "<td align=\"left\">variazione delle rimanenze di materie prime, sussidiarie, di consumo e merci</td>";
+        echo "<td align=\"left\">variazione delle rimanenze di materie prime, sussidiarie, di consumo e merci (RI&minus;RF)</td>";
         echo "<td align=\"right\">".-$bil["eB0011"]."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. B7+B8</td><td align=\"center\">&minus;</td>";
@@ -783,12 +799,12 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<th align=\"left\">Valore aggiunto</th>";
         echo "<th align=\"right\">".$bil["Va"]."</th><td align=\"center\">Va</td></tr>\n";
         //
-        $bil["Cper"] = -$bil["eB009"];
+        $bil["Cl"] = -$bil["eB009"];
         echo "<tr><td align=\"center\">c.e. B9</td><td align=\"center\">&minus;</td>";
         echo "<td align=\"left\">costi del personale</td>";
-        echo "<td align=\"right\">".$bil["Cper"]."</td><td align=\"center\">Cper</td></tr>\n";
+        echo "<td align=\"right\">".$bil["Cl"]."</td><td align=\"center\">Cl</td></tr>\n";
         //
-        $bil["Mol"] = $bil["Va"]-$bil["Cper"];
+        $bil["Mol"] = $bil["Va"]-$bil["Cl"];
         echo "<tr><td align=\"center\"> </td><td align=\"center\">=</td>";
         echo "<th align=\"left\">Margine operativo lordo (EBITDA)</th>";
         echo "<th align=\"right\">".$bil["Mol"]."</th><td align=\"center\">Mol</td></tr>\n";
@@ -1021,19 +1037,19 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"right\">".$bil["eB10__ind"]."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. B14 (solo costi industriali)</td><td align=\"center\">+</td>";
-        echo "<td align=\"left\">costi del personale</td>";
+        echo "<td align=\"left\">oneri diversi di gestione</td>";
         echo "<td align=\"right\">".$bil["eB14__ind"]."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. B11</td><td align=\"center\">&minus;</td>";
-        echo "<td align=\"left\">variazione rimanenze materie prime, sussidiarie, di consumo e merci</td>";
+        echo "<td align=\"left\">variazione rimanenze materie prime, sussidiarie, di consumo e merci (RF&minus;RI)</td>";
         echo "<td align=\"right\">".$bil["eB0011"]."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. A2</td><td align=\"center\">&minus;</td>";
-        echo "<td align=\"left\">variazione rimanenze prodotti in lavorazione, semilavorati e finiti</td>";
+        echo "<td align=\"left\">variazione rimanenze prodotti in lavorazione, semilavorati e finiti (RF&minus;RI)</td>";
         echo "<td align=\"right\">".$bil["eA002"]."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. A3</td><td align=\"center\">&minus;</td>";
-        echo "<td align=\"left\">variazione dei lavori in corso su ordinazione</td>";
+        echo "<td align=\"left\">variazione dei lavori in corso su ordinazione (RF&minus;RI)</td>";
         echo "<td align=\"right\">".$bil["eA003"]."</td><td align=\"center\">  </td></tr>\n";
         //
         echo "<tr><td align=\"center\">c.e. A4</td><td align=\"center\">&minus;</td>";
@@ -1139,7 +1155,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"left\">Ricavi di vendita</td>";
         echo "<td align=\"right\">".$bil["Rv"]."</td><td align=\"center\">Rv</td></tr>\n";
         //
-        $bil["Cl"] = -$bil["eB009"];
+        //$bil["Cl"] = -$bil["eB009"];
         echo "<tr><td align=\"center\">c.e. B9</td>";
         echo "<td align=\"left\">Costi del lavoro</td>";
         echo "<td align=\"right\">".$bil["Cl"]."</td><td align=\"center\">Cl</td></tr>\n";
@@ -1332,11 +1348,11 @@ if (isset($_GET['visualizza']) and $message == "")
             echo "<td align=\"center\">=</td>";
             echo "<td align=\"center\"><p>costi del personale<p><hr><p>numero di dipendenti</p></td>";
             echo "<td align=\"center\">=</td>";
-            echo "<td align=\"center\"><p>Cper<p><hr><p>Ndip</p></td>";
+            echo "<td align=\"center\"><p>Cl<p><hr><p>Ndip</p></td>";
             echo "<td align=\"center\">=</td>";
-            echo "<td align=\"center\"><p>".$bil["Cper"]."<p><hr><p>".$bil["num_dip"]."</p></td>";
+            echo "<td align=\"center\"><p>".$bil["Cl"]."<p><hr><p>".$bil["num_dip"]."</p></td>";
             echo "<td align=\"center\">=</td>";
-            echo "<td align=\"right\">".round($bil["Cper"]/$bil["num_dip"], 4)."</td>\n";
+            echo "<td align=\"right\">".round($bil["Cl"]/$bil["num_dip"], 4)."</td>\n";
             //
             echo "<tr><td align=\"center\">fatturato medio per dipendente</td>";
             echo "<td align=\"center\">=</td>";
@@ -1525,16 +1541,16 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"left\">immobilizzazioni finanziarie</td>";
         echo "<td align=\"right\">".$bil["aB03"]."</td><td align=\"center\"></td></tr>\n";
         //
-        $bil["Ai"] = $bil["aB01"] + $bil["aB02"] + $bil["aB03"];
+        //$bil["Ai"] = $bil["aB01"] + $bil["aB02"] + $bil["aB03"];
         echo "<tr><td align=\"center\"></td><td align=\"center\">=</td>";
         echo "<th align=\"left\">Attivo immobilizzato</th>";
-        echo "<th align=\"right\">".$bil["Ai"]."</th><td align=\"center\">Ai</td></tr>\n";
+        echo "<th align=\"right\">".$bil["Im"]."</th><td align=\"center\">Im</td></tr>\n";
         //
         echo "<tr><td align=\"center\" colspan=\"5\">&nbsp;</td></tr>\n";
         //
         echo "<tr><td align=\"center\"></td><td align=\"center\"></td>";
         echo "<th align=\"left\">TOTALE IMPIEGHI</th>";
-        echo "<th align=\"right\">".($bil["Aco"]+$bil["Ai"])."</td><td align=\"center\"></td></tr>\n";
+        echo "<th align=\"right\">".($bil["Ac"]+$bil["Im"])."</td><td align=\"center\"></td></tr>\n";
         //
         echo "<tr><td align=\"center\" colspan=\"5\"><hr></td></tr>\n";
         //
@@ -1596,21 +1612,21 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>patrimonio netto<p><hr><p>attivo immobilizzato</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>Pn<p><hr><p>Ai</p></td>";
+        echo "<td align=\"center\"><p>Pn<p><hr><p>Im</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>".$bil["Pn"]."<p><hr><p>".$bil["Ai"]."</p></td>";
+        echo "<td align=\"center\"><p>".$bil["Pn"]."<p><hr><p>".$bil["Im"]."</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".round ($bil["Pn"]/$bil["Ai"], 4)."</td>\n";
+        echo "<td align=\"right\">".round ($bil["Pn"]/$bil["Im"], 4)."</td>\n";
         //
         echo "<tr><td align=\"center\">indice di copertura globale delle immobilizzazioni</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>(patrimonio netto + debiti a media e lunga scadenza)<p><hr><p>attivo immobilizzato</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(Pn+Dc)<p><hr><p>Ai</p></td>";
+        echo "<td align=\"center\"><p>(Pn+Dc)<p><hr><p>Im</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(".$bil["Pn"]."+".$bil["Dc"].")<p><hr><p>".$bil["Ai"]."</p></td>";
+        echo "<td align=\"center\"><p>(".$bil["Pn"]."+".$bil["Dc"].")<p><hr><p>".$bil["Im"]."</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".round (($bil["Pn"]+$bil["Dc"])/$bil["Ai"], 4)."</td>\n";
+        echo "<td align=\"right\">".round (($bil["Pn"]+$bil["Dc"])/$bil["Im"], 4)."</td>\n";
         //
         echo "<tr><td align=\"center\">indice di disponibilità</td>";
         echo "<td align=\"center\">=</td>";
@@ -1656,21 +1672,21 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>patrimonio netto &minus; attivo immobilizzato</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>Pn&minus;Ai</p></td>";
+        echo "<td align=\"center\"><p>Pn&minus;Im</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>".$bil["Pn"]." &minus; ".$bil["Ai"]."</p></td>";
+        echo "<td align=\"center\"><p>".$bil["Pn"]." &minus; ".$bil["Im"]."</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".($bil["Pn"]-$bil["Ai"])."      </td>\n";
+        echo "<td align=\"right\">".($bil["Pn"]-$bil["Im"])."      </td>\n";
         //
         echo "<tr><td align=\"center\">margine di struttura secondario</td>";
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"center\"><p>(patrimonio netto + debiti a media e lunga scadenza) &minus; attivo immobilizzato</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(Pn+Dc)&minus;Ai</p></td>";
+        echo "<td align=\"center\"><p>(Pn+Dc)&minus;Im</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(".$bil["Pn"]."+".$bil["Dc"].") &minus; ".$bil["Ai"]."</p></td>";
+        echo "<td align=\"center\"><p>(".$bil["Pn"]."+".$bil["Dc"].") &minus; ".$bil["Im"]."</p></td>";
         echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".(($bil["Pn"]+$bil["Dc"])-$bil["Ai"])."      </td>\n";
+        echo "<td align=\"right\">".(($bil["Pn"]+$bil["Dc"])-$bil["Im"])."      </td>\n";
         //
         echo "<tr><td align=\"center\">patrimonio circolante netto</td>";
         echo "<td align=\"center\">=</td>";
