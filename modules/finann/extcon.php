@@ -188,7 +188,7 @@ else
 // Produce il form.
 //
 echo "<form method=\"POST\">";
-echo "<p><big><strong>Informazioni addizionali per la rivalutazione di bilancio</strong></big></p>";
+echo "<p><big><strong>Informazioni addizionali per la riclassificazione di bilancio</strong></big></p>";
 //
 echo "<table>\n";
 //

@@ -34,8 +34,8 @@ $transl['finann'] = array('name' => "Fine Anno",
                           'm3' => array( 1 =>array("Controllo sbilancio dare-avere dei movimenti contabili","Controllo sbilancio movimenti contabili"),
                                          2 =>array("Controllo numerazione protocolli IVA","Controllo numerazione protocoli IVA"),
                                          3 =>array("Visualizzazione e stampa Bilancio","Bilancio"),
-                                         4 =>array("Visualizzazione e stampa Bilancio IV direttiva CEE","Bilancio CEE"),
-                                         5 =>array("Informazioni per la rivalutazione di bilancio","Dati rivalutanzione bilancio"),
+                                         4 =>array("Visualizzazione e stampa Bilancio civilistico","Bilancio civilistico"),
+                                         5 =>array("Informazioni per la riclassificazione di bilancio","Dati riclassificazione bilancio"),
                                        )
                          );
 ?>
