@@ -49,6 +49,137 @@ $result;
 $extra;
 $extcon_sum = 0;
 //
+// Inizializza a zero l'array associativo $bil[], per evitare che
+// venga richiesto poi l'uso di elementi non dichiarati.
+//
+$bil["aA"] = 0;
+$bil["aB"] = 0;
+$bil["aB01"] = 0;
+$bil["aB02"] = 0;
+$bil["aB03"] = 0;
+$bil["aB011"] = 0;
+$bil["aB012"] = 0;
+$bil["aB013"] = 0;
+$bil["aB014"] = 0;
+$bil["aB015"] = 0;
+$bil["aB016"] = 0;
+$bil["aB017"] = 0;
+$bil["aB021"] = 0;
+$bil["aB022"] = 0;
+$bil["aB023"] = 0;
+$bil["aB024"] = 0;
+$bil["aB025"] = 0;
+$bil["aB031a"] = 0;
+$bil["aB031b"] = 0;
+$bil["aB031c"] = 0;
+$bil["aB031d"] = 0;
+$bil["aB032a"] = 0;
+$bil["aB032b"] = 0;
+$bil["aB032c"] = 0;
+$bil["aB032d"] = 0;
+$bil["aB033"] = 0;
+$bil["aB034"] = 0;
+$bil["aC"] = 0;
+$bil["aC01"] = 0;
+$bil["aC02"] = 0;
+$bil["aC011"] = 0;
+$bil["aC012"] = 0;
+$bil["aC013"] = 0;
+$bil["aC014"] = 0;
+$bil["aC015"] = 0;
+$bil["aC021"] = 0;
+$bil["aC022"] = 0;
+$bil["aC023"] = 0;
+$bil["aC024"] = 0;
+$bil["aC024b"] = 0;
+$bil["aC024c"] = 0;
+$bil["aC025"] = 0;
+$bil["aC031"] = 0;
+$bil["aC032"] = 0;
+$bil["aC033"] = 0;
+$bil["aC034"] = 0;
+$bil["aC035"] = 0;
+$bil["aC036"] = 0;
+$bil["aC041"] = 0;
+$bil["aC042"] = 0;
+$bil["aC043"] = 0;
+$bil["aD"] = 0;
+$bil["aD001"] = 0;
+$bil["aD002"] = 0;
+$bil["aD003"] = 0;
+$bil["pA01"] = 0;
+$bil["pA02"] = 0;
+$bil["pA03"] = 0;
+$bil["pA04"] = 0;
+$bil["pA05"] = 0;
+$bil["pA06"] = 0;
+$bil["pA07"] = 0;
+$bil["pA08"] = 0;
+$bil["pA09"] = 0;
+$bil["pB"] = 0;
+$bil["pB001"] = 0;
+$bil["pB002"] = 0;
+$bil["pB003"] = 0;
+$bil["pC"] = 0;
+$bil["pD001"] = 0;
+$bil["pD002"] = 0;
+$bil["pD003"] = 0;
+$bil["pD004"] = 0;
+$bil["pD005"] = 0;
+$bil["pD006"] = 0;
+$bil["pD007"] = 0;
+$bil["pD008"] = 0;
+$bil["pD009"] = 0;
+$bil["pD001"] = 0;
+$bil["pD0011"] = 0;
+$bil["pD0012"] = 0;
+$bil["pD0013"] = 0;
+$bil["pD0014"] = 0;
+$bil["pE"] = 0;
+$bil["pE001"] = 0;
+$bil["pE002"] = 0;
+$bil["pE003"] = 0;
+$bil["eA"] = 0;
+$bil["eA001"] = 0;
+$bil["eA002"] = 0;
+$bil["eA003"] = 0;
+$bil["eA004"] = 0;
+$bil["eA005"] = 0;
+$bil["eB006"] = 0;
+$bil["eB007"] = 0;
+$bil["eB008"] = 0;
+$bil["eB009a"] = 0;
+$bil["eB009b"] = 0;
+$bil["eB009c"] = 0;
+$bil["eB009d"] = 0;
+$bil["eB009e"] = 0;
+$bil["eB0010a"] = 0;
+$bil["eB0010b"] = 0;
+$bil["eB0010c"] = 0;
+$bil["eB0010d"] = 0;
+$bil["eB0011"] = 0;
+$bil["eB0012"] = 0;
+$bil["eB0013"] = 0;
+$bil["eB0014"] = 0;
+$bil["eC"] = 0;
+$bil["eC0015"] = 0;
+$bil["eC0016a"] = 0;
+$bil["eC0016b"] = 0;
+$bil["eC0016c"] = 0;
+$bil["eC0016d"] = 0;
+$bil["eC0017"] = 0;
+$bil["eD"] = 0;
+$bil["eD0018a"] = 0;
+$bil["eD0018b"] = 0;
+$bil["eD0018c"] = 0;
+$bil["eD0019a"] = 0;
+$bil["eD0019b"] = 0;
+$bil["eD0019c"] = 0;
+$bil["eE0019"] = 0;
+$bil["eD002"] = 0;
+$bil["eD0021"] = 0;
+$bil["e_0022"] = 0;
+//
 // Carica i dati del bilancio IV direttiva CEE
 // Legge le linee del file
 //
@@ -196,7 +327,7 @@ if ($message == "")
   }
 echo "</table>";
 //
-// Link all'altro file.
+// Link all'altro file (provvisorio).
 //
 echo "<p align=\"right\"><big>Compila la tabella dei dati <a href=\"extcon.php\"><big>extracontabili</big></a></strong></big></p>";
 //
@@ -1550,7 +1681,7 @@ if (isset($_GET['visualizza']) and $message == "")
         //
         echo "<tr><td align=\"center\"></td><td align=\"center\"></td>";
         echo "<th align=\"left\">TOTALE IMPIEGHI</th>";
-        echo "<th align=\"right\">".($bil["Ac"]+$bil["Im"])."</td><td align=\"center\"></td></tr>\n";
+        echo "<th align=\"right\">".($bil["Aci"]+$bil["Im"])."</td><td align=\"center\"></td></tr>\n";
         //
         echo "<tr><td align=\"center\" colspan=\"5\"><hr></td></tr>\n";
         //
@@ -1608,65 +1739,80 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<div><center><b>ANALISI FINANZIARIA</b></CENTER></div>\n";
         echo "<table class=\"Tlarge\">";
         //
-        echo "<tr><td align=\"center\">indice di autocopertura delle immobilizzazioni</td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>patrimonio netto<p><hr><p>attivo immobilizzato</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>Pn<p><hr><p>Im</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>".$bil["Pn"]."<p><hr><p>".$bil["Im"]."</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".round ($bil["Pn"]/$bil["Im"], 4)."</td>\n";
+        if ($bil["Im"] != 0)
+          {
+            echo "<tr><td align=\"center\">indice di autocopertura delle immobilizzazioni</td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>patrimonio netto<p><hr><p>attivo immobilizzato</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>Pn<p><hr><p>Im</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>".$bil["Pn"]."<p><hr><p>".$bil["Im"]."</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"right\">".round ($bil["Pn"]/$bil["Im"], 4)."</td>\n";
+            //
+            echo "<tr><td align=\"center\">indice di copertura globale delle immobilizzazioni</td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>(patrimonio netto + debiti a media e lunga scadenza)<p><hr><p>attivo immobilizzato</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>(Pn+Dc)<p><hr><p>Im</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>(".$bil["Pn"]."+".$bil["Dc"].")<p><hr><p>".$bil["Im"]."</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"right\">".round (($bil["Pn"]+$bil["Dc"])/$bil["Im"], 4)."</td>\n";
+          }
         //
-        echo "<tr><td align=\"center\">indice di copertura globale delle immobilizzazioni</td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(patrimonio netto + debiti a media e lunga scadenza)<p><hr><p>attivo immobilizzato</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(Pn+Dc)<p><hr><p>Im</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(".$bil["Pn"]."+".$bil["Dc"].")<p><hr><p>".$bil["Im"]."</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".round (($bil["Pn"]+$bil["Dc"])/$bil["Im"], 4)."</td>\n";
+        if ($bil["Db"] != 0)
+          {
+            echo "<tr><td align=\"center\">indice di disponibilità</td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>attivo circolante<p><hr><p>debiti a breve</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>Ac<p><hr><p>Db</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>".$bil["Aci"]."<p><hr><p>".$bil["Db"]."</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"right\">".round ($bil["Aci"]/$bil["Db"], 4)."</td>\n";
+          }
         //
-        echo "<tr><td align=\"center\">indice di disponibilità</td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>attivo circolante<p><hr><p>debiti a breve</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>Ac<p><hr><p>Db</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>".$bil["Aci"]."<p><hr><p>".$bil["Db"]."</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".round ($bil["Aci"]/$bil["Db"], 4)."</td>\n";
+        if ($bil["Db"] != 0)
+          {
+            echo "<tr><td align=\"center\">indice di liquidità secondaria</td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>(disponibilità liquide + disponibilità finanziarie)<p><hr><p>debiti a breve</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>(Dl+Df)<p><hr><p>Db</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>(".$bil["Dl"]."+".$bil["Df"].")<p><hr><p>".$bil["Db"]."</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"right\">".round (($bil["Dl"]+$bil["Df"])/$bil["Db"], 4)."</td>\n";
+          }
         //
-        echo "<tr><td align=\"center\">indice di liquidità secondaria</td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(disponibilità liquide + disponibilità finanziarie)<p><hr><p>debiti a breve</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(Dl+Df)<p><hr><p>Db</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>(".$bil["Dl"]."+".$bil["Df"].")<p><hr><p>".$bil["Db"]."</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".round (($bil["Dl"]+$bil["Df"])/$bil["Db"], 4)."</td>\n";
+        if ($bil["Db"] != 0)
+          {
+            echo "<tr><td align=\"center\">indice di liquidità primaria</td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>disponibilità liquide<p><hr><p>debiti a breve</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>Dl<p><hr><p>Db</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>".$bil["Dl"]."<p><hr><p>".$bil["Db"]."</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"right\">".round ($bil["Dl"]/$bil["Db"], 4)."</td>\n";
+          }
         //
-        echo "<tr><td align=\"center\">indice di liquidità primaria</td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>disponibilità liquide<p><hr><p>debiti a breve</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>Dl<p><hr><p>Db</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>".$bil["Dl"]."<p><hr><p>".$bil["Db"]."</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".round ($bil["Dl"]/$bil["Db"], 4)."</td>\n";
-        //
-        echo "<tr><td align=\"center\">indice di rotazione dell'attivo circolante</td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>ricavi delle vendite<p><hr><p>attivo circolante</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>Rv<p><hr><p>Ac</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"center\"><p>".$bil["Rv"].")<p><hr><p>".$bil["Aci"]."</p></td>";
-        echo "<td align=\"center\">=</td>";
-        echo "<td align=\"right\">".round ($bil["Rv"]/$bil["Aci"], 4)."</td>\n";
+        if ($bil["Aci"] != 0)
+          {
+            echo "<tr><td align=\"center\">indice di rotazione dell'attivo circolante</td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>ricavi delle vendite<p><hr><p>attivo circolante</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>Rv<p><hr><p>Ac</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"center\"><p>".$bil["Rv"].")<p><hr><p>".$bil["Aci"]."</p></td>";
+            echo "<td align=\"center\">=</td>";
+            echo "<td align=\"right\">".round ($bil["Rv"]/$bil["Aci"], 4)."</td>\n";
+          }
         //
         echo "<tr><td align=\"center\">margine di struttura primario</td>";
         echo "<td align=\"center\">=</td>";
