@@ -711,8 +711,8 @@ echo '});
                  function(data) {
                     $.each(data, function(i,value){
                            $( "#db-contain"+ nrow + " tbody").append( "<tr>" +
-                              "<td>" + value.expiry + "</td>" +
-                               "<td>" + value.amount + "</td>" +
+                              "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + value.expiry + "</td>" +
+                              "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + value.amount + "</td>" +
                                '."'<td><button><img src=\"../../library/images/upp.png\" /></button></td>'".' +
                                "</tr>" );
                    });
@@ -773,10 +773,11 @@ echo '});
                 bValid = bValid && checkRegexp( amount, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
                 if ( bValid ) {
                     $( "#openitem"+ nrow + " tbody" ).append( "<tr>" +
-                       "<td>" + expiry.val() + "</td>" +
-                       "<td>" + amount.val() + "</td>" +
+                       "<td" + '."' class=\"text ui-widget-content \" >'".' + expiry.val() + "</td>" +
+                       "<td" + '."' class=\"text ui-widget-content \" >'".' + amount.val() + "</td>" +
                        '."'<td><button><img src=\"../../library/images/x.gif\" /></button></td>'".' +
                        "</tr>" );
+                       allFields.val( "" ).removeClass( "ui-state-error" );
                        updateTips( "" );
                 }
         });
@@ -1040,7 +1041,7 @@ foreach($form['paymov'] as $k=>$v) {
 echo'
      </tbody>
     </table>
-    <table id="db-contain'.$k.'" class="ui-widget ui-widget-content">
+    <table  width="334" id="db-contain'.$k.'" class="ui-widget ui-widget-content">
      <tbody>
      </tbody>
     </table>
