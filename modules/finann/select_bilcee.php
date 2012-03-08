@@ -1801,18 +1801,17 @@ if (isset($_GET['visualizza']) and $message == "")
             echo "<td align=\"right\">".round ($bil["Dl"]/$bil["Db"], 4)."</td>\n";
           }
         //
-        if ($bil["Aci"] != 0)
-          {
-            echo "<tr><td align=\"center\">indice di rotazione dell'attivo circolante</td>";
-            echo "<td align=\"center\">=</td>";
-            echo "<td align=\"center\"><p>ricavi delle vendite<p><hr><p>attivo circolante</p></td>";
-            echo "<td align=\"center\">=</td>";
-            echo "<td align=\"center\"><p>Rv<p><hr><p>Ac</p></td>";
-            echo "<td align=\"center\">=</td>";
-            echo "<td align=\"center\"><p>".$bil["Rv"].")<p><hr><p>".$bil["Aci"]."</p></td>";
-            echo "<td align=\"center\">=</td>";
-            echo "<td align=\"right\">".round ($bil["Rv"]/$bil["Aci"], 4)."</td>\n";
-          }
+        $bil["Rv/Aci"] = ($bil["Aci"] == 0 ? 0 : $bil["Rv"]/$bil["Aci"]);
+        $bil["Rv/Aci"] = round ($bil["Rv/Aci"], 4);
+        echo "<tr><td align=\"center\">indice di rotazione dell'attivo circolante</td>";
+        echo "<td align=\"center\">=</td>";
+        echo "<td align=\"center\"><p>ricavi delle vendite<p><hr><p>attivo circolante</p></td>";
+        echo "<td align=\"center\">=</td>";
+        echo "<td align=\"center\"><p>Rv<p><hr><p>Ac</p></td>";
+        echo "<td align=\"center\">=</td>";
+        echo "<td align=\"center\"><p>".$bil["Rv"]."<p><hr><p>".$bil["Aci"]."</p></td>";
+        echo "<td align=\"center\">=</td>";
+        echo "<td align=\"right\">".$bil["Rv/Aci"]."</td>\n";
         //
         echo "<tr><td align=\"center\">margine di struttura primario</td>";
         echo "<td align=\"center\">=</td>";
