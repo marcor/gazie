@@ -369,8 +369,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       }
                   }
                   // alla fine modifico le testate documenti introducendo il numero del movimento contabile
-                  gaz_dbi_put_query($gTables['tesdoc'],"datfat = '".$v['tes']['datfat']."' AND seziva = ".$v['tes']['seziva']." AND protoc = ".$v['tes']['protoc'],"id_con",$tes_id);
-
+                  gaz_dbi_put_query($gTables['tesdoc'],"tipdoc = '".$v['tes']['tipdoc']."' AND datfat = '".$v['tes']['datfat']."' AND seziva = ".$v['tes']['seziva']." AND protoc = ".$v['tes']['protoc'],"id_con",$tes_id);
           }
           header("Location: report_docven.php");
           exit;
