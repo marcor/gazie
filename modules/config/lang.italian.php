@@ -160,7 +160,10 @@
                            'base_arch'=>'Popolamento degli archivi di base',
                            'base_arch_value'=>array(0=>'No (sconsigliato)',
                                                     1=>'Si, ma senza vettori e imballi',
-                                                    2=>'Si, compresi vettori e imballi')
+                                                    2=>'Si, compresi vettori e imballi'),
+                           'artico_catmer'=>'Duplicazione articoli di magazzino',
+                           'artico_catmer_value'=>array(0=>'No (default)',
+                                                        1=>'Sì (normalmente sulle installazione didattiche)')
                          ),
                      "admin_pagame.php" =>
                    array(  "Modalit&agrave; di pagamento",

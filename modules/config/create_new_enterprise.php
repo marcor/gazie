@@ -40,6 +40,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
     $form['ref_co'] = intval($_POST['ref_co']);
     $form['clfoco'] = intval($_POST['clfoco']);
     $form['base_arch'] = intval($_POST['base_arch']);
+    $form['artico_catmer'] = intval($_POST['artico_catmer']);
     if (isset($_POST['users'])){
        $form['users']=substr($_POST['users'],0,8);
        $where_user="enterprise_id = ".$form['ref_co'];
@@ -72,7 +73,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                     switch ($form['base_arch']) {
                       case 0:
                            $sql=createNewTable($r[0],$form['codice']);
-                      break;
+                           break;
                       default:
                            $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."` ;\n\n";
                       break;
@@ -82,25 +83,35 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                     switch ($form['base_arch']) {
                       case 2:
                            $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."` ;\n\n";
-                      break;
+                           break;
                       default:
                            $sql=createNewTable($r[0],$form['codice']);
                       break;
+                    }
+                 } elseif(preg_match("/[a-zA-Z0-9]*.artico$/",$r[0]) ||
+                    preg_match("/[a-zA-Z0-9]*.catmer$/",$r[0])) {
+                    switch ($form['artico_catmer']) {
+                      case 1:
+                           $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."` ;\n\n";
+                           break;
+                      default:
+                           $sql=createNewTable($r[0],$form['codice']);
+                           break;
                     }
                  } elseif(preg_match("/[a-zA-Z0-9]*.clfoco$/",$r[0])) { // per la tabelle del piano dei conti mi baso sulla scelta dell'utente
                     switch ($form['clfoco']) {
                       case 0:
                            $sql=createNewTable($r[0],$form['codice']);
-                      break;
+                           break;
                       case 1:
                            $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."`
                                  WHERE (codice < ".($ref_company['mascli']*1000000+1)." OR codice > ".($ref_company['mascli']*1000000+999999).") AND
                                        (codice < ".($ref_company['masfor']*1000000+1)." OR codice > ".($ref_company['masfor']*1000000+999999).") AND
                                        (codice < ".($ref_company['masban']*1000000+1)." OR codice > ".($ref_company['masban']*1000000+999999).");\n\n";
-                      break;
+                           break;
                       case 2:
                            $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."` ;\n\n";
-                      break;
+                           break;
                     }
                  } else { // le altre tabelle solo struttura senza alcun dato
                     $sql=createNewTable($r[0],$form['codice']);
@@ -163,6 +174,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
     $form['ref_co'] = 0;
     $form['clfoco'] = 1;
     $form['base_arch'] = 1;
+    $form['artico_catmer'] = 0;
     $form['users']=true;
 }
 
@@ -196,11 +208,15 @@ $gForm->variousSelect('base_arch',$script_transl['base_arch_value'],$form['base_
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['artico_catmer']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->variousSelect('artico_catmer',$script_transl['artico_catmer_value'],$form['artico_catmer']);
+echo "\t </td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['users']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->selCheckbox('users',$form['users']);
 echo "</td>\n";
 echo "</tr>\n";
-
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
 echo "\t </td>\n";

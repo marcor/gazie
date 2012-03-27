@@ -160,7 +160,10 @@ $strScript = array ("admin_aziend.php" =>
                            'base_arch'=>'Populating base archive',
                            'base_arch_value'=>array(0=>'No (not recommended)',
                                                     1=>'Yes, but without carriers and packaging',
-                                                    2=>'Yes, including carriers and packaging')
+                                                    2=>'Yes, including carriers and packaging'),
+                           'artico_catmer'=>'Duplicazione articoli di magazzino',
+                           'artico_catmer_value'=>array(0=>'No (default)',
+                                                        1=>'Sì (normalmente sulle installazione didattiche)')
                          ),
                     "admin_pagame.php" =>
                    array(  "Payments method",

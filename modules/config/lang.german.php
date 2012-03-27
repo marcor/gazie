@@ -162,7 +162,10 @@ $strScript = array ("admin_aziend.php" =>
                            'base_arch'=>'Auffüllen Base-Archiv',
                            'base_arch_value'=>array(0=>'Keine (nicht empfohlen)',
                                                     1=>'Ja, aber ohne Träger und Verpackung',
-                                                    2=>'Ja, einschließlich Träger und Verpackung')
+                                                    2=>'Ja, einschließlich Träger und Verpackung'),
+                           'artico_catmer'=>'Duplicazione articoli di magazzino',
+                           'artico_catmer_value'=>array(0=>'No (default)',
+                                                        1=>'Sì (normalmente sulle installazione didattiche)')
                          ),
                     "admin_pagame.php" =>
                    array(  "Zahlungen Methode",

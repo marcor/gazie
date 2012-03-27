@@ -164,7 +164,10 @@ $strScript = array ("admin_aziend.php" =>
                            'base_arch'=>'Rellenando archivo de base',
                            'base_arch_value'=>array(0=>'No (no recomendado)',
                                                     1=>'S&iacute;, pero sin transporte y embalaje',
-                                                    2=>'S&iacute;, incluyendo transporte y embalaje')
+                                                    2=>'S&iacute;, incluyendo transporte y embalaje'),
+                           'artico_catmer'=>'Duplicazione articoli di magazzino',
+                           'artico_catmer_value'=>array(0=>'No (default)',
+                                                        1=>'Sì (normalmente sulle installazione didattiche)')
                          ),
                     "admin_pagame.php" =>
                    array(  "Modalidad; el pago",
