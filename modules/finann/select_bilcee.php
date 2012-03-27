@@ -329,7 +329,7 @@ echo "</table>";
 //
 // Link all'altro file (provvisorio).
 //
-echo "<p align=\"right\"><big>Compila la tabella dei dati <a href=\"extcon.php\"><big>extracontabili</big></a></strong></big></p>";
+//echo "<p align=\"right\"><big>Compila la tabella dei dati <a href=\"extcon.php\"><big>extracontabili</big></a></strong></big></p>";
 //
 if (isset($_GET['visualizza']) and $message == "")
   {
