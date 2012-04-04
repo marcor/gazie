@@ -201,8 +201,8 @@ function createRowsAndErrors($partner){
        $search_partner = " clfoco LIKE '".$admin_aziend['masfor']."%'";
     }
     $sqlquery= "SELECT COUNT(".$gTables['rigmoi'].".id_tes) AS numdoc,
-           codiva,".$gTables['aliiva'].".tipiva,SUM(impost - impost*2*(caucon LIKE '_NC')) AS imposta,
-           SUM(imponi - imponi*2*(caucon LIKE '_NC')) AS imponibile,clfoco,CONCAT(ragso1,' ',ragso2) AS ragsoc, sedleg,sexper,indspe,
+           codiva,".$gTables['aliiva'].".tipiva,SUM(impost - impost*2*((caucon LIKE '_NC') or (caucon LIKE '_FC' ))) AS imposta,
+           SUM(imponi - imponi*2*((caucon LIKE '_NC') or (caucon LIKE '_FC' ))) AS imponibile,clfoco,CONCAT(ragso1,' ',ragso2) AS ragsoc, sedleg,sexper,indspe,
            citspe,prospe,codfis,pariva,allegato,operat
            FROM ".$gTables['rigmoi']."
            LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
