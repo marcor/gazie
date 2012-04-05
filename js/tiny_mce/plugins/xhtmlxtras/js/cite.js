@@ -1,25 +1,28 @@
- /**
- * $Id: cite.js,v 1.4 2011/01/01 11:07:11 devincen Exp $
+/**
+ * cite.js
  *
- * @author Moxiecode - based on work by Andrew Tetlaw
- * @copyright Copyright © 2004-2012, Moxiecode Systems AB, All rights reserved.
+ * Copyright 2009, Moxiecode Systems AB
+ * Released under LGPL License.
+ *
+ * License: http://tinymce.moxiecode.com/license
+ * Contributing: http://tinymce.moxiecode.com/contributing
  */
 
 function init() {
-    SXE.initElementDialog('cite');
-    if (SXE.currentAction == "update") {
-        SXE.showRemoveButton();
-    }
+	SXE.initElementDialog('cite');
+	if (SXE.currentAction == "update") {
+		SXE.showRemoveButton();
+	}
 }
 
 function insertCite() {
-    SXE.insertElement('cite');
-    tinyMCEPopup.close();
+	SXE.insertElement('cite');
+	tinyMCEPopup.close();
 }
 
 function removeCite() {
-    SXE.removeElement('cite');
-    tinyMCEPopup.close();
+	SXE.removeElement('cite');
+	tinyMCEPopup.close();
 }
 
 tinyMCEPopup.onInit.add(init);
