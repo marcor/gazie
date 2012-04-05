@@ -94,7 +94,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // fine rigo input
     $form['rows'] = array();
     $next_row = 0;
-    $rows_text ='body_text';
     if (isset($_POST['rows'])) {
        foreach ($_POST['rows'] as $next_row => $value) {
             $form['rows'][$next_row]['status'] = substr($value['status'],0,30);
@@ -318,7 +317,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 
     $form['rows'] = array();
     $next_row = 0;
-    $rows_text = 'body_text';
     $rs_row = gaz_dbi_dyn_query("*", $gTables['contract_row'], "id_contract = ".intval($_GET['id_contract']),"id_row ASC");
     while ($row = gaz_dbi_fetch_array($rs_row)) {
            $form['rows'][$next_row]['descri'] = $row['descri'];
@@ -383,7 +381,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['provvigione'] = 0.00;
     $form['rows'] = array();
     $next_row = 0;
-    $rows_text ='body_text';
     $form['hidden_req'] = '';
     // inizio rigo di input
     $form['in_status'] = "INSERT";
@@ -413,23 +410,23 @@ if ($toDo=='update'){
   $title = ucfirst($script_transl['upd_this']);
 }
 echo "<script type=\"text/javascript\">
-// Initialize TinyMCE with the new plugin and menu button
-tinyMCE.init({
-  mode : \"exact\",
-  theme : \"advanced\",
-  language : \"it\",
-  forced_root_block : false,
-  force_br_newlines : true,
-  force_p_newlines : false,
-  elements : \"".$rows_text."\",
-  plugins : \"table,advlink\",
-  theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
-  theme_advanced_buttons2 : \"\",
-  theme_advanced_buttons3 : \"\",
-  theme_advanced_toolbar_location : \"external\",
-  theme_advanced_toolbar_align : \"left\",
-});
-
+          // Initialize TinyMCE with the new plugin and menu button
+          tinyMCE.init({
+          mode : \"specific_textareas\",
+          theme : \"advanced\",
+          forced_root_block : false,
+          force_br_newlines : true,
+          force_p_newlines : false,
+          elements : \"body_text\",
+          plugins : \"table,advlink\",
+          theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
+          theme_advanced_buttons2 : \"\",
+          theme_advanced_buttons3 : \"\",
+          theme_advanced_toolbar_location : \"external\",
+          theme_advanced_toolbar_align : \"left\",
+          editor_selector  : \"mceClass\",
+          });\n";
+echo "
 var cal = new CalendarPopup();
 var calName = '';
 function setMultipleValues(y,m,d) {
@@ -537,7 +534,7 @@ echo "\t<td colspan=\"6\" align=\"center\">\n";
 echo $script_transl['body_text'];
 echo "</td></tr>\n";
 echo "\t<td colspan=\"6\">\n";
-echo "<textarea id=\"body_text\" name=\"body_text\" style=\"width:100%;height:400px;\" >".$form['body_text']."</textarea>\n";
+echo "<textarea id=\"body_text\" name=\"body_text\" class=\"mceClass\" style=\"width:100%;height:400px;\" >".$form['body_text']."</textarea>\n";
 echo "</td></tr>\n";
 echo "</table>\n";
 echo "<table class=\"Tlarge\">\n";

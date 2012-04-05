@@ -165,11 +165,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // fine rigo input
     $form['rows'] = array();
     $next_row = 0;
-    $rows_text ='';
     if (isset($_POST['rows'])) {
        foreach ($_POST['rows'] as $next_row => $v) {
             if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
-               $rows_text .= ",row_$next_row";
                $form["row_$next_row"] = $_POST["row_$next_row"];
             }
             $form['rows'][$next_row]['descri'] = substr($v['descri'],0,50);
@@ -780,7 +778,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
             $form['rows'][$next_row]['ritenuta'] = 0;
          } elseif ($form['in_tiprig']>5 && $form['in_tiprig']<9) { //testo
-            $rows_text .= ",row_$next_row";
             $form["row_$next_row"] = "";
             $form['rows'][$next_row]['codart'] = "";
             $form['rows'][$next_row]['annota'] = "";
@@ -819,7 +816,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
      if (isset($form["row_$k_next"])) { //se ho un rigo testo prima gli cambio l'index
          $form["row_$upp_key"] = $form["row_$k_next"];
          unset($form["row_$k_next"]);
-         $rows_text=str_replace("row_$k_next","row_$upp_key",$rows_text);
      }
      if ($upp_key > 0) {
         $new_key = $upp_key-1;
@@ -846,16 +842,12 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // fine sottrazione peso,pezzi,volume
 
     // diminuisco o lascio inalterati gli index dei testi
-    $rows_text='';
     foreach ($form['rows'] as $k => $val) {
             if (isset($form["row_$k"])) { //se ho un rigo testo
                if ($k > $delri) { //se ho un rigo testo dopo
                    $new_k=$k-1;
-                   $rows_text .= ",row_$new_k";
                    $form["row_$new_k"] = $form["row_$k"];
                    unset($form["row_$k"]);
-               } else {
-                   $rows_text .= ",row_$k";
                }
             }
     }
@@ -959,12 +951,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['caucon'] = $tesdoc['caucon'];
     $form['sconto'] = $tesdoc['sconto'];
     $next_row = 0;
-    $rows_text = '';
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
        $articolo = gaz_dbi_get_row($gTables['artico'],"codice",$rigo['codart']);
        if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
            $text = gaz_dbi_get_row($gTables['body_text'],"id_body",$rigo['id_body_text']);
-           $rows_text .= ",row_$next_row";
            $form["row_$next_row"] = $text['body_text'];
        }
        $form['rows'][$next_row]['descri'] = $rigo['descri'];
@@ -1002,7 +992,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['mintra'] = date("i");
     $form['rows'] = array();
     $next_row = 0;
-    $rows_text ='';
     $form['hidden_req'] = '';
     // inizio rigo di input
     $form['in_descri'] = "";
@@ -1132,31 +1121,35 @@ if ($form['id_tes'] > 0) {
 } else {
    $title = ucfirst($script_transl[$toDo].$script_transl[0][$form['tipdoc']]);
 }
+echo "<script type=\"text/javascript\">";
+foreach ($form['rows'] as $k => $v) {
+  if ($v['tiprig'] > 5 || $v['tiprig'] < 9 ){
+     echo "\n// Initialize TinyMCE with the new plugin and menu button
+          tinyMCE.init({
+          mode : \"specific_textareas\",
+          theme : \"advanced\",
+          forced_root_block : false,
+          force_br_newlines : true,
+          force_p_newlines : false,
+          elements : \"row_".$k."\",
+          plugins : \"table,advlink\",
+          theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
+          theme_advanced_buttons2 : \"\",
+          theme_advanced_buttons3 : \"\",
+          theme_advanced_toolbar_location : \"external\",
+          theme_advanced_toolbar_align : \"left\",
+          editor_selector  : \"mceClass".$k."\",
+          });\n";
+  }
+}
 
-echo "<script type=\"text/javascript\">
-// Initialize TinyMCE with the new plugin and menu button
-tinyMCE.init({
-  mode : \"exact\",
-  theme : \"advanced\",
-  language : \"it\",
-  forced_root_block : false,
-  force_br_newlines : true,
-  force_p_newlines : false,
-  elements : \"".$rows_text."\",
-  plugins : \"table,advlink\",
-  theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
-  theme_advanced_buttons2 : \"\",
-  theme_advanced_buttons3 : \"\",
-  theme_advanced_toolbar_location : \"external\",
-  theme_advanced_toolbar_align : \"left\",
-});
-
+echo "
 function pulldown_menu(selectName, destField)
 {
     // Create a variable url to contain the value of the
     // selected option from the the form named broven and variable selectName
-    var url = document.docven[selectName].options[document.docven[selectName].selectedIndex].value;
-    document.docven[destField].value = url;
+    var url = document.broven[selectName].options[document.broven[selectName].selectedIndex].value;
+    document.broven[destField].value = url;
 }";
 ?>
 </script>
@@ -1479,7 +1472,7 @@ foreach ($form['rows'] as $k => $v) {
         case "8":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
               <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" /></td>\n";
-        echo "<td colspan=\"10\"><textarea id=\"row_$k\" name=\"row_$k\" style=\"width:100%;height:100px;\">".$form["row_$k"]."</textarea></td>\n";
+        echo "<td colspan=\"10\"><textarea id=\"row_$k\" name=\"row_$k\" class=\"mceClass$k\" style=\"width:100%;height:100px;\">".$form["row_$k"]."</textarea></td>\n";
         echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"\" />\n";
         echo "<input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />\n";
         echo "<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />\n";
