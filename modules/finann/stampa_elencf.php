@@ -253,13 +253,10 @@ $aRiportare = array('top'=>array(array('lun' => 88,'nam'=>'da riporto : '),
                            )
                     );
 $pdf->setVars($admin_aziend,$title);
-$config = new Config;
-//$pdf->SetPageFormat($config->getValue('page_format'));
 $pdf->setAuthor($admin_aziend['ragso1'].' '.$_SESSION['Login']);
 $pdf->setTitle($title['title']);
 $pdf->SetTopMargin(43);
 $pdf->SetFooterMargin(20);
-$pdf->StartPageGroup();
 $pdf->AddPage();
 if ($_GET['partner'] == 1 or $_GET['partner'] == 3){
     $queryData = createRowsAndErrors(1);
@@ -270,7 +267,6 @@ if ($_GET['partner'] == 1 or $_GET['partner'] == 3){
                 $value['operazioni_esente']+
                 $value['imposte_addebitate'];
       $pdf->SetFont('helvetica','',7);
-      //$pdf->setRiporti($aRiportare);
       $pdf->Cell(8,3,$value['Progressivo'],'LTR',0,'R');
       $pdf->Cell(80,3,$value['Rag_Sociale'],'T');
       $pdf->Cell(54,3,$value['Indirizzo'],'T');
@@ -332,7 +328,6 @@ if ($_GET['partner'] == 2 or $_GET['partner'] == 3){
                 $value['operazioni_esente']+
                 $value['imposte_addebitate'];
       $pdf->SetFont('helvetica','',7);
-      //$pdf->setRiporti($aRiportare);
       $pdf->Cell(8,3,$value['Progressivo'],'LTR',0,'R');
       $pdf->Cell(80,3,$value['Rag_Sociale'],'T');
       $pdf->Cell(54,3,$value['Indirizzo'],'T');

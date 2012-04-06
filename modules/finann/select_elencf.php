@@ -170,7 +170,7 @@ function getHeaderData()
             $Testa['fatal_error'] = '';
         }
         if (empty($admin_aziend['luonas'])) {
-                $Testa['fatal_error'] = '';
+                $Testa['fatal_error'] = 'Manca il luogo di nascita in configurazione azienda';
         } else {
             $Testa['luonas'] = strtoupper($admin_aziend['luonas']);
         }
@@ -550,7 +550,8 @@ if (isset($_GET['view'])) {
        echo "<td colspan=\"4\" class=\"FacetDataTD\">".$Testa['pariva']."</td>";
        echo "<td colspan=\"3\"></td>";
        echo "</tr>\n";
-       if (!isset($Testa['sesso'])){ // è una persona giuridica
+       if (!isset($Testa['fatal_error'])) {
+        if (!isset($Testa['sesso'])){ // è una persona giuridica
           echo "<tr>";
           echo "<td colspan=\"2\"></td>";
           echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">$script_transl[32]</td>";
@@ -569,7 +570,7 @@ if (isset($_GET['view'])) {
           echo "<td colspan=\"4\" class=\"FacetDataTD\">".$Testa['proleg']."</td>";
           echo "<td colspan=\"3\"></td>";
           echo "</tr>\n";
-       } else {     // persona fisica
+        } else {     // persona fisica
           echo "<tr>";
           echo "<td colspan=\"2\"></td>";
           echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">$script_transl[26]</td>";
@@ -606,6 +607,11 @@ if (isset($_GET['view'])) {
           echo "<td colspan=\"4\" class=\"FacetDataTD\">".$Testa['pronas']."</td>";
           echo "<td colspan=\"3\"></td>";
           echo "</tr>\n";
+        }
+       } else {
+         echo "<tr>";
+         echo "<td colspan=\"10\" align=\"center\" class=\"FacetDataTDred\" colspan=\"6\">$script_transl[23]:".$Testa['fatal_error']."</td>\n";
+         echo "</tr>\n";
        }
        if (!empty($error_partners) and $_GET['anno'] > 2007){
                echo "<tr>\n
@@ -614,7 +620,7 @@ if (isset($_GET['view'])) {
        } elseif (isset($Testa['fatal_error'])) {
               echo "<tr>\n
                    <td align=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"4\"><input type=\"submit\" name=\"pdf\" value=\"PDF\"></td>\n
-                   <td align=\"center\" class=\"FacetDataTDred\" colspan=\"6\">$script_transl[23]</td>\n
+                   <td align=\"center\" class=\"FacetDataTDred\" colspan=\"6\">$script_transl[23]:".$Testa['fatal_error']."</td>\n
                    </tr>\n";
        } else {
               echo "<tr>\n
