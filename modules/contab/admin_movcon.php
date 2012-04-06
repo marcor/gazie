@@ -372,9 +372,10 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                $loadCosRic = substr($form['conto_rc'.$i],0,1);
            }
            $form['cod_partner'] = $_POST['conto_rc'.$i];
-           //ricarico i registri per il form delle partite aperte dei clienti/fornitori
-           foreach($_POST['paymov'][$i] as $k=>$v) {
+           if (isset($_POST['paymov'][$i])) { // se ho dati sul form delle partite aperte dei clienti/fornitori li ricarico
+             foreach($_POST['paymov'][$i] as $k=>$v) {
                 $form['paymov'][$i][$k] = $v;  // devo fare il parsing
+             }
            }
            
         }
