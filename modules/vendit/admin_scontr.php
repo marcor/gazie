@@ -117,7 +117,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['status'] = substr($v['status'],0,30);
             $form['rows'][$next_row]['descri'] = substr($v['descri'],0,100);
             $form['rows'][$next_row]['unimis'] = substr($v['unimis'],0,3);
-            $form['rows'][$next_row]['prelis'] = number_format(preg_replace("/\,/",'.',$v['prelis']),$admin_aziend['decimal_price'],'.','');
+            if ($v['tiprig'] <=1 ){
+                $form['rows'][$next_row]['prelis'] = number_format($v['prelis'],$admin_aziend['decimal_price'],'.','');
+            } else {
+                $form['rows'][$next_row]['prelis'] = 0; 
+            }
             $form['rows'][$next_row]['sconto'] = floatval(preg_replace("/\,/",'.',$v['sconto']));
             $form['rows'][$next_row]['quanti'] = gaz_format_quantity($v['quanti'],0,$admin_aziend['decimal_quantity']);
             $form['rows'][$next_row]['provvigione'] = intval($v['provvigione']);
@@ -282,6 +286,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     );
                 }
              }
+             $form['datfat'] = $form['datemi'];
              $form['id_contract'] = $form['id_cash'];
              tesdocUpdate(array('id_tes',$form['id_tes']),$form);
              header("Location: ".$form['ritorno']);
@@ -389,6 +394,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
         $cliente = $anagrafica->getPartner($form['clfoco']);
     }
     $form['pagame']=$cliente['codpag'];
+    $form['fiscal_code']=$cliente['codfis'];
     $form['address']=$cliente['indspe'].' '.$cliente['citspe'];
     $form['id_agente']=$cliente['id_agente'];
     $form['in_codvat']=$cliente['aliiva'];
