@@ -1,0 +1,19 @@
+Titolo:
+Fortiter in re, suaviter in modo.
+
+Presentazione:
+Contavo di riuscire a completare tutte le funzionalità relative alla gestione degli scadenziari a partite aperte entro aprile ma causa l'impossibilità oggettiva di dedicare (molto) tempo a questo lavoro ho preferito rilasciare la nuova versione che con l'aiuto di alcuni di voi corregge parecchie imperfezioni e pone una pietra miliare di riferimento per il lavoro futuro. Sotto potete vedere le correzioni/migliorie apportate. Gli sviluppatori che vogliono curiosare ed osservare l'embrione di quello che sto producendo per gestire le partite aperte dei clienti e fornitori potranno notare una icona su ogni rigo contabile ad essi relativo (sia in inserimento che in modifica); detta icona permette l'accesso ad una finestra di dialogo scritta con javascript/jquery che interagendo con la base dati, e precisamente con la tabella gaz_001paymov la dovrà modificare opportunamente.
+ 
+Modifiche apportate:
+- permesso l'inserimento di clienti,fornitori,aziende senza indirizzo email.
+- corretta data sulla stampa degli schedari di magazzino, prima veniva stampata la data del documento e non quella di registrazione, e queste non sempre coincidono.  
+- corretto da angelo983 errore di arrotondamento delle provvigioni.
+- corretti errori nella gestione dei contratti bug[3479535] segnalato da pelassa.
+- aggiunte da dg7 le documentazioni dei moduli.
+- aggiunta da dg7 la possibilità di duplicare il magazzino in fase di creazione di una nuova azienda.
+- corretto errore di data fattura in fase di modifica degli scontrini con fattura allegata.
+- corretto da marcovinicio il problema delle note credito da fornitore sull'allegato clienti e fornitori (in odore di ripristino).
+- iniziato lo sviluppo della gestione dello scadenziario a partite aperte.
+
+
+Antonio de Vincentiis, Montesilvano, 17 Aprile 2012
