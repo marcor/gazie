@@ -120,11 +120,12 @@ if (isset($_POST['genera'])and $message == "") {
             tesmovInsert($newValue);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
-            //inserisco i due righi
+            // inserisco i due righi, partendo dal conto dare.
+            rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$admin_aziend['coriba'],'import'=>$effett['impeff']));
+            // continuo con il conto clienti.
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'A','codcon'=>$effett['clfoco'],'import'=>$effett['impeff']));
             // memorizzo l'id del cliente  
             $paymov_id = gaz_dbi_last_id();
-            rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$admin_aziend['coriba'],'import'=>$effett['impeff']));
         }
         if ($effett['tipeff'] == 'T') {
             //inserisco la testata
@@ -141,11 +142,12 @@ if (isset($_POST['genera'])and $message == "") {
             tesmovInsert($newValue);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
-            //inserisco i due righi
+            // inserisco i due righi partendo dal conto dare
+            rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$admin_aziend['cotrat'],'import'=>$effett['impeff']));
+            // continuo con il conto clienti.
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'A','codcon'=>$effett['clfoco'],'import'=>$effett['impeff']));
             // memorizzo l'id del cliente  
             $paymov_id = gaz_dbi_last_id();
-            rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$admin_aziend['cotrat'],'import'=>$effett['impeff']));
         }
         if ($effett['tipeff'] == 'V') {
             //inserisco la testata
@@ -162,11 +164,12 @@ if (isset($_POST['genera'])and $message == "") {
             tesmovInsert($newValue);
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
-            //inserisco i due righi
+            // inserisco i due righi partendo dal conto dare.
+            rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$effett['banacc'],'import'=>$effett['impeff']));
+            // continuo con il cliente.
             rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'A','codcon'=>$effett['clfoco'],'import'=>$effett['impeff']));
             // memorizzo l'id del cliente  
             $paymov_id = gaz_dbi_last_id();
-            rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>'D','codcon'=>$effett['banacc'],'import'=>$effett['impeff']));
         }
         // aggiungo un movimento alle partite aperte
         paymovInsert(array('id_tesdoc_ref'=>$effett['id_doc'],'id_rigmoc_pay'=>$paymov_id,'amount'=>$effett['impeff'],'expiry'=>$effett['scaden']));
