@@ -1,4 +1,4 @@
-<p>Il men&ugrave; principale si ottiene spostanto il puntatore del mouse
+<p>Il men&ugrave; principale si ottiene spostando il puntatore del mouse
 sopra la voce <strong>Home</strong>, in alto a sinistra.<!-- Si veda
 eventualmente questo breve <a title="guarda il video"
 href="help/italian/home_menu.ogv">filmato</a>.--></p>
