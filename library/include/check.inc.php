@@ -183,9 +183,18 @@ function check_TAXcode($cf,$country='IT')
 
 class postal_code
 {
-    function check_postal_code($v,$country='IT')
+    function check_postal_code($v,$country='IT',$db_cp_length=0)
     {
-      switch ($country ) {
+      // se il valore della lunghezza del codice postale è stato inserito sul db lo uso per il controllo
+      if {$db_cp_length>0} {
+         if(!preg_match("/^[0-9]{".$db_cp_length."}$/", $v) ) {
+             return "Invalid postal code";
+         } else {
+             return false;
+         }
+      // altrimenti uso quello più selettivo per i paesi sottoriportati  
+      } else { 
+        switch ($country ) {
                case 'IT':
                case 'DE':
                case 'FR':
@@ -272,6 +281,7 @@ class postal_code
                    return false;
                 }
                break;
+        }
       }
     }
 }
