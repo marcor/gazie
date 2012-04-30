@@ -489,7 +489,8 @@ if (isset($_POST['anteprima']) and $message == "") {
     $fatture = FattureDaDdt($periodo,$sezione,$_POST['codcli'],$_POST['excludeDdt']);
     echo '<div align="center"><b>ANTEPRIMA DI FATTURAZIONE</b></div>';
     echo "<table class=\"Tlarge\">";
-    foreach ($fatture['yes'] as $kt=>$vt) {
+    if (isset($fatture['yes']) && !isset($fatture['yes'][0]['totale'])){
+      foreach ($fatture['yes'] as $kt=>$vt) {
             echo "<tr>";
             echo "<td> ".$vt['codicecliente']." &nbsp;</td>";
             echo "<td colspan=\"4\"> ".$vt['ragionesociale']." &nbsp;</td>";
@@ -533,9 +534,13 @@ if (isset($_POST['anteprima']) and $message == "") {
                        echo "<td class=\"FacetFooterTD\" align=\"right\"> ".gaz_format_number($vt['speseincasso'])." &nbsp;</td>";
                        echo "</tr>\n";
             }
+      }
+      echo "<tr><td  align=\"right\" colspan=\"7\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA !\"></TD></TR>";
+    } else { 
+      echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
     }
     if (isset($fatture['no'])) {
-            echo "<tr><td class=\"FacetDataTDred\" colspan=\"2\" align=\"right\">I DdT sottosegnati sono stati esclusi dalla fatturazione&darr; </td><td  align=\"right\" colspan=\"5\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA !\"></TD></TR>";
+            echo "<tr><td class=\"FacetDataTDred\" colspan=\"3\" align=\"right\">I DdT sottosegnati sono stati esclusi dalla fatturazione&darr; </td></TR>";
             $ctrld=0;
             foreach ($fatture['no'] as $key => $value) {
                  if ($ctrld!=$value['id']) {
@@ -546,9 +551,6 @@ if (isset($_POST['anteprima']) and $message == "") {
                  }
              $ctrld=$value['id'];
             }
-    } else {
-            echo "<tr><td  align=\"right\" colspan=\"7\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA !\"></TD></TR>";
-
     }
     echo "</table>\n";
 }
