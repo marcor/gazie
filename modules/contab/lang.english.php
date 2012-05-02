@@ -170,7 +170,8 @@ $strScript = array ("select_liqiva.php" =>
                                            'You forgot to put the registration number!',
                                            'You forgot to put the document number!',
                                            'The date of the document must not be later than that of the registration!',
-                                           'WARNING you\'re editing a movement that involving a VAT registry!'
+                                           'WARNING you\'re editing a movement that involving a VAT registry!',
+                                           'You\'re trying to record a document that is already registered'
                                           ),
                            'id_testata'=>'Entry number',
                            'date_reg'=>'Registration date',

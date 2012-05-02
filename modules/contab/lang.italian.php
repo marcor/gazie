@@ -171,7 +171,8 @@ $strScript = array ("select_liqiva.php" =>
                                            'Hai dimenticato di inserire il numero di protocollo!',
                                            'Hai dimenticato di inserire il numero del documento!',
                                            'La data del documento non dev\'essere successiva a quella del movimento!',
-                                           'ATTENZIONE stai modificando un movimento che interessa un registro IVA!'
+                                           'ATTENZIONE stai modificando un movimento che interessa un registro IVA!',
+                                           'Stai tentando di registrare un documento gi&agrave; registrato'
                                           ),
                            'id_testata'=>'Numero di movimento',
                            'date_reg'=>'Data di registrazione',

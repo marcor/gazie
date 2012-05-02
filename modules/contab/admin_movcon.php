@@ -124,6 +124,11 @@ if (isset($_POST['ins'])) {
         if ($ctrldatreg < $ctrldatdoc) {
             $msg .= "12+";
         }
+        // controllo se ci documenti con lo stesso numero e anno dello stesso fornitore (duplicato) 
+        $dupli = gaz_dbi_record_count($gTables['tesmov'] , "numdoc = '".trim(substr($_POST['numdocumen'],0,20))."' AND seziva = ".intval($_POST['sezioneiva'])." AND clfoco = ".intval($_POST['cod_partner'])." AND YEAR(datdoc) = ".intval($_POST['date_doc_Y']));
+        if ($dupli > 1 || ($dupli == 1 && $toDo == 'insert')) {
+            $msg .= "14+";          
+        }
     }
     if ($msg == "") { // nessun errore
         //se è un update recupero i vecchi righi per trovare quelli da inserire/modificare/cancellare

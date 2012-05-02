@@ -174,7 +174,8 @@ $strScript = array ("select_liqiva.php" =>
                                            'Sie haben vergessen, die Nummer der Eintragung gestellt!',
                                            'Sie haben vergessen, den Aktenzeichen setzen!',
                                            'Das Datum des Dokuments muss nicht später als die der Registrierung werden!',
-                                           'WARNUNG Sie \'re Bearbeitung einer Bewegung, die eine MwSt-Registrierung!'
+                                           'WARNUNG Sie \'re Bearbeitung einer Bewegung, die eine MwSt-Registrierung!',
+                                           'Sie versuchen, ein Dokument, das bereits registriert ist aufzuzeichnen'
                                           ),
                            'id_testata'=>'Eintrag Nummer',
                            'date_reg'=>'Datum der Registrierung',
