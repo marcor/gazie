@@ -186,7 +186,7 @@ class postal_code
     function check_postal_code($v,$country='IT',$db_cp_length=0)
     {
       // se il valore della lunghezza del codice postale è stato inserito sul db lo uso per il controllo
-      if {$db_cp_length>0} {
+      if ($db_cp_length>0) {
          if(!preg_match("/^[0-9]{".$db_cp_length."}$/", $v) ) {
              return "Invalid postal code";
          } else {
