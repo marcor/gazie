@@ -84,13 +84,13 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['numrat'] = $_POST['numrat'];
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
-    if ($form['change_pag'] != $form['pagame']){  //se è stato cambiato il pagamento
+    if ($form['change_pag'] != $form['pagame']){  //se Ã¨ stato cambiato il pagamento
        $new_pag = gaz_dbi_get_row($gTables['pagame'],"codice",$form['pagame']);
        $old_pag = gaz_dbi_get_row($gTables['pagame'],"codice",$form['change_pag']);
        if (($new_pag['tippag'] == 'B' or $new_pag['tippag'] == 'T' or $new_pag['tippag'] == 'V')
            and ($old_pag['tippag'] == 'C' or $old_pag['tippag'] == 'D')) { // se adesso devo mettere le spese e prima no
            $form['numrat'] = $new_pag['numrat'];
-           if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
+           if ($toDo == 'update') {  //se Ã¨ una modifica mi baso sulle vecchie spese
               $old_header = gaz_dbi_get_row($gTables['tesdoc'],"id_tes",$form['id_tes']);
               if ($old_header['speban'] > 0 and $fornitore['speban'] == "S"){
                  $form['speban'] = 0;
@@ -150,6 +150,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $next_row = 0;
     if (isset($_POST['righi'])) {
        foreach ($_POST['righi'] as $next_row => $value) {
+            if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
+               $form["row_$next_row"] = $_POST["row_$next_row"];
+            }
             $form['righi'][$next_row]['descri'] = substr($value['descri'],0,50);
             $form['righi'][$next_row]['tiprig'] = intval($value['tiprig']);
             $form['righi'][$next_row]['codart'] = substr($value['codart'],0,15);
@@ -204,7 +207,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        $utsemi = mktime(0,0,0,$form['mesemi'],$form['gioemi'],$form['annemi']);
        $initra = $form['anntra']."-".$form['mestra']."-".$form['giotra'];
        $utstra = mktime(0,0,0,$form['mestra'],$form['giotra'],$form['anntra']);
-       if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT vs Fattura differita
+       if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se Ã¨ un DDT vs Fattura differita
           if ($utstra < $utsemi) {
              $msg .= "38+";
           }
@@ -227,7 +230,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        }
        // --- inizio controllo coerenza date-numerazione
        if ($toDo == 'update') {  // controlli in caso di modifica
-          if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT vs Fattura differita
+          if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se Ã¨ un DDT vs Fattura differita
              $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = ".$form['annemi']." and datemi < '$datemi' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione","numdoc desc",0,1);
              $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
              if ($result and ($form['numdoc'] < $result['numdoc'])) {
@@ -238,7 +241,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
              if ($result and ($form['numdoc'] > $result['numdoc'])) {
                 $msg .= "41+";
              }
-          } elseif ($form['tipdoc'] == 'ADT') { //se è un DDT acquisto
+          } elseif ($form['tipdoc'] == 'ADT') { //se Ã¨ un DDT acquisto
             $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = ".$form['annemi']." and datemi < '$datemi' and tipdoc = 'ADT' and seziva = $sezione","protoc desc",0,1);
             $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
             if ($result && ($form['protoc'] < $result['protoc'])) {
@@ -262,7 +265,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             }
           }
        } else {    //controlli in caso di inserimento
-         if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT
+         if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se Ã¨ un DDT
             $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = ".$form['annemi']." and tipdoc like 'DD_' and seziva = $sezione","numdoc desc, datemi desc",0,1);
             $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
             $utsUltimoDdT = mktime(0,0,0,substr($ultimo_ddt['datfat'],5,2),substr($ultimo_ddt['datfat'],8,2),substr($ultimo_ddt['datfat'],0,4));
@@ -336,6 +339,15 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                  $form['righi'][$i]['id_tes'] = $form['id_tes'];
                  $codice = array('id_rig',$val_old_row['id_rig']);
                  rigdocUpdate($codice,$form['righi'][$i]);
+                 if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se Ã¨ un rigo testo giÃ  presente lo modifico
+                      bodytextUpdate(array('id_body',$val_old_row['id_body_text']),array('table_name_ref'=>'rigdoc','id_ref'=>$val_old_row['id_rig'],'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
+                      gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
+                 } elseif (isset($form["row_$i"]) && $val_old_row['id_body_text'] == 0 ) { //prima era un rigo diverso da testo
+                      bodytextInsert(array('table_name_ref'=>'rigdoc','id_ref'=>$val_old_row['id_rig'],'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
+                      gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', gaz_dbi_last_id());
+                 } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0){ //un rigo che prima era testo adesso non lo Ã¨ piÃ¹
+                      gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
+                 }
                  if ($form['righi'][$i]['id_mag'] > 0 ){ //se il rigo ha un movimento di magazzino associato
                      $upd_mm->uploadMag($val_old_row['id_rig'],
                                     $form['tipdoc'],
@@ -356,14 +368,14 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     );
                  }
               } else { //altrimenti lo elimino
-                  if ($val_old_row['id_mag'] > 0){  //se c'è stato un movimento di magazzino lo azzero
+                  if ($val_old_row['id_mag'] > 0){  //se c'Ã¨ stato un movimento di magazzino lo azzero
                      $upd_mm->uploadMag('DEL',$form['tipdoc'],'','','','','','','','','','',$val_old_row['id_mag'],$admin_aziend['stock_eval_method']);
                   }
                   gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
               }
               $i++;
              }
-             //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
+             //qualora i nuovi righi fossero di piÃ¹ dei vecchi inserisco l'eccedenza
              for ($i = $i; $i <= $count; $i++) {
                 $form['righi'][$i]['id_tes'] = $form['id_tes'];
                 rigdocInsert($form['righi'][$i]);
@@ -391,7 +403,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
              }
              //modifico la testata con i nuovi dati...
              $old_head = gaz_dbi_get_row($gTables['tesdoc'],'id_tes',$form['id_tes']);
-             if (substr($form['tipdoc'],0,2) == 'DD') { //se è un DDT non fatturato
+             if (substr($form['tipdoc'],0,2) == 'DD') { //se Ã¨ un DDT non fatturato
                $form['datfat'] = '';
                $form['numfat'] = 0;
              } else {
@@ -437,7 +449,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             } else {
                $form['numdoc'] = 1;
             }
-            if (substr($form['tipdoc'],0,2) == 'DD'){  //ma se e' un ddt il protocollo è 0 così come il numero e data fattura
+            if (substr($form['tipdoc'],0,2) == 'DD'){  //ma se e' un ddt il protocollo Ã¨ 0 cosÃ¬ come il numero e data fattura
                $form['protoc'] = 0;
                $form['numfat'] = 0;
                $form['datfat'] = 0;
@@ -457,6 +469,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             foreach ($form['righi'] as $i => $value) {
                   $form['righi'][$i]['id_tes'] = $ultimo_id;
                   rigdocInsert($form['righi'][$i]);
+                  $last_rigdoc_id = gaz_dbi_last_id();
+                  if (isset($form["row_$i"])) { //se Ã¨ un rigo testo lo inserisco il contenuto in body_text
+                      bodytextInsert(array('table_name_ref'=>'rigdoc','id_ref'=>$last_rigdoc_id,'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
+                      gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
+                  }
                   if ($admin_aziend['conmag'] == 2 and
                      $form['righi'][$i]['tiprig'] == 0 and
                      !empty($form['righi'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
@@ -534,7 +551,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   // Se viene inviata la richiesta di conferma rigo
   if (isset($_POST['in_submit_x'])) {
     $artico = gaz_dbi_get_row($gTables['artico'],"codice",$form['in_codart']);
-    if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
+    if (substr($form['in_status'],0,6) == "UPDROW"){ //se Ã¨ un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['righi'][$old_key]['tiprig'] = $form['in_tiprig'];
          $form['righi'][$old_key]['descri'] = $form['in_descri'];
@@ -580,7 +597,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['righi'][$old_key]['sconto'] = 0;
          }
          ksort($form['righi']);
-    } else { //se è un rigo da inserire
+    } else { //se Ã¨ un rigo da inserire
          $form['righi'][$next_row]['tiprig'] = $form['in_tiprig'];
          $form['righi'][$next_row]['descri'] = $form['in_descri'];
          $form['righi'][$next_row]['id_mag'] = $form['in_id_mag'];
@@ -626,7 +643,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['righi'][$next_row]['sconto'] = 0;
             $form['righi'][$next_row]['pervat'] = 0;
             $form['righi'][$next_row]['codvat'] = 0;
-         } else {
+         } elseif ($form['in_tiprig'] == 3) {
             $form['righi'][$next_row]['codart'] = "";
             $form['righi'][$next_row]['annota'] = "";
             $form['righi'][$next_row]['pesosp'] = "";
@@ -638,6 +655,20 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['righi'][$next_row]['codvat'] = $form['in_codvat'];
             $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
             $form['righi'][$next_row]['pervat'] = $iva_row['aliquo'];
+         } elseif ($form['in_tiprig']>5 && $form['in_tiprig']<9) { //testo
+            $form["row_$next_row"] = "";
+            $form['righi'][$next_row]['codart'] = "";
+            $form['righi'][$next_row]['annota'] = "";
+            $form['righi'][$next_row]['pesosp'] = "";
+            $form['righi'][$next_row]['unimis'] = "";
+            $form['righi'][$next_row]['quanti'] = 0;
+            $form['righi'][$next_row]['prelis'] = 0;
+            $form['righi'][$next_row]['codric'] = 0;
+            $form['righi'][$next_row]['sconto'] = 0;
+            $form['righi'][$next_row]['pervat'] = 0;
+            $form['righi'][$next_row]['tipiva'] = 0;
+            $form['righi'][$next_row]['ritenuta'] = 0;
+            $form['righi'][$next_row]['codvat'] = 0;
          }
     }
      // reinizializzo rigo di input tranne che per il tipo rigo e aliquota iva
@@ -658,6 +689,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   // Se viene inviata la richiesta di spostamento verso l'alto del rigo
   if (isset($_POST['upper_row'])) {
      $upp_key = key($_POST['upper_row']);
+     $k_next = $upp_key-1;
+     if (isset($form["row_$k_next"])) { //se ho un rigo testo prima gli cambio l'index
+         $form["row_$upp_key"] = $form["row_$k_next"];
+         unset($form["row_$k_next"]);
+     }
      if ($upp_key > 0) {
         $new_key = $upp_key-1;
      } else {
@@ -672,6 +708,18 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   // Se viene inviata la richiesta elimina il rigo corrispondente
   if (isset($_POST['del'])) {
     $delri= key($_POST['del']);
+
+    // diminuisco o lascio inalterati gli index dei testi
+    foreach ($form['righi'] as $k => $val) {
+            if (isset($form["row_$k"])) { //se ho un rigo testo
+               if ($k > $delri) { //se ho un rigo testo dopo
+                   $new_k=$k-1;
+                   $form["row_$new_k"] = $form["row_$k"];
+                   unset($form["row_$k"]);
+               }
+            }
+    }
+
     array_splice($form['righi'],$delri,1);
     $next_row--;
   }
@@ -768,6 +816,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $next_row = 0;
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
        $articolo = gaz_dbi_get_row($gTables['artico'],"codice",$rigo['codart']);
+       if ($rigo['id_body_text'] > 0) { //se ho un rigo testo
+           $text = gaz_dbi_get_row($gTables['body_text'],"id_body",$rigo['id_body_text']);
+           $form["row_$next_row"] = $text['body_text'];
+       }
        $form['righi'][$next_row]['descri'] = $rigo['descri'];
        $form['righi'][$next_row]['tiprig'] = $rigo['tiprig'];
        $form['righi'][$next_row]['codart'] = $rigo['codart'];
@@ -902,6 +954,29 @@ if ($form['id_tes'] > 0 and substr($form['tipdoc'],0,1) == 'D') {
 } else {
    $title = ucfirst($script_transl[$toDo].$script_transl[0][$form['tipdoc']]);
 }
+echo "<script type=\"text/javascript\">";
+foreach ($form['righi'] as $k => $v) {
+  if ($v['tiprig'] > 5 || $v['tiprig'] < 9 ){
+     echo "\n// Initialize TinyMCE with the new plugin and menu button
+          tinyMCE.init({
+          mode : \"specific_textareas\",
+          theme : \"advanced\",
+          forced_root_block : false,
+          force_br_newlines : true,
+          force_p_newlines : false,
+          elements : \"row_".$k."\",
+          plugins : \"table,advlink\",
+          theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
+          theme_advanced_buttons2 : \"\",
+          theme_advanced_buttons3 : \"\",
+          theme_advanced_toolbar_location : \"external\",
+          theme_advanced_toolbar_align : \"left\",
+          editor_selector  : \"mceClass".$k."\",
+          });\n";
+  }
+}
+echo "\n</script>\n";
+
 echo "<form method=\"POST\" name=\"docacq\">\n";
 $gForm = new gazieForm();
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
@@ -1058,16 +1133,9 @@ echo "</select>\n";
 echo "</TD><TD class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";
 echo "</td></tr>\n";
-echo "<tr><td class=\"FacetColumnTD\">$script_transl[17]: <select name=\"in_tiprig\" class=\"FacetSelect\">\n";
-$selArray = array('0'=>'Normale', '1'=>'Forfait','2'=>'Descrittivo', '3'=>'Var.totale fatt');
-foreach ($selArray as $key => $value) {
-    $selected="";
-    if(isset($form["in_tiprig"]) and $form["in_tiprig"] == $key) {
-        $selected = " selected ";
-    }
-    echo "<option value=\"".$key."\"".$selected.">".$key.'-'.$value."</option>";
-}
-echo "</select> $script_transl[18]: ";
+echo "<tr><td class=\"FacetColumnTD\">$script_transl[17]:";
+$gForm->selTypeRow('in_tiprig',$form['in_tiprig']);
+echo $script_transl[18].": ";
 $gForm->selectAccount('in_codric',$form['in_codric'],intval(substr($form['in_codric'],0,1)));
 echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" size=\"1\" name=\"in_sconto\">";
 echo "</TD><TD class=\"FacetColumnTD\"> $script_transl[19]: ";
@@ -1170,6 +1238,19 @@ foreach ($form['righi'] as $key => $value) {
         echo "<td align=\"right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>\n";
         echo "<td></td>\n";
         echo "<td></td>\n";
+        break;
+        case "6":
+        case "7":
+        case "8":
+        echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
+              <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$key]\" value=\"".$script_transl['typerow'][$value['tiprig']]."\" /></td>\n";
+        echo "<td colspan=\"10\"><textarea id=\"row_$key\" name=\"row_$key\" class=\"mceClass$key\" style=\"width:100%;height:100px;\">".$form["row_$key"]."</textarea></td>\n";
+        echo "<input type=\"hidden\" name=\"rows[$key][descri]\" value=\"\" />\n";
+        echo "<input type=\"hidden\" name=\"rows[$key][unimis]\" value=\"\" />\n";
+        echo "<input type=\"hidden\" name=\"rows[$key][quanti]\" value=\"\" />\n";
+        echo "<input type=\"hidden\" name=\"rows[$key][prelis]\" value=\"\" />\n";
+        echo "<input type=\"hidden\" name=\"rows[$key][sconto]\" value=\"\" />\n";
+        echo "<input type=\"hidden\" name=\"rows[$key][provvigione]\" value=\"\" /></td>\n";
         break;
         }
         echo "<TD align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
@@ -1285,7 +1366,7 @@ foreach ($castel as $key => $value) {
       }
 }
 
-if ($chk_add_iva_tes == 0){// se le spese della testata non sono state aggiunte perchè non si è incontrato uno stesso codice IVA
+if ($chk_add_iva_tes == 0){// se le spese della testata non sono state aggiunte perchÃ¨ non si Ã¨ incontrato uno stesso codice IVA
    $result = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['ivaspe']);
    $impcast = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
    $ivacast =  round($impcast * $result['aliquo'])/ 100;
