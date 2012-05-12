@@ -158,9 +158,8 @@ $script_transl = HeadMain(0,array('tiny_mce/tiny_mce'));
 echo "<script type=\"text/javascript\">
 // Initialize TinyMCE with the new plugin and menu button
 tinyMCE.init({
-  mode : \"exact\",
+  mode : \"specific_textareas\",
   theme : \"advanced\",
-  language : \"it\",
   forced_root_block : false,
   force_br_newlines : true,
   force_p_newlines : false,
@@ -171,7 +170,8 @@ tinyMCE.init({
   theme_advanced_buttons3 : \"\",
   theme_advanced_toolbar_location : \"external\",
   theme_advanced_toolbar_align : \"left\",
-  theme_advanced_resizing : true
+  theme_advanced_resizing : true,
+  editor_selector  : \"mceClass1\",
 });
 </script>\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl[$toDo].$script_transl['title'].$script_transl[0][$form['tipo']])."</div>\n";
@@ -251,7 +251,7 @@ if (isset($partner['indspe'])){
 }
 echo "</td></tr>\n";
 echo "<tr><td colspan=\"6\" class=\"FacetFieldCaptionTD\" align=\"center\">$script_transl[8]</td></tr>\n";
-echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" style=\"width:100%;height:200px;\">".$form["corpo"]."</textarea></td></tr>\n";
+echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass1\" style=\"width:100%;height:200px;\">".$form["corpo"]."</textarea></td></tr>\n";
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[9]<input type=\"checkbox\" name=\"signature\" ".$form['signature']."></td>
           <td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"submit\" accesskey=\"i\" name=\"ins\" value=\"".$script_transl['submit']." !\" /></td>
           </tr>";
