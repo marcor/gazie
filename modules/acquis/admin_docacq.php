@@ -146,54 +146,54 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_pesosp'] = $_POST['in_pesosp'];
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
-    $form['righi'] = array();
+    $form['rows'] = array();
     $next_row = 0;
-    if (isset($_POST['righi'])) {
-       foreach ($_POST['righi'] as $next_row => $value) {
+    if (isset($_POST['rows'])) {
+       foreach ($_POST['rows'] as $next_row => $value) {
             if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
                $form["row_$next_row"] = $_POST["row_$next_row"];
             }
-            $form['righi'][$next_row]['descri'] = substr($value['descri'],0,50);
-            $form['righi'][$next_row]['tiprig'] = intval($value['tiprig']);
-            $form['righi'][$next_row]['codart'] = substr($value['codart'],0,15);
-            $form['righi'][$next_row]['pervat'] = preg_replace("/\,/",'.',$value['pervat']);
-            $form['righi'][$next_row]['unimis'] = substr($value['unimis'],0,3);
-            $form['righi'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/",'.',$value['prelis'])),$admin_aziend['decimal_price'],'.','');
-            $form['righi'][$next_row]['sconto'] = floatval(preg_replace("/\,/",'.',$value['sconto']));
-            $form['righi'][$next_row]['quanti'] = gaz_format_quantity($value['quanti'],0,$admin_aziend['decimal_quantity']);
-            $form['righi'][$next_row]['codvat'] = intval($value['codvat']);
-            $form['righi'][$next_row]['codric'] = intval($value['codric']);
-            $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
-            $form['righi'][$next_row]['annota'] = substr($value['annota'],0,50);
-            $form['righi'][$next_row]['pesosp'] = floatval($value['pesosp']);
-            $form['righi'][$next_row]['status'] = substr($value['status'],0,10);
+            $form['rows'][$next_row]['descri'] = substr($value['descri'],0,50);
+            $form['rows'][$next_row]['tiprig'] = intval($value['tiprig']);
+            $form['rows'][$next_row]['codart'] = substr($value['codart'],0,15);
+            $form['rows'][$next_row]['pervat'] = preg_replace("/\,/",'.',$value['pervat']);
+            $form['rows'][$next_row]['unimis'] = substr($value['unimis'],0,3);
+            $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/",'.',$value['prelis'])),$admin_aziend['decimal_price'],'.','');
+            $form['rows'][$next_row]['sconto'] = floatval(preg_replace("/\,/",'.',$value['sconto']));
+            $form['rows'][$next_row]['quanti'] = gaz_format_quantity($value['quanti'],0,$admin_aziend['decimal_quantity']);
+            $form['rows'][$next_row]['codvat'] = intval($value['codvat']);
+            $form['rows'][$next_row]['codric'] = intval($value['codric']);
+            $form['rows'][$next_row]['id_mag'] = intval($value['id_mag']);
+            $form['rows'][$next_row]['annota'] = substr($value['annota'],0,50);
+            $form['rows'][$next_row]['pesosp'] = floatval($value['pesosp']);
+            $form['rows'][$next_row]['status'] = substr($value['status'],0,10);
             if (isset($_POST['upd_row'])) {
                $key_row = key($_POST['upd_row']);
                if ($key_row == $next_row) {
-                  $form['in_descri'] = $form['righi'][$key_row]['descri'];
-                  $form['in_tiprig'] = $form['righi'][$key_row]['tiprig'];
-                  $form['in_codart'] = $form['righi'][$key_row]['codart'];
-                  $form['in_pervat'] = $form['righi'][$key_row]['pervat'];
-                  $form['in_unimis'] = $form['righi'][$key_row]['unimis'];
-                  $form['in_prelis'] = $form['righi'][$key_row]['prelis'];
-                  $form['in_sconto'] = $form['righi'][$key_row]['sconto'];
-                  $form['in_quanti'] = $form['righi'][$key_row]['quanti'];
-                  $form['in_codvat'] = $form['righi'][$key_row]['codvat'];
-                  $form['in_codric'] = $form['righi'][$key_row]['codric'];
-                  $form['in_id_mag'] = $form['righi'][$key_row]['id_mag'];
-                  $form['in_annota'] = $form['righi'][$key_row]['annota'];
-                  $form['in_pesosp'] = $form['righi'][$key_row]['pesosp'];
+                  $form['in_descri'] = $form['rows'][$key_row]['descri'];
+                  $form['in_tiprig'] = $form['rows'][$key_row]['tiprig'];
+                  $form['in_codart'] = $form['rows'][$key_row]['codart'];
+                  $form['in_pervat'] = $form['rows'][$key_row]['pervat'];
+                  $form['in_unimis'] = $form['rows'][$key_row]['unimis'];
+                  $form['in_prelis'] = $form['rows'][$key_row]['prelis'];
+                  $form['in_sconto'] = $form['rows'][$key_row]['sconto'];
+                  $form['in_quanti'] = $form['rows'][$key_row]['quanti'];
+                  $form['in_codvat'] = $form['rows'][$key_row]['codvat'];
+                  $form['in_codric'] = $form['rows'][$key_row]['codric'];
+                  $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
+                  $form['in_annota'] = $form['rows'][$key_row]['annota'];
+                  $form['in_pesosp'] = $form['rows'][$key_row]['pesosp'];
                   $form['in_status'] = "UPDROW".$key_row;
                   if ($form['in_artsea'] == 'D'){
-                    $artico_u = gaz_dbi_get_row($gTables['artico'],'codice',$form['righi'][$key_row]['codart']);
+                    $artico_u = gaz_dbi_get_row($gTables['artico'],'codice',$form['rows'][$key_row]['codart']);
                     $form['cosear'] = $artico_u['descri'];
                   } elseif ($form['in_artsea'] == 'B') {
-                    $artico_u = gaz_dbi_get_row($gTables['artico'],'codice',$form['righi'][$key_row]['codart']);
+                    $artico_u = gaz_dbi_get_row($gTables['artico'],'codice',$form['rows'][$key_row]['codart']);
                     $form['cosear'] = $artico_u['barcode'];
                   } else {
-                    $form['cosear'] = $form['righi'][$key_row]['codart'];
+                    $form['cosear'] = $form['rows'][$key_row]['codart'];
                   }
-                  array_splice($form['righi'],$key_row,1);
+                  array_splice($form['rows'],$key_row,1);
                   $next_row--;
                }
             }
@@ -225,7 +225,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
              $msg .= "55+";
           }
        }
-       if (!isset($_POST['righi'])) {
+       if (!isset($_POST['rows'])) {
           $msg .= "39+";
        }
        // --- inizio controllo coerenza date-numerazione
@@ -289,7 +289,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        if (empty ($form["pagame"]))
           $msg .= "48+";
        //controllo che i righi non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
-       foreach ($form['righi'] as $i => $value) {
+       foreach ($form['rows'] as $i => $value) {
             if ($value['descri']=='' &&
                 $value['quanti']) {
                 $msgrigo= $i+1;
@@ -331,14 +331,14 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           $form['imball'] = addslashes($form['imball']);
           $form['destin'] = addslashes($form['destin']);
           if ($toDo == 'update') { // e' una modifica
-            $old_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = ".$form['id_tes'],"id_rig asc");
-            $i=0;
-            $count = count($form['righi'])-1;
+             $old_rows = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = ".$form['id_tes'],"id_rig asc");
+             $i=0;
+             $count = count($form['rows'])-1;
              while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
               if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
-                 $form['righi'][$i]['id_tes'] = $form['id_tes'];
+                 $form['rows'][$i]['id_tes'] = $form['id_tes'];
                  $codice = array('id_rig',$val_old_row['id_rig']);
-                 rigdocUpdate($codice,$form['righi'][$i]);
+                 rigdocUpdate($codice,$form['rows'][$i]);
                  if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se è un rigo testo già presente lo modifico
                       bodytextUpdate(array('id_body',$val_old_row['id_body_text']),array('table_name_ref'=>'rigdoc','id_ref'=>$val_old_row['id_rig'],'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
                       gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
@@ -348,7 +348,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                  } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0){ //un rigo che prima era testo adesso non lo è più
                       gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                  }
-                 if ($form['righi'][$i]['id_mag'] > 0 ){ //se il rigo ha un movimento di magazzino associato
+                 if ($form['rows'][$i]['id_mag'] > 0 ){ //se il rigo ha un movimento di magazzino associato
                      $upd_mm->uploadMag($val_old_row['id_rig'],
                                     $form['tipdoc'],
                                     $form['numdoc'],
@@ -357,10 +357,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     $form['clfoco'],
                                     $form['sconto'],
                                     $form['caumag'],
-                                    $form['righi'][$i]['codart'],
-                                    $form['righi'][$i]['quanti'],
-                                    $form['righi'][$i]['prelis'],
-                                    $form['righi'][$i]['sconto'],
+                                    $form['rows'][$i]['codart'],
+                                    $form['rows'][$i]['quanti'],
+                                    $form['rows'][$i]['prelis'],
+                                    $form['rows'][$i]['sconto'],
                                     $val_old_row['id_mag'],
                                     $admin_aziend['stock_eval_method'],
                                     false,
@@ -377,11 +377,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
              }
              //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
              for ($i = $i; $i <= $count; $i++) {
-                $form['righi'][$i]['id_tes'] = $form['id_tes'];
-                rigdocInsert($form['righi'][$i]);
+                $form['rows'][$i]['id_tes'] = $form['id_tes'];
+                rigdocInsert($form['rows'][$i]);
                 if ($admin_aziend['conmag'] == 2 and
-                   $form['righi'][$i]['tiprig'] == 0 and
-                   !empty($form['righi'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                   $form['rows'][$i]['tiprig'] == 0 and
+                   !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                    $upd_mm->uploadMag(gaz_dbi_last_id(),
                                     $form['tipdoc'],
                                     $form['numdoc'],
@@ -390,10 +390,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     $form['clfoco'],
                                     $form['sconto'],
                                     $form['caumag'],
-                                    $form['righi'][$i]['codart'],
-                                    $form['righi'][$i]['quanti'],
-                                    $form['righi'][$i]['prelis'],
-                                    $form['righi'][$i]['sconto'],
+                                    $form['rows'][$i]['codart'],
+                                    $form['rows'][$i]['quanti'],
+                                    $form['rows'][$i]['prelis'],
+                                    $form['rows'][$i]['sconto'],
                                     0,
                                     $admin_aziend['stock_eval_method'],
                                     false,
@@ -466,17 +466,17 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
             //inserisco i righi
-            foreach ($form['righi'] as $i => $value) {
-                  $form['righi'][$i]['id_tes'] = $ultimo_id;
-                  rigdocInsert($form['righi'][$i]);
+            foreach ($form['rows'] as $i => $value) {
+                  $form['rows'][$i]['id_tes'] = $ultimo_id;
+                  rigdocInsert($form['rows'][$i]);
                   $last_rigdoc_id = gaz_dbi_last_id();
                   if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
                       bodytextInsert(array('table_name_ref'=>'rigdoc','id_ref'=>$last_rigdoc_id,'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
                       gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
                   }
                   if ($admin_aziend['conmag'] == 2 and
-                     $form['righi'][$i]['tiprig'] == 0 and
-                     !empty($form['righi'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                     $form['rows'][$i]['tiprig'] == 0 and
+                     !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
                      $upd_mm->uploadMag(gaz_dbi_last_id(),
                                     $form['tipdoc'],
                                     $form['numdoc'],
@@ -485,10 +485,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     $form['clfoco'],
                                     $form['sconto'],
                                     $form['caumag'],
-                                    $form['righi'][$i]['codart'],
-                                    $form['righi'][$i]['quanti'],
-                                    $form['righi'][$i]['prelis'],
-                                    $form['righi'][$i]['sconto'],
+                                    $form['rows'][$i]['codart'],
+                                    $form['rows'][$i]['quanti'],
+                                    $form['rows'][$i]['prelis'],
+                                    $form['rows'][$i]['sconto'],
                                     0,
                                     $admin_aziend['stock_eval_method'],
                                     false,
@@ -553,122 +553,122 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $artico = gaz_dbi_get_row($gTables['artico'],"codice",$form['in_codart']);
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
-         $form['righi'][$old_key]['tiprig'] = $form['in_tiprig'];
-         $form['righi'][$old_key]['descri'] = $form['in_descri'];
-         $form['righi'][$old_key]['id_mag'] = $form['in_id_mag'];
-         $form['righi'][$old_key]['status'] = "UPDATE";
-         $form['righi'][$old_key]['unimis'] = $form['in_unimis'];
-         $form['righi'][$old_key]['quanti'] = $form['in_quanti'];
-         $form['righi'][$old_key]['codart'] = $form['in_codart'];
-         $form['righi'][$old_key]['codric'] = $form['in_codric'];
-         $form['righi'][$old_key]['prelis'] = number_format($form['in_prelis'],$admin_aziend['decimal_price'],'.','');
-         $form['righi'][$old_key]['sconto'] = $form['in_sconto'];
-         $form['righi'][$old_key]['codvat'] = $form['in_codvat'];
+         $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
+         $form['rows'][$old_key]['descri'] = $form['in_descri'];
+         $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
+         $form['rows'][$old_key]['status'] = "UPDATE";
+         $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
+         $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
+         $form['rows'][$old_key]['codart'] = $form['in_codart'];
+         $form['rows'][$old_key]['codric'] = $form['in_codric'];
+         $form['rows'][$old_key]['prelis'] = number_format($form['in_prelis'],$admin_aziend['decimal_price'],'.','');
+         $form['rows'][$old_key]['sconto'] = $form['in_sconto'];
+         $form['rows'][$old_key]['codvat'] = $form['in_codvat'];
          $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
-         $form['righi'][$old_key]['pervat'] = $iva_row['aliquo'];
-         $form['righi'][$old_key]['annota'] = '';
-         $form['righi'][$old_key]['pesosp'] = '';
+         $form['rows'][$old_key]['pervat'] = $iva_row['aliquo'];
+         $form['rows'][$old_key]['annota'] = '';
+         $form['rows'][$old_key]['pesosp'] = '';
          if ($form['in_tiprig'] == 0 and !empty($form['in_codart'])) {  //rigo normale
-            $form['righi'][$old_key]['annota'] = $artico['annota'];
-            $form['righi'][$old_key]['pesosp'] = $artico['peso_specifico'];
-            $form['righi'][$old_key]['unimis'] = $artico['unimis'];
-            $form['righi'][$old_key]['descri'] = $artico['descri'];
-            $form['righi'][$old_key]['prelis'] = number_format($artico['preacq'],$admin_aziend['decimal_price'],'.','');
+            $form['rows'][$old_key]['annota'] = $artico['annota'];
+            $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
+            $form['rows'][$old_key]['unimis'] = $artico['unimis'];
+            $form['rows'][$old_key]['descri'] = $artico['descri'];
+            $form['rows'][$old_key]['prelis'] = number_format($artico['preacq'],$admin_aziend['decimal_price'],'.','');
          } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
-            $form['righi'][$old_key]['codart'] = "";
-            $form['righi'][$old_key]['annota'] = "";
-            $form['righi'][$old_key]['pesosp'] = "";
-            $form['righi'][$old_key]['unimis'] = "";
-            $form['righi'][$old_key]['quanti'] = 0;
-            $form['righi'][$old_key]['prelis'] = 0;
-            $form['righi'][$old_key]['codric'] = 0;
-            $form['righi'][$old_key]['sconto'] = 0;
-            $form['righi'][$old_key]['pervat'] = 0;
-            $form['righi'][$old_key]['codvat'] = 0;
+            $form['rows'][$old_key]['codart'] = "";
+            $form['rows'][$old_key]['annota'] = "";
+            $form['rows'][$old_key]['pesosp'] = "";
+            $form['rows'][$old_key]['unimis'] = "";
+            $form['rows'][$old_key]['quanti'] = 0;
+            $form['rows'][$old_key]['prelis'] = 0;
+            $form['rows'][$old_key]['codric'] = 0;
+            $form['rows'][$old_key]['sconto'] = 0;
+            $form['rows'][$old_key]['pervat'] = 0;
+            $form['rows'][$old_key]['codvat'] = 0;
          } elseif ($form['in_tiprig'] == 1) { //rigo forfait
-            $form['righi'][$old_key]['codart'] = "";
-            $form['righi'][$old_key]['unimis'] = "";
-            $form['righi'][$old_key]['quanti'] = 0;
-            $form['righi'][$old_key]['sconto'] = 0;
+            $form['rows'][$old_key]['codart'] = "";
+            $form['rows'][$old_key]['unimis'] = "";
+            $form['rows'][$old_key]['quanti'] = 0;
+            $form['rows'][$old_key]['sconto'] = 0;
          } elseif ($form['in_tiprig'] == 3) {   //var.tot.fatt.
-            $form['righi'][$old_key]['codart'] = "";
-            $form['righi'][$old_key]['quanti'] = "";
-            $form['righi'][$old_key]['unimis'] = "";
-            $form['righi'][$old_key]['sconto'] = 0;
+            $form['rows'][$old_key]['codart'] = "";
+            $form['rows'][$old_key]['quanti'] = "";
+            $form['rows'][$old_key]['unimis'] = "";
+            $form['rows'][$old_key]['sconto'] = 0;
          }
-         ksort($form['righi']);
+         ksort($form['rows']);
     } else { //se è un rigo da inserire
-         $form['righi'][$next_row]['tiprig'] = $form['in_tiprig'];
-         $form['righi'][$next_row]['descri'] = $form['in_descri'];
-         $form['righi'][$next_row]['id_mag'] = $form['in_id_mag'];
-         $form['righi'][$next_row]['status'] = "INSERT";
+         $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
+         $form['rows'][$next_row]['descri'] = $form['in_descri'];
+         $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
+         $form['rows'][$next_row]['status'] = "INSERT";
          if ($form['in_tiprig'] == 0) {  //rigo normale
-            $form['righi'][$next_row]['codart'] = $form['in_codart'];
-            $form['righi'][$next_row]['annota'] = $artico['annota'];
-            $form['righi'][$next_row]['pesosp'] = $artico['peso_specifico'];
-            $form['righi'][$next_row]['descri'] = $artico['descri'];
-            $form['righi'][$next_row]['unimis'] = $artico['uniacq'];
-            $form['righi'][$next_row]['codric'] = $form['in_codric'];
-            $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
-            $form['righi'][$next_row]['sconto'] = $form['in_sconto'];
-            $form['righi'][$next_row]['prelis'] = number_format($artico['preacq'],$admin_aziend['decimal_price'],'.','');
-            $form['righi'][$next_row]['codvat'] = $admin_aziend['alliva'];
+            $form['rows'][$next_row]['codart'] = $form['in_codart'];
+            $form['rows'][$next_row]['annota'] = $artico['annota'];
+            $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
+            $form['rows'][$next_row]['descri'] = $artico['descri'];
+            $form['rows'][$next_row]['unimis'] = $artico['uniacq'];
+            $form['rows'][$next_row]['codric'] = $form['in_codric'];
+            $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
+            $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
+            $form['rows'][$next_row]['prelis'] = number_format($artico['preacq'],$admin_aziend['decimal_price'],'.','');
+            $form['rows'][$next_row]['codvat'] = $admin_aziend['alliva'];
             $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['alliva']);
-            $form['righi'][$next_row]['pervat'] = $iva_azi['aliquo'];
+            $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
             if ($artico['aliiva'] > 0) {
-               $form['righi'][$next_row]['codvat'] = $artico['aliiva'];
+               $form['rows'][$next_row]['codvat'] = $artico['aliiva'];
                $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$artico['aliiva']);
-               $form['righi'][$next_row]['pervat'] = $iva_row['aliquo'];
+               $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
             }
             if ($form['in_codvat'] > 0) {
-               $form['righi'][$next_row]['codvat'] = $form['in_codvat'];
+               $form['rows'][$next_row]['codvat'] = $form['in_codvat'];
                $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
-               $form['righi'][$next_row]['pervat'] = $iva_row['aliquo'];
+               $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
             }
             if ($artico['id_cost'] > 0) {
-               $form['righi'][$next_row]['codric'] = $artico['id_cost'];
+               $form['rows'][$next_row]['codric'] = $artico['id_cost'];
                $form['in_codric'] = $artico['id_cost'];
             }
             if ($form['tipdoc'] == 'AFC') { // nel caso che si tratti di nota di credito
                $form['in_codric'] = $admin_aziend['purchases_return'];
             }
          } elseif ($form['in_tiprig'] == 2) { //descrittivo
-            $form['righi'][$next_row]['codart'] = "";
-            $form['righi'][$next_row]['annota'] = "";
-            $form['righi'][$next_row]['pesosp'] = "";
-            $form['righi'][$next_row]['unimis'] = "";
-            $form['righi'][$next_row]['quanti'] = 0;
-            $form['righi'][$next_row]['prelis'] = 0;
-            $form['righi'][$next_row]['codric'] = 0;
-            $form['righi'][$next_row]['sconto'] = 0;
-            $form['righi'][$next_row]['pervat'] = 0;
-            $form['righi'][$next_row]['codvat'] = 0;
+            $form['rows'][$next_row]['codart'] = "";
+            $form['rows'][$next_row]['annota'] = "";
+            $form['rows'][$next_row]['pesosp'] = "";
+            $form['rows'][$next_row]['unimis'] = "";
+            $form['rows'][$next_row]['quanti'] = 0;
+            $form['rows'][$next_row]['prelis'] = 0;
+            $form['rows'][$next_row]['codric'] = 0;
+            $form['rows'][$next_row]['sconto'] = 0;
+            $form['rows'][$next_row]['pervat'] = 0;
+            $form['rows'][$next_row]['codvat'] = 0;
          } elseif ($form['in_tiprig'] == 3) {
-            $form['righi'][$next_row]['codart'] = "";
-            $form['righi'][$next_row]['annota'] = "";
-            $form['righi'][$next_row]['pesosp'] = "";
-            $form['righi'][$next_row]['unimis'] = "";
-            $form['righi'][$next_row]['quanti'] = 0;
-            $form['righi'][$next_row]['prelis'] = $form['in_prelis'];
-            $form['righi'][$next_row]['codric'] = $form['in_codric'];
-            $form['righi'][$next_row]['sconto'] = 0;
-            $form['righi'][$next_row]['codvat'] = $form['in_codvat'];
+            $form['rows'][$next_row]['codart'] = "";
+            $form['rows'][$next_row]['annota'] = "";
+            $form['rows'][$next_row]['pesosp'] = "";
+            $form['rows'][$next_row]['unimis'] = "";
+            $form['rows'][$next_row]['quanti'] = 0;
+            $form['rows'][$next_row]['prelis'] = $form['in_prelis'];
+            $form['rows'][$next_row]['codric'] = $form['in_codric'];
+            $form['rows'][$next_row]['sconto'] = 0;
+            $form['rows'][$next_row]['codvat'] = $form['in_codvat'];
             $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
-            $form['righi'][$next_row]['pervat'] = $iva_row['aliquo'];
+            $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
          } elseif ($form['in_tiprig']>5 && $form['in_tiprig']<9) { //testo
             $form["row_$next_row"] = "";
-            $form['righi'][$next_row]['codart'] = "";
-            $form['righi'][$next_row]['annota'] = "";
-            $form['righi'][$next_row]['pesosp'] = "";
-            $form['righi'][$next_row]['unimis'] = "";
-            $form['righi'][$next_row]['quanti'] = 0;
-            $form['righi'][$next_row]['prelis'] = 0;
-            $form['righi'][$next_row]['codric'] = 0;
-            $form['righi'][$next_row]['sconto'] = 0;
-            $form['righi'][$next_row]['pervat'] = 0;
-            $form['righi'][$next_row]['tipiva'] = 0;
-            $form['righi'][$next_row]['ritenuta'] = 0;
-            $form['righi'][$next_row]['codvat'] = 0;
+            $form['rows'][$next_row]['codart'] = "";
+            $form['rows'][$next_row]['annota'] = "";
+            $form['rows'][$next_row]['pesosp'] = "";
+            $form['rows'][$next_row]['unimis'] = "";
+            $form['rows'][$next_row]['quanti'] = 0;
+            $form['rows'][$next_row]['prelis'] = 0;
+            $form['rows'][$next_row]['codric'] = 0;
+            $form['rows'][$next_row]['sconto'] = 0;
+            $form['rows'][$next_row]['pervat'] = 0;
+            $form['rows'][$next_row]['tipiva'] = 0;
+            $form['rows'][$next_row]['ritenuta'] = 0;
+            $form['rows'][$next_row]['codvat'] = 0;
          }
     }
      // reinizializzo rigo di input tranne che per il tipo rigo e aliquota iva
@@ -699,10 +699,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
      } else {
         $new_key = $next_row-1;
      }
-     $updated_row = $form['righi'][$new_key] ;
-     $form['righi'][$new_key] = $form['righi'][$upp_key] ;
-     $form['righi'][$upp_key] = $updated_row ;
-     ksort($form['righi']);
+     $updated_row = $form['rows'][$new_key] ;
+     $form['rows'][$new_key] = $form['rows'][$upp_key] ;
+     $form['rows'][$upp_key] = $updated_row ;
+     ksort($form['rows']);
      unset($updated_row);
   }
   // Se viene inviata la richiesta elimina il rigo corrispondente
@@ -710,7 +710,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $delri= key($_POST['del']);
 
     // diminuisco o lascio inalterati gli index dei testi
-    foreach ($form['righi'] as $k => $val) {
+    foreach ($form['rows'] as $k => $val) {
             if (isset($form["row_$k"])) { //se ho un rigo testo
                if ($k > $delri) { //se ho un rigo testo dopo
                    $new_k=$k-1;
@@ -720,7 +720,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             }
     }
 
-    array_splice($form['righi'],$delri,1);
+    array_splice($form['rows'],$delri,1);
     $next_row--;
   }
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
@@ -758,7 +758,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_pesosp'] = 0;
     $form['in_status'] = "INSERT";
     // fine rigo input
-    $form['righi'] = array();
+    $form['rows'] = array();
     // ...e della testata
     $form['search']['clfoco']=substr($fornitore['ragso1'],0,10);
     $form['cosear'] = "";
@@ -820,20 +820,20 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
            $text = gaz_dbi_get_row($gTables['body_text'],"id_body",$rigo['id_body_text']);
            $form["row_$next_row"] = $text['body_text'];
        }
-       $form['righi'][$next_row]['descri'] = $rigo['descri'];
-       $form['righi'][$next_row]['tiprig'] = $rigo['tiprig'];
-       $form['righi'][$next_row]['codart'] = $rigo['codart'];
-       $form['righi'][$next_row]['pervat'] = $rigo['pervat'];
-       $form['righi'][$next_row]['unimis'] = $rigo['unimis'];
-       $form['righi'][$next_row]['prelis'] = $rigo['prelis'];
-       $form['righi'][$next_row]['sconto'] = $rigo['sconto'];
-       $form['righi'][$next_row]['quanti'] = gaz_format_quantity($rigo['quanti'],0,$admin_aziend['decimal_quantity']);
-       $form['righi'][$next_row]['codvat'] = $rigo['codvat'];
-       $form['righi'][$next_row]['codric'] = $rigo['codric'];
-       $form['righi'][$next_row]['id_mag'] = $rigo['id_mag'];
-       $form['righi'][$next_row]['annota'] = $articolo['annota'];
-       $form['righi'][$next_row]['pesosp'] = $articolo['peso_specifico'];
-       $form['righi'][$next_row]['status'] = "UPDATE";
+       $form['rows'][$next_row]['descri'] = $rigo['descri'];
+       $form['rows'][$next_row]['tiprig'] = $rigo['tiprig'];
+       $form['rows'][$next_row]['codart'] = $rigo['codart'];
+       $form['rows'][$next_row]['pervat'] = $rigo['pervat'];
+       $form['rows'][$next_row]['unimis'] = $rigo['unimis'];
+       $form['rows'][$next_row]['prelis'] = $rigo['prelis'];
+       $form['rows'][$next_row]['sconto'] = $rigo['sconto'];
+       $form['rows'][$next_row]['quanti'] = gaz_format_quantity($rigo['quanti'],0,$admin_aziend['decimal_quantity']);
+       $form['rows'][$next_row]['codvat'] = $rigo['codvat'];
+       $form['rows'][$next_row]['codric'] = $rigo['codric'];
+       $form['rows'][$next_row]['id_mag'] = $rigo['id_mag'];
+       $form['rows'][$next_row]['annota'] = $articolo['annota'];
+       $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
+       $form['rows'][$next_row]['status'] = "UPDATE";
        $next_row++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
@@ -853,7 +853,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['anntra'] = date("Y",$utstra);
     $form['oratra'] = date("H");
     $form['mintra'] = date("i");
-    $form['righi'] = array();
+    $form['rows'] = array();
     $next_row = 0;
     // inizio rigo di input
     $form['in_descri'] = "";
@@ -955,7 +955,7 @@ if ($form['id_tes'] > 0 and substr($form['tipdoc'],0,1) == 'D') {
    $title = ucfirst($script_transl[$toDo].$script_transl[0][$form['tipdoc']]);
 }
 echo "<script type=\"text/javascript\">";
-foreach ($form['righi'] as $k => $v) {
+foreach ($form['rows'] as $k => $v) {
   if ($v['tiprig'] > 5 || $v['tiprig'] < 9 ){
      echo "\n// Initialize TinyMCE with the new plugin and menu button
           tinyMCE.init({
@@ -1151,7 +1151,7 @@ echo "</table>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td><td colspan=\"2\" class=\"FacetFieldCaptionTD\">$script_transl[21]</td><td class=\"FacetFieldCaptionTD\">$script_transl[22]</td><td class=\"FacetFieldCaptionTD\">$script_transl[16]</td><td class=\"FacetFieldCaptionTD\">$script_transl[23]</td><td class=\"FacetFieldCaptionTD\">%".substr($script_transl[24],0,2)."</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[25]</td><td class=\"FacetFieldCaptionTD\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\">$script_transl[18]</td><td class=\"FacetFieldCaptionTD\"></td></tr>\n";
 $castel=array();
-foreach ($form['righi'] as $key => $value) {
+foreach ($form['rows'] as $key => $value) {
     //calcolo il totale del peso in kg
     switch(strtolower($value['unimis']))
     {
@@ -1165,9 +1165,9 @@ foreach ($form['righi'] as $key => $value) {
     $descrizione=$value['descri'];
     //calcolo importo rigo
     if ($tiporigo == 0) {//se del tipo normale
-        $imprig = CalcolaImportoRigo($form['righi'][$key]['quanti'], $form['righi'][$key]['prelis'], $form['righi'][$key]['sconto']);
+        $imprig = CalcolaImportoRigo($form['rows'][$key]['quanti'], $form['rows'][$key]['prelis'], $form['rows'][$key]['sconto']);
     } elseif ($tiporigo == 1) {//ma se del tipo forfait
-        $imprig = CalcolaImportoRigo(1, $form['righi'][$key]['prelis'], 0);
+        $imprig = CalcolaImportoRigo(1, $form['rows'][$key]['prelis'], 0);
     }
     if ($tiporigo <= 1) {//ma solo se del tipo normale o forfait
        if (!isset($castel[$codice_vat])){
@@ -1175,17 +1175,17 @@ foreach ($form['righi'] as $key => $value) {
        }
        $castel[$codice_vat] = number_format(($castel[$codice_vat]+ $imprig),2,'.','');
     }
-    if ($form['righi'][$key]['tiprig'] == 1)
-        $imprig = number_format($form['righi'][$key]['prelis'], 2 , '.', '');
-        echo "<input type=\"hidden\" value=\"{$value['codart']}\" name=\"righi[{$key}][codart]\">\n";
-        echo "<input type=\"hidden\" value=\"{$value['status']}\" name=\"righi[{$key}][status]\">\n";
-        echo "<input type=\"hidden\" value=\"{$value['tiprig']}\" name=\"righi[{$key}][tiprig]\">\n";
-        echo "<input type=\"hidden\" value=\"{$value['codvat']}\" name=\"righi[{$key}][codvat]\">\n";
-        echo "<input type=\"hidden\" value=\"{$value['pervat']}\" name=\"righi[{$key}][pervat]\">\n";
-        echo "<input type=\"hidden\" value=\"{$value['codric']}\" name=\"righi[{$key}][codric]\">\n";
-        echo "<input type=\"hidden\" value=\"{$value['id_mag']}\" name=\"righi[{$key}][id_mag]\">\n";
-        echo "<input type=\"hidden\" value=\"{$value['annota']}\" name=\"righi[{$key}][annota]\">\n";
-        echo "<input type=\"hidden\" value=\"{$value['pesosp']}\" name=\"righi[{$key}][pesosp]\">\n";
+    if ($form['rows'][$key]['tiprig'] == 1)
+        $imprig = number_format($form['rows'][$key]['prelis'], 2 , '.', '');
+        echo "<input type=\"hidden\" value=\"{$value['codart']}\" name=\"rows[{$key}][codart]\">\n";
+        echo "<input type=\"hidden\" value=\"{$value['status']}\" name=\"rows[{$key}][status]\">\n";
+        echo "<input type=\"hidden\" value=\"{$value['tiprig']}\" name=\"rows[{$key}][tiprig]\">\n";
+        echo "<input type=\"hidden\" value=\"{$value['codvat']}\" name=\"rows[{$key}][codvat]\">\n";
+        echo "<input type=\"hidden\" value=\"{$value['pervat']}\" name=\"rows[{$key}][pervat]\">\n";
+        echo "<input type=\"hidden\" value=\"{$value['codric']}\" name=\"rows[{$key}][codric]\">\n";
+        echo "<input type=\"hidden\" value=\"{$value['id_mag']}\" name=\"rows[{$key}][id_mag]\">\n";
+        echo "<input type=\"hidden\" value=\"{$value['annota']}\" name=\"rows[{$key}][annota]\">\n";
+        echo "<input type=\"hidden\" value=\"{$value['pesosp']}\" name=\"rows[{$key}][pesosp]\">\n";
         //stampo i righi in modo diverso a secondo del tipo
         switch($value['tiprig']) {
         case "0":
@@ -1197,45 +1197,45 @@ foreach ($form['righi'] as $key => $value) {
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso specifico = 0]  fade=[on] fadespeed=[0.03] \"";
         }
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"".$value['codart']."\" /></td>\n";
-        echo "<td $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
-        echo "<td $boxpeso><input type=\"text\" name=\"righi[{$key}][unimis]\" value=\"{$value['unimis']}\" maxlength=\"3\" size=\"1\" /></td>\n";
-        echo "<td $boxpeso><input type=\"text\" name=\"righi[{$key}][quanti]\" value=\"{$value['quanti']}\" align=\"right\" maxlength=\"11\" size=\"4\" onchange=\"this.form.submit()\" /></td>\n";
-        echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
-        echo "<td><input type=\"text\" name=\"righi[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
+        echo "<td $boxover><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td $boxpeso><input type=\"text\" name=\"rows[{$key}][unimis]\" value=\"{$value['unimis']}\" maxlength=\"3\" size=\"1\" /></td>\n";
+        echo "<td $boxpeso><input type=\"text\" name=\"rows[{$key}][quanti]\" value=\"{$value['quanti']}\" align=\"right\" maxlength=\"11\" size=\"4\" onchange=\"this.form.submit()\" /></td>\n";
+        echo "<td><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
+        echo "<td><input type=\"text\" name=\"rows[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
         echo "<td align=\"right\">".gaz_format_number($imprig)."</td>\n";
         echo "<td>{$value['pervat']}%</td>\n";
         echo "<td>".$value['codric']."</td>\n";
         break;
         case "1":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
         echo "<td></td>\n";
-        echo "<td align=\"right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
+        echo "<td align=\"right\"><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
         echo "<td>{$value['pervat']}%</td>\n";
         echo "<td>".$value['codric']."</td>\n";
         break;
         case "2":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][prelis]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][prelis]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
         echo "<td></td>\n";
         echo "<td></td>\n";
         echo "<td></td>\n";
         break;
         case "3":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
         echo "<td></td>\n";
-        echo "<td align=\"right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>\n";
+        echo "<td align=\"right\"><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>\n";
         echo "<td></td>\n";
         echo "<td></td>\n";
         break;

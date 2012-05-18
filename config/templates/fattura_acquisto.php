@@ -123,6 +123,10 @@ class FatturaAcquisto extends Template
                     $this->Cell(20,6,gaz_format_number($rigo['prelis']),1,0,'R');
                     $this->Cell(12,6,'',1,1,'R');
                     break;
+                case "6":
+                case "8":
+                    $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
+                    break;
                 }
        }
     }
