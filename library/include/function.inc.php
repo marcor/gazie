@@ -808,7 +808,28 @@ class GAzieMail
         $subject = $admin_data['ragso1']." ".$admin_data['ragso2']."-Trasmissione documenti"; //subject
 		$email_disclaimer = ("".$email_disclaimer != "") ? "<p>".$email_disclaimer."</p>" : "";
         $uid = md5(uniqid(time()));
-        $headers = "MIME-Version: 1.0\n";
+        //
+        // Crea e azzera la variabile $headers.
+        //
+        $headers = "";
+        //
+        // Imposta il mittente.
+        //
+        if (isset ($admin_data['e_mail']))
+          {
+            //
+            // Attenzione: anche se sarebbe formalmente corretto,
+            // qui non si può mettere il mittente, perché risulterebbe
+            // come un messaggio contraffatto. Si può solo impostare
+            // il campo "Reply-To:".
+            //
+            // $headers .= "From: ".$admin_data['e_mail']."\n";
+            //
+            $headers .= "Reply-To: ".$admin_data['e_mail']."\n";
+          }
+        //
+        $headers .= "MIME-Version: 1.0\n";
+        //
         if ($config_notif['val']=='yes'){
             $headers .= "Disposition-notification-to: ".$admin_data['e_mail']."\n";
         }
