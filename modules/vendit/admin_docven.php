@@ -1147,9 +1147,9 @@ echo "
 function pulldown_menu(selectName, destField)
 {
     // Create a variable url to contain the value of the
-    // selected option from the the form named broven and variable selectName
-    var url = document.broven[selectName].options[document.broven[selectName].selectedIndex].value;
-    document.broven[destField].value = url;
+    // selected option from the the form named docven and variable selectName
+    var url = document.docven[selectName].options[document.docven[selectName].selectedIndex].value;
+    document.docven[destField].value = url;
 }";
 ?>
 </script>
