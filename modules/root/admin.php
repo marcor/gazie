@@ -100,25 +100,21 @@ if ($data){
 echo "<form method=\"POST\" name=\"myform\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo '<table border="1" class="Tmiddle">';
-echo "<tr><td colspan=\"3\" align=\"center\" class=\"FacetDataTD\">";
-echo ucfirst($msg)." ".$admin_aziend['Cognome']." ".$admin_aziend['Nome'].' (ip='.$admin_aziend['last_ip'].') '.
-          $script_transl['access'].$admin_aziend['Access'].$script_transl['pass'].gaz_format_date($admin_aziend['datpas']);
-echo "</td></tr>\n";
 echo "<tr>\n";
-echo "<td><img src=\"../../library/images/gazie.gif\" border=\"0\"><br />Version: $versSw </td>\n";
-echo "<td align=\"center\">".$script_transl['logout']."<br /><input name=\"logout\" type=\"submit\" value=\" Logout \"><br />\n";
-echo "<br /><A href=\"../config/admin_utente.php?Login=".$admin_aziend['Login']."&Update\"><img src=\"view.php?table=admin&field=Login&value=".$admin_aziend['Login']."\"  alt=\"".$admin_aziend['Cognome'].' '.$admin_aziend['Nome']."\" width=100 title=\"".$script_transl['change_usr']."\" border=\"2\"></a></td>\n";
-echo "<td align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['company']."<br />\n";
+echo "<td class=\"FacetDataTD\"><A href=\"../config/admin_utente.php?Login=".$admin_aziend['Login']."&Update\"><img src=\"view.php?table=admin&field=Login&value=".$admin_aziend['Login']."\" alt=\"".$admin_aziend['Cognome'].' '.$admin_aziend['Nome']."\" width=100 title=\"".$script_transl['change_usr']."\" border=\"2\"></a>";
+echo "</td>";
+echo "<td>";
+echo ucfirst($msg)." ".$admin_aziend['Cognome']." ".$admin_aziend['Nome'].' (ip='.$admin_aziend['last_ip'].')'.
+"\n";
+echo "".$script_transl['access'].$admin_aziend['Access'].$script_transl['pass'].gaz_format_date($admin_aziend['datpas'])."<br /><br /><br />".$script_transl['logout']." &rarr; <input name=\"logout\" type=\"submit\" value=\" Logout \"></td>\n";
+echo "<td align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['company']."<a href=\"../config/admin_aziend.php\"><img src=\"view.php?table=aziend&value=".$form['enterprise_id']."\" width=\"200\" alt=\"Logo\" border=\"0\" title=\"".$script_transl['upd_company']."\"></a><br />".$script_transl['mesg_co'][2]." &rarr; ";
 echo selectCompany('enterprise_id',$form['enterprise_id'],$form['search']['enterprise_id'],$form['hidden_req'],$script_transl['mesg_co']);
-echo "<br /><br /><a href=\"../config/admin_aziend.php\"><img src=\"view.php?table=aziend&value=".$form['enterprise_id']."\" width=\"200\" alt=\"Logo\" border=\"0\" title=\"".$script_transl['upd_company']."\"></a></td>\n";
+echo "</td>\n";
 echo "</tr>\n";
-echo "<tr><td colspan=\"3\">Software Open Source (lic. GPL ver.2) ".$script_transl['business']."\n";
-echo "</td></tr>\n";
-echo "<tr><td colspan=\"3\">".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://www.devincentiis.it\"> www.devincentiis.it </a>\n";
-echo "</td></tr>\n";
-echo "<tr><td colspan=\"3\">".$script_transl['devel']."<a  target=\"_new\" title=\"Sourceforge.net\" href=\"http://gazie.sourceforge.net\">  gazie.it </a>\n";
-echo "</td></tr>\n";
+echo "<tr><td colspan=\"2\" align=\"center\">".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://www.devincentiis.it\"> www.devincentiis.it </a>\n";
+echo "</td><td>Version: $versSw Software Open Source (lic. GPL) ".$script_transl['business']."</td></tr>\n";
 echo "<tr align=\"center\"><td colspan=\"3\">\n";
+echo "<a href=\"http://gazie.it\" target=\"_new\" title=\"Version: $versSw Software Open Source (lic. GPL) ".$script_transl['business']." ".$script_transl['devel']."\"><img src=\"../../library/images/gazie.gif\" height=\"38\" border=\"0\"></a>\n";
 foreach ($script_transl['strBottom'] as $value){
         echo "<a href=\"".$value['href']."\" title=\"".$value['title']."\" target=\"_NEW\" >
               <img src=\"http://".$_SERVER['HTTP_HOST']."/".$radix."/library/images/".$value['img']."\" border=\"0\" ></a>\n";
