@@ -63,7 +63,6 @@ function getPreviousCredit($date)
 function getMovements($date_ini,$date_fin)
 {
         global $gTables,$admin_aziend;
-        $m=array();
         $where = "datreg BETWEEN $date_ini AND $date_fin GROUP BY seziva,regiva,codiva";
         $orderby="seziva, regiva, datreg, protoc";
         $rs=gaz_dbi_dyn_query("seziva,regiva,codiva,periva,operat,
