@@ -116,8 +116,9 @@ echo '<div><table border="1" class="Tmiddle">';
 echo "<tr align=\"center\"><td>\n";
 echo "<a href=\"http://gazie.it\" target=\"_new\" title=\"".$script_transl['devel']." www.gazie.it\"><img src=\"../../library/images/gazie.gif\" height=\"38\" border=\"0\"></a>\n";
 foreach ($script_transl['strBottom'] as $value){
-        echo "<a href=\"".$value['href']."\" title=\"".$value['title']."\" target=\"_NEW\" >
-              <img src=\"http://".$_SERVER['HTTP_HOST']."/".$radix."/library/images/".$value['img']."\" border=\"0\" ></a>\n";
+        echo "<a href=\"".$value['href']."\" title=\"".$value['title']."\" target=\"_NEW\" >";
+        // echo "<img src=\"http://".$_SERVER['HTTP_HOST']."/".$radix."/library/images/".$value['img']."\" border=\"0\" ></a>\n";
+        echo "<img src=\"../../library/images/".$value['img']."\" border=\"0\" ></a>\n";
 }
 echo '</td></tr></table></div>';
 echo '</form>';
