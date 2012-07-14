@@ -823,9 +823,9 @@ class GAzieMail
             // come un messaggio contraffatto. Si può solo impostare
             // il campo "Reply-To:".
             //
-            // $headers .= "From: ".$admin_data['e_mail']."\n";
+            // $headers .= "From: ".$admin_data['ragso1']." <".$admin_data['e_mail'].">\n";
             //
-            $headers .= "Reply-To: ".$admin_data['e_mail']."\n";
+            $headers .= "Reply-To: ".$admin_data['ragso1']." <".$admin_data['e_mail'].">\n";
           }
         //
         $headers .= "MIME-Version: 1.0\n";
