@@ -28,6 +28,6 @@ $doc = gaz_dbi_get_row($gTables['files'],'id_doc',intval($_GET['id_doc']));
 header("Content-Type: application/".$doc['extension']);
 header('Content-Disposition: attachment; filename="Doc_'.$doc['id_doc'].'.'.$doc['extension'].'"');
 // data retrieved from filesystem
-$doc=file_get_contents('../../data/files/'.$doc['id_doc'].'.'.$doc['extension']);
+$doc=file_get_contents(DATA_DIR.'files/'.$doc['id_doc'].'.'.$doc['extension']);
 echo $doc;
 ?>
