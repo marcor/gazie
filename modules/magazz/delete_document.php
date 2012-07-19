@@ -24,7 +24,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if (isset($_POST['Delete'])) {
     gaz_dbi_del_row($gTables['files'], "id_doc", intval($_POST['id_doc']));
-    $fn="../../data/files/".intval($_POST['id_doc']).'.'.substr($_POST['ext'],0,4);
+    $fn = DATA_DIR . "files/" . intval($_POST['id_doc']) . '.' . substr($_POST['ext'],0,4);
     unlink($fn);
     header("Location: browse_document.php");
     exit;
@@ -61,7 +61,7 @@ $script_transl=HeadMain('','','browse_document');
   </tr>
  <tr>
     <td class="FacetFieldCaptionTD">File: </td>
-    <td class="FacetDataTD" colspan=2><?php print '/data/files/'.$form['id_doc'].'.'.$form["extension"] ?>&nbsp;</td>
+    <td class="FacetDataTD" colspan=2><?php print DATA_DIR.'files/'.$form['id_doc'].'.'.$form["extension"] ?>&nbsp;</td>
   </tr>
 <TR>
  <td align="right">
