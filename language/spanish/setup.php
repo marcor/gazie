@@ -25,8 +25,8 @@
 $errors                  = Array();
 $errors['is_align']      = "La base de datos est&aacute; alineada con la &uacute;ltima versi&oacute;n";
 $errors['no_conn']       = "La conexi&oacute;n de base de datos no es correcta.<br />Establecer correctamente usuario, contrase&ntilde;a y el nombre de la base de datos <br />en el archivo config/config/gconfig.php";
-$errors['no_data_files_writable']  = "El servidor no tiene el permiso (min. 666) para almacenar los documentos en el directorio /data/files";
-$errors['no_tcpdf_cache_writable'] = "TCPDF no puede generar archivos PDF sin el permiso (min. 666) requiere el directorio /library/tcpdf/cache";
+$errors['no_data_files_writable']  = "El servidor no tiene el permiso (min. 666) para almacenar los documentos en el directorio " . DATA_DIR . "files";
+$errors['no_tcpdf_cache_writable'] = "TCPDF no puede generar archivos PDF sin el permiso (min. 666) requiere el directorio " . K_PATH_CACHE;
 
 $msg                     = Array();
 $msg['title']            = "Instalaci&oacute;n y actualizaci&oacute;n de la Base de Datos de GAzie";
