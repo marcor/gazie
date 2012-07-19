@@ -108,4 +108,12 @@ define('_SESSION_NAME','gazie');
 
 //url di default per l'aggiornamento di gazie
 $update_URI_files= "http://sourceforge.net/projects/gazie";
+
+// Le seguenti definizioni assegnano il percorso delle directory che devono essere scrivibili
+// dal web server.
+// Directory usata da modules/root/retrieve.php
+define('DATA_DIR', '../../data/');
+// Directory usata dal modulo tcpdf
+define('K_PATH_CACHE', '../../library/tcpdf/cache/');
+
 ?>
