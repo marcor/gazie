@@ -84,7 +84,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           }
           // aggiorno il filesystem solo se è stato selezionato un nuovo file
           if ($_FILES['userfile']['error']==0) {
-            move_uploaded_file($_FILES["userfile"]["tmp_name"] ,"../../data/files/".$form['id_doc'].".".$form['extension']);
+            move_uploaded_file($_FILES["userfile"]["tmp_name"], DATA_DIR . "files/" . $form['id_doc'] . "." . $form['extension']);
           }
           header("Location: ".$form['ritorno']);
           exit;
@@ -140,7 +140,7 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">".$form['id_doc']."</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">File : </td>\n";
-echo "\t<td class=\"FacetDataTD\"><a href=\"../root/retrieve.php?id_doc=".$form["id_doc"]."\"><img src=\"../../library/images/vis.gif\" title=\"".$script_transl['view']."!\" border=\"0\"> /data/files/".$form['id_doc'].".".$form['extension']."</a></td>\n";
+echo "\t<td class=\"FacetDataTD\"><a href=\"../root/retrieve.php?id_doc=".$form["id_doc"]."\"><img src=\"../../library/images/vis.gif\" title=\"".$script_transl['view']."!\" border=\"0\"> "DATA_DIR."files/".$form['id_doc'].".".$form['extension']."</a></td>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['update']." :  <input name=\"userfile\" type=\"file\"> </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
