@@ -40,10 +40,10 @@ if (isset($_SESSION['table_prefix'])) {
 //
 // Alcune directory devono essere scrivibili dal servente HTTP/PHP (www-data).
 //
-if (!dir_writable('../../data/files/')) { //questa per archiviare i documenti
+if (!dir_writable(DATA_DIR.'files/')) { //questa per archiviare i documenti
     $err[] = 'no_data_files_writable';
 }
-if (!dir_writable('../../library/tcpdf/cache/')) { //questa per permettere a TCPDF di inserire le immagini
+if (!dir_writable(K_PATH_CACHE)) { //questa per permettere a TCPDF di inserire le immagini
     $err[] = 'no_tcpdf_cache_writable'; 
 }
 //
