@@ -40,7 +40,7 @@ echo '<link rel="shortcut icon" href="../../library/images/favicon.ico">';
 echo '<script type="text/javascript" src="../../js/jscookmenu/JSCookMenu.js"></script>';
 echo '<link rel="stylesheet" href="../../js/jscookmenu/theme.css" type="text/css">';
 echo '<script type="text/javascript" src="../../js/jscookmenu/theme.js"></script>';
-function HeadMain ($idScript='',$jsArray='',$alternative_transl=false)
+function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray='')
 {
   /* - In $idScript si deve passare l'id dell'array submenu (m2) in menu.language.php (per mettere nel tag <TITLE> )
              oltre che il nome del modulo anche quello dello script tradotto
@@ -50,6 +50,11 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false)
       foreach ($jsArray as $v){
               echo "\n<script type=\"text/javascript\" src=\"../../js/".$v.".js\"></script>";
       }
+  }
+  if (is_array($cssArray)){
+    foreach ($cssArray as $v){
+      echo "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"../../library/style/".$v."\">";
+    }
   }
   global $module,$admin_aziend,$radix,$scriptname;
   $result = getAccessRights($_SESSION['Login'],$_SESSION['enterprise_id']);
