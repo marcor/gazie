@@ -678,7 +678,7 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.resizable',
                                   'jquery/ui/jquery.effects.core',
                                   'jquery/ui/jquery.effects.scale',
-                                  'jquery/modal_form.js'));
+                                  'jquery/modal_form'));
 echo '<SCRIPT type="text/javascript">
       $(function() {
            $( "#search_insert_conto" ).autocomplete({

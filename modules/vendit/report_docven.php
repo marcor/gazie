@@ -64,7 +64,7 @@ $script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.resizable',
                                   'jquery/ui/jquery.effects.core',
                                   'jquery/ui/jquery.effects.scale',
-                                  'jquery/modal_form.js'));
+                                  'jquery/modal_form'));
 echo '<script>
 $(function() {
    $( "#dialog" ).dialog({
