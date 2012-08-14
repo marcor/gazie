@@ -47,17 +47,17 @@ $Host     = "localhost";
 //
 // Nome della base di dati a cui ci si connette.
 //
-$Database = "gazie";
+$Database = "gazie-svn";
 //
 // Utente della base di dati che ha il permesso di accedervi con tutti
 // i privilegi necessari.
 //
-$User     = "root";
+$User     = "gazie-svn";
 //
 // Parola d'ordine necessaria per accedere alla base di dati
 // in qualità di utente $User.
 //
-$Password = "";
+$Password = "gazie-svn";
 //
 // Prefisso delle tabelle di Gazie.
 //
