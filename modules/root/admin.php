@@ -99,20 +99,23 @@ if ($data){
 }
 echo "<form method=\"POST\" name=\"myform\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
-echo '<div><table border="1" class="Tmiddle">';
+echo '<br>';
+echo '<div id="admin_main" ><table border="1" class="Tmiddle">';
 echo "<tr class=\"FacetFormHeaderFont\">\n";
 echo "<td class=\"FacetDataTD\"><A href=\"../config/admin_utente.php?Login=".$admin_aziend['Login']."&Update\"><img src=\"view.php?table=admin&field=Login&value=".$admin_aziend['Login']."\" alt=\"".$admin_aziend['Cognome'].' '.$admin_aziend['Nome']."\" width=100 title=\"".$script_transl['change_usr']."\" border=\"2\"></a>";
 echo "</td>";
-echo "<td>";
+echo "<td id='admin_welcome'>";
 echo ucfirst($msg)." ".$admin_aziend['Cognome']." ".$admin_aziend['Nome'].' (ip='.$admin_aziend['last_ip'].')'.
 "\n";
-echo "".$script_transl['access'].$admin_aziend['Access'].$script_transl['pass'].gaz_format_date($admin_aziend['datpas'])."<br />".$script_transl['logout']." &rarr; <input name=\"logout\" type=\"submit\" value=\" Logout \"></td>\n";
+echo "".$script_transl['access'].$admin_aziend['Access'].$script_transl['pass'].gaz_format_date($admin_aziend['datpas'])."<br>";
+echo "<div id='admin_p_logout'>".$script_transl['logout']." &rarr; <input name=\"logout\" type=\"submit\" value=\" Logout \"></div></td>\n";
 echo "<td align=\"center\" class=\"FacetFieldCaptionTD\">".$script_transl['company']."<a href=\"../config/admin_aziend.php\"><img src=\"view.php?table=aziend&value=".$form['enterprise_id']."\" width=\"200\" alt=\"Logo\" border=\"0\" title=\"".$script_transl['upd_company']."\"></a><br />".$script_transl['mesg_co'][2]." &rarr; ";
 echo selectCompany('enterprise_id',$form['enterprise_id'],$form['search']['enterprise_id'],$form['hidden_req'],$script_transl['mesg_co']);
 echo "</td>\n";
 echo "</tr></table></div>\n";
+echo "<div id='admin_footer'>";
 echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) ".$script_transl['business']." ".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://www.devincentiis.it\"> www.devincentiis.it</a></div>\n";
-echo '<div><table border="1" class="Tmiddle">';
+echo '<div><table border="0" class="Tmiddle">';
 echo "<tr align=\"center\"><td>\n";
 echo "<a href=\"http://gazie.it\" target=\"_new\" title=\"".$script_transl['devel']." www.gazie.it\"><img src=\"../../library/images/gazie.gif\" height=\"38\" border=\"0\"></a>\n";
 foreach ($script_transl['strBottom'] as $value){
@@ -130,6 +133,7 @@ echo '</form>';
 if (file_exists("help/".$admin_aziend['lang']."/admin_help.php")) {
     include("help/".$admin_aziend['lang']."/admin_help.php");
 }
+echo "</div>";
 ?>
 </body>
 </html>
