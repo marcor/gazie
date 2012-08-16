@@ -53,7 +53,7 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
   }
   if (is_array($cssArray)){
     foreach ($cssArray as $v){
-      echo "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"../../library/style/".$v."\">";
+      echo "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"../../modules/".$v."\">";
     }
   }
   global $module,$admin_aziend,$radix,$scriptname;
