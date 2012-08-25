@@ -26,6 +26,9 @@ require("../../library/include/datlib.inc.php");
 $message = "";
 $newpass = false;
 $config = new Config;
+//
+// table prefix
+//
 if (isset($_POST['tp'])) {
     $tp=filter_var(substr($_POST['tp'],0,12),FILTER_SANITIZE_MAGIC_QUOTES);
 } elseif(isset($_GET['tp'])) {
@@ -33,7 +36,7 @@ if (isset($_POST['tp'])) {
 } else {
     $tp=filter_var(substr($table_prefix,0,12),FILTER_SANITIZE_MAGIC_QUOTES);
 }
-
+//
 if (!table_prefix_ok ($tp)) {
   //
   // Ahia...
@@ -41,8 +44,19 @@ if (!table_prefix_ok ($tp)) {
   message_fatal_error ("Il prefisso delle tabelle non è valido: \"$tp\"");
   exit;
 }
-
-
+//
+// utente predefinito.
+//
+if (isset($_POST['usr'])) {
+    $usr=filter_var(substr($_POST['usr'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
+} elseif(isset($_GET['usr'])) {
+    $usr=filter_var(substr($_GET['usr'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
+} else {
+    $usr=filter_var(substr($default_user,0,30),FILTER_SANITIZE_MAGIC_QUOTES);
+}
+//
+//
+//
 if (isset($_POST['actionflag'])) {
     $form['Login']=filter_var(substr($_POST['Login'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
     // checkUser();
@@ -151,7 +165,7 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 <!-- END Error -->
 <tr><td class="FacetDataTD" rowspan="2"><img src="../../library/images/gazie.gif" width="51"></td>
 <td class="FacetFieldCaptionTD">User </td>
-<td class="FacetDataTD"><input type="text" name="Login" value="<?php if (isset($_POST['Login'])) echo $form['Login']; ?>" maxlength="30" size="20" class="FacetInput"> </td>
+<td class="FacetDataTD"><input type="text" name="Login" value="<?php if (isset($_POST['Login'])) {echo $form['Login'];} else {if (isset($usr)) {echo $usr;}}; ?>" maxlength="30" size="20" class="FacetInput"> </td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD">Password </td>
