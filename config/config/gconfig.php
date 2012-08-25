@@ -72,7 +72,7 @@ $table_prefix = "gaz";
 // Utente proposto inizialmente per l'accesso a Gazie. Se non si vuole
 // suggerire alcunché, è sufficiente assegnare la stringa vuota.
 //
-$default_user = "amministratore"
+$default_user = "amministratore";
 //
 // Fuso orario, per la rappresentazione corretta delle date, indipendentemente
 // dalla collocazione del server HTTP+PHP. MA NON FUNZIONA, perché MySQL aggiorna
