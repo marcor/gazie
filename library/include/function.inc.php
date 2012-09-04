@@ -54,6 +54,12 @@ function gaz_format_date($date)
   return date("d-m-Y",$uts);
 }
 
+function gaz_format_datetime($date)
+{
+  $uts=mktime(substr($date,11,2),substr($date,14,2),substr($date,17,2),substr($date,5,2),substr($date,8,2),substr($date,0,4));
+  return date("d-m-Y H:i:s",$uts);
+}
+
 function gaz_format_quantity($number,$comma=false,$decimal=false)
 {
     $number =  sprintf("%.3f",preg_replace("/\,/",'.',$number)); //max 3 decimal
