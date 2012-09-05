@@ -84,6 +84,9 @@ td.ThemeGazieMainItemLeft
 	background-color:	inherit;
 }
 
+/* allinea il testo dei menù centralmente*/
+.ThemeGazieMainFolderText { vertical-align: middle; }
+
 td.ThemeGazieMainFolderText,
 td.ThemeGazieMainFolderText,
 td.ThemeGazieMainItemText,
@@ -93,6 +96,7 @@ td.ThemeGazieMainItemText
 
 	border:		0;
 	background-color:	inherit;
+	vertical-align: middle;
 }
 
 td.ThemeGazieMainItemRight,
