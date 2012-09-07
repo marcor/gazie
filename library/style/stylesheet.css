@@ -247,14 +247,12 @@ TABLE.selectTable TD {
 }
 
 #admin_welcome{
-  padding: 30px 50px;
+  padding: 30px 40px;
   position: relative;
 }
 
 #admin_p_logout{
-  position: absolute;
-  bottom: 20px;
-  right: 20px;
+  margin-top: 20px;
 }
 
 #admin_footer{
