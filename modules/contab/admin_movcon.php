@@ -541,6 +541,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
    }
 
    // Se viene inviata la richiesta di aggiunta, aggiunge un rigo iva
+   if (isset($_POST['insert_imponi']))
+      $_POST['insert_imponi'] = preg_replace("/\,/",'.',$_POST['insert_imponi']);
+   //
    if (isset($_POST['adi_x']) && $_POST['insert_imponi'] <> 0) {
       if ($_POST['insert_codiva'] > 0) {
          $causa = gaz_dbi_get_row($gTables['caucon'],"codice",$form['codcausale']);
