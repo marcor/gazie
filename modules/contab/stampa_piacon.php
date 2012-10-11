@@ -183,6 +183,75 @@ while ($row = gaz_dbi_fetch_array($result)) {
            } else {
                $max_y=$pdf->GetY();
            }
+            $pdf->Cell(15,4,$row['codice'],'L',0,'C');
+            $pdf->Cell(55,4,$row['descri'],'L');
+            $pdf->SetFont('helvetica','',6);
+            $cee='';
+            $ce_d=trim($row['ceedar']);
+            if (isset($data[$ce_d]) && !empty($data[$ce_d])) {
+                $des_cee=substr($ce_d,1,1);
+                $des_cee.=$nromani[intval(substr($ce_d,2,2))];
+                $des_cee.= convNum($ce_d) . substr($ce_d,7,1);
+                $cee='DARE: '.$d_b[substr($ce_d,0,1)].' '.$des_cee;
+                if (substr($row['codice'],0,1)=='2'){
+                  $cee .= ' (in diminuzione)';
+                }
+                $cee .=' '.$data[$ce_d];
+            }
+            $ce_a=trim($row['ceeave']);
+            if (isset($data[$ce_a]) && !empty($data[$ce_a])) {
+                $des_cee=substr($ce_a,1,1);
+                $des_cee.=$nromani[intval(substr($ce_a,2,2))];
+                $des_cee.= convNum($ce_a) . substr($ce_a,7,1);
+                if (empty($cee)){
+                    $cee='AVERE: ';
+                } else {
+                    $cee.="\nAVERE: ";
+                }
+                $cee.=$d_b[substr($ce_a,0,1)].' '.$des_cee;
+                if (substr($row['codice'],0,1)=='1'){
+                  $cee .= ' (in diminuzione)';
+                }
+                $cee .=' '.$data[$ce_a];
+            }
+            if (empty($cee)) { // se il conto non è riclassificato controllo che lo sia il mastro
+                if (isset($data[$cm_d]) && !empty($data[$cm_d])) {
+                    $des_cee=substr($cm_d,1,1);
+                    $des_cee.=$nromani[intval(substr($cm_d,2,2))];
+                    $des_cee.= convNum($cm_d) . substr($cm_d,7,1);
+                    $cee='DARE: '.$d_b[substr($cm_d,0,1)].' '.$des_cee;
+                    if (substr($row['codice'],0,1)=='2'){
+                      $cee .= ' (in diminuzione)';
+                    }
+                    $cee .=' '.$data[$cm_d];
+                }
+                if (isset($data[$cm_a]) && !empty($data[$cm_a])) {
+                    $des_cee=substr($cm_a,1,1);
+                    $des_cee.=$nromani[intval(substr($cm_a,2,2))];
+                    $des_cee.= convNum($cm_a) . substr($cm_a,7,1);
+                       if (empty($cee)){
+                          $cee='AVERE: ';
+                       } else {
+                          $cee.="\nAVERE: ";
+                       }
+                    $cee.=$d_b[substr($cm_a,0,1)].' '.$des_cee;
+                    if (substr($row['codice'],0,1)=='1'){
+                        $cee .= ' (in diminuzione)';
+                    }
+                    $cee .=' '.$data[$cm_a];
+                }
+            }
+            if (empty($cee)) {
+                $cee=$row['annota'];
+            } else {
+                $cee .="\n".$row['annota'];
+            }
+            $pdf->MultiCell(65,4,$cee,'LR','L',false);
+            $ly=$pdf->GetY();
+            $pdf->Line(10,$ly,10,$y);
+            $pdf->Line(25,$ly,25,$y);
+            $pdf->SetFont('helvetica','',7);
+
 
     }
     $ctrl_mas = $mas;
