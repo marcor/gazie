@@ -89,6 +89,22 @@ $email_enabled = TRUE;
 //
 $email_disclaimer = "";
 //
+// PHPMailer
+//
+$phpMailer->mailer = "mail";                        // Tipo di invio:
+                                                    //  smtp    : tramite server SMTP
+                                                    //  mail    : tramite funzione mail() di PHP
+                                                    //  sendmail: tramite sendmail come MTA
+                                                    //  qmail   : tramite qmail come MTA
+$phpMailer->host = "smtp.gmail.com";                // nome del server SMTP
+$phpMailer->port = 587;                             // Porta del servizio SMTP (default 25)
+$phpMailer->smtpSecure = "tls";                     // Usa STARTTLS
+$phpMailer->smtpAuth = TRUE;                        // Inviare con o senza autenticazione SMTP
+$phpMailer->username = "email@gmail.com";           // Username per autenticazione SMTP
+$phpMailer->password = "vostra password";           // Password per autenticazione SMTP
+// $phpMailer->ccSender = TRUE;                        // Aggiunge il mittente in copia conoscenza
+//
+//
 // Gazie utilizza la funzione PHP set_time_limit() per consentire il completamento
 // di elaborazioni che richiedono più tempo del normale.
 // In condizioni normali, la variabile $disable_set_time_limit deve avere corrispondere
