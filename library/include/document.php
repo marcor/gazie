@@ -337,7 +337,12 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     $pdf->compose();
     $pdf->pageFooter();
     if ($dest && $dest=='E'){ // è stata richiesta una e-mail
-       $content=$pdf->Output($docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numdoc'].'_del_'.gaz_format_date($docVars->tesdoc['datemi']).'.pdf',$dest);
+       $dest = 'S';     // Genero l'output pdf come stringa binaria
+       // Costruisco oggetto con tutti i dati del file pdf da allegare
+       $content->name = $docVars->intesta1.'_FatturaDifferita_n.'.$docVars->tesdoc['numfat'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
+       $content->string = $pdf->Output($docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numdoc'].'_del_'.gaz_format_date($docVars->tesdoc['datemi']).'.pdf',$dest);
+       $content->encoding = "base64";
+       $content->mimeType = "application/pdf";
        $gMail = new GAzieMail();
        $gMail->sendMail($docVars->azienda,$docVars->user,$content,$docVars->client);
     } else { // va all'interno del browser
@@ -451,7 +456,12 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
     }
     $pdf->pageFooter();
     if ($dest && $dest=='E'){ // è stata richiesta una e-mail
-       $content=$pdf->Output($docVars->intesta1.'_FatturaDifferita_n.'.$docVars->tesdoc['numfat'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf',$dest);
+       $dest = 'S';     // Genero l'output pdf come stringa binaria
+       // Costruisco oggetto con tutti i dati del file pdf da allegare
+       $content->name = $docVars->intesta1.'_FatturaDifferita_n.'.$docVars->tesdoc['numfat'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
+       $content->string = $pdf->Output($docVars->intesta1.'_FatturaDifferita_n.'.$docVars->tesdoc['numfat'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf',$dest);
+       $content->encoding = "base64";
+       $content->mimeType = "application/pdf";
        $gMail = new GAzieMail();
        $gMail->sendMail($docVars->azienda,$docVars->user,$content,$docVars->client);
     } else { // va all'interno del browser
