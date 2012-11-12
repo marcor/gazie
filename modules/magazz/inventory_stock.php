@@ -40,7 +40,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     $result = gaz_dbi_dyn_query($gTables['artico'].'.*, '.$gTables['catmer'].'.descri AS descat,'.$gTables['catmer'].'.annota AS anncat', $gTables['artico'].' LEFT JOIN '.$gTables['catmer'].' ON catmer = '.$gTables['catmer'].'.codice', "catmer = ".$form["catmer"],'catmer ASC, '.$gTables['artico'].'.codice ASC');
     if ($result) {
         while ($r = gaz_dbi_fetch_array($result)) {
-              $magval=array_pop($gForm->getStockValue(false,$r['codice'],$date));
+              $mv=$gForm->getStockValue(false,$r['codice'],$date); 
+              $magval=array_pop($mv);
               $form['a'][$r['codice']]['i_d'] = $r['descri'];
               $form['a'][$r['codice']]['i_u'] = $r['unimis'];
               $form['a'][$r['codice']]['v_a'] = $magval['v'];
@@ -88,7 +89,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
              gaz_set_time_limit (30);
              $ctrl_cm=$r['catmer'];
            }
-           $magval=array_pop($gForm->getStockValue(false,$r['codice'],$date));
+           $mv=$gForm->getStockValue(false,$r['codice'],$date); 
+           $magval=array_pop($mv);
            $form['a'][$r['codice']]['i_d'] = $r['descri'];
            $form['a'][$r['codice']]['i_u'] = $r['unimis'];
            $form['a'][$r['codice']]['v_a'] = $magval['v'];

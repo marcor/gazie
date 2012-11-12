@@ -102,7 +102,8 @@ $pdf->AddPage('L');
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $ctrlcatmer=0;
 while ($row = gaz_dbi_fetch_array($result)) {
-       $magval=array_pop($gForm->getStockValue(false,$row['codice']));
+       $mv=$gForm->getStockValue(false,$row['codice']);
+       $magval=array_pop($mv);
        $pdf->SetFont('helvetica','',10);
        switch($_GET['li']) {
         case '0':

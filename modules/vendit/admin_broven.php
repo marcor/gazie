@@ -580,7 +580,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             } else {
                $form['rows'][$old_key]['prelis'] = number_format($artico['preve1'],$admin_aziend['decimal_price'],'.','');
             }
-            $magval=array_pop($upd_mm->getStockValue(false,$form['in_codart'],$form['annemi'].'-'.$form['mesemi'].'-'.$form['gioemi'],$admin_aziend['stock_eval_method']));
+            $mv=$upd_mm->getStockValue(false,$form['in_codart'],$form['annemi'].'-'.$form['mesemi'].'-'.$form['gioemi'],$admin_aziend['stock_eval_method']);
+            $magval=array_pop($mv);
             $form['rows'][$old_key]['scorta'] = $magval['q_g'] - $artico['scorta'];
          } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
             $form['rows'][$old_key]['codart'] = "";
@@ -654,7 +655,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                $form['rows'][$next_row]['codric'] = $artico['codcon'];
                $form['in_codric'] = $artico['codcon'];
             }
-            $magval=array_pop($upd_mm->getStockValue(false,$form['in_codart'],$form['annemi'].'-'.$form['mesemi'].'-'.$form['gioemi'],$admin_aziend['stock_eval_method']));
+            $mv=$upd_mm->getStockValue(false,$form['in_codart'],$form['annemi'].'-'.$form['mesemi'].'-'.$form['gioemi'],$admin_aziend['stock_eval_method']);
+            $magval=array_pop($mv);
             $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $artico['scorta'];
          } elseif ($form['in_tiprig'] == 1) { //rigo forfait
             $form['rows'][$next_row]['codart'] = "";
@@ -891,7 +893,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];
        $form['rows'][$next_row]['id_mag'] = $rigo['id_mag'];
        $form['rows'][$next_row]['annota'] = $articolo['annota'];
-       $magval=array_pop($upd_mm->getStockValue(false,$rigo['codart'],$form['annemi'].'-'.$form['mesemi'].'-'.$form['gioemi'],$admin_aziend['stock_eval_method']));
+       $mv=$upd_mm->getStockValue(false,$rigo['codart'],$form['annemi'].'-'.$form['mesemi'].'-'.$form['gioemi'],$admin_aziend['stock_eval_method']);
+       $magval=array_pop($mv);
        $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $articolo['scorta'];
        $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
        $form['rows'][$next_row]['status'] = "UPDATE";

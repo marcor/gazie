@@ -109,7 +109,8 @@ $gForm = new magazzForm();
 while ($r = gaz_dbi_fetch_array($result)) {
        gaz_set_time_limit (30);
        $lastdoc=getLastDoc($r["codice"]);
-       $magval=array_pop($gForm->getStockValue(false,$r['codice']));
+       $mv=$gForm->getStockValue(false,$r['codice']); 
+       $magval=array_pop($mv);
        if(!isset($_GET['all']) and !empty($r["image"])){
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
        } else {

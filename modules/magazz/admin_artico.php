@@ -154,7 +154,8 @@ echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n"
 echo "<input type=\"hidden\" name=\"ref_code\" value=\"".$form['ref_code']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
 $gForm = new magazzForm();
-$magval=array_pop($gForm->getStockValue(false,$form['codice']));
+$mv=$gForm->getStockValue(false,$form['codice']);
+$magval=array_pop($mv);
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
 } else {
