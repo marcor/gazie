@@ -118,7 +118,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['descri'] = substr($v['descri'],0,100);
             $form['rows'][$next_row]['unimis'] = substr($v['unimis'],0,3);
             if ($v['tiprig'] <=1 ){
-                $form['rows'][$next_row]['prelis'] = number_format($v['prelis'],$admin_aziend['decimal_price'],'.','');
+                $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/",'.',$v['prelis'])),$admin_aziend['decimal_price'],'.','');
             } else {
                 $form['rows'][$next_row]['prelis'] = 0; 
             }
