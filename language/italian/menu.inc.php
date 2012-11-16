@@ -69,6 +69,9 @@ $strCommon = array(  'cancel' => " Annulla ",
                      'caps'=>"Blocco maiuscole attivato!",
                      'typerow'=>array(0=>'Normale',1=>'Forfait',2=>'Descrittivo',3=>'Var.totale fatt',6=>'Testo',7=>'Solo su DdT',8=>'Solo su Fatt'),
                      'search_item'=>array('C'=>'Codice articolo','B'=>'Codice a barre','D'=>'Descrizione'),
-                     'tipiva'=>array('I'=>'Imponibile','N'=>'Non Imponibile','E'=>'Esente','S'=>'Non Soggetto','C'=>'Escluso','D'=>'Indetraibile','P'=>'In sospensione')
+                     'tipiva'=>array('I'=>'Imponibile','N'=>'Non Imponibile','E'=>'Esente','S'=>'Non Soggetto','C'=>'Escluso','D'=>'Indetraibile','P'=>'In sospensione'),
+                     'mail_alert0'=>'Invio documento con email',
+                     'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                     'mail_alert2'=>'con allegato il seguente documento:'
            );
 ?>

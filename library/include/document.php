@@ -134,6 +134,22 @@ class DocContabVars
         $this->year = substr($tesdoc['initra'],0,4);
         $this->trasporto=$tesdoc['traspo'];
         $this->testat = $testat;
+        
+        switch ( $tesdoc["tipdoc"] ) {
+            case "FAD":
+            case "FAI":
+                $this->docRelNum  = $this->tesdoc["numfat"];
+                $this->docRelDate = $this->tesdoc["datfat"];
+                break;
+            case "DDT":
+            case "DDL":
+            case "DDR":
+            default:
+                $this->docRelNum  = $this->tesdoc["numdoc"];    // Numero del documento relativo
+                $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
+        }
+        
+        
     }
 
     function open_drawer() // apre il cassetto dell'eventuale registratore di cassa
@@ -339,8 +355,8 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     if ($dest && $dest=='E'){ // è stata richiesta una e-mail
        $dest = 'S';     // Genero l'output pdf come stringa binaria
        // Costruisco oggetto con tutti i dati del file pdf da allegare
-       $content->name = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numfat'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
-       $content->string = $pdf->Output($docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numdoc'].'_del_'.gaz_format_date($docVars->tesdoc['datemi']).'.pdf',$dest);
+       $content->name = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->docRelNum.'_del_'.gaz_format_date($docVars->docRelDate).'.pdf';
+       $content->string = $pdf->Output($content->name, $dest);
        $content->encoding = "base64";
        $content->mimeType = "application/pdf";
        $gMail = new GAzieMail();
@@ -350,7 +366,7 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     }
 }
 
-function createMultiDocument($results, $templateName, $gTables)
+function createMultiDocument($results, $templateName, $gTables, $dest=false)
 {
     $templates = array('Received' => 'received',
                        'CartaIntestata' => 'carta_intestata',
@@ -408,7 +424,18 @@ function createMultiDocument($results, $templateName, $gTables)
             $pdf->compose();
     }
     $pdf->pageFooter();
-    $pdf->Output();
+    if ( $dest && $dest=='E' ){ // è stata richiesta una e-mail
+        $dest = 'S';     // Genero l'output pdf come stringa binaria
+        // Costruisco oggetto con tutti i dati del file pdf da allegare
+        $content->name = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->docRelNum.'_del_'.gaz_format_date($docVars->docRelDate).'.pdf';
+        $content->string = $pdf->Output($docVars->intesta1.'_'.$templateName.'_n.'.$docVars->docRelNum.'_del_'.gaz_format_date($docVars->docRelDate).'.pdf', $dest);
+        $content->encoding = "base64";
+        $content->mimeType = "application/pdf";
+        $gMail = new GAzieMail();
+        $gMail->sendMail($docVars->azienda,$docVars->user,$content,$docVars->client);
+    } else { // va all'interno del browser
+        $pdf->Output();
+    }    
 }
 
 function createInvoiceFromDDT($result,$gTables,$dest=false) {

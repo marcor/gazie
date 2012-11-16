@@ -74,8 +74,10 @@ $strCommon = array(  'cancel' => " Cancelar ",
                      'caps'=>"Bloqueo de may&uacute;sculas!",
                      'typerow'=>array(0=>'Normal',1=>'Forfait',2=>'Descriptive',3=>'Diff.invoice total',6=>'Text',7=>'Note only',8=>'Invoice only'),
                      'search_item'=>array('C'=>'Item code','B'=>'Barcode','D'=>'Description'),
-                     'tipiva'=>array('I'=>'Taxable','N'=>'No Taxable','E'=>'Exempt','S'=>'Not subject','C'=>'Excluded','D'=>'Indetraibile','P'=>'In suspension')
-
+                     'tipiva'=>array('I'=>'Taxable','N'=>'No Taxable','E'=>'Exempt','S'=>'Not subject','C'=>'Excluded','D'=>'Indetraibile','P'=>'In suspension'),
+                     'mail_alert0'=>'Send document by email',
+                     'mail_alert1'=>'Send email to address: ',
+                     'mail_alert2'=>'with the following document as attachment:'
            );
 
 ?>
