@@ -794,30 +794,30 @@ class GAzieMail
 
         require_once "../../library/phpmailer/class.phpmailer.php";
         require_once "../../library/phpmailer/class.smtp.php";
-        global $phpMailer;
-
         //
         // Se è possibile usare la posta elettronica, si procede.
         //
-        if (!$email_enabled)
-          {
+        if (!$email_enabled) {
             echo "invio e-mail <b style=\"color: #ff0000;\">disabilitato... ERROR!</b><br />mail send is <b style=\"color: #ff0000;\">disabled... ERROR!</b> ";
             return;
-          }
+        }
         //
         // Si procede con la costruzione del messaggio.
         //
         // definisco il server SMTP e il mittente 
-// //         $config_smtp = gaz_dbi_get_row($gTables['company_config'],'var','smtp_server');
+        $config_host = gaz_dbi_get_row($gTables['company_config'],'var','smtp_server');
         $config_notif = gaz_dbi_get_row($gTables['company_config'],'var','return_notification');
-// //         ini_set("SMTP",$config_smtp['val']);
-// //         ini_set('sendmail_from', $admin_data['e_mail']);
+        $config_port = gaz_dbi_get_row($gTables['company_config'],'var','smtp_port');
+        $config_secure = gaz_dbi_get_row($gTables['company_config'],'var','smtp_secure');
+        $config_auth = gaz_dbi_get_row($gTables['company_config'],'var','smtp_auth');
+        $config_user = gaz_dbi_get_row($gTables['company_config'],'var','smtp_user');
+        $config_pass = gaz_dbi_get_row($gTables['company_config'],'var','smtp_password');
         // se non è possibile usare ini_set allora la mail verrà trasmessa usando i
         // dati attinti su php.ini
         $body_text = gaz_dbi_get_row($gTables['body_text'],'table_name_ref','body_send_doc_email');
         $mailto = $partner['e_mail']; //recipient
         $subject = $admin_data['ragso1']." ".$admin_data['ragso2']."-Trasmissione documenti"; //subject
-		$email_disclaimer = ("".$email_disclaimer != "") ? "<p>".$email_disclaimer."</p>" : "";
+	$email_disclaimer = ("".$email_disclaimer != "") ? "<p>".$email_disclaimer."</p>" : "";
         // Costruisco il testo HTML dell'email
         $body_text['body_text'] .= "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">Company: " . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
         $admin_data['web_url'] = trim($admin_data['web_url']);
@@ -828,35 +828,22 @@ class GAzieMail
         // Inizializzo PHPMailer
         //
         $mail = new PHPMailer();
-        switch ( $phpMailer->mailer ) {
-            case "smtp":
-                //
-                // Invio tramite protocollo SMTP
-                //
-                $mail->SMTPDebug = 2;                           // Attivo il debug
-                $mail->IsSMTP();                                // Modalita' SMTP
-                if ( !empty($phpMailer->smtpSecure) ) {
-                    $mail->SMTPSecure = $phpMailer->smtpSecure; // Invio tramite protocollo criptato
-                }
-                $mail->Host = $phpMailer->host;                 // Imposto il server SMTP
-                if ( isset($phpMailer->port) && is_int($phpMailer->port) && !empty($phpMailer->port) ) {
-                    $mail->Port = $phpMailer->port;             // Imposto la porta del servizio SMTP
-                }
-                $mail->SMTPAuth = ( isset($phpMailer->smtpAuth) && $phpMailer->smtpAuth===TRUE ? TRUE : FALSE );
-                if ( $mail->SMTPAuth ) {
-                    $mail->Username = $phpMailer->username;     // Imposto username per autenticazione SMTP
-                    $mail->Password = $phpMailer->password;     // Imposto password per autenticazione SMTP
-                }
-                break;
-            case "mail":
-            default:
-                //
-                // Invio tramite la funzione mail()
-                //
-                
-                // Niente da impostare, fa gia' tutto phpMailer
-
-                break;
+        //
+        // Invio tramite protocollo SMTP
+        //
+        $mail->SMTPDebug = 2;                           // Attivo il debug
+        $mail->IsSMTP();                                // Modalita' SMTP
+        if (! empty($config_secure['val'])) {
+            $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
+        }
+        $mail->Host = $config_host['val'];                 // Imposto il server SMTP
+        if ( !empty($config_port['val']) ) {
+            $mail->Port = $config_port['val'];             // Imposto la porta del servizio SMTP
+        }
+        $mail->SMTPAuth = ( !empty($config_user['val']) && $config_auth['val']=='smtp' ? TRUE : FALSE );
+        if ( $mail->SMTPAuth ) {
+            $mail->Username = $config_user['val'];     // Imposto username per autenticazione SMTP
+            $mail->Password = $config_pass['val'];     // Imposto password per autenticazione SMTP
         }
         // Imposto eventuale richiesta di notifica
         if ($config_notif['val']=='yes'){
@@ -866,10 +853,8 @@ class GAzieMail
         $mail->SetFrom($admin_data['e_mail'], $admin_data['ragso1']." ".$admin_data['ragso2']);
         // Imposto email del destinatario
         $mail->AddAddress($mailto);
-        if ( isset($phpMailer->ccSender) && $phpMailer->ccSender ) {
-            // Aggiungo l'email del mittente tra i destinatari in cc
-            $mail->AddCC($admin_data['e_mail'], $admin_data['ragso1']." ".$admin_data['ragso2']);
-        }
+        // Aggiungo l'email del mittente tra i destinatari in cc
+        $mail->AddCC($admin_data['e_mail'], $admin_data['ragso1']." ".$admin_data['ragso2']);
         // Imposto l'oggetto dell'email
         $mail->Subject = $subject;
         // Imposto il testo HTML dell'email
@@ -883,52 +868,6 @@ class GAzieMail
             echo "invio e-mail <strong style=\"color: #ff0000;\">NON riuscito... ERROR!</strong><br />mail send has<strong style=\"color: #ff0000;\"> NOT been successful... ERROR!</strong> ";
             echo "<br />mailer error: " . $mail->ErrorInfo;            
         }
-// //         $uid = md5(uniqid(time()));
-// //         //
-// //         // Crea e azzera la variabile $headers.
-// //         //
-// //         $headers = "";
-// //         //
-// //         // Imposta il mittente.
-// //         //
-// //         if (isset ($admin_data['e_mail']))
-// //           {
-// //             //
-// //             // Attenzione: anche se sarebbe formalmente corretto,
-// //             // qui non si può mettere il mittente, perché risulterebbe
-// //             // come un messaggio contraffatto. Si può solo impostare
-// //             // il campo "Reply-To:".
-// //             //
-// //             // $headers .= "From: ".$admin_data['ragso1']." <".$admin_data['e_mail'].">\n";
-// //             //
-// //             $headers .= "Reply-To: ".$admin_data['ragso1']." <".$admin_data['e_mail'].">\n";
-// //           }
-// //         //
-// //         $headers .= "MIME-Version: 1.0\n";
-// //         //
-// //         if ($config_notif['val']=='yes'){
-// //             $headers .= "Disposition-notification-to: ".$admin_data['e_mail']."\n";
-// //         }
-// //         $headers .= "Content-Type: multipart/mixed;\n" .
-// //         " boundary=\"{$uid}\""; 
-// //         $msg_content = "--".$uid."\r\n".
-// //                 "Content-type:text/html; charset=utf8\r\n".
-// //                 "Content-Transfer-Encoding: 7bit\r\n\r\n".
-// //                 $body_text['body_text']."<h3><span style=\"color: #000000;
-// //                 background-color: #".$admin_data['colore'].";\">Company: ".$admin_data['ragso1']." ".$admin_data['ragso2']."</span></h3>
-// //                 <h4><span style=\"color: #000000;\">Web: <a href=\"".$admin_data['web_url']."\">".$admin_data['web_url']."</a></span></h4>
-// //                 <address><span style=\"color: #".$admin_data['colore'].";\">User: ".$user['Nome']." ".$user['Cognome']."</span><br /></address>\r\n".
-// //                 "<hr>".$email_disclaimer."\r\n".
-// //                 "\r\n".
-// //                 "--".$uid."\r\n".
-// //                 $content.
-// //                 "--".$uid."--";
-// //         echo 'mailto: '.$mailto.'<br /> from:'.$admin_data['e_mail'].'<br /> SMTP: '.$config_smtp['val'].'<br />';
-// //         if (mail($mailto, $subject,$msg_content,$headers)) {
-// //             echo "invio e-mail riuscito... <b>OK</b><br />mail send has been successful... <b>OK</b>"; // or use booleans here
-// //         } else {
-// //             echo "invio e-mail <b style=\"color: #ff0000;\">NON riuscito... ERROR!</b><br />mail send has<b style=\"color: #ff0000;\"> NOT been successful... ERROR!</b> ";
-// //         }
  }
 }
 

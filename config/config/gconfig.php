@@ -89,29 +89,13 @@ $email_enabled = TRUE;
 //
 $email_disclaimer = "";
 //
-// PHPMailer
-//
-$phpMailer->mailer = "mail";                        // Tipo di invio:
-                                                    //  smtp    : tramite server SMTP
-                                                    //  mail    : tramite funzione mail() di PHP
-                                                    //  sendmail: tramite sendmail come MTA
-                                                    //  qmail   : tramite qmail come MTA
-$phpMailer->host = "smtp.gmail.com";                // nome del server SMTP
-$phpMailer->port = 587;                             // Porta del servizio SMTP (default 25)
-$phpMailer->smtpSecure = "tls";                     // Usa STARTTLS
-$phpMailer->smtpAuth = TRUE;                        // Inviare con o senza autenticazione SMTP
-$phpMailer->username = "email@gmail.com";           // Username per autenticazione SMTP
-$phpMailer->password = "vostra password";           // Password per autenticazione SMTP
-// $phpMailer->ccSender = TRUE;                        // Aggiunge il mittente in copia conoscenza
-//
-//
 // Gazie utilizza la funzione PHP set_time_limit() per consentire il completamento
 // di elaborazioni che richiedono più tempo del normale.
-// In condizioni normali, la variabile $disable_set_time_limit deve avere corrispondere
+// In condizioni normali, la variabile $disable_set_time_limit deve corrispondere
 // a FALSE. La modifica del valore a TRUE serve solo in situazioni eccezionali,
-// per esempio quando si vuole installare Gazie presso un servizio che vieta
+// per esempio quando si vuole installare GAzie presso un servizio che vieta
 // l'uso della funzione set_time_limit(), sapendo però che ciò pregiudica il funzionamento
-// corretto di Gazie.
+// corretto di GAzie.
 //
 $disable_set_time_limit = FALSE;
 //
@@ -139,7 +123,7 @@ define('K_PATH_CACHE', '../../library/tcpdf/cache/');
 // il nome del direttorio di installazione che normalmente e', appunto:  gazie
 define('_SESSION_NAME','gazie');
 
-//url di default per l'aggiornamento di gazie
+//url di default per l'aggiornamento di GAzie
 $update_URI_files= "http://sourceforge.net/projects/gazie";
 
 
