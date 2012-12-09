@@ -111,6 +111,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
            $form['righi'][$_POST['num_rigo']]['unimis'] = $rigo['unimis'];
            $form['righi'][$_POST['num_rigo']]['prelis'] = $rigo['prelis'];
            $form['righi'][$_POST['num_rigo']]['provvigione'] = $rigo['provvigione'];
+		   $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
            $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
            $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
            $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
@@ -199,6 +200,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
                             $form['righi'][$_POST['num_rigo']]['unimis'] = $rigo['unimis'];
                             $form['righi'][$_POST['num_rigo']]['prelis'] = $rigo['prelis'];
                             $form['righi'][$_POST['num_rigo']]['provvigione'] = $rigo['provvigione'];
+							$form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
                             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
                             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
                             $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
@@ -890,6 +892,7 @@ if (! empty ($form['righi'])) {
         echo "<input type=\"hidden\" name=\"righi[$k][id_body_text]\" value=\"".$v['id_body_text']."\">\n";
         echo "<input type=\"hidden\" name=\"righi[$k][codvat]\" value=\"".$v['codvat']."\">\n";
         echo "<input type=\"hidden\" name=\"righi[$k][pervat]\" value=\"".$v['pervat']."\">\n";
+		echo "<input type=\"hidden\" name=\"righi[$k][ritenuta]\" value=\"".$v['ritenuta']."\">\n";
         echo "<input type=\"hidden\" name=\"righi[$k][codric]\" value=\"".$v['codric']."\">\n";
         echo "<td><input type=\"hidden\" name=\"righi[$k][codart]\" value=\"".$v['codart']."\">".$v['codart']."</td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[$k][descri]\" value=\"".$v['descri']."\">".$v['descri']."</td>\n";
