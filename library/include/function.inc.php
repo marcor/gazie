@@ -828,22 +828,29 @@ class GAzieMail
         // Inizializzo PHPMailer
         //
         $mail = new PHPMailer();
-        //
-        // Invio tramite protocollo SMTP
-        //
-        $mail->SMTPDebug = 2;                           // Attivo il debug
-        $mail->IsSMTP();                                // Modalita' SMTP
-        if (! empty($config_secure['val'])) {
-            $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
-        }
-        $mail->Host = $config_host['val'];                 // Imposto il server SMTP
+        $mail->Host = $config_host['val'];
+        $mail->IsHTML();                                // Modalita' HTML
+        // Imposto il server SMTP
         if ( !empty($config_port['val']) ) {
             $mail->Port = $config_port['val'];             // Imposto la porta del servizio SMTP
         }
-        $mail->SMTPAuth = ( !empty($config_user['val']) && $config_auth['val']=='smtp' ? TRUE : FALSE );
-        if ( $mail->SMTPAuth ) {
-            $mail->Username = $config_user['val'];     // Imposto username per autenticazione SMTP
-            $mail->Password = $config_pass['val'];     // Imposto password per autenticazione SMTP
+        switch ( $config_auth['val'] ) { 	 
+	    case "smtp":
+            // Invio tramite protocollo SMTP
+            $mail->SMTPDebug = 2;                           // Attivo il debug
+            $mail->IsSMTP();                                // Modalita' SMTP
+            if (! empty($config_secure['val'])) {
+                $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
+            }
+            $mail->SMTPAuth = ( !empty($config_user['val']) && $config_auth['val']=='smtp' ? TRUE : FALSE );
+            if ( $mail->SMTPAuth ) {
+                $mail->Username = $config_user['val'];     // Imposto username per autenticazione SMTP
+                $mail->Password = $config_pass['val'];     // Imposto password per autenticazione SMTP
+            }
+            break;
+            case "mail": 	 
+            default:
+	    break;
         }
         // Imposto eventuale richiesta di notifica
         if ($config_notif['val']=='yes'){
@@ -865,7 +872,7 @@ class GAzieMail
         if ( $mail->Send() ) {
             echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
         } else {
-            echo "invio e-mail <strong style=\"color: #ff0000;\">NON riuscito... ERROR!</strong><br />mail send has<strong style=\"color: #ff0000;\"> NOT been successful... ERROR!</strong> ";
+            echo "<br />invio e-mail <strong style=\"color: #ff0000;\">NON riuscito... ERROR!</strong><br />mail send has<strong style=\"color: #ff0000;\"> NOT been successful... ERROR!</strong> ";
             echo "<br />mailer error: " . $mail->ErrorInfo;            
         }
  }
