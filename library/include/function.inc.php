@@ -110,7 +110,7 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal=2)
 // delle tabelle è valido, secondo lo schema di Gazie, oppure no.
 // In pratica, si verifica che inizi con la stringa `gaz' e può
 // continuare con lettere minuscole e cifre numeriche, fino
-// a un massimo di ulteriori nove caratteri 
+// a un massimo di ulteriori nove caratteri
 //
 function table_prefix_ok ($table_prefix)
 {
@@ -783,7 +783,7 @@ class selectvettor extends SelectBox
     }
 }
 
-// classe per l'invio di documenti allegati ad una e-mail 
+// classe per l'invio di documenti allegati ad una e-mail
 class GAzieMail
 {
   function sendMail($admin_data,$user,$content,$partner)
@@ -804,12 +804,12 @@ class GAzieMail
         //
         // Si procede con la costruzione del messaggio.
         //
-        // definisco il server SMTP e il mittente 
+        // definisco il server SMTP e il mittente
+        $config_mailer = gaz_dbi_get_row($gTables['company_config'],'var','mailer');
         $config_host = gaz_dbi_get_row($gTables['company_config'],'var','smtp_server');
         $config_notif = gaz_dbi_get_row($gTables['company_config'],'var','return_notification');
         $config_port = gaz_dbi_get_row($gTables['company_config'],'var','smtp_port');
         $config_secure = gaz_dbi_get_row($gTables['company_config'],'var','smtp_secure');
-        $config_auth = gaz_dbi_get_row($gTables['company_config'],'var','smtp_auth');
         $config_user = gaz_dbi_get_row($gTables['company_config'],'var','smtp_user');
         $config_pass = gaz_dbi_get_row($gTables['company_config'],'var','smtp_password');
         // se non è possibile usare ini_set allora la mail verrà trasmessa usando i
@@ -817,7 +817,7 @@ class GAzieMail
         $body_text = gaz_dbi_get_row($gTables['body_text'],'table_name_ref','body_send_doc_email');
         $mailto = $partner['e_mail']; //recipient
         $subject = $admin_data['ragso1']." ".$admin_data['ragso2']."-Trasmissione documenti"; //subject
-	$email_disclaimer = ("".$email_disclaimer != "") ? "<p>".$email_disclaimer."</p>" : "";
+        $email_disclaimer = ("".$email_disclaimer != "") ? "<p>".$email_disclaimer."</p>" : "";
         // Costruisco il testo HTML dell'email
         $body_text['body_text'] .= "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">Company: " . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
         $admin_data['web_url'] = trim($admin_data['web_url']);
@@ -834,21 +834,21 @@ class GAzieMail
         if ( !empty($config_port['val']) ) {
             $mail->Port = $config_port['val'];             // Imposto la porta del servizio SMTP
         }
-        switch ( $config_auth['val'] ) { 	 
-	    case "smtp":
+        switch ( $config_mailer['val'] ) {
+            case "smtp":
             // Invio tramite protocollo SMTP
             $mail->SMTPDebug = 2;                           // Attivo il debug
             $mail->IsSMTP();                                // Modalita' SMTP
             if (! empty($config_secure['val'])) {
                 $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
             }
-            $mail->SMTPAuth = ( !empty($config_user['val']) && $config_auth['val']=='smtp' ? TRUE : FALSE );
+            $mail->SMTPAuth = ( !empty($config_user['val']) && $config_mailer['val']=='smtp' ? TRUE : FALSE );
             if ( $mail->SMTPAuth ) {
                 $mail->Username = $config_user['val'];     // Imposto username per autenticazione SMTP
                 $mail->Password = $config_pass['val'];     // Imposto password per autenticazione SMTP
             }
             break;
-            case "mail": 	 
+            case "mail":
             default:
 	    break;
         }
@@ -873,7 +873,7 @@ class GAzieMail
             echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
         } else {
             echo "<br />invio e-mail <strong style=\"color: #ff0000;\">NON riuscito... ERROR!</strong><br />mail send has<strong style=\"color: #ff0000;\"> NOT been successful... ERROR!</strong> ";
-            echo "<br />mailer error: " . $mail->ErrorInfo;            
+            echo "<br />mailer error: " . $mail->ErrorInfo;
         }
  }
 }
