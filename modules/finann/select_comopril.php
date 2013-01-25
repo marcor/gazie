@@ -317,10 +317,13 @@ function createRowsAndErrors($min_limit){
                      }
                  }
                } else {        // È un soggetto con codice fiscale senza partita IVA (caso 1)
-                     $resultcf = $nuw->check_TAXcode($row['codfis']);
+				 $resultcf = $nuw->check_TAXcode($row['codfis']);
+                 if( strlen(trim($row['codfis'])) == 11) { // È una persona giuridica
+				    $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
+				 }
                      if (empty($row['codfis'])) {
                          $error_transact[$row['idtes']][] = $script_transl['errors'][3];
-                     } elseif ($row['sexper'] == 'G' and empty($resultcf)) {
+                     } elseif ($row['sexper'] == 'G' and !empty($resultcf)) {
                         $error_transact[$row['idtes']][] = $script_transl['errors'][4];
                      } elseif ($row['sexper'] == 'M' and empty($resultcf) and
                          (intval(substr($row['codfis'],9,2)) > 31 or
