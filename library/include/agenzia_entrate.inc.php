@@ -417,7 +417,12 @@ class AgenziaEntrate
                foreach ($D as $ElementsData) {
                         switch ($ElementsData['soggetto_type']) {
                             case '1': // SOGGETTI RESIDENTI NON TITOLARI DI PARTITA IVA
-                                $acc .= '1'.substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16)
+							    if( strlen(trim($ElementsData['codfis'])) == 11) { // È una persona giuridica ( associazione )
+									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_RIGHT),0,16);
+								} else { // È una persona fisica
+									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16);
+								}
+                                $acc .= '1'.$cf
                                         .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
                                         .$ElementsData['n_rate']
                                         .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['imposte_addebitate']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
