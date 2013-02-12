@@ -48,6 +48,11 @@ function createArrayCrediti($result,$pagame,$utsval) {
     // la variabile $result deve contenere tutti i movimenti tranne quelli di chiusura
     // scopo di questa funzione e' quella di creare l'array dei CREDITI vantati verso il cliente in base
     // alla condizione di pagamento passata tramite la seconda variabile.
+
+    $epsilon = 0.000001;    // Massima differenza tra 2 float
+                            // http://www.php.net/manual/en/language.types.float.php
+                            // http://stackoverflow.com/questions/3148937/compare-floats-in-php
+
     $parzi = 0.00;
     $progr = 0.00;
     $righiCrediti = array();
@@ -124,7 +129,7 @@ function createArrayCrediti($result,$pagame,$utsval) {
                     }
                }
             }
-            if($progr > 0 and $progr < $movimenti['import']) {
+            if($progr > 0 and $progr < $movimenti['import'] and abs($progr-$movimenti['import']) >= $epsilon) {
                $giodoc = substr($movimenti['datdoc'],8,2);
                $mesdoc = substr($movimenti['datdoc'],5,2);
                $anndoc = substr($movimenti['datdoc'],0,4);
@@ -175,7 +180,7 @@ function createArrayCrediti($result,$pagame,$utsval) {
                     }
                }
             }
-            if($progr > 0 and $progr >= $movimenti['import']) {
+            if($progr > 0 and ($progr > $movimenti['import'] or abs($progr-$movimenti['import']) < $epsilon)) {
                $progr -= $movimenti["import"];
             }
         }
