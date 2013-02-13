@@ -64,13 +64,13 @@ function createArrayCrediti($result,$pagame,$utsval) {
             if($progr >= 0) {
                $progr += $movimenti["import"];
             }
-            if($progr < 0 and $progr >= -$movimenti["import"]) {
+            if($progr < 0 and ($progr > -$movimenti["import"] or abs($progr+$movimenti['import'])<$epsilon)) {
                $progr += $movimenti["import"];
                //questo per eliminare tutti gli array
                $righiCrediti = array();
                $rigo = 0;
             }
-            if($progr < 0 and $progr < -$movimenti["import"]) {
+            if($progr < 0 and $progr < -$movimenti["import"] and abs($progr+$movimenti['import'])>=$epsilon) {
                $parzi = $movimenti["import"];
                $progr += $movimenti["import"];
                foreach ($righiCrediti as $key => $value) {
@@ -104,7 +104,7 @@ function createArrayCrediti($result,$pagame,$utsval) {
                                $righiCrediti[$rigo]['descri'] = substr($movimenti['descri'],0,18)." N.".$movimenti['numdoc']." DEL ".$giodoc."-".$mesdoc."-".$anndoc;
                                break;
                                default:
-                               $righiCrediti[$rigo]['descri'] = "";
+                               $righiCrediti[$rigo]['descri'] = $movimenti['descri'];
                                break;
                        }
                        switch($movimenti['caucon']) {
@@ -149,7 +149,7 @@ function createArrayCrediti($result,$pagame,$utsval) {
                                $righiCrediti[$rigo]['descri'] = substr($movimenti['descri'],0,18)." N.".$movimenti['numdoc']." DEL ".$giodoc."-".$mesdoc."-".$anndoc;
                                break;
                                default:
-                               $righiCrediti[$rigo]['descri'] = "";
+                               $righiCrediti[$rigo]['descri'] = $movimenti['descri'];
                                break;
                           }
                        switch($movimenti['caucon']) {
