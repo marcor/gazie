@@ -117,7 +117,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
    //recupero tutti i movimenti contabili del conto insieme alle relative testate per creare l'array dei crediti
    $utsemi= mktime(0,0,0,$_POST['mesemi'],$_POST['gioemi'],$_POST['annemi']);
    $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$conto['codpag']);
-   $result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = {$conto['codice']} and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon = {$conto['codice']} and datreg IN (SELECT min(datreg) FROM gaz_001tesmov)) ORDER BY datreg asc");
+   $result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = {$conto['codice']} and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon = {$conto['codice']} and datreg IN (SELECT min(datreg) FROM ".$gTables['tesmov']." WHERE darave='D')) ORDER BY datreg asc");
    $_POST['righi'] = createArrayCrediti($result,$pagame,$utsemi);
    $_POST['num_rigo'] = $_POST['righi']['numrighi'] ;
    $_POST['righi'] = array_splice($_POST['righi'],0,$_POST['num_rigo']);
