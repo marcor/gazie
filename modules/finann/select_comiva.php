@@ -169,7 +169,7 @@ if (isset($_POST['Return'])) {
                  $form['rotimp'],$form['rotiva'],$form['ivaatt'],$form['ivapas'],$ivadebit,$ivacredit );
       // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
       header('Content-Type: text/x-ivc');
-      header("Content-Disposition: attachment; filename=".$form['codfis']."_".date("y").'_'.$A[0].$year.".ivc");
+      header("Content-Disposition: attachment; filename=".$form['codfis']."_".date("y").'_'.$A[0]."10.ivc");
       header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
       if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
          header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
