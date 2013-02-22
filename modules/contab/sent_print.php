@@ -42,7 +42,7 @@ if (isset($_SESSION['print_request'])){
         $url="setTimeout(\"window.location='".$request['script_name'].".php?";
         unset($request['script_name']);
         foreach($request as $k=>$v){
-           $url .=$k.'='.$v.'&';
+           $url .=$k.'='.preg_replace("/\'/",'`',$v).'&';
         }
         $url .="'\",500)\n";
         //fine formattazione url
@@ -50,6 +50,7 @@ if (isset($_SESSION['print_request'])){
         echo "<script type=\"text/javascript\">\n";
         echo $url;
         echo "</script></HEAD>\n<BODY><DIV align=\"center\">Wait for PDF</DIV><DIV align=\"center\">Aspetta il PDF</DIV></BODY></HTML>";
+
     } else {  //altrimenti torno indietro
         header("Location: ".$_SERVER['HTTP_REFERER']);
         exit;
