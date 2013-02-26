@@ -1,8 +1,8 @@
 <?php
- /* $Id: document.php,v 1.50 2011/01/04 16:13:01 devincen Exp $
+ /* $
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2012 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2013 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
                         <http://gazie.it>
  --------------------------------------------------------------------------
