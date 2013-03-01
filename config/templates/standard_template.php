@@ -36,7 +36,6 @@ class Standard_template extends TCPDF
        } else {
            $this->link='../config/admin_aziend.php';
        }
-       $this->n_page=$n_page;
        $this->intesta1 = $admin_aziend['ragso1'].' '.$admin_aziend['ragso2'];
        $this->intesta2 = $admin_aziend['indspe'].' '.sprintf("%05d",$admin_aziend['capspe']).' '.$admin_aziend['citspe'].' ('.$admin_aziend['prospe'].')';
        $this->intesta3 = 'Tel.'.$admin_aziend['telefo'].' C.F. '.$admin_aziend['codfis'].' P.I. '.$admin_aziend['pariva'];
@@ -54,13 +53,21 @@ class Standard_template extends TCPDF
        $this->SetHeaderMargin(7);
        $this->SetTopMargin(44);
        $this->SetFooterMargin(23);
-       $this->StartPageGroup();
+       if ($n_page){
+           $this->StartPageGroup();
+           $this->n_page=$n_page;
+       }
        $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
    }
 
     public function setCover($cover_data=false)
     {
         $this->cover = $cover_data;
+    }
+
+    public function setNpage($page_data)
+    {
+        $this->n_page = $page_data;
     }
 
     public function setTopBar($top_bar=false)

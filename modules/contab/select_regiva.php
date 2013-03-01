@@ -212,7 +212,7 @@ if (isset($_POST['print']) && $msg=='') {
                                      'ds'=>$form['descri'],
                                      'pi'=>$form['page_ini'],
                                      'sd'=>$form['sta_def'],
-                                     'mt'=>$form['sem_ord'],
+                                     'so'=>$form['sem_ord'],
                                      'cv'=>$form['cover'],
                                      'ri'=>date("dmY",$utsini),
                                      'rf'=>date("dmY",$utsfin)

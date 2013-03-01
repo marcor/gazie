@@ -2,7 +2,7 @@
 /*
 --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2012 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2013 - Antonio De Vincentiis Montesilvano (PE)
                                 (www.devincentiis.it)
                         <http://gazie.it>
  --------------------------------------------------------------------------
@@ -24,14 +24,15 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-
-$mastroCassa = substr($admin_aziend['cassa_'],0,3);
+if (!ini_get('safe_mode')){ //se me lo posso permettere...
+    ini_set('memory_limit','128M');
+    gaz_set_time_limit (300);
+}
 if (!isset($_GET['vr']) ||
     !isset($_GET['vs']) ||
-    !isset($_GET['ds']) ||
     !isset($_GET['pi']) ||
     !isset($_GET['sd']) ||
-    !isset($_GET['mt']) ||
+    !isset($_GET['so']) ||
     !isset($_GET['cv']) ||
     !isset($_GET['ri']) ||
     !isset($_GET['rf'])) {
@@ -39,271 +40,303 @@ if (!isset($_GET['vr']) ||
     exit;
 }
 
-$gioini = substr($_GET['ri'],0,2);
-$mesini = substr($_GET['ri'],2,2);
-$annini = substr($_GET['ri'],4,4);
-$utsini= mktime(0,0,0,$mesini,$gioini,$annini);
-$giofin = substr($_GET['rf'],0,2);
-$mesfin = substr($_GET['rf'],2,2);
-$annfin = substr($_GET['rf'],4,4);
-$utsfin= mktime(0,0,0,$mesfin,$giofin,$annfin);
-$datainizio = date("Ymd",$utsini);
-$datafine = date("Ymd",$utsfin);
-
-//recupero tutti i movimenti IVA del conto insieme alle relative testate
-$what = $gTables['tesmov'].".*, ".
-        $gTables['rigmoi'].".*,
-        CONCAT(".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc, ".
-        $gTables['aliiva'].".descri AS desiva "
-        ;
-$table = $gTables['rigmoi']." LEFT JOIN ".$gTables['tesmov']." ON (".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes)
-         LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice)
-         LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra)
-         LEFT JOIN ".$gTables['aliiva']." ON (".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice)";
-$orderby = "datreg ASC , protoc ASC, id_rig ASC";
-$where = "datreg BETWEEN $datainizio AND $datafine AND seziva = ".intval($_GET['vs'])." AND regiva = ".intval($_GET['vr']);
-$result = gaz_dbi_dyn_query($what, $table, $where, $orderby);
-
-switch($_GET['vr']) {
-case 2:
-    $title = 'Registro delle fatture di vendita '.$_GET['ds'];
-    $cliforsco = 'Ragione Sociale Cliente';
-    $cover_descri = 'Registro delle fatture di vendita dell\'anno '.date("Y",$utsfin)."\n sezione I.V.A. n.".$_GET['vs'];
-    break;
-case 4:
-    $title = 'Registro dei corrispettivi '.$_GET['ds'];
-    $cliforsco = 'Descrizione';
-    $cover_descri = 'Registro dei corrispettivi dell\'anno '.date("Y",$utsfin)."\n sezione I.V.A. n.".$_GET['vs'];
-    break;
-case 6:
-    $title = 'Registro degli acquisti '.$_GET['ds'];
-    $cliforsco = 'Ragione Sociale Fornitore';
-    $cover_descri = 'Registro degli acquisti dell\'anno '.date("Y",$utsfin)."\n sezione I.V.A. n.".$_GET['vs'];
-    break;
-}
-
-$topCarry = array(array('lenght' => 118,'name'=>'da riporto : ','frame' => 'B','fill'=>0,'font'=>8),
-                  array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>0),
-                  array('lenght' => 32,'name'=>'','frame' => 1,'fill'=>0),
-                  array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>0));
-$botCarry = array(array('lenght' => 118,'name'=>'a riporto : ','frame' => 'T','fill'=>0,'font'=>8),
-                  array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>1),
-                  array('lenght' => 32,'name'=>'','frame' => 1,'fill'=>1),
-                  array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>1));
-$top = array(array('lenght' => 10,'name'=>'N.Prot.','frame' => 1,'fill'=>1,'font'=>8),
-             array('lenght' => 18,'name'=>'Data Reg.','frame' => 1,'fill'=>1),
-             array('lenght' => 32,'name'=>'N.Documento/Descr.','frame' => 1,'fill'=>1),
-             array('lenght' => 18,'name'=>'Data Doc.','frame' => 1,'fill'=>1),
-             array('lenght' => 40,'name'=>$cliforsco,'frame' => 1,'fill'=>1),
-             array('lenght' => 20,'name'=>'Imponibile','frame' => 1,'fill'=>1),
-             array('lenght' => 14,'name'=>'Perc.','frame' => 1,'fill'=>1),
-             array('lenght' => 18,'name'=>'Imposta','frame' => 1,'fill'=>1),
-             array('lenght' => 20,'name'=>'Totale','frame' => 1,'fill'=>1));
-
 require("../../config/templates/standard_template.php");
-$pdf = new Standard_template();
-$n_page = intval($_GET['pi']);
-if ($_GET['cv']=='cover') {
-   $n_page--;
-}
-$pdf->setVars($admin_aziend,$title,0,array('ini_page'=>$n_page,'year'=>'Sezione IVA n.'.intval($_GET['vs']).' Pagina '.$annfin));
-if ($_GET['cv']=='cover') {
-   $pdf->setCover($cover_descri);
-   $pdf->AddPage();
-}
-$pdf->setTopBar($top);
-$pdf->AddPage();
-$pdf->setFooterMargin(21);
-$pdf->setTopMargin(44);
-$pdf->SetFont('helvetica','',8);
-$castelconti = array();
-$totimponi =0.00;
-$totimpost =0.00;
-$totmovpre =0.00;
-$totmovsuc =0.00;
-$ctrlmovco = 0;
-$ctrlmoiva = 0;
-$saldo = 0.00;
-$key="";
 
-while ($mov = gaz_dbi_fetch_array($result)) {
-      $giomov = substr($mov['datreg'],8,2);
-      $mesmov = substr($mov['datreg'],5,2);
-      $annmov = substr($mov['datreg'],0,4);
-      $giodoc = substr($mov['datdoc'],8,2);
-      $mesdoc = substr($mov['datdoc'],5,2);
-      $anndoc = substr($mov['datdoc'],0,4);
-      $utsmov= mktime(0,0,0,$mesmov,$giomov,$annmov);
-      $utsdoc= mktime(0,0,0,$mesdoc,$giodoc,$anndoc);
-      $datamov = date("d-m-Y",$utsmov);
-      $datadoc = date("d-m-Y",$utsdoc);
-      $codiva = $mov['codiva'];
-      switch ($mov['operat']) {
-             case "1":
-             $imponi = $mov['imponi'];
-             $impost = $mov['impost'];
-             $sezion = "/".$mov['seziva'];
-             break;
-             case "2":
-             $imponi = number_format(-$mov['imponi'],2, '.', '');
-             $impost = number_format(-$mov['impost'],2, '.', '');
-             $sezion = "";
-             break;
-             default:
-             $imponi = 0;
-             $impost = 0;
-             $sezion = "";
-             break;
-      }
-      $totimponi += $imponi;
-      if ($mov['tipiva'] != "D") {
-         $totimpost += $impost;
-      }
-      if (!isset($castelimponi[$codiva])) {
-         $castelimponi[$codiva]= 0;
-      }
-      $castelimponi[$codiva] = number_format(($castelimponi[$codiva]+ $imponi),2,'.','');
-      if (!isset($castelimpost[$codiva])) {
-         $castelimpost[$codiva]= 0;
-      }
-      $castelimpost[$codiva] = number_format(($castelimpost[$codiva]+ $impost),2,'.','');
-      if ($ctrlmovco != $mov['id_tes']) {
-         $pdf->Cell(10,4,$mov['protoc'],'LTB',0,'C');
-         $pdf->Cell(18,4,$datamov,'LTB',0,'C');
-         $pdf->Cell(32,4,$mov['numdoc'],'LTB',0,'C');
-         $pdf->Cell(18,4,$datadoc,'LTB',0,'R');
-         $pdf->Cell(112,4,$mov['ragsoc'],'LTR',1,'L');
-         $topCarry[1]['name']= gaz_format_number($totimponi);
-         $botCarry[1]['name']= gaz_format_number($totimponi);
-         $topCarry[2]['name']= gaz_format_number($totimpost);
-         $botCarry[2]['name']= gaz_format_number($totimpost);
-         $topCarry[3]['name']= gaz_format_number($totimponi+$totimpost);
-         $botCarry[3]['name']= gaz_format_number($totimponi+$totimpost);
-         $pdf->setTopCarryBar($topCarry);
-         $pdf->setBotCarryBar($botCarry);
-         $pdf->Cell(66,4,$mov['descri'],'LTB',0,'R');
-         $pdf->Cell(12,4,'cod. '.$mov['codiva'],1,0,'C');
-         $pdf->Cell(40,4,$mov['desiva'],1,0,'L');
-         $pdf->Cell(20,4,gaz_format_number($imponi),1,0,'R');
-         $pdf->Cell(14,4,gaz_format_number($mov['periva']).'%',1,0,'C');
-         $pdf->Cell(18,4,gaz_format_number($impost),1,0,'R');
-         $pdf->Cell(20,4,gaz_format_number($impost + $imponi),1,1,'R');
-         $topY = $pdf->GetY();
-         $maxY = $pdf->GetY();
-         //se e' una semplificata recupero anche i righi contabili
-         if ($_GET['mt']==1) {
-            $rs_righicontabili = gaz_dbi_dyn_query("*",
-                               $gTables['rigmoc']." LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice)",
-                                      "id_tes = '".$mov['id_tes']."'
-                                      AND codcon NOT LIKE '".$admin_aziend['mascli']."%'
-                                      AND codcon NOT LIKE '".$admin_aziend['masfor']."%'
-                                      AND codcon NOT LIKE '$mastroCassa%'
-                                      AND codcon NOT LIKE '".$admin_aziend['masban']."%'
-                                      AND codcon <> ".$admin_aziend['ivaacq']."
-                                      AND codcon <> ".$admin_aziend['ivaven']."
-                                      AND codcon <> ".$admin_aziend['ivacor'],
-                                      "id_rig asc");
-            while ($righi_cont = gaz_dbi_fetch_array($rs_righicontabili)) {
-               $codcon = $righi_cont['codcon'];
-               $pdf->SetFont('helvetica','',7);
-               $pdf->Cell(50,4,$righi_cont['codcon']."-".substr($righi_cont['descri'],0,23),'L');
-               $pdf->Cell(1,4,$admin_aziend['symbol']);
-               $maxY = $pdf->GetY();
-               $pdf->Cell(15,4,gaz_format_number($righi_cont['import']),'R',1,'R');
-               $pdf->SetFont('helvetica','',8);
-               if (!isset($castelconti[$codcon])) {
-                   $castelconti[$codcon] = array('value'=>0,'ds'=>0);
-                   $castelconti[$codcon]['ds'] = $righi_cont['descri'];
-               }
-               if (($righi_cont['darave'] == 'A' and $mov['regiva'] > 5) or ($righi_cont['darave'] == 'D' and $mov['regiva'] <= 5) ) {
-                    $castelconti[$codcon]['value'] -= $righi_cont['import'];
-               } else {
-                    $castelconti[$codcon]['value'] += $righi_cont['import'];
-               }
+class vatBook extends Standard_template
+{
+    function setData($url_get,$gTables,$admin_aziend) {
+        $this->azienda = $admin_aziend;
+        require("lang.".$admin_aziend['lang'].".php");
+        $this->script_transl=$strScript['stampa_regiva.php'];
+        $this->endyear=substr($url_get['rf'],4,4);
+        $this->vatsect=intval($url_get['vs']);
+        $this->typbook=intval($url_get['vr']);
+        $this->semplificata=intval($url_get['so']);
+        $this->inidate=date("Ymd",mktime(0,0,0,substr($url_get['ri'],2,2),substr($url_get['ri'],0,2),substr($url_get['ri'],4,4)));
+        $this->enddate=date("Ymd",mktime(0,0,0,substr($url_get['rf'],2,2),substr($url_get['rf'],0,2),substr($url_get['rf'],4,4)));
+    }
+    
+    function getRows($gTables) { // recupera i righi dell'intervallo settato 
+        //recupero i movimenti IVA del conto insieme alle relative testate
+        $what = $gTables['tesmov'].".*, ".
+                $gTables['rigmoi'].".*,
+                CONCAT(".$gTables['anagra'].".ragso1, ' ',".$gTables['anagra'].".ragso2) AS ragsoc, ".
+                $gTables['aliiva'].".descri AS desiva ";
+        $table= $gTables['rigmoi']." LEFT JOIN ".$gTables['tesmov']." ON (".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes)
+                LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice)
+                LEFT JOIN ".$gTables['anagra']." ON (".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra)
+                LEFT JOIN ".$gTables['aliiva']." ON (".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice)";
+        $orderby="datreg ASC , protoc ASC, id_rig ASC";
+        $where="datreg BETWEEN ".$this->inidate." AND ".$this->enddate." AND seziva = ". $this->vatsect." AND regiva = ".$this->typbook;
+        $result = gaz_dbi_dyn_query($what, $table, $where, $orderby);        
+        $this->rows = array();
+        $this->vat_castle = array();
+        $this->acc_castle = array();
+        $this->taxable =0.00;
+        $this->tax =0.00;
+        $ctrl_idtes=0;
+        while ($mov = gaz_dbi_fetch_array($result)) {
+            $codiva = $mov['codiva'];
+            $id_tes = $mov['id_tes'];
+            switch ($mov['operat']) {
+                case "1":
+                    $taxable = $mov['imponi'];
+                    $tax = $mov['impost'];
+                break;
+                case "2":
+                    $taxable = -$mov['imponi'];
+                    $tax = -$mov['impost'];
+                break;
+                default:
+                    $taxable = 0;
+                    $tax = 0;
+                break;
             }
-         }
-      } else {
-         if ($maxY > $topY) {
-            $topY = $maxY;
-         }
-         $topCarry[1]['name']= gaz_format_number($totimponi);
-         $botCarry[1]['name']= gaz_format_number($totimponi);
-         $topCarry[2]['name']= gaz_format_number($totimpost);
-         $botCarry[2]['name']= gaz_format_number($totimpost);
-         $topCarry[3]['name']= gaz_format_number($totimponi+$totimpost);
-         $botCarry[3]['name']= gaz_format_number($totimponi+$totimpost);
-         $pdf->setTopCarryBar($topCarry);
-         $pdf->setBotCarryBar($botCarry);
-         $pdf->SetXY(76,$topY);
-         $pdf->Cell(12,4,'cod. '.$mov['codiva'],1,0,'C');
-         $pdf->Cell(40,4,$mov['desiva'],1,0,'L');
-         $pdf->Cell(20,4,gaz_format_number($imponi),1,0,'R');
-         $pdf->Cell(14,4,gaz_format_number($mov['periva']).'%',1,0,'C');
-         $pdf->Cell(18,4,gaz_format_number($impost),1,0,'R');
-         $pdf->Cell(20,4,gaz_format_number($impost + $imponi),1,1,'R');
-         $topY = $pdf->GetY();
-      }
-      $ctrlmovco = $mov['id_tes'];
-}
-$pdf->setTopCarryBar('');
-$pdf->setBotCarryBar('');
-$pdf->Cell(190,1,'','T');
-$pdf->SetFont('helvetica','B',10);
-$pdf->Ln(6);
-$pdf->Cell(190,6,'RIEPILOGO TOTALI PER ALIQUOTE',1,1,'C',1);
-$pdf->Cell(20,5,'cod'.$key,1,0,'C');
-$pdf->Cell(60,5,'descrizione',1,0,'C');
-$pdf->Cell(30,5,'imponibile',1,0,'R');
-$pdf->Cell(20,5,'%',1,0,'C');
-$pdf->Cell(30,5,'imposta',1,0,'R');
-$pdf->Cell(30,5,'totale',1,1,'R');
-$totale = number_format(($totimponi+$totimpost),2,'.','');
-foreach ($castelimponi as $key => $value) {
-     $iva = gaz_dbi_get_row($gTables['aliiva'],"codice",$key);
-     $pdf->Cell(20,5,$key,1,0,'C');
-     $pdf->Cell(60,5,$iva['descri'],1,0,'C');
-     $pdf->Cell(30,5,gaz_format_number($value),1,0,'R');
-     $pdf->Cell(20,5,$iva['aliquo'].'%',1,0,'C');
-     $pdf->Cell(30,5,gaz_format_number($castelimpost[$key]),1,0,'R');
-     $pdf->Cell(30,5,gaz_format_number($value + $castelimpost[$key]),1,1,'R');
-}
-$pdf->SetFont('helvetica','B',10);
-$pdf->Cell(80,5,'TOTALE GENERALE',1,0,'C',1);
-$pdf->Cell(30,5,gaz_format_number($totimponi),1,0,'R',1);
-$pdf->Cell(20,5);
-$pdf->Cell(30,5,gaz_format_number($totimpost),1,0,'R',1);
-$pdf->Cell(30,5,gaz_format_number($totale),1,1,'R',1);
-
-if ($_GET['mt']==1) {
-   $pdf->Ln(6);
-   $pdf->SetFont('helvetica','B',10);
-   $pdf->Cell(35);
-   $pdf->Cell(120,6,'RIEPILOGO TOTALI CONTI',1,2,'C',1);
-   $pdf->Cell(20,5,'codice',1,0,'C');
-   $pdf->Cell(75,5,'descrizione',1,0,'C');
-   $pdf->Cell(25,5,'importo',1,1,'R');
-   $pdf->SetFont('helvetica','',8);
-   foreach ($castelconti as $key => $value) {
-     $pdf->Cell(35);
-     $pdf->Cell(20,5,$key,1,0,'C');
-     $pdf->Cell(75,5,$value['ds'],1,0,'L');
-     $pdf->Cell(25,5,gaz_format_number($value['value']),1,1,'R');
-   }
+            // aggiungo ai totali generali
+            $this->taxable += $taxable;
+            if ($mov['tipiva'] != "D") {
+               $this->tax += $tax;
+            }
+            
+            // creo il castelletto IVA
+            if (!isset($this->vat_castle[$codiva]['taxable'])) {
+               $this->vat_castle[$codiva]['taxable']= 0;
+            }
+            $this->vat_castle[$codiva]['taxable'] += $taxable;
+            
+            if (!isset($this->vat_castle[$codiva]['tax'])) {
+               $this->vat_castle[$codiva]['tax']= 0;
+            }
+            $this->vat_castle[$codiva]['tax'] += $tax;
+            //se e' una semplificata recupero anche i righi contabili
+            $this->acc_rows = array();
+            if ($this->semplificata==1 && $ctrl_idtes<>$id_tes) {
+                $rs_accounting_rows = gaz_dbi_dyn_query("*",
+                    $gTables['rigmoc']." LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice)",
+                           "id_tes = '".$mov['id_tes']."'
+                           AND codcon NOT LIKE '".$this->azienda['mascli']."%'
+                           AND codcon NOT LIKE '".$this->azienda['masfor']."%'
+                           AND codcon NOT LIKE '".substr($this->azienda['cassa_'],0,3)."%'
+                           AND codcon NOT LIKE '".$this->azienda['masban']."%'
+                           AND codcon <> ".$this->azienda['ivaacq']."
+                           AND codcon <> ".$this->azienda['ivaven']."
+                           AND codcon <> ".$this->azienda['ivacor'],
+                          "id_rig asc");
+                while ($acc_rows = gaz_dbi_fetch_array($rs_accounting_rows)) {
+                    $codcon = $acc_rows['codcon'];
+                    if (!isset($this->acc_castle[$codcon])) {
+                        $this->acc_castle[$codcon] = array('value'=>0,'descri'=>'');
+                        $this->acc_castle[$codcon]['descri'] = $acc_rows['descri'];
+                    }
+                    if (($acc_rows['darave'] == 'A' && $mov['regiva'] > 5) || ($acc_rows['darave'] == 'D' && $mov['regiva'] <= 5) ) {
+                        $this->acc_castle[$codcon]['value'] -= $acc_rows['import'];
+                    } else {
+                        $this->acc_castle[$codcon]['value'] += $acc_rows['import'];
+                    }
+                    $this->acc_rows[$codcon] = array('value'=>$acc_rows['import'],'descri'=>$acc_rows['descri']);
+                }
+                $this->rows[]=$mov+array('acc_rows'=>$this->acc_rows);
+            } else {
+                $this->rows[]=$mov;
+            }
+            $ctrl_idtes=$id_tes;
+        }
+    }
 }
 
-switch($_GET['vr']) {
-        case 2:
-        $azireg='upgve'.intval($_GET['vs']);
-        break;
-        case 4:
-        $azireg='upgco'.intval($_GET['vs']);
-        break;
-        case 6:
-        $azireg='upgac'.intval($_GET['vs']);
-        break;
+// -------------  INIZIO STAMPA  -------------------------------
+
+$difYears = substr($_GET['rf'],4,4) - substr($_GET['ri'],4,4);
+$difMonths = substr($_GET['rf'],2,2) - substr($_GET['ri'],2,2) + $difYears*12;
+$pdf = new vatBook();
+$ini_page = intval($_GET['pi']);
+if ($_GET['cv']=='cover') {
+   $ini_page--;
 }
-if ($_GET['sd']=='sta_def') {
-    gaz_dbi_put_row($gTables['aziend'],'codice',$admin_aziend['codice'],$azireg, $pdf->getGroupPageNo()+$n_page-1);
+$url_get=$_GET;
+for( $i = 0; $i <= $difMonths; $i++ ) {
+    if ($difMonths==0) { // il solo
+        $url_get['ri']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2),substr($_GET['ri'],0,2),substr($_GET['ri'],4,4)));
+        $url_get['rf']=date("dmY",mktime(0,0,0,substr($_GET['rf'],2,2),substr($_GET['rf'],0,2),substr($_GET['rf'],4,4)));
+    } elseif ($i==0) { // il primo
+        $url_get['ri']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2),substr($_GET['ri'],0,2),substr($_GET['ri'],4,4)));
+        $url_get['rf']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2)+1,0,substr($_GET['ri'],4,4)));
+    } elseif ($i==$difMonths) { // l'ultimo
+        $url_get['ri']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2)+$i,1,substr($_GET['ri'],4,4)));
+        $url_get['rf']=date("dmY",mktime(0,0,0,substr($_GET['rf'],2,2),substr($_GET['rf'],0,2),substr($_GET['rf'],4,4)));
+    } else { // gli intermedi
+        $url_get['ri']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2)+$i,1,substr($_GET['ri'],4,4)));
+        $url_get['rf']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2)+$i+1,0,substr($_GET['ri'],4,4)));
+    }
+
+    $pdf->setData($url_get,$gTables,$admin_aziend);
+    if ($i==0) {
+        $n_page=array('ini_page'=>$ini_page,'year'=>ucwords($pdf->script_transl['vat_section']).$pdf->vatsect.' '.$pdf->script_transl['page'].' '.substr($url_get['ri'],4,4));
+    } else {
+        $n_page=false;
+    }
+    $pdf->setVars($admin_aziend,$pdf->script_transl['title'][$pdf->typbook].ucwords(strftime("%B %Y", mktime (0,0,0,substr($url_get['ri'],2,2),1,substr($url_get['ri'],4,4)))),0,$n_page);
+    $pdf->getRows($gTables);
+    if ($_GET['cv']=='cover') {
+       $pdf->setCover($pdf->script_transl['cover_descri'][$pdf->typbook]."\n".substr($url_get['ri'],4,4)."\n".$pdf->script_transl['vat_section'].$pdf->vatsect);
+       $pdf->AddPage();
+       $_GET['cv']='';
+    }
+    // creo la matrice dei valori per la stampa della barra delle descrizioni delle colonne
+    $topCarry = array(array('lenght' => 118,'name'=>$pdf->script_transl['top_carry'],'frame' => 'B','fill'=>0,'font'=>8),
+                      array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>0),
+                      array('lenght' => 32,'name'=>'','frame' => 1,'fill'=>0),
+                      array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>0));
+    $botCarry = array(array('lenght' => 118,'name'=>$pdf->script_transl['bot_carry'],'frame' => 'T','fill'=>0,'font'=>8),
+                      array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>1),
+                      array('lenght' => 32,'name'=>'','frame' => 1,'fill'=>1),
+                      array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>1));
+    $top = array(array('lenght' => 10,'name'=>$pdf->script_transl['top']['prot'],'frame' => 1,'fill'=>1,'font'=>7),
+                 array('lenght' => 18,'name'=>$pdf->script_transl['top']['dreg'],'frame' => 1,'fill'=>1),
+                 array('lenght' => 32,'name'=>$pdf->script_transl['top']['desc'],'frame' => 1,'fill'=>1),
+                 array('lenght' => 18,'name'=>$pdf->script_transl['top']['ddoc'],'frame' => 1,'fill'=>1),
+                 array('lenght' => 40,'name'=>$pdf->script_transl['partner_descri'][$pdf->typbook],'frame' => 1,'fill'=>1),
+                 array('lenght' => 20,'name'=>$pdf->script_transl['top']['txbl'],'frame' => 1,'fill'=>1),
+                 array('lenght' => 14,'name'=>$pdf->script_transl['top']['perc'],'frame' => 1,'fill'=>1),
+                 array('lenght' => 18,'name'=>$pdf->script_transl['top']['tax'],'frame' => 1,'fill'=>1),
+                 array('lenght' => 20,'name'=>$pdf->script_transl['top']['tot'],'frame' => 1,'fill'=>1));
+    $pdf->setTopBar($top);
+    $pdf->AddPage();
+    $pdf->setFooterMargin(21);
+    $pdf->setTopMargin(44);
+    $pdf->SetFont('helvetica','',8);
+    $maxY = $pdf->GetY();
+    $ctrl=0;
+    $totimponi =0.00;
+    $totimpost =0.00;
+    foreach($pdf->rows as $k=>$v) {
+        switch ($v['operat']) {
+               case "1":
+               $imponi = $v['imponi'];
+               $impost = $v['impost'];
+               break;
+               case "2":
+               $imponi = number_format(-$v['imponi'],2, '.', '');
+               $impost = number_format(-$v['impost'],2, '.', '');
+               break;
+               default:
+               $imponi = 0;
+               $impost = 0;
+               break;
+        }
+        $totimponi += $imponi;
+        if ($v['tipiva'] != "D") {
+            $totimpost += $impost;
+        }
+        if ($ctrl != $v['id_tes']) { // primo rigo iva del movimento contabile
+            if ($maxY>265){
+                $pdf->AddPage();
+                $maxY = $pdf->GetY();
+            }
+            $pdf->SetY($maxY);
+            $pdf->Cell(10,4,$v['protoc'],'LTB',0,'C');
+            $pdf->Cell(18,4,gaz_format_date($v['datreg']),'LTB',0,'C');
+            $pdf->Cell(32,4,$v['numdoc'],'LTB',0,'C');
+            $pdf->Cell(18,4,gaz_format_date($v['datdoc']),'LTB',0,'R');
+            $pdf->Cell(112,4,$v['ragsoc'],'LTR',1,'L');
+            $topCarry[1]['name']= gaz_format_number($totimponi).' ';
+            $botCarry[1]['name']= gaz_format_number($totimponi).' ';
+            $topCarry[2]['name']= gaz_format_number($totimpost).' ';
+            $botCarry[2]['name']= gaz_format_number($totimpost).' ';
+            $topCarry[3]['name']= gaz_format_number($totimponi+$totimpost).' ';
+            $botCarry[3]['name']= gaz_format_number($totimponi+$totimpost).' ';
+            $pdf->setTopCarryBar($topCarry);
+            $pdf->setBotCarryBar($botCarry);
+            $pdf->Cell(66,4,$v['descri'],'LTB',0,'R');
+            $pdf->Cell(12,4,'cod. '.$v['codiva'],1,0,'C');
+            $pdf->Cell(40,4,$v['desiva'],1,0,'L');
+            $pdf->Cell(20,4,gaz_format_number($v['imponi']),1,0,'R');
+            $pdf->Cell(14,4,gaz_format_number($v['periva']).'%',1,0,'C');
+            $pdf->Cell(18,4,gaz_format_number($v['impost']),1,0,'R');
+            $pdf->Cell(20,4,gaz_format_number($v['impost'] + $v['imponi']),1,1,'R');
+            $topY = $pdf->GetY();
+            if (isset($v['acc_rows'])) {
+                foreach ($v['acc_rows']as $k1=>$v1){
+                    $pdf->SetFont('helvetica','',7);
+                    $pdf->Cell(50,4,$k1."-".substr($v1['descri'],0,23),'L');
+                    $pdf->Cell(1,4,$admin_aziend['symbol']);
+                    $pdf->Cell(15,4,gaz_format_number($v1['value']),'R',1,'R');
+                    $pdf->SetFont('helvetica','',8);
+                }
+            }
+            $maxY = $pdf->GetY();                        
+        } else { // righi iva successivi al primo
+            $pdf->SetY($topY);
+            $pdf->Cell(66,4,'','L');
+            $pdf->Cell(12,4,'cod. '.$v['codiva'],1,0,'C');
+            $pdf->Cell(40,4,$v['desiva'],1,0,'L');
+            $pdf->Cell(20,4,gaz_format_number($v['imponi']),1,0,'R');
+            $pdf->Cell(14,4,gaz_format_number($v['periva']).'%',1,0,'C');
+            $pdf->Cell(18,4,gaz_format_number($v['impost']),1,0,'R');
+            $pdf->Cell(20,4,gaz_format_number($v['impost'] + $v['imponi']),1,1,'R');
+            $topCarry[1]['name']= gaz_format_number($totimponi).' ';
+            $botCarry[1]['name']= gaz_format_number($totimponi).' ';
+            $topCarry[2]['name']= gaz_format_number($totimpost).' ';
+            $botCarry[2]['name']= gaz_format_number($totimpost).' ';
+            $topCarry[3]['name']= gaz_format_number($totimponi+$totimpost).' ';
+            $botCarry[3]['name']= gaz_format_number($totimponi+$totimpost).' ';
+            $pdf->setTopCarryBar($topCarry);
+            $pdf->setBotCarryBar($botCarry);
+            if ( $maxY < $pdf->GetY()){
+                 $maxY = $pdf->GetY();                        
+            }
+            $topY = $pdf->GetY();                        
+        }
+        $ctrl = $v['id_tes'];
+    }
+    
+    $pdf->setTopCarryBar('');
+    $pdf->setBotCarryBar('');
+    $pdf->Cell(190,1,'','T');
+    $pdf->SetFont('helvetica','B',10);
+    $pdf->Ln(6);
+    $pdf->Cell(190,6,$pdf->script_transl['vat_castle_title'],1,1,'C',1);
+    $pdf->Cell(20,5,'cod.',1,0,'C');
+    $pdf->Cell(60,5,$pdf->script_transl['descri'],1,0,'C');
+    $pdf->Cell(30,5,$pdf->script_transl['taxable'],1,0,'R');
+    $pdf->Cell(20,5,'%',1,0,'C');
+    $pdf->Cell(30,5,$pdf->script_transl['tax'],1,0,'R');
+    $pdf->Cell(30,5,$pdf->script_transl['tot'],1,1,'R');
+    foreach ($pdf->vat_castle as $k=>$v) {
+         $iva = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
+         $pdf->Cell(20,5,$k,1,0,'C');
+         $pdf->Cell(60,5,$iva['descri'],1,0,'C');
+         $pdf->Cell(30,5,gaz_format_number($v['taxable']),1,0,'R');
+         $pdf->Cell(20,5,$iva['aliquo'].'%',1,0,'C');
+         $pdf->Cell(30,5,gaz_format_number($v['tax']),1,0,'R');
+         $pdf->Cell(30,5,gaz_format_number($v['taxable'] + $v['tax']),1,1,'R');
+    }
+    $pdf->SetFont('helvetica','B',10);
+    $pdf->Cell(80,5,$pdf->script_transl['tot_descri'],1,0,'C',1);
+    $pdf->Cell(30,5,gaz_format_number($pdf->taxable),1,0,'R',1);
+    $pdf->Cell(20,5);
+    $pdf->Cell(30,5,gaz_format_number($pdf->tax),1,0,'R',1);
+    $pdf->Cell(30,5,gaz_format_number($pdf->taxable+$pdf->tax),1,1,'R',1);
+    if (count($pdf->acc_castle)>0) {
+        $pdf->Ln(6);
+        $pdf->SetFont('helvetica','B',10);
+        $pdf->Cell(35);
+        $pdf->Cell(120,6,$pdf->script_transl['acc_castle_title'],1,2,'C',1);
+        $pdf->Cell(20,5,'cod.',1,0,'C');
+        $pdf->Cell(75,5,$pdf->script_transl['descri'],1,0,'C');
+        $pdf->Cell(25,5,$pdf->script_transl['amount'],1,1,'R');
+        $pdf->SetFont('helvetica','',8);
+        foreach($pdf->acc_castle as $k=>$v) {
+            $pdf->Cell(35);
+            $pdf->Cell(20,5,$k,1,0,'C');
+            $pdf->Cell(75,5,$v['descri'],1,0,'L');
+            $pdf->Cell(25,5,gaz_format_number($v['value']),1,1,'R');
+        }
+    }
+    if ($_GET['sd']=='sta_def') {
+        gaz_dbi_put_row($gTables['aziend'],'codice',$admin_aziend['codice'],$azireg, $pdf->getGroupPageNo()+$n_page-1);
+    }
 }
+    
 $pdf->Output();
 ?>
