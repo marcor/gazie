@@ -117,7 +117,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     require("lang.".$admin_aziend['lang'].".php");
-    $form['descri'] = $strScript[$scriptname]['descri_value'][$admin_aziend['ivam_t']];
     if ($admin_aziend['ivam_t'] == 'M') {
        $utsdatini = mktime(0,0,0,date("m")-1,1,date("Y"));
        $utsdatfin = mktime(0,0,0,date("m"),0,date("Y"));
@@ -134,11 +133,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
        $utsdatini = mktime(0,0,0,7,1,date("Y"));
        $utsdatfin = mktime(0,0,0,9,30,date("Y"));
     }
-    if ($admin_aziend['ivam_t'] == 'M') {
-         $form['descri'].=ucwords(strftime("%B %Y",$utsdatini));
-    } else {
-         $form['descri'].=ucwords(strftime("%B",$utsdatini))." - ".ucwords(strftime("%B %Y",$utsdatfin));
-    }
+    $form['men_tri']='men_tri';
     $form['date_ini_D']=1;
     $form['date_ini_M']=date("m",$utsdatini);
     $form['date_ini_Y']=date("Y",$utsdatini);
@@ -167,6 +162,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     } else {
        $form['sta_def']='';
     }
+    if (isset($_POST['men_tri'])){
+       $form['men_tri']=substr($_POST['men_tri'],0,8);
+    } else {
+       $form['men_tri']='';
+    }
     $form['sem_ord']=substr($_POST['sem_ord'],0,1);
     if (isset($_POST['cover'])){
        $form['cover']=substr($_POST['cover'],0,8);
@@ -175,17 +175,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     if ($form['hidden_req']=='vat_reg' || $form['hidden_req']=='vat_section'){
        require("lang.".$admin_aziend['lang'].".php");
-       $form['descri'] = $strScript[$scriptname]['descri_value'][$admin_aziend['ivam_t']];
        $form['page_ini'] = getPage_ini($form['vat_section'],$form['vat_reg']);
-       if ($admin_aziend['ivam_t'] == 'M') {
-         $form['descri'].=ucwords(strftime("%B %Y",mktime(0,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y'])));
-       } else {
-         $form['descri'].=ucwords(strftime("%B",mktime(0,0,0,$form['date_ini_M'],$form['date_ini_D'],$form['date_ini_Y'])))." - ".ucwords(strftime("%B %Y",mktime(0,0,0,$form['date_fin_M'],$form['date_fin_D'],$form['date_fin_Y'])));
-       }
        $form['hidden_req']='';
     } else {
        $form['page_ini'] = intval($_POST['page_ini']);
-       $form['descri']=substr($_POST['descri'],0,50);
     }
     if (isset($_POST['return'])) {
         header("Location: ".$form['ritorno']);
@@ -209,7 +202,7 @@ if (isset($_POST['print']) && $msg=='') {
     $_SESSION['print_request']=array('script_name'=>'stampa_regiva',
                                      'vs'=>$form['vat_section'],
                                      'vr'=>$form['vat_reg'],
-                                     'ds'=>$form['descri'],
+                                     'mt'=>$form['men_tri'],
                                      'pi'=>$form['page_ini'],
                                      'sd'=>$form['sta_def'],
                                      'so'=>$form['sem_ord'],
@@ -269,8 +262,8 @@ $gForm->selCheckbox('sta_def',$form['sta_def'],$script_transl['sta_def_title']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>\n";
-echo "\t<td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['men_tri']."</td>\n<td class=\"FacetDataTD\" colspan=\"3\">";
+$gForm->selCheckbox('men_tri',$form['men_tri'],$script_transl['men_tri_title']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

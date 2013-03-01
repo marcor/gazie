@@ -237,8 +237,10 @@ $strScript = array ("select_liqiva.php" =>
                            'vat_reg_value'=>array(2=>'Fatture di Vendita',4=>'Corrispettivi',6=>'Fatture d\'Acquisto'),
                            'vat_section'=>'Sezione IVA ',
                            'page_ini'=>'N. pagina iniziale',
+                           'men_tri'=>'Riepilogo ad ogni salto periodo',
+                           'men_tri_title'=>'Se selezonato stampa sul PDF tutti i riepiloghi periodici',
                            'sta_def'=>'Stampa definitiva',
-                           'sta_def_title'=>'Se selezonato modifica il valore dell\'ultima pagina stampata di questo registro in configurazione azienda',
+                           'sta_def_title'=>'Se selezionato modifica il valore dell\'ultima pagina stampata di questo registro in configurazione azienda',
                            'descri'=>'Descrizione',
                            'descri_value'=>array('M'=>'del mese di ','T'=>'del trimestre '
                                            ),

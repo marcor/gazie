@@ -32,6 +32,7 @@ if (!isset($_GET['vr']) ||
     !isset($_GET['vs']) ||
     !isset($_GET['pi']) ||
     !isset($_GET['sd']) ||
+    !isset($_GET['mt']) ||
     !isset($_GET['so']) ||
     !isset($_GET['cv']) ||
     !isset($_GET['ri']) ||
@@ -153,6 +154,10 @@ $ini_page = intval($_GET['pi']);
 if ($_GET['cv']=='cover') {
    $ini_page--;
 }
+
+if ($_GET['mt']!='men_tri') {
+   $difMonths=0;
+}
 $url_get=$_GET;
 for( $i = 0; $i <= $difMonths; $i++ ) {
     if ($difMonths==0) { // il solo
@@ -175,7 +180,11 @@ for( $i = 0; $i <= $difMonths; $i++ ) {
     } else {
         $n_page=false;
     }
-    $pdf->setVars($admin_aziend,$pdf->script_transl['title'][$pdf->typbook].ucwords(strftime("%B %Y", mktime (0,0,0,substr($url_get['ri'],2,2),1,substr($url_get['ri'],4,4)))),0,$n_page);
+    $descri_period=$pdf->script_transl['title'][$pdf->typbook].ucwords(strftime("%B %Y", mktime (0,0,0,substr($url_get['ri'],2,2),1,substr($url_get['ri'],4,4))));
+    if ($_GET['mt']!='men_tri') {
+        $descri_period .= ' - '.ucwords(strftime("%B %Y", mktime (0,0,0,substr($url_get['rf'],2,2),1,substr($url_get['rf'],4,4))));
+    }
+    $pdf->setVars($admin_aziend,$descri_period,0,$n_page);
     $pdf->getRows($gTables);
     if ($_GET['cv']=='cover') {
        $pdf->setCover($pdf->script_transl['cover_descri'][$pdf->typbook]."\n".substr($url_get['ri'],4,4)."\n".$pdf->script_transl['vat_section'].$pdf->vatsect);
