@@ -32,7 +32,7 @@ if (!isset($_GET['vr']) ||
     !isset($_GET['vs']) ||
     !isset($_GET['pi']) ||
     !isset($_GET['sd']) ||
-    !isset($_GET['mt']) ||
+    !isset($_GET['jp']) ||
     !isset($_GET['so']) ||
     !isset($_GET['cv']) ||
     !isset($_GET['ri']) ||
@@ -45,16 +45,16 @@ require("../../config/templates/standard_template.php");
 
 class vatBook extends Standard_template
 {
-    function setData($url_get,$gTables,$admin_aziend) {
+    function setData($data,$gTables,$admin_aziend) {
         $this->azienda = $admin_aziend;
         require("lang.".$admin_aziend['lang'].".php");
         $this->script_transl=$strScript['stampa_regiva.php'];
-        $this->endyear=substr($url_get['rf'],4,4);
-        $this->vatsect=intval($url_get['vs']);
-        $this->typbook=intval($url_get['vr']);
-        $this->semplificata=intval($url_get['so']);
-        $this->inidate=date("Ymd",mktime(0,0,0,substr($url_get['ri'],2,2),substr($url_get['ri'],0,2),substr($url_get['ri'],4,4)));
-        $this->enddate=date("Ymd",mktime(0,0,0,substr($url_get['rf'],2,2),substr($url_get['rf'],0,2),substr($url_get['rf'],4,4)));
+        $this->endyear=substr($data['f'],4,4);
+        $this->vatsect=intval($data['vs']);
+        $this->typbook=intval($data['vr']);
+        $this->semplificata=intval($data['so']);
+        $this->inidate=date("Ymd",mktime(0,0,0,substr($data['i'],2,2),substr($data['i'],0,2),substr($data['i'],4,4)));
+        $this->enddate=date("Ymd",mktime(0,0,0,substr($data['f'],2,2),substr($data['f'],0,2),substr($data['f'],4,4)));
     }
     
     function getRows($gTables) { // recupera i righi dell'intervallo settato 
@@ -145,44 +145,96 @@ class vatBook extends Standard_template
     }
 }
 
+function calcPeriod($dateIni,$dateFin,$period){
+    if ($period=='M'){ // mensile
+        $period_num = 1+ substr($dateFin,2,2) - substr($dateIni,2,2) + (substr($dateFin,4,4) - substr($dateIni,4,4))*12;
+        for ($i=1; $i<=$period_num; $i++){
+            $rs[$i]['m']='M';
+            if ($period_num==1) { // il solo
+                $rs[$i]['i']=date("dmY",mktime(0,0,0,substr($dateIni,2,2),substr($dateIni,0,2),substr($dateIni,4,4)));
+                $rs[$i]['f']=date("dmY",mktime(0,0,0,substr($dateFin,2,2),substr($dateFin,0,2),substr($dateFin,4,4)));
+            } elseif ($i==1) { // il primo
+                $rs[$i]['i']=date("dmY",mktime(0,0,0,substr($dateIni,2,2),substr($dateIni,0,2),substr($dateIni,4,4)));
+                $rs[$i]['f']=date("dmY",mktime(0,0,0,substr($dateIni,2,2)+1,0,substr($dateIni,4,4)));
+            } elseif ($i==$period_num) { // l'ultimo
+                $rs[$i]['i']=date("dmY",mktime(0,0,0,substr($dateIni,2,2)+$i-1,1,substr($dateIni,4,4)));
+                $rs[$i]['f']=date("dmY",mktime(0,0,0,substr($dateFin,2,2),substr($dateFin,0,2),substr($dateFin,4,4)));
+            } else { // gli intermedi
+                $rs[$i]['i']=date("dmY",mktime(0,0,0,substr($dateIni,2,2)+$i-1,1,substr($dateIni,4,4)));
+                $rs[$i]['f']=date("dmY",mktime(0,0,0,substr($dateIni,2,2)+$i,0,substr($dateIni,4,4)));
+            }
+        }
+    } elseif  ($period=='no'){ // tutto
+        $period_num = 1;
+        $rs[1]['m']='N';
+        $rs[1]['i']=$dateIni;
+        $rs[1]['f']=$dateFin;
+    } else { // trimestrale
+        if (substr($dateIni,2,2) >= 1 and substr($dateIni,2,2) < 4) {
+            $tri_ini = 1;
+        } elseif (substr($dateIni,2,2) >= 4 and substr($dateIni,2,2) < 6) {
+            $tri_ini = 2;
+        } elseif (substr($dateIni,2,2) >= 6 and substr($dateIni,2,2) < 10) {
+            $tri_ini = 3;
+        } else {
+            $tri_ini = 4;
+        }
+        if (substr($dateFin,2,2) >= 1 and substr($dateFin,2,2) < 4) {
+            $tri_fin = 1;
+        } elseif (substr($dateFin,2,2) >= 4 and substr($dateFin,2,2) < 6) {
+            $tri_fin = 2;
+        } elseif (substr($dateFin,2,2) >= 6 and substr($dateFin,2,2) < 10) {
+            $tri_fin = 3;
+        } else {
+            $tri_fin = 4;
+        }
+        $period_num = 1 + $tri_fin - $tri_ini +(substr($dateFin,4,4) - substr($dateIni,4,4))*4;
+        for ($i=1; $i<=$period_num; $i++){
+            $rs[$i]['m']='T';
+            if ($period_num==1) { // il solo
+                $rs[$i]['i']=date("dmY",mktime(0,0,0,substr($dateIni,2,2),substr($dateIni,0,2),substr($dateIni,4,4)));
+                $rs[$i]['f']=date("dmY",mktime(0,0,0,substr($dateFin,2,2),substr($dateFin,0,2),substr($dateFin,4,4)));
+            } elseif ($i==1) { // il primo
+                $rs[$i]['i']=date("dmY",mktime(0,0,0,substr($dateIni,2,2),substr($dateIni,0,2),substr($dateIni,4,4)));
+                $rs[$i]['f']=date("dmY",mktime(0,0,0,$tri_ini*3+1,0,substr($dateIni,4,4)));
+            } elseif ($i==$period_num) { // l'ultimo
+                $rs[$i]['i']=date("dmY",mktime(0,0,0,$tri_ini*3+($i-2)*3+1,1,substr($dateIni,4,4)));
+                $rs[$i]['f']=date("dmY",mktime(0,0,0,substr($dateFin,2,2),substr($dateFin,0,2),substr($dateFin,4,4)));
+            } else { // gli intermedi
+                $rs[$i]['i']=date("dmY",mktime(0,0,0,$tri_ini*3+($i-2)*3+1,1,substr($dateIni,4,4)));
+                $rs[$i]['f']=date("dmY",mktime(0,0,0,$tri_ini*3+($i-2)*3+4,0,substr($dateIni,4,4)));
+            }
+        }
+    }
+    return $rs;
+}
+
 // -------------  INIZIO STAMPA  -------------------------------
 
-$difYears = substr($_GET['rf'],4,4) - substr($_GET['ri'],4,4);
-$difMonths = substr($_GET['rf'],2,2) - substr($_GET['ri'],2,2) + $difYears*12;
 $pdf = new vatBook();
 $ini_page = intval($_GET['pi']);
 if ($_GET['cv']=='cover') {
    $ini_page--;
 }
 
-if ($_GET['mt']!='men_tri') {
-   $difMonths=0;
-}
 $url_get=$_GET;
-for( $i = 0; $i <= $difMonths; $i++ ) {
-    if ($difMonths==0) { // il solo
-        $url_get['ri']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2),substr($_GET['ri'],0,2),substr($_GET['ri'],4,4)));
-        $url_get['rf']=date("dmY",mktime(0,0,0,substr($_GET['rf'],2,2),substr($_GET['rf'],0,2),substr($_GET['rf'],4,4)));
-    } elseif ($i==0) { // il primo
-        $url_get['ri']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2),substr($_GET['ri'],0,2),substr($_GET['ri'],4,4)));
-        $url_get['rf']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2)+1,0,substr($_GET['ri'],4,4)));
-    } elseif ($i==$difMonths) { // l'ultimo
-        $url_get['ri']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2)+$i,1,substr($_GET['ri'],4,4)));
-        $url_get['rf']=date("dmY",mktime(0,0,0,substr($_GET['rf'],2,2),substr($_GET['rf'],0,2),substr($_GET['rf'],4,4)));
-    } else { // gli intermedi
-        $url_get['ri']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2)+$i,1,substr($_GET['ri'],4,4)));
-        $url_get['rf']=date("dmY",mktime(0,0,0,substr($_GET['ri'],2,2)+$i+1,0,substr($_GET['ri'],4,4)));
-    }
-
-    $pdf->setData($url_get,$gTables,$admin_aziend);
-    if ($i==0) {
+$period=$admin_aziend['ivam_t'];
+if ($url_get['jp']!='jump'){
+    $period='no';
+}
+$period_chopped=calcPeriod($url_get['ri'],$url_get['rf'],$period);
+$p_max=count($period_chopped);
+//print_r($period_chopped);
+for( $i = 1; $i <= $p_max; $i++ ) {
+    $pdf->setData($period_chopped[$i]+$url_get,$gTables,$admin_aziend);
+    if ($i==1) {
         $n_page=array('ini_page'=>$ini_page,'year'=>ucwords($pdf->script_transl['vat_section']).$pdf->vatsect.' '.$pdf->script_transl['page'].' '.substr($url_get['ri'],4,4));
     } else {
         $n_page=false;
     }
-    $descri_period=$pdf->script_transl['title'][$pdf->typbook].ucwords(strftime("%B %Y", mktime (0,0,0,substr($url_get['ri'],2,2),1,substr($url_get['ri'],4,4))));
-    if ($_GET['mt']!='men_tri') {
-        $descri_period .= ' - '.ucwords(strftime("%B %Y", mktime (0,0,0,substr($url_get['rf'],2,2),1,substr($url_get['rf'],4,4))));
+    $descri_period=$pdf->script_transl['title'][$pdf->typbook].ucwords(strftime("%B %Y", mktime (0,0,0,substr($period_chopped[$i]['i'],2,2),1,substr($period_chopped[$i]['i'],4,4))));
+    if (substr($period_chopped[$i]['f'],2,6)!= substr($period_chopped[$i]['i'],2,6)) {
+        $descri_period .= ' - '.ucwords(strftime("%B %Y", mktime (0,0,0,substr($period_chopped[$i]['f'],2,2),1,substr($period_chopped[$i]['f'],4,4))));
     }
     $pdf->setVars($admin_aziend,$descri_period,0,$n_page);
     $pdf->getRows($gTables);
@@ -342,10 +394,20 @@ for( $i = 0; $i <= $difMonths; $i++ ) {
             $pdf->Cell(25,5,gaz_format_number($v['value']),1,1,'R');
         }
     }
-    if ($_GET['sd']=='sta_def') {
-        gaz_dbi_put_row($gTables['aziend'],'codice',$admin_aziend['codice'],$azireg, $pdf->getGroupPageNo()+$n_page-1);
-    }
 }
-    
+if ($_GET['sd']=='sta_def') {
+    switch($pdf->typbook) { 	 
+        case 2: 	 
+            $azireg='upgve'.intval($_GET['vs']); 	 
+        break; 	 
+        case 4: 	 
+            $azireg='upgco'.intval($_GET['vs']); 	 
+        break; 	 
+        case 6: 	 
+            $azireg='upgac'.intval($_GET['vs']); 	 
+        break; 	 
+    }    
+    gaz_dbi_put_row($gTables['aziend'],'codice',$admin_aziend['codice'],$azireg, $pdf->getGroupPageNo()+$n_page-1);
+}
 $pdf->Output();
 ?>

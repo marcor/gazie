@@ -133,7 +133,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
        $utsdatini = mktime(0,0,0,7,1,date("Y"));
        $utsdatfin = mktime(0,0,0,9,30,date("Y"));
     }
-    $form['men_tri']='men_tri';
+    $form['jump']='jump';
     $form['date_ini_D']=1;
     $form['date_ini_M']=date("m",$utsdatini);
     $form['date_ini_Y']=date("Y",$utsdatini);
@@ -162,10 +162,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     } else {
        $form['sta_def']='';
     }
-    if (isset($_POST['men_tri'])){
-       $form['men_tri']=substr($_POST['men_tri'],0,8);
+    if (isset($_POST['jump'])){
+       $form['jump']=substr($_POST['jump'],0,8);
     } else {
-       $form['men_tri']='';
+       $form['jump']='';
     }
     $form['sem_ord']=substr($_POST['sem_ord'],0,1);
     if (isset($_POST['cover'])){
@@ -202,7 +202,7 @@ if (isset($_POST['print']) && $msg=='') {
     $_SESSION['print_request']=array('script_name'=>'stampa_regiva',
                                      'vs'=>$form['vat_section'],
                                      'vr'=>$form['vat_reg'],
-                                     'mt'=>$form['men_tri'],
+                                     'jp'=>$form['jump'],
                                      'pi'=>$form['page_ini'],
                                      'sd'=>$form['sta_def'],
                                      'so'=>$form['sem_ord'],
@@ -262,8 +262,8 @@ $gForm->selCheckbox('sta_def',$form['sta_def'],$script_transl['sta_def_title']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['men_tri']."</td>\n<td class=\"FacetDataTD\" colspan=\"3\">";
-$gForm->selCheckbox('men_tri',$form['men_tri'],$script_transl['men_tri_title']);
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['jump']."</td>\n<td class=\"FacetDataTD\" colspan=\"3\">";
+$gForm->selCheckbox('jump',$form['jump'],$script_transl['jump_title']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
