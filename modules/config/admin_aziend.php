@@ -170,7 +170,7 @@ $script_transl = HeadMain(0,array('calendarpopup/CalendarPopup',
 echo "<script type=\"text/javascript\">
 $(document).ready(function(){
 	$('.simple_color_custom').simpleColor({
-			columns: 18,
+			columns: 36,
 			border: '1px solid #333333',
 			buttonClass: 'button',
 			displayColorCode: true,
@@ -196,12 +196,7 @@ function setDate(name) {
   cal.showCalendar('anchor', mdy);
 }
 </script>
-<style type=\"text/css\">
-	.simpleColorDisplay {
-		font-family: Helvetica;
-		margin: 10px 0;
-	}
-</style>";
+";
 echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
