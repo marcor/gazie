@@ -160,15 +160,25 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('calendarpopup/CalendarPopup',
-                                  'colorpicker/ColorPicker2',
                                   'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',
-                                  'jquery/autocomplete_location'));
+                                  'jquery/autocomplete_location',
+                                  'jquery/jquery.simple-color'));
 echo "<script type=\"text/javascript\">
-var cp = new ColorPicker('window');
+$(document).ready(function(){
+	$('.simple_color_custom').simpleColor({
+			columns: 18,
+			border: '1px solid #333333',
+			buttonClass: 'button',
+			displayColorCode: true,
+                        colorCodeColor: '#000'
+	});
+	
+	
+});
 var cal = new CalendarPopup();
 var calName = '';
 function setMultipleValues(y,m,d) {
@@ -185,8 +195,13 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
-
-</script>";
+</script>
+<style type=\"text/css\">
+	.simpleColorDisplay {
+		font-family: Helvetica;
+		margin: 10px 0;
+	}
+</style>";
 echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
@@ -573,7 +588,7 @@ if ($handle = opendir($relativePath)) {
 echo "</select></td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['colore']."</td>\n";
 echo "<td colspan=\"2\" style=\"color:white; background-color:#".$form['colore'].";\">\n";
-echo "<INPUT TYPE=\"text\" NAME=\"colore\" SIZE=\"6\" VALUE=\"".$form['colore']."\"><A HREF=\"#\" onClick=\"cp.select(document.form.colore,'pick'); return false;\" NAME=\"pick\" ID=\"pick\">".$script_transl['change']."</A>\n";
+echo "<INPUT class='simple_color_custom' TYPE=\"text\" NAME=\"colore\" SIZE=\"6\" VALUE=\"".$form['colore']."\">\n";
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
