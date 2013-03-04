@@ -109,7 +109,7 @@ echo ucfirst($msg)." ".$admin_aziend['Cognome']." ".$admin_aziend['Nome'].' (ip=
 "\n";
 echo "".$script_transl['access'].$admin_aziend['Access'].$script_transl['pass'].gaz_format_date($admin_aziend['datpas'])."<br>";
 echo "<div id='admin_p_logout'>".$script_transl['logout']." &rarr; <input name=\"logout\" type=\"submit\" value=\" Logout \"></div></td>\n";
-echo "<td align=\"center\" class=\"FacetFieldCaptionTD\">".$script_transl['company']."<a href=\"../config/admin_aziend.php\"><img src=\"view.php?table=aziend&value=".$form['enterprise_id']."\" width=\"200\" alt=\"Logo\" border=\"0\" title=\"".$script_transl['upd_company']."\"></a><br />".$script_transl['mesg_co'][2]." &rarr; ";
+echo "<td align=\"center\" bgcolor=\"#".$admin_aziend['colore']."\">".$script_transl['company']."<a href=\"../config/admin_aziend.php\"><img src=\"view.php?table=aziend&value=".$form['enterprise_id']."\" width=\"200\" alt=\"Logo\" border=\"0\" title=\"".$script_transl['upd_company']."\"></a><br />".$script_transl['mesg_co'][2]." &rarr; ";
 echo selectCompany('enterprise_id',$form['enterprise_id'],$form['search']['enterprise_id'],$form['hidden_req'],$script_transl['mesg_co']);
 echo "</td>\n";
 echo "</tr></table></div>\n";
