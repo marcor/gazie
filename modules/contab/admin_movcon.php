@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $mastroclienti = $admin_aziend['mascli']."000000";
 $mastrofornitori = $admin_aziend['masfor']."000000";
-
+$anagrafica = new Anagrafica();
 $msg = "";
 
 if (!isset($_POST['ritorno'])) {
@@ -147,15 +147,29 @@ if (isset($_POST['ins'])) {
            $count = count($_POST['id_rig_rc'])-1;
            while ($row_con = gaz_dbi_fetch_array($vecchi_righcon)) {
               //se l'id del vecchio rigo e' ancora presente nel nuovo lo modifico
-              if ($i <= $count) {
-                 gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
+           if ($i <= $count) {
+                $account_new=intval($_POST['conto_rc'.$i]);
+                if (preg_match("/^id_([0-9]+)$/",substr($_POST['conto_rc'.$i],0,12),$match)) { // è un partner da inserire sul piano dei conti
+                        $new_clfoco = $anagrafica->getPartnerData($match[1],1);
+                        $account_new=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
+     /*      print_r($_POST);
+           print "<hr><br>";
+           print_r($new_clfoco);
+           print "<hr><br>";
+           print_r($account_new);*/
+                }
+                gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
               } else { //altrimenti lo elimino
-                 gaz_dbi_del_row($gTables['rigmoc'], "id_rig", $row_con['id_rig']);
+                gaz_dbi_del_row($gTables['rigmoc'], "id_rig", $row_con['id_rig']);
               }
               $i++;
            }
            //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
            for ($i = $i; $i <= $count; $i++) {
+                if (preg_match("/^id_([0-9]+)$/",substr($_POST['conto_rc'.$i],0,12),$match)) { // è un partner da inserire sul piano dei conti
+                        $new_clfoco = $anagrafica->getPartnerData($match[1],1);
+                        $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
+                }
                 rigmocInsert(array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
            }
            $vecchi_righiva = gaz_dbi_dyn_query("*", $gTables['rigmoi'], "id_tes = '".intval($_POST['id_testata'])."'","id_rig asc");
@@ -237,7 +251,13 @@ if (isset($_POST['ins'])) {
            }
            //inserisco i righi contabili
            for ($i = 0; $i < $_POST['rigcon']; $i++) {
+                $account=substr($_POST['conto_rc'.$i],0,12);
+                if (preg_match("/^id_([0-9]+)$/",$account,$match)) { // è un partner da inserire sul piano dei conti
+                        $new_clfoco = $anagrafica->getPartnerData($match[1],1);
+                        $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
+                }
                 rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
+
            }
         }
         header("Location:report_movcon.php");
@@ -372,7 +392,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         if (($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) && $_POST['conto_rc'.$i] > 0) {
            //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
            if  ($_POST['cod_partner'] == 0 and $form['conto_rc'.$i] > 0) {
-               $anagrafica = new Anagrafica();
                $partner = $anagrafica->getPartner($form['conto_rc'.$i]);
                $loadCosRic = substr($form['conto_rc'.$i],0,1);
            }
@@ -514,7 +533,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       $rigo = $_POST['rigcon'];
       $form['id_rig_rc'][$rigo] = "";
       $form['mastro_rc'][$rigo] = intval($_POST['insert_mastro']);
-      $form['conto_rc'.$rigo] = intval($_POST['insert_conto']);
+      $form['conto_rc'.$rigo] = substr($_POST['insert_conto'],0,12);
       $form['search']['conto_rc'.$rigo]='';
       $form['darave_rc'][$rigo] = $_POST['insert_darave'];
       $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);;
@@ -665,7 +684,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['imponi_ri'] = array();
     $form['impost_ri'] = array();
 }
-$anagrafica = new Anagrafica();
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
@@ -1201,7 +1219,7 @@ $gForm->selMasterAcc('insert_mastro',$form['insert_mastro'],'insert_mastro');
 echo "</td>\n";
 echo "<td class=\"FacetColumnTD\">\n";
 $gForm->lockSubtoMaster($form['insert_mastro'],'insert_conto');
-$gForm->selSubAccount('insert_conto',$form['insert_conto'],$form['search']['insert_conto'],$form['hidden_req'],$script_transl['mesg']);
+$gForm->sub_Account('insert_conto',$form['insert_conto'],$form['search']['insert_conto'],$form['hidden_req'],$script_transl['mesg']);
 echo "</td>\n";
 echo "<td class=\"FacetColumnTD\"><div onmousedown=\"toggleContent('insert')\" class=\"clickarea\" style=\"cursor:pointer;\">";
 echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" size=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
@@ -1265,8 +1283,10 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
     echo "</td>\n";
     echo "<td class=\"FacetDataTD\">";
     $gForm->lockSubtoMaster($form["mastro_rc"][$i],'conto_rc'.$i);
-    $gForm->selSubAccount('conto_rc'.$i,$form['conto_rc'.$i],$form['search']['conto_rc'.$i],$form['hidden_req'],$script_transl['mesg']);
-    echo "<a href=\"select_partit.php?id=".$form['conto_rc'.$i]."\" target=\"_new\"> <img src=\"../../library/images/vis.gif\" title=\"".$script_transl['visacc']."\" border=\"0\"> </a>\n";
+    $gForm->sub_Account('conto_rc'.$i,$form['conto_rc'.$i],$form['search']['conto_rc'.$i],$form['hidden_req'],$script_transl['mesg']);
+    if (!preg_match("/^id_([0-9]+)$/",$form['conto_rc'.$i],$match)) { // non è un partner da inserire sul piano dei conti
+        echo "<a href=\"select_partit.php?id=".$form['conto_rc'.$i]."\" target=\"_new\"> <img src=\"../../library/images/vis.gif\" title=\"".$script_transl['visacc']."\" border=\"0\"> </a>\n";
+    }
     echo "</td>\n";
     $val=sprintf("%01.2f",preg_replace("/\,/",'.',$form['importorc'][$i]));
     $valsty=' style="text-align:right;" ';

@@ -151,6 +151,9 @@ class contabForm extends GAzieForm
 
     function settleAccount($name,$val,$date_r=false)
     {
+        if (preg_match("/^id_([0-9]+)$/",$val,$match)) { // è un partner da inserire sul piano dei conti
+            $val=0;
+        }
         global $gTables,$admin_aziend;
         $rs_display=array();
         // INIZIO determinazione limiti di date
@@ -213,6 +216,142 @@ class contabForm extends GAzieForm
                   </tr>\n";
         }
         echo "</table></div>\n";
+    }
+    
+    
+// ------- INIZIO NUOVA VERSIONE DELLE FUNZIONI PER LA SELEZIONE DEI SOTTOCONTI-----------------------------
+
+    function setWhat($m)
+    {
+
+        $this->what="a.id AS id,pariva,codfis,a.citspe AS citta, ragso1 AS ragsoc,
+                     (SELECT ".$this->gTables['clfoco'].".codice FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra AND ".$this->gTables['clfoco'].".codice BETWEEN ".substr($m,0,3)."000001 AND ".substr($m,0,3)."999999 ) AS codpart ,
+                     (SELECT ".$this->gTables['clfoco'].".codice FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra  LIMIT 1) AS codice,
+                     (SELECT ".$this->gTables['clfoco'].".status FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra LIMIT 1) AS status ";
+    }
+
+    function queryAnagra($where=1)
+    {
+       $rs=gaz_dbi_dyn_query($this->what,$this->gTables['anagra'].' AS a',$where,"ragsoc ASC");
+       $anagrafiche = array();
+       while ($r=gaz_dbi_fetch_array($rs)) {
+            $anagrafiche[] = $r;
+       }
+       return $anagrafiche;
+    }
+
+    function sub_Account($name,$val,$strSearch='',$val_hiddenReq='',$mesg)
+    {
+        global $gTables,$admin_aziend;
+        $this->gTables = $gTables;
+        $this->name = $name;
+        $this->what="a.id AS id,pariva,codfis,a.citspe AS citta, ragso1 AS ragsoc,
+                     (SELECT ".$this->gTables['clfoco'].".codice FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra LIMIT 1) AS codice,
+                     (SELECT ".$this->gTables['clfoco'].".status FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra LIMIT 1) AS status, 0 AS codpart ";
+        $mas_query='';
+        $ctrl_mas=substr($val,0,3);
+        if (isset($this->master_value)){
+           if ($this->sub_name==$name &&  $this->master_value >100) { // // se e' gia' stato selezionato un conto legato al mastro
+              $ctrl_mas=substr($this->master_value,0,3);
+              $where="codice LIKE '".intval($ctrl_mas)."%' AND codice > ".$this->master_value;
+           } else { // nessuno
+              $where="codice < 0";
+           }
+        } else { //altrimenti tutti tranne i mastri
+              $where="codice NOT LIKE '%000000'";
+        }
+        if ($ctrl_mas == $admin_aziend['mascli'] || $ctrl_mas == $admin_aziend['masfor']) { // se è un partner commerciale
+            // cliente o fornitore
+            $anagrafica = new Anagrafica();
+            if ($val>100000000 && $ctrl_mas==substr($val,0,3)) { //vengo da una modifica della precedente select case quindi non serve la ricerca
+                $partner=gaz_dbi_get_row($gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',"codice",$val);
+                echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+                echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"".substr($partner['ragso1'],0,8)."\">\n";
+                echo "\t<input type=\"submit\" tabindex=\"999\" value=\"".$partner['ragso1']."\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
+            } elseif (preg_match("/^id_([0-9]+)$/",$val,$match)) { // e' stata selezionata la sola anagrafica
+                $partner=gaz_dbi_get_row($gTables['anagra'],'id',$match[1]);
+                echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+                echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"".substr($partner['ragso1'],0,8)."\">\n";
+                echo "\t<input type=\"submit\" tabindex=\"999\" style=\"background:#FFBBBB\"; value=\"".$partner['ragso1']."\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
+            }  else {
+                if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
+                    if ($this->master_value>100){ //ho da ricercare nell'ambito di un mastro
+                        $this->setWhat($this->master_value);
+                    }
+                    if (is_numeric($strSearch)){                      //ricerca per partita iva
+                        $partner = $this->queryAnagra(" pariva = ".intval($strSearch));
+                    } elseif (is_numeric(substr($strSearch,6,2))) {   //ricerca per codice fiscale
+                        $partner = $this->queryAnagra(" a.codfis LIKE '%".addslashes($strSearch)."%'");
+                    } else {                                      //ricerca per ragione sociale
+                        $partner = $this->queryAnagra(" a.ragso1 LIKE '".addslashes($strSearch)."%'");
+                    }
+                    if (count($partner) > 0) {
+                        echo "\t<select name=\"$name\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
+                        echo "<option value=\"0\"> ---------- </option>";
+                        preg_match("/^id_([0-9]+)$/",$val,$match);
+                        foreach ($partner as $r) {
+                            if ($r['codpart']>0){
+                                $r['codice']=$r['codpart'];
+                            }
+                            $style='';
+                            $selected = '';
+                            $disabled='';
+                            if($r['status']=='HIDDEN') {
+                                $disabled=' disabled ';
+                            }
+                            if (isset($match[1]) && $match[1]==$r['id']) {
+                                $selected = "selected";
+                            } elseif ($r['codice']==$val && $val >0) {
+                                $selected = "selected";
+                            }
+                            if ($this->master_value<0) { // vado cercando tutti i partner del piano dei conti
+                                if ($r["codice"]<1) {  // disabilito le anagrafiche presenti solo in altre aziende
+                                    $disabled=' disabled ';
+                                    $style = 'style="background:#FF6666";';
+                                }
+                            } elseif($r["codice"]<1) {
+                                $style = 'style="background:#FF6666";';
+                                $r['codice'] = 'id_'.$r['id'];
+                            } elseif(substr($r["codice"],0,3)!=substr($this->master_value,0,3)) {
+                                $style = 'style="background:#FFBBBB";';
+                                $r['codice'] = 'id_'.$r['id'];
+                            }
+                            echo "\t\t <option $style value=\"".$r['codice']."\" $selected $disabled>".substr($r["codice"],3,6).'-'.$r["ragsoc"]." ".$r["citta"]."</option>\n";
+                        }
+                        echo "\t </select>\n";
+                    } else {
+                        $msg = $mesg[0];
+                        echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+                    }   
+                } else {
+                    $msg = $mesg[1];
+                    echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+                }
+                echo "\t<input type=\"text\" id=\"search_$name\" name=\"search[$name]\" value=\"".$strSearch."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+                if (isset($msg)) {
+                    echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"".strlen($msg)."\" disabled value=\"$msg\">\n";
+                }
+                echo "\t<input type=\"image\" align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
+            }
+        } else {   // altri sottoconti
+              echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"\">\n";
+              echo "\t<select name=\"$name\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
+              echo "<option value=\"0\"> ---------- </option>";
+              $result = gaz_dbi_dyn_query("*", $gTables['clfoco'],$where,"codice ASC");
+              while ($r = gaz_dbi_fetch_array($result)) {
+                  $selected='';
+                  if ($val == $r['codice']) {
+                     $selected = " selected ";
+                  }
+                  if(isset($this->master_value)){
+                       $descri= substr($r["codice"],3,6);
+                  } else {
+                       $descri= $r["codice"];
+                  }
+                  echo "<option value=\"".$r['codice']."\"".$selected.">$descri-".$r['descri']."</option>";
+              }
+              echo "</select>\n";
+        }
     }
 }
 ?>
