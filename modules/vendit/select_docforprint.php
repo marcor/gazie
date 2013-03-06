@@ -301,8 +301,8 @@ echo "<select name=\"codcli\" class=\"FacetSelect\">";
 echo "\t\t <option value=\"\">$script_transl[10]</option>\n";
 if (strlen($form['ragso1']) >= 2)
    {
-   $mascon=$clienti.'000000';
-   $result = gaz_dbi_dyn_query("codice,ragso1,citspe", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',"codice like '$clienti%' and codice > '$mascon'  and ragso1 like '".addslashes($cerca)."%'","ragso1 desc");
+   $mascon=$admin_aziend['mascli'].'000000';
+   $result = gaz_dbi_dyn_query("codice,ragso1,citspe", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',"codice like '".$admin_aziend['mascli']."%' and codice > '$mascon'  and ragso1 like '".addslashes($cerca)."%'","ragso1 desc");
    $numclfoco = gaz_dbi_num_rows($result);
    if ($numclfoco > 0)
       {
