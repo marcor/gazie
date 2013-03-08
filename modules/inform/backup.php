@@ -86,7 +86,7 @@ if ($form['do_backup'] != 1)
     echo "<tr><td colspan=\"2\"><hr></td></tr>";
     echo "<tr><td></td><td align=\"right\"><strong>".$script_transl['sql_submit'].":</strong></td></tr>";
     echo "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\"></td>
-              <td class=\"FacetDataTD\" align=\"right\"><input type=\"submit\" name=\"submit\" value=\"".$script_transl['submit']."\"></td></tr>";
+              <td class=\"FacetDataTD\" align=\"right\"><input type=\"submit\" id=\"preventDuplicate\" onClick=\"chkSubmit();\" name=\"submit\" value=\"".$script_transl['submit']."\"></td></tr>";
     echo "</form>";
     echo "</body>";
     echo "</html>";
