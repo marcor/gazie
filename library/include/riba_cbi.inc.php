@@ -109,18 +109,18 @@ class RibaAbiCbi
                }
       function creaFile($intestazione,$ricevute_bancarie)
                {
-               $accumulatore = $this->RecordIB($intestazione[0],$intestazione[3],$intestazione[4],$intestazione[5],$intestazione[11],$intestazione[1]);
+               $accumulatore = $this->RecordIB($intestazione[0],$intestazione[3],$intestazione[4],$intestazione[5],$intestazione[11],$intestazione[1]).chr(13).chr(10);
                foreach ($ricevute_bancarie as $value) { //estraggo le ricevute dall'array
                        $this->progressivo ++;
-                       $accumulatore .= $this->Record14($value[1],$value[2],$intestazione[0],$intestazione[2],$value[8],$value[9],$value[11]);
-                       $accumulatore .= $this->Record20($intestazione[6],$intestazione[7],$intestazione[8],$intestazione[9]);
-                       $accumulatore .= $this->Record30($value[3],$value[4]);
-                       $accumulatore .= $this->Record40($value[5],$value[6],$value[7],$value[10],$value[13]);
-                       $accumulatore .= $this->Record50($value[12],$intestazione[10]);
-                       $accumulatore .= $this->Record51($value[0]);
-                       $accumulatore .= $this->Record70();
+                       $accumulatore .= $this->Record14($value[1],$value[2],$intestazione[0],$intestazione[2],$value[8],$value[9],$value[11]).chr(13).chr(10);
+                       $accumulatore .= $this->Record20($intestazione[6],$intestazione[7],$intestazione[8],$intestazione[9]).chr(13).chr(10);
+                       $accumulatore .= $this->Record30($value[3],$value[4]).chr(13).chr(10);
+                       $accumulatore .= $this->Record40($value[5],$value[6],$value[7],$value[10],$value[13]).chr(13).chr(10);
+                       $accumulatore .= $this->Record50($value[12],$intestazione[10]).chr(13).chr(10);
+                       $accumulatore .= $this->Record51($value[0]).chr(13).chr(10);
+                       $accumulatore .= $this->Record70().chr(13).chr(10);
                }
-               $accumulatore .= $this->RecordEF();
+               $accumulatore .= $this->RecordEF().chr(13).chr(10);
                return $accumulatore;
                }
       }
