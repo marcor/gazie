@@ -292,6 +292,7 @@
                            "CAP ",
                            "Citt&agrave; - Provincia ",
                            "Nazione ",
+                           'sia_code'=>'Codice SIA',
                            "Codice IBAN ",
                            "Sede legale ",
                            "Telefono ",

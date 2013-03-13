@@ -66,7 +66,8 @@ $arrayTestata = array($bancaAccredito['codabi'],
               $admin_aziend['ragso2'],
               $admin_aziend['indspe'],
               $admin_aziend['capspe']." ".$admin_aziend['citspe']." ".$admin_aziend['prospe'],
-              $codfis);
+              $codfis,
+              $contoAccredito['sia_code']);
 $arrayRiba = array();
 while ($row = gaz_dbi_fetch_array($result)) {
       //C.F. o P.I. debitore
@@ -88,16 +89,17 @@ while ($row = gaz_dbi_fetch_array($result)) {
                           $codfis,
                           $row['indspe'],
                           $row['capspe'],
-                          $row['citspe']." ".$row['prospe'],
+                          $row['citspe'],
                           $row['codabi'],
                           $row['codcab'],
                           $row['descri']." ".$row['locali']." ".$row['codpro'],
                           $row['clfoco'],
-                          $descrizione_debito);
+                          $descrizione_debito,
+                          $row['prospe']);
        //aggiorno il db solo se non &egrave; una ristampa
        if ($row["status"] <> 'DISTINTATO') {
            gaz_dbi_put_row($gTables['effett'], "id_tes",$row["id_tes"],"status",'DISTINTATO');
-           gaz_dbi_put_row($gTables['effett'], "id_tes",$row["id_tes"],"banacc",$_GET['banacc']);
+           gaz_dbi_put_row($gTables['effett'], "id_tes",$row["id_tes"],"banacc",intval($_GET['banacc']));
        }
 }
 $RB = new RibaAbiCbi();

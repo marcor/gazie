@@ -295,7 +295,8 @@ $strScript = array ("admin_aziend.php" =>
                            "Postleitzahl",
                            "City - County code ",
                            "Nation ",
-                           "IBAN code ",
+                           "IBAN code ",,
+                           'sia_code'=>'SIA Code'
                            "Hauptsitz",
                            "Telephone ",
                            "Fax ",

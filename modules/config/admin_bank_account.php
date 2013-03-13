@@ -120,6 +120,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['prospe'] = '';
     $form['country'] = $admin_aziend['country'];
     $form['iban'] = '';
+    $form['sia_code'] = '';
     $form['sedleg'] = '';
     $form['telefo'] = '';
     $form['fax'] = '';
@@ -184,6 +185,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 }
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]* </td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"iban\" value=\"".$form['iban']."\" maxlength=\"27\" size=\"27\" />
+       </td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sia_code']."* </td><td class=\"FacetDataTD\">
+       <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"5\" size=\"5\" />
        </td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[9] </td><td class=\"FacetDataTD\">
        <textarea type =\"text\" name=\"sedleg\" row=\"2\" cols=\"30\">".$form['sedleg']."</textarea>

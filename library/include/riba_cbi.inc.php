@@ -36,6 +36,7 @@ $intestazione = array monodimensionale con i seguenti index:
               [8] = indirizzo_creditore variabile lunghezza 24 alfanumerico
               [9] = cap_citta_prov_creditore variabile lunghezza 24 alfanumerico
               [10] = codice_fiscale_creditore variabile lunghezza 16 alfanumerico opzionale default ""
+              [11] = codice SIA 5 caratteri alfanumerici
 $ricevute_bancarie = array bidimensionale con i seguenti index:
                    [0] = numero ricevuta lunghezza 10 numerico
                    [1] = scadenza lunghezza 6 numerico
@@ -44,12 +45,14 @@ $ricevute_bancarie = array bidimensionale con i seguenti index:
                    [4] = codice fiscale/partita iva debitore lunghezza 16 alfanumerico
                    [5] = indirizzo debitore lunghezza 30 alfanumerico
                    [6] = cap debitore lunghezza 5 numerico
-                   [7] = comune provincia debitore lunghezza 25 alfanumerico
+                   [7] = comune debitore lunghezza 25 alfanumerico
                    [8] = abi banca domiciliataria lunghezza 5 numerico
                    [9] = cab banca domiciliataria lunghezza 5 numerico
                    [10] = descrizione banca domiciliataria lunghezza 50 alfanumerico
                    [11] = codice cliente attribuito dal creditore lunghezza 16 numerico
                    [12] = descrizione del debito lunghezza 40 alfanumerico
+                   [13] = provincia debitore lunghezza 2 alfanumerico
+
 */
 class RibaAbiCbi
       {
@@ -60,18 +63,20 @@ class RibaAbiCbi
       var $supporto;
       var $totale;
       var $creditore;
-      function RecordIB($abi_assuntrice,$data_creazione,$nome_supporto,$codice_divisa) //record di testa
+      function RecordIB($abi_assuntrice,$data_creazione,$nome_supporto,$codice_divisa,$sia_code,$cab_assuntrice) //record di testa
                {
                $this->assuntrice = str_pad($abi_assuntrice,5,'0',STR_PAD_LEFT);
+               $this->cab_ass = str_pad($cab_assuntrice,5,'0',STR_PAD_LEFT);
                $this->data = str_pad($data_creazione,6,'0');
                $this->valuta = substr($codice_divisa,0,1);
                $this->supporto =  str_pad($nome_supporto,20,'*',STR_PAD_LEFT);
-               return " IB     ".$this->assuntrice.$this->data.$this->supporto.str_repeat(" ",74).$this->valuta.str_repeat(" ",6);
+               $this->sia_code =  str_pad($sia_code,5,'0',STR_PAD_LEFT);
+               return " IB".$this->sia_code.$this->assuntrice.$this->data.$this->supporto.str_repeat(" ",65)."1$".$this->assuntrice.str_repeat(" ",2).$this->valuta.str_repeat(" ",6);
                }
-      function Record14($scadenza,$importo,$abi_assuntrice,$cab_assuntrice,$conto,$abi_domiciliataria,$cab_domiciliataria,$codice_cliente)
+      function Record14($scadenza,$importo,$abi_assuntrice,$conto,$abi_domiciliataria,$cab_domiciliataria,$codice_cliente)
                {
                $this->totale += $importo;
-               return " 14".str_pad($this->progressivo,7,'0',STR_PAD_LEFT).str_repeat(" ",12).$scadenza."30000".str_pad($importo,13,'0',STR_PAD_LEFT)."-".str_pad($abi_assuntrice,5,'0',STR_PAD_LEFT).str_pad($cab_assuntrice,5,'0',STR_PAD_LEFT).str_pad($conto,12).str_pad($abi_domiciliataria,5,'0',STR_PAD_LEFT).str_pad($cab_domiciliataria,5,'0',STR_PAD_LEFT).str_repeat(" ",12).str_repeat(" ",5)."4".str_pad($codice_cliente,16).str_repeat(" ",6).$this->valuta;
+               return " 14".str_pad($this->progressivo,7,'0',STR_PAD_LEFT).str_repeat(" ",12).$scadenza."30000".str_pad($importo,13,'0',STR_PAD_LEFT)."-".str_pad($abi_assuntrice,5,'0',STR_PAD_LEFT).$this->cab_ass.str_pad($conto,12).str_pad($abi_domiciliataria,5,'0',STR_PAD_LEFT).str_pad($cab_domiciliataria,5,'0',STR_PAD_LEFT).str_repeat(" ",12).$this->sia_code."4".str_pad($codice_cliente,16).str_repeat(" ",6).$this->valuta;
                }
       function Record20($ragione_soc1_creditore,$ragione_soc2_creditore,$indirizzo_creditore,$cap_citta_prov_creditore)
                {
@@ -82,9 +87,9 @@ class RibaAbiCbi
                {
                return " 30".str_pad($this->progressivo,7,'0',STR_PAD_LEFT).substr(str_pad($nome_debitore,60),0,60).str_pad($codice_fiscale_debitore,16,' ').str_repeat(" ",34);
                }
-      function Record40($indirizzo_debitore,$cap_debitore,$comune_provincia_debitore,$descrizione_domiciliataria="")
+      function Record40($indirizzo_debitore,$cap_debitore,$comune_debitore,$descrizione_domiciliataria="",$provincia_debitore)
                {
-               return " 40".str_pad($this->progressivo,7,'0',STR_PAD_LEFT).substr(str_pad($indirizzo_debitore,30),0,30).str_pad(intval($cap_debitore),5,'0',STR_PAD_LEFT).substr(str_pad($comune_provincia_debitore,25),0,25).substr(str_pad($descrizione_domiciliataria,50),0,50);
+               return " 40".str_pad($this->progressivo,7,'0',STR_PAD_LEFT).substr(str_pad($indirizzo_debitore,30),0,30).str_pad(intval($cap_debitore),5,'0',STR_PAD_LEFT).substr(str_pad($comune_debitore,22),0,22)." ".substr(str_pad($provincia_debitore,2),0,2).substr(str_pad($descrizione_domiciliataria,50),0,50);
                }
       function Record50($descrizione_debito,$codice_fiscale_creditore)
                {
@@ -100,17 +105,17 @@ class RibaAbiCbi
                }
       function RecordEF() //record di coda
                {
-               return " EF     ".$this->assuntrice.$this->data.$this->supporto.str_repeat(" ",6).str_pad($this->progressivo,7,'0',STR_PAD_LEFT).str_pad($this->totale,15,'0',STR_PAD_LEFT).str_repeat("0",15).str_pad($this->progressivo*7+2,7,'0',STR_PAD_LEFT).str_repeat(" ",24).$this->valuta.str_repeat(" ",6);
+               return " EF".$this->sia_code.$this->assuntrice.$this->data.$this->supporto.str_repeat(" ",6).str_pad($this->progressivo,7,'0',STR_PAD_LEFT).str_pad($this->totale,15,'0',STR_PAD_LEFT).str_repeat("0",15).str_pad($this->progressivo*7+2,7,'0',STR_PAD_LEFT).str_repeat(" ",24).$this->valuta.str_repeat(" ",6);
                }
       function creaFile($intestazione,$ricevute_bancarie)
                {
-               $accumulatore = $this->RecordIB($intestazione[0],$intestazione[3],$intestazione[4],$intestazione[5]);
+               $accumulatore = $this->RecordIB($intestazione[0],$intestazione[3],$intestazione[4],$intestazione[5],$intestazione[11],$intestazione[1]);
                foreach ($ricevute_bancarie as $value) { //estraggo le ricevute dall'array
                        $this->progressivo ++;
-                       $accumulatore .= $this->Record14($value[1],$value[2],$intestazione[0],$intestazione[1],$intestazione[2],$value[8],$value[9],$value[11]);
+                       $accumulatore .= $this->Record14($value[1],$value[2],$intestazione[0],$intestazione[2],$value[8],$value[9],$value[11]);
                        $accumulatore .= $this->Record20($intestazione[6],$intestazione[7],$intestazione[8],$intestazione[9]);
                        $accumulatore .= $this->Record30($value[3],$value[4]);
-                       $accumulatore .= $this->Record40($value[5],$value[6],$value[7],$value[10]);
+                       $accumulatore .= $this->Record40($value[5],$value[6],$value[7],$value[10],$value[13]);
                        $accumulatore .= $this->Record50($value[12],$intestazione[10]);
                        $accumulatore .= $this->Record51($value[0]);
                        $accumulatore .= $this->Record70();

@@ -294,6 +294,7 @@ $strScript = array ("admin_aziend.php" =>
                            "City - County code ",
                            "Nation ",
                            "IBAN code ",
+                           'sia_code'=>'SIA Code',
                            "Head office ",
                            "Telephone ",
                            "Fax ",
