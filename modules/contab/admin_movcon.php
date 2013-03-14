@@ -62,12 +62,13 @@ if (isset($_POST['ins'])) {
         if ($_POST['importorc'][$i]==0)  { //controllo che non ci siamo valori a 0
             $msg .= "1+";
         }
-        if ($_POST['registroiva'] == 4 and (
+        if ($_POST['registroiva'] == 4 && (
            substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['masban']
-           or substr($_POST['conto_rc'.$i],0,3) == substr($admin_aziend['cassa_'],0,3)))  {
+           || substr($_POST['conto_rc'.$i],0,3) == substr($admin_aziend['cassa_'],0,3)))  {
            $ctrlmoviva = number_format($_POST['importorc'][$i] + $ctrlmoviva,2, '.', '');
         } elseif (substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['mascli']
-           or substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['masfor']) {
+           || substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['masfor'] 
+           || (preg_match("/^id_([0-9]+)$/",$_POST['conto_rc'.$i],$match))) {
            $ctrlmoviva = number_format($_POST['importorc'][$i],2, '.', '');
         }
         if ($_POST['darave_rc'][$i] == "D") {
@@ -96,10 +97,11 @@ if (isset($_POST['ins'])) {
     if ($ctrltotave == 0) {
         $msg .= "4+";
     }
-    if ($_POST['registroiva'] > 0 and $ctrltotmov == 0) {
+    if ($_POST['registroiva'] > 0 && $ctrltotmov == 0) {
         $msg .= "5+";
     }
-    if ($_POST['registroiva'] > 0 and $ctrltotmov <> $ctrlmoviva) {
+    if ($_POST['registroiva'] > 0 && $ctrltotmov <> $ctrlmoviva) {
+        print $ctrltotmov.' '.$ctrlmoviva.'<br><hr>';
         $msg .= "6+";
     }
     if (empty($_POST['descrizion'])) {
@@ -125,9 +127,11 @@ if (isset($_POST['ins'])) {
             $msg .= "12+";
         }
         // controllo se ci documenti con lo stesso numero e anno dello stesso fornitore (duplicato) 
-        $dupli = gaz_dbi_record_count($gTables['tesmov'] , "numdoc = '".trim(substr($_POST['numdocumen'],0,20))."' AND seziva = ".intval($_POST['sezioneiva'])." AND clfoco = ".intval($_POST['cod_partner'])." AND YEAR(datdoc) = ".intval($_POST['date_doc_Y']));
-        if ($dupli > 1 || ($dupli == 1 && $toDo == 'insert')) {
-            $msg .= "14+";          
+        if ($_POST['cod_partner']>0){
+            $dupli = gaz_dbi_record_count($gTables['tesmov'] , "numdoc = '".trim(substr($_POST['numdocumen'],0,20))."' AND seziva = ".intval($_POST['sezioneiva'])." AND clfoco = ".intval($_POST['cod_partner'])." AND YEAR(datdoc) = ".intval($_POST['date_doc_Y']));
+            if ($dupli > 1 || ($dupli == 1 && $toDo == 'insert')) {
+                $msg .= "14+";          
+            }
         }
     }
     if ($msg == "") { // nessun errore
@@ -152,11 +156,6 @@ if (isset($_POST['ins'])) {
                 if (preg_match("/^id_([0-9]+)$/",substr($_POST['conto_rc'.$i],0,12),$match)) { // è un partner da inserire sul piano dei conti
                         $new_clfoco = $anagrafica->getPartnerData($match[1],1);
                         $account_new=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
-     /*      print_r($_POST);
-           print "<hr><br>";
-           print_r($new_clfoco);
-           print "<hr><br>";
-           print_r($account_new);*/
                 }
                 gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
               } else { //altrimenti lo elimino
@@ -255,6 +254,9 @@ if (isset($_POST['ins'])) {
                 if (preg_match("/^id_([0-9]+)$/",$account,$match)) { // è un partner da inserire sul piano dei conti
                         $new_clfoco = $anagrafica->getPartnerData($match[1],1);
                         $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
+                        // modifico la testata precedentemente introdotta per aggiungerci 
+                        gaz_dbi_table_update('tesmov',array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
+                        //tesmovUpdate(array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
                 }
                 rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
 
@@ -560,9 +562,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
    }
 
    // Se viene inviata la richiesta di aggiunta, aggiunge un rigo iva
-   if (isset($_POST['insert_imponi']))
-      $_POST['insert_imponi'] = preg_replace("/\,/",'.',$_POST['insert_imponi']);
-   //
+   if (isset($_POST['insert_imponi'])){
+        $_POST['insert_imponi'] = preg_replace("/\,/",'.',$_POST['insert_imponi']);
+        }
    if (isset($_POST['adi_x']) && $_POST['insert_imponi'] <> 0) {
       if ($_POST['insert_codiva'] > 0) {
          $causa = gaz_dbi_get_row($gTables['caucon'],"codice",$form['codcausale']);
