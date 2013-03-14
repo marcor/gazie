@@ -121,6 +121,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['country'] = $admin_aziend['country'];
     $form['iban'] = '';
     $form['sia_code'] = '';
+    $form['addbol'] = 'N';
     $form['sedleg'] = '';
     $form['telefo'] = '';
     $form['fax'] = '';
@@ -135,6 +136,7 @@ if ($toDo == 'update') {
    $title = ucwords($script_transl[$toDo].$script_transl[0]);
 }
 print "<form method=\"POST\">\n";
+$gForm = new configForm();
 print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
 print "<input type=\"hidden\" value=\"".$form['id_anagra']."\" name=\"id_anagra\">\n";
@@ -189,6 +191,13 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]* </td><td class=\
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sia_code']."* </td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"5\" size=\"5\" />
        </td></tr>\n";
+
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['eof']."</td><td  class=\"FacetDataTD\">\n";
+$gForm->variousSelect('addbol',$script_transl['eof_value'],$form['addbol'],'FacetSelect',0,'eof');
+echo "\t </td>\n";
+echo "</tr>\n";
+
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[9] </td><td class=\"FacetDataTD\">
        <textarea type =\"text\" name=\"sedleg\" row=\"2\" cols=\"30\">".$form['sedleg']."</textarea>
        </td></tr>\n";

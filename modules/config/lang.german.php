@@ -295,8 +295,10 @@ $strScript = array ("admin_aziend.php" =>
                            "Postleitzahl",
                            "City - County code ",
                            "Nation ",
-                           "IBAN code ",,
-                           'sia_code'=>'SIA Code'
+                           "IBAN code ",
+                           'sia_code'=>'SIA Code',
+                           'eof'=>'File RiBA record with end of line characters',
+                           'eof_value'=>array('S'=>'Yes','N'=>'No'),
                            "Hauptsitz",
                            "Telephone ",
                            "Fax ",

@@ -534,7 +534,9 @@ $strScript = array ("admin_client.php" =>
                            'period_value'=>'Plazos proximos',
                            'reprint'=>'Rutulados',
                            'reprint_value'=>array('S'=>'Si','N'=>'No'),
-                           'tot'=>'Total del contenido del archivo'
+                           'tot'=>'Total del contenido del archivo',
+                           'eof'=>'Record with characters at the end of line',
+                           'eof_title'=>'Record with characters at the end of line chr 13 e 10'
                            ),
                     "select_filemav.php" =>
                     array( 'title'=>'Creacion de Archivo MAV (formato CBI)',

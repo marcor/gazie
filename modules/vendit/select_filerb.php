@@ -119,6 +119,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_fin_Y']=substr($iniData['sf'],0,4);
     $form['num_ini']=$iniData['ni'];
     $form['num_fin']=$iniData['nf'];
+    $form['eof']=false;
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
@@ -163,6 +164,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       $form['num_fin']=999999999;
       $form['reprint']='S';
     }
+    if (isset($_POST['eof'])){
+       $form['eof']=substr($_POST['eof'],0,8);
+    } else {
+       $form['eof']='';
+    }
     if (isset($_POST['return'])) {
         header("Location: ".$form['ritorno']);
         exit;
@@ -191,9 +197,13 @@ if (isset($_POST['print']) && $msg=='') {
     $datini=strftime("%Y-%m-%d",$utsini);
     $datfin=strftime("%Y-%m-%d",$utsfin);
     $locazione = "Location: genera_rb_cbi.php?ristam=".$form['reprint']."&datemi=".$datemi."&banacc=".$form['bank']."&proini=".$form['num_ini']."&profin=".$form['num_fin']."&scaini=".$datini."&scafin=".$datfin;
+    if (isset($form['eof'])){
+        $locazione .= '&eof=1';
+    }
     header($locazione);
     exit;
 }
+$anagrafica = new Anagrafica();
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup'));
@@ -236,6 +246,16 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['bank']."</td><td  clas
 $select_bank = new selectconven("bank");
 $select_bank -> addSelected($form['bank']);
 $select_bank -> output($admin_aziend['masban']);
+if ($form['bank']>0){
+    $bank_data = $anagrafica->getPartner($form['bank']);
+    if ($bank_data['addbol']=='N'){
+        $form['eof']= ''; 
+    } else {
+        $form['eof']= 'eof'; 
+    }
+}
+echo " ".$script_transl['eof'];
+$gForm->selCheckbox('eof',$form['eof'],$script_transl['eof_title']);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

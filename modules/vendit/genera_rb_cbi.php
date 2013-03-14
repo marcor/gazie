@@ -68,6 +68,9 @@ $arrayTestata = array($bancaAccredito['codabi'],
               $admin_aziend['capspe']." ".$admin_aziend['citspe']." ".$admin_aziend['prospe'],
               $codfis,
               $contoAccredito['sia_code']);
+if (isset($_GET['eof'])) {
+    $arrayTestata[12]=1;    
+}
 $arrayRiba = array();
 while ($row = gaz_dbi_fetch_array($result)) {
       //C.F. o P.I. debitore

@@ -37,6 +37,7 @@ $intestazione = array monodimensionale con i seguenti index:
               [9] = cap_citta_prov_creditore variabile lunghezza 24 alfanumerico
               [10] = codice_fiscale_creditore variabile lunghezza 16 alfanumerico opzionale default ""
               [11] = codice SIA 5 caratteri alfanumerici
+              [12] = carry  booleano true per aggiungere i caratteri di fine rigo chr(13) e chr(10)
 $ricevute_bancarie = array bidimensionale con i seguenti index:
                    [0] = numero ricevuta lunghezza 10 numerico
                    [1] = scadenza lunghezza 6 numerico
@@ -109,18 +110,22 @@ class RibaAbiCbi
                }
       function creaFile($intestazione,$ricevute_bancarie)
                {
-               $accumulatore = $this->RecordIB($intestazione[0],$intestazione[3],$intestazione[4],$intestazione[5],$intestazione[11],$intestazione[1]).chr(13).chr(10);
+               $eol='';
+               if (isset($intestazione[12])){
+                  $eol=chr(13).chr(10);
+               } 
+               $accumulatore = $this->RecordIB($intestazione[0],$intestazione[3],$intestazione[4],$intestazione[5],$intestazione[11],$intestazione[1]).$eol;
                foreach ($ricevute_bancarie as $value) { //estraggo le ricevute dall'array
                        $this->progressivo ++;
-                       $accumulatore .= $this->Record14($value[1],$value[2],$intestazione[0],$intestazione[2],$value[8],$value[9],$value[11]).chr(13).chr(10);
-                       $accumulatore .= $this->Record20($intestazione[6],$intestazione[7],$intestazione[8],$intestazione[9]).chr(13).chr(10);
-                       $accumulatore .= $this->Record30($value[3],$value[4]).chr(13).chr(10);
-                       $accumulatore .= $this->Record40($value[5],$value[6],$value[7],$value[10],$value[13]).chr(13).chr(10);
-                       $accumulatore .= $this->Record50($value[12],$intestazione[10]).chr(13).chr(10);
-                       $accumulatore .= $this->Record51($value[0]).chr(13).chr(10);
-                       $accumulatore .= $this->Record70().chr(13).chr(10);
+                       $accumulatore .= $this->Record14($value[1],$value[2],$intestazione[0],$intestazione[2],$value[8],$value[9],$value[11]).$eol;
+                       $accumulatore .= $this->Record20($intestazione[6],$intestazione[7],$intestazione[8],$intestazione[9]).$eol;
+                       $accumulatore .= $this->Record30($value[3],$value[4]).$eol;
+                       $accumulatore .= $this->Record40($value[5],$value[6],$value[7],$value[10],$value[13]).$eol;
+                       $accumulatore .= $this->Record50($value[12],$intestazione[10]).$eol;
+                       $accumulatore .= $this->Record51($value[0]).$eol;
+                       $accumulatore .= $this->Record70().$eol;
                }
-               $accumulatore .= $this->RecordEF().chr(13).chr(10);
+               $accumulatore .= $this->RecordEF().$eol;
                return $accumulatore;
                }
       }

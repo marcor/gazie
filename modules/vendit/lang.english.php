@@ -530,7 +530,9 @@ $strScript = array ("admin_client.php" =>
                            'period_value'=>'Upcoming deadlines',
                            'reprint'=>'Badged',
                            'reprint_value'=>array('S'=>'Yes','N'=>'No'),
-                           'tot'=>'Total of file content'
+                           'tot'=>'Total of file content',
+                           'eof'=>'Record with characters at the end of line',
+                           'eof_title'=>'Record with characters at the end of line chr 13 e 10'
                            ),
                     "select_filemav.php" =>
                     array( 'title'=>'File MAV creation (format CBI)',

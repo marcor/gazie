@@ -293,6 +293,8 @@
                            "Citt&agrave; - Provincia ",
                            "Nazione ",
                            'sia_code'=>'Codice SIA',
+                           'eof'=>'Tracciato file RiBA con caratteri di fine rigo',
+                           'eof_value'=>array('S'=>'Si','N'=>'No'),
                            "Codice IBAN ",
                            "Sede legale ",
                            "Telefono ",

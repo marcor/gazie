@@ -591,7 +591,9 @@ $strScript = array ("admin_client.php" =>
                            'period_value'=>'Scadenze prossime',
                            'reprint'=>'Distintato',
                            'reprint_value'=>array('S'=>'Si','N'=>'No'),
-                           'tot'=>'Totali del contenuto del file'
+                           'tot'=>'Totali del contenuto del file',
+                           'eof'=>'Tracciato con caratteri di fine rigo',
+                           'eof_title'=>'Ad ogni record verranno aggiunti i caratteri di fine rigo chr 13 e 10'
                            ),
                     "select_filemav.php" =>
                     array( 'title'=>'Generazione File dei MAV in formato CBI',

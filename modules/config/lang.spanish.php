@@ -299,6 +299,8 @@ $strScript = array ("admin_aziend.php" =>
                            "Nacion ",
                            "Codigo IBAN ",
                            'sia_code'=>'Codigo SIA',
+                           'eof'=>'File RiBA record with end of line characters',
+                           'eof_value'=>array('S'=>'Yes','N'=>'No'),
                            "Sede ",
                            "Telefono ",
                            "Fax ",
