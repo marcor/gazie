@@ -197,7 +197,7 @@ if (isset($_POST['print']) && $msg=='') {
     $datini=strftime("%Y-%m-%d",$utsini);
     $datfin=strftime("%Y-%m-%d",$utsfin);
     $locazione = "Location: genera_rb_cbi.php?ristam=".$form['reprint']."&datemi=".$datemi."&banacc=".$form['bank']."&proini=".$form['num_ini']."&profin=".$form['num_fin']."&scaini=".$datini."&scafin=".$datfin;
-    if (isset($form['eof'])){
+    if (!empty($form['eof'])){
         $locazione .= '&eof=1';
     }
     header($locazione);
