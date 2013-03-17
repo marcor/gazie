@@ -728,7 +728,8 @@ echo '});
         impo= document.getElementById("impoRC"+nrow).value.toString();
         getResults(clfoco);
         $.fx.speeds._default = 500;
-        var expiry = $( "#expiry" ),
+        var descri = $( "#descri" ),
+            expiry = $( "#expiry" ),
             amount = $( "#amount" ),
             remrow = $( "#remrow" ),
             allFields = $( [] ).add( expiry ).add( amount ).add( remrow ),
@@ -740,9 +741,12 @@ echo '});
                  function(data) {
                     $.each(data, function(i,value){
                            $( "#db-contain"+ nrow + " tbody").append( "<tr>" +
+                              "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + value.descri + " n."
+                              + value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
                               "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + value.expiry + "</td>" +
-                              "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + value.amount + "</td>" +
-                               '."'<td><button><img src=\"../../library/images/upp.png\" /></button></td>'".' +
+                              "<td" + '."' class=\"ui-widget-right ui-widget-content \" >'".' + value.amount + "</td>" +
+                               '."'<td class=\"ui-widget-right ui-widget-content \" >'+value.darave+'</td>'".' +
+                               '."'<td class=\"ui-widget-right ui-widget-content \"><A target=\"_new\" href=\"admin_movcon.php?id_tes=' + value.id_tes + '&Update\"><img src=\"../../library/images/new.png\" /></A></td>'".' +
                                "</tr>" );
                    });
                  },"json"
@@ -782,7 +786,7 @@ echo '});
         $( "#dialog"+nrow ).dialog({
           autoOpen: false,
           show: "scale",
-          width: 360,
+          width: 520,
           modal: true,
           buttons: {
             "Chiudi":function(){ $(this).dialog( "close" );}
@@ -801,10 +805,11 @@ echo '});
                 bValid = bValid && checkRegexp( expiry, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
                 bValid = bValid && checkRegexp( amount, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
                 if ( bValid ) {
-                    $( "#openitem"+ nrow + " tbody" ).append( "<tr>" +
-                       "<td" + '."' class=\"text ui-widget-content \" >'".' + expiry.val() + "</td>" +
-                       "<td" + '."' class=\"text ui-widget-content \" >'".' + amount.val() + "</td>" +
-                       '."'<td><button><img src=\"../../library/images/x.gif\" /></button></td>'".' +
+                    $( "#db-contain"+ nrow + " tbody" ).prepend( "<tr>" +
+                       "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + descri.val() + "</td>" +
+                       "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + expiry.val() + "</td>" +
+                       "<td" + '."' class=\"ui-widget-right ui-widget-content \" >'".' + amount.val() + "</td>" +
+                       '."'<td class=\"ui-widget-right ui-widget-content \"><button id=\"'+nrow+'\"><img src=\"../../library/images/x.gif\" /></button></td>'".' +
                        "</tr>" );
                        allFields.val( "" ).removeClass( "ui-state-error" );
                        updateTips( "" );
@@ -1050,27 +1055,29 @@ foreach($form['paymov'] as $k=>$v) {
     }
     echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$v[0]['codcon'].'">
    <p class="validateTips"></p>
-    <table id="openitem'.$k.'" class="ui-widget ui-widget-content ui-corner-all">
+    <table id="openitem'.$k.'" class="ui-widget ui-widget-content" width="500">
      <tbody>
     <tr>
-    <td><label for="expiry">Scadenza</label></td>
-    <td><label for="name">Importo</label></td>
-    <td><label for="remrow"></label></td>
+    <td class="ui-widget ui-widget-content " for="expiry">Descrizione</td>
+    <td class="ui-widget ui-widget-content " for="expiry">Scadenza</td>
+    <td class="ui-widget-right ui-widget-content " for="name">Importo</td>
+    <td class="ui-widget-right ui-widget-content " for="remrow"></td>
     </tr>
     <tr>
+        <td name="descri" id="descri"></td>
         <td><input type="text" name="expiry" id="expiry" /></td>
         <td><input type="text" name="amount" id="amount" /></td>
         <td><button id="rerun"><img src="../../library/images/v.gif" /> </button></td>  
     </tr>';
-    foreach($v as $k_j=>$v_j) {    
+/*    foreach($v as $k_j=>$v_j) {    
     echo '<tr><td><input type="text" name="paymov'.$k.'_'.$k_j.'expiry" value="'.$form['paymov'][$k][$k_j]['expiry'].'" class="text ui-widget-content" /></td>
      <td><input type="text" name="paymov'.$k.'_'.$k_j.'amount" value="'.$form['paymov'][$k][$k_j]['amount'].'" class="text ui-widget-content" /></td>
      <td><button id="paymov'.$k.'_'.$k_j.'rerun"><img src="../../library/images/x.gif" />  </button></td></tr>';
-    }
+    }*/
 echo'
      </tbody>
     </table>
-    <table  width="334" id="db-contain'.$k.'" class="ui-widget ui-widget-content">
+    <table  width="500" id="db-contain'.$k.'" class="ui-widget ui-widget-content">
      <tbody>
      </tbody>
     </table>
