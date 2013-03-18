@@ -746,7 +746,7 @@ echo '});
                               "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + value.expiry + "</td>" +
                               "<td" + '."' class=\"ui-widget-right ui-widget-content \" >'".' + value.amount + "</td>" +
                                '."'<td class=\"ui-widget-right ui-widget-content \" >'+value.darave+'</td>'".' +
-                               '."'<td class=\"ui-widget-right ui-widget-content \"><A target=\"_new\" href=\"admin_movcon.php?id_tes=' + value.id_tes + '&Update\"><img src=\"../../library/images/new.png\" /></A></td>'".' +
+                               '."'<td class=\"ui-widget-right ui-widget-content \"><A target=\"_new\" href=\"admin_movcon.php?id_tes=' + value.id_tes + '&Update\"><img src=\"../../library/images/new.png\" width=\"12\"/></A></td>'".' +
                                "</tr>" );
                    });
                  },"json"

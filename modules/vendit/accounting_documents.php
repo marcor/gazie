@@ -365,7 +365,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['cassa_'],'import'=>($tot['tot']-$v['rit'])));
                   } else { // altrimenti inserisco le partite aperte
                       foreach($rate['import'] as $k_rate=>$v_rate) {
-                          paymovInsert(array('id_tesdoc_ref'=>$v['tes']['id_tes'],'id_rigmoc_doc'=>$paymov_id,'amount'=>$v_rate,'expiry'=>$rate['anno'][$k_rate].'-'.$rate['mese'][$k_rate].'-'.$rate['giorno'][$k_rate]));
+                          paymovInsert(array('id_tesdoc_ref'=>substr($v['tes']['datfat'],0,4).'V'.$v['tes']['seziva'].str_pad($v['tes']['protoc'],9,0,STR_PAD_LEFT),'id_rigmoc_doc'=>$paymov_id,'amount'=>$v_rate,'expiry'=>$rate['anno'][$k_rate].'-'.$rate['mese'][$k_rate].'-'.$rate['giorno'][$k_rate]));
                       }
                   }
                   // alla fine modifico le testate documenti introducendo il numero del movimento contabile

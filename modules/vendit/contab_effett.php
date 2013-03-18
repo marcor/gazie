@@ -172,7 +172,7 @@ if (isset($_POST['genera'])and $message == "") {
             $paymov_id = gaz_dbi_last_id();
         }
         // aggiungo un movimento alle partite aperte
-        paymovInsert(array('id_tesdoc_ref'=>$effett['id_doc'],'id_rigmoc_pay'=>$paymov_id,'amount'=>$effett['impeff'],'expiry'=>$effett['scaden']));
+        paymovInsert(array('id_tesdoc_ref'=>substr($effett['datfat'],0,4).'V'.$effett['seziva'].str_pad($effett['protoc'],9,0,STR_PAD_LEFT),'id_rigmoc_pay'=>$paymov_id,'amount'=>$effett['impeff'],'expiry'=>$effett['scaden']));
         //vado a modificare l'effetto cambiando il numero di riferimento al movimento
         gaz_dbi_put_row($gTables['effett'], "id_tes",$effett["id_tes"],"id_con",$ultimo_id);
        }

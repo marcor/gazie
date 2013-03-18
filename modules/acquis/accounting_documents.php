@@ -290,6 +290,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                      $round=$v['tes']['numrat']*$v['tes']['round_stamp'];
                   }
                   $tot=computeTot($v['vat'],$v['car']-$v['rit'],$stamp,$round);
+                  // calcolo le rate al fine di inserire le partite aperte  
+                  $rate = CalcolaScadenze($tot['tot'],substr($v['tes']['datfat'],8,2),substr($v['tes']['datfat'],5,2),substr($v['tes']['datfat'],0,4),$v['tes']['tipdec'],$v['tes']['giodec'],$v['tes']['numrat'],$v['tes']['tiprat'],$v['tes']['mesesc'],$v['tes']['giosuc']);
                   //inserisco la testata
                   $newValue=array('caucon'=>$v['tes']['tipdoc'],
                            'descri'=>$script_transl['doc_type_value'][$v['tes']['tipdoc']],
@@ -320,6 +322,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       $v['tes']['clfoco']=$admin_aziend['cassa_'];
                   }
                   rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$v['tes']['clfoco'],'import'=>($tot['tot']-$v['rit'])));
+                  $paymov_id = gaz_dbi_last_id();
                   foreach($v['acc'] as $acc_k=>$acc_v) {
                       if ($acc_v['import']>0){
                          rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$acc_k,'import'=>$acc_v['import']));
@@ -346,6 +349,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                   if ($v['tes']['incaut']=='S') {  // se il pagamento prevede l'incasso automatico
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$v['tes']['clfoco'],'import'=>($tot['tot']-$v['rit'])));
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['cassa_'],'import'=>($tot['tot']-$v['rit'])));
+                  } else { // altrimenti inserisco le partite aperte
+                      foreach($rate['import'] as $k_rate=>$v_rate) {
+                          paymovInsert(array('id_tesdoc_ref'=>substr($v['tes']['datfat'],0,4).'A'.$v['tes']['seziva'].str_pad($v['tes']['protoc'],9,0,STR_PAD_LEFT),'id_rigmoc_doc'=>$paymov_id,'amount'=>$v_rate,'expiry'=>$rate['anno'][$k_rate].'-'.$rate['mese'][$k_rate].'-'.$rate['giorno'][$k_rate]));
+                      }
                   }
                   // alla fine modifico le testate documenti introducendo il numero del movimento contabile
                   gaz_dbi_put_query($gTables['tesdoc'],"tipdoc = '".$v['tes']['tipdoc']."' AND datfat = '".$v['tes']['datfat']."' AND seziva = ".$v['tes']['seziva']." AND protoc = ".$v['tes']['protoc'],"id_con",$tes_id);

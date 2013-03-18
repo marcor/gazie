@@ -209,6 +209,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 foreach($rate['import'] as $k_r=>$v_r) {
                        $v['tes']['tipeff']=$v['tes']['tippag'];
                        $n_type=$v['tes']['tippag'];
+                       print_r($v['tes']);
                        if ($n_type == 'B'){
                            $n_type = 'R';
                        }
