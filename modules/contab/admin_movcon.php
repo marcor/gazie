@@ -402,7 +402,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
              foreach($_POST['paymov'][$i] as $k=>$v) {
                 $form['paymov'][$i][$k] = $v;  // devo fare il parsing
              }
-           }
+           } 
            
         }
         if ($loadCosRic == 1 && substr($form['conto_rc'.$i],0,1) == 4
@@ -722,101 +722,8 @@ foreach($form['paymov'] as $k=>$v) {
         ';
 }
 echo '});
-      function dialogSchedule(paymov){
-        clfoco = paymov.id.substring(6,15);
-        nrow = paymov.id.substring(23);
-        impo= document.getElementById("impoRC"+nrow).value.toString();
-        getResults(clfoco);
-        $.fx.speeds._default = 500;
-        var descri = $( "#descri" ),
-            expiry = $( "#expiry" ),
-            amount = $( "#amount" ),
-            remrow = $( "#remrow" ),
-            allFields = $( [] ).add( expiry ).add( amount ).add( remrow ),
-            tips = $( ".validateTips" );
-
-        function getResults(term_val) {
-           $.get("expiry.php",
-                 {clfoco:term_val},
-                 function(data) {
-                    $.each(data, function(i,value){
-                           $( "#db-contain"+ nrow + " tbody").append( "<tr>" +
-                              "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + value.descri + " n."
-                              + value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
-                              "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + value.expiry + "</td>" +
-                              "<td" + '."' class=\"ui-widget-right ui-widget-content \" >'".' + value.amount + "</td>" +
-                               '."'<td class=\"ui-widget-right ui-widget-content \" >'+value.darave+'</td>'".' +
-                               '."'<td class=\"ui-widget-right ui-widget-content \"><A target=\"_new\" href=\"admin_movcon.php?id_tes=' + value.id_tes + '&Update\"><img src=\"../../library/images/new.png\" width=\"12\"/></A></td>'".' +
-                               "</tr>" );
-                   });
-                 },"json"
-                 );
-        }
-
-        function updateTips( t ) {
-           tips
-           .text( t )
-           .addClass( "ui-state-highlight" );
-           setTimeout(function() {
-                tips.removeClass( "ui-state-highlight", 1500 );
-           }, 500 );
-        }
-
-        function checkLength( o, n, min, max ) {
-            if ( o.val().length > max || o.val().length < min ) {
-                o.addClass( "ui-state-error" );
-                updateTips( "Length of " + n + " must be between " +
-                min + " and " + max + "." );
-                return false;
-           } else {
-                return true;
-           }
-        }
-
-        function checkRegexp( o, regexp, n ) {
-           if ( !( regexp.test( o.val() ) ) ) {
-                o.addClass( "ui-state-error" );
-                updateTips( n );
-                return false;
-           } else {
-                return true;
-           }
-        }
-
-        $( "#dialog"+nrow ).dialog({
-          autoOpen: false,
-          show: "scale",
-          width: 520,
-          modal: true,
-          buttons: {
-            "Chiudi":function(){ $(this).dialog( "close" );}
-          },
-          close: function() {
-            allFields.val( "" ).removeClass( "ui-state-error" );
-            $( "#db-contain"+ nrow + " tbody").replaceWith("<tbody></tbody>");
-          }
-        });
-        $("#dialog"+nrow ).dialog( "open" );
-        $("#rerun").click(function() {
-                var bValid = true;
-                allFields.removeClass( "ui-state-error" );
-                bValid = bValid && checkLength( expiry, "userexpiry", 3, 16 );
-                bValid = bValid && checkLength( amount, "amount", 6, 80 );
-                bValid = bValid && checkRegexp( expiry, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
-                bValid = bValid && checkRegexp( amount, /^[a-z]([0-9a-z_])+$/i, "Userexpiry may consist of a-z, 0-9, underscores, begin with a letter." );
-                if ( bValid ) {
-                    $( "#db-contain"+ nrow + " tbody" ).prepend( "<tr>" +
-                       "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + descri.val() + "</td>" +
-                       "<td" + '."' class=\"ui-widget ui-widget-content \" >'".' + expiry.val() + "</td>" +
-                       "<td" + '."' class=\"ui-widget-right ui-widget-content \" >'".' + amount.val() + "</td>" +
-                       '."'<td class=\"ui-widget-right ui-widget-content \"><button id=\"'+nrow+'\"><img src=\"../../library/images/x.gif\" /></button></td>'".' +
-                       "</tr>" );
-                       allFields.val( "" ).removeClass( "ui-state-error" );
-                       updateTips( "" );
-                }
-        });
-    }
 </SCRIPT>';
+echo '<script type="text/javascript" src="./dialog_schedule.js"></script>';
 echo "<SCRIPT type=\"text/javascript\">\n";
 
 
@@ -1047,41 +954,49 @@ if ($toDo == 'insert') {
 
 
 // creo i dialog form delle partite aperte dei clienti/fornitori
+
 foreach($form['paymov'] as $k=>$v) {
+    echo '
+    <div id="paymov_dial'.$k.'">';
     foreach($v as $k_j=>$v_j) {    
-        echo '<input type="hidden" name="paymov['.$k.']['.$k_j.'][expiry]" value="'.$form['paymov'][$k][$k_j]['expiry'].'" class="text ui-widget-content ui-corner-all" />
-              <input type="hidden" name="paymov['.$k.']['.$k_j.'][amount]" value="'.$form['paymov'][$k][$k_j]['amount'].'" class="text ui-widget-content ui-corner-all" />
-              <input type="hidden" name="paymov['.$k.']['.$k_j.'][codcon]" value="'.$form['paymov'][$k][$k_j]['codcon'].'" class="text ui-widget-content ui-corner-all" />';
+        echo '<input type="hidden" id="paymov_'.$k.'_'.$k_j.'_expiry" name="paymov['.$k.']['.$k_j.'][expiry]" value="'.$form['paymov'][$k][$k_j]['expiry'].'" />
+              <input type="hidden" id="paymov_'.$k.'_'.$k_j.'_amount" name="paymov['.$k.']['.$k_j.'][amount]" value="'.$form['paymov'][$k][$k_j]['amount'].'" />
+             '; 
     }
+    echo '</div>
+    ';
     echo '<div id="dialog'.$k.'" title="Partite Aperte del conto n.'.$v[0]['codcon'].'">
-   <p class="validateTips"></p>
-    <table id="openitem'.$k.'" class="ui-widget ui-widget-content" width="500">
-     <tbody>
+    <p class="validateTips"></p>
+    <table id="openitem'.$k.'" class="ui-widget ui-widget-content" width="600">
+    <tbody>
     <tr>
-    <td class="ui-widget ui-widget-content " for="expiry">Descrizione</td>
+    <td class="ui-widget ui-widget-content " for="descri">Descrizione</td>
     <td class="ui-widget ui-widget-content " for="expiry">Scadenza</td>
     <td class="ui-widget-right ui-widget-content " for="name">Importo</td>
     <td class="ui-widget-right ui-widget-content " for="remrow"></td>
-    </tr>
-    <tr>
-        <td name="descri" id="descri"></td>
-        <td><input type="text" name="expiry" id="expiry" /></td>
-        <td><input type="text" name="amount" id="amount" /></td>
-        <td><button id="rerun"><img src="../../library/images/v.gif" /> </button></td>  
     </tr>';
-/*    foreach($v as $k_j=>$v_j) {    
-    echo '<tr><td><input type="text" name="paymov'.$k.'_'.$k_j.'expiry" value="'.$form['paymov'][$k][$k_j]['expiry'].'" class="text ui-widget-content" /></td>
-     <td><input type="text" name="paymov'.$k.'_'.$k_j.'amount" value="'.$form['paymov'][$k][$k_j]['amount'].'" class="text ui-widget-content" /></td>
-     <td><button id="paymov'.$k.'_'.$k_j.'rerun"><img src="../../library/images/x.gif" />  </button></td></tr>';
-    }*/
-echo'
+echo '<tr>
+        <td class="ui-widget ui-widget-content" name="descri" id="descri">'.$form['descrizion'].' n.'.$form['numdocumen'].'/'.$form['sezioneiva'].' del '.$form['date_doc_D'].'/'.$form['date_doc_M'].'/'.$form['date_doc_Y'].'</td>
+        <td class="ui-widget-right ui-widget-content"><input type="text" name="expiry" id="expiry" /></td>
+        <td class="ui-widget-right ui-widget-content "><input style="text-align:right;" type="text" name="amount" id="amount" /></td>
+        <td><a id="rerun"><img src="../../library/images/v.gif" /> </a></td>  
+    </tr>';
+    foreach($v as $k_j=>$v_j) {    
+        echo '<tr><td></td><td class="ui-widget-right ui-widget-content "><input type="text" name="paymov_'.$k.'_'.$k_j.'_expiry" value="'.$form['paymov'][$k][$k_j]['expiry'].'" /></td>
+              <td class="ui-widget-right ui-widget-content "><input style="text-align:right;" type="text" name="paymov_'.$k.'_'.$k_j.'_amount" value="'.$form['paymov'][$k][$k_j]['amount'].'" /></td>
+              <td><button id="paymov"><img src="../../library/images/x.gif" /></button></td>
+              </tr>
+              '; 
+    }
+
+echo '
      </tbody>
     </table>
-    <table  width="500" id="db-contain'.$k.'" class="ui-widget ui-widget-content">
+    <table  width="600" id="db-contain'.$k.'" class="ui-widget ui-widget-content">
      <tbody>
      </tbody>
     </table>
-  </div>';
+</div>';
 }
 
 ?>
@@ -1304,7 +1219,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
     }
     echo "<td class=\"FacetDataTD\">
           <input type=\"text\" name=\"importorc[$i]\" ID=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" size=\"13\"  tabindex=\"".(30+$i*2)."\" >\n";
-    echo "<input type=\"hidden\" name=\"id_rig_rc[$i]\" value=\"".$form['id_rig_rc'][$i]."\">\n";
+    echo "<input type=\"hidden\" ID=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"".$form['id_rig_rc'][$i]."\">\n";
     // inizio input degli sbilanci
     if ($form['darave_rc'][$i] == 'D' && $form['tot_D'] > $form['tot_A'] ||
         $form['darave_rc'][$i] == 'A' && $form['tot_A'] > $form['tot_D'] ) {
