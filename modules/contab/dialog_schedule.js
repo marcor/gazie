@@ -38,39 +38,34 @@
                 tips.removeClass( "ui-state-highlight", 1500 );
            }, 500 );
         }
-
-        function checkDate( o, n, min, max ) {
-            var d = new Date();
-            o.val(o.val().toString().replace(/\//g,"-"));
-            if ( o.val().length > max || o.val().length < min ) {
+		
+		function checkDate (o_date, n) {
+			var d,day,month,year;
+		    d = o_date.val().toString().replace(/\//g,"-").split("-");
+			day = d[0] - 0;
+			month = d[1]-0;
+			year = d[2] - 0;			
+			if (month > 0 && month < 13 && year > 1000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate()){
+                return true;
+			} else {
+                o_date.addClass( "ui-state-error" );
+                updateTips( "Errore !!! "+n);
+                return false;
+			}
+		}
+		
+        function checkAmount( o, n ) {
+			var amou;
+            amou = o.val().toString().replace(/\,/g,".");
+            if ( amou < 0.01 ) {
                 o.addClass( "ui-state-error" );
-                updateTips( "La lunghezza della " + n + " dev'essere tra " + min + " e " + max + " caratteri!" );
+                updateTips( "Errore !!! " + n );
                 return false;
            } else {
                 return true;
            }
         }
 
-        function checkAmount( o, n, min, max ) {
-            o.val(o.val().toString().replace(/\,/g,"."));
-            if ( o.val().length > max || o.val().length < min ) {
-                o.addClass( "ui-state-error" );
-                updateTips( "La lunghezza della " + n + " dev'essere tra " + min + " e " + max + " caratteri!" );
-                return false;
-           } else {
-                return true;
-           }
-        }
-
-        function checkRegexp( o, regexp, n ) {
-           if ( !( regexp.test( o.val() ) ) ) {
-                o.addClass( "ui-state-error" );
-                updateTips( n );
-                return false;
-           } else {
-                return true;
-           }
-        }
         
         $( "#dialog"+nrow ).dialog({
           autoOpen: false,
@@ -86,13 +81,11 @@
           }
         });
         $("#dialog"+nrow ).dialog( "open" );
-        $("#rerun").click(function() {
+        $("#sbmt").click(function() {
                 var bValid = true;
                 allFields.removeClass( "ui-state-error" );
-                bValid = bValid && checkDate( expiry, "Scadenza", 10, 10 );
-                bValid = bValid && checkAmount( amount, "Importo", 1, 12 );
-                bValid = bValid && checkRegexp( expiry, /^\d{4}[-]\d{2}[-]\d{2}$/i, "La data di scadenza è errata inserire la data con questo formato: AAAA-MM-GG" );
-                bValid = bValid && checkRegexp( amount, /^\d+(\.\d{1,2})?$/i, "Il valore dell'importo non è valido" );
+                bValid = bValid && checkDate( expiry, "La data di Scadenza è sbagliata" );
+                bValid = bValid && checkAmount( amount,"L'importo inserito è sbagliato" );
                 if ( bValid ) {     
                     $( "#openitem"+ nrow + " tbody" ).append( "<tr>" +
                        "<td></td>" +

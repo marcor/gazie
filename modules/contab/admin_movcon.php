@@ -979,7 +979,7 @@ echo '<tr>
         <td class="ui-widget ui-widget-content" name="descri" id="descri">'.$form['descrizion'].' n.'.$form['numdocumen'].'/'.$form['sezioneiva'].' del '.$form['date_doc_D'].'/'.$form['date_doc_M'].'/'.$form['date_doc_Y'].'</td>
         <td class="ui-widget-right ui-widget-content"><input type="text" name="expiry" id="expiry" /></td>
         <td class="ui-widget-right ui-widget-content "><input style="text-align:right;" type="text" name="amount" id="amount" /></td>
-        <td><a id="rerun"><img src="../../library/images/v.gif" /> </a></td>  
+        <td><a id="sbmt"><img src="../../library/images/v.gif" /> </a></td>  
     </tr>';
     foreach($v as $k_j=>$v_j) {    
         echo '<tr><td></td><td class="ui-widget-right ui-widget-content "><input type="text" name="paymov_'.$k.'_'.$k_j.'_expiry" value="'.$form['paymov'][$k][$k_j]['expiry'].'" /></td>
