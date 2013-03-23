@@ -28,7 +28,6 @@ $mastroclienti = $admin_aziend['mascli']."000000";
 $mastrofornitori = $admin_aziend['masfor']."000000";
 $anagrafica = new Anagrafica();
 $msg = "";
-
 if (!isset($_POST['ritorno'])) {
         $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
@@ -379,7 +378,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['insert_codiva'] = $_POST['insert_codiva'];
         $form['insert_imponi'] = $_POST['insert_imponi'];
     }
-    $form['paymov']=array();
     //ricarico i registri per il form dei righi contabili già  immessi
     $loadCosRic = 0;
     for( $i = 0; $i < $_POST['rigcon']; $i++ ) {
@@ -388,19 +386,20 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['conto_rc'.$i] = $_POST['conto_rc'.$i];
         $form['darave_rc'][$i] = $_POST['darave_rc'][$i];
         $form['importorc'][$i] = $_POST['importorc'][$i];
-        if (($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) && $_POST['conto_rc'.$i] > 0) {
-           //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
-           if  ($_POST['cod_partner'] == 0 and $form['conto_rc'.$i] > 0) {
-               $partner = $anagrafica->getPartner($form['conto_rc'.$i]);
-               $loadCosRic = substr($form['conto_rc'.$i],0,1);
-           }
-           $form['cod_partner'] = $_POST['conto_rc'.$i];
-           if (isset($_POST['paymov'][$i])) { // se ho dati sul form delle partite aperte dei clienti/fornitori li ricarico
-             foreach($_POST['paymov'][$i] as $k=>$v) {
-                $form['paymov'][$i][$k] = $v;  // qui devo ancora fare il parsing
-             }
-           } 
-           
+        if ($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) {
+            if  ($_POST['conto_rc'.$i] > 0) {
+                //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
+                if  ($_POST['cod_partner'] == 0 and $form['conto_rc'.$i] > 0) {
+                    $partner = $anagrafica->getPartner($form['conto_rc'.$i]);
+                    $loadCosRic = substr($form['conto_rc'.$i],0,1);
+                }
+                $form['cod_partner'] = $_POST['conto_rc'.$i];
+            }
+            if (isset($_POST['paymov'][$i])) { // se ho dati sul form delle partite aperte dei clienti/fornitori li ricarico
+              foreach($_POST['paymov'][$i] as $k=>$v) {
+                 $form['paymov'][$i][$k] = $v;  // qui devo ancora fare il parsing
+              }
+            }
         }
         if ($loadCosRic == 1 && substr($form['conto_rc'.$i],0,1) == 4
             && $partner['cosric'] > 0 && $form['registroiva'] > 0 ){  //e' un  cliente agisce sui ricavi
@@ -527,7 +526,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
             $_POST['rigcon'] = $newRow;
       }
    }
-   // Se viene inviata la richiesta di aggiunta, aggiunge un rigo contabile
+   // Se viene inviata la richiesta si aggiunge un rigo contabile
    if (isset($_POST['add_x'])) {
       $rigo = $_POST['rigcon'];
       $form['id_rig_rc'][$rigo] = "";
@@ -536,6 +535,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       $form['search']['conto_rc'.$rigo]='';
       $form['darave_rc'][$rigo] = $_POST['insert_darave'];
       $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);;
+      if ($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori) { // se è un partner carico permetto l'input 
+          $form['paymov'][$rigo]['new']= array('amount' => 0, 'expiry'=>''); 
+      }
       $_POST['rigcon']++;
    }
 
@@ -932,6 +934,7 @@ echo "function updateTot(row,newva)
       document.myform.tot_D.value = (Math.round(sumD*100)/100).toFixed(2);
       }\n";
 echo "</script>\n";
+
 ?>
 <form method="POST" name="myform">
 <?php
@@ -1223,6 +1226,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         echo '
         <div id="paymov_last_id'.$i.'" value="'.$i_j.'"></div>
         ';
+        $partnersel=$anagrafica->getPartner($form['conto_rc'.$i]);
         echo '<div id="dialog'.$i.'" title="Partite aperte di: '.$partnersel['ragso1'].'">
         <p class="validateTips"></p>
         <table id="openitem'.$i.'" class="ui-widget ui-widget-content" width="600">
