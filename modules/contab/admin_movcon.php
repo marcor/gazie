@@ -535,8 +535,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       $form['search']['conto_rc'.$rigo]='';
       $form['darave_rc'][$rigo] = $_POST['insert_darave'];
       $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);;
-      if ($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori) { // se è un partner carico permetto l'input 
-          $form['paymov'][$rigo]['new']= array('amount' => 0, 'expiry'=>''); 
+      // se è un partner permetto l'input del dialog-schedule
+      if ($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori) { 
+          $form['paymov'][$rigo]['new']= array('amount' => '', 'expiry'=>''); 
       }
       $_POST['rigcon']++;
    }
@@ -1232,21 +1233,16 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         <table id="openitem'.$i.'" class="ui-widget ui-widget-content" width="600">
         <tbody>
         <tr>
-        <td class="ui-widget ui-widget-content " for="descri">Descrizione</td>
-        <td class="ui-widget ui-widget-content " for="expiry">Scadenza</td>
-        <td class="ui-widget-right ui-widget-content " for="name">Importo</td>
-        <td class="ui-widget-right ui-widget-content " for="remrow"></td>
-        </tr>';
-        echo '<tr>
-            <td class="ui-widget ui-widget-content" name="descri" id="descri">'.$form['descrizion'].' n.'.$form['numdocumen'].'/'.$form['sezioneiva'].' del '.$form['date_doc_D'].'/'.$form['date_doc_M'].'/'.$form['date_doc_Y'].'</td>
-            <td class="ui-widget-right ui-widget-content"><input type="text" name="expiry" id="expiry" /></td>
-            <td class="ui-widget-right ui-widget-content "><input style="text-align:right;" type="text" name="amount" id="amount" /></td>
-            <td><a id="sbmt"><img src="../../library/images/v.gif" /> </a></td>  
+        <td class="ui-widget ui-widget-content " >Descrizione</td>
+        <td class="ui-widget ui-widget-content " >Scadenza</td>
+        <td class="ui-widget-right ui-widget-content ">Importo</td>
+        <td class="ui-widget-right ui-widget-content "><button id="add_expiry"><img src="../../library/images/add.png" /></button></td>
         </tr>';
         foreach($form['paymov'][$i] as $i_j=>$v_j) {    
-            echo '<tr><td></td><td class="ui-widget-right ui-widget-content "><input type="text" name="paymov_'.$i.'_'.$i_j.'_expiry" value="'.$form['paymov'][$i][$i_j]['expiry'].'" /></td>
-                  <td class="ui-widget-right ui-widget-content "><input style="text-align:right;" type="text" name="paymov_'.$i.'_'.$i_j.'_amount" value="'.$form['paymov'][$i][$i_j]['amount'].'" /></td>
-                  <td><button id="paymov"><img src="../../library/images/x.gif" /></button></td>
+            echo '<tr><td class="ui-widget ui-widget-content" name="descri" id="descri">'.$form['descrizion'].' n.'.$form['numdocumen'].'/'.$form['sezioneiva'].' del '.$form['date_reg_D'].'/'.$form['date_reg_M'].'/'.$form['date_reg_Y'].'</td>
+                  <td class="ui-widget-right ui-widget-content"><input type="text" name="paymov_'.$i.'_'.$i_j.'_expiry" value="'.$form['paymov'][$i][$i_j]['expiry'].'" /></td>
+                  <td class="ui-widget-right ui-widget-content"><input style="text-align:right;" type="text" name="paymov_'.$i.'_'.$i_j.'_amount" value="'.$form['paymov'][$i][$i_j]['amount'].'" /></td>
+                  <td class="ui-widget-right ui-widget-content" ><button id="del_expiry_app" value="'.$i_j.'"><img class="ui-button-text dynamic-button" src="../../library/images/x.gif" /></button></td>
                   </tr>
                   '; 
         }

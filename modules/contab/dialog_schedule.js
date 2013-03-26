@@ -104,4 +104,23 @@ function dialogSchedule(paymov) {
                 updateTips( "" );
             }
     });
+
+    $("#add_expiry").click(function() {
+				var id_btn = new Date().valueOf().toString();
+     			$( "#openitem"+ nrow + " tbody tr td " ).each(function(){
+					$( this ).toggleClass( "ui-state-error" );
+				});
+                $( "#openitem"+ nrow + " tbody" ).append( '<tr id="'+id_btn+'_row">' +
+                   '<td></td><td class="ui-widget-right ui-widget-content " ><input type="text" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" /></td>' +
+                   '<td class="ui-widget-right ui-widget-content " ><input style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" /></td>' +
+                   '<td class="ui-widget-right ui-widget-content " ><span class="ui-button-text dynamic-button" id="' + id_btn + '"><img src="../../library/images/x.gif" /></span></td>' +
+                   "</tr>" );
+				$('#' + id_btn).button().click(function() {
+					$( '#' + id_btn + '_row').remove();
+					    updateTips( "Cancellato: " + id_btn );
+				});
+                updateTips( "Aggiunto: " + id_btn );
+			}
+	);
+
 }
