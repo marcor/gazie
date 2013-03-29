@@ -28,7 +28,6 @@ $mastroclienti = $admin_aziend['mascli']."000000";
 $mastrofornitori = $admin_aziend['masfor']."000000";
 $anagrafica = new Anagrafica();
 $msg = "";
-print_r($_POST);
 if (!isset($_POST['ritorno'])) {
         $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
