@@ -1232,7 +1232,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         <div id="paymov_last_id'.$i.'" value="'.$i_j.'"></div>
         ';
         $partnersel=$anagrafica->getPartner($form['conto_rc'.$i]);
-        echo '<div id="dialog'.$i.'" title="Partite aperte di: '.$partnersel['ragso1'].'">
+        echo '<div id="dialog'.$i.'" title="Partita aperta di: '.$partnersel['ragso1'].' - €'.sprintf("%01.2f",preg_replace("/\,/",".",$form["importorc"][$i])).'">
         <p class="validateTips"></p>
         <table id="openitem'.$i.'" class="ui-widget ui-widget-content" width="600">
         <tbody>';

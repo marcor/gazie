@@ -98,9 +98,10 @@ function dialogSchedule(paymov) {
       show: "scale",
       width: 620,
       modal: true,
+	  position: "top",	  
 	  open: function(){ updateForm(); },
       buttons: {
-        "Chiudi":function(){ $(this).dialog( "close" );}
+        "Chiudi (Esc)":function(){ $(this).dialog( "close" );}
       },
       close: function() {
 			allFields.val( "" ).removeClass( "ui-state-error" );
