@@ -28,6 +28,7 @@ $mastroclienti = $admin_aziend['mascli']."000000";
 $mastrofornitori = $admin_aziend['masfor']."000000";
 $anagrafica = new Anagrafica();
 $msg = "";
+print_r($_POST);
 if (!isset($_POST['ritorno'])) {
         $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
@@ -1215,12 +1216,16 @@ echo "\n</td></tr></table>";
 // INIZIO creazione dialog-schedule dei partner
 for ($i = 0; $i < $_POST['rigcon']; $i++) {
     if (isset($form['paymov'][$i])) {
+        $pm_row=0;
         echo '
-        <div id="paymov_dial'.$i.'">';
+        <div id="pm_post_container_'.$i.'">';
         foreach($form['paymov'][$i] as $i_j=>$v_j) {    
-            echo '<input type="hidden" id="paymov_'.$i.'_'.$i_j.'_expiry" name="paymov['.$i.']['.$i_j.'][expiry]" value="'.$form['paymov'][$i][$i_j]['expiry'].'" />
-                  <input type="hidden" id="paymov_'.$i.'_'.$i_j.'_amount" name="paymov['.$i.']['.$i_j.'][amount]" value="'.$form['paymov'][$i][$i_j]['amount'].'" />
-                 '; 
+            echo '<div id="pm_post_'.$pm_row.'">
+                  <input type="hidden" id="paymov_'.$i.'_'.$pm_row.'_expiry" name="paymov['.$i.']['.$pm_row.'][expiry]" value="'.$form['paymov'][$i][$i_j]['expiry'].'" />
+                  <input type="hidden" id="paymov_'.$i.'_'.$pm_row.'_amount" name="paymov['.$i.']['.$pm_row.'][amount]" value="'.$form['paymov'][$i][$i_j]['amount'].'" />
+                  </div>
+                 ';
+            $pm_row++;
         }
         echo '</div>
         ';
@@ -1231,21 +1236,17 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         echo '<div id="dialog'.$i.'" title="Partite aperte di: '.$partnersel['ragso1'].'">
         <p class="validateTips"></p>
         <table id="openitem'.$i.'" class="ui-widget ui-widget-content" width="600">
-        <tbody>
-        <tr>
-        <td class="ui-widget ui-widget-content " >Descrizione</td>
-        <td class="ui-widget ui-widget-content " >Scadenza</td>
-        <td class="ui-widget-right ui-widget-content ">Importo</td>
-        <td class="ui-widget-right ui-widget-content "><button id="add_expiry"><img src="../../library/images/add.png" /></button></td>
-        </tr>';
+        <tbody>';
+      /*  $pm_row=0;
         foreach($form['paymov'][$i] as $i_j=>$v_j) {    
-            echo '<tr><td class="ui-widget ui-widget-content" name="descri" id="descri">'.$form['descrizion'].' n.'.$form['numdocumen'].'/'.$form['sezioneiva'].' del '.$form['date_reg_D'].'/'.$form['date_reg_M'].'/'.$form['date_reg_Y'].'</td>
+            echo '<tr id="pm_data_'.$pm_row.'"><td class="ui-widget ui-widget-content" name="descri" id="descri">'.$form['descrizion'].' n.'.$form['numdocumen'].'/'.$form['sezioneiva'].' del '.$form['date_reg_D'].'/'.$form['date_reg_M'].'/'.$form['date_reg_Y'].'</td>
                   <td class="ui-widget-right ui-widget-content"><input type="text" name="paymov_'.$i.'_'.$i_j.'_expiry" value="'.$form['paymov'][$i][$i_j]['expiry'].'" /></td>
                   <td class="ui-widget-right ui-widget-content"><input style="text-align:right;" type="text" name="paymov_'.$i.'_'.$i_j.'_amount" value="'.$form['paymov'][$i][$i_j]['amount'].'" /></td>
                   <td class="ui-widget-right ui-widget-content" ><button id="del_expiry_app" value="'.$i_j.'"><img class="ui-button-text dynamic-button" src="../../library/images/x.gif" /></button></td>
                   </tr>
-                  '; 
-        }
+                  ';
+            $pm_row++;
+        }*/
         echo '
              </tbody>
             </table>
