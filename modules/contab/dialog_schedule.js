@@ -5,10 +5,6 @@ function dialogSchedule(paymov) {
 		id_rig = $( "#id_rig_rc"+nrow ).val(),
 		tot_amount = $( "#impoRC"+nrow ).val(); //mi servirà per controllare che il totale delle partite sia uguale a questo
 
-	getResults(clfoco,id_rig);
-
-	$.fx.speeds._default = 500;
-
     var descri = $( "#descri" ),
         expiry = $( "#expiry" ),
         amount = $( "#amount" ),
@@ -16,8 +12,8 @@ function dialogSchedule(paymov) {
         tips = $( ".validateTips" );
 
     function updateForm() {
-		$( "#openitem"+ nrow + " tbody tr" ).remove();
-		$( "#openitem"+ nrow + " tbody" ).replaceWith('<tbody> <tr id="pm_header_'+ nrow + '">' +
+		$( "#pm_form_container_"+ nrow + " tbody tr" ).remove();
+		$( "#pm_form_container_"+ nrow + " tbody" ).replaceWith('<tbody> <tr id="pm_header_'+ nrow + '" def="nopost" >' +
 			'<td class="ui-widget ui-widget-content " >Descrizione</td>' +
 			'<td class="ui-widget ui-widget-content " >Scadenza</td>' +
 			'<td class="ui-widget-right ui-widget-content ">Importo</td>' + 
@@ -26,13 +22,19 @@ function dialogSchedule(paymov) {
 			$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
 				var valore = $(v).attr('id').split('_');
 				var id_sub = valore[2];
-				var ex = $('input[id=paymov_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value');
-				var am = $('input[id=paymov_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value');
-				$( "#openitem"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'">' +
-					'<td></td><td class="ui-widget-right ui-widget-content " ><input type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" /></td>' +
-					'<td class="ui-widget-right ui-widget-content " ><input style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" /></td>' +
+				var ex = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value');
+				var am = $('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value');
+				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'">' +
+					'<td></td><td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
+					'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
 					"</tr>" );
+				$('#form_' + nrow + '_' + id_sub + '_expiry' ).change(function(){
+					$('#post_' + nrow + '_' + id_sub + '_expiry').val($(this).val());
+				});
+				$('#form_' + nrow + '_' + id_sub + '_amount' ).change(function(){
+					$('#post_' + nrow + '_' + id_sub + '_amount').val($(this).val());
+				});					
 				$( "#btn_"+id_sub ).click(function() { 
 					$("#pm_form_"+id_sub ).remove();
 					$("#pm_post_"+id_sub ).remove();
@@ -99,10 +101,13 @@ function dialogSchedule(paymov) {
       width: 620,
       modal: true,
 	  position: "top",	  
-	  open: function(){ updateForm(); },
+	  open: function(){
+			getResults(clfoco,id_rig);
+			updateForm(); 
+		},
       buttons: {
-        "Chiudi (Esc)":function(){ $(this).dialog( "close" );}
-      },
+			"Chiudi (Esc)":function(){ $(this).dialog( "close" );}
+		},
       close: function() {
 			allFields.val( "" ).removeClass( "ui-state-error" );
 			$( "#db-contain"+ nrow + " tbody").remove();
@@ -124,8 +129,8 @@ function dialogSchedule(paymov) {
                    "<td" + ' class="ui-widget-right ui-widget-content " >' + amount.val() + "</td>" +
                    '<td class="ui-widget-right ui-widget-content "><button id="'+nrow+'"><img src="../../library/images/x.gif" /></button></td>' +
                    "</tr>" );
-                $("#paymov_dial"+nrow+" input" ).append("<input type='hidden' name='paymov[" + nrow + "][][amount]' value='" + amount.val() + "' />");
-                $("#paymov_dial"+nrow+" input" ).append("<input type='hidden' name='paymov[" + nrow + "][][expiry]' value='" + expiry.val() + "' />");
+                $("#post_dial"+nrow+" input" ).append("<input type='hidden' name='paymov[" + nrow + "][][amount]' value='" + amount.val() + "' />");
+                $("#post_dial"+nrow+" input" ).append("<input type='hidden' name='paymov[" + nrow + "][][expiry]' value='" + expiry.val() + "' />");
                 allFields.val( "" ).removeClass( "ui-state-error" );
                 updateTips( "" );
             }
@@ -134,14 +139,20 @@ function dialogSchedule(paymov) {
     $("#add_expiry"+nrow).click(function() {
 				var id_btn = new Date().valueOf().toString();
 				$( "#pm_post_container_"+ nrow ).append( '<div id="pm_post_' + id_btn + '">'+
-					'<input type="hidden" id="paymov_' + nrow + '_' + id_btn + '_expiry" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" />'+
-					'<input type="hidden" id="paymov_' + nrow + '_' + id_btn + '_amount" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" />'+
+					'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_expiry" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" />'+
+					'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_amount" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" />'+
 					'</div>');
-                $( "#openitem"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_btn+'">' +
-                   '<td></td><td class="ui-widget-right ui-widget-content " ><input type="text" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" /></td>' +
-                   '<td class="ui-widget-right ui-widget-content " ><input style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" /></td>' +
+                $( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_btn+'">' +
+                   '<td></td><td class="ui-widget-right ui-widget-content " ><input  id="form_' + nrow + '_' + id_btn + '_expiry" type="text" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" /></td>' +
+                   '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_btn + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" /></td>' +
                    '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_btn + '"><img src="../../library/images/x.gif" /></button></td>' +
                    "</tr>" );
+				$('#form_' + nrow + '_' + id_btn + '_expiry' ).change(function(){
+					$('#post_' + nrow + '_' + id_btn + '_expiry').val($(this).val());
+				});
+				$('#form_' + nrow + '_' + id_btn + '_amount' ).change(function(){
+					$('#post_' + nrow + '_' + id_btn + '_amount').val($(this).val());
+				});
      			$( "#btn_"+id_btn ).click(function(){
 					$("#pm_form_"+id_btn).remove();
 					$("#pm_post_"+id_btn).remove();

@@ -537,7 +537,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);;
       // se è un partner permetto l'input del dialog-schedule
       if ($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori) { 
-          $form['paymov'][$rigo]['new']= array('amount' => '', 'expiry'=>''); 
+          $form['paymov'][$rigo]['new']= array('id_tesdoc_ref'=>'new','amount' => '', 'expiry'=>''); 
       }
       $_POST['rigcon']++;
    }
@@ -1084,7 +1084,7 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['del_
 echo "<table class=\"Tlarge\">\n";
 echo "<tr><td class=\"FacetColumnTD\">".$script_transl['mas']."</td><td class=\"FacetColumnTD\">".$script_transl['sub']."</td><td class=\"FacetColumnTD\">".$script_transl['amount']."</td><td class=\"FacetColumnTD\">".$script_transl['daav']."</td><td class=\"FacetColumnTD\">".$script_transl['addrow']."!</td></tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetColumnTD\">\n";
+echo "<td class=\"FacetColumnTD\">\n#";
 $gForm->selMasterAcc('insert_mastro',$form['insert_mastro'],'insert_mastro');
 echo "</td>\n";
 echo "<td class=\"FacetColumnTD\">\n";
@@ -1218,10 +1218,11 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         $pm_row=0;
         echo '
         <div id="pm_post_container_'.$i.'">';
-        foreach($form['paymov'][$i] as $i_j=>$v_j) {    
+        foreach($form['paymov'][$i] as $i_j=>$v_j) {
             echo '<div id="pm_post_'.$pm_row.'">
-                  <input type="hidden" id="paymov_'.$i.'_'.$pm_row.'_expiry" name="paymov['.$i.']['.$pm_row.'][expiry]" value="'.$form['paymov'][$i][$i_j]['expiry'].'" />
-                  <input type="hidden" id="paymov_'.$i.'_'.$pm_row.'_amount" name="paymov['.$i.']['.$pm_row.'][amount]" value="'.$form['paymov'][$i][$i_j]['amount'].'" />
+                  <input type="hidden" id="post_'.$i.'_'.$pm_row.'_id_tesdoc_ref" name="paymov['.$i.']['.$pm_row.'][id_tesdoc_ref]" value="'.$form['paymov'][$i][$i_j]['id_tesdoc_ref'].'" />
+                  <input type="hidden" id="post_'.$i.'_'.$pm_row.'_expiry" name="paymov['.$i.']['.$pm_row.'][expiry]" value="'.$form['paymov'][$i][$i_j]['expiry'].'" />
+                  <input type="hidden" id="post_'.$i.'_'.$pm_row.'_amount" name="paymov['.$i.']['.$pm_row.'][amount]" value="'.$form['paymov'][$i][$i_j]['amount'].'" />
                   </div>
                  ';
             $pm_row++;
@@ -1232,20 +1233,10 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         <div id="paymov_last_id'.$i.'" value="'.$i_j.'"></div>
         ';
         $partnersel=$anagrafica->getPartner($form['conto_rc'.$i]);
-        echo '<div id="dialog'.$i.'" title="Partita aperta di: '.$partnersel['ragso1'].' - €'.sprintf("%01.2f",preg_replace("/\,/",".",$form["importorc"][$i])).'">
+        echo '<div id="dialog'.$i.'" title="Partita aperta id:'.$v_j['id_tesdoc_ref'].' di '.$partnersel['ragso1'].' - €'.sprintf("%01.2f",preg_replace("/\,/",".",$form["importorc"][$i])).'">
         <p class="validateTips"></p>
-        <table id="openitem'.$i.'" class="ui-widget ui-widget-content" width="600">
+        <table id="pm_form_container_'.$i.'" class="ui-widget ui-widget-content" width="600">
         <tbody>';
-      /*  $pm_row=0;
-        foreach($form['paymov'][$i] as $i_j=>$v_j) {    
-            echo '<tr id="pm_data_'.$pm_row.'"><td class="ui-widget ui-widget-content" name="descri" id="descri">'.$form['descrizion'].' n.'.$form['numdocumen'].'/'.$form['sezioneiva'].' del '.$form['date_reg_D'].'/'.$form['date_reg_M'].'/'.$form['date_reg_Y'].'</td>
-                  <td class="ui-widget-right ui-widget-content"><input type="text" name="paymov_'.$i.'_'.$i_j.'_expiry" value="'.$form['paymov'][$i][$i_j]['expiry'].'" /></td>
-                  <td class="ui-widget-right ui-widget-content"><input style="text-align:right;" type="text" name="paymov_'.$i.'_'.$i_j.'_amount" value="'.$form['paymov'][$i][$i_j]['amount'].'" /></td>
-                  <td class="ui-widget-right ui-widget-content" ><button id="del_expiry_app" value="'.$i_j.'"><img class="ui-button-text dynamic-button" src="../../library/images/x.gif" /></button></td>
-                  </tr>
-                  ';
-            $pm_row++;
-        }*/
         echo '
              </tbody>
             </table>
