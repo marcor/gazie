@@ -1221,7 +1221,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         foreach($form['paymov'][$i] as $i_j=>$v_j) {
             echo '<div id="pm_post_'.$pm_row.'">
                   <input type="hidden" id="post_'.$i.'_'.$pm_row.'_id_tesdoc_ref" name="paymov['.$i.']['.$pm_row.'][id_tesdoc_ref]" value="'.$form['paymov'][$i][$i_j]['id_tesdoc_ref'].'" />
-                  <input type="hidden" id="post_'.$i.'_'.$pm_row.'_expiry" name="paymov['.$i.']['.$pm_row.'][expiry]" value="'.$form['paymov'][$i][$i_j]['expiry'].'" />
+                  <input type="hidden" id="post_'.$i.'_'.$pm_row.'_expiry" name="paymov['.$i.']['.$pm_row.'][expiry]" value="'.gaz_format_date($form['paymov'][$i][$i_j]['expiry']).'" />
                   <input type="hidden" id="post_'.$i.'_'.$pm_row.'_amount" name="paymov['.$i.']['.$pm_row.'][amount]" value="'.$form['paymov'][$i][$i_j]['amount'].'" />
                   </div>
                  ';

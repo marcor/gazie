@@ -20,8 +20,8 @@ function dialogSchedule(paymov) {
 			'<td class="ui-widget-right ui-widget-content "><button id="add_expiry'+ nrow + '" value="' + nrow +'">'+
 			'<img src="../../library/images/add.png" /></button></td></tr></tbody>');
 			$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
-				var valore = $(v).attr('id').split('_');
-				var id_sub = valore[2];
+				var idv = $(v).attr('id').split('_');
+				var id_sub = idv[2];
 				var ex = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value');
 				var am = $('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value');
 				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'">' +
@@ -30,10 +30,14 @@ function dialogSchedule(paymov) {
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
 					"</tr>" );
 				$('#form_' + nrow + '_' + id_sub + '_expiry' ).change(function(){
-					$('#post_' + nrow + '_' + id_sub + '_expiry').val($(this).val());
+					if (checkDate($(this),"La data di Scadenza è sbagliata")) {
+						$('#post_' + nrow + '_' + id_sub + '_expiry').val($(this).val());
+					}
 				});
 				$('#form_' + nrow + '_' + id_sub + '_amount' ).change(function(){
-					$('#post_' + nrow + '_' + id_sub + '_amount').val($(this).val());
+					if (checkAmount($(this),"L'importo è sbagliato")) {
+						$('#post_' + nrow + '_' + id_sub + '_amount').val($(this).val());
+					}
 				});					
 				$( "#btn_"+id_sub ).click(function() { 
 					$("#pm_form_"+id_sub ).remove();
@@ -68,6 +72,44 @@ function dialogSchedule(paymov) {
        }, 500 );
     }
 	
+	function checkTot (n) {
+		var accu = 0;
+		$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
+			var idv = $(v).attr('id').split('_');
+			var id_sub = idv[2];
+			accu += parseFloat($('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value'));
+		});
+		accu = accu.toFixed(2);
+		if (accu == tot_amount) {
+			return true; 
+		} else  { 
+			updateTips( "Errore !!! " + n + " ("+accu+" - "+tot_amount+")");
+			return false;
+		}
+	}
+
+	function checkField () {
+		var bval=true;
+		$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
+			var idv = $(v).attr('id').split('_');
+			var id_sub = idv[2];
+			var am = parseFloat($('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value')).toFixed(2);
+			var d = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value').split("-");
+			var day,month,year;
+			day = d[0] - 0;
+			month = d[1]-0;
+			year = d[2] - 0;			
+			if ( am < 0.01 ) {
+				updateTips( "Errore !!! Un rigo importo non è stato valorizzato");
+				bval=false;
+			} else if (!(month > 0 && month < 13 && year > 2000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate())){
+				updateTips( "Errore !!! Un rigo scadenza non è stato valorizzato");
+				bval=false;
+			}
+		});
+		return bval;
+    }
+	
 	function checkDate (o_date, n) {
 		var d,day,month,year;
 	    d = o_date.val().toString().replace(/\//g,"-").split("-");
@@ -75,7 +117,9 @@ function dialogSchedule(paymov) {
 		month = d[1]-0;
 		year = d[2] - 0;			
 		if (month > 0 && month < 13 && year > 2000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate()){
-            return true;
+            o_date.removeClass();
+			updateTips('');
+			return true;
 		} else {
             o_date.addClass( "ui-state-error" );
             updateTips( "Errore !!! "+n);
@@ -85,12 +129,15 @@ function dialogSchedule(paymov) {
 	
     function checkAmount( o, n ) {
 		var amou;
-        amou = o.val().toString().replace(/\,/g,".");
+        amou = parseFloat(o.val().toString().replace(/\,/g,".")).toFixed(2);
         if ( amou < 0.01 ) {
             o.addClass( "ui-state-error" );
             updateTips( "Errore !!! " + n );
             return false;
        } else {
+            o.removeClass();
+			o.val(amou);
+			updateTips('');
             return true;
        }
     }
@@ -106,7 +153,12 @@ function dialogSchedule(paymov) {
 			updateForm(); 
 		},
       buttons: {
-			"Chiudi (Esc)":function(){ $(this).dialog( "close" );}
+			"Conferma":function(){ $(this).dialog( "close" );}
+		},
+	  beforeClose:function(event,ui) { 
+	      if (!checkTot('Il totale delle scadenze non coincide con il totale rigo') || !checkField() ){
+		    return false;
+		  } 
 		},
       close: function() {
 			allFields.val( "" ).removeClass( "ui-state-error" );
@@ -137,27 +189,31 @@ function dialogSchedule(paymov) {
     });
 
     $("#add_expiry"+nrow).click(function() {
-				var id_btn = new Date().valueOf().toString();
-				$( "#pm_post_container_"+ nrow ).append( '<div id="pm_post_' + id_btn + '">'+
-					'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_expiry" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" />'+
-					'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_amount" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" />'+
-					'</div>');
-                $( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_btn+'">' +
-                   '<td></td><td class="ui-widget-right ui-widget-content " ><input  id="form_' + nrow + '_' + id_btn + '_expiry" type="text" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" /></td>' +
-                   '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_btn + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" /></td>' +
-                   '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_btn + '"><img src="../../library/images/x.gif" /></button></td>' +
-                   "</tr>" );
-				$('#form_' + nrow + '_' + id_btn + '_expiry' ).change(function(){
+			var id_btn = new Date().valueOf().toString();
+			$( "#pm_post_container_"+ nrow ).append( '<div id="pm_post_' + id_btn + '">'+
+				'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_expiry" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" />'+
+				'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_amount" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" />'+
+				'</div>');
+            $( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_btn+'">' +
+               '<td></td><td class="ui-widget-right ui-widget-content " ><input  id="form_' + nrow + '_' + id_btn + '_expiry" type="text" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" /></td>' +
+               '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_btn + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" /></td>' +
+               '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_btn + '"><img src="../../library/images/x.gif" /></button></td>' +
+               "</tr>" );
+			$('#form_' + nrow + '_' + id_btn + '_expiry' ).change(function(){
+				if (checkDate($(this),"La data di Scadenza è sbagliata")) {
 					$('#post_' + nrow + '_' + id_btn + '_expiry').val($(this).val());
-				});
-				$('#form_' + nrow + '_' + id_btn + '_amount' ).change(function(){
+				}
+			});
+			$('#form_' + nrow + '_' + id_btn + '_amount' ).change(function(){
+				if (checkAmount($(this),"L'importo è sbagliato")) {
 					$('#post_' + nrow + '_' + id_btn + '_amount').val($(this).val());
-				});
-     			$( "#btn_"+id_btn ).click(function(){
-					$("#pm_form_"+id_btn).remove();
-					$("#pm_post_"+id_btn).remove();
-				});
-			}
+				}
+			});
+     		$( "#btn_"+id_btn ).click(function(){
+				$("#pm_form_"+id_btn).remove();
+				$("#pm_post_"+id_btn).remove();
+			});
+		}
 	);
 
 }
