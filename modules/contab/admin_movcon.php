@@ -328,7 +328,8 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
             && $form['conto_rc'.$i] > 0 ) {
           $rs_paymov = gaz_dbi_dyn_query("*", $gTables['paymov'], "id_rigmoc_pay = ".$row['id_rig']." OR id_rigmoc_doc = ".$row['id_rig'],"id asc");
           while ($rpm = gaz_dbi_fetch_array($rs_paymov)) {
-             $form['paymov'][$i][$rpm['id']]= $rpm ;    
+             $form['paymov'][$i][$rpm['id']]= $rpm ;
+             $form['paymov'][$i][$rpm['id']]['expiry']= gaz_format_date($rpm['expiry']);
           }
         }
         // fine recupero partite aperte
@@ -399,6 +400,8 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
               foreach($_POST['paymov'][$i] as $k=>$v) {
                  $form['paymov'][$i][$k] = $v;  // qui devo ancora fare il parsing
               }
+            } else {
+              $form['paymov'][$i]['new']= array('id_tesdoc_ref'=>'new','amount' => '', 'expiry'=>''); 
             }
         }
         if ($loadCosRic == 1 && substr($form['conto_rc'.$i],0,1) == 4
@@ -558,8 +561,8 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
 
    // Se viene inviata la richiesta di aggiunta, aggiunge un rigo iva
    if (isset($_POST['insert_imponi'])){
-        $_POST['insert_imponi'] = preg_replace("/\,/",'.',$_POST['insert_imponi']);
-        }
+      $_POST['insert_imponi'] = preg_replace("/\,/",'.',$_POST['insert_imponi']);
+   }
    if (isset($_POST['adi_x']) && $_POST['insert_imponi'] <> 0) {
       if ($_POST['insert_codiva'] > 0) {
          $causa = gaz_dbi_get_row($gTables['caucon'],"codice",$form['codcausale']);
@@ -713,8 +716,6 @@ for ($i=0; $i<$_POST['rigcon']; $i++ ) {
               autoOpen: false
            });
         ';
-}
-foreach($form['paymov'] as $k=>$v) {
 }
 echo '});
 </SCRIPT>';
@@ -935,7 +936,6 @@ echo "function updateTot(row,newva)
       document.myform.tot_D.value = (Math.round(sumD*100)/100).toFixed(2);
       }\n";
 echo "</script>\n";
-
 ?>
 <form method="POST" name="myform">
 <?php
@@ -1221,7 +1221,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         foreach($form['paymov'][$i] as $i_j=>$v_j) {
             echo '<div id="pm_post_'.$pm_row.'">
                   <input type="hidden" id="post_'.$i.'_'.$pm_row.'_id_tesdoc_ref" name="paymov['.$i.']['.$pm_row.'][id_tesdoc_ref]" value="'.$form['paymov'][$i][$i_j]['id_tesdoc_ref'].'" />
-                  <input type="hidden" id="post_'.$i.'_'.$pm_row.'_expiry" name="paymov['.$i.']['.$pm_row.'][expiry]" value="'.gaz_format_date($form['paymov'][$i][$i_j]['expiry']).'" />
+                  <input type="hidden" id="post_'.$i.'_'.$pm_row.'_expiry" name="paymov['.$i.']['.$pm_row.'][expiry]" value="'.$form['paymov'][$i][$i_j]['expiry'].'" />
                   <input type="hidden" id="post_'.$i.'_'.$pm_row.'_amount" name="paymov['.$i.']['.$pm_row.'][amount]" value="'.$form['paymov'][$i][$i_j]['amount'].'" />
                   </div>
                  ';
