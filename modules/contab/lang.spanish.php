@@ -130,6 +130,8 @@ $strScript = array ("select_liqiva.php" =>
                            'regiva_value'=>array(0=>'Ninguno',2 =>'Factura de venta',4=>'Tickets',6=>'Factura de compra'),
                            'operat'=>'Operador',
                            'operat_value'=>array(0=>'No',1=>'Sumar',2=>'Restar'),
+                           'pay_schedule'=>'Open items (scheduler)',
+                           'pay_schedule_value'=>array(0=>'Does not work',1=>'Document sale / purchase (open)',2=>'Payment (close)'),
                            'contr'=>'Cuenta (min. 1) *',
                            'tipim'=>'Tipo de cantidad ',
                            'tipim_value'=>array(''=>'','A'=>'Total','B'=>'Tributable','C'=>'Impuesto'),

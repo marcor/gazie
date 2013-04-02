@@ -3,6 +3,7 @@ function dialogSchedule(paymov) {
     var clfoco = paymov.id.substring(6,15),
 		nrow = paymov.id.substring(23),
 		id_rig = $( "#id_rig_rc"+nrow ).val(),
+		tesdoc_ref = $("#post_"+nrow+"_0_id_tesdoc_ref").val();
 		tot_amount = $( "#impoRC"+nrow ).val(); //mi servirà per controllare che il totale delle partite sia uguale a questo
 
     var descri = $( "#descri" ),
@@ -20,12 +21,14 @@ function dialogSchedule(paymov) {
 			'<td class="ui-widget-right ui-widget-content "><button id="add_expiry'+ nrow + '" value="' + nrow +'">'+
 			'<img src="../../library/images/add.png" /></button></td></tr></tbody>');
 			$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
+				var descri_mov = '';
+				if (i==0){ descri_mov = $("input[name=descrizion]").val()+' n.'+$("input[name=numdocumen]").val()+'/'+$("select[name=sezioneiva] option").val(); }
 				var idv = $(v).attr('id').split('_');
 				var id_sub = idv[2];
 				var ex = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value');
 				var am = $('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value');
-				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'">' +
-					'<td></td><td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
+				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td>' + descri_mov +
+					'</td><td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
 					"</tr>" );
@@ -47,14 +50,36 @@ function dialogSchedule(paymov) {
 			});
 	}
 
-    function getResults(term_val,excl_val) {
-       $.get("expiry.php",
-             {clfoco:term_val, id_exc:excl_val},
+    function getPayment(tes_ref,excl_val) {
+       $.get("payment.php",
+             {id_tesdoc_ref:tes_ref, id_exc:excl_val},
              function(data) {
+                $( "#db-contain" + nrow + " tbody").append( "<tr>" +
+                    "<td class='ui-widget-content ui-state-active' colspan=6" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa partita ' + tes_ref + "</td></tr>");
                 $.each(data, function(i,value){
                        $( "#db-contain" + nrow + " tbody").append( "<tr>" +
                           "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n."
                           + value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
+                          "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
+                          "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
+                           '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
+                           '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
+                           "</tr>" );
+               });
+             },"json"
+             ).done(function(){ getOtherMov(clfoco,tesdoc_ref) });
+	}
+
+    function getOtherMov(term_val,excl_val) {
+       $.get("expiry.php",
+             {clfoco:term_val, id_tesdoc_ref:excl_val},
+             function(data) {
+                $( "#db-contain" + nrow + " tbody").append( "<tr>" +
+                    "<td class='ui-widget-content ui-state-active' colspan=6" + ' class="ui-widget ui-widget-content " > Altri movimenti di ' + $( "#dialog"+nrow ).attr('partner') + ' </td></tr>');
+                $.each(data, function(i,value){
+                       $( "#db-contain" + nrow + " tbody").append( "<tr>" +
+                          "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n." +
+                          value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
                           "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                           "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
                            '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
@@ -149,14 +174,14 @@ function dialogSchedule(paymov) {
       modal: true,
 	  position: "top",	  
 	  open: function(){
-			getResults(clfoco,id_rig);
 			updateForm(); 
+			getPayment(tesdoc_ref,id_rig);
 		},
       buttons: {
 			"Conferma":function(){ $(this).dialog( "close" );}
 		},
 	  beforeClose:function(event,ui) { 
-	      if (!checkTot('Il totale delle scadenze non coincide con il totale rigo') || !checkField() ){
+	      if (!checkField() || !checkTot('Il totale delle scadenze non coincide con il totale rigo')  ){
 		    return false;
 		  } 
 		},
@@ -168,25 +193,6 @@ function dialogSchedule(paymov) {
     });
 
     $("#dialog"+nrow ).dialog( "open" );
-
-    $("#sbmt").click(function() {
-            var bValid = true;
-            allFields.removeClass( "ui-state-error" );
-            bValid = bValid && checkDate( expiry, "La data di Scadenza è sbagliata" );
-            bValid = bValid && checkAmount( amount,"L'importo inserito è sbagliato" );
-            if ( bValid ) {     
-                $( "#openitem"+ nrow + " tbody" ).append( "<tr>" +
-                   "<td></td>" +
-                   "<td" + ' class="ui-widget ui-widget-content " >' + expiry.val() + "</td>" +
-                   "<td" + ' class="ui-widget-right ui-widget-content " >' + amount.val() + "</td>" +
-                   '<td class="ui-widget-right ui-widget-content "><button id="'+nrow+'"><img src="../../library/images/x.gif" /></button></td>' +
-                   "</tr>" );
-                $("#post_dial"+nrow+" input" ).append("<input type='hidden' name='paymov[" + nrow + "][][amount]' value='" + amount.val() + "' />");
-                $("#post_dial"+nrow+" input" ).append("<input type='hidden' name='paymov[" + nrow + "][][expiry]' value='" + expiry.val() + "' />");
-                allFields.val( "" ).removeClass( "ui-state-error" );
-                updateTips( "" );
-            }
-    });
 
     $("#add_expiry"+nrow).click(function() {
 			var id_btn = new Date().valueOf().toString();
