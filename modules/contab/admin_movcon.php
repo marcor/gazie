@@ -127,12 +127,13 @@ if (isset($_POST['ins'])) {
         }
         // controllo se ci documenti con lo stesso numero e anno dello stesso fornitore (duplicato) 
         if ($_POST['cod_partner']>0){
-            $dupli = gaz_dbi_record_count($gTables['tesmov'] , "numdoc = '".trim(substr($_POST['numdocumen'],0,20))."' AND seziva = ".intval($_POST['sezioneiva'])." AND clfoco = ".intval($_POST['cod_partner'])." AND YEAR(datdoc) = ".intval($_POST['date_doc_Y']));
+            $dupli = gaz_dbi_record_count($gTables['tesmov'] , "caucon = '".substr($_POST['codcausale'],0,3)."' AND numdoc = '".trim(substr($_POST['numdocumen'],0,20))."' AND seziva = ".intval($_POST['sezioneiva'])." AND clfoco = ".intval($_POST['cod_partner'])." AND YEAR(datdoc) = ".intval($_POST['date_doc_Y']));
             if ($dupli > 1 || ($dupli == 1 && $toDo == 'insert')) {
                 $msg .= "14+";          
             }
         }
     }
+
     if ($msg == "") { // nessun errore
         //se è un update recupero i vecchi righi per trovare quelli da inserire/modificare/cancellare
         //formatto le date
@@ -330,6 +331,11 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
           while ($rpm = gaz_dbi_fetch_array($rs_paymov)) {
              $form['paymov'][$i][$rpm['id']]= $rpm ;
              $form['paymov'][$i][$rpm['id']]['expiry']= gaz_format_date($rpm['expiry']);
+             if ($rpm['id_rigmoc_pay']>0) { //  se è un pagamento (chiude)
+                $form['pay_schedule'] = 2;  
+             } else {                       // ...o un documento (apre)
+                $form['pay_schedule'] = 1;  
+             }  
           }
         }
         // fine recupero partite aperte
@@ -351,6 +357,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['inserimdoc'] = $_POST['inserimdoc'];
     $form['registroiva'] = $_POST['registroiva'];
     $form['operatore'] = $_POST['operatore'];
+    $form['pay_schedule'] = $_POST['pay_schedule'];
     if ($form['registroiva'] > 0) {
        $form['inserimdoc'] = 1;
     }
@@ -492,6 +499,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
             $form['inserimdoc'] = $causa['insdoc'];
             $form['registroiva'] = $causa['regiva'];
             $form['operatore'] = $causa['operat'];
+            $form['pay_schedule'] = $causa['pay_schedule'];
             $newRow = 0;
             for( $i = 1; $i <= 6; $i++ ) { //se ce ne sono, carico le contropartite
                  if ($causa["contr$i"] > 0) {
@@ -660,6 +668,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['inserimdoc'] = 0;
     $form['registroiva'] = 0;
     $form['operatore'] = 0;
+    $form['pay_schedule'] = 0;
     //registri per il form del rigo di inserimento contabile
     $form['insert_mastro'] = 0;
     $form['insert_conto'] = 0;
@@ -942,6 +951,7 @@ echo "</script>\n";
 $gForm = new contabForm();
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
+echo "<input type=\"hidden\" value=\"".$form['pay_schedule']."\" id=\"pay_schedule\" name=\"pay_schedule\">\n";
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
 } else {
