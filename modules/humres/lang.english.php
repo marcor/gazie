@@ -3,7 +3,7 @@
  --------------------------------------------------------------------------
                             Gazie - Gestione Azienda
     Copyright (C) 2004-2010 - Antonio De Vincentiis Montesilvano (PE)
-                                (www.devincentiis.it)
+         (www.facebook.com/antonio.devincentiis.9)
                         <http://gazie.sourceforge.net>
 	Spanish Translation by Dante Becerra Lagos softenglish@gmail.com
  --------------------------------------------------------------------------

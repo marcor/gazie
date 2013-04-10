@@ -3,8 +3,8 @@
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2013 - Antonio De Vincentiis Montesilvano (PE)
-                                (www.devincentiis.it)
-                        <http://gazie.it>
+         (www.facebook.com/antonio.devincentiis.9)
+           <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -27,7 +27,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="author" content="Antonio De Vincentiis www.devincentiis.it">
+<meta name="author" content="Antonio De Vincentiis www.facebook.com/antonio.devincentiis.9">
 <?php
 $menuclass = ' class="FacetMainMenu" ';
 $style = 'stylesheet.css';

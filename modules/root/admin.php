@@ -3,8 +3,8 @@
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2013 - Antonio De Vincentiis Montesilvano (PE)
-                                (www.devincentiis.it)
-                        <http://gazie.it>
+         (www.facebook.com/antonio.devincentiis.9)
+           <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -114,7 +114,7 @@ echo selectCompany('enterprise_id',$form['enterprise_id'],$form['search']['enter
 echo "</td>\n";
 echo "</tr></table></div>\n";
 echo "<div id='admin_footer'>";
-echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) ".$script_transl['business']." ".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://www.devincentiis.it\"> www.devincentiis.it</a></div>\n";
+echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) ".$script_transl['business']." ".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://www.facebook.com/antonio.devincentiis.9\"> www.facebook.com/antonio.devincentiis.9</a></div>\n";
 echo '<div><table border="0" class="Tmiddle">';
 echo "<tr align=\"center\"><td>\n";
 echo "<a href=\"http://gazie.it\" target=\"_new\" title=\"".$script_transl['devel']." www.gazie.it\"><img src=\"../../library/images/gazie.gif\" height=\"38\" border=\"0\"></a>\n";

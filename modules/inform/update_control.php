@@ -3,8 +3,8 @@
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2013 - Antonio De Vincentiis Montesilvano (PE)
-                                (www.devincentiis.it)
-                        <http://gazie.it>
+         (www.facebook.com/antonio.devincentiis.9)
+           <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -30,8 +30,8 @@ $tutor= array();
 $tutor[1] = array('zone'   => 'Abruzzo',
                   'city'   => 'Montesilvano (PE)',
                   'sms'    => '+393383121161',
-                  'web'    => 'www.devincentiis.it',
-                  'check'  => 'http://www.devincentiis.it/file_ver');
+                  'web'    => 'www.facebook.com/antonio.devincentiis.9',
+                  'check'  => 'http://www.facebook.com/antonio.devincentiis.9/file_ver');
 // fine lista
 
 $configurazione = gaz_dbi_get_row($gTables['config'],'variable','update_url');
