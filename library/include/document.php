@@ -75,7 +75,9 @@ class DocContabVars
         $country = gaz_dbi_get_row($gTables['country'], "iso", $this->client['country']);
         if ($this->client['country'] != 'IT') {
             $this->cliente4b = strtoupper($country['istat_name']);
-        }
+        } else {
+			$this->cliente4b = ''; 
+		}
         if (!empty($this->client['pariva'])){
            $this->cliente5 = 'P.I. '.$this->client['pariva'].' ';
         } else {
