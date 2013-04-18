@@ -104,7 +104,7 @@ class Template extends TCPDF
         $interlinea = $this->GetY();
         $this->Ln(6);
         $this->SetFont('helvetica','',9);
-        if (!empty ($this->destinazione)) {
+        if (!empty ($this->destinazione)&&!($this->tesdoc['tipdoc']=='FAD')) {
             if (is_array($this->destinazione)){ //quando si vuole indicare un titolo diverso da destinazione si deve passare un array con titolo index 0 e descrizione index 1
                 $this->Cell(80,5,$this->destinazione[0],'LTR',2,'L',1);
                 $this->MultiCell(80,4,$this->destinazione[1],'LBR','L');
