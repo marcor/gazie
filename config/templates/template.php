@@ -53,6 +53,7 @@ class Template extends TCPDF
         $this->cliente2 = $docVars->cliente2;
         $this->cliente3 = $docVars->cliente3;
         $this->cliente4 = $docVars->cliente4;  // CAP, Città, Provincia
+        $this->cliente4b = $docVars->cliente4b; // Nazione
         $this->cliente5 = $docVars->cliente5;  // P.IVA e C.F.
         $this->agente = $docVars->name_agente;
         $this->destinazione = $docVars->destinazione;
@@ -125,6 +126,10 @@ class Template extends TCPDF
         $this->Cell(75,5,$this->cliente3,0,1,'L');
         $this->Cell(115);
         $this->Cell(75,5,$this->cliente4,0,1,'L');
+        if (!empty ($this->cliente4b)) {
+            $this->Cell(115);
+            $this->Cell(75,5,$this->cliente4b,0,1,'L');
+        }
         $this->SetFont('helvetica','',7);
         $this->Cell(115);
         $this->Cell(75,5,$this->cliente5,0,1,'L');

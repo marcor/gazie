@@ -68,9 +68,13 @@ class DocContabVars
         $this->cliente2 = $this->client['ragso2'];
         $this->cliente3 = $this->client['indspe'];
         if (!empty($this->client['citspe'])) {
-           $this->cliente4 = sprintf("%05d",$this->client['capspe']).' '.$this->client['citspe'].' ('.$this->client['prospe'].')';
+           $this->cliente4 = sprintf("%05d",$this->client['capspe']).' '.strtoupper($this->client['citspe']).' '.strtoupper($this->client['prospe']);
         } else {
            $this->cliente4 = '';
+        }
+        $country = gaz_dbi_get_row($gTables['country'], "iso", $this->client['country']);
+        if ($this->client['country'] != 'IT') {
+            $this->cliente4b = strtoupper($country['istat_name']);
         }
         if (!empty($this->client['pariva'])){
            $this->cliente5 = 'P.I. '.$this->client['pariva'].' ';
