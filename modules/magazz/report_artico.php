@@ -24,6 +24,9 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+if ($admin_aziend['decimal_quantity']>4){
+	$admin_aziend['decimal_quantity']=4;
+}
 
 function getLastDoc($item_code)
    {
@@ -129,7 +132,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
        echo "<td class=\"FacetDataTD\" align=\"center\">".$r["unimis"]." </td>";
        echo "<td class=\"FacetDataTD\" align=\"right\">".number_format($r["preve1"],$admin_aziend['decimal_price'],',','.')." </td>";
        echo "<td class=\"FacetDataTD\" align=\"right\">".number_format($r["preacq"],$admin_aziend['decimal_price'],',','.')." </td>";
-       echo "<td class=\"FacetDataTD\" align=\"right\" title=\"".$admin_aziend['symbol']." ".$magval['v_g']."\">".$magval['q_g']." </td>";
+       echo "<td class=\"FacetDataTD\" align=\"right\" title=\"".$admin_aziend['symbol']." ".$magval['v_g']."\">".number_format($magval['q_g'],$admin_aziend['decimal_quantity'],',','.')." </td>";
        if ($admin_aziend['conmag']>0) {
           echo "<td class=\"FacetDataTD\" align=\"center\" title=\"Visualizza e/o stampa la scheda di magazzino\">
                 <a href=\"../magazz/select_schart.php?di=0101".date('Y')."&df=".date('dmY')."&id=".$r['codice']."\">

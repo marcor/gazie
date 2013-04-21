@@ -24,7 +24,9 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-
+if ($admin_aziend['decimal_quantity']>4){
+	$admin_aziend['decimal_quantity']=4;
+}
 
 if (!isset($_GET['li']) or
     !isset($_GET['ci']) or
@@ -131,7 +133,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $pdf->Cell(85,5,$row['desart'],1);
       $pdf->Cell(15,5,$row['unimis'],1,0,'C');
       $pdf->Cell(25,5,number_format($price,$admin_aziend['decimal_price'],',','.'),1,0,'R');
-      $pdf->Cell(25,5,$magval['q_g'],1,0,'R');
+      $pdf->Cell(25,5,number_format($magval['q_g'],$admin_aziend['decimal_quantity'],',','.'),1,0,'R');
       $pdf->Cell(15,5,$row['aliquo'],1,0,'C');
       $pdf->Cell(70,5,$row['annota'],1,1,'C');
       $ctrlcatmer=$row["catmer"];
