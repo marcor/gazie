@@ -573,8 +573,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
         and $cliente['speban'] == 'S') {
            $form['speban'] = $admin_aziend['sperib'];
            $form['numrat'] = $pagame['numrat'];
-           $form['stamp'] = $admin_aziend['perbol'];
-           $form['round_stamp'] = $admin_aziend['round_bol'];
+           $form['stamp'] = 0;
+		   if ($pagame['tippag'] == 'T') { 
+				$form['stamp']=$admin_aziend['perbol'];
+		   }	
+		   $form['round_stamp'] = $admin_aziend['round_bol'];
     } elseif ($pagame['tippag'] == 'R') {
            $form['speban'] = 0.00;
            $form['numrat'] = 1;
