@@ -52,5 +52,9 @@ if ($lettera['signature'] > 0){
 } else {
     $testata['signature'] = '';
 }
-createDocument($testata,'Lettera',$gTables);
+if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
+    createDocument($testata, 'Lettera', $gTables,'rigdoc','E');
+} else {
+	createDocument($testata,'Lettera',$gTables);
+}
 ?>

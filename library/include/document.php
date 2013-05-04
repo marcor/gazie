@@ -140,6 +140,9 @@ class DocContabVars
         $this->year = substr($tesdoc['initra'],0,4);
         $this->trasporto=$tesdoc['traspo'];
         $this->testat = $testat;
+
+        $this->docRelNum  = $this->tesdoc["numdoc"];    // Numero del documento relativo
+        $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         
         switch ( $tesdoc["tipdoc"] ) {
             case "FAD":

@@ -30,7 +30,10 @@ $strScript = array ("report_letter.php" =>
                            "Type ",
                            "Company name ",
                            "Object ",
-                           "Write new letter"),
+                           "Write new letter",
+                         'mail_alert0'=>'Invio lettera con email',
+                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
+                         'mail_alert2'=>'con allegato la seguente lettera:'),
                     "admin_letter.php" =>
                    array(  'title' => " Letter ",
                            'mesg'=>array('The search yielded no results!',
