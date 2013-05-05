@@ -37,6 +37,7 @@ if(!isset($_GET["annfin"])){
 if(!isset($_GET["annini"])) {
     $_GET["annini"] = date("Y")-1;
 }
+
 $anagrafica = new Anagrafica();
 $conto = $anagrafica->getPartner(intval($_GET['codice']));
 //recupero tutti i movimenti contabili del conto insieme alle relative testate...
@@ -102,5 +103,17 @@ while ($movimenti = gaz_dbi_fetch_array($result)){
     if ($avere != 0) $pdf->Cell(18,4,$avere,1,0,'R'); else $pdf->Cell(18,4,'',1);
     $pdf->Cell(20,4,gaz_format_number($saldo),1,1,'R');
 }
-$pdf->Output();
+
+if ($_GET["dest"] && $_GET["dest"]=='E'){ // è stata richiesta una e-mail
+   $dest = 'S';     // Genero l'output pdf come stringa binaria
+   // Costruisco oggetto con tutti i dati del file pdf da allegare
+   $content->name = 'Estratto_conto_del_'.intval($_GET["annini"]).'_'.intval($_GET["annfin"]).'.pdf';
+   $content->string = $pdf->Output('Estratto_conto_del_'.intval($_GET["annini"]).'_'.intval($_GET["annfin"]).'.pdf', $dest);
+   $content->encoding = "base64";
+   $content->mimeType = "application/pdf";
+   $gMail = new GAzieMail();
+   $gMail->sendMail($admin_aziend,$admin_aziend,content,$conto);
+} else { // va all'interno del browser
+   $pdf->Output();
+}
 ?>
