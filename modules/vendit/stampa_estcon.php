@@ -42,7 +42,7 @@ $anagrafica = new Anagrafica();
 $conto = $anagrafica->getPartner(intval($_GET['codice']));
 //recupero tutti i movimenti contabili del conto insieme alle relative testate...
 $result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = ".intval($_GET['codice'])." AND datreg BETWEEN '".intval($_GET["annini"])."0101' AND '".intval($_GET["annfin"])."1231' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon ='".intval($_GET['codice'])."%' AND datreg LIKE '".intval($_GET["annini"])."%') ORDER BY datreg ASC");
-$emissione = 'Estratto conto della Spett.le '.$conto['ragso1'];
+$emissione = 'Estratto conto: '.$conto['ragso1'].' '.$conto['ragso2'];
 $title = array('title'=>$emissione,
                'hile'=>array(array('lun' => 20,'nam'=>'Data'),
                              array('lun' => 75,'nam'=>'Descrizione'),
@@ -112,7 +112,7 @@ if ($_GET["dest"] && $_GET["dest"]=='E'){ // è stata richiesta una e-mail
    $content->encoding = "base64";
    $content->mimeType = "application/pdf";
    $gMail = new GAzieMail();
-   $gMail->sendMail($admin_aziend,$admin_aziend,content,$conto);
+   $gMail->sendMail($admin_aziend,$admin_aziend,$content,$conto);
 } else { // va all'interno del browser
    $pdf->Output();
 }
