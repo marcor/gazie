@@ -126,13 +126,16 @@ function getDbVersion()
     return $versione[0];
 }
 
-function getCompanyNumber()
+function getCompanyNumbers()
 {
     global $table_prefix;
-    $query = "SELECT MAX(codice) FROM `".$table_prefix."_aziend`";
+    $query = "SELECT codice FROM `".$table_prefix."_aziend`";
     $result = gaz_dbi_query ($query);
-    $companyNo = gaz_dbi_fetch_array($result);
-    return $companyNo[0];
+    $companyNo = array();
+	while($r=gaz_dbi_fetch_array($result)){
+		$companyNo[]=$r['codice'];
+	}
+    return $companyNo;
 }
 
 function getLang()
@@ -226,7 +229,7 @@ function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestio
     // Iterazione per ciascuna linea del file.
     $lineArray = file($sqlFile);
     $parsingFlag = False; // flag per individuare ciascuna sottosezione, corrispondente a cisacuna versione del DB
-    $numberOfCompanies=getCompanyNumber();
+    $companies=getCompanyNumbers();
     $activateWhile = False; // flag per attivare il ciclo while
     foreach($lineArray as $line) {
         if (preg_match("/UPDATE[ \n\r\t\x0B]+(`){0,1}gaz_config(`){0,1}[ \n\r\t\x0B]+SET[ \n\r\t\x0B]+(`){0,1}cvalue(`){0,1}[ \n\r\t\x0B]*=[ \n\r\t\x0B]*\'$nextDbVersion\'/i", $line)) {
@@ -256,7 +259,7 @@ function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestio
             if ($activateWhile){
                // Esegue l'istruzione sulle tabelle di tutte le aziende installate.
                $sql_ori=$sql;;
-               for ($i = 1; $i <= $numberOfCompanies; $i++) {
+               foreach ($companies as $i) {
                     $sql = preg_replace("/XXX/", sprintf('%03d',$i), $sql_ori);
                     if (!gaz_dbi_query($sql)) { // si collega al DB
                         echo "Query Fallita";
