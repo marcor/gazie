@@ -146,3 +146,4 @@ class Template_con_scheda extends Template
         $this->Cell(184,3,"(5) Indicare le generalita' di chi sottoscrive la scheda in nome e per conto del committente",0,1);
     }
 }
+?>

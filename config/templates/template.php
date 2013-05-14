@@ -150,3 +150,4 @@ class Template extends TCPDF
     }
 
 }
+?>
