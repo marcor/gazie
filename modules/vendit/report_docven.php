@@ -36,19 +36,29 @@ if (isset($_GET['auxil'])) {
 if (isset($_GET['protoc'])) {
    if ($_GET['protoc'] > 0) {
       $protocollo = $_GET['protoc'];
-      $auxil = $_GET['auxil']."&protoc=".$protocollo;
       $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' AND protoc = '$protocollo' GROUP BY protoc, datfat";
+      $auxil = $_GET['auxil']."&protoc=".$protocollo;
       $passo = 1;
    }
 }  else {
    $protocollo ='';
+}
+if (isset($_GET['cliente'])) {
+   if ($_GET['cliente'] <> '') {
+      $cliente = $_GET['cliente'];
+      $where = " tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' and ".$gTables['clfoco'].".descri like '%$cliente%' GROUP BY protoc, datfat";
+      $auxil = $_GET['auxil']."&cliente=".$cliente;
+      $passo = 50;
+      unset($protocollo);
+   }
 }
 if (isset($_GET['all'])) {
    gaz_set_time_limit (240);
    $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;
-   $protocollo ='';
+   unset($protocollo);
+   unset($cliente);
 }
 
 $titolo="Documenti di vendita a clienti";
@@ -156,21 +166,24 @@ for ($sez = 1; $sez <= 3; $sez++) {
 <?php
 if (!isset($_GET['field']) or ($_GET['field'] == 2) or(empty($_GET['field'])))
         $orderby = "datfat desc, protoc desc";
-$recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
+$recordnav = new recordnav($gTables['tesdoc'].' LEFT JOIN '.$gTables['clfoco'].' on '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <table class="Tlarge">
-<tr>
-<td colspan="2" class="FacetFieldCaptionTD">Protocollo:
-<input type="text" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
-</td>
-<td>
-<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
-</td>
-<td>
-<input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
-</td>
-</tr>
+ <tr>
+   <td class="FacetFieldCaptionTD">Protocollo:
+     <input type="text" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+   </td>
+   <td colspan="4" class="FacetFieldCaptionTD">Cliente:
+     <input type="text" name="cliente" value="<?php if ($cliente <> '') print $cliente; ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">
+   </td>
+   <td>
+     <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+   </td>
+   <td colspan="3">
+     <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+   </td>
+ </tr>
 <tr>
 <?php
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -191,7 +204,7 @@ $linkHeaders -> output();
 ?>
 </tr>
 <?php
-$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,'datfat DESC, protoc DESC',0,1);
+$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'].' LEFT JOIN '.$gTables['clfoco'].' on '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where,'datfat DESC, numfat DESC',0,1);
 $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesdoc'].".*, MAX(".$gTables['tesdoc'].".id_tes) AS reftes,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail,".$gTables['pagame'].".tippag", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id  LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice", $where, $orderby,$limit, $passo);
@@ -320,7 +333,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $ctrl_doc = sprintf('%09d',$r['protoc']).$r['datfat'];
 }
 ?>
-</form>
 </table>
+</form>
 </body>
 </html>
