@@ -26,36 +26,36 @@ if (isset($_POST['Delete'])){
         gaz_dbi_del_row($gTables['caucon'], "codice", substr($_POST['codice'],0,3));
         header("Location: report_caucon.php");
         exit;
+} else {
+    $form = gaz_dbi_get_row($gTables['caucon'], "codice", substr($_GET['codice'],0,3));
 }
+
 if (isset($_POST['Return'])){
         header("Location: report_caucon.php");
         exit;
-}
-if (!isset($_POST['Delete'])){
-    $form = gaz_dbi_get_row($gTables['caucon'], "codice", substr($_GET['codice'],0,3));
 }
 require("../../library/include/header.php");
 $script_transl=HeadMain('','','admin_caucon');
 ?>
 <form method="POST">
-<input type="hidden" name="codice" value="<?php print $script_transl['codice']; ?>">
+<input type="hidden" name="codice" value="<?php echo $form['codice']; ?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['del_this']." '".substr($_GET['codice'],0,3)."'" ; ?></font></div>
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
 <tr>
-    <td class="FacetFieldCaptionTD"><?php print $script_transl['descri']; ?></td>
-    <td class="FacetDataTD"><?php print $form["descri"]; ?> &nbsp;</td>
+    <td class="FacetFieldCaptionTD"><?php echo $script_transl['descri']; ?></td>
+    <td class="FacetDataTD"><?php echo $form["descri"]; ?> &nbsp;</td>
 </tr>
 <tr>
-    <td class="FacetFieldCaptionTD" ><?php print $script_transl['insdoc']; ?></td>
-    <td class="FacetDataTD"><?php print $script_transl['insdoc_value'][$form["insdoc"]]; ?></td>
+    <td class="FacetFieldCaptionTD" ><?php echo $script_transl['insdoc']; ?></td>
+    <td class="FacetDataTD"><?php echo $script_transl['insdoc_value'][$form["insdoc"]]; ?></td>
 </tr>
 <tr>
-    <td class="FacetFieldCaptionTD"><?php print $script_transl['regiva']; ?></td>
-    <td class="FacetDataTD"><?php print $script_transl['regiva_value'][$form["regiva"]]; ?> &nbsp;</td>
+    <td class="FacetFieldCaptionTD"><?php echo $script_transl['regiva']; ?></td>
+    <td class="FacetDataTD"><?php echo $script_transl['regiva_value'][$form["regiva"]]; ?> &nbsp;</td>
 
 </tr>
 <tr>
-<td colspan="2" class="FacetFormHeaderFont" align="center"><?php print $script_transl['head']; ?></td>
+<td colspan="2" class="FacetFormHeaderFont" align="center"><?php echo $script_transl['head']; ?></td>
 </tr>
 <?php
 for( $i = 1; $i <= 6; $i++ ) {
