@@ -30,28 +30,12 @@ if (isset($_POST['Delete']))
     // La cancellazione dell'effetto è stata confermata!
     //
     // Rilegge i dati dell'effetto.
-    //
     $effetto = gaz_dbi_get_row($gTables['effett'], "id_tes", intval($_POST['id_tes']));
-    //
-    // Verifica se l'effetto da cancellare è già stato contabilizzato.
-    // In tal caso, ne elimina subito la registrazione.
-    //
-    if ($effetto['id_con'] > 0)
-      {
-        $movimento = gaz_dbi_get_row($gTables['tesmov'], "id_tes",
-                                     $effetto['id_con']);
-        if ($movimento['id_tes'] == $effetto['id_con']
-            and ($movimento['caucon'] == "RIB"
-                 or $movimento['caucon'] == "TRA"))
-          {
+    // elimina subito la registrazione.
+    if ($effetto['id_con'] > 0) {
             gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $effetto['id_con']);
             gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $effetto['id_con']);
-            gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $effetto['id_con']);
-          }
-      }
-    //
-    // Alla fine elimina definitivamente l'effetto e conclude.
-    //
+    }
     $result = gaz_dbi_del_row($gTables['effett'], "id_tes", intval($_POST['id_tes']));
     header("Location: report_effett.php");
     exit;
