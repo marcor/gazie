@@ -37,6 +37,8 @@ if (isset($_POST['Delete'])) {
     gaz_dbi_del_row($gTables['tesmov'], "id_tes", intval($_POST['id_tes']));
     // se si riferisce ad un documento contabilizzato annullo il riferimento al movimento
     gaz_dbi_put_query($gTables['tesdoc'], 'id_con ='.intval($_POST['id_tes']),'id_con',0);
+    // se si riferisce ad un effetto contabilizzato annullo il riferimento al movimento
+    gaz_dbi_put_query($gTables['effett'], 'id_con ='.intval($_POST['id_tes']),'id_con',0);
     header("Location: report_movcon.php");
     exit;
 }
