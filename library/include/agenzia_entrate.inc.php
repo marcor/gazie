@@ -346,7 +346,7 @@ class AgenziaEntrate
 
 
 
-/****** creaFileART21 - COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA
+/****** creaFileART21 - COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA ANTE 2012
       $testa = array monodimensionale con i seguenti index:
               [codfis] = Codice Fiscale del contribuente 16 alfanumerico o 11 numerico
               [pariva] = Partita IVA del contribuente 11 numerico
@@ -487,6 +487,229 @@ class AgenziaEntrate
                                '9'.$this->Record_09($testa);
                return $accumulatore;
                }
-// --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21)
+// --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21) ANTE 2012
+
+
+/****** creaFile MODELLO COMUNICAZIONE POLIVALENTE
+      $testa = array monodimensionale con i seguenti index:
+              [codfis] = Codice Fiscale del contribuente 16 alfanumerico o 11 numerico
+              [pariva] = Partita IVA del contribuente 11 numerico
+              [nome] = Nome del Contribuente 26 alfanumerico
+              [cognome] = Cognome del Contribuente 25 alfanumerico
+              [sesso] = Sesso se Persona Fisica (d'ora in poi PF) 1 alfanumerico (MF)
+              [datnas] = Data di nascita contribuente se PF formato GGMMAAAA
+              [luonas] = Comune o stato estero di nascita contribuente se PF 40 alfanumerico
+              [pronas] = Provincia o stato estero (EE) di nascita contribuente se PF 2 alfanumerico
+              [ragsoc] = Ragione sociale contribuente se Persona Giuridica (d'ora in poi PG) 70 alfanumerico
+              [segleg] = Comune della sede legale se PG 40 alfanumerico
+              [proleg] = Provincia della sede legale se PG 2 alfanumerico
+              [anno] = Anno fornitura 4 numerico
+      $dati = array bidimensionale con i seguenti index posti anche in questo ordine:
+              [tipo] = Tipo di Record 1 numerico (1=SOGGETTI NON TITOLARI DI PARTITA IVA,2=SOGGETTI TITOLARI DI PARTITA IVA,3=SOGGETTI NON RESIDENTI)
+              [codfis] = Codice Fiscale del cliente 16 alfanumerico
+              [pariva] = Partita IVA del cliente/fornitore 11 numerico
+              [imponibile] = Imponibile o corrispettivo in caso di [tipo] = 1
+              [imposta] = Imposta applicata
+              [tipoimponibile] = Tipologia Imponibile (1=Imponibile,2 = Non imponibile,3 = Esente,4 = Imponibile con IVA non esposta in fattura )
+              [tipooperazione] = Tipologia dell'operazione (1 = Cessione di beni,2 = Prestazione di servizi,3 = Acquisto di beni,4 = Acquisto di servizi )
+              [cognome] = Cognome in caso di [tipo] = 3
+              [nome] = Nome in caso di [tipo] = 3
+              [datnas] = Data di Nascita in caso di [tipo] = 3   (se non valorizzato discrimina viene considerata una persona non fisica)
+              [luonas] = Comune o Stato estero di nascita in caso di [tipo] = 3
+              [pronas] = Provincia di nascita in caso di [tipo] = 3 (in caso di Stato estero, indicare "EE")
+              [stato] = Stato estero del domicilio fiscale in caso di [tipo] = 3 (Indicare uno dei codici, corrispondente allo Stato di residenza della controparte, di
+                                                                                 cui all'Elenco dei Paesi e Territori esteri contenuto nelle istruzioni per la compilazione
+                                                                                 del modello UNICO di dichiarazione dei redditi.)
+              [indirizzo] = Indirizzo estero del domicilio fiscale in caso di [tipo] = 3  (se non valorizzato discrimina viene considerata una persona fisica)
+     $totali = array bidimensionale (prima dimensione:index [1] =clienti, index[2] = fornitori)  la seconda dimensione deve avere i seguenti index:
+              [numero] = Numero di clienti/fornitori 8 numerico
+              [imponibile] = Imponibile
+              [imposta] = Imposta applicata
+              [esente] = Esente
+              [nonimp] = Non imponibile
+*/
+      function Record_A($T) // RECORD DATI INVIO
+               $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
+               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
+               if (isset($T['sesso'])){  // PERSONA FISICA
+                  $this->AltriDati= str_repeat(' ',102).
+                                    substr(str_pad($T['cognome'],24,' '),0,24).
+                                    substr(str_pad($T['nome'],20,' '),0,20).
+                                    substr($T['sesso'],0,1).
+                                    substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
+                                    substr(str_pad($T['luonas'],40,' '),0,40).
+                                    substr(str_pad($T['pronas'],2,' '),0,2);
+               } else {    // PERSONA GIURIDICA
+                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
+                                    substr(str_pad($T['sedleg'],40,' '),0,40).
+                                    substr(str_pad($T['proleg'],2,' '),0,2).
+                                    str_repeat(' ',95);
+               }
+               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
+               return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
+                      $this->AltriDati.
+                      $this->Anno.'000010001'.
+                      str_repeat(' ',1528)."A\r\n";
+
+               }
+
+      function Record_B($T) // RECORD DATI IDENTIFICATIVI
+               {
+               $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
+               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
+               if (isset($T['sesso'])){  // PERSONA FISICA
+                  $this->AltriDati= str_repeat(' ',102).
+                                    substr(str_pad($T['cognome'],24,' '),0,24).
+                                    substr(str_pad($T['nome'],20,' '),0,20).
+                                    substr($T['sesso'],0,1).
+                                    substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
+                                    substr(str_pad($T['luonas'],40,' '),0,40).
+                                    substr(str_pad($T['pronas'],2,' '),0,2);
+               } else {    // PERSONA GIURIDICA
+                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
+                                    substr(str_pad($T['sedleg'],40,' '),0,40).
+                                    substr(str_pad($T['proleg'],2,' '),0,2).
+                                    str_repeat(' ',95);
+               }
+               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
+               return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
+                      $this->AltriDati.
+                      $this->Anno.'000010001'.
+                      str_repeat(' ',1528)."A\r\n";
+
+               }
+
+      function Record_D($D) // RECORD DATI OPERAZIONI (NON AGGREGATE) 
+               {
+               $acc='';
+               $ctrl_tipo = 0;
+               foreach ($D as $ElementsData) {
+                        switch ($ElementsData['soggetto_type']) {
+                            case '1': // SOGGETTI RESIDENTI NON TITOLARI DI PARTITA IVA
+							    if( strlen(trim($ElementsData['codfis'])) == 11) { // È una persona giuridica ( associazione )
+									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_RIGHT),0,16);
+								} else { // È una persona fisica
+									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16);
+								}
+                                $acc .= '1'.$cf
+                                        .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
+                                        .$ElementsData['n_rate']
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['imposte_addebitate']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
+                                        .str_repeat(' ',1762)."A\r\n";
+                            break;
+                            case '2': // SOGGETTI RESIDENTI TITOLARI DI PARTITA IVA
+                                $acc .= '2'.substr(str_pad($ElementsData['pariva'],11,'0',STR_PAD_LEFT),0,11)
+                                        .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
+                                        .substr(str_pad(round($ElementsData['numdoc']),15,' '),0,15)
+                                        .$ElementsData['n_rate']
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,'0',STR_PAD_LEFT),0,9)
+                                        .substr(str_pad(round($ElementsData['imposte_addebitate']),9,'0',STR_PAD_LEFT),0,9);
+                                        if ($ElementsData['op_type']>2){ //acquisto
+                                             $acc .= '2';
+                                        } else { // vendita
+                                             $acc .= '1';
+                                        }
+                                $acc .= str_repeat(' ',1742)."A\r\n";
+                            break;
+                            case '3': // SOGGETTI NON RESIDENTI 
+                                $acc .= '3';
+                                if ($ElementsData['sexper']=='G'){ //persona giuridica
+                                    $acc .= str_repeat(' ',97)
+                                        .substr(str_pad($ElementsData['ragso1'].' '.$ElementsData['ragso2'],60,' ',STR_PAD_RIGHT),0,60)
+                                        .substr(str_pad($ElementsData['citspe'],40,' ',STR_PAD_RIGHT),0,40)
+                                        .substr(str_pad($ElementsData['istat_country'],3,' ',STR_PAD_LEFT),0,3)
+                                        .substr(str_pad($ElementsData['indspe'],40,' ',STR_PAD_RIGHT),0,40);
+                                } else { // persona fisica
+                                    $acc .= substr(str_pad($ElementsData['cognome'],24,' ',STR_PAD_RIGHT),0,24)
+                                        .substr(str_pad($ElementsData['nome'],20,' ',STR_PAD_RIGHT),0,20)
+                                        .substr($ElementsData['datnas'],8,2).substr($ElementsData['datnas'],5,2).substr($ElementsData['datnas'],0,4)
+                                        .substr(str_pad($ElementsData['luonas'],40,' ',STR_PAD_RIGHT),0,40)
+                                        .substr(str_pad($ElementsData['pronas'],2,' ',STR_PAD_RIGHT),0,2)
+                                        .substr(str_pad($ElementsData['istat_country'],3,' ',STR_PAD_LEFT),0,3)
+                                        .str_repeat(' ',143);
+                                }
+                                $acc .= substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
+                                        .substr(str_pad(round($ElementsData['numdoc']),15,' '),0,15)
+                                        .$ElementsData['n_rate']
+                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
+                                        .substr(str_pad(round($ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9);
+                                if ($ElementsData['op_type']>2){ //acquisto
+                                    $acc .= '2';
+                                } else { // vendita
+                                    $acc .= '1';
+                                }
+                                $acc .= str_repeat(' ',1513)."A\r\n";
+                            break;
+                            case '4': // SOGGETTI RESIDENTI - NOTE DI VARIAZIONE
+                            break;
+                            case '5': // SOGGETTI NON RESIDENTI - NOTE DI VARIAZIONE
+                            break;
+                        }
+                    }
+                return $acc;
+               }
+
+      function Record_E($T) // RECORD DATI RIEPILOGATIVI
+               {
+               $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
+               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
+               if (isset($T['sesso'])){  // PERSONA FISICA
+                  $this->AltriDati= str_repeat(' ',102).
+                                    substr(str_pad($T['cognome'],24,' '),0,24).
+                                    substr(str_pad($T['nome'],20,' '),0,20).
+                                    substr($T['sesso'],0,1).
+                                    substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
+                                    substr(str_pad($T['luonas'],40,' '),0,40).
+                                    substr(str_pad($T['pronas'],2,' '),0,2);
+               } else {    // PERSONA GIURIDICA
+                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
+                                    substr(str_pad($T['sedleg'],40,' '),0,40).
+                                    substr(str_pad($T['proleg'],2,' '),0,2).
+                                    str_repeat(' ',95);
+               }
+               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
+               return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
+                      $this->AltriDati.
+                      $this->Anno.'000010001'.
+                      str_repeat(' ',1528)."A\r\n";
+
+               }
+
+      function Record_Z($T) // RECORD DI CODA
+               {
+               $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
+               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
+               if (isset($T['sesso'])){  // PERSONA FISICA
+                  $this->AltriDati= str_repeat(' ',102).
+                                    substr(str_pad($T['cognome'],24,' '),0,24).
+                                    substr(str_pad($T['nome'],20,' '),0,20).
+                                    substr($T['sesso'],0,1).
+                                    substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
+                                    substr(str_pad($T['luonas'],40,' '),0,40).
+                                    substr(str_pad($T['pronas'],2,' '),0,2);
+               } else {    // PERSONA GIURIDICA
+                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
+                                    substr(str_pad($T['sedleg'],40,' '),0,40).
+                                    substr(str_pad($T['proleg'],2,' '),0,2).
+                                    str_repeat(' ',95);
+               }
+               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
+               return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
+                      $this->AltriDati.
+                      $this->Anno.'000010001'.
+                      str_repeat(' ',1528)."A\r\n";
+
+               }
+
+      function creaFileART21_poli($testa,$dati)
+               {
+               $accumulatore = $this->Record_A($testa).
+                               $this->Record_B($testa).
+                               $this->Record_D($dati).
+                               $this->Record_E($testa).
+                               $this->Record_Z($testa);
+               return $accumulatore;
+               }
+// --- FINE FUNZIONE CREA FILE COMUNICAZIONE POLIVALENTE
       }
 ?>
