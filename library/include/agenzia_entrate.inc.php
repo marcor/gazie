@@ -490,7 +490,7 @@ class AgenziaEntrate
 // --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21) ANTE 2012
 
 
-/****** creaFile MODELLO COMUNICAZIONE POLIVALENTE
+/****** creaFileART21_poli MODELLO COMUNICAZIONE POLIVALENTE DAL 2013
       $testa = array monodimensionale con i seguenti index:
               [codfis] = Codice Fiscale del contribuente 16 alfanumerico o 11 numerico
               [pariva] = Partita IVA del contribuente 11 numerico
@@ -504,6 +504,10 @@ class AgenziaEntrate
               [segleg] = Comune della sede legale se PG 40 alfanumerico
               [proleg] = Provincia della sede legale se PG 2 alfanumerico
               [anno] = Anno fornitura 4 numerico
+              [ateco]= codice attività azienda ATECO 2007
+              [telefono]= telefono del contribuente
+              [fax]= fax del contribuente
+              [e_mail]= e-mail del contribuente
       $dati = array bidimensionale con i seguenti index posti anche in questo ordine:
               [tipo] = Tipo di Record 1 numerico (1=SOGGETTI NON TITOLARI DI PARTITA IVA,2=SOGGETTI TITOLARI DI PARTITA IVA,3=SOGGETTI NON RESIDENTI)
               [codfis] = Codice Fiscale del cliente 16 alfanumerico
@@ -529,61 +533,55 @@ class AgenziaEntrate
               [nonimp] = Non imponibile
 */
       function Record_A($T) // RECORD DATI INVIO
+            {
                $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
-               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
-               if (isset($T['sesso'])){  // PERSONA FISICA
-                  $this->AltriDati= str_repeat(' ',102).
-                                    substr(str_pad($T['cognome'],24,' '),0,24).
-                                    substr(str_pad($T['nome'],20,' '),0,20).
-                                    substr($T['sesso'],0,1).
-                                    substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
-                                    substr(str_pad($T['luonas'],40,' '),0,40).
-                                    substr(str_pad($T['pronas'],2,' '),0,2);
-               } else {    // PERSONA GIURIDICA
-                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
-                                    substr(str_pad($T['sedleg'],40,' '),0,40).
-                                    substr(str_pad($T['proleg'],2,' '),0,2).
-                                    str_repeat(' ',95);
-               }
-               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
-               return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
-                      $this->AltriDati.
-                      $this->Anno.'000010001'.
-                      str_repeat(' ',1528)."A\r\n";
-
-               }
+               return "A".str_repeat(' ',14)."NSP0001".
+                      $this->CFContribuente.str_repeat(' ',483).
+                      str_repeat('0',8).    /* qui andrebbero messi i valori degli invii multipli,
+                                               che GAzie non gestisce sperando che non si superi il limite di record
+                                               in una piccola/media azienda (5Mb)*/
+                      str_repeat(' ',1368)."A\r\n";
+            }
 
       function Record_B($T) // RECORD DATI IDENTIFICATIVI
                {
                $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
                $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
+               $this->ATECO = substr(str_pad($T['ateco'],6,'0'),0,6);
+               $this->telefono = substr(str_pad(filter_var($T['telefono'], FILTER_SANITIZE_NUMBER_INT),12,' ',STR_PAD_RIGHT),0,12);
+               $this->fax = substr(str_pad(filter_var($T['fax'], FILTER_SANITIZE_NUMBER_INT),12,' ',STR_PAD_RIGHT),0,12);
+               $this->e_mail = substr(str_pad(strtoupper($T['e_mail']),50,' ',STR_PAD_RIGHT),0,50);
                if (isset($T['sesso'])){  // PERSONA FISICA
-                  $this->AltriDati= str_repeat(' ',102).
-                                    substr(str_pad($T['cognome'],24,' '),0,24).
+                  $this->AltriDati= substr(str_pad($T['cognome'],24,' '),0,24).
                                     substr(str_pad($T['nome'],20,' '),0,20).
                                     substr($T['sesso'],0,1).
                                     substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
                                     substr(str_pad($T['luonas'],40,' '),0,40).
-                                    substr(str_pad($T['pronas'],2,' '),0,2);
+                                    substr(str_pad($T['pronas'],2,' '),0,2).
+                                    str_repeat(' ',60);
                } else {    // PERSONA GIURIDICA
-                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
-                                    substr(str_pad($T['sedleg'],40,' '),0,40).
-                                    substr(str_pad($T['proleg'],2,' '),0,2).
-                                    str_repeat(' ',95);
+                  $this->AltriDati= str_repeat(' ',95).substr(str_pad($T['ragsoc'],60,' '),0,60);
                }
                $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
-               return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
-                      $this->AltriDati.
-                      $this->Anno.'000010001'.
-                      str_repeat(' ',1528)."A\r\n";
-
+               return "B".$this->CFContribuente.'00000001'.
+                      str_repeat(' ',48).$this->CFContribuente.'1  '.str_repeat(' ',23).' 1'.
+                      str_repeat(' ',12). // qui andranno messi i 12 flag dei quadri compilati
+                      $this->PIContribuente.$this->ATECO.$this->telefono.$this->fax.$this->e_mail.
+                      $this->AltriDati.$this->Anno.str_repeat(' ',1518).
+                      "A\r\n";
                }
-
-      function Record_D($D) // RECORD DATI OPERAZIONI (NON AGGREGATE) 
+      function Record_C($C) // RECORD DATI AGGREGATI OPERAZIONI (NON UTILIZZATA) 
+               {}
+               
+      function Record_D($D) // RECORD DATI ANALITICI OPERAZIONI  
                {
-               $acc='';
+               $progressivo=1;
+               $acc='D'.$this->CFContribuente;
                $ctrl_tipo = 0;
                foreach ($D as $ElementsData) {
+                        $acc .= str_pad($progressivo,8,'0',STR_PAD_LEFT).str_repeat(' ',64).$this->CFContribuente;
+                        $progressivo++;
+                        // adesso compilo i quadri  FE, FR, NE, NR, DF, FN  
                         switch ($ElementsData['soggetto_type']) {
                             case '1': // SOGGETTI RESIDENTI NON TITOLARI DI PARTITA IVA
 							    if( strlen(trim($ElementsData['codfis'])) == 11) { // È una persona giuridica ( associazione )
@@ -651,52 +649,14 @@ class AgenziaEntrate
 
       function Record_E($T) // RECORD DATI RIEPILOGATIVI
                {
-               $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
-               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
-               if (isset($T['sesso'])){  // PERSONA FISICA
-                  $this->AltriDati= str_repeat(' ',102).
-                                    substr(str_pad($T['cognome'],24,' '),0,24).
-                                    substr(str_pad($T['nome'],20,' '),0,20).
-                                    substr($T['sesso'],0,1).
-                                    substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
-                                    substr(str_pad($T['luonas'],40,' '),0,40).
-                                    substr(str_pad($T['pronas'],2,' '),0,2);
-               } else {    // PERSONA GIURIDICA
-                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
-                                    substr(str_pad($T['sedleg'],40,' '),0,40).
-                                    substr(str_pad($T['proleg'],2,' '),0,2).
-                                    str_repeat(' ',95);
-               }
-               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
                return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
-                      $this->AltriDati.
-                      $this->Anno.'000010001'.
                       str_repeat(' ',1528)."A\r\n";
 
                }
 
       function Record_Z($T) // RECORD DI CODA
                {
-               $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
-               $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
-               if (isset($T['sesso'])){  // PERSONA FISICA
-                  $this->AltriDati= str_repeat(' ',102).
-                                    substr(str_pad($T['cognome'],24,' '),0,24).
-                                    substr(str_pad($T['nome'],20,' '),0,20).
-                                    substr($T['sesso'],0,1).
-                                    substr($T['datnas'],8,2).substr($T['datnas'],5,2).substr($T['datnas'],0,4).
-                                    substr(str_pad($T['luonas'],40,' '),0,40).
-                                    substr(str_pad($T['pronas'],2,' '),0,2);
-               } else {    // PERSONA GIURIDICA
-                  $this->AltriDati= substr(str_pad($T['ragsoc'],60,' '),0,70).
-                                    substr(str_pad($T['sedleg'],40,' '),0,40).
-                                    substr(str_pad($T['proleg'],2,' '),0,2).
-                                    str_repeat(' ',95);
-               }
-               $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
                return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
-                      $this->AltriDati.
-                      $this->Anno.'000010001'.
                       str_repeat(' ',1528)."A\r\n";
 
                }
