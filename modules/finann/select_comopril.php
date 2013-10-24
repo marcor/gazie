@@ -160,6 +160,10 @@ function getHeaderData()
       $Testa['anno'] = intval($_GET['anno']);
       $Testa['pariva'] = $admin_aziend['pariva'];
       $Testa['codfis'] = $admin_aziend['codfis'];
+      $Testa['ateco'] = $admin_aziend['cod_ateco'];
+      $Testa['e_mail'] = $admin_aziend['e_mail'];
+      $Testa['telefono'] = filter_var($admin_aziend['telefo'], FILTER_SANITIZE_NUMBER_INT);
+      $Testa['fax'] = filter_var($admin_aziend['fax'], FILTER_SANITIZE_NUMBER_INT);
       if ($admin_aziend['sexper'] == 'G') {
          // persona giuridica
          if (strlen($Testa['codfis']) <> 11) {
@@ -481,6 +485,7 @@ if (isset($_GET['pdf'])) {
 }
 
 if (isset($_GET['file_agenzia'])) {
+    $year=intval($_GET['anno']);
     $queryData = createRowsAndErrors(intval($_GET['min_limit']));
     require("../../library/include/agenzia_entrate.inc.php");
     $annofornitura = date("y");
@@ -490,7 +495,7 @@ if (isset($_GET['file_agenzia'])) {
 
     // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
     header('Content-Type: text/x-art21');
-    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$_GET['anno'].".Art21");
+    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$year.".Art21");
     header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
     if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
@@ -498,7 +503,11 @@ if (isset($_GET['file_agenzia'])) {
     } else {
        header('Pragma: no-cache');
     }
-    $content = $agenzia->creaFileART21($Testa,$queryData[0]);
+    if ($year>2011){
+        $content = $agenzia->creaFileART21_poli($Testa,$queryData[0]);
+    } else {
+        $content = $agenzia->creaFileART21($Testa,$queryData[0]);
+    }
     print $content;
     exit;
 }
