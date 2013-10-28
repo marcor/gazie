@@ -132,7 +132,7 @@ function printTransact($transact,$error)
                echo "</tr>\n";
                echo "<tr>";
                echo "<td align=\"center\" $class>N.".$value['numdoc'].' del '.gaz_format_date($value['datreg'])."</td>";
-               echo "<td $class>".$value['codfis']." ".$value['pariva']."</td>";
+               echo "<td $class>".$value['codfis']." ".$value['pariva']." ".$value['iso']." Black List=".$value['black_list']." Cod.Istat=".$value['istat_country']."</td>";
                echo "<td align=\"right\" $class>$totale</td>";
                echo "<td align=\"right\" $class>".gaz_format_number($value['imposte_addebitate'])."</td>";
                echo "<td align=\"center\" $class>".$script_transl['imptype_value'][$value['tipiva']]."</td>";
@@ -245,13 +245,14 @@ function createRowsAndErrors($min_limit){
     $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,
                citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
                ".$gTables['tesmov'].".numdoc,".$gTables['tesmov'].".datdoc,".$gTables['tesmov'].".seziva,
-               ".$gTables['tesmov'].".caucon,datreg,op_type,datnas,luonas,pronas,counas,id_doc,
+               ".$gTables['tesmov'].".caucon,datreg,op_type,datnas,luonas,pronas,counas,id_doc,iso,black_list,istat_country,
                operat, SUM(impost - impost*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
                SUM(imponi - imponi*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imponibile FROM ".$gTables['rigmoi']."
                LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
                LEFT JOIN ".$gTables['aliiva']." ON ".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
+               LEFT JOIN ".$gTables['country']." ON ".$gTables['anagra'].".country = ".$gTables['country'].".iso
                WHERE YEAR(datdoc) = ".intval($_GET['anno'])." AND ( ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['masfor']."%' OR ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['mascli']."%')
                GROUP BY ".$gTables['rigmoi'].".id_tes, tipiva
                ORDER BY regiva, datreg";
