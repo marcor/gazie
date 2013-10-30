@@ -245,7 +245,7 @@ function createRowsAndErrors($min_limit){
     $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,
                citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
                ".$gTables['tesmov'].".numdoc,".$gTables['tesmov'].".datdoc,".$gTables['tesmov'].".seziva,
-               ".$gTables['tesmov'].".caucon,datreg,op_type,datnas,luonas,pronas,counas,id_doc,iso,black_list,istat_country,
+               ".$gTables['tesmov'].".caucon,datreg,op_type,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
                operat, SUM(impost - impost*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
                SUM(imponi - imponi*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imponibile FROM ".$gTables['rigmoi']."
                LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
