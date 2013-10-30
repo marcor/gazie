@@ -212,7 +212,7 @@ function gaz_dbi_last_id()
 function gaz_dbi_record_count($table, $where)
 {
     global $link;
-    $result = mysql_query("SELECT * FROM ".$table." WHERE ".$where."" ,$link);
+    $result = mysql_query("SELECT * FROM ".$table.(($where!="") ? " WHERE ".$where : "") ,$link);
     $count = mysql_num_rows($result);
     return $count;
 }
