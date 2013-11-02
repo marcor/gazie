@@ -27,7 +27,7 @@
 Questa classe genera il file da importare con l'apposito software messo a disposizione della
 Agenzie delle Entrate (Uniconline - File Internet) per effettuare la trasmissione per via
 telematica.
-AffinchË il tutto avvenga correttamente si devono passare alle funzioni specifiche sotto
+Affinch√® il tutto avvenga correttamente si devono passare alle funzioni specifiche sotto
 elencate  denominate "creaFileXXX" gli array di seguito specificati per singola  funzione.
 ******************************************************************************************/
 
@@ -35,7 +35,7 @@ class AgenziaEntrate
       {
 
 /****** creaFileIVC - COMUNICAZIONE ANNUALE DATI IVA
-      Una AVVERTENZA IMPORTANTE Ë quella di considerare che siccome questa funzione Ë predisposta
+      Una AVVERTENZA IMPORTANTE √® quella di considerare che siccome questa funzione √® predisposta
       solo per chi si invia "IN PROPRIO" le dichiarazioni viene impostato il relativo flag
       (campo 4 del record di testa "A") sempre a "01" e quindi il codice fiscale del fornitore
       deve coincidere con quello del contribuente, lo stesso vale per il campo 7 del Record "B"
@@ -52,13 +52,13 @@ class AgenziaEntrate
               [4] = Cognome del Contribuente se persona fisica 20 alfanumerico
               [5] = Anno d'Imposta 4 numerico
               [6] = Partita IVA del Contribuente 11 numerico
-              [7] = Codice Attivit‡ 5 alfanumerico
-              [8] = Flag Contabilit‡ Separata 1 boleano
+              [7] = Codice Attivit√† 5 alfanumerico
+              [8] = Flag Contabilit√† Separata 1 boleano
               [9] = Flag Societa appartenente ad un Gruppo IVA 1 boleano
               [10]= Flag Eventi Eccezionali 1 boleano
               [11]= Codice Fiscale Dichiarante (Responsabile della dichiarazione) 16 alfanumerico
               [12]= Codice carica del dichiarante se presente(0,1,2,5,6,7,8 o 9) 2 nuemrico
-              [13]= Codice Fiscale societ‡ Dichiarante 11 numerico
+              [13]= Codice Fiscale societ√† Dichiarante 11 numerico
               [14]= Totale operazioni attive al netto dell'IVA 11 numerico
               [15]= Operazioni non imponibili 11 numerico
               [16]= Operazioni esenti 11 numerico
@@ -258,7 +258,7 @@ class AgenziaEntrate
                $n_elements = 0;
                $ctrl_tipo = 0;
                foreach ($D as $ElementsData){
-                       if ($ctrl_tipo < $ElementsData['tipo'] and $ctrl_tipo != 0) { // non Ë lo stesso partner precedente e non Ë il primo
+                       if ($ctrl_tipo < $ElementsData['tipo'] and $ctrl_tipo != 0) { // non √® lo stesso partner precedente e non √® il primo
                           $diff_to_end = (70-$n_elements)*24 + 116;
                           $acc .= str_repeat(' ',$diff_to_end)."A\r\n".$ElementsData['tipo'];
                           $n_elements = 0;
@@ -267,7 +267,7 @@ class AgenziaEntrate
                        }
                        foreach ($ElementsData as $key=>$value){
                            $rs_elemento = CreaElemento($key,$value,$ElementsData['tipo']);
-                           if (!empty($rs_elemento)){ // se Ë un elemento valido
+                           if (!empty($rs_elemento)){ // se √® un elemento valido
                               $acc .= $rs_elemento;
                               $n_elements++;
                            }
@@ -417,9 +417,9 @@ class AgenziaEntrate
                foreach ($D as $ElementsData) {
                         switch ($ElementsData['soggetto_type']) {
                             case '1': // SOGGETTI RESIDENTI NON TITOLARI DI PARTITA IVA
-							    if( strlen(trim($ElementsData['codfis'])) == 11) { // » una persona giuridica ( associazione )
+							    if( strlen(trim($ElementsData['codfis'])) == 11) { // √à una persona giuridica ( associazione )
 									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_RIGHT),0,16);
-								} else { // » una persona fisica
+								} else { // √à una persona fisica
 									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16);
 								}
                                 $acc .= '1'.$cf
@@ -504,11 +504,12 @@ class AgenziaEntrate
               [segleg] = Comune della sede legale se PG 40 alfanumerico
               [proleg] = Provincia della sede legale se PG 2 alfanumerico
               [anno] = Anno fornitura 4 numerico
-              [ateco]= codice attivit‡ azienda ATECO 2007
+              [ateco]= codice attivit√† azienda ATECO 2007
               [telefono]= telefono del contribuente
               [fax]= fax del contribuente
               [e_mail]= e-mail del contribuente
       $dati = array bidimensionale con i seguenti index posti anche in questo ordine:
+              [quadro] = Quadro 2 alfanumerico (FE=FATTURE EMESSE,FR=FATTURE RICEVUTE,NE=NOTE EMESSE,NR=NOTE RICEVUTE,DF=SENZA FATTURA,FN=NON RESIDENTI)
               [tipo] = Tipo di Record 1 numerico (1=SOGGETTI NON TITOLARI DI PARTITA IVA,2=SOGGETTI TITOLARI DI PARTITA IVA,3=SOGGETTI NON RESIDENTI)
               [codfis] = Codice Fiscale del cliente 16 alfanumerico
               [pariva] = Partita IVA del cliente/fornitore 11 numerico
@@ -532,6 +533,12 @@ class AgenziaEntrate
               [esente] = Esente
               [nonimp] = Non imponibile
 */
+      function createElement($data) // FUNZIONE PER CREARE GLI ELEMENTI CON I CAMPI CODICE-VALORE
+                /*
+                 In $data c'√® l'array con i due elementi da utilizzare per creare l'elemento standard
+                */
+               {}
+
       function Record_A($T) // RECORD DATI INVIO
             {
                $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
@@ -570,55 +577,69 @@ class AgenziaEntrate
                       $this->AltriDati.$this->Anno.str_repeat(' ',1518).
                       "A\r\n";
                }
-      function Record_C($C) // RECORD DATI AGGREGATI OPERAZIONI (NON UTILIZZATA) 
-               {}
                
-      function Record_D($D) // RECORD DATI ANALITICI OPERAZIONI  
-               {
-               $progressivo=1;
-               $acc='D'.$this->CFContribuente;
-               $ctrl_tipo = 0;
+      function Record_CD($D) // RECORD DATI BLACK LIST, OPERAZIONI ANALITICHE, OPERAZIONI AGGREGATE (NON UTILIZZATA) 
+               {            //                              TIPO    
+               $this->BL=0; //BLACK LIST                    C
+               $this->FE=0; //FATTURE EMESSE                D
+               $this->FR=0; //FATTURE RICEVUTE              D  
+               $this->NE=0; //NOTE EMESSE                   D
+               $this->NR=0; //NOTE RICEVUTE                 D
+               $this->DF=0; //OPERAZIONI SENZA FATTURA      D
+               $this->FN=0; //OPERAZIONI NO RESIDENTI       D
+               $this->SE=0; //OPERAZIONI SAN MARINO         D
+               $this->progressivo_elements=1;
+               $this->progr_C=0;
+               $this->progr_D=0;
+               $this->progr_BL=0;
+               $this->progr_FE=0;
+               $this->progr_FR=0;
+               $this->progr_NE=0;
+               $this->progr_NR=0;
+               $this->progr_DF=0;
+               $this->progr_FN=0;
+               $this->progr_SE=0;
+               $this->accu_C='C'.$this->CFContribuente.str_pad($this->progr_C,8,'0',STR_PAD_LEFT).str_repeat(' ',64).$this->CFContribuente;
+               $this->accu_D='D'.$this->CFContribuente.str_pad($this->progr_D,8,'0',STR_PAD_LEFT).str_repeat(' ',64).$this->CFContribuente;
                foreach ($D as $ElementsData) {
-                        $acc .= str_pad($progressivo,8,'0',STR_PAD_LEFT).str_repeat(' ',64).$this->CFContribuente;
-                        $progressivo++;
-                        // adesso compilo i quadri  FE, FR, NE, NR, DF, FN  
+                        // adesso compilo i quadri  
                         switch ($ElementsData['soggetto_type']) {
                             case '1': // SOGGETTI RESIDENTI NON TITOLARI DI PARTITA IVA
-							    if( strlen(trim($ElementsData['codfis'])) == 11) { // » una persona giuridica ( associazione )
+							    if( strlen(trim($ElementsData['codfis'])) == 11) { // √à una persona giuridica ( associazione )
 									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_RIGHT),0,16);
-								} else { // » una persona fisica
+								} else { // √à una persona fisica
 									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16);
 								}
-                                $acc .= '1'.$cf
+                                $this->accu_D .= '1'.$cf
                                         .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
                                         .$ElementsData['n_rate']
                                         .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['imposte_addebitate']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
                                         .str_repeat(' ',1762)."A\r\n";
                             break;
                             case '2': // SOGGETTI RESIDENTI TITOLARI DI PARTITA IVA
-                                $acc .= '2'.substr(str_pad($ElementsData['pariva'],11,'0',STR_PAD_LEFT),0,11)
+                                $this->accu_D .= '2'.substr(str_pad($ElementsData['pariva'],11,'0',STR_PAD_LEFT),0,11)
                                         .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
                                         .substr(str_pad(round($ElementsData['numdoc']),15,' '),0,15)
                                         .$ElementsData['n_rate']
                                         .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,'0',STR_PAD_LEFT),0,9)
                                         .substr(str_pad(round($ElementsData['imposte_addebitate']),9,'0',STR_PAD_LEFT),0,9);
                                         if ($ElementsData['op_type']>2){ //acquisto
-                                             $acc .= '2';
+                                             $this->accu_D .= '2';
                                         } else { // vendita
-                                             $acc .= '1';
+                                             $this->accu_D .= '1';
                                         }
-                                $acc .= str_repeat(' ',1742)."A\r\n";
+                                $this->accu_D .= str_repeat(' ',1742)."A\r\n";
                             break;
                             case '3': // SOGGETTI NON RESIDENTI 
-                                $acc .= '3';
+                                $this->accu_D .= '3';
                                 if ($ElementsData['sexper']=='G'){ //persona giuridica
-                                    $acc .= str_repeat(' ',97)
+                                    $this->accu_D .= str_repeat(' ',97)
                                         .substr(str_pad($ElementsData['ragso1'].' '.$ElementsData['ragso2'],60,' ',STR_PAD_RIGHT),0,60)
                                         .substr(str_pad($ElementsData['citspe'],40,' ',STR_PAD_RIGHT),0,40)
                                         .substr(str_pad($ElementsData['istat_country'],3,' ',STR_PAD_LEFT),0,3)
                                         .substr(str_pad($ElementsData['indspe'],40,' ',STR_PAD_RIGHT),0,40);
                                 } else { // persona fisica
-                                    $acc .= substr(str_pad($ElementsData['cognome'],24,' ',STR_PAD_RIGHT),0,24)
+                                    $this->accu_D .= substr(str_pad($ElementsData['cognome'],24,' ',STR_PAD_RIGHT),0,24)
                                         .substr(str_pad($ElementsData['nome'],20,' ',STR_PAD_RIGHT),0,20)
                                         .substr($ElementsData['datnas'],8,2).substr($ElementsData['datnas'],5,2).substr($ElementsData['datnas'],0,4)
                                         .substr(str_pad($ElementsData['luonas'],40,' ',STR_PAD_RIGHT),0,40)
@@ -626,17 +647,17 @@ class AgenziaEntrate
                                         .substr(str_pad($ElementsData['istat_country'],3,' ',STR_PAD_LEFT),0,3)
                                         .str_repeat(' ',143);
                                 }
-                                $acc .= substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
+                                $this->accu_D .= substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
                                         .substr(str_pad(round($ElementsData['numdoc']),15,' '),0,15)
                                         .$ElementsData['n_rate']
                                         .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
                                         .substr(str_pad(round($ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9);
                                 if ($ElementsData['op_type']>2){ //acquisto
-                                    $acc .= '2';
+                                    $this->accu_D .= '2';
                                 } else { // vendita
-                                    $acc .= '1';
+                                    $this->accu_D .= '1';
                                 }
-                                $acc .= str_repeat(' ',1513)."A\r\n";
+                                $this->accu_D .= str_repeat(' ',1513)."A\r\n";
                             break;
                             case '4': // SOGGETTI RESIDENTI - NOTE DI VARIAZIONE
                             break;
@@ -644,7 +665,7 @@ class AgenziaEntrate
                             break;
                         }
                     }
-                return $acc;
+                return $this->accu_D;
                }
 
       function Record_E($T) // RECORD DATI RIEPILOGATIVI
@@ -665,7 +686,7 @@ class AgenziaEntrate
                {
                $accumulatore = $this->Record_A($testa).
                                $this->Record_B($testa).
-                               $this->Record_D($dati).
+                               $this->Record_CD($dati).
                                $this->Record_E($testa).
                                $this->Record_Z($testa);
                return $accumulatore;

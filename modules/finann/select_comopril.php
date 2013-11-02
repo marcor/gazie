@@ -114,7 +114,7 @@ function printTransact($transact,$error)
                }
                echo "<tr>";
                echo "<td align=\"center\" $class><a href=\"../contab/admin_movcon.php?id_tes=".$value['id_tes']."&Update\">".$value['id_tes']."</a></td>";
-               echo "<td $class>".$value['ragso1'].' '.$value['ragso2']."</td>";
+               echo "<td $class>".$value['ragso1'].' '.$value['ragso2']."  Quadro ".$value['quadro']."</td>";
                echo "<td $class align=\"center\">";
                $docref=getDocRef($value);
                if (!empty($docref)){
@@ -132,7 +132,7 @@ function printTransact($transact,$error)
                echo "</tr>\n";
                echo "<tr>";
                echo "<td align=\"center\" $class>N.".$value['numdoc'].' del '.gaz_format_date($value['datreg'])."</td>";
-               echo "<td $class>".$value['codfis']." ".$value['pariva']." ".$value['iso']." Black List=".$value['black_list']." Cod.Istat=".$value['istat_country']."</td>";
+               echo "<td $class>".$value['codfis']." ".$value['pariva']." ".$value['iso']." Black List=".$value['black_list']." Cod.AdE=".$value['cod_agenzia_entrate']."</td>";
                echo "<td align=\"right\" $class>$totale</td>";
                echo "<td align=\"right\" $class>".gaz_format_number($value['imposte_addebitate'])."</td>";
                echo "<td align=\"center\" $class>".$script_transl['imptype_value'][$value['tipiva']]."</td>";
@@ -242,12 +242,12 @@ function getHeaderData()
 function createRowsAndErrors($min_limit){
     gaz_set_time_limit (240);                
     global $gTables,$admin_aziend,$script_transl;
-    $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,
+    $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,
                citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
                ".$gTables['tesmov'].".numdoc,".$gTables['tesmov'].".datdoc,".$gTables['tesmov'].".seziva,
                ".$gTables['tesmov'].".caucon,datreg,op_type,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
-               operat, SUM(impost - impost*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
-               SUM(imponi - imponi*2*(".$gTables['tesmov'].".caucon LIKE '_NC')) AS imponibile FROM ".$gTables['rigmoi']."
+               operat, SUM(impost) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
+               SUM(imponi) AS imponibile FROM ".$gTables['rigmoi']."
                LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
                LEFT JOIN ".$gTables['aliiva']." ON ".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice
@@ -255,7 +255,7 @@ function createRowsAndErrors($min_limit){
                LEFT JOIN ".$gTables['country']." ON ".$gTables['anagra'].".country = ".$gTables['country'].".iso
                WHERE YEAR(datdoc) = ".intval($_GET['anno'])." AND ( ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['masfor']."%' OR ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['mascli']."%')
                GROUP BY ".$gTables['rigmoi'].".id_tes, tipiva
-               ORDER BY regiva, datreg";
+               ORDER BY regiva,operat,country,datreg";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact= array();
     $error_transact= array();
@@ -266,14 +266,10 @@ function createRowsAndErrors($min_limit){
        $value_imponi = 0.00;
        $value_impost = 0.00;
 
-
        while ($row = gaz_dbi_fetch_array($result)) {
-         if ($row['operat'] == 1) {
+         if ($row['operat'] >= 1) {
                 $value_imponi = $row['imponibile'];
                 $value_impost = $row['imposta'];
-         } elseif ($row['operat'] == 2) {
-                $value_imponi = -$row['imponibile'];
-                $value_impost = -$row['imposta'];
          } else {
                 $value_imponi = 0;
                 $value_impost = 0;
@@ -289,21 +285,25 @@ function createRowsAndErrors($min_limit){
                // inizio controlli su CF e PI
                $nuw = new check_VATno_TAXcode();
                $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
-               if ($admin_aziend['country'] != $row['country']) { // È uno non residente (caso 3)
+               if ($admin_aziend['country'] != $row['country']) {
+                    // È uno non residente (caso 3)
                      if (!empty($row['datnas'])) { // È un persona fisica straniera
                         if (empty($row['pronas']) || empty($row['luonas']) || empty($row['counas'])) {
                             $error_transact[$row['idtes']][] = $script_transl['errors'][9];
                         }
                      }                
-               } elseif (empty($resultpi) && !empty($row['pariva'])) { // ha la partita IVA ed è giusta (caso 2) 
-                 if( strlen(trim($row['codfis'])) == 11) { // È una persona giuridica
+               } elseif (empty($resultpi) && !empty($row['pariva'])) {
+                    // ha la partita IVA ed è giusta (caso 2) 
+                 if( strlen(trim($row['codfis'])) == 11) {
+                    // È una persona giuridica
                      $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
                      if (intval($row['codfis']) == 0) {
                         $error_transact[$row['idtes']][] = $script_transl['errors'][1];
                      } elseif ($row['sexper'] != 'G') {
                         $error_transact[$row['idtes']][] = $script_transl['errors'][2];
                      }
-                 } else {           // È una una persona fisica
+                 } else {
+                    // È una una persona fisica
                      $resultcf = $nuw->check_TAXcode($row['codfis']);
                      if (empty($row['codfis'])) {
                          $error_transact[$row['idtes']][] = $script_transl['errors'][3];
@@ -321,8 +321,9 @@ function createRowsAndErrors($min_limit){
                          $error_transact[$row['idtes']][] = $script_transl['errors'][7];
                      }
                  }
-               } else {        // È un soggetto con codice fiscale senza partita IVA (caso 1)
-				 $resultcf = $nuw->check_TAXcode($row['codfis']);
+               } else {
+                    // È un soggetto con codice fiscale senza partita IVA (caso 1)
+		 $resultcf = $nuw->check_TAXcode($row['codfis']);
                  if( strlen(trim($row['codfis'])) == 11) { // È una persona giuridica
 				    $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
 				 }
@@ -342,29 +343,38 @@ function createRowsAndErrors($min_limit){
                          $error_transact[$row['idtes']][] = $script_transl['errors'][7];
                      }
                }
-
-                // fine controlli su CF e PI
-
-                $castel_transact[$row['idtes']] = $row;
-
+            // fine controlli su CF e PI
+            $castel_transact[$row['idtes']] = $row;
             // determino il tipo di soggetto residente all'estero
             $castel_transact[$row['idtes']]['istat_country'] = 0;
-            if ($row['country'] <> 'IT' ) { // non residente
-                $nation=gaz_dbi_get_row($gTables['country'], 'iso', $row['country']);
-                $castel_transact[$row['idtes']]['istat_country']=$nation['istat_country']; 
+            // --------- TIPIZZAZIONE DEI MOVIMENTI -----------------
+            if ($row['country'] <> $admin_aziend['country'] ) {
+                // NON RESIDENTE
+                $castel_transact[$row['idtes']]['istat_country']=$row['country']; 
+                $castel_transact[$row['idtes']]['cod_ade']=$row['cod_agenzia_entrate']; 
+                $castel_transact[$row['idtes']]['quadro'] = 'FN';
                 $castel_transact[$row['idtes']]['soggetto_type'] = 3;
-                if (substr($row['caucon'],-2) == 'NC'){
-                        $castel_transact[$row['idtes']]['soggetto_type'] = 5;
-                }
-                if (!empty($row['pariva'])){ // È una azienda straniera quindi forzo l'eliminazione azzerando i valori
-                    $value_imponi = 0;
-                    $value_impost = 0;
-                }
             } else {
-                 if ($row['pariva'] >0){ // residente
-                        $castel_transact[$row['idtes']]['soggetto_type'] = 2;
+                if ($row['pariva'] >0){ 
+                    // RESIDENTE con partita IVA
+                    if ($row['regiva'] < 6){ // VENDITE - Fatture Emesse o Note Emesse
+                        if ($row['operat']==1){ // Fattura
+                            $castel_transact[$row['idtes']]['quadro'] = 'FE';
+                        } else {                // Note
+                            $castel_transact[$row['idtes']]['quadro'] = 'NE';
+                        } 
+                    } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
+                        if ($row['operat']==1){ // Fattura
+                            $castel_transact[$row['idtes']]['quadro'] = 'FR';
+                        } else {                // Note
+                            $castel_transact[$row['idtes']]['quadro'] = 'NR';
+                        } 
+                        
+                    }
+                    $castel_transact[$row['idtes']]['soggetto_type'] = 2;
                  } else {
-                        $castel_transact[$row['idtes']]['soggetto_type'] = 1;
+                    $castel_transact[$row['idtes']]['soggetto_type'] = 1;
+                    $castel_transact[$row['idtes']]['quadro'] = 'DF';
                  }
                 if (substr($row['caucon'],-2) == 'NC'){
                         $castel_transact[$row['idtes']]['soggetto_type'] = 4;
@@ -480,10 +490,6 @@ function createRowsAndErrors($min_limit){
     return array($castel_transact,$error_transact);
 }
 
-if (isset($_GET['pdf'])) {
-    header("Location: stampa_comopril.php?anno=".$_GET['anno']."&min_limit=".$_GET['min_limit']);
-    exit;
-}
 
 if (isset($_GET['file_agenzia'])) {
     $year=intval($_GET['anno']);
@@ -615,12 +621,11 @@ if (isset($_GET['view'])) {
        } elseif (isset($Testa['fatal_error'])) {
               echo "<tr>\n
                    <td align=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"2\"><input type=\"submit\" name=\"pdf\" value=\"PDF\"></td>\n
-                   <td align=\"center\" class=\"FacetDataTDred\" colspan=\"3\">".$script_transl['errors'][15]."</td>\n
+                   <td align=\"center\" class=\"FacetDataTDred\" colspan=\"6\">".$script_transl['errors'][15]."</td>\n
                    </tr>\n";
        } else {
               echo "<tr>\n
-                   <td align=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"2\"><input type=\"submit\" name=\"pdf\" value=\"PDF\"></td>\n
-                   <td a7lign=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"3\"><input type=\"submit\" name=\"file_agenzia\" value=\"File Internet (ART21)\"></td>\n
+                   <td align=\"center\" class=\"FacetFieldCaptionTD\" colspan=\"6\"><input type=\"submit\" name=\"file_agenzia\" value=\"File Internet (ART21)\"></td>\n
                    </tr>\n";
        }
        printTransact($queryData[0],$queryData[1]);
