@@ -113,7 +113,7 @@ function printTransact($transact,$error)
                   $class = ' class="FacetDataTDred" ';
                }
                echo "<tr>";
-               echo "<td align=\"center\" $class><a href=\"../contab/admin_movcon.php?id_tes=".$value['id_tes']."&Update\">".$value['id_tes']."</a></td>";
+               echo "<td align=\"center\" $class><a href=\"../contab/admin_movcon.php?id_tes=".$value['id_tes']."&Update\">".$value['id_tes']." reg ".gaz_format_date($value['datreg'])."</a></td>";
                echo "<td $class>".$value['ragso1'].' '.$value['ragso2']."  Quadro ".$value['quadro']."</td>";
                echo "<td $class align=\"center\">";
                $docref=getDocRef($value);
@@ -131,7 +131,7 @@ function printTransact($transact,$error)
                echo ">".$script_transl['op_type_value'][$value['op_type']]."</td>";
                echo "</tr>\n";
                echo "<tr>";
-               echo "<td align=\"center\" $class>N.".$value['numdoc'].' del '.gaz_format_date($value['datreg'])."</td>";
+               echo "<td align=\"center\" $class>N.".$value['numdoc'].' del '.gaz_format_date($value['datdoc'])."</td>";
                echo "<td $class>".$value['codfis']." ".$value['pariva']." ".$value['iso']." Black List=".$value['black_list']." Cod.AdE=".$value['cod_agenzia_entrate']."</td>";
                echo "<td align=\"right\" $class>$totale</td>";
                echo "<td align=\"right\" $class>".gaz_format_number($value['imposte_addebitate'])."</td>";
@@ -502,7 +502,7 @@ if (isset($_GET['file_agenzia'])) {
 
     // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
     header('Content-Type: text/x-art21');
-    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$year.".Art21");
+    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$year."_NSP00.nsp");
     header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
     if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');

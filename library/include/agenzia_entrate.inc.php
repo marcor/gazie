@@ -533,15 +533,21 @@ class AgenziaEntrate
               [esente] = Esente
               [nonimp] = Non imponibile
 */
-      function createElement($data) // FUNZIONE PER CREARE GLI ELEMENTI CON I CAMPI CODICE-VALORE
-                /*
-                 In $data c'è l'array con i due elementi da utilizzare per creare l'elemento standard
-                */
-               {}
-
-      function Record_A($T) // RECORD DATI INVIO
+      function createElement($codice,$valore,$padType=STR_PAD_RIGHT) // FUNZIONE PER CREARE GLI ELEMENTI CON I CAMPI CODICE-VALORE
             {
-               $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
+                $acc=$codice.str_pad(substr($valore,0,16),16,' ',$padType);
+                if (strlen($valore)>16){
+                    $next_str= substr($valore,16);
+                    $val=str_split($next_str, 15);
+                    foreach ($val as $v) {
+                        $acc .= $codice.'+'.str_pad($v,15,' ',$padType);
+                    }                    
+                }
+                return $acc;
+            }
+
+      function Record_A() // RECORD DATI INVIO
+            {
                return "A".str_repeat(' ',14)."NSP0001".
                       $this->CFContribuente.str_repeat(' ',483).
                       str_repeat('0',8).    /* qui andrebbero messi i valori degli invii multipli,
@@ -550,10 +556,24 @@ class AgenziaEntrate
                       str_repeat(' ',1368)."A\r\n";
             }
 
-      function Record_B($T) // RECORD DATI IDENTIFICATIVI
+      function Record_B() // RECORD DATI IDENTIFICATIVI
                {
+                return "B".$this->CFContribuente.'00000001'.
+                       str_repeat(' ',48).$this->SoftHouseId.'100'.str_repeat('0',23).'01'.
+                       // qui andranno messi i 12 flag dei quadri compilati
+                       '000'. // FA,SA,BL al momento non gestiti
+                       $this->FE.$this->FR.$this->NE.$this->NR.$this->DF.$this->FN.$this->SE.
+                       '01'.// TU NO, riepilogo (TA)sempre esistente
+                       $this->PIContribuente.$this->ATECO.$this->telefono.$this->fax.$this->e_mail.
+                       $this->AltriDati.$this->Anno.str_repeat(' ',18).str_repeat('0',18).str_repeat(' ',45).str_repeat('0',8).str_repeat(' ',118).'000000 00000000'.str_repeat(' ',1296).
+                       "A\r\n";
+               }
+               
+      function Record_CD($T,$D) // RECORD DATI BLACK LIST, OPERAZIONI ANALITICHE, OPERAZIONI AGGREGATE (NON UTILIZZATA) 
+               {            //                              TIPO    
                $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
                $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
+               $this->SoftHouseId = str_pad($T['pariva'],16,' ',STR_PAD_RIGHT);
                $this->ATECO = substr(str_pad($T['ateco'],6,'0'),0,6);
                $this->telefono = substr(str_pad(filter_var($T['telefono'], FILTER_SANITIZE_NUMBER_INT),12,' ',STR_PAD_RIGHT),0,12);
                $this->fax = substr(str_pad(filter_var($T['fax'], FILTER_SANITIZE_NUMBER_INT),12,' ',STR_PAD_RIGHT),0,12);
@@ -570,17 +590,7 @@ class AgenziaEntrate
                   $this->AltriDati= str_repeat(' ',95).substr(str_pad($T['ragsoc'],60,' '),0,60);
                }
                $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
-               return "B".$this->CFContribuente.'00000001'.
-                      str_repeat(' ',48).$this->CFContribuente.'1  '.str_repeat(' ',23).' 1'.
-                      str_repeat(' ',12). // qui andranno messi i 12 flag dei quadri compilati
-                      $this->PIContribuente.$this->ATECO.$this->telefono.$this->fax.$this->e_mail.
-                      $this->AltriDati.$this->Anno.str_repeat(' ',1518).
-                      "A\r\n";
-               }
-               
-      function Record_CD($D) // RECORD DATI BLACK LIST, OPERAZIONI ANALITICHE, OPERAZIONI AGGREGATE (NON UTILIZZATA) 
-               {            //                              TIPO    
-               $this->BL=0; //BLACK LIST                    C
+
                $this->FE=0; //FATTURE EMESSE                D
                $this->FR=0; //FATTURE RICEVUTE              D  
                $this->NE=0; //NOTE EMESSE                   D
@@ -588,10 +598,7 @@ class AgenziaEntrate
                $this->DF=0; //OPERAZIONI SENZA FATTURA      D
                $this->FN=0; //OPERAZIONI NO RESIDENTI       D
                $this->SE=0; //OPERAZIONI SAN MARINO         D
-               $this->progressivo_elements=1;
-               $this->progr_C=0;
-               $this->progr_D=0;
-               $this->progr_BL=0;
+               $this->progr_D=1;
                $this->progr_FE=0;
                $this->progr_FR=0;
                $this->progr_NE=0;
@@ -599,97 +606,167 @@ class AgenziaEntrate
                $this->progr_DF=0;
                $this->progr_FN=0;
                $this->progr_SE=0;
-               $this->accu_C='C'.$this->CFContribuente.str_pad($this->progr_C,8,'0',STR_PAD_LEFT).str_repeat(' ',64).$this->CFContribuente;
-               $this->accu_D='D'.$this->CFContribuente.str_pad($this->progr_D,8,'0',STR_PAD_LEFT).str_repeat(' ',64).$this->CFContribuente;
+               $this->accu_D='';
+               $this->D_elements=0;
                foreach ($D as $ElementsData) {
-                        // adesso compilo i quadri  
-                        switch ($ElementsData['soggetto_type']) {
-                            case '1': // SOGGETTI RESIDENTI NON TITOLARI DI PARTITA IVA
-							    if( strlen(trim($ElementsData['codfis'])) == 11) { // È una persona giuridica ( associazione )
-									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_RIGHT),0,16);
-								} else { // È una persona fisica
-									$cf = substr(str_pad($ElementsData['codfis'],16,' ',STR_PAD_LEFT),0,16);
-								}
-                                $this->accu_D .= '1'.$cf
-                                        .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
-                                        .$ElementsData['n_rate']
-                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['imposte_addebitate']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
-                                        .str_repeat(' ',1762)."A\r\n";
-                            break;
-                            case '2': // SOGGETTI RESIDENTI TITOLARI DI PARTITA IVA
-                                $this->accu_D .= '2'.substr(str_pad($ElementsData['pariva'],11,'0',STR_PAD_LEFT),0,11)
-                                        .substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
-                                        .substr(str_pad(round($ElementsData['numdoc']),15,' '),0,15)
-                                        .$ElementsData['n_rate']
-                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,'0',STR_PAD_LEFT),0,9)
-                                        .substr(str_pad(round($ElementsData['imposte_addebitate']),9,'0',STR_PAD_LEFT),0,9);
-                                        if ($ElementsData['op_type']>2){ //acquisto
-                                             $this->accu_D .= '2';
-                                        } else { // vendita
-                                             $this->accu_D .= '1';
-                                        }
-                                $this->accu_D .= str_repeat(' ',1742)."A\r\n";
-                            break;
-                            case '3': // SOGGETTI NON RESIDENTI 
-                                $this->accu_D .= '3';
-                                if ($ElementsData['sexper']=='G'){ //persona giuridica
-                                    $this->accu_D .= str_repeat(' ',97)
-                                        .substr(str_pad($ElementsData['ragso1'].' '.$ElementsData['ragso2'],60,' ',STR_PAD_RIGHT),0,60)
-                                        .substr(str_pad($ElementsData['citspe'],40,' ',STR_PAD_RIGHT),0,40)
-                                        .substr(str_pad($ElementsData['istat_country'],3,' ',STR_PAD_LEFT),0,3)
-                                        .substr(str_pad($ElementsData['indspe'],40,' ',STR_PAD_RIGHT),0,40);
-                                } else { // persona fisica
-                                    $this->accu_D .= substr(str_pad($ElementsData['cognome'],24,' ',STR_PAD_RIGHT),0,24)
-                                        .substr(str_pad($ElementsData['nome'],20,' ',STR_PAD_RIGHT),0,20)
-                                        .substr($ElementsData['datnas'],8,2).substr($ElementsData['datnas'],5,2).substr($ElementsData['datnas'],0,4)
-                                        .substr(str_pad($ElementsData['luonas'],40,' ',STR_PAD_RIGHT),0,40)
-                                        .substr(str_pad($ElementsData['pronas'],2,' ',STR_PAD_RIGHT),0,2)
-                                        .substr(str_pad($ElementsData['istat_country'],3,' ',STR_PAD_LEFT),0,3)
-                                        .str_repeat(' ',143);
-                                }
-                                $this->accu_D .= substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4)
-                                        .substr(str_pad(round($ElementsData['numdoc']),15,' '),0,15)
-                                        .$ElementsData['n_rate']
-                                        .substr(str_pad(round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),9,' ',STR_PAD_LEFT),0,9)
-                                        .substr(str_pad(round($ElementsData['imposte_addebitate']),9,' ',STR_PAD_LEFT),0,9);
-                                if ($ElementsData['op_type']>2){ //acquisto
-                                    $this->accu_D .= '2';
-                                } else { // vendita
-                                    $this->accu_D .= '1';
-                                }
-                                $this->accu_D .= str_repeat(' ',1513)."A\r\n";
-                            break;
-                            case '4': // SOGGETTI RESIDENTI - NOTE DI VARIAZIONE
-                            break;
-                            case '5': // SOGGETTI NON RESIDENTI - NOTE DI VARIAZIONE
-                            break;
-                        }
+                    $pad=$this->progr_D*1900-3;
+                    if ( $this->D_elements > 40 ) {
+                       // l'elemento D potrebbe non avere lo spazio per contenere
+                       // tutti gli elementi del prossimo movimento allora aggiungo un record
+                       // e azzero tutti i contatori dei quadri
+                       $fe=0; 
+                       $fr=0; 
+                       $ne=0; 
+                       $nr=0; 
+                       $df=0; 
+                       $fn=0; 
+                       $se=0; 
+                       $this->D_elements=0;
+                       $this->progr_D++;
+                       $this->accu_D=str_pad($this->accu_D,$pad,' ',STR_PAD_RIGHT)."A\r\n".
+                                    'D'.$this->CFContribuente.str_pad($this->progr_D,8,'0',STR_PAD_LEFT).str_repeat(' ',48).$this->SoftHouseId;
+                    } elseif ( empty($this->accu_D) ) {
+                       // inizializzo il primo 
+                       $fe=0; 
+                       $fr=0; 
+                       $ne=0; 
+                       $nr=0; 
+                       $df=0; 
+                       $fn=0; 
+                       $se=0; 
+                       $this->accu_D='D'.$this->CFContribuente.str_pad($this->progr_D,8,'0',STR_PAD_LEFT).str_repeat(' ',48).$this->SoftHouseId;
                     }
-                return $this->accu_D;
+                    // adesso compilo i quadri
+                    switch ($ElementsData['quadro']) {
+                        case 'FE':  //FATTURE EMESSE                D
+                            $fe++;
+                            $this->D_elements +=5;
+                            if ($fe==6){ // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
+                               $this->D_elements=50; 
+                            }
+                            $this->FE=1;
+                            $this->progr_FE++;
+                            $cod_ini='FE'.str_pad($fe,3,'0',STR_PAD_LEFT);
+                            $this->accu_D .=    $this->createElement($cod_ini.'001',$ElementsData['pariva']).
+                                                $this->createElement($cod_ini.'007',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'009',$ElementsData['numdoc'].'/'.$ElementsData['seziva']).
+                                                $this->createElement($cod_ini.'010',round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'011',round($ElementsData['imposte_addebitate']),STR_PAD_LEFT)
+                                                ;
+                        break;
+                        case 'FR':  //FATTURE RICEVUTE              D
+                            $fr++;
+                            $this->FR=1;
+                            $this->D_elements +=5;
+                            if ($fr==6){ // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
+                               $this->D_elements=50; 
+                            }
+                            $this->progr_FR++;;
+                            $cod_ini='FR'.str_pad($fr,3,'0',STR_PAD_LEFT);
+                            $this->accu_D .=    $this->createElement($cod_ini.'001',$ElementsData['pariva']).
+                                                $this->createElement($cod_ini.'003',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'004',substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'008',round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'009',round($ElementsData['imposte_addebitate']),STR_PAD_LEFT)
+                                                ;
+                        break;
+                        case 'NE':  //NOTE EMESSE
+                            $ne++;
+                            $this->NE=1;
+                            $this->D_elements +=5;
+                            if ($ne==10){ // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
+                               $this->D_elements=50; 
+                            }
+                            $this->progr_NE++;
+                            $cod_ini='NE'.str_pad($ne,3,'0',STR_PAD_LEFT);
+                            $this->accu_D .=    $this->createElement($cod_ini.'001',$ElementsData['pariva']).
+                                                $this->createElement($cod_ini.'003',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'005',$ElementsData['numdoc'].'/'.$ElementsData['seziva']).
+                                                $this->createElement($cod_ini.'006',round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'007',round($ElementsData['imposte_addebitate']),STR_PAD_LEFT)
+                                                ;
+                        break;
+                        case 'NR':  //NOTE RICEVUTE
+                            $nr++;
+                            $this->NR=1;
+                            $this->D_elements +=5;
+                            if ($nr==10){ // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
+                               $this->D_elements=50; 
+                            }
+                            $this->progr_NR++;;
+                            $cod_ini='NR'.str_pad($nr,3,'0',STR_PAD_LEFT);
+                            $this->accu_D .=    $this->createElement($cod_ini.'001',$ElementsData['pariva']).
+                                                $this->createElement($cod_ini.'002',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'003',substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'004',round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'005',round($ElementsData['imposte_addebitate']),STR_PAD_LEFT)
+                                                ;
+                        break;
+                        case 'DF':  //OPERAZIONI SENZA FATTURA      D
+                            $df++;
+                            $this->DF=1;
+                            $this->D_elements +=3;
+                            if ($df==10){ // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
+                               $this->D_elements=50; 
+                            }
+                            $this->progr_DF++;;
+                            $cod_ini='DF'.str_pad($df,3,'0',STR_PAD_LEFT);
+                            $this->accu_D .=    $this->createElement($cod_ini.'001',$ElementsData['codfis']).
+                                                $this->createElement($cod_ini.'002',substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4),STR_PAD_LEFT).
+                                                $this->createElement($cod_ini.'003',round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']+$ElementsData['imposte_addebitate']),STR_PAD_LEFT)
+                                                ;
+                        break;
+                        case 'FN':  //OPERAZIONI NO RESIDENTI       D
+                            $this->FN=1;
+                        break;
+                        case 'SE':  //OPERAZIONI SAN MARINO         D
+                            $this->SE=1;
+                        break;
+                        
+                    }    
+
+                }
+                return  $this->accu_D=str_pad($this->accu_D,$pad,' ',STR_PAD_RIGHT)."A\r\n";
+            }
+
+      function Record_E() // RECORD DATI RIEPILOGATIVI
+               {
+                $acc= "E".$this->CFContribuente.'00000001'.str_repeat(' ',48).$this->SoftHouseId;
+                if ( $this->FE >0 ){
+                    $acc .='TA004001'.str_pad($this->progr_FE,16,' ',STR_PAD_LEFT);
+                }
+                if ( $this->FR >0 ){
+                    $acc .='TA005001'.str_pad($this->progr_FR,16,' ',STR_PAD_LEFT);
+                }
+                if ( $this->NE >0 ){
+                    $acc .='TA006001'.str_pad($this->progr_NE,16,' ',STR_PAD_LEFT);
+                }
+                if ( $this->NR >0 ){
+                    $acc .='TA007001'.str_pad($this->progr_NR,16,' ',STR_PAD_LEFT);
+                }
+                if ( $this->DF >0 ){
+                    $acc .='TA008001'.str_pad($this->progr_DF,16,' ',STR_PAD_LEFT);
+                }
+                return str_pad($acc,1897,' ',STR_PAD_RIGHT)."A\r\n";
+            
                }
 
-      function Record_E($T) // RECORD DATI RIEPILOGATIVI
+      function Record_Z() // RECORD DI CODA
                {
-               return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
-                      str_repeat(' ',1528)."A\r\n";
-
-               }
-
-      function Record_Z($T) // RECORD DI CODA
-               {
-               return "NSP00".str_repeat(' ',23).$this->CFContribuente.$this->PIContribuente.
-                      str_repeat(' ',1528)."A\r\n";
+               return "Z".str_repeat(' ',14).'000000001'.str_repeat('0',9).
+                      str_pad($this->progr_D,9,'0',STR_PAD_LEFT).
+                      '000000001'.str_repeat(' ',1846)."A\r\n";
 
                }
 
       function creaFileART21_poli($testa,$dati)
                {
-               $accumulatore = $this->Record_A($testa).
-                               $this->Record_B($testa).
-                               $this->Record_CD($dati).
-                               $this->Record_E($testa).
-                               $this->Record_Z($testa);
-               return $accumulatore;
+                $acc=$this->Record_CD($testa,$dati);
+                return  $this->Record_A().
+                        $this->Record_B().
+                        $acc.
+                        $this->Record_E().
+                        $this->Record_Z();
                }
 // --- FINE FUNZIONE CREA FILE COMUNICAZIONE POLIVALENTE
       }
