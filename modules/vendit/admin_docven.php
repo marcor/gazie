@@ -1498,7 +1498,7 @@ echo "<input type=\"hidden\" value=\"".$form['stamp']."\" name=\"stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['round_stamp']."\" name=\"round_stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['cauven']."\" name=\"cauven\">\n";
 echo "<input type=\"hidden\" value=\"".$form['caucon']."\" name=\"caucon\">\n";
-if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata') {
+if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['tipdoc']=='FAD' ) {
      echo "<tr>";
      echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[26]</td>\n";
      echo "<td colspan=\"2\" class=\"FacetDataTD\"><input type=\"text\" name=\"imball\" value=\"".$form["imball"]."\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";

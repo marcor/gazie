@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $anno = date("Y");
+$cliente='';
 $message = "";
 if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];

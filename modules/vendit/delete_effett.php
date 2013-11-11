@@ -24,8 +24,14 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-if (isset($_POST['Delete']))
-  {
+
+if (!isset($_POST['ritorno'])) {
+  $ritorno = $_SERVER['HTTP_REFERER'];
+} else {
+  $ritorno = $_POST['ritorno'];
+}
+
+if (isset($_POST['Delete'])){
     //
     // La cancellazione dell'effetto è stata confermata!
     //
@@ -37,11 +43,9 @@ if (isset($_POST['Delete']))
             gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $effetto['id_con']);
     }
     $result = gaz_dbi_del_row($gTables['effett'], "id_tes", intval($_POST['id_tes']));
-    header("Location: report_effett.php");
+    header("Location: ".$ritorno);
     exit;
-  }
-else
-  {
+} else {
     //
     // Legge i dati dell'effetto di cui è stata richiesta
     // la cancellazione, assieme a tutto quello che cui
@@ -60,14 +64,16 @@ else
         $movimento = gaz_dbi_get_row($gTables['tesmov'], "id_tes",
                                      $form['id_con']);
       }
-  }
-//
-//
-//
-if (isset($_POST['Return'])){
-        header("Location: report_effett.php");
-        exit;
 }
+
+//
+//
+//
+if (isset($_POST['Return'])) {
+    header("Location: ".$ritorno);
+    exit;
+}
+
 //
 // Se siamo giunti a questo punto, è stata richiesta la cancellazione
 // dell'effetto, ma ciò deve ancora essere confermato. Pertanto
@@ -76,9 +82,12 @@ if (isset($_POST['Return'])){
 //
 require("../../library/include/header.php");
 $script_transl=HeadMain('','','select_effett');
+
+
 ?>
 <form method="POST">
-<input type="hidden" name="id_tes" value="<?php print intval($_GET['id_tes'])?>">
+<input type="hidden" value="<?php print $ritorno; ?>" name="ritorno">
+<input type="hidden" name="id_tes" value="<?php print intval($_GET['id_tes']); ?>">
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['del_this'].' ID= '.intval($_GET['id_tes']); ?> </div>
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
   <tr>

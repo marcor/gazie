@@ -228,5 +228,9 @@ INSERT INTO `gaz_country` (`iso`, `name`, `iso3`, `postal_code_length`, `IBAN_pr
 ('ZW', 'ZIMBABWE', 'ZWE', 0, 'ZW', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 23, 465, 73, 'Zimbabwe (ex Rhodesia)', '.zw', 'ZW');
 
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
-
+UPDATE `gaz_XXXeffett` SET id_doc = ( SELECT MAX(`gaz_XXXtesdoc`.id_tes) AS last_id FROM `gaz_XXXtesdoc` WHERE 
+`gaz_XXXeffett`.protoc = `gaz_XXXtesdoc`.protoc AND
+`gaz_XXXeffett`.seziva = `gaz_XXXtesdoc`.seziva AND
+`gaz_XXXeffett`.datfat = `gaz_XXXtesdoc`.datfat
+ GROUP BY protoc LIMIT 1) WHERE 1;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query seguenti su tutte le aziende dell'installazione)

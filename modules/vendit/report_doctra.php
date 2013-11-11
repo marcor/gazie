@@ -136,7 +136,7 @@ $recordnav -> output();
 <table class="Tlarge">
   <tr>
      <td class="FacetFieldCaptionTD">Numero:
-       <input type="text" name="numdoc" value="<?php if ($documento > 0) print $documento; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+       <input type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
      </td>
      <td colspan="2" class="FacetFieldCaptionTD">Cliente:
        <input type="text" name="cliente" value="<?php if ($cliente <> '') print $cliente; ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">

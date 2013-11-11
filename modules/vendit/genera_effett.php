@@ -39,7 +39,7 @@ function getDocumentsBill($upd=false)
              LEFT JOIN '.$gTables['anagra'].' AS anagraf
              ON anagraf.id=customer.id_anagra';
     $where = "(tippag = 'B' OR tippag = 'T' OR tippag = 'V') AND geneff = '' AND tipdoc LIKE 'FA_'";
-    $orderby = "datfat ASC, protoc ASC";
+    $orderby = "datfat ASC, protoc ASC, id_tes ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
                         pay.tippag,pay.numrat,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
                         customer.codice, customer.speban AS addebitospese,
