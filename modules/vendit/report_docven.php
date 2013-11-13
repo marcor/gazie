@@ -282,7 +282,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
               if (strtoupper($r["geneff"])=='S'){
                     // Gli effetti della fattura sono stati generati in passato, ma poi
                     // sono stati rimossi tutti.
-                    gaz_dbi_put_row ($gTables['tesdoc'],"id_tes",$r["id_tes"],"geneff","");
+                    /* gaz_dbi_put_row ($gTables['tesdoc'],"id_tes",$r["id_tes"],"geneff","");
+                       IN ALCUNE INSTALLAZIONI CREA PROBLEMI */
               }
 
         }
