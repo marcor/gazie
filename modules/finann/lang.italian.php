@@ -175,7 +175,7 @@ $strScript = array ("select_comiva.php" =>
                            ),
                     "select_comopril.php" =>
                    array( 'title'=>"Comunicazioni operazioni IVA rilevanti (ART.21)",
-                          'limit'=>"Limite minimo",
+                          'limit'=>"Limite min. operazioni s/fattura",
                           'year'=>"Anno di riferimento",
                           'op_date'=>"Data Operazione",
                           'ragso1'=>"Cognome / Ragione Sociale 1",

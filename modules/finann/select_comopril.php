@@ -254,7 +254,7 @@ function createRowsAndErrors($min_limit){
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
                LEFT JOIN ".$gTables['country']." ON ".$gTables['anagra'].".country = ".$gTables['country'].".iso
                WHERE YEAR(datdoc) = ".intval($_GET['anno'])." AND ( ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['masfor']."%' OR ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['mascli']."%')
-               GROUP BY ".$gTables['rigmoi'].".id_tes, tipiva
+               GROUP BY ".$gTables['rigmoi'].".id_tes
                ORDER BY regiva,operat,country,datreg";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact= array();
@@ -277,9 +277,16 @@ function createRowsAndErrors($min_limit){
          if ($ctrl_id <> $row['idtes']) {
             // se il precedente movimento non ha raggiunto l'importo lo elimino
             if (isset($castel_transact[$ctrl_id])
+                && $castel_transact[$ctrl_id]['operazioni_imponibili'] < 0.5
+                && $castel_transact[$ctrl_id]['contract'] < 0.5) {
+                unset ($castel_transact[$ctrl_id]);
+                unset ($error_transact[$ctrl_id]);
+            }
+            if (isset($castel_transact[$ctrl_id])
+                && $castel_transact[$ctrl_id]['quadro'] == 'DF' 
                 && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit
-                && $castel_transact[$ctrl_id]['contract'] < $min_limit) {
-               unset ($castel_transact[$ctrl_id]);
+                && $castel_transact[$ctrl_id]['contract'] < $min_limit ){
+                unset ($castel_transact[$ctrl_id]);
                 unset ($error_transact[$ctrl_id]);
             }
                // inizio controlli su CF e PI
@@ -478,8 +485,14 @@ function createRowsAndErrors($min_limit){
 
        // se il precedente movimento non ha raggiunto l'importo lo elimino
        if (isset($castel_transact[$ctrl_id])
+           && $castel_transact[$ctrl_id]['operazioni_imponibili'] < 0.5
+           && $castel_transact[$ctrl_id]['contract'] < 0.5) {
+           unset ($castel_transact[$ctrl_id]);
+           unset ($error_transact[$ctrl_id]);
+       }
+       if ($castel_transact[$ctrl_id]['quadro'] == 'DF' 
            && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit
-           && $castel_transact[$ctrl_id]['contract'] < $min_limit) {
+           && $castel_transact[$ctrl_id]['contract'] < $min_limit ){
            unset ($castel_transact[$ctrl_id]);
            unset ($error_transact[$ctrl_id]);
        }
