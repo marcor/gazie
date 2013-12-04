@@ -96,7 +96,7 @@ $strScript = array ("admin_client.php" =>
                            'stapre'=>'Stampa prezzi su D.d.T.',
                            'op_type'=>'Tipologia operazioni',
                            'op_type_value'=>array(1=>'Cessione di beni',2=>'Prestazione di servizi'),
-                           'allegato'=>'Allegato IVA - Elenco Clienti',
+                           'allegato'=>'Spesometro - Elenco Clienti',
                            'yn_value'=>array('S'=>'Si','N'=>'No'),
                            'aliiva'=>'Riduzione I.V.A.',
                            'ritenuta'=>'% Ritenuta',
