@@ -213,7 +213,7 @@ function createRowsAndErrors($min_limit){
                  AND ( ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['masfor']."%' OR ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['mascli']."%')
                  AND ".$gTables['clfoco'].".allegato > 0 
                GROUP BY ".$gTables['rigmoi'].".id_tes
-               ORDER BY regiva,operat,country,datreg";
+               ORDER BY regiva,operat,country,datreg,seziva,protoc";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact= array();
     $error_transact= array();
