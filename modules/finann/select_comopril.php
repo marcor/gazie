@@ -68,16 +68,16 @@ function printTransact($transact,$error)
                           $class = 'style="color:#000000; background-color: #FFDDDD;"';
                       break;
                       case 'NE':
-                          $class = 'style="color:#000000; background-color: #DDFFDD;" ';
+                          $class = 'style="color:#000000; background-color: #DDFFDD;"';
                       break;
                       case 'FR':
                           $class = 'style="color:#000000; background-color: #AFC8D8"';
                       break;
                       case 'NR':
-                          $class = 'style="color:#000000; background-color: #D3CFA8; ';
+                          $class = 'style="color:#000000; background-color: #D3CFA8;"';
                       break;
                       case 'DF':
-                          $class = 'style="color:#000000; background-color: #DDDDFF;" ';
+                          $class = 'style="color:#000000; background-color: #DDDDFF;"';
                       break;
                }
                if (isset($error[$key])){
