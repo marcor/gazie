@@ -336,13 +336,12 @@ function createRowsAndErrors($min_limit){
                         } 
                         
                     }
-                 } else {
+                 } else { // senza partita iva
                         if ($row['allegato']==2){ // riepilogativo es.scheda carburante
                             $castel_transact[$row['idtes']]['quadro'] = 'FR'; 
                             $castel_transact[$row['idtes']]['riepil'] = 1; 
                         } elseif ( empty($resultcf) && strlen($row['codfis'])==11){ // associazioni/noprofit
                             // imposto il codice fiscale come partita iva
-                            $castel_transact[$row['idtes']]['pariva'] = $castel_transact[$row['idtes']]['codfis'];
                             if ($row['regiva'] < 6){ // VENDITE - Fatture Emesse o Note Emesse
                                 if ($row['operat']==1){ // Fattura
                                     $castel_transact[$row['idtes']]['quadro'] = 'FE';
@@ -350,6 +349,9 @@ function createRowsAndErrors($min_limit){
                                     $castel_transact[$row['idtes']]['quadro'] = 'NE';
                                 } 
                             } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
+                                // nei quadri FR NR è possibile indicare la sola partita iva
+                                $castel_transact[$row['idtes']]['pariva'] = $castel_transact[$row['idtes']]['codfis'];
+                                $castel_transact[$row['idtes']]['codfis']=0;
                                 if ($row['operat']==1){ // Fattura
                                     $castel_transact[$row['idtes']]['quadro'] = 'FR';
                                 } else {                // Note

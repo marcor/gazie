@@ -593,6 +593,7 @@ class AgenziaEntrate
 
                $this->FE=0; //FATTURE EMESSE                D
                $this->FR=0; //FATTURE RICEVUTE              D  
+               $this->FR=0; //FATTURE RIEPILOG. RICEVUTE    D  
                $this->NE=0; //NOTE EMESSE                   D
                $this->NR=0; //NOTE RICEVUTE                 D
                $this->DF=0; //OPERAZIONI SENZA FATTURA      D
@@ -601,6 +602,7 @@ class AgenziaEntrate
                $this->progr_D=1;
                $this->progr_FE=0;
                $this->progr_FR=0;
+               $this->progr_FR_riepil=0;
                $this->progr_NE=0;
                $this->progr_NR=0;
                $this->progr_DF=0;
@@ -647,8 +649,12 @@ class AgenziaEntrate
                             $this->FE=1;
                             $this->progr_FE++;
                             $cod_ini='FE'.str_pad($fe,3,'0',STR_PAD_LEFT);
-                            $this->accu_D .=    $this->createElement($cod_ini.'001',$ElementsData['pariva']).
-                                                $this->createElement($cod_ini.'007',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
+                            if ($ElementsData['pariva']==0) { // fattura emessa ad una associazione no profit
+                                $this->accu_D .=  $this->createElement($cod_ini.'002',$ElementsData['codfis']);
+                            } else {
+                                $this->accu_D .=  $this->createElement($cod_ini.'001',$ElementsData['pariva']);
+                            }
+                            $this->accu_D .=    $this->createElement($cod_ini.'007',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
                                                 $this->createElement($cod_ini.'009',$ElementsData['numdoc'].'/'.$ElementsData['seziva']).
                                                 $this->createElement($cod_ini.'010',round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),STR_PAD_LEFT).
                                                 $this->createElement($cod_ini.'011',round($ElementsData['imposte_addebitate']),STR_PAD_LEFT)
@@ -656,16 +662,18 @@ class AgenziaEntrate
                         break;
                         case 'FR':  //FATTURE RICEVUTE              D
                             $fr++;
-                            $this->FR=1;
                             $this->D_elements +=5;
                             if ($fr==6){ // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
                                $this->D_elements=50; 
                             }
-                            $this->progr_FR++;;
                             $cod_ini='FR'.str_pad($fr,3,'0',STR_PAD_LEFT);
                             if ($ElementsData['riepil']==1) { // documento  riepilogativo es.scheda carburante
-                                $this->accu_D .=  $this->createElement($cod_ini.'002','1');
+                                $this->FR_riepil=1;
+                                $this->progr_FR_riepil++;;
+                                $this->accu_D .=  $this->createElement($cod_ini.'002','1',STR_PAD_LEFT);
                             } else {
+                                $this->FR=1;
+                                $this->progr_FR++;;
                                 $this->accu_D .=  $this->createElement($cod_ini.'001',$ElementsData['pariva']);
                             }
                             $this->accu_D .=    $this->createElement($cod_ini.'003',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
@@ -741,6 +749,9 @@ class AgenziaEntrate
                 }
                 if ( $this->FR >0 ){
                     $acc .='TA005001'.str_pad($this->progr_FR,16,' ',STR_PAD_LEFT);
+                }
+                if ( $this->FR_riepil >0 ){
+                    $acc .='TA005002'.str_pad($this->progr_FR_riepil,16,' ',STR_PAD_LEFT);
                 }
                 if ( $this->NE >0 ){
                     $acc .='TA006001'.str_pad($this->progr_NE,16,' ',STR_PAD_LEFT);
