@@ -100,6 +100,7 @@ $strScript = array("admin_fornit.php" =>
                            'op_type'=>'Tipologia operazioni',
                            'op_type_value'=>array(3=>'Acquisto di beni',4=>'Acquisto di servizi'),
                            'allegato'=>'Spesometro - Elenco fornitori',
+                           'allegato_value'=>array(1=>'Si',0=>'No',2=>'Riepilogativo'),
                            'yn_value'=>array('S'=>'Si','N'=>'No'),
                            'aliiva'=>'Riduzione I.V.A.',
                            'ritenuta'=>'% Ritenuta',

@@ -498,7 +498,7 @@ echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['allegato']."</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->selectNumber('allegato',$form['allegato'],true);
+$gForm->variousSelect('allegato',$script_transl['allegato_value'],$form['allegato'],'FacetSelect',false);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

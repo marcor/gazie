@@ -31,12 +31,7 @@ require("../../library/include/check.inc.php");
 
 if (!isset($_GET['anno'])) { //al primo accesso allo script suppongo che si debba produrre l'elenco per l'anno precedente
     $_GET['anno'] = date("Y")-1;
-    $_GET['min_limit'] = 3000;
-    if ($_GET['anno'] < 2011) {
-      $_GET['min_limit'] = 25000;
-    } else {
-      $_GET['min_limit'] = 3000;
-    }
+    $_GET['min_limit'] = 2951;
     $Testa = getHeaderData();
     if ($admin_aziend['sexper'] != 'G') { // le persone fisiche hanno due campi separati
       $_GET['ragso1'] = $Testa['cognome'];
@@ -87,8 +82,12 @@ function printTransact($transact,$error)
                echo "<td align=\"center\" $class><a href=\"../contab/admin_movcon.php?id_tes=".$value['id_tes']."&Update\">n.".$value['id_tes']." - ".gaz_format_date($value['datreg'])."</a></td>";
                echo "<td align=\"center\" $class> sez.".$value['seziva']." n.".$value['numdoc'].' del '.gaz_format_date($value['datdoc'])."</td>";
                echo "<td $class>".$value['ragso1'].' '.$value['ragso2']."</td>";
-               echo "<td align=\"center\" $class>".$value['iso']." ".$value['pariva']."</td>";
-               echo "<td align=\"center\" $class>".$value['codfis']."</td>";
+               if ($value['riepil']== 1 ){ // è un riepilogativo quindi il tracciato dovrà prevedere l'apposito flag
+                   echo "<td align=\"center\" colspan=\"2\" style=\"color:#000000; background-color: #DDADAF;\">".$script_transl['riepil']."</td>";
+               } else {
+                   echo "<td align=\"center\" $class>".$value['iso']." ".$value['pariva']."</td>";
+                   echo "<td align=\"center\" $class>".$value['codfis']."</td>";
+               }
                echo "<td align=\"center\" $class>".$value['quadro']."</td>";
                echo "<td align=\"right\" $class>$totale</td>";
                echo "<td align=\"right\" $class>".gaz_format_number($value['imposte_addebitate'])."</td>";
@@ -196,9 +195,9 @@ function getHeaderData()
 }
 
 function createRowsAndErrors($min_limit){
-    gaz_set_time_limit (240);                
     global $gTables,$admin_aziend,$script_transl;
-    $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,
+    $nuw = new check_VATno_TAXcode();
+    $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
                citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
                ".$gTables['tesmov'].".numdoc,".$gTables['tesmov'].".datdoc,".$gTables['tesmov'].".seziva,
                ".$gTables['tesmov'].".caucon,datreg,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
@@ -247,72 +246,74 @@ function createRowsAndErrors($min_limit){
                 unset ($castel_transact[$ctrl_id]);
                 unset ($error_transact[$ctrl_id]);
             }
-               // inizio controlli su CF e PI
-               $nuw = new check_VATno_TAXcode();
-               $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
-               if ($admin_aziend['country'] != $row['country']) {
-                    // È uno non residente (caso 3)
-                     if (!empty($row['datnas'])) { // È un persona fisica straniera
-                        if (empty($row['pronas']) || empty($row['luonas']) || empty($row['counas'])) {
-                            $error_transact[$row['idtes']][] = $script_transl['errors'][9];
-                        }
-                     }                
-               } elseif (empty($resultpi) && !empty($row['pariva'])) {
-                    // ha la partita IVA ed è giusta (caso 2) 
-                 if( strlen(trim($row['codfis'])) == 11) {
-                    // È una persona giuridica
-                     $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
-                     if (intval($row['codfis']) == 0) {
-                        $error_transact[$row['idtes']][] = $script_transl['errors'][1];
-                     } elseif ($row['sexper'] != 'G') {
-                        $error_transact[$row['idtes']][] = $script_transl['errors'][2];
+            // inizio controlli su CF e PI
+            $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
+            $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
+            if ($admin_aziend['country'] != $row['country']) {
+                 // È uno non residente 
+                  if (!empty($row['datnas'])) { // È un persona fisica straniera
+                     if (empty($row['pronas']) || empty($row['luonas']) || empty($row['counas'])) {
+                         $error_transact[$row['idtes']][] = $script_transl['errors'][9];
                      }
-                 } else {
-                    // È una una persona fisica
-                     $resultcf = $nuw->check_TAXcode($row['codfis']);
-                     if (empty($row['codfis'])) {
-                         $error_transact[$row['idtes']][] = $script_transl['errors'][3];
-                     } elseif ($row['sexper'] == 'G' and empty($resultcf)) {
-                        $error_transact[$row['idtes']][] = $script_transl['errors'][4];
-                     } elseif ($row['sexper'] == 'M' and empty($resultcf) and
-                         (intval(substr($row['codfis'],9,2)) > 31 or
-                         intval(substr($row['codfis'],9,2)) < 1) ) {
-                         $error_transact[$row['idtes']][] = $script_transl['errors'][5];
-                     } elseif ($row['sexper'] == 'F' and empty($resultcf) and
-                         (intval(substr($row['codfis'],9,2)) > 71 or
-                         intval(substr($row['codfis'],9,2)) < 41) ) {
-                         $error_transact[$row['idtes']][] = $script_transl['errors'][6];
-                     } elseif (! empty ($resultcf)) {
-                         $error_transact[$row['idtes']][] = $script_transl['errors'][7];
-                     }
-                 }
-               } else {
-                    // È un soggetto con codice fiscale senza partita IVA (caso 1)
+                  }                
+            } elseif (empty($resultpi) && !empty($row['pariva'])) {
+              // ha la partita IVA ed è giusta 
+              if( strlen(trim($row['codfis'])) == 11) {
+                 // È una persona giuridica
+
+                  if (intval($row['codfis']) == 0 && $row['allegato'] < 2 ) { // se non è un riepilogativo 
+                     $error_transact[$row['idtes']][] = $script_transl['errors'][1];
+                  } elseif ($row['sexper'] != 'G') {
+                     $error_transact[$row['idtes']][] = $script_transl['errors'][2];
+                  }
+              } else {
+                 // È una una persona fisica
+                  $resultcf = $nuw->check_TAXcode($row['codfis']);
+                  if (empty($row['codfis'])) {
+                      $error_transact[$row['idtes']][] = $script_transl['errors'][3];
+                  } elseif ($row['sexper'] == 'G' and empty($resultcf)) {
+                     $error_transact[$row['idtes']][] = $script_transl['errors'][4];
+                  } elseif ($row['sexper'] == 'M' and empty($resultcf) and
+                      (intval(substr($row['codfis'],9,2)) > 31 or
+                      intval(substr($row['codfis'],9,2)) < 1) ) {
+                      $error_transact[$row['idtes']][] = $script_transl['errors'][5];
+                  } elseif ($row['sexper'] == 'F' and empty($resultcf) and
+                      (intval(substr($row['codfis'],9,2)) > 71 or
+                      intval(substr($row['codfis'],9,2)) < 41) ) {
+                      $error_transact[$row['idtes']][] = $script_transl['errors'][6];
+                  } elseif (! empty ($resultcf)) {
+                      $error_transact[$row['idtes']][] = $script_transl['errors'][7];
+                  }
+              }
+            } else {
+                 // È un soggetto con codice fiscale senza partita IVA 
 		 $resultcf = $nuw->check_TAXcode($row['codfis']);
-                 if( strlen(trim($row['codfis'])) == 11) { // È una persona giuridica
+              if( strlen(trim($row['codfis'])) == 11) { // È una persona giuridica
 				    $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
 				 }
-                     if (empty($row['codfis'])) {
-                         $error_transact[$row['idtes']][] = $script_transl['errors'][3];
-                     } elseif ($row['sexper'] == 'G' and !empty($resultcf)) {
-                        $error_transact[$row['idtes']][] = $script_transl['errors'][4];
-                     } elseif ($row['sexper'] == 'M' and empty($resultcf) and
-                         (intval(substr($row['codfis'],9,2)) > 31 or
-                         intval(substr($row['codfis'],9,2)) < 1) ) {
-                         $error_transact[$row['idtes']][] = $script_transl['errors'][5];
-                     } elseif ($row['sexper'] == 'F' and empty($resultcf) and
-                         (intval(substr($row['codfis'],9,2)) > 71 or
-                         intval(substr($row['codfis'],9,2)) < 41) ) {
-                         $error_transact[$row['idtes']][] = $script_transl['errors'][6];
-                     } elseif (!empty ($resultcf)) {
-                         $error_transact[$row['idtes']][] = $script_transl['errors'][7];
-                     }
-               }
+                  if (empty($row['codfis'])) {
+                      $error_transact[$row['idtes']][] = $script_transl['errors'][3];
+                  } elseif ($row['sexper'] == 'G' and !empty($resultcf)) {
+                     $error_transact[$row['idtes']][] = $script_transl['errors'][4];
+                  } elseif ($row['sexper'] == 'M' and empty($resultcf) and
+                      (intval(substr($row['codfis'],9,2)) > 31 or
+                      intval(substr($row['codfis'],9,2)) < 1) ) {
+                      $error_transact[$row['idtes']][] = $script_transl['errors'][5];
+                  } elseif ($row['sexper'] == 'F' and empty($resultcf) and
+                      (intval(substr($row['codfis'],9,2)) > 71 or
+                      intval(substr($row['codfis'],9,2)) < 41) ) {
+                      $error_transact[$row['idtes']][] = $script_transl['errors'][6];
+                  } elseif (!empty ($resultcf)) {
+                      $error_transact[$row['idtes']][] = $script_transl['errors'][7];
+                  }
+            }
             // fine controlli su CF e PI
             $castel_transact[$row['idtes']] = $row;
+            $castel_transact[$row['idtes']]['riepil'] = 0; 
             // determino il tipo di soggetto residente all'estero
             $castel_transact[$row['idtes']]['istat_country'] = 0;
             // --------- TIPIZZAZIONE DEI MOVIMENTI -----------------
+            $castel_transact[$row['idtes']]['quadro'] = 'ZZ';
             if ($row['country'] <> $admin_aziend['country'] ) {
                 // NON RESIDENTE
                 $castel_transact[$row['idtes']]['istat_country']=$row['country']; 
@@ -336,7 +337,28 @@ function createRowsAndErrors($min_limit){
                         
                     }
                  } else {
-                    $castel_transact[$row['idtes']]['quadro'] = 'DF';
+                        if ($row['allegato']==2){ // riepilogativo es.scheda carburante
+                            $castel_transact[$row['idtes']]['quadro'] = 'FR'; 
+                            $castel_transact[$row['idtes']]['riepil'] = 1; 
+                        } elseif ( empty($resultcf) && strlen($row['codfis'])==11){ // associazioni/noprofit
+                            // imposto il codice fiscale come partita iva
+                            $castel_transact[$row['idtes']]['pariva'] = $castel_transact[$row['idtes']]['codfis'];
+                            if ($row['regiva'] < 6){ // VENDITE - Fatture Emesse o Note Emesse
+                                if ($row['operat']==1){ // Fattura
+                                    $castel_transact[$row['idtes']]['quadro'] = 'FE';
+                                } else {                // Note
+                                    $castel_transact[$row['idtes']]['quadro'] = 'NE';
+                                } 
+                            } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
+                                if ($row['operat']==1){ // Fattura
+                                    $castel_transact[$row['idtes']]['quadro'] = 'FR';
+                                } else {                // Note
+                                    $castel_transact[$row['idtes']]['quadro'] = 'NR';
+                                } 
+                            }
+                        } else {                // privati
+                            $castel_transact[$row['idtes']]['quadro'] = 'DF';
+                        } 
                  }
             }
            
@@ -398,7 +420,7 @@ function createRowsAndErrors($min_limit){
                              }
                         break;
                  }
-              } else { //movimenti successivi al primo ma dello stesso id
+            } else { //movimenti successivi al primo ma dello stesso id
                  // inizio addiziona valori imponibile,imposta,esente,non imponibile
                  switch ($row['tipiva']) {
                         case 'I':
@@ -410,24 +432,25 @@ function createRowsAndErrors($min_limit){
                              }
                         break;
                         case 'E':
-                             $castel_transact[$row['idtes']]['operazioni_esente'] = $value_imponi;
+                             $castel_transact[$row['idtes']]['operazioni_esente'] += $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][12];
                              }
                         break;
                         case 'N':
                         //case 'C':
-                             $castel_transact[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
+                             $castel_transact[$row['idtes']]['operazioni_nonimp'] += $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][12];
                              }
                         break;
                  }
                  // fine addiziona valori imponibile,imposta,esente,non imponibile
-              }
+            }
+
+              
               // fine valorizzazione imponibile,imposta,esente,non imponibile
               $ctrl_id = $row['idtes'];
-
        }
 
        // se il precedente movimento non ha raggiunto l'importo lo elimino
@@ -447,6 +470,7 @@ function createRowsAndErrors($min_limit){
               $error_transact[0] = $script_transl['errors'][15];
     }
     // fine creazione array righi ed errori
+
     return array($castel_transact,$error_transact);
 }
 

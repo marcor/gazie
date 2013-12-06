@@ -663,8 +663,12 @@ class AgenziaEntrate
                             }
                             $this->progr_FR++;;
                             $cod_ini='FR'.str_pad($fr,3,'0',STR_PAD_LEFT);
-                            $this->accu_D .=    $this->createElement($cod_ini.'001',$ElementsData['pariva']).
-                                                $this->createElement($cod_ini.'003',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
+                            if ($ElementsData['riepil']==1) { // documento  riepilogativo es.scheda carburante
+                                $this->accu_D .=  $this->createElement($cod_ini.'002','1');
+                            } else {
+                                $this->accu_D .=  $this->createElement($cod_ini.'001',$ElementsData['pariva']);
+                            }
+                            $this->accu_D .=    $this->createElement($cod_ini.'003',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
                                                 $this->createElement($cod_ini.'004',substr($ElementsData['datreg'],8,2).substr($ElementsData['datreg'],5,2).substr($ElementsData['datreg'],0,4),STR_PAD_LEFT).
                                                 $this->createElement($cod_ini.'008',round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),STR_PAD_LEFT).
                                                 $this->createElement($cod_ini.'009',round($ElementsData['imposte_addebitate']),STR_PAD_LEFT)
