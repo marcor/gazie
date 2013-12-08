@@ -593,7 +593,7 @@ class AgenziaEntrate
 
                $this->FE=0; //FATTURE EMESSE                D
                $this->FR=0; //FATTURE RICEVUTE              D  
-               $this->FR=0; //FATTURE RIEPILOG. RICEVUTE    D  
+               $this->FR_riepil=0; //FATTURE RIEPILOG. RICEVUTE    D  
                $this->NE=0; //NOTE EMESSE                   D
                $this->NR=0; //NOTE RICEVUTE                 D
                $this->DF=0; //OPERAZIONI SENZA FATTURA      D
@@ -611,11 +611,11 @@ class AgenziaEntrate
                $this->accu_D='';
                $this->D_elements=0;
                foreach ($D as $ElementsData) {
-                    $pad=$this->progr_D*1900-3;
                     if ( $this->D_elements > 40 ) {
                        // l'elemento D potrebbe non avere lo spazio per contenere
                        // tutti gli elementi del prossimo movimento allora aggiungo un record
                        // e azzero tutti i contatori dei quadri
+					   $pad=$this->progr_D*1900-3;
                        $fe=0; 
                        $fr=0; 
                        $ne=0; 
@@ -627,6 +627,7 @@ class AgenziaEntrate
                        $this->progr_D++;
                        $this->accu_D=str_pad($this->accu_D,$pad,' ',STR_PAD_RIGHT)."A\r\n".
                                     'D'.$this->CFContribuente.str_pad($this->progr_D,8,'0',STR_PAD_LEFT).str_repeat(' ',48).$this->SoftHouseId;
+                       $pad=$this->progr_D*1900-3;
                     } elseif ( empty($this->accu_D) ) {
                        // inizializzo il primo 
                        $fe=0; 
@@ -738,7 +739,7 @@ class AgenziaEntrate
                     }    
 
                 }
-                return  $this->accu_D=str_pad($this->accu_D,$pad,' ',STR_PAD_RIGHT)."A\r\n";
+                return  str_pad($this->accu_D,$pad,' ',STR_PAD_RIGHT)."A\r\n";
             }
 
       function Record_E() // RECORD DATI RIEPILOGATIVI
