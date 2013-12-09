@@ -1,0 +1,8 @@
+Titolo:
+Amare simul et sapere vix Iovi conceditur.
+
+Modifiche apportate:
+Oltre l'aggiornamento del tracciato per la comunicazione dei dati rilevanti ai fini IVA (SPESOMETRO)
+sono state apportate molte migliorie minime che possono essere visualizzati dal log del repository SVN a questo indirizzo: http://sourceforge.net/p/gazie/code/commit_browser a partire da r357.
+ 
+Antonio de Vincentiis, Montesilvano, 9 Dicembre 2013
