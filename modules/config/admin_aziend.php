@@ -121,6 +121,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        if (!filter_var($form['web_url'], FILTER_VALIDATE_URL) && !empty($form['e_mail'])) {
           $msg .= "17+";
        }
+       if ($form['cod_ateco'] < 10000) {
+          $msg .= "18+";
+       }
        if (empty($msg)) { // nessun errore
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
              $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);

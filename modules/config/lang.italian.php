@@ -43,7 +43,8 @@
                                            'Devi inserire una immagine per il logo aziendale',
                                            'Il codice di avviamento postale (CAP) &egrave; sbagliato',
                                            'Indirizzo email formalmente sbagliato',
-                                           'Indirizzo web formalmente sbagliato'
+                                           'Indirizzo web formalmente sbagliato',
+                                           'Codice ATECO 2007 non valido'
                                           ),
                            'codice'=>"Codice ",
                            'ragso1'=>"Ragione Sociale 1",

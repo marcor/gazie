@@ -574,7 +574,7 @@ class AgenziaEntrate
                $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
                $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
                $this->SoftHouseId = str_pad($T['pariva'],16,' ',STR_PAD_RIGHT);
-               $this->ATECO = substr(str_pad($T['ateco'],6,'0'),0,6);
+               $this->ATECO = substr(str_pad($T['ateco'],6,'0',STR_PAD_LEFT),0,6);
                $this->telefono = substr(str_pad(filter_var($T['telefono'], FILTER_SANITIZE_NUMBER_INT),12,' ',STR_PAD_RIGHT),0,12);
                $this->fax = substr(str_pad(filter_var($T['fax'], FILTER_SANITIZE_NUMBER_INT),12,' ',STR_PAD_RIGHT),0,12);
                $this->e_mail = substr(str_pad(strtoupper($T['e_mail']),50,' ',STR_PAD_RIGHT),0,50);
