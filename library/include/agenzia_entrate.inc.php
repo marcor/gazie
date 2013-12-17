@@ -587,7 +587,7 @@ class AgenziaEntrate
                                     substr(str_pad($T['pronas'],2,' '),0,2).
                                     str_repeat(' ',60);
                } else {    // PERSONA GIURIDICA
-                  $this->AltriDati= str_repeat(' ',95).substr(str_pad($T['ragsoc'],60,' '),0,60);
+                  $this->AltriDati= str_repeat(' ',45).str_repeat('0',8).str_repeat(' ',42).substr(str_pad($T['ragsoc'],60,' '),0,60);
                }
                $this->Anno = substr(str_pad($T['anno'],4,'0'),0,4);
 
