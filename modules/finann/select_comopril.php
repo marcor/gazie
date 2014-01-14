@@ -488,7 +488,7 @@ if (isset($_GET['file_agenzia'])) {
 
     // Impostazione degli header per l'opozione "save as" dello standard input che verrà generato
     header('Content-Type: text/x-art21');
-    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].'_'.$year."_NSP00.nsp");
+    header("Content-Disposition: attachment; filename=".$admin_aziend['codfis'].$year."NSP00.nsp");
     header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up più volte.
     if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
