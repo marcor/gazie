@@ -45,6 +45,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
+    $form['intermediary'] == intval($_POST['intermediary']);
     if (isset($_POST['Submit'])) { // conferma tutto
        require("../../library/include/check.inc.php");
        $chk = new check_VATno_TAXcode();
@@ -147,6 +148,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = substr($form['datnas'],0,4);
     $form['datnas_M'] = substr($form['datnas'],5,2);
     $form['datnas_D'] = substr($form['datnas'],8,2);
+    // controllo se è un intermediario
+    $intermediary = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
+    if ( $intermediary['cvalue'] == $form['codice'] ){
+        $form['intermediary'] = 1;
+    } else {
+        $form['intermediary'] = 0;
+    }   
+    
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form=gaz_dbi_fields('aziend');
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
@@ -159,6 +168,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['decimal_price']=3;
     $form['ivaera']=5;
     $form['web_url']='http://';
+    $form['intermediary'] == 0;
 }
 
 require("../../library/include/header.php");
