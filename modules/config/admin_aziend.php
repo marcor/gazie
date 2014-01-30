@@ -45,8 +45,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
-    $form['intermediary_code'] == intval($_POST['intermediary_code']);
-    $form['intermediary_descr'] == substr($_POST['intermediary_descr'],0,50);
+    $form['intermediary_code'] = intval($_POST['intermediary_code']);
+    $form['intermediary_descr'] = substr($_POST['intermediary_descr'],0,50);
     if (isset($_POST['Submit'])) { // conferma tutto
        require("../../library/include/check.inc.php");
        $chk = new check_VATno_TAXcode();
@@ -136,6 +136,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           } elseif ($toDo == 'update') {
              gaz_dbi_table_update('aziend',$form['codice'],$form);
           }
+          // in ogni caso se è stata scelta come azienda intermediatrice verso l'AdE aggiorno la configurazione
+          if ( ( $form['codice']==$form['intermediary_code'] || $form['intermediary_code'] == 0 ) && isset($_POST['intermediary_check'])){
+            if ($_POST['intermediary_check']=='y'){
+               gaz_dbi_put_row($gTables['config'],'variable','intermediary','cvalue', $form['codice']);
+            } else { // no intermediario
+               gaz_dbi_put_row($gTables['config'],'variable','intermediary','cvalue', 0);
+            }
+          }
           header("Location: docume_config.php");
           exit;
        }
@@ -203,6 +211,8 @@ $(document).ready(function(){
 	
 	
 });
+$( '#check').button();
+
 var cal = new CalendarPopup();
 var calName = '';
 function setMultipleValues(y,m,d) {
@@ -256,12 +266,18 @@ echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\">".$script_transl['image'].
 echo "</td></tr>";
 
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">Intermediario presso l'Agenzia delle Entrate:</td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['intermediary'].":</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
         <input type=\"hidden\" name=\"intermediary_code\" value=\"".$form['intermediary_code']."\" />
-        <input type=\"hidden\" name=\"intermediary_descr\" value=\"".$form['intermediary_descr']."\" />
-         ".$form['intermediary_descr']." 
-    </td>\n";
+        <input type=\"hidden\" name=\"intermediary_descr\" value=\"".$form['intermediary_descr']."\" />";
+if ($form['intermediary_code']==$form['codice']){
+   echo "<input type=\"radio\" checked value=\"y\" name=\"intermediary_check\">Si - No<input type=\"radio\" value=\"n\" name=\"intermediary_check\">";
+} elseif($form['intermediary_code']==0){
+   echo "<input type=\"radio\" value=\"y\" name=\"intermediary_check\">".$script_transl['yes']." - ".$script_transl['no']."<input type=\"radio\" checked value=\"n\" name=\"intermediary_check\">";
+} else {
+   echo $form['intermediary_descr']; 
+}
+echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['legrap']." </td>\n";

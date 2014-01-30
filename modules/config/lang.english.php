@@ -49,6 +49,7 @@ $strScript = array ("admin_aziend.php" =>
                            'ragso1'=>"Company name 1",
                            'ragso2'=>"Company name 2",
                            'image'=>"Company logo<br />(jpg,png,gif) around 400x400px max 64kb",
+                           'intermediary'=>"Agenzia delle Entrate intermediary",
                            'sedleg'=>"Legal address",
                            'legrap'=>"Legal representative ",
                            'sexper'=>"Sex or legal person ",

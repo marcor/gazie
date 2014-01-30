@@ -53,6 +53,7 @@ $strScript = array ("admin_aziend.php" =>
                            'ragso1'=>"Nombre de la empresa 1",
                            'ragso2'=>"Nombre de la empresa 2",
                            'image'=>"Logotipo de la empresa<br />(jpg,png,gif) aprox. 400x400px max 64kb",
+                           'intermediary'=>"Intermediario para Agenzia delle Entrate",
                            'sedleg'=>"Domicilio legal",
                            'legrap'=>"Representante legal ",
                            'sexper'=>"Genero de la persona jur&iacute;dica ",
