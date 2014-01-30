@@ -45,7 +45,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
-    $form['intermediary'] == intval($_POST['intermediary']);
+    $form['intermediary_code'] == intval($_POST['intermediary_code']);
+    $form['intermediary_descr'] == substr($_POST['intermediary_descr'],0,50);
     if (isset($_POST['Submit'])) { // conferma tutto
        require("../../library/include/check.inc.php");
        $chk = new check_VATno_TAXcode();
@@ -148,13 +149,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = substr($form['datnas'],0,4);
     $form['datnas_M'] = substr($form['datnas'],5,2);
     $form['datnas_D'] = substr($form['datnas'],8,2);
-    // controllo se è un intermediario
+    // rilevo l'eventuale intermediario
     $intermediary = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
-    if ( $intermediary['cvalue'] == $form['codice'] ){
-        $form['intermediary'] = 1;
+    $form['intermediary_code'] = $intermediary['cvalue'];
+    if ($intermediary['cvalue']>0){
+        $intermediary_descr = gaz_dbi_get_row($gTables['aziend'], 'codice',$intermediary['cvalue']);
+        $form['intermediary_descr'] = $intermediary_descr['ragso1'].' '.$intermediary_descr['ragso2'];
     } else {
-        $form['intermediary'] = 0;
-    }   
+        $form['intermediary_descr'] = '';
+    }
     
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form=gaz_dbi_fields('aziend');
@@ -168,7 +171,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['decimal_price']=3;
     $form['ivaera']=5;
     $form['web_url']='http://';
-    $form['intermediary'] == 0;
+    // rilevo l'eventuale intermediario
+    $intermediary = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
+    $form['intermediary_code'] = $intermediary['cvalue'];
+    if ($intermediary['cvalue']>0){
+        $intermediary_descr = gaz_dbi_get_row($gTables['aziend'], 'codice',$intermediary['cvalue']);
+        $form['intermediary_descr'] = $intermediary_descr['ragso1'].' '.$intermediary_descr['ragso2'];
+    } else {
+        $form['intermediary_descr'] = '';
+    }
 }
 
 require("../../library/include/header.php");
@@ -243,6 +254,15 @@ echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=aziend&value=".$form['codice']."\" width=\"100\">*</td>\n";
 echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\">".$script_transl['image']." * <input name=\"userfile\" type=\"file\">";
 echo "</td></tr>";
+
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">Intermediario presso l'Agenzia delle Entrate:</td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+        <input type=\"hidden\" name=\"intermediary_code\" value=\"".$form['intermediary_code']."\" />
+        <input type=\"hidden\" name=\"intermediary_descr\" value=\"".$form['intermediary_descr']."\" />
+         ".$form['intermediary_descr']." 
+    </td>\n";
+echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['legrap']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
