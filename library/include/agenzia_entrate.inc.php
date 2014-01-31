@@ -548,8 +548,14 @@ class AgenziaEntrate
 
       function Record_A() // RECORD DATI INVIO
             {
-               return "A".str_repeat(' ',14)."NSP0001".
-                      $this->CFContribuente.str_repeat(' ',483).
+               if (!empty($this->Intermediario)){ // intermediario no-intermediario
+                    $tipofornitore='10'.substr(str_pad($this->Intermediario,16,' ',STR_PAD_RIGHT),0,16);
+               } else {
+                    $tipofornitore='01'.$this->CFContribuente;
+               } 
+               return "A".str_repeat(' ',14)."NSP00".
+                      $tipofornitore.
+                      str_repeat(' ',483).
                       str_repeat('0',8).    /* qui andrebbero messi i valori degli invii multipli,
                                                che GAzie non gestisce sperando che non si superi il limite di record
                                                in una piccola/media azienda (5Mb)*/
@@ -558,6 +564,11 @@ class AgenziaEntrate
 
       function Record_B() // RECORD DATI IDENTIFICATIVI
                {
+                if (!empty($this->Intermediario)){ // intermediario no-intermediario
+                    $impegno_trasmissione=substr(str_pad($this->Intermediario,16,' ',STR_PAD_RIGHT),0,16).'000002 '.date("dmY");
+                } else {
+                    $impegno_trasmissione='                000000 00000000';
+                } 
                 return "B".$this->CFContribuente.'00000001'.
                        str_repeat(' ',48).$this->SoftHouseId.'100'.str_repeat('0',23).'01'.
                        // qui andranno messi i 12 flag dei quadri compilati
@@ -565,12 +576,15 @@ class AgenziaEntrate
                        $this->FE.$this->FR.$this->NE.$this->NR.$this->DF.$this->FN.$this->SE.
                        '01'.// TU NO, riepilogo (TA)sempre esistente
                        $this->PIContribuente.$this->ATECO.$this->telefono.$this->fax.$this->e_mail.
-                       $this->AltriDati.$this->Anno.str_repeat(' ',18).str_repeat('0',18).str_repeat(' ',45).str_repeat('0',8).str_repeat(' ',118).'000000 00000000'.str_repeat(' ',1296).
+                       $this->AltriDati.$this->Anno.
+                       str_repeat(' ',18).str_repeat('0',18).str_repeat(' ',45).str_repeat('0',8).str_repeat(' ',102).
+                       $impegno_trasmissione.str_repeat(' ',1296).
                        "A\r\n";
                }
                
       function Record_CD($T,$D) // RECORD DATI BLACK LIST, OPERAZIONI ANALITICHE, OPERAZIONI AGGREGATE (NON UTILIZZATA) 
-               {            //                              TIPO    
+               {            //                              TIPO
+               $this->Intermediario = $T['intermediario'];
                $this->CFContribuente = substr(str_pad($T['codfis'],16,' ',STR_PAD_RIGHT),0,16);
                $this->PIContribuente = substr(str_pad($T['pariva'],11,'0',STR_PAD_LEFT),0,11);
                $this->SoftHouseId = str_pad($T['pariva'],16,' ',STR_PAD_RIGHT);

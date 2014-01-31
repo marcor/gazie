@@ -110,7 +110,7 @@ function printTransact($transact,$error)
 
 function getHeaderData()
 {
-      global $admin_aziend;
+      global $admin_aziend,$gTables;
       // preparo il nome dell'azienda e faccio i controlli di errore
       $Testa['anno'] = intval($_GET['anno']);
       $Testa['pariva'] = $admin_aziend['pariva'];
@@ -187,6 +187,14 @@ function getHeaderData()
             $Testa['datnas'] = $admin_aziend['datnas'];
         } else {
             $Testa['fatal_error'] = 'datnas';
+        }
+        // aggiungo l'eventuale intermediario in caso di installazione "da commercialista"
+        $intermediary_code = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
+        if ($intermediary_code['cvalue']>0){
+            $intermediary = gaz_dbi_get_row($gTables['aziend'], 'codice',$intermediary_code['cvalue']);
+            $Testa['intermediario'] = $intermediary['codfis'];
+        } else {
+            $Testa['intermediario'] = '';
         }
       } else {
         $Testa['fatal_error'] = 'nosexper';
