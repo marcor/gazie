@@ -264,21 +264,6 @@ echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=aziend&value=".$form['codice']."\" width=\"100\">*</td>\n";
 echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\">".$script_transl['image']." * <input name=\"userfile\" type=\"file\">";
 echo "</td></tr>";
-
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['intermediary'].":</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-        <input type=\"hidden\" name=\"intermediary_code\" value=\"".$form['intermediary_code']."\" />
-        <input type=\"hidden\" name=\"intermediary_descr\" value=\"".$form['intermediary_descr']."\" />";
-if ($form['intermediary_code']==$form['codice']){
-   echo "<input type=\"radio\" checked value=\"y\" name=\"intermediary_check\">Si - No<input type=\"radio\" value=\"n\" name=\"intermediary_check\">";
-} elseif($form['intermediary_code']==0){
-   echo "<input type=\"radio\" value=\"y\" name=\"intermediary_check\">".$script_transl['yes']." - ".$script_transl['no']."<input type=\"radio\" checked value=\"n\" name=\"intermediary_check\">";
-} else {
-   echo $form['intermediary_descr']; 
-}
-echo "</td>\n";
-echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['legrap']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
@@ -372,6 +357,20 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_url']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\" size=\"50\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['intermediary'].":</td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+        <input type=\"hidden\" name=\"intermediary_code\" value=\"".$form['intermediary_code']."\" />
+        <input type=\"hidden\" name=\"intermediary_descr\" value=\"".$form['intermediary_descr']."\" />";
+if ($form['intermediary_code']==$form['codice']){
+   echo "<input type=\"radio\" checked value=\"y\" name=\"intermediary_check\">Si - No<input type=\"radio\" value=\"n\" name=\"intermediary_check\">";
+} elseif($form['intermediary_code']==0){
+   echo "<input type=\"radio\" value=\"y\" name=\"intermediary_check\">".$script_transl['yes']." - ".$script_transl['no']."<input type=\"radio\" checked value=\"n\" name=\"intermediary_check\">";
+} else {
+   echo $form['intermediary_descr']; 
+}
+echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['cod_ateco']."</td>\n";

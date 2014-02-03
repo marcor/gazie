@@ -67,6 +67,7 @@ if (isset($_POST['Delete'])){
                 gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
                 gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
                 gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
+                gaz_dbi_put_query($gTables['rigbro'], 'id_doc = '.$row["id_tes"],"id_doc","");
                 //cancello i righi
                 $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$row['id_tes']."'");
                 while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {
@@ -85,6 +86,7 @@ if (isset($_POST['Delete'])){
                 gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
                 gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
                 gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
+                gaz_dbi_put_query($gTables['rigbro'], 'id_doc = '.$row["id_tes"],"id_doc","");
                 //cancello i righi
                 $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$row['id_tes']."'");
                 while ($val_old_row = gaz_dbi_fetch_array($rs_righidel)) {

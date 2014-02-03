@@ -105,7 +105,7 @@ echo "<tr class=\"FacetFormHeaderFont\">\n";
 echo "<td class=\"FacetDataTD\"><A href=\"../config/admin_utente.php?Login=".$admin_aziend['Login']."&Update\"><img src=\"view.php?table=admin&field=Login&value=".$admin_aziend['Login']."\" alt=\"".$admin_aziend['Cognome'].' '.$admin_aziend['Nome']."\" width=100 title=\"".$script_transl['change_usr']."\" border=\"2\"></a>";
 echo "</td>";
 echo "<td id='admin_welcome'>";
-echo ucfirst($msg)." ".$admin_aziend['Cognome']." ".$admin_aziend['Nome'].' (ip='.$admin_aziend['last_ip'].')'.
+echo ucfirst($msg)." ".$admin_aziend['Nome'].' (ip='.$admin_aziend['last_ip'].')'.
 "\n";
 echo "".$script_transl['access'].$admin_aziend['Access'].$script_transl['pass'].gaz_format_date($admin_aziend['datpas'])."<br>";
 echo "<div id='admin_p_logout'>".$script_transl['logout']." &rarr; <input name=\"logout\" type=\"submit\" value=\" Logout \"></div></td>\n";
