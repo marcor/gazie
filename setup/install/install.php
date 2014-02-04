@@ -2,8 +2,8 @@
 /* $Id: install.php,v 1.17 2011/01/01 11:08:15 devincen Exp $
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2013 - Antonio De Vincentiis Montesilvano (PE)
-         (www.facebook.com/antonio.devincentiis.9)
+    Copyright (C) 2004-2014 - Antonio De Vincentiis Montesilvano (PE)
+         (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
@@ -390,7 +390,7 @@ function dir_writable($folder)
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="author" content="Antonio De Vincentiis www.facebook.com/antonio.devincentiis.9">
+    <meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
     <link rel="stylesheet" type="text/css" href="../../library/style/stylesheet.css">
     <link rel="shortcut icon" href="../library/images/favicon.ico">
     <title><?php echo $msg['title'];?></title>

@@ -2,8 +2,8 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2013 - Antonio De Vincentiis Montesilvano (PE)
-         (www.facebook.com/antonio.devincentiis.9)
+    Copyright (C) 2004-2014 - Antonio De Vincentiis Montesilvano (PE)
+         (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
@@ -158,7 +158,7 @@ function message_fatal_error ($text)
   echo "<html>\n";
   echo "<head>\n";
   echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
-  echo "<meta name=\"author\" content=\"Antonio De Vincentiis www.facebook.com/antonio.devincentiis.9\">\n";
+  echo "<meta name=\"author\" content=\"Antonio De Vincentiis http://www.devincentiis.it\">\n";
   echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../../library/style/stylesheet.css\">\n";
   echo "<link rel=\"shortcut icon\" href=\"../../library/images/favicon.ico\">\n";
   echo "<title>Fatal error</title>\n";

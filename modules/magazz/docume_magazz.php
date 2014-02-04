@@ -2,8 +2,8 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2013 - Antonio De Vincentiis Montesilvano (PE)
-                             (www.facebook.com/antonio.devincentiis.9)
+    Copyright (C) 2004-2014 - Antonio De Vincentiis Montesilvano (PE)
+                             (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
