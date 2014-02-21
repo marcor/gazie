@@ -47,7 +47,8 @@ $strScript = array ("admin_aziend.php" =>
                                            'El color que usted elija tiene una luminosidad de menos de 408 (hex88 +88 +88)',
                                            'Debe introducir una imagen para el logotipo de la empresa',
                                            'Email formalmente mal la dirección',
-                                           'Web formalmente mal la dirección'
+                                           'Web formalmente mal la dirección',
+                                           'ATECO 2007 code invalid'
                                     ),
                            'codice'=>"Codigo ",
                            'ragso1'=>"Nombre de la empresa 1",

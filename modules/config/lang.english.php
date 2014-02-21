@@ -43,7 +43,8 @@ $strScript = array ("admin_aziend.php" =>
                                            'You must enter a picture for the company logo',
                                            'Invalid postal code',
                                            'Email address formally wrong',
-                                           'Web address formally wrong'
+                                           'Web address formally wrong',
+                                           'ATECO 2007 code invalid'
                                     ),
                            'codice'=>"Code ",
                            'ragso1'=>"Company name 1",
