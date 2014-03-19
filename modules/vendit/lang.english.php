@@ -456,7 +456,9 @@ $strScript = array ("admin_client.php" =>
                            'units'=>'Pieces',
                            'volume'=>'Volume',
                            'taxable'=>'Taxable',
-                           'tax'=>'V.A.T.'
+                           'tax'=>'V.A.T.',
+                           'confirm'=>'Confirm sent data to ECR?'
+                           
                            ),
                     "genera_effett.php" =>
                     array( 'title'=>'Generate the effects from tax documents',

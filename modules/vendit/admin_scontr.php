@@ -255,14 +255,14 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     );
                       }
                    } else { //altrimenti lo elimino
-                      if (intval($val_old_row['id_mag']) > 0){  //se c'è stato un movimento di magazzino lo azzero
+                      if (intval($val_old_row['id_mag']) > 0){  //se c'Ã¨ stato un movimento di magazzino lo azzero
                          $magazz->uploadMag('DEL',$form['tipdoc'],'','','','','','','','','','',$val_old_row['id_mag'],$admin_aziend['stock_eval_method']);
                       }
                       gaz_dbi_del_row($gTables['rigdoc'], 'id_rig', $val_old_row['id_rig']);
                    }
                    $i++;
              }
-             //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
+             //qualora i nuovi righi fossero di piÃ¹ dei vecchi inserisco l'eccedenza
              for ($i = $i; $i <= $count; $i++) {
                 $form['rows'][$i]['id_tes'] = $form['id_tes'];
                 rigdocInsert($form['rows'][$i]);
@@ -296,7 +296,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
              $form['id_contract'] = $ecr['id_cash'];
              $form['seziva'] = $ecr['seziva'];
              $form['spediz'] = $form['fiscal_code'];
-             // ricavo il progressivo della cassa del giorno (in id_contract c'è la cassa alla quale invio lo scontrino)
+             // ricavo il progressivo della cassa del giorno (in id_contract c'Ã¨ la cassa alla quale invio lo scontrino)
              $rs_last_n = gaz_dbi_dyn_query("numdoc", $gTables['tesdoc'], "tipdoc = 'VCO' AND id_con = 0 AND id_contract = ".$ecr['id_cash'],'datemi DESC, numdoc DESC',0,1);
              $last_n = gaz_dbi_fetch_array($rs_last_n);
              if ($last_n) {
@@ -367,14 +367,14 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                        }
                    }
             }
-            if (!empty($form['fiscal_code'])) { // è stata impostata la stampa del codice fiscale
+            if (!empty($form['fiscal_code'])) { // Ã¨ stata impostata la stampa del codice fiscale
                $ticket_printer->descri_ticket('CF= '.$form['fiscal_code']);
             }
             $ticket_printer->pay_ticket();
             $ticket_printer->close_ticket();
             // FINE invio
             if ($form['clfoco']>100000000) {
-                // procedo alla stampa della fattura solo se c'è un cliente selezionato
+                // procedo alla stampa della fattura solo se c'Ã¨ un cliente selezionato
                 $_SESSION['print_request']=$last_id;
                 header("Location: invsta_docven.php");
                 exit;
@@ -405,7 +405,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   // Se viene inviata la richiesta di conferma rigo
   if (isset($_POST['in_submit_x'])) {
     $artico = gaz_dbi_get_row($gTables['artico'],"codice",$form['in_codart']);
-    if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
+    if (substr($form['in_status'],0,6) == "UPDROW"){ //se Ã¨ un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
          $form['rows'][$old_key]['descri'] = $form['in_descri'];
@@ -457,7 +457,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$old_key]['codvat'] = 0;
          }
          ksort($form['rows']);
-    } else { //se è un rigo da inserire
+    } else { //se Ã¨ un rigo da inserire
          $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
          $form['rows'][$next_row]['descri'] = $form['in_descri'];
          $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
@@ -652,7 +652,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        $next_row++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
-    // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non può emettere scontrini
+    // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non puÃ² emettere scontrini
     $ecr_user = gaz_dbi_get_row($gTables['cash_register'],'adminid',$admin_aziend['Login']);
     if (!$ecr_user){
          header("Location: error_msg.php?ref=admin_scontr");
@@ -720,6 +720,8 @@ $script_transl = HeadMain(0,array('boxover/boxover','calendarpopup/CalendarPopup
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',
                                   'jquery/autocomplete_anagra'));
+
+
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
@@ -742,9 +744,10 @@ function setDate(name) {
 echo "<form method=\"POST\" name=\"tesdoc\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"".$form['id_tes']."\" name=\"id_tes\">\n";
-if ($form['id_tes'] > 0) { // è una modifica
+if ($form['id_tes'] > 0) { // Ã¨ una modifica
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']."<input type=\"text\" name=\"numdoc\" value=\"".$form['numdoc']."\" style=\"text-align:right\" maxlength=\"9\" size=\"3\"  onchange=\"this.form.submit()\" /></div>\n";
 } else {
+   echo "<input type=\"hidden\" value=\"".$script_transl['confirm']."\" id=\"confirmSubmit\">\n";
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$admin_aziend['Nome'].', '.$script_transl['ins_this'].'<font class="FacetDataTD">'.$ecr['descri']."</font></div>\n";
    echo "<input type=\"hidden\" value=\"\" name=\"numdoc\">\n";
 }

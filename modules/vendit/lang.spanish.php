@@ -460,7 +460,9 @@ $strScript = array ("admin_client.php" =>
                            'units'=>'Piezas',
                            'volume'=>'Volumen',
                            'taxable'=>'Tributable',
-                           'tax'=>'IVA'
+                           'tax'=>'IVA',
+                           'confirm'=>'Confirm sent data to ECR?'
+                           
                            ),
                     "genera_effett.php" =>
                     array( 'title'=>'Generar los efectos de los documentos tributables',

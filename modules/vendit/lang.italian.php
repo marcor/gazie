@@ -517,7 +517,8 @@ $strScript = array ("admin_client.php" =>
                            'units'=>'N.Colli',
                            'volume'=>'Volume',
                            'taxable'=>'Imponibile',
-                           'tax'=>'I.V.A.'
+                           'tax'=>'I.V.A.',
+                           'confirm'=>'Confermi invio dati al registratore di cassa?'
                            ),
                     "genera_effett.php" =>
                     array( 'title'=>'Genera gli effetti a partire dai documenti fiscali',
