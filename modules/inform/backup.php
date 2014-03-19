@@ -110,7 +110,7 @@ if ($form['do_backup'] != 1)
     }
     echo "-- GAzie SQL Dump\n";
     echo "-- version: ".$versSw."\n";
-    echo "-- http://gazie.it\n";
+    echo "-- http://gazie.sourceforge.net\n";
     echo "-- Date: ".date("d-m-Y H:i:s")."\n";
     echo "-- OS: ".PHP_OS."\n";
     echo "-- Host: ".$_SERVER["HTTP_HOST"]."\n";
