@@ -1221,7 +1221,7 @@ class   recordnav
         $this->passo = $passo;
         // faccio il conto totale dei record selezionati dalla query
         $this->count = gaz_dbi_record_count($table, $where);
-        $this->last = gaz_dbi_record_count($table, $where)-(gaz_dbi_record_count($table, $where)%$this->passo);
+        $this->last = $this->count-($this->count%$this->passo);
         //return $last;
     }
 
