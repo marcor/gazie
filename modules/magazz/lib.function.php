@@ -177,7 +177,7 @@ class magazzForm extends GAzieForm
       $datePrev = date("Y-m-d",$utsdatePrev);
 
       $where="artico = '$item_code' AND (datreg BETWEEN '$last_invDate' AND '$datePrev' OR (datreg = '$date' AND id_mov <= $id_mov))";
-      $orderby="datreg ASC,operat DESC, id_mov ASC"; //ordino in base alle date ma a pari data esamino prima i carichi
+      $orderby="datreg ASC, id_mov ASC"; //ordino in base alle date ma a pari data esamino prima i carichi
       $return_val=array();
       $accumulatore=array();
       switch ($stock_eval_method) { //calcolo il nuovo valore in base al metodo scelto in configurazione azienda
