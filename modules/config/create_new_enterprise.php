@@ -64,6 +64,9 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
           // richiamo le tabelle dall'azienda di riferimento richiesta
           $tables = gaz_dbi_query ("SHOW TABLES FROM $Database LIKE '".$table_prefix."\_".sprintf('%03d',$form['ref_co'])."%'");
           while ($r = gaz_dbi_fetch_array($tables)) {
+                // CREO LA STRUTTURA DELLA TABELLA
+                 $sql=createNewTable($r[0],$form['codice']);
+                 gaz_dbi_query($sql);
                  if(preg_match("/[a-zA-Z0-9]*.aliiva$/",$r[0]) ||
                     preg_match("/[a-zA-Z0-9]*.caumag$/",$r[0]) ||
                     preg_match("/[a-zA-Z0-9]*.caucon$/",$r[0]) ||
@@ -71,52 +74,50 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                     preg_match("/[a-zA-Z0-9]*.portos$/",$r[0]) ||
                     preg_match("/[a-zA-Z0-9]*.spediz$/",$r[0])) { // queste tabelle le copio identiche anche con i dati provenienti dall'azienda di riferimento
                     switch ($form['base_arch']) {
-                      case 0:
-                           $sql=createNewTable($r[0],$form['codice']);
+                      case 0:  // SOLO STRUTTURA
                            break;
-                      default:
-                           $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."` ;\n\n";
+                      default: // POPOLO CON I DATI
+                            $sql =" INSERT INTO `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."`  SELECT * FROM `".$r[0]."` ;\n\n";
+                            gaz_dbi_query($sql);
                       break;
                     }
                  } elseif(preg_match("/[a-zA-Z0-9]*.imball$/",$r[0]) ||
                           preg_match("/[a-zA-Z0-9]*.vettor$/",$r[0])) { // per queste tabella mi baso sulla scelta dell'utente
                     switch ($form['base_arch']) {
-                      case 2:
-                           $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."` ;\n\n";
+                      case 2: // POPOLO CON I DATI
+                           $sql =" INSERT INTO `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."`  SELECT * FROM `".$r[0]."` ;\n\n";
+                           gaz_dbi_query($sql);
                            break;
-                      default:
-                           $sql=createNewTable($r[0],$form['codice']);
+                      default: // SOLO STRUTTURA
                       break;
                     }
                  } elseif(preg_match("/[a-zA-Z0-9]*.artico$/",$r[0]) ||
                     preg_match("/[a-zA-Z0-9]*.catmer$/",$r[0])) {
                     switch ($form['artico_catmer']) {
-                      case 1:
-                           $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."` ;\n\n";
+                      case 1: // POPOLO CON GLI ARTICOLI DI MAGAZZINO
+                           $sql =" INSERT INTO `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` SELECT * FROM `".$r[0]."` ;\n\n";
+                           gaz_dbi_query($sql);
                            break;
-                      default:
-                           $sql=createNewTable($r[0],$form['codice']);
+                      default:  // SOLO STRUTTURA
                            break;
                     }
                  } elseif(preg_match("/[a-zA-Z0-9]*.clfoco$/",$r[0])) { // per la tabelle del piano dei conti mi baso sulla scelta dell'utente
                     switch ($form['clfoco']) {
-                      case 0:
-                           $sql=createNewTable($r[0],$form['codice']);
+                      case 0: // SOLO STRUTTURA
                            break;
-                      case 1:
-                           $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."`
+                      case 1: // POPOLO CON I DATI
+                           $sql =" INSERT INTO `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` SELECT * FROM `".$r[0]."`
                                  WHERE (codice < ".($ref_company['mascli']*1000000+1)." OR codice > ".($ref_company['mascli']*1000000+999999).") AND
                                        (codice < ".($ref_company['masfor']*1000000+1)." OR codice > ".($ref_company['masfor']*1000000+999999).") AND
                                        (codice < ".($ref_company['masban']*1000000+1)." OR codice > ".($ref_company['masban']*1000000+999999).");\n\n";
+                           gaz_dbi_query($sql);
                            break;
-                      case 2:
-                           $sql="CREATE TABLE `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` ENGINE=MyISAM DEFAULT CHARSET=utf8 SELECT * FROM `".$r[0]."` ;\n\n";
+                      case 2: // POPOLO CON I DATI BANCHE, CLIENTI, FORNITORI
+                           $sql =" INSERT INTO  `".preg_replace("/$table_prefix\_[0-9]{3}/",$table_prefix.sprintf('_%03d',$form['codice']),$r[0])."` SELECT * FROM `".$r[0]."` ;\n\n";
+                           gaz_dbi_query($sql);
                            break;
                     }
-                 } else { // le altre tabelle solo struttura senza alcun dato
-                    $sql=createNewTable($r[0],$form['codice']);
                  }
-                 gaz_dbi_query($sql);
           }
           // inserisco la nuova azienda nel suo archivio con una descrizione da modificare manualmente
           $upd='Modificare i dati di questa azienda';
