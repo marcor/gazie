@@ -573,7 +573,8 @@ $strScript = array ("admin_client.php" =>
                            'invoice'=>'Attached invoices',
                            'status'=>'Status',
                            'status_value'=>array(0=>'ISSUED',1=>'REGISTERED'),
-                           'send'=>'Retransmit to ECR'
+                           'send'=>'Retransmit to ECR',
+                           'amount'=>'Amount'
                            ),
                     "report_broven.php" =>
                     array( 'title'=>'Quotes and orders',

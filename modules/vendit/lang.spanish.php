@@ -577,7 +577,8 @@ $strScript = array ("admin_client.php" =>
                            'invoice'=>'Factura adjuntas',
                            'status'=>'Estado',
                            'status_value'=>array(0=>'Emitida',1=>'Registrada'),
-                           'send'=>'Retransmitir a ECR'
+                           'send'=>'Retransmitir a ECR',
+                           'amount'=>'Amount'
                            ),
                     "report_broven.php" =>
                     array( 'title'=>'Las cotizaciones y pedidos',

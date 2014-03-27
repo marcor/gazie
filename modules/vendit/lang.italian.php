@@ -413,7 +413,8 @@ $strScript = array ("admin_client.php" =>
                            'invoice'=>'Fattura allegata',
                            'status'=>'Stato',
                            'status_value'=>array(0=>'EMESSO',1=>'CONTABILIZZATO'),
-                           'send'=>'Invia nuovamente all\'ECR'
+                           'send'=>'Invia nuovamente all\'ECR',
+                           'amount'=>'Importo'
                            ),
                     "report_broven.php" =>
                     array( 'title'=>'Preventivi e ordini',
