@@ -27,6 +27,15 @@ $admin_aziend=checkAdmin();
 $anno = date("Y");
 $cliente='';
 $message = "";
+
+function print_querytime($prev)
+{
+    list($usec, $sec) = explode(" ", microtime());
+    $this_time= ((float)$usec + (float)$sec);
+    echo round($this_time-$prev,8);
+    return $this_time;
+}
+
 if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
    $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
@@ -54,7 +63,7 @@ if (isset($_GET['cliente'])) {
    }
 }
 if (isset($_GET['all'])) {
-   gaz_set_time_limit (240);
+   gaz_set_time_limit (0);
    $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;
@@ -167,6 +176,9 @@ for ($sez = 1; $sez <= 3; $sez++) {
 <?php
 if (!isset($_GET['field']) or ($_GET['field'] == 2) or(empty($_GET['field'])))
         $orderby = "datfat desc, protoc desc";
+list($usec, $sec) = explode(' ',microtime());
+$querytime = ((float)$usec + (float)$sec);
+$querytime_before = $querytime;
 $recordnav = new recordnav($gTables['tesdoc'].' LEFT JOIN '.$gTables['clfoco'].' on '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where, $limit, $passo);
 $recordnav -> output();
 ?>
@@ -176,14 +188,17 @@ $recordnav -> output();
      <input type="text" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
    </td>
    <td colspan="4" class="FacetFieldCaptionTD">Cliente:
-     <input type="text" name="cliente" value="<?php if ($cliente <> '') print $cliente; ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">
+     <input type="text" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">
    </td>
    <td>
      <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
    </td>
-   <td colspan="3">
+   <td colspan="2">
      <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
    </td>
+   <td colspan="2">
+   
+     </td>
  </tr>
 <tr>
 <?php
@@ -329,11 +344,16 @@ while ($r = gaz_dbi_fetch_array($result)) {
            echo "<img title=\"per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" src=\"../../library/images/stop-info.gif\" alt=\"!\" border=\"0\">";
         }
         echo "</td>";
-        //
+/*        echo "<td class=\"FacetDataTD\" align=\"right\">";
+        $querytime=print_querytime($querytime);
+        echo "</td>";*/
         echo "</tr>\n";
     }
     $ctrl_doc = sprintf('%09d',$r['protoc']).$r['datfat'];
 }
+echo '<tr><td colspan="9" align="right">Querytime: ';
+print_querytime($querytime);
+echo ' sec.</td></tr>';
 ?>
 </table>
 </form>
