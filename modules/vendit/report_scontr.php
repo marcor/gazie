@@ -50,6 +50,7 @@ $gForm = new venditForm();
 $ecr=$gForm->getECR_userData($admin_aziend['Login']);
 $where = "tipdoc = 'VCO' AND seziva = ".$ecr['seziva'];
 if (isset($_GET['all'])) {
+   gaz_set_time_limit (0);
    $passo = 100000;
 }
 require("../../library/include/header.php");
@@ -91,6 +92,7 @@ $headers_tesdoc = array  (
             $script_transl['number'] => "numdoc",
             $script_transl['invoice'] => "clfoco",
             $script_transl['status'] => "",
+            $script_transl['amount'] => "",
             $script_transl['delete'] => "",
             '' => ""
             );
@@ -102,7 +104,72 @@ $linkHeaders -> output();
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query('*',$gTables['tesdoc'], $where, $orderby,$limit, $passo);
 $anagrafica = new Anagrafica();
+$tot=0;
 while ($row = gaz_dbi_fetch_array($result)) {
+        $cast_vat=array();
+        $cast_acc=array();
+        $tot_tes=0;
+        //recupero i dati righi per creare i castelletti
+        $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = ".$row['id_tes'],"id_rig");
+        while ($v = gaz_dbi_fetch_array($rs_rig)) {
+              if ($v['tiprig'] <= 1) {    //ma solo se del tipo normale o forfait
+                 if ($v['tiprig'] == 0) { // tipo normale
+                    $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'],array($v['sconto'],$row['sconto'],-$v['pervat']));
+                 } else {                 // tipo forfait
+                    $tot_row = CalcolaImportoRigo(1,$v['prelis'],-$v['pervat']);
+                 }
+                 if (!isset($cast_vat[$v['codvat']])) {
+                    $cast_vat[$v['codvat']]['totale']=0.00;
+                    $cast_vat[$v['codvat']]['imponi']=0.00;
+                    $cast_vat[$v['codvat']]['impost']=0.00;
+                    $cast_vat[$v['codvat']]['periva']=$v['pervat'];
+                 }
+                 $cast_vat[$v['codvat']]['totale']+=$tot_row;
+                 // calcolo il totale del rigo stornato dell'iva
+                 $imprig=round($tot_row/(1+($v['pervat']/100)),2);
+                 $cast_vat[$v['codvat']]['imponi']+=$imprig;
+                 $cast_vat[$v['codvat']]['impost']+=$tot_row-$imprig;
+                 $tot+=$tot_row;
+                 $tot_tes+=$tot_row;
+                 // inizio AVERE
+                 if (!isset($cast_acc[$admin_aziend['ivacor']]['A'])) {
+                     $cast_acc[$admin_aziend['ivacor']]['A']=0;
+                 }
+                 $cast_acc[$admin_aziend['ivacor']]['A']+=$tot_row-$imprig;
+                 if (!isset($cast_acc[$v['codric']]['A'])) {
+                     $cast_acc[$v['codric']]['A']=0;
+                 }
+                 $cast_acc[$v['codric']]['A']+=$imprig;
+                 // inizio DARE
+                 if ($row['clfoco']>100000000) { // c'è un cliente selezionato
+                     if (!isset($cast_acc[$row['clfoco']]['D'])) {
+                         $cast_acc[$row['clfoco']]['D']=0;
+                     }
+                     $cast_acc[$row['clfoco']]['D']+=$tot_row;
+                 } else {  // il cliente è anonimo lo passo direttamente per cassa
+                     if (!isset($cast_acc[$admin_aziend['cassa_']]['D'])) {
+                         $cast_acc[$admin_aziend['cassa_']]['D']=0;
+                     }
+                     $cast_acc[$admin_aziend['cassa_']]['D']+=$tot_row;
+                 }
+              }
+        }
+        $doc['all'][]= array('tes'=>$row,
+                                 'vat'=>$cast_vat,
+                                 'acc'=>$cast_acc,
+                                 'tot'=>$tot_tes);
+        if ($row['clfoco']>100000000) {
+              $doc['invoice'][]= array('tes'=>$row,
+                                       'vat'=>$cast_vat,
+                                       'acc'=>$cast_acc,
+                                       'tot'=>$tot_tes);
+        } else {
+              $doc['ticket'][]= array('tes'=>$row,
+                                      'vat'=>$cast_vat,
+                                      'acc'=>$cast_acc,
+                                      'tot'=>$tot_tes);
+        }
+        // ************* FINE CREAZIONE TOTALI SCONTRINO ***************
         if ($row['id_con']>0){
            $status=$script_transl['status_value'][1];
         } else {
@@ -114,12 +181,16 @@ while ($row = gaz_dbi_fetch_array($result)) {
         } else {
            $invoice='';
         }
+        
         echo "<tr>";
         echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"admin_scontr.php?Update&id_tes=".$row['id_tes']."\">".$row["id_tes"]."</a></td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($row['datemi'])."</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$row["numdoc"]." &nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">$invoice</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$status." &nbsp;</td>";
+        echo '<td class="FacetDataTD" align="right" style="font-weight=bolt;">';
+        echo gaz_format_number($tot_tes);
+        echo "\t </td>\n";
         if ($row["id_con"] == 0) {
            if (getLastId($row['datemi'],$row['seziva']) == $row["id_tes"]) {
                echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_docven.php?id_tes=".$row['id_tes']."\"><img src=\"../../library/images/x.gif\" border=\"0\"></a></td>";
