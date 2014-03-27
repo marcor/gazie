@@ -53,7 +53,7 @@ if (isset($_GET['cliente'])) {
    }
 }
 if (isset($_GET['all'])) {
-   gaz_set_time_limit (240);
+   gaz_set_time_limit (0);
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;
    $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil'";

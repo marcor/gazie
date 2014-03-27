@@ -24,7 +24,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
-    gaz_set_time_limit (240);
+    gaz_set_time_limit (0);
 }
 
 function FattureDaDdt($period,$sezione=1,$cliente=0,$excludeDdt=array())
