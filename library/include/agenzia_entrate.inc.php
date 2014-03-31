@@ -127,7 +127,7 @@ class AgenziaEntrate
                for ($i = 14; $i < 32; $i++) {
                    $this->Valori .= str_pad(intval($B[$i]),11,' ',STR_PAD_LEFT);
                }
-               return "B".$this->CFContribuente.str_repeat(" ",56).$this->CFProduttore."0"
+               return "B".$this->CFContribuente.'00000001'.str_repeat(" ",48).$this->CFProduttore."0"
                       .$this->Ragionesociale.$this->Cognome.$this->Nome.$this->AnnoImposta
                       .$this->PIContribuente.$this->CodiceAttivita.$this->ContabSeparata
                       .$this->SocietaGruppo.$this->EventiEccezio.$this->CFDichiarante
