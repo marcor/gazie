@@ -119,6 +119,15 @@ function getHeaderData()
       $Testa['e_mail'] = $admin_aziend['e_mail'];
       $Testa['telefono'] = filter_var($admin_aziend['telefo'], FILTER_SANITIZE_NUMBER_INT);
       $Testa['fax'] = filter_var($admin_aziend['fax'], FILTER_SANITIZE_NUMBER_INT);
+      // aggiungo l'eventuale intermediario in caso di installazione "da commercialista"
+      $intermediary_code = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
+      if ($intermediary_code['cvalue']>0){
+          $intermediary = gaz_dbi_get_row($gTables['aziend'], 'codice',$intermediary_code['cvalue']);
+          $Testa['intermediario'] = $intermediary['codfis'];
+      } else {
+          $Testa['intermediario'] = '';
+      }
+      
       if ($admin_aziend['sexper'] == 'G') {
          // persona giuridica
          if (strlen($Testa['codfis']) <> 11) {
@@ -187,14 +196,6 @@ function getHeaderData()
             $Testa['datnas'] = $admin_aziend['datnas'];
         } else {
             $Testa['fatal_error'] = 'datnas';
-        }
-        // aggiungo l'eventuale intermediario in caso di installazione "da commercialista"
-        $intermediary_code = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
-        if ($intermediary_code['cvalue']>0){
-            $intermediary = gaz_dbi_get_row($gTables['aziend'], 'codice',$intermediary_code['cvalue']);
-            $Testa['intermediario'] = $intermediary['codfis'];
-        } else {
-            $Testa['intermediario'] = '';
         }
       } else {
         $Testa['fatal_error'] = 'nosexper';
