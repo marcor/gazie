@@ -175,15 +175,14 @@ class magazzForm extends GAzieForm
       }
       $utsdatePrev= mktime(0,0,0,intval(substr($date,5,2)),intval(substr($date,8,2))-1,intval(substr($date,0,4)));
       $datePrev = date("Y-m-d",$utsdatePrev);
-
       $where="artico = '$item_code' AND (datreg BETWEEN '$last_invDate' AND '$datePrev' OR (datreg = '$date' AND id_mov <= $id_mov))";
-      $orderby="datreg ASC, id_mov ASC"; //ordino in base alle date ma a pari data esamino prima i carichi
+      $orderby="datreg ASC, id_mov ASC"; //ordino in base alle date 
       $return_val=array();
       $accumulatore=array();
       switch ($stock_eval_method) { //calcolo il nuovo valore in base al metodo scelto in configurazione azienda
             case "0": //standard
             case "3": // FIFO
-                 $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'],"caumag < 99 AND ". $where,$orderby);
+                 $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'],"caumag < 98 AND ". $where,$orderby);
                  // Qui metto i valori dell'ultimo inventario
                  $accumulatore[0]=array('q'=>$last_invQuanti,'v'=>$last_invPrice);
                  $giacenza=array('q_g'=>$last_invQuanti,'v_g'=>$last_invPrice*$last_invQuanti);
@@ -248,7 +247,7 @@ class magazzForm extends GAzieForm
                  }
             break;
             case "1": // WMA
-                 $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where." AND caumag < 99",$orderby);
+                 $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where." AND caumag < 98",$orderby);
                  $giacenza=array('q_g'=>$last_invQuanti,'v_g'=>$last_invPrice*$last_invQuanti);
                  $return_val[0] = array('q'=>$last_invQuanti,'v'=>$last_invPrice,
                                       'q_g'=>$giacenza['q_g'],'v_g'=>$giacenza['v_g']);
@@ -277,7 +276,7 @@ class magazzForm extends GAzieForm
                  }
             break;
             case "2": // LIFO
-                 $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where." AND caumag < 99",$orderby);
+                 $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where." AND caumag < 98",$orderby);
                  // Qui metto i valori dell'ultimo inventario
                  $accumulatore[0]=array('q'=>$last_invQuanti,'v'=>$last_invPrice);
                  $giacenza=array('q_g'=>$last_invQuanti,'v_g'=>$last_invPrice*$last_invQuanti);
