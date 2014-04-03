@@ -210,8 +210,8 @@ function createRowsAndErrors($min_limit){
                citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
                ".$gTables['tesmov'].".numdoc,".$gTables['tesmov'].".datdoc,".$gTables['tesmov'].".seziva,
                ".$gTables['tesmov'].".caucon,datreg,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
-               operat, SUM(impost) AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
-               SUM(imponi) AS imponibile FROM ".$gTables['rigmoi']."
+               operat, impost AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
+               imponi AS imponibile FROM ".$gTables['rigmoi']."
                LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
                LEFT JOIN ".$gTables['aliiva']." ON ".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice
@@ -220,7 +220,6 @@ function createRowsAndErrors($min_limit){
                WHERE YEAR(datreg) = ".intval($_GET['anno'])."
                  AND ( ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['masfor']."%' OR ".$gTables['tesmov'].".clfoco LIKE '".$admin_aziend['mascli']."%')
                  AND ".$gTables['clfoco'].".allegato > 0 
-               GROUP BY ".$gTables['rigmoi'].".id_tes
                ORDER BY regiva,operat,country,datreg,seziva,protoc";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact= array();
@@ -244,6 +243,8 @@ function createRowsAndErrors($min_limit){
             // se il precedente movimento non ha raggiunto l'importo lo elimino
             if (isset($castel_transact[$ctrl_id])
                 && $castel_transact[$ctrl_id]['operazioni_imponibili'] < 0.5
+				&& $castel_transact[$ctrl_id]['operazioni_esente'] < 0.5
+				&& $castel_transact[$ctrl_id]['operazioni_nonimp'] < 0.5
                 && $castel_transact[$ctrl_id]['contract'] < 0.5) {
                 unset ($castel_transact[$ctrl_id]);
                 unset ($error_transact[$ctrl_id]);
@@ -390,7 +391,6 @@ function createRowsAndErrors($min_limit){
                 }
             }
             // fine ricerca contratti
-
                  if (!empty($row['sedleg'])){
                      if ( preg_match("/([\w\,\.\s]+)([0-9]{5})[\s]+([\w\s\']+)\(([\w]{2})\)/",$row['sedleg'],$regs)) {
                         $castel_transact[$row['idtes']]['Indirizzo'] = $regs[1];
@@ -416,6 +416,7 @@ function createRowsAndErrors($min_limit){
                              }
                         break;
                         case 'E':
+
                              $castel_transact[$row['idtes']]['tipiva'] = 3;
                              $castel_transact[$row['idtes']]['operazioni_esente'] = $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
@@ -423,7 +424,6 @@ function createRowsAndErrors($min_limit){
                              }
                         break;
                         case 'N':
-                        //case 'C':
                              $castel_transact[$row['idtes']]['tipiva'] = 2;
                              $castel_transact[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
@@ -449,7 +449,6 @@ function createRowsAndErrors($min_limit){
                              }
                         break;
                         case 'N':
-                        //case 'C':
                              $castel_transact[$row['idtes']]['operazioni_nonimp'] += $value_imponi;
                              if ($value_impost != 0){  //se c'è imposta il movimento è sbagliato
                                 $error_transact[$row['idtes']][] = $script_transl['errors'][12];
@@ -463,10 +462,11 @@ function createRowsAndErrors($min_limit){
               // fine valorizzazione imponibile,imposta,esente,non imponibile
               $ctrl_id = $row['idtes'];
        }
-
        // se il precedente movimento non ha raggiunto l'importo lo elimino
        if (isset($castel_transact[$ctrl_id])
            && $castel_transact[$ctrl_id]['operazioni_imponibili'] < 0.5
+           && $castel_transact[$ctrl_id]['operazioni_esente'] < 0.5
+           && $castel_transact[$ctrl_id]['operazioni_nonimp'] < 0.5
            && $castel_transact[$ctrl_id]['contract'] < 0.5) {
            unset ($castel_transact[$ctrl_id]);
            unset ($error_transact[$ctrl_id]);
