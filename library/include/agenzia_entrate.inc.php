@@ -624,12 +624,13 @@ class AgenziaEntrate
                $this->progr_SE=0;
                $this->accu_D='';
                $this->D_elements=0;
+               $pad=1897;
                foreach ($D as $ElementsData) {
                     if ( $this->D_elements > 40 ) {
                        // l'elemento D potrebbe non avere lo spazio per contenere
                        // tutti gli elementi del prossimo movimento allora aggiungo un record
                        // e azzero tutti i contatori dei quadri
-					   $pad=$this->progr_D*1900-3;
+		       $pad=$this->progr_D*1900-3;
                        $fe=0; 
                        $fr=0; 
                        $ne=0; 
