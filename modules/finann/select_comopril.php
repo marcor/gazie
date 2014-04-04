@@ -372,7 +372,13 @@ function createRowsAndErrors($min_limit){
                                     $castel_transact[$row['idtes']]['quadro'] = 'NR';
                                 } 
                             }
-                        } else {                // privati
+                        }  elseif ( empty($resultcf) && strlen($row['codfis'])==16 && $row['regiva'] < 4){ // privato servito con fattura
+                            if ($row['operat']==1){ // Fattura
+                                $castel_transact[$row['idtes']]['quadro'] = 'FE';
+                            } else {                // Note
+                                $castel_transact[$row['idtes']]['quadro'] = 'NE';
+                            } 
+                        }  else {                // privati con scontrino
                             $castel_transact[$row['idtes']]['quadro'] = 'DF';
                         } 
                  }
