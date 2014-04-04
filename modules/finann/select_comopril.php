@@ -46,6 +46,8 @@ if (!isset($_GET['anno'])) { //al primo accesso allo script suppongo che si debb
 function printTransact($transact,$error)
 {
           global $script_transl,$admin_aziend;
+          $nrec=0;
+          echo "<td align=\"center\" class=\"FacetDataTD\" >N.Rec.</td>";
           echo "<td align=\"center\" class=\"FacetDataTD\" >N.Mov.</td>";
           echo "<td align=\"center\" class=\"FacetDataTD\" >".$script_transl['sourcedoc']."</td>";
           echo "<td class=\"FacetDataTD\" >".$script_transl['soggetto']."</td>";
@@ -56,6 +58,7 @@ function printTransact($transact,$error)
           echo "<td align=\"right\" class=\"FacetDataTD\" >".$script_transl['tax']."</td>";
           echo "</tr>\n";
           foreach ($transact as $key=>$value ) {
+               $nrec++;
                $totale = gaz_format_number($value['operazioni_imponibili']+$value['operazioni_nonimp']+$value['operazioni_esente']);
                $class = ' ';
                switch ($value['quadro']) {
@@ -79,6 +82,7 @@ function printTransact($transact,$error)
                   $class = ' class="FacetDataTDred" ';
                }
                echo "<tr>";
+               echo "<td align=\"right\" $class>$nrec</a></td>";
                echo "<td align=\"center\" $class><a href=\"../contab/admin_movcon.php?id_tes=".$value['id_tes']."&Update\">n.".$value['id_tes']." - ".gaz_format_date($value['datreg'])."</a></td>";
                echo "<td align=\"center\" $class> sez.".$value['seziva']." n.".$value['numdoc'].' del '.gaz_format_date($value['datdoc'])."</td>";
                echo "<td $class>".$value['ragso1'].' '.$value['ragso2']."</td>";
