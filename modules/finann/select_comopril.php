@@ -372,7 +372,7 @@ function createRowsAndErrors($min_limit){
                                     $castel_transact[$row['idtes']]['quadro'] = 'NR';
                                 } 
                             }
-                        }  elseif ( empty($resultcf) && strlen($row['codfis'])==16 && $row['regiva'] < 4){ // privato servito con fattura
+                        }  elseif (empty($resultcf) && strlen($row['codfis'])==16){ // privato servito con fattura
                             if ($row['operat']==1){ // Fattura
                                 $castel_transact[$row['idtes']]['quadro'] = 'FE';
                             } else {                // Note
