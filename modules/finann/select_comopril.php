@@ -213,10 +213,12 @@ function createRowsAndErrors($min_limit){
     $sqlquery= "SELECT ".$gTables['rigmoi'].".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
                citspe,prospe,country,codfis,pariva,".$gTables['tesmov'].".clfoco,".$gTables['tesmov'].".protoc,
                ".$gTables['tesmov'].".numdoc,".$gTables['tesmov'].".datdoc,".$gTables['tesmov'].".seziva,
-               ".$gTables['tesmov'].".caucon,datreg,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
+               ".$gTables['tesmov'].".caucon,".$gTables['tesdoc'].".numfat AS n_fatt,
+			   datreg,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
                operat, impost AS imposta,".$gTables['rigmoi'].".id_tes AS idtes,
                imponi AS imponibile FROM ".$gTables['rigmoi']."
                LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoi'].".id_tes = ".$gTables['tesmov'].".id_tes
+               LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['tesmov'].".id_doc = ".$gTables['tesdoc'].".id_tes
                LEFT JOIN ".$gTables['aliiva']." ON ".$gTables['rigmoi'].".codiva = ".$gTables['aliiva'].".codice
                LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesmov'].".clfoco = ".$gTables['clfoco'].".codice
                LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra
@@ -334,10 +336,14 @@ function createRowsAndErrors($min_limit){
                 $castel_transact[$row['idtes']]['cod_ade']=$row['cod_agenzia_entrate']; 
                 $castel_transact[$row['idtes']]['quadro'] = 'FN';
             } else {
+				if ($row['regiva']==4 && (!empty($row['n_fatt']))) { // se è un documento allegato ad uno scontrino utilizzo il numero fattura in tesdoc
+					$castel_transact[$row['idtes']]['numdoc']=$row['n_fatt'].' all';
+					$castel_transact[$row['idtes']]['seziva']='';
+				}
                 if ($row['pariva'] >0){ 
                     // RESIDENTE con partita IVA
                     if ($row['regiva'] < 6){ // VENDITE - Fatture Emesse o Note Emesse
-                        if ($row['operat']==1){ // Fattura
+						if ($row['operat']==1){ // Fattura
                             $castel_transact[$row['idtes']]['quadro'] = 'FE';
                         } else {                // Note
                             $castel_transact[$row['idtes']]['quadro'] = 'NE';
