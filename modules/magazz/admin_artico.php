@@ -34,6 +34,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form=gaz_dbi_parse_post('artico');
+    $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code']= substr($_POST['ref_code'],0,15);
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
