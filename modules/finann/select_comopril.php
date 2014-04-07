@@ -336,14 +336,14 @@ function createRowsAndErrors($min_limit){
                 $castel_transact[$row['idtes']]['cod_ade']=$row['cod_agenzia_entrate']; 
                 $castel_transact[$row['idtes']]['quadro'] = 'FN';
             } else {
-				if ($row['regiva']==4 && (!empty($row['n_fatt']))) { // se è un documento allegato ad uno scontrino utilizzo il numero fattura in tesdoc
-					$castel_transact[$row['idtes']]['numdoc']=$row['n_fatt'].' all';
-					$castel_transact[$row['idtes']]['seziva']='';
-				}
+                if ($row['regiva']==4 && (!empty($row['n_fatt']))) { // se è un documento allegato ad uno scontrino utilizzo il numero fattura in tesdoc
+                    $castel_transact[$row['idtes']]['numdoc']=$row['n_fatt'].' scontr.n.'.$row['numdoc'];
+                    $castel_transact[$row['idtes']]['seziva']='';
+		}
                 if ($row['pariva'] >0){ 
                     // RESIDENTE con partita IVA
                     if ($row['regiva'] < 6){ // VENDITE - Fatture Emesse o Note Emesse
-						if ($row['operat']==1){ // Fattura
+			if ($row['operat']==1){ // Fattura
                             $castel_transact[$row['idtes']]['quadro'] = 'FE';
                         } else {                // Note
                             $castel_transact[$row['idtes']]['quadro'] = 'NE';
