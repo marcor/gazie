@@ -39,6 +39,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     $date = date("Y-m-d",$utsdate);
     $result = gaz_dbi_dyn_query($gTables['artico'].'.*, '.$gTables['catmer'].'.descri AS descat,'.$gTables['catmer'].'.annota AS anncat', $gTables['artico'].' LEFT JOIN '.$gTables['catmer'].' ON catmer = '.$gTables['catmer'].'.codice', "catmer = ".$form["catmer"],'catmer ASC, '.$gTables['artico'].'.codice ASC');
     if ($result) {
+    	// Imposto totale valore giacenza by DF
+    	$tot_val_giac = 0;
         while ($r = gaz_dbi_fetch_array($result)) {
               $mv=$gForm->getStockValue(false,$r['codice'],$date); 
               $magval=array_pop($mv);
@@ -63,6 +65,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                  $form['chk_on'.$r['codice']] = '';
                  $form['a'][$r['codice']]['col'] = '';
               }
+              
+              // Calcolo totale valore giacenza by DF
+              $tot_val_giac += $magval['v_g'];
         }
     }
 } else { //nelle  successive entrate
@@ -84,6 +89,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $ctrl_cm=0;
       $result = gaz_dbi_dyn_query($gTables['artico'].'.*, '.$gTables['catmer'].'.descri AS descat,'.$gTables['catmer'].'.annota AS anncat', $gTables['artico'].' LEFT JOIN '.$gTables['catmer'].' ON catmer = '.$gTables['catmer'].'.codice', $where,'catmer ASC, '.$gTables['artico'].'.codice ASC');
       if ($result) {
+      	// Imposto totale valore giacenza by DF
+      	$tot_val_giac = 0;
          while ($r = gaz_dbi_fetch_array($result)) {
            if ($r['catmer']<>$ctrl_cm ){
              gaz_set_time_limit (30);
@@ -112,6 +119,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                  $form['chk_on'.$r['codice']] = '';
                  $form['a'][$r['codice']]['col'] = '';
            }
+           // Calcolo totale valore giacenza by DF
+           $tot_val_giac += $magval['v_g'];
          }
       }
     } elseif (isset($_POST['preview']) || isset($_POST['insert'])) {  //in caso di conferma
@@ -294,7 +303,8 @@ if (isset($form['a'])) {
    }
    echo "<tr>
       <td  colspan=\"2\" class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">&nbsp;</td>
-      <td align=\"right\" colspan=\"7\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"preview\" value=\"".$script_transl['view']."!\">&nbsp;</td>
+      <td align=\"center\" colspan=\"6\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"preview\" value=\"".$script_transl['view']."!\">&nbsp;</td>
+      <td align=\"center\" class=\"FacetFormHeaderFont\">Tot. ".gaz_format_number($tot_val_giac)."</td>
       </tr>\n";
    if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
        echo "</table><table class=\"Tlarge\">\n";
