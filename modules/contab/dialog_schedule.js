@@ -15,19 +15,26 @@ function dialogSchedule(paymov) {
     function updateForm() {
 		$( "#pm_form_container_"+ nrow + " tbody tr" ).remove();
 		$( "#pm_form_container_"+ nrow + " tbody" ).replaceWith('<tbody> <tr id="pm_header_'+ nrow + '" def="nopost" >' +
-			'<td class="ui-widget ui-widget-content " >Descrizione</td>' +
+			'<td class="ui-widget ui-widget-content " >ID partita</td>' +
 			'<td class="ui-widget ui-widget-content " >Scadenza</td>' +
 			'<td class="ui-widget-right ui-widget-content ">Importo</td>' + 
 			'<td class="ui-widget-right ui-widget-content "><button id="add_expiry'+ nrow + '" value="' + nrow +'">'+
 			'<img src="../../library/images/add.png" /></button></td></tr></tbody>');
 			$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
 				var descri_mov = '';
-				if (i==0){ descri_mov = $("input[name=descrizion]").val()+' n.'+$("input[name=numdocumen]").val()+'/'+$("select[name=sezioneiva] option").val(); }
+				var ins_doc = parseInt($("select[name=inserimdoc] option").val());
+				if (i==0){ 
+					descri_mov = $("input[name=descrizion]").val();
+					if (ins_doc==1){
+						descri_mov += ' n.'+$("input[name=numdocumen]").val()+'/'+$("select[name=sezioneiva] option").val();
+					} 
+				}
 				var idv = $(v).attr('id').split('_');
 				var id_sub = idv[2];
+				var id = $('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first',v).focus().attr('value');
 				var ex = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value');
 				var am = $('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value');
-				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td>' + descri_mov +
+				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td>' + id +
 					'</td><td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
@@ -54,37 +61,46 @@ function dialogSchedule(paymov) {
        $.get("payment.php",
              {id_tesdoc_ref:tes_ref, id_exc:excl_val},
              function(data) {
-                $( "#db-contain" + nrow + " tbody").append( "<tr>" +
-                    "<td class='ui-widget-content ui-state-active' colspan=6" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa partita ' + tes_ref + "</td></tr>");
+			    var j=0;
                 $.each(data, function(i,value){
-                       $( "#db-contain" + nrow + " tbody").append( "<tr>" +
-                          "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n."
-                          + value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
-                          "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
-                          "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
-                           '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
-                           '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
-                           "</tr>" );
+					if(j==0){
+						$( "#db-contain" + nrow + " tbody").append( "<tr>" +
+						"<td class='ui-widget-content ui-state-active' colspan=6" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa partita ' + tes_ref + "</td></tr>");
+					}
+                    $( "#db-contain" + nrow + " tbody").append( "<tr>" +
+                    "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n."
+                    + value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
+                    "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
+                    "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
+                     '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
+                     '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
+                     "</tr>" );
+					 j++;
                });
              },"json"
-             ).done(function(){ getOtherMov(clfoco,tesdoc_ref) });
+             );
 	}
 
     function getOtherMov(term_val,excl_val) {
        $.get("expiry.php",
              {clfoco:term_val, id_tesdoc_ref:excl_val},
              function(data) {
-                $( "#db-contain" + nrow + " tbody").append( "<tr>" +
-                    "<td class='ui-widget-content ui-state-active' colspan=6" + ' class="ui-widget ui-widget-content " > Altri movimenti di ' + $( "#dialog"+nrow ).attr('partner') + ' </td></tr>');
+			    var j=0;
                 $.each(data, function(i,value){
-                       $( "#db-contain" + nrow + " tbody").append( "<tr>" +
-                          "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n." +
-                          value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
-                          "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
-                          "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
-                           '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
-                           '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
-                           "</tr>" );
+					if(j==0){
+						$( "#db-contain" + nrow + " tbody").append( "<tr>" +
+						"<td class='ui-widget-content ui-state-active' colspan=6" + ' class="ui-widget ui-widget-content " > Altri movimenti di ' + $( "#dialog"+nrow ).attr('partner') + ' </td></tr>');
+					};
+                    $( "#db-contain" + nrow + " tbody").append( "<tr>" +
+                       "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n." +
+                       value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
+                       "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
+                       "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
+                        '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
+                        '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
+                        "</tr>" );
+						j++;
+					   
                });
              },"json"
              );
@@ -176,6 +192,7 @@ function dialogSchedule(paymov) {
 	  open: function(){
 			updateForm(); 
 			getPayment(tesdoc_ref,id_rig);
+			getOtherMov(clfoco,tesdoc_ref);
 		},
       buttons: {
 			"Conferma":function(){ $(this).dialog( "close" );}
@@ -197,12 +214,12 @@ function dialogSchedule(paymov) {
     $("#add_expiry"+nrow).click(function() {
 			var id_btn = new Date().valueOf().toString();
 			$( "#pm_post_container_"+ nrow ).append( '<div id="pm_post_' + id_btn + '">'+
-				'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_id_tesdoc_ref" name="paymov[' + nrow + '][' + id_btn + '][id_tesdoc_ref]" value="new" />'+
+				'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_id_tesdoc_ref" name="paymov[' + nrow + '][' + id_btn + '][id_tesdoc_ref]" value="' + tesdoc_ref + '" />'+
 				'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_expiry" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" />'+
 				'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_amount" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" />'+
 				'</div>');
             $( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_btn+'">' +
-               '<td></td><td class="ui-widget-right ui-widget-content " ><input  id="form_' + nrow + '_' + id_btn + '_expiry" type="text" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" /></td>' +
+               '<td>' + tesdoc_ref + '</td><td class="ui-widget-right ui-widget-content " ><input  id="form_' + nrow + '_' + id_btn + '_expiry" type="text" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" /></td>' +
                '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_btn + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" /></td>' +
                '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_btn + '"><img src="../../library/images/x.gif" /></button></td>' +
                "</tr>" );
