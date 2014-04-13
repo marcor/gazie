@@ -34,7 +34,7 @@ function dialogSchedule(paymov) {
 				var id = $('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first',v).focus().attr('value');
 				var ex = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value');
 				var am = $('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value');
-				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td>' + id +
+				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td><button id="unlink_' + id_sub + '"><img src="../../library/images/link_break.png" width="12" /></button> ' + id +
 					'</td><td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
@@ -65,9 +65,10 @@ function dialogSchedule(paymov) {
                 $.each(data, function(i,value){
 					if(j==0){
 						$( "#db-contain" + nrow + " tbody").append( "<tr>" +
-						"<td class='ui-widget-content ui-state-active' colspan=6" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa partita ' + tes_ref + "</td></tr>");
+						"<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa partita ' + tes_ref + "</td></tr>");
 					}
                     $( "#db-contain" + nrow + " tbody").append( "<tr>" +
+                    "<td" + ' class="ui-widget ui-widget-content " ></td>' +
                     "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n."
                     + value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
                     "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
@@ -89,9 +90,10 @@ function dialogSchedule(paymov) {
                 $.each(data, function(i,value){
 					if(j==0){
 						$( "#db-contain" + nrow + " tbody").append( "<tr>" +
-						"<td class='ui-widget-content ui-state-active' colspan=6" + ' class="ui-widget ui-widget-content " > Altri movimenti di ' + $( "#dialog"+nrow ).attr('partner') + ' </td></tr>');
+						"<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti di ' + $( "#dialog"+nrow ).attr('partner') + ' </td></tr>');
 					};
                     $( "#db-contain" + nrow + " tbody").append( "<tr>" +
+                        '<td class="ui-widget-right ui-widget-content "><button id="btn_2014V1000000011"><img src="../../library/images/link.png" width="12"/></button></td>' +
                        "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n." +
                        value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
                        "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
@@ -140,7 +142,7 @@ function dialogSchedule(paymov) {
 			day = d[0] - 0;
 			month = d[1]-0;
 			year = d[2] - 0;			
-			if ( am < 0.01 ) {
+			if ( am < 0.00 ) {
 				updateTips( "Errore !!! Un rigo importo non è stato valorizzato");
 				bval=false;
 			} else if (!(month > 0 && month < 13 && year > 2000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate())){
@@ -171,7 +173,7 @@ function dialogSchedule(paymov) {
     function checkAmount( o, n ) {
 		var amou;
         amou = parseFloat(o.val().toString().replace(/\,/g,".")).toFixed(2);
-        if ( amou < 0.01 ) {
+        if ( amou < 0.00 ) {
             o.addClass( "ui-state-error" );
             updateTips( "Errore !!! " + n );
             return false;
@@ -236,6 +238,7 @@ function dialogSchedule(paymov) {
      		$( "#btn_"+id_btn ).click(function(){
 				$("#pm_form_"+id_btn).remove();
 				$("#pm_post_"+id_btn).remove();
+				updateForm();
 			});
 		}
 	);

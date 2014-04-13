@@ -409,7 +409,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                  $form['paymov'][$i][$k] = $v;  // qui devo ancora fare il parsing
               }
             } else {
-              $form['paymov'][$i]['new']= array('id_tesdoc_ref'=>'new','amount' => '', 'expiry'=>''); 
+              $form['paymov'][$i]['new']= array('id_tesdoc_ref'=>'new','amount' => '0.00', 'expiry'=>''); 
             }
         }
         if ($loadCosRic == 1 && substr($form['conto_rc'.$i],0,1) == 4
@@ -549,7 +549,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);;
       // se è un partner permetto l'input del dialog-schedule
       if ($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori) { 
-          $form['paymov'][$rigo]['new']= array('id_tesdoc_ref'=>'new','amount' => '', 'expiry'=>''); 
+          $form['paymov'][$rigo]['new']= array('id_tesdoc_ref'=>'new','amount' => '0.00', 'expiry'=>''); 
       }
       $_POST['rigcon']++;
    }
