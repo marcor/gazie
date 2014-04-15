@@ -325,18 +325,20 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['search']['conto_rc'.$i]='';
         $form['darave_rc'][$i] = $row['darave'];
         $form['importorc'][$i] = $row['import'];
+        $form['paymov_op_cl'][$i] = 0;
         // recupero le eventuali partite aperte
         if (($form['mastro_rc'][$i] == $mastroclienti || $form['mastro_rc'][$i] == $mastrofornitori)
             && $form['conto_rc'.$i] > 0 ) {
+          if (($form['mastro_rc'][$i] == $mastroclienti && $form['darave_rc'][$i] == 'D')
+             ||($form['mastro_rc'][$i] == $mastrofornitori && $form['darave_rc'][$i] == 'A') ){ // è un rigo di documento o addebito (apertura partita)
+                $form['paymov_op_cl'][$i] = 1;
+          } else {                            // è un rigo di pagamento o storno (chiusura partita)
+                $form['paymov_op_cl'][$i] = 2;
+          }            
           $rs_paymov = gaz_dbi_dyn_query("*", $gTables['paymov'], "id_rigmoc_pay = ".$row['id_rig']." OR id_rigmoc_doc = ".$row['id_rig'],"id asc");
           while ($rpm = gaz_dbi_fetch_array($rs_paymov)) {
              $form['paymov'][$i][$rpm['id']]= $rpm ;
              $form['paymov'][$i][$rpm['id']]['expiry']= gaz_format_date($rpm['expiry']);
-             if ($rpm['id_rigmoc_pay']>0) { //  se è un pagamento (chiude)
-                $form['pay_schedule'] = 2;  
-             } else {                       // ...o un documento (apre)
-                $form['pay_schedule'] = 1;  
-             }  
           }
         }
         // fine recupero partite aperte
@@ -358,7 +360,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['inserimdoc'] = $_POST['inserimdoc'];
     $form['registroiva'] = $_POST['registroiva'];
     $form['operatore'] = $_POST['operatore'];
-    $form['pay_schedule'] = $_POST['pay_schedule'];
     if ($form['registroiva'] > 0) {
        $form['inserimdoc'] = 1;
     }
@@ -395,6 +396,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         $form['conto_rc'.$i] = $_POST['conto_rc'.$i];
         $form['darave_rc'][$i] = $_POST['darave_rc'][$i];
         $form['importorc'][$i] = $_POST['importorc'][$i];
+        $form['paymov_op_cl'][$i] = 0;
         if ($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) {
             if  ($_POST['conto_rc'.$i] > 0) {
                 //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
@@ -404,6 +406,12 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                 }
                 $form['cod_partner'] = $_POST['conto_rc'.$i];
             }
+            if (($form['mastro_rc'][$i] == $mastroclienti && $form['darave_rc'][$i] == 'D')
+               ||($form['mastro_rc'][$i] == $mastrofornitori && $form['darave_rc'][$i] == 'A') ){ // è un rigo di documento o addebito (apertura partita)
+                $form['paymov_op_cl'][$i] = 1;
+            } else {                            // è un rigo di pagamento o storno (chiusura partita)
+                $form['paymov_op_cl'][$i] = 2;
+            }            
             if (isset($_POST['paymov'][$i])) { // se ho dati sul form delle partite aperte dei clienti/fornitori li ricarico
               foreach($_POST['paymov'][$i] as $k=>$v) {
                  $form['paymov'][$i][$k] = $v;  // qui devo ancora fare il parsing
@@ -500,7 +508,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
             $form['inserimdoc'] = $causa['insdoc'];
             $form['registroiva'] = $causa['regiva'];
             $form['operatore'] = $causa['operat'];
-            $form['pay_schedule'] = $causa['pay_schedule'];
             $newRow = 0;
             for( $i = 1; $i <= 6; $i++ ) { //se ce ne sono, carico le contropartite
                  if ($causa["contr$i"] > 0) {
@@ -546,9 +553,16 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       $form['conto_rc'.$rigo] = substr($_POST['insert_conto'],0,12);
       $form['search']['conto_rc'.$rigo]='';
       $form['darave_rc'][$rigo] = $_POST['insert_darave'];
-      $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);;
+      $form['importorc'][$rigo] = preg_replace("/\,/",'.',$_POST['insert_import']);
+      $form['paymov_op_cl'][$rigo] = 0;
       // se è un partner permetto l'input del dialog-schedule
       if ($form['mastro_rc'][$rigo] == $mastroclienti || $form['mastro_rc'][$rigo] == $mastrofornitori) { 
+          if (($form['mastro_rc'][$rigo] == $mastroclienti && $form['darave_rc'][$rigo] == 'D')
+             ||($form['mastro_rc'][$rigo] == $mastrofornitori && $form['darave_rc'][$rigo] == 'A') ){ // è un rigo di documento o addebito (apertura partita)
+                $form['paymov_op_cl'][$rigo] = 1;
+          } else {                            // è un rigo di pagamento o storno (chiusura partita)
+                $form['paymov_op_cl'][$rigo] = 2;
+          }            
           $form['paymov'][$rigo]['new']= array('id_tesdoc_ref'=>'new','amount' => '0.00', 'expiry'=>''); 
       }
       $_POST['rigcon']++;
@@ -669,7 +683,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['inserimdoc'] = 0;
     $form['registroiva'] = 0;
     $form['operatore'] = 0;
-    $form['pay_schedule'] = 0;
     //registri per il form del rigo di inserimento contabile
     $form['insert_mastro'] = 0;
     $form['insert_conto'] = 0;
@@ -722,10 +735,17 @@ for ($i=0; $i<$_POST['rigcon']; $i++ ) {
            minLength: 2,
            });
         ';
-  echo '   $( "#dialog'.$i.'").dialog({
+  if ($form['paymov_op_cl'][$i]==1){ // apertura partita
+     echo '   $( "#dialog_open'.$i.'").dialog({
               autoOpen: false
            });
         ';
+  } else {  // chiusura partita
+     echo '   $( "#dialog_close'.$i.'").dialog({
+              autoOpen: false
+           });
+        ';
+  }
 }
 echo '});
 </SCRIPT>';
@@ -952,7 +972,6 @@ echo "</script>\n";
 $gForm = new contabForm();
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
-echo "<input type=\"hidden\" value=\"".$form['pay_schedule']."\" id=\"pay_schedule\" name=\"pay_schedule\">\n";
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
 } else {
@@ -1178,6 +1197,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
     echo "<td class=\"FacetDataTD\">
           <input type=\"text\" name=\"importorc[$i]\" ID=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" size=\"13\"  tabindex=\"".(30+$i*2)."\" >\n";
     echo "<input type=\"hidden\" ID=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"".$form['id_rig_rc'][$i]."\">\n";
+    echo "<input type=\"hidden\" ID=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"".$form['paymov_op_cl'][$i]."\">\n";
     // inizio input degli sbilanci
     if ($form['darave_rc'][$i] == 'D' && $form['tot_D'] > $form['tot_A'] ||
         $form['darave_rc'][$i] == 'A' && $form['tot_A'] > $form['tot_D'] ) {
@@ -1244,8 +1264,12 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         <div id="paymov_last_id'.$i.'" value="'.$i_j.'"></div>
         ';
         $partnersel=$anagrafica->getPartner($form['conto_rc'.$i]);
-        echo '<div id="dialog'.$i.'" partner="'.$partnersel['ragso1'].'" title="'.$form['descrizion'].' - '.$partnersel['ragso1'].' - '.$admin_aziend['html_symbol'].' '.sprintf("%01.2f",preg_replace("/\,/",".",$form["importorc"][$i])).'">
-        <p class="validateTips"></p>
+        if ($form['paymov_op_cl'][$i]==1){ // apertura partita
+            echo '<div id="dialog_open'.$i.'" partner="'.$partnersel['ragso1'].'" title="Apertura: '.$form['descrizion'].' - '.$partnersel['ragso1'].' - '.$admin_aziend['html_symbol'].' '.sprintf("%01.2f",preg_replace("/\,/",".",$form["importorc"][$i])).'">';
+        } else {  // chiusura partita
+            echo '<div id="dialog_close'.$i.'" partner="'.$partnersel['ragso1'].'" title="Chiusura: '.$form['descrizion'].' - '.$partnersel['ragso1'].' - '.$admin_aziend['html_symbol'].' '.sprintf("%01.2f",preg_replace("/\,/",".",$form["importorc"][$i])).'">';
+        }
+        echo '<p class="validateTips"></p>
         <table id="pm_form_container_'.$i.'" class="ui-widget ui-widget-content" width="600">
         <tbody>';
         echo '
