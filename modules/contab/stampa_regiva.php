@@ -407,7 +407,7 @@ if ($_GET['sd']=='sta_def') {
             $azireg='upgac'.intval($_GET['vs']); 	 
         break; 	 
     }    
-    gaz_dbi_put_row($gTables['aziend'],'codice',$admin_aziend['codice'],$azireg, $pdf->getGroupPageNo()+$n_page-1);
+    gaz_dbi_put_row($gTables['aziend'],'codice',$admin_aziend['codice'],$azireg, $pdf->getGroupPageNo()+$ini_page-1);
 }
 $pdf->Output();
 ?>
