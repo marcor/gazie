@@ -103,7 +103,7 @@ $strScript = array ("admin_client.php" =>
                            'status'=>'Visibilit&agrave; alla ricerca',
                            'status_value'=>array(''=>'Attiva','HIDDEN'=>'Disabilitata'),
                            'annota'=>'Annotazioni',
-                           'fe_cd'=>'F.E. - Codice Destinarario'
+                           'fe_cod_univoco'=>'F.E. - Codice Destinarario'
                          ),
                    "report_docven.php" =>
                    array('title'=>'Lista dei documenti di vendita',

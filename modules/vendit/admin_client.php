@@ -398,9 +398,9 @@ echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
 echo "</tr>\n";
 
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['fe_cd']."</td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['fe_cod_univoco']."</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"fe_cd\" value=\"".$form['fe_cd']."\" align=\"right\" maxlength=\"6\" size=\"7\" /></td>\n";
+      <input type=\"text\" name=\"fe_cod_univoco\" value=\"".$form['fe_cod_univoco']."\" align=\"right\" maxlength=\"6\" size=\"7\" /></td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
