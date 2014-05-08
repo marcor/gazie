@@ -396,6 +396,13 @@ echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['e_mail']."</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <input type=\"text\" name=\"e_mail\" value=\"".$form['e_mail']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
+
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['fe_cd']."</td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"fe_cd\" value=\"".$form['fe_cd']."\" align=\"right\" maxlength=\"6\" size=\"7\" /></td>\n";
+echo "</tr>\n";
+
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['codpag']."</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
 $gForm->selectFromDB('pagame','codpag','codice',$form['codpag'],'codice',1,' - ','descri');

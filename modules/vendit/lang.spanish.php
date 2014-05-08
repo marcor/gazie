@@ -106,7 +106,8 @@ $strScript = array ("admin_client.php" =>
                            'ritenuta'=>'% Retenci&oacute;n',
                            'status'=>'Visibilidad de Investigacion',
                            'status_value'=>array(''=>'Activa','HIDDEN'=>'Desabilitada'),
-                           'annota'=>'Anotaciones'
+                           'annota'=>'Anotaciones',
+                           'fe_cd'=>'F.E. - Codice Destinarario'
                          ),
                    "report_docven.php" =>
                    array('title'=>'Lista dei documenti di vendita',
