@@ -107,7 +107,7 @@ $strScript = array ("admin_client.php" =>
                            'status'=>'Visibilidad de Investigacion',
                            'status_value'=>array(''=>'Activa','HIDDEN'=>'Desabilitada'),
                            'annota'=>'Anotaciones',
-                           'fe_cod_univoco'=>'F.E. - Codice Destinarario'
+                           'fe_cod_univoco'=>'Código de cliente único (factura electrónica)'
                          ),
                    "report_docven.php" =>
                    array('title'=>'Lista dei documenti di vendita',
