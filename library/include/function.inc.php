@@ -479,6 +479,13 @@ class selectPartner extends SelectBox
             }
             if (is_numeric($strSearch)){                      //ricerca per partita iva
               $partner = $this->queryAnagra(" pariva = ".intval($strSearch));
+              } elseif (substr($strSearch,0,1) == '@') { //ricerca conoscendo il codice cliente
+			        $temp_agrafica = new Anagrafica();
+			        $codicetemp = intval($m*1000000+substr($strSearch,1)); 
+			        $last=$temp_agrafica->getPartner($codicetemp); 	
+			        $codicecer=$last['id_anagra'];				  
+			        $partner = $this->queryAnagra(" a.id = ".intval($codicecer));
+              echo "---".$m."-".$codicetemp."-".$codicecer; //debug
             } elseif (is_numeric(substr($strSearch,6,2))) {   //ricerca per codice fiscale
               $partner = $this->queryAnagra(" a.codfis LIKE '%".addslashes($strSearch)."%'");
             } else {                                      //ricerca per ragione sociale
