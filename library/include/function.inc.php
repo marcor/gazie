@@ -485,7 +485,7 @@ class selectPartner extends SelectBox
 			        $last=$temp_agrafica->getPartner($codicetemp); 	
 			        $codicecer=$last['id_anagra'];				  
 			        $partner = $this->queryAnagra(" a.id = ".intval($codicecer));
-              echo "---".$m."-".$codicetemp."-".$codicecer; //debug
+              //echo "---".$m."-".$codicetemp."-".$codicecer; //debug
             } elseif (is_numeric(substr($strSearch,6,2))) {   //ricerca per codice fiscale
               $partner = $this->queryAnagra(" a.codfis LIKE '%".addslashes($strSearch)."%'");
             } else {                                      //ricerca per ragione sociale
