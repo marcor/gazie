@@ -698,12 +698,19 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
             $provvigione = new Agenti;
             $form['rows'][$next_row]['provvigione'] = $provvigione -> getPercent($form['id_agente'],$form['in_codart']);
-            if ($form['listin'] == 2) {
-               $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'],$admin_aziend['decimal_price'],'.','');
-            } elseif ($form['listin'] == 3) {
-               $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'],$admin_aziend['decimal_price'],'.','');
-            } else {
-               $form['rows'][$next_row]['prelis'] = number_format($artico['preve1'],$admin_aziend['decimal_price'],'.','');
+            //~ Nel caso in cui volessi inserire una riga di sconto, faccio il controllo sul campo hidden (nel form)
+            //~ e gestisco a parte: prezzo e descrizione. giovanni.colombarini@gmail.com
+            if ($form['in_prelis'] == 0) {
+              if ($form['listin'] == 2) {
+                 $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'],$admin_aziend['decimal_price'],'.','');
+              } elseif ($form['listin'] == 3) {
+                 $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'],$admin_aziend['decimal_price'],'.','');
+              } else {
+                 $form['rows'][$next_row]['prelis'] = number_format($artico['preve1'],$admin_aziend['decimal_price'],'.','');
+              }
+            }
+            else {
+              $form['rows'][$next_row]['descri'] = $form['in_descri'];
             }
             $form['rows'][$next_row]['codvat'] = $admin_aziend['alliva'];
             $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['alliva']);
@@ -1159,6 +1166,17 @@ function pulldown_menu(selectName, destField)
 }";
 ?>
 </script>
+
+<?php
+if ( $toDo == 'insert' )
+echo "<script>
+  $( document ).ready(function() {
+    //gianni: selezione del primo elemento presente nella lista delle banche
+    $(\"[name=banapp] option:first-child\").next().attr('selected', true);
+  });
+</script>";
+?>
+
 <SCRIPT LANGUAGE="JavaScript" ID="datapopup">
 var cal = new CalendarPopup();
 cal.setReturnFunction("setMultipleValues");
@@ -1167,6 +1185,28 @@ function setMultipleValues(y,m,d) {
   document.docven.mestra.value=LZ(m);
   document.docven.giotra.value=LZ(d);
   }
+//~ giovanni.colombarini@gmail.com
+function fnInsScontoCentesimi() {
+  //estrazione decimali dal totale della fattura
+  decimali = $('.totfatt').text().split(",")[1];
+  if (decimali == '00') {
+    //se i decimali sono a 0 ('00') non faccio niente
+    alert('Sconto centesimi non necessario.');
+  }
+  else {
+    //impostazione dei campi
+    //valorizzazione importo da scontare
+    $('input[name=in_prelis]').val('-0.'+decimali);
+    //valorizzazione descrizione riga
+    $('input[name=in_descri]').val('SCONTO');
+    //valorizzazione dell'iva a 0 (mi attendo che alla 4a posizione ci sia "ESCLUSA art. 15""
+    $('select[name=in_codvat]').val(4);
+    //valorizzazione della quantità
+    $('input[name=in_quanti]').val(1);
+    //esecuzione del trigger del click per creare automaticamente la riga
+    $('input[name=in_submit]').trigger('click');
+  }
+};
 </SCRIPT>
 <?php
 echo "<form method=\"POST\" name=\"docven\" >\n";
@@ -1630,8 +1670,11 @@ if ($next_row > 0) {
               <td align=\"right\">".gaz_format_number($totimpfat)."</td>
               <td align=\"right\">".gaz_format_number($totivafat)."</td>
               <td align=\"right\">".gaz_format_number($stamp)."</td>
-              <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($totimpfat+$totivafat+$stamp)."</td>\n";
-        echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
+              <td class='totfatt' align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($totimpfat+$totivafat+$stamp)."</td>\n";
+        echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center">'.
+             '<input id="insScontoCentesimi" onClick="fnInsScontoCentesimi();" type="button" value="Sconto">'.
+             '<input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!">'.
+             '</td></tr>';
         if ($rit > 0) {
             echo "<tr>";
             echo "<td colspan=\"7\" align=\"right\">".$script_transl['ritenuta']."</td>";
