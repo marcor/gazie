@@ -105,8 +105,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        $anagrafica= new Anagrafica();
        if (!($form['pariva']=="") && !($form['pariva']=="00000000000")) {
            $partner_with_same_pi= $anagrafica->queryPartners('*', "codice <> ".$real_code." AND codice BETWEEN ".$admin_aziend['mascli']."000000 AND ".$admin_aziend['mascli']."999999 AND pariva = '".$form['pariva']."'","pariva DESC",0,1);
-           if ($partner_with_same_pi) { // c'è già un cliente sul piano dei conti
-              $msg .= "10+";
+           if ($partner_with_same_pi){
+              if ($partner_with_same_pi[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'è già un cliente sul piano dei conti ed è anche lo stesso ufficio ( amministrativo della PA )
+                $msg .= "10+";
+              }
            } elseif ($form['id_anagra']==0) { // è un nuovo cliente senza anagrafica
               $rs_anagra_with_same_pi=gaz_dbi_dyn_query('*',$gTables['anagra']," pariva = '".$form['pariva']."'","pariva DESC",0,1);
               $anagra_with_same_pi=gaz_dbi_fetch_array($rs_anagra_with_same_pi);
@@ -123,7 +125,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        if (!($form['codfis']=="") && !($form['codfis']=="00000000000")) {
           $partner_with_same_cf=$anagrafica->queryPartners('*',  "codice <> ".$real_code." AND codice BETWEEN ".$admin_aziend['mascli']."000000 AND ".$admin_aziend['mascli']."999999 AND codfis = '".$form['codfis']."'","codfis DESC",0,1);
           if ($partner_with_same_cf) { // c'è già un cliente sul piano dei conti
-             $msg .= "12+";
+              if ($partner_with_same_cf[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'è già un cliente sul piano dei conti ed è anche lo stesso ufficio ( amministrativo della PA )
+                  $msg .= "12+";
+              }
           } elseif ($form['id_anagra']==0) { // è un nuovo cliente senza anagrafica
              $rs_anagra_with_same_cf=gaz_dbi_dyn_query('*',$gTables['anagra']," codfis = '".$form['codfis']."'","codfis DESC",0,1);
              $anagra_with_same_cf=gaz_dbi_fetch_array($rs_anagra_with_same_cf);
