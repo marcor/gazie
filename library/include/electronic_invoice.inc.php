@@ -373,7 +373,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					$el1= $domDoc->createElement("UnitaMisura", $rigo['unimis']);
 					$el->appendChild($el1); 
 					
-					$el1= $domDoc->createElement("Quantita", gaz_format_quantity($rigo['quanti'],1,2));
+					$el1= $domDoc->createElement("Quantita", $rigo['quanti']);
 					$el->appendChild($el1); 
 					 
 					$el1= $domDoc->createElement("PrezzoTotale", gaz_format_number($rigo['importo']));
