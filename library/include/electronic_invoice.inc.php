@@ -324,6 +324,25 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);		
 	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['country'] ));	   
 	   $results->appendChild($attrVal);
+     
+     //sono sempre tutte fatture?
+     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);		
+	   $attrVal = $domDoc->createTextNode( "TD01" );	   
+	   $results->appendChild($attrVal);
+     
+     //sempre in euro?
+     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Divisa")->item(0);		
+	   $attrVal = $domDoc->createTextNode( "EUR" );	   
+	   $results->appendChild($attrVal);
+     
+     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelDate ));	   
+	   $results->appendChild($attrVal);
+          
+     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelNum ));	   
+	   $results->appendChild($attrVal);          
+          
           
 
      $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
