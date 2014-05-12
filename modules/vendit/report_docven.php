@@ -211,6 +211,7 @@ $headers_tesdoc = array  (
             "Cliente" => "ragso1",
             "Status" => "",
             "Stampa" => "",
+            "FAE" => "",
             "Mail" => "",
             "Origine" => "",
             "Cancella" => ""
@@ -230,6 +231,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     if ($r["tipdoc"] == 'FAI') {
         $tipodoc="Fattura Immediata";
         $modulo="stampa_docven.php?id_tes=".$r['id_tes'];
+        $modulo_fae="electronic_invoice.php?id_tes=".$r['id_tes'];
         $modifi="admin_docven.php?Update&id_tes=".$r['id_tes'];
     } elseif ($r["tipdoc"] == 'FAD') {
         $tipodoc="Fattura Differita";
@@ -306,6 +308,17 @@ while ($r = gaz_dbi_fetch_array($result)) {
         // Colonna "Stampa"
         echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"".$modulo."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
         echo "</td>";
+        
+        // Colonna "Fattura elettronica"
+        if ($r["tipdoc"]=='FAI') {
+           echo "<td class=\"FacetDataTD\" align=\"center\"><a target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
+           echo "</td>";
+           }
+         else {
+           echo "<td></td>";
+         }
+                 
+        
         // Colonna "Mail"
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if (!empty($r["e_mail"])) {
