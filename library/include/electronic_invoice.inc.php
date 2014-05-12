@@ -276,11 +276,11 @@ class DocContabVars
 function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 {
     $docVars = new DocContabVars();
-    $docVars->setVars($gTables, $testata, $testata['id_tes'], $rows);
+    $docVars->setVars($gTables, $testata, $testata['id_tes'], $rows, false);
+
     
-    
-	   $domDoc = new DOMDocument;
-	   $domDoc->load("../../library/include/template_fae.xml");
+    $domDoc = new DOMDocument;
+    $domDoc->load("../../library/include/template_fae.xml");
 	   
      //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
 	   $xpath     = new DOMXPath($domDoc);
@@ -327,16 +327,112 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	    //$results->appendChild($attrVal);
 
 	   
-		//elenco beni in fattura  
-		//$lines = $docVars->getRigo();
-		
-    
-       header("Content-type: text/plain");
-       //rendere dinamico il nome del file
-       header("Content-Disposition: attachment; filename=IT12345678910_11111.xml");
+		 //elenco beni in fattura  
+		 $lines = $docVars->getRigo();
+     
 
-	     //   echo $domDoc->saveXML();     
-       print $domDoc->saveXML();    
+
+/////////////////////
+
+       $n_linea = 1;
+       while (list($key, $rigo) = each($lines)) {
+
+                switch($rigo['tiprig']) {
+                case "0":
+                    $el = $domDoc->createElement("DettaglioLinee","");					 
+					
+					$el1= $domDoc->createElement("NumeroLinea", $n_linea);
+					$el->appendChild($el1);
+					
+					$el1= $domDoc->createElement("Descrizione", $rigo['descri']);
+					$el->appendChild($el1);
+
+					$el1= $domDoc->createElement("UnitaMisura", $rigo['unimis']);
+					$el->appendChild($el1); 
+					
+					$el1= $domDoc->createElement("Quantita", gaz_format_quantity($rigo['quanti'],1,2));
+					$el->appendChild($el1); 
+					 
+					$el1= $domDoc->createElement("PrezzoTotale", gaz_format_number($rigo['importo']));
+					$el->appendChild($el1);
+					 
+					$el1= $domDoc->createElement("AliquotaIVA", gaz_format_number($rigo['pervat']));
+					$el->appendChild($el1);
+					 
+					$results->appendChild($el);
+					$n_linea = $n_linea+1;
+				/*
+					$this->Cell(25, 5, $rigo['codart'],1,0,'L');
+                    $this->Cell(80, 5, $rigo['descri'],1,0,'L');
+                    $this->Cell(7, 5, $rigo['unimis'],1,0,'C');
+                    $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(18, 5, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
+                    if ($rigo['sconto']>0) {
+                       $this->Cell(8, 5,  number_format($rigo['sconto'],1,',',''),1,0,'C');
+                    } else {
+                       $this->Cell(8, 5, '',1,0,'C');
+                    }
+                    $this->Cell(20, 5, gaz_format_number($rigo['importo']),1,0,'R');
+                    $this->Cell(12, 5, gaz_format_number($rigo['pervat']),1,1,'R');
+					*/
+
+					
+					
+                    break;
+                case "1":
+                    /*
+					$this->Cell(25, 5, $rigo['codart'],1,0,'L');
+                    $this->Cell(80, 5, $rigo['descri'],1,0,'L');
+                    $this->Cell(49, 5, '',1);
+                    $this->Cell(20, 5, gaz_format_number($rigo['importo']),1,0,'R');
+                    $this->Cell(12, 5, gaz_format_number($rigo['pervat']),1,1,'R');
+					*/
+                    break;
+                case "2":
+                    /*
+					$this->Cell(25,5,'','L');
+                    $this->Cell(80,5,$rigo['descri'],'LR',0,'L');
+                    $this->Cell(81,5,'','R',1);
+					*/
+                    break;
+                case "3":
+                    /*
+					$this->Cell(25,5,'',1,0,'L');
+                    $this->Cell(80,5,$rigo['descri'],'B',0,'L');
+                    $this->Cell(49,5,'','B',0,'L');
+                    $this->Cell(20,5,gaz_format_number($rigo['prelis']),1,0,'R');
+                    $this->Cell(12,5,'',1,1,'R');
+					*/
+                    break;
+                case "6":
+                case "8":
+                    /*
+					$this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
+					*/
+                    break;
+                }
+                if ($rigo['ritenuta']>0) {
+                    /*
+					$this->Cell(154, 5,'Ritenuta d\'acconto al '.gaz_format_number($rigo['ritenuta']).'%','LB',0,'R');
+                    $this->Cell(20, 5,gaz_format_number(round($rigo['importo']*$rigo['ritenuta']/100,2)),'RB',0,'R');
+                    $this->Cell(12, 5,'',1,1,'R');
+					*/
+                }
+        }
+
+
+
+////////////////////		     
+     
+     
+		
+       //rendere dinamico il nome del file    
+       header("Content-type: text/plain");
+       header("Content-Disposition: attachment; filename=IT12345678910_11111.xml");
+       print $domDoc->saveXML();
+
+	     //echo $domDoc->saveXML();     
+    
 }
 
 
