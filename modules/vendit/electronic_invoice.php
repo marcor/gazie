@@ -26,22 +26,26 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 
 require("../../library/include/electronic_invoice.inc.php");
-require("../../library/include/calsca.inc.php");
+
 
 // recupero i dati
 if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo documento attraverso il suo id_tes
-   $id_testata = intval($_GET['id_tes']);
-   $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $id_testata);
-
+    $id_testata = intval($_GET['id_tes']);
+    $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $id_testata);
+    $si=$testata['seziva'];
+    $yr=substr($testata['datfat'],0,4);
+    $pr=$testata['protoc'];
 } else { // in tutti gli altri casi devo passare i valori su $_GET
    if (!isset($_GET['protoc']) || !isset($_GET['year']) || !isset($_GET['seziva'])) {
       header("Location: report_docven.php");
       exit;
+   } else {
+    $si=intval($_GET['seziva']);
+    $yr=intval($_GET['year']);
+    $pr=intval($_GET['protoc']);
    }
 }
 //recupero i dati
-$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],"seziva = ".intval($_GET['seziva'])." AND
-                                                     YEAR(datfat) = ".intval($_GET['year'])." AND
-                                                     protoc = ".intval($_GET['protoc']));
-create_XML_invoice($testate,$template,$gTables);
+$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],"seziva = $si AND YEAR(datfat) = $yr AND protoc = ".$pr,'datemi ASC, numdoc ASC, id_tes ASC');
+create_XML_invoice($testate,$gTables);
 ?>

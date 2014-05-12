@@ -23,6 +23,8 @@
  --------------------------------------------------------------------------
 */
 
+require("../../library/include/calsca.inc.php");
+
 class DocContabVars
 {
     function setVars($gTables, $tesdoc, $testat, $tableName,$ecr=false)
