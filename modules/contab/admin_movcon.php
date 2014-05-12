@@ -563,7 +563,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
           } else {                            // è un rigo di pagamento o storno (chiusura partita)
                 $form['paymov_op_cl'][$rigo] = 2;
           }            
-          $form['paymov'][$rigo]['new']= array('id_tesdoc_ref'=>'new','amount' => '0.00', 'expiry'=>''); 
+          $form['paymov'][$rigo]['new']= array('id'=>'new','id_tesdoc_ref'=>'new','amount' => '0.00', 'expiry'=>''); 
       }
       $_POST['rigcon']++;
    }
@@ -1251,6 +1251,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         <div id="pm_post_container_'.$i.'">';
         foreach($form['paymov'][$i] as $i_j=>$v_j) {
             echo '<div id="pm_post_'.$pm_row.'">
+                  <input type="hidden" id="post_'.$i.'_'.$pm_row.'_id" name="paymov['.$i.']['.$pm_row.'][id]" value="'.$form['paymov'][$i][$i_j]['id'].'" />
                   <input type="hidden" id="post_'.$i.'_'.$pm_row.'_id_tesdoc_ref" name="paymov['.$i.']['.$pm_row.'][id_tesdoc_ref]" value="'.$form['paymov'][$i][$i_j]['id_tesdoc_ref'].'" />
                   <input type="hidden" id="post_'.$i.'_'.$pm_row.'_expiry" name="paymov['.$i.']['.$pm_row.'][expiry]" value="'.$form['paymov'][$i][$i_j]['expiry'].'" />
                   <input type="hidden" id="post_'.$i.'_'.$pm_row.'_amount" name="paymov['.$i.']['.$pm_row.'][amount]" value="'.$form['paymov'][$i][$i_j]['amount'].'" />
@@ -1270,12 +1271,12 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
             echo '<div id="dialog_close'.$i.'" partner="'.$partnersel['ragso1'].'" title="Chiusura: '.$form['descrizion'].' - '.$partnersel['ragso1'].' - '.$admin_aziend['html_symbol'].' '.sprintf("%01.2f",preg_replace("/\,/",".",$form["importorc"][$i])).'">';
         }
         echo '<p class="validateTips"></p>
-        <table id="pm_form_container_'.$i.'" class="ui-widget ui-widget-content" width="600">
+        <table id="pm_form_container_'.$i.'" class="ui-widget ui-widget-content" width="800">
         <tbody>';
         echo '
              </tbody>
             </table>
-            <table  width="600" id="db-contain'.$i.'" class="ui-widget ui-widget-content">
+            <table  width="800" id="db-contain'.$i.'" class="ui-widget ui-widget-content">
              <tbody>
              </tbody>
             </table>
