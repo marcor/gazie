@@ -293,9 +293,11 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $results->appendChild($attrVal);	
 	       
      
-     $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['codfis'] ));	   
-	   $results->appendChild($attrVal);    
+     
+     $el = $domDoc->createElement("CodiceFiscale",trim( $docVars->client['codfis'] ));					 
+     $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
+     $results->appendChild($el);
+        
      
      $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
 	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['ragso1'] ." " . $docVars->client['ragso2'] ));	   
@@ -305,9 +307,11 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['indspe'] ));	   
 	   $results->appendChild($attrVal);	
      
-     $results = $xpath->query("//CessionarioCommittente/Sede/Provincia")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['prospe'] ));	   
-	   $results->appendChild($attrVal);
+     
+     $el = $domDoc->createElement("Provincia",trim( $docVars->client['prospe'] ));					 
+     $results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
+     $results->appendChild($el);
+     
      
      $results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);		
 	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['citspe'] ));	   
