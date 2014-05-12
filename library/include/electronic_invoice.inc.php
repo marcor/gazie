@@ -273,23 +273,70 @@ class DocContabVars
 }
 
 
-function create_XML_invoice($testata, $templateName, $gTables, $rows='rigdoc', $dest=false)
+function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 {
     $docVars = new DocContabVars();
-    $docVars->setVars($gTables, $testata, $testata['id_tes'], $rows, $ecr);
-/*    $pdf->setVars($docVars,$templateName);
-    $pdf->setTesDoc();
-    $pdf->setCreator('GAzie - '.$docVars->intesta1);
-    $pdf->setAuthor($docVars->user['Cognome'].' '.$docVars->user['Nome']);
-    $pdf->setTitle($templateName);
-    $pdf->setTopMargin(79);
-    $pdf->setHeaderMargin(5);
-    $pdf->Open();
-    $pdf->AliasNbPages();
-    $pdf->pageHeader();
-    $pdf->compose();
-    $pdf->pageFooter();
-    $pdf->Output();*/
+    $docVars->setVars($gTables, $testata, $testata['id_tes'], $rows);
+    
+    
+	   $domDoc = new DOMDocument;
+	   $domDoc->load("../../library/include/template_fae.xml");
+	   
+     //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
+	   $xpath     = new DOMXPath($domDoc);
+     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese")->item(0);		
+	   $attrVal = $domDoc->createTextNode('IT');	   
+	   $results->appendChild($attrVal);
+	
+     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);		
+	   $attrVal = $domDoc->createTextNode('0123456789');	   
+	   $results->appendChild($attrVal);	
+	       
+     
+     $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['codfis'] ));	   
+	   $results->appendChild($attrVal);    
+     
+     $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['ragso1'] ." " . $docVars->client['ragso2'] ));	   
+	   $results->appendChild($attrVal);	
+
+	   $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['indspe'] ));	   
+	   $results->appendChild($attrVal);	
+     
+     $results = $xpath->query("//CessionarioCommittente/Sede/Provincia")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['prospe'] ));	   
+	   $results->appendChild($attrVal);
+     
+     $results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['citspe'] ));	   
+	   $results->appendChild($attrVal);
+     
+	   $results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['capspe'] ));	   
+	   $results->appendChild($attrVal);
+     
+	   $results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['country'] ));	   
+	   $results->appendChild($attrVal);
+          
+
+     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
+	    //$attrVal = $domDoc->createTextNode('IT');	   
+	    //$results->appendChild($attrVal);
+
+	   
+		//elenco beni in fattura  
+		//$lines = $docVars->getRigo();
+		
+    
+       header("Content-type: text/plain");
+       //rendere dinamico il nome del file
+       header("Content-Disposition: attachment; filename=IT12345678910_11111.xml");
+
+	     //   echo $domDoc->saveXML();     
+       print $domDoc->saveXML();    
 }
 
 
