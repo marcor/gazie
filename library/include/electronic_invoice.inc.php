@@ -288,10 +288,33 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $attrVal = $domDoc->createTextNode('IT');	   
 	   $results->appendChild($attrVal);
 	
+  
+     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/ProgressivoInvio")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelNum ));	   
+	   $results->appendChild($attrVal);
+     
+     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);		
+	   $attrVal = $domDoc->createTextNode( "SDI10" );	   
+	   $results->appendChild($attrVal);
+  
+     $id_test='12345678910';
      $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);		
-	   $attrVal = $domDoc->createTextNode('0123456789');	   
+	   $attrVal = $domDoc->createTextNode($id_test);	   
 	   $results->appendChild($attrVal);	
-	       
+
+     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese")->item(0);		
+	   $attrVal = $domDoc->createTextNode("IT");	   
+	   $results->appendChild($attrVal);
+
+     //il IdCodice iva e' la partita iva?
+     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0);		
+	   $attrVal = $domDoc->createTextNode(trim($docVars->azienda['pariva']));	   
+	   $results->appendChild($attrVal);
+
+
+     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);		
+	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['fe_cod_univoco'] ));	   
+	   $results->appendChild($attrVal);     
      
      
      $el = $domDoc->createElement("CodiceFiscale",trim( $docVars->client['codfis'] ));					 
@@ -343,6 +366,28 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelNum ));	   
 	   $results->appendChild($attrVal);          
           
+
+     //regime fiscale RF01 valido per il regime fiscale ordinario
+     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/RegimeFiscale")->item(0);		
+     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['fiscal_reg']));     	   
+	   $results->appendChild($attrVal);
+
+
+     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0);		
+     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['indspe']));     	   
+	   $results->appendChild($attrVal);
+
+     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0);		
+     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['capspe']));     	   
+	   $results->appendChild($attrVal);
+     
+     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0);		
+     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['citspe']));     	   
+	   $results->appendChild($attrVal);
+
+     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0);		
+     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['country']));     	   
+	   $results->appendChild($attrVal);
           
 
      $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
@@ -379,7 +424,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					$el1= $domDoc->createElement("PrezzoTotale", gaz_format_number($rigo['importo']));
 					$el->appendChild($el1);
 					 
-					$el1= $domDoc->createElement("AliquotaIVA", gaz_format_number($rigo['pervat']));
+					$el1= $domDoc->createElement("AliquotaIVA", $rigo['pervat']);
 					$el->appendChild($el1);
 					 
 					$results->appendChild($el);
@@ -447,11 +492,11 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
 ////////////////////		     
      
-     
-		
+       //occorre effettuare alcune validazioni sul numero e sull'id
+		   $nome_file = "IT" .  $id_test . "_" . trim( $docVars->docRelNum );
        //rendere dinamico il nome del file    
        header("Content-type: text/plain");
-       header("Content-Disposition: attachment; filename=IT12345678910_11111.xml");
+       header("Content-Disposition: attachment; filename=". $nome_file .".xml");
        print $domDoc->saveXML();
 
 	     //echo $domDoc->saveXML();     
