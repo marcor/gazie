@@ -317,9 +317,11 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $results->appendChild($attrVal);     
      
      
-     $el = $domDoc->createElement("CodiceFiscale",trim( $docVars->client['codfis'] ));					 
-     $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);
-     $results->appendChild($el);
+     $el = $domDoc->createElement("CodiceFiscale",trim( $docVars->client['codfis'] ));
+     $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);				 
+     $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+     //$results1 =$xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+     $results->insertBefore($el, $results1);
         
      
      $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
@@ -418,13 +420,13 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					$el1= $domDoc->createElement("UnitaMisura", $rigo['unimis']);
 					$el->appendChild($el1); 
 					
-					$el1= $domDoc->createElement("Quantita", $rigo['quanti']);
+					$el1= $domDoc->createElement("Quantita", number_format($rigo['quanti'],2,'.',''));
 					$el->appendChild($el1); 
 					 
-					$el1= $domDoc->createElement("PrezzoTotale", gaz_format_number($rigo['importo']));
+					$el1= $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'],2,'.',''));
 					$el->appendChild($el1);
 					 
-					$el1= $domDoc->createElement("AliquotaIVA", $rigo['pervat']);
+					$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
 					$el->appendChild($el1);
 					 
 					$results->appendChild($el);
