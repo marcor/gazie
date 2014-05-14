@@ -253,6 +253,7 @@ class DocContabVars
             }
             $ivacast = round($v*$vat['aliquo'])/ 100;
             $this->totivafat += $ivacast;
+            $this->cast[$k]['aliquo'] = $vat['aliquo'];
             $this->cast[$k]['impcast'] = $v;
             $this->cast[$k]['ivacast'] = $ivacast;
             $this->cast[$k]['descriz'] = $vat['descri'];
@@ -281,6 +282,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     
     $domDoc = new DOMDocument;
     $domDoc->load("../../library/include/template_fae.xml");
+    
 	   
      //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
 	   $xpath     = new DOMXPath($domDoc);
@@ -320,7 +322,6 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
      $el = $domDoc->createElement("CodiceFiscale",trim( $docVars->client['codfis'] ));
      $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);				 
      $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-     //$results1 =$xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
      $results->insertBefore($el, $results1);
         
      
@@ -333,9 +334,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $results->appendChild($attrVal);	
      
      
-     $el = $domDoc->createElement("Provincia",trim( $docVars->client['prospe'] ));					 
+     $el = $domDoc->createElement("Provincia", strtoupper(trim( $docVars->client['prospe'] )));					 
      $results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
-     $results->appendChild($el);
+     $results1 = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
+     $results->insertBefore($el, $results1);
      
      
      $results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);		
@@ -368,6 +370,11 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelNum ));	   
 	   $results->appendChild($attrVal);          
           
+
+
+     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
+     $attrVal = $domDoc->createTextNode( trim($docVars->intesta1 . " " . $docVars->intesta1bis));     	   
+	   $results->appendChild($attrVal);
 
      //regime fiscale RF01 valido per il regime fiscale ordinario
      $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/RegimeFiscale")->item(0);		
@@ -417,11 +424,14 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					$el1= $domDoc->createElement("Descrizione", $rigo['descri']);
 					$el->appendChild($el1);
 
+					$el1= $domDoc->createElement("Quantita", number_format($rigo['quanti'],2,'.',''));
+					$el->appendChild($el1); 
+
 					$el1= $domDoc->createElement("UnitaMisura", $rigo['unimis']);
 					$el->appendChild($el1); 
 					
-					$el1= $domDoc->createElement("Quantita", number_format($rigo['quanti'],2,'.',''));
-					$el->appendChild($el1); 
+					$el1= $domDoc->createElement("PrezzoUnitario",  number_format($rigo['prelis'],2,'.',''));
+					$el->appendChild($el1);
 					 
 					$el1= $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'],2,'.',''));
 					$el->appendChild($el1);
@@ -492,11 +502,42 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
 
 
+          //iva
+          
+          $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
+           
+           
+           
+           //Attenzione qui 
+           $docVars->setTotal();
+           foreach ($docVars->cast as $key => $value) {          
+            
+            $el = $domDoc->createElement("DatiRiepilogo","");					 
+
+					  $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
+					  $el->appendChild($el1);
+            
+            $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
+					  $el->appendChild($el1);
+            
+            $el1= $domDoc->createElement("Imposta", number_format($value['ivacast'],2,'.',''));
+					  $el->appendChild($el1);
+          
+            $el1= $domDoc->createElement("RiferimentoNormativo", $value['descriz']);
+					  $el->appendChild($el1);
+                        
+            $results->appendChild($el);
+
+          }
+
+
 ////////////////////		     
      
+        
        //occorre effettuare alcune validazioni sul numero e sull'id
 		   $nome_file = "IT" .  $id_test . "_" . trim( $docVars->docRelNum );
        //rendere dinamico il nome del file    
+    
        header("Content-type: text/plain");
        header("Content-Disposition: attachment; filename=". $nome_file .".xml");
        print $domDoc->saveXML();
