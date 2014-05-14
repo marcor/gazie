@@ -160,7 +160,14 @@ class DocContabVars
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
         
-        
+      // aggiungo l'eventuale intermediario in caso di installazione "da commercialista"
+      $intermediary_code = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
+      if ($intermediary_code['cvalue']>0){
+          $intermediary = gaz_dbi_get_row($gTables['aziend'], 'codice',$intermediary_code['cvalue']);
+          $this->IdCodice = $intermediary['pariva'];
+      } else {
+          $this->IdCodice = $admin_aziend['pariva'];
+      }
     }
 
 
@@ -299,7 +306,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $attrVal = $domDoc->createTextNode( "SDI10" );	   
 	   $results->appendChild($attrVal);
   
-     $id_test='12345678910';
+     $id_test=$docVars->IdCodice;
      $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);		
 	   $attrVal = $domDoc->createTextNode($id_test);	   
 	   $results->appendChild($attrVal);	
@@ -430,7 +437,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					$el1= $domDoc->createElement("UnitaMisura", $rigo['unimis']);
 					$el->appendChild($el1); 
 					
-					$el1= $domDoc->createElement("PrezzoUnitario",  number_format($rigo['prelis'],2,'.',''));
+					$el1= $domDoc->createElement("PrezzoUnitario",  number_format($rigo['prelis'],$docVars->decimal_price,'.',''));
 					$el->appendChild($el1);
 					 
 					$el1= $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'],2,'.',''));
@@ -504,9 +511,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
           //iva
           
-          $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
-           
-           
+           $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
            
            //Attenzione qui 
            $docVars->setTotal();
