@@ -333,7 +333,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
         
      
      $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['ragso1'] ." " . $docVars->client['ragso2'] ));	   
+	   $attrVal = $domDoc->createTextNode( substr(trim( $docVars->client['ragso1'] ." " . $docVars->client['ragso2'] ), 0, 80) );	   
 	   $results->appendChild($attrVal);	
 
 	   $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);		
@@ -428,7 +428,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					$el1= $domDoc->createElement("NumeroLinea", $n_linea);
 					$el->appendChild($el1);
 					
-					$el1= $domDoc->createElement("Descrizione", $rigo['descri']);
+					$el1= $domDoc->createElement("Descrizione", substr($rigo['descri'], 0, 100));
 					$el->appendChild($el1);
 
 					$el1= $domDoc->createElement("Quantita", number_format($rigo['quanti'],2,'.',''));
