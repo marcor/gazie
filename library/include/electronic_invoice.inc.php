@@ -160,6 +160,10 @@ class DocContabVars
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
         
+        $this->protoc = $this->tesdoc["protoc"];
+        $this->seziva = $this->tesdoc["seziva"];
+        
+
       // aggiungo l'eventuale intermediario in caso di installazione "da commercialista"
       $intermediary_code = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
       if ($intermediary_code['cvalue']>0){
@@ -297,9 +301,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	   $attrVal = $domDoc->createTextNode('IT');	   
 	   $results->appendChild($attrVal);
 	
-  
+     
+     $id_progressivo = substr($docVars->docRelDate , 2,2) . $docVars->seziva . str_pad($docVars->protoc, 7,'0', STR_PAD_LEFT);   
      $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/ProgressivoInvio")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelNum ));	   
+	   $attrVal = $domDoc->createTextNode( $id_progressivo );	   
 	   $results->appendChild($attrVal);
      
      $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);		
