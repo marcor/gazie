@@ -236,6 +236,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } elseif ($r["tipdoc"] == 'FAD') {
         $tipodoc="Fattura Differita";
         $modulo="stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat'];
+        $modulo_fae="electronic_invoice.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&year=".substr($r['protoc'],0,4);
         $modifi="";
     } elseif ($r["tipdoc"] == 'FAP') {
         $tipodoc="Parcella";
@@ -310,7 +311,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "</td>";
         
         // Colonna "Fattura elettronica"
-        if ($r["tipdoc"]=='FAI') {
+        if (substr($r["tipdoc"],0,2)=='FA') {
            echo "<td class=\"FacetDataTD\" align=\"center\"><a target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
            echo "</td>";
            }
