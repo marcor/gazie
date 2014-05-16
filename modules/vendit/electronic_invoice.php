@@ -35,8 +35,8 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     $si=$testata['seziva'];
     $yr=substr($testata['datfat'],0,4);
     $pr=$testata['protoc'];
-    create_XML_invoice($testata, $gTables);
-    exit;
+//    create_XML_invoice($testata, $gTables);
+//    exit;
 } else { // in tutti gli altri casi devo passare i valori su $_GET
    if (!isset($_GET['protoc']) || !isset($_GET['year']) || !isset($_GET['seziva'])) {
       header("Location: report_docven.php");

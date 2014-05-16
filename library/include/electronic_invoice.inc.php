@@ -288,134 +288,133 @@ class DocContabVars
 function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 {
     $docVars = new DocContabVars();
-    $docVars->setVars($gTables, $testata, $testata['id_tes'], $rows, false);
-
-    
     $domDoc = new DOMDocument;
     $domDoc->load("../../library/include/template_fae.xml");
+    $xpath = new DOMXPath($domDoc);
+    $ctrl_doc = 0;
+    while ($tesdoc = gaz_dbi_fetch_array($testata)) {
+      $docVars->setVars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
+      if ($ctrl_doc == 0) {
+         //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
+        $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese")->item(0);		
+		   $attrVal = $domDoc->createTextNode('IT');	   
+		   $results->appendChild($attrVal);
+		
+         
+         $id_progressivo = substr($docVars->docRelDate , 2,2) . $docVars->seziva . str_pad($docVars->protoc, 7,'0', STR_PAD_LEFT);   
+         $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/ProgressivoInvio")->item(0);		
+		   $attrVal = $domDoc->createTextNode( $id_progressivo );	   
+		   $results->appendChild($attrVal);
+         
+         $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);		
+		   $attrVal = $domDoc->createTextNode( "SDI10" );	   
+		   $results->appendChild($attrVal);
+      
+         $id_test=$docVars->IdCodice;
+         $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);		
+		   $attrVal = $domDoc->createTextNode($id_test);	   
+		   $results->appendChild($attrVal);	
     
-	   
-     //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
-	   $xpath     = new DOMXPath($domDoc);
-     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese")->item(0);		
-	   $attrVal = $domDoc->createTextNode('IT');	   
-	   $results->appendChild($attrVal);
-	
-     
-     $id_progressivo = substr($docVars->docRelDate , 2,2) . $docVars->seziva . str_pad($docVars->protoc, 7,'0', STR_PAD_LEFT);   
-     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/ProgressivoInvio")->item(0);		
-	   $attrVal = $domDoc->createTextNode( $id_progressivo );	   
-	   $results->appendChild($attrVal);
-     
-     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);		
-	   $attrVal = $domDoc->createTextNode( "SDI10" );	   
-	   $results->appendChild($attrVal);
-  
-     $id_test=$docVars->IdCodice;
-     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);		
-	   $attrVal = $domDoc->createTextNode($id_test);	   
-	   $results->appendChild($attrVal);	
+         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese")->item(0);		
+		   $attrVal = $domDoc->createTextNode("IT");	   
+		   $results->appendChild($attrVal);
+    
+         //il IdCodice iva e' la partita iva?
+         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0);		
+		   $attrVal = $domDoc->createTextNode(trim($docVars->azienda['pariva']));	   
+		   $results->appendChild($attrVal);
+    
+    
+         $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);		
+		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['fe_cod_univoco'] ));	   
+		   $results->appendChild($attrVal);     
+         
+         
+         $el = $domDoc->createElement("CodiceFiscale",trim( $docVars->client['codfis'] ));
+         $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);				 
+         $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
+         $results->insertBefore($el, $results1);
+            
+         
+         $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
+		   $attrVal = $domDoc->createTextNode( substr(trim( $docVars->client['ragso1'] ." " . $docVars->client['ragso2'] ), 0, 80) );	   
+		   $results->appendChild($attrVal);	
+    
+		   $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);		
+		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['indspe'] ));	   
+		   $results->appendChild($attrVal);	
+         
+         
+         $el = $domDoc->createElement("Provincia", strtoupper(trim( $docVars->client['prospe'] )));					 
+         $results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
+         $results1 = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
+         $results->insertBefore($el, $results1);
+         
+         
+         $results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);		
+		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['citspe'] ));	   
+		   $results->appendChild($attrVal);
+         
+		   $results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);		
+		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['capspe'] ));	   
+		   $results->appendChild($attrVal);
+         
+		   $results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);		
+		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['country'] ));	   
+		   $results->appendChild($attrVal);
+         
+         //sono sempre tutte fatture?
+         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);		
+		   $attrVal = $domDoc->createTextNode( "TD01" );	   
+		   $results->appendChild($attrVal);
+         
+         //sempre in euro?
+         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Divisa")->item(0);		
+		   $attrVal = $domDoc->createTextNode( "EUR" );	   
+		   $results->appendChild($attrVal);
+         
+         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0);		
+		   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelDate ));	   
+		   $results->appendChild($attrVal);
+              
+         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0);		
+		   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelNum ));	   
+		   $results->appendChild($attrVal);          
+              
+    
+    
+         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
+         $attrVal = $domDoc->createTextNode( trim($docVars->intesta1 . " " . $docVars->intesta1bis));     	   
+		   $results->appendChild($attrVal);
+    
+         //regime fiscale RF01 valido per il regime fiscale ordinario
+         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/RegimeFiscale")->item(0);		
+         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['fiscal_reg']));     	   
+		   $results->appendChild($attrVal);
+    
+    
+         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0);		
+         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['indspe']));     	   
+		   $results->appendChild($attrVal);
+    
+         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0);		
+         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['capspe']));     	   
+		   $results->appendChild($attrVal);
+         
+         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0);		
+         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['citspe']));     	   
+		   $results->appendChild($attrVal);
+    
+         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0);		
+         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['country']));     	   
+		   $results->appendChild($attrVal);
+              
+    
+         $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
+		    //$attrVal = $domDoc->createTextNode('IT');	   
+		    //$results->appendChild($attrVal);
 
-     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese")->item(0);		
-	   $attrVal = $domDoc->createTextNode("IT");	   
-	   $results->appendChild($attrVal);
-
-     //il IdCodice iva e' la partita iva?
-     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0);		
-	   $attrVal = $domDoc->createTextNode(trim($docVars->azienda['pariva']));	   
-	   $results->appendChild($attrVal);
-
-
-     $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['fe_cod_univoco'] ));	   
-	   $results->appendChild($attrVal);     
-     
-     
-     $el = $domDoc->createElement("CodiceFiscale",trim( $docVars->client['codfis'] ));
-     $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);				 
-     $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
-     $results->insertBefore($el, $results1);
-        
-     
-     $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
-	   $attrVal = $domDoc->createTextNode( substr(trim( $docVars->client['ragso1'] ." " . $docVars->client['ragso2'] ), 0, 80) );	   
-	   $results->appendChild($attrVal);	
-
-	   $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['indspe'] ));	   
-	   $results->appendChild($attrVal);	
-     
-     
-     $el = $domDoc->createElement("Provincia", strtoupper(trim( $docVars->client['prospe'] )));					 
-     $results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
-     $results1 = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
-     $results->insertBefore($el, $results1);
-     
-     
-     $results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['citspe'] ));	   
-	   $results->appendChild($attrVal);
-     
-	   $results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['capspe'] ));	   
-	   $results->appendChild($attrVal);
-     
-	   $results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->client['country'] ));	   
-	   $results->appendChild($attrVal);
-     
-     //sono sempre tutte fatture?
-     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);		
-	   $attrVal = $domDoc->createTextNode( "TD01" );	   
-	   $results->appendChild($attrVal);
-     
-     //sempre in euro?
-     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Divisa")->item(0);		
-	   $attrVal = $domDoc->createTextNode( "EUR" );	   
-	   $results->appendChild($attrVal);
-     
-     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelDate ));	   
-	   $results->appendChild($attrVal);
-          
-     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0);		
-	   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelNum ));	   
-	   $results->appendChild($attrVal);          
-          
-
-
-     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
-     $attrVal = $domDoc->createTextNode( trim($docVars->intesta1 . " " . $docVars->intesta1bis));     	   
-	   $results->appendChild($attrVal);
-
-     //regime fiscale RF01 valido per il regime fiscale ordinario
-     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/RegimeFiscale")->item(0);		
-     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['fiscal_reg']));     	   
-	   $results->appendChild($attrVal);
-
-
-     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0);		
-     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['indspe']));     	   
-	   $results->appendChild($attrVal);
-
-     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0);		
-     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['capspe']));     	   
-	   $results->appendChild($attrVal);
-     
-     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0);		
-     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['citspe']));     	   
-	   $results->appendChild($attrVal);
-
-     $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0);		
-     $attrVal = $domDoc->createTextNode( trim($docVars->azienda['country']));     	   
-	   $results->appendChild($attrVal);
-          
-
-     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
-	    //$attrVal = $domDoc->createTextNode('IT');	   
-	    //$results->appendChild($attrVal);
-
-	   
+      }   
 		 //elenco beni in fattura  
 		 $lines = $docVars->getRigo();
      
@@ -511,8 +510,8 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					*/
                 }
         }
-
-
+        $ctrl_doc =  $docVars->tesdoc['numdoc'];
+    }
 
           //iva
           
