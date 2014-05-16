@@ -236,7 +236,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } elseif ($r["tipdoc"] == 'FAD') {
         $tipodoc="Fattura Differita";
         $modulo="stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat'];
-        $modulo_fae="electronic_invoice.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&year=".substr($r['protoc'],0,4);
+        $modulo_fae="electronic_invoice.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&year=".substr($r['datfat'],0,4);
         $modifi="";
     } elseif ($r["tipdoc"] == 'FAP') {
         $tipodoc="Parcella";

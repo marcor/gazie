@@ -414,17 +414,16 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		    //$attrVal = $domDoc->createTextNode('IT');	   
 		    //$results->appendChild($attrVal);
 
-      }   
-		 //elenco beni in fattura  
-		 $lines = $docVars->getRigo();
-     
-
-
-/////////////////////
-
-       $n_linea = 1;
-       while (list($key, $rigo) = each($lines)) {
-
+      } elseif($ctrl_doc <> $docVars->tesdoc['numdoc']){ // quando cambia il DdT
+        /*
+        qui devo aggiungere una linea descrittiva come si fa sui cartacei oppure
+        fare altro in base alla normativa? DA CHIARIRE!!!!                      
+        */ 
+      }
+      //elenco beni in fattura  
+      $lines = $docVars->getRigo();
+      $n_linea = 1;
+      while (list($key, $rigo) = each($lines)) {
                 switch($rigo['tiprig']) {
                 case "0":
                     $el = $domDoc->createElement("DettaglioLinee","");					 
@@ -513,31 +512,31 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
         $ctrl_doc =  $docVars->tesdoc['numdoc'];
     }
 
-          //iva
-          
-           $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
-           
-           //Attenzione qui 
-           $docVars->setTotal();
-           foreach ($docVars->cast as $key => $value) {          
-            
-            $el = $domDoc->createElement("DatiRiepilogo","");					 
+    //iva
+    
+     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
+     
+     //Attenzione qui 
+     $docVars->setTotal();
+     foreach ($docVars->cast as $key => $value) {          
+      
+      $el = $domDoc->createElement("DatiRiepilogo","");					 
 
 					  $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
 					  $el->appendChild($el1);
-            
-            $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
+      
+      $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
 					  $el->appendChild($el1);
-            
-            $el1= $domDoc->createElement("Imposta", number_format($value['ivacast'],2,'.',''));
+      
+      $el1= $domDoc->createElement("Imposta", number_format($value['ivacast'],2,'.',''));
 					  $el->appendChild($el1);
-          
-            $el1= $domDoc->createElement("RiferimentoNormativo", $value['descriz']);
+    
+      $el1= $domDoc->createElement("RiferimentoNormativo", $value['descriz']);
 					  $el->appendChild($el1);
-                        
-            $results->appendChild($el);
+                  
+      $results->appendChild($el);
 
-          }
+    }
 
 
 ////////////////////		     
