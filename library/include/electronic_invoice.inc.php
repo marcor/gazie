@@ -142,12 +142,17 @@ class DocContabVars
         $this->year = substr($tesdoc['initra'],0,4);
         $this->trasporto=$tesdoc['traspo'];
         $this->testat = $testat;
+        $this->ddt_data = false;
 
         $this->docRelNum  = $this->tesdoc["numdoc"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         
         switch ( $tesdoc["tipdoc"] ) {
             case "FAD":
+                $this->ddt_data = true;
+                $this->docRelNum  = $this->tesdoc["numfat"];
+                $this->docRelDate = $this->tesdoc["datfat"];
+                break;
             case "FAI":
                 $this->docRelNum  = $this->tesdoc["numfat"];
                 $this->docRelDate = $this->tesdoc["datfat"];
@@ -156,6 +161,7 @@ class DocContabVars
             case "DDL":
             case "DDR":
             default:
+                $this->ddt_data = true;
                 $this->docRelNum  = $this->tesdoc["numdoc"];    // Numero del documento relativo
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
@@ -292,6 +298,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     $domDoc->load("../../library/include/template_fae.xml");
     $xpath = new DOMXPath($domDoc);
     $ctrl_doc = 0;
+    $n_linea = 1;
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
       $docVars->setVars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
       if ($ctrl_doc == 0) {
@@ -414,7 +421,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		    //$attrVal = $domDoc->createTextNode('IT');	   
 		    //$results->appendChild($attrVal);
 
-      } elseif($ctrl_doc <> $docVars->tesdoc['numdoc']){ // quando cambia il DdT
+      } elseif($ctrl_doc <> $docVars->docRelNum){ // quando cambia il DdT
         /*
         qui devo aggiungere una linea descrittiva come si fa sui cartacei oppure
         fare altro in base alla normativa? DA CHIARIRE!!!!                      
@@ -422,8 +429,20 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
       }
       //elenco beni in fattura  
       $lines = $docVars->getRigo();
-      $n_linea = 1;
       while (list($key, $rigo) = each($lines)) {
+                // se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
+                if ($docVars->ddt_data) {
+                    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
+                    $el_ddt = $domDoc->createElement("DatiDDT","");
+			$el1= $domDoc->createElement("NumeroDDT", $docVars->tesdoc['numdoc']);
+			$el_ddt->appendChild($el1);
+ 			$el1= $domDoc->createElement("DataDDT", $docVars->tesdoc['datemi']);
+			$el_ddt->appendChild($el1);
+ 			$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
+			$el_ddt->appendChild($el1);
+                    $results->appendChild($el_ddt);
+                    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
+                }
                 switch($rigo['tiprig']) {
                 case "0":
                     $el = $domDoc->createElement("DettaglioLinee","");					 
