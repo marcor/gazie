@@ -56,7 +56,12 @@ class DocContabVars
         if ($admin_aziend['rea']) {
             $this->codici .= 'R.E.A. '.$admin_aziend['rea'];
         }
-        $this->intesta4 = $admin_aziend['e_mail'];
+        if ($tesdoc['template'] == 'FatturaImmediata') {
+			$this->sempl_accom = true;
+		} else {
+			$this->sempl_accom = false;
+		}
+		$this->intesta4 = $admin_aziend['e_mail'];
         $this->intesta5 = $admin_aziend['sexper'];
         $this->colore = $admin_aziend['colore'];
         $this->decimal_quantity = $admin_aziend['decimal_quantity'];
@@ -434,12 +439,12 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                 if ($docVars->ddt_data) {
                     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
                     $el_ddt = $domDoc->createElement("DatiDDT","");
-			$el1= $domDoc->createElement("NumeroDDT", $docVars->tesdoc['numdoc']);
-			$el_ddt->appendChild($el1);
- 			$el1= $domDoc->createElement("DataDDT", $docVars->tesdoc['datemi']);
-			$el_ddt->appendChild($el1);
- 			$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
-			$el_ddt->appendChild($el1);
+					$el1= $domDoc->createElement("NumeroDDT", $docVars->tesdoc['numdoc']);
+					$el_ddt->appendChild($el1);
+					$el1= $domDoc->createElement("DataDDT", $docVars->tesdoc['datemi']);
+					$el_ddt->appendChild($el1);
+					$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
+					$el_ddt->appendChild($el1);
                     $results->appendChild($el_ddt);
                     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
                 }
@@ -557,7 +562,9 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
     }
 
-
+    if ($docVars->sempl_accom) {
+		// se è una fattura accompagnatoria qui inserisco anche i dati relativi al trasporto
+	}
 ////////////////////		     
      
         
