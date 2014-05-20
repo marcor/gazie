@@ -677,7 +677,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$old_key]['quanti'] = "";
             $form['rows'][$old_key]['unimis'] = "";
             $form['rows'][$old_key]['sconto'] = 0;
-         } elseif ($form['in_tiprig'] == 11) { //rigo fattura elettronica
+         } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //rigo fattura elettronica
             $form['rows'][$old_key]['codart'] = "";
             $form['rows'][$old_key]['annota'] = "";
             $form['rows'][$old_key]['pesosp'] = "";
@@ -809,7 +809,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['tipiva'] = 0;
             $form['rows'][$next_row]['ritenuta'] = 0;
             $form['rows'][$next_row]['codvat'] = 0;
-          } elseif ($form['in_tiprig'] == 11) { //dati fattura elettronica
+          } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //dati fattura elettronica
             $form['rows'][$next_row]['codart'] = "";
             $form['rows'][$next_row]['annota'] = "";
             $form['rows'][$next_row]['pesosp'] = "";
@@ -1513,6 +1513,8 @@ foreach ($form['rows'] as $k => $v) {
         echo "<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>\n";
         break;
         case "11":
+        case "12":
+        case "13":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
               <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" /></td>\n";
         echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
