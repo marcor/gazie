@@ -563,8 +563,27 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     }
 
     if ($docVars->sempl_accom) {
-		// se è una fattura accompagnatoria qui inserisco anche i dati relativi al trasporto
-	}
+	// se è una fattura accompagnatoria qui inserisco anche i dati relativi al trasporto
+        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
+        $el = $domDoc->createElement("DatiTrasporto","");
+			$el1= $domDoc->createElement("MezzoTrasporto", $docVars->tesdoc['spediz']);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("NumeroColli", $docVars->tesdoc['units']);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("Descrizione", $docVars->tesdoc['imball']);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("UnitaMisuraPeso", 'kg');
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("PesoNetto", $docVars->tesdoc['net_weight']);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("PesoLordo", $docVars->tesdoc['gross_weight']);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("DataInizioTrasporto", substr($docVars->tesdoc['initra'],0,10));
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("DataOraConsegna", substr($docVars->tesdoc['initra'],0,16));
+			$el->appendChild($el1);
+        $results->appendChild($el);
+    }
 ////////////////////		     
      
         
