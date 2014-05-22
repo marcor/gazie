@@ -312,11 +312,14 @@ while ($r = gaz_dbi_fetch_array($result)) {
         
         // Colonna "Fattura elettronica"
         if (substr($r["tipdoc"],0,2)=='FA'){
-           if (strlen($r["fe_cod_univoco"])==6) { // se il cliente non è un ufficio della PA tolgo il link
+           if (strlen($r["fe_cod_univoco"])!=6) { // se il cliente non è un ufficio della PA tolgo il link
                $modulo_fae='';
-           }
+               echo "<td class=\"FacetDataTD\" align=\"center\"><img width=\"20px\" src=\"../../library/images/e_inv_disabled.png\" alt=\"Fattura elettronica\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\" border=\"0\">";
+               echo "</td>";
+           } else {
            echo "<td class=\"FacetDataTD\" align=\"center\"><a target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
            echo "</td>";
+           }
            }
          else {
            echo "<td></td>";
