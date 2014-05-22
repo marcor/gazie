@@ -75,7 +75,7 @@ $strScript = array ("admin_aziend.php" =>
                            'regime_value'=>array('0'=>'Ordinary','1'=>'Semplified'),
                            'fiscal_reg'=>'Regime fiscale',
                            'fiscal_reg_value'=>array('RF01'=>'Ordinario','RF02'=>'Contribuenti minimi','RF03'=>'Nuove iniziative produttive','RF04'=>'Agricoltura e attività connesse e pesca',
-                                                     'RF05'=>'Vendita sali e tabacchi','RF06'=>'Commercio dei fiammiferi','RF07'=>'Editoria','RF08'=>'Gestione di servizi di telefonia pubblica',
+                                                     'RF05'=>'Vendita sali e tabacchi','RF06'=>'Commercio dei fiammiferi','RF07'=>'Editoria','RF08'=>'Gestione di servizi di telefonia pubblica'),
                            'decimal_quantity'=>'N&ordm; decimal quantity',
                            'decimal_quantity_value'=>array(0,1,2,3,9=>'Float'),
                            'decimal_price'=>'N&ordm; decimal price',
