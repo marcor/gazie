@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data>
+    <record id="natura_N1" model="">
+        <field name="code">N1</field>
+        <field name="name">Escluse ex art.15</field>
+    </record>
+    <record id="natura_N2" model="">
+        <field name="code">N2</field>
+        <field name="name">Non soggette</field>
+    </record>
+    <record id="natura_N3" model="">
+        <field name="code">N3</field>
+        <field name="name">Non imponibili</field>
+    </record>
+    <record id="natura_N4" model="">
+        <field name="code">N4</field>
+        <field name="name">Esenti</field>
+    </record>
+    <record id="natura_N5" model="">
+        <field name="code">N5</field>
+        <field name="name">Regime del margine</field>
+    </record>
+</data>

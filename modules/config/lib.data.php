@@ -40,7 +40,7 @@ function aziendUpdate ($codice, $newValue)
 function aliivaInsert ($newValue)
 {
     $table = 'aliiva';
-    $columns=array('codice', 'tipiva', 'aliquo', 'descri', 'status', 'annota', 'adminid');
+    $columns=array('codice', 'tipiva', 'aliquo', 'fae_natura', 'descri', 'status', 'annota', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
     tableInsert($table, $columns, $newValue);
 }
@@ -48,7 +48,7 @@ function aliivaInsert ($newValue)
 function aliivaUpdate ($codice, $newValue)
 {
     $table = 'aliiva';
-    $columns=array('codice', 'tipiva', 'aliquo', 'descri', 'status', 'annota', 'adminid');
+    $columns=array('codice', 'tipiva', 'aliquo', 'fae_natura', 'descri', 'status', 'annota', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
     tableUpdate($table, $columns, $codice, $newValue);
 }

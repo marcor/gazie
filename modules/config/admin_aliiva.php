@@ -43,6 +43,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['tipiva'] = substr($_POST['tipiva'],0,1);
     $form['descri'] = substr($_POST['descri'],0,50);
     $form['aliquo'] = floatval($_POST['aliquo']);
+    $form['fae_natura'] = substr($_POST['fae_natura'],0,2);;
     $form['annota'] = substr($_POST['annota'],0,50);
     if (isset($_POST['Submit'])) { // conferma tutto
        //eseguo i controlli formali
@@ -59,6 +60,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        }
        if ($form['aliquo'] < 0 || $form['aliquo'] >99) {
           $msg .= "8+";
+       }
+       if ($form['aliquo'] == 0 && empty($form['fae_natura'])) {
+          $msg .= "10+";
        }
        if (empty($msg)) { // nessun errore
           // aggiorno il db
@@ -84,11 +88,13 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['tipiva'] = 'I';
     $form['descri'] = '';
     $form['aliquo'] = '';
+    $form['fae_natura'] = '';
     $form['annota'] = '';
 }
 
 require("../../library/include/header.php");
 $script_transl=HeadMain();
+$gForm = new GAzieForm();
 echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$_POST['ritorno']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
@@ -135,6 +141,12 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[3]."</td>
      <td class=\"FacetDataTD\">\n";
 echo "\t<input type=\"text\" name=\"aliquo\" value=\"".$form['aliquo']."\" maxlength=\"9\" size=\"5\" class=\"FacetInput\">\n";
 echo "</td></tr>";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['fae_natura']."</td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\">";
+$gForm->selectFromXML('../../library/include/fae_natura_iva.xml', 'fae_natura','fae_natura',$form['fae_natura'],true);
+echo "</td>\n";
+echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[4]."</td>
      <td class=\"FacetDataTD\">\n";
 echo "\t<input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"30\" class=\"FacetInput\">\n";

@@ -205,7 +205,8 @@ $strScript = array ("admin_aziend.php" =>
                            'codice'=>"Codigo",
                            'descri'=>"Descripcion",
                            'type'=>"Tipo",
-                           'aliquo'=>"Percentual"
+                           'aliquo'=>"Percentual",
+                           'fae_natura'=>"Nature - PA electronic invoice"
                         ),
                     "admin_aliiva.php" =>
                    array(  "Tasa IVA",
@@ -217,7 +218,9 @@ $strScript = array ("admin_aziend.php" =>
                            "El c&oacute;digo debe estar entre 1 y 99",
                            "La descripci&oacute;n est&aacute; vac&iacute;a!",
                            "% Tasa no valida",
-                           "Tipo IVA"
+                           "Tipo IVA",
+                           "Select the nature of the exemption / exclusion!",
+                           'fae_natura'=>"Nature - PA electronic invoice"
                          ),
                     "admin_banapp.php" =>
                    array(  'title'=>'Administraci&oacute;n de Apoyo de Banco',

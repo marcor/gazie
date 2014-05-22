@@ -201,7 +201,8 @@ $strScript = array ("admin_aziend.php" =>
                            'codice'=>"Code",
                            'descri'=>"Description",
                            'type'=>"Type",
-                           'aliquo'=>"Rate"
+                           'aliquo'=>"Rate",
+                           'fae_natura'=>"Nature - PA electronic invoice"
                         ),
                     "admin_aliiva.php" =>
                    array(  "VAT rate",
@@ -213,7 +214,9 @@ $strScript = array ("admin_aziend.php" =>
                            "The code must be between 1 and 99",
                            "The description is empty!",
                            "% Rate invalid!",
-                           "Type VAT"
+                           "Type VAT",
+                           "Select the nature of the exemption / exclusion!",
+                           'fae_natura'=>"Nature - PA electronic invoice"
                          ),
                     "admin_banapp.php" =>
                    array(  'title'=>'Bank support management',

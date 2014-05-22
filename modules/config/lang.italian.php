@@ -203,7 +203,8 @@
                            'codice'=>"Codice",
                            'descri'=>"Descizione",
                            'type'=>"Tipo",
-                           'aliquo'=>"Percentuale"
+                           'aliquo'=>"Percentuale",
+                           'fae_natura'=>"Natura fatt.elettronica PA"
                         ),
                      "admin_aliiva.php" =>
                    array(  "Aliquota IVA",
@@ -215,7 +216,9 @@
                            "Il codice dev'essere compreso tra 1 e 99",
                            "La descrizione &egrave; vuota!",
                            "% Aliquota non valida!",
-                           "Tipo IVA"
+                           "Tipo IVA",
+                           "Indicare la natura dell'esenzione/esclusione!",
+                           'fae_natura'=>"Natura fatt.elettronica PA"
                          ),
                     "admin_banapp.php" =>
                    array(  'title'=>'Gestione delle banche di appoggio',

@@ -34,6 +34,7 @@ $headers = array  (
             $script_transl['descri']=>'descri',
             $script_transl['type']=>'tipiva',
             $script_transl['aliquo']=>'aliquo',
+            $script_transl['fae_natura']=>'fe_natura',
             $script_transl['delete']=>''
             );
 $linkHeaders = new linkHeaders($headers);
@@ -42,11 +43,12 @@ $result = gaz_dbi_dyn_query ('*', $gTables['aliiva'], $where, $orderby, $limit, 
 while ($a_row = gaz_dbi_fetch_array($result))
     {
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\"><a href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\">".$a_row["codice"]."</a> &nbsp</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\">".$a_row["codice"]."</a> &nbsp</td>";
     echo "<td class=\"FacetDataTD\">".$a_row["descri"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\">".$script_transl['tipiva'][$a_row["tipiva"]]."</td>";
-    echo "<td class=\"FacetDataTD\">".$a_row["aliquo"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\"><a href=\"delete_aliiva.php?codice=".$a_row["codice"]."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['tipiva'][$a_row["tipiva"]]."</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["aliquo"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["fae_natura"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_aliiva.php?codice=".$a_row["codice"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
     echo "</tr>";
     }
 ?>

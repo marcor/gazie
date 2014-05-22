@@ -12,7 +12,7 @@
         <field name="code">MP03</field>
         <field name="name">Assegno circolare</field>
     </record>
-    <record id="payment_MP03" model="">
+    <record id="payment_MP04" model="">
         <field name="code">MP04</field>
         <field name="name">Contanti presso Tesoreria</field>
     </record>

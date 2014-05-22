@@ -203,7 +203,8 @@ $strScript = array ("admin_aziend.php" =>
                            'codice'=>"Code",
                            'descri'=>"Beschreibung",
                            'type'=>"Typ",
-                           'aliquo'=>"Rate"
+                           'aliquo'=>"Rate",
+                           'fae_natura'=>"Nature - PA electronic invoice"
                         ),
                     "admin_aliiva.php" =>
                    array(  "MwSt-Satz",
@@ -215,7 +216,9 @@ $strScript = array ("admin_aziend.php" =>
                            "Der Code muss zwischen 1 und 99 werden",
                            "Die Beschreibung ist leer!",
                            "% Rate ungültig!",
-                           "Typ MwSt."
+                           "Typ MwSt.",
+                           "Select the nature of the exemption / exclusion!",
+                           'fae_natura'=>"Nature - PA electronic invoice"
                          ),
                     "admin_banapp.php" =>
                    array(  'title'=>'Bank-Management-Unterstützung',
