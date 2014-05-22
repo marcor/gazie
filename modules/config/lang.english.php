@@ -261,6 +261,7 @@ $strScript = array ("admin_aziend.php" =>
                            'codice'=>"Code ",
                            'descri'=>"Description ",
                            'annota'=>"Note",
+                           'incoterms'=>'Incoterms-standard ICC',
                            'report'=>'List of the ports',
                            'del_this'=>'port'
                          ),

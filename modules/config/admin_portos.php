@@ -37,6 +37,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno'] = $_POST['ritorno'];
     $form['codice'] = intval($_POST['codice']);
     $form['descri'] = substr($_POST['descri'],0,50);
+    $form['incoterms'] = substr($_POST['incoterms'],0,3);
     $form['annota'] = substr($_POST['annota'],0,50);
     if (isset($_POST['Submit'])) { // conferma tutto
        //eseguo i controlli formali
@@ -77,6 +78,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $last = gaz_dbi_fetch_array($rs_last);
     $form['codice'] = $last['codice']+1;
     $form['descri'] = '';
+    $form['incoterms'] = '';
     $form['annota'] = '';
 }
 
@@ -105,6 +107,14 @@ if ($toDo == 'insert') {
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."* </td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['incoterms']."</td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\">";
+$gForm->selectFromXML('../../library/include/stock_incoterms.xml', 'incoterms','incoterms',$form['incoterms']);
+   //  $select_incoterms = new SelectXML("incoterms");
+   //  $select_incoterms->output('../../library/include/stock_incoterms.xml', 'incoterms');
+echo "</td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['annota']."</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";

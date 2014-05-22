@@ -770,6 +770,7 @@ class SelectValue extends SelectBox
     }
 }
 
+
 // classe per la generazione di select box vettori
 class selectvettor extends SelectBox
 {
@@ -1068,6 +1069,39 @@ class GAzieForm
             } else {
                 echo substr($r[$key],0,28).$bridge.substr($r[$key2],0,35)."</option>\n";
             }
+        }
+        if ($addOption) {
+            echo "\t\t <option value=\"".$addOption['value']."\"";
+            if($addOption['value'] == $val) {
+                echo " selected ";
+            }
+            echo ">".$addOption['descri']."</option>\n";
+        }
+        echo "\t </select>\n";
+    }
+    
+    // funzione per la generazione di una select box da file XML
+    function selectFromXML($nameFileXML, $name,$key,$val,$empty=false,$val_hiddenReq='',$class='FacetSelect',$addOption=null)
+    {
+        $refresh ='';
+        if (file_exists($nameFileXML)) {
+            $xml = simplexml_load_file($nameFileXML);
+        } else {
+            exit('Failed to open test.xml.');
+        }
+        if (!empty($val_hiddenReq)){
+            $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
+        }
+        echo "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh >\n";
+        if ($empty) {
+            echo "\t\t <option value=\"\"></option>\n";
+        }
+        foreach ($xml->record as $v){
+            $selected = '';
+            if($v->field[0] == $val) {
+                $selected = "selected";
+            }
+            echo "\t\t <option value=\"".$v->field[0]."\" $selected >&nbsp;".$v->field[0]." - ".$v->field[1]."</option>\n";
         }
         if ($addOption) {
             echo "\t\t <option value=\"".$addOption['value']."\"";

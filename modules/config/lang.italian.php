@@ -260,6 +260,7 @@
                                           ),
                            'codice'=>"Codice ",
                            'descri'=>"Descrizione porto/resa ",
+                           'incoterms'=>'Incoterms-standard ICC',
                            'annota'=>"Annotazioni",
                            'report'=>'Lista dei porti/rese',
                            'del_this'=>'porto/resa'

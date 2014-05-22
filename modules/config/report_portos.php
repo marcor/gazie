@@ -38,6 +38,7 @@ $recordnav -> output();
 $headers_portos = array  (
               $script_transl['codice'] => "codice",
               $script_transl['descri'] => "descri",
+              $script_transl['incoterms'] => "Incoterms",
               $script_transl['annota'] => "annota",
               $script_transl['delete'] => ""
               );
@@ -48,6 +49,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     print "<tr>";
     print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"admin_portos.php?Update&codice=".$a_row["codice"]."\">".$a_row["codice"]."</a> &nbsp</td>";
     print "<td class=\"FacetDataTD\">".$a_row["descri"]." &nbsp;</td>";
+    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["incoterms"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["annota"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_portos.php?codice=".$a_row["codice"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
     print "</tr>";
