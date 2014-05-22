@@ -94,7 +94,19 @@ class DDT extends Template_con_scheda
                    $this->Cell(35,6,'','R',1);
                 } elseif ($rigo['tiprig']==6 || $rigo['tiprig']==7) {
                     $this->writeHtmlCell(187,6,10,$this->GetY(),$rigo['descri'],1,1);
-                }
+                } elseif ($rigo['tiprig'] == 11) {
+                    $this->Cell(30,6,'','L');
+                    $this->Cell(122,6,"CIG: " . $rigo['descri'],'LR',0,'L');
+                    $this->Cell(35,6,'','R',1);
+                } elseif ($rigo['tiprig'] == 12) {
+                    $this->Cell(30,6,'','L');
+                    $this->Cell(122,6,"CUP: " . $rigo['descri'],'LR',0,'L');
+                    $this->Cell(35,6,'','R',1);
+                } elseif ($rigo['tiprig'] == 13) {
+                    $this->Cell(30,6,'','L');
+                    $this->Cell(122,6,"IdDocumento: " . $rigo['descri'],'LR',0,'L');
+                    $this->Cell(35,6,'','R',1);
+                }                
        }
     }
 
