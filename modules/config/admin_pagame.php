@@ -26,7 +26,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = '';
 
-
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
@@ -49,6 +48,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['giosuc'] = intval($_POST['giosuc']);
     $form['numrat'] = intval($_POST['numrat']);
     $form['tiprat'] = substr($_POST['tiprat'],0,1);
+    $form['fae_mode'] = substr($_POST['fae_mode'],0,4);
     $form['id_bank'] = intval($_POST['id_bank']);
     $form['annota'] = substr($_POST['annota'],0,50);
     if (isset($_POST['Submit'])) { // conferma tutto
@@ -95,6 +95,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['giosuc'] = 0;
     $form['numrat'] = 0;
     $form['tiprat'] = 'M';
+    $form['fae_mode'] = '';
     $form['id_bank'] = 0;
     $form['annota'] =  '';
 }
@@ -203,6 +204,12 @@ foreach ($script_transl[17] as $key => $value) {
          echo "<option value=\"".$key."\"".$selected.">".$key.'-'.$value."</option>";
 }
 echo "</select></td></tr>";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['fae_mode']."</td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\">";
+$gForm->selectFromXML('../../library/include/fae_payment_mode.xml', 'fae_mode','fae_mode',$form['fae_mode'],true);
+echo "</td>\n";
+echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[12]."</td>
      <td class=\"FacetDataTD\">\n";
 echo "<select name=\"id_bank\" class=\"FacetSelect\">";

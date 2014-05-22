@@ -194,7 +194,8 @@ $strScript = array ("admin_aziend.php" =>
                            "Der Code gewählt wird bereits verwendet!",
                            "Die Beschreibung ist leer!",
                            "Der Code muss zwischen 1 und 99 werden",
-                           'ins_this'=>'Legen Sie eine neue Zahlungsmethode'
+                           'ins_this'=>'Legen Sie eine neue Zahlungsmethode',
+                           'fae_mode'=>"PA electronic invoice mode"
                            ),
                     "report_aliiva.php" =>
                    array(  'title'=>"MWST. rates",

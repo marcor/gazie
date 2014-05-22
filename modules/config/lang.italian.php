@@ -193,7 +193,9 @@
                            "Il codice scelto &egrave; gi&agrave; stato usato!",
                            "La descrizione &egrave; vuota!",
                            "Il codice dev'essere compreso tra 1 e 99",
-                           'ins_this'=>'Inserisci una nuova modalit&agrave; di pagamento'
+                           'ins_this'=>'Inserisci una nuova modalit&agrave; di pagamento',
+                           'fae_mode'=>"Modalità fatt.elettronica PA"
+                           
                          ),
                     "report_aliiva.php" =>
                    array(  'title'=>"Aliquote I.V.A.",

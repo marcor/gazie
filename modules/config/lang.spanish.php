@@ -196,7 +196,8 @@ $strScript = array ("admin_aziend.php" =>
                            "El c&oacute;digo elegido ya est&aacute; en uso!",
                            "La descripci&oacute;n est&aacute; vac&iacute;a!",
                            "El c&oacute;digo debe estar entre 1 y 99",
-                           'ins_this'=>'Insertar nueva modalidad el pago'
+                           'ins_this'=>'Insertar nueva modalidad el pago',
+                           'fae_mode'=>"Modalidad fatt.elettronica PA"
                            ),
                     "report_aliiva.php" =>
                    array(  'title'=>"Tasas I.V.A.",

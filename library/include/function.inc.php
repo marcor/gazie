@@ -1087,7 +1087,7 @@ class GAzieForm
         if (file_exists($nameFileXML)) {
             $xml = simplexml_load_file($nameFileXML);
         } else {
-            exit('Failed to open test.xml.');
+            exit('Failed to open: '.$nameFileXML);
         }
         if (!empty($val_hiddenReq)){
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";

@@ -112,8 +112,6 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['incoterms']."</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">";
 $gForm->selectFromXML('../../library/include/stock_incoterms.xml', 'incoterms','incoterms',$form['incoterms']);
-   //  $select_incoterms = new SelectXML("incoterms");
-   //  $select_incoterms->output('../../library/include/stock_incoterms.xml', 'incoterms');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['annota']."</td>

@@ -40,6 +40,7 @@ $headers_pagame = array  (
               $script_transl[6] => "giodec",
               $script_transl[10] => "numrat",
               $script_transl[11] => "tiprat",
+              $script_transl['fae_mode'] => "fae_mode",
               $script_transl['delete'] => ""
               );
 $linkHeaders = new linkHeaders($headers_pagame);
@@ -52,6 +53,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["giodec"]." &nbsp;</td>\n";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["numrat"]." &nbsp;</td>\n";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["tiprat"]." &nbsp;</td>\n";
+    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["fae_mode"]." &nbsp;</td>\n";
     print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_pagame.php?codice=".$a_row["codice"]."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>\n";
     print "</tr>\n";
 }

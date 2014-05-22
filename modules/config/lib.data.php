@@ -56,7 +56,7 @@ function aliivaUpdate ($codice, $newValue)
 function pagameInsert ($newValue)
 {
     $table = 'pagame';
-    $columns = array('codice','descri','tippag','incaut','tipdec','giodec','mesesc','messuc','giosuc','numrat','tiprat','id_bank','annota');
+    $columns = array('codice','descri','tippag','incaut','tipdec','giodec','mesesc','messuc','giosuc','numrat','tiprat','fae_mode','id_bank','annota');
     $newValue['adminid'] = $_SESSION['Login'];
     tableInsert($table, $columns, $newValue);
 }
@@ -64,7 +64,7 @@ function pagameInsert ($newValue)
 function pagameUpdate ($codice, $newValue)
 {
     $table = 'pagame';
-    $columns = array('codice','descri','tippag','incaut','tipdec','giodec','mesesc','messuc','giosuc','numrat','tiprat','id_bank','annota');
+    $columns = array('codice','descri','tippag','incaut','tipdec','giodec','mesesc','messuc','giosuc','numrat','tiprat','fae_mode','id_bank','annota');
     $newValue['adminid'] = $_SESSION['Login'];
     tableUpdate($table, $columns, $codice, $newValue);
 }
