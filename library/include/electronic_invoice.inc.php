@@ -434,6 +434,9 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
       }
       //elenco beni in fattura  
       $lines = $docVars->getRigo();
+      $cig="";
+      $cup="";
+      $id_documento="";
       while (list($key, $rigo) = each($lines)) {
                 // se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
                 if ($docVars->ddt_data) {
@@ -445,8 +448,9 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					$el_ddt->appendChild($el1);
 					$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
 					$el_ddt->appendChild($el1);
-                    $results->appendChild($el_ddt);
-                    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
+          
+          $results->appendChild($el_ddt);
+          $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
                 }
                 switch($rigo['tiprig']) {
                 case "0":
@@ -524,6 +528,16 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					$this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
 					*/
                     break;
+                    
+                case "11":
+                     $cig= $rigo['descri'];
+                     break;
+                case "12":
+                     $cup= $rigo['descri'];
+                     break;
+                case "13":
+                     $id_documento= $rigo['descri'];
+                     break;                                               
                 }
                 if ($rigo['ritenuta']>0) {
                     /*
@@ -535,7 +549,29 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
         }
         $ctrl_doc =  $docVars->tesdoc['numdoc'];
     }
+    
+    //dati ordine di acquisto
+    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
+    if ($id_documento !="") {
+          $el_datiOrdineAcquisto = $domDoc->createElement("DatiOrdineAcquisto","");
+					$el1= $domDoc->createElement("IdDocumento", $id_documento);
+					$el_datiOrdineAcquisto->appendChild($el1);
+    }      
 
+    if ($id_documento !="" and $cup !="") {
+					$el1= $domDoc->createElement("CodiceCUP", $cup);
+					$el_datiOrdineAcquisto->appendChild($el1);
+    }
+
+    if ($id_documento !="" and $cig !="") {
+					$el1= $domDoc->createElement("CodiceCIG", $cig);
+					$el_datiOrdineAcquisto->appendChild($el1);
+    }
+    //occorre testare qui se presente il ddt altrimeni occorrera' fare l'insertbefore
+    if ($id_documento !="") {
+          $results->appendChild($el_datiOrdineAcquisto);
+    }        
+    
     //iva
     
      $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
@@ -560,7 +596,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                   
       $results->appendChild($el);
 
-    }
+    }     
 
     if ($docVars->sempl_accom) {
 	// se è una fattura accompagnatoria qui inserisco anche i dati relativi al trasporto
