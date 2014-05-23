@@ -295,6 +295,7 @@ class DocContabVars
             $this->cast[$k]['impcast'] = $v;
             $this->cast[$k]['ivacast'] = $ivacast;
             $this->cast[$k]['descriz'] = $vat['descri'];
+            $this->cast[$k]['fae_natura'] = $vat['fae_natura'];
         }
         //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione dell'effetto
         if ($this->pagame['tippag'] == 'T' or $this->pagame['tippag'] == 'R') {
@@ -323,13 +324,13 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
       $docVars->setVars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
       if ($ctrl_doc == 0) {
+        $id_progressivo = substr($docVars->docRelDate , 2,2) . $docVars->seziva . str_pad($docVars->protoc, 7,'0', STR_PAD_LEFT);   
          //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
         $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese")->item(0);		
 		   $attrVal = $domDoc->createTextNode('IT');	   
 		   $results->appendChild($attrVal);
 		
          
-         $id_progressivo = substr($docVars->docRelDate , 2,2) . $docVars->seziva . str_pad($docVars->protoc, 7,'0', STR_PAD_LEFT);   
          $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/ProgressivoInvio")->item(0);		
 		   $attrVal = $domDoc->createTextNode( $id_progressivo );	   
 		   $results->appendChild($attrVal);
@@ -470,48 +471,23 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                 switch($rigo['tiprig']) {
                 case "0":
                     $el = $domDoc->createElement("DettaglioLinee","");					 
-					
-					$el1= $domDoc->createElement("NumeroLinea", $n_linea);
-					$el->appendChild($el1);
-					
-					$el1= $domDoc->createElement("Descrizione", substr($rigo['descri'], 0, 100));
-					$el->appendChild($el1);
-
-					$el1= $domDoc->createElement("Quantita", number_format($rigo['quanti'],2,'.',''));
-					$el->appendChild($el1); 
-
-					$el1= $domDoc->createElement("UnitaMisura", $rigo['unimis']);
-					$el->appendChild($el1); 
-					
-					$el1= $domDoc->createElement("PrezzoUnitario",  number_format($rigo['prelis'],$docVars->decimal_price,'.',''));
-					$el->appendChild($el1);
-					 
-					$el1= $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'],2,'.',''));
-					$el->appendChild($el1);
-					 
-					$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
-					$el->appendChild($el1);
-					 
-					$results->appendChild($el);
-					$n_linea = $n_linea+1;
-				/*
-					$this->Cell(25, 5, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 5, $rigo['descri'],1,0,'L');
-                    $this->Cell(7, 5, $rigo['unimis'],1,0,'C');
-                    $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    $this->Cell(18, 5, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
-                    if ($rigo['sconto']>0) {
-                       $this->Cell(8, 5,  number_format($rigo['sconto'],1,',',''),1,0,'C');
-                    } else {
-                       $this->Cell(8, 5, '',1,0,'C');
-                    }
-                    $this->Cell(20, 5, gaz_format_number($rigo['importo']),1,0,'R');
-                    $this->Cell(12, 5, gaz_format_number($rigo['pervat']),1,1,'R');
-					*/
-
-					
-					
-                    break;
+			$el1= $domDoc->createElement("NumeroLinea", $n_linea);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("Descrizione", substr($rigo['descri'], 0, 100));
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("Quantita", number_format($rigo['quanti'],2,'.',''));
+			$el->appendChild($el1); 
+			$el1= $domDoc->createElement("UnitaMisura", $rigo['unimis']);
+			$el->appendChild($el1); 
+			$el1= $domDoc->createElement("PrezzoUnitario",  number_format($rigo['prelis'],$docVars->decimal_price,'.',''));
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'],2,'.',''));
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
+			$el->appendChild($el1);
+			$results->appendChild($el);
+			$n_linea++;
+                   break;
                 case "1":
                     /*
 					$this->Cell(25, 5, $rigo['codart'],1,0,'L');
@@ -597,6 +573,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
         $el = $domDoc->createElement("DatiRiepilogo","");					 
             $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
             $el->appendChild($el1);
+            if ($value['aliquo']<=0){
+                $el1= $domDoc->createElement("Natura", $value['fae_natura']);
+                $el->appendChild($el1);
+            }
             $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
 	    $el->appendChild($el1);
             $el1= $domDoc->createElement("Imposta", number_format($value['ivacast'],2,'.',''));
@@ -656,20 +636,15 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
             $el->appendChild($el1);
         $results->appendChild($el);
     }
-
-////////////////////		     
-     
-        
-       //occorre effettuare alcune validazioni sul numero e sull'id
-		   $nome_file = "IT" .  $id_test . "_" . trim( $docVars->docRelNum );
-       //rendere dinamico il nome del file    
+   
+    //occorre effettuare alcune validazioni sul numero e sull'id
+    $nome_file = "IT" .  $id_test . "_" .substr($docVars->azienda['codice'].$docVars->protoc,0,5);
+    //rendere dinamico il nome del file    
     
-       header("Content-type: text/plain");
-       header("Content-Disposition: attachment; filename=". $nome_file .".xml");
-       print $domDoc->saveXML();
+    header("Content-type: text/plain");
+    header("Content-Disposition: attachment; filename=". $nome_file .".xml");
+    print $domDoc->saveXML();
 
-	     //echo $domDoc->saveXML();     
-    
 }
 
 
