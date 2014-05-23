@@ -23,7 +23,7 @@
  --------------------------------------------------------------------------
 */
 
-require("../../library/include/calsca.inc.php");
+require("../../library/include/expiry_calc.php");
 
 class DocContabVars
 {
@@ -574,28 +574,21 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     
     //iva
     
-     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
-     
-     //Attenzione qui 
-     $docVars->setTotal();
-     foreach ($docVars->cast as $key => $value) {          
-      
-      $el = $domDoc->createElement("DatiRiepilogo","");					 
-
-					  $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
-					  $el->appendChild($el1);
-      
-      $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
-					  $el->appendChild($el1);
-      
-      $el1= $domDoc->createElement("Imposta", number_format($value['ivacast'],2,'.',''));
-					  $el->appendChild($el1);
+    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
     
-      $el1= $domDoc->createElement("RiferimentoNormativo", $value['descriz']);
-					  $el->appendChild($el1);
-                  
-      $results->appendChild($el);
-
+    //Attenzione qui 
+    $docVars->setTotal();
+    foreach ($docVars->cast as $key => $value) {          
+        $el = $domDoc->createElement("DatiRiepilogo","");					 
+            $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
+            $el->appendChild($el1);
+            $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
+	    $el->appendChild($el1);
+            $el1= $domDoc->createElement("Imposta", number_format($value['ivacast'],2,'.',''));
+	    $el->appendChild($el1);
+            $el1= $domDoc->createElement("RiferimentoNormativo", $value['descriz']);
+	    $el->appendChild($el1);
+        $results->appendChild($el);
     }     
 
     if ($docVars->sempl_accom) {
@@ -620,6 +613,35 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1);
         $results->appendChild($el);
     }
+
+// ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
+
+    $totpag = $docVars->totimpfat+$docVars->impbol+$docVars->totriport+$docVars->totivafat-$docVars->tot_ritenute;
+    $ex= new Expiry;
+    $ratpag = $ex->CalcExpiry($totpag, $docVars->tesdoc["datfat"], $docVars->pagame['tipdec'],$docVars->pagame['giodec'],$docVars->pagame['numrat'],$docVars->pagame['tiprat'],$docVars->pagame['mesesc'],$docVars->pagame['giosuc']);
+    if ($docVars->pagame['numrat']>1){
+        $cond_pag='TP01';        
+    } else {
+        $cond_pag='TP02';        
+    }
+    // elementi dei <DatiPagamento> (2.4)
+    $results = $xpath->query("//FatturaElettronicaBody")->item(0);		
+    $el = $domDoc->createElement("DatiPagamento","");
+		$el1= $domDoc->createElement("CondizioniPagamento",$cond_pag); // 2.4.1
+		$el->appendChild($el1);
+    $results->appendChild($el);
+    foreach ($ratpag as $k=>$v){
+        $results = $xpath->query("//FatturaElettronicaBody/DatiPagamento")->item(0);
+        $el= $domDoc->createElement("DettaglioPagamento",''); // 2.4.2
+            $el1= $domDoc->createElement("ModalitaPagamento",$docVars->pagame['fae_mode']); // 2.4.2.2
+            $results->appendChild($el1);
+            $el1= $domDoc->createElement("DataScadenzaPagamento",$v['date']); // 2.4.2.5
+            $el->appendChild($el1);
+            $el1= $domDoc->createElement("ImportoPagamento",$v['amount']); // 2.4.2.6
+            $el->appendChild($el1);
+        $results->appendChild($el);
+    }
+
 ////////////////////		     
      
         
