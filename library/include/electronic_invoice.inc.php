@@ -149,6 +149,7 @@ class DocContabVars
         $this->testat = $testat;
         $this->ddt_data = false;
 
+        $this->TipoDocumento  = 'TD01';    // <TipoDocumento> 2.1.1.1
         $this->docRelNum  = $this->tesdoc["numdoc"];    // Numero del documento relativo
         $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         
@@ -159,6 +160,21 @@ class DocContabVars
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
             case "FAI":
+                $this->docRelNum  = $this->tesdoc["numfat"];
+                $this->docRelDate = $this->tesdoc["datfat"];
+                break;
+            case "FNC":
+				$this->TipoDocumento  = 'TD04';    // <TipoDocumento> 2.1.1.1
+                $this->docRelNum  = $this->tesdoc["numfat"];
+                $this->docRelDate = $this->tesdoc["datfat"];
+                break;
+            case "FND":
+ 				$this->TipoDocumento  = 'TD05';    // <TipoDocumento> 2.1.1.1
+                $this->docRelNum  = $this->tesdoc["numfat"];
+                $this->docRelDate = $this->tesdoc["datfat"];
+                break;
+            case "FAP":
+ 				$this->TipoDocumento  = 'TD06';    // <TipoDocumento> 2.1.1.1
                 $this->docRelNum  = $this->tesdoc["numfat"];
                 $this->docRelDate = $this->tesdoc["datfat"];
                 break;
@@ -375,9 +391,8 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['country'] ));	   
 		   $results->appendChild($attrVal);
          
-         //sono sempre tutte fatture?
-         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);		
-		   $attrVal = $domDoc->createTextNode( "TD01" );	   
+           $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);		
+		   $attrVal = $domDoc->createTextNode( $docVars->TipoDocumento );	   
 		   $results->appendChild($attrVal);
          
          //sempre in euro?
