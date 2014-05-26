@@ -24,16 +24,15 @@
 */
 
 require("../../library/include/expiry_calc.php");
+require("../../library/include/document.php");
 
-class DocContabVars
+class invoiceXMLvars
 {
-    function setVars($gTables, $tesdoc, $testat, $tableName,$ecr=false)
+    function setXMLvars($gTables, $tesdoc, $testat, $tableName,$ecr=false)
     {
-        $this->ecr=$ecr;
         $this->gTables = $gTables;
         $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['enterprise_id']);
         $this->azienda = $admin_aziend;
-        $this->user = gaz_dbi_get_row($gTables['admin'], 'Login', $_SESSION['Login']);
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
         $this->banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$tesdoc['banapp']);
         $anagrafica = new Anagrafica();
@@ -132,12 +131,6 @@ class DocContabVars
         }
 
         $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
-
-        if (isset($tesdoc['c_a'])) {
-           $this->c_Attenzione = $tesdoc['c_a'];
-        } else {
-           $this->c_Attenzione = '';
-        }
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $this->tesdoc = $tesdoc;
         $this->min = substr($tesdoc['initra'],14,2);
@@ -202,7 +195,7 @@ class DocContabVars
     }
 
 
-    function getRigo()
+    function getXMLrows()
     {
         $from =  $this->gTables[$this->tableName].' AS rows
                  LEFT JOIN '.$this->gTables['aliiva'].' AS vat
@@ -245,7 +238,7 @@ class DocContabVars
         return $results;
     }
 
-    function setTotal($totTrasporto=0)
+    function setXMLtot($totTrasporto=0)
     {
         $bolli = new Compute();
         $this->totivafat = 0.00;
@@ -315,16 +308,16 @@ class DocContabVars
 
 function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 {
-    $docVars = new DocContabVars();
+    $XMLvars = new invoiceXMLvars();
     $domDoc = new DOMDocument;
     $domDoc->load("../../library/include/template_fae.xml");
     $xpath = new DOMXPath($domDoc);
     $ctrl_doc = 0;
     $n_linea = 1;
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
-      $docVars->setVars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
+      $XMLvars->setXMLvars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
       if ($ctrl_doc == 0) {
-        $id_progressivo = substr($docVars->docRelDate , 2,2) . $docVars->seziva . str_pad($docVars->protoc, 7,'0', STR_PAD_LEFT);   
+        $id_progressivo = substr($XMLvars->docRelDate , 2,2) . $XMLvars->seziva . str_pad($XMLvars->protoc, 7,'0', STR_PAD_LEFT);   
          //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
         $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdPaese")->item(0);		
 		   $attrVal = $domDoc->createTextNode('IT');	   
@@ -339,7 +332,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		   $attrVal = $domDoc->createTextNode( "SDI10" );	   
 		   $results->appendChild($attrVal);
       
-         $id_test=$docVars->IdCodice;
+         $id_test=$XMLvars->IdCodice;
          $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);		
 		   $attrVal = $domDoc->createTextNode($id_test);	   
 		   $results->appendChild($attrVal);	
@@ -350,50 +343,50 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     
          //il IdCodice iva e' la partita iva?
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0);		
-		   $attrVal = $domDoc->createTextNode(trim($docVars->azienda['pariva']));	   
+		   $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['pariva']));	   
 		   $results->appendChild($attrVal);
     
     
          $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);		
-		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['fe_cod_univoco'] ));	   
+		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->client['fe_cod_univoco'] ));	   
 		   $results->appendChild($attrVal);     
          
          
-         $el = $domDoc->createElement("CodiceFiscale",trim( $docVars->client['codfis'] ));
+         $el = $domDoc->createElement("CodiceFiscale",trim( $XMLvars->client['codfis'] ));
          $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);				 
          $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
          $results->insertBefore($el, $results1);
             
          
          $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
-		   $attrVal = $domDoc->createTextNode( substr(trim( $docVars->client['ragso1'] ." " . $docVars->client['ragso2'] ), 0, 80) );	   
+		   $attrVal = $domDoc->createTextNode( substr(trim( $XMLvars->client['ragso1'] ." " . $XMLvars->client['ragso2'] ), 0, 80) );	   
 		   $results->appendChild($attrVal);	
     
 		   $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);		
-		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['indspe'] ));	   
+		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->client['indspe'] ));	   
 		   $results->appendChild($attrVal);	
          
          
-         $el = $domDoc->createElement("Provincia", strtoupper(trim( $docVars->client['prospe'] )));					 
+         $el = $domDoc->createElement("Provincia", strtoupper(trim( $XMLvars->client['prospe'] )));					 
          $results = $xpath->query("//CessionarioCommittente/Sede")->item(0);
          $results1 = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);
          $results->insertBefore($el, $results1);
          
          
          $results = $xpath->query("//CessionarioCommittente/Sede/Comune")->item(0);		
-		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['citspe'] ));	   
+		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->client['citspe'] ));	   
 		   $results->appendChild($attrVal);
          
 		   $results = $xpath->query("//CessionarioCommittente/Sede/CAP")->item(0);		
-		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['capspe'] ));	   
+		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->client['capspe'] ));	   
 		   $results->appendChild($attrVal);
          
 		   $results = $xpath->query("//CessionarioCommittente/Sede/Nazione")->item(0);		
-		   $attrVal = $domDoc->createTextNode( trim( $docVars->client['country'] ));	   
+		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->client['country'] ));	   
 		   $results->appendChild($attrVal);
          
            $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);		
-		   $attrVal = $domDoc->createTextNode( $docVars->TipoDocumento );	   
+		   $attrVal = $domDoc->createTextNode( $XMLvars->TipoDocumento );	   
 		   $results->appendChild($attrVal);
          
          //sempre in euro?
@@ -402,39 +395,39 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		   $results->appendChild($attrVal);
          
          $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0);		
-		   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelDate ));	   
+		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->docRelDate ));	   
 		   $results->appendChild($attrVal);
               
          $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0);		
-		   $attrVal = $domDoc->createTextNode( trim( $docVars->docRelNum ));	   
+		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->docRelNum ));	   
 		   $results->appendChild($attrVal);          
               
     
     
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
-         $attrVal = $domDoc->createTextNode( trim($docVars->intesta1 . " " . $docVars->intesta1bis));     	   
+         $attrVal = $domDoc->createTextNode( trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis));     	   
 		   $results->appendChild($attrVal);
     
          //regime fiscale RF01 valido per il regime fiscale ordinario
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/RegimeFiscale")->item(0);		
-         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['fiscal_reg']));     	   
+         $attrVal = $domDoc->createTextNode( trim($XMLvars->azienda['fiscal_reg']));     	   
 		   $results->appendChild($attrVal);
     
     
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0);		
-         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['indspe']));     	   
+         $attrVal = $domDoc->createTextNode( trim($XMLvars->azienda['indspe']));     	   
 		   $results->appendChild($attrVal);
     
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0);		
-         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['capspe']));     	   
+         $attrVal = $domDoc->createTextNode( trim($XMLvars->azienda['capspe']));     	   
 		   $results->appendChild($attrVal);
          
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0);		
-         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['citspe']));     	   
+         $attrVal = $domDoc->createTextNode( trim($XMLvars->azienda['citspe']));     	   
 		   $results->appendChild($attrVal);
     
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0);		
-         $attrVal = $domDoc->createTextNode( trim($docVars->azienda['country']));     	   
+         $attrVal = $domDoc->createTextNode( trim($XMLvars->azienda['country']));     	   
 		   $results->appendChild($attrVal);
               
     
@@ -442,28 +435,28 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		    //$attrVal = $domDoc->createTextNode('IT');	   
 		    //$results->appendChild($attrVal);
 
-      } elseif($ctrl_doc <> $docVars->docRelNum){ // quando cambia il DdT
+      } elseif($ctrl_doc <> $XMLvars->docRelNum){ // quando cambia il DdT
         /*
         qui devo aggiungere una linea descrittiva come si fa sui cartacei oppure
         fare altro in base alla normativa? DA CHIARIRE!!!!                      
         */ 
       }
       //elenco beni in fattura  
-      $lines = $docVars->getRigo();
+      $lines = $XMLvars->getXMLrows();
       $cig="";
       $cup="";
       $id_documento="";
       while (list($key, $rigo) = each($lines)) {
                 // se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
-                if ($docVars->ddt_data) {
+                if ($XMLvars->ddt_data) {
                     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
                     $el_ddt = $domDoc->createElement("DatiDDT","");
-					$el1= $domDoc->createElement("NumeroDDT", $docVars->tesdoc['numdoc']);
-					$el_ddt->appendChild($el1);
-					$el1= $domDoc->createElement("DataDDT", $docVars->tesdoc['datemi']);
-					$el_ddt->appendChild($el1);
-					$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
-					$el_ddt->appendChild($el1);
+			$el1= $domDoc->createElement("NumeroDDT", $XMLvars->tesdoc['numdoc']);
+			$el_ddt->appendChild($el1);
+			$el1= $domDoc->createElement("DataDDT", $XMLvars->tesdoc['datemi']);
+			$el_ddt->appendChild($el1);
+			$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
+			$el_ddt->appendChild($el1);
           
           $results->appendChild($el_ddt);
           $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
@@ -479,7 +472,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1); 
 			$el1= $domDoc->createElement("UnitaMisura", $rigo['unimis']);
 			$el->appendChild($el1); 
-			$el1= $domDoc->createElement("PrezzoUnitario",  number_format($rigo['prelis'],$docVars->decimal_price,'.',''));
+			$el1= $domDoc->createElement("PrezzoUnitario",  number_format($rigo['prelis'],$XMLvars->decimal_price,'.',''));
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'],2,'.',''));
 			$el->appendChild($el1);
@@ -538,7 +531,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 					*/
                 }
         }
-        $ctrl_doc =  $docVars->tesdoc['numdoc'];
+        $ctrl_doc =  $XMLvars->tesdoc['numdoc'];
     }
     
     //dati ordine di acquisto
@@ -568,8 +561,8 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
     
     //Attenzione qui 
-    $docVars->setTotal();
-    foreach ($docVars->cast as $key => $value) {          
+    $XMLvars->setXMLtot();
+    foreach ($XMLvars->cast as $key => $value) {          
         $el = $domDoc->createElement("DatiRiepilogo","");					 
             $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
             $el->appendChild($el1);
@@ -586,35 +579,35 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
         $results->appendChild($el);
     }     
 
-    if ($docVars->sempl_accom) {
+    if ($XMLvars->sempl_accom) {
 	// se è una fattura accompagnatoria qui inserisco anche i dati relativi al trasporto
         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
         $el = $domDoc->createElement("DatiTrasporto","");
-			$el1= $domDoc->createElement("MezzoTrasporto", $docVars->tesdoc['spediz']);
-			$el->appendChild($el1);
-			$el1= $domDoc->createElement("NumeroColli", $docVars->tesdoc['units']);
-			$el->appendChild($el1);
-			$el1= $domDoc->createElement("Descrizione", $docVars->tesdoc['imball']);
-			$el->appendChild($el1);
-			$el1= $domDoc->createElement("UnitaMisuraPeso", 'kg');
-			$el->appendChild($el1);
-			$el1= $domDoc->createElement("PesoNetto", $docVars->tesdoc['net_weight']);
-			$el->appendChild($el1);
-			$el1= $domDoc->createElement("PesoLordo", $docVars->tesdoc['gross_weight']);
-			$el->appendChild($el1);
-			$el1= $domDoc->createElement("DataInizioTrasporto", substr($docVars->tesdoc['initra'],0,10));
-			$el->appendChild($el1);
-			$el1= $domDoc->createElement("DataOraConsegna", substr($docVars->tesdoc['initra'],0,16));
-			$el->appendChild($el1);
+	    $el1= $domDoc->createElement("MezzoTrasporto", $XMLvars->tesdoc['spediz']);
+	    $el->appendChild($el1);
+	    $el1= $domDoc->createElement("NumeroColli", $XMLvars->tesdoc['units']);
+	    $el->appendChild($el1);
+	    $el1= $domDoc->createElement("Descrizione", $XMLvars->tesdoc['imball']);
+	    $el->appendChild($el1);
+	    $el1= $domDoc->createElement("UnitaMisuraPeso", 'kg');
+	    $el->appendChild($el1);
+	    $el1= $domDoc->createElement("PesoNetto", $XMLvars->tesdoc['net_weight']);
+	    $el->appendChild($el1);
+	    $el1= $domDoc->createElement("PesoLordo", $XMLvars->tesdoc['gross_weight']);
+	    $el->appendChild($el1);
+	    $el1= $domDoc->createElement("DataInizioTrasporto", substr($XMLvars->tesdoc['initra'],0,10));
+	    $el->appendChild($el1);
+	    $el1= $domDoc->createElement("DataOraConsegna", substr($XMLvars->tesdoc['initra'],0,16));
+	    $el->appendChild($el1);
         $results->appendChild($el);
     }
 
 // ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
 
-    $totpag = $docVars->totimpfat+$docVars->impbol+$docVars->totriport+$docVars->totivafat-$docVars->tot_ritenute;
+    $totpag = $XMLvars->totimpfat+$XMLvars->impbol+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->tot_ritenute;
     $ex= new Expiry;
-    $ratpag = $ex->CalcExpiry($totpag, $docVars->tesdoc["datfat"], $docVars->pagame['tipdec'],$docVars->pagame['giodec'],$docVars->pagame['numrat'],$docVars->pagame['tiprat'],$docVars->pagame['mesesc'],$docVars->pagame['giosuc']);
-    if ($docVars->pagame['numrat']>1){
+    $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'],$XMLvars->pagame['giodec'],$XMLvars->pagame['numrat'],$XMLvars->pagame['tiprat'],$XMLvars->pagame['mesesc'],$XMLvars->pagame['giosuc']);
+    if ($XMLvars->pagame['numrat']>1){
         $cond_pag='TP01';        
     } else {
         $cond_pag='TP02';        
@@ -628,7 +621,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     foreach ($ratpag as $k=>$v){
         $results = $xpath->query("//FatturaElettronicaBody/DatiPagamento")->item(0);
         $el= $domDoc->createElement("DettaglioPagamento",''); // 2.4.2
-            $el1= $domDoc->createElement("ModalitaPagamento",$docVars->pagame['fae_mode']); // 2.4.2.2
+            $el1= $domDoc->createElement("ModalitaPagamento",$XMLvars->pagame['fae_mode']); // 2.4.2.2
             $results->appendChild($el1);
             $el1= $domDoc->createElement("DataScadenzaPagamento",$v['date']); // 2.4.2.5
             $el->appendChild($el1);
@@ -638,7 +631,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     }
    
     //occorre effettuare alcune validazioni sul numero e sull'id
-    $nome_file = "IT" .  $id_test . "_" .substr($docVars->azienda['codice'].$docVars->protoc,0,5);
+    $nome_file = "IT" .  $id_test . "_" .substr($XMLvars->azienda['codice'].$XMLvars->protoc,0,5);
     //rendere dinamico il nome del file    
     
     header("Content-type: text/plain");
