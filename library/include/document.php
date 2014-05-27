@@ -370,6 +370,13 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
        $content->mimeType = "application/pdf";
        $gMail = new GAzieMail();
        $gMail->sendMail($docVars->azienda,$docVars->user,$content,$docVars->client);
+    } elseif ($dest && $dest=='X'){ // è stata richiesta una stringa da allegare
+       $dest = 'S';     // Genero l'output pdf come stringa binaria
+       // Costruisco oggetto con tutti i dati del file pdf
+       $content->descri = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numfat'].'/'.$docVars->tesdoc['seziva'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
+       $content->string = $pdf->Output($content->descri,$dest);
+       $content->mimeType = "PDF";
+       return ($content);
     } else { // va all'interno del browser
        $pdf->Output();
     }
@@ -442,6 +449,13 @@ function createMultiDocument($results, $templateName, $gTables, $dest=false)
         $content->mimeType = "application/pdf";
         $gMail = new GAzieMail();
         $gMail->sendMail($docVars->azienda,$docVars->user,$content,$docVars->client);
+    } elseif ($dest && $dest=='X'){ // è stata richiesta una stringa da allegare
+       $dest = 'S';     // Genero l'output pdf come stringa binaria
+       // Costruisco oggetto con tutti i dati del file pdf
+       $content->descri = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numfat'].'/'.$docVars->tesdoc['seziva'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
+       $content->string = $pdf->Output($content->descri,$dest);
+       $content->mimeType = "PDF";
+       return ($content);
     } else { // va all'interno del browser
         $pdf->Output();
     }    
@@ -503,6 +517,13 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
        $content->mimeType = "application/pdf";
        $gMail = new GAzieMail();
        $gMail->sendMail($docVars->azienda,$docVars->user,$content,$docVars->client);
+    } elseif ($dest && $dest=='X'){ // è stata richiesta una stringa da allegare
+       $dest = 'S';     // Genero l'output pdf come stringa binaria
+       // Costruisco oggetto con tutti i dati del file pdf
+       $content->descri = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numfat'].'/'.$docVars->tesdoc['seziva'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
+       $content->string = $pdf->Output($content->descri,$dest);
+       $content->mimeType = "PDF";
+       return ($content);
     } else { // va all'interno del browser
        $pdf->Output();
     }
