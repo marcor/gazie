@@ -200,7 +200,7 @@ class invoiceXMLvars
         $from =  $this->gTables[$this->tableName].' AS rows
                  LEFT JOIN '.$this->gTables['aliiva'].' AS vat
                  ON rows.codvat=vat.codice';
-        $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva',$from, "rows.id_tes = ".$this->testat,"id_tes DESC, id_rig");
+        $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva, vat.fae_natura AS natura',$from, "rows.id_tes = ".$this->testat,"id_tes DESC, id_rig");
         $this->riporto =0.00;
         $this->ritenuta=0.00;
         $results = array();
@@ -478,6 +478,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
 			$el->appendChild($el1);
+      if ($rigo['pervat'] <= 0 ) {
+         $el1= $domDoc->createElement("Natura", $rigo['natura']);
+			   $el->appendChild($el1);
+      }
 			$results->appendChild($el);
 			$n_linea++;
                    break;
