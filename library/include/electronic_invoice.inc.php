@@ -622,7 +622,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
         $results = $xpath->query("//FatturaElettronicaBody/DatiPagamento")->item(0);
         $el= $domDoc->createElement("DettaglioPagamento",''); // 2.4.2
             $el1= $domDoc->createElement("ModalitaPagamento",$XMLvars->pagame['fae_mode']); // 2.4.2.2
-            $results->appendChild($el1);
+            $el->appendChild($el1);
             $el1= $domDoc->createElement("DataScadenzaPagamento",$v['date']); // 2.4.2.5
             $el->appendChild($el1);
             $el1= $domDoc->createElement("ImportoPagamento",$v['amount']); // 2.4.2.6
