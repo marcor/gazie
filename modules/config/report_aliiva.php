@@ -34,7 +34,7 @@ $headers = array  (
             $script_transl['descri']=>'descri',
             $script_transl['type']=>'tipiva',
             $script_transl['aliquo']=>'aliquo',
-            $script_transl['fae_natura']=>'fe_natura',
+            $script_transl['fae_natura']=>'fae_natura',
             $script_transl['delete']=>''
             );
 $linkHeaders = new linkHeaders($headers);
