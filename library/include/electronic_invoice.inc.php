@@ -24,7 +24,6 @@
 */
 
 require("../../library/include/expiry_calc.php");
-require("../../library/include/document.php");
 
 class invoiceXMLvars
 {
@@ -189,8 +188,10 @@ class invoiceXMLvars
       if ($intermediary_code['cvalue']>0){
           $intermediary = gaz_dbi_get_row($gTables['aziend'], 'codice',$intermediary_code['cvalue']);
           $this->IdCodice = $intermediary['pariva'];
+          $this->Intermediary = $intermediary['codice'];
       } else {
           $this->IdCodice = $admin_aziend['pariva'];
+          $this->Intermediary = false;
       }
     }
 
@@ -305,16 +306,29 @@ class invoiceXMLvars
     }
 
     function encodeSendingNumber($data, $b=62) {
-        // questa funzione converte un numero decimale in uno a base 62
-        /* ---------------------- SCHEMA DEI DATI ----------------------------------
-            |   SEZIONE IVA   | ANNO DOCUMENTO | CODICE AZIENDA | NUMERO PROTOCOLLO |
-            |     INT (1)     |     INT(1)     |      INT(2)    |      INT(5)       |
-            |        3        |       9        |        99      |      99999        |
-            | $data[sezione]  |  $data[anno]   | $data[azienda] | $data[protocollo] |
-           --------------------------------------------------------------------------
+        // questa funzione converte un numero decimale in uno a base 36
+        /* -- SCHEMA DEI DATI PER INVIO TRAMITE INTERMEDIARIO $data[intemediary] =true --
+            |   SEZIONE IVA   |  ANNO DOCUMENTO  |  CODICE AZIENDA  | NUMERO PROTOCOLLO |
+            |     INT (1)     |      INT(1)      |       INT(2)     |      INT(4)       |
+            |        3        |        9         |         99       |      99999        |
+            | $data[sezione]  |   $data[anno]    |  $data[azienda]  | $data[protocollo] |
+           ------------------------------------------------------------------------------
+           -- SCHEMA DEI DATI PER INVIO TRAMITE INTERMEDIARIO $data[intemediary]=false --
+            |   SEZIONE IVA   |  ANNO DOCUMENTO  |         NUMERO PROTOCOLLO            |
+            |     INT (1)     |      INT(1)      |                INT(6)                |
+            |        3        |        9         |               9999999                |
+            | $data[sezione]  |   $data[anno]    |           $data[protocollo]          |
+           ------------------------------------------------------------------------------
         */
-        $num=intval( $data['sezione'].substr($data['anno'],3,1).substr(str_pad($data['azienda'],2,'0',STR_PAD_LEFT),0,2).substr(str_pad($data['protocollo'],5,'0',STR_PAD_LEFT),-5) );
-        $base='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $num=$data['sezione'].substr($data['anno'],3,1);
+        if ($data['intermediary']) {
+            $num .= substr(str_pad($data['azienda'],2,'0',STR_PAD_LEFT),0,2).substr(str_pad($data['protocollo'],4,'0',STR_PAD_LEFT),-4) ;
+        
+        } else {
+            $num .= substr(str_pad($data['protocollo'],6,'0',STR_PAD_LEFT),-6) ;
+        }
+        $num=intval($num);
+        $base='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $r = $num  % $b ;
         $res = $base[$r];
         $q = floor($num/$b);
@@ -326,8 +340,8 @@ class invoiceXMLvars
         return $res;
     }
     
-    function decodeFromSendingNumber( $num, $b=62) {
-        $base='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    function decodeFromSendingNumber( $num, $b=36) {
+        $base='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $limit = strlen($num);
         $res=strpos($base,$num[0]);
         for($i=1;$i<$limit;$i++) {
@@ -670,9 +684,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     $data=array('azienda'=>$XMLvars->azienda['codice'],
                 'anno'=>$XMLvars->docRelDate,
                 'sezione'=>$XMLvars->seziva,
-                'protocollo'=>$XMLvars->protoc);
-    $numero_unico_invio= $XMLvars->encodeSendingNumber($data);
-    // print $XMLvars->decodeFromSendingNumber($numero_unico_invio);
+                'protocollo'=>$XMLvars->protoc,
+                'intermediary'=>$XMLvars->Intermediary);
+    $numero_unico_invio= $XMLvars->encodeSendingNumber($data,36);
+    //print $XMLvars->decodeFromSendingNumber($numero_unico_invio);
     $nome_file = "IT" .  $id_test . "_" .$numero_unico_invio;
     header("Content-type: text/plain");
     header("Content-Disposition: attachment; filename=". $nome_file .".xml");
