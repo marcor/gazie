@@ -303,6 +303,38 @@ class invoiceXMLvars
         $this->castel = array();
         $this->decalc_castle= array();
     }
+
+    function encodeSendingNumber($data, $b=62) {
+        // questa funzione converte un numero decimale in uno a base 62
+        /* ---------------------- SCHEMA DEI DATI ----------------------------------
+            |   SEZIONE IVA   | ANNO DOCUMENTO | CODICE AZIENDA | NUMERO PROTOCOLLO |
+            |     INT (1)     |     INT(1)     |      INT(2)    |      INT(5)       |
+            |        3        |       9        |        99      |      99999        |
+            | $data[sezione]  |  $data[anno]   | $data[azienda] | $data[protocollo] |
+           --------------------------------------------------------------------------
+        */
+        $num=intval( $data['sezione'].substr($data['anno'],3,1).substr(str_pad($data['azienda'],2,'0',STR_PAD_LEFT),0,2).substr(str_pad($data['protocollo'],5,'0',STR_PAD_LEFT),-5) );
+        $base='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $r = $num  % $b ;
+        $res = $base[$r];
+        $q = floor($num/$b);
+        while ($q) {
+            $r = $q % $b;
+            $q =floor($q/$b);
+            $res = $base[$r].$res;
+        }
+        return $res;
+    }
+    
+    function decodeFromSendingNumber( $num, $b=62) {
+        $base='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $limit = strlen($num);
+        $res=strpos($base,$num[0]);
+        for($i=1;$i<$limit;$i++) {
+            $res = $b * $res + strpos($base,$num[$i]);
+        }
+        return $res;
+    }
 }
 
 
@@ -634,14 +666,17 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
         $results->appendChild($el);
     }
    
-    //occorre effettuare alcune validazioni sul numero e sull'id
-    $nome_file = "IT" .  $id_test . "_" .substr($XMLvars->azienda['codice'].$XMLvars->protoc,0,5);
-    //rendere dinamico il nome del file    
-    
+    // faccio l'encode per ricavare il numero unico di invio
+    $data=array('azienda'=>$XMLvars->azienda['codice'],
+                'anno'=>$XMLvars->docRelDate,
+                'sezione'=>$XMLvars->seziva,
+                'protocollo'=>$XMLvars->protoc);
+    $numero_unico_invio= $XMLvars->encodeSendingNumber($data);
+    // print $XMLvars->decodeFromSendingNumber($numero_unico_invio);
+    $nome_file = "IT" .  $id_test . "_" .$numero_unico_invio;
     header("Content-type: text/plain");
     header("Content-Disposition: attachment; filename=". $nome_file .".xml");
     print $domDoc->saveXML();
-
 }
 
 
