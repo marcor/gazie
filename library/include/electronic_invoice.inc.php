@@ -306,17 +306,17 @@ class invoiceXMLvars
     }
 
     function encodeSendingNumber($data, $b=62) {
-        // questa funzione converte un numero decimale in uno a base 36
-        /* -- SCHEMA DEI DATI PER INVIO TRAMITE INTERMEDIARIO $data[intemediary] =true --
+        /* questa funzione mi serve per convertire un numero decimale in uno a base 36
+           -- SCHEMA DEI DATI PER INVIO TRAMITE INTERMEDIARIO $data[intemediary] =true --
             |   SEZIONE IVA   |  ANNO DOCUMENTO  |  CODICE AZIENDA  | NUMERO PROTOCOLLO |
             |     INT (1)     |      INT(1)      |       INT(2)     |      INT(4)       |
-            |        3        |        9         |         99       |      99999        |
+            |        3        |        9         |         99       |      9999         |
             | $data[sezione]  |   $data[anno]    |  $data[azienda]  | $data[protocollo] |
            ------------------------------------------------------------------------------
-           -- SCHEMA DEI DATI PER INVIO TRAMITE INTERMEDIARIO $data[intemediary]=false --
+           --- SCHEMA DEI DATI PER INVIO SENZA INTERMEDIARIO $data[intemediary]=false ---
             |   SEZIONE IVA   |  ANNO DOCUMENTO  |         NUMERO PROTOCOLLO            |
             |     INT (1)     |      INT(1)      |                INT(6)                |
-            |        3        |        9         |               9999999                |
+            |        3        |        9         |                999999                |
             | $data[sezione]  |   $data[anno]    |           $data[protocollo]          |
            ------------------------------------------------------------------------------
         */
@@ -340,7 +340,7 @@ class invoiceXMLvars
         return $res;
     }
     
-    function decodeFromSendingNumber( $num, $b=36) {
+    function decodeFromSendingNumber( $num, $b=62) {
         $base='0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
         $limit = strlen($num);
         $res=strpos($base,$num[0]);
@@ -378,9 +378,9 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		   $attrVal = $domDoc->createTextNode( "SDI10" );	   
 		   $results->appendChild($attrVal);
       
-         $id_test=$XMLvars->IdCodice;
+         $codice_trasmittente=$XMLvars->IdCodice;
          $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);		
-		   $attrVal = $domDoc->createTextNode($id_test);	   
+		   $attrVal = $domDoc->createTextNode($codice_trasmittente);	   
 		   $results->appendChild($attrVal);	
     
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese")->item(0);		
@@ -483,8 +483,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
       } elseif($ctrl_doc <> $XMLvars->docRelNum){ // quando cambia il DdT
         /*
-        qui devo aggiungere una linea descrittiva come si fa sui cartacei oppure
-        fare altro in base alla normativa? DA CHIARIRE!!!!                      
+           in caso di necessità qui potrò aggiungere linee di codice                       
         */ 
       }
       //elenco beni in fattura  
@@ -504,8 +503,8 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
 			$el_ddt->appendChild($el1);
           
-          $results->appendChild($el_ddt);
-          $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
+                    $results->appendChild($el_ddt);
+                    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
                 }
                 switch($rigo['tiprig']) {
                 case "0":
@@ -524,13 +523,18 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
 			$el->appendChild($el1);
-      if ($rigo['pervat'] <= 0 ) {
-         $el1= $domDoc->createElement("Natura", $rigo['natura']);
-			   $el->appendChild($el1);
-      }
-			$results->appendChild($el);
-			$n_linea++;
-                   break;
+                        if ($rigo['pervat'] <= 0 ) {
+                            $el1= $domDoc->createElement("Natura", $rigo['natura']);
+                            $el->appendChild($el1);
+                        }
+		    $results->appendChild($el);
+		    $n_linea++;
+                    break;
+
+/*  ------------------- !!!!!!!!!!!!  A T T E N Z I O N E  Q U I !!!!!!!!!!!!!
+    ------------------- COSA NE FACCIAMO DEGLI ALTRI TIPI DI RIGO ? -----------------------------
+    ------------------- DOVE LI ANDIAMO A METTERE, VISTO  CHE IL TRACCIATO NON LI PREVEDE? ------
+*/
                 case "1":
                     /*
 					$this->Cell(25, 5, $rigo['codart'],1,0,'L');
@@ -549,20 +553,24 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                     break;
                 case "3":
                     /*
-					$this->Cell(25,5,'',1,0,'L');
+                    $this->Cell(25,5,'',1,0,'L');
                     $this->Cell(80,5,$rigo['descri'],'B',0,'L');
                     $this->Cell(49,5,'','B',0,'L');
                     $this->Cell(20,5,gaz_format_number($rigo['prelis']),1,0,'R');
                     $this->Cell(12,5,'',1,1,'R');
-					*/
+                    */
                     break;
                 case "6":
                 case "8":
                     /*
-					$this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
-					*/
+                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
+		    */
                     break;
+/*   ------------------- COSA NE FACCIAMO DEI TIPI DI RIGO DI SOPRA? -----------------------------
+     ------------------- DOVE LI ANDIAMO A METTERE, VISTO  CHE IL TRACCIATO NON LI PREVEDE? ------
+*/
                     
+
                 case "11":
                      $cig= $rigo['descri'];
                      break;
@@ -574,11 +582,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                      break;                                               
                 }
                 if ($rigo['ritenuta']>0) {
-                    /*
-					$this->Cell(154, 5,'Ritenuta d\'acconto al '.gaz_format_number($rigo['ritenuta']).'%','LB',0,'R');
-                    $this->Cell(20, 5,gaz_format_number(round($rigo['importo']*$rigo['ritenuta']/100,2)),'RB',0,'R');
-                    $this->Cell(12, 5,'',1,1,'R');
-					*/
+                    /*		*/
                 }
         }
         $ctrl_doc =  $XMLvars->tesdoc['numdoc'];
@@ -587,19 +591,17 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     //dati ordine di acquisto
     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
     if ($id_documento !="") {
-          $el_datiOrdineAcquisto = $domDoc->createElement("DatiOrdineAcquisto","");
-					$el1= $domDoc->createElement("IdDocumento", $id_documento);
-					$el_datiOrdineAcquisto->appendChild($el1);
+        $el_datiOrdineAcquisto = $domDoc->createElement("DatiOrdineAcquisto","");
+            $el1= $domDoc->createElement("IdDocumento", $id_documento);
+            $el_datiOrdineAcquisto->appendChild($el1);
     }      
-
     if ($id_documento !="" and $cup !="") {
-					$el1= $domDoc->createElement("CodiceCUP", $cup);
-					$el_datiOrdineAcquisto->appendChild($el1);
+            $el1= $domDoc->createElement("CodiceCUP", $cup);
+            $el_datiOrdineAcquisto->appendChild($el1);
     }
-
     if ($id_documento !="" and $cig !="") {
-					$el1= $domDoc->createElement("CodiceCIG", $cig);
-					$el_datiOrdineAcquisto->appendChild($el1);
+            $el1= $domDoc->createElement("CodiceCIG", $cig);
+            $el_datiOrdineAcquisto->appendChild($el1);
     }
     //occorre testare qui se presente il ddt altrimeni occorrera' fare l'insertbefore
     if ($id_documento !="") {
@@ -677,18 +679,27 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
             $el->appendChild($el1);
             $el1= $domDoc->createElement("ImportoPagamento",$v['amount']); // 2.4.2.6
             $el->appendChild($el1);
+            if ($XMLvars->pagame['tippag']=='B'){ // se il pagamento è una RiBa indico CAB e ABI
+                $el1= $domDoc->createElement("ABI",$XMLvars->banapp['codabi']); // 2.4.2.14
+                $el->appendChild($el1);
+                $el1= $domDoc->createElement("CAB",$XMLvars->banapp['codcab']); // 2.4.2.15
+                $el->appendChild($el1);
+            } elseif(!empty($XMLvars->banacc['iban'])) { // se il pagamento ha un IBAN associato
+                $el1= $domDoc->createElement("IBAN",$XMLvars->banacc['iban']); // 2.4.2.13
+                $el->appendChild($el1);
+            }
         $results->appendChild($el);
     }
    
-    // faccio l'encode per ricavare il numero unico di invio
+    // faccio l'encode per ricavare il progressivo unico di invio
     $data=array('azienda'=>$XMLvars->azienda['codice'],
                 'anno'=>$XMLvars->docRelDate,
                 'sezione'=>$XMLvars->seziva,
                 'protocollo'=>$XMLvars->protoc,
                 'intermediary'=>$XMLvars->Intermediary);
-    $numero_unico_invio= $XMLvars->encodeSendingNumber($data,36);
-    //print $XMLvars->decodeFromSendingNumber($numero_unico_invio);
-    $nome_file = "IT" .  $id_test . "_" .$numero_unico_invio;
+    $progressivo_unico_invio= $XMLvars->encodeSendingNumber($data,36);
+    //print $XMLvars->decodeFromSendingNumber($progressivo_unico_invio);
+    $nome_file = "IT".$codice_trasmittente."_".$progressivo_unico_invio;
     header("Content-type: text/plain");
     header("Content-Disposition: attachment; filename=". $nome_file .".xml");
     print $domDoc->saveXML();

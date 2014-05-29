@@ -7,6 +7,8 @@ ALTER TABLE `gaz_XXXrigdoc` CHANGE `tiprig` `tiprig` INT( 2 ) NOT NULL DEFAULT '
 ALTER TABLE `gaz_XXXportos` ADD `incoterms` VARCHAR( 3 ) NOT NULL AFTER `descri`;
 UPDATE `gaz_XXXportos` SET `incoterms`='EXW' WHERE 1;
 ALTER TABLE `gaz_XXXpagame` ADD `fae_mode` VARCHAR( 4 ) NOT NULL AFTER `tiprat`;
+UPDATE `gaz_XXXpagame` SET `fae_mode`='MP12' WHERE `tippag` = 'B';
+UPDATE `gaz_XXXpagame` SET `fae_mode`='MP01' WHERE `tippag` = 'C';
 ALTER TABLE `gaz_XXXaliiva` ADD `fae_natura` VARCHAR( 2 ) NOT NULL AFTER `aliquo` ;
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N1' WHERE `tipiva` = 'C';
 UPDATE `gaz_XXXaliiva` SET `fae_natura`='N2' WHERE `tipiva` = 'S';
