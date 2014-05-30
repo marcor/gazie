@@ -1450,7 +1450,7 @@ foreach ($form['rows'] as $k => $v) {
             $scorta_col = 'FacetDataTDsmall';
         }
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."! Sottoscorta =".$v['scorta']."\"><input class=\"$scorta_col\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$v['codart']."\" /></td>\n";
-        echo "<td $boxover><input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td $boxover><input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
         echo "<td $boxpeso><input type=\"text\" name=\"rows[$k][unimis]\" value=\"".$v['unimis']."\" maxlength=\"3\" size=\"1\" /></td>\n";
         echo "<td $boxpeso><input type=\"text\" name=\"rows[$k][quanti]\" value=\"".$v['quanti']."\" align=\"right\" maxlength=\"11\" size=\"4\" onchange=\"this.form.hidden_req.value='ROW'; this.form.submit();\" /></td>\n";
         echo "<td><input type=\"text\" name=\"rows[$k][prelis]\" value=\"".$v['prelis']."\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
@@ -1463,7 +1463,7 @@ foreach ($form['rows'] as $k => $v) {
         case "1":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
               <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
@@ -1476,7 +1476,7 @@ foreach ($form['rows'] as $k => $v) {
         case "2":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
               <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>\n";
@@ -1489,7 +1489,7 @@ foreach ($form['rows'] as $k => $v) {
         case "3":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
               <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\"></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
@@ -1517,7 +1517,7 @@ foreach ($form['rows'] as $k => $v) {
         case "13":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
               <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>\n";

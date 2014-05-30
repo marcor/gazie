@@ -204,9 +204,20 @@ class invoiceXMLvars
         $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva, vat.fae_natura AS natura',$from, "rows.id_tes = ".$this->testat,"id_tes DESC, id_rig");
         $this->riporto =0.00;
         $this->ritenuta=0.00;
+        $righiDescrittivi=array();
+        $last_normal_row=0;
+        $nr=1;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             if ($rigo['tiprig'] <= 1) {
+                $last_normal_row=$nr; // mi potrebbe servire se alla fine dei righi mi ritrovo con dei descrittivi non ancora indicizzati perché seguono l'ultimo rigo normale
+                // se ho avuto dei righi descrittivi che hanno preceduto  questo allora li inputo a questo rigo
+                if (isset($righiDescrittivi[0])) {
+                    foreach ($righiDescrittivi[0] as $v) {
+                        $righiDescrittivi[$nr][]=$v; // faccio il push su un array indicizzato con $nr (numero rigo)
+                    }
+                }
+                unset ($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'],$this->tesdoc['sconto']));
                 if ($rigo['tiprig'] == 1) {
@@ -227,16 +238,36 @@ class invoiceXMLvars
                 $this->totimp_body += $rigo['importo'];
                 $this->ritenuta += round($rigo['importo']*$rigo['ritenuta']/100,2);
                 $this->totimp_doc += $v_for_castle;
+            } elseif ($rigo['tiprig']==2) { // descrittivo
+                // faccio il push su un array ancora da indicizzare (0)
+                $righiDescrittivi[0][]=$rigo['descri'];
             } elseif ($rigo['tiprig']>5 && $rigo['tiprig']<9) {
                $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body",$rigo['id_body_text']);
                $rigo['descri'] = $body_text['body_text'];
-            } elseif ($rigo['tiprig'] == 3) {
+            } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
                $this->riporto += $rigo['prelis'];
             }
-            $results[] = $rigo;
+            $results[$nr] = $rigo;
+            $nr++;
             //creo il castelletto IVA ma solo se del tipo normale o forfait
         }
-        return $results;
+        /* se finiti i righi ho incontrato dei descrittivi che non sono stati
+           imputati a dei righi normali perché successivi a questi allora
+           li imputo all'ultimo normale incontrato
+        */
+        if (isset($righiDescrittivi[0])) {
+            foreach ($righiDescrittivi[0] as $v) {
+                $righiDescrittivi[$last_normal_row][]=$v; // faccio il push su un array indicizzato con $nr (numero rigo)
+            }
+        }
+        unset($righiDescrittivi[0]);
+        foreach ($results as $k => $v) { // associo l'array dei righi descrittivi con quello del righo corrispondente
+            $r[$k]=$v;
+            if (isset($righiDescrittivi[$k])){
+                $r[$k]['descrittivi']= $righiDescrittivi[$k];
+            }
+        }
+        return $r;
     }
 
     function setXMLtot($totTrasporto=0)
@@ -507,7 +538,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
                 }
                 switch($rigo['tiprig']) {
-                case "0":
+                case "0":       // normale
                     $el = $domDoc->createElement("DettaglioLinee","");					 
 			$el1= $domDoc->createElement("NumeroLinea", $n_linea);
 			$el->appendChild($el1);
@@ -527,50 +558,53 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                             $el1= $domDoc->createElement("Natura", $rigo['natura']);
                             $el->appendChild($el1);
                         }
+                        if (isset($rigo['descrittivi'] )) {
+                            foreach($rigo['descrittivi'] as $k=>$v){
+                                $el1= $domDoc->createElement("AltriDatiGestionali", '');
+                                $el->appendChild($el1);
+                                    $el2= $domDoc->createElement("TipoDato", 'txt'.$k);
+                                    $el1->appendChild($el2);
+                                    $el2= $domDoc->createElement("RiferimentoTesto", $v);
+                                    $el1->appendChild($el2);
+                            }
+                        }
 		    $results->appendChild($el);
 		    $n_linea++;
                     break;
 
-/*  ------------------- !!!!!!!!!!!!  A T T E N Z I O N E  Q U I !!!!!!!!!!!!!
-    ------------------- COSA NE FACCIAMO DEGLI ALTRI TIPI DI RIGO ? -----------------------------
-    ------------------- DOVE LI ANDIAMO A METTERE, VISTO  CHE IL TRACCIATO NON LI PREVEDE? ------
-*/
-                case "1":
-                    /*
-					$this->Cell(25, 5, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 5, $rigo['descri'],1,0,'L');
-                    $this->Cell(49, 5, '',1);
-                    $this->Cell(20, 5, gaz_format_number($rigo['importo']),1,0,'R');
-                    $this->Cell(12, 5, gaz_format_number($rigo['pervat']),1,1,'R');
-					*/
+                case "1":       // forfait
+                    $el = $domDoc->createElement("DettaglioLinee","");					 
+			$el1= $domDoc->createElement("NumeroLinea", $n_linea);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("Descrizione", substr($rigo['descri'], 0, 100));
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("PrezzoUnitario", number_format($rigo['importo'],2,'.',''));
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'],2,'.',''));
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
+			$el->appendChild($el1);
+                        if ($rigo['pervat'] <= 0 ) {
+                            $el1= $domDoc->createElement("Natura", $rigo['natura']);
+                            $el->appendChild($el1);
+                        }
+		    $results->appendChild($el);
+		    $n_linea++;
                     break;
-                case "2":
-                    /*
-					$this->Cell(25,5,'','L');
-                    $this->Cell(80,5,$rigo['descri'],'LR',0,'L');
-                    $this->Cell(81,5,'','R',1);
+                case "2":       // descrittivo
+                    /* ! ATTENZIONE: tipo rigo spostato in appendice <2.2.1.16> ai righi "normale" !!!
 					*/
+                    
                     break;
-                case "3":
-                    /*
-                    $this->Cell(25,5,'',1,0,'L');
-                    $this->Cell(80,5,$rigo['descri'],'B',0,'L');
-                    $this->Cell(49,5,'','B',0,'L');
-                    $this->Cell(20,5,gaz_format_number($rigo['prelis']),1,0,'R');
-                    $this->Cell(12,5,'',1,1,'R');
-                    */
+                case "3":       // variazione totale fatture 
+                    /* ! ATTENZIONE: questa tipologia di rigo non si deve utilizzare in caso di PA !!!
+					*/
                     break;
                 case "6":
                 case "8":
-                    /*
-                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
-		    */
+                    /* ! ATTENZIONE: tipo rigo spostato in appendice <2.2.1.16>  ai righi "normale" !!!
+                                        */
                     break;
-/*   ------------------- COSA NE FACCIAMO DEI TIPI DI RIGO DI SOPRA? -----------------------------
-     ------------------- DOVE LI ANDIAMO A METTERE, VISTO  CHE IL TRACCIATO NON LI PREVEDE? ------
-*/
-                    
-
                 case "11":
                      $cig= $rigo['descri'];
                      break;
