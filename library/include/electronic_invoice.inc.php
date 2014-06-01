@@ -208,6 +208,7 @@ class invoiceXMLvars
         $last_normal_row=0;
         $nr=1;
         $results = array();
+        $dom = new DOMDocument;
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             if ($rigo['tiprig'] <= 1) {
                 $last_normal_row=$nr; // mi potrebbe servire se alla fine dei righi mi ritrovo con dei descrittivi non ancora indicizzati perché seguono l'ultimo rigo normale
@@ -239,11 +240,20 @@ class invoiceXMLvars
                 $this->ritenuta += round($rigo['importo']*$rigo['ritenuta']/100,2);
                 $this->totimp_doc += $v_for_castle;
             } elseif ($rigo['tiprig']==2) { // descrittivo
-                // faccio il push su un array ancora da indicizzare (0)
-                $righiDescrittivi[0][]=$rigo['descri'];
-            } elseif ($rigo['tiprig']>5 && $rigo['tiprig']<9) {
-               $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body",$rigo['id_body_text']);
-               $rigo['descri'] = $body_text['body_text'];
+                // faccio prima il parsing XML e poi il push su un array ancora da indicizzare (0)
+                $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'],ENT_XML1);
+            } elseif ($rigo['tiprig']==6 || $rigo['tiprig']==8) {
+                $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body",$rigo['id_body_text']);
+                $dom->loadHTML($body_text['body_text']);
+                $rigo['descri'] = strip_tags($dom->saveXML());
+                $res=explode("\n", wordwrap($rigo['descri'], 60, "\n"));
+                // faccio il push ricorsivo su un array ancora da indicizzare (0)
+                foreach($res as $v){
+                    $ctrl_v=trim($v);
+                    if (! empty($ctrl_v)){
+                        $righiDescrittivi[0][]=$v;
+                    }
+                }
             } elseif ($rigo['tiprig'] == 3) {  // var.totale fattura
                $this->riporto += $rigo['prelis'];
             }
