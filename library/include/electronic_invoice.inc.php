@@ -687,13 +687,13 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	    $el->appendChild($el1);
 	    $el1= $domDoc->createElement("UnitaMisuraPeso", 'kg');
 	    $el->appendChild($el1);
-	    $el1= $domDoc->createElement("PesoNetto", $XMLvars->tesdoc['net_weight']);
-	    $el->appendChild($el1);
 	    $el1= $domDoc->createElement("PesoLordo", $XMLvars->tesdoc['gross_weight']);
+	    $el->appendChild($el1);
+	    $el1= $domDoc->createElement("PesoNetto", $XMLvars->tesdoc['net_weight']);
 	    $el->appendChild($el1);
 	    $el1= $domDoc->createElement("DataInizioTrasporto", substr($XMLvars->tesdoc['initra'],0,10));
 	    $el->appendChild($el1);
-	    $el1= $domDoc->createElement("DataOraConsegna", substr($XMLvars->tesdoc['initra'],0,16));
+	    $el1= $domDoc->createElement("DataOraConsegna", substr($XMLvars->tesdoc['initra'],0,10).' '.substr($XMLvars->tesdoc['initra'],11,5));
 	    $el->appendChild($el1);
         $results->appendChild($el);
     }
