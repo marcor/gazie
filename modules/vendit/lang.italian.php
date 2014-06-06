@@ -524,7 +524,7 @@ $strScript = array ("admin_client.php" =>
                            ),
                     "genera_effett.php" =>
                     array( 'title'=>'Genera gli effetti a partire dai documenti fiscali',
-                           'errors'=>array('Non ci sono documenti che possono genare effetti nell\'intervallo selezionato'
+                           'errors'=>array('Non ci sono documenti che possono generare effetti nell\'intervallo selezionato'
                                           ),
                            'preview'=>'Anteprima della generazione degli effetti',
                            'date_reg'=>'Data',
