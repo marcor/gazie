@@ -693,7 +693,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	    $el->appendChild($el1);
 	    $el1= $domDoc->createElement("DataInizioTrasporto", substr($XMLvars->tesdoc['initra'],0,10));
 	    $el->appendChild($el1);
-	    $el1= $domDoc->createElement("DataOraConsegna", substr($XMLvars->tesdoc['initra'],0,10).' '.substr($XMLvars->tesdoc['initra'],11,5));
+	    $el1= $domDoc->createElement("DataOraConsegna", substr($XMLvars->tesdoc['initra'],0,10).'T'.substr($XMLvars->tesdoc['initra'],11,8));
 	    $el->appendChild($el1);
         $results->appendChild($el);
     }
