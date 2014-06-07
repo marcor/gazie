@@ -2,15 +2,17 @@ Titolo:
 Captatio benevolentiæ.
 
 Modifiche apportate:
-Questa release è frutto di un assiduo lavoro collaborativo con Giulio Valentino ed è stato tutto incentrato sulla produzione del tracciato (file) XML della fattura elettronica per la pubblica amministrazione. 
+Questa release è frutto di un mese di assiduo lavoro collaborativo con Giulio Valentino ed è stato tutto incentrato sulla produzione del tracciato (file) XML della fattura elettronica per la pubblica amministrazione. 
 Di seguito riportiamo i passi principali da compiere per poter permettere al nostro software la corretta generazione della fattura elettronica da firmare ed inviare all'ufficio destinatario.
 
 1) Aggiungere al cliente (Vendite->Clienti) il "Codice Univoco Destinatario".
-2) Aggiungere alla modalità di pagamento (Archivi di Base->Pagamenti) usato dello stesso il campo "Modalità fatt.elettronica PA"
-3) All'atto della emissione della fattura stessa aggiungere sul corpo i righi tipo "13 - IdDocumento" che è propedeutico ai tipi righi "11 - CIG" e "12 - CUP".
-Dopo aver inserito correttamente i dati sopra indicati vi ritroverete un report delle fatture con l'apposita colonna "FAE" con una icona colorata, cliccandoci avrete il file .xml da firmare ed inviare, per le prime volte è consigliabile sottoporre lo stesso al vaglio (controllo formale) sull'apposita pagina web messa a disposizione sul sito 
+2) Aggiungere alla modalità di pagamento (Archivi di Base->Pagamenti) usato dello stesso il campo "Modalità fatt.elettronica PA".
+3) All'atto della emissione della fattura stessa aggiungere sul corpo i righi tipo "13 - IdDocumento" che è indispensabile e propedeutico ai tipi righi "11 - CIG" e "12 - CUP".
+4) Rivedere tutte le aliquote IVA (Archivi di base->Aliquote IVA) senza addebito d'imposta (esclusi,esenti,non soggetti, ecc) e controllare se il valore "Natura fatt.elettronica PA" è giusto.
+
+Dopo aver inserito correttamente i dati sopra indicati vi ritroverete un report delle fatture con l'apposita colonna "FAE" con una icona colorata sulle fatture relative ai clienti della PA, ovvero quelli che hanno valorizzato il "Codice Univoco Destinatario" (vedi sopra punto 1). Cliccando su di essa avrete il file .xml da firmare ed inviare, per le prime volte è consigliabile sottoporre lo stesso al vaglio (controllo formale) sull'apposita pagina web messa a disposizione sul sito: 
 
 http://sdi.fatturapa.gov.it/SdI2FatturaPAWeb/AccediAlServizioAction.do?pagina=controlla_fattura
 
 
-Antonio de Vincentiis, Montesilvano, XX Giugno 2014
+Antonio de Vincentiis, Montesilvano, 7 Giugno 2014
