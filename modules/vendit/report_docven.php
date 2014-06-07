@@ -56,7 +56,7 @@ if (isset($_GET['protoc'])) {
 if (isset($_GET['cliente'])) {
    if ($_GET['cliente'] <> '') {
       $cliente = $_GET['cliente'];
-      $where = " tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' and ".$gTables['clfoco'].".descri like '%$cliente%' GROUP BY protoc, datfat";
+      $where = " tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' and ".$gTables['clfoco'].".descri like '%".addslashes($cliente)."%' GROUP BY protoc, datfat";
       $auxil = $_GET['auxil']."&cliente=".$cliente;
       $passo = 50;
       unset($protocollo);
