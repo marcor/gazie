@@ -40,12 +40,21 @@ if (isset($_GET['auxil'])) {
    $auxil = "";
 }
 
+if (isset($_GET['auxil1'])) {
+   $auxil1 = $_GET['auxil1'];
+} else {
+   $auxil1 = "";
+}
+
 if (isset($_GET['all'])) {
    $auxil = "&all=yes";
    $passo = 100000;
 } else {
-   if (isset($_GET['auxil'])) {
+   if (isset($_GET['auxil']) and $auxil1=="") {
       $where .= " AND ragso1 LIKE '".addslashes($auxil)."%'";
+   } elseif (isset($_GET['auxil1'])) {
+      $codicetemp = intval($mascli)+intval($auxil1); 
+      $where .= " AND codice LIKE '".$codicetemp."%'";
    }
 }
 
@@ -65,9 +74,11 @@ if (!isset($_GET['field'])) {
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <table class="Tlarge">
 <tr>
-<td></td>
+<td class="FacetFieldCaptionTD">
+<input type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
+</td>
 <td class="FacetFieldCaptionTD">Ragione sociale:
-<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
 </td>
 <td>
 <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
