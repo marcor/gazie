@@ -1135,6 +1135,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['caumag'] = 0;
     $form['sconto'] = 0;
     $cliente['indspe']="";
+    $cliente['fe_cod_univoco']="";
 }
 
 require("../../library/include/header.php");
@@ -1256,8 +1257,11 @@ if (!empty($msg)) {
     }
     echo '<td colspan="4" class="FacetDataTDred">'.$message."</td>\n";
 } else {
-    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td colspan=\"3\">".$cliente['indspe']."<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td colspan=\"1\">".$cliente['indspe']."<br />";
     echo "</td>\n";
+    echo "<td class=\"FacetFieldCaptionTD\">Cod.Univoco</td><td colspan=\"1\">".$cliente['fe_cod_univoco']."<br />";
+    echo "</td>\n";
+    
 }
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\">\n";
 // select del giorno
