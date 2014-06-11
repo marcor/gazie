@@ -1262,12 +1262,12 @@ if (!empty($msg)) {
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td colspan=\"1\">".$cliente['indspe']."<br />";
     echo "</td>\n";
     
-    if ($cliente['pariva'] == "") {
-    echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td colspan=\"1\">".$cliente['codfis']."<br />";
+    if ($cliente['pariva'] > 0) {
+    echo "<td class=\"FacetFieldCaptionTD\">P.IVA</td><td colspan=\"1\">".$cliente['pariva']."<br />";
     echo "</td>\n";
     } else
     {
-    echo "<td class=\"FacetFieldCaptionTD\">P. IVA</td><td colspan=\"1\">".$cliente['pariva']."<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td colspan=\"1\">".$cliente['codfis']."<br />";
     echo "</td>\n";
     }    
 }
