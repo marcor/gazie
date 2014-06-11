@@ -1136,6 +1136,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['sconto'] = 0;
     $cliente['indspe']="";
     $cliente['fe_cod_univoco']="";
+    $cliente['codfis']="";
+    $cliente['pariva']="";
 }
 
 require("../../library/include/header.php");
@@ -1259,9 +1261,15 @@ if (!empty($msg)) {
 } else {
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td colspan=\"1\">".$cliente['indspe']."<br />";
     echo "</td>\n";
-    echo "<td class=\"FacetFieldCaptionTD\">Cod.Univoco</td><td colspan=\"1\">".$cliente['fe_cod_univoco']."<br />";
-    echo "</td>\n";
     
+    if ($cliente['pariva'] == "") {
+    echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td colspan=\"1\">".$cliente['codfis']."<br />";
+    echo "</td>\n";
+    } else
+    {
+    echo "<td class=\"FacetFieldCaptionTD\">P. IVA</td><td colspan=\"1\">".$cliente['pariva']."<br />";
+    echo "</td>\n";
+    }    
 }
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\">\n";
 // select del giorno
@@ -1305,11 +1313,16 @@ for ($lis = 1; $lis <= 3; $lis++) {
     echo "<option value=\"".$lis."\"".$selected.">".$lis."</option>\n";
 }
 echo "</select></td>\n";
-echo "<td class=\"FacetFieldCaptionTD\">$script_transl[8]</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">$script_transl[8]</td><td colspan=\"1\" class=\"FacetDataTD\">\n";
 $select_pagame = new selectpagame("pagame");
 $select_pagame -> addSelected($form["pagame"]);
 $select_pagame -> output();
-echo "</td><td class=\"FacetFieldCaptionTD\">$script_transl[9]</td><td  class=\"FacetDataTD\">\n";
+echo "</td>";
+
+echo "<td class=\"FacetFieldCaptionTD\">Cod.Univoco</td><td colspan=\"1\">".$cliente['fe_cod_univoco']."<br />";
+echo "</td>\n";
+
+echo "<td class=\"FacetFieldCaptionTD\">$script_transl[9]</td><td  class=\"FacetDataTD\">\n";
 $select_banapp = new selectbanapp("banapp");
 $select_banapp -> addSelected($form["banapp"]);
 $select_banapp -> output();
