@@ -1531,10 +1531,23 @@ foreach ($form['rows'] as $k => $v) {
         break;
         case "11":
         case "12":
-        case "13":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
               <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" /></td>\n";
         echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
+        echo "<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>\n";
+        echo "<td></td>\n";
+        echo "<td></td>\n";
+        echo "<td></td>\n";
+        break;
+
+        case "13":
+        echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
+              <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" /></td>\n";
+        echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"21\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>\n";
