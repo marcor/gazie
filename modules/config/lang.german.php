@@ -123,6 +123,8 @@ $strScript = array ("admin_aziend.php" =>
                            'round_bol'=>'Runde von Briefmarken',
                            'round_bol_value'=>array(1=>'cent',5=>'cents',10=>'cents',
                                                     50=>'cents',100=>'cents (unit)'),
+                           'virtual_stamp_auth_prot'=>'Virtual stamp authorizzation number ',
+                           'virtual_stamp_auth_date'=>' date ',
                            'sperib'=>'RIBA Inkassokosten verrechnet werden',
                            'desez'=>'Beschreibung des',
                            'fatimm'=>'Abschnitt der unmittelbaren Abrechnung',

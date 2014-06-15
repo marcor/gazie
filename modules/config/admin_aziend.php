@@ -42,6 +42,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['mascli'] = intval(substr($_POST['mascli'],0,3));
     $form['masfor'] = intval(substr($_POST['masfor'],0,3));
     $form['masban'] = intval(substr($_POST['masban'],0,3));
+    $form['virtual_stamp_auth_date_Y'] = intval($_POST['virtual_stamp_auth_date_Y']);
+    $form['virtual_stamp_auth_date_M'] = intval($_POST['virtual_stamp_auth_date_M']);
+    $form['virtual_stamp_auth_date_D'] = intval($_POST['virtual_stamp_auth_date_D']);
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
@@ -157,6 +160,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = substr($form['datnas'],0,4);
     $form['datnas_M'] = substr($form['datnas'],5,2);
     $form['datnas_D'] = substr($form['datnas'],8,2);
+    $form['virtual_stamp_auth_date_Y'] = substr($form['virtual_stamp_auth_date'],0,4);
+    $form['virtual_stamp_auth_date_M'] = substr($form['virtual_stamp_auth_date'],5,2);
+    $form['virtual_stamp_auth_date_D'] = substr($form['virtual_stamp_auth_date'],8,2);
     // rilevo l'eventuale intermediario
     $intermediary = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
     $form['intermediary_code'] = $intermediary['cvalue'];
@@ -173,6 +179,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = date("Y");
     $form['datnas_M'] = date("m");
     $form['datnas_D'] = date("d");
+    $form['virtual_stamp_auth_date_Y'] = 1970;
+    $form['virtual_stamp_auth_date_M'] = 1;
+    $form['virtual_stamp_auth_date_D'] = 1;
     $form['country'] ='IT';
     $form['id_language']=1;
     $form['id_currency']=1;
@@ -596,6 +605,13 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['round_bol']."</td><td 
 $gForm->variousSelect('round_bol',$script_transl['round_bol_value'],$form['round_bol']);
 echo "\t </td>\n";
 echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['virtual_stamp_auth_prot']." </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"virtual_stamp_auth_prot\" value=\"".$form['virtual_stamp_auth_prot']."\" align=\"right\" maxlength=\"14\" size=\"14\" />\n";
+echo $script_transl['virtual_stamp_auth_date'];
+$gForm->CalendarPopup('virtual_stamp_auth_date',$form['virtual_stamp_auth_date_D'],$form['virtual_stamp_auth_date_M'],$form['virtual_stamp_auth_date_Y']);
+echo "</td></tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sperib']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">

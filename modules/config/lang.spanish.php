@@ -125,6 +125,8 @@ $strScript = array ("admin_aziend.php" =>
                            'round_bol'=>'Redondeo de Estampillas',
                            'round_bol_value'=>array(1=>'cent',5=>'cents',10=>'cents',
                                                     50=>'cents',100=>'cents (unidad)'),
+                           'virtual_stamp_auth_prot'=>'Virtual stamp authorizzation number ',
+                           'virtual_stamp_auth_date'=>' date ',
                            'sperib'=>'RIBA gastos de recaudaci&oacute;n a ser cargados ',
                            'desez'=>'Descripcion de ',
                            'fatimm'=>'Secci&oacute;n de factura inmediata',

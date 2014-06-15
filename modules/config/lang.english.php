@@ -121,6 +121,8 @@ $strScript = array ("admin_aziend.php" =>
                            'round_bol'=>'Round of stamps',
                            'round_bol_value'=>array(1=>'cent',5=>'cents',10=>'cents',
                                                     50=>'cents',100=>'cents (unit)'),
+                           'virtual_stamp_auth_prot'=>'Virtual stamp authorizzation number ',
+                           'virtual_stamp_auth_date'=>' date ',
                            'sperib'=>'RIBA collection costs to be charged ',
                            'desez'=>'Description of ',
                            'fatimm'=>'Sezione delle Fatture Immediate',

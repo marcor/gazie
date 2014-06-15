@@ -122,6 +122,8 @@
                            'round_bol'=>'Arrotondamento bolli',
                            'round_bol_value'=>array(1=>'centesimo',5=>'centesimi',10=>'centesimi',
                                                     50=>'centesimi',100=>'centesimi (unit&agrave;)'),
+                           'virtual_stamp_auth_prot'=>'Protocollo autorizzazione bollo virtuale ',
+                           'virtual_stamp_auth_date'=>' rilasciata il ',
                            'sperib'=>'Spese incasso RIBA da addebitare ',
                            'desez'=>'Descrizione della ',
                            'fatimm'=>'Sezione delle Fatture Immediate',
