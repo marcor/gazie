@@ -547,6 +547,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"ritenuta\" value=\"".$form['ritenuta']."\" align=\"right\" maxlength=\"4\" size=\"4\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['causale_pagam_770']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->variousSelect('causale_pagam_770',$script_transl['causale_pagam_770_value'],$form['causale_pagam_770'],'FacetSelect',true,'',100);
+echo "\t </td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['upgrie']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"upgrie\" value=\"".$form['upgrie']."\" align=\"right\" maxlength=\"4\" size=\"4\" /></td>\n";

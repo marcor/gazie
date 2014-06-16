@@ -986,23 +986,26 @@ class GAzieForm
     }
 
 
-  function variousSelect($name,$transl,$sel,$class='FacetSelect',$bridge=true,$refresh='')
+  function variousSelect($name,$transl,$sel,$class='FacetSelect',$bridge=true,$refresh='',$maxlenght=false)
     {
         if (!empty($refresh)){
             $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
         }
         echo "<select name=\"$name\" id=\"$name\" class=\"$class\" $refresh>\n";
         foreach ($transl as $i=>$val) {
-             $selected='';
-             if ($bridge){
-                 $k = $i.' -';
-             } else {
-                 $k = '';
-             }
-             if ($sel == $i) {
-                 $selected = ' selected ';
-             }
-             echo "<option value=\"$i\"$selected>$k $val</option>\n";
+            if ($maxlenght){
+                $val = substr($val,0,$maxlenght);
+            }
+            $selected='';
+            if ($bridge){
+                $k = $i.' -';
+            } else {
+                $k = '';
+            }
+            if ($sel == $i) {
+                $selected = ' selected ';
+            }
+            echo "<option value=\"$i\"$selected>$k $val</option>\n";
         }
         echo "</select>\n";
     }
