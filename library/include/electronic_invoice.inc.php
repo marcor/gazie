@@ -667,7 +667,6 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     
     //iva
     
-    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
     
     //Attenzione qui 
     $XMLvars->setXMLtot();
@@ -694,6 +693,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1);
 		    $results->appendChild($el);
     }
+    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
     foreach ($XMLvars->cast as $key => $value) {          
         $el = $domDoc->createElement("DatiRiepilogo","");					 
             $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
