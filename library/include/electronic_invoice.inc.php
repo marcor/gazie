@@ -61,6 +61,12 @@ class invoiceXMLvars
 		}
 		$this->intesta4 = $admin_aziend['e_mail'];
         $this->intesta5 = $admin_aziend['sexper'];
+        if ($admin_aziend['sexper']=='G') {
+            $this->TipoRitenuta = 'RT02';
+        } else {
+            $this->TipoRitenuta = 'RT01';
+        }
+
         $this->colore = $admin_aziend['colore'];
         $this->decimal_quantity = $admin_aziend['decimal_quantity'];
         $this->decimal_price = $admin_aziend['decimal_price'];
@@ -472,7 +478,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->client['country'] ));	   
 		   $results->appendChild($attrVal);
          
-           $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);		
+         $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/TipoDocumento")->item(0);		
 		   $attrVal = $domDoc->createTextNode( $XMLvars->TipoDocumento );	   
 		   $results->appendChild($attrVal);
          
@@ -488,8 +494,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
          $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0);		
 		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->docRelNum ));	   
 		   $results->appendChild($attrVal);          
-              
-    
+         
     
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
          $attrVal = $domDoc->createTextNode( trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis));     	   
@@ -564,6 +569,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
 			$el->appendChild($el1);
+                        if ($rigo['ritenuta'] > 0 ) {
+                            $el1= $domDoc->createElement("Ritenuta", 'SI');
+                            $el->appendChild($el1);
+                        }
                         if ($rigo['pervat'] <= 0 ) {
                             $el1= $domDoc->createElement("Natura", $rigo['natura']);
                             $el->appendChild($el1);
@@ -594,6 +603,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
 			$el->appendChild($el1);
+                        if ($rigo['ritenuta'] > 0 ) {
+                            $el1= $domDoc->createElement("Ritenuta", 'SI');
+                            $el->appendChild($el1);
+                        }
                         if ($rigo['pervat'] <= 0 ) {
                             $el1= $domDoc->createElement("Natura", $rigo['natura']);
                             $el->appendChild($el1);
@@ -658,6 +671,29 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     
     //Attenzione qui 
     $XMLvars->setXMLtot();
+    if ($XMLvars->tot_ritenute>0){     
+       $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);		
+               $el = $domDoc->createElement("DatiRitenuta","");					 
+			$el1= $domDoc->createElement("TipoRitenuta", $XMLvars->TipoRitenuta);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("ImportoRitenuta",$XMLvars->tot_ritenute);
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("AliquotaRitenuta",$XMLvars->azienda['ritenuta'] );
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("CausalePagamento",$XMLvars->azienda['causale_pagam_770']);
+			$el->appendChild($el1);
+		    $results->appendChild($el);
+    }
+
+    if ($XMLvars->impbol>0){     
+       $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);		
+               $el = $domDoc->createElement("DatiBollo","");					 
+			$el1= $domDoc->createElement("NumeroBollo", str_pad($XMLvars->azienda['virtual_stamp_auth_prot'].'/'.substr($XMLvars->azienda['virtual_stamp_auth_date'],0,4),14,' ',STR_PAD_LEFT));
+			$el->appendChild($el1);
+			$el1= $domDoc->createElement("ImportoBollo", $XMLvars->impbol);
+			$el->appendChild($el1);
+		    $results->appendChild($el);
+    }
     foreach ($XMLvars->cast as $key => $value) {          
         $el = $domDoc->createElement("DatiRiepilogo","");					 
             $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
