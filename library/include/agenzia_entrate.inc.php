@@ -707,8 +707,12 @@ class AgenziaEntrate
                             }
                             $this->progr_NE++;
                             $cod_ini='NE'.str_pad($ne,3,'0',STR_PAD_LEFT);
-                            $this->accu_D .=    $this->createElement($cod_ini.'001',$ElementsData['pariva']).
-                                                $this->createElement($cod_ini.'003',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
+                            if ($ElementsData['pariva']==0) { // NOTA DI VARIAZIONE emessa ad un privato (senza partita IVA)
+                                $this->accu_D .=  $this->createElement($cod_ini.'002',$ElementsData['codfis']);
+                            } else {
+                                $this->accu_D .=  $this->createElement($cod_ini.'001',$ElementsData['pariva']);
+                            }
+                            $this->accu_D .=    $this->createElement($cod_ini.'003',substr($ElementsData['datdoc'],8,2).substr($ElementsData['datdoc'],5,2).substr($ElementsData['datdoc'],0,4),STR_PAD_LEFT).
                                                 $this->createElement($cod_ini.'005',$ElementsData['numdoc'].'/'.$ElementsData['seziva']).
                                                 $this->createElement($cod_ini.'006',round($ElementsData['operazioni_imponibili']+$ElementsData['operazioni_nonimp']+$ElementsData['operazioni_esente']),STR_PAD_LEFT).
                                                 $this->createElement($cod_ini.'007',round($ElementsData['imposte_addebitate']),STR_PAD_LEFT)
