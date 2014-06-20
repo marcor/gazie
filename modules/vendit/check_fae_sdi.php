@@ -13,14 +13,13 @@ $cfiltro = gaz_dbi_get_row($gTables['company_config'],'var','cfiltro');
 $cpopimap = gaz_dbi_get_row($gTables['company_config'],'var','cpopimap');
 define('CATTACHMENTS_DIR',  '../../data/files/ricevutesdi');
 
-
 $mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');
 $mails = array();
 
 // Get some mail
 $mailsIds = $mailbox->searchMailBox($cfiltro['val'] );
 if(!$mailsIds) {
-	die('Mailbox is empty');
+	die('Casella di posta elettronica vuota');
 }
 
 //$mailId = reset($mailsIds);
@@ -61,6 +60,10 @@ foreach($mailsIds as $mailId) {
 	
     echo "<br/>";	
   
+  $valori=array('filename_ori'=>'aa','id_tes_ref'=>11,'exec_date'=>'2014-06-20 12:20:45','filename_son'=>'','id_SDI'=>10,'data'=>'','status'=>'','descri'=>'');
+  var_dump($valori); 
+  
+  fae_fluxInsert($valori);
   
 }
 
