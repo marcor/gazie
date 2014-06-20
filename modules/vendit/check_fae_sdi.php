@@ -7,19 +7,18 @@ $admin_aziend=checkAdmin();
 
 global $gTables;
 // IMAP  
-define('CEMAIL', gaz_dbi_get_row($gTables['company_config'],'var','cemail'));
-define('CPASSWORD', gaz_dbi_get_row($gTables['company_config'],'var','cpassword'));
-define('CFILTRO', gaz_dbi_get_row($gTables['company_config'],'var','cfiltro'));
-define('CPOPIMAP', gaz_dbi_get_row($gTables['company_config'],'var','cpopimap'));
+$cemail = gaz_dbi_get_row($gTables['company_config'],'var','cemail');
+$cpassword = gaz_dbi_get_row($gTables['company_config'],'var','cpassword');
+$cfiltro = gaz_dbi_get_row($gTables['company_config'],'var','cfiltro');
+$cpopimap = gaz_dbi_get_row($gTables['company_config'],'var','cpopimap');
 define('CATTACHMENTS_DIR',  '../../data/files/ricevutesdi');
 
-echo "-----" . gaz_dbi_get_row($gTables['company_config'],'var','cemail');
 
-$mailbox = new ImapMailbox(CPOPIMAP, CEMAIL, CPASSWORD, CATTACHMENTS_DIR, 'utf-8');
+$mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');
 $mails = array();
 
 // Get some mail
-$mailsIds = $mailbox->searchMailBox(CFILTRO);
+$mailsIds = $mailbox->searchMailBox($cfiltro['val'] );
 if(!$mailsIds) {
 	die('Mailbox is empty');
 }
