@@ -487,7 +487,7 @@ function createRowsAndErrors($min_limit){
            unset ($castel_transact[$ctrl_id]);
            unset ($error_transact[$ctrl_id]);
        }
-       if ($castel_transact[$ctrl_id]['quadro'] == 'DF' 
+       if (isset($castel_transact[$ctrl_id]) && $castel_transact[$ctrl_id]['quadro'] == 'DF' 
            && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit
            && $castel_transact[$ctrl_id]['contract'] < $min_limit ){
            unset ($castel_transact[$ctrl_id]);
