@@ -92,4 +92,12 @@ function provvigioniUpdate ($codice, $newValue)
 }
 
 
+function fae_fluxInsert($newValue)
+{
+    $table = 'fae_flux';
+    $columns = array('filename_ori','id_tes_ref','exec_date','filename_son','id_SDI','data','status','descri');
+    tableInsert($table, $columns, $newValue);
+}
+
+
 ?>
