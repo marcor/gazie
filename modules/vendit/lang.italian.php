@@ -786,11 +786,21 @@ $strScript = array ("admin_client.php" =>
                            'alert1'=>'&sup1; La sezione IVA scelta non &egrave; quella<br/>normalente usata per<br/>l\'emissione delle Fatture immediate.',
                            'alert2'=>'&sup1; La sezione IVA selezionata potrebbe non<br/>coincidere con quella che verr&agrave; usata per<br/>l\'emissione della Fattura immediata che per<br/>Vostra scelta sar&agrave; uguale all\'ultima emessa.'
                            ),
-                   "admin_fae_sdi.php" =>
+                   "report_fae_sdi.php" =>
                    array(  'title'=>'EDITA DATI FATTURAZIONE ELETTRONICA',
                            'table'=>'Tabella su cui stai lavorando: ',
-                           'msg1'=>'ATTENZIONE! Le modifiche sono direttamente apportate sulla tabella',
-                           'msg2'=>'Questo modulo &egrave; stato scritto utilizzando la classe <b>PhpMyEdit</b>'
+                           'id'=>'ID',
+                           'filename_ori'=>'Nome file primo invio',
+                           'ragso1'=>'Amministrazione',
+                           'exec_date'=>'Data di esecuzione ',
+                           'received_date'=>'Data ricezione ',
+                           'delivery_date'=>'Data consegna ',
+                           'filename_son'=>'Nome file figlio',
+                           'id_SDI'=>'ID SDI',
+                           'filename_ret'=>'Nome file di ritorno',
+                           'mail_id'=>'UID della mail',
+                           'status'=>'Stato',
+                           'flux_descri'=>'Descrizione'
                          )                           
                    );
 ?>
