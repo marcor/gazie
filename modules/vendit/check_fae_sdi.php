@@ -35,7 +35,7 @@ if(!$mailsIds) {
 $bbb = new IncomingMailAttachment();
 $domDoc = new DOMDocument;
 
-echo "I file vengono salvati in: " .  CATTACHMENTS_DIR;
+echo "I file vengono salvati in: " .  CATTACHMENTS_DIR . "<br/>";
 
 foreach($mailsIds as $mailId) {
     $mail = $mailbox->getMail($mailId);
@@ -124,7 +124,7 @@ foreach($mailsIds as $mailId) {
          'mail_id'=>$message_id,
 				 'data'=>'',
 				 'status'=>$status,
-				 'descri'=>$errore);
+				 'flux_descri'=>$errore);
     
     fae_fluxInsert($valori);
     echo $idsidi . " " . $nome_file . " " . $status ."<br/>";
