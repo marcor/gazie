@@ -46,6 +46,9 @@ foreach($mailsIds as $mailId) {
     $domDoc->load($bbb->filePath);
 
     $xpath = new DOMXPath($domDoc);	
+
+
+	
 	$result = $xpath->query("//IdentificativoSdI")->item(0);
 	$idsidi = $result->textContent;  
 	
@@ -53,22 +56,29 @@ foreach($mailsIds as $mailId) {
     $nome_file = $result->textContent;
 	
 	$result = $xpath->query("//DataOraRicezione")->item(0);
-    $data_ora_ricezione = $result->textContent;
-
-
-   $result = $xpath->query("//MessageId")->item(0);
-   $message_id = $result->textContent;    
     
+	if ($result) {
+	     $data_ora_ricezione = $result->textContent; }
+	else {
+	     $data_ora_ricezione = "";
+	}
 	
-	$result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
+	
+    $result = $xpath->query("//MessageId")->item(0);
+    $message_id = $result->textContent;    
+   
 
+	$result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
 	if ($result) {
      	$errore = $result->textContent; }
 	else {
 	    $errore = ""; }
     
-	
-  
+	$result = $xpath->query("//Esito")->item(0);
+    if ($result) {
+     	$errore = $result->textContent; }
+	else {
+	    $errore = ""; }
 
   
     $status=""; 
@@ -78,7 +88,9 @@ foreach($mailsIds as $mailId) {
        $status = "Notifica di scarto";
     } elseif (strpos($bbb->name, '_RC_') >0) {
        $status = "Consegnata";   
-    }   
+    }  elseif (strpos($bbb->name, '_NE_') >0) {
+       $status = "Notifica esito";   
+    }  
   
    $valori=array('filename_ori'=>$nome_file,
          'id_tes_ref'=>11,
