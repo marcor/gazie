@@ -9,6 +9,23 @@ if (!isset($_POST['ritorno'])) {
 }
 
 
+
+if (isset($_GET['all'])) {
+   $where ="";
+   $passo = 100000;
+   $nome_file ="";
+   $form['ritorno'] = ""; 
+} else {
+
+  if (isset($_GET['nome_file'])) {
+     $nome_file = $_GET['nome_file'];
+     $where = " filename_ori LIKE '%".$nome_file."%'";
+  } else {
+     $nome_file = "";
+  }
+
+}  
+
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/jquery-1.7.1.min',
@@ -33,6 +50,24 @@ echo "</div>\n";
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
 echo "<table class=\"Tlarge\">\n";
+
+?>
+<form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+<tr>
+<td></td>
+<td class="FacetFieldCaptionTD">
+<input type="text" name="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
+</td>
+<td>
+<input type="submit" name="search" colspan="9" value="Cerca" tabindex="1" >
+</td>
+<td colspan="1">
+<input type="submit" name="all" value="Mostra tutti" >
+</td>
+</tr>
+</form>
+<?php
+
 $headers = array  ($script_transl['id']=>'id',
                    $script_transl['filename_ori']=>'filename_ori',
                    $script_transl['ragso1']=>'',
@@ -53,26 +88,36 @@ $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['clfoco'].".des
                              ' LEFT JOIN '.$gTables['tesmov'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesmov'].'.id_tes'.
                              ' LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesmov'].'.clfoco = '.$gTables['clfoco'].'.codice',
                              $where, $orderby, $limit, $passo);
+
+
+    
 while ($r = gaz_dbi_fetch_array($result)) {
+    
+    if ($r['status'] == "Consegnata") {
+      $class="FacetDataTD";
+      } else {
+      $class="";
+    } 
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['id']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['filename_ori']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['descri']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['exec_date']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['received_date']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['delivery_date']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['filename_son']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['id_SDI']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['filename_ret']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['mail_id']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['status']."</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$r['flux_descri']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['filename_ori']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['descri']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['exec_date']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['received_date']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['delivery_date']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['filename_son']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['status']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";
 }
 echo "</table>\n";
 echo "</form>\n";
 
 ?>
+
 </body>
 </html>
 
