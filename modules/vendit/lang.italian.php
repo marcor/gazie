@@ -787,7 +787,7 @@ $strScript = array ("admin_client.php" =>
                            'alert2'=>'&sup1; La sezione IVA selezionata potrebbe non<br/>coincidere con quella che verr&agrave; usata per<br/>l\'emissione della Fattura immediata che per<br/>Vostra scelta sar&agrave; uguale all\'ultima emessa.'
                            ),
                    "report_fae_sdi.php" =>
-                   array(  'title'=>'EDITA DATI FATTURAZIONE ELETTRONICA',
+                   array(  'title'=>'TRAFFICO DATI FATTURAZIONE ELETTRONICA',
                            'table'=>'Tabella su cui stai lavorando: ',
                            'id'=>'ID',
                            'filename_ori'=>'Nome file primo invio',
