@@ -12,7 +12,6 @@ if (!isset($_POST['ritorno'])) {
 
 if (isset($_GET['all'])) {
    $where ="";
-   $passo = 100000;
    $nome_file ="";
    $form['ritorno'] = ""; 
 } else {
@@ -20,6 +19,7 @@ if (isset($_GET['all'])) {
   if (isset($_GET['nome_file'])) {
      $nome_file = $_GET['nome_file'];
      $where = " filename_ori LIKE '%".$nome_file."%'";
+     
   } else {
      $nome_file = "";
   }
@@ -93,14 +93,14 @@ $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['clfoco'].".des
     
 while ($r = gaz_dbi_fetch_array($result)) {
     
-    if ($r['status'] == "Consegnata") {
+    if ($r['status'] == "RC") {
       $class="FacetDataTD";
       } else {
       $class="";
     } 
     echo "<tr>";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
-    echo "<td class=\"$class\" align=\"center\">".$r['filename_ori']."</td>";
+    echo "<td class=\"$class\" align=\"left\">".$r['filename_ori']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['descri']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['exec_date']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['received_date']."</td>";

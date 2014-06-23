@@ -55,8 +55,15 @@ foreach($mailsIds as $mailId) {
     $data_ora_ricezione="";
 	  $errore = "";  
     $status=""; 
-    if (strpos($nome_file_ret, '_MC_') >0) {
-       $status = "Mancata consegna";
+    
+    //aggiungere dei controlli
+    $nome_info=explode( '_', $nome_file_ret );
+    $nome_status = $nome_info[2];
+    $progressivo_status = substr($nome_info[3],0,3);
+     
+    
+    if ($nome_status == 'MC') {
+       $status = "MC";
        $result = $xpath->query("//IdentificativoSdI")->item(0);
 	     $idsidi = $result->textContent;  
 	
@@ -67,8 +74,8 @@ foreach($mailsIds as $mailId) {
        $data_ora_ricezione = $result->textContent; 
        $data_ora_consegna =$data_ora_ricezione; 
         
-    } elseif (strpos($nome_file_ret, '_NS_') >0) {
-      $status = "Notifica di scarto";
+    } elseif ($nome_status == 'NS') {
+      $status = "NS";
 
       $result = $xpath->query("//IdentificativoSdI")->item(0);
 	    $idsidi = $result->textContent;  
@@ -83,8 +90,8 @@ foreach($mailsIds as $mailId) {
       $result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
 	    $errore = $result->textContent; 
                    
-    } elseif (strpos($nome_file_ret, '_RC_') >0) {
-       $status = "Consegnata";
+    } elseif ($nome_status == 'RC') {
+       $status = "RC";
 	     $result = $xpath->query("//IdentificativoSdI")->item(0);
 	     $idsidi = $result->textContent;  
 	
@@ -96,8 +103,8 @@ foreach($mailsIds as $mailId) {
        $result = $xpath->query("//DataOraConsegna")->item(0);
 	     $data_ora_consegna = $result->textContent;
                         
-    }  elseif (strpos($nome_file_ret, '_NE_') >0) {
-       $status = "Notifica esito";
+    }  elseif ($nome_status == 'NE') {
+       $status = "NE";
 
 	     $result = $xpath->query("//IdentificativoSdI")->item(0);
 	     $idsidi = $result->textContent;  
@@ -127,7 +134,7 @@ foreach($mailsIds as $mailId) {
 				 'flux_descri'=>$errore);
     
     fae_fluxInsert($valori);
-    echo $idsidi . " " . $nome_file . " " . $status ."<br/>";
+    echo $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
     flush();
     ob_flush();
     sleep(1);
