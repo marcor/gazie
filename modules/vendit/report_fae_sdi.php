@@ -33,18 +33,18 @@ echo "</div>\n";
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
 echo "<table class=\"Tlarge\">\n";
-$headers = array  ($script_transl['id']=>`id`,
-                   $script_transl['filename_ori']=>`filename_ori`,
+$headers = array  ($script_transl['id']=>'id',
+                   $script_transl['filename_ori']=>'filename_ori',
                    $script_transl['ragso1']=>'',
-                   $script_transl['exec_date']=>`exec_date`,
-                   $script_transl['received_date']=>`received_date`,
-                   $script_transl['delivery_date']=>`delivery_date`,
-                   $script_transl['filename_son']=>`filename_son`,
-                   $script_transl['id_SDI']=>`id_SDI`,
-                   $script_transl['filename_ret']=>`filename_ret`,
-                   $script_transl['mail_id']=>`mail_id`,
-                   $script_transl['status']=>`status`,
-                   $script_transl['flux_descri']=>`flux_descri`
+                   $script_transl['exec_date']=>'exec_date',
+                   $script_transl['received_date']=>'received_date',
+                   $script_transl['delivery_date']=>'delivery_date',
+                   $script_transl['filename_son']=>'filename_son',
+                   $script_transl['id_SDI']=>'id_SDI',
+                   $script_transl['filename_ret']=>'filename_ret',
+                   $script_transl['mail_id']=>'mail_id',
+                   $script_transl['status']=>'status',
+                   $script_transl['flux_descri']=>'flux_descri'
             );
 $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
