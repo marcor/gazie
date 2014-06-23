@@ -35,74 +35,104 @@ if(!$mailsIds) {
 $bbb = new IncomingMailAttachment();
 $domDoc = new DOMDocument;
 
+echo "I file vengono salvati in: " .  CATTACHMENTS_DIR;
 
 foreach($mailsIds as $mailId) {
-  $mail = $mailbox->getMail($mailId);
-    
+    $mail = $mailbox->getMail($mailId);
+    $data_mail =  $mail->date;
     $aaa= $mail->getAttachments();
     $ccc = array_values($aaa);  
     $bbb = $ccc[0];
+    $nome_file_ret = $bbb->name;
     
     $domDoc->load($bbb->filePath);
-
     $xpath = new DOMXPath($domDoc);	
-
-
-	
-	$result = $xpath->query("//IdentificativoSdI")->item(0);
-	$idsidi = $result->textContent;  
-	
-    $result = $xpath->query("//NomeFile")->item(0);
-    $nome_file = $result->textContent;
-	
-	$result = $xpath->query("//DataOraRicezione")->item(0);
-    
-	if ($result) {
-	     $data_ora_ricezione = $result->textContent; }
-	else {
-	     $data_ora_ricezione = "";
-	}
-	
 	
     $result = $xpath->query("//MessageId")->item(0);
     $message_id = $result->textContent;    
-   
-
-	
+   	
+    
+    $data_ora_ricezione="";
 	  $errore = "";  
     $status=""; 
-    if (strpos($bbb->name, '_MC_') >0) {
-       $status = "Mancata consegna"; 
-    } elseif (strpos($bbb->name, '_NS_') >0) {
-       $status = "Notifica di scarto";
-       $result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
-	     if ($result) {
-     	     $errore = $result->textContent; }       
-    } elseif (strpos($bbb->name, '_RC_') >0) {
-       $status = "Consegnata";   
-    }  elseif (strpos($bbb->name, '_NE_') >0) {
+    if (strpos($nome_file_ret, '_MC_') >0) {
+       $status = "Mancata consegna";
+       $result = $xpath->query("//IdentificativoSdI")->item(0);
+	     $idsidi = $result->textContent;  
+	
+       $result = $xpath->query("//NomeFile")->item(0);
+       $nome_file = $result->textContent;
+	
+	     $result = $xpath->query("//DataOraRicezione")->item(0);
+       $data_ora_ricezione = $result->textContent; 
+       $data_ora_consegna =$data_ora_ricezione; 
+        
+    } elseif (strpos($nome_file_ret, '_NS_') >0) {
+      $status = "Notifica di scarto";
+
+      $result = $xpath->query("//IdentificativoSdI")->item(0);
+	    $idsidi = $result->textContent;  
+	
+      $result = $xpath->query("//NomeFile")->item(0);
+      $nome_file = $result->textContent;
+	
+	    $result = $xpath->query("//DataOraRicezione")->item(0);
+	    $data_ora_ricezione = $result->textContent; 
+      $data_ora_consegna =$data_ora_ricezione;
+
+      $result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
+	    $errore = $result->textContent; 
+                   
+    } elseif (strpos($nome_file_ret, '_RC_') >0) {
+       $status = "Consegnata";
+	     $result = $xpath->query("//IdentificativoSdI")->item(0);
+	     $idsidi = $result->textContent;  
+	
+       $result = $xpath->query("//NomeFile")->item(0);
+       $nome_file = $result->textContent;
+	
+	     $result = $xpath->query("//DataOraRicezione")->item(0);
+	     $data_ora_ricezione = $result->textContent; 
+       $result = $xpath->query("//DataOraConsegna")->item(0);
+	     $data_ora_consegna = $result->textContent;
+                        
+    }  elseif (strpos($nome_file_ret, '_NE_') >0) {
        $status = "Notifica esito";
+
+	     $result = $xpath->query("//IdentificativoSdI")->item(0);
+	     $idsidi = $result->textContent;  
+	
+       $result = $xpath->query("//NomeFile")->item(0);
+       $nome_file = $result->textContent;
+
 	     $result = $xpath->query("//Esito")->item(0);
-       if ($result) {
-     	    $errore = $result->textContent; }                 
-       }  
+       $errore = $result->textContent;  
+       
+       $data_ora_ricezione =$data_mail;
+       $data_ora_consegna =$data_mail;                
+       
+    }  
   
    $valori=array('filename_ori'=>$nome_file,
          'id_tes_ref'=>11,
-				 'exec_date'=>$data_ora_ricezione,
+				 'exec_date'=>$data_mail,
+         'received_date'=>$data_ora_ricezione,
+         'delivery_date'=>$data_ora_consegna,
 				 'filename_son'=>'',
 				 'id_SDI'=>$idsidi,
-         'filename_ret'=>$bbb->name,
+         'filename_ret'=>$nome_file_ret,
          'mail_id'=>$message_id,
 				 'data'=>'',
 				 'status'=>$status,
 				 'descri'=>$errore);
     
     fae_fluxInsert($valori);
-    print $idsidi . " " . $nome_file . " " . $status ."<br/>";
-  
+    echo $idsidi . " " . $nome_file . " " . $status ."<br/>";
+    flush();
+    ob_flush();
+    sleep(1);
 }
-
+    echo "Completato";
 
 
 ?>
