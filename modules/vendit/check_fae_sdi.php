@@ -68,29 +68,24 @@ foreach($mailsIds as $mailId) {
     $message_id = $result->textContent;    
    
 
-	$result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
-	if ($result) {
-     	$errore = $result->textContent; }
-	else {
-	    $errore = ""; }
-    
-	$result = $xpath->query("//Esito")->item(0);
-    if ($result) {
-     	$errore = $result->textContent; }
-	else {
-	    $errore = ""; }
-
-  
+	
+	  $errore = "";  
     $status=""; 
     if (strpos($bbb->name, '_MC_') >0) {
        $status = "Mancata consegna"; 
     } elseif (strpos($bbb->name, '_NS_') >0) {
        $status = "Notifica di scarto";
+       $result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
+	     if ($result) {
+     	     $errore = $result->textContent; }       
     } elseif (strpos($bbb->name, '_RC_') >0) {
        $status = "Consegnata";   
     }  elseif (strpos($bbb->name, '_NE_') >0) {
-       $status = "Notifica esito";   
-    }  
+       $status = "Notifica esito";
+	     $result = $xpath->query("//Esito")->item(0);
+       if ($result) {
+     	    $errore = $result->textContent; }                 
+       }  
   
    $valori=array('filename_ori'=>$nome_file,
          'id_tes_ref'=>11,
