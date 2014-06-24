@@ -108,11 +108,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } 
     
     if ($r['progr_ret'] == "000") {
-      $class="FacetDataTDevidenzia";
+      $class="FacetDataTDevidenzia paper";
      }
     echo "<tr>";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
-    echo "<td class=\"$class paper\" align=\"left\">".$r['filename_ori']."</td>";
+    echo "<td class=\"$class\" align=\"left\">".$r['filename_ori']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['descri']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['exec_date']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['received_date']."</td>";
