@@ -63,7 +63,8 @@ $transl['vendit'] = array('name' => "Vendite",
                                          26=>array("Chiusura giornaliera registratore di cassa","Chiusura giornaliera registratore di cassa"),
                                          27=>array("Emissione Parcella","Emetti Parcella"),
                                          28=>array("Importa ordini dal WEB","Importa Ordini WEB"),
-                                         29=>array("Genera file RiBa standard CBI","Genera file MAV")
+                                         29=>array("Genera file RiBa standard CBI","Genera file MAV"),
+                                         30=>array("Report fatture elettroniche","Report fatture elettroniche")
                                       )
                           );
 ?>
