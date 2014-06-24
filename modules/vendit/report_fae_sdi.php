@@ -105,6 +105,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
       $class="FacetDataTD";
      } elseif ($r['status'] == "NS") {
       $class="FacetDataTDred";
+    } elseif ($r['status'] == "DT") {
+      $class="FacetDataTDred";
     } 
     
     if ($r['progr_ret'] == "000") {
