@@ -131,6 +131,7 @@ foreach($mailsIds as $mailId) {
          'mail_id'=>$message_id,
 				 'data'=>'',
 				 'status'=>$status,
+         'progr_ret'=>$progressivo_status,
 				 'flux_descri'=>$errore);
     
     fae_fluxInsert($valori);

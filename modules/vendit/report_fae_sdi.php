@@ -59,7 +59,7 @@ echo "<table class=\"Tlarge\">\n";
 <input type="text" name="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
 </td>
 <td>
-<input type="submit" name="search" colspan="9" value="Cerca" tabindex="1" >
+<input type="submit" name="search" colspan="10" value="Cerca" tabindex="1" >
 </td>
 <td colspan="1">
 <input type="submit" name="all" value="Mostra tutti" >
@@ -79,11 +79,14 @@ $headers = array  ($script_transl['id']=>'id',
                    $script_transl['filename_ret']=>'',
                    $script_transl['mail_id']=>'',
                    $script_transl['status']=>'',
+                   $script_transl['progr_ret']=>'',
                    $script_transl['flux_descri']=>''
             );
 $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
-$orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.mail_id'   ; 
+//$orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.mail_id'   ; 
+$orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.progr_ret'   ;
+
 $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['clfoco'].".descri", $gTables['fae_flux'].
                              ' LEFT JOIN '.$gTables['tesmov'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesmov'].'.id_tes'.
                              ' LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesmov'].'.clfoco = '.$gTables['clfoco'].'.codice',
@@ -110,6 +113,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['status']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";
 }
