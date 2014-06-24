@@ -92,8 +92,8 @@ $linkHeaders -> output();
 $orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.progr_ret'   ;
 
 $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['clfoco'].".descri", $gTables['fae_flux'].
-                             ' LEFT JOIN '.$gTables['tesmov'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesmov'].'.id_tes'.
-                             ' LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesmov'].'.clfoco = '.$gTables['clfoco'].'.codice',
+                             ' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes'.
+                             ' LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice',
                              $where, $orderby, $limit, $passo);
 
 
