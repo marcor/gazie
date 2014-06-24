@@ -106,6 +106,10 @@ while ($r = gaz_dbi_fetch_array($result)) {
      } elseif ($r['status'] == "NS") {
       $class="FacetDataTDred";
     } 
+    
+    if ($r['progr_ret'] == "000") {
+      $class="FacetDataTDevidenzia";
+     }
     echo "<tr>";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
     echo "<td class=\"$class paper\" align=\"left\">".$r['filename_ori']."</td>";

@@ -75,20 +75,20 @@ foreach($mailsIds as $mailId) {
        $data_ora_consegna =$data_ora_ricezione; 
         
     } elseif ($nome_status == 'NS') {
-      $status = "NS";
+       $status = "NS";
 
-      $result = $xpath->query("//IdentificativoSdI")->item(0);
-	    $idsidi = $result->textContent;  
+       $result = $xpath->query("//IdentificativoSdI")->item(0);
+	     $idsidi = $result->textContent;  
 	
-      $result = $xpath->query("//NomeFile")->item(0);
-      $nome_file = $result->textContent;
+       $result = $xpath->query("//NomeFile")->item(0);
+       $nome_file = $result->textContent;
 	
-	    $result = $xpath->query("//DataOraRicezione")->item(0);
-	    $data_ora_ricezione = $result->textContent; 
-      $data_ora_consegna =$data_ora_ricezione;
+	     $result = $xpath->query("//DataOraRicezione")->item(0);
+	     $data_ora_ricezione = $result->textContent; 
+       $data_ora_consegna =$data_ora_ricezione;
 
-      $result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
-	    $errore = $result->textContent; 
+       $result = $xpath->query("//ListaErrori/Errore/Descrizione")->item(0);
+	     $errore = $result->textContent; 
                    
     } elseif ($nome_status == 'RC') {
        $status = "RC";
@@ -142,11 +142,11 @@ foreach($mailsIds as $mailId) {
     } else {
     echo "presente ". $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
     } 
-    
-    
+        
     flush();
     ob_flush();
     sleep(1);
+    
 }
     echo "Completato";
 
