@@ -69,17 +69,17 @@ echo "<table class=\"Tlarge\">\n";
 <?php
 
 $headers = array  ($script_transl['id']=>'id',
-                   $script_transl['filename_ori']=>'filename_ori',
+                   $script_transl['filename_ori']=>'',
                    $script_transl['ragso1']=>'',
-                   $script_transl['exec_date']=>'exec_date',
-                   $script_transl['received_date']=>'received_date',
-                   $script_transl['delivery_date']=>'delivery_date',
-                   $script_transl['filename_son']=>'filename_son',
-                   $script_transl['id_SDI']=>'id_SDI',
-                   $script_transl['filename_ret']=>'filename_ret',
-                   $script_transl['mail_id']=>'mail_id',
-                   $script_transl['status']=>'status',
-                   $script_transl['flux_descri']=>'flux_descri'
+                   $script_transl['exec_date']=>'',
+                   $script_transl['received_date']=>'',
+                   $script_transl['delivery_date']=>'',
+                   $script_transl['filename_son']=>'',
+                   $script_transl['id_SDI']=>'',
+                   $script_transl['filename_ret']=>'',
+                   $script_transl['mail_id']=>'',
+                   $script_transl['status']=>'',
+                   $script_transl['flux_descri']=>''
             );
 $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
