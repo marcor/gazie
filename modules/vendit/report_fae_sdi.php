@@ -40,7 +40,8 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.resizable',
                                   'jquery/ui/jquery.effects.core',
                                   'jquery/ui/jquery.effects.scale',
-                                  'jquery/modal_form'));
+                                  'jquery/modal_form',
+                                  'jquery/varie'));
 $gForm = new GAzieForm();
 echo '<form method="GET">';
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
@@ -49,14 +50,17 @@ echo "</div>\n";
 
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
-echo "<table class=\"Tlarge\">\n";
+//echo "<table id =\"tableId\"class=\"Tlarge\">\n";
 
 ?>
+
+
+<table id ="tableId" name="tableId" class="Tlarge">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <tr>
 <td></td>
 <td class="FacetFieldCaptionTD">
-<input type="text" name="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
+<input type="text" name="nome_file" id="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
 </td>
 <td>
 <input type="submit" name="search" colspan="10" value="Cerca" tabindex="1" >
@@ -103,7 +107,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } 
     echo "<tr>";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
-    echo "<td class=\"$class\" align=\"left\">".$r['filename_ori']."</td>";
+    echo "<td class=\"$class paper\" align=\"left\">".$r['filename_ori']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['descri']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['exec_date']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['received_date']."</td>";
