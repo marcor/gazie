@@ -118,13 +118,40 @@ foreach($mailsIds as $mailId) {
        $data_ora_ricezione =$data_mail;
        $data_ora_consegna =$data_mail;                
        
+    }  elseif ($nome_status == 'DT') {
+       $status = "DT";
+
+	     $result = $xpath->query("//IdentificativoSdI")->item(0);
+	     $idsidi = $result->textContent;  
+	
+       $result = $xpath->query("//NomeFile")->item(0);
+       $nome_file = $result->textContent;
+
+	     $result = $xpath->query("//Descrizione")->item(0);
+       $errore = $result->textContent;  
+       
+       $data_ora_ricezione =$data_mail;
+       $data_ora_consegna =$data_mail;                
+       
     }  
   
+  
+   
+   
+   $nome_file_ori =str_replace('.xml.p7m','.xml', $nome_file);
+   $verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori ', $nome_file_ori);
+   
+   if ($verifica == false) {
+     $id_tes = 0;
+   } else {
+      $id_tes = $verifica['id_tes_ref'];
+   }
+   
    //non dovrebbero esserci ma verifica eventuali doppioni causa errori sulla casella di posta elettronica
    $verifica = gaz_dbi_get_row($gTables['fae_flux'], 'mail_id', $message_id);   
    if ($verifica == false) {
    $valori=array('filename_ori'=>$nome_file,
-         'id_tes_ref'=>11,
+         'id_tes_ref'=>$id_tes,
 				 'exec_date'=>$data_mail,
          'received_date'=>$data_ora_ricezione,
          'delivery_date'=>$data_ora_consegna,
