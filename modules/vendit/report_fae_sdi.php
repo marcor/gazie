@@ -100,10 +100,11 @@ $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['clfoco'].".des
     
 while ($r = gaz_dbi_fetch_array($result)) {
     
+    $class="";
     if ($r['status'] == "RC") {
       $class="FacetDataTD";
-      } else {
-      $class="";
+     } elseif ($r['status'] == "NS") {
+      $class="FacetDataTDred";
     } 
     echo "<tr>";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
