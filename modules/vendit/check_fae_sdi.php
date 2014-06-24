@@ -60,7 +60,7 @@ foreach($mailsIds as $mailId) {
     $nome_info=explode( '_', $nome_file_ret );
     $nome_status = $nome_info[2];
     $progressivo_status = substr($nome_info[3],0,3);
-     
+    
     
     if ($nome_status == 'MC') {
        $status = "MC";
@@ -120,6 +120,9 @@ foreach($mailsIds as $mailId) {
        
     }  
   
+   //non dovrebbero esserci ma verifica eventuali doppioni causa errori sulla casella di posta elettronica
+   $verifica = gaz_dbi_get_row($gTables['fae_flux'], 'mail_id', $message_id);   
+   if ($verifica == false) {
    $valori=array('filename_ori'=>$nome_file,
          'id_tes_ref'=>11,
 				 'exec_date'=>$data_mail,
@@ -136,6 +139,11 @@ foreach($mailsIds as $mailId) {
     
     fae_fluxInsert($valori);
     echo $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
+    } else {
+    echo "presente ". $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
+    } 
+    
+    
     flush();
     ob_flush();
     sleep(1);
