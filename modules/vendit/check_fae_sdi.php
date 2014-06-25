@@ -25,7 +25,7 @@ if(!$mailsIds) {
 //$mailId = reset($mailsIds);
 //$mail = $mailbox->getMail($mailId);
 
-//var_dump($mailbox->getMailsInfo($mailsIds));
+echo "N. email: " . count($mailbox->getMailsInfo($mailsIds)) ."<br />";
 //var_dump($mailId);
 //var_dump($mail);
 
@@ -36,6 +36,7 @@ $bbb = new IncomingMailAttachment();
 $domDoc = new DOMDocument;
 
 echo "I file vengono salvati in: " .  CATTACHMENTS_DIR . "<br/>";
+
 
 foreach($mailsIds as $mailId) {
     $mail = $mailbox->getMail($mailId);
@@ -165,9 +166,10 @@ foreach($mailsIds as $mailId) {
 				 'flux_descri'=>$errore);
     
     fae_fluxInsert($valori);
-    echo $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
+
+    echo  $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
     } else {
-    echo "presente ". $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
+    echo " presente ". $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
     } 
         
     flush();

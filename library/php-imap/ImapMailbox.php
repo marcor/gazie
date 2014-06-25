@@ -469,7 +469,7 @@ class ImapMailbox {
 			$attachment->id = $attachmentId;
 			$attachment->name = $fileName;
 			
-			if ($fileName <> "daticert.xml" and $fileName <> "postacert.eml" and $fileName<>"smime.p7s" ) {
+			if ($fileName <> "daticert.xml" and $fileName <> "postacert.eml" and $fileName<>"smime.p7s" and $fileName <> "mailoriginale.eml") {
 			
 			if($this->attachmentsDir) {
 				$replace = array(
