@@ -106,14 +106,31 @@ TABLE.selectTable TD {
     font-size : 13px;
 }
 
+.FacetDataTRstart td  {
+     border-top: 2px solid white;
+
+}
+
+.FacetDataTRend td  {
+     border-bottom: 5px solid #FFFFFF;
+   
+
+}
+
 .FacetDataTD  {
     background-color : #c9edc8;
     color : #000000;
     font-size : 13px;
 }
 
-.FacetDataTDevidenzia  {
+.FacetDataTDevidenziaOK  {
     background-color : #FFE13C;
+    color : #000000;
+    font-size : 13px;
+}
+
+.FacetDataTDevidenziaKO  {
+    background-color : #FF0000;
     color : #000000;
     font-size : 13px;
 }

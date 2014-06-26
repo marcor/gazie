@@ -67,7 +67,7 @@ $recordnav -> output();
 
 <table id ="tableId" name="tableId" class="Tlarge">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-<tr>
+<tr style="margin-bottom: 20px !important;">
 <td></td>
 <td class="FacetFieldCaptionTD">
 <input type="text" name="nome_file" id="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
@@ -80,6 +80,7 @@ $recordnav -> output();
 </td>
 </tr>
 </form>
+
 
 <?php
 
@@ -100,7 +101,7 @@ $headers = array  ($script_transl['id']=>'id',
                    $script_transl['flux_descri']=>''
             );
 $linkHeaders = new linkHeaders($headers);
-$linkHeaders -> output();
+//$linkHeaders -> output();
 //$orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.mail_id'   ; 
 $orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.progr_ret'   ;
 
@@ -114,18 +115,39 @@ $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".pro
 while ($r = gaz_dbi_fetch_array($result)) {
     
     $class="";
+    $class1="";
+    $class2="";
     if ($r['status'] == "RC") {
       $class="FacetDataTD";
      } elseif ($r['status'] == "NS") {
-      $class="FacetDataTDred";
+      $class="FacetDataTD";  
+      $class2="FacetDataTDevidenziaKO";
     } elseif ($r['status'] == "DT") {
       $class="FacetDataTDred";
+    } elseif ($r['status'] == "MC") {
+      $class="FacetDataTD";
+      $class2="FacetDataTDred";
     } 
     
     if ($r['progr_ret'] == "000") {
-      $class="FacetDataTDevidenzia";
+      $class="FacetDataTD";
+      $class1="";
+      $linkHeaders -> output();
      }
-    echo "<tr>";
+     
+    //Fattura accettata
+    if ($r['flux_descri'] == "EC01") {
+      $class="FacetDataTD";
+      $class2="FacetDataTDevidenziaOK";
+     } 
+    
+    //Fattura rifiutata
+    if ($r['flux_descri'] == "EC02") {
+      $class="FacetDataTD";
+      $class2="FacetDataTDevidenziaKO";
+    }
+ 
+    echo "<tr class=\"$class1 $class2\" >";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
     echo "<td class=\"$class paper\" align=\"left\">".$r['filename_ori']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['protoc']."</td>";
@@ -138,7 +160,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
-    echo "<td class=\"$class\" align=\"center\">".$r['status']."</td>";
+    echo "<td class=\"$class  $class2\" align=\"center\">".$r['status']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";
