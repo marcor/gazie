@@ -22,7 +22,17 @@ if (isset($_GET['all'])) {
      
   } else {
      $nome_file = "";
+     if (isset($_GET['id_tes'])) {
+     $id_tes = $_GET['id_tes'];
+     $where = " id_tes_ref = ".$id_tes."";
+     }
+     
+     
+     
+     
   }
+  
+  
 
 }  
 
