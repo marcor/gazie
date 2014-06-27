@@ -11,6 +11,7 @@ $cemail = gaz_dbi_get_row($gTables['company_config'],'var','cemail');
 $cpassword = gaz_dbi_get_row($gTables['company_config'],'var','cpassword');
 $cfiltro = gaz_dbi_get_row($gTables['company_config'],'var','cfiltro');
 $cpopimap = gaz_dbi_get_row($gTables['company_config'],'var','cpopimap');
+$last_fae_email = gaz_dbi_get_row($gTables['company_config'],'var','last_fae_email');
 define('CATTACHMENTS_DIR',  '../../data/files/ricevutesdi');
 
 $mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');
@@ -25,7 +26,27 @@ if(!$mailsIds) {
 //$mailId = reset($mailsIds);
 //$mail = $mailbox->getMail($mailId);
 
-echo "N. email: " . count($mailbox->getMailsInfo($mailsIds)) ."<br />";
+$n_email = count($mailbox->getMailsInfo($mailsIds));
+
+
+
+if ($n_email == $last_fae_email['val']) {
+ 
+ echo "Nessuna variazione sul numero di email ($n_email) <br/>";
+ flush();
+    ob_flush();
+    
+ 
+ 
+ exit();
+}
+
+
+echo "N. email: " . $n_email ."<br />";
+   flush();
+    ob_flush();
+    sleep(1);
+ 
 //var_dump($mailId);
 //var_dump($mail);
 
@@ -174,9 +195,12 @@ foreach($mailsIds as $mailId) {
         
     flush();
     ob_flush();
-    sleep(1);
+    
     
 }
+
+    gaz_dbi_put_row($gTables['company_config'],'var','last_fae_email','val',$n_email);
+
     echo "Completato";
 
 
