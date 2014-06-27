@@ -95,7 +95,7 @@ function provvigioniUpdate ($codice, $newValue)
 function fae_fluxInsert($newValue)
 {
     $table = 'fae_flux';
-    $columns = array('filename_ori','id_tes_ref','exec_date','received_date','delivery_date','filename_son','id_SDI','filename_ret','mail_id','data','status','progr_ret','flux_descri');
+    $columns = array('filename_ori','id_tes_ref','exec_date','received_date','delivery_date','filename_son','id_SDI','filename_ret','mail_id','data','flux_status','progr_ret','flux_descri');
     tableInsert($table, $columns, $newValue);
 }
 

@@ -179,7 +179,7 @@ foreach($mailsIds as $mailId) {
          'filename_ret'=>$nome_file_ret,
          'mail_id'=>$message_id,
 				 'data'=>'',
-				 'status'=>$status,
+				 'flux_status'=>$status,
          'progr_ret'=>$progressivo_status,
 				 'flux_descri'=>$errore);
     

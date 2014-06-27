@@ -23,10 +23,14 @@ if (isset($_GET['all'])) {
   } else {
      $nome_file = "";
      if (isset($_GET['id_tes'])) {
-     $id_tes = $_GET['id_tes'];
-     $where = " id_tes_ref = ".$id_tes."";
+         $id_tes = $_GET['id_tes'];
+         $where = " id_tes_ref = ".$id_tes."";
      }
-     
+
+     if (isset($_GET['status'])) {
+         $status = $_GET['status'];
+         $where = " flux_status = '%".$status."%'";
+     }     
      
      
      
@@ -98,7 +102,7 @@ $headers = array  ($script_transl['id']=>'id',
                    $script_transl['id_SDI']=>'',
                    $script_transl['filename_ret']=>'',
                    $script_transl['mail_id']=>'',
-                   $script_transl['status']=>'',
+                   $script_transl['flux_status']=>'',
                    $script_transl['progr_ret']=>'',
                    $script_transl['flux_descri']=>''
             );
@@ -119,14 +123,14 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $class="";
     $class1="";
     $class2="";
-    if ($r['status'] == "RC") {
+    if ($r['flux_status'] == "RC") {
       $class="FacetDataTD";
-     } elseif ($r['status'] == "NS") {
+     } elseif ($r['flux_status'] == "NS") {
       $class="FacetDataTD";  
       $class2="FacetDataTDevidenziaKO";
-    } elseif ($r['status'] == "DT") {
+    } elseif ($r['flux_status'] == "DT") {
       $class="FacetDataTDred";
-    } elseif ($r['status'] == "MC") {
+    } elseif ($r['flux_status'] == "MC") {
       $class="FacetDataTD";
       $class2="FacetDataTDred";
     } 
@@ -162,7 +166,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
-    echo "<td class=\"$class  $class2\" align=\"center\">".$r['status']."</td>";
+    echo "<td class=\"$class  $class2\" align=\"center\">".$r['flux_status']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";

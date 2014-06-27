@@ -801,7 +801,7 @@ $strScript = array ("admin_client.php" =>
                            'id_SDI'=>'ID SDI',
                            'filename_ret'=>'Nome file di ritorno',
                            'mail_id'=>'UID della mail',
-                           'status'=>'Stato',
+                           'flux_status'=>'Stato',
                            'progr_ret'=>'Progr.',
                            'flux_descri'=>'Descrizione'
                          )                           
