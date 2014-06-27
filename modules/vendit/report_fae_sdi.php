@@ -34,7 +34,7 @@ if (isset($_GET['all'])) {
 
      if (isset($_GET['status'])) {
          $passo=1000000;
-         $status = $_GET['status'];
+         $status = $_GET['status'];         
          $where = " flux_status LIKE '%".$status."%'";
      }     
      
@@ -174,9 +174,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['protoc']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['codice']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['descri']."</td>";
-    echo "<td class=\"$class\" align=\"center\">".$r['exec_date']."</td>";
-    echo "<td class=\"$class\" align=\"center\">".$r['received_date']."</td>";
-    echo "<td class=\"$class\" align=\"center\">".$r['delivery_date']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".gaz_format_date($r['exec_date'])."</td>";
+    echo "<td class=\"$class\" align=\"center\">".gaz_format_date($r['received_date'])."</td>";
+    echo "<td class=\"$class\" align=\"center\">".gaz_format_date($r['delivery_date'])."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_son']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";

@@ -3,6 +3,28 @@
 require_once('../../library/php-imap/ImapMailbox.php');
 require("../../library/include/datlib.inc.php");
 
+// Turn off output buffering
+ini_set('output_buffering', 'off');
+// Turn off PHP output compression
+ini_set('zlib.output_compression', false);
+         
+//Flush (send) the output buffer and turn off output buffering
+//ob_end_flush();
+while (@ob_end_flush());
+         
+// Implicitly flush the buffer(s)
+ini_set('implicit_flush', true);
+ob_implicit_flush(true);
+ 
+
+
+//Alcuni browser non iniziano ad eseguire output fino a quando non viene superato un certo numero di byte 
+for($i = 0; $i < 1300; $i++)
+{
+echo ' ';
+}
+ 
+
 $admin_aziend=checkAdmin();
 set_time_limit(3600);
 global $gTables;
@@ -26,6 +48,7 @@ if(!$mailsIds) {
 //$mailId = reset($mailsIds);
 //$mail = $mailbox->getMail($mailId);
 
+echo "Attendere: Verifico la posta elettronica sulla casella " . $cemail['val'] ."<br />";
 $n_email = count($mailbox->getMailsInfo($mailsIds));
 
 
@@ -33,15 +56,12 @@ $n_email = count($mailbox->getMailsInfo($mailsIds));
 if ($n_email == $last_fae_email['val']) { 
    echo "Nessuna variazione sul numero di email ($n_email) <br/>";
    echo "<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>";
-   flush();
-   ob_flush();
    exit();
 }
 
 
 echo "N. email: " . $n_email ."<br />";
-   flush();
-   ob_flush();
+
    
  
 //var_dump($mailId);
@@ -190,8 +210,7 @@ foreach($mailsIds as $mailId) {
     echo " presente ". $idsidi . " " . $nome_file . " " . $status . " ". $progressivo_status."<br/>";
     } 
         
-    flush();
-    ob_flush();
+
     
     
 }
