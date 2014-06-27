@@ -65,6 +65,8 @@ $recordnav -> output();
 ?>
 
 
+<p align="center"><a href="./check_fae_sdi.php">Verifica email (...)</a></p>
+
 <table id ="tableId" name="tableId" class="Tlarge">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <tr style="margin-bottom: 20px !important;">

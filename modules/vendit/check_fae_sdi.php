@@ -30,22 +30,19 @@ $n_email = count($mailbox->getMailsInfo($mailsIds));
 
 
 
-if ($n_email == $last_fae_email['val']) {
- 
- echo "Nessuna variazione sul numero di email ($n_email) <br/>";
- flush();
-    ob_flush();
-    
- 
- 
- exit();
+if ($n_email == $last_fae_email['val']) { 
+   echo "Nessuna variazione sul numero di email ($n_email) <br/>";
+   echo "<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>";
+   flush();
+   ob_flush();
+   exit();
 }
 
 
 echo "N. email: " . $n_email ."<br />";
    flush();
-    ob_flush();
-    sleep(1);
+   ob_flush();
+   
  
 //var_dump($mailId);
 //var_dump($mail);
@@ -202,6 +199,6 @@ foreach($mailsIds as $mailId) {
     gaz_dbi_put_row($gTables['company_config'],'var','last_fae_email','val',$n_email);
 
     echo "Completato";
-
+    echo "<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>";
 
 ?>
