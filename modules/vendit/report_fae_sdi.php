@@ -8,30 +8,35 @@ if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_POST['ritorno'];
 }
 
+$nome_file="";
 
+  
 
 if (isset($_GET['all'])) {
    $where ="";
-   $nome_file ="";
+   $status="";
    $form['ritorno'] = ""; 
 } else {
 
   if (isset($_GET['nome_file'])) {
      $nome_file = $_GET['nome_file'];
+     $status="";
      $where = " filename_ori LIKE '%".$nome_file."%'";
      
-  } else {
-     $nome_file = "";
+  }
+  
+  if ($nome_file=="") {
+     $status="";
      if (isset($_GET['id_tes'])) {
          $id_tes = $_GET['id_tes'];
          $where = " id_tes_ref = ".$id_tes."";
      }
 
      if (isset($_GET['status'])) {
+         $passo=1000000;
          $status = $_GET['status'];
-         $where = " flux_status = '%".$status."%'";
+         $where = " flux_status LIKE '%".$status."%'";
      }     
-     
      
      
   }
@@ -39,6 +44,8 @@ if (isset($_GET['all'])) {
   
 
 }  
+
+
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
@@ -64,7 +71,7 @@ echo "</div>\n";
 
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
-//echo "<table id =\"tableId\"class=\"Tlarge\">\n";
+
 
 ?>
 
@@ -77,6 +84,9 @@ $recordnav -> output();
 <td></td>
 <td class="FacetFieldCaptionTD">
 <input type="text" name="nome_file" id="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
+</td>
+<td class="FacetFieldCaptionTD">
+<input type="text" name="status" id="status" value="<?php echo $status ?>" maxlength="3" size="3" tabindex="1" class="FacetInput">
 </td>
 <td>
 <input type="submit" name="search" colspan="12" value="Cerca" tabindex="1" >
@@ -107,9 +117,14 @@ $headers = array  ($script_transl['id']=>'id',
                    $script_transl['flux_descri']=>''
             );
 $linkHeaders = new linkHeaders($headers);
-//$linkHeaders -> output();
-//$orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.mail_id'   ; 
+
+if ($status <> "") {
+    $linkHeaders -> output();
+}
+
+
 $orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.progr_ret'   ;
+
 
 $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".protoc,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].
                              ' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes'.
@@ -166,7 +181,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
-    echo "<td class=\"$class  $class2\" align=\"center\">".$r['flux_status']."</td>";
+    echo "<td class=\"$class  $class2 paper1\" align=\"center\">".$r['flux_status']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";
