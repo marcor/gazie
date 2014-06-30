@@ -10,8 +10,6 @@ if (!isset($_POST['ritorno'])) {
 
 $nome_file="";
 
-  
-
 if (isset($_GET['all'])) {
    $where ="";
    $status="";
@@ -21,8 +19,7 @@ if (isset($_GET['all'])) {
   if (isset($_GET['nome_file'])) {
      $nome_file = $_GET['nome_file'];
      $status="";
-     $where = " filename_ori LIKE '%".$nome_file."%'";
-     
+     $where = " filename_ori LIKE '%".$nome_file."%'";     
   }
   
   if ($nome_file=="") {
@@ -37,12 +34,7 @@ if (isset($_GET['all'])) {
          $status = $_GET['status'];         
          $where = " flux_status LIKE '%".$status."%'";
      }     
-     
-     
   }
-  
-  
-
 }  
 
 
@@ -68,16 +60,13 @@ echo '<form method="GET">';
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
+echo "<p align=\"center\"><a href=\"./check_fae_sdi.php\">Verifica email (...)</a></p>";
 
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
-
-
 ?>
 
-
-<p align="center"><a href="./check_fae_sdi.php">Verifica email (...)</a></p>
-
+<p>&nbsp;</p>
 <table id ="tableId" name="tableId" class="Tlarge">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <tr style="margin-bottom: 20px !important;">
@@ -190,7 +179,7 @@ echo "</table>\n";
 echo "</form>\n";
 
 ?>
-
+<p align="center"><b>[NS]</b> Notifica scarto <b>[MC]</b> Mancata Consegna <b>[RC]</b> Ricevuta consegna <b>[NE]</b> Notifica esito <b>[DT]</b> Decorrenza termini</p>
 </body>
 </html>
 
