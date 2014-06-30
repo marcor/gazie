@@ -791,7 +791,7 @@ $strScript = array ("admin_client.php" =>
                            'table'=>'Tabella su cui stai lavorando: ',
                            'id'=>'ID',
                            'filename_ori'=>'Nome file primo invio',
-                           'protoc'=>'Protoc. fattura',
+                           'numfat'=>'N. fattura',
                            'codice'=>'Codice cliente',
                            'ragso1'=>'Amministrazione',
                            'exec_date'=>'Data di esecuzione ',

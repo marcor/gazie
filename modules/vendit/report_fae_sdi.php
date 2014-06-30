@@ -102,7 +102,7 @@ $recordnav -> output();
 
 $headers = array  ($script_transl['id']=>'id',
                    $script_transl['filename_ori']=>'',
-                   $script_transl['protoc']=>'',
+                   $script_transl['numfat']=>'',
                    $script_transl['codice']=>'',
                    $script_transl['ragso1']=>'',
                    $script_transl['exec_date']=>'',
@@ -126,7 +126,7 @@ if ($status <> "") {
 $orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.progr_ret'   ;
 
 
-$result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".protoc,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].
+$result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].
                              ' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes'.
                              ' LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice',
                              $where, $orderby, $limit, $passo);
@@ -171,7 +171,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"$class1 $class2\" >";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
     echo "<td class=\"$class paper\" align=\"left\">".$r['filename_ori']."</td>";
-    echo "<td class=\"$class\" align=\"center\">".$r['protoc']."</td>";
+    echo "<td class=\"$class\" align=\"center\">".$r['numfat']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['codice']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['descri']."</td>";
     echo "<td class=\"$class\" align=\"center\">".gaz_format_date($r['exec_date'])."</td>";
