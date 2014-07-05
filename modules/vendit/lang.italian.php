@@ -802,6 +802,12 @@ $strScript = array ("admin_client.php" =>
                            'filename_ret'=>'Nome file di ritorno',
                            'mail_id'=>'UID della mail',
                            'flux_status'=>'Stato',
+                           'flux_status_value'=>array(''=>'Generato',
+                                                      'NS'=>'Notifica scarto',
+                                                      'MC'=>'Mancata Consegna',
+                                                      'RC'=>'Ricevuta consegna',
+                                                      'NE'=>'Notifica esito',
+                                                      'DT'=>'Decorrenza termini'),
                            'progr_ret'=>'Progr.',
                            'flux_descri'=>'Descrizione'
                          )                           

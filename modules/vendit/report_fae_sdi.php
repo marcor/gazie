@@ -170,7 +170,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
-    echo "<td class=\"$class  $class2 paper1\" align=\"center\">".$r['flux_status']."</td>";
+    echo "<td class=\"$class  $class2 paper1\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";
@@ -179,7 +179,6 @@ echo "</table>\n";
 echo "</form>\n";
 
 ?>
-<p align="center"><b>[NS]</b> Notifica scarto <b>[MC]</b> Mancata Consegna <b>[RC]</b> Ricevuta consegna <b>[NE]</b> Notifica esito <b>[DT]</b> Decorrenza termini</p>
 </body>
 </html>
 
