@@ -27,7 +27,7 @@ function dialogSchedule(paymov) {
 				var id = $('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first',v).focus().attr('value');
 				var ex = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value');
 				var am = $('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value');
-				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td><button id="unlink_' + id_sub + '"><img src="../../library/images/link_break.png" width="12" /></button> ' + id +
+				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td><button id="unlink_' + id_sub + '"><img id="image_unlink_' + id_sub + '" src="../../library/images/link_break.png" width="12" /></button> ' + id +
 					'</td><td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
@@ -45,6 +45,11 @@ function dialogSchedule(paymov) {
 				$( "#btn_"+id_sub ).click(function() { 
 					$("#pm_form_"+id_sub ).remove();
 					$("#pm_post_"+id_sub ).remove();
+				});
+				$( "#unlink_"+id_sub ).click(function() { 
+					$('#post_' + nrow + '_' + id_sub + '_id_tesdoc_ref').val('');
+					updateCloseForm();
+					$('#image_unlink_' + id_sub).remove();
 				});
 
 			});
@@ -65,7 +70,7 @@ function dialogSchedule(paymov) {
 				var id = $('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first',v).focus().attr('value');
 				var ex = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value');
 				var am = $('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value');
-				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td><button id="unlink_' + id_sub + '"><img src="../../library/images/link_break.png" width="12" /></button> ' + id +
+				$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'"><td> ' + id +
 					'</td><td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
@@ -124,7 +129,7 @@ function dialogSchedule(paymov) {
 						"<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti di: '+ value.ragso1 +' ' + value.ragso2 +'</td></tr>');
 					};
                     $( "#db-contain" + nrow + " tbody").append( "<tr>" +
-                        '<td class="ui-widget-right ui-widget-content "><button id="btn_PROVAAGGIUNTA"><img src="../../library/images/link.png" width="12"/></button></td>' +
+                        '<td class="ui-widget-right ui-widget-content "><button id="linking_'+ value.datdoc +'"><img src="../../library/images/link.png" width="12"/></button></td>' +
                        "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n." +
                        value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
                        "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
@@ -132,6 +137,10 @@ function dialogSchedule(paymov) {
                         '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
                         '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
                         "</tr>" );
+						$( "#linking_" + value.datdoc).click(function() { 
+							var docref = value.seziva*1000000000+parseInt(value.protoc);
+							alert (value.datdoc.substring(0,4)+"V"+docref);
+						});
 						j++;
 					   
                });
@@ -279,7 +288,7 @@ function dialogSchedule(paymov) {
 				'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_expiry" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" />'+
 				'<input type="hidden" id="post_' + nrow + '_' + id_btn + '_amount" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" />'+
 				'</div>');
-            $( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_btn+'"><td><button id="unlink_' + id_btn + '"><img src="../../library/images/link_break.png" width="12" /></button> ' + tesdoc_ref +
+            $( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_btn+'"><td>' + tesdoc_ref +
 					 '</td><td class="ui-widget-right ui-widget-content " ><input  id="form_' + nrow + '_' + id_btn + '_expiry" type="text" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" /></td>' +
                '<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_btn + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="" /></td>' +
                '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_btn + '"><img src="../../library/images/x.gif" /></button></td>' +
