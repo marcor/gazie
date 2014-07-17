@@ -83,7 +83,8 @@ $recordnav -> output();
   <option value="NS">NS-Notifica scarto</option>
   <option value="MC">MC-Mancata consegna</option>
   <option value="RC">RC-Ricevuta consegna</option>
-  <option value="NE">NE-Notifica esito</option>
+  <option value="DT">DT-Decorrenza termini</option>
+  <option value="NE">NE-Notifica esito</option>  
 </select> 
 </td>
 <td>
