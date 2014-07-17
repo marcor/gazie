@@ -80,11 +80,12 @@ $recordnav -> output();
 
 <select name="status">
   <option value=""></option>
-  <option value="NS">NS-Notifica scarto</option>
-  <option value="MC">MC-Mancata consegna</option>
-  <option value="RC">RC-Ricevuta consegna</option>
-  <option value="DT">DT-Decorrenza termini</option>
-  <option value="NE">NE-Notifica esito</option>  
+  <option value="@">@ - Inviato</option>
+  <option value="NS">NS - Notifica scarto</option>
+  <option value="MC">MC - Mancata consegna</option>
+  <option value="RC">RC - Ricevuta consegna</option>
+  <option value="DT">DT - Decorrenza termini</option>
+  <option value="NE">NE - Notifica esito</option>  
 </select> 
 </td>
 <td>
@@ -119,7 +120,7 @@ $headers = array  ($script_transl['id']=>'id',
             );
 $linkHeaders = new linkHeaders($headers);
 
-if ($status <> "") {
+if ($status <> "" and $status <> "@") {
     $linkHeaders -> output();
 }
 
@@ -149,7 +150,10 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } elseif ($r['flux_status'] == "MC") {
       $class="FacetDataTD";
       $class2="FacetDataTDred";
-    } 
+    } elseif ($r['flux_status'] == "@") {
+      $class="FacetDataTD";
+      $class1="";
+    }   
     
     if ($r['progr_ret'] == "000") {
       $class="FacetDataTD";
@@ -175,9 +179,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['numfat']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['codice']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['descri']."</td>";
-    echo "<td class=\"$class\" align=\"center\">".gaz_format_date($r['exec_date'])."</td>";
-    echo "<td class=\"$class\" align=\"center\">".gaz_format_date($r['received_date'])."</td>";
-    echo "<td class=\"$class\" align=\"center\">".gaz_format_date($r['delivery_date'])."</td>";
+    echo "<td style=\"white-space:nowrap;\" class=\"$class\" align=\"center\">".gaz_format_date($r['exec_date'])."</td>";
+    echo "<td style=\"white-space:nowrap;\" class=\"$class\" align=\"center\">".gaz_format_date($r['received_date'])."</td>";
+    echo "<td style=\"white-space:nowrap;\" class=\"$class\" align=\"center\">".gaz_format_date($r['delivery_date'])."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_son']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";

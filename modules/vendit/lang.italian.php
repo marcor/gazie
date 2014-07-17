@@ -803,6 +803,7 @@ $strScript = array ("admin_client.php" =>
                            'mail_id'=>'UID della mail',
                            'flux_status'=>'Stato',
                            'flux_status_value'=>array(''=>'Generato',
+                                                      '@'=>'Inviato',
                                                       'NS'=>'Notifica scarto',
                                                       'MC'=>'Mancata Consegna',
                                                       'RC'=>'Ricevuta consegna',

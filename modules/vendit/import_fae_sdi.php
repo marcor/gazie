@@ -84,7 +84,7 @@ foreach($arrayfile[1] as $mailId) {
          'filename_ret'=>$nome_file_ret,
          'mail_id'=>0,
 				 'data'=>'',
-				 'flux_status'=>'',
+				 'flux_status'=>'@',
          'progr_ret'=>'000',
 				 'flux_descri'=>'');
     
