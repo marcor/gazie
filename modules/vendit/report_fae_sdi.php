@@ -80,12 +80,12 @@ $recordnav -> output();
 
 <select name="status">
   <option value=""></option>
-  <option value="@">@ - Inviato</option>
-  <option value="NS">NS - Notifica scarto</option>
-  <option value="MC">MC - Mancata consegna</option>
-  <option value="RC">RC - Ricevuta consegna</option>
-  <option value="DT">DT - Decorrenza termini</option>
-  <option value="NE">NE - Notifica esito</option>  
+  <option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviato</option>
+  <option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
+  <option value="MC" <?php if($status =="MC") echo "selected";?> >MC - Mancata consegna</option>
+  <option value="RC" <?php if($status =="RC") echo "selected";?> >RC - Ricevuta consegna</option>
+  <option value="DT" <?php if($status =="DT") echo "selected";?> >DT - Decorrenza termini</option>
+  <option value="NE" <?php if($status =="NE") echo "selected";?> >NE - Notifica esito</option>  
 </select> 
 </td>
 <td>
