@@ -67,6 +67,7 @@ $recordnav -> output();
 ?>
 
 <p>&nbsp;</p>
+
 <table id ="tableId" name="tableId" class="Tlarge">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <tr style="margin-bottom: 20px !important;">
@@ -74,11 +75,19 @@ $recordnav -> output();
 <td class="FacetFieldCaptionTD">
 <input type="text" name="nome_file" id="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
 </td>
-<td class="FacetFieldCaptionTD">
-<input type="text" name="status" id="status" value="<?php echo $status ?>" maxlength="3" size="3" tabindex="1" class="FacetInput">
+<td class="FacetFieldCaptionTD" colspan="2">
+
+
+<select name="status">
+  <option value=""></option>
+  <option value="NS">NS-Notifica scarto</option>
+  <option value="MC">MC-Mancata consegna</option>
+  <option value="RC">RC-Ricevuta consegna</option>
+  <option value="NE">NE-Notifica esito</option>
+</select> 
 </td>
 <td>
-<input type="submit" name="search" colspan="12" value="Cerca" tabindex="1" >
+<input type="submit" name="search" colspan="11" value="Cerca" tabindex="1" >
 </td>
 <td colspan="1">
 <input type="submit" name="all" value="Mostra tutti" >
@@ -88,6 +97,8 @@ $recordnav -> output();
 
 
 <?php
+
+
 
 $headers = array  ($script_transl['id']=>'id',
                    $script_transl['filename_ori']=>'',
@@ -170,7 +181,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
-    echo "<td class=\"$class  $class2 paper1\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
+    echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";
