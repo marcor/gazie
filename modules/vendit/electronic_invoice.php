@@ -48,6 +48,6 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
    }
 }
 //recupero i dati
-$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],"seziva = $si AND YEAR(datfat) = $yr AND protoc = ".$pr,'datemi ASC, numdoc ASC, id_tes ASC');
+$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'],"tipdoc LIKE 'F__' AND seziva = $si AND YEAR(datfat) = $yr AND protoc = ".$pr,'datemi ASC, numdoc ASC, id_tes ASC');
 create_XML_invoice($testate,$gTables);
 ?>
