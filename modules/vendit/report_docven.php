@@ -187,7 +187,10 @@ $recordnav -> output();
    <td class="FacetFieldCaptionTD">Protocollo:
      <input type="text" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
    </td>
-   <td colspan="4" class="FacetFieldCaptionTD">Cliente:
+   <td></td>
+   <td class="FacetFieldCaptionTD"></td>
+   <td></td>
+   <td colspan="1" class="FacetFieldCaptionTD">Cliente:
      <input type="text" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">
    </td>
    <td>
@@ -325,9 +328,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
            $r2 = gaz_dbi_fetch_array($result2);   
            
            if ($r2 == false) {
-               echo " -- ";
+              echo " -- ";
            } else {
-               echo " @ ";
+              echo " @ ";
            }
            
            echo "</td>";
