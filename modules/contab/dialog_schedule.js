@@ -118,18 +118,22 @@ function dialogSchedule(paymov) {
              );
 	}
 
-    function getOtherMov(term_val,excl_val) {
+    function getOtherMov(term_val,excl_val,link) {
        $.get("expiry.php",
              {clfoco:term_val, id_tesdoc_ref:excl_val},
              function(data) {
 			    var j=0;
+				var link_ref="";
                 $.each(data, function(i,value){
 					if(j==0){
 						$( "#db-contain" + nrow + " tbody").append( "<tr>" +
 						"<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti di: '+ value.ragso1 +' ' + value.ragso2 +'</td></tr>');
 					};
+					if (link){
+						link_ref = '<button id="linking_'+ value.datdoc +'"><img src="../../library/images/link.png" width="12"/></button>';
+					};
                     $( "#db-contain" + nrow + " tbody").append( "<tr>" +
-                        '<td class="ui-widget-right ui-widget-content "><button id="linking_'+ value.datdoc +'"><img src="../../library/images/link.png" width="12"/></button></td>' +
+                       '<td class="ui-widget-right ui-widget-content ">' + link_ref + '</td>' +
                        "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n." +
                        value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
                        "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
@@ -234,7 +238,7 @@ function dialogSchedule(paymov) {
 	  open: function(){
 			updateOpenForm(); 
 			getSamePaymov(tesdoc_ref,id_rig);
-			getOtherMov(clfoco,tesdoc_ref);
+			getOtherMov(clfoco,tesdoc_ref,false);
 		},
       buttons: {
 			"Conferma":function(){ $(this).dialog( "close" );}
@@ -262,7 +266,7 @@ function dialogSchedule(paymov) {
 	  open: function(){
 			updateCloseForm(); 
 			getSamePaymov(tesdoc_ref,id_rig);
-			getOtherMov(clfoco,tesdoc_ref);
+			getOtherMov(clfoco,tesdoc_ref,true);
 		},
       buttons: {
 			"Conferma":function(){ $(this).dialog( "close" );}
