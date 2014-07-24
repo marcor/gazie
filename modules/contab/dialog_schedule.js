@@ -142,8 +142,16 @@ function dialogSchedule(paymov) {
                         '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
                         "</tr>" );
 						$( "#linking_" + value.datdoc).click(function() { 
-							var docref = value.seziva*1000000000+parseInt(value.protoc);
-							alert (value.datdoc.substring(0,4)+"V"+docref);
+							var paymov_op_cl = $("#paymov_op_cl"+nrow).val();
+							var docref = value.datdoc.substring(0,4);
+							if (paymov_op_cl==2){ // vendita
+								docref += "V";
+							} else {
+								docref += "A";
+							}
+							docref += value.seziva*1000000000+parseInt(value.protoc);
+							updateSchedule(docref,paymov_op_cl);
+							updateCloseForm();
 						});
 						j++;
 					   
@@ -152,6 +160,17 @@ function dialogSchedule(paymov) {
              );
     }
 
+    function updateSchedule( docref, paymov_oc ) {
+			$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
+				var idv = $(v).attr('id').split('_');
+				var id_sub = idv[2];
+				var tesref = $('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first',v).focus().attr('value');
+				if (tesref == ''){ // replace value only if row is empty
+					$('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first',v).val(docref)
+				}
+			});
+			return true;
+	}
     function updateTips( t ) {
        tips.text( t ).addClass( "ui-state-highlight" );
        setTimeout(function() {
