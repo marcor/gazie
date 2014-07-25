@@ -150,7 +150,7 @@ function dialogSchedule(paymov) {
 								docref += "A";
 							}
 							docref += value.seziva*1000000000+parseInt(value.protoc);
-							updateSchedule(docref,paymov_op_cl);
+							updateSchedule(docref);
 							updateCloseForm();
 						});
 						j++;
@@ -160,7 +160,7 @@ function dialogSchedule(paymov) {
              );
     }
 
-    function updateSchedule( docref, paymov_oc ) {
+    function updateSchedule(docref) {
 			$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
 				var idv = $(v).attr('id').split('_');
 				var id_sub = idv[2];
@@ -169,8 +169,10 @@ function dialogSchedule(paymov) {
 					$('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first',v).val(docref)
 				}
 			});
+			updateTips("");
 			return true;
 	}
+	
     function updateTips( t ) {
        tips.text( t ).addClass( "ui-state-highlight" );
        setTimeout(function() {
@@ -199,6 +201,7 @@ function dialogSchedule(paymov) {
 		$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
 			var idv = $(v).attr('id').split('_');
 			var id_sub = idv[2];
+			var tesref = $('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first',v).focus().attr('value');
 			var am = parseFloat($('input[id=post_' + nrow + '_' + id_sub + '_amount]:first',v).focus().attr('value')).toFixed(2);
 			var d = $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first',v).focus().attr('value').split("-");
 			var day,month,year;
@@ -210,6 +213,9 @@ function dialogSchedule(paymov) {
 				bval=false;
 			} else if (!(month > 0 && month < 13 && year > 2000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate())){
 				updateTips( "Errore !!! Un rigo scadenza non è stato valorizzato");
+				bval=false;
+			} else if (tesref=="") { // la partita di riferimento non è stata valorizzata
+				updateTips( "Errore !!! Un rigo è senza partita di riferimento");
 				bval=false;
 			}
 		});
