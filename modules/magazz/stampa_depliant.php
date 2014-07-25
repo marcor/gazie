@@ -112,7 +112,9 @@ function printItem($code,$description,$price='',$um='',$un=0,$note='',$image='',
            $this->SetY($y);
            $this->SetX($x);
         }
-        $this->EAN13($x+40,$y+5,$barcode,10);
+        $this->EAN13($x+40,$y+5,$barcode,7);
+        $this->SetY($y);
+        $this->SetX($x);
         $this->Cell(93,5,$code.' - '.$description,'LTR',2);
         $this->Cell(93,5,'','LR',2);
         $this->Cell(93,5,$price.' '.$admin_aziend['symbol'].'/'.$um,'LR',2);
