@@ -232,6 +232,7 @@ $ctrl_doc = "";
 $ctrl_eff = 999999;
 while ($r = gaz_dbi_fetch_array($result)) {
     $modulo_fae="electronic_invoice.php?id_tes=".$r['id_tes'];
+    $modulo_fae_report="report_fae_sdi.php?id_tes=".$r['id_tes'];
     if ($r["tipdoc"] == 'FAI') {
         $tipodoc="Fattura Immediata";
         $modulo="stampa_docven.php?id_tes=".$r['id_tes'];
@@ -330,7 +331,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
            if ($r2 == false) {
               echo " -- ";
            } else {
-              echo " @ ";
+              echo " <a target=\"_blank\" href=\"".$modulo_fae_report."\">@</a>";
            }
            
            echo "</td>";
