@@ -334,11 +334,17 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                 $form['paymov_op_cl'][$i] = 1;
           } else {                            // è un rigo di pagamento o storno (chiusura partita)
                 $form['paymov_op_cl'][$i] = 2;
-          }            
-          $rs_paymov = gaz_dbi_dyn_query("*", $gTables['paymov'], "id_rigmoc_pay = ".$row['id_rig']." OR id_rigmoc_doc = ".$row['id_rig'],"id asc");
-          while ($rpm = gaz_dbi_fetch_array($rs_paymov)) {
-             $form['paymov'][$i][$rpm['id']]= $rpm ;
-             $form['paymov'][$i][$rpm['id']]['expiry']= gaz_format_date($rpm['expiry']);
+          }
+          $where= "id_rigmoc_pay = ".$row['id_rig']." OR id_rigmoc_doc = ".$row['id_rig'];
+          $numpaymov = gaz_dbi_record_count($gTables['paymov'], $where);
+          $rs_paymov = gaz_dbi_dyn_query("*", $gTables['paymov'], $where,"id asc");
+          if ($numpaymov>0){      
+                while ($rpm = gaz_dbi_fetch_array($rs_paymov)) {
+                   $form['paymov'][$i][$rpm['id']]= $rpm ;
+                   $form['paymov'][$i][$rpm['id']]['expiry']= gaz_format_date($rpm['expiry']);
+                }
+          } else {
+                   $form['paymov'][$i]['new']= array('id'=>'new','id_tesdoc_ref'=>'new','amount' => '0.00', 'expiry'=>''); 
           }
         }
         // fine recupero partite aperte
