@@ -9,6 +9,8 @@ if (!isset($_POST['ritorno'])) {
 }
 
 $nome_file="";
+$senza_esito=0;
+
 
 if (isset($_GET['all'])) {
    $where ="";
@@ -31,8 +33,16 @@ if (isset($_GET['all'])) {
 
      if (isset($_GET['status'])) {
          $passo=1000000;
-         $status = $_GET['status'];         
-         $where = " flux_status LIKE '%".$status."%'";
+         $status = $_GET['status'];   
+         
+         if ($status == "NO") {
+           // $status="@";           
+           $where = " flux_status LIKE '%@%'";
+           $senza_esito=1;
+         } else {
+                                 
+           $where = " flux_status LIKE '%".$status."%'";
+         }  
      }     
   }
 }  
@@ -86,6 +96,7 @@ $recordnav -> output();
   <option value="RC" <?php if($status =="RC") echo "selected";?> >RC - Ricevuta consegna</option>
   <option value="DT" <?php if($status =="DT") echo "selected";?> >DT - Decorrenza termini</option>
   <option value="NE" <?php if($status =="NE") echo "selected";?> >NE - Notifica esito</option>  
+  <option value="NO" <?php if($status =="NO") echo "selected";?> >NO - Senza esiti oltre RC</option>
 </select> 
 </td>
 <td>
@@ -120,7 +131,9 @@ $headers = array  ($script_transl['id']=>'id',
             );
 $linkHeaders = new linkHeaders($headers);
 
-if ($status <> "" and $status <> "@") {
+
+
+if ( $status <> "" and $status <> "@" and $status <> "NO" ) {
     $linkHeaders -> output();
 }
 
@@ -136,6 +149,23 @@ $result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".num
 
     
 while ($r = gaz_dbi_fetch_array($result)) {
+    
+    
+    if ($senza_esito == 1) {
+    
+       
+       $where1 = " filename_ori = '" . $r['filename_ori'] . ".p7m' and flux_status <> 'RC' ";    
+       $risultati = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where1, $orderby, $limit, $passo);
+       $rr = gaz_dbi_fetch_array($risultati);
+        
+       if ($rr == false) {
+          //   echo "<tr><td>-------- FALSO " . $where1 . "</td></tr>";
+        } else {
+          //   echo "<tr><td>-------- VERO "  . $where1 . " " . $rr['filename_ori'] . "</td></tr>";
+          continue;
+        }
+      
+    }
     
     $class="";
     $class1="";
@@ -190,7 +220,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";
-}
+
+   }    
+
+
+
 echo "</table>\n";
 echo "</form>\n";
 
