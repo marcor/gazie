@@ -17,7 +17,7 @@ function dialogSchedule(paymov) {
 		$( "#pm_form_container_"+ nrow + " tbody tr" ).remove();
 		$( "#pm_form_container_"+ nrow + " tbody" ).replaceWith('<tbody> <tr id="pm_header_'+ nrow + '" def="nopost" >' +
 			'<td class="ui-widget ui-widget-content " >ID partita </td>' +
-			'<td class="ui-widget ui-widget-content " >Scadenza</td>' +
+			'<td class="ui-widget ui-widget-content " >Data Chiusura</td>' +
 			'<td class="ui-widget-right ui-widget-content ">Importo</td>' + 
 			'<td class="ui-widget-right ui-widget-content "><button id="addCloseExpiry'+ nrow + '" value="' + nrow +'">'+
 			'<img src="../../library/images/add.png" /></button></td></tr></tbody>');
@@ -33,7 +33,7 @@ function dialogSchedule(paymov) {
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
 					"</tr>" );
 				$('#form_' + nrow + '_' + id_sub + '_expiry' ).change(function(){
-					if (checkDate($(this),"La data di Scadenza è sbagliata")) {
+					if (checkDate($(this),"La data di chiusura è sbagliata (gg-mm-aaaa)")) {
 						$('#post_' + nrow + '_' + id_sub + '_expiry').val($(this).val());
 					}
 				});
@@ -76,7 +76,7 @@ function dialogSchedule(paymov) {
 					'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
 					"</tr>" );
 				$('#form_' + nrow + '_' + id_sub + '_expiry' ).change(function(){
-					if (checkDate($(this),"La data di Scadenza è sbagliata")) {
+					if (checkDate($(this),"La data di Scadenza è sbagliata (gg-mm-aaaa)")) {
 						$('#post_' + nrow + '_' + id_sub + '_expiry').val($(this).val());
 					}
 				});
@@ -196,7 +196,7 @@ function dialogSchedule(paymov) {
 		}
 	}
 
-	function checkField () {
+	function checkField (open=true) {
 		var bval=true;
 		$( "#pm_post_container_"+ nrow + " div" ).each(function(i,v) {
 			var idv = $(v).attr('id').split('_');
@@ -211,8 +211,8 @@ function dialogSchedule(paymov) {
 			if ( am < 0.00 ) {
 				updateTips( "Errore !!! Un rigo importo non è stato valorizzato");
 				bval=false;
-			} else if (!(month > 0 && month < 13 && year > 2000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate())){
-				updateTips( "Errore !!! Un rigo scadenza non è stato valorizzato");
+			} else if (!(month > 0 && month < 13 && year > 2000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate()) && open ) { // la data è indispensabile solo in caso di apertura
+				updateTips( "Errore !!! Un rigo scadenza non è stato valorizzato (gg-mm-aaaa)");
 				bval=false;
 			} else if (tesref=="") { // la partita di riferimento non è stata valorizzata
 				updateTips( "Errore !!! Un rigo è senza partita di riferimento");
@@ -224,11 +224,12 @@ function dialogSchedule(paymov) {
 	
 	function checkDate (o_date, n) {
 		var d,day,month,year;
+		var chk_date = o_date.val().toString().length;
 	    d = o_date.val().toString().replace(/\//g,"-").split("-");
 		day = d[0] - 0;
 		month = d[1]-0;
 		year = d[2] - 0;			
-		if (month > 0 && month < 13 && year > 2000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate()){
+		if ( ( month > 0 && month < 13 && year > 2000 && year < 3000 && day > 0 && day <= (new Date(year, month, 0)).getDate() ) || chk_date== 0 ){
             o_date.removeClass();
 			updateTips('');
 			return true;
@@ -297,7 +298,7 @@ function dialogSchedule(paymov) {
 			"Conferma":function(){ $(this).dialog( "close" );}
 		},
 	  beforeClose:function(event,ui) { 
-	      if (!checkField() || !checkTot('Il totale delle scadenze non coincide con il totale rigo')  ){
+	      if (!checkField(false) || !checkTot('Il totale delle scadenze non coincide con il totale rigo')  ){
 		    return false;
 		  } 
 		},
@@ -323,7 +324,7 @@ function dialogSchedule(paymov) {
                '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_btn + '"><img src="../../library/images/x.gif" /></button></td>' +
                "</tr>" );
 			$('#form_' + nrow + '_' + id_btn + '_expiry' ).change(function(){
-				if (checkDate($(this),"La data di Scadenza è sbagliata")) {
+				if (checkDate($(this),"La data di Scadenza è sbagliata (gg-mm-aaaa)")) {
 					$('#post_' + nrow + '_' + id_btn + '_expiry').val($(this).val());
 				}
 			});
@@ -352,7 +353,7 @@ function dialogSchedule(paymov) {
                '<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_btn + '"><img src="../../library/images/x.gif" /></button></td>' +
                "</tr>" );
 			$('#form_' + nrow + '_' + id_btn + '_expiry' ).change(function(){
-				if (checkDate($(this),"La data di Scadenza è sbagliata")) {
+				if (checkDate($(this),"La data di Scadenza è sbagliata (gg-mm-aaaa)")) {
 					$('#post_' + nrow + '_' + id_btn + '_expiry').val($(this).val());
 				}
 			});
