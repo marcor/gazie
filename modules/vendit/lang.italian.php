@@ -733,6 +733,21 @@ $strScript = array ("admin_client.php" =>
                                             'Cliente' =>'','Fattura'=>'','Appoggio'=>''
                                            )
                            ),
+                    "select_schedule.php" =>
+                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa delle partite aperte',
+                           'mesg'=>array('La ricerca non ha dato risultati!',
+                                         'Inserire almeno 2 caratteri!',
+                                         'Cambia cliente/fornitore'
+                                          ),
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'Non ci sono movimenti nei limiti selezionati'
+                                          ),
+                           'account'=>'Cliente ',
+                           'header'=>array('Cliente'=>'','ID Partita'=>'','Mov.Cont.'=>'','Descrizione'=>'',
+                                            'N.Doc.'=>'','Data Doc.' =>'','Dare'=>'','Avere'=>'',
+                                            'Scadenza'=>''
+                                           )
+                           ),
                     "select_evaord.php" =>
                     array( 'title'=>'Evasione degli ordini del cliente',
                            'errors'=>array('Non &egrave; stato selezionato un cliente',

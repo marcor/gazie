@@ -232,7 +232,7 @@ function copy(conto){
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['search']."\" name=\"search\" />\n";
+//echo "<input type=\"hidden\" value=\"".$form['search']."\" name=\"search\" />\n";
 $gForm = new contabForm();
 echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
