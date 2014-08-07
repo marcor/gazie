@@ -740,13 +740,18 @@ $strScript = array ("admin_client.php" =>
                                          'Cambia cliente/fornitore'
                                           ),
                            'errors'=>array('La data  non &egrave; corretta!',
-                                           'Non ci sono movimenti nei limiti selezionati'
+                                           'Non sono stati trovati movimenti!'
                                           ),
                            'account'=>'Cliente ',
-                           'header'=>array('Cliente'=>'','ID Partita'=>'','Mov.Cont.'=>'','Descrizione'=>'',
-                                            'N.Doc.'=>'','Data Doc.' =>'','Dare'=>'','Avere'=>'',
+                           'orderby'=>'Ordina per: ',
+                           'orderby_value'=>array(0=>'Scadenza crescente',1=>'Scadenza decrescente',
+                                                  2=>'Cliente crescente',3=>'Cliente decrescente'
+                                           ),
+                           'header'=>array('Cliente'=>'','ID Partita'=>'','Status'=>'','Mov.Cont.'=>'','Descrizione'=>'',
+                                            'N.Doc.'=>'','Data Doc.' =>'','Data Reg.' =>'','Dare'=>'','Avere'=>'',
                                             'Scadenza'=>''
-                                           )
+                                           ),
+                           'status_value'=>array(0=>'Chiusa',1=>'Aperta'),
                            ),
                     "select_evaord.php" =>
                     array( 'title'=>'Evasione degli ordini del cliente',
