@@ -193,10 +193,10 @@ class invoiceXMLvars
       $intermediary_code = gaz_dbi_get_row($gTables['config'],'variable','intermediary');
       if ($intermediary_code['cvalue']>0){
           $intermediary = gaz_dbi_get_row($gTables['aziend'], 'codice',$intermediary_code['cvalue']);
-          $this->IdCodice = $intermediary['pariva'];
+          $this->IdCodice = $intermediary['codfis'];
           $this->Intermediary = $intermediary['codice'];
       } else {
-          $this->IdCodice = $admin_aziend['pariva'];
+          $this->IdCodice = $admin_aziend['codfis'];
           $this->Intermediary = false;
       }
     }
@@ -677,7 +677,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("ImportoRitenuta",$XMLvars->tot_ritenute);
 			$el->appendChild($el1);
-			$el1= $domDoc->createElement("AliquotaRitenuta",$XMLvars->azienda['ritenuta'] );
+			$el1= $domDoc->createElement("AliquotaRitenuta", number_format($XMLvars->azienda['ritenuta'], 2, '.', ''));
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("CausalePagamento",$XMLvars->azienda['causale_pagam_770']);
 			$el->appendChild($el1);
