@@ -693,6 +693,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1);
 		    $results->appendChild($el);
     }
+    
+   
+    
+    
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
     foreach ($XMLvars->cast as $key => $value) {          
         $el = $domDoc->createElement("DatiRiepilogo","");					 
@@ -753,6 +757,8 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     foreach ($ratpag as $k=>$v){
         $results = $xpath->query("//FatturaElettronicaBody/DatiPagamento")->item(0);
         $el= $domDoc->createElement("DettaglioPagamento",''); // 2.4.2
+            $el1= $domDoc->createElement("Beneficiario", trim($XMLvars->intesta1 . " " . $XMLvars->intesta1bis) ); // 2.4.2.1
+            $el->appendChild($el1);
             $el1= $domDoc->createElement("ModalitaPagamento",$XMLvars->pagame['fae_mode']); // 2.4.2.2
             $el->appendChild($el1);
             $el1= $domDoc->createElement("DataScadenzaPagamento",$v['date']); // 2.4.2.5
@@ -770,6 +776,11 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
             }
         $results->appendChild($el);
     }
+    
+     //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
+    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);		
+    $el = $domDoc->createElement("ImportoTotaleDocumento",number_format($XMLvars->totimpfat, 2,'.',''));
+    $results->appendChild($el);
    
     // faccio l'encode per ricavare il progressivo unico di invio
     $data=array('azienda'=>$XMLvars->azienda['codice'],
