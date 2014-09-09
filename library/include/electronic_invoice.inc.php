@@ -779,7 +779,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     
      //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);		
-    $el = $domDoc->createElement("ImportoTotaleDocumento",number_format($XMLvars->totimpfat, 2,'.',''));
+    $el = $domDoc->createElement("ImportoTotaleDocumento",number_format($totpag, 2,'.',''));  // totimpfat
     $results->appendChild($el);
    
     // faccio l'encode per ricavare il progressivo unico di invio
