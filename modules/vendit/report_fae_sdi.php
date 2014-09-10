@@ -90,7 +90,8 @@ $recordnav -> output();
 
 <select name="status">
   <option value=""></option>
-  <option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviato</option>
+  <option value="#" <?php if($status =="@") echo "selected";?> ># - Non inviata</option>
+  <option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviata</option>
   <option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
   <option value="MC" <?php if($status =="MC") echo "selected";?> >MC - Mancata consegna</option>
   <option value="RC" <?php if($status =="RC") echo "selected";?> >RC - Ricevuta consegna</option>
@@ -133,7 +134,7 @@ $linkHeaders = new linkHeaders($headers);
 
 
 
-if ( $status <> "" and $status <> "@" and $status <> "NO" ) {
+if ( $status <> "" and $status <> "#" and $status <> "@" and $status <> "NO" ) {
     $linkHeaders -> output();
 }
 
@@ -183,6 +184,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } elseif ($r['flux_status'] == "@") {
       $class="FacetDataTD";
       $class1="";
+    } elseif ($r['flux_status'] == "#") {
+      $class="FacetDataTD";
+      $class1="";  
     }   
     
     if ($r['progr_ret'] == "000") {

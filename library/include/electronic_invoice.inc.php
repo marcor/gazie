@@ -788,12 +788,40 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                 'sezione'=>$XMLvars->seziva,
                 'protocollo'=>$XMLvars->protoc,
                 'intermediary'=>$XMLvars->Intermediary);
-    $progressivo_unico_invio= $XMLvars->encodeSendingNumber($data,36);
+    $progressivo_unico_invio= $XMLvars->encodeSendingNumber($data, 36);
+		
     //print $XMLvars->decodeFromSendingNumber($progressivo_unico_invio);
     $nome_file = "IT".$codice_trasmittente."_".$progressivo_unico_invio;
+	
+	$id_tes = $XMLvars->tesdoc['id_tes'] ;
+	$data_ora_ricezione = $XMLvars->docRelDate;
+	
+	
+	$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file);   
+    if ($verifica == false) { 
+	
+	$valori=array('filename_ori'=>$nome_file,
+         'id_tes_ref'=>$id_tes,
+				 'exec_date'=>$data_ora_ricezione,
+         'received_date'=>$data_ora_ricezione,
+         'delivery_date'=>$data_ora_ricezione,
+				 'filename_son'=>'',
+				 'id_SDI'=>0,
+         'filename_ret'=>'',
+         'mail_id'=>0,
+				 'data'=>'',
+				 'flux_status'=>'#',
+         'progr_ret'=>'000',
+				 'flux_descri'=>'');
+    
+    fae_fluxInsert($valori);
+	}
+	
+	
     header("Content-type: text/plain");
     header("Content-Disposition: attachment; filename=". $nome_file .".xml");
     print $domDoc->saveXML();
+	
 }
 
 
