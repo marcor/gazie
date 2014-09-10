@@ -16,6 +16,11 @@ if (isset($_GET['all'])) {
    $where ="";
    $status="";
    $form['ritorno'] = ""; 
+} elseif (isset($_GET['id_record'])) {
+   //da migliorare l'interazione
+   $numero_record = $_GET['id_record'];
+   gaz_dbi_put_row($gTables['fae_flux'], "id", $numero_record, "flux_status", "@" );
+   $status="";
 } else {
 
   if (isset($_GET['nome_file'])) {
@@ -220,13 +225,19 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"$class\" align=\"center\">".$r['id_SDI']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['filename_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['mail_id']."</td>";
-    echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
+    
+    //aggiungere una icona invece del cancelletto 
+    if ($r['flux_status'] == "#") {
+        $modulo_fae_report="report_fae_sdi.php?id_record=".$r['id'];
+        echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$modulo_fae_report."\">#</a>" . "</td>";
+    } else {
+        echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
+    }
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
     echo "</tr>";
 
    }    
-
 
 
 echo "</table>\n";
