@@ -324,15 +324,17 @@ while ($r = gaz_dbi_fetch_array($result)) {
            echo "<td class=\"FacetDataTD\" align=\"center\"><a target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
            
            //identifica le fatture inviate all'sdi           
-           $where2 = " id_tes_ref = ".$r['id_tes'] . " and flux_status like '@'";
+           $where2 = " id_tes_ref = ".$r['id_tes'] . " and (flux_status like '@' or flux_status like '#')";
            $result2 = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where2);
            $r2 = gaz_dbi_fetch_array($result2);   
            
            if ($r2 == false) {
-              echo " -- ";
-           } else {
+              
+           } elseif ($r2['flux_status']=="@") {
               echo " <a target=\"_blank\" href=\"".$modulo_fae_report."\">@</a>";
-           }
+           } elseif ($r2['flux_status']=="#") {
+              echo " <a target=\"_blank\" href=\"".$modulo_fae_report."\">#</a>";
+           }   
            
            echo "</td>";
            }
