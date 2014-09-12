@@ -39,10 +39,17 @@ define('CATTACHMENTS_DIR',  '../../data/files/ricevutesdi');
 $mailbox = new ImapMailbox($cpopimap['val'], $cemail['val'], $cpassword['val'], CATTACHMENTS_DIR, 'utf-8');
 $mails = array();
 
+//se passato checkall verranno riscaricate tutte le email senza tener conto dell'eventule filtro: UNSEEN (solo non lette) 
+if (isset($_GET['checkall'])) {
+   $cfiltro['val'] = str_replace("UNSEEN","", $cfiltro['val']);
+}
+
+
 // Get some mail
 $mailsIds = $mailbox->searchMailBox($cfiltro['val'] );
 if(!$mailsIds) {
-	die('Casella di posta elettronica vuota');
+	echo('Nessuna nuova email con questo filtro: ' . $cfiltro['val']);
+  die("<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>");
 }
 
 //$mailId = reset($mailsIds);
@@ -53,11 +60,11 @@ $n_email = count($mailbox->getMailsInfo($mailsIds));
 
 
 
-if ($n_email == $last_fae_email['val']) { 
-   echo "Nessuna variazione sul numero di email ($n_email) <br/>";
-   echo "<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>";
-   exit();
-}
+// if ($n_email == $last_fae_email['val']) { 
+//     echo "Nessuna variazione sul numero di email ($n_email) <br/>";
+//     echo "<p align=\"center\"><a href=\"./report_fae_sdi.php\">Ritorna a report Fatture elettroniche</a></p>";
+//     exit();
+// }
 
 
 echo "N. email: " . $n_email ."<br />";
