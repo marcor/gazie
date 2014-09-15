@@ -10,12 +10,16 @@ if (!isset($_POST['ritorno'])) {
 
 $nome_file="";
 $senza_esito=0;
+$mostra_intesta = 1;
+$mostra_intesta_riga = 1;
 
 
 if (isset($_GET['all'])) {
    $where ="";
    $status="";
-   $form['ritorno'] = ""; 
+   $form['ritorno'] = "";
+   $mostra_intesta = 1;
+   $mostra_intesta_riga = 1; 
 } elseif (isset($_GET['id_record'])) {
    //da migliorare l'interazione
    $numero_record = $_GET['id_record'];
@@ -26,7 +30,8 @@ if (isset($_GET['all'])) {
   if (isset($_GET['nome_file'])) {
      $nome_file = $_GET['nome_file'];
      $status="";
-     $where = " filename_ori LIKE '%".$nome_file."%'";     
+     $where = " filename_ori LIKE '%".$nome_file."%'";
+     $mostra_intesta = 1;     
   }
   
   if ($nome_file=="") {
@@ -34,6 +39,7 @@ if (isset($_GET['all'])) {
      if (isset($_GET['id_tes'])) {
          $id_tes = $_GET['id_tes'];
          $where = " id_tes_ref = ".$id_tes."";
+         $mostra_intesta = 1;
      }
 
      if (isset($_GET['status'])) {
@@ -44,9 +50,12 @@ if (isset($_GET['all'])) {
            // $status="@";           
            $where = " flux_status LIKE '%@%'";
            $senza_esito=1;
-         } else {
-                                 
+           $mostra_intesta = 1;
+           $mostra_intesta_riga = 0;
+         } else {                                 
            $where = " flux_status LIKE '%".$status."%'";
+           $mostra_intesta = 1;
+           $mostra_intesta_riga = 0;
          }  
      }     
   }
@@ -139,7 +148,7 @@ $linkHeaders = new linkHeaders($headers);
 
 
 
-if ( $status <> "" and $status <> "#" and $status <> "@" and $status <> "NO" ) {
+if ( $mostra_intesta == 1 and $mostra_intesta_riga == 0 ) {
     $linkHeaders -> output();
 }
 
@@ -178,7 +187,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $class2="";
     if ($r['flux_status'] == "RC") {
       $class="FacetDataTD";
-     } elseif ($r['flux_status'] == "NS") {
+    } elseif ($r['flux_status'] == "NS") {
       $class="FacetDataTD";  
       $class2="FacetDataTDevidenziaKO";
     } elseif ($r['flux_status'] == "DT") {
@@ -194,11 +203,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
       $class1="";  
     }   
     
-    if ($r['progr_ret'] == "000") {
-      $class="FacetDataTD";
-      $class1="";
-      $linkHeaders -> output();
-     }
+    
+    if ($r['progr_ret'] == "000" and $mostra_intesta_riga == 1) {
+       $class="FacetDataTD";
+       $class1="";
+       $linkHeaders -> output();
+    } elseif ($r['progr_ret'] == "000" and $mostra_intesta_riga == 0) {
+       $class="FacetDataTD";
+       $class1="";
+    } 
      
     //Fattura accettata
     if ($r['flux_descri'] == "EC01") {
