@@ -328,9 +328,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
               $r2 = gaz_dbi_fetch_array($result2);   
               if ($r2 == false) {
               } elseif ($r2['flux_status']=="@") {
-                 echo " <a  title=\"FATTURA ELETTRONICA INVIATA: VEDI REPORT\" class=\"FacetDataTDred\" target=\"_blank\" href=\"".$modulo_fae_report."\"> @<img width=\"20px\" src=\"../../library/images/listed.png\" border=\"0\"></a>";
+                 echo " <a  title=\"Fattura elettronica inviata: VEDI REPORT\" class=\"FacetDataTDred\" target=\"_blank\" href=\"".$modulo_fae_report."\"> <img width=\"20px\" src=\"../../library/images/listed.png\" border=\"0\"></a>";
               } elseif ($r2['flux_status']=="#") {
-                 echo " <a title=\"FATTURA ELETTRONICA GENERATA: VEDI REPORT\" target=\"_blank\" href=\"".$modulo_fae_report."\"> #<img width=\"20px\" src=\"../../library/images/listed.png\" border=\"0\"></a>";
+                 echo " <a title=\"Fattura elettronica generata: VEDI REPORT\" target=\"_blank\" href=\"".$modulo_fae_report."\"> #<img width=\"20px\" src=\"../../library/images/listed.png\" border=\"0\"></a>";
               }   
               echo "</td>";
             }
