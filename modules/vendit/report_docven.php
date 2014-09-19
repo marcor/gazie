@@ -316,34 +316,28 @@ while ($r = gaz_dbi_fetch_array($result)) {
         
         // Colonna "Fattura elettronica"
         if (substr($r["tipdoc"],0,1)=='F'){
-           if (strlen($r["fe_cod_univoco"])!=6) { // se il cliente non è un ufficio della PA tolgo il link
+            if (strlen($r["fe_cod_univoco"])!=6) { // se il cliente non è un ufficio della PA tolgo il link
                $modulo_fae='';
                echo "<td class=\"FacetDataTD\" align=\"center\"><img width=\"20px\" src=\"../../library/images/e_inv_disabled.png\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\" border=\"0\">";
                echo "</td>";
-           } else {
-           echo "<td class=\"FacetDataTD\" align=\"center\"><a target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
-           
-           //identifica le fatture inviate all'sdi           
-           $where2 = " id_tes_ref = ".$r['id_tes'] . " and (flux_status like '@' or flux_status like '#')";
-           $result2 = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where2);
-           $r2 = gaz_dbi_fetch_array($result2);   
-           
-           if ($r2 == false) {
-              
-           } elseif ($r2['flux_status']=="@") {
-              echo " <a target=\"_blank\" href=\"".$modulo_fae_report."\">@</a>";
-           } elseif ($r2['flux_status']=="#") {
-              echo " <a target=\"_blank\" href=\"".$modulo_fae_report."\">#</a>";
-           }   
-           
-           echo "</td>";
-           }
-           }
-         else {
+            } else {
+              echo "<td class=\"FacetDataTD\" align=\"center\"><a target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
+              //identifica le fatture inviate all'sdi           
+              $where2 = " id_tes_ref = ".$r['id_tes'] . " AND (flux_status LIKE '@' OR flux_status LIKE '#')";
+              $result2 = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where2);
+              $r2 = gaz_dbi_fetch_array($result2);   
+              if ($r2 == false) {
+              } elseif ($r2['flux_status']=="@") {
+                 echo " <a  title=\"FATTURA ELETTRONICA INVIATA: VEDI REPORT\" class=\"FacetDataTDred\" target=\"_blank\" href=\"".$modulo_fae_report."\"> @<img width=\"20px\" src=\"../../library/images/listed.png\" border=\"0\"></a>";
+              } elseif ($r2['flux_status']=="#") {
+                 echo " <a title=\"FATTURA ELETTRONICA GENERATA: VEDI REPORT\" target=\"_blank\" href=\"".$modulo_fae_report."\"> #<img width=\"20px\" src=\"../../library/images/listed.png\" border=\"0\"></a>";
+              }   
+              echo "</td>";
+            }
+         } else {
            echo "<td></td>";
          }
                  
-        
         // Colonna "Mail"
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if (!empty($r["e_mail"])) {
