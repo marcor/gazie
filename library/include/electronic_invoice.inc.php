@@ -797,10 +797,10 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	$data_ora_ricezione = $XMLvars->docRelDate;
 	
 	
-	$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file);   
+	$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file.".xml");   
     if ($verifica == false) { 
 	
-	$valori=array('filename_ori'=>$nome_file,
+	$valori=array('filename_ori'=>$nome_file.".xml",
          'id_tes_ref'=>$id_tes,
 				 'exec_date'=>$data_ora_ricezione,
          'received_date'=>$data_ora_ricezione,
