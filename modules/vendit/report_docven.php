@@ -122,14 +122,14 @@ function confirMail(link){
 
 
 function confirFae(link){
-
+   tes_id = link.id.replace("doc1", "");;
    $.fx.speeds._default = 500;
-  
+   $("p#fae1").html("numero: " + $("#doc1"+tes_id).attr("n_fatt"));
    $( "#dialog1" ).dialog({
-         modal: "true",
+      modal: "true",
       show: "blind",
       hide: "explode",
-         buttons: {
+      buttons: {
                       " '.$script_transl['submit'].' ": function() {
                          window.location.href = link.href;
                           $(this).dialog("close");
@@ -137,7 +137,7 @@ function confirFae(link){
                       " '.$script_transl['cancel'].' ": function() {
                         $(this).dialog("close");
                       }
-                  }
+               }
          });
    $("#dialog1" ).dialog( "open" );
 }
@@ -192,9 +192,9 @@ switch($admin_aziend['fatimm']) {
 </div>
 
 <div id="dialog1" title="<?php echo $script_transl['fae_alert0']; ?>">
-      <p id="mail_alert1"><?php echo $script_transl['fae_alert1']; ?></p>
+      <p id="fae_alert1"><?php echo $script_transl['fae_alert1']; ?></p>
       <p class="ui-state-highlight" id="fae1"></p>
-      <p id="mail_alert2"><?php echo $script_transl['fae_alert2']; ?></p>
+      <p id="fae_alert2"><?php echo $script_transl['fae_alert2']; ?></p>
       <p class="ui-state-highlight" id="fae2"></p>
 </div>
 
@@ -358,7 +358,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
                echo "<td class=\"FacetDataTD\" align=\"center\"><img width=\"20px\" src=\"../../library/images/e_inv_disabled.png\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\" border=\"0\">";
                echo "</td>";
             } else {
-              echo "<td class=\"FacetDataTD genera\" align=\"center\"><a onclick=\"confirFae(this);return false;\" n_fatt=\"".$r["numfat"]."\" target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
+              echo "<td class=\"FacetDataTD genera\" align=\"center\"><a onclick=\"confirFae(this);return false;\" id=\"doc1".$r["id_tes"]."\" n_fatt=\"".$r["numfat"]."\" target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
               //identifica le fatture inviate all'sdi           
               $where2 = " id_tes_ref = ".$r['id_tes'] . " AND (flux_status LIKE '@' OR flux_status LIKE '#')";
               $result2 = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where2);
