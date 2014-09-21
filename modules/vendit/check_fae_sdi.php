@@ -152,14 +152,20 @@ foreach($mailsIds as $mailId) {
     }  elseif ($nome_status == 'NE') {
        $status = "NE";
 
-	     $result = $xpath->query("//IdentificativoSdI")->item(0);
-	     $idsidi = $result->textContent;  
+       $result = $xpath->query("//IdentificativoSdI")->item(0);
+       $idsidi = $result->textContent;  
 	
        $result = $xpath->query("//NomeFile")->item(0);
        $nome_file = $result->textContent;
 
-	     $result = $xpath->query("//Esito")->item(0);
-       $errore = $result->textContent;  
+       $result = $xpath->query("//Esito")->item(0);
+       $errore = $result->textContent;
+       
+       if ($errore == "EC02") {
+	 $result = $xpath->query("//Descrizione")->item(0);
+	 $errore = "EC02: " . $result->textContent;
+       }
+       
        
        $data_ora_ricezione =$data_mail;
        $data_ora_consegna =$data_mail;                

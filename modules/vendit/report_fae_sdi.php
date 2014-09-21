@@ -226,7 +226,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
      } 
     
     //Fattura rifiutata
-    if ($r['flux_descri'] == "EC02") {
+    echo strpos($r['flux_descri'], "EC021");
+    if (strlen($r['flux_descri']) > 5) {
       $class="FacetDataTD";
       $class2="FacetDataTDevidenziaKO";
     }
