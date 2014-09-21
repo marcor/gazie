@@ -52,6 +52,11 @@ if (isset($_GET['all'])) {
            $senza_esito=1;
            $mostra_intesta = 1;
            $mostra_intesta_riga = 0;
+         } elseif ($status == "NEEC02") {
+           $where = " flux_status LIKE '%NE%' and flux_descri <> 'EC01'";
+           $senza_esito=1;
+           $mostra_intesta = 1;
+           $mostra_intesta_riga = 0;                       
          } else {                                 
            $where = " flux_status LIKE '%".$status."%'";
            $mostra_intesta = 1;
@@ -110,7 +115,8 @@ $recordnav -> output();
   <option value="MC" <?php if($status =="MC") echo "selected";?> >MC - Mancata consegna</option>
   <option value="RC" <?php if($status =="RC") echo "selected";?> >RC - Ricevuta consegna</option>
   <option value="DT" <?php if($status =="DT") echo "selected";?> >DT - Decorrenza termini</option>
-  <option value="NE" <?php if($status =="NE") echo "selected";?> >NE - Notifica esito</option>  
+  <option value="NE" <?php if($status =="NE") echo "selected";?> >NE - Notifica esito</option>
+  <option value="NEEC02" <?php if($status =="NEEC02") echo "selected";?> >NE EC02 - Notifica esito</option>  
   <option value="NO" <?php if($status =="NO") echo "selected";?> >NO - Senza esiti oltre RC</option>
 </select> 
 </td>
