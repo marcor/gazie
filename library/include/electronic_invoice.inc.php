@@ -199,6 +199,10 @@ class invoiceXMLvars
           $this->IdCodice = $admin_aziend['codfis'];
           $this->Intermediary = false;
       }
+      $this->totimp_body = 0;
+      $this->totimp_decalc = 0;
+      $this->totimp_doc = 0;
+
     }
 
 
