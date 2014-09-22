@@ -109,6 +109,10 @@ $(function() {
    $( "#dialog1" ).dialog({
       autoOpen: false
    });
+
+   $( "#dialog2" ).dialog({
+      autoOpen: false
+   });
    
 });
 function confirMail(link){
@@ -156,6 +160,26 @@ function confirFae(link){
          });
    $("#dialog1" ).dialog( "open" );
 }
+
+function confirTutti(link){
+   $.fx.speeds._default = 500;
+   $( "#dialog2" ).dialog({
+      modal: "true",
+      show: "blind",
+      hide: "explode",
+      buttons: {
+                      " '.$script_transl['submit'].' ": function() {
+                          window.location.href = window.location.href + "&all=Mostra+tutti";
+                          $(this).dialog("close");
+                      },
+                      " '.$script_transl['cancel'].' ": function() {
+                        $(this).dialog("close");
+                      }
+               }
+         });
+   $("#dialog2" ).dialog( "open" );
+}
+
 
 
 </script>';
@@ -213,6 +237,11 @@ switch($admin_aziend['fatimm']) {
       <p class="ui-state-highlight" id="fae2"></p>
 </div>
 
+<div id="dialog2" title="<?php echo $script_transl['report_alert0']; ?>">
+      <p id="report_alert1"><?php echo $script_transl['report_alert1']; ?></p>
+      <p class="ui-state-highlight" id="report1"></p>
+</div>
+
 <div align="center"><font class="FacetFormHeaderFont">Documenti di vendita della sezione
 <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
 <?php
@@ -251,7 +280,7 @@ $recordnav -> output();
      <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
    </td>
    <td colspan="2">
-     <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+     <input type="submit" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
    </td>
    <td colspan="2">
    

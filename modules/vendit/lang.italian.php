@@ -112,8 +112,9 @@ $strScript = array ("admin_client.php" =>
                          'mail_alert2'=>'con allegato il seguente documento di vendita:',
                          'fae_alert0'=>'Generazione documento FAE',
                          'fae_alert1'=>'Hai scelto di generare la fattura elettronica ',
-                         'fae_alert2'=>'',                         
-                         
+                         'fae_alert2'=>'',
+                         'report_alert0'=>'Mostra tutti i documenti',
+                         'report_alert1'=>'Sicuro di voler mostrare tutti i documenti?'
                          ),
                     "admin_agenti.php" =>
                    array(  "Agenti di vendita ",
