@@ -53,6 +53,18 @@ if (isset($_GET['protoc'])) {
 }  else {
    $protocollo ='';
 }
+
+if (isset($_GET['numerof'])) {
+   if ($_GET['numerof'] > 0) {
+      $numerof = $_GET['numerof'];
+      $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' AND numfat = '$numerof' GROUP BY protoc, datfat";
+      $auxil = $_GET['auxil']."&numerof=".$numerof;
+      $passo = 1;
+   }
+}  else {
+   $numerof ='';
+}
+
 if (isset($_GET['cliente'])) {
    if ($_GET['cliente'] <> '') {
       $cliente = $_GET['cliente'];
@@ -60,8 +72,10 @@ if (isset($_GET['cliente'])) {
       $auxil = $_GET['auxil']."&cliente=".$cliente;
       $passo = 50;
       unset($protocollo);
+      unset($numerof);
    }
 }
+
 if (isset($_GET['all'])) {
    gaz_set_time_limit (0);
    $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
@@ -69,6 +83,7 @@ if (isset($_GET['all'])) {
    $passo = 100000;
    unset($protocollo);
    unset($cliente);
+   unset($numerof);
 }
 
 $titolo="Documenti di vendita a clienti";
@@ -225,10 +240,12 @@ $recordnav -> output();
      <input type="text" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
    </td>
    <td></td>
-   <td class="FacetFieldCaptionTD"></td>
+   <td class="FacetFieldCaptionTD">Numero:
+      <input type="text" name="numerof" value="<?php if (isset($numerof)) { print $numerof;} ?>" maxlength="6" size="3" tabindex="2" class="FacetInput">
+   </td>
    <td></td>
    <td colspan="1" class="FacetFieldCaptionTD">Cliente:
-     <input type="text" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">
+     <input type="text" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="3" class="FacetInput">
    </td>
    <td>
      <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
