@@ -456,7 +456,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
             
          
          $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
-		   $attrVal = $domDoc->createTextNode( substr(trim( $XMLvars->client['ragso1'] ." " . $XMLvars->client['ragso2'] ), 0, 80) );	   
+		   $attrVal = $domDoc->createTextNode( substr(trim( $XMLvars->client['ragso1']) . " " . trim($XMLvars->client['ragso2'] ), 0, 80) );	   
 		   $results->appendChild($attrVal);	
     
 		   $results = $xpath->query("//CessionarioCommittente/Sede/Indirizzo")->item(0);		
