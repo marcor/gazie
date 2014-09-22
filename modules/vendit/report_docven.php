@@ -169,7 +169,7 @@ function confirTutti(link){
       hide: "explode",
       buttons: {
                       " '.$script_transl['submit'].' ": function() {
-                          window.location.href = window.location.href + "&all=Mostra+tutti";
+                          window.location.href = location.href + "&all=Mostra+tutti";
                           $(this).dialog("close");
                       },
                       " '.$script_transl['cancel'].' ": function() {
