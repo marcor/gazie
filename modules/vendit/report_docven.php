@@ -219,6 +219,8 @@ switch($admin_aziend['fatimm']) {
 </tr>
 <tr>
 <td class="FacetFormHeaderFont"><a href="admin_docven.php?Insert&seziva=<?php echo substr($auxil,0,1); ?>&tipdoc=FND">Emetti Nuova Nota Debito</a></td>
+<td class="FacetFormHeaderFont"><a href="report_fae_sdi.php">Report fatture elettroniche</a></td>
+
 </tr>
 </table>
 <form method="GET" >
