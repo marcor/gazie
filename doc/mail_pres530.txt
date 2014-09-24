@@ -1,0 +1,23 @@
+Titolo:
+Omnia fert aetas.
+
+Presentazione:
+Questo rilascio è stato deciso per mettere alla prova definitiva ( e quindi nella speranza di ottenere dei feedback positivi) il sottosistema di gestione e controllo del flusso delle fatture elettroniche verso la PA realizzato da Giulio Valentino. Il sistema è incentrato su una nuova tabella del database che si chiama gaz_XXXfaeflux, in questa si tiene traccia di tutti gli stadi di avanzamento fino al pagamento di ogni singola fattura emessa nei confronti della pubblica amministrazione dal momento della firma e invio della stessa attraverso una casella di posta elettronica. Per poter far funzionare il tutto è necessario fornire a GAzie i dati di accesso alla casella stessa e siccome GAzie al momento  non possiede un form per poter gestire questi dati presenti comunque nel database essi devono essere inseriti attraverso un amministratore di database es. PhpMyAdmin. Nello specifico devono essere indicati nella tabella gaz_XXXcompany_config i nuovi campi aggiunti per questo scopo:
+15 - 'Casella di posta', 'cemail'
+16 - 'Password', 'cpassword
+17 - 'Filtro casella di posta', 'cfiltro'
+18 - 'Configurazione pop imap', 'cpopimap'
+Inoltre sarebbe buona cosa utilizzare una apposita casella di posta elettronica su cui riversare tutte le mail ricevute da SDI per evitare che gli operatori per sbadataggine cancellino/modifichino le mail di risposta dello SDI stesso.
+Tutto quanto sopra descritto tenendo conto che anche le mail di risposta dello SDI, oltre che il file XML firmato, dovrebbero in qualche modo essere oggetto di "conservazione sostitutiva", anche se nello specifico non sono ancora chiare le modalità...
+Confido nella bontà di tutti coloro che andranno ad utilizzare l'invio delle fatture elettroniche tramite e-mail (o FTP) di informare Giulio Valentino sulle proprie impressioni e magari dare dei consigli in merito.
+Per quanto riguarda il mio operato: ho fatto dei passi in avanti nella realizzazione dello scadenziario a partite aperte ma sono a poco oltre la metà del lavoro; infatti ho scritto tutto quanto è necessario per la fase attiva di generazione (apertura delle partite) e la visualizzazione delle stesse, mentre manca tutta la parte relativa alla chiusura, speriamo nella prossima release :-)
+    
+
+Modifiche apportate:
+- Aggiunto da Giulio Valentino un sottosistema di archiviazione e gestione del flusso delle fatture elettroniche PA inviate tramite posta elettronica
+- Aggiunti gli elementi bolli e ritenute sul tracciato XML della fattura elettronica PA
+- Corretto bug #224 segnalato da mag4 in data 25.6.2014 e relativo al quadro NE dello spesometro che mancava del CF/PI
+- Continuati i lavori per la gestione dello scadenziario a partite aperte.
+- Per evitare di buttar giù il server in caso di database "grasso" e macchina lenta è stao aggiunto un dialog per la conferma del "Mostra tutti" nel report delle fatture di vendita.
+
+Antonio de Vincentiis, Montesilvano, 24 Settembre 2014
