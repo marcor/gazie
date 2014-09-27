@@ -232,7 +232,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
       $class2="FacetDataTDevidenziaKO";
     }
  
-    echo "<tr class=\"$class1 $class2\" >";
+    echo "<tr class=\"$class1 $class2\">";
     echo "<td class=\"$class\" align=\"center\">".$r['id']."</td>";
     echo "<td class=\"$class paper\" align=\"left\">".$r['filename_ori']."</td>";
     echo "<td class=\"$class\" align=\"center\">".$r['numfat']."</td>";
@@ -254,11 +254,17 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
     }
     echo "<td class=\"$class\" align=\"center\">".$r['progr_ret']."</td>";
-    echo "<td class=\"$class\" align=\"center\">".$r['flux_descri']."</td>";
+    
+    if (strlen($r['flux_descri']) < 5) {
+      echo "<td class=\"$class\" >".$r['flux_descri']."</td>"; 
+    } else {
+      echo "<td class=\"$class\" ></td>";   
+      echo "</tr>";
+      echo "<tr><td colspan =\"4\"><td colspan =\"11\" class=\"$class\" style=\"text-align:center;\" >".$r['flux_descri']."</td>";
+      echo "</tr><tr><td colspan=\"15\">&nbsp;</td></tr>";    
+    }
     echo "</tr>";
-
    }    
-
 
 echo "</table>\n";
 echo "</form>\n";
