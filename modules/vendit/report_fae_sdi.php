@@ -95,7 +95,7 @@ $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 
-<p>&nbsp;</p>
+<br>
 
 <table id ="tableId" name="tableId" class="Tlarge">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">

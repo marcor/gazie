@@ -258,6 +258,7 @@ TABLE.selectTable TD {
 .ThemeGazieMainItem
 {
 	background-color:	SKYBLUE;
+        border-bottom: 20px !important;
 }
 .ThemeGazieMenuItemHover,.ThemeGazieMenuItemActive
 {
