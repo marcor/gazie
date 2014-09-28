@@ -260,7 +260,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } else {
       echo "<td class=\"$class\" ></td>";   
       echo "</tr>";
-      echo "<tr><td colspan =\"4\"><td colspan =\"11\" class=\"$class\" style=\"text-align:center;\" >".$r['flux_descri']."</td>";
+      echo "<tr><td colspan =\"5\"><td colspan =\"10\" class=\"$class\" style=\"text-align:left;\" >".$r['flux_descri']."</td>";
       echo "</tr><tr><td colspan=\"15\">&nbsp;</td></tr>";    
     }
     echo "</tr>";
