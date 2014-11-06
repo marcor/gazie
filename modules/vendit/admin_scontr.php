@@ -143,7 +143,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                   $form['in_prezzo'] = $form['rows'][$key_row]['prelis'];
                   $form['in_sconto'] = $form['rows'][$key_row]['sconto'];
                   $form['in_quanti'] = $form['rows'][$key_row]['quanti'];
-                  $form['in_codvat'] = $form['rows'][$key_row]['codvat'];
+                  //$form['in_codvat'] = $form['rows'][$key_row]['codvat'];
                   $form['in_codric'] = $form['rows'][$key_row]['codric'];
                   $form['in_provvigione'] = $form['rows'][$key_row]['provvigione'];
                   $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
@@ -418,9 +418,21 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
          $form['rows'][$old_key]['provvigione'] = $form['in_provvigione'];
          $form['rows'][$old_key]['prelis'] = number_format($form['in_prezzo'],$admin_aziend['decimal_price'],'.','');
          $form['rows'][$old_key]['sconto'] = $form['in_sconto'];
-         $form['rows'][$old_key]['codvat'] = $form['in_codvat'];
+         if ($artico['aliiva'] > 0) {
+            $form['rows'][$old_key]['codvat'] = $artico['aliiva'];
+            $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$artico['aliiva']);
+            $form['rows'][$old_key]['pervat'] = $iva_row['aliquo'];
+            $form['rows'][$old_key]['tipiva'] = $iva_row['tipiva'];
+         }
+         if ($form['in_codvat'] > 0) {
+            $form['rows'][$old_key]['codvat'] = $form['in_codvat'];
+            $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
+            $form['rows'][$old_key]['pervat'] = $iva_row['aliquo'];
+            $form['rows'][$old_key]['tipiva'] = $iva_row['tipiva'];
+         }         
+         /*$form['rows'][$old_key]['codvat'] = $form['in_codvat'];
          $pervat=gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
-         $form['rows'][$old_key]['pervat'] = $pervat['aliquo'];
+         $form['rows'][$old_key]['pervat'] = $pervat['aliquo'];*/
          $form['rows'][$old_key]['annota'] = '';
          $form['rows'][$old_key]['scorta'] = '';
          $form['rows'][$old_key]['pesosp'] = '';
@@ -617,7 +629,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_prezzo'] = 0;
     $form['in_sconto'] = 0;
     $form['in_quanti'] = 0;
-    $form['in_codvat'] = $admin_aziend['alliva'];
+    $form['in_codvat'] = 0;
     $form['in_codric'] = $admin_aziend['impven'];
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
@@ -693,7 +705,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_sconto'] = 0;
     $form['in_provvigione'] = 0;
     $form['in_quanti'] = 0;
-    $form['in_codvat'] = $admin_aziend['alliva'];
+    $form['in_codvat'] = 0;
     $form['in_codric'] = $admin_aziend['impven'];
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
@@ -840,7 +852,7 @@ echo "% ".$script_transl['sconto'].": \n";
 echo "<input type=\"text\" value=\"".$form['in_sconto']."\" maxlength=\"4\" size=\"1\" name=\"in_sconto\">\n";
 echo $script_transl['provvigione']."\n";
 echo "<input type=\"text\" value=\"".$form['in_provvigione']."\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">\n";
-echo $script_transl['codvat']."\n";
+echo $script_transl['vat_constrain']."\n";
 $gForm->selectFromDB('aliiva','in_codvat','codice',$form['in_codvat'],'codice',true,'-','descri');
 echo "\t </td>\n";
 echo "\t </tr>\n";

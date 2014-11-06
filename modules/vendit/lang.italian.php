@@ -227,7 +227,8 @@ $strScript = array ("admin_client.php" =>
                            'ritenuta'=>'Ritenuta ',
                            'netpay'=>'Netto a pagare',
                            'id_agente'=>"Agente di vendita",
-                           'in_artsea'=>'Ricerca per '
+                           'in_artsea'=>'Ricerca per ',
+                           'vat_constrain'=>'(forza) IVA al '
                            ),
                     "select_docforprint.php" =>
                    array(  array(1 => "D.d.T. di Vendita",
@@ -328,7 +329,8 @@ $strScript = array ("admin_client.php" =>
                            'print_total'=>"Stampa totale",
                            'print_total_value'=>array(0=>'No',1=>'Si'),
                            'delivery_time'=>"Tempi di consegna",
-                           'day_of_validity'=>"Giorni di validità"
+                           'day_of_validity'=>"Giorni di validità",
+                           'vat_constrain'=>'(forza) IVA al '
                            ),
                     "report_contract.php" =>
                     array( 'title'=>'Elenco dei contratti stipulati',
@@ -501,6 +503,7 @@ $strScript = array ("admin_client.php" =>
                            'pagame'=>'Pagamento',
                            'codric'=>'C/ricavo',
                            'codvat'=>'%IVA',
+                           'vat_constrain'=>'(forza) IVA al ',
                            'total'=>'Totale',
                            'id_agente'=>'Agente',
                            'in_rows_title'=>'inserimento rigo',

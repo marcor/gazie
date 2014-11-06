@@ -223,7 +223,8 @@ $strScript = array ("admin_client.php" =>
                            'ritenuta'=>'Advance tax deduction ',
                            'netpay'=>'Net to pay ',
                            'id_agente'=>"Sales agent",
-                           'in_artsea'=>'search for '
+                           'in_artsea'=>'search for ',
+                           'vat_constrain'=>'(constrain) VAT al '
                            ),
                     "select_docforprint.php" =>
                    array(  array(1 => "D.d.T. di Vendita",2 => "Fattura Differita",3 => "Fattura Immediata Accompagnatoria",4 => "Fattura Immediata Semplice",5 => "Nota Credito a Cliente",6 => "Nota Debito a Cliente"),
@@ -319,7 +320,8 @@ $strScript = array ("admin_client.php" =>
                            'print_total'=>"Print total",
                            'print_total_value'=>array(0=>'No',1=>'Yes'),
                            'delivery_time'=>"Delivery_days",
-                           'day_of_validity'=>"Days of validity"
+                           'day_of_validity'=>"Days of validity",
+                           'vat_constrain'=>'(contrain) VAT  '
                            ),
                     "report_contract.php" =>
                     array( 'title'=>'Report of concluded contracts',
@@ -433,6 +435,7 @@ $strScript = array ("admin_client.php" =>
                            'address'=>'Address',
                            'pagame'=>'Payment',
                            'codric'=>'C/revenue',
+                           'vat_constrain'=>'(constrain) VAT ',
                            'codvat'=>'%VAT',
                            'total'=>'Total',
                            'id_agente'=>'Agent',
