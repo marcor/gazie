@@ -40,7 +40,6 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
 
 ?>
 <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="../../library/bootstrap/css/font-awesome.min.css" rel="stylesheet">
 <link href="../../library/bootstrap/css/ml_dropdown.css" rel="stylesheet" type="text/css" >
 <link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" >
 <script src="../../library/bootstrap/js/jquery.min.js"></script>
@@ -79,9 +78,7 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
                 require("../../modules/".$row['name']."/menu.".$admin_aziend['lang'].".php");
              }
              if ($row['name'] == $module) {
-               //if ( $admin_aziend['Menu']=="header_menu02.php" ) {
                $row['weight']=0;
-               //           }
                  if ($row['m3_link'] == $scriptname) {
                      $title_from_menu = $transl[$row['name']]['m3'][$row['m3_trkey']][0];
                  }
