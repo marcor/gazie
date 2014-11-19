@@ -28,18 +28,26 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
 <?php
 $menuclass = ' class="FacetMainMenu" ';
-$style = 'stylesheet.css';
-if (!empty($admin_aziend['style'])){
+$style = 'default.css';
+if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin_aziend['style'] ) ){
     $style = $admin_aziend['style'];
 }
 
-echo '<link rel="stylesheet" type="text/css" href="../../library/style/'.$style.'">';
-echo '<link rel="shortcut icon" href="../../library/images/favicon.ico">';
-echo '<script type="text/javascript" src="../../js/jscookmenu/JSCookMenu.js"></script>';
-echo '<link rel="stylesheet" href="../../js/jscookmenu/theme.css" type="text/css">';
-echo '<script type="text/javascript" src="../../js/jscookmenu/theme.js"></script>';
+?>
+<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+<link href="../../library/bootstrap/css/font-awesome.min.css" rel="stylesheet">
+<link href="../../library/bootstrap/css/ml_dropdown.css" rel="stylesheet" type="text/css" >
+<link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" >
+<script src="../../library/bootstrap/js/jquery.min.js"></script>
+<script src="../../library/bootstrap/js/bootstrap.min.js"></script>
+<link rel="shortcut icon" href="../../library/images/favicon.ico">
+<?php
+
 function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray='')
 {
   /* - In $idScript si deve passare l'id dell'array submenu (m2) in menu.language.php (per mettere nel tag <TITLE> )
@@ -71,7 +79,9 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
                 require("../../modules/".$row['name']."/menu.".$admin_aziend['lang'].".php");
              }
              if ($row['name'] == $module) {
-                 $row['weight']=0;
+               //if ( $admin_aziend['Menu']=="header_menu02.php" ) {
+               $row['weight']=0;
+               //           }
                  if ($row['m3_link'] == $scriptname) {
                      $title_from_menu = $transl[$row['name']]['m3'][$row['m3_trkey']][0];
                  }
@@ -129,13 +139,16 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
             echo "&raquo;".$title_from_menu;
      }
      echo "</title>\n";
-     echo createGazieCookMenu($menuArray,$radix);
      echo "</head>\n";
      echo "<body>\n";
-     echo '<div id="GazieMenuID"></div>';
-     echo '<script type="text/javascript">';
-     echo "cmDraw('GazieMenuID', myMenu, 'hbr', cmThemeGazie);\n";
-     echo '</script>';
+
+    // cambia il tipo di menu
+    $tipomenu = substr ( $admin_aziend['style'], 0, -4 );
+	if ( file_exists( "../../library/style/header_menu_".$tipomenu.".php" ) ) {
+		require("../../library/style/header_menu_".$tipomenu.".php");
+	} else {
+		require("../../library/style/header_menu_default.php");
+	}
   }
   if (!isset($translated_script)){
      if ($alternative_transl){ // se e' stato passato il nome dello script sul quale mi devo basare per la traduzione
@@ -168,42 +181,5 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
      }
      </script>';
   return ($strCommon+$translated_script);
-}
-
-function createGazieCookMenu($m,$r)
-{
-/*
-Questa funzione  crea l'array Javascript da passare a JSCookMenu
-dove sulla barra orizzontale in alto c'è il menu del modulo corrente
-*/
-$acc="<script type=\"text/javascript\">\n var myMenu = [";
-$acc.= "['<img class=\"seq1\" src=\"".$m[0]['icon']."\" />','".$m[0]['name']."','".$m[0]['link']."','_new',null\n";
-unset($m[0][0],$m[0]['link'],$m[0]['icon'],$m[0]['name'],$m[0]['title'],$m[0]['class']);
-$topm=$m[0];
-unset($m[0]);
-foreach($m as $v1) {
-    $acc .= ",['<img class=\"seq1\" src=\"".$v1['icon']."\"/><img class=\"seq2\" src=\"".$v1['icon']."\" />','".$v1['name']."','".$v1['link']."',null,null\n";
-    unset($v1['link'],$v1['icon'],$v1['name'],$v1['title'],$v1['class']);
-    foreach($v1 as $v2) {
-        $acc .= ",[null,'".$v2['name']."','".$v2['link']."',null,null";
-        unset($v2['link'],$v2['icon'],$v2['name'],$v2['title'],$v2['class']);
-        foreach($v2 as $v3) {
-            $acc .= ",['','".$v3['name']."','".$v3['link']."',null,null]";
-        }
-        $acc .= "]\n";
-    }
-    $acc .= "]\n";
-}
-$acc .= "]\n";
-foreach($topm as $v2) {
-        $acc .= ",_cmSplit,[null,'".$v2['name']."','".$v2['link']."',null,null";
-        unset($v2['link'],$v2['icon'],$v2['name'],$v2['title'],$v2['class']);
-        foreach($v2 as $v3) {
-            $acc .= ",[null,'".$v3['name']."','".$v3['link']."',null,null]";
-        }
-        $acc .= "]\n";
-}
-$acc .= "];\n </script>\n";
-return $acc;
 }
 ?>
