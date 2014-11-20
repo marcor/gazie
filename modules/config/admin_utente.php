@@ -279,7 +279,10 @@ echo '<select name="style" class="FacetSelect">';
 $relativePath = '../../library/style';
 if ($handle = opendir($relativePath)) {
     while ($file = readdir($handle)) {
-        if(($file == ".") or ($file == "..") or ($file == ".svn")) continue;
+        // accetto solo i file css
+        if (!preg_match("/^[a-z0-9\s\_]+\.css$/",$file)){
+            continue;
+        } 
         $selected="";
         if ($form["style"] == $file) {
             $selected = " selected ";
