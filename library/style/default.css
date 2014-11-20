@@ -404,6 +404,25 @@ input.input-xs {
 .progress {
 	margin: 5px 5px 7px 5px;
 }
+.navbar-toggle {
+	margin-left: 20px;
+}
+.contenuto-help {
+	background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+.nav-tabs {
+    margin-bottom: 0px;
+}
+.help-text {
+	font-size: 1.0em;
+}
+
+.help-text a {
+	color: #2b652c;
+	text-transform: uppercase;
+}
 
 
 
