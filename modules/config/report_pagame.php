@@ -25,8 +25,6 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain('','','admin_pagame');
 ?>
-<div align="center" class="FacetFormHeaderFont"><a href="admin_pagame.php?Insert">
-<?php echo $script_transl['ins_this']; ?></a></div>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl[0]; ?></div>
 <?php
 $recordnav = new recordnav($gTables['pagame'], $where, $limit, $passo);

@@ -25,9 +25,6 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain('','','admin_portos');
 ?>
-<div align="center" class="FacetFormHeaderFont"><a href="admin_portos.php?Insert">
-<?php echo $script_transl['ins_this']; ?>
-</a></div>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <?php
 $recordnav = new recordnav($gTables['portos'], $where, $limit, $passo);

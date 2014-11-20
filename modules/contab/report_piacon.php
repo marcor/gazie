@@ -43,13 +43,8 @@ require("../../library/include/header.php");
 $strTransl=HeadMain();
 ?>
 <table border="0" align="center" width="90%">
-<tr>
-<td class="FacetFormHeaderFont"><a href="admin_piacon.php?Insert"><?php echo $strTransl['ins_this']; ?> </a></td>
-<td class="FacetFormHeaderFont"><a href="<?php echo "select_partit.php";?>"><?php echo $strTransl['view_this']; ?> </a></td>
-<td class="FacetFormHeaderFont"><a href="stampa_piacon.php"><?php echo $strTransl['print_this']; ?> </a></td>
-</tr>
-<tr><td colspan="3" class="FacetFormHeaderFont" align="center"><?php echo $strTransl['title']; ?></td></tr>
-<tr><td colspan="3" class="FacetDataTDred" ><?php echo $strTransl['msg1']; ?></td></tr>
+<div colspan="3" class="FacetFormHeaderFont" align="center"><?php echo $strTransl['title']; ?></div>
+<div colspan="3" align="center" class="FacetDataTDred" ><?php echo $strTransl['msg1']; ?></div>
 </table>
 <table class="Tlarge">
 <tr>

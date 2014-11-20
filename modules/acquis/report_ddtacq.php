@@ -33,13 +33,7 @@ $titolo = "D.d.T. a Fornitori";
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
-<br>
-<table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
-<tr>
-<td align="center"><font class="FacetFormHeaderFont"><a href="admin_docacq.php?seziva=<?php print $_GET['auxil']; ?>&tipdoc=DDR&Insert" accesskey="d">Emetti D.d.T. per Reso a Fornitore</a></td>
-<td align="center"><font class="FacetFormHeaderFont"><a href="admin_docacq.php?seziva=<?php print $_GET['auxil']; ?>&tipdoc=DDL&Insert" accesskey="d">Emetti D.d.T. in c/lavorazione</a></td>
-</tr>
-</table>
+
 <form method="GET" action="<?php print $_SERVER['PHP_SELF']; ?>"  name="auxil">
     <p>
     <div align="center">

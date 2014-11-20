@@ -63,7 +63,6 @@ if (!isset($_GET['auxil'])) {
    $where = $search_field_Array[$admin_aziend['artsea']][0]." LIKE '$auxil%'";
 }
 ?>
-<div align="center" class="FacetFormHeaderFont"><a href="admin_artico.php?Insert">Inserisci Nuovo Articolo</a></div>
 <div align="center" class="FacetFormHeaderFont">Articoli</div>
 <form method="GET">
 <table class="Tlarge">

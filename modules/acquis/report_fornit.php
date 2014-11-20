@@ -55,7 +55,6 @@ if (!isset($_GET['field'])) {
 }
 
 ?>
-<div align="center" class="FacetFormHeaderFont"><a href="admin_fornit.php?Insert">Inserisci Nuovo Fornitore</a></div>
 <div align="center" class="FacetFormHeaderFont">Fornitori</div>
 <form method="GET">
 <table class="Tlarge">

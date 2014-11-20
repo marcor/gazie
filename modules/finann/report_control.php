@@ -33,10 +33,6 @@ $script_transl=HeadMain();
 <tr><td class="FacetFormHeaderFont" align="center" colspan="2">
 Queste routine eseguono un controllo formale sugli archivi.
 </td></tr>
-<tr>
-<td class="FacetFormHeaderFont" align="center"><a href="error_rigmoc.php" accesskey="c">Controllo Sbilancio Movimenti Contabili</a></td>
-<td class="FacetFormHeaderFont" align="center"><a href="error_protoc.php" accesskey="p">Controllo Protocolli I.V.A.</a></td>
-</tr>
 </table>
 </body>
 </html>

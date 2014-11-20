@@ -70,13 +70,6 @@ function confirMail(link){
 }
 </script>';
 ?>
-<table align="center" width="80%">
-<tr>
-<td><font class="FacetFormHeaderFont"><a href="admin_broacq.php?tipdoc=APR" accesskey="p">Nuovo Preventivo</a></td>
-<td><font class="FacetFormHeaderFont"><a href="admin_broacq.php?tipdoc=AOR" accesskey="o">Nuovo Ordine</a></td>
-<br>
-</tr>
-</table>
 <div align="center" class="FacetFormHeaderFont">Preventivi e ordini a fornitori</div>
 <?php
 $where = "tipdoc = 'APR' or tipdoc = 'AOR'";

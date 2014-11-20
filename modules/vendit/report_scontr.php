@@ -58,14 +58,6 @@ $script_transl = HeadMain();
 $gForm = new GAzieForm();
 echo "<form method=\"GET\" name=\"report\">\n";
 echo "<input type=\"hidden\" name=\"hidden_req\">\n";
-echo "<table align=\"center\" width=\"70%\">\n";
-echo "<tr class=\"FacetFormHeaderFont\">\n";
-echo "<td><a href=\"admin_scontr.php?Insert\">".$script_transl['link1']."</a>
-      </td>\n";
-echo "<td><a href=\"close_ecr.php\">".$script_transl['link2']."</a>
-      </td>\n";
-echo "</tr>\n";
-echo "</table>\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['seziva'];
 echo $ecr['seziva'];
 echo "</div>\n";

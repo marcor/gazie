@@ -25,8 +25,6 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl = HeadMain('','','admin_banapp');
 ?>
-<div align="center" class="FacetFormHeaderFont"><a href="admin_banapp.php?Insert">
-<?php echo $script_transl['ins_this']; ?></a></div>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <?php
 $recordnav = new recordnav($gTables['banapp'], $where, $limit, $passo);

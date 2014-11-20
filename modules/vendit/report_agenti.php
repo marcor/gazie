@@ -44,10 +44,6 @@ if (isset($_GET['all'])) {
 require("../../library/include/header.php");
 $script_transl=HeadMain('','','admin_agenti');
 ?>
-<br />
-<div align="center" class="FacetFormHeaderFont"><a href="admin_agenti.php?Insert" accesskey="a">
-<?php echo $script_transl['ins_this']?></a>
-</div>
 <form method="GET" >
 <div align="center" class="FacetFormHeaderFont">
 <?php echo ucfirst($script_transl[0]);?>

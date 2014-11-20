@@ -105,7 +105,6 @@ function confirMail(link){
 }
 </script>';
 ?>
-<div align="center" class="FacetFormHeaderFont"><a href="admin_docven.php?Insert&seziva=<?php echo substr($auxil,0,1); ?>&tipdoc=DDT" accesskey="d">Emetti Documento di Trasporto</a></div>
 <form method="GET">
 
 <div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">

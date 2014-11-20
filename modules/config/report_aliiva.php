@@ -24,7 +24,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl=HeadMain();
-echo '<div align="center" class="FacetFormHeaderFont"><a href="admin_aliiva.php?Insert">'.$script_transl['ins_this'].'</a></div>';
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>';
 $recordnav = new recordnav($gTables['aliiva'], $where, $limit, $passo);
 $recordnav -> output();

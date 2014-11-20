@@ -48,7 +48,6 @@ if (!isset($_GET['auxil'])) {
    $where = "descri like '".addslashes($auxil)."%'";
 }
 ?>
-<div align="center" class="FacetFormHeaderFont"><a href="admin_catmer.php?Insert">Inserisci Nuova Categoria Merceologica</a></div>
 <div align="center" class="FacetFormHeaderFont">Categorie Merceologiche</div>
 <?php
 $recordnav = new recordnav($gTables['catmer'], $where, $limit, $passo);

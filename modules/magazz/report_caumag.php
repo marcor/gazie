@@ -52,7 +52,6 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("./lang.".$admin_aziend['lang'].".php");
 $script_transl += $strScript["admin_caumag.php"];
-print "<div align=\"center\" class=\"FacetFormHeaderFont\"><a href=\"admin_caumag.php?Insert\">".$script_transl['insert'].$script_transl[0]."</a></div>\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl[1].$script_transl[0]."</div>\n";
 print "<form method=\"GET\">";
 print "<table class=\"Tlarge\">\n";

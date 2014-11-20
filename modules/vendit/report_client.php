@@ -64,12 +64,6 @@ if (!isset($_GET['field'])) {
 
 
 ?>
-<table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
-<tr>
-<td align="center" class="FacetFormHeaderFont"><a href="admin_client.php?Insert">Inserisci Nuovo Cliente</a></td>
-<td align="center" class="FacetFormHeaderFont"><a href="report_credit.php" title="Visualizzazione e Stampa della Lista dei Crediti verso Clienti">Lista dei crediti</a></td>
-</tr>
-</table>
 <div align="center" class="FacetFormHeaderFont">Clienti</div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <table class="Tlarge">

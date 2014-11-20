@@ -29,7 +29,6 @@ $script_transl = HeadMain();
 $where = "codice BETWEEN ".$admin_aziend['masban']."000001 AND ".$admin_aziend['masban']."999999";
 $anagrafica = new Anagrafica();
 $result=$anagrafica->queryPartners('*', $where, $orderby, $limit, $passo);
-echo '<div align="center" class="FacetFormHeaderFont"><a href="admin_bank_account.php?Insert">'.$script_transl['ins_this'].'</a></div>';
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>';
 $recordnav = new recordnav($gTables['clfoco'], $where, $limit, $passo);
 $recordnav -> output();

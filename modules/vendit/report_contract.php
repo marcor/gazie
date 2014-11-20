@@ -45,14 +45,6 @@ $script_transl = HeadMain();
 $gForm = new GAzieForm();
 echo "<form method=\"GET\" name=\"report\">\n";
 echo "<input type=\"hidden\" name=\"hidden_req\">\n";
-echo "<table align=\"center\" width=\"70%\">\n";
-echo "<tr class=\"FacetFormHeaderFont\">\n";
-echo "<td><a href=\"admin_contract.php?Insert&vat_section=".substr($auxil,0,1)."\">".$script_transl['link1']."</a>
-      </td>\n";
-echo "<td><a href=\"invoice_from_contract.php?vat_section=".substr($auxil,0,1)."\">".$script_transl['link2']."</a>
-      </td>\n";
-echo "</tr>\n";
-echo "</table>\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['vat_section'];
 $gForm->selectNumber('auxil',$auxil,0,1,3,'FacetSelect','auxil');
 echo "</div>\n";

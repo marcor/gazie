@@ -99,10 +99,6 @@ if (!isset($_GET['flag_order'])) {
       <p class="ui-state-highlight" id="mail_attc"></p>
 </div>
 <?php
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\" width=\"70%\">\n";
-echo "<tr>\n
-      <td align=\"center\" class=\"FacetFormHeaderFont\"><a href=\"admin_letter.php?Insert\">".$script_transl[6]."</a></td>\n
-      </tr></table>";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$script_transl[0]</div>\n";
 echo "<form method=\"GET\">";
 echo "<table class=\"Tlarge\">\n";

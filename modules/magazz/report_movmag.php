@@ -50,15 +50,6 @@ if (!isset($_GET['auxil'])) {
    $auxil = "";
    $where = "caumag LIKE '$auxil%'";
 }
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\" width=\"70%\">\n";
-echo "<tr>\n
-      <td align=\"center\" class=\"FacetFormHeaderFont\"><a href=\"admin_movmag.php?Insert\">".$script_transl[2].$strScript['admin_movmag.php'][0]."</a></td>\n
-      <td align=\"center\" class=\"FacetFormHeaderFont\"><a href=\"genera_movmag.php\">$script_transl[10]</a></td>\n
-      </tr>\n";
-echo "<tr>\n
-      <td align=\"center\" class=\"FacetFormHeaderFont\"><a href=\"select_schart.php\">".$strScript['select_schart.php'][0]."</a></td>\n
-      <td align=\"center\" class=\"FacetFormHeaderFont\"><a href=\"select_giomag.php\">".$strScript['select_giomag.php'][0]."</a></td>\n
-      </tr></table>";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$script_transl[3]$script_transl[0]</div>\n";
 echo "<form method=\"GET\">";
 echo "<table class=\"Tlarge\">\n";

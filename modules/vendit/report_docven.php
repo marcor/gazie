@@ -206,25 +206,7 @@ switch($admin_aziend['fatimm']) {
 }
 
 ?>
-<table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
-<tr>
-<td class="FacetFormHeaderFont"><a href="admin_docven.php?Insert&seziva=<?php echo $sezfatimm; ?>&tipdoc=FAI" accesskey="e">Emetti Nuova Fattura Immediata</a></td>
-<td class="FacetFormHeaderFont"><a href="admin_docven.php?Insert&seziva=<?php echo substr($auxil,0,1); ?>&tipdoc=FNC">Emetti Nuova Nota Credito</a></td>
-<td class="FacetFormHeaderFont"><a href="admin_docven.php?Insert&seziva=<?php echo substr($auxil,0,1); ?>&tipdoc=FAP">Emetti Nuova Parcella</a></td>
-</tr>
-<tr>
-<td class="FacetFormHeaderFont"><a href="emissi_fatdif.php?seziva=<?php echo substr($auxil,0,1); ?>" accesskey="g">Genera Fatture Differite da D.d.T</a></td>
-<td class="FacetFormHeaderFont"><a href="accounting_documents.php?type=F&vat_section=<?php echo substr($auxil,0,1); ?>" accesskey="c">Contabilizzazione Fatture</a></td>
-<td class="FacetFormHeaderFont"><a href="select_docforprint.php?seziva=<?php echo substr($auxil,0,1); ?>" accesskey="s">Ristampa Documenti gi&agrave; emessi</a></td>
-</tr>
-<tr>
-<td class="FacetFormHeaderFont"><a href="admin_docven.php?Insert&seziva=<?php echo substr($auxil,0,1); ?>&tipdoc=FND">Emetti Nuova Nota Debito</a></td>
-<td class="FacetFormHeaderFont"><a href="report_fae_sdi.php" target="_blank">Report fatture elettroniche</a></td>
-
-</tr>
-</table>
 <form method="GET" >
-
 <div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
       <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
       <p class="ui-state-highlight" id="mail_adrs"></p>

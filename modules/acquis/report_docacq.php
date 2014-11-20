@@ -54,13 +54,6 @@ $titolo="Documenti d'acquisto";
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
-<table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
-<tr>
-<td class="FacetFormHeaderFont"><a href="admin_docacq.php?Insert&tipdoc=AFA" accesskey="F">Registra Fattura d'Acquisto Merce</a></td>
-<td class="FacetFormHeaderFont"><a href="admin_docacq.php?Insert&tipdoc=AFC" accesskey="N">Registra Nota Credito per Merce</a></td>
-<td class="FacetFormHeaderFont"><a href="accounting_documents.php?type=A" accesskey="C">Contabilizzazione fatture</a></td>
-</tr>
-</table>
 <form method="GET" >
 <div align="center" class="FacetFormHeaderFont"><?php echo $titolo; ?>
 </div>

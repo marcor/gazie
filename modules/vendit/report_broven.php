@@ -112,23 +112,7 @@ function confirMail(link){
 </script>';
 $a=substr($auxil,0,3);
 ?>
-<table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
-<tr>
-<?php
-if (substr($a,1,1)=='O') {
-echo '<td align="center" class="FacetFormHeaderFont">';
-echo '<a href="'.$script_transl['link_value']['VOR'].'">'.$script_transl['link_title']['VOR'].'</a></td>';
-echo '<td align="center" class="FacetFormHeaderFont">  ';
-echo '<a href="'.$script_transl['link_value']['VOW'].'">'.$script_transl['link_title']['VOW'].'</a></td>';
-echo '<td align="center" class="FacetFormHeaderFont"><a href="select_evaord.php">'.$script_transl['issue_ord'].'</a></td>';
-}  else {
-echo '<td align="center" class="FacetFormHeaderFont">';
-echo '<a href="'.$script_transl['link_value']['VPR'].'">'.$script_transl['link_title']['VPR'].'</a></td>';
-}
-?>
 
-</tr>
-</table>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][$_GET['auxil']]; ?></div>
 <?php
 $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);

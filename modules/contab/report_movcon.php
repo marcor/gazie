@@ -85,7 +85,6 @@ if (!isset($_GET['auxil'])) {
 }
 $script_transl=HeadMain('','','admin_movcon');
 ?>
-<div align="center" class="FacetFormHeaderFont"><a href="admin_movcon.php?Insert"><?php echo $script_transl['ins_this']; ?></a></div>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <form method="GET">
 <table class="Tlarge">
