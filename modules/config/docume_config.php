@@ -32,10 +32,11 @@ $script_transl=HeadMain();
 // Se esiste, viene incluso il file "help/italian/docume_config_help.php",
 // o l'equivalente di un altro linguaggio.
 //
+echo '<div class="help">';
 if (file_exists("help/".$admin_aziend['lang']."/docume_config_help.php")) {
     include("help/".$admin_aziend['lang']."/docume_config_help.php");
 }
 ?>
-</table>
+</div>
 </body>
 </html>
