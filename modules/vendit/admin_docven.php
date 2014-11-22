@@ -1487,8 +1487,8 @@ foreach ($form['rows'] as $k => $v) {
         echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"".$v['sconto']."\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
         echo "<td><input type=\"text\" name=\"rows[$k][provvigione]\" value=\"".$v['provvigione']."\" maxlength=\"6\" size=\"1\" /></td>\n";
         echo "<td $rit_title align=\"right\">".gaz_format_number($imprig)."</td>\n";
-        echo "<td $rit_title >".$v['pervat']."%</td>\n";
-        echo "<td $rit_title >".$v['codric']."</td>\n";
+        echo "<td $rit_title align=\"right\">".$v['pervat']."%</td>\n";
+        echo "<td $rit_title align=\"right\">".$v['codric']."</td>\n";
         break;
         case "1":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
@@ -1500,8 +1500,8 @@ foreach ($form['rows'] as $k => $v) {
         echo "<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>\n";
         echo "<td></td>\n";
         echo "<td $rit_title align=\"right\"><input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"".number_format($v['prelis'],2,'.','')."\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
-        echo "<td $rit_title >".$v['pervat']."%</td>\n";
-        echo "<td $rit_title >".$v['codric']."</td>\n";
+        echo "<td $rit_title align=\"right\">".$v['pervat']."%</td>\n";
+        echo "<td $rit_title align=\"right\">".$v['codric']."</td>\n";
         break;
         case "2":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">

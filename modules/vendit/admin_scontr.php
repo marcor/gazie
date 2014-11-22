@@ -941,7 +941,7 @@ if ($next_row>0) {
                    echo "<td class=\"FacetDataTDsmall\" style=\"text-align:center\">".$v['provvigione']."</td>\n";
                    echo "<td style=\"text-align:right\">".gaz_format_number($imprig)." </td>\n";
                    echo "<td style=\"text-align:right\" class=\"FacetDataTDsmall\">".$v['pervat']."%</td>\n";
-                   echo "<td class=\"FacetDataTDsmall\">".$v['codric']."</td>\n";
+                   echo "<td class=\"FacetDataTDsmall\" align=\"right\">".$v['codric']."</td>\n";
                    echo "<td align=\"right\">".gaz_format_number($tot_row)."</td>\n";
                    break;
                    case "1":
