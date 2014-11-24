@@ -18,6 +18,7 @@ TABLE {
 TABLE.Tlarge{
     width : 100%;
     border : solid 1px #000000;
+	margin-top: -1px;
 }
 
 TABLE.Tmiddle{
@@ -108,7 +109,7 @@ TABLE.selectTable TD {
     background-color : #AAE2A8;
     color : #000000;
     font-size : 13px;
-	padding: 0px 3px 0px 3px;
+	padding: 0px 3px 0px 5px;
 }
 
 .FacetDataTRstart td  {
@@ -331,7 +332,7 @@ TABLE.selectTable TD {
   background-color: #99d197;
 }
 .nav > li > a.row-menu {
-	padding: 11px 6px 12px 6px;
+	padding: 11px 6px 11px 6px;
 }
 div.help {
 	margin: 25px 20px;
