@@ -192,10 +192,8 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 				echo '</div>';
 			}
 			?>
-			<p><h4>Benvenuto in GAzie</h4>GAzie è il sistema di Gestione della tua Azienda.
-			Con GAzie è possibile tenere traccia dei clienti, mantenerne il conto
-			e la loro storia, preparare preventivi e fatture, gestire i 
-			costi, e molto, molto altro.</p>
+			<p><h4>Benvenuto in GAzie</h4>il Gestionale multiAZIEndale
+			che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, i magazzini e tanto altro di molte ditte contemporaneamente.</p>
 			<p>Inserisci il nome utente e la password che ti sono stati assegnati per iniziare :
 			</p><br/>
                     <div style="margin-bottom: 25px" class="input-group">
