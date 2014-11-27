@@ -428,6 +428,18 @@ input.input-xs {
 /*    --------------------------------------------------
 	:: Login Section
 	-------------------------------------------------- */
+
+.panel-title {
+	vertical-align: middle;
+}
+.panel-info {
+	border-color: #88c086;
+}
+.panel-info > .panel-gazie {
+	background-color: #aae2a8;
+    border-color: #88c086;
+    color: #123311;
+}
 #formlogin {
     padding-top: 50px
 }
@@ -494,7 +506,9 @@ input.input-xs {
 	text-align: center;
 	display: block;
 }
-
+.panel-body {
+  background-color: #dafed9;
+}
 /*    --------------------------------------------------
 	:: Inputs & Buttons
 	-------------------------------------------------- */
