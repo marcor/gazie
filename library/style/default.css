@@ -16,9 +16,10 @@ TABLE {
 	border-spacing: 2px;
 }
 TABLE.Tlarge{
-    width : 100%;
+    width : 99%;
     border : solid 1px #000000;
 	margin-top: -1px;
+	margin-left: 6px;
 }
 
 TABLE.Tmiddle{
@@ -438,7 +439,7 @@ input.input-xs {
 .panel-info > .panel-gazie {
 	background-color: #aae2a8;
     border-color: #88c086;
-    color: #123311;
+	color: #123311;
 }
 #formlogin {
     padding-top: 50px
@@ -506,7 +507,7 @@ input.input-xs {
 	text-align: center;
 	display: block;
 }
-.panel-body {
+.panel-help {
   background-color: #dafed9;
 }
 /*    --------------------------------------------------

@@ -1,4 +1,4 @@
-<div class="alert alert-success">
+<div class="panel panel-default panel-body panel-help">
 <h3>Men&ugrave; Fine anno</h3>
 <p class="help-text">Qui si accede alle funzioni
 relative alle operazioni che si svolgono comunemente alla fine dell'anno

@@ -1,4 +1,4 @@
-<div class="alert alert-success">
+<div class="panel panel-default panel-body panel-help">
 	<h3>Men&ugrave; Archivi di base</h3>
 	<p>Qui si raccolgono le
 	funzioni relative alla gestine delle tabelle che riguardano la procedura

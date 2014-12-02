@@ -1,4 +1,4 @@
-<div class="alert alert-success">
+<div class="panel panel-default panel-body panel-help">
 	<h3>Men&ugrave; Tools e Info</h3>
 	<p>
 		

@@ -1,4 +1,4 @@
-<div class="alert alert-success">
+<div class="panel panel-default panel-body panel-help">
 <h3>Men&ugrave; Contabilit&agrave;</h3>
 <p>Qui si raccolgono le
 funzioni relative alla gestine della contabilit&agrave; generale,

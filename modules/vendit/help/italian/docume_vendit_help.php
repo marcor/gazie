@@ -1,4 +1,4 @@
-<div class="panel panel-default panel-body">
+<div class="panel panel-default panel-body panel-help">
 	<h3>Men&ugrave; Vendite</h3>
 	<p>Qui si raccolgono le funzioni relative alla gestine delle vendite, la quale va a integrarsi con la contabilit&agrave; generale e la contabilità di magazzino.</p>
 	<p>Per accedere agli elenchi dei corrispettivi, delle fatture, dei documenti di trasporto, dei preventivi, degli ordini, degli effetti, dei clienti, dei contratti e degli agenti, basta selezionare la voce principale relativa: <strong>Corrispettivi</strong>, <strong>Fatture</strong>, <strong>D.d.t.</strong>, <strong>Preventivi</strong>, <strong>Ordini</strong>, <strong>Effetti</strong>, <strong>Clienti</strong>, <strong>Contratti</strong>, <strong>Agenti</strong>, tralasciando le voci di men&ugrave; ulteriori che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
