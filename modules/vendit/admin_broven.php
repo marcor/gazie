@@ -1284,7 +1284,11 @@ foreach ($form['rows'] as $k => $v) {
         switch($v['tiprig']) {
         case "0":
         echo "<tr>";
-        $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";
+        if ( file_exists ( "../../data/files/fotoart/".$v["codart"].".gif" ) ) {
+			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$v["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";		
+		} else {
+			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";
+        }
         if ($v['pesosp'] != 0){
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso = ".gaz_format_number($v['quanti'] * $v['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
         } else {

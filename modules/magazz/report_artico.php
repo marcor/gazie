@@ -113,8 +113,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
        $lastdoc=getLastDoc($r["codice"]);
        $mv=$gForm->getStockValue(false,$r['codice']); 
        $magval=array_pop($mv);
-       if(!isset($_GET['all']) and !empty($r["image"])){
-            $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
+		if(!isset($_GET['all']) and (!empty($r["image"]) or (file_exists("../../data/files/fotoart/".$r["codice"].".gif" )))){
+			if ( !empty( $r["image"] ) ) {
+				$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
+			} else {
+				$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$r["codice"].".gif'>] fade=[on] fadespeed=[0.03] \"";
+			}
        } else {
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."]  fade=[on] fadespeed=[0.03] \"";
        }

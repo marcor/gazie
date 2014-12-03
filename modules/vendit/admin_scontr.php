@@ -920,8 +920,12 @@ if ($next_row>0) {
             echo "<td style=\"text-align:right\"><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['upper_row']."\" /> $nr</td>\n";
             //stampo i righi in modo diverso a secondo del tipo
             switch ($v['tiprig']) {
-                   case "0":
-                   $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";
+                case "0":
+               		if ( file_exists ( "../../data/files/fotoart/".$v['codart'].".gif" ) ) {
+						$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$v['codart'].".gif'>] fade=[on] fadespeed=[0.03] \"";
+					} else {
+						$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";
+					}
                    if ($v['pesosp'] != 0) {
                       $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso = ".gaz_format_number($v['quanti'] * $v['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
                    } else {
