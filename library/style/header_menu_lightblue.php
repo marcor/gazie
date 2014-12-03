@@ -40,7 +40,7 @@ function submenu($array) {
 				echo '<li>';
 			}
 			if (preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/",$array[$i]['icon'])){
-				$icon_lnk='<img src="'.$array[$i]['icon'].'"/>';
+				$icon_lnk='<img src="'.$array[$i]['icon'].'"/> ';
 			}
 			echo '<a href="' . $array[$i]['link'] . '">'.$icon_lnk . stripslashes ( $array[$i]['name'] ). '</a>';
 			submenu($array[$i]);
@@ -81,13 +81,14 @@ function submenu($array) {
 
 		$i=0;
 		foreach ( $menuArray[0] as $menu ) {
-			$icon_lnk='';
+			$icon_lnk=''; $css_class='row-menu';
 			if (isset($menu['icon']) && preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/",$menu['icon'])){
 				$icon_lnk='<img src="'.$menu['icon'].'"/>';
+				$css_class='icon-menu';
 			}
 			if ( $i > 4 ) {
 				if ( count($menu)>5 ) {
-					echo '<li class="dropdown"><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'<span class="caret"></span></a>';
+					echo '<li class="dropdown"><a class="'.$css_class.'" href="'.$menu['link'].'">'.$icon_lnk.' '.$menu['name'].'<span class="caret"></span></a>';
 				} else {
 					echo '<li><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'</a>';
 				}
