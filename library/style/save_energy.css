@@ -8,20 +8,19 @@ BODY {
 DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL, INPUT  {
     font-family : Arial, Tahoma, Verdana, Helvetica;
     font-size : 13px;
-    background-color : #000000;
     color : #FFFFFF;
 }
 
 TABLE.Tlarge{
     width : 100%;
-    border : solid 1px #BBBBBB;
+    border : solid 1px #898989;
     background-color : #000000;
     color : #FFFFFF;
 }
 
 TABLE.Tmiddle{
     width : 70%;
-    border : solid 1px #BBBBBB;
+    border : solid 1px #898989;
     margin-left: auto;
     margin-right: auto;
     background-color : #000000;
@@ -30,7 +29,7 @@ TABLE.Tmiddle{
 
 TABLE.Tsmall{
     width : 50%;
-    border : solid 1px #FFFFFF;
+    border : solid 1px #898989;
     margin-left: auto;
     margin-right: auto;
     background-color : #000000;
@@ -58,7 +57,7 @@ TABLE.selectTable TD {
 .selectContainer {
 	width:300px;
 	position: absolute;
-	border:1px solid #222;
+	border:1px solid #898989;
     background-color : #000000;
     color : #FFFFFF;
 }
@@ -93,7 +92,7 @@ TABLE.selectTable TD {
 }
 
 .FacetFormTABLE  {
-    border : solid 1px #FFFFFF;
+    border : solid 1px #898989;
     background-color : #000000;
     color : #FFFFFF;
 }
@@ -241,7 +240,7 @@ TABLE.selectTable TD {
 .error_box {
     margin: 40px;
     padding: 20px;
-    border: 1px solid #000000;
+    border: 1px solid #92B592;
     text-align: center;
 }
 .ThemeGazieMainItemHover,.ThemeGazieMainItemActive
@@ -256,7 +255,262 @@ TABLE.selectTable TD {
 {
 	background-color:	#999999;
 }
+#admin_main{
+  background-image: url("../../library/images/sfondo.png");
+  background-attachment: fixed;
+}
 
+#admin_welcome{
+  padding: 30px 40px;
+  position: relative;
+}
+
+#admin_p_logout{
+  margin-top: 20px;
+}
+
+#admin_footer{
+  position: absolute;
+  bottom: 0px;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  z-index: -1;
+}
+
+#admin_footer:hover{
+  opacity:1;
+  filter:alpha(opacity=100);
+}
+.nav>li>a:hover,.nav>li>a:focus {
+  background-color: #aae2a8;
+  color: #123311;
+}
+.nav>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #aae2a8;
+  color: #123311;
+}
+.nav>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #aae2a8;
+  color: #123311;
+}
+.nav>li>ul>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #aae2a8;
+  color: #123311;
+}
+.navbar {
+  border-top: 0px;
+  border-bottom: 1px solid #92B592;
+  border-left: 1px solid #92B592;
+  border-right: 1px solid #92B592;
+  border-radius: 0px;
+  font-size : 14px;
+  min-height: 40px;
+}
+.navbar-default .navbar-brand {
+	color: #fff;
+}
+.nav > li > a {
+    padding: 5px 10px;
+	border-radius: 0px;
+}
+.nav > li > a:hover {
+  background-color: #99d197;
+}
+.nav > li > a.row-menu {
+	padding: 11px 6px 11px 6px;
+}
+.nav > li > a.icon-menu {
+	padding: 7px 6px 6px 6px;
+}
+div.help {
+	margin: 25px 20px;
+	text-align: justify;
+}
+.nav-boot {
+  background-color : #565656;
+  color : #000000;
+  font-size : 13px;
+}
+.nav-first {
+  margin-bottom: 0px;
+  padding-top: auto;
+  padding-bottom: auto;
+}
+.navbar-brand {
+  padding: 3px 3px 3px 3px;
+  float: right;
+  font-size: 16px;
+  height: 43px;
+  line-height: 20px;
+  padding: 10px 3px 10px 3px;
+}
+.nav-tabs {
+    border-bottom: 0px;
+}
+table.submenu {
+  margin-bottom: 20px;
+    margin-top: -20px;
+}
+.navbar-left {
+	border: #fff 0px solid;
+}
+.navbar-lower {
+  background-color: #848A84;
+  min-height: 20px;
+}
+div.FacetFormHeaderFont {
+  margin-top: 20px;
+}
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+	padding-right:5px;
+}
+input.input-xs {
+    height: 22px;
+    padding: 5px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+.caret {
+	text-color: #fff;
+	border-top-color: white !important;
+}
+
+.container-fluid {
+	padding-left: 0px;
+    padding-right: 5px;
+}
+.navbar-collapse {
+	padding-left: 0;
+    padding-right: 5px;
+}
+.opzione {
+	margin-top: 10px;
+	margin-left: -8px;
+}
+.progress {
+	margin: 5px 5px 7px 5px;
+}
+.navbar-toggle {
+	margin-left: 20px;
+}
+.contenuto-help {
+	background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+.nav-tabs {
+    margin-bottom: 0px;
+}
+.help-text {
+	font-size: 1.0em;
+}
+
+.help-text a {
+	color: #2b652c;
+	text-transform: uppercase;
+}
+/*    --------------------------------------------------
+	:: Login Section
+	-------------------------------------------------- */
+
+.panel-title {
+	vertical-align: middle;
+}
+.panel-info {
+	border-color: #898989;
+}
+.panel-info > .panel-gazie {
+	background-color: #aae2a8;
+    border-color: #898989;
+	color: #123311;
+}
+#formlogin {
+    padding-top: 50px
+}
+#formlogin .form-wrap {
+    margin: 0 auto;
+	float:right;
+}
+.form-logo {
+	float:left;
+}
+.form-main {
+	margin: 10px 30%;
+	background-color: #77b075;
+	border: 1px solid #898989;
+}
+#formlogin h1 {
+    color: #1fa67b;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 20px;
+}
+#formlogin .form-group {
+    margin-bottom: 25px;
+}
+#formlogin .checkbox {
+    margin-bottom: 20px;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+#formlogin .checkbox.show:before {
+    content: '\e013';
+    color: #1fa67b;
+    font-size: 17px;
+    margin: 1px 0 0 3px;
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Glyphicons Halflings';
+}
+#formlogin .checkbox .character-checkbox {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    /*border-radius: 3px;*/
+    border: 1px solid #898989;
+    vertical-align: middle;
+    display: inline-block;
+}
+#formlogin .checkbox .label {
+    color: #6d6d6d;
+    font-size: 13px;
+    font-weight: normal;
+}
+#formlogin .btn.btn-custom {
+    font-size: 14px;
+	margin-bottom: 20px;
+}
+#formlogin .forget {
+    font-size: 13px;
+	text-align: center;
+	display: block;
+}
+.panel-help {
+  background-color: #dafed9;
+}
+/*    --------------------------------------------------
+	:: Inputs & Buttons
+	-------------------------------------------------- */
+.form-control {
+    color: #212121;
+}
+.btn-custom {
+    color: #fff;
+	background-color: #99d197;
+}
+.btn-custom:hover,
+.btn-custom:focus {
+    color: #fff;
+}
 /* INIZIO CSS di JQuery/UI 
 
  * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
