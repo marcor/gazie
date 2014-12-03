@@ -335,6 +335,9 @@ TABLE.selectTable TD {
 .nav > li > a.row-menu {
 	padding: 11px 6px 11px 6px;
 }
+.nav > li > a.icon-menu {
+	padding: 7px 6px 6px 6px;
+}
 div.help {
 	margin: 25px 20px;
 	text-align: justify;
