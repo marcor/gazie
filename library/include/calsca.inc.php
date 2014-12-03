@@ -49,6 +49,8 @@ function createArrayCrediti($result,$pagame,$utsval) {
     // scopo di questa funzione e' quella di creare l'array dei CREDITI vantati verso il cliente in base
     // alla condizione di pagamento passata tramite la seconda variabile.
 
+	global $gTables;
+
     $epsilon = 0.000001;    // Massima differenza tra 2 float
                             // http://www.php.net/manual/en/language.types.float.php
                             // http://stackoverflow.com/questions/3148937/compare-floats-in-php
@@ -86,6 +88,12 @@ function createArrayCrediti($result,$pagame,$utsval) {
                }
             }
         } else {
+
+			$tesdoc = gaz_dbi_get_row($gTables['tesdoc'],"id_tes",$movimenti['id_doc']);
+			if ($tesdoc['pagame'] != $pagame['codice']) {
+				$pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$tesdoc['pagame']);
+			}
+
             if($progr <= 0) {
                $giodoc = substr($movimenti['datdoc'],8,2);
                $mesdoc = substr($movimenti['datdoc'],5,2);
@@ -196,6 +204,9 @@ function createArrayCrediti($result,$pagame,$utsval) {
 function createArrayDebiti($result,$pagame,$utsval) {
     // scopo di questa funzione e' quella di creare l'array dei DEBITI verso il fornitore in base
     // alla condizione di pagamento passata tramite la seconda variabile.
+
+	global $gTables;
+
     $parzi = 0.00;
     $progr = 0.00;
     $righiDebiti = array();
@@ -227,6 +238,12 @@ function createArrayDebiti($result,$pagame,$utsval) {
                }
             }
         } else {
+
+			$tesdoc = gaz_dbi_get_row($gTables['tesdoc'],"id_tes",$movimenti['id_doc']);
+			if ($tesdoc['pagame'] != $pagame['codice']) {
+				$pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$tesdoc['pagame']);
+			}
+
             if($progr <= 0) {
                $giodoc = substr($movimenti['datdoc'],8,2);
                $mesdoc = substr($movimenti['datdoc'],5,2);
