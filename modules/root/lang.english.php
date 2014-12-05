@@ -66,11 +66,24 @@ $strScript = array ("admin.php" =>
                                              )
                             ),
                     "login_admin.php" =>
-                   array(        " The new password to be long at least ",
+                   array( /* 0*/ " The new password to be long at least ",
                           /* 1*/ " characters,<BR> various from previous and the equal one to that one of control !<br>",
                           /* 2*/ " You have had approached the program but yours password it is past due,<br /> you must insert of one new!",
                           /* 3*/ " User and/or Password incorrect!<br>",
                           /* 4*/ " Denied access to this module !",
                           /* 5*/ " New password",
-                          /* 6*/ " New confirmation password"));
+                          /* 6*/ " New confirmation password",
+                          'log'=>"Access to system localized in:",
+                          'welcome'=>"Welcome to GAzie",
+                          'intro'=>"the Enterprise Resource Planning that allows you to keep track of the accounts, documentation, sales, purchases, warehouses and more, for many companies simultaneously.",
+                          'usr_psw'=>"Enter your username and password that you have been assigned to start:",
+                          'ins_psw'=>"Enter Password",
+                          'label_conf_psw'=>"Confirm Password",
+                          'conf_psw'=>"Re-enter Password",
+                          'label_new_psw'=>"New Password",
+                          'new_psw'=>"Enter New Password",
+                          ));
+$errors = array (
+            'access' => 'You have no right of access to the module'
+);
 ?>

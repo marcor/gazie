@@ -57,17 +57,28 @@ if (isset($_POST['usr'])) {
 //
 //
 //
+$server_lang=substr(strtoupper($local['cvalue']),0,2);
+switch ($server_lang) {
+    case 'IT':
+        $lang = 'italian';
+        break;
+    case 'EN':
+        $lang = 'english';
+        break;
+    case 'ES':
+        $lang = 'spanish';
+        break;
+    default:
+        $lang = 'italian';
+        break;
+}
+require("./lang.".$lang.".php");
+$script_transl = $strScript["login_admin.php"];
+
 if (isset($_POST['actionflag'])) {
     $form['Login']=filter_var(substr($_POST['Login'],0,30),FILTER_SANITIZE_MAGIC_QUOTES);
     // checkUser();
     $result = gaz_dbi_get_row ($gTables['admin'], "Login", $form['Login']);
-    if (!empty ($result['lang'])){
-          $lang = $result['lang'];
-    } else {
-          $lang = 'italian';
-    }
-    require("./lang.".$lang.".php");
-    $script_transl = $strScript["login_admin.php"];
     if ($result) {
         require("../../library/include/HMAC.php");
         $crypt = new Crypt_HMAC($result["Password"], 'md5');
@@ -180,7 +191,7 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
     <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
         <div class="panel panel-info" >
             <div class="panel-heading panel-gazie">
-                <div class="panel-title"><img width="5%" src="../../library/images/gazie.gif" /> Accesso al sistema</div>
+                <div class="panel-title"><img width="5%" src="../../library/images/gazie.gif" /> <?php echo $script_transl['log']; ?> <?php echo $server_lang; ?> <img width="5%" src="../../language/<?php echo $lang;?>/flag.png" /></div>
                 <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
             </div>
 
@@ -192,10 +203,9 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 				echo '</div>';
 			}
 			?>
-			<p><h4>Benvenuto in GAzie</h4>il Gestionale multiAZIEndale
-			che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, i magazzini e tanto altro di molte ditte contemporaneamente.</p>
-			<p>Inserisci il nome utente e la password che ti sono stati assegnati per iniziare :
-			</p><br/>
+			<p><h4><?php echo $script_transl['welcome']; ?></h4>
+                        <?php echo $script_transl['intro']; ?></p>
+                        <p><?php echo $script_transl['usr_psw']; ?></p><br/>
                     <div style="margin-bottom: 25px" class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                                         <input id="login-username" type="text" class="form-control" name="Login" value="<?php if (isset($_POST['Login'])) {echo $form['Login'];} else {if (isset($usr)) {echo $usr;}}; ?>" placeholder="Inserisci il Nome Utente">
@@ -203,21 +213,21 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
                                 
                     <div style="margin-bottom: 25px" class="input-group">
                                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                        <input id="login-password" type="password" class="form-control" name="Password" placeholder="Inserisci la Password">
+                                        <input id="login-password" type="password" class="form-control" name="Password" placeholder="<?php echo $script_transl['ins_psw']; ?>">
                                     </div>
 					<?php
 					if ($newpass == true) {
 					?>
-					Nuova Password
+					<?php echo $script_transl['label_new_psw']; ?>
 					<div style="margin-bottom: 25px" class="input-group">
 						<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-						<input id="login-password" type="password" class="form-control" name="Nuovapass" placeholder="Inserisci Nuova Password">
+						<input id="login-password" type="password" class="form-control" name="Nuovapass" placeholder="<?php echo $script_transl['new_psw']; ?>">
 					</div>
 
-					Conferma Password			
+					<?php echo $script_transl['label_conf_psw']; ?>			
 					<div style="margin-bottom: 25px" class="input-group">	
 						<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-						<input id="login-password" type="password" class="form-control" name="Confepass" placeholder="Reinserisci la Password">
+						<input id="login-password" type="password" class="form-control" name="Confepass" placeholder="<?php echo $script_transl['conf_psw']; ?>">
 					</div>
 					<?php
 					}

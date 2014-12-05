@@ -67,13 +67,23 @@ $strScript = array ("admin.php" =>
                                              )
                           ),
                     "login_admin.php" =>
-                   array(        "La nuova password dev'essere lunga almeno ",
+                   array( /* 0*/ "La nuova password dev'essere lunga almeno ",
                           /* 1*/ " caratteri,<BR> diversa dalla vecchia e uguale alla quella di conferma !<br>",
                           /* 2*/ " hai avuto accesso a Gazie<br> ma la tua password &egrave; scaduta, devi inserirne una nuova!<br>",
                           /* 3*/ " User e/o Password Errate!<br>",
                           /* 4*/ " Non sei autorizzato ad accedere a questo modulo!",
                           /* 5*/ " Nuova password ",
-                          /* 6*/ " Conferma nuova password "));
+                          /* 6*/ " Conferma nuova password ",
+                          'log'=>"Accesso al sistema localizzato in:",
+                          'welcome'=>"Benvenuto in GAzie",
+                          'intro'=>"il Gestionale multiAZIEndale che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, i magazzini e tanto altro e di molte ditte contemporaneamente.",
+                          'usr_psw'=>"Inserisci il nome utente e la password che ti sono stati assegnati per iniziare:",
+                          'ins_psw'=>"Inserisci Password",
+                          'label_conf_psw'=>"Conferma Password",
+                          'conf_psw'=>"Reinserisci la Password",
+                          'label_new_psw'=>"Nuova Password",
+                          'new_psw'=>"Inserisci Nuova Password",
+                          ));
 $errors = array (
             'access' => 'Non hai il diritto di accedere al modulo'
 );

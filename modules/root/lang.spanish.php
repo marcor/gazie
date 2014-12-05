@@ -70,11 +70,24 @@ $strScript = array ("admin.php" =>
                                              )
                             ),
                     "login_admin.php" =>
-                   array(        " La nueva contrase&ntilde;a debe tener un largo de al menos ",
+                   array( /* 0*/ " La nueva contrase&ntilde;a debe tener un largo de al menos ",
                           /* 1*/ " caracteres,<BR> diferente de la antigua e igual a la de la confirmaci&oacute;n!<br>",
                           /* 2*/ " ha tenido acceso a Gazie <br> pero su contrase&ntilde;a ha caducado, debe insertar una nueva!<br>",
                           /* 3*/ " Usuario y/o contrase&ntilde;a incorrecta!<br>",
                           /* 4*/ " Acceso denegado a este m&oacute;dulo!",
                           /* 5*/ " Nueva contrase&ntilde;a",
-                          /* 6*/ " Confirmacion de nueva contrase&ntilde;a"));
+                          /* 6*/ " Confirmacion de nueva contrase&ntilde;a",
+                          'log'=>"El acceso al sistema localiza en:",
+                          'welcome'=>"Bienvenida a GAzie",
+                          'intro'=>"la planificación de recursos empresariales que le permite realizar un seguimiento de las cuentas, la documentación, ventas, compras, almacenes y más, para muchas empresas al mismo tiempo.",
+                          'usr_psw'=>"Introduzca su nombre de usuario y la contraseña que se le ha asignado para comenzar:",
+                          'ins_psw'=>"Introduzca contraseña",
+                          'label_conf_psw'=>"Confirmacion de nueva contrase&ntilde;a",
+                          'conf_psw'=>"Escriba la contraseña otra vez",
+                          'label_new_psw'=>"Nueva contrase&ntilde;a",
+                          'new_psw'=>"Introduzca nueva contraseña",
+                          ));
+$errors = array (
+            'access' => 'Usted no tiene derecho de acceso al módulo'
+);
 ?>
