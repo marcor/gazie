@@ -213,8 +213,11 @@ class DocContabVars
                  LEFT JOIN '.$this->gTables['aliiva'].' AS vat
                  ON rows.codvat=vat.codice';
         $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva',$from, "rows.id_tes = ".$this->testat,"id_tes DESC, id_rig");
+        $this->totimp_decalc =0.00;
         $this->riporto =0.00;
         $this->ritenuta=0.00;
+		$this->totimp_body=0.00;
+		$this->totimp_doc = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             if ($rigo['tiprig'] <= 1) {
@@ -378,7 +381,10 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
        $content->mimeType = "PDF";
        return ($content);
     } else { // va all'interno del browser
-       $pdf->Output();
+       	$tipodocumento = $templateName;
+		if ( $docVars->tesdoc['tipdoc']=="FNC" ) $tipodocumento = "NotaDiCredito";
+		if ( $docVars->tesdoc['tipdoc']=="FND" ) $tipodocumento = "NotaDiDebito";
+		$pdf->Output($docVars->intesta1.'_'.$tipodocumento.'_n.'.$docVars->tesdoc['numdoc'].'_'.gaz_format_date($docVars->tesdoc['datemi']).'.pdf');
     }
 }
 
