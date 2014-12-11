@@ -157,6 +157,10 @@ class DocContabVars
                 $this->docRelNum  = $this->tesdoc["numdoc"];    // Numero del documento relativo
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
+        // definisco le variabili dei totali 
+        $this->totimp_decalc = 0;
+        $this->totimp_body = 0;
+        $this->totimp_doc = 0;
         
         
     }
