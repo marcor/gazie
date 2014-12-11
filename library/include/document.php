@@ -378,10 +378,7 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
        $content->mimeType = "PDF";
        return ($content);
     } else { // va all'interno del browser
-       	$tipodocumento = $templateName;
-		if ( $docVars->tesdoc['tipdoc']=="FNC" ) $tipodocumento = "NotaDiCredito";
-		if ( $docVars->tesdoc['tipdoc']=="FND" ) $tipodocumento = "NotaDiDebito";
-		$pdf->Output($docVars->intesta1.'_'.$tipodocumento.'_n.'.$docVars->tesdoc['numdoc'].'_'.gaz_format_date($docVars->tesdoc['datemi']).'.pdf');
+                $pdf->Output($docVars->intesta1.'_'.$pdf->tipdoc.'.pdf');
     }
 }
 
