@@ -361,11 +361,12 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     $pdf->pageHeader();
     $pdf->compose();
     $pdf->pageFooter();
+	$doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1.'_'.$pdf->tipdoc);
     if ($dest && $dest=='E'){ // è stata richiesta una e-mail
        $dest = 'S';     // Genero l'output pdf come stringa binaria
        // Costruisco oggetto con tutti i dati del file pdf da allegare
-       $content->name = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->docRelNum.'_del_'.gaz_format_date($docVars->docRelDate).'.pdf';
-       $content->string = $pdf->Output($content->name, $dest);
+       $content->name = $doc_name;
+       $content->string = $pdf->Output($doc_name, $dest);
        $content->encoding = "base64";
        $content->mimeType = "application/pdf";
        $gMail = new GAzieMail();
@@ -373,12 +374,12 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     } elseif ($dest && $dest=='X'){ // è stata richiesta una stringa da allegare
        $dest = 'S';     // Genero l'output pdf come stringa binaria
        // Costruisco oggetto con tutti i dati del file pdf
-       $content->descri = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numfat'].'/'.$docVars->tesdoc['seziva'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
+       $content->descri = $doc_name;
        $content->string = $pdf->Output($content->descri,$dest);
        $content->mimeType = "PDF";
        return ($content);
     } else { // va all'interno del browser
-                $pdf->Output($docVars->intesta1.'_'.$pdf->tipdoc.'.pdf');
+                $pdf->Output($doc_name);
     }
 }
 
@@ -476,9 +477,11 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
     $pdf->SetHeaderMargin(5);
     $pdf->Open();
     $ctrlprotoc = 0;
+	$n=0;
     while ($tesdoc = gaz_dbi_fetch_array($result)) {
-    //se il cliente non e' lo stesso di prima
+		//se il cliente non e' lo stesso di prima
         if ($tesdoc['protoc'] <> $ctrlprotoc) {
+			$n++;
             //se non e' piu' lo stesso cliente e non e' il primo Ddt stampo il piede della fattura
             if ($ctrlprotoc <> 0) {
                 $pdf->pageFooter();
@@ -507,12 +510,17 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
         $pdf->docVars->setVars($gTables, $tesdoc, $testat, 'rigdoc');
         $pdf->compose();
     }
-    $pdf->pageFooter();
+	if ($n>1){ // è una stampa con molte fatture
+		$doc_name = $docVars->intesta1.'_Fatture_differite_da_DdT';
+	} else { // è la stampa di una sola fattura
+		$doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1.'_'.$pdf->tipdoc);
+    }
+	$pdf->pageFooter();
     if ($dest && $dest=='E'){ // è stata richiesta una e-mail
        $dest = 'S';     // Genero l'output pdf come stringa binaria
        // Costruisco oggetto con tutti i dati del file pdf da allegare
-       $content->name = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numfat'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
-       $content->string = $pdf->Output($docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numfat'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf',$dest);
+       $content->name = $doc_name;
+       $content->string = $pdf->Output($doc_name,$dest);
        $content->encoding = "base64";
        $content->mimeType = "application/pdf";
        $gMail = new GAzieMail();
@@ -520,12 +528,12 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
     } elseif ($dest && $dest=='X'){ // è stata richiesta una stringa da allegare
        $dest = 'S';     // Genero l'output pdf come stringa binaria
        // Costruisco oggetto con tutti i dati del file pdf
-       $content->descri = $docVars->intesta1.'_'.$templateName.'_n.'.$docVars->tesdoc['numfat'].'/'.$docVars->tesdoc['seziva'].'_del_'.gaz_format_date($docVars->tesdoc['datfat']).'.pdf';
+       $content->descri = $doc_name;
        $content->string = $pdf->Output($content->descri,$dest);
        $content->mimeType = "PDF";
        return ($content);
     } else { // va all'interno del browser
-       $pdf->Output();
+       $pdf->Output($doc_name);
     }
 }
 ?>
