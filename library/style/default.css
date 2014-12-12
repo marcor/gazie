@@ -513,6 +513,25 @@ input.input-xs {
 .panel-help {
   background-color: #dafed9;
 }
+.btn-edit {
+	/*float: right;*/
+	background-color: ;
+}
+.btn-cont {
+	background-color: #aae2a8;
+}
+.btn-cont:hover {
+	background-color: #99d197;
+}
+.btn-elimina {
+	color: #ff3939;
+}
+.btn-xml {
+	color: #0000ff;
+}
+.btn.disabled {
+    pointer-events: auto;
+}
 /*    --------------------------------------------------
 	:: Inputs & Buttons
 	-------------------------------------------------- */

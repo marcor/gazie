@@ -330,9 +330,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
         $n_e=0;
         echo "<tr>";
         if (! empty ($modifi)) {
-           echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\">".$r["protoc"]."</td>";
+           echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\" class=\"btn btn-xs btn-default btn-edit\" title=\"Modifica il documento\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["protoc"]."</a></td>";
         } else {
-           echo "<td class=\"FacetDataTD\">".$r["protoc"]." &nbsp;</td>";
+           echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default btn-edit disabled\">".$r["protoc"]." &nbsp;</button></td>";
         }
         echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$r["numfat"]." &nbsp;</td>";
@@ -342,7 +342,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if ($r["id_con"] > 0) {
            echo " <a style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont.".$r["id_con"]."</a> ";
         } else {
-           echo " <a href=\"accounting_documents.php?type=F&vat_section=".substr($auxil,0,1)."&last=".$r["protoc"]."\">Contabilizza</a>";
+           echo " <a class=\"btn btn-xs btn-cont\" href=\"accounting_documents.php?type=F&vat_section=".substr($auxil,0,1)."&last=".$r["protoc"]."\">Contabilizza</a>";
         }
         $effett_result = gaz_dbi_dyn_query ('*',$gTables['effett'],"id_doc = ".$r["reftes"],'progre');
         while ($r_e = gaz_dbi_fetch_array ($effett_result)){
@@ -378,17 +378,17 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         echo "</td>";
         // Colonna "Stampa"
-        echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"".$modulo."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
+        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"".$modulo."\"><i class=\"glyphicon glyphicon-print\"></i></a>";
         echo "</td>";
         
         // Colonna "Fattura elettronica"
         if (substr($r["tipdoc"],0,1)=='F'){
             if (strlen($r["fe_cod_univoco"])!=6) { // se il cliente non è un ufficio della PA tolgo il link
                $modulo_fae='';
-               echo "<td class=\"FacetDataTD\" align=\"center\"><img width=\"20px\" src=\"../../library/images/e_inv_disabled.png\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\" border=\"0\">";
+			   echo "<td class=\"FacetDataTD\" align=\"center\"><button class=\"btn btn-xs btn-default btn-xml disabled\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\"><i class=\"glyphicon glyphicon-tag\"></i></button>";
                echo "</td>";
             } else {
-              echo "<td class=\"FacetDataTD genera\" align=\"center\"><a onclick=\"confirFae(this);return false;\" id=\"doc1".$r["id_tes"]."\" n_fatt=\"".$r["numfat"]."\" target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
+              echo "<td class=\"FacetDataTD genera\" align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1".$r["id_tes"]."\" n_fatt=\"".$r["numfat"]."\" target=\"_blank\" href=\"".$modulo_fae."\">xml</a>";
               //identifica le fatture inviate all'sdi           
               $where2 = " id_tes_ref = ".$r['id_tes'] . " AND (flux_status LIKE '@' OR flux_status LIKE '#' OR flux_status LIKE '@@')";
               $result2 = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where2);
@@ -408,8 +408,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
         // Colonna "Mail"
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if (!empty($r["e_mail"])) {
-            echo '<a onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
-            mail="'.$r["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numfat"].' del '.gaz_format_date($r["datfat"]).'"><img src="../../library/images/email.gif" border="0"></a>';
+            echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+            mail="'.$r["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numfat"].' del '.gaz_format_date($r["datfat"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
         }  
         echo "</td>";
         // Colonna "Origine"
@@ -435,12 +435,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if ($ultimo_documento['id_tes'] == $r["id_tes"] ) {
            // Permette di cancellare il documento.
            if ($r["id_con"] > 0) {
-               echo "<a title=\"cancella il documento e la registrazione contabile relativa\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a>";
+               echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"cancella il documento e la registrazione contabile relativa\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
            } else {
-               echo "<a title=\"cancella il documento\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a>";
+               echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"cancella il documento\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
            }
         } else {
-           echo "<img title=\"per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" src=\"../../library/images/stop-info.gif\" alt=\"!\" border=\"0\">";
+           echo "<button title=\"per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button>";
         }
         echo "</td>";
 /*        echo "<td class=\"FacetDataTD\" align=\"right\">";
