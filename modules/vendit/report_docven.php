@@ -390,11 +390,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
             } else {
               echo "<td class=\"FacetDataTD genera\" align=\"center\"><a onclick=\"confirFae(this);return false;\" id=\"doc1".$r["id_tes"]."\" n_fatt=\"".$r["numfat"]."\" target=\"_blank\" href=\"".$modulo_fae."\"><img width=\"20px\" src=\"../../library/images/e_inv.png\" alt=\"Fattura elettronica\" border=\"0\"></a>";
               //identifica le fatture inviate all'sdi           
-              $where2 = " id_tes_ref = ".$r['id_tes'] . " AND (flux_status LIKE '@' OR flux_status LIKE '#')";
+              $where2 = " id_tes_ref = ".$r['id_tes'] . " AND (flux_status LIKE '@' OR flux_status LIKE '#' OR flux_status LIKE '@@')";
               $result2 = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where2);
               $r2 = gaz_dbi_fetch_array($result2);   
               if ($r2 == false) {
-              } elseif ($r2['flux_status']=="@") {
+              } elseif ($r2['flux_status']=="@" or $r2['flux_status']=="@@") {
                  echo " <a  title=\"Fattura elettronica inviata: VEDI REPORT\" class=\"FacetDataTDred\" target=\"_blank\" href=\"".$modulo_fae_report."\"> <img width=\"20px\" src=\"../../library/images/listed.png\" border=\"0\"></a>";
               } elseif ($r2['flux_status']=="#") {
                  echo " <a title=\"Fattura elettronica generata: VEDI REPORT\" target=\"_blank\" href=\"".$modulo_fae_report."\"> #<img width=\"20px\" src=\"../../library/images/listed.png\" border=\"0\"></a>";
