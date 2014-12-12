@@ -72,6 +72,7 @@ class invoiceXMLvars
         $this->decimal_price = $admin_aziend['decimal_price'];
         $this->logo = $admin_aziend['image'];
         $this->link = $admin_aziend['web_url'];
+        $this->ricbol = $admin_aziend['ricbol'];
         $this->perbollo = 0;
         $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['ivabol']);
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
@@ -297,7 +298,6 @@ class invoiceXMLvars
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
         $this->tot_ritenute = $this->ritenuta;
-        $this->impbol = 0.00;
         $this->totriport = $this->riporto;
         $this->speseincasso = $this->tesdoc['speban'] * $this->pagame['numrat'];
         $this->cast = array();
@@ -320,6 +320,15 @@ class invoiceXMLvars
         $somma_spese = $totTrasporto + $this->speseincasso + $this->tesdoc['spevar'];
         $last=count($this->castel);
         $acc_val=$somma_spese;
+
+        $imp_iva_esente = 0.00;
+
+        $epsilon = 0.000001;    // Massima differenza tra 2 float
+                                // http://www.php.net/manual/en/language.types.float.php
+                                // http://stackoverflow.com/questions/3148937/compare-floats-in-php
+
+        $max_imp_iva_esente_bollo = 77.47; // http://it.wikipedia.org/wiki/Imposta_di_bollo
+
         foreach ($this->castel as $k=>$v) {
             $vat = gaz_dbi_get_row($this->gTables['aliiva'],"codice",$k);
             if (isset($this->decalc_castle[$k])) {
@@ -335,6 +344,9 @@ class invoiceXMLvars
                $last--;
             }
             $ivacast = round($v*$vat['aliquo'])/ 100;
+            if (abs($ivacast) < $epsilon) {
+              $imp_iva_esente+= $v;
+            }
             $this->totivafat += $ivacast;
             $this->cast[$k]['aliquo'] = $vat['aliquo'];
             $this->cast[$k]['impcast'] = $v;
@@ -343,13 +355,19 @@ class invoiceXMLvars
             $this->cast[$k]['fae_natura'] = $vat['fae_natura'];
         }
         //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione dell'effetto
+        $stamp = 0.00;
         if ($this->pagame['tippag'] == 'T' or $this->pagame['tippag'] == 'R') {
            if ($this->pagame['tippag'] == 'T') {
-              $this->impbol = $bolli->stampTax($this->totimpfat+$this->totriport+$this->totivafat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
+              $stamp = $bolli->stampTax($this->totimpfat+$this->totriport+$this->totivafat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
            } elseif($this->pagame['tippag'] == 'R') {
-              $this->impbol = $this->tesdoc['stamp'];
+              $stamp = $this->tesdoc['stamp'];
            }
         }
+        //se la quota parte imponibile esente iva supera il valore massimo 'max_imp_iva_esente_bollo' viene aggiunto il costo della imposta di bollo
+        if ($imp_iva_esente > $max_imp_iva_esente_bollo && $this->pagame['tippag'] != 'R') {
+           $stamp+= $this->ricbol;
+        }
+        $this->impbol = $stamp;
         $this->riporto=0;
         $this->ritenute=0;
         $this->castel = array();
