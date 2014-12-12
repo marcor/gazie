@@ -249,22 +249,22 @@ $recordnav -> output();
 ?>
 <table class="Tlarge">
  <tr>
-   <td class="FacetFieldCaptionTD">Protocollo:
-     <input type="text" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+   <td class="FacetFieldCaptionTD">
+		<input type="text" placeholder="Cerca Prot." class="input-xs form-control" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
    </td>
    <td></td>
-   <td class="FacetFieldCaptionTD">Numero:
-      <input type="text" name="numerof" value="<?php if (isset($numerof)) { print $numerof;} ?>" maxlength="6" size="3" tabindex="2" class="FacetInput">
+   <td class="FacetFieldCaptionTD">
+		<input type="text" placeholder="Cerca Num." class="input-xs form-control" name="numerof" value="<?php if (isset($numerof)) { print $numerof;} ?>" maxlength="6" size="3" tabindex="2" class="FacetInput">
    </td>
    <td></td>
-   <td colspan="1" class="FacetFieldCaptionTD">Cliente:
-     <input type="text" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="3" class="FacetInput">
+   <td colspan="1" class="FacetFieldCaptionTD">
+		<input type="text" placeholder="Cerca Cliente" class="input-xs form-control" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="3" class="FacetInput">
    </td>
    <td>
-     <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+     <input type="submit" class="btn btn-xs btn-submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
    </td>
    <td colspan="2">
-     <input type="submit" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
+     <input type="submit" class="btn btn-xs btn-submit" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
    </td>
    <td colspan="2">
    
@@ -329,15 +329,21 @@ while ($r = gaz_dbi_fetch_array($result)) {
     if (sprintf('%09d',$r['protoc']).$r['datfat'] <> $ctrl_doc)    {
         $n_e=0;
         echo "<tr>";
+		// Colonna protocollo
         if (! empty ($modifi)) {
            echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\" class=\"btn btn-xs btn-default btn-edit\" title=\"Modifica il documento\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["protoc"]."</a></td>";
         } else {
-           echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default btn-edit disabled\">".$r["protoc"]." &nbsp;</button></td>";
+           echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default btn-edit disabled\" title=\"Impossibile modificare questo tipo di documento, è stato generato automaticamente!\">".$r["protoc"]." &nbsp;</button></td>";
         }
+		// Colonna tipo documento
         echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
+		// Colonna numero documento
         echo "<td class=\"FacetDataTD\" align=\"center\">".$r["numfat"]." &nbsp;</td>";
+		// Colonna data documento
         echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datfat"])." &nbsp;</td>";
+		// Colonna cliente
         echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
+		// Colonna movimenti contabili
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if ($r["id_con"] > 0) {
            echo " <a style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont.".$r["id_con"]."</a> ";
@@ -349,25 +355,25 @@ while ($r = gaz_dbi_fetch_array($result)) {
            // La fattura ha almeno un effetto emesso
            $n_e++;
            if ($r_e["tipeff"] == "B") {
-                        echo " <a style=\"font-size:10px;\" title=\"visualizza la ricevuta bancaria generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a style=\"font-size:10px;\" title=\"Visualizza la ricevuta bancaria generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo "RiBa".$r_e["progre"];
                         echo "</a>";
            } elseif ($r_e["tipeff"] == "T")  {
-                        echo " <a style=\"font-size:10px;\" title=\"visualizza la cambiale tratta generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a style=\"font-size:10px;\" title=\"Visualizza la cambiale tratta generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo "Tratta".$r_e["progre"];
                         echo "</a>";
            } elseif ($r_e["tipeff"] == "V")  {
-                        echo " <a style=\"font-size:10px;\" title=\"visualizza il pagamento mediante avviso generato per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a style=\"font-size:10px;\" title=\"Visualizza il pagamento mediante avviso generato per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo "MAV".$r_e["progre"];
                         echo "</a>";
            }  else {
-                        echo " <a style=\"font-size:10px;\" title=\"visualizza l'effetto\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a style=\"font-size:10px;\" title=\"Visualizza l'effetto\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo $r_e["tipeff"].$r_e["progre"];
                         echo "</a>";
            }
         }
         if ($n_e==0 && ($r["tippag"]=='B' || $r["tippag"]=='T' || $r["tippag"]=='V')) {
-              echo " <a title=\"genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
+              echo " <a title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
               if (strtoupper($r["geneff"])=='S'){
                     // Gli effetti della fattura sono stati generati in passato, ma poi
                     // sono stati rimossi tutti.
@@ -408,23 +414,23 @@ while ($r = gaz_dbi_fetch_array($result)) {
         // Colonna "Mail"
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if (!empty($r["e_mail"])) {
-            echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+            echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="Mailto: '.$r["e_mail"].'"
             mail="'.$r["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numfat"].' del '.gaz_format_date($r["datfat"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
         }  
         echo "</td>";
         // Colonna "Origine"
         if ($r["tipdoc"]=='FAD'){
-           $ddt_result = gaz_dbi_dyn_query ('*',$gTables['tesdoc'],"tipdoc = '".$r["tipdoc"]."' AND numfat = ".$r["numfat"]." AND datfat = '".$r["datfat"]."'",'datemi DESC');
-           echo "<td class=\"FacetDataTD\" align=\"center\">";
+           $ddt_result = gaz_dbi_dyn_query ('*',$gTables['tesdoc'],"tipdoc = '".$r["tipdoc"]."' AND numfat = ".$r["numfat"]." AND datfat = '".$r["datfat"]."'",'datemi DESC');   
+		   echo "<td class=\"FacetDataTD\" align=\"center\">";
            while ($r_d = gaz_dbi_fetch_array ($ddt_result)){
-             echo " <a title=\"visualizza il DdT\" href=\"stampa_docven.php?id_tes=".$r_d['id_tes']."&template=DDT\" style=\"font-size:10px;\">DdT".$r_d['numdoc']."</a>\n";
-           }
+             echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=".$r_d['id_tes']."&template=DDT\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;DdT".$r_d['numdoc']."</a>\n";
+           }		   
            echo "</td>";
         } elseif($r["id_contract"]>0) {
            $con_result = gaz_dbi_dyn_query ('*',$gTables['contract'],"id_contract = ".$r["id_contract"],'conclusion_date DESC');
            echo "<td class=\"FacetDataTD\" align=\"center\">";
            while ($r_d = gaz_dbi_fetch_array ($con_result)){
-             echo " <a title=\"visualizza il contratto\" href=\"print_contract.php?id_contract=".$r_d['id_contract']."\" style=\"font-size:10px;\">Contr.".$r_d['doc_number']."</a>\n";
+             echo " <a class=\"btn btn-xs btn-default btn-contr\" title=\"Visualizza il contratto\" href=\"print_contract.php?id_contract=".$r_d['id_contract']."\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-list-alt\"></i>&nbsp;Contr.".$r_d['doc_number']."</a>\n";
            }
            echo "</td>";
         } else {
@@ -435,12 +441,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if ($ultimo_documento['id_tes'] == $r["id_tes"] ) {
            // Permette di cancellare il documento.
            if ($r["id_con"] > 0) {
-               echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"cancella il documento e la registrazione contabile relativa\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
+               echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"Cancella il documento e la registrazione contabile relativa\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
            } else {
-               echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"cancella il documento\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
+               echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"Cancella il documento\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
            }
         } else {
-           echo "<button title=\"per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button>";
+           echo "<button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button>";
         }
         echo "</td>";
 /*        echo "<td class=\"FacetDataTD\" align=\"right\">";
