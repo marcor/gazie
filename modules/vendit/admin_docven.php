@@ -574,10 +574,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
            $form['speban'] = $admin_aziend['sperib'];
            $form['numrat'] = $pagame['numrat'];
            $form['stamp'] = 0;
-		   if ($pagame['tippag'] == 'T') { 
-				$form['stamp']=$admin_aziend['perbol'];
-		   }	
-		   $form['round_stamp'] = $admin_aziend['round_bol'];
+           if ($pagame['tippag'] == 'T') { 
+              $form['stamp']=$admin_aziend['perbol'];
+           }
+           $form['round_stamp'] = $admin_aziend['round_bol'];
     } elseif ($pagame['tippag'] == 'R') {
            $form['speban'] = 0.00;
            $form['numrat'] = 1;
@@ -1469,10 +1469,10 @@ foreach ($form['rows'] as $k => $v) {
         case "0":
         echo "<tr>";
         if ( file_exists ( "../../data/files/fotoart/".$v["codart"].".gif" ) ) {
-			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$v["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";		
-		} else {
-			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";			
-		}
+           $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$v["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";
+        } else {
+           $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";
+        }
         if ($v['pesosp'] != 0){
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso = ".gaz_format_number($v['quanti'] * $v['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
         } else {
@@ -1729,12 +1729,19 @@ if ($next_row > 0) {
 */
         //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione dell'effetto
         $stamp = 0.00;
-        if ($pagame['tippag'] == 'T' or $pagame['tippag'] == 'R') {
-           if ($pagame['tippag'] == 'T') {
-              $stamp = $v_stamp->stampTax($totimpfat+$totivafat+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
-           } elseif($pagame['tippag'] == 'R') {
-              $stamp = $form['stamp'];
+        if (!empty($form['pagame'])) {
+           if (!isset($pagame)) {
+              $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$form['pagame']);
            }
+           if ($pagame['tippag'] == 'T' or $pagame['tippag'] == 'R') {
+              if ($pagame['tippag'] == 'T') {
+                $stamp = $v_stamp->stampTax($totimpfat+$totivafat+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
+              } elseif($pagame['tippag'] == 'R') {
+                $stamp = $form['stamp'];
+              }
+           }
+        } else {
+           $pagame['tippag'] = '';
         }
         //se la quota parte imponibile esente iva supera il valore massimo 'max_imp_iva_esente_bollo' viene aggiunto il costo della imposta di bollo
         if ($imp_iva_esente > $max_imp_iva_esente_bollo && $pagame['tippag'] != 'R') {

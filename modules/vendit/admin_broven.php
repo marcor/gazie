@@ -1502,12 +1502,19 @@ if ($next_row > 0) {
 */
         //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione dell'effetto
         $stamp = 0.00;
-        if ($pagame['tippag'] == 'T' or $pagame['tippag'] == 'R') {
-           if ($pagame['tippag'] == 'T') {
-              $stamp = $v_stamp->stampTax($totimpfat+$totivafat+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
-           } elseif($pagame['tippag'] == 'R') {
-              $stamp = $form['stamp'];
+        if (!empty($form['pagame'])) {
+           if (!isset($pagame)) {
+              $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$form['pagame']);
            }
+           if ($pagame['tippag'] == 'T' or $pagame['tippag'] == 'R') {
+              if ($pagame['tippag'] == 'T') {
+                $stamp = $v_stamp->stampTax($totimpfat+$totivafat+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
+              } elseif($pagame['tippag'] == 'R') {
+                $stamp = $form['stamp'];
+              }
+           }
+        } else {
+           $pagame['tippag'] = '';
         }
         //se la quota parte imponibile esente iva supera il valore massimo 'max_imp_iva_esente_bollo' viene aggiunto il costo della imposta di bollo
         if ($imp_iva_esente > $max_imp_iva_esente_bollo && $pagame['tippag'] != 'R') {
