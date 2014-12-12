@@ -71,14 +71,14 @@ $recordnav -> output();
 ?>
 <table class="Tlarge">
 <tr>
-<td colspan="2" class="FacetFieldCaptionTD">Numero:
-<input type="text" name="numdoc" value="<?php if ($doc > 0) print $doc; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+<td colspan="2" class="FacetFieldCaptionTD">
+<input type="text" placeholder="Cerca Numero" class="input-xs form-control" name="numdoc" value="<?php if ($doc > 0) print $doc; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 </td>
 <td>
-<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
 <td>
-<input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <tr>

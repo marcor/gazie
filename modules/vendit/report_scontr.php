@@ -72,7 +72,7 @@ $recordnav->output();
 <td colspan="2">
 </td>
 <td>
-<input type="submit" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-default btn-xs" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <tr>
@@ -175,24 +175,30 @@ while ($row = gaz_dbi_fetch_array($result)) {
         }
         
         echo "<tr>";
-        echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"admin_scontr.php?Update&id_tes=".$row['id_tes']."\">".$row["id_tes"]."</a></td>";
-        echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($row['datemi'])."</td>";
+        // Colonna ID scontrino
+		echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_scontr.php?Update&id_tes=".$row['id_tes']."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$row["id_tes"]."</a></td>";
+        // Colonna data emissione
+		echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($row['datemi'])."</td>";
+		// Colonna numero documento
         echo "<td class=\"FacetDataTD\" align=\"center\">".$row["numdoc"]." &nbsp;</td>";
+		// Colonna fattura
         echo "<td class=\"FacetDataTD\" align=\"center\">$invoice</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$status." &nbsp;</td>";
         echo '<td class="FacetDataTD" align="right" style="font-weight=bolt;">';
         echo gaz_format_number($tot_tes);
         echo "\t </td>\n";
-        if ($row["id_con"] == 0) {
+        // Colonna Elimina
+		if ($row["id_con"] == 0) {
            if (getLastId($row['datemi'],$row['seziva']) == $row["id_tes"]) {
-               echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_docven.php?id_tes=".$row['id_tes']."\"><img src=\"../../library/images/x.gif\" border=\"0\"></a></td>";
+               echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=".$row['id_tes']."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
            } else {
-               echo "<td class=\"FacetDataTD\"></td>";
+               echo "<td class=\"FacetDataTD\" align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
            }
         } else {
-           echo "<td class=\"FacetDataTD\"></td>";
+           echo "<td class=\"FacetDataTD\" align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
         }
-        echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"resend_to_ecr.php?id_tes=".$row['id_tes']."\" >".$script_transl['send']."</a>";
+		// Colonna invia a ECR
+        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-primary btn-ecr\" href=\"resend_to_ecr.php?id_tes=".$row['id_tes']."\" >".$script_transl['send']."</a>";
         echo "</tr>\n";
 }
 ?>

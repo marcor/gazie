@@ -129,6 +129,9 @@ TABLE.selectTable TD {
 	margin: 2px 2px;
 	padding: 2px 5px 2px 5px;
 }
+.dispari {
+	background-color : #b8dcb7;
+}
 
 .FacetDataTDevidenziaOK  {
     background-color : #FFE13C;
@@ -513,25 +516,7 @@ input.input-xs {
 .panel-help {
   background-color: #dafed9;
 }
-.btn-edit {
-	/*float: right;*/
-	background-color: ;
-}
-.btn-cont {
-	background-color: #aae2a8;
-}
-.btn-cont:hover {
-	background-color: #99d197;
-}
-.btn-elimina {
-	color: #ff3939;
-}
-.btn-xml {
-	color: #0000ff;
-}
-.btn.disabled {
-    pointer-events: auto;
-}
+
 /*    --------------------------------------------------
 	:: Inputs & Buttons
 	-------------------------------------------------- */
@@ -546,8 +531,31 @@ input.input-xs {
 .btn-custom:focus {
     color: #fff;
 }
-
-
+.btn-edit {
+	/*float: right;*/
+	background-color: ;
+}
+.btn-cont {
+	background-color: #aae2a8;
+}
+/*.btn-cont:hover {
+	background-color: #99d197;
+}*/
+.btn-elimina {
+	color: #ff3939;
+}
+.btn-xml {
+	color: #0000ff;
+}
+.btn.disabled {
+    pointer-events: auto;
+}
+.btn-effetti {
+	background-color: #D4CB6A;
+}
+.btn-riba {
+	background-color: #FFF7AA;
+}
 
 
 /* INIZIO CSS di JQuery/UI

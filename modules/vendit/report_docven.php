@@ -261,10 +261,10 @@ $recordnav -> output();
 		<input type="text" placeholder="Cerca Cliente" class="input-xs form-control" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="3" class="FacetInput">
    </td>
    <td>
-     <input type="submit" class="btn btn-xs btn-submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+     <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
    </td>
    <td colspan="2">
-     <input type="submit" class="btn btn-xs btn-submit" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
+     <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
    </td>
    <td colspan="2">
    
@@ -346,34 +346,34 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		// Colonna movimenti contabili
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if ($r["id_con"] > 0) {
-           echo " <a style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont.".$r["id_con"]."</a> ";
+           echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont.".$r["id_con"]."</a> ";
         } else {
-           echo " <a class=\"btn btn-xs btn-cont\" href=\"accounting_documents.php?type=F&vat_section=".substr($auxil,0,1)."&last=".$r["protoc"]."\">Contabilizza</a>";
+           echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=".substr($auxil,0,1)."&last=".$r["protoc"]."\">Contabilizza</a>";
         }
         $effett_result = gaz_dbi_dyn_query ('*',$gTables['effett'],"id_doc = ".$r["reftes"],'progre');
         while ($r_e = gaz_dbi_fetch_array ($effett_result)){
            // La fattura ha almeno un effetto emesso
            $n_e++;
            if ($r_e["tipeff"] == "B") {
-                        echo " <a style=\"font-size:10px;\" title=\"Visualizza la ricevuta bancaria generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a class=\"btn btn-xs btn-default btn-riba\" style=\"font-size:10px;\" title=\"Visualizza la ricevuta bancaria generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo "RiBa".$r_e["progre"];
                         echo "</a>";
            } elseif ($r_e["tipeff"] == "T")  {
-                        echo " <a style=\"font-size:10px;\" title=\"Visualizza la cambiale tratta generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a class=\"btn btn-xs btn-default btn-cambiale\" style=\"font-size:10px;\" title=\"Visualizza la cambiale tratta generata per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo "Tratta".$r_e["progre"];
                         echo "</a>";
            } elseif ($r_e["tipeff"] == "V")  {
-                        echo " <a style=\"font-size:10px;\" title=\"Visualizza il pagamento mediante avviso generato per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a class=\"btn btn-xs btn-default btn-avviso\" style=\"font-size:10px;\" title=\"Visualizza il pagamento mediante avviso generato per il regolamento della fattura\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo "MAV".$r_e["progre"];
                         echo "</a>";
            }  else {
-                        echo " <a style=\"font-size:10px;\" title=\"Visualizza l'effetto\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
+                        echo " <a class=\"btn btn-xs btn-default btn-effetto\" style=\"font-size:10px;\" title=\"Visualizza l'effetto\" href=\"stampa_effett.php?id_tes=".$r_e["id_tes"]."\">";
                         echo $r_e["tipeff"].$r_e["progre"];
                         echo "</a>";
            }
         }
         if ($n_e==0 && ($r["tippag"]=='B' || $r["tippag"]=='T' || $r["tippag"]=='V')) {
-              echo " <a title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
+              echo " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
               if (strtoupper($r["geneff"])=='S'){
                     // Gli effetti della fattura sono stati generati in passato, ma poi
                     // sono stati rimossi tutti.
