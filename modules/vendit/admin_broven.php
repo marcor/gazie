@@ -1460,15 +1460,6 @@ if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
 $somma_spese = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
 $last=count($castle);
 $acc_val=$somma_spese;
-
-$imp_iva_esente = 0.00;
-
-$epsilon = 0.000001;    // Massima differenza tra 2 float
-                        // http://www.php.net/manual/en/language.types.float.php
-                        // http://stackoverflow.com/questions/3148937/compare-floats-in-php
-
-$max_imp_iva_esente_bollo = 77.47; // http://it.wikipedia.org/wiki/Imposta_di_bollo
-
 foreach ($castle as $k=> $v) {
       $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
       $last--;
@@ -1481,10 +1472,7 @@ foreach ($castle as $k=> $v) {
         $totimpfat += $decalc;
         $acc_val=$somma_spese-$decalc;
       }
-      $ivacast = round($v*$vat['aliquo'])/100;
-      if (abs($ivacast) < $epsilon) {
-        $imp_iva_esente+= $v;
-      }
+      $ivacast = round($v*$vat['aliquo'])/ 100;
       $totivafat += $ivacast;
       if ($next_row > 0) {
         echo "<tr><td align=\"right\">".gaz_format_number($v)."</td><td align=\"right\">".$vat['descri']." ".gaz_format_number($ivacast)."</td>\n";
@@ -1492,33 +1480,11 @@ foreach ($castle as $k=> $v) {
 }
 
 if ($next_row > 0) {
-/*
         if ($form['stamp'] > 0) {
           $v_stamp = new Compute;
           $stamp = $v_stamp->stampTax($totimpfat+$totivafat+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
         } else {
           $stamp = 0;
-        }
-*/
-        //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione dell'effetto
-        $stamp = 0.00;
-        if (!empty($form['pagame'])) {
-           if (!isset($pagame)) {
-              $pagame = gaz_dbi_get_row($gTables['pagame'],"codice",$form['pagame']);
-           }
-           if ($pagame['tippag'] == 'T' or $pagame['tippag'] == 'R') {
-              if ($pagame['tippag'] == 'T') {
-                $stamp = $v_stamp->stampTax($totimpfat+$totivafat+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
-              } elseif($pagame['tippag'] == 'R') {
-                $stamp = $form['stamp'];
-              }
-           }
-        } else {
-           $pagame['tippag'] = '';
-        }
-        //se la quota parte imponibile esente iva supera il valore massimo 'max_imp_iva_esente_bollo' viene aggiunto il costo della imposta di bollo
-        if ($imp_iva_esente > $max_imp_iva_esente_bollo && $pagame['tippag'] != 'R') {
-           $stamp+= $admin_aziend['ricbol'];
         }
         echo "<td align=\"right\">".gaz_format_number($totimp_body)."</td>
               <td align=\"right\">".gaz_format_number(($totimp_body-$totimpfat+$somma_spese),2, '.', '')."</td>
@@ -1526,7 +1492,11 @@ if ($next_row > 0) {
               <td align=\"right\">".gaz_format_number($totivafat)."</td>
               <td align=\"right\">".gaz_format_number($stamp)."</td>
               <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($totimpfat+$totivafat+$stamp)."</td>\n";
-        echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" id="preventDuplicate" name="ins" onClick="chkSubmit();" onClick="chkSubmit();" accesskey="'.(($toDo == 'update') ? 'm' : 'i').'" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
+        if ($toDo == 'update') {
+           echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !"></td></tr>';
+        } else {
+           echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !"></td></tr>';
+        }
         if ($rit > 0) {
             echo "<tr>";
             echo "<td colspan=\"7\" align=\"right\">".$script_transl['ritenuta']."</td>";
