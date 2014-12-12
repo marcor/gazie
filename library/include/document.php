@@ -157,13 +157,16 @@ class DocContabVars
                 $this->docRelNum  = $this->tesdoc["numdoc"];    // Numero del documento relativo
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
-        // definisco le variabili dei totali 
+        
+    }
+
+    function initializeTotals() 
+    {
+	// definisco le variabili dei totali 
         $this->totimp_decalc = 0;
         $this->totimp_body = 0;
         $this->totimp_doc = 0;
-        
-        
-    }
+	}        
 
     function open_drawer() // apre il cassetto dell'eventuale registratore di cassa
     {
@@ -352,6 +355,7 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     }
     $docVars = new DocContabVars();
     $docVars->setVars($gTables, $testata, $testata['id_tes'], $rows, $ecr);
+    $docVars->initializeTotals();
     $pdf->setVars($docVars,$templateName);
     $pdf->setTesDoc();
     //$pdf->SetPageFormat($config->getValue('page_format'));
@@ -427,6 +431,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest=false)
             // Inizio pagina
             $testat = $tesdoc['id_tes'];
             $docVars->setVars($gTables, $tesdoc, $testat, 'rigdoc');
+            $docVars->initializeTotals();
             $pdf->setVars($docVars,$templateName);
             $pdf->setTesDoc();
             if ($ctrlprotoc == 0) {
@@ -499,6 +504,7 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
 
             $testat = $tesdoc['id_tes'];
             $docVars->setVars($gTables, $tesdoc, $testat, 'rigdoc');
+            $docVars->initializeTotals();
             $pdf->setVars($docVars);
             $pdf->setTesDoc();
             if ($ctrlprotoc == 0) {
