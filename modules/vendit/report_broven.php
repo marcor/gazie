@@ -174,10 +174,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
         $modifi="admin_broven.php?Update&id_tes=".$r['id_tes'];
     }
     echo "<tr>";
+	
     if (!empty ($modifi)) {
-       echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\">".$r["id_tes"]."</td>";
+       echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["id_tes"]."</td>";
     } else {
-       echo "<td class=\"FacetDataTD\">".$r["id_tes"]." &nbsp;</td>";
+       echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default disabled\">".$r["id_tes"]." </button></td>";
     }
     echo "<td class=\"FacetDataTD\">".$script_transl['type_value'][$r["tipdoc"]]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$r["numdoc"]." &nbsp;</td>";
@@ -221,7 +222,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if ($r["status"] != "GENERATO") {
             gaz_dbi_put_row ($gTables['tesbro'],"id_tes",$r["id_tes"],"status","RIGENERATO");
         }
-        echo "<td class=\"FacetDataTD\"><a href=\"select_evaord.php?id_tes=".$r['id_tes']."\">evadi</a></td>";
+        echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"select_evaord.php?id_tes=".$r['id_tes']."\">evadi</a></td>";
     } elseif ($remains_atleastone) {
         echo "<td class=\"FacetDataTD\">";
 
@@ -247,11 +248,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
                     $tesdoc_r = gaz_dbi_fetch_array ($tesdoc_result);
                     #
                     if ($tesdoc_r["tipdoc"] == "FAI") {
-                        echo "<a title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."\">";
+                        echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."\">";
                         echo "fatt. ". $tesdoc_r["numfat"];
                         echo "</a> ";
                     } elseif ($tesdoc_r["tipdoc"] == "DDT") {
-                        echo "<a title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."&template=DDT\">";
+                        echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."&template=DDT\">";
                         echo "ddt ". $tesdoc_r["numdoc"];
                         echo "</a> ";
                     } else {
@@ -261,7 +262,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
                 }
             }
         }
-        echo "<a href=\"select_evaord.php?id_tes=".$r['id_tes']."\">evadi il rimanente</a></td>";
+        echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord.php?id_tes=".$r['id_tes']."\">evadi il rimanente</a></td>";
     } else {
         echo "<td class=\"FacetDataTD\">";
         //
@@ -285,15 +286,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
                     $tesdoc_result = gaz_dbi_dyn_query ('*',$gTables['tesdoc'],"id_tes = ".$rigbro_r["id_doc"],'id_tes DESC');
                     $tesdoc_r = gaz_dbi_fetch_array ($tesdoc_result);
                     if ($tesdoc_r["tipdoc"] == "FAI") {
-                        echo "<a title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."\">";
+                        echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."\">";
                         echo "fatt. ". $tesdoc_r["numfat"];
                         echo "</a> ";
                     } elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
-                        echo "<a title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."&template=DDT\">";
+                        echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."&template=DDT\">";
                         echo "ddt ". $tesdoc_r["numdoc"];
                         echo "</a> ";
                     } elseif ($tesdoc_r["tipdoc"] == "VCO") {
-                        echo "<a title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."&template=FatturaAllegata\">";
+                        echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=".$rigbro_r["id_doc"]."&template=FatturaAllegata\">";
                         echo "scontrino n.". $tesdoc_r["numdoc"]."<br />del ".gaz_format_date($tesdoc_r["datemi"]);
                         echo "</a> ";
                     } else {
@@ -305,19 +306,19 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         echo "</td>";
     }
-    echo "<td class=\"FacetDataTD\"><a href=\"".$modulo."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"".$modulo."\"><i class=\"glyphicon glyphicon-print\"></i></a>";
     echo "</td>";
      // Colonna "Mail"
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     if (!empty($r["e_mail"])) {
-        echo '<a onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
-        mail="'.$r["e_mail"].'" namedoc="'.$script_transl['type_value'][$r["tipdoc"]].' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><img src="../../library/images/email.gif" border="0"></a>';
+        echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+        mail="'.$r["e_mail"].'" namedoc="'.$script_transl['type_value'][$r["tipdoc"]].' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
     }  
     echo "</td>";
-    echo "<td class=\"FacetDataTD\">";
+    echo "<td class=\"FacetDataTD\" align=\"center\">";
     if (!$remains_atleastone || !$processed_atleastone) {
         //possono essere cancellati solo gli ordini inevasi o completamente evasi
-        echo "<a href=\"delete_broven.php?id_tes=".$r['id_tes']."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a>";
+        echo "<a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_broven.php?id_tes=".$r['id_tes']."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
     }
     echo "</td>";
     echo "</tr>\n";

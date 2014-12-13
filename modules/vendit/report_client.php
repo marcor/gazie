@@ -35,33 +35,43 @@ $script_transl=HeadMain();
 $where = "codice BETWEEN ".$clienti."000000 AND ".$clienti."999999 and codice > $mascli";
 
 if (isset($_GET['auxil'])) {
-   $auxil = $_GET['auxil'];
+	$auxil = $_GET['auxil'];
 } else {
-   $auxil = "";
+	$auxil = "";
 }
+	
+if ( !$_GET['ricerca_completa'] ) {
 
-if (isset($_GET['auxil1'])) {
-   $auxil1 = $_GET['auxil1'];
+	if (isset($_GET['auxil1'])) {
+		$auxil1 = $_GET['auxil1'];
+	} else {
+		$auxil1 = "";
+	}
+
+	if (isset($_GET['all'])) {
+		$auxil = "&all=yes";
+		$passo = 100000;
+	} else {
+		if (isset($_GET['auxil']) and $auxil1=="") {
+			$where .= " AND ragso1 LIKE '".addslashes($auxil)."%'";
+		} elseif (isset($_GET['auxil1'])) {
+			$codicetemp = intval($mascli)+intval($auxil1); 
+			$where .= " AND codice LIKE '".$codicetemp."%'";
+		}
+	}
+
+	if (!isset($_GET['field'])) {
+		$orderby = "codice DESC";
+	}
 } else {
-   $auxil1 = "";
+	$ricerca_testo = $_GET['ricerca_completa'];
+	$where .= " and ( ragso1 like '%".$ricerca_testo."%' ";
+	$where .= " or ragso2 like '%".$ricerca_testo."%' ";
+	$where .= " or pariva like '%".$ricerca_testo."%' ";
+	$where .= " or pariva like '%".$ricerca_testo."%' ";
+	$where .= " or codfis like '%".$ricerca_testo."%' ";
+	$where .= " or citspe like '%".$ricerca_testo."%' )";
 }
-
-if (isset($_GET['all'])) {
-   $auxil = "&all=yes";
-   $passo = 100000;
-} else {
-   if (isset($_GET['auxil']) and $auxil1=="") {
-      $where .= " AND ragso1 LIKE '".addslashes($auxil)."%'";
-   } elseif (isset($_GET['auxil1'])) {
-      $codicetemp = intval($mascli)+intval($auxil1); 
-      $where .= " AND codice LIKE '".$codicetemp."%'";
-   }
-}
-
-if (!isset($_GET['field'])) {
-   $orderby = "codice DESC";
-}
-
 
 ?>
 <div align="center" class="FacetFormHeaderFont">Clienti</div>

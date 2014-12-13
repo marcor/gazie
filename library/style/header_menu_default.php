@@ -116,6 +116,10 @@ $riga = gaz_dbi_fetch_array($result);
 if ( $riga["id"]!="" ) {
 	$result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
 if ( gaz_dbi_num_rows($result2)>0 ) {
+
+if ( is_array( $posizione ) ) $posizione = $posizione[0];
+if (isset($_GET['auxil'])) $auxil = $_GET['auxil'];
+else $auxil = "";
 ?>
 
 <nav class="navbar navbar-default navbar-lower" role="navigation">
@@ -126,6 +130,16 @@ if ( gaz_dbi_num_rows($result2)>0 ) {
 				echo '<a href="'.$r["link"].'" class="btn btn-default">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a>';
 			}
 		?>
+		</div>
+	</div>
+	
+	<div class="nav navbar-default navbar-right">
+		<div class="form-inline">
+			<form action="<?php echo $posizione; ?>" method="GET">
+				<input type="hidden" name="auxil" value="<?php echo $auxil; ?>">
+				<input type="text" class="form-control input-xs" title="La ricerca viene effettuata nei campi ragione sociale 1 e 2, partita iva, codice fiscale e città" type="text" name="ricerca_completa" placeholder="Cerca nel modulo">
+				<button type="submit" class="btn btn-xs btn-default">Go!</button>
+			</form>
 		</div>
 	</div>
 </nav>

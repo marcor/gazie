@@ -387,8 +387,8 @@ div.FacetFormHeaderFont {
 	padding-right:5px;
 }
 input.input-xs {
-    height: 20px;
-    padding: 4px 4px;
+    height: 24px;
+    padding: 2px 2px;
     font-size: 12px;
     line-height: 1.5;
     border-radius: 3px;
@@ -559,7 +559,12 @@ input.input-xs {
 .btn-pagamento {
 	color: #66aa66;
 }
-
+.form-inline {
+	{width: 200px};
+	padding-top: 7px;
+	background-color: #dafed9;
+	padding-right: 10px;
+}
 /* INIZIO CSS di JQuery/UI
 
  * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
