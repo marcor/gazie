@@ -87,13 +87,13 @@ $result = gaz_dbi_dyn_query('*',$gTables['contract'], $where, $orderby,$limit, $
 while ($row = gaz_dbi_fetch_array($result)) {
         $cliente = $anagrafica->getPartner($row['id_customer']);
         print "<tr>";
-        print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"admin_contract.php?Update&id_contract=".$row['id_contract']."\">".$row["id_contract"]."</a></td>";
+        print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_contract.php?Update&id_contract=".$row['id_contract']."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$row["id_contract"]."</a></td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($row["conclusion_date"])."</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".$row["doc_number"]." &nbsp;</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".$cliente['ragso1']."&nbsp;</td>";
         print "<td class=\"FacetDataTD\" align=\"center\">".$row["current_fee"]." &nbsp;</td>";
-        print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"print_contract.php?id_contract=".$row['id_contract']."\"><img src=\"../../library/images/stampa.gif\" border=\"0\"></a></td>";
-        print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_contract.php?id_contract=".$row['id_contract']."\"><img src=\"../../library/images/x.gif\" border=\"0\"></a></td>";
+        print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"print_contract.php?id_contract=".$row['id_contract']."\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+        print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_contract.php?id_contract=".$row['id_contract']."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
         print "</tr>\n";
 }
 ?>

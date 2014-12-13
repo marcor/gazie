@@ -99,7 +99,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     $cliente = $anagrafica->getPartner($r['clfoco']);
     $banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$r['banapp']);
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\" align=\"right\"><a href=\"admin_effett.php?Update&id=".$r["id_tes"]."\">".$r["id_tes"]."</a> &nbsp</td>";
+    echo "<td class=\"FacetDataTD\" align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_effett.php?Update&id=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["id_tes"]."</a> &nbsp</td>";
     echo "<td class=\"FacetDataTD\" align=\"right\"><a href=\"admin_effett.php?Update&id=".$r["id_tes"]."\">".$r["progre"]."</a> &nbsp</td>";
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_date($r["datemi"])."</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$r["tipeff"]." &nbsp;</td>";
@@ -148,17 +148,17 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
     } else {
         if ($r["tipeff"] == "T") {
-            echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a></td>";
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a></td>";
         } elseif ($r["tipeff"] == "B") {
-            echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerb.php\">file RiBa</a></td>";
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filerb.php\">file RiBa</a></td>";
         } elseif ($r["tipeff"] == "V") {
-            echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filemav.php\">file MAV</a></td>";
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"distin_effett.php\">Distinta</a>/<a href=\"select_filemav.php\">file MAV</a></td>";
         } else {
             echo "<td class=\"FacetDataTD\" align=\"center\">".$r["status"]."</td>";
         }
     }
     // Colonna "Stampa"
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_effett.php?id_tes=".$r["id_tes"]."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"stampa_effett.php?id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
     // Colonna "Origine"
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     //
@@ -173,15 +173,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
         $tesdoc_r = gaz_dbi_fetch_array ($tesdoc_result);
         if ($tesdoc_r["tipdoc"] == "FAI") {
             // Fattura immediata
-            echo "<a title=\"".$script_transl['sourcedoc']."\" href=\"../vendit/stampa_docven.php?id_tes=".$tesdoc_r["id_tes"]."\">ft ".$tesdoc_r["numfat"]."</a>";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"".$script_transl['sourcedoc']."\" href=\"../vendit/stampa_docven.php?id_tes=".$tesdoc_r["id_tes"]."\">ft ".$tesdoc_r["numfat"]."</a>";
         } elseif ($tesdoc_r["tipdoc"] == "FAD") {
             // Fattura differita
-            echo "<a title=\"".$script_transl['sourcedoc']."\" href=\"../vendit/stampa_docven.php?td=2&si=".$tesdoc_r["seziva"]."&pi=".$tesdoc_r['protoc']."&pf=".$tesdoc_r['protoc']."&di=".$tesdoc_r["datfat"]."&df=".$tesdoc_r["datfat"]."\">ft ".$tesdoc_r["numfat"]."</a>";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"".$script_transl['sourcedoc']."\" href=\"../vendit/stampa_docven.php?td=2&si=".$tesdoc_r["seziva"]."&pi=".$tesdoc_r['protoc']."&pf=".$tesdoc_r['protoc']."&di=".$tesdoc_r["datfat"]."&df=".$tesdoc_r["datfat"]."\">ft ".$tesdoc_r["numfat"]."</a>";
         }
     }
     echo "</td>";
     // Colonna "Elimina"
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_effett.php?id_tes=".$r["id_tes"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_effett.php?id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }
 ?>
