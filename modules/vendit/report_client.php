@@ -69,16 +69,16 @@ if (!isset($_GET['field'])) {
 <table class="Tlarge">
 <tr>
 <td class="FacetFieldCaptionTD">
-<input type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
+<input placeholder="Cerca" class="input-xs form-control" type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
 </td>
-<td class="FacetFieldCaptionTD">Ragione sociale:
-<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
+<td class="FacetFieldCaptionTD">
+<input placeholder="Cerca Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
 </td>
 <td>
-<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
 <td colspan="3">
-<input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <?php
@@ -105,11 +105,19 @@ $recordnav -> output();
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"admin_client.php?codice=".substr($a_row["codice"],3)."&Update\">".substr($a_row["codice"],3)."</a> &nbsp</td>";
-    echo "<td class=\"FacetDataTD\" title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["sexper"]."</td>";
-    echo "<td class=\"FacetDataTD\" title=\"".$a_row["capspe"]." ".$a_row["indspe"]."\">".$a_row["citspe"]." (".$a_row["prospe"].")</td>";
-    $title = "";
+	// Colonna codice cliente
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_client.php?codice=".substr($a_row["codice"],3)."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($a_row["codice"],3)."</a> &nbsp</td>";
+    // Colonna ragione sociale
+	echo "<td class=\"FacetDataTD\" title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." &nbsp;</td>";
+    // colonna sesso
+	echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["sexper"]."</td>";
+	// colonna indirizzo
+	$google_string = str_replace(" ","+",$a_row["indspe"]).",".str_replace(" ","+",$a_row["capspe"]).",".str_replace(" ","+",$a_row["citspe"]).",".str_replace(" ","+",$a_row["prospe"]);
+    echo "<td class=\"FacetDataTD\" title=\"".$a_row["capspe"]." ".$a_row["indspe"]."\">";
+	echo "<a class=\"btn btn-xs btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/place/".$google_string."\">".$a_row["citspe"]." (".$a_row["prospe"].")&nbsp;<i class=\"glyphicon glyphicon-eye-open\"></i></a>";
+	echo "</td>";
+    // composizione telefono
+	$title = "";
     $telefono = "";
     if (!empty($a_row["telefo"])){
        $telefono = $a_row["telefo"];
@@ -130,20 +138,27 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
        $telefono = "_";
        $title = " nessun contatto telefonico memorizzato ";
     }
+	// colonna telefono
     echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".$telefono." &nbsp;</td>";
-    if ($a_row['pariva'] > 0 and empty($a_row['codfis'])){
+    // colonna fiscali
+	if ($a_row['pariva'] > 0 and empty($a_row['codfis'])){
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['pariva']."</td>";
     } elseif($a_row['pariva'] == 0 and !empty($a_row['codfis'])) {
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['codfis']."</td>";
-    } elseif($a_row['pariva'] > 0 and !empty($a_row['codfis'])) {
-        echo "<td class=\"FacetDataTDsmall\" align=\"center\">".$a_row['pariva']."<br>".$a_row['codfis']."</td>";
+    } elseif($a_row['pariva'] > 0 and !empty($a_row['codfis']) ) {
+		if( $a_row['pariva'] == $a_row['codfis'] ) {
+			echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['pariva']."</td>";
+		} else {
+			echo "<td class=\"FacetDataTDsmall\" align=\"center\">".$a_row['pariva']."<br>".$a_row['codfis']."</td>";
+		}
     } else {
         echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
     }
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_privacy.php?codice=".$a_row["codice"]."\"><img src=\"../../library/images/privacy.gif\" title=\"Stampa informativa sulla privacy a ".$a_row["ragso1"]."\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"salcon_credit.php?codice=".$a_row["codice"]."\"><img src=\"../../library/images/pay.gif\" title=\"Effettuato un pagamento da ".$a_row["ragso1"]."\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"../contab/select_partit.php?id=".$a_row["codice"]."\"><center><img src=\"../../library/images/vis.gif\" alt=\"Visualizza e stampa il partitario\" border=\"0\"><img src=\"../../library/images/stampa.gif\" alt=\"Visualizza e stampa il partitario\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_client.php?codice=".substr($a_row["codice"],3)."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+	// colonna stampa privacy
+    echo "<td title=\"stampa informativa sulla privacy\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+    echo "<td title=\"Effettuato un pagamento da ".$a_row["ragso1"]."\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" href=\"salcon_credit.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
+    echo "<td title=\"Visualizza e stampa il partitario\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_client.php?codice=".substr($a_row["codice"],3)."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>\n";
 }
 ?>

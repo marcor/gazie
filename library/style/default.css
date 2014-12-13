@@ -538,9 +538,6 @@ input.input-xs {
 .btn-cont {
 	background-color: #aae2a8;
 }
-/*.btn-cont:hover {
-	background-color: #99d197;
-}*/
 .btn-elimina {
 	color: #ff3939;
 }
@@ -556,7 +553,12 @@ input.input-xs {
 .btn-riba {
 	background-color: #FFF7AA;
 }
-
+.btn-fatt {
+	background-color: #d4cb6a;
+}
+.btn-pagamento {
+	color: #66aa66;
+}
 
 /* INIZIO CSS di JQuery/UI
 
