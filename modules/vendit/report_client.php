@@ -40,30 +40,29 @@ if (isset($_GET['auxil'])) {
 	$auxil = "";
 }
 	
-if ( !$_GET['ricerca_completa'] ) {
-
-	if (isset($_GET['auxil1'])) {
-		$auxil1 = $_GET['auxil1'];
-	} else {
-		$auxil1 = "";
-	}
-
-	if (isset($_GET['all'])) {
-		$auxil = "&all=yes";
-		$passo = 100000;
-	} else {
-		if (isset($_GET['auxil']) and $auxil1=="") {
-			$where .= " AND ragso1 LIKE '".addslashes($auxil)."%'";
-		} elseif (isset($_GET['auxil1'])) {
-			$codicetemp = intval($mascli)+intval($auxil1); 
-			$where .= " AND codice LIKE '".$codicetemp."%'";
-		}
-	}
-
-	if (!isset($_GET['field'])) {
-		$orderby = "codice DESC";
-	}
+if (isset($_GET['auxil1'])) {
+	$auxil1 = $_GET['auxil1'];
 } else {
+	$auxil1 = "";
+}
+
+if (isset($_GET['all'])) {
+	$auxil = "&all=yes";
+	$passo = 100000;
+} else {
+	if (isset($_GET['auxil']) and $auxil1=="") {
+		$where .= " AND ragso1 LIKE '".addslashes($auxil)."%'";
+	} elseif (isset($_GET['auxil1'])) {
+		$codicetemp = intval($mascli)+intval($auxil1); 
+		$where .= " AND codice LIKE '".$codicetemp."%'";
+	}
+}
+
+if (!isset($_GET['field'])) {
+	$orderby = "codice DESC";
+}
+
+if ( isset($_GET['ricerca_completa'])) {
 	$ricerca_testo = $_GET['ricerca_completa'];
 	$where .= " and ( ragso1 like '%".$ricerca_testo."%' ";
 	$where .= " or ragso2 like '%".$ricerca_testo."%' ";
