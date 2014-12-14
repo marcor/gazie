@@ -120,6 +120,7 @@ $strScript = array ("admin_aziend.php" =>
                            'upgco'=>'Ultimas paginas de registro factura Tickets',
                            'sezione'=>'Seccion IVA',
                            'acciva'=>'Porcentaje Avance IVA(%)',
+                           'ricbol_limit'=>'Límite de exención de estampillado',
                            'ricbol'=>'Importe de impuesto de timbre sobre ingresos',
                            'perbol'=>'Porcentaje de Estampillas sobre draft (%)',
                            'round_bol'=>'Redondeo de Estampillas',

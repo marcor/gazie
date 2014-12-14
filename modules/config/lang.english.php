@@ -116,6 +116,7 @@ $strScript = array ("admin_aziend.php" =>
                            'upgco'=>'Last pages of Tickets invoice reg.',
                            'sezione'=>'VAT section ',
                            'acciva'=>'VAT advance rate (%)',
+                           'ricbol_limit'=>'Tax stamp exemption limit',
                            'ricbol'=>'Amount of stamp duty on receipts',
                            'perbol'=>'Rate of stamps on draft (%)',
                            'round_bol'=>'Round of stamps',

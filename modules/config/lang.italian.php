@@ -117,6 +117,7 @@
                            'upgco'=>'Ultime pagine registri Corrispettivi',
                            'sezione'=>'Sez. IVA ',
                            'acciva'=>'Percentuale d\'acconto I.V.A. (%)',
+                           'ricbol_limit'=>'Limite esenzione imposta di bollo',
                            'ricbol'=>'Importo bollo su ricevute',
                            'perbol'=>'Aliquota imposta di bollo su tratte (%)',
                            'round_bol'=>'Arrotondamento bolli',
