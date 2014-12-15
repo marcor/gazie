@@ -479,15 +479,15 @@ class selectPartner extends SelectBox
             }
             if (is_numeric($strSearch)){                      //ricerca per partita iva
               $partner = $this->queryAnagra(" pariva = ".intval($strSearch));
-              } elseif (substr($strSearch,0,1) == '@') { //ricerca conoscendo il codice cliente
-			        $temp_agrafica = new Anagrafica();
-			        $codicetemp = intval($m*1000000+substr($strSearch,1)); 
-			        $last=$temp_agrafica->getPartner($codicetemp); 	
-			        $codicecer=$last['id_anagra'];				  
-			        $partner = $this->queryAnagra(" a.id = ".intval($codicecer));
+            } elseif (substr($strSearch,0,1) == '@') { //ricerca conoscendo il codice cliente
+			  $temp_agrafica = new Anagrafica();
+			  $codicetemp = intval($m*1000000+substr($strSearch,1)); 
+			  $last=$temp_agrafica->getPartner($codicetemp); 	
+			  $codicecer=$last['id_anagra'];				  
+			  $partner = $this->queryAnagra(" a.id = ".intval($codicecer));
               //echo "---".$m."-".$codicetemp."-".$codicecer; //debug
             } elseif (substr($strSearch,0,1) == '#') { //ricerca conoscendo il codice cliente
-			        $partner = $this->queryAnagra(" a.fe_cod_univoco LIKE '%".addslashes(substr($strSearch,1))."%'");
+			  $partner = $this->queryAnagra(" a.fe_cod_univoco LIKE '%".addslashes(substr($strSearch,1))."%'");
             } elseif (is_numeric(substr($strSearch,6,2))) {   //ricerca per codice fiscale
               $partner = $this->queryAnagra(" a.codfis LIKE '%".addslashes($strSearch)."%'");
             } else {                                      //ricerca per ragione sociale
@@ -1084,7 +1084,7 @@ class GAzieForm
         }
         echo "\t </select>\n";
     }
-    
+
     // funzione per la generazione di una select box da file XML
     function selectFromXML($nameFileXML, $name,$key,$val,$empty=false,$val_hiddenReq='',$class='FacetSelect',$addOption=null)
     {
