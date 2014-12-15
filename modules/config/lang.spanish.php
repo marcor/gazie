@@ -126,6 +126,8 @@ $strScript = array ("admin_aziend.php" =>
                            'round_bol'=>'Redondeo de Estampillas',
                            'round_bol_value'=>array(1=>'cent',5=>'cents',10=>'cents',
                                                     50=>'cents',100=>'cents (unidad)'),
+                           'virtual_taxstamp'=>'Modo de estampillado',
+                           'virtual_taxstamp_value'=>array(0=>'No',1=>'Materiales',2=>'Virtuales'),
                            'virtual_stamp_auth_prot'=>'Virtual stamp authorizzation number ',
                            'virtual_stamp_auth_date'=>' date ',
                            'causale_pagam_770'=>'Causale del pagamento ritenuta(mod.770)',

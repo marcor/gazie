@@ -616,6 +616,11 @@ $gForm->variousSelect('round_bol',$script_transl['round_bol_value'],$form['round
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['virtual_taxstamp']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
+echo "\t </td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['virtual_stamp_auth_prot']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"virtual_stamp_auth_prot\" value=\"".$form['virtual_stamp_auth_prot']."\" align=\"right\" maxlength=\"14\" size=\"14\" />\n";

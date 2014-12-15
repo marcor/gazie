@@ -122,6 +122,8 @@ $strScript = array ("admin_aziend.php" =>
                            'round_bol'=>'Round of stamps',
                            'round_bol_value'=>array(1=>'cent',5=>'cents',10=>'cents',
                                                     50=>'cents',100=>'cents (unit)'),
+                           'virtual_taxstamp'=>'Tax stamp mode',
+                           'virtual_taxstamp_value'=>array(0=>'No',1=>'Material',2=>'Virtual'),
                            'virtual_stamp_auth_prot'=>'Virtual stamp authorizzation number ',
                            'virtual_stamp_auth_date'=>' date ',
                            'causale_pagam_770'=>'Causale del pagamento ritenuta(mod.770)',

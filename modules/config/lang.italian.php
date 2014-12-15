@@ -123,6 +123,8 @@
                            'round_bol'=>'Arrotondamento bolli',
                            'round_bol_value'=>array(1=>'centesimo',5=>'centesimi',10=>'centesimi',
                                                     50=>'centesimi',100=>'centesimi (unit&agrave;)'),
+                           'virtual_taxstamp'=>'Modalità assoluzione bolli',
+                           'virtual_taxstamp_value'=>array(0=>'No',1=>'Fisica',2=>'Virtuale'),
                            'virtual_stamp_auth_prot'=>'Protocollo autorizzazione bollo virtuale ',
                            'virtual_stamp_auth_date'=>' rilasciata il ',
                            'causale_pagam_770'=>'Causale del pagamento ritenuta(mod.770)',
