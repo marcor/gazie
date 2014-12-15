@@ -679,11 +679,11 @@ class selectbanapp extends SelectBox
 // classe per la generazione di select box dei pagamenti
 class selectpagame extends SelectBox
 {
-    function output()
+    function output($refresh='')
     {
         global $gTables;
         $query = 'SELECT * FROM `'.$gTables['pagame'].'` ORDER BY `codice`';
-        SelectBox::_output($query, 'descri', True);
+        SelectBox::_output($query, 'descri', True, '', '', 'codice', $refresh);
     }
 }
 
