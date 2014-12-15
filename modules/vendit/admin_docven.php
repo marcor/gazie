@@ -84,6 +84,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     //tutti i controlli su  tipo di pagamento e rate
     $form['speban'] = floatval($_POST['speban']);
     $form['numrat'] = intval($_POST['numrat']);
+    $form['virtual_taxstamp'] = intval($_POST['virtual_taxstamp']);
+    $form['ricbol'] = floatval($_POST['ricbol']);
     $form['stamp'] = floatval($_POST['stamp']);
     $form['round_stamp'] = intval($_POST['round_stamp']);
     $form['pagame'] = $_POST['pagame'];
@@ -983,6 +985,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['search']['id_des']=substr($id_des['ragso1'],0,10);
     $form['traspo'] = $tesdoc['traspo'];
     $form['spevar'] = $tesdoc['spevar'];
+    $form['virtual_taxstamp'] = $tesdoc['virtual_taxstamp'];
+    $form['ricbol'] = $tesdoc['ricbol'];
     $form['stamp'] = $tesdoc['stamp'];
     $form['round_stamp'] = $tesdoc['round_stamp'];
     if ($form['tipdoc']=='VRI') {
@@ -1138,6 +1142,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['speban'] = 0;
     $form['spevar'] = 0;
     $form['stamp'] = 0;
+    $form['virtual_taxstamp'] = $admin_aziend['virtual_taxstamp'];
+    $form['ricbol'] = 0;
     $form['round_stamp'] = $admin_aziend['round_bol'];
     if ($form['tipdoc']=='VRI') {
         $form['round_stamp'] = -1;
@@ -1655,7 +1661,9 @@ if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['ti
     echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['units']."\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>\n";
     echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[55]</td>\n";
     echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['volume']."\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>\n";
-    echo "</tr>";
+    echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['ricbol']."<input type=\"text\" value=\"".$form['ricbol']."\" name=\"ricbol\" maxlength=\"6\" size=\"4\" > ".$script_transl['virtual_taxstamp'];
+    $gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
+    echo "</td></tr>";
 } else {
     echo "<input type=\"hidden\" value=\"".$form['imball']."\" name=\"imball\">\n";
     echo "<input type=\"hidden\" value=\"".$form['spediz']."\" name=\"spediz\">\n";

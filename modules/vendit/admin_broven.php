@@ -85,6 +85,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     //tutti i controlli su  tipo di pagamento e rate
     $form['speban'] = $_POST['speban'];
     $form['numrat'] = $_POST['numrat'];
+    $form['virtual_taxstamp'] = intval($_POST['virtual_taxstamp']);
+    $form['ricbol'] = floatval($_POST['ricbol']);
     $form['stamp'] = floatval($_POST['stamp']);
     $form['round_stamp'] = intval($_POST['round_stamp']);
     $form['pagame'] = $_POST['pagame'];
@@ -874,6 +876,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['id_des'] = $tesbro['id_des'];
     $form['traspo'] = $tesbro['traspo'];
     $form['spevar'] = $tesbro['spevar'];
+    $form['virtual_taxstamp'] = $tesbro['virtual_taxstamp'];
+    $form['ricbol'] = $tesbro['ricbol'];
     $form['stamp'] = $tesbro['stamp'];
     $form['round_stamp'] = $tesbro['round_stamp'];
     $form['cauven'] = $tesbro['cauven'];
@@ -986,6 +990,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['spevar'] = 0;
     $form['stamp'] = 0;
     $form['round_stamp'] = $admin_aziend['round_bol'];
+    $form['virtual_taxstamp'] = $admin_aziend['virtual_taxstamp'];
+    $form['ricbol'] = 0;
     $form['cauven'] = 0;
     $form['caucon'] = '';
     $form['caumag'] = 0;
@@ -1446,7 +1452,9 @@ echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[54]</td>\
 echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['units']."\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>\n";
 echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[55]</td>\n";
 echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['volume']."\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>\n";
-echo "</tr>";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['ricbol']."<input type=\"text\" value=\"".$form['ricbol']."\" name=\"ricbol\" maxlength=\"6\" size=\"4\" > ".$script_transl['virtual_taxstamp'];
+$gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
+echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td>

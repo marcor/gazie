@@ -223,12 +223,16 @@ $strScript = array ("admin_client.php" =>
                            'speban'=>"Spese incasso",
                            'speban_title'=>'Spese incasso non documentate/rate',
                            'traspo_title'=>'Spese trasporto non documentate',
-                           'stamp'=>'Bolli',
+                           'stamp'=>'Bolli(cambiali)',
                            'ritenuta'=>'Ritenuta ',
                            'netpay'=>'Netto a pagare',
                            'id_agente'=>"Agente di vendita",
                            'in_artsea'=>'Ricerca per ',
-                           'vat_constrain'=>'(forza) IVA al '
+                           'vat_constrain'=>'(forza) IVA al ',
+                           'ricbol'=>'Bollo',
+                           'virtual_taxstamp'=>'Modo',
+                           'virtual_taxstamp_value'=>array(0=>'No',1=>'Materiale',2=>'Virtuale'),
+
                            ),
                     "select_docforprint.php" =>
                    array(  array(1 => "D.d.T. di Vendita",
@@ -330,7 +334,11 @@ $strScript = array ("admin_client.php" =>
                            'print_total_value'=>array(0=>'No',1=>'Si'),
                            'delivery_time'=>"Tempi di consegna",
                            'day_of_validity'=>"Giorni di validità",
-                           'vat_constrain'=>'(forza) IVA al '
+                           'vat_constrain'=>'(forza) IVA al ',
+                           'ricbol'=>'Bollo',
+                           'virtual_taxstamp'=>'Modo',
+                           'virtual_taxstamp_value'=>array(0=>'No',1=>'Materiale',2=>'Virtuale'),
+
                            ),
                     "report_contract.php" =>
                     array( 'title'=>'Elenco dei contratti stipulati',

@@ -227,7 +227,11 @@ $strScript = array ("admin_client.php" =>
                            'ritenuta'=>'Deducci&oacute;n de impuestos por adelantado ',
                            'netpay'=>'Neto a pagar ',
                            'id_agente'=>"Agente de venta",
-                           'in_artsea'=>'B&uacute;squeda por '
+                           'in_artsea'=>'B&uacute;squeda por ',
+                           'vat_constrain'=>'(forza) IVA al ',
+                           'ricbol'=>'Taxstamp',
+                           'virtual_taxstamp'=>'Mode',
+                           'virtual_taxstamp_value'=>array(0=>'No',1=>'Material',2=>'Virtual')
                            ),
                     "select_docforprint.php" =>
                    array(  array(1 => "D.d.T. de venta",2 => "Factura diferida",3 => "Factura inmediata que acompa&ntilde;a",4 => "Factura inmediata simple",5 => "Nota Credito a Cliente",6 => "Nota Debito a Cliente"),

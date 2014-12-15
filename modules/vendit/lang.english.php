@@ -224,7 +224,10 @@ $strScript = array ("admin_client.php" =>
                            'netpay'=>'Net to pay ',
                            'id_agente'=>"Sales agent",
                            'in_artsea'=>'search for ',
-                           'vat_constrain'=>'(constrain) VAT al '
+                           'vat_constrain'=>'(constrain) VAT al ',
+                           'ricbol'=>'Taxstamp',
+                           'virtual_taxstamp'=>'Mode',
+                           'virtual_taxstamp_value'=>array(0=>'No',1=>'Material',2=>'Virtual'),
                            ),
                     "select_docforprint.php" =>
                    array(  array(1 => "D.d.T. di Vendita",2 => "Fattura Differita",3 => "Fattura Immediata Accompagnatoria",4 => "Fattura Immediata Semplice",5 => "Nota Credito a Cliente",6 => "Nota Debito a Cliente"),
@@ -321,7 +324,11 @@ $strScript = array ("admin_client.php" =>
                            'print_total_value'=>array(0=>'No',1=>'Yes'),
                            'delivery_time'=>"Delivery_days",
                            'day_of_validity'=>"Days of validity",
-                           'vat_constrain'=>'(contrain) VAT  '
+                           'vat_constrain'=>'(contrain) VAT  ',
+                           'ricbol'=>'Taxstamp',
+                           'virtual_taxstamp'=>'Mode',
+                           'virtual_taxstamp_value'=>array(0=>'No',1=>'Material',2=>'Virtual'),
+
                            ),
                     "report_contract.php" =>
                     array( 'title'=>'Report of concluded contracts',
