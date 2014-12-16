@@ -139,15 +139,15 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
               } else {
                   $speban = 0;
               }
-              if ($paym['tippag'] == 'R' ) {
-                $stamp= $admin_aziend['ricbol'];
-                $round_stamp = -1;
-              } elseif ($paym['tippag'] == 'T') {  //se il pagamento prevede il bollo
+              $stamp=0;
+              $round_stamp = 0;
+              $ricbol=0;
+              if ($paym['tippag'] == 'R' ) { // i pagamenti di tipo R sarebbero da eliminare !?!?!
+                $ricbol= $admin_aziend['ricbol'];
+              }
+              if ($paym['tippag'] == 'T') {  //se il pagamento prevede il bollo
                 $stamp = $admin_aziend['perbol'];
                 $round_stamp = $admin_aziend['round_bol'];
-              } else {
-                $stamp=0;
-                $round_stamp = 0;
               }
               $head_data = array('seziva'=>$cntr['vat_section'],'tipdoc'=>$cntr['doc_type'],
                                  'datemi'=>$form['this_date'],'protoc'=>$last['protoc'],
@@ -155,6 +155,7 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
                                  'datfat'=>$form['this_date'],'clfoco'=>$cntr['id_customer'],
                                  'pagame'=>$cntr['payment_method'],'banapp'=>$cntr['bank'],
                                  'speban'=>$speban,'stamp'=>$stamp,'round_stamp'=>$round_stamp,
+                                 'ricbol'=>$ricbol,'virtual_taxstamp'=>$admin_aziend['virtual_taxstamp'],
                                  'id_agente'=>$cntr['id_agente'],'id_contract'=>$k,'initra'=>$form['this_date'],
                                  'status'=>'GENERATO','template'=>'FatturaSemplice'
                                  );

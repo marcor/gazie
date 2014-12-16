@@ -166,7 +166,9 @@ class DocContabVars
         $this->totimp_decalc = 0;
         $this->totimp_body = 0;
         $this->totimp_doc = 0;
-	}        
+        $this->ricbol = 0;
+        $this->virtual_taxstamp = 0;
+    }        
 
     function open_drawer() // apre il cassetto dell'eventuale registratore di cassa
     {
@@ -307,14 +309,12 @@ class DocContabVars
             $this->cast[$k]['ivacast'] = $ivacast;
             $this->cast[$k]['descriz'] = $vat['descri'];
         }
-        //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione dell'effetto
-        if ($this->pagame['tippag'] == 'T' or $this->pagame['tippag'] == 'R') {
-           if ($this->pagame['tippag'] == 'T') {
+        //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione della cambiale tratta
+        if ($this->pagame['tippag'] == 'T') {
               $this->impbol = $bolli->stampTax($this->totimpfat+$this->totriport+$this->totivafat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
-           } elseif($this->pagame['tippag'] == 'R') {
-              $this->impbol = $this->tesdoc['stamp'];
-           }
         }
+        $this->ricbol = $this->tesdoc['ricbol'];
+        $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->riporto=0;
         $this->ritenute=0;
         $this->castel = array();
