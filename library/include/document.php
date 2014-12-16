@@ -166,7 +166,7 @@ class DocContabVars
         $this->totimp_decalc = 0;
         $this->totimp_body = 0;
         $this->totimp_doc = 0;
-        $this->ricbol = 0;
+        $this->taxstamp = 0;
         $this->virtual_taxstamp = 0;
     }        
 
@@ -313,7 +313,7 @@ class DocContabVars
         if ($this->pagame['tippag'] == 'T') {
               $this->impbol = $bolli->stampTax($this->totimpfat+$this->totriport+$this->totivafat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
         }
-        $this->ricbol = $this->tesdoc['ricbol'];
+        $this->taxstamp = $this->tesdoc['taxstamp'];
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->riporto=0;
         $this->ritenute=0;

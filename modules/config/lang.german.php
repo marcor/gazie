@@ -118,7 +118,7 @@ $strScript = array ("admin_aziend.php" =>
                            'upgco'=>'Letzten Seiten des Tickets Rechnung reg.',
                            'sezione'=>'MwSt. Abschnitt ',
                            'acciva'=>'Umsatzsteuervoranmeldung (in%)',
-                           'ricbol'=>'Höhe der Stempelsteuer auf Einnahmen',
+                           'taxstamp'=>'Höhe der Stempelsteuer auf Einnahmen',
                            'perbol'=>'Rate von Briefmarken über den Entwurf (%)',
                            'round_bol'=>'Runde von Briefmarken',
                            'round_bol_value'=>array(1=>'cent',5=>'cents',10=>'cents',

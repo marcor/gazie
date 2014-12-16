@@ -229,7 +229,7 @@ $strScript = array ("admin_client.php" =>
                            'id_agente'=>"Agente de venta",
                            'in_artsea'=>'B&uacute;squeda por ',
                            'vat_constrain'=>'(forza) IVA al ',
-                           'ricbol'=>'Taxstamp',
+                           'taxstamp'=>'Taxstamp',
                            'virtual_taxstamp'=>'Mode',
                            'virtual_taxstamp_value'=>array(0=>'No',1=>'Material',2=>'Virtual')
                            ),

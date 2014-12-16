@@ -225,7 +225,7 @@ $strScript = array ("admin_client.php" =>
                            'id_agente'=>"Sales agent",
                            'in_artsea'=>'search for ',
                            'vat_constrain'=>'(constrain) VAT al ',
-                           'ricbol'=>'Taxstamp',
+                           'taxstamp'=>'Taxstamp',
                            'virtual_taxstamp'=>'Mode',
                            'virtual_taxstamp_value'=>array(0=>'No',1=>'Material',2=>'Virtual'),
                            ),
@@ -325,7 +325,7 @@ $strScript = array ("admin_client.php" =>
                            'delivery_time'=>"Delivery_days",
                            'day_of_validity'=>"Days of validity",
                            'vat_constrain'=>'(contrain) VAT  ',
-                           'ricbol'=>'Taxstamp',
+                           'taxstamp'=>'Taxstamp',
                            'virtual_taxstamp'=>'Mode',
                            'virtual_taxstamp_value'=>array(0=>'No',1=>'Material',2=>'Virtual'),
 

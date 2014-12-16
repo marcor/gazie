@@ -85,7 +85,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['speban'] = floatval($_POST['speban']);
     $form['numrat'] = intval($_POST['numrat']);
     $form['virtual_taxstamp'] = intval($_POST['virtual_taxstamp']);
-    $form['ricbol'] = floatval($_POST['ricbol']);
+    $form['taxstamp'] = floatval($_POST['taxstamp']);
     $form['stamp'] = floatval($_POST['stamp']);
     $form['round_stamp'] = intval($_POST['round_stamp']);
     $form['pagame'] = $_POST['pagame'];
@@ -114,7 +114,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
            $form['stamp'] = $admin_aziend['perbol'];
            $form['round_stamp'] = $admin_aziend['round_bol'];
        } elseif ($new_pag['tippag'] == 'R') {
-           $form['stamp'] = $admin_aziend['ricbol'];
+           $form['stamp'] = $admin_aziend['taxstamp'];
            $form['round_stamp'] = 0;
        } elseif ($new_pag['tippag'] != 'T') {
            $form['stamp'] = 0;
@@ -583,7 +583,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     } elseif ($pagame['tippag'] == 'R') {
            $form['speban'] = 0.00;
            $form['numrat'] = 1;
-           $form['stamp'] = $admin_aziend['ricbol'];
+           $form['stamp'] = $admin_aziend['taxstamp'];
            $form['round_stamp'] = 0;
     } else {
            $form['speban'] = 0.00;
@@ -986,12 +986,12 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['traspo'] = $tesdoc['traspo'];
     $form['spevar'] = $tesdoc['spevar'];
     $form['virtual_taxstamp'] = $tesdoc['virtual_taxstamp'];
-    $form['ricbol'] = $tesdoc['ricbol'];
+    $form['taxstamp'] = $tesdoc['taxstamp'];
     $form['stamp'] = $tesdoc['stamp'];
     $form['round_stamp'] = $tesdoc['round_stamp'];
     if ($form['tipdoc']=='VRI') {
         $form['round_stamp'] = -1;
-        $form['stamp'] = $admin_aziend['ricbol'];
+        $form['stamp'] = $admin_aziend['taxstamp'];
     }
     $form['cauven'] = $tesdoc['cauven'];
     $form['caucon'] = $tesdoc['caucon'];
@@ -1143,11 +1143,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['spevar'] = 0;
     $form['stamp'] = 0;
     $form['virtual_taxstamp'] = $admin_aziend['virtual_taxstamp'];
-    $form['ricbol'] = 0;
+    $form['taxstamp'] = 0;
     $form['round_stamp'] = $admin_aziend['round_bol'];
     if ($form['tipdoc']=='VRI') {
         $form['round_stamp'] = -1;
-        $form['stamp'] = $admin_aziend['ricbol'];
+        $form['stamp'] = $admin_aziend['taxstamp'];
     }
     $form['cauven'] = 0;
     $form['caucon'] = '';
@@ -1587,9 +1587,9 @@ echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<input type=\"hidden\" value=\"".$form['numrat']."\" name=\"numrat\">\n";
-echo "<input type=\"hidden\" value=\"".$form['spevar']."\" name=\"spevar\">\n";
 echo "<input type=\"hidden\" value=\"".$form['stamp']."\" name=\"stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['round_stamp']."\" name=\"round_stamp\">\n";
+echo "<input type=\"hidden\" value=\"".$form['spevar']."\" name=\"spevar\">\n";
 echo "<input type=\"hidden\" value=\"".$form['cauven']."\" name=\"cauven\">\n";
 echo "<input type=\"hidden\" value=\"".$form['caucon']."\" name=\"caucon\">\n";
 if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['tipdoc']=='FAD' ) {
@@ -1661,9 +1661,10 @@ if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['ti
     echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['units']."\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>\n";
     echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[55]</td>\n";
     echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['volume']."\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>\n";
-    echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['ricbol']."<input type=\"text\" value=\"".$form['ricbol']."\" name=\"ricbol\" maxlength=\"6\" size=\"4\" > ".$script_transl['virtual_taxstamp'];
+    echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['taxstamp']."<input type=\"text\" value=\"".$form['taxstamp']."\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" > ".$script_transl['virtual_taxstamp'];
     $gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
-    echo "</td></tr>";
+    echo "</td>";
+    echo "</tr>";
 } else {
     echo "<input type=\"hidden\" value=\"".$form['imball']."\" name=\"imball\">\n";
     echo "<input type=\"hidden\" value=\"".$form['spediz']."\" name=\"spediz\">\n";
@@ -1680,6 +1681,11 @@ if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['ti
     echo "<input type=\"hidden\" value=\"".$form['gross_weight']."\" name=\"gross_weight\">\n";
     echo "<input type=\"hidden\" value=\"".$form['units']."\" name=\"units\">\n";
     echo "<input type=\"hidden\" value=\"".$form['volume']."\" name=\"volume\">\n";
+    echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['taxstamp']."<input type=\"text\" value=\"".$form['taxstamp']."\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" > ".$script_transl['virtual_taxstamp'];
+    $gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
+    echo "</td>";
+    echo "</tr>";
+    echo "<tr>\n";
 }
 
 echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>

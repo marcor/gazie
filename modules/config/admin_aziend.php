@@ -601,14 +601,14 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"acciva\" value=\"".$form['acciva']."\" align=\"right\" maxlength=\"5\" size=\"5\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['ricbol_limit']." </td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['taxstamp_limit']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ricbol_limit\" value=\"".$form['ricbol_limit']."\" align=\"right\" maxlength=\"6\" size=\"6\" /></td>\n";
+      <input type=\"text\" name=\"taxstamp_limit\" value=\"".$form['taxstamp_limit']."\" align=\"right\" maxlength=\"6\" size=\"6\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['ricbol']." </td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['taxstamp']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ricbol\" value=\"".$form['ricbol']."\" align=\"right\" maxlength=\"6\" size=\"6\" /></td>\n";
+      <input type=\"text\" name=\"taxstamp\" value=\"".$form['taxstamp']."\" align=\"right\" maxlength=\"6\" size=\"6\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['taxstamp_vat']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";

@@ -141,9 +141,9 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
               }
               $stamp=0;
               $round_stamp = 0;
-              $ricbol=0;
+              $taxstamp=0;
               if ($paym['tippag'] == 'R' ) { // i pagamenti di tipo R sarebbero da eliminare !?!?!
-                $ricbol= $admin_aziend['ricbol'];
+                $taxstamp= $admin_aziend['taxstamp'];
               }
               if ($paym['tippag'] == 'T') {  //se il pagamento prevede il bollo
                 $stamp = $admin_aziend['perbol'];
@@ -155,7 +155,7 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
                                  'datfat'=>$form['this_date'],'clfoco'=>$cntr['id_customer'],
                                  'pagame'=>$cntr['payment_method'],'banapp'=>$cntr['bank'],
                                  'speban'=>$speban,'stamp'=>$stamp,'round_stamp'=>$round_stamp,
-                                 'ricbol'=>$ricbol,'virtual_taxstamp'=>$admin_aziend['virtual_taxstamp'],
+                                 'taxstamp'=>$taxstamp,'virtual_taxstamp'=>$admin_aziend['virtual_taxstamp'],
                                  'id_agente'=>$cntr['id_agente'],'id_contract'=>$k,'initra'=>$form['this_date'],
                                  'status'=>'GENERATO','template'=>'FatturaSemplice'
                                  );
