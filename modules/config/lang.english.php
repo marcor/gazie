@@ -118,6 +118,7 @@ $strScript = array ("admin_aziend.php" =>
                            'acciva'=>'VAT advance rate (%)',
                            'ricbol_limit'=>'Tax stamp exemption limit',
                            'ricbol'=>'Amount of stamp duty on receipts',
+                           'taxstamp_vat'=>'Taxstamp VAT rate',
                            'perbol'=>'Rate of stamps on draft (%)',
                            'round_bol'=>'Round of stamps',
                            'round_bol_value'=>array(1=>'cent',5=>'cents',10=>'cents',
@@ -166,7 +167,7 @@ $strScript = array ("admin_aziend.php" =>
                            'conmag_value'=>array(0=>'Never',1=>'Manual (not recommended)',2=>'Automatic'),
                            'ivam_t'=>'Frequency VAT payment',
                            'ivam_t_value'=>array('M'=>'Monthly','T'=>'Quarterly'),
-                           'alliva'=>'Usually VAT rate',
+                           'preeminent_vat'=>'Usually VAT rate',
                            'interessi'=>'Interest on Quarterly VAT'
                          ),
                      "report_aziend.php" =>

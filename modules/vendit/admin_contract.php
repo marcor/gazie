@@ -311,7 +311,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_quanti'] = 0;
     $form['in_price'] = 0;
     $form['in_discount'] = 0;
-    $form['in_vat_code'] = $admin_aziend['alliva'];
+    $form['in_vat_code'] = $admin_aziend['preeminent_vat'];
     $form['in_cod_revenue'] = $admin_aziend['impven'];
     // fine rigo input
 
@@ -371,7 +371,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['current_fee'] = 0.00;
     $form['cod_revenue'] = $admin_aziend['impven'];
     $form['id_body_text'] = 0;
-    $form['vat_code'] = $admin_aziend['alliva'];
+    $form['vat_code'] = $admin_aziend['preeminent_vat'];
     $form['body_text'] = '';
     $form['last_reassessment'] = '';
     $form['last_reassessment_Y'] = date("Y");
@@ -390,7 +390,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_price'] = 0;
     $form['in_discount'] = 0;
     $form['in_quanti'] = 0;
-    $form['in_vat_code'] = $admin_aziend['alliva'];
+    $form['in_vat_code'] = $admin_aziend['preeminent_vat'];
     $form['in_cod_revenue'] = $admin_aziend['impven'];
     // fine rigo input
 }

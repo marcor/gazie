@@ -612,8 +612,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
             $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
             $form['rows'][$next_row]['prelis'] = number_format($artico['preacq'],$admin_aziend['decimal_price'],'.','');
-            $form['rows'][$next_row]['codvat'] = $admin_aziend['alliva'];
-            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['alliva']);
+            $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
+            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['preeminent_vat']);
             $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
             if ($artico['aliiva'] > 0) {
                $form['rows'][$next_row]['codvat'] = $artico['aliiva'];
@@ -741,7 +741,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_prelis'] = 0.000;
     $form['in_sconto'] = 0;
     $form['in_quanti'] = 0;
-    $form['in_codvat'] = $admin_aziend['alliva'];
+    $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     if ($fornitore['cosric'] > 0) {
        $form['in_codric'] = $fornitore['cosric'];
     } else {
@@ -865,7 +865,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_prelis'] = 0.000;
     $form['in_sconto'] = 0;
     $form['in_quanti'] = 0;
-    $form['in_codvat'] = $admin_aziend['alliva'];
+    $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     $form['in_codric'] = $admin_aziend['impacq'];
     if ($form['tipdoc'] == 'AFC') { // nel caso che si tratti di nota di credito
        $form['in_codric'] = $admin_aziend['purchases_return'];
@@ -902,8 +902,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['numrat'] = 1;
     $form['speban'] = 0;
     $form['spevar'] = 0;
-    if ($admin_aziend['alliva'] > 0) {
-       $form['ivaspe'] = $admin_aziend['alliva'];
+    if ($admin_aziend['preeminent_vat'] > 0) {
+       $form['ivaspe'] = $admin_aziend['preeminent_vat'];
     } else {
        $form['ivaspe'] = 1;
     }

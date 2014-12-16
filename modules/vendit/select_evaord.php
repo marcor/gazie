@@ -63,7 +63,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
    $form['banapp'] = "";
    $form['spediz'] = "";
    $form['sconto'] = 0.00;
-   $form['ivaspe'] = $admin_aziend['alliva'];
+   $form['ivaspe'] = $admin_aziend['preeminent_vat'];
    $form['listin'] = 1;
    $form['net_weight'] = 0;
    $form['gross_weight'] = 0;

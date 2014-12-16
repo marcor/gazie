@@ -165,7 +165,7 @@ $strScript = array ("admin_aziend.php" =>
                            'conmag_value'=>array(0=>'Never',1=>'Manual (not recommended)',2=>'Automatic'),
                            'ivam_t'=>'Frequenz Zahlung der Mehrwertsteuer',
                            'ivam_t_value'=>array('M'=>'Monatlich','T'=>'Vierteljährlich'),
-                           'alliva'=>'Gewöhnlich Mehrwertsteuersatz',
+                           'preeminent_vat'=>'Gewöhnlich Mehrwertsteuersatz',
                            'interessi'=>'Zinsen auf Vierteljährlich MwSt.'
                          ),
                      "report_aziend.php" =>

@@ -138,7 +138,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form=gaz_dbi_fields('artico');
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $form['ref_code']='';
-    $form['aliiva']=$admin_aziend['alliva'];
+    $form['aliiva']=$admin_aziend['preeminent_vat'];
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
     $form["preacq"] = number_format($form['preacq'],$admin_aziend['decimal_price'],'.','');
     $form["preve1"] = number_format($form['preve1'],$admin_aziend['decimal_price'],'.','');

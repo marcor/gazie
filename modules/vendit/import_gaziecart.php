@@ -54,7 +54,7 @@ if (!extension_loaded('imap')){
 }
 
 if (!isset($_POST['ritorno'])) { // al primo accesso allo script
-    $vat=gaz_dbi_get_row($gTables['aliiva'],'codice',$admin_aziend['alliva']);
+    $vat=gaz_dbi_get_row($gTables['aliiva'],'codice',$admin_aziend['preeminent_vat']);
     $form['vat']= $vat['aliquo'];
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';

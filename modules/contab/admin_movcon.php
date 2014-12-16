@@ -300,7 +300,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['paymov']=array();
     $form['insert_darave'] = 'A';
     $form['insert_conto'] = '000000000';
-    $form['insert_codiva'] = $admin_aziend['alliva'];
+    $form['insert_codiva'] = $admin_aziend['preeminent_vat'];
     $form['insert_imponi'] = 0;
     //recupero i righi iva
     $rs_righiva = gaz_dbi_dyn_query("*", $gTables['rigmoi'], "id_tes = '".intval($form['id_testata'])."'","id_rig asc");
@@ -388,7 +388,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     //ricarico i registri per il form del rigo di inserimento iva
     if (!isset($_POST['rigiva'])) {  //se non c'erano righi in precedenza
         $_POST['rigiva'] = 0;
-        $form['insert_codiva'] = $admin_aziend['alliva'];
+        $form['insert_codiva'] = $admin_aziend['preeminent_vat'];
         $form['insert_imponi'] = 0;
     } else {
         $form['insert_codiva'] = $_POST['insert_codiva'];
@@ -698,7 +698,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
     $form['insert_darave'] = "A";
     //registri per il form del rigo di inserimento iva
     $form['insert_imponi'] = 0;
-    $form['insert_codiva'] = $admin_aziend['alliva'];
+    $form['insert_codiva'] = $admin_aziend['preeminent_vat'];
     $form['insert_imponi'] = 0;
     //registri per il form dei righi contabili
     $_POST['rigcon'] = 0;

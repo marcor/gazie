@@ -119,6 +119,7 @@
                            'acciva'=>'Percentuale d\'acconto I.V.A. (%)',
                            'ricbol_limit'=>'Limite esenzione imposta di bollo',
                            'ricbol'=>'Importo bollo su ricevute',
+                           'taxstamp_vat'=>'Aliquota IVA dei bolli',
                            'perbol'=>'Aliquota imposta di bollo su tratte (%)',
                            'round_bol'=>'Arrotondamento bolli',
                            'round_bol_value'=>array(1=>'centesimo',5=>'centesimi',10=>'centesimi',
@@ -167,7 +168,7 @@
                            'conmag_value'=>array(0=>'Nessuna',1=>'Manuale (sconsigliata)',2=>'Automatica'),
                            'ivam_t'=>'Periodicit&agrave; liquidazione IVA',
                            'ivam_t_value'=>array('M'=>'Mensile','T'=>'Trimestrale'),
-                           'alliva'=>'Aliquota preminente',
+                           'preeminent_vat'=>'Aliquota IVA spese (preminente)',
                            'interessi'=>'Interessi su IVA Trimestrale'
                          ),
                      "report_aziend.php" =>

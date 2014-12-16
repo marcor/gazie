@@ -94,11 +94,11 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
                     $tes['tippag'] == 'T') && $tes['addebitospese'] == 'S' ) {
                         $spese_incasso = $tes['numrat']*$tes['speban'];
                 } elseif ($tes['tippag'] == 'R') { // il pagamento prevede una imposta di bollo fissa
-                    if (!isset($cast_vat[$admin_aziend['ivabol']]['imponi'])) {
-                        $cast_vat[$admin_aziend['ivabol']]['periva'] = 0;
-                        $cast_vat[$admin_aziend['ivabol']]['imponi'] = $tes['stamp'];
+                    if (!isset($cast_vat[$admin_aziend['taxstamp_vat']]['imponi'])) {
+                        $cast_vat[$admin_aziend['taxstamp_vat']]['periva'] = 0;
+                        $cast_vat[$admin_aziend['taxstamp_vat']]['imponi'] = $tes['stamp'];
                     } else {
-                        $cast_vat[$admin_aziend['ivabol']]['imponi'] += $tes['stamp'];
+                        $cast_vat[$admin_aziend['taxstamp_vat']]['imponi'] += $tes['stamp'];
                     }
                     if (!isset($cast_acc[$admin_aziend['boleff']]['import'])) {
                         $cast_acc[$admin_aziend['boleff']]['import'] = $tes['stamp'];
@@ -346,11 +346,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$kac,'import'=>$tot['vat']));
                   }
                   if ($tot['stamp']>0) { // se ho il bollo sulla tratta ci metto anch'esso
-                      $stamp_vat = gaz_dbi_get_row($gTables['aliiva'],'codice',$admin_aziend['ivabol']);
+                      $stamp_vat = gaz_dbi_get_row($gTables['aliiva'],'codice',$admin_aziend['taxstamp_vat']);
                       //aggiungo i valori mancanti all'array
                       $vv['id_tes']=$tes_id;
                       $vv['tipiva']=$stamp_vat['tipiva'];
-                      $vv['codiva']=$admin_aziend['ivabol'];
+                      $vv['codiva']=$admin_aziend['taxstamp_vat'];
                       $vv['periva']=$stamp_vat['aliquo'];
                       $vv['imponi']=$tot['stamp'];
                       $vv['impost']=round($tot['stamp']*$stamp_vat['aliquo'])/ 100;

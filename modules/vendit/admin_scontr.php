@@ -487,8 +487,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
             $provvigione = new Agenti;
             $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'],$form['in_codart']);
-            $form['rows'][$next_row]['codvat'] = $admin_aziend['alliva'];
-            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['alliva']);
+            $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
+            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['preeminent_vat']);
             $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
             if ($artico['aliiva'] > 0) {
                $form['rows'][$next_row]['codvat'] = $artico['aliiva'];
@@ -527,8 +527,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$next_row]['prelis'] = 0;
             $form['rows'][$next_row]['codric'] = $form['in_codric'];
             $form['rows'][$next_row]['sconto'] = 0;
-            $form['rows'][$next_row]['codvat'] = $admin_aziend['alliva'];
-            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['alliva']);
+            $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
+            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['preeminent_vat']);
             $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
             if ($form['in_codvat'] > 0) {
                $form['rows'][$next_row]['codvat'] = $form['in_codvat'];

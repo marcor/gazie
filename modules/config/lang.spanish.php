@@ -122,6 +122,7 @@ $strScript = array ("admin_aziend.php" =>
                            'acciva'=>'Porcentaje Avance IVA(%)',
                            'ricbol_limit'=>'Límite de exención de estampillado',
                            'ricbol'=>'Importe de impuesto de timbre sobre ingresos',
+                           'taxstamp_vat'=>'Taxstamp VAT rate',
                            'perbol'=>'Porcentaje de Estampillas sobre draft (%)',
                            'round_bol'=>'Redondeo de Estampillas',
                            'round_bol_value'=>array(1=>'cent',5=>'cents',10=>'cents',
@@ -170,7 +171,7 @@ $strScript = array ("admin_aziend.php" =>
                            'conmag_value'=>array(0=>'Nunca',1=>'Manual (no recomendado)',2=>'Automatico'),
                            'ivam_t'=>'Frecuencia de pago del IVA',
                            'ivam_t_value'=>array('M'=>'Mensualmente','T'=>'Trimestralmente'),
-                           'alliva'=>'Generalmente porcentaje IVA',
+                           'preeminent_vat'=>'Generalmente porcentaje IVA',
                            'interessi'=>'Interes sobre IVA Trimestral'
                          ),
                      "report_aziend.php" =>

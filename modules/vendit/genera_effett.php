@@ -64,11 +64,11 @@ function getDocumentsBill($upd=false)
                     $tes['tippag'] == 'V') && $tes['addebitospese'] == 'S' ) {
                     $spese_incasso=$tes['numrat']*$tes['speban'] ;
                 } elseif ($tes['tippag'] == 'R') { // il pagamento prevede una imposta di bollo fissa
-                    if (!isset($cast_vat[$admin_aziend['ivabol']]['import'])) {
-                        $cast_vat[$admin_aziend['ivabol']]['periva'] = 0;
-                        $cast_vat[$admin_aziend['ivabol']]['import'] = $tes['stamp'];
+                    if (!isset($cast_vat[$admin_aziend['taxstamp_vat']]['import'])) {
+                        $cast_vat[$admin_aziend['taxstamp_vat']]['periva'] = 0;
+                        $cast_vat[$admin_aziend['taxstamp_vat']]['import'] = $tes['stamp'];
                     } else {
-                        $cast_vat[$admin_aziend['ivabol']]['import'] += $tes['stamp'];
+                        $cast_vat[$admin_aziend['taxstamp_vat']]['import'] += $tes['stamp'];
                     }
                 }
            } else {

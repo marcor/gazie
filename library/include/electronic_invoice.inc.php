@@ -73,7 +73,7 @@ class invoiceXMLvars
         $this->logo = $admin_aziend['image'];
         $this->link = $admin_aziend['web_url'];
         $this->perbollo = 0;
-        $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['ivabol']);
+        $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $this->cliente1 = $this->client['ragso1'];
         $this->cliente2 = $this->client['ragso2'];

@@ -409,8 +409,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                 $form['righi'][$next_row]['sconto'] = 0;
                 $form['righi'][$next_row]['prelis'] = 0;
             }
-            $form['righi'][$next_row]['codvat'] = $admin_aziend['alliva'];
-            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['alliva']);
+            $form['righi'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
+            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['preeminent_vat']);
             $form['righi'][$next_row]['pervat'] = $iva_azi['aliquo'];
             if ($artico['aliiva'] > 0) {
                $form['righi'][$next_row]['codvat'] = $artico['aliiva'];
@@ -504,7 +504,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_prelis'] = 0.000;
     $form['in_sconto'] = 0;
     $form['in_quanti'] = 0;
-    $form['in_codvat'] = $admin_aziend['alliva'];
+    $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     $form['in_codric'] = substr($admin_aziend['impacq'],0,3);
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
@@ -594,7 +594,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['in_prelis'] = 0.000;
     $form['in_sconto'] = 0;
     $form['in_quanti'] = 0;
-    $form['in_codvat'] = $admin_aziend['alliva'];
+    $form['in_codvat'] = $admin_aziend['preeminent_vat'];
     $form['in_codric'] = substr($admin_aziend['impacq'],0,3);
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
