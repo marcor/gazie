@@ -84,6 +84,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     //tutti i controlli su  tipo di pagamento e rate
     $form['speban'] = floatval($_POST['speban']);
     $form['numrat'] = intval($_POST['numrat']);
+    $form['expense_vat'] = intval($_POST['expense_vat']);
     $form['virtual_taxstamp'] = intval($_POST['virtual_taxstamp']);
     $form['taxstamp'] = floatval($_POST['taxstamp']);
     $form['stamp'] = floatval($_POST['stamp']);
@@ -985,6 +986,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['search']['id_des']=substr($id_des['ragso1'],0,10);
     $form['traspo'] = $tesdoc['traspo'];
     $form['spevar'] = $tesdoc['spevar'];
+    $form['expense_vat'] = $tesdoc['expense_vat'];
     $form['virtual_taxstamp'] = $tesdoc['virtual_taxstamp'];
     $form['taxstamp'] = $tesdoc['taxstamp'];
     $form['stamp'] = $tesdoc['stamp'];
@@ -1142,6 +1144,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['speban'] = 0;
     $form['spevar'] = 0;
     $form['stamp'] = 0;
+    $form['expense_vat'] = $admin_aziend['preeminent_vat'];
     $form['virtual_taxstamp'] = $admin_aziend['virtual_taxstamp'];
     $form['taxstamp'] = 0;
     $form['round_stamp'] = $admin_aziend['round_bol'];
@@ -1587,6 +1590,7 @@ echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<input type=\"hidden\" value=\"".$form['numrat']."\" name=\"numrat\">\n";
+echo "<input type=\"hidden\" value=\"".$form['expense_vat']."\" name=\"expense_vat\">\n";
 echo "<input type=\"hidden\" value=\"".$form['stamp']."\" name=\"stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['round_stamp']."\" name=\"round_stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['spevar']."\" name=\"spevar\">\n";
