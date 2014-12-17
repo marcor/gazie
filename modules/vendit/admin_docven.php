@@ -1665,7 +1665,6 @@ if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['ti
     echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['units']."\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>\n";
     echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[55]</td>\n";
     echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['volume']."\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>\n";
-    echo "</td>";
     echo "</tr>";
 } else {
     echo "<input type=\"hidden\" value=\"".$form['imball']."\" name=\"imball\">\n";
@@ -1683,9 +1682,6 @@ if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['ti
     echo "<input type=\"hidden\" value=\"".$form['gross_weight']."\" name=\"gross_weight\">\n";
     echo "<input type=\"hidden\" value=\"".$form['units']."\" name=\"units\">\n";
     echo "<input type=\"hidden\" value=\"".$form['volume']."\" name=\"volume\">\n";
-    echo "</td>";
-    echo "</tr>";
-    echo "<tr>\n";
 }
 
 echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
@@ -1719,6 +1715,7 @@ foreach ($castle as $k=> $v) {
            $totimpfat += $decalc;
            $acc_val-=$decalc;
         }
+        echo "</tr>";
       }
       $ivacast = round($v*$vat['aliquo'])/100;
       if (abs($ivacast) < $epsilon) {
