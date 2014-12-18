@@ -1421,6 +1421,9 @@ class Compute
             foreach ($vat_castle as $k=>$v) {   // riattraverso l'array del castelletto
                                                 // per aggiungere proporzionalmente (ventilazione)
                 $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
+                $new_castle[$k]['periva'] = $vat['aliquo'];
+                $new_castle[$k]['tipiva'] = $vat['tipiva'];
+                $new_castle[$k]['descriz'] = $vat['descri'];
                 $row--; 
                 if ($row == 0) { // è l'ultimo rigo del castelletto
                     // aggiungo il resto
@@ -1430,28 +1433,31 @@ class Compute
                     $decalc_imp+=$v['impcast'];
                 }
                 $new_castle[$k]['impcast'] = $new_imp;
+                $new_castle[$k]['imponi'] = $new_imp;
                 $this->total_imp+=$new_imp; // aggiungo all'accumulatore del totale
                 if ($vat['aliquo'] < 0.01){ // è senza IVA
                     $this->total_exc+=$new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
                 $new_castle[$k]['ivacast'] = round(($new_imp*$vat['aliquo'])/ 100,2);
                 $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
-                $new_castle[$k]['descriz'] = $vat['descri'];
             }
         } else {  // METODO DELL'AGGIUNTA DIRETTA (nuovo)
             $match=false;            
             foreach ($vat_castle as $k=>$v) { // attraverso dell'array 
                 $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
+                $new_castle[$k]['periva'] = $vat['aliquo'];
+                $new_castle[$k]['tipiva'] = $vat['tipiva'];
+                $new_castle[$k]['descriz'] = $vat['descri'];
                 if ($k==$vat_rate) { // SE è la stessa aliquota aggiungo il nuovo valore
                     $match=true;
                     $new_imp = $v['impcast']+$value;
                     $new_castle[$k]['impcast'] = $new_imp;
+                    $new_castle[$k]['imponi'] = $new_imp;
                     $new_castle[$k]['ivacast'] = round(($new_imp*$vat['aliquo'])/ 100,2);
-                    $new_castle[$k]['descriz'] = $vat['descri'];
                 } else { // è una aliquota che non interessa il valore che devo aggiungere 
                     $new_castle[$k]['impcast'] = $v['impcast'];
+                    $new_castle[$k]['imponi'] = $v['impcast'];
                     $new_castle[$k]['ivacast'] = round(($v['impcast']*$vat['aliquo'])/ 100,2);
-                    $new_castle[$k]['descriz'] = $vat['descri'];
                 }
                 if ($vat['aliquo'] < 0.01){ // è senza IVA
                     $this->total_exc+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
@@ -1459,9 +1465,12 @@ class Compute
                 $this->total_imp+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
                 $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
             }
-            if (!$match) { // non ho trovato una aliquota uguale a quella del nuovo valore
+            if (!$match && $value >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0 
                 $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$vat_rate);
+                $new_castle[$vat_rate]['periva'] = $vat['aliquo'];
+                $new_castle[$vat_rate]['tipiva'] = $vat['tipiva'];
                 $new_castle[$vat_rate]['impcast'] = $value;
+                $new_castle[$vat_rate]['imponi'] = $value;
                 $new_castle[$vat_rate]['ivacast'] = round(($value*$vat['aliquo'])/ 100,2);
                 $new_castle[$vat_rate]['descriz'] = $vat['descri'];
                 if ($vat['aliquo'] < 0.01){ // è senza IVA

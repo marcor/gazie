@@ -185,8 +185,7 @@ class FatturaSemplice extends Template
         $this->Cell(18,4,'Imponibile','LR',0,'C',1);
         $this->Cell(32,4,'Aliquota','LR',0,'C',1);
         $this->Cell(18,4,'Imposta','LR',1,'C',1);
-        $totTrasporto = $this->tottraspo;
-        $this->docVars->setTotal($totTrasporto);
+        $this->docVars->setTotal();
         foreach ($this->docVars->cast as $key => $value) {
                 if ($this->tesdoc['id_tes'] > 0) {
                    $this->Cell(62);
@@ -202,8 +201,6 @@ class FatturaSemplice extends Template
         foreach ($this->docVars->castel as $i => $value) {
             unset($this->docVars->castel[$i]);
         }
-        //azzero il trasporto
-        $this->tottraspo = 0.00;
 
         $totimpmer = $this->docVars->totimpmer;
         $speseincasso = $this->docVars->speseincasso;
@@ -257,8 +254,8 @@ class FatturaSemplice extends Template
         } else {
            $this->Cell(24, 6,'','LBR');
         }
-        if ($totTrasporto > 0) {
-           $this->Cell(26, 6, gaz_format_number($totTrasporto),'LBR',0,'C');
+        if ($this->tottraspo > 0) {
+           $this->Cell(26, 6, gaz_format_number($this->tottraspo),'LBR',0,'C');
         } else {
            $this->Cell(26, 6,'','LBR');
         }

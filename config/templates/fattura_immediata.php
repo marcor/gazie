@@ -166,7 +166,7 @@ class FatturaImmediata extends Template_con_scheda
         $this->Cell(18,4, 'Imponibile','LR',0,'C',1);
         $this->Cell(32,4, 'Aliquota','LR',0,'C',1);
         $this->Cell(18,4, 'Imposta','LR',1,'C',1);
-        $this->docVars->setTotal($this->tesdoc['traspo']);
+        $this->docVars->setTotal();
         foreach ($this->docVars->cast as $key => $value) {
                 if ($this->tesdoc['id_tes'] > 0) {
                    $this->Cell(62);
@@ -255,8 +255,8 @@ class FatturaImmediata extends Template_con_scheda
         } else {
            $this->Cell(24, 5,'','LBR');
         }
-        if ($this->tesdoc['traspo'] > 0) {
-           $this->Cell(26, 5, gaz_format_number($this->tesdoc['traspo']),'LBR',0,'C');
+        if ($this->trasporto > 0) {
+           $this->Cell(26, 5, gaz_format_number($this->trasporto),'LBR',0,'C');
         } else {
            $this->Cell(26, 5,'','LBR');
         }

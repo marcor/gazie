@@ -54,6 +54,7 @@ function getExtremeDocs($type='_',$vat_section=1,$date=false)
 function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999999999)
 {
     global $gTables,$admin_aziend;
+    $calc = new Compute;
     $type = substr($type,0,1);
     if ($date){
        $p=' AND (YEAR(datfat)*1000000+protoc) <= '.(substr($date,0,4)*1000000+$protoc);
@@ -81,6 +82,10 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
     $ctrlp=0;
     while ($tes = gaz_dbi_fetch_array($result)) {
            if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
+                if ($ctrlp>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+                    print "<br><br><br><br>";
+                    print_r($doc[$ctrlp]);
+                }    
                 $carry=0;
                 $cast_vat=array();
                 $cast_acc=array();
@@ -88,42 +93,26 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
                 $totimpdoc=0;
                 $totimp_decalc=0.00;
                 $n_vat_decalc=0;
-                $spese_incasso=0;
+                $spese_incasso=$tes['numrat']*$tes['speban'];
                 $rit=0;
-                if (($tes['tippag'] == 'B' ||
-                    $tes['tippag'] == 'T') && $tes['addebitospese'] == 'S' ) {
-                        $spese_incasso = $tes['numrat']*$tes['speban'];
-                } elseif ($tes['tippag'] == 'R') { // il pagamento prevede una imposta di bollo fissa
-                    if (!isset($cast_vat[$admin_aziend['taxstamp_vat']]['imponi'])) {
-                        $cast_vat[$admin_aziend['taxstamp_vat']]['periva'] = 0;
-                        $cast_vat[$admin_aziend['taxstamp_vat']]['imponi'] = $tes['stamp'];
-                    } else {
-                        $cast_vat[$admin_aziend['taxstamp_vat']]['imponi'] += $tes['stamp'];
-                    }
-                    if (!isset($cast_acc[$admin_aziend['boleff']]['import'])) {
-                        $cast_acc[$admin_aziend['boleff']]['import'] = $tes['stamp'];
-                    } else {
-                        $cast_acc[$admin_aziend['boleff']]['import'] += $tes['stamp'];
-                    }
-                }
            } else {
                 $spese_incasso=0;
            }
-           if ($tes['traspo']>0) {
+           if ($tes['traspo']>=0.01) {
                    if (!isset($cast_acc[$admin_aziend['imptra']]['import'])) {
                       $cast_acc[$admin_aziend['imptra']]['import'] = $tes['traspo'];
                    } else {
                       $cast_acc[$admin_aziend['imptra']]['import'] += $tes['traspo'];
                    }
            }
-           if ($spese_incasso>0) {
+           if ($spese_incasso>=0.01) {
                    if (!isset($cast_acc[$admin_aziend['impspe']]['import'])) {
                       $cast_acc[$admin_aziend['impspe']]['import'] = $spese_incasso;
                    } else {
                       $cast_acc[$admin_aziend['impspe']]['import'] += $spese_incasso;
                    }
            }
-           if ($tes['spevar']>0) {
+           if ($tes['spevar']>=0.01) {
                    if (!isset($cast_acc[$admin_aziend['impvar']]['import'])) {
                       $cast_acc[$admin_aziend['impvar']]['import'] = $tes['spevar'];
                    } else {
@@ -143,22 +132,20 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
                     $importo = CalcolaImportoRigo(1,$r['prelis'], $tes['sconto']);
                  }
                  //creo il castelletto IVA
-                 if (!isset($cast_vat[$r['codvat']]['imponi'])) {
-                    $cast_vat[$r['codvat']]['imponi']=0;
+                 if (!isset($cast_vat[$r['codvat']]['impcast'])) {
+                    $cast_vat[$r['codvat']]['impcast']=0;
+                    $cast_vat[$r['codvat']]['ivacast']=round(($importo*$r['pervat'])/ 100,2);;
                     $cast_vat[$r['codvat']]['periva']=$r['pervat'];
                     $cast_vat[$r['codvat']]['tipiva']=$r['tipiva'];
                  }
-                 $cast_vat[$r['codvat']]['imponi']+=$importo;
+                 $cast_vat[$r['codvat']]['impcast']+=$importo;
+                 $cast_vat[$r['codvat']]['ivacast']+=round(($importo*$r['pervat'])/ 100,2);;
                  $totimpdoc += $importo;
                  //creo il castelletto conti
                  if (!isset($cast_acc[$r['codric']]['import'])) {
                     $cast_acc[$r['codric']]['import'] = 0;
                  }
                  $cast_acc[$r['codric']]['import']+=$importo;
-                 if ($r['tipiva']!='C' && $r['tipiva']!='S' ) {
-                     $totimp_decalc += $importo;
-                     $n_vat_decalc++;
-                 }
                  $rit+=round($importo*$r['ritenuta']/100,2);
               } elseif($r['tiprig'] == 3) {
                  $carry += $r['prelis'] ;
@@ -168,31 +155,10 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
            $doc[$tes['protoc']]['acc']=$cast_acc;
            $doc[$tes['protoc']]['car']=$carry;
            $doc[$tes['protoc']]['rit']=$rit;
+           $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'] ;
+           $calc->add_value_to_VAT_castle($cast_vat,$somma_spese,$tes['expense_vat']);
+           $doc[$tes['protoc']]['vat']=$calc->castle;
            $ctrlp=$tes['protoc'];
-           $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
-           // ricostruisco il castelletto IVA
-           $new_cast_vat=array();
-           $last=count($cast_vat);
-           $acc_val=$somma_spese;
-           foreach ($cast_vat as $k=> $v) {
-                   if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                      if ($last == 1) {
-                         $v['imponi'] += $acc_val;
-                         $totimpdoc += $acc_val;
-                      } else {
-                         $decalc=round($somma_spese*$v['imponi']/$totimp_decalc,2);
-                         $v['imponi'] += $decalc;
-                         $totimpdoc += $decalc;
-                         $acc_val-=$decalc;
-                      }
-                      $last--;
-                   }
-                   $new_cast_vat[$k]['imponi']=$v['imponi'];
-                   $new_cast_vat[$k]['periva']=$v['periva'];
-                   $new_cast_vat[$k]['tipiva']=$v['tipiva'];
-           }
-           $doc[$tes['protoc']]['vat']=$new_cast_vat;
-           // fine aggiunta spese non documentate al castelletto IVA
     }
     return $doc;
 }
@@ -204,14 +170,14 @@ function computeTot($data,$carry,$stamp_percent=false,$round=5)
    $tax=0;
    $sta=0;
    foreach($data as $k=>$v) {
-          $tax += $v['imponi'];
-          $vat += round($v['imponi']*$v['periva'])/ 100;
+          $tax += $v['impcast'];
+          $vat += round($v['impcast']*$v['periva'])/ 100;
    }
    $tot=$vat+$tax;
    if ($stamp_percent) { // è stata passata la percentuale
-          $v_stamp = new Compute;
-          $v_stamp->payment_taxstamp($tot+$carry,$stamp_percent,$round);
-          $tot+=$v_stamp->pay_taxstamp;
+          $calc = new Compute;
+          $calc->payment_taxstamp($tot+$carry,$stamp_percent,$round);
+          $tot+=$calc->pay_taxstamp;
    }
    return array('taxable'=>$tax,'vat'=>$vat,'stamp'=>$sta,'tot'=>$tot);
 }
@@ -327,7 +293,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       $vv['tipiva']=$vat['tipiva'];
                       $vv['codiva']=$k;
                       $vv['id_tes']=$tes_id;
-                      $vv['impost']=round($vv['imponi']*$vv['periva'])/ 100;
+                      $vv['impost']=round($vv['impcast']*$vv['periva'])/ 100;
                       rigmoiInsert($vv);
                   }
                   //inserisco i righi contabili nel db
@@ -352,7 +318,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       $vv['tipiva']=$stamp_vat['tipiva'];
                       $vv['codiva']=$admin_aziend['taxstamp_vat'];
                       $vv['periva']=$stamp_vat['aliquo'];
-                      $vv['imponi']=$tot['stamp'];
+                      $vv['impcast']=$tot['stamp'];
                       $vv['impost']=round($tot['stamp']*$stamp_vat['aliquo'])/ 100;
                       rigmoiInsert($vv);
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$admin_aziend['boleff'],'import'=>$tot['stamp']));
