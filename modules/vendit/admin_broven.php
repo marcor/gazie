@@ -85,6 +85,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     //tutti i controlli su  tipo di pagamento e rate
     $form['speban'] = $_POST['speban'];
     $form['numrat'] = $_POST['numrat'];
+    $form['expense_vat'] = intval($_POST['expense_vat']);
     $form['virtual_taxstamp'] = intval($_POST['virtual_taxstamp']);
     $form['taxstamp'] = floatval($_POST['taxstamp']);
     $form['stamp'] = floatval($_POST['stamp']);
@@ -876,6 +877,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['id_des'] = $tesbro['id_des'];
     $form['traspo'] = $tesbro['traspo'];
     $form['spevar'] = $tesbro['spevar'];
+    $form['expense_vat'] = $tesbro['expense_vat'];
     $form['virtual_taxstamp'] = $tesbro['virtual_taxstamp'];
     $form['taxstamp'] = $tesbro['taxstamp'];
     $form['stamp'] = $tesbro['stamp'];
@@ -988,6 +990,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['numrat'] = 1;
     $form['speban'] = 0;
     $form['spevar'] = 0;
+    $form['expense_vat'] = $admin_aziend['preeminent_vat'];
     $form['stamp'] = 0;
     $form['round_stamp'] = $admin_aziend['round_bol'];
     $form['virtual_taxstamp'] = $admin_aziend['virtual_taxstamp'];
@@ -1224,8 +1227,6 @@ $select_in_codvat = new selectaliiva("in_codvat");
 $select_in_codvat -> addSelected($form['in_codvat']);
 $select_in_codvat -> output();
 echo "</td><TD class=\"FacetColumnTD\"></TD></tr>\n";
-$totivafat=0.00;
-$totimpfat=0.00;
 echo "</table>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td>
@@ -1241,12 +1242,13 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td>
           <td class=\"FacetFieldCaptionTD\"></td>
           </tr>\n";
 $totimp_body=0.00;
-$totimp_decalc=0.00;
+$totivafat=0.00;
+$totimpfat=0.00;
 $castle=array();
-$decalc_castle=array();
 $rit=0;
 $carry=0;
 foreach ($form['rows'] as $k => $v) {
+        //creo il castelletto IVA
         $imprig=0;
         if ($v['tiprig'] <= 1) {
             $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
@@ -1256,18 +1258,10 @@ foreach ($form['rows'] as $k => $v) {
                 $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
             }
             if (!isset($castle[$v['codvat']])) {
-                $castle[$v['codvat']] = 0.00;
-                if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                   $decalc_castle[$v['codvat']] = 0.00;
-                }
+                $castle[$v['codvat']]['impcast'] = 0.00;
             }
             $totimp_body += $imprig;
-            $castle[$v['codvat']] += $v_for_castle;
-            if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                   $decalc_castle[$v['codvat']] += $v_for_castle;
-                   $totimp_decalc += $v_for_castle;
-            }
-            $totimpfat += $v_for_castle;
+            $castle[$v['codvat']]['impcast'] += $v_for_castle;
             $rit+=round($imprig*$v['ritenuta']/100,2);
         } elseif ($v['tiprig'] == 3) {
             $carry+=$v['prelis'];
@@ -1375,12 +1369,21 @@ echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<input type=\"hidden\" value=\"".$form['numrat']."\" name=\"numrat\">\n";
+echo "<input type=\"hidden\" value=\"".$form['expense_vat']."\" name=\"expense_vat\">\n";
 echo "<input type=\"hidden\" value=\"".$form['spevar']."\" name=\"spevar\">\n";
 echo "<input type=\"hidden\" value=\"".$form['stamp']."\" name=\"stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['round_stamp']."\" name=\"round_stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['cauven']."\" name=\"cauven\">\n";
 echo "<input type=\"hidden\" value=\"".$form['caucon']."\" name=\"caucon\">\n";
 echo "<input type=\"hidden\" value=\"".$form['caumag']."\" name=\"caumag\">\n";
+
+$somma_spese = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
+$calc = new Compute;
+$calc->add_value_to_VAT_castle($castle,$somma_spese,$form['expense_vat']);
+if ($calc->total_exc > $admin_aziend['taxstamp_limit']) {
+   $form['taxstamp'] = $admin_aziend['taxstamp'];
+}
+
 echo "<tr>";
 echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[26]</td>\n";
 echo "<td colspan=\"2\" class=\"FacetDataTD\"><input type=\"text\" name=\"imball\" value=\"".$form['imball']."\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
@@ -1465,32 +1468,14 @@ echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</
 if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
     echo "<td><input type=\"submit\" accesskey=\"o\" name=\"ord\" value=\"GENERA ORDINE!\"></td>";
 }
-$somma_spese = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
-$last=count($castle);
-$acc_val=$somma_spese;
-foreach ($castle as $k=> $v) {
-      $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
-      $last--;
-      if ($last == 0) {
-        $v += $acc_val;
-        $totimpfat += $acc_val;
-      } else {
-        $decalc=round($somma_spese*$v/$totimpfat,2);
-        $v += $decalc;
-        $totimpfat += $decalc;
-        $acc_val=$somma_spese-$decalc;
-      }
-      $ivacast = round($v*$vat['aliquo'])/ 100;
-      $totivafat += $ivacast;
-      if ($next_row > 0) {
-        echo "<tr><td align=\"right\">".gaz_format_number($v)."</td><td align=\"right\">".$vat['descri']." ".gaz_format_number($ivacast)."</td>\n";
-      }
+foreach ($calc->castle as $k=> $v) {
+        echo "<tr><td align=\"right\">".gaz_format_number($v['impcast'])."</td><td align=\"right\">".$v['descriz']." ".gaz_format_number($v['ivacast'])."</td>\n";
 }
 
 if ($next_row > 0) {
         if ($form['stamp'] > 0) {
-          $v_stamp = new Compute;
-          $stamp = $v_stamp->stampTax($totimpfat+$totivafat+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
+          $calc->payment_taxstamp($calc->total_imp+$calc->total_imp+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
+          $stamp=$calc->pay_taxstamp;  
         } else {
           $stamp = 0;
         }

@@ -292,7 +292,7 @@ class invoiceXMLvars
 
     function setXMLtot($totTrasporto=0)
     {
-        $bolli = new Compute();
+        $calc = new Compute();
         $this->totivafat = 0.00;
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
@@ -342,10 +342,12 @@ class invoiceXMLvars
             $this->cast[$k]['descriz'] = $vat['descri'];
             $this->cast[$k]['fae_natura'] = $vat['fae_natura'];
         }
+        //************* QUESTA PARTE E' DA RIVEDERE *************************
         //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione dell'effetto
         if ($this->pagame['tippag'] == 'T' or $this->pagame['tippag'] == 'R') {
            if ($this->pagame['tippag'] == 'T') {
-              $this->impbol = $bolli->stampTax($this->totimpfat+$this->totriport+$this->totivafat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
+                $calc->payment_taxstamp($this->totimpfat+$this->totriport+$this->totivafat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
+                $this->impbol = $calc->pay_taxstamp;
            } elseif($this->pagame['tippag'] == 'R') {
               $this->impbol = $this->tesdoc['stamp'];
            }

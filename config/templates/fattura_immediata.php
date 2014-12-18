@@ -35,6 +35,7 @@ class FatturaImmediata extends Template_con_scheda
         $this->mese = substr($this->tesdoc['datfat'],5,2);
         $this->anno = substr($this->tesdoc['datfat'],0,4);
         $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+        $this->taxstamp=$this->tesdoc['taxstamp'];
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
         $this->tipdoc = 'Fattura immediata n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
@@ -63,7 +64,7 @@ class FatturaImmediata extends Template_con_scheda
     {
         $lines = $this->docVars->getRigo();
         while (list($key, $rigo) = each($lines)) {
-            if ($this->GetY() >= 185) {
+            if (($this->GetY() >= 157 && $this->taxstamp >= 0.01) || $this->GetY() >= 186 ) { // mi serve per poter stampare la casella del bollo
                 $this->Cell(186,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
@@ -72,6 +73,7 @@ class FatturaImmediata extends Template_con_scheda
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
             }
+
                 switch($rigo['tiprig']) {
                 case "0":
                     $this->Cell(25, 6, $rigo['codart'],1,0,'L');
@@ -131,7 +133,17 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(20, 5,gaz_format_number(round($rigo['importo']*$rigo['ritenuta']/100,2)),'RB',0,'R');
                     $this->Cell(12, 5,'',1,1,'R');
                 }
-       }
+        }
+        if ($this->taxstamp >= 0.01 ) {
+            $this->Cell(186,5,'','LR',1);
+            $this->Cell(150,8,'','L',0,0);
+            $this->Cell(36,8,"Bollo applicato","TLR",1,"C");
+            $this->Cell(150,8,'','L',0,0);
+            $this->Cell(36,8,"sull'originale","LR",1,"C");
+            $this->Cell(150,8,'','L',0,0);
+            $this->Cell(36,8,"€ ".gaz_format_number($this->taxstamp),'LR',1,'C');
+        }
+       
     }
 
 
@@ -174,12 +186,6 @@ class FatturaImmediata extends Template_con_scheda
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
-        if ($impbol > 0) {
-            $this->Cell(62);
-            $this->Cell(18, 4, gaz_format_number($impbol).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $this->docVars->iva_bollo['descri'], 'LR', 0, 'C');
-            $this->Cell(18, 4,gaz_format_number($this->docVars->iva_bollo['aliquo']*$impbol).' ',0,1,'R');
-        }
         //effettuo il calcolo degli importi delle scadenze
         $totpag = $totimpfat+$impbol+$totriport+$totivafat-$ritenuta;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);
@@ -233,7 +239,7 @@ class FatturaImmediata extends Template_con_scheda
         $this->Cell(26, 5,'Trasporto','LTR',0,'C',1);
         $this->Cell(36, 5,'Tot.Imponibile','LTR',0,'C',1);
         $this->Cell(26, 5,'Tot. I.V.A.','LTR',0,'C',1);
-        $this->Cell(22, 5,'Bolli','LTR',1,'C',1);
+        $this->Cell(22, 5,'Bolli(tratte)','LTR',1,'C',1);
         if ($totimpmer > 0) {
            $this->Cell(36, 5, gaz_format_number($totimpmer),'LBR',0,'C');
         } else {

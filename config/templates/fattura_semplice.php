@@ -37,6 +37,7 @@ class FatturaSemplice extends Template
         $this->anno = substr($this->tesdoc['datfat'],0,4);
         $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
         $this->sconto = $this->tesdoc['sconto'];
+        $this->taxstamp=$this->tesdoc['taxstamp'];
         $this->trasporto = $this->tesdoc['traspo'];
         if ($this->tesdoc['tipdoc'] == 'FAD') {
             $descri='Fattura differita n.';
@@ -90,15 +91,15 @@ class FatturaSemplice extends Template
     {
         $lines = $this->docVars->getRigo();
         while (list($key, $rigo) = each($lines)) {
-            if ($this->GetY() >= 195) {
+            if (($this->GetY() >= 166 && $this->taxstamp >= 0.01 ) || $this->GetY() >= 195) { // mi serve per poter stampare la casella del bollo
                 $this->Cell(186,6,'','T',1);
-                $this->SetFont('helvetica','',14);
+                $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
                 $this->Cell(186,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
-                $this->SetFont('helvetica','',9);
+                $this->SetFont('helvetica', '', 9);
                 $this->newPage();
                 $this->Cell(186,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
-            }
+            }  
                 switch($rigo['tiprig']) {
                 case "0":
                     $this->Cell(25, 5, $rigo['codart'],1,0,'L');
@@ -163,6 +164,15 @@ class FatturaSemplice extends Template
 
     function pageFooter()
     {
+        if ($this->taxstamp >= 0.01 ) {
+            $this->Cell(186,5,'','LR',1);
+            $this->Cell(150,8,'','L',0,0);
+            $this->Cell(36,8,"Bollo applicato","TLR",1,"C");
+            $this->Cell(150,8,'','L',0,0);
+            $this->Cell(36,8,"sull'originale","LR",1,"C");
+            $this->Cell(150,8,'','L',0,0);
+            $this->Cell(36,8,"€ ".gaz_format_number($this->taxstamp),'LR',1,'C');
+        }
         $y = $this->GetY();
         $this->Rect(10,$y,186,200-$y); //questa marca le linee dx e sx del documento
         //stampo il castelletto
@@ -203,12 +213,6 @@ class FatturaSemplice extends Template
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
-        if ($impbol > 0) {
-            $this->Cell(62);
-            $this->Cell(18, 4, gaz_format_number($impbol).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $this->docVars->iva_bollo['descri'], 'LR', 0, 'C');
-            $this->Cell(18, 4,gaz_format_number($this->docVars->iva_bollo['aliquo']*$impbol).' ',0,1,'R');
-        }
 
         //effettuo il calcolo degli importi delle scadenze
         $totpag = $totimpfat+$impbol+$totriport+$totivafat-$ritenuta;
@@ -237,7 +241,7 @@ class FatturaSemplice extends Template
         $this->Cell(26, 6,'Trasporto','LTR',0,'C',1);
         $this->Cell(36, 6,'Tot.Imponibile','LTR',0,'C',1);
         $this->Cell(26, 6,'Tot. I.V.A.','LTR',0,'C',1);
-        $this->Cell(22, 6,'Bolli','LTR',1,'C',1);
+        $this->Cell(22, 6,'Bolli(tratte)','LTR',1,'C',1);
         if ($totimpmer > 0) {
            $this->Cell(36, 6, gaz_format_number($totimpmer),'LBR',0,'C');
         } else {

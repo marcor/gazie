@@ -163,11 +163,11 @@ class DocContabVars
     function initializeTotals() 
     {
 	// definisco le variabili dei totali 
-        $this->totimp_decalc = 0;
         $this->totimp_body = 0;
-        $this->totimp_doc = 0;
+        $this->body_castle=array();
         $this->taxstamp = 0;
         $this->virtual_taxstamp = 0;
+        $this->tottraspo = 0;
     }        
 
     function open_drawer() // apre il cassetto dell'eventuale registratore di cassa
@@ -235,18 +235,14 @@ class DocContabVars
                 }
                 if (!isset($this->castel[$rigo['codvat']])) {
                     $this->castel[$rigo['codvat']] = 0;
-                    if ($rigo['tipiva']!='C' && $rigo['tipiva']!='S' ) {
-                       $this->decalc_castle[$rigo['codvat']] = 0.00;
-                    }
                 }
+                if (!isset($this->body_castle[$rigo['codvat']])) {
+                    $this->body_castle[$rigo['codvat']]['impcast'] = 0;
+                }
+                $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
                 $this->castel[$rigo['codvat']] += $v_for_castle;
-                if ($rigo['tipiva']!='C' && $rigo['tipiva']!='S' ) {
-                   $this->decalc_castle[$rigo['codvat']] += $v_for_castle;
-                   $this->totimp_decalc += $v_for_castle;
-                }
                 $this->totimp_body += $rigo['importo'];
                 $this->ritenuta += round($rigo['importo']*$rigo['ritenuta']/100,2);
-                $this->totimp_doc += $v_for_castle;
             } elseif ($rigo['tiprig']>5 && $rigo['tiprig']<9) {
                $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body",$rigo['id_body_text']);
                $rigo['descri'] = $body_text['body_text'];
@@ -259,9 +255,9 @@ class DocContabVars
         return $results;
     }
 
-    function setTotal($totTrasporto=0)
+    function setTotal($no_used=0)
     {
-        $bolli = new Compute();
+        $calc = new Compute();
         $this->totivafat = 0.00;
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
@@ -270,9 +266,6 @@ class DocContabVars
         $this->totriport = $this->riporto;
         $this->speseincasso = $this->tesdoc['speban'] * $this->pagame['numrat'];
         $this->cast = array();
-        if (!isset($this->decalc_castle)){
-            $this->decalc_castle= array();
-        }
         if (!isset($this->castel)){
             $this->castel= array();
         }
@@ -281,44 +274,24 @@ class DocContabVars
         }
         $this->totimpmer = $this->totimp_body;
         $this->totimp_body=0;
-        if (!isset($this->totimp_doc)){
-            $this->totimp_doc=0;
-        }
-        $this->totimpfat = $this->totimp_doc;
-        $this->totimp_doc = 0;
-        $somma_spese = $totTrasporto + $this->speseincasso + $this->tesdoc['spevar'];
-        $last=count($this->castel);
-        $acc_val=$somma_spese;
-        foreach ($this->castel as $k=>$v) {
-            $vat = gaz_dbi_get_row($this->gTables['aliiva'],"codice",$k);
-            if (isset($this->decalc_castle[$k])) {
-               if ($last == 1) {
-                  $v += $acc_val;
-                  $this->totimpfat += $acc_val;
-               } else {
-                  $decalc=round($somma_spese*$v/$this->totimpmer,2);
-                  $v += $decalc;
-                  $this->totimpfat += $decalc;
-                  $acc_val-=$decalc;
-               }
-               $last--;
-            }
-            $ivacast = round($v*$vat['aliquo'])/ 100;
-            $this->totivafat += $ivacast;
-            $this->cast[$k]['impcast'] = $v;
-            $this->cast[$k]['ivacast'] = $ivacast;
-            $this->cast[$k]['descriz'] = $vat['descri'];
-        }
-        //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione della cambiale tratta
-        if ($this->pagame['tippag'] == 'T') {
-              $this->impbol = $bolli->stampTax($this->totimpfat+$this->totriport+$this->totivafat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
-        }
         $this->taxstamp = $this->tesdoc['taxstamp'];
+        $somma_spese = $this->tottraspo + $this->speseincasso + $this->tesdoc['spevar'];
+        $calc->add_value_to_VAT_castle($this->body_castle,$somma_spese,$this->tesdoc['expense_vat']);
+        if ($this->tesdoc['stamp'] > 0) {
+              $calc->payment_taxstamp($calc->total_imp+$this->totriport+$calc->total_vat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
+              $this->impbol = $calc->pay_taxstamp;  
+        }
+        $this->totimpfat=$calc->total_imp;
+        $this->totivafat=$calc->total_vat;
+        // aggiungo gli eventuali bolli al castelletto
+        if ($this->impbol > 0 || $this->taxstamp > 0) {
+            $calc->add_value_to_VAT_castle($calc->castle,$this->taxstamp+$this->impbol,$this->azienda['taxstamp_vat']);
+        }
+        $this->cast=$calc->castle;
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->riporto=0;
         $this->ritenute=0;
         $this->castel = array();
-        $this->decalc_castle= array();
     }
 }
 
@@ -490,7 +463,7 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
     while ($tesdoc = gaz_dbi_fetch_array($result)) {
 		//se il cliente non e' lo stesso di prima
         if ($tesdoc['protoc'] <> $ctrlprotoc) {
-			$n++;
+	    $n++;
             //se non e' piu' lo stesso cliente e non e' il primo Ddt stampo il piede della fattura
             if ($ctrlprotoc <> 0) {
                 $pdf->pageFooter();

@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend=checkAdmin();
 $msg='';
-
+$calc = new Compute;
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 
@@ -577,10 +577,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
            $form['speban'] = $admin_aziend['sperib'];
            $form['numrat'] = $pagame['numrat'];
            $form['stamp'] = 0;
-           if ($pagame['tippag'] == 'T') {
-              $form['stamp']=$admin_aziend['perbol'];
-           }
-           $form['round_stamp'] = $admin_aziend['round_bol'];
+		   if ($pagame['tippag'] == 'T') { 
+				$form['stamp']=$admin_aziend['perbol'];
+		   }	
+		   $form['round_stamp'] = $admin_aziend['round_bol'];
     } elseif ($pagame['tippag'] == 'R') {
            $form['speban'] = 0.00;
            $form['numrat'] = 1;
@@ -991,10 +991,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['taxstamp'] = $tesdoc['taxstamp'];
     $form['stamp'] = $tesdoc['stamp'];
     $form['round_stamp'] = $tesdoc['round_stamp'];
-    if ($form['tipdoc']=='VRI') {
-        $form['round_stamp'] = -1;
-        $form['stamp'] = $admin_aziend['taxstamp'];
-    }
     $form['cauven'] = $tesdoc['cauven'];
     $form['caucon'] = $tesdoc['caucon'];
     $form['caumag'] = $tesdoc['caumag'];
@@ -1148,10 +1144,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['virtual_taxstamp'] = $admin_aziend['virtual_taxstamp'];
     $form['taxstamp'] = 0;
     $form['round_stamp'] = $admin_aziend['round_bol'];
-    if ($form['tipdoc']=='VRI') {
-        $form['round_stamp'] = -1;
-        $form['stamp'] = $admin_aziend['taxstamp'];
-    }
     $form['cauven'] = 0;
     $form['caucon'] = '';
     $form['caumag'] = 0;
@@ -1410,10 +1402,7 @@ $select_in_codvat = new selectaliiva("in_codvat");
 $select_in_codvat -> addSelected($form["in_codvat"]);
 $select_in_codvat -> output();
 echo "</td><TD class=\"FacetColumnTD\"></TD></tr>\n";
-$totimp_body=0.00;
-$totimp_decalc=0.00;
-$totivafat=0.00;
-$totimpfat=0.00;
+
 echo "</table>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td>
@@ -1428,8 +1417,10 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td>
           <td class=\"FacetFieldCaptionTD\">$script_transl[18]</td>
           <td class=\"FacetFieldCaptionTD\"></td>
           </tr>\n";
+$totimp_body=0.00;
+$totivafat=0.00;
+$totimpfat=0.00;
 $castle=array();
-$decalc_castle=array();
 $rit=0;
 $carry=0;
 foreach ($form['rows'] as $k => $v) {
@@ -1443,18 +1434,10 @@ foreach ($form['rows'] as $k => $v) {
                 $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
             }
             if (!isset($castle[$v['codvat']])) {
-                $castle[$v['codvat']] = 0.00;
-                if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                   $decalc_castle[$v['codvat']] = 0.00;
-                }
+                $castle[$v['codvat']]['impcast'] = 0.00;
             }
             $totimp_body += $imprig;
-            $castle[$v['codvat']] += $v_for_castle;
-            if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                   $decalc_castle[$v['codvat']] += $v_for_castle;
-                   $totimp_decalc += $v_for_castle;
-            }
-            $totimpfat += $v_for_castle;
+            $castle[$v['codvat']]['impcast'] += $v_for_castle;
             $rit+=round($imprig*$v['ritenuta']/100,2);
         } elseif ($v['tiprig'] == 3) {
             $carry+=$v['prelis'];
@@ -1478,10 +1461,10 @@ foreach ($form['rows'] as $k => $v) {
         case "0":
         echo "<tr>";
         if ( file_exists ( "../../data/files/fotoart/".$v["codart"].".gif" ) ) {
-           $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$v["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";
-        } else {
-           $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";
-        }
+			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$v["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";		
+		} else {
+			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";			
+		}
         if ($v['pesosp'] != 0){
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso = ".gaz_format_number($v['quanti'] * $v['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
         } else {
@@ -1596,6 +1579,12 @@ echo "<input type=\"hidden\" value=\"".$form['round_stamp']."\" name=\"round_sta
 echo "<input type=\"hidden\" value=\"".$form['spevar']."\" name=\"spevar\">\n";
 echo "<input type=\"hidden\" value=\"".$form['cauven']."\" name=\"cauven\">\n";
 echo "<input type=\"hidden\" value=\"".$form['caucon']."\" name=\"caucon\">\n";
+$somma_spese = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
+$calc->add_value_to_VAT_castle($castle,$somma_spese,$form['expense_vat']);
+if ($calc->total_exc > $admin_aziend['taxstamp_limit']) {
+   $form['taxstamp'] = $admin_aziend['taxstamp'];
+}
+
 if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['tipdoc']=='FAD' ) {
      echo "<tr>";
      echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[26]</td>\n";
@@ -1665,6 +1654,9 @@ if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['ti
     echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['units']."\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>\n";
     echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[55]</td>\n";
     echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['volume']."\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>\n";
+    echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['taxstamp']."<input type=\"text\" value=\"".$form['taxstamp']."\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" > ".$script_transl['virtual_taxstamp'];
+    $gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
+    echo "</td>";
     echo "</tr>";
 } else {
     echo "<input type=\"hidden\" value=\"".$form['imball']."\" name=\"imball\">\n";
@@ -1682,76 +1674,38 @@ if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['ti
     echo "<input type=\"hidden\" value=\"".$form['gross_weight']."\" name=\"gross_weight\">\n";
     echo "<input type=\"hidden\" value=\"".$form['units']."\" name=\"units\">\n";
     echo "<input type=\"hidden\" value=\"".$form['volume']."\" name=\"volume\">\n";
+    echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['taxstamp']."<input type=\"text\" value=\"".$form['taxstamp']."\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" > ".$script_transl['virtual_taxstamp'];
+    $gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
+    echo "</td>";
+    echo "</tr>";
+    echo "<tr>\n";
 }
 
 echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['taxstamp']."</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">% $script_transl[24] <input type=\"text\" name=\"sconto\" value=\"".$form["sconto"]."\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td>
+          <td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['stamp']."</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] ".$admin_aziend['symbol']."</td>\n";
-$somma_spese = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
-$last=count($decalc_castle);
-$acc_val=$somma_spese;
-
-$imp_iva_esente = 0.00;
-
-$epsilon = 0.000001;    // Massima differenza tra 2 float
-                        // http://www.php.net/manual/en/language.types.float.php
-                        // http://stackoverflow.com/questions/3148937/compare-floats-in-php
-
-foreach ($castle as $k=> $v) {
-      $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
-      if (isset($decalc_castle[$k])) {
-        $last--;
-        if ($last == 0) {
-           $v += $acc_val;
-           $totimpfat += $acc_val;
-        } else {
-           $decalc=round($somma_spese*$v/$totimp_decalc,2);
-           $v += $decalc;
-           $totimpfat += $decalc;
-           $acc_val-=$decalc;
-        }
-        echo "</tr>";
-      }
-      $ivacast = round($v*$vat['aliquo'])/100;
-      if (abs($ivacast) < $epsilon) {
-        $imp_iva_esente+= $v;
-      }
-      $totivafat += $ivacast;
-      if ($next_row > 0) {
-        echo "<tr><td align=\"right\">".gaz_format_number($v)."</td><td align=\"right\">".$vat['descri']." ".gaz_format_number($ivacast)."</td>\n";
-      }
+foreach ($calc->castle as $k=> $v) {
+        echo "<tr><td align=\"right\">".gaz_format_number($v['impcast'])."</td><td align=\"right\">".$v['descriz']." ".gaz_format_number($v['ivacast'])."</td>\n";
 }
 
 if ($next_row > 0) {
         if ($form['stamp'] > 0) {
-          $v_stamp = new Compute;
-          $stamp = $v_stamp->stampTax($totimpfat+$totivafat+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
+          $calc->payment_taxstamp($calc->total_imp+$calc->total_imp+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
+          $stamp=$calc->pay_taxstamp;  
         } else {
           $stamp = 0;
         }
-        if ($admin_aziend['virtual_taxstamp'] != 0 && (!isset($_POST['taxstamp']) || abs(floatval($form['taxstamp']))<$epsilon) && !isset($_GET['Update'])) {
-           //se la quota parte imponibile esente iva supera il valore massimo 'max_imp_iva_esente_bollo' viene aggiunto il costo della imposta di bollo
-           if ($imp_iva_esente > $admin_aziend['taxstamp_limit']) {
-              $form['taxstamp'] = $admin_aziend['taxstamp'];
-           }
-        }
-        echo "<td align=\"right\">";
-        echo $script_transl['virtual_taxstamp'];
-        $gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
-        echo " - ".$script_transl['taxstamp']." <input type=\"text\" value=\"".number_format($form['taxstamp'],2,'.','')."\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" style=\"text-align: right;\" >";
-        echo "<br />";
-        echo $script_transl['stamp']." <input type=\"text\" value=\"".gaz_format_number($stamp)."\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" disabled=\"disabled\" style=\"text-align: right;\" >";
-        echo "</td>";
         echo "<td align=\"right\">".gaz_format_number($totimp_body)."</td>
-              <td align=\"right\">".gaz_format_number(($totimp_body-$totimpfat+$somma_spese),2, '.', '')."</td>
-              <td align=\"right\">".gaz_format_number($totimpfat)."</td>
-              <td align=\"right\">".gaz_format_number($totivafat)."</td>
-              <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($totimpfat+$totivafat+$stamp)."</td>\n";
+              <td align=\"right\">".gaz_format_number(($totimp_body-$calc->total_imp+$somma_spese),2, '.', '')."</td>
+              <td align=\"right\">".gaz_format_number($calc->total_imp)."</td>
+              <td align=\"right\">".gaz_format_number($calc->total_vat)."</td>
+              <td align=\"right\">".gaz_format_number($stamp)."</td>
+              <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($calc->total_imp+$calc->total_vat+$stamp)."</td>\n";
         echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
         if ($rit > 0) {
             echo "<tr>";
@@ -1760,7 +1714,7 @@ if ($next_row > 0) {
             echo "</tr>\n";
             echo "<tr>";
             echo "<td colspan=\"7\" align=\"right\">".$script_transl['netpay']."</td>";
-            echo "<td align=\"right\">".gaz_format_number($totimpfat+$totivafat+$stamp-$rit)."</td>";
+            echo "<td align=\"right\">".gaz_format_number($calc->total_imp+$calc->total_vat+$stamp-$rit)."</td>";
             echo "</tr>\n";
         }
 }

@@ -27,7 +27,7 @@ $admin_aziend=checkAdmin();
 require("../../library/include/ciftolet.inc.php");
 require('../../library/tcpdf/tcpdf.php');
 
-$bolli = new Compute;
+$calc = new Compute;
 
 if (! isset($_GET['id_tes'])){
     header("Location: report_effett.php");
@@ -141,7 +141,8 @@ while ($effetto = gaz_dbi_fetch_array($result))
     break;
     //questo è il modulo delle cambiali tratte
     case "T":
-        $impbol = $bolli->stampTax($effetto['impeff'],$admin_aziend['perbol']);
+        $calc->payment_taxstamp($effetto['impeff'],$admin_aziend['perbol']);
+        $impbol = $calc->pay_taxstamp;
         $pdf->Image('cambiale-tratta.jpg',0,5+$passo*$numefftot,210);
         $pdf->SetXY(67,9+$numefftot*$passo);
         $pdf->SetFont('times','',14);
@@ -173,7 +174,8 @@ while ($effetto = gaz_dbi_fetch_array($result))
     break;
     //questo è il modulo delle cambiali tratte
     case "V":
-        $impbol = $bolli->stampTax($effetto['impeff'],$admin_aziend['perbol']);
+        $calc->payment_taxstamp($effetto['impeff'],$admin_aziend['perbol']);
+        $impbol = $calc->pay_taxstamp;
         $pdf->Image('mav.jpg',0,5+$passo*$numefftot,210);
         $pdf->SetXY(51,13+$numefftot*$passo);
         $pdf->SetFont('helvetica','B',7);

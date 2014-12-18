@@ -1382,6 +1382,111 @@ function changeEnterprise($new_co=1)
     gaz_dbi_put_row($gTables['admin'],'Login',$_SESSION['Login'],'enterprise_id',$new_co);
     $_SESSION['enterprise_id']=$new_co;
 }
+
+class Compute
+{
+    
+    function payment_taxstamp($value,$percent,$cents_ceil_round=5)
+    {
+        if ($cents_ceil_round==0) {
+            $cents_ceil_round=5;
+        }
+        $cents=100*$value*($percent/100+$percent*$percent/10000);
+        if ($cents_ceil_round<0) { // quando passo un arrotondamento negativo ritorno il valore di $percent
+           $this->pay_taxstamp=round($percent,2);
+        } else {
+           $this->pay_taxstamp=round(ceil($cents/$cents_ceil_round)*$cents_ceil_round/100,2);
+        }
+    }
+
+    function add_value_to_VAT_castle($vat_castle,$value=0,$vat_rate=0)
+    {
+        global $gTables;
+        $new_castle=array();    
+        $row=0;
+        $this->total_imp=0;
+        $this->total_vat=0;
+        $this->total_exc=0;
+        /* ho due metodi di calcolo del castelletto IVA:
+         * 1 - quando non ho l'aliquota IVA allora uso la ventilazione
+         * 2 - in presenza di aliquota IVA e quindi devo aggiungere al castelletto */
+        
+        if ($vat_rate==0){        // METODO VENTILAZIONE (per mantenere la retrocompatibilità)
+            $total_imp=0;
+            $decalc_imp=0;
+            foreach ($vat_castle as $k=>$v) { // attraverso dell'array per calcolare i totali
+                $total_imp += $v['impcast'];
+                $row++;
+            }
+            foreach ($vat_castle as $k=>$v) {   // riattraverso l'array del castelletto
+                                                // per aggiungere proporzionalmente (ventilazione)
+                $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
+                $row--; 
+                if ($row == 0) { // è l'ultimo rigo del castelletto
+                    // aggiungo il resto
+                    $new_imp = round($total_imp-$decalc_imp +($value*($total_imp-$decalc_imp)/$total_imp),2);
+                } else {
+                    $new_imp=round($v['impcast']+($value*$v['impcast']/$total_imp),2);
+                    $decalc_imp+=$v['impcast'];
+                }
+                $new_castle[$k]['impcast'] = $new_imp;
+                $this->total_imp+=$new_imp; // aggiungo all'accumulatore del totale
+                if ($vat['aliquo'] < 0.01){ // è senza IVA
+                    $this->total_exc+=$new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                }
+                $new_castle[$k]['ivacast'] = round(($new_imp*$vat['aliquo'])/ 100,2);
+                $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
+                $new_castle[$k]['descriz'] = $vat['descri'];
+            }
+        } else {  // METODO DELL'AGGIUNTA DIRETTA (nuovo)
+            $match=false;            
+            foreach ($vat_castle as $k=>$v) { // attraverso dell'array 
+                $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
+                if ($k==$vat_rate) { // SE è la stessa aliquota aggiungo il nuovo valore
+                    $match=true;
+                    $new_imp = $v['impcast']+$value;
+                    $new_castle[$k]['impcast'] = $new_imp;
+                    $new_castle[$k]['ivacast'] = round(($new_imp*$vat['aliquo'])/ 100,2);
+                    $new_castle[$k]['descriz'] = $vat['descri'];
+                } else { // è una aliquota che non interessa il valore che devo aggiungere 
+                    $new_castle[$k]['impcast'] = $v['impcast'];
+                    $new_castle[$k]['ivacast'] = round(($v['impcast']*$vat['aliquo'])/ 100,2);
+                    $new_castle[$k]['descriz'] = $vat['descri'];
+                }
+                if ($vat['aliquo'] < 0.01){ // è senza IVA
+                    $this->total_exc+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                }
+                $this->total_imp+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
+                $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
+            }
+            if (!$match) { // non ho trovato una aliquota uguale a quella del nuovo valore
+                $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$vat_rate);
+                $new_castle[$vat_rate]['impcast'] = $value;
+                $new_castle[$vat_rate]['ivacast'] = round(($value*$vat['aliquo'])/ 100,2);
+                $new_castle[$vat_rate]['descriz'] = $vat['descri'];
+                if ($vat['aliquo'] < 0.01){ // è senza IVA
+                    $this->total_exc+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                }
+                $this->total_imp+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale
+                $this->total_vat+=$new_castle[$vat_rate]['ivacast']; // aggiungo anche l'IVA al totale
+            }
+        }
+        $this->castle=$new_castle;
+    }
+
+    function compute_VAT_castle_totals($castle)
+    {
+        $this->total_imp=0;
+        $this->total_vat=0;
+        $this->row=0;
+        foreach ($castle as $k=>$v) { // attraverso dell'array per calcolare i totali
+            $this->total_imp += $v['impcast'];
+            $this->total_vat += $v['ivacast'];
+            $this->row++;
+        }
+    }
+}
+
 /* controllo se ho delle funzioni specifiche per il modulo corrente
      residente nella directory del module stesso, con queste caratteristiche:
      modules/nome_modulo/lib.function.php

@@ -210,8 +210,8 @@ function computeTot($data,$carry,$stamp_percent=false,$round=5)
    $tot=$vat+$tax;
    if ($stamp_percent) { // è stata passata la percentuale
           $v_stamp = new Compute;
-          $sta = $v_stamp->stampTax($tot+$carry,$stamp_percent,$round);
-          $tot+=$sta;
+          $v_stamp->payment_taxstamp($tot+$carry,$stamp_percent,$round);
+          $tot+=$v_stamp->pay_taxstamp;
    }
    return array('taxable'=>$tax,'vat'=>$vat,'stamp'=>$sta,'tot'=>$tot);
 }
