@@ -258,6 +258,7 @@ class DocContabVars
     function setTotal($no_used=0)
     {
         $calc = new Compute();
+		$this->tottraspo += $this->trasporto;
         $this->totivafat = 0.00;
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
