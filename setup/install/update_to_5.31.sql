@@ -15,4 +15,5 @@ ALTER TABLE `gaz_XXXtesbro` ADD `taxstamp` DECIMAL(5,2) NOT NULL AFTER `stamp`;
 ALTER TABLE `gaz_XXXtesdoc` ADD `virtual_taxstamp` TINYINT(1) NOT NULL AFTER `taxstamp`;
 ALTER TABLE `gaz_XXXtesbro` ADD `virtual_taxstamp` TINYINT(1) NOT NULL AFTER `taxstamp`;
 ALTER TABLE `gaz_XXXtesdoc` CHANGE `vat_susp` `expense_vat` INT(2) NOT NULL DEFAULT '0';
+ALTER TABLE `gaz_XXXtesbro` CHANGE `vat_susp` `expense_vat` INT(2) NOT NULL DEFAULT '0';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query seguenti su tutte le aziende dell'installazione)
