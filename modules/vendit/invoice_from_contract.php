@@ -115,6 +115,7 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
     $uts_this_month = mktime(0,0,0,$form['this_date_M'],$form['this_date_D'],$form['this_date_Y']);
     $form['this_date'] = strftime("%Y-%m-%d",$uts_this_month);
     $billable = getBillableContracts($form['this_date'],$form['vat_section']);
+    $calc= new venditCalc;
     if (isset($_POST['create']) && empty($msg)) {
        $first_protoc=0;
        $first_numdoc=0;
@@ -131,6 +132,7 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
                   $last_numdoc++;
               }
               //inserisco i dati della testata
+              $calc->contractCalc($k); // creo e calcolo il castelletto IVA e i totali del contratto
               $cntr = gaz_dbi_get_row($gTables['contract'],'id_contract',$k);
               $paym = gaz_dbi_get_row($gTables['pagame'],'codice',$cntr['payment_method']);
               if ($paym['tippag'] == 'B' ||
@@ -142,8 +144,8 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
               $stamp=0;
               $round_stamp = 0;
               $taxstamp=0;
-              if ($paym['tippag'] == 'R' ) { // i pagamenti di tipo R sarebbero da eliminare !?!?!
-                $taxstamp= $admin_aziend['taxstamp'];
+              if ($calc->total_exc > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] > 0 ) {
+                $taxstamp = $admin_aziend['taxstamp'];
               }
               if ($paym['tippag'] == 'T') {  //se il pagamento prevede il bollo
                 $stamp = $admin_aziend['perbol'];
@@ -154,7 +156,7 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
                                  'numdoc'=>$last['numdoc'],'numfat'=>$last['numfat'],
                                  'datfat'=>$form['this_date'],'clfoco'=>$cntr['id_customer'],
                                  'pagame'=>$cntr['payment_method'],'banapp'=>$cntr['bank'],
-                                 'speban'=>$speban,'stamp'=>$stamp,'round_stamp'=>$round_stamp,
+                                 'speban'=>$speban,'expense_vat'=>$admin_aziend['preeminent_vat'],'stamp'=>$stamp,'round_stamp'=>$round_stamp,
                                  'taxstamp'=>$taxstamp,'virtual_taxstamp'=>$admin_aziend['virtual_taxstamp'],
                                  'id_agente'=>$cntr['id_agente'],'id_contract'=>$k,'initra'=>$form['this_date'],
                                  'status'=>'GENERATO','template'=>'FatturaSemplice'

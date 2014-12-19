@@ -64,6 +64,27 @@ class selectAgente extends SelectBox
   }
 }
 
+class venditCalc extends Compute
+{
+  function contractCalc($id_contract)
+  {
+    //recupero il contratto da calcolare
+    global $gTables,$admin_aziend;
+    $this->contract_castle=array();
+    $contract = gaz_dbi_get_row($gTables['contract'],"id_contract",$id_contract);
+    $this->contract_castel[$contract['vat_code']]['impcast']=$contract['current_fee'];
+    
+    $result = gaz_dbi_dyn_query('*', $gTables['contract_row'], $gTables['contract_row'].'.id_contract ='.$id_contract, $gTables['contract_row'].'.id_row');
+    while ($row = gaz_dbi_fetch_array($result)) {
+        $r_val = CalcolaImportoRigo($row['quanti'], $row['price'],array($row['discount']));
+        if (!isset($this->contract_castel[$row['vat_code']])) {
+            $this->contract_castel[$row['vat_code']]['impcast']=0.00;
+        }
+        $this->contract_castel[$row['vat_code']]['impcast']+=$r_val;
+    }
+    $this->add_value_to_VAT_castle($this->contract_castel,444,$admin_aziend['taxstamp_vat']);
+  }    
+}
 
 
 ?>

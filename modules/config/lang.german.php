@@ -216,7 +216,7 @@ $strScript = array ("admin_aziend.php" =>
                            "Periodizität",
                            "Bankkonto",
                            "Note",
-                           array('C' => 'Simultaneous','D' => 'direkte Überweisung','B' => 'Bank recepit','R' => 'Empfang mit Umsatzabgabe','T' => 'Wechsel','V' => 'RID'),
+                           array('C' => 'Simultaneous','D' => 'direkte Überweisung','B' => 'Bank recepit','T' => 'Wechsel','V' => 'RID'),
                            array('S' => 'ja','N' => 'Nein'),
                            array('D'=>'Rechnungsdatum', 'G'=>'Fest tag','F'=>'Ende des Monats'),
                            array('Q' => 'vierzehntägig','M' => 'Monatlich','B' => 'zweimonatlich','T' => 'trimestrali','U' => 'vierteljährlich','S' => 'semestrali','A' => 'jährlich'),
