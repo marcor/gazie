@@ -35,6 +35,7 @@ class FatturaImmediata extends Template_con_scheda
         $this->mese = substr($this->tesdoc['datfat'],5,2);
         $this->anno = substr($this->tesdoc['datfat'],0,4);
         $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+        $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
         $this->taxstamp=$this->tesdoc['taxstamp'];
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
@@ -135,13 +136,23 @@ class FatturaImmediata extends Template_con_scheda
                 }
         }
         if ($this->taxstamp >= 0.01 ) {
-            $this->Cell(186,5,'','LR',1);
-            $this->Cell(150,8,'','L',0,0);
-            $this->Cell(36,8,"Bollo applicato","TLR",1,"C");
-            $this->Cell(150,8,'','L',0,0);
-            $this->Cell(36,8,"sull'originale","LR",1,"C");
-            $this->Cell(150,8,'','L',0,0);
-            $this->Cell(36,8,"€ ".gaz_format_number($this->taxstamp),'LR',1,'C');
+            if ($this->virtual_taxstamp == 2 ) {
+                $this->Cell(186,5,'','LR',1);
+                $this->Cell(130,8,'','L',0,0);
+                $this->Cell(56,8,"Bollo assolto ai sensi del","TLR",1,"C");
+                $this->Cell(130,8,'','L',0,0);
+                $this->Cell(56,8,"decreto MEF 17.06.2014 (art.6)","LR",1,"C");
+                $this->Cell(130,8,'','L',0,0);
+                $this->Cell(56,8," € ".gaz_format_number($this->taxstamp),'LR',1,'C');
+            } else {
+                $this->Cell(186,5,'','LR',1);
+                $this->Cell(150,8,'','L',0,0);
+                $this->Cell(36,8,"Bollo applicato","TLR",1,"C");
+                $this->Cell(150,8,'','L',0,0);
+                $this->Cell(36,8,"sull'originale","LR",1,"C");
+                $this->Cell(150,8,'','L',0,0);
+                $this->Cell(36,8,"€ ".gaz_format_number($this->taxstamp),'LR',1,'C');
+            }
         }
        
     }
