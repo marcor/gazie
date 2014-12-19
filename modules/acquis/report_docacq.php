@@ -65,14 +65,14 @@ $recordnav -> output();
 ?>
 <table class="Tlarge">
 <tr>
-<td colspan="2" class="FacetFieldCaptionTD">Protocollo:
-<input type="text" name="protoc" value="<?php if (isset($protocollo)) print $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+<td colspan="2" class="FacetFieldCaptionTD">
+<input type="text" placeholder="Cerca Prot." class="input-xs form-control" name="protoc" value="<?php if (isset($protocollo)) print $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 </td>
 <td>
-<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
 <td>
-<input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <tr>
@@ -116,24 +116,24 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     if ($a_row["protoc"] <> $ctrlprotoc)    {
         print "<tr>";
         if (! empty ($modifi)) {
-           print "<td class=\"FacetDataTD\"><a href=\"".$modifi."\">".$a_row["protoc"]."</td>";
+           print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["protoc"]."</td>";
         } else {
-           print "<td class=\"FacetDataTD\">".$a_row["protoc"]." &nbsp;</td>";
+           print "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default btn-edit disabled\">".$a_row["protoc"]." &nbsp;</button></td>";
         }
         print "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
         print "<td class=\"FacetDataTD\">".$a_row["numfat"]." &nbsp;</td>";
         print "<td class=\"FacetDataTD\">".$a_row["datfat"]." &nbsp;</td>";
         print "<td class=\"FacetDataTD\">".$a_row["ragso1"]."&nbsp;</td>";
         if ($a_row["id_con"] > 0) {
-           echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"../contab/admin_movcon.php?id_tes=".$a_row["id_con"]."&Update\">Cont. n.".$a_row["id_con"]."</a></td>";
+           echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=".$a_row["id_con"]."&Update\">Cont. n.".$a_row["id_con"]."</a></td>";
         } else {
-           echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"accounting_documents.php?type=A&last=".$a_row["protoc"]."\">Contabilizza</a></td>";
+           echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=".$a_row["protoc"]."\">Contabilizza</a></td>";
         }
-        print "<td class=\"FacetDataTD\"><a href=\"".$modulo."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+        print "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"".$modulo."\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
         if (($lt_doc[$y]==$a_row['protoc']) && ($a_row["id_con"]==0)) {
-           print "<td class=\"FacetDataTD\"><a href=\"delete_docacq.php?id_tes=".$a_row["id_tes"]."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+           print "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=".$a_row["id_tes"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
         } else {
-           print "<td class=\"FacetDataTD\"></td>";
+           print "<td class=\"FacetDataTD\"><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
         }
         print "</tr>\n";
     }

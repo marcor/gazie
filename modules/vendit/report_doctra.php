@@ -268,7 +268,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			// Colonna Stato
             echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"stampa la fattura differita n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\">Fat ".$r["numfat"]."</a>";
             if ($r["id_con"] > 0) {
-                echo ", <a class=\"btn btn-xs btn-default btn-registrazione\" title=\"visualizza la registrazione contabile della fattura differita\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont ".$r["id_con"]."</a>";
+                echo "&nbsp;<a class=\"btn btn-xs btn-default btn-registrazione\" title=\"visualizza la registrazione contabile della fattura differita\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont ".$r["id_con"]."</a>";
             }
             echo "</td>";
 
@@ -284,8 +284,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$urlPrintDoc.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
                 mail="'.$r["e_mail"].'" namedoc="DDT n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else {
-				echo '<button class="btn btn-xs btn-default btn-mail disabled"><i class="glyphicon glyphicon-envelope"></i></button>';
-			}
+					echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+				}
             echo "</td>";
 
 			// Colonna

@@ -81,19 +81,19 @@ while ($r = gaz_dbi_fetch_array($rs)) {
           $r2=gaz_dbi_fetch_array($rs2);
        }
        if (substr($r["codice"],3) == '000000') {
-           echo "<td class=\"FacetDataTD\"><a href=\"admin_piacon.php?Update&codice=".$r["codice"]."\" title=\"Modifica il mastro\" >".substr($r["codice"],0,3)."</a> </td>";
-           echo "<td class=\"FacetDataTD\">".substr($r["codice"],3)." </td><td class=\"FacetDataTDred\" colspan=\"5\" >".$r["descri"]." </td>";
-           echo "<td class=\"FacetDataTD\"><a href=\"delete_piacon.php?codice=".$r["codice"]."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+           echo "<td class=\"FacetData\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_piacon.php?Update&codice=".$r["codice"]."\" title=\"Modifica il mastro\" ><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],0,3)."</a> </td>";
+           echo "<td class=\"FacetData\">".substr($r["codice"],3)." </td><td class=\"FacetData\" style=\"color: #f00;\" colspan=\"5\" >".$r["descri"]." </td>";
+           echo "<td class=\"FacetData\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
            echo "</tr>\n";
        } else {
            echo "<td class=\"FacetDataTD\">".substr($r["codice"],0,3)." </td>";
-           echo "<td class=\"FacetDataTD\"><a href=\"admin_piacon.php?Update&codice=".$r["codice"]."\" title=\"Modifica il conto\">".substr($r["codice"],3)."</a> ";
+           echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_piacon.php?Update&codice=".$r["codice"]."\" title=\"Modifica il conto\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> ";
            echo "</td><td class=\"FacetDataTD\">".$r["descri"]." </td>";
            echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r2["dare"])." </td>";
            echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r2["avere"])." </td>";
            echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r2["dare"]-$r2["avere"])." </td>";
-           echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"select_partit.php?id=".$r["codice"]."\"><img src=\"../../library/images/vis.gif\" alt=\"Visualizza e stampa il partitario\" border=\"0\"><img src=\"../../library/images/stampa.gif\" alt=\"Visualizza e stampa il partitario\" border=\"0\"></a></td>";
-           echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_piacon.php?codice=".$r["codice"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+           echo "<td title=\"Visualizza e stampa il paritario\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"select_partit.php?id=".$r["codice"]."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
+           echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
            echo "</tr>\n";
        }
 }

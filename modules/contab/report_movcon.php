@@ -127,7 +127,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
        $title = "";
     }
     print "<tr>";
-    print "<td class=\"FacetDataTD\" align=\"right\"><a href=\"admin_movcon.php?id_tes=".$a_row["id_tes"]."&Update\" title=\"Modifica\">".$a_row["id_tes"]."</a> &nbsp</td>";
+    print "<td class=\"FacetDataTD\" align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_movcon.php?id_tes=".$a_row["id_tes"]."&Update\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id_tes"]."</a> &nbsp</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" title= \"$title\" align=\"center\">".$a_row["caucon"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" title= \"$title\">".$a_row["descri"]." &nbsp;</td>";
@@ -142,10 +142,10 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     print "<td class=\"FacetDataTD\" align=\"center\">";
     $docref=getDocRef($a_row);
     if (!empty($docref)){
-      echo "<a title=\"".$script_transl['sourcedoc']."\" href=\"$docref\"><img src=\"../../library/images/stampa.gif\" border=\"0\"></a>";
+      echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"".$script_transl['sourcedoc']."\" href=\"$docref\"><i class=\"glyphicon glyphicon-print\"></i></a>";
     }
     print "</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_movcon.php?id_tes=".$a_row["id_tes"]."\"><img src=\"../../library/images/x.gif\" title=\"".$script_transl['delete']."!\" border=\"0\"></a></td>";
+    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movcon.php?id_tes=".$a_row["id_tes"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     print "</tr>\n";
 }
 ?>
