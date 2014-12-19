@@ -60,14 +60,14 @@ if (!isset($_GET['field'])) {
 <table class="Tlarge">
 <tr>
 <td></td>
-<td class="FacetFieldCaptionTD">Ragione sociale:
-<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+<td class="FacetFieldCaptionTD">
+<input placeholder="Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 </td>
 <td>
-<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
 <td colspan="3">
-<input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <tr>
@@ -95,10 +95,16 @@ $recordnav -> output();
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\"><a href=\"admin_fornit.php?codice=".substr($a_row["codice"],3)."&Update\">".substr($a_row["codice"],3)."</a> &nbsp</td>";
+	 //colonna codice
+    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_fornit.php?codice=".substr($a_row["codice"],3)."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($a_row["codice"],3)."</a></td>";
     echo "<td class=\"FacetDataTD\" title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["sexper"]."</td>";
-    echo "<td class=\"FacetDataTD\" title=\"".$a_row["capspe"]." ".$a_row["indspe"]."\">".$a_row["citspe"]." (".$a_row["prospe"].")</td>";
+	 $google_string = str_replace(" ","+",$a_row["indspe"]).",".str_replace(" ","+",$a_row["capspe"]).",".str_replace(" ","+",$a_row["citspe"]).",".str_replace(" ","+",$a_row["prospe"]);
+		echo "<td class=\"FacetDataTD\" title=\"".$a_row["capspe"]." ".$a_row["indspe"]."\">";	
+		echo "<a class=\"btn btn-xs btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/place/".$google_string."\">".$a_row["citspe"]." (".$a_row["prospe"].")&nbsp;<i class=\"glyphicon glyphicon-eye-open\"></i></a>";
+		echo "</td>";
+    //echo "<td class=\"FacetDataTD\" title=\"".$a_row["capspe"]." ".$a_row["indspe"]."\">".$a_row["citspe"]." (".$a_row["prospe"].")</td>";
+
     $title = "";
     $telefono = "";
     if (!empty($a_row["telefo"])){
@@ -126,14 +132,18 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     } elseif($a_row['pariva'] == 0 and !empty($a_row['codfis'])) {
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['codfis']."</td>";
     } elseif($a_row['pariva'] > 0 and !empty($a_row['codfis'])) {
-        echo "<td class=\"FacetDataTDsmall\" align=\"center\">".$a_row['pariva']."<br>".$a_row['codfis']."</td>";
+		if ( $a_row['pariva'] == $a_row['codfis'] ) {
+			echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['pariva']."</td>";		
+		} else {
+			echo "<td class=\"FacetDataTDsmall\" align=\"center\">".$a_row['pariva']."<br>".$a_row['codfis']."</td>";
+		}
     } else {
         echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
     }
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_privacy.php?codice=".$a_row["codice"]."\"><img src=\"../../library/images/privacy.gif\" title=\"Stampa informativa sulla privacy a ".$a_row["ragso1"]."\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"salcon_debiti.php?codice=".$a_row["codice"]."\"><img src=\"../../library/images/pay.gif\" title=\"Effettua un pagamento a ".$a_row["ragso1"]."\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\"><a href=\"../contab/select_partit.php?id=".$a_row["codice"]."\"><center><img src=\"../../library/images/vis.gif\" title=\"Visualizza e stampa il partitario\" border=\"0\"><img src=\"../../library/images/stampa.gif\" alt=\"Visualizza e stampa il partitario\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\"><a href=\"delete_fornit.php?codice=".substr($a_row["codice"],3)."\"><center><img src=\"../../library/images/x.gif\" title=\"Cancella\" border=\"0\"></a></td>";
+    echo "<td title=\"stampa informativa sulla privacy\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+    echo "<td title=\"Effettua un pagamento a ".$a_row["ragso1"]."\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" href=\"salcon_debiti.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
+    echo "<td title=\"Visualizza e stampa il partitario\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
+    echo "<td title=\"Cancella\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_fornit.php?codice=".substr($a_row["codice"],3)."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>\n";
 }
 ?>

@@ -174,7 +174,7 @@ if ($ultimo_documento)
 else
     $ultimoddt = 1;
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesdoc'].".*,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail", $gTables['tesdoc']."
+$result = gaz_dbi_dyn_query($gTables['tesdoc'].".*,".$gTables['anagra'].".ragso1,".$gTables['clfoco'].".codice,".$gTables['anagra'].".e_mail", $gTables['tesdoc']."
                             LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice
                             LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra",
                             $where, $orderby,$limit, $passo);
@@ -209,8 +209,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
                 echo '<a onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$urlPrintDoc.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
                 mail="'.$r["e_mail"].'" namedoc="'.$r['tipdoc'].' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><img src="../../library/images/email.gif" alt="email" style="border:0" /></a>';
             } else {
-				echo '<button class="btn btn-xs btn-default btn-mail disabled"><i class="glyphicon glyphicon-envelope"></i></button>';
-			}
+					echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+				}
             echo "</td>";
 
             echo "<td class=\"FacetDataTD\" align=\"center\">";
