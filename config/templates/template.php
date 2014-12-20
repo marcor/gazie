@@ -69,7 +69,6 @@ class Template extends TCPDF
         $this->day = $docVars->day;
         $this->month = $docVars->month;
         $this->year = $docVars->year;
-        $this->tottraspo = 0.00;
     }
 
     function Header()

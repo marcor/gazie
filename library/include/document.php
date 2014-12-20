@@ -25,7 +25,7 @@
 
 class DocContabVars
 {
-    function setVars($gTables, $tesdoc, $testat, $tableName,$ecr=false)
+    function setData($gTables, $tesdoc, $testat, $tableName,$ecr=false)
     {
         $this->ecr=$ecr;
         $this->gTables = $gTables;
@@ -222,6 +222,7 @@ class DocContabVars
                  LEFT JOIN '.$this->gTables['aliiva'].' AS vat
                  ON rows.codvat=vat.codice';
         $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva',$from, "rows.id_tes = ".$this->testat,"id_tes DESC, id_rig");
+        $this->tottraspo += $this->trasporto;
         $this->riporto =0.00;
         $this->ritenuta=0.00;
         $results = array();
@@ -255,10 +256,9 @@ class DocContabVars
         return $results;
     }
 
-    function setTotal($no_used=0)
+    function setTotal()
     {
         $calc = new Compute();
-		$this->tottraspo += $this->trasporto;
         $this->totivafat = 0.00;
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
@@ -328,7 +328,7 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
        $ecr=false;
     }
     $docVars = new DocContabVars();
-    $docVars->setVars($gTables, $testata, $testata['id_tes'], $rows, $ecr);
+    $docVars->setData($gTables, $testata, $testata['id_tes'], $rows, $ecr);
     $docVars->initializeTotals();
     $pdf->setVars($docVars,$templateName);
     $pdf->setTesDoc();
@@ -404,7 +404,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest=false)
             }
             // Inizio pagina
             $testat = $tesdoc['id_tes'];
-            $docVars->setVars($gTables, $tesdoc, $testat, 'rigdoc');
+            $docVars->setData($gTables, $tesdoc, $testat, 'rigdoc');
             $docVars->initializeTotals();
             $pdf->setVars($docVars,$templateName);
             $pdf->setTesDoc();
@@ -420,7 +420,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest=false)
                $ctrlprotoc=$tesdoc['numdoc'];
             }
             $testat = $tesdoc['id_tes'];
-            $pdf->docVars->setVars($gTables, $tesdoc, $testat, 'rigdoc');
+            $pdf->docVars->setData($gTables, $tesdoc, $testat, 'rigdoc');
             $pdf->compose();
     }
     $pdf->pageFooter();
@@ -477,7 +477,7 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
                }
 
             $testat = $tesdoc['id_tes'];
-            $docVars->setVars($gTables, $tesdoc, $testat, 'rigdoc');
+            $docVars->setData($gTables, $tesdoc, $testat, 'rigdoc');
             $docVars->initializeTotals();
             $pdf->setVars($docVars);
             $pdf->setTesDoc();
@@ -491,7 +491,7 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
             $ctrlprotoc = $tesdoc['protoc'];
         }
         $testat = $tesdoc['id_tes'];
-        $pdf->docVars->setVars($gTables, $tesdoc, $testat, 'rigdoc');
+        $pdf->docVars->setData($gTables, $tesdoc, $testat, 'rigdoc');
         $pdf->compose();
     }
 	if ($n>1){ // è una stampa con molte fatture

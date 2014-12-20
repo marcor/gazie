@@ -76,7 +76,6 @@ class FatturaSemplice extends Template
     {
         $this->setTesDoc();
         $this->AliasNbPages();
-        $this->tottraspo += $this->trasporto;
         $dataddt = substr($this->tesdoc['datemi'],8,2).'-'.substr($this->tesdoc['datemi'],5,2).'-'.substr($this->tesdoc['datemi'],0,4);
         if ($this->tesdoc['tipdoc'] == 'FAD') {
             $this->SetFont('helvetica','B',9);
@@ -212,7 +211,7 @@ class FatturaSemplice extends Template
         foreach ($this->docVars->castel as $i => $value) {
             unset($this->docVars->castel[$i]);
         }
-
+        $this->tottraspo = $this->docVars->tottraspo;
         $totimpmer = $this->docVars->totimpmer;
         $speseincasso = $this->docVars->speseincasso;
         $totimpfat = $this->docVars->totimpfat;
