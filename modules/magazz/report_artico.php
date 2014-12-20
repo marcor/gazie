@@ -113,18 +113,36 @@ while ($r = gaz_dbi_fetch_array($result)) {
        $lastdoc=getLastDoc($r["codice"]);
        $mv=$gForm->getStockValue(false,$r['codice']); 
        $magval=array_pop($mv);
+		 
+		 $image_src = "";
+		 
 		if(!isset($_GET['all']) and (!empty($r["image"]) or (file_exists("../../data/files/fotoart/".$r["codice"].".gif" )))){
 			if ( !empty( $r["image"] ) ) {
-				$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
+				$image_src = "../root/view.php?table=artico&value=".$r['codice'];
+				$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<img src='".$image_src."'>] fade=[on] fadespeed=[0.03] \"";
 			} else {
-				$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$r["codice"].".gif'>] fade=[on] fadespeed=[0.03] \"";
+				$image_src = "../../data/files/fotoart/".$r["codice"].".gif";
+				$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<img width='50%' height='50%' src='".$image_src."'>] fade=[on] fadespeed=[0.03] \"";
 			}
        } else {
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."]  fade=[on] fadespeed=[0.03] \"";
        }
        $iva = gaz_dbi_get_row($gTables['aliiva'],"codice",$r["aliiva"]);
        echo "<tr>";
-       echo "<td class=\"FacetDataTD\" $boxover><a href=\"admin_artico.php?codice=".$r["codice"]."&Update\">".$r["codice"]."</a> </td>";
+       ?>
+			<td class="FacetDataTD">
+				<a class="btn btn-block btn-default" href="admin_artico.php?codice="<?php echo $r["codice"]; ?>"&Update\">
+				<div>
+					<div style="float:left;vertical-align: middle;">
+						<img border="1px" height="22" src="<?php echo $image_src;?>" />
+					</div>
+					<div style="text-align:right;">
+						<?php echo $r["codice"]; ?>
+					</div>
+				</div>
+				</a>
+			</td>
+		 <?php
        echo "<td class=\"FacetDataTD\" $boxover>".$r["descri"]." </td>";
        echo "<td class=\"FacetDataTD\" align=\"center\" title=\"\">";
        if ($lastdoc){

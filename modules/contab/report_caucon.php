@@ -47,12 +47,12 @@ $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['caucon'], $where, $orderby);
 while ($row = gaz_dbi_fetch_array($result)) {
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\"><a href=\"admin_caucon.php?codice=".$row["codice"]."&Update\">".$row["codice"]."</a> &nbsp</td>";
+    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_caucon.php?codice=".$row["codice"]."&Update\"><i class=\"glyphicon glyphicon-folder-open\"></i>&nbsp;&nbsp;".$row["codice"]."</a> &nbsp</td>";
     echo "<td class=\"FacetDataTD\">".$row["descri"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['regiva_value'][$row["regiva"]]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['operat_value'][$row["operat"]]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['pay_schedule_value'][$row["pay_schedule"]]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_caucon.php?codice=".$row["codice"]."\"><img src=\"../../library/images/x.gif\" alt=\"".$script_transl['delete']."\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_caucon.php?codice=".$row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }
 ?>
