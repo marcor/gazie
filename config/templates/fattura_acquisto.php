@@ -49,6 +49,7 @@ class FatturaAcquisto extends Template
             $descri='** documento sconosciuto **';
         }
         $this->tipdoc=$descri.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+		
     }
 
     function newPage() {
@@ -149,8 +150,7 @@ class FatturaAcquisto extends Template
         $this->Cell(18,4,'Imponibile','LR',0,'C',1);
         $this->Cell(32,4,'Aliquota','LR',0,'C',1);
         $this->Cell(18,4,'Imposta','LR',1,'C',1);
-        $totTrasporto = $this->tottraspo;
-        $this->docVars->setTotal($totTrasporto);
+        $this->docVars->setTotal();
         foreach ($this->docVars->cast as $key => $value) {
             $this->Cell(62);
             $this->Cell(18, 4, gaz_format_number($value['impcast']).' ','LR', 0, 'R');
@@ -161,8 +161,7 @@ class FatturaAcquisto extends Template
         foreach ($this->docVars->castel as $i => $value) {
             unset($this->docVars->castel[$i]);
         }
-        //azzero il trasporto
-        $this->tottraspo = 0.00;
+
 
         $totimpmer = $this->docVars->totimpmer;
         $speseincasso = $this->docVars->speseincasso;
@@ -171,12 +170,8 @@ class FatturaAcquisto extends Template
         $vettor = $this->docVars->vettor;
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
-        if ($impbol > 0) {
-            $this->Cell(62);
-            $this->Cell(18, 4, gaz_format_number($impbol).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $this->docVars->iva_bollo['descri'], 'LR', 0, 'C');
-            $this->Cell(18, 4,gaz_format_number($this->docVars->iva_bollo['aliquo']*$impbol).' ',0,1,'R');
-        }
+        $taxstamp = $this->docVars->taxstamp;
+
         //effettuo il calcolo degli importi delle scadenze
         $totpag = $totimpfat + $impbol + $totriport + $totivafat;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);
@@ -220,8 +215,8 @@ class FatturaAcquisto extends Template
         } else {
            $this->Cell(24, 6,'','LBR');
         }
-        if ($totTrasporto > 0) {
-           $this->Cell(26, 6, gaz_format_number($totTrasporto),'LBR',0,'C');
+        if ($this->trasporto > 0) {
+           $this->Cell(26, 6, gaz_format_number($this->trasporto),'LBR',0,'C');
         } else {
            $this->Cell(26, 6,'','LBR');
         }

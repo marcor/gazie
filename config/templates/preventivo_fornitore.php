@@ -141,19 +141,13 @@ class PreventivoFornitore extends Template
         $this->Cell(25,4, 'Imponibile','LR',0,'C',1);
         $this->Cell(18,4, 'Aliquota','LR',0,'C',1);
         $this->Cell(25,4, 'Imposta','LR',1,'C',1);
-        $this->docVars->setTotal($this->tesdoc['traspo']);
+        $this->docVars->setTotal();
         $totimpmer = $this->docVars->totimpmer;
         $speseincasso = $this->docVars->speseincasso;
         $totimpfat = $this->docVars->totimpfat;
         $totivafat = $this->docVars->totivafat;
         $vettor = $this->docVars->vettor;
         $impbol = $this->docVars->impbol;
-        if ($impbol > 0) {
-            $this->Cell(62);
-            $this->Cell(18, 4, gaz_format_number($impbol).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $this->docVars->iva_bollo['descri'], 'LR', 0, 'C');
-            $this->Cell(18, 4,gaz_format_number($this->docVars->iva_bollo['aliquo']*$impbol).' ',0,1,'R');
-        }
 
         //stampo i totali
         $this->SetY(210);

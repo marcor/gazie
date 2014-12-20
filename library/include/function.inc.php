@@ -1411,7 +1411,8 @@ class Compute
          * 1 - quando non ho l'aliquota IVA allora uso la ventilazione
          * 2 - in presenza di aliquota IVA e quindi devo aggiungere al castelletto */
         
-        if ($vat_rate==0){        // METODO VENTILAZIONE (per mantenere la retrocompatibilità)
+        if ($value==0){
+		} elseif ($vat_rate==0){        // METODO VENTILAZIONE (per mantenere la retrocompatibilità)
             $total_imp=0;
             $decalc_imp=0;
             foreach ($vat_castle as $k=>$v) { // attraverso dell'array per calcolare i totali

@@ -91,7 +91,7 @@ $headers_tesdoc = array  (
               "Tipo" => "tipdoc",
               "Numero" => "numdoc",
               "Data" => "datemi",
-              "Cliente" => "clfoco",
+              "Fornitore" => "clfoco",
               "Status" => "",
               "Stampa" => "",
               "Mail" => "",
@@ -138,7 +138,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$fornitore["e_mail"].'"
         mail="'.$fornitore["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
     } else {
-		echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+		echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="admin_fornit.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	 }		  
     echo "</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_broacq.php?id_tes=".$r['id_tes']."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
