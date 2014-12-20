@@ -31,6 +31,7 @@ $msg = '';
 function getDocumentsBill($upd=false)
 {
     global $gTables,$admin_aziend;
+    $calc = new Compute;
     $from =  $gTables['tesdoc'].' AS tesdoc
              LEFT JOIN '.$gTables['pagame'].' AS pay
              ON tesdoc.pagame=pay.codice
@@ -51,26 +52,24 @@ function getDocumentsBill($upd=false)
            //il numero di protocollo contiene anche l'anno nei primi 4 numeri
            $year_prot=intval(substr($tes['datfat'],0,4))*1000000+$tes['protoc'];
            if ($year_prot <> $ctrlp) { // la prima testata della fattura
+                if ($ctrlp>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+					$calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$doc[$ctrlp]['tes']['taxstamp'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+					$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
+					$doc[$ctrlp]['vat']=$calc->castle;
+					// aggiungo il castelleto conti
+					if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
+						$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] = 0;
+					}
+					$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp;
+                }    
                 $carry=0;
                 $somma_spese=0;
                 $cast_vat=array();
                 $totimp_decalc=0.00;
                 $n_vat_decalc=0;
                 $totimpdoc=0;
-                $spese_incasso=0;
+                $spese_incasso=$tes['numrat']*$tes['speban'];
                 $rit=0;
-                if (($tes['tippag'] == 'B' ||
-                    $tes['tippag'] == 'T' ||
-                    $tes['tippag'] == 'V') && $tes['addebitospese'] == 'S' ) {
-                    $spese_incasso=$tes['numrat']*$tes['speban'] ;
-                } elseif ($tes['tippag'] == 'R') { // il pagamento prevede una imposta di bollo fissa
-                    if (!isset($cast_vat[$admin_aziend['taxstamp_vat']]['import'])) {
-                        $cast_vat[$admin_aziend['taxstamp_vat']]['periva'] = 0;
-                        $cast_vat[$admin_aziend['taxstamp_vat']]['import'] = $tes['stamp'];
-                    } else {
-                        $cast_vat[$admin_aziend['taxstamp_vat']]['import'] += $tes['stamp'];
-                    }
-                }
            } else {
                 $spese_incasso=0;
            }
@@ -88,15 +87,14 @@ function getDocumentsBill($upd=false)
                  }
                  //creo il castelletto IVA
                  if (!isset($cast_vat[$r['codvat']]['import'])) {
+                    $cast_vat[$r['codvat']]['impcast']=0;
+                    $cast_vat[$r['codvat']]['ivacast']=round(($importo*$r['pervat'])/ 100,2);;
                     $cast_vat[$r['codvat']]['import']=0;
                     $cast_vat[$r['codvat']]['periva']=$r['pervat'];
                     $cast_vat[$r['codvat']]['tipiva']=$r['tipiva'];
                  }
+                 $cast_vat[$r['codvat']]['impcast']+=$importo;
                  $cast_vat[$r['codvat']]['import']+=$importo;
-                 if ($r['tipiva']!='C' && $r['tipiva']!='S' ) {
-                     $totimp_decalc += $importo;
-                     $n_vat_decalc++;
-                 }
                  $totimpdoc += $importo;
                  $rit+=round($importo*$r['ritenuta']/100,2);
               } elseif($r['tiprig'] == 3) {
@@ -107,33 +105,20 @@ function getDocumentsBill($upd=false)
            $doc[$year_prot]['car']=$carry;
            $doc[$year_prot]['rit']=$rit;
            $ctrlp=$year_prot;
-           // aggiungo i valori della testata al castelletto IVA
-           $new_cast_vat=array();
-           $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'];
-           $last=count($cast_vat);
-           $acc_val=$somma_spese;
-           foreach ($cast_vat as $k=> $v) {
-                   if ($v['tipiva']!='C' && $v['tipiva']!='S' ) {
-                      if ($last == 1) {
-                         $v['import'] += $acc_val;
-                         $totimpdoc += $acc_val;
-                      } else {
-                         $decalc=round($somma_spese*$v['import']/$totimp_decalc,2);
-                         $v['import'] += $decalc;
-                         $totimpdoc += $decalc;
-                         $acc_val-=$decalc;
-                      }
-                      $last--;
-                   }
-                   $new_cast_vat[$k]['import']=$v['import'];
-                   $new_cast_vat[$k]['periva']=$v['periva'];
-                   $new_cast_vat[$k]['tipiva']=$v['tipiva'];
-           }
-           $doc[$year_prot]['vat']=$new_cast_vat;
-           // fine aggiunta spese non documentate al castelletto IVA
-           if ($upd) {
-            gaz_dbi_query ("UPDATE ".$gTables['tesdoc']." SET geneff = 'S' WHERE id_tes = ".$tes['id_tes'].";");
-           }
+           $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'] ;
+           $calc->add_value_to_VAT_castle($cast_vat,$somma_spese,$tes['expense_vat']);
+           $doc[$ctrlp]['vat']=$calc->castle;
+    }
+    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 ) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+        $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$doc[$ctrlp]['tes']['taxstamp'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+        // aggiungo al castelletto IVA
+		$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
+        $doc[$ctrlp]['vat']=$calc->castle;
+        // aggiungo il castelleto conti
+        if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
+           $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] = 0;
+        }
+        $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp;
     }
     return $doc;
 }
@@ -159,24 +144,15 @@ function getReceiptNumber($date)
     return $first;
 }
 
-function computeTot($data,$carry,$stamp_percent=false,$round=5)
+function computeTot($data)
 {
-   $vat=0;
-   $tax=0;
-   $sta=0;
-   foreach($data as $k=>$v) {
-          $tax += $v['import'];
-          $vat += round($v['import']*$v['periva'])/ 100;
-   }
-   $tot=$vat+$tax;
-   if ($stamp_percent) { // è stata passata la percentuale
-          $v_stamp = new Compute;
-          $v_stamp->payment_taxstamp($tot+$carry,$stamp_percent,$round);
-          $tot+=$v_stamp->pay_taxstamp;
-   } else {
-          $tot+=$carry;
-   }
-   return array('taxable'=>$tax,'vat'=>$vat,'stamp'=>$sta,'tot'=>$tot);
+	$tax=0;$vat=0;
+	foreach($data as $k=>$v) {
+          $tax += $v['impcast'];
+          $vat += round($v['impcast']*$v['periva'])/ 100;
+	}
+	$tot=$vat+$tax;
+	return array('taxable'=>$tax,'vat'=>$vat,'tot'=>$tot);
 }
 
 
@@ -273,6 +249,7 @@ if (isset($_POST['preview'])) {
          <th class=\"FacetFieldCaptionTD\">".$script_transl['tot']."</th>\n";
    $ctrl_date='';
    $tot_type=array('B'=>0,'T'=>0,'V'=>0);
+
    foreach($rs as $k=>$v) {
          if($ctrl_date <> substr($v['tes']['datfat'],0,4)) {
             $n=getReceiptNumber($v['tes']['datfat']);
@@ -280,12 +257,8 @@ if (isset($_POST['preview'])) {
          // calcolo i totali
          $stamp=false;
          $round=0;
-         if($v['tes']['tippag']=='T') {
-            $stamp=$v['tes']['stamp'];
-            $round=$v['tes']['numrat']*$v['tes']['round_stamp'];
-         }
-         $tot=computeTot($v['vat'],$v['car']-$v['rit'],$stamp,$round);
-         //fine calcolo totali
+         $tot=computeTot($v['vat']);
+		 //fine calcolo totali
          echo "<tr class=\"FacetDataTD\">
                <td align=\"center\">".gaz_format_date($v['tes']['datfat'])."</td>
                <td align=\"center\">".$v['tes']['protoc'].'/'.$v['tes']['seziva']."</td>
