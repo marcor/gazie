@@ -1474,22 +1474,18 @@ foreach ($calc->castle as $k=> $v) {
 
 if ($next_row > 0) {
         if ($form['stamp'] > 0) {
-          $calc->payment_taxstamp($calc->total_imp+$calc->total_imp+$carry-$rit,$form['stamp'],$form['round_stamp']*$form['numrat']);
+          $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$form['taxstamp'],$form['stamp'],$form['round_stamp']*$form['numrat']);
           $stamp=$calc->pay_taxstamp;  
         } else {
           $stamp = 0;
         }
         echo "<td align=\"right\">".gaz_format_number($totimp_body)."</td>
               <td align=\"right\">".gaz_format_number(($totimp_body-$totimpfat+$somma_spese),2, '.', '')."</td>
-              <td align=\"right\">".gaz_format_number($totimpfat)."</td>
-              <td align=\"right\">".gaz_format_number($totivafat)."</td>
+              <td align=\"right\">".gaz_format_number($calc->total_imp)."</td>
+              <td align=\"right\">".gaz_format_number($calc->total_vat)."</td>
               <td align=\"right\">".gaz_format_number($stamp)."</td>
               <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($totimpfat+$totivafat+$stamp)."</td>\n";
-        if ($toDo == 'update') {
-           echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !"></td></tr>';
-        } else {
-           echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !"></td></tr>';
-        }
+		echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
         if ($rit > 0) {
             echo "<tr>";
             echo "<td colspan=\"7\" align=\"right\">".$script_transl['ritenuta']."</td>";
@@ -1497,7 +1493,7 @@ if ($next_row > 0) {
             echo "</tr>\n";
             echo "<tr>";
             echo "<td colspan=\"7\" align=\"right\">".$script_transl['netpay']."</td>";
-            echo "<td align=\"right\">".gaz_format_number($totimpfat+$totivafat+$stamp-$rit)."</td>";
+            echo "<td align=\"right\">".gaz_format_number($totimpfat+$totivafat+$stamp-$rit+$form['taxstamp'])."</td>";
             echo "</tr>\n";
         }
 }

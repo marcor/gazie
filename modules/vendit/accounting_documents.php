@@ -83,7 +83,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
     while ($tes = gaz_dbi_fetch_array($result)) {
            if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
                 if ($ctrlp>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-					$calc->payment_taxstamp($calc->total_imp+$doc[$ctrlp]['rit']+$calc->total_vat-$doc[$ctrlp]['rit'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+					$calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$doc[$ctrlp]['tes']['taxstamp'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
 					$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
 					$doc[$ctrlp]['vat']=$calc->castle;
 					// aggiungo il castelleto conti
@@ -167,7 +167,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
            $ctrlp=$tes['protoc'];
     }
     if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 ) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-        $calc->payment_taxstamp($calc->total_imp+$doc[$ctrlp]['rit']+$calc->total_vat-$doc[$ctrlp]['rit'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+        $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$doc[$ctrlp]['tes']['taxstamp'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
 		$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
         $doc[$ctrlp]['vat']=$calc->castle;

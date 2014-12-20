@@ -197,8 +197,9 @@ class FatturaImmediata extends Template_con_scheda
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
+		$taxstamp=$this->docVars->taxstamp;
         //effettuo il calcolo degli importi delle scadenze
-        $totpag = $totimpfat+$impbol+$totriport+$totivafat-$ritenuta;
+        $totpag = $totimpfat+$impbol+$totriport+$totivafat-$ritenuta+$taxstamp;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);
         if ($ratpag){
            //allungo l'array fino alla 4^ scadenza
@@ -289,7 +290,7 @@ class FatturaImmediata extends Template_con_scheda
 
         $this->SetY(214);
         $this->Cell(130);
-        $totale = $totimpfat + $totivafat + $impbol;
+        $totale = $totimpfat + $totivafat + $impbol+ $taxstamp;
         if ($this->tesdoc['id_tes'] > 0) {
            if ($ritenuta>0) {
                $this->SetFont('helvetica','B',11);
