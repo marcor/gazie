@@ -131,7 +131,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
        echo "<tr>";
        ?>
 			<td class="FacetDataTD">
-				<a class="btn btn-block btn-default" href="admin_artico.php?codice="<?php echo $r["codice"]; ?>"&Update\">
+				<a class="btn btn-block btn-default" href="admin_artico.php?codice=<?php echo $r["codice"]; ?>&Update">
 				<div>
 					<div style="float:left;vertical-align: middle;">
 						<img border="1px" height="22" src="<?php echo $image_src;?>" />
