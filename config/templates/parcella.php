@@ -178,15 +178,10 @@ class Parcella extends Template
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
-        if ($impbol > 0) {
-            $this->Cell(62);
-            $this->Cell(18, 4, gaz_format_number($impbol).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $this->docVars->iva_bollo['descri'], 'LR', 0, 'C');
-            $this->Cell(18, 4,gaz_format_number($this->docVars->iva_bollo['aliquo']*$impbol).' ',0,1,'R');
-        }
-
+		$taxstamp=$this->docVars->taxstamp;
+ 
         //effettuo il calcolo degli importi delle scadenze
-        $totpag = $totimpfat+$impbol+$totriport+$totivafat-$ritenuta;
+        $totpag = $totimpfat+$impbol+$totriport+$totivafat-$ritenuta+$taxstamp;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);
         if ($ratpag){
            //allungo l'array fino alla 4^ scadenza

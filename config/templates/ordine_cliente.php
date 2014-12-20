@@ -144,12 +144,7 @@ class OrdineCliente extends Template
         $totivafat = $this->docVars->totivafat;
         $vettor = $this->docVars->vettor;
         $impbol = $this->docVars->impbol;
-        if ($impbol > 0) {
-            $this->Cell(62);
-            $this->Cell(18, 4, gaz_format_number($impbol).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $this->docVars->iva_bollo['descri'], 'LR', 0, 'C');
-            $this->Cell(18, 4,gaz_format_number($this->docVars->iva_bollo['aliquo']*$impbol).' ',0,1,'R');
-        }
+		$taxstamp=$this->docVars->taxstamp;
         //stampo i totali
         $this->SetY(200);
         $this->SetFont('helvetica','',9);
@@ -171,7 +166,7 @@ class OrdineCliente extends Template
         $this->SetY(218);
         $this->Cell(130);
         $this->SetFont('helvetica','B',18);
-        $this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol), 1, 1, 'C');
+        $this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol+$taxstamp), 1, 1, 'C');
         $this->SetY(224);
         $this->SetFont('helvetica','',9);
         $this->Cell(62, 6,'Spedizione',1,1,'C',1);
