@@ -38,7 +38,8 @@ $transl['vendit'] = array('name' => "Ventas",
                                          7 =>array("Administracion de Clientes","Clientes"),
                                          8 =>array("Administracion de Agentes de Venta","Agentes"),
                                          9 =>array("Estadisticas de Venta","Estadisticas"),
-                                         10=>array("Contratos","Contratos")
+                                         10=>array("Contratos","Contratos"),
+                                         11=>array("Las partidas abiertas horario","Partidas abiertas ")
                                         ),
                           'm3' => array( 1 =>array("Emitir Recibos Fiscal","Emitir Recibos"),
                                          2 =>array("Emitir Factura de Venta","Emitir Factura"),
@@ -69,7 +70,9 @@ $transl['vendit'] = array('name' => "Ventas",
                                          27=>array("Emitir nueva Cuenta","Emitir Cuenta"),
                                          28=>array("Importación desde el sitio web","importaci&oacute;n desde el web"),
                                          29=>array("Crear archivo MAV estandar CBI","Crear archivo MAV"),
-                                         30=>array("Informe de la factura electrónica", "informe de Factura Electrónica")
+                                         30=>array("Informe de la factura electrónica", "informe de Factura Electrónica"),
+                                         31=>array("Reporte de partidas abiertas","Reporte de partidas abiertas ")
+
                                        )
                           );
 ?>

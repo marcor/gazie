@@ -33,7 +33,8 @@ $transl['vendit'] = array('name' => "Sales",
                                          7 =>array("Customers management","Customers"),
                                          8 =>array("Managements of Sales Agents","Agents"),
                                          9 =>array("Sales Statistic","Statistics"),
-                                         10=>array("Contracts","Contracts")
+                                         10=>array("Contracts","Contracts"),
+                                         11=>array("Open items schedule","Schedule")
                                         ),
                           'm3' => array( 1 =>array("Issue Fiscal Receipts","Issue Receipts"),
                                          2 =>array("Issue Sales Invoice","Issue Invoice"),
@@ -64,7 +65,8 @@ $transl['vendit'] = array('name' => "Sales",
                                          27=>array("Issue new Bill","Issue Bill"),
                                          28=>array("Import order from WEB","Import WEB Order"),
                                          29=>array("Create file RiBa standard CBI","Create file MAV"),
-                                         30=>array("Electronic invoice report","Electronic invoice report")
+                                         30=>array("Electronic invoice report","Electronic invoice report"),
+                                         31=>array("Select & print open items schedule","Open items report")
                                        )
                           );
 ?>
