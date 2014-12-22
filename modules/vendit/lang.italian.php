@@ -749,6 +749,16 @@ $strScript = array ("admin_client.php" =>
                                             'Cliente' =>'','Fattura'=>'','Appoggio'=>''
                                            )
                            ),
+                    "report_schedule.php" =>
+                    array( 'title'=>'Lista dei movimenti delle partite',
+                           'header'=>array( 'ID'=>'id',
+                                            'Identificativo partita' => "id_tesdoc_ref",
+                                            'Movimento documento (apertura)' => "id_rigmoc_doc",
+                                            'Movimento pagamento (chiusura)' => "id_rigmoc_pay",
+                                            'Importo' => "amount",
+                                            'Scadenza' => "expiry"
+                                            ),
+                           ),
                     "select_schedule.php" =>
                     array( 'title'=>'Selezione per la visualizzazzione e/o la stampa delle partite aperte',
                            'mesg'=>array('La ricerca non ha dato risultati!',

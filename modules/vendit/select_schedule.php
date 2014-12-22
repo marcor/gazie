@@ -26,52 +26,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = "";
 
-
-function getMovements($account,$ob=0)
-    {
-        global $gTables;
-        switch ($ob) {
-              case 1:
-                $orderby = "expiry DESC, codice, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
-              break;
-              case 2:
-                $orderby = "ragso1, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
-              break;
-              case 3:
-                $orderby = "ragso1 DESC, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
-              break;
-              default:
-                $orderby = "expiry, codice, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
-        }
-        $select = "*, ".$gTables['tesmov'].".*, ".$gTables['clfoco'].".descri AS ragsoc";
-        if ($account==0 ) {
-            $where = " 1";
-        } else {
-            $where = $gTables['clfoco'].".codice = ".$account;
-        }
-        $table = $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig )"
-                ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes "
-                ."LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon "
-                ."LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra ";
-
-        $m=array();
-        $rs=gaz_dbi_dyn_query ($select, $table, $where, $orderby);
-        while ($r = gaz_dbi_fetch_array($rs)) {
-            $m[] = $r;
-        }
-        return $m;
-}
-
-function getStatus($id_tesdoc_ref)
-    {
-        global $gTables;
-        $sqlquery= "SELECT SUM(amount*(id_rigmoc_doc>0)- amount*(id_rigmoc_pay>0)) AS diff_paydoc, SUM(amount*(id_rigmoc_pay>0)) AS pay, SUM(amount*(id_rigmoc_doc>0))AS doc 
-            FROM ".$gTables['paymov']."
-            WHERE id_tesdoc_ref = '".$id_tesdoc_ref."' GROUP BY id_tesdoc_ref";
-        $rs = gaz_dbi_query($sqlquery);
-        return gaz_dbi_fetch_array($rs);
-    }
-
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -148,9 +102,10 @@ echo "\t </tr>\n";
 echo "</table>\n";
 
 if (isset($_POST['preview'])) {
-  $m = getMovements($form['account'],$form['orderby']);
+  $scdl = new Schedule;
+  $m = $scdl->getScheduleEntries($form['orderby']);
   echo "<table class=\"Tlarge\">";
-  if (sizeof($m) > 0) {
+  if (sizeof($scdl->Entries) > 0) {
         $ctrl_partner=0;
         $ctrl_id_tes=0;
         $ctrl_paymov=0;
@@ -158,7 +113,7 @@ if (isset($_POST['preview'])) {
         $linkHeaders = new linkHeaders($script_transl['header']);
         $linkHeaders -> output();
         echo "</tr>";
-        while (list($key, $mv) = each($m)) {
+        while (list($key, $mv) = each($scdl->Entries)) {
             $class_partner='';
             $class_paymov='';
             $class_id_tes='';
@@ -180,8 +135,8 @@ if (isset($_POST['preview'])) {
             }
             if ($mv["id_tesdoc_ref"]<>$ctrl_paymov){
                 $paymov=$mv["id_tesdoc_ref"];
-                $status_pay=getStatus($paymov);
-                if($status_pay['diff_paydoc']<>0){
+                $scdl->getStatus($paymov);
+                if($scdl->Status['diff_paydoc']<>0){
                     $class_paymov='FacetDataTDevidenziaOK';
                     $status_descr=$script_transl['status_value'][1];
                 } else {
