@@ -9,7 +9,7 @@ ALTER TABLE `gaz_aziend` CHANGE `alliva` `preeminent_vat` INT(2) NOT NULL DEFAUL
 ALTER TABLE `gaz_aziend` DROP `iva_susp`;
 ALTER TABLE `gaz_aziend` CHANGE `ricbol` `taxstamp` DECIMAL(5,2) NOT NULL;
 ALTER TABLE `gaz_aziend` CHANGE `ivabol` `taxstamp_vat` INT(2) NOT NULL DEFAULT '0';
-INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '2', 'report_schedule.php', '', '', '11', '', '8'  FROM `gaz_menu_module`;
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '2', 'report_schedule.php', '', '', '11', '', '11'  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_schedule.php', '', '', '31', '', '3'  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesdoc` ADD `taxstamp` DECIMAL(5,2) NOT NULL AFTER `stamp`;
@@ -18,4 +18,5 @@ ALTER TABLE `gaz_XXXtesdoc` ADD `virtual_taxstamp` TINYINT(1) NOT NULL AFTER `ta
 ALTER TABLE `gaz_XXXtesbro` ADD `virtual_taxstamp` TINYINT(1) NOT NULL AFTER `taxstamp`;
 ALTER TABLE `gaz_XXXtesdoc` CHANGE `vat_susp` `expense_vat` INT(2) NOT NULL DEFAULT '0';
 ALTER TABLE `gaz_XXXtesbro` CHANGE `vat_susp` `expense_vat` INT(2) NOT NULL DEFAULT '0';
+TRUNCATE `gaz_XXXpaymov`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query seguenti su tutte le aziende dell'installazione)
