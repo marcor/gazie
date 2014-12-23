@@ -1309,24 +1309,35 @@ class linkHeaders
     function linkHeaders($headers)
     {
         $this->headers = $headers;
-        $this->field_names = false;
+        $this->align = false;
+        $this->style = false;
     }
-    function setFieldsNames($fields)
+    function setAlign($align) // funzione per settare l'allineamento del testo passando un array
     {
-        $this->field_names = $fields;
+        $this->align = $align;
     }
+    function setStyle($style) // funzione per settare uno stile particolare passando un array
+    {
+        $this->style = $style;
+    }
+
     function output()
     {
         global $flag_order, $script_transl, $auxil, $headers;
         $k=0; // è l'indice dell'array dei nomi di campo 
         foreach($this->headers as $header => $field) {
-            if($this->field_names){ // ho settato i nomi dei campi del db
-                $field=$this->field_names[$k];
-            } 
-            if (!$field == "") {
-                echo "\t<th class=\"FacetFieldCaptionTD\"><a href=\"".$_SERVER['PHP_SELF']."?field=".$field."&flag_order=".$flag_order."&auxil=".$auxil."\" title=\"".$script_transl['order'].$header."\">".$header."</a></th>\n\r";
+            $style='FacetFieldCaptionTD';
+            $align='';
+            if($this->align){ // ho settato i nomi dei campi del db
+                $align= ' style="text-align:'.$this->align[$k].';" ';
+            }
+            if($this->style){ // ho settato degli stili diversi
+                $style= $this->style[$k];
+            }
+            if ($field <> "") {
+                echo "\t<th class=\"$style\" $align ><a href=\"".$_SERVER['PHP_SELF']."?field=".$field."&flag_order=".$flag_order."&auxil=".$auxil."\" title=\"".$script_transl['order'].$header."\">".$header."</a></th>\n\r";
             } else {
-                echo "\t<th class=\"FacetFieldCaptionTD\">".$header."</th>\n\r";
+                echo "\t<th class=\"$style\" $align >".$header."</th>\n\r";
             }
             $k++;
         }
