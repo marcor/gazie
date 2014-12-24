@@ -1583,7 +1583,8 @@ class Schedule
             paymovUpdate(array('id',$data['id']),$data);
         } elseif (is_numeric($data)) { /* se passo un dato numerico vuol dire che devo eliminare tutti i righi
                                         * di paymov che fanno riferimento a quell'id_rig */
-            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_pay=$data OR id_rigmoc_doc=", $data);
+            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_doc", $data);
+            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_pay", $data);
         } elseif (isset($data['id_del'])) { /* se passo un id da eliminare elimino SOLO quello */
             gaz_dbi_del_row($gTables['paymov'], "id", $data['id_del']);
         } else {    // altrimenti è un nuovo rigo da inserire

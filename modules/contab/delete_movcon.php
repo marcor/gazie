@@ -23,10 +23,13 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if (isset($_POST['Delete'])) {
+    $calc = new Schedule;
     //cancello i righi contabili
     $result = gaz_dbi_dyn_query("*", $gTables['rigmoc'],"id_tes = ".intval($_POST['id_tes']),"id_tes asc");
     while ($a_row = gaz_dbi_fetch_array($result)) {
         gaz_dbi_del_row($gTables['rigmoc'], "id_rig", $a_row['id_rig']);
+        // elimino le eventuali partite aperte
+        $calc->updateItemsTable($a_row['id_rig']);
     }
     //cancello i righi iva
     $result = gaz_dbi_dyn_query("*", $gTables['rigmoi'],"id_tes = ".intval($_POST['id_tes']),"id_tes asc");

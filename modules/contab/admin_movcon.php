@@ -531,6 +531,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         }
         
         if ($msg == "") { // nessun errore
+            $calc = new Schedule;
             //se è un update recupero i vecchi righi per trovare quelli da inserire/modificare/cancellare
             //formatto le date
             $datareg = $_POST['date_reg_Y']."-".$_POST['date_reg_M']."-".$_POST['date_reg_D'];
@@ -543,7 +544,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
             }
             if ( $toDo == 'update') {  //se è una modifica
                // MODIFICO I RIGHI CONTABILI
-               $calc = new Schedule;
                $vecchi_righcon = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = '".intval($_POST['id_testata'])."'","id_rig asc");
                $i=0;
                $count = count($_POST['id_rig_rc'])-1;
@@ -559,7 +559,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                     // MODIFICO PURE I RELATIVI MOVIMENTI DI PARTITE APERTE (in paymov)
                     $calc->getRigmocEntries($row_con['id_rig']);
                     $count_oldpaymov=count($calc->RigmocEntries);
-                    if (isset($_POST['paymov'][$i])){
+                    if (isset($form['paymov'][$i])){
                         // HO DELLE PARTITE POSTATE SU QUESTO RIGO
                         $new_paymov=array_values($form['paymov'][$i]);
                         $count_newpaymov=count($new_paymov);
@@ -580,7 +580,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                $count_newpaymov--;
                                $j++;
                             }
-                            // se i nuovi righi eccedono i vecchi li inserisco
+                            // se i nuovi righi paymov eccedono i vecchi li inserisco
                             for ($j = $j; $j <= $count_newpaymov; $j++) { // attraverso l'eccedenza dei nuovi righi
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
                                      $new_paymov[$j]['id_rigmoc_doc']=$row_con['id_rig'];
@@ -592,7 +592,12 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                $j++;
                             }
                         } else { // prima non li avevo quindi adesso devo introdurre TUTTI I NUOVI 
-                            foreach($new_paymov as $v){ // attraverso il nuovo array
+                            foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
+                               if ($v['id']=='new'){ // nuovo rigo
+                                   $j=$k;
+                                   unset($new_paymov[$j]['id']);
+                                   $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].'V'.$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
+                                }
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
                                      $new_paymov[$j]['id_rigmoc_doc']=$row_con['id_rig'];
                                } else {  // chiusura partita
@@ -623,6 +628,25 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                             $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
                     }
                     rigmocInsert(array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
+                    // INSERISCO PURE LE EVENTUALE PARTITE APERTE
+                    if (isset($form['paymov'][$i])){
+                            $new_paymov=array_values($form['paymov'][$i]);
+                            $count_newpaymov=count($new_paymov);
+                            foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
+                               if ($v['id']=='new'){ // nuovo rigo
+                                   $j=$k;
+                                   unset($new_paymov[$j]['id']);
+                                   $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].$form['registroiva'].$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
+                                }
+                               if ($form['paymov_op_cl'][$i]==1){ // apertura partita
+                                     $new_paymov[$j]['id_rigmoc_doc']=gaz_dbi_last_id();
+                               } else {  // chiusura partita
+                                     $new_paymov[$j]['id_rigmoc_pay']=gaz_dbi_last_id();
+                               }
+                               $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
+                               $calc->updateItemsTable($new_paymov[$j]);
+                            }
+                    }
                }
                
                // MODIFICO I RIGHI IVA
@@ -712,13 +736,35 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                             $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
                             // modifico la testata precedentemente introdotta per aggiungerci 
                             gaz_dbi_table_update('tesmov',array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
-                            //tesmovUpdate(array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
                     }
                     rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
+                    // INSERISCO PURE LE EVENTUALE PARTITE APERTE
+                    if (isset($form['paymov'][$i])){
+                            $new_paymov=array_values($form['paymov'][$i]);
+                            $count_newpaymov=count($new_paymov);
+                            foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
+                               if ($v['id']=='new'){ // nuovo rigo
+                                   $j=$k;
+                                   unset($new_paymov[$j]['id']);
+                                   $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].$form['registroiva'].$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
+                                }
+                               if ($form['paymov_op_cl'][$i]==1){ // apertura partita
+                                     $new_paymov[$j]['id_rigmoc_doc']=gaz_dbi_last_id();
+                               } else {  // chiusura partita
+                                     $new_paymov[$j]['id_rigmoc_pay']=gaz_dbi_last_id();
+                               }
+                               $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
+                               $calc->updateItemsTable($new_paymov[$j]);
+                            }
+                   }
         
                }
             }
-            header("Location: ".$_POST['ritorno']);
+            if ($toDo == 'insert') {
+                header("Location: report_movcon.php");
+            } else {
+                header("Location: ".$_POST['ritorno']);
+            }
             exit;
         }
    }
