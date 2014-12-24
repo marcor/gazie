@@ -45,228 +45,6 @@ if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
     $toDo = 'insert';
 }
 
-// Se viene inviata la richiesta di conferma totale ...
-if (isset($_POST['ins'])) {
-    $ctrltotdar = 0.00;
-    $ctrltotmov = 0.00;
-    $ctrltotave = 0.00;
-    $ctrlsaldo = 0.00;
-    $ctrlmoviva = 0.00;
-    //calcolo i totali dare e avere per poter eseguire il controllo
-    for ($i = 0; $i < $_POST['rigcon']; $i++) {
-        $_POST['importorc'][$i] = preg_replace("/\,/",'.',$_POST['importorc'][$i]);
-        $nr = $i + 1;
-        if (substr($_POST['conto_rc'.$i],3,6) < 1)  { //controllo che tutti i conti siano stati introdotti...
-            $msg .= "0+";
-        }
-        if ($_POST['importorc'][$i]==0)  { //controllo che non ci siamo valori a 0
-            $msg .= "1+";
-        }
-        if ($_POST['registroiva'] == 4 && (
-           substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['masban']
-           || substr($_POST['conto_rc'.$i],0,3) == substr($admin_aziend['cassa_'],0,3)))  {
-           $ctrlmoviva = number_format($_POST['importorc'][$i] + $ctrlmoviva,2, '.', '');
-        } elseif (substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['mascli']
-           || substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['masfor'] 
-           || (preg_match("/^id_([0-9]+)$/",$_POST['conto_rc'.$i],$match))) {
-           $ctrlmoviva = number_format($_POST['importorc'][$i],2, '.', '');
-        }
-        if ($_POST['darave_rc'][$i] == "D") {
-            $ctrltotdar += $_POST['importorc'][$i];
-        } else {
-            $ctrltotave += $_POST['importorc'][$i];
-        }
-        $ctrlsaldo = number_format($ctrltotdar - $ctrltotave,2, '.', '');
-    }
-    //calcolo i totali iva per poter eseguire il controllo
-    if (!isset($_POST['rigiva'])) {
-       $_POST['rigiva'] = 0;
-    }
-    for ($i = 0; $i < $_POST['rigiva']; $i++) {
-        $_POST['imponi_ri'][$i] = preg_replace("/\,/",'.',$_POST['imponi_ri'][$i]);
-        $_POST['impost_ri'][$i] = preg_replace("/\,/",'.',$_POST['impost_ri'][$i]);
-        $ctrltotmov += $_POST['imponi_ri'][$i] + $_POST['impost_ri'][$i];
-    }
-    $ctrltotmov = number_format($ctrltotmov,2, '.', '');
-    if ($ctrlsaldo != 0) {
-        $msg .= "2+";
-    }
-    if ($ctrltotdar == 0) {
-        $msg .= "3+";
-    }
-    if ($ctrltotave == 0) {
-        $msg .= "4+";
-    }
-    if ($_POST['registroiva'] > 0 && $ctrltotmov == 0) {
-        $msg .= "5+";
-    }
-    if ($_POST['registroiva'] > 0 && $ctrltotmov <> $ctrlmoviva) {
-        print $ctrltotmov.' '.$ctrlmoviva.'<br><hr>';
-        $msg .= "6+";
-    }
-    if (empty($_POST['descrizion'])) {
-        $msg .= "7+";
-    }
-    //controllo le date
-    if (!checkdate( $_POST['date_reg_M'], $_POST['date_reg_D'], $_POST['date_reg_Y']))
-        $msg .= "8+";
-    //controllo che siano stati inseriti in maniera giusta i dati del documento
-    if ($_POST['inserimdoc'] > 0 ) {
-        if (!checkdate( $_POST['date_doc_M'], $_POST['date_doc_D'], $_POST['date_doc_Y'])) {
-            $msg .= "9+";
-        }
-        if ($_POST['protocollo'] <= 0) {
-            $msg .= "10+";
-        }
-        if (empty($_POST['numdocumen'])) {
-            $msg .= "11+";
-        }
-        $ctrldatreg = mktime (0,0,0,$_POST['date_reg_M'], $_POST['date_reg_D'], $_POST['date_reg_Y']);
-        $ctrldatdoc = mktime (0,0,0,$_POST['date_doc_M'], $_POST['date_doc_D'], $_POST['date_doc_Y']);
-        if ($ctrldatreg < $ctrldatdoc) {
-            $msg .= "12+";
-        }
-        // controllo se ci documenti con lo stesso numero e anno dello stesso fornitore (duplicato) 
-        if ($_POST['cod_partner']>0){
-            $dupli = gaz_dbi_record_count($gTables['tesmov'] , "caucon = '".substr($_POST['codcausale'],0,3)."' AND numdoc = '".trim(substr($_POST['numdocumen'],0,20))."' AND seziva = ".intval($_POST['sezioneiva'])." AND clfoco = ".intval($_POST['cod_partner'])." AND YEAR(datdoc) = ".intval($_POST['date_doc_Y']));
-            if ($dupli > 1 || ($dupli == 1 && $toDo == 'insert')) {
-                $msg .= "14+";          
-            }
-        }
-    }
-
-    if ($msg == "") { // nessun errore
-        //se è un update recupero i vecchi righi per trovare quelli da inserire/modificare/cancellare
-        //formatto le date
-        $datareg = $_POST['date_reg_Y']."-".$_POST['date_reg_M']."-".$_POST['date_reg_D'];
-        $datadoc = $_POST['date_doc_Y']."-".$_POST['date_doc_M']."-".$_POST['date_doc_D'];
-        if ($_POST['inserimdoc'] == 0 and $_POST['registroiva'] == 0) { //se non sono richisti i dati documenti e iva
-              $_POST['sezioneiva'] = 0;
-              $_POST['protocollo'] = 0;
-              $_POST['numdocumen'] = "";
-              $datadoc = 0;
-        }
-        if ( $toDo == 'update') {  //se è una modifica
-           $vecchi_righcon = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = '".intval($_POST['id_testata'])."'","id_rig asc");
-           $i=0;
-           $count = count($_POST['id_rig_rc'])-1;
-           while ($row_con = gaz_dbi_fetch_array($vecchi_righcon)) {
-              //se l'id del vecchio rigo e' ancora presente nel nuovo lo modifico
-           if ($i <= $count) {
-                $account_new=intval($_POST['conto_rc'.$i]);
-                if (preg_match("/^id_([0-9]+)$/",substr($_POST['conto_rc'.$i],0,12),$match)) { // è un partner da inserire sul piano dei conti
-                        $new_clfoco = $anagrafica->getPartnerData($match[1],1);
-                        $account_new=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
-                }
-                gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
-              } else { //altrimenti lo elimino
-                gaz_dbi_del_row($gTables['rigmoc'], "id_rig", $row_con['id_rig']);
-              }
-              $i++;
-           }
-           //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
-           for ($i = $i; $i <= $count; $i++) {
-                if (preg_match("/^id_([0-9]+)$/",substr($_POST['conto_rc'.$i],0,12),$match)) { // è un partner da inserire sul piano dei conti
-                        $new_clfoco = $anagrafica->getPartnerData($match[1],1);
-                        $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
-                }
-                rigmocInsert(array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
-           }
-           $vecchi_righiva = gaz_dbi_dyn_query("*", $gTables['rigmoi'], "id_tes = '".intval($_POST['id_testata'])."'","id_rig asc");
-           $i=0;
-           if ($_POST['registroiva'] > 0) {
-              $count = count($_POST['id_rig_ri'])-1;
-           } else {
-              $count = 0;
-              $i = 1;
-           }
-           while ($row_iva = gaz_dbi_fetch_array($vecchi_righiva)) {
-              //se l'id del vecchio rigo e' ancora presente nel nuovo lo modifico
-              if ($i <= $count) {
-                //recupero i dati dell'aliquota iva
-                $vv = gaz_dbi_get_row($gTables['aliiva'],'codice',intval($_POST['codiva_ri'][$i]));
-                //aggiungo i valori mancanti all'array
-                $vv['codiva']=$vv['codice'];
-                $vv['id_tes']=intval($_POST['id_testata']);
-                $vv['periva']=$vv['aliquo'];
-                $vv['imponi']=floatval($_POST['imponi_ri'][$i]);
-                $vv['impost']=floatval($_POST['impost_ri'][$i]);
-                gaz_dbi_table_update('rigmoi',array('id_rig',$row_iva['id_rig']),$vv);
-              } else { //altrimenti lo elimino
-                gaz_dbi_del_row($gTables['rigmoi'], "id_rig", $row_iva['id_rig']);
-              }
-              $i++;
-           }
-           //qualora i nuovi righi iva fossero di più dei vecchi inserisco l'eccedenza
-           for ($i = $i; $i <= $count; $i++) {
-                $vv = gaz_dbi_get_row($gTables['aliiva'],'codice',intval($_POST['codiva_ri'][$i]));
-                //aggiungo i valori mancanti all'array
-                $vv['codiva']=$vv['codice'];
-                $vv['id_tes']=intval($_POST['id_testata']);
-                $vv['periva']=$vv['aliquo'];
-                $vv['imponi']=floatval($_POST['imponi_ri'][$i]);
-                $vv['impost']=floatval($_POST['impost_ri'][$i]);
-                rigmoiInsert($vv);
-           }
-           //modifico la testata
-           $codice=array('id_tes',intval($_POST['id_testata']));
-           $newValue=array('caucon'=>substr($_POST['codcausale'],0,3),
-                           'descri'=>substr($_POST['descrizion'],0,50),
-                           'datreg'=>$datareg,
-                           'seziva'=>intval($_POST['sezioneiva']),
-                           'protoc'=>intval($_POST['protocollo']),
-                           'numdoc'=>substr($_POST['numdocumen'],0,20),
-                           'datdoc'=>$datadoc,
-                           'clfoco'=>intval($_POST['cod_partner']),
-                           'regiva'=>substr($_POST['registroiva'],0,1),
-                           'operat'=>intval($_POST['operatore'])
-                           );
-           tesmovUpdate($codice,$newValue);
-        } else { //se è un'inserimento
-           //inserisco la testata
-           $newValue=array('caucon'=>substr($_POST['codcausale'],0,3),
-                           'descri'=>substr($_POST['descrizion'],0,50),
-                           'datreg'=>$datareg,
-                           'seziva'=>intval($_POST['sezioneiva']),
-                           'protoc'=>intval($_POST['protocollo']),
-                           'numdoc'=>substr($_POST['numdocumen'],0,20),
-                           'datdoc'=>$datadoc,
-                           'clfoco'=>intval($_POST['cod_partner']),
-                           'regiva'=>substr($_POST['registroiva'],0,1),
-                           'operat'=>intval($_POST['operatore'])
-                           );
-           tesmovInsert($newValue);
-           //recupero l'id assegnato dall'inserimento
-           $ultimo_id = gaz_dbi_last_id();
-           //inserisco i righi iva
-           for ($i = 0; $i < $_POST['rigiva']; $i++) {
-                $vv = gaz_dbi_get_row($gTables['aliiva'],'codice',intval($_POST['codiva_ri'][$i]));
-                //aggiungo i valori mancanti all'array
-                $vv['codiva']=$vv['codice'];
-                $vv['id_tes']=$ultimo_id;
-                $vv['periva']=$vv['aliquo'];
-                $vv['imponi']=floatval($_POST['imponi_ri'][$i]);
-                $vv['impost']=floatval($_POST['impost_ri'][$i]);
-                rigmoiInsert($vv);
-           }
-           //inserisco i righi contabili
-           for ($i = 0; $i < $_POST['rigcon']; $i++) {
-                $account=substr($_POST['conto_rc'.$i],0,12);
-                if (preg_match("/^id_([0-9]+)$/",$account,$match)) { // è un partner da inserire sul piano dei conti
-                        $new_clfoco = $anagrafica->getPartnerData($match[1],1);
-                        $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
-                        // modifico la testata precedentemente introdotta per aggiungerci 
-                        gaz_dbi_table_update('tesmov',array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
-                        //tesmovUpdate(array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
-                }
-                rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
-
-           }
-        }
-        header("Location:report_movcon.php");
-        exit;
-    }
-}
 if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $form['hidden_req'] = '';
     //recupero la testata con la causale
@@ -662,7 +440,289 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
         }
    }
 
-
+   // Se viene inviata la richiesta di conferma totale ...
+   if (isset($_POST['ins'])) {
+        $ctrltotdar = 0.00;
+        $ctrltotmov = 0.00;
+        $ctrltotave = 0.00;
+        $ctrlsaldo = 0.00;
+        $ctrlmoviva = 0.00;
+        //calcolo i totali dare e avere per poter eseguire il controllo
+        for ($i = 0; $i < $_POST['rigcon']; $i++) {
+            $_POST['importorc'][$i] = preg_replace("/\,/",'.',$_POST['importorc'][$i]);
+            $nr = $i + 1;
+            if (substr($_POST['conto_rc'.$i],3,6) < 1)  { //controllo che tutti i conti siano stati introdotti...
+                $msg .= "0+";
+            }
+            if ($_POST['importorc'][$i]==0)  { //controllo che non ci siamo valori a 0
+                $msg .= "1+";
+            }
+            if ($_POST['registroiva'] == 4 && (
+               substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['masban']
+               || substr($_POST['conto_rc'.$i],0,3) == substr($admin_aziend['cassa_'],0,3)))  {
+               $ctrlmoviva = number_format($_POST['importorc'][$i] + $ctrlmoviva,2, '.', '');
+            } elseif (substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['mascli']
+               || substr($_POST['conto_rc'.$i],0,3) == $admin_aziend['masfor'] 
+               || (preg_match("/^id_([0-9]+)$/",$_POST['conto_rc'.$i],$match))) {
+               $ctrlmoviva = number_format($_POST['importorc'][$i],2, '.', '');
+            }
+            if ($_POST['darave_rc'][$i] == "D") {
+                $ctrltotdar += $_POST['importorc'][$i];
+            } else {
+                $ctrltotave += $_POST['importorc'][$i];
+            }
+            $ctrlsaldo = number_format($ctrltotdar - $ctrltotave,2, '.', '');
+        }
+        //calcolo i totali iva per poter eseguire il controllo
+        if (!isset($_POST['rigiva'])) {
+           $_POST['rigiva'] = 0;
+        }
+        for ($i = 0; $i < $_POST['rigiva']; $i++) {
+            $_POST['imponi_ri'][$i] = preg_replace("/\,/",'.',$_POST['imponi_ri'][$i]);
+            $_POST['impost_ri'][$i] = preg_replace("/\,/",'.',$_POST['impost_ri'][$i]);
+            $ctrltotmov += $_POST['imponi_ri'][$i] + $_POST['impost_ri'][$i];
+        }
+        $ctrltotmov = number_format($ctrltotmov,2, '.', '');
+        if ($ctrlsaldo != 0) {
+            $msg .= "2+";
+        }
+        if ($ctrltotdar == 0) {
+            $msg .= "3+";
+        }
+        if ($ctrltotave == 0) {
+            $msg .= "4+";
+        }
+        if ($_POST['registroiva'] > 0 && $ctrltotmov == 0) {
+            $msg .= "5+";
+        }
+        if ($_POST['registroiva'] > 0 && $ctrltotmov <> $ctrlmoviva) {
+            print $ctrltotmov.' '.$ctrlmoviva.'<br><hr>';
+            $msg .= "6+";
+        }
+        if (empty($_POST['descrizion'])) {
+            $msg .= "7+";
+        }
+        //controllo le date
+        if (!checkdate( $_POST['date_reg_M'], $_POST['date_reg_D'], $_POST['date_reg_Y']))
+            $msg .= "8+";
+        //controllo che siano stati inseriti in maniera giusta i dati del documento
+        if ($_POST['inserimdoc'] > 0 ) {
+            if (!checkdate( $_POST['date_doc_M'], $_POST['date_doc_D'], $_POST['date_doc_Y'])) {
+                $msg .= "9+";
+            }
+            if ($_POST['protocollo'] <= 0) {
+                $msg .= "10+";
+            }
+            if (empty($_POST['numdocumen'])) {
+                $msg .= "11+";
+            }
+            $ctrldatreg = mktime (0,0,0,$_POST['date_reg_M'], $_POST['date_reg_D'], $_POST['date_reg_Y']);
+            $ctrldatdoc = mktime (0,0,0,$_POST['date_doc_M'], $_POST['date_doc_D'], $_POST['date_doc_Y']);
+            if ($ctrldatreg < $ctrldatdoc) {
+                $msg .= "12+";
+            }
+            // controllo se ci documenti con lo stesso numero e anno dello stesso fornitore (duplicato) 
+            if ($_POST['cod_partner']>0){
+                $dupli = gaz_dbi_record_count($gTables['tesmov'] , "caucon = '".substr($_POST['codcausale'],0,3)."' AND numdoc = '".trim(substr($_POST['numdocumen'],0,20))."' AND seziva = ".intval($_POST['sezioneiva'])." AND clfoco = ".intval($_POST['cod_partner'])." AND YEAR(datdoc) = ".intval($_POST['date_doc_Y']));
+                if ($dupli > 1 || ($dupli == 1 && $toDo == 'insert')) {
+                    $msg .= "14+";          
+                }
+            }
+        }
+        
+        if ($msg == "") { // nessun errore
+            //se è un update recupero i vecchi righi per trovare quelli da inserire/modificare/cancellare
+            //formatto le date
+            $datareg = $_POST['date_reg_Y']."-".$_POST['date_reg_M']."-".$_POST['date_reg_D'];
+            $datadoc = $_POST['date_doc_Y']."-".$_POST['date_doc_M']."-".$_POST['date_doc_D'];
+            if ($_POST['inserimdoc'] == 0 and $_POST['registroiva'] == 0) { //se non sono richisti i dati documenti e iva
+                  $_POST['sezioneiva'] = 0;
+                  $_POST['protocollo'] = 0;
+                  $_POST['numdocumen'] = "";
+                  $datadoc = 0;
+            }
+            if ( $toDo == 'update') {  //se è una modifica
+               // MODIFICO I RIGHI CONTABILI
+               $calc = new Schedule;
+               $vecchi_righcon = gaz_dbi_dyn_query("*", $gTables['rigmoc'], "id_tes = '".intval($_POST['id_testata'])."'","id_rig asc");
+               $i=0;
+               $count = count($_POST['id_rig_rc'])-1;
+               while ($row_con = gaz_dbi_fetch_array($vecchi_righcon)) {
+                  if ($i <= $count) { //se l'id del vecchio rigo e' ancora presente nel nuovo lo modifico
+                    $account_new=intval($_POST['conto_rc'.$i]);
+                    if (preg_match("/^id_([0-9]+)$/",substr($_POST['conto_rc'.$i],0,12),$match)) { // è un partner da inserire sul piano dei conti
+                            $new_clfoco = $anagrafica->getPartnerData($match[1],1);
+                            $account_new=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
+                    }
+                    gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
+        
+                    // MODIFICO PURE I RELATIVI MOVIMENTI DI PARTITE APERTE (in paymov)
+                    $calc->getRigmocEntries($row_con['id_rig']);
+                    $count_oldpaymov=count($calc->RigmocEntries);
+                    if (isset($_POST['paymov'][$i])){
+                        // HO DELLE PARTITE POSTATE SU QUESTO RIGO
+                        $new_paymov=array_values($form['paymov'][$i]);
+                        $count_newpaymov=count($new_paymov);
+                        if($count_oldpaymov > 0) { // ...e se prima li avevo anche : li devo aggiornare    
+                            $j=0;
+                            foreach($calc->RigmocEntries as $v){ // attraverso il vecchio array
+                               if ($count_newpaymov>0){ //  se non è un rigo eccedente lo modifico mantenendo il vecchio indice
+                                  if ($form['paymov_op_cl'][$i]==1){ // apertura partita
+                                        $new_paymov[$j]['id_rigmoc_doc']=$row_con['id_rig'];
+                                  } else {  // chiusura partita
+                                        $new_paymov[$j]['id_rigmoc_pay']=$row_con['id_rig'];
+                                  }
+                                  $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
+                                  $calc->updateItemsTable($new_paymov[$j]);
+                               } else {  // altrimenti lo elimino ma passando il SOLO id
+                                  $calc->updateItemsTable(array('id_del'=>$v['id']));
+                               }
+                               $count_newpaymov--;
+                               $j++;
+                            }
+                            // se i nuovi righi eccedono i vecchi li inserisco
+                            for ($j = $j; $j <= $count_newpaymov; $j++) { // attraverso l'eccedenza dei nuovi righi
+                               if ($form['paymov_op_cl'][$i]==1){ // apertura partita
+                                     $new_paymov[$j]['id_rigmoc_doc']=$row_con['id_rig'];
+                               } else {  // chiusura partita
+                                     $new_paymov[$j]['id_rigmoc_pay']=$row_con['id_rig'];
+                               }
+                               $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
+                               $calc->updateItemsTable($new_paymov[$j]);
+                               $j++;
+                            }
+                        } else { // prima non li avevo quindi adesso devo introdurre TUTTI I NUOVI 
+                            foreach($new_paymov as $v){ // attraverso il nuovo array
+                               if ($form['paymov_op_cl'][$i]==1){ // apertura partita
+                                     $new_paymov[$j]['id_rigmoc_doc']=$row_con['id_rig'];
+                               } else {  // chiusura partita
+                                     $new_paymov[$j]['id_rigmoc_pay']=$row_con['id_rig'];
+                               }
+                               $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
+                               $calc->updateItemsTable($new_paymov[$j]);
+                            }
+                        }   
+                    } else {
+                        // NON HO PARTITE POSTATE SU QUESTO RIGO
+                        if($count_oldpaymov > 0) { // ...e se prima li avevo: li devo eliminare  TUTTI   
+                            $calc->updateItemsTable($row_con['id_rig']);
+                        }    
+                    }
+                    // se su questo rigo ci sono rimasti 
+                  } else { //altrimenti elimino i righi e le relative partite
+                    gaz_dbi_del_row($gTables['rigmoc'], "id_rig", $row_con['id_rig']);
+                    // ...elimino pure eventuali relativi movimenti di partite aperte
+                    $calc->updateItemsTable($row_con['id_rig']);
+                  }
+                  $i++;
+               }
+               //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
+               for ($i = $i; $i <= $count; $i++) {
+                    if (preg_match("/^id_([0-9]+)$/",substr($_POST['conto_rc'.$i],0,12),$match)) { // è un partner da inserire sul piano dei conti
+                            $new_clfoco = $anagrafica->getPartnerData($match[1],1);
+                            $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
+                    }
+                    rigmocInsert(array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
+               }
+               
+               // MODIFICO I RIGHI IVA
+               $vecchi_righiva = gaz_dbi_dyn_query("*", $gTables['rigmoi'], "id_tes = '".intval($_POST['id_testata'])."'","id_rig asc");
+               $i=0;
+               if ($_POST['registroiva'] > 0) {
+                  $count = count($_POST['id_rig_ri'])-1;
+               } else {
+                  $count = 0;
+                  $i = 1;
+               }
+               while ($row_iva = gaz_dbi_fetch_array($vecchi_righiva)) {
+                  //se l'id del vecchio rigo e' ancora presente nel nuovo lo modifico
+                  if ($i <= $count) {
+                    //recupero i dati dell'aliquota iva
+                    $vv = gaz_dbi_get_row($gTables['aliiva'],'codice',intval($_POST['codiva_ri'][$i]));
+                    //aggiungo i valori mancanti all'array
+                    $vv['codiva']=$vv['codice'];
+                    $vv['id_tes']=intval($_POST['id_testata']);
+                    $vv['periva']=$vv['aliquo'];
+                    $vv['imponi']=floatval($_POST['imponi_ri'][$i]);
+                    $vv['impost']=floatval($_POST['impost_ri'][$i]);
+                    gaz_dbi_table_update('rigmoi',array('id_rig',$row_iva['id_rig']),$vv);
+                  } else { //altrimenti lo elimino
+                    gaz_dbi_del_row($gTables['rigmoi'], "id_rig", $row_iva['id_rig']);
+                  }
+                  $i++;
+               }
+               //qualora i nuovi righi iva fossero di più dei vecchi inserisco l'eccedenza
+               for ($i = $i; $i <= $count; $i++) {
+                    $vv = gaz_dbi_get_row($gTables['aliiva'],'codice',intval($_POST['codiva_ri'][$i]));
+                    //aggiungo i valori mancanti all'array
+                    $vv['codiva']=$vv['codice'];
+                    $vv['id_tes']=intval($_POST['id_testata']);
+                    $vv['periva']=$vv['aliquo'];
+                    $vv['imponi']=floatval($_POST['imponi_ri'][$i]);
+                    $vv['impost']=floatval($_POST['impost_ri'][$i]);
+                    rigmoiInsert($vv);
+               }
+               //modifico la testata
+               $codice=array('id_tes',intval($_POST['id_testata']));
+               $newValue=array('caucon'=>substr($_POST['codcausale'],0,3),
+                               'descri'=>substr($_POST['descrizion'],0,50),
+                               'datreg'=>$datareg,
+                               'seziva'=>intval($_POST['sezioneiva']),
+                               'protoc'=>intval($_POST['protocollo']),
+                               'numdoc'=>substr($_POST['numdocumen'],0,20),
+                               'datdoc'=>$datadoc,
+                               'clfoco'=>intval($_POST['cod_partner']),
+                               'regiva'=>substr($_POST['registroiva'],0,1),
+                               'operat'=>intval($_POST['operatore'])
+                               );
+               tesmovUpdate($codice,$newValue);
+               
+            } else { //se è un'inserimento
+               //inserisco la testata
+               $newValue=array('caucon'=>substr($_POST['codcausale'],0,3),
+                               'descri'=>substr($_POST['descrizion'],0,50),
+                               'datreg'=>$datareg,
+                               'seziva'=>intval($_POST['sezioneiva']),
+                               'protoc'=>intval($_POST['protocollo']),
+                               'numdoc'=>substr($_POST['numdocumen'],0,20),
+                               'datdoc'=>$datadoc,
+                               'clfoco'=>intval($_POST['cod_partner']),
+                               'regiva'=>substr($_POST['registroiva'],0,1),
+                               'operat'=>intval($_POST['operatore'])
+                               );
+               tesmovInsert($newValue);
+               //recupero l'id assegnato dall'inserimento
+               $ultimo_id = gaz_dbi_last_id();
+               //inserisco i righi iva
+               for ($i = 0; $i < $_POST['rigiva']; $i++) {
+                    $vv = gaz_dbi_get_row($gTables['aliiva'],'codice',intval($_POST['codiva_ri'][$i]));
+                    //aggiungo i valori mancanti all'array
+                    $vv['codiva']=$vv['codice'];
+                    $vv['id_tes']=$ultimo_id;
+                    $vv['periva']=$vv['aliquo'];
+                    $vv['imponi']=floatval($_POST['imponi_ri'][$i]);
+                    $vv['impost']=floatval($_POST['impost_ri'][$i]);
+                    rigmoiInsert($vv);
+               }
+               //inserisco i righi contabili
+               for ($i = 0; $i < $_POST['rigcon']; $i++) {
+                    $account=substr($_POST['conto_rc'.$i],0,12);
+                    if (preg_match("/^id_([0-9]+)$/",$account,$match)) { // è un partner da inserire sul piano dei conti
+                            $new_clfoco = $anagrafica->getPartnerData($match[1],1);
+                            $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
+                            // modifico la testata precedentemente introdotta per aggiungerci 
+                            gaz_dbi_table_update('tesmov',array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
+                            //tesmovUpdate(array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
+                    }
+                    rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
+        
+               }
+            }
+            header("Location: ".$_POST['ritorno']);
+            exit;
+        }
+   }
+   
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     //registri per il form della testata

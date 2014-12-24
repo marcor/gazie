@@ -48,10 +48,15 @@ function gaz_format_number($number=0)
     return number_format(floatval($number),$currency['decimal_place'],$currency['decimal_symbol'],$currency['thousands_symbol']);
 }
 
-function gaz_format_date($date)
+function gaz_format_date($date,$db=false)
 {
-  $uts=mktime(0,0,0,substr($date,5,2),substr($date,8,2),substr($date,0,4));
-  return date("d-m-Y",$uts);
+    if ($db){
+        $uts=mktime(0,0,0,substr($date,3,2),substr($date,0,2),substr($date,6,4));
+        return date("Y-m-d",$uts);
+    } else {
+        $uts=mktime(0,0,0,substr($date,5,2),substr($date,8,2),substr($date,0,4));
+        return date("d-m-Y",$uts);
+    }
 }
 
 function gaz_format_datetime($date)
@@ -1516,6 +1521,87 @@ class Compute
         }
     }
 }
+
+class Schedule 
+{
+    function Schedule()
+        {
+            $this->target=0;
+        }
+    
+    function setPartnerTarget($account)
+        {
+            $this->target=$account;
+        }
+    function getScheduleEntries($ob=0)
+        {
+            global $gTables;
+            switch ($ob) {
+                  case 1:
+                    $orderby = "expiry DESC, codice, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
+                  break;
+                  case 2:
+                    $orderby = "ragso1, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
+                  break;
+                  case 3:
+                    $orderby = "ragso1 DESC, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
+                  break;
+                  default:
+                    $orderby = "expiry, codice, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
+            }
+            $select = "*, ".$gTables['tesmov'].".*, ".$gTables['clfoco'].".descri AS ragsoc";
+            if ($this->target==0 ) {
+                $where = " 1";
+            } else {
+                $where = $gTables['clfoco'].".codice = ".$this->target;
+            }
+            $table = $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig )"
+                    ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes "
+                    ."LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon "
+                    ."LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra ";
+    
+            $this->Entries=array();
+            $rs=gaz_dbi_dyn_query ($select, $table, $where, $orderby);
+            while ($r = gaz_dbi_fetch_array($rs)) {
+                $this->Entries[] = $r;
+            }
+    }
+    function getStatus($id_tesdoc_ref)
+    {
+        global $gTables;
+        $sqlquery= "SELECT SUM(amount*(id_rigmoc_doc>0)- amount*(id_rigmoc_pay>0)) AS diff_paydoc, SUM(amount*(id_rigmoc_pay>0)) AS pay, SUM(amount*(id_rigmoc_doc>0))AS doc 
+            FROM ".$gTables['paymov']."
+            WHERE id_tesdoc_ref = '".$id_tesdoc_ref."' GROUP BY id_tesdoc_ref";
+        $rs = gaz_dbi_query($sqlquery);
+        $this->Status=gaz_dbi_fetch_array($rs);
+    }
+
+    function updateItemsTable($data)
+    {
+        global $gTables;
+        if (isset($data['id']) && !empty($data['id'])) { // se c'è l'id vuol dire che è un rigo da aggiornare
+            paymovUpdate(array('id',$data['id']),$data);
+        } elseif (is_numeric($data)) { /* se passo un dato numerico vuol dire che devo eliminare tutti i righi
+                                        * di paymov che fanno riferimento a quell'id_rig */
+            gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_pay=$data OR id_rigmoc_doc=", $data);
+        } elseif (isset($data['id_del'])) { /* se passo un id da eliminare elimino SOLO quello */
+            gaz_dbi_del_row($gTables['paymov'], "id", $data['id_del']);
+        } else {    // altrimenti è un nuovo rigo da inserire
+            paymovInsert($data);
+        }
+    }
+    function getRigmocEntries($id_rig) // 
+    {
+        global $gTables;
+        $sqlquery= "SELECT * FROM ".$gTables['paymov']." WHERE id_rigmoc_pay=$id_rig OR id_rigmoc_doc=$id_rig";
+        $this->RigmocEntries=array();
+        $rs = gaz_dbi_query($sqlquery);
+        while ($r = gaz_dbi_fetch_array($rs)) {
+            $this->RigmocEntries[] = $r;
+        }
+    }
+}
+
 
 /* controllo se ho delle funzioni specifiche per il modulo corrente
      residente nella directory del module stesso, con queste caratteristiche:

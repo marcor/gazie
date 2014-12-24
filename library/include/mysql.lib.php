@@ -458,6 +458,13 @@ function paymovInsert($newValue)
     tableInsert($table, $columns, $newValue);
 }
 
+function paymovUpdate($id,$newValue)
+{
+    $table = 'paymov';
+    $columns = array('id','id_tesdoc_ref','id_rigmoc_pay','id_rigmoc_doc','amount','expiry');
+    tableUpdate($table, $columns,$id, $newValue);
+}
+
 function rigbroInsert ($newValue)
 {
     $table = 'rigbro';
