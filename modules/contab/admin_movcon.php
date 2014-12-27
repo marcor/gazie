@@ -29,10 +29,13 @@ $mastroclienti = $admin_aziend['mascli']."000000";
 $mastrofornitori = $admin_aziend['masfor']."000000";
 $anagrafica = new Anagrafica();
 $msg = "";
-if (!isset($_POST['ritorno'])) {
-        $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
-}
 $form = array();
+if (!isset($_POST['ritorno'])) {
+        $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+} else {
+        $form['ritorno'] = $_POST['ritorno'];
+}
+
 if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
     if (!isset($_GET['id_tes'])) {
         header("Location: ".$_POST['ritorno']);
@@ -596,7 +599,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                if ($v['id']=='new'){ // nuovo rigo
                                    $j=$k;
                                    unset($new_paymov[$j]['id']);
-                                   $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].'V'.$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
+                                   $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].$form['registroiva'].$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
                                 }
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
                                      $new_paymov[$j]['id_rigmoc_doc']=$row_con['id_rig'];
@@ -763,7 +766,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
             if ($toDo == 'insert') {
                 header("Location: report_movcon.php");
             } else {
-                header("Location: ".$_POST['ritorno']);
+                header("Location: ".$form['ritorno']);
             }
             exit;
         }
@@ -1083,6 +1086,7 @@ echo "</script>\n";
 <form method="POST" name="myform">
 <?php
 $gForm = new contabForm();
+echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 if ($toDo == 'insert') {
@@ -1200,7 +1204,7 @@ if($form["registroiva"] > 0) {
     $select_aliiva -> output();
     echo "</td>";
     echo "<td class=\"FacetColumnTD\"></td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"adi\" src=\"../../library/images/vbut.gif\" title=\"Aggiungi il rigo\" $tabsmt >";
-    echo "<input type=\"hidden\" value=\"".$_POST['rigiva']."\" name=\"rigiva\"><input type=\"hidden\" name=\"ritorno\" value=\"{$_POST['ritorno']}\"></td></tr>\n";
+    echo "<input type=\"hidden\" value=\"".$_POST['rigiva']."\" name=\"rigiva\"></td></tr>\n";
     echo "<TR><td class=\"FacetColumnTD\" colspan=\"4\"><hr></td></tr>";
     echo "<tr>";
     for ($i = 0; $i < $_POST['rigiva']; $i++) {
@@ -1346,7 +1350,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
 echo "<input type=\"hidden\" value=\"".$_POST['rigcon']."\" name=\"rigcon\">";
 echo "<input type=\"hidden\" value=\"".$form['id_testata']."\" name=\"id_testata\">";
 echo '<tr><td>';
-echo '<input name="Back" type="button" value="'.$script_transl['return'].'!" onclick="location.href=\''.$_POST['ritorno'].'\'">';
+echo '<input name="Back" type="button" value="'.$script_transl['return'].'!" onclick="location.href=\''.$form['ritorno'].'\'">';
 echo '<td colspan="2">'.$script_transl['tot_d'].' :';
 echo "<input type=\"button\" $d_but value=\"".number_format($form['tot_D'],2,'.','')."\" ID=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
 echo $diffV.' '.$script_transl['tot_a'].' :';

@@ -378,7 +378,8 @@ table.submenu {
   min-height: 20px;
 }
 div.FacetFormHeaderFont {
-  margin-top: 20px;
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 .vcenter {
     display: inline-block;

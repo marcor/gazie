@@ -93,16 +93,20 @@ function dialogSchedule(paymov) {
 			});
 	}
 
-    function getSamePaymov(tes_ref,excl_val) {
+    function getSamePaymov(tes_ref,excl_val,link=false) {
        $.get("same_paymov.php",
              {id_tesdoc_ref:tes_ref, id_exc:excl_val},
              function(data) {
 			    var j=0;
                 $.each(data, function(i,value){
 					if(j==0){
+						if (link){
+							link_ref = '<button id="linking_same_'+ value.datdoc +'"><img src="../../library/images/link.png" width="12"/></button>';
+						};
 						$( "#db-contain" + nrow + " tbody").append( "<tr>" +
-						"<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa partita ' + tes_ref + "</td></tr>");
-					}
+						"<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa partita ' + tes_ref + ' ' + link_ref + "</td></tr>");
+					}					
+
                     $( "#db-contain" + nrow + " tbody").append( "<tr>" +
                     "<td" + ' class="ui-widget ui-widget-content " ></td>' +
                     "<td" + ' class="ui-widget ui-widget-content " > '+ value.descri + " n."
@@ -112,7 +116,15 @@ function dialogSchedule(paymov) {
                      '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
                      '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
                      "</tr>" );
-					 j++;
+					$( "#linking_same_" + value.datdoc).click(function() { 
+							var paymov_op_cl = $("#paymov_op_cl"+nrow).val();
+							var docref = value.datdoc.substring(0,4);
+							docref += value.regiva;
+							docref += value.seziva*1000000000+parseInt(value.protoc);
+							updateSchedule(docref);
+							updateCloseForm();
+					});
+					j++;
                });
              },"json"
              );
@@ -144,11 +156,7 @@ function dialogSchedule(paymov) {
 						$( "#linking_" + value.datdoc).click(function() { 
 							var paymov_op_cl = $("#paymov_op_cl"+nrow).val();
 							var docref = value.datdoc.substring(0,4);
-							if (paymov_op_cl==2){ // vendita
-								docref += "V";
-							} else {
-								docref += "A";
-							}
+							docref += value.regiva;
 							docref += value.seziva*1000000000+parseInt(value.protoc);
 							updateSchedule(docref);
 							updateCloseForm();
@@ -291,7 +299,7 @@ function dialogSchedule(paymov) {
 	  position: "top",	  
 	  open: function(){
 			updateCloseForm(); 
-			getSamePaymov(tesdoc_ref,id_rig);
+			getSamePaymov(tesdoc_ref,id_rig,true);
 			getOtherMov(clfoco,tesdoc_ref,true);
 		},
       buttons: {
