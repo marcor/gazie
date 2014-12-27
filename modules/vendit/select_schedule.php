@@ -53,12 +53,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 // fine controlli
 
 if (isset($_POST['print']) && $msg=='') {
-    //Mando in stampa i movimenti contabili generati
-    if ($form['account_fin']==0){
-        $form['account_fin']==$form['account_ini'];
-    }
     $_SESSION['print_request']=array('script_name'=>'print_schedule',
-                                     'account'=>$form['account']
+                                     'account'=>$form['account'],
+                                     'orderby'=>$form['orderby']
                                      );
     header("Location: sent_print.php");
     exit;

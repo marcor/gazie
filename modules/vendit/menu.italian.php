@@ -34,7 +34,7 @@ $transl['vendit'] = array('name' => "Vendite",
                                          8 =>array("Gestione Agenti di Vendita","Agenti"),
                                          9 =>array("Statistiche delle Vendite","Statistiche"),
                                          10=>array("Abbonamenti - Contratti","Contratti"),
-                                         11=>array("Scadenziario a partite aperte","Scadenziario")
+                                         11=>array("Scadenzario a partite aperte","Scadenzario")
                                         ),
                           'm3' => array( 1 =>array("Emissione Scontrini Fiscali","Emetti Scontrino"),
                                          2 =>array("Emissione Fattura di Vendita","Emetti Fattura"),

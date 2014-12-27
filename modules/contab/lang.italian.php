@@ -126,7 +126,7 @@ $strScript = array ("select_liqiva.php" =>
                            'regiva_value'=>array(0=>'Nessuno',2 =>'Fatture di Vendita',4=>'Corrispettivi',6=>'Fatture d\'Acquisto'),
                            'operat'=>'Operatore',
                            'operat_value'=>array(0=>'Non opera',1=>'Somma',2=>'Sottrae'),
-                           'pay_schedule'=>'Partite aperte (scadenziario)',
+                           'pay_schedule'=>'Partite aperte (scadenzario)',
                            'pay_schedule_value'=>array(0=>'Non opera',1=>'Documento vendita/acquisto (apre)',2=>'Pagamento (chiude)'),
                            'contr'=>'Conto (minimo 1) *',
                            'tipim'=>'Tipo di importo',
