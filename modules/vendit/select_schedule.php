@@ -117,6 +117,7 @@ if (isset($_POST['preview'])) {
             $partner='';
             $id_tes='';
             $paymov='';
+            $status_del=false;
             if ($mv["clfoco"]<>$ctrl_partner){
                 $class_partner='FacetDataTDred';
                 $partner=$mv["ragsoc"];
@@ -139,6 +140,7 @@ if (isset($_POST['preview'])) {
                 } else {
                     $class_paymov='FacetDataTDevidenziaKO';
                     $status_descr=$script_transl['status_value'][0];
+                    $status_del=true;
                 }
             }
             echo "<tr>";
@@ -158,7 +160,14 @@ if (isset($_POST['preview'])) {
                 echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["amount"]." &nbsp;</td>";
             }
             echo "<td align=\"center\" class=\"FacetDataTD\">".gaz_format_date($mv["expiry"])." &nbsp;</td>";
-            $ctrl_partner=$mv["clfoco"];
+            echo "<td align=\"center\" class=\"FacetDataTD\"> ";
+            // Permette di cancellare il documento.
+            if ($status_del) {
+                echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)\" href=\"delete_schedule.php?id_tesdoc_ref=".$paymov."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
+            } else {
+                echo "<button title=\"Non &egrave; possibile cancellare una partita ancora aperta\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button>";
+            }
+            echo "</td></tr>\n";
             $ctrl_id_tes=$mv["id_tes"];
             $ctrl_paymov=$mv["id_tesdoc_ref"];
 
