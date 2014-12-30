@@ -223,6 +223,9 @@ class DocContabVars
                  ON rows.codvat=vat.codice';
         $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva',$from, "rows.id_tes = ".$this->testat,"id_tes DESC, id_rig");
         $this->tottraspo += $this->trasporto;
+        if ($this->taxstamp<0.01 && $this->tesdoc['taxstamp'] >= 0.01){
+            $this->taxstamp = $this->tesdoc['taxstamp'];
+        }
         $this->riporto =0.00;
         $this->ritenuta=0.00;
         $results = array();
@@ -275,7 +278,6 @@ class DocContabVars
         }
         $this->totimpmer = $this->totimp_body;
         $this->totimp_body=0;
-        $this->taxstamp = $this->tesdoc['taxstamp'];
         $somma_spese = $this->tottraspo + $this->speseincasso + $this->tesdoc['spevar'];
         $calc->add_value_to_VAT_castle($this->body_castle,$somma_spese,$this->tesdoc['expense_vat']);
         if ($this->tesdoc['stamp'] > 0) {
@@ -289,7 +291,6 @@ class DocContabVars
             $calc->add_value_to_VAT_castle($calc->castle,$this->taxstamp+$this->impbol,$this->azienda['taxstamp_vat']);
         }
         $this->cast=$calc->castle;
-        $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->riporto=0;
         $this->ritenute=0;
         $this->castel = array();

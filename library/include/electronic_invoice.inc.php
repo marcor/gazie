@@ -138,6 +138,7 @@ class invoiceXMLvars
         $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $this->tesdoc = $tesdoc;
+        $this->expense_pervat = gaz_dbi_get_row($gTables['aliiva'], "codice", $this->tesdoc['expense_vat']);
         $this->min = substr($tesdoc['initra'],14,2);
         $this->ora = substr($tesdoc['initra'],11,2);
         $this->day = substr($tesdoc['initra'],8,2);
@@ -208,6 +209,10 @@ class invoiceXMLvars
 
     function getXMLrows()
     {
+        $this->tot_trasporto += $this->trasporto;
+        if ($this->taxstamp<0.01 && $this->tesdoc['taxstamp'] >= 0.01){
+            $this->taxstamp = $this->tesdoc['taxstamp'];
+        }
         $from =  $this->gTables[$this->tableName].' AS rows
                  LEFT JOIN '.$this->gTables['aliiva'].' AS vat
                  ON rows.codvat=vat.codice';
@@ -237,15 +242,12 @@ class invoiceXMLvars
                 }
                 if (!isset($this->castel[$rigo['codvat']])) {
                     $this->castel[$rigo['codvat']] = 0;
-                    if ($rigo['tipiva']!='C' && $rigo['tipiva']!='S' ) {
-                       $this->decalc_castle[$rigo['codvat']] = 0.00;
-                    }
                 }
+                if (!isset($this->body_castle[$rigo['codvat']])) {
+                    $this->body_castle[$rigo['codvat']]['impcast'] = 0;
+                }
+                $this->body_castle[$rigo['codvat']]['impcast'] += $v_for_castle;
                 $this->castel[$rigo['codvat']] += $v_for_castle;
-                if ($rigo['tipiva']!='C' && $rigo['tipiva']!='S' ) {
-                   $this->decalc_castle[$rigo['codvat']] += $v_for_castle;
-                   $this->totimp_decalc += $v_for_castle;
-                }
                 $this->totimp_body += $rigo['importo'];
                 $this->ritenuta += round($rigo['importo']*$rigo['ritenuta']/100,2);
                 $this->totimp_doc += $v_for_castle;
@@ -281,6 +283,15 @@ class invoiceXMLvars
             }
         }
         unset($righiDescrittivi[0]);
+        // se ho dei trasporti lo aggiungo ai righi del relativo DdT
+        if ($this->trasporto>=0.1){
+            $rigo_T=array('tiprig'=>'T','descri'=>'TRASPORTO',
+                          'importo'=>$this->trasporto,
+                          'pervat'=>$this->expense_pervat['aliquo'],'ritenuta'=>0);
+            $results[$nr] = $rigo_T;
+            $nr++;
+        }
+        
         foreach ($results as $k => $v) { // associo l'array dei righi descrittivi con quello del righo corrispondente
             $r[$k]=$v;
             if (isset($righiDescrittivi[$k])){
@@ -290,7 +301,7 @@ class invoiceXMLvars
         return $r;
     }
 
-    function setXMLtot($totTrasporto=0)
+    function setXMLtot()
     {
         $calc = new Compute();
         $this->totivafat = 0.00;
@@ -300,10 +311,6 @@ class invoiceXMLvars
         $this->impbol = 0.00;
         $this->totriport = $this->riporto;
         $this->speseincasso = $this->tesdoc['speban'] * $this->pagame['numrat'];
-        $this->cast = array();
-        if (!isset($this->decalc_castle)){
-            $this->decalc_castle= array();
-        }
         if (!isset($this->castel)){
             $this->castel= array();
         }
@@ -317,45 +324,22 @@ class invoiceXMLvars
         }
         $this->totimpfat = $this->totimp_doc;
         $this->totimp_doc = 0;
-        $somma_spese = $totTrasporto + $this->speseincasso + $this->tesdoc['spevar'];
-        $last=count($this->castel);
-        $acc_val=$somma_spese;
-        foreach ($this->castel as $k=>$v) {
-            $vat = gaz_dbi_get_row($this->gTables['aliiva'],"codice",$k);
-            if (isset($this->decalc_castle[$k])) {
-               if ($last == 1) {
-                  $v += $acc_val;
-                  $this->totimpfat += $acc_val;
-               } else {
-                  $decalc=round($somma_spese*$v/$this->totimpmer,2);
-                  $v += $decalc;
-                  $this->totimpfat += $decalc;
-                  $acc_val-=$decalc;
-               }
-               $last--;
-            }
-            $ivacast = round($v*$vat['aliquo'])/ 100;
-            $this->totivafat += $ivacast;
-            $this->cast[$k]['aliquo'] = $vat['aliquo'];
-            $this->cast[$k]['impcast'] = $v;
-            $this->cast[$k]['ivacast'] = $ivacast;
-            $this->cast[$k]['descriz'] = $vat['descri'];
-            $this->cast[$k]['fae_natura'] = $vat['fae_natura'];
+        $somma_spese = $this->tot_trasporto + $this->speseincasso + $this->tesdoc['spevar'];
+        $calc->add_value_to_VAT_castle($this->body_castle,$somma_spese,$this->tesdoc['expense_vat']);
+        if ($this->tesdoc['stamp'] > 0) {
+              $calc->payment_taxstamp($calc->total_imp+$this->totriport+$calc->total_vat-$this->tot_ritenute+$this->taxstamp, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
+              $this->impbol = $calc->pay_taxstamp;  
         }
-        //************* QUESTA PARTE E' DA RIVEDERE *************************
-        //se il pagamento e' del tipo TRATTA calcolo i bolli da addebitare per l'emissione dell'effetto
-        if ($this->pagame['tippag'] == 'T' or $this->pagame['tippag'] == 'R') {
-           if ($this->pagame['tippag'] == 'T') {
-                $calc->payment_taxstamp($this->totimpfat+$this->totriport+$this->totivafat-$this->tot_ritenute, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
-                $this->impbol = $calc->pay_taxstamp;
-           } elseif($this->pagame['tippag'] == 'R') {
-              $this->impbol = $this->tesdoc['stamp'];
-           }
+        $this->totimpfat=$calc->total_imp;
+        $this->totivafat=$calc->total_vat;
+        // aggiungo gli eventuali bolli al castelletto
+        if ($this->impbol > 0 || $this->taxstamp > 0) {
+            $this->impbol += $this->taxstamp;  
+            $calc->add_value_to_VAT_castle($calc->castle,$this->taxstamp+$this->impbol,$this->azienda['taxstamp_vat']);
         }
+        $this->cast=$calc->castle;
         $this->riporto=0;
         $this->ritenute=0;
-        $this->castel = array();
-        $this->decalc_castle= array();
     }
 
     function encodeSendingNumber($data, $b=62) {
@@ -413,6 +397,13 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     $xpath = new DOMXPath($domDoc);
     $ctrl_doc = 0;
     $n_linea = 1;
+    // definisco le variabili dei totali 
+    $XMLvars->totimp_body = 0;
+    $XMLvars->taxstamp = 0;
+    $XMLvars->virtual_taxstamp = 0;
+    $XMLvars->tot_trasporto = 0;
+    $XMLvars->body_castle=array();
+
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
       $XMLvars->setXMLvars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
       if ($ctrl_doc == 0) {
@@ -544,20 +535,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
       $cup="";
       $id_documento="";
       while (list($key, $rigo) = each($lines)) {
-                // se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
-                if ($XMLvars->ddt_data) {
-                    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
-                    $el_ddt = $domDoc->createElement("DatiDDT","");
-			$el1= $domDoc->createElement("NumeroDDT", $XMLvars->tesdoc['numdoc']);
-			$el_ddt->appendChild($el1);
-			$el1= $domDoc->createElement("DataDDT", $XMLvars->tesdoc['datemi']);
-			$el_ddt->appendChild($el1);
-			$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
-			$el_ddt->appendChild($el1);
-          
-                    $results->appendChild($el_ddt);
-                    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
-                }
+                $nl=false;
                 switch($rigo['tiprig']) {
                 case "0":       // normale
                     $el = $domDoc->createElement("DettaglioLinee","");					 
@@ -594,10 +572,11 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                             }
                         }
 		    $results->appendChild($el);
-		    $n_linea++;
+		    $nl=true;
                     break;
 
-                case "1":       // forfait
+                case "1":
+                case "T":       // forfait o trasporto
                     $el = $domDoc->createElement("DettaglioLinee","");					 
 			$el1= $domDoc->createElement("NumeroLinea", $n_linea);
 			$el->appendChild($el1);
@@ -618,7 +597,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                             $el->appendChild($el1);
                         }
 		    $results->appendChild($el);
-		    $n_linea++;
+		    $nl=true;
                     break;
                 case "2":       // descrittivo
                     /* ! ATTENZIONE: tipo rigo spostato in appendice <2.2.1.16> ai righi "normale" !!!
@@ -647,8 +626,40 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                 if ($rigo['ritenuta']>0) {
                     /*		*/
                 }
+                // se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
+                
+                if ($XMLvars->ddt_data && $nl) {
+                    $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
+                    $el_ddt = $domDoc->createElement("DatiDDT","");
+			$el1= $domDoc->createElement("NumeroDDT", $XMLvars->tesdoc['numdoc']);
+			$el_ddt->appendChild($el1);
+			$el1= $domDoc->createElement("DataDDT", $XMLvars->tesdoc['datemi']);
+			$el_ddt->appendChild($el1);
+			$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
+			$el_ddt->appendChild($el1);
+          
+                    $results->appendChild($el_ddt);
+                    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
+                    $n_linea++;
+                }
+
         }
         $ctrl_doc =  $XMLvars->tesdoc['numdoc'];
+        // aggiungo le eventuali spese di incasso ma queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
+        if ($XMLvars->tesdoc['speban']>0){
+            $el = $domDoc->createElement("DettaglioLinee","");					 
+        	$el1= $domDoc->createElement("NumeroLinea", $n_linea);
+        	$el->appendChild($el1);
+        	$el1= $domDoc->createElement("Descrizione", 'SPESE INCASSO '.$XMLvars->pagame['numrat'].' EFFETTI');
+        	$el->appendChild($el1);
+        	$el1= $domDoc->createElement("PrezzoUnitario", number_format($XMLvars->tesdoc['speban'],2,'.',''));
+        	$el->appendChild($el1);
+        	$el1= $domDoc->createElement("PrezzoTotale", number_format(($XMLvars->tesdoc['speban']*$XMLvars->pagame['numrat']),2,'.',''));
+        	$el->appendChild($el1);
+        	$el1= $domDoc->createElement("AliquotaIVA", number_format($XMLvars->expense_pervat['aliquo'],2,'.',''));
+        	$el->appendChild($el1);
+            $results->appendChild($el);
+        }
     }
     
     //dati ordine di acquisto
@@ -706,9 +717,9 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
     foreach ($XMLvars->cast as $key => $value) {          
         $el = $domDoc->createElement("DatiRiepilogo","");					 
-            $el1= $domDoc->createElement("AliquotaIVA", number_format($value['aliquo'],2,'.',''));
+            $el1= $domDoc->createElement("AliquotaIVA", number_format($value['periva'],2,'.',''));
             $el->appendChild($el1);
-            if ($value['aliquo']<=0){
+            if ($value['periva']<0.01){
                 $el1= $domDoc->createElement("Natura", $value['fae_natura']);
                 $el->appendChild($el1);
             }

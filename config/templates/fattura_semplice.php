@@ -38,7 +38,6 @@ class FatturaSemplice extends Template
         $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
         $this->sconto = $this->tesdoc['sconto'];
         $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
-        $this->taxstamp=$this->tesdoc['taxstamp'];
         $this->trasporto = $this->tesdoc['traspo'];
         if ($this->tesdoc['tipdoc'] == 'FAD') {
             $descri='Fattura differita n.';
@@ -91,7 +90,7 @@ class FatturaSemplice extends Template
     {
         $lines = $this->docVars->getRigo();
         while (list($key, $rigo) = each($lines)) {
-            if (($this->GetY() >= 166 && $this->taxstamp >= 0.01 ) || $this->GetY() >= 195) { // mi serve per poter stampare la casella del bollo
+            if (($this->GetY() >= 166 && $this->docVars->taxstamp >= 0.01 ) || $this->GetY() >= 195) { // mi serve per poter stampare la casella del bollo
                 $this->Cell(186,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
@@ -164,7 +163,7 @@ class FatturaSemplice extends Template
 
     function pageFooter()
     {
-        if ($this->taxstamp >= 0.01 ) {
+        if ($this->docVars->taxstamp >= 0.01 ) {
             if ($this->virtual_taxstamp == 2 ) {
                 $this->Cell(186,5,'','LR',1);
                 $this->Cell(130,8,'','L',0,0);
@@ -172,7 +171,7 @@ class FatturaSemplice extends Template
                 $this->Cell(130,8,'','L',0,0);
                 $this->Cell(56,8,"decreto MEF 17.06.2014 (art.6)","LR",1,"C");
                 $this->Cell(130,8,'','L',0,0);
-                $this->Cell(56,8," € ".gaz_format_number($this->taxstamp),'LR',1,'C');
+                $this->Cell(56,8," € ".gaz_format_number($this->docVars->taxstamp),'LR',1,'C');
             } else {
                 $this->Cell(186,5,'','LR',1);
                 $this->Cell(150,8,'','L',0,0);
@@ -180,7 +179,7 @@ class FatturaSemplice extends Template
                 $this->Cell(150,8,'','L',0,0);
                 $this->Cell(36,8,"sull'originale","LR",1,"C");
                 $this->Cell(150,8,'','L',0,0);
-                $this->Cell(36,8,"€ ".gaz_format_number($this->taxstamp),'LR',1,'C');
+                $this->Cell(36,8,"€ ".gaz_format_number($this->docVars->taxstamp),'LR',1,'C');
             }
         }
         $y = $this->GetY();
@@ -220,7 +219,7 @@ class FatturaSemplice extends Template
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
-		$taxstamp=$this->docVars->taxstamp;
+	$taxstamp=$this->docVars->taxstamp;
         //effettuo il calcolo degli importi delle scadenze
         $totpag = $totimpfat+$taxstamp+$impbol+$totriport+$totivafat-$ritenuta;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);

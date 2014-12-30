@@ -1450,6 +1450,7 @@ class Compute
                 $new_castle[$k]['periva'] = $vat['aliquo'];
                 $new_castle[$k]['tipiva'] = $vat['tipiva'];
                 $new_castle[$k]['descriz'] = $vat['descri'];
+                $new_castle[$k]['fae_natura'] = $vat['fae_natura'];
                 $row--; 
                 if ($row == 0) { // è l'ultimo rigo del castelletto
                     // aggiungo il resto
@@ -1474,6 +1475,7 @@ class Compute
                 $new_castle[$k]['periva'] = $vat['aliquo'];
                 $new_castle[$k]['tipiva'] = $vat['tipiva'];
                 $new_castle[$k]['descriz'] = $vat['descri'];
+                $new_castle[$k]['fae_natura'] = $vat['fae_natura'];
                 if ($k==$vat_rate) { // SE è la stessa aliquota aggiungo il nuovo valore
                     $match=true;
                     $new_imp = $v['impcast']+$value;
@@ -1499,6 +1501,7 @@ class Compute
                 $new_castle[$vat_rate]['imponi'] = $value;
                 $new_castle[$vat_rate]['ivacast'] = round(($value*$vat['aliquo'])/ 100,2);
                 $new_castle[$vat_rate]['descriz'] = $vat['descri'];
+                $new_castle[$vat_rate]['fae_natura'] = $vat['fae_natura'];
                 if ($vat['aliquo'] < 0.01){ // è senza IVA
                     $this->total_exc+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
