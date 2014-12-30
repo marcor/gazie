@@ -83,14 +83,14 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
     while ($tes = gaz_dbi_fetch_array($result)) {
            if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
                 if ($ctrlp>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-					$calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$doc[$ctrlp]['tes']['taxstamp'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
-					$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
+					$calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+					$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$taxstamp+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
 					$doc[$ctrlp]['vat']=$calc->castle;
 					// aggiungo il castelleto conti
 					if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
 						$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] = 0;
 					}
-					$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp;
+					$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $taxstamp+$calc->pay_taxstamp;
                 }    
                 $carry=0;
                 $cast_vat=array();
@@ -100,10 +100,15 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
                 $totimp_decalc=0.00;
                 $n_vat_decalc=0;
                 $spese_incasso=$tes['numrat']*$tes['speban'];
+                $taxstamp=0;
                 $rit=0;
            } else {
                 $spese_incasso=0;
            }
+           // aggiungo il bollo sugli esenti/esclusi se nel DdT c'è ma non è ancora stato mai aggiunto
+           if ($tes['taxstamp']>=0.01 && $taxstamp<0.01) {
+                $taxstamp=$tes['taxstamp'];
+           }           
            if ($tes['traspo']>=0.01) {
                    if (!isset($cast_acc[$admin_aziend['imptra']]['import'])) {
                       $cast_acc[$admin_aziend['imptra']]['import'] = $tes['traspo'];
@@ -166,16 +171,16 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
            $doc[$tes['protoc']]['vat']=$calc->castle;
            $ctrlp=$tes['protoc'];
     }
-    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 ) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-        $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$doc[$ctrlp]['tes']['taxstamp'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01 ) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+        $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
-		$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
+		$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$taxstamp+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
         $doc[$ctrlp]['vat']=$calc->castle;
         // aggiungo il castelleto conti
         if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
            $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] = 0;
         }
-        $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp;
+        $doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $taxstamp+$calc->pay_taxstamp;
     }    
     return $doc;
 }

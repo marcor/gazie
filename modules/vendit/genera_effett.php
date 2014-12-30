@@ -52,15 +52,15 @@ function getDocumentsBill($upd=false)
            //il numero di protocollo contiene anche l'anno nei primi 4 numeri
            $year_prot=intval(substr($tes['datfat'],0,4))*1000000+$tes['protoc'];
            if ($year_prot <> $ctrlp) { // la prima testata della fattura
-                if ($ctrlp>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-					$calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$doc[$ctrlp]['tes']['taxstamp'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
-					$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
+                if ($ctrlp>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+					$calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+					$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$taxstamp+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
 					$doc[$ctrlp]['vat']=$calc->castle;
 					// aggiungo il castelleto conti
 					if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
 						$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] = 0;
 					}
-					$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp;
+					$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $taxstamp+$calc->pay_taxstamp;
                 }    
                 $carry=0;
                 $somma_spese=0;
@@ -69,10 +69,15 @@ function getDocumentsBill($upd=false)
                 $n_vat_decalc=0;
                 $totimpdoc=0;
                 $spese_incasso=$tes['numrat']*$tes['speban'];
+                $taxstamp=0;
                 $rit=0;
            } else {
                 $spese_incasso=0;
            }
+           // aggiungo il bollo sugli esenti/esclusi se nel DdT c'è ma non è ancora stato mai aggiunto
+           if ($tes['taxstamp']>=0.01 && $taxstamp<0.01) {
+                $taxstamp=$tes['taxstamp'];
+           }           
            //recupero i dati righi per creare il castelletto
            $from =  $gTables['rigdoc'].' AS rows
                     LEFT JOIN '.$gTables['aliiva'].' AS vat
@@ -109,10 +114,10 @@ function getDocumentsBill($upd=false)
            $calc->add_value_to_VAT_castle($cast_vat,$somma_spese,$tes['expense_vat']);
            $doc[$ctrlp]['vat']=$calc->castle;
     }
-    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 ) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-        $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$doc[$ctrlp]['tes']['taxstamp'], $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01 ) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+        $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
-		$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$doc[$ctrlp]['tes']['taxstamp']+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
+		$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$taxstamp+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
         $doc[$ctrlp]['vat']=$calc->castle;
         // aggiungo il castelleto conti
         if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
