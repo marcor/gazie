@@ -692,7 +692,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                $el = $domDoc->createElement("DatiRitenuta","");					 
 			$el1= $domDoc->createElement("TipoRitenuta", $XMLvars->TipoRitenuta);
 			$el->appendChild($el1);
-			$el1= $domDoc->createElement("ImportoRitenuta",$XMLvars->tot_ritenute);
+			$el1= $domDoc->createElement("ImportoRitenuta", number_format($XMLvars->tot_ritenute,2,'.',''));
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("AliquotaRitenuta", number_format($XMLvars->azienda['ritenuta'], 2, '.', ''));
 			$el->appendChild($el1);
@@ -706,7 +706,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                $el = $domDoc->createElement("DatiBollo","");					 
 			$el1= $domDoc->createElement("NumeroBollo", str_pad($XMLvars->azienda['virtual_stamp_auth_prot'].'/'.substr($XMLvars->azienda['virtual_stamp_auth_date'],0,4),14,' ',STR_PAD_LEFT));
 			$el->appendChild($el1);
-			$el1= $domDoc->createElement("ImportoBollo", $XMLvars->impbol);
+			$el1= $domDoc->createElement("ImportoBollo", number_format($XMLvars->impbol,2,'.',''));
 			$el->appendChild($el1);
 		    $results->appendChild($el);
     }
