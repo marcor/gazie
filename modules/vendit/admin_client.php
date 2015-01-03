@@ -168,7 +168,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           } elseif ($toDo == 'update') {
              $anagrafica->updatePartners($form['codice'],$form);
           }
-          header("Location: report_client.php");
+          header("Location: ".$form['ritorno']);
           exit;
        }
 

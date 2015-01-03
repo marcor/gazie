@@ -342,7 +342,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		// Colonna data documento
         echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datfat"])." &nbsp;</td>";
 		// Colonna cliente
-        echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
+        echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$r["ragso1"]."&search=Cerca\">".$r["ragso1"]."</a>&nbsp;</td>";
 		// Colonna movimenti contabili
         echo "<td class=\"FacetDataTD\" align=\"center\">";
         if ($r["id_con"] > 0) {
@@ -417,7 +417,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="Mailto: '.$r["e_mail"].'"
             mail="'.$r["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numfat"].' del '.gaz_format_date($r["datfat"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
 			} else {
-				echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+				echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 			}		  
         echo "</td>";
         // Colonna "Origine"

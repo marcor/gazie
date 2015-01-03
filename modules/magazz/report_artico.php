@@ -116,11 +116,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
        $image_src = '';
        if(!isset($_GET['all']) and (!empty($r["image"]) || (file_exists("../../data/files/fotoart/".$r["codice"].".gif" )))){
 		if ( !empty( $r["image"] ) ) {
-			$image_src = '<img border="1px" height="22" src="../root/view.php?table=artico&value='.$r['codice'].'" />';
+			$image_src = '<img border="1px" height="20" src="../root/view.php?table=artico&value='.$r['codice'].'" />';
 			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
 		} elseif (file_exists("../../data/files/fotoart/".$r["codice"].".gif" )) {
-			$image_src = '<img border="1px" height="22" src="../../data/files/fotoart/'.$r["codice"].'.gif" />';
-			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<img width='50%' height='50%' src='../../data/files/fotoart/".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
+			$image_src = '<img border="1px" height="20" src="../../data/files/fotoart/'.$r["codice"].'.gif" />';
+			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<img width='50%' height='50%' src='../../data/files/fotoart/".$r['codice'].".gif'>] fade=[on] fadespeed=[0.03] \"";
 		} else {
 			$image_src = "";
 		}
@@ -130,8 +130,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
        $iva = gaz_dbi_get_row($gTables['aliiva'],"codice",$r["aliiva"]);
        echo "<tr>";
        ?>
-			<td class="FacetDataTD">
-				<a class="btn btn-block btn-default" href="admin_artico.php?codice=<?php echo $r["codice"]; ?>&Update">
+			<td class="FacetDataTD" style="min-width:80px">
+				<a class="btn btn-xs btn-block btn-default " href="admin_artico.php?codice=<?php echo $r["codice"]; ?>&Update">
 				<div>
 					<div style="float:left;vertical-align: middle;">
 						<?php echo $image_src;?>
@@ -156,12 +156,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
        echo "<td class=\"FacetDataTD\" align=\"right\" title=\"".$admin_aziend['symbol']." ".$magval['v_g']."\">".number_format($magval['q_g'],$admin_aziend['decimal_quantity'],',','.')." </td>";
        if ($admin_aziend['conmag']>0) {
           echo "<td class=\"FacetDataTD\" align=\"center\" title=\"Visualizza e/o stampa la scheda di magazzino\">
-                <a href=\"../magazz/select_schart.php?di=0101".date('Y')."&df=".date('dmY')."&id=".$r['codice']."\">
-                <img src=\"../../library/images/vis.gif\" alt=\"Visualizza e stampa il partitario\" border=\"0\"><img src=\"../../library/images/stampa.gif\" border=\"0\"></a></td>";
+               <a class=\"btn btn-xs btn-default\" href=\"../magazz/select_schart.php?di=0101".date('Y')."&df=".date('dmY')."&id=".$r['codice']."\">
+               <i class=\"glyphicon glyphicon-check\"></i><i class=\"glyphicon glyphicon-print\"></i></a></td>";
        }
-       echo "<td class=\"FacetDataTD\" align=\"center\" title=\"Stampa Codici a Barre\"><a href=\"stampa_barcode.php?code=".$r["codice"]."\"><img src=\"../../library/images/barcode.png\" border=\"0\"><br />".$r['barcode']."</a></td>";
-       echo "<td class=\"FacetDataTD\" align=\"center\" title=\"Duplica articolo in (".$r["codice"]."_2)\"><a href=\"clone_artico.php?codice=".$r["codice"]."\"><img src=\"../../library/images/copy.png\" alt=\"Duplica!\" border=\"0\"></a></td>";
-       echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_artico.php?codice=".$r["codice"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+       echo "<td class=\"FacetDataTD\" align=\"center\" title=\"Stampa Codici a Barre\"><a class=\"btn btn-xs btn-default\" href=\"stampa_barcode.php?code=".$r["codice"]."\"><i class=\"glyphicon glyphicon-barcode\"></i></a></td>"; //<img src=\"../../library/images/barcode.png\" border=\"0\"><br />".$r['barcode']."
+       echo "<td class=\"FacetDataTD\" align=\"center\" title=\"Duplica articolo in (".$r["codice"]."_2)\"><a class=\"btn btn-xs btn-default\" href=\"clone_artico.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-export\"></i></a></td>";
+       echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_artico.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
        echo "</tr>";
 }
 ?>

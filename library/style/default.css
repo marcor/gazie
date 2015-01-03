@@ -560,6 +560,9 @@ input.input-xs {
 .btn-pagamento {
 	color: #66aa66;
 }
+.btn-articolo {
+	padding: 3px 2px 5px 2px;
+}
 .form-inline {
 	{width: 200px};
 	padding-top: 7px;
