@@ -398,7 +398,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['e_mail']."</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"e_mail\" value=\"".$form['e_mail']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" id=\"email\" name=\"e_mail\" value=\"".$form['e_mail']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";

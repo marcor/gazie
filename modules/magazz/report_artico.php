@@ -114,7 +114,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
        $mv=$gForm->getStockValue(false,$r['codice']); 
        $magval=array_pop($mv);
        $image_src = '';
-       if(!isset($_GET['all']) and (!empty($r["image"]) || (file_exists("../../data/files/fotoart/".$r["codice"].".gif" )))){
+       if((!empty($r["image"]) || (file_exists("../../data/files/fotoart/".$r["codice"].".gif" )))){
 		if ( !empty( $r["image"] ) ) {
 			$image_src = '<img border="1px" height="20" src="../root/view.php?table=artico&value='.$r['codice'].'" />';
 			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$r['annota']."] body=[<img src='../root/view.php?table=artico&value=".$r['codice']."'>] fade=[on] fadespeed=[0.03] \"";
@@ -134,10 +134,10 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				<a class="btn btn-xs btn-block btn-default " href="admin_artico.php?codice=<?php echo $r["codice"]; ?>&Update">
 				<div>
 					<div style="float:left;vertical-align: middle;">
-						<?php echo $image_src;?>
+						<?php echo $r["codice"]; ?>
 					</div>
 					<div style="text-align:right;">
-						<?php echo $r["codice"]; ?>
+						<?php echo $image_src;?>
 					</div>
 				</div>
 				</a>

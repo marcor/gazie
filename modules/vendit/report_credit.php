@@ -51,7 +51,7 @@ if (isset($_GET['Return'])) {
 // garvin: Measure query time. TODO-Item http://sourceforge.net/tracker/index.php?func=detail&aid=571934&group_id=23067&atid=377411
 list($usec, $sec) = explode(' ',microtime());
 $querytime_before = ((float)$usec + (float)$sec);
-$sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) as nummov,codcon, ragso1, e_mail, telefo, sum(import*(darave='D')) as dare,sum(import*(darave='A')) as avere, sum(import*(darave='D') - import*(darave='A')) as saldo, darave FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra WHERE datreg between ".$annini."0101 and ".$annfin."1231 and codcon like '".$admin_aziend['mascli']."%' and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon like '".$admin_aziend['mascli']."%' and datreg like '".$annini."%') GROUP BY codcon ORDER BY ragso1, darave";
+$sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) as nummov,codcon, ragso1, e_mail, telefo,".$gTables['clfoco'].".codice, sum(import*(darave='D')) as dare,sum(import*(darave='A')) as avere, sum(import*(darave='D') - import*(darave='A')) as saldo, darave FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra WHERE datreg between ".$annini."0101 and ".$annfin."1231 and codcon like '".$admin_aziend['mascli']."%' and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon like '".$admin_aziend['mascli']."%' and datreg like '".$annini."%') GROUP BY codcon ORDER BY ragso1, darave";
 $rs_castel = gaz_dbi_query($sqlquery);
 list($usec, $sec) = explode(' ',microtime());
 $querytime_after = ((float)$usec + (float)$sec);
@@ -70,7 +70,7 @@ $script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.effects.scale',
                                   'jquery/modal_form'));
 
-echo '<script>
+?><script>
 
 $(function() {
    $( "#dialog" ).dialog({
@@ -100,8 +100,7 @@ function confirMail(link){
          });
    $("#dialog" ).dialog( "open" );
 }
-</script>';
-?>
+</script>
 <div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
       <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
       <p class="ui-state-highlight" id="mail_adrs"></p>
@@ -119,17 +118,17 @@ if (! $message == "") {
 <tr>
 <td class="FacetFieldCaptionTD">Anno inizio &nbsp;</td>
 <td class="FacetDataTD">
+	<!--// select del anno-->
+	<select name=\"annini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">
 <?php
-// select del anno
-echo "\t <select name=\"annini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
     $selected = "";
     if($counter == $annini)
             $selected = "selected";
     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
-echo "\t </select>\n";
 ?>
+	</select>
 </td>
 </tr>
 <tr>
@@ -187,20 +186,22 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
       if ($r['saldo'] != 0) {
          echo "<tr>";
          echo "<td class=\"FacetDataTD\">".$r['codcon']."&nbsp;</td>";
-         echo "<td class=\"FacetDataTD\">".$r['ragso1']." &nbsp;</td>";
+         echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$r["ragso1"]."&search=Cerca\">".$r["ragso1"]."</a> &nbsp;</td>";
          echo "<td class=\"FacetDataTD\">".$r['telefo']." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"center\">".$r['nummov']." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['dare'])." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"salcon_credit.php?codice=".$r['codcon']."\"><img src=\"../../library/images/pay.gif\" title=\"Effettuato un pagamento da ".$r["ragso1"]."\" border=\"0\"></a></td>";
-         echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&annfin=".$annfin."\"><center><img src=\"../../library/images/stampa.gif\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" border=\"0\"></a></td>";
+         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" title=\"Effettuato un pagamento da ".$r["ragso1"]."\"  href=\"salcon_credit.php?codice=".$r['codcon']."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
+         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&annfin=".$annfin."\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
     // Colonna "Mail"
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     if (!empty($r["e_mail"])) {
         echo '<a onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="stampa_estcon.php?codice='.$r["codcon"].'&annini='.$annini.'&annfin='.$annfin.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
         mail="'.$r["e_mail"].'" namedoc="Estratto conto '.$annini.'-'.$annfin.'"><img src="../../library/images/email.gif" border="0"></a>';
-    }  
+    } else {
+		echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+	} 
     echo "</td>";
          echo "</tr>";
          $tot += $r['saldo'];

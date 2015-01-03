@@ -162,7 +162,7 @@ $linkHeaders -> output();
 if (!isset($_GET['flag_order']))
        $orderby = "datemi DESC, numdoc DESC";
 //recupero le testate in base alle scelte impostate
-$result = gaz_dbi_dyn_query($gTables['tesbro'].".*,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice  LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby,$limit, $passo);
+$result = gaz_dbi_dyn_query($gTables['tesbro'].".*,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail,".$gTables["clfoco"].".codice", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice  LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby,$limit, $passo);
 $ctrlprotoc = "";
 while ($r = gaz_dbi_fetch_array($result)) {
     if ($r["tipdoc"] == 'VPR') {
@@ -183,7 +183,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\">".$script_transl['type_value'][$r["tipdoc"]]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$r["numdoc"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
+    echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$r["ragso1"]."&search=Cerca\">".$r["ragso1"]."</a> &nbsp;</td>";
     $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
     $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
     $rigbro_result = gaz_dbi_dyn_query ('*',$gTables['rigbro'],"id_tes = ".$r["id_tes"]." AND tiprig <=1 ",'id_tes DESC');
@@ -313,7 +313,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     if (!empty($r["e_mail"])) {
         echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
         mail="'.$r["e_mail"].'" namedoc="'.$script_transl['type_value'][$r["tipdoc"]].' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
-    }  
+    } else {
+		echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+	}
     echo "</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     if (!$remains_atleastone || !$processed_atleastone) {
