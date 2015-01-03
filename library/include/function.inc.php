@@ -2,7 +2,7 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2014 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
@@ -1577,6 +1577,25 @@ class Schedule
             WHERE id_tesdoc_ref = '".$id_tesdoc_ref."' GROUP BY id_tesdoc_ref";
         $rs = gaz_dbi_query($sqlquery);
         $this->Status=gaz_dbi_fetch_array($rs);
+    }
+    function getCreditDebit($clfoco,$date=false)
+    /*  INCOMPLETO !!!
+     * restituisce il valore dell'esposizione verso il debito/credito
+     * riferito ad una data, se passata, oppure alla data di sistema
+     * */
+    {
+        global $gTables;
+        if (!$date){
+           $date = strftime("%Y-%m-%d", mktime (0,0,0,date("m"),date("d"),date("Y")));
+        }
+        $sqlquery= "SELECT SUM(amount*(id_rigmoc_doc>0)- amount*(id_rigmoc_pay>0)) AS diff_paydoc, SUM(amount*(id_rigmoc_pay>0)) AS pay, SUM(amount*(id_rigmoc_doc>0))AS doc 
+            FROM ".$gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig )"
+                    ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes "
+                    ."LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon 
+            WHERE ".$gTables['clfoco'].".codice  = ".$clfoco." AND  GROUP BY id_tesdoc_ref";
+        $rs = gaz_dbi_query($sqlquery);
+        $this->Status=gaz_dbi_fetch_array($rs);
+
     }
 
     function updateItemsTable($data)
