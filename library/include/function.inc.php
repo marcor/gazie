@@ -1539,6 +1539,30 @@ class Schedule
             */
             $this->target=$account;
         }
+
+    function setScheduledPartner($partner_type=false) // 0=TUTTI, 1=FORNITORI, 2=TUTTI
+        {
+            /*
+             * restituisce in $this->Partners i codici dei clienti o dei fornitori
+             * che hanno almeno un movimento nell'archivio dello scadenzario 
+            */
+            global $gTables;
+            if (!$partner_type) { // se NON mi è stato passato il mastro dei clienti o dei fornitori
+              $partner_type='';  
+            }
+            $sqlquery= "SELECT ".$gTables['clfoco'].".codice 
+                FROM ".$gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig )"
+                        ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes "
+                        ."LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon 
+                WHERE ".$gTables['clfoco'].".codice  LIKE '".$partner_type."%' GROUP BY codcon ORDER BY ".$gTables['clfoco'].".descri ";
+                $rs = gaz_dbi_query($sqlquery);
+                $acc=array();
+                while ($r = gaz_dbi_fetch_array($rs)) {
+                    $acc[] = $r['codice'];
+                }
+                $this->Partners=$acc;               
+        }
+        
     function getScheduleEntries($ob=0)
         {
             /*
@@ -1620,7 +1644,7 @@ class Schedule
                 $carry=0.00;
             }    
             if ($r['id_rigmoc_doc']>0) { // APERTURE (vengono prima delle chiusure)
-                $acc[$k][]= array('id'=>$r['id'],'op_val'=>$r['amount'],'expiry'=>$r['expiry'],'cl_val'=>0,'expo_day'=>0);
+                $acc[$k][]= array('id'=>$r['id'],'op_val'=>$r['amount'],'expiry'=>$r['expiry'],'cl_val'=>0,'expo_day'=>0,'status'=>0);
             } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTUTRE (in ordine di scadenza)
                 $ex = new DateTime($r['expiry']);
                 if ($date_ctrl < $ex  ) { //  se è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
@@ -1643,6 +1667,9 @@ class Schedule
                             $acc[$k][$ko]['expo_day'] = $interval->format('%a');
                         }
                         $v -=$diff;
+                    }
+                    if ($acc[$k][$ko]['cl_val']==$acc[$k][$ko]['op_val']) { // se chiusa cambio lo stato
+                        $acc[$k][$ko]['status'] = 1;
                     }
                 }
             }

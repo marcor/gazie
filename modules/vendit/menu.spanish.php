@@ -71,7 +71,8 @@ $transl['vendit'] = array('name' => "Ventas",
                                          28=>array("Importación desde el sitio web","importaci&oacute;n desde el web"),
                                          29=>array("Crear archivo MAV estandar CBI","Crear archivo MAV"),
                                          30=>array("Informe de la factura electrónica", "informe de Factura Electrónica"),
-                                         31=>array("Reporte de partidas abiertas","Reporte de partidas abiertas ")
+                                         31=>array("Reporte de partidas abiertas","Reporte de partidas abiertas "),
+                                         32=>array("Selezione e stampa stato clienti","Stato delle scadenze")
 
                                        )
                           );
