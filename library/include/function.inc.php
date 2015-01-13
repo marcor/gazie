@@ -1534,10 +1534,17 @@ class Schedule
     
     function setPartnerTarget($account)
         {
+            /*
+             * setta il valore del conto (piano dei conti) del partner (cliente o fornitore) 
+            */
             $this->target=$account;
         }
     function getScheduleEntries($ob=0)
         {
+            /*
+             * genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
+             * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso 
+            */
             global $gTables;
             switch ($ob) {
                   case 1:
@@ -1571,6 +1578,9 @@ class Schedule
     }
     function getStatus($id_tesdoc_ref)
     {
+        /*
+         * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
+        */
         global $gTables;
         $sqlquery= "SELECT SUM(amount*(id_rigmoc_doc>0)- amount*(id_rigmoc_pay>0)) AS diff_paydoc, SUM(amount*(id_rigmoc_pay>0)) AS pay, SUM(amount*(id_rigmoc_doc>0))AS doc 
             FROM ".$gTables['paymov']."
@@ -1578,24 +1588,67 @@ class Schedule
         $rs = gaz_dbi_query($sqlquery);
         $this->Status=gaz_dbi_fetch_array($rs);
     }
-    function getCreditDebit($clfoco,$date=false)
-    /*  INCOMPLETO !!!
-     * restituisce il valore dell'esposizione verso il debito/credito
+    
+    function getPartnerStatus($clfoco,$date=false)
+    /*  
+     * genera un array ($this->PartnerStatus)con i valori dell'esposizione verso un partner commerciale
      * riferito ad una data, se passata, oppure alla data di sistema
      * */
     {
         global $gTables;
+        $this->PartnerStatus = array();
+        if ( $this->target>0 && $clfoco==0 ) {
+            $clfoco=$this->target;
+        }
         if (!$date){
            $date = strftime("%Y-%m-%d", mktime (0,0,0,date("m"),date("d"),date("Y")));
         }
-        $sqlquery= "SELECT SUM(amount*(id_rigmoc_doc>0)- amount*(id_rigmoc_pay>0)) AS diff_paydoc, SUM(amount*(id_rigmoc_pay>0)) AS pay, SUM(amount*(id_rigmoc_doc>0))AS doc 
+        $sqlquery= "SELECT ".$gTables['paymov'].".* 
             FROM ".$gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig )"
                     ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes "
                     ."LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon 
-            WHERE ".$gTables['clfoco'].".codice  = ".$clfoco." AND  GROUP BY id_tesdoc_ref";
+            WHERE ".$gTables['clfoco'].".codice  = ".$clfoco." ORDER BY id_tesdoc_ref, id_rigmoc_pay, expiry";
         $rs = gaz_dbi_query($sqlquery);
-        $this->Status=gaz_dbi_fetch_array($rs);
-
+        $date_ctrl = new DateTime($date);
+        $ctrl_id=0;
+        $acc=array();
+        while ($r = gaz_dbi_fetch_array($rs)) {
+            $expo=false;
+            $k=$r['id_tesdoc_ref'];
+            if ( $k <> $ctrl_id){ // PARTITA DIVERSA DALLA PRECEDENTE
+                $acc[$k]= array();
+                $carry=0.00;
+            }    
+            if ($r['id_rigmoc_doc']>0) { // APERTURE (vengono prima delle chiusure)
+                $acc[$k][]= array('id'=>$r['id'],'op_val'=>$r['amount'],'expiry'=>$r['expiry'],'cl_val'=>0,'expo_day'=>0);
+            } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTUTRE (in ordine di scadenza)
+                $ex = new DateTime($r['expiry']);
+                if ($date_ctrl < $ex  ) { //  se è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
+                    $interval = $date_ctrl->diff($ex);
+                    $expo=true;
+                }
+                $v=$r['amount'];
+                foreach ($acc[$k] as $ko=>$vo) {
+                    $diff=$vo['op_val']-$vo['cl_val'];
+                    if ($v <= $diff) { // se c'è capienza
+                        $acc[$k][$ko]['cl_val'] += $v;
+                        if ($expo) { // è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
+                            $acc[$k][$ko]['expo_day'] = $interval->format('%a');
+                            $expo=false;
+                        }
+                        $v = 0;
+                    } else { // non c'è capienza
+                        $acc[$k][$ko]['cl_val'] += $diff;
+                        if ($expo) { // è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
+                            $acc[$k][$ko]['expo_day'] = $interval->format('%a');
+                        }
+                        $v -=$diff;
+                    }
+                }
+            }
+            $ctrl_id=$r['id_tesdoc_ref'];
+        }
+        $this->PartnerStatus=$acc;
     }
 
     function updateItemsTable($data)
