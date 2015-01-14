@@ -130,6 +130,9 @@ if (isset($_POST['preview'])) {
                 $mv['descri']='';
                 $mv['numdoc']='';
                 $mv['datdoc']='';
+                $class_partner='';
+				$partner='';
+				$status_descr='';
             }
             if ($mv["id_tesdoc_ref"]<>$ctrl_paymov){
                 $paymov=$mv["id_tesdoc_ref"];
@@ -138,7 +141,7 @@ if (isset($_POST['preview'])) {
                     $class_paymov='FacetDataTDevidenziaOK';
                     $status_descr=$script_transl['status_value'][1];
                 } else {
-                    $class_paymov='FacetDataTDevidenziaKO';
+                    $class_paymov='FacetDataTDevidenziaCL';
                     $status_descr=$script_transl['status_value'][0];
                     $status_del=true;
                 }

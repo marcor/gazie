@@ -64,7 +64,7 @@ $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
 $pdf->setFooterMargin(22);
 $pdf->setTopMargin(43);
-$pdf->SetFillColor(0, 70, 0, 0);
+$pdf->SetFillColor(160, 255,220 );
 $pdf->setRiporti('');
 $pdf->AddPage();
 $config = new Config;
@@ -93,6 +93,7 @@ if (sizeof($scdl->Entries) > 0) {
           } else {
               $mv['descri']='';
               $mv['numdoc']='';
+              $mv['seziva']='';
               $mv['datdoc']='';
           }
           if ($mv["id_tesdoc_ref"]<>$ctrl_paymov){

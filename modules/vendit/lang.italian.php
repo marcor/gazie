@@ -780,7 +780,7 @@ $strScript = array ("admin_client.php" =>
                            'status_value'=>array(0=>'Chiusa',1=>'Aperta'),
                            ),
                     "delete_schedule.php" =>
-                    array( 'title'=>'Cancellazione movimenti chiusi dello scadenziario',
+                    array( 'title'=>'Cancellazione movimenti chiusi dello scadenzario',
                            'ragsoc'=>'Cliente',
                            'id_tesdoc_ref'=>'Identificativo partita',
                            'descri'=> 'Descrizione'

@@ -1572,7 +1572,7 @@ class Schedule
             global $gTables;
             switch ($ob) {
                   case 1:
-                    $orderby = "expiry DESC, codice, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
+                    $orderby = "id_tesdoc_ref, expiry DESC, codice, caucon, datreg, numdoc ASC ";
                   break;
                   case 2:
                     $orderby = "ragso1, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
@@ -1581,7 +1581,7 @@ class Schedule
                     $orderby = "ragso1 DESC, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
                   break;
                   default:
-                    $orderby = "expiry, codice, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
+                    $orderby = "id_tesdoc_ref, expiry, codice,  caucon, datreg, numdoc ASC ";
             }
             $select = "*, ".$gTables['tesmov'].".*, ".$gTables['clfoco'].".descri AS ragsoc";
             if ($this->target==0 ) {
