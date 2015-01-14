@@ -749,7 +749,6 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                if ($v['id']=='new'){ // nuovo rigo
                                    $j=$k;
                                    unset($new_paymov[$j]['id']);
-                                   $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].$form['registroiva'].$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
                                 }
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
                                      $new_paymov[$j]['id_rigmoc_doc']=gaz_dbi_last_id();

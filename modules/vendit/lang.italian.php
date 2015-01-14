@@ -838,6 +838,17 @@ $strScript = array ("admin_client.php" =>
                            'alert1'=>'&sup1; La sezione IVA scelta non &egrave; quella<br/>normalente usata per<br/>l\'emissione delle Fatture immediate.',
                            'alert2'=>'&sup1; La sezione IVA selezionata potrebbe non<br/>coincidere con quella che verr&agrave; usata per<br/>l\'emissione della Fattura immediata che per<br/>Vostra scelta sar&agrave; uguale all\'ultima emessa.'
                            ),
+                    "select_partner_status.php" =>
+                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei clienti',
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'err'=>'Ci sono degli errori che impediscono la stampa'
+                                          ),
+                           'date_ini'=>'Data di riferimento ',
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni di esposizione' =>'','Stato'=>''
+                                           ),
+                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA')
+                           ),
                    "report_fae_sdi.php" =>
                    array(  'title'=>'TRAFFICO DATI FATTURAZIONE ELETTRONICA',
                            'table'=>'Tabella su cui stai lavorando: ',

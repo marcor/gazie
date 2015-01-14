@@ -742,6 +742,53 @@ $strScript = array ("admin_client.php" =>
                                             'Customer' =>'','Invoice'=>'','Bank'=>''
                                            )
                            ),
+                    "select_partner_status.php" =>
+                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei clienti',
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'err'=>'Ci sono degli errori che impediscono la stampa'
+                                          ),
+                           'date_ini'=>'Data di riferimento ',
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni di esposizione' =>'','Stato'=>''
+                                           ),
+                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA')
+                           ),
+                    "report_schedule.php" =>
+                    array( 'title'=>'Lista dei movimenti delle partite',
+                           'header'=>array( 'ID'=>'id',
+                                            'Identificativo partita' => "id_tesdoc_ref",
+                                            'Movimento contabile apertura (documento)' => "id_rigmoc_doc",
+                                            'Movimento contabile chiusura (pagamento)' => "id_rigmoc_pay",
+                                            'Importo' => "amount",
+                                            'Scadenza' => "expiry"
+                                            ),
+                           ),
+                    "select_schedule.php" =>
+                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa delle partite aperte',
+                           'mesg'=>array('La ricerca non ha dato risultati!',
+                                         'Inserire almeno 2 caratteri!',
+                                         'Cambia cliente/fornitore'
+                                          ),
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'Non sono stati trovati movimenti!'
+                                          ),
+                           'account'=>'Cliente ',
+                           'orderby'=>'Ordina per: ',
+                           'orderby_value'=>array(0=>'Scadenza crescente',1=>'Scadenza decrescente',
+                                                  2=>'Cliente crescente',3=>'Cliente decrescente'
+                                           ),
+                           'header'=>array('Cliente'=>'','ID Partita'=>'','Status'=>'','Mov.Cont.'=>'','Descrizione'=>'',
+                                            'N.Doc.'=>'','Data Doc.' =>'','Data Reg.' =>'','Dare'=>'','Avere'=>'',
+                                            'Scadenza'=>''
+                                           ),
+                           'status_value'=>array(0=>'Chiusa',1=>'Aperta'),
+                           ),
+                    "delete_schedule.php" =>
+                    array( 'title'=>'Cancellazione movimenti chiusi dello scadenziario',
+                           'ragsoc'=>'Cliente',
+                           'id_tesdoc_ref'=>'Identificativo partita',
+                           'descri'=> 'Descrizione'
+                           ),
                     "select_evaord.php" =>
                     array( 'title'=>'Order picking of customer',
                            'errors'=>array('Non &egrave; stato selezionato un cliente',

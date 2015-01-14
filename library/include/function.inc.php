@@ -1643,30 +1643,36 @@ class Schedule
                 $acc[$k]= array();
                 $carry=0.00;
             }    
+            $ex = new DateTime($r['expiry']);
+            $interval = $date_ctrl->diff($ex);
             if ($r['id_rigmoc_doc']>0) { // APERTURE (vengono prima delle chiusure)
-                $acc[$k][]= array('id'=>$r['id'],'op_val'=>$r['amount'],'expiry'=>$r['expiry'],'cl_val'=>0,'expo_day'=>0,'status'=>0);
+                $s=0;
+                if($date_ctrl >= $ex  ){
+                    $s=3; // SCADUTA
+                }
+                $acc[$k][]= array('id'=>$r['id'],'op_val'=>$r['amount'],'expiry'=>$r['expiry'],'cl_val'=>0,'cl_exp'=>'','expo_day'=>0,'status'=>$s);
             } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTUTRE (in ordine di scadenza)
-                $ex = new DateTime($r['expiry']);
                 if ($date_ctrl < $ex  ) { //  se è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
-                    $interval = $date_ctrl->diff($ex);
                     $expo=true;
                 }
                 $v=$r['amount'];
-                foreach ($acc[$k] as $ko=>$vo) {
-                    $diff=$vo['op_val']-$vo['cl_val'];
+                foreach ($acc[$k] as $ko=>$vo) { // attraverso l'array delle aperture
+                    $diff=round($vo['op_val']-$vo['cl_val'],2);
                     if ($v <= $diff) { // se c'è capienza
                         $acc[$k][$ko]['cl_val'] += $v;
                         if ($expo) { // è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
                             $acc[$k][$ko]['expo_day'] = $interval->format('%a');
+                            $acc[$k][$ko]['cl_exp'] = $r['expiry'];
                             $expo=false;
                         }
                         $v = 0;
                     } else { // non c'è capienza
                         $acc[$k][$ko]['cl_val'] += $diff;
-                        if ($expo) { // è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
+                        if ($expo && $diff >= 0.01) { // è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
                             $acc[$k][$ko]['expo_day'] = $interval->format('%a');
+                            $acc[$k][$ko]['cl_exp'] = $r['expiry'];
                         }
-                        $v -=$diff;
+                        $v = round($v-$diff,2);
                     }
                     if ($acc[$k][$ko]['cl_val']==$acc[$k][$ko]['op_val']) { // se chiusa cambio lo stato
                         $acc[$k][$ko]['status'] = 1;
