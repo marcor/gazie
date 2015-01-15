@@ -145,6 +145,12 @@ TABLE.selectTable TD {
     font-size : 13px;
 }
 
+.FacetDataTDevidenziaBL  {
+    background-color : #AAAAFF;
+    color : #000000;
+    font-size : 13px;
+}
+
 .FacetDataTDevidenziaKO  {
     background-color : #FF8888;
     color : #000000;

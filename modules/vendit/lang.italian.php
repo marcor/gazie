@@ -845,9 +845,9 @@ $strScript = array ("admin_client.php" =>
                                           ),
                            'date_ini'=>'Data di riferimento ',
                            'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
-                                           ,'Data chiusura'=>'','Giorni di esposizione' =>'','Stato'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
                                            ),
-                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA')
+                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO')
                            ),
                    "report_fae_sdi.php" =>
                    array(  'title'=>'TRAFFICO DATI FATTURAZIONE ELETTRONICA',

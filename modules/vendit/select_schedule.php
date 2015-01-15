@@ -131,8 +131,8 @@ if (isset($_POST['preview'])) {
                 $mv['numdoc']='';
                 $mv['datdoc']='';
                 $class_partner='';
-				$partner='';
-				$status_descr='';
+		$partner='';
+		$status_descr='';
             }
             if ($mv["id_tesdoc_ref"]<>$ctrl_paymov){
                 $paymov=$mv["id_tesdoc_ref"];

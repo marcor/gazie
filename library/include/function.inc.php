@@ -1678,6 +1678,9 @@ class Schedule
                         $acc[$k][$ko]['status'] = 1;
                     }
                 }
+                if (count($acc[$k])==0){ 
+                    $acc[$k][]= array('id'=>$r['id'],'op_val'=>0,'expiry'=>0,'cl_val'=>$r['amount'],'cl_exp'=>$r['expiry'],'expo_day'=>0,'status'=>9);
+                }
             }
             $ctrl_id=$r['id_tesdoc_ref'];
         }

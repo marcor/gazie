@@ -751,7 +751,7 @@ $strScript = array ("admin_client.php" =>
                            'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
                                            ,'Data chiusura'=>'','Giorni di esposizione' =>'','Stato'=>''
                                            ),
-                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA')
+                            'status_value'=>array(0=>'OPEN',1=>'CLOSE',2=>'EXPOSED',3=>'EXPIRED',9=>'ADVANCED')
                            ),
                     "report_schedule.php" =>
                     array( 'title'=>'Lista dei movimenti delle partite',
@@ -781,7 +781,7 @@ $strScript = array ("admin_client.php" =>
                                             'N.Doc.'=>'','Data Doc.' =>'','Data Reg.' =>'','Dare'=>'','Avere'=>'',
                                             'Scadenza'=>''
                                            ),
-                           'status_value'=>array(0=>'Chiusa',1=>'Aperta'),
+                           'status_value'=>array(0=>'CLOSE',1=>'OPEN'),
                            ),
                     "delete_schedule.php" =>
                     array( 'title'=>'Cancellazione movimenti chiusi dello scadenziario',

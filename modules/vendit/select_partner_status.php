@@ -58,9 +58,8 @@ if (!checkdate( $form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y'])) 
 // fine controlli
 
 if (isset($_POST['print']) && $msg=='') {
-    $_SESSION['print_request']=array('script_name'=>'print_schedule',
-                                     'account'=>$form['account'],
-                                     'orderby'=>$form['orderby']
+    $_SESSION['print_request']=array('script_name'=>'print_partner_status',
+                                     'date'=>$form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D']
                                      );
     header("Location: sent_print.php");
     exit;
@@ -131,7 +130,7 @@ if (isset($_POST['preview'])) {
             echo "<tr class=\"FacetFieldCaptionTD\">";
             echo "<td colspan='3'>".$prt['ragso1']." ".$prt['ragso2']."</td>";
             echo "</tr>\n";
-            $paymov->getPartnerStatus($p);
+            $paymov->getPartnerStatus($p,$form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D']);
             foreach ($paymov->PartnerStatus as $k=>$v){
                echo "<tr>";
                echo "<td class=\"FacetDataTDred\" colspan='2'>REF: $k</td>";
@@ -140,11 +139,11 @@ if (isset($_POST['preview'])) {
                   $class_paymov='FacetDataTDevidenziaCL';
                   $v_op='';
                   if ($vi['op_val']>=0.01){
-                     $v_op=$vi['op_val'];
+                     $v_op=gaz_format_number($vi['op_val']);
                   }
                   $v_cl='';
                   if ($vi['cl_val']>=0.01){
-                     $v_cl=$vi['cl_val'];
+                     $v_cl=gaz_format_number($vi['cl_val']);
                   }
                   $expo='';
                   $cl_exp=gaz_format_date($vi['cl_exp']);
@@ -155,11 +154,15 @@ if (isset($_POST['preview'])) {
                         $class_paymov='FacetDataTDevidenziaOK';
                      }
                   } else {
-                     $cl_exp='';
                      if ($vi['cl_val']==$vi['op_val']){ // chiusa e non esposta
+                        $cl_exp='';
                         $class_paymov='FacetDataTD';
-                     } elseif($vi['status']==3){
+                     } elseif($vi['status']==3){ // SCADUTA
+                        $cl_exp='';
                         $class_paymov='FacetDataTDevidenziaKO';
+                     } elseif($vi['status']==9){ // PAGAMENTO ANTICIPATO
+                        $class_paymov='FacetDataTDevidenziaBL';
+                        $vi['expiry']=$vi['cl_exp'];
                      }
                   }
                   echo "<tr class='".$class_paymov."'>";

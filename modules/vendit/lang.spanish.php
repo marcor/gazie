@@ -749,7 +749,7 @@ $strScript = array ("admin_client.php" =>
                            'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
                                            ,'Data chiusura'=>'','Giorni di esposizione' =>'','Stato'=>''
                                            ),
-                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA')
+                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO')
                            ),
                     "report_schedule.php" =>
                     array( 'title'=>'Lista dei movimenti delle partite',
