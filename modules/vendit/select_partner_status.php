@@ -127,6 +127,7 @@ if (isset($_POST['preview'])) {
         foreach ($paymov->Partners as $p){
             $anagrafica = new Anagrafica();
             $prt = $anagrafica->getPartner($p);
+            echo "<tr></tr>";
             echo "<tr class=\"FacetFieldCaptionTD\">";
             echo "<td colspan='5'>".$prt['ragso1']." ".$prt['ragso2'].
                   " tel:".gaz_html_call_tel($prt['telefo']).
@@ -137,19 +138,25 @@ if (isset($_POST['preview'])) {
             foreach ($paymov->PartnerStatus as $k=>$v){
                echo "<tr>";
                echo "<td class=\"FacetDataTDred\" colspan='2'>REF: $k</td>";
+               echo "<td class=\"FacetDataTD\" colspan='5'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=".$paymov->docData[$k]['id_tes']."\"><i class=\"glyphicon glyphicon-edit\"></i>".
+                    $paymov->docData[$k]['descri'].' n.'.
+                    $paymov->docData[$k]['numdoc'].'/'.
+                    $paymov->docData[$k]['seziva'].' '.
+                    $paymov->docData[$k]['datdoc']."</a></td>\n";
                echo "</tr>\n";
                foreach ($v as $ki=>$vi){
                   $class_paymov='FacetDataTDevidenziaCL';
                   $v_op='';
+                  $cl_exp='';
                   if ($vi['op_val']>=0.01){
                      $v_op=gaz_format_number($vi['op_val']);
                   }
                   $v_cl='';
                   if ($vi['cl_val']>=0.01){
                      $v_cl=gaz_format_number($vi['cl_val']);
+                     $cl_exp=gaz_format_date($vi['cl_exp']);
                   }
                   $expo='';
-                  $cl_exp=gaz_format_date($vi['cl_exp']);
                   if ($vi['expo_day']>=1){ 
                      $expo=$vi['expo_day'];
                      if ($vi['cl_val']==$vi['op_val']){

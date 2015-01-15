@@ -1550,7 +1550,7 @@ class Schedule
         {
             /*
              * restituisce in $this->Partners i codici dei clienti o dei fornitori
-             * che hanno almeno un movimento nell'archivio dello scadenzario 
+             * che hanno almeno un movimento nell'archivio dello scadenzario
             */
             global $gTables;
             if (!$partner_type) { // se NON mi è stato passato il mastro dei clienti o dei fornitori
@@ -1623,6 +1623,7 @@ class Schedule
     /*  
      * genera un array ($this->PartnerStatus)con i valori dell'esposizione verso un partner commerciale
      * riferito ad una data, se passata, oppure alla data di sistema
+     * $this->docData verrà valorizzato con i dati relativi al documento di riferimento
      * */
     {
         global $gTables;
@@ -1633,7 +1634,7 @@ class Schedule
         if (!$date){
            $date = strftime("%Y-%m-%d", mktime (0,0,0,date("m"),date("d"),date("Y")));
         }
-        $sqlquery= "SELECT ".$gTables['paymov'].".* 
+        $sqlquery= "SELECT ".$gTables['paymov'].".*, ".$gTables['tesmov'].".* 
             FROM ".$gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig )"
                     ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes "
                     ."LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon 
@@ -1647,7 +1648,7 @@ class Schedule
             $k=$r['id_tesdoc_ref'];
             if ( $k <> $ctrl_id){ // PARTITA DIVERSA DALLA PRECEDENTE
                 $acc[$k]= array();
-                $carry=0.00;
+                $this->docData[$k]=array('id_tes'=>$r['id_tes'],'descri'=>$r['descri'],'numdoc'=>$r['numdoc'],'seziva'=>$r['seziva'],'datdoc'=>$r['datdoc']);
             }    
             $ex = new DateTime($r['expiry']);
             $interval = $date_ctrl->diff($ex);
