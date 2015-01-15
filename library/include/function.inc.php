@@ -65,6 +65,12 @@ function gaz_format_datetime($date)
   return date("d-m-Y H:i:s",$uts);
 }
 
+function gaz_html_call_tel($tel_n)
+{
+    preg_match_all("/([\d]+)/",$tel_n,$r);
+    return '<a href="tel:'.implode("", $r[0]).'" >'.$tel_n."</a>\n";
+}
+
 function gaz_format_quantity($number,$comma=false,$decimal=false)
 {
     $number =  sprintf("%.3f",preg_replace("/\,/",'.',$number)); //max 3 decimal

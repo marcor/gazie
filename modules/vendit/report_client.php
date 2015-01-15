@@ -148,7 +148,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
        $title = " nessun contatto telefonico memorizzato ";
     }
 	// colonna telefono
-    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".$telefono." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($telefono)." &nbsp;</td>";
     // colonna fiscali
 	if ($a_row['pariva'] > 0 and empty($a_row['codfis'])){
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['pariva']."</td>";

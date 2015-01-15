@@ -128,7 +128,10 @@ if (isset($_POST['preview'])) {
             $anagrafica = new Anagrafica();
             $prt = $anagrafica->getPartner($p);
             echo "<tr class=\"FacetFieldCaptionTD\">";
-            echo "<td colspan='3'>".$prt['ragso1']." ".$prt['ragso2']."</td>";
+            echo "<td colspan='5'>".$prt['ragso1']." ".$prt['ragso2'].
+                  " tel:".gaz_html_call_tel($prt['telefo']).
+                  " fax:".$prt['fax'].
+                  " mob:".gaz_html_call_tel($prt['cell'])."</td>";
             echo "</tr>\n";
             $paymov->getPartnerStatus($p,$form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D']);
             foreach ($paymov->PartnerStatus as $k=>$v){
