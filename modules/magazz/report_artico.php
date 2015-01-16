@@ -42,7 +42,7 @@ function getLastDoc($item_code)
    }
 
 $search_field_Array = array('C'=>array('codice','Codice'), 'D'=>array('descri','Descrizione'),'B'=>array('barcode','Codice a barre'));
-echo "<script src=\"../../js/boxover/boxover.js\"></script>";
+//
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 if (isset($_GET['auxil'])) {
@@ -169,3 +169,4 @@ while ($r = gaz_dbi_fetch_array($result)) {
 </table>
 </body>
 </html>
+<script src="../../js/boxover/boxover.js"></script>

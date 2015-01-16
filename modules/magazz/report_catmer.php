@@ -26,7 +26,6 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
 $titolo = 'Categorie Merceologiche';
-echo "<script src=\"../../js/boxover/boxover.js\"></script>";
 require("../../library/include/header.php");
 $script_transl =HeadMain();
 
@@ -101,3 +100,4 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 </table>
 </body>
 </html>
+<script src="../../js/boxover/boxover.js"></script>
