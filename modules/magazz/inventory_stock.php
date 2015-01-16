@@ -42,7 +42,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     	// Imposto totale valore giacenza by DF
     	$tot_val_giac = 0;
         while ($r = gaz_dbi_fetch_array($result)) {
-              $mv=$gForm->getStockValue(false,$r['codice'],$date); 
+              $mv=$gForm->getStockValue(false,$r['codice'],$date,null,$admin_aziend['decimal_price']); 
               $magval=array_pop($mv);
               $form['a'][$r['codice']]['i_d'] = $r['descri'];
               $form['a'][$r['codice']]['i_u'] = $r['unimis'];
@@ -96,7 +96,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
              gaz_set_time_limit (30);
              $ctrl_cm=$r['catmer'];
            }
-           $mv=$gForm->getStockValue(false,$r['codice'],$date); 
+           $mv=$gForm->getStockValue(false,$r['codice'],$date,null,$admin_aziend['decimal_price']); 
            $magval=array_pop($mv);
            $form['a'][$r['codice']]['i_d'] = $r['descri'];
            $form['a'][$r['codice']]['i_u'] = $r['unimis'];

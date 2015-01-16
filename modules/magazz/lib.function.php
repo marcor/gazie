@@ -129,7 +129,7 @@ class magazzForm extends GAzieForm
       }
     }
 
-    function getStockValue($id_mov=false,$item_code=null,$date=null,$stock_eval_method=null)
+    function getStockValue($id_mov=false,$item_code=null,$date=null,$stock_eval_method=null,$decimal_price=2)
      /* Questa funzione serve per restituire la valorizzazione dello scarico
         a seconda del metodo (WMA,LIFO,FIFO) scelto per ottenerla.
         Puo' essere sufficiente valorizzare il solo $id_mov, ma questo costringe
@@ -191,7 +191,7 @@ class magazzForm extends GAzieForm
                  // Fine valorizzazione con ultimo inventario
                  while ($r = gaz_dbi_fetch_array($rs_movmag)) {
                     // questo e' il prezzo che usero' solo per gli acquisti
-                    $row_val=CalcolaImportoRigo(1,$r['prezzo'],array($r['scorig'],$r['scochi']));
+                    $row_val=CalcolaImportoRigo(1,$r['prezzo'],array($r['scorig'],$r['scochi']),$decimal_price);
                     if ($r['operat']==1) { //carico
                           $accumulatore[]=array('q'=>$r['quanti'],'v'=>$row_val);
                           $giacenza['q_g']+=$r['quanti'];
@@ -253,7 +253,7 @@ class magazzForm extends GAzieForm
                                       'q_g'=>$giacenza['q_g'],'v_g'=>$giacenza['v_g']);
                  while ($r = gaz_dbi_fetch_array($rs_movmag)) {
                     if ($r['operat']==1) { //carico
-                          $row_val=CalcolaImportoRigo(1,$r['prezzo'],array($r['scorig'],$r['scochi']));
+                          $row_val=CalcolaImportoRigo(1,$r['prezzo'],array($r['scorig'],$r['scochi']),$decimal_price);
                           $giacenza['q_g']+=$r['quanti'];
                           $giacenza['v_g']+=$r['quanti']*$row_val;
                     } elseif ($r['operat']==-1) { //scarico

@@ -24,26 +24,15 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$msg = "";
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['this_date_D']=date("d");
-    $form['search']['account']='';
-    if (isset($_GET['id'])) {
-       $form['account']=intval($_GET['id']);
-    } else {
-       $form['account']=0;
-    }
     $form['orderby']=0;
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
-    $form['account']=intval($_POST['account']);
-    foreach($_POST['search'] as $k=>$v){
-       $form['search'][$k]=$v;
-    }
     if (isset($_POST['return'])) {
         header("Location: ".$form['ritorno']);
         exit;
@@ -54,7 +43,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 
 if (isset($_POST['print']) && $msg=='') {
     $_SESSION['print_request']=array('script_name'=>'print_schedule',
-                                     'account'=>$form['account'],
                                      'orderby'=>$form['orderby']
                                      );
     header("Location: sent_print.php");
@@ -75,19 +63,10 @@ $gForm = new venditForm();
 echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
 echo "<table class=\"Tmiddle\">\n";
-if (!empty($msg)) {
-    echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
-}
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['orderby']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('orderby',$script_transl['orderby_value'],$form['orderby'],'FacetSelect',0,'orderby');
 echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['account']." </td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$select_cliente = new selectPartner('account');
-$select_cliente->selectDocPartner('account',$form['account'],$form['search']['account'],'account',$script_transl['mesg'],$admin_aziend['mascli']);
-echo "</td>\n";
 echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
