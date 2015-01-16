@@ -89,11 +89,11 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$a_row['annota']}]  fade=[on] fadespeed=[0.03] \"";
     }
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\" $boxover><a href=\"admin_catmer.php?Update&codice=".$a_row["codice"]."\">".$a_row["codice"]."</a> </td>";
+    echo "<td class=\"FacetDataTD\" $boxover><a class=\"btn btn-xs btn-default\" href=\"admin_catmer.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> </td>";
     echo "<td class=\"FacetDataTD\" $boxover>".$a_row["descri"]." </td>";
     echo "<td class=\"FacetDataTD\">".$a_row["ricarico"]." </td>";
     echo "<td class=\"FacetDataTD\">".$a_row["annota"]." </td>";
-    echo "<td class=\"FacetDataTD\"><a href=\"delete_catmer.php?codice=".$a_row["codice"]."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></center></a></td>";
+    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_catmer.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>\n";
 }
 ?>

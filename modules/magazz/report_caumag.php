@@ -78,11 +78,11 @@ $recordnav = new recordnav($gTables['caumag'], $where, $limit, $passo);
 $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
     print "<tr>\n";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"admin_caumag.php?codice=".$a_row["codice"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\">".$a_row["codice"]."</a> &nbsp</td>";
+    print "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_caumag.php?codice=".$a_row["codice"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["descri"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".$script_transl[$a_row['clifor']+13]."</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".$script_transl[$a_row['operat']+9]."</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_caumag.php?codice=".$a_row["codice"]."\"><img src=\"../../library/images/x.gif\" title=\"".$script_transl['delete']."!\" border=\"0\"></a></td>";
+    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_caumag.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     print "</tr>\n";
 }
 ?>

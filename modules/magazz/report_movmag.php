@@ -87,7 +87,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
     $valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
     echo "<tr>\n";
-    echo "<td class=\"FacetDataTD\" align=\"right\"><a href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\">".$a_row["id_mov"]."</a> &nbsp</td>";
+    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
     if ($a_row['id_rif'] == 0) {
@@ -104,7 +104,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["artico"]." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($valore)." </td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><img src=\"../../library/images/x.gif\" title=\"".$script_transl['delete']."!\" border=\"0\"></a></td>\n";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
     echo "</tr>\n";
 }
 ?>
