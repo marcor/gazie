@@ -1709,7 +1709,7 @@ class Schedule
             paymovInsert($data);
         }
     }
-    function getRigmocEntries($id_rig) // 
+    function setRigmocEntries($id_rig) // 
     {
         global $gTables;
         $sqlquery= "SELECT * FROM ".$gTables['paymov']." WHERE id_rigmoc_pay=$id_rig OR id_rigmoc_doc=$id_rig";

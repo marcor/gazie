@@ -849,6 +849,26 @@ $strScript = array ("admin_client.php" =>
                                            ),
                             'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO')
                            ),
+                    "customer_payment.php" =>
+                    array( 'title'=>'Riscossione credito da cliente (chiusura partita/e)',
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'err'=>'Ci sono degli errori che impediscono la stampa'
+                                          ),
+                           'partner'=>'Cliente ',
+                           'date_ini'=>'Data di riferimento ',
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
+                                           ),
+                           'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO'),
+                           'mesg'=>array('La ricerca non ha dato risultati!',
+                                         'Inserire almeno 2 caratteri!',
+                                         'Cambia cliente'
+                                          ),
+                           'header'=>array('Data'=>'','ID'=>'','Descrizione'=>'','N.Prot.'=>'',
+                                            'N.Doc.'=>'','Data Doc.' =>'','Dare'=>'','Avere'=>'',
+                                            'Saldo<br />progressivo'=>''
+                                           )
+                           ),
                    "report_fae_sdi.php" =>
                    array(  'title'=>'TRAFFICO DATI FATTURAZIONE ELETTRONICA',
                            'table'=>'Tabella su cui stai lavorando: ',

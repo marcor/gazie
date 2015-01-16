@@ -560,7 +560,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                     gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
         
                     // MODIFICO PURE I RELATIVI MOVIMENTI DI PARTITE APERTE (in paymov)
-                    $calc->getRigmocEntries($row_con['id_rig']);
+                    $calc->setRigmocEntries($row_con['id_rig']);
                     $count_oldpaymov=count($calc->RigmocEntries);
                     if (isset($form['paymov'][$i])){
                         // HO DELLE PARTITE POSTATE SU QUESTO RIGO
