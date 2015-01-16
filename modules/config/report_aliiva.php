@@ -42,12 +42,12 @@ $result = gaz_dbi_dyn_query ('*', $gTables['aliiva'], $where, $orderby, $limit, 
 while ($a_row = gaz_dbi_fetch_array($result))
     {
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\">".$a_row["codice"]."</a> &nbsp</td>";
+    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
     echo "<td class=\"FacetDataTD\">".$a_row["descri"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['tipiva'][$a_row["tipiva"]]."</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["aliquo"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["fae_natura"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_aliiva.php?codice=".$a_row["codice"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_aliiva.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
     }
 ?>

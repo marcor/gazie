@@ -47,7 +47,7 @@ $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
 foreach($result as $r) {
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\"><a href=\"admin_bank_account.php?Update&codice=".substr($r["codice"],3)."\" title=\"Modifica\">".substr($r["codice"],3)."</a> &nbsp</td>";
+    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-default\" href=\"admin_bank_account.php?Update&codice=".substr($r["codice"],3)."\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> &nbsp</td>";
     echo "<td class=\"FacetDataTD\">".$r["ragso1"]." &nbsp;</td>";
     if (!empty($r['iban'])) {
        echo "<td class=\"FacetDataTD\">".$r["iban"]." &nbsp;</td>";
@@ -57,8 +57,8 @@ foreach($result as $r) {
     } else {
        echo "<td class=\"FacetDataTD\" colspan=\"4\">".$script_transl['msg'][0]."</td>\n";
     }
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"../contab/select_partit.php?id=".$r["codice"]."\"><img src=\"../../library/images/vis.gif\" title=\"".$script_transl['msg'][1]."\" border=\"0\"><img src=\"../../library/images/stampa.gif\" alt=\"".$script_transl['msg'][1]."\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"../contab/delete_piacon.php?codice=".$r["codice"]."\"><img src=\"../../library/images/x.gif\" title=\"".$script_transl['delete']."\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r["codice"]."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"../contab/delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }
 ?>
