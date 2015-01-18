@@ -156,36 +156,42 @@ echo "\t </select>\n";
 echo "</td></tr>";
 echo "</table>\n";
 if ($form['partner']>100000000) { // partner selezionato
-	$paymov->getPartnerAccountingBalance($form['partner']);
 	$date=$form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D'];
-	$paymov->getPartnerStatus($form['partner']);
+        // ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario
+	$acc_bal=$paymov->getPartnerAccountingBalance($form['partner'],$date);
+	$paymov->getPartnerStatus($form['partner'],$date);
 	$id_paymov = 0;
 	$date_ctrl = new DateTime($date);
 	$saldo=0.00;
 	echo "<table class=\"Tlarge\">\n";
 	echo "<tr>";
+        echo "<td colspan='8'>".$script_transl['accbal'].gaz_format_number($acc_bal)."</td>";
+	echo "<tr>";
 	$linkHeaders = new linkHeaders($script_transl['header']);
 	$linkHeaders -> output();
 	echo "</tr>";
+        $paymov_bal=0.00;
 	foreach ($paymov->PartnerStatus as $k=>$v){
-		echo "<tr>";
-        echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=".$paymov->docData[$k]['id_tes']."\"><i class=\"glyphicon glyphicon-edit\"></i>".
-        $paymov->docData[$k]['descri'].' n.'.
-        $paymov->docData[$k]['numdoc'].'/'.
-        $paymov->docData[$k]['seziva'].' '.
-        $paymov->docData[$k]['datdoc']."</a> REF: $k</td>";
-        echo "</tr>\n";
-        foreach ($v as $ki=>$vi){
+	       echo "<tr>";
+               echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=".$paymov->docData[$k]['id_tes']."\"><i class=\"glyphicon glyphicon-edit\"></i>".
+               $paymov->docData[$k]['descri'].' n.'.
+               $paymov->docData[$k]['numdoc'].'/'.
+               $paymov->docData[$k]['seziva'].' '.
+               $paymov->docData[$k]['datdoc']."</a> REF: $k</td>";
+               echo "</tr>\n";
+               foreach ($v as $ki=>$vi){
 			$class_paymov='FacetDataTDevidenziaCL';
 			$v_op='';
 			$cl_exp='';
 			if ($vi['op_val']>=0.01){
 				$v_op=gaz_format_number($vi['op_val']);
+                                $paymov_bal+=$vi['op_val'];
 			}
 			$v_cl='';
 			if ($vi['cl_val']>=0.01){
 				$v_cl=gaz_format_number($vi['cl_val']);
 				$cl_exp=gaz_format_date($vi['cl_exp']);
+                                $paymov_bal-=$vi['cl_val'];
 			}
 			$expo='';
 			if ($vi['expo_day']>=1){ 
@@ -218,10 +224,21 @@ if ($form['partner']>100000000) { // partner selezionato
 			echo "<td align=\"center\">".$cl_exp."</td>";
 			echo "<td align=\"center\">".$expo."</td>";
 			echo "<td align=\"center\">".$script_transl['status_value'][$vi['status']]." &nbsp;</td>";
+                        if($vi['status']<>1 || $vi['status']<9 ) {
+         		   echo "<td align=\"center\"><input style=\"text-align: right;\" type=\"text\" value=\"".round($vi['op_val']-$vi['cl_val'],2)."\"></td>";
+                        }
 			echo "</tr>\n";
         }
     }
-	echo "</table></form>";
+    echo "<tr>";
+    echo "<td colspan='3'>".$script_transl['paymovbal'].gaz_format_number($paymov_bal)."</td>";
+    if ($paymov_bal<$acc_bal){
+       echo "<td class=\"FacetDataTDred\" colspan='4'>".$script_transl['mesg'][3]." <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
+    }
+    echo '<td class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl['insert']).'!"></td>';
+    echo "<tr>";
+
+   echo "</table></form>";
 }
 ?>
 </body>

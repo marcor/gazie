@@ -1613,22 +1613,31 @@ class Schedule
      * restituisce il valore del saldo contabile di un cliente ad una data, se passata, oppure alla data di sistema
      * */
         global $gTables;
-        $this->PartnerStatus = array();
         if ( $this->target>0 && $clfoco==0 ) {
             $clfoco=$this->target;
         }
         if (!$date){
            $date = strftime("%Y-%m-%d", mktime (0,0,0,date("m"),date("d"),date("Y")));
         }
-		$sqlquery= "SELECT ".$gTables['tesmov'].".* ,".$gTables['rigmoc'].".*
-            FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes WHERE codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon = $clfoco AND datreg IN (SELECT MIN(datreg) FROM ".$gTables['tesmov'].")) ORDER BY datreg ASC";
-                $rs = gaz_dbi_query($sqlquery);
-                $acc=array();
-                while ($r = gaz_dbi_fetch_array($rs)) {
-                    //print "<br>"; print_r($r);
+	$sqlquery= "SELECT ".$gTables['tesmov'].".datreg ,".$gTables['rigmoc'].".import, ".$gTables['rigmoc'].".darave
+            FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov'].
+            " ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
+            WHERE codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon = $clfoco AND datreg IN (SELECT MIN(datreg) FROM ".$gTables['tesmov'].")) ORDER BY datreg ASC";
+        $rs = gaz_dbi_query($sqlquery);
+        $date_ctrl = new DateTime($date);
+        $acc=0.00;
+        while ($r = gaz_dbi_fetch_array($rs)) {
+            $dr = new DateTime($r['datreg']);
+            if ($dr<=$date_ctrl){
+                if ($r['darave']=='D'){
+                    $acc+=$r['import'];
+                } else {
+                    $acc-=$r['import'];
                 }
-			return $acc;
-	}
+            }
+        }
+	return round($acc,2);
+    }
 	
     function getStatus($id_tesdoc_ref)
     {

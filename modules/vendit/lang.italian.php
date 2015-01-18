@@ -857,16 +857,19 @@ $strScript = array ("admin_client.php" =>
                            'partner'=>'Cliente ',
                            'date_ini'=>'Data di registrazione',
                            'account_target'=>'Cliente ',
+                           'accbal'=>'Saldo risultante dai movimenti contabili: ',
+                           'paymovbal'=>'Saldo risultante dalle partite aperte: ',
                            'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
                                            ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
                                            ),
                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO'),
                            'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
-                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>'', 'Riscuoti'=>''
                                            ),
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 2 caratteri!',
-                                         'Cambia cliente'
+                                         'Cambia cliente',
+                                         'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:'
                                           ),
                            ),
                    "report_fae_sdi.php" =>
