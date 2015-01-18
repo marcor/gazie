@@ -27,12 +27,12 @@ $msg='';
 function getMovements($account)
     {
         global $gTables;
-        $select = $gTables['tesmov'].".id_tes,".$gTables['tesmov'].".descri AS tesdes,id_rig,datreg,codice,protoc,numdoc,datdoc,".$gTables['clfoco'].".descri,import*(darave='D') AS dare,import*(darave='A') AS avere";
+        $select = $gTables['tesmov'].".id_tes,".$gTables['tesmov'].".descri AS tesdes,id_rig,datreg,codice,seziva,numdoc,datdoc,".$gTables['clfoco'].".descri,import*(darave='D') AS dare,import*(darave='A') AS avere";
         $table = $gTables['clfoco']." LEFT JOIN ".$gTables['rigmoc']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon "
                     ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes ";
 
         $m=array();
-        $rs=gaz_dbi_dyn_query ($select, $table, " codcon = $account "," datreg DESC, id_tes DESC ");
+        $rs=gaz_dbi_dyn_query ($select, $table, " codcon = $account "," datreg DESC, darave DESC ");
         while ($r = gaz_dbi_fetch_array($rs)) {
             $m[] = $r;
         }
@@ -56,6 +56,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     } else {
        $form['partner']=0;
     }
+	$form['target_account']=0;
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
@@ -64,6 +65,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_ini_Y']=intval($_POST['date_ini_Y']);
     $form['search']['partner']=substr($_POST['search']['partner'],0,20);
     $form['partner']=intval($_POST['partner']);
+	$form['target_account']=intval($_POST['target_account']);
     if (isset($_POST['return'])) {
         header("Location: ".$form['ritorno']);
         exit;
@@ -120,7 +122,7 @@ echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\
 $gForm = new venditForm();
 echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tmiddle\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
@@ -134,51 +136,92 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['partner']."</td><td co
 $gForm->selectCustomer('partner',$form['partner'],$form['search']['partner'],$form['hidden_req'],$script_transl['mesg']);
 echo "</td>\n";
 echo "</tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\"> Conto per l'incasso </td>\n ";
+echo "<td class=\"FacetFieldCaptionTD\">";
+echo "\t <select name=\"target_account\" class=\"FacetSelect\">\n"; //impropriamente usato per il numero di conto d'accredito
+
+$masban = $admin_aziend['masban']*1000000;
+$casse = substr($admin_aziend['cassa_'],0,3);
+$mascas = $casse*1000000;
+$res = gaz_dbi_dyn_query ('*', $gTables['clfoco'], "(codice LIKE '$casse%' AND codice > '$mascas') or (codice LIKE '".$admin_aziend['masban']."%' AND codice > '$masban')", "codice ASC");//recupero i c/c
+echo "\t\t <option value=\"0\">--------------------------</option>\n";
+while ($a = gaz_dbi_fetch_array($res)) {
+    $sel = "";
+    if($a["codice"] == $form['target_account']) {
+       $sel = "selected";
+    }
+    echo "\t\t <option value=\"".$a["codice"]."\" $sel >".$a["codice"]." - ".$a["descri"]."</option>\n";
+}
+echo "\t </select>\n";
+echo "</td></tr>";
 echo "</table>\n";
 if ($form['partner']>100000000) { // partner selezionato
-   $paymov->getPartnerStatus($form['partner'],$form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D']);
-   $res=getMovements($form['partner']);
-   $nummov = count($res);
-   if ($nummov > 0) {
-        $saldo=0.00;
-        echo "<table class=\"Tlarge\">\n";
-        echo "<tr>";
-        $linkHeaders = new linkHeaders($script_transl['header']);
-        $linkHeaders -> output();
-        echo "</tr>";
-        while (list($key, $mv) = each($res)) {
-            $paymov->setRigmocEntries($mv["id_rig"]); 
-            $saldo += $mv['dare'];
-            $saldo -= $mv['avere'];
-            echo "<tr><td class=\"FacetDataTD\">".gaz_format_date($mv["datreg"])." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"FacetDataTD\"><a href=\"admin_movcon.php?id_tes=".$mv["id_tes"]."&Update\">".$mv["id_tes"]."</a> &nbsp</td>";
-            echo "<td class=\"FacetDataTD\">".$mv["tesdes"]." &nbsp;</td>";
-            if (!empty($mv['numdoc'])){
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["protoc"]." &nbsp;</td>";
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["numdoc"]." &nbsp;</td>";
-                echo "<td align=\"center\" class=\"FacetDataTD\">".gaz_format_date($mv["datdoc"])." &nbsp;</td>";
-            } else {
-                echo "<td class=\"FacetDataTD\" colspan=\"3\"></td>";
-            }
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['dare'])."</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['avere'])."</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($saldo)."</td></tr>\n";
-            foreach($paymov->RigmocEntries as $e){
-               echo "<tr><td colspan=\"3\"></td>\n";
-               echo "<td colspan=\"3\" align=\"center\" class=\"FacetDataTDevidenziaBL\">".$e["id_tesdoc_ref"]."</td>";
-               if ($e['id_rigmoc_pay']==0){
-                   echo "<td align=\"right\" class=\"FacetDataTDevidenziaBL\">".gaz_format_number($e['amount'])." &nbsp;</td>";
-                   echo "<td></td>";
-               } else {
-                   echo "<td></td>";
-                   echo "<td align=\"right\" class=\"FacetDataTDevidenziaBL\">".gaz_format_number($e['amount'])." &nbsp;</td>";
-               }
-            }
+	$paymov->getPartnerAccountingBalance($form['partner']);
+	$date=$form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D'];
+	$paymov->getPartnerStatus($form['partner']);
+	$id_paymov = 0;
+	$date_ctrl = new DateTime($date);
+	$saldo=0.00;
+	echo "<table class=\"Tlarge\">\n";
+	echo "<tr>";
+	$linkHeaders = new linkHeaders($script_transl['header']);
+	$linkHeaders -> output();
+	echo "</tr>";
+	foreach ($paymov->PartnerStatus as $k=>$v){
+		echo "<tr>";
+        echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=".$paymov->docData[$k]['id_tes']."\"><i class=\"glyphicon glyphicon-edit\"></i>".
+        $paymov->docData[$k]['descri'].' n.'.
+        $paymov->docData[$k]['numdoc'].'/'.
+        $paymov->docData[$k]['seziva'].' '.
+        $paymov->docData[$k]['datdoc']."</a> REF: $k</td>";
+        echo "</tr>\n";
+        foreach ($v as $ki=>$vi){
+			$class_paymov='FacetDataTDevidenziaCL';
+			$v_op='';
+			$cl_exp='';
+			if ($vi['op_val']>=0.01){
+				$v_op=gaz_format_number($vi['op_val']);
+			}
+			$v_cl='';
+			if ($vi['cl_val']>=0.01){
+				$v_cl=gaz_format_number($vi['cl_val']);
+				$cl_exp=gaz_format_date($vi['cl_exp']);
+			}
+			$expo='';
+			if ($vi['expo_day']>=1){ 
+				$expo=$vi['expo_day'];
+				if ($vi['cl_val']==$vi['op_val']){
+					$vi['status']=2; // la partita è chiusa ma è esposta a rischio insolvenza 
+					$class_paymov='FacetDataTDevidenziaOK';
+				}	
+			} else {
+				if ($vi['cl_val']==$vi['op_val']){ // chiusa e non esposta
+					$cl_exp='';
+					$class_paymov='FacetDataTD';
+				} elseif($vi['status']==3){ // SCADUTA
+					$cl_exp='';
+					$class_paymov='FacetDataTDevidenziaKO';
+				} elseif($vi['status']==9){ // PAGAMENTO ANTICIPATO
+					$class_paymov='FacetDataTDevidenziaBL';
+					$vi['expiry']=$vi['cl_exp'];
+				}
+			}
+			echo "<tr class='".$class_paymov."'>";
+			echo "<td align=\"right\">".$vi['id']."</td>";
+			echo "<td align=\"right\">".$v_op."</td>";
+			echo "<td align=\"center\">".gaz_format_date($vi['expiry'])."</td>";
+			echo "<td align=\"right\">";
+			foreach($vi['cl_rig_data'] as $vj){
+				echo "<a class=\"btn btn-xs btn-default btn-edit\"  href=\"../contab/admin_movcon.php?id_tes=".$vj['id_tes']."&Update\" title=\"".$script_transl['update'].': '.$vj['descri']." € ".gaz_format_number($vj['import'])."\"><i class=\"glyphicon glyphicon-edit\"></i>".$vj['id_tes']."</a> ";
+			}
+			echo $v_cl."</td>";
+			echo "<td align=\"center\">".$cl_exp."</td>";
+			echo "<td align=\"center\">".$expo."</td>";
+			echo "<td align=\"center\">".$script_transl['status_value'][$vi['status']]." &nbsp;</td>";
+			echo "</tr>\n";
         }
-   } else {
-       echo "<tr><td colspan=\"6\" class=\"FacetDataTDred\">Non ci sono movimenti contabili relativi al cliente !<td></tr>\n";
-   }
-
+    }
+	echo "</table></form>";
 }
 ?>
 </body>

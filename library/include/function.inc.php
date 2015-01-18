@@ -1606,6 +1606,30 @@ class Schedule
                 $this->Entries[] = $r;
             }
     }
+	
+    function getPartnerAccountingBalance($clfoco,$date=false)
+    {
+    /*  
+     * restituisce il valore del saldo contabile di un cliente ad una data, se passata, oppure alla data di sistema
+     * */
+        global $gTables;
+        $this->PartnerStatus = array();
+        if ( $this->target>0 && $clfoco==0 ) {
+            $clfoco=$this->target;
+        }
+        if (!$date){
+           $date = strftime("%Y-%m-%d", mktime (0,0,0,date("m"),date("d"),date("Y")));
+        }
+		$sqlquery= "SELECT ".$gTables['tesmov'].".* ,".$gTables['rigmoc'].".*
+            FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes WHERE codcon = $clfoco AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon = $clfoco AND datreg IN (SELECT MIN(datreg) FROM ".$gTables['tesmov'].")) ORDER BY datreg ASC";
+                $rs = gaz_dbi_query($sqlquery);
+                $acc=array();
+                while ($r = gaz_dbi_fetch_array($rs)) {
+                    //print "<br>"; print_r($r);
+                }
+			return $acc;
+	}
+	
     function getStatus($id_tesdoc_ref)
     {
         /*
@@ -1634,7 +1658,7 @@ class Schedule
         if (!$date){
            $date = strftime("%Y-%m-%d", mktime (0,0,0,date("m"),date("d"),date("Y")));
         }
-        $sqlquery= "SELECT ".$gTables['paymov'].".*, ".$gTables['tesmov'].".* 
+        $sqlquery= "SELECT ".$gTables['paymov'].".*, ".$gTables['tesmov'].".* ,".$gTables['rigmoc'].".*
             FROM ".$gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON (".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig OR ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig )"
                     ."LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes "
                     ."LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['rigmoc'].".codcon 
@@ -1657,7 +1681,7 @@ class Schedule
                 if($date_ctrl >= $ex  ){
                     $s=3; // SCADUTA
                 }
-                $acc[$k][]= array('id'=>$r['id'],'op_val'=>$r['amount'],'expiry'=>$r['expiry'],'cl_val'=>0,'cl_exp'=>'','expo_day'=>0,'status'=>$s);
+                $acc[$k][]= array('id'=>$r['id'],'op_val'=>$r['amount'],'expiry'=>$r['expiry'],'cl_val'=>0,'cl_exp'=>'','expo_day'=>0,'status'=>$s,'op_id_rig'=>$r['id_rig'],'cl_rig_data'=>array());
             } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTUTRE (in ordine di scadenza)
                 if ($date_ctrl < $ex  ) { //  se è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
                     $expo=true;
@@ -1665,13 +1689,18 @@ class Schedule
                 $v=$r['amount'];
                 foreach ($acc[$k] as $ko=>$vo) { // attraverso l'array delle aperture
                     $diff=round($vo['op_val']-$vo['cl_val'],2);
+                    if ($diff>=0.01 && $v>0.01) { // faccio il push sui dati del rigo
+						$acc[$k][$ko]['cl_rig_data'][]=array('id_rig'=>$r['id_rig'],'descri'=>$r['descri'],'id_tes'=>$r['id_tes'],'import'=>$r['import']);
+					}
                     if ($v <= $diff) { // se c'è capienza
                         $acc[$k][$ko]['cl_val'] += $v;
                         if ($expo) { // è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
                             $acc[$k][$ko]['expo_day'] = $interval->format('%a');
                             $acc[$k][$ko]['cl_exp'] = $r['expiry'];
                             $expo=false;
-                        }
+                        } else {
+                            $acc[$k][$ko]['cl_exp'] = $r['expiry'];
+						}
                         $v = 0;
                     } else { // non c'è capienza
                         $acc[$k][$ko]['cl_val'] += $diff;
@@ -1681,12 +1710,12 @@ class Schedule
                         }
                         $v = round($v-$diff,2);
                     }
-                    if ($acc[$k][$ko]['cl_val']==$acc[$k][$ko]['op_val']) { // se chiusa cambio lo stato
-                        $acc[$k][$ko]['status'] = 1;
-                    }
+					if (round($acc[$k][$ko]['op_val']-$acc[$k][$ko]['cl_val'],2)<0.01) { // è chiusa
+						$acc[$k][$ko]['status']=1;
+					}
                 }
                 if (count($acc[$k])==0){ 
-                    $acc[$k][]= array('id'=>$r['id'],'op_val'=>0,'expiry'=>0,'cl_val'=>$r['amount'],'cl_exp'=>$r['expiry'],'expo_day'=>0,'status'=>9);
+                    $acc[$k][]= array('id'=>$r['id'],'op_val'=>0,'expiry'=>0,'cl_val'=>$r['amount'],'cl_exp'=>$r['expiry'],'expo_day'=>0,'status'=>9,'op_id_rig'=>0,'cl_rig_data'=>array(0=>array('id_rig'=>$r['id_rig'],'descri'=>$r['descri'],'id_tes'=>$r['id_tes'])));
                 }
             }
             $ctrl_id=$r['id_tesdoc_ref'];

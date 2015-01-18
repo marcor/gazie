@@ -35,25 +35,6 @@ if (isset($_SESSION['table_prefix'])) {
   $table_prefix=filter_var(substr($table_prefix,0,12),FILTER_SANITIZE_MAGIC_QUOTES);
 }
 
-if (!table_prefix_ok ($table_prefix)) {
-  //
-  // Il prefisso delle tabelle non è valido: che si fa?
-  //
-  // Per ora non lo so cosa si può fare, quindi non
-  // faccio nulla e faccio finta di nulla...
-  //
-  ;
-}
-
-//
-// Imposto il fuso orario, in base alla configurazione.
-// Ma non funziona, perché MySQL gestisce il fuso orario
-// in modo indipendente e alcune date vengono inserite
-// da MySQL stesso, nel momento dell'accesso alle tabelle.
-//
-//if (isset ($Timezone)) {
-//    date_default_timezone_set ($Timezone);
-//}
 
 // tabelle comuni alle aziende della stessa gestione
 $tn=array('admin','admin_module','anagra','aziend','config','country','currencies','currency_history',
@@ -89,7 +70,7 @@ if(@file_exists('./lib.data.php') ) {
 
 //tabelle aziendali
 $tn=array('aliiva','agenti','artico','banapp','body_text','cash_register','catmer',
-          'caucon','caumag','clfoco','company_config','contract','effett','extcon','files',
+          'caucon','caumag','clfoco','company_config','company_data','contract','effett','extcon','files',
           'imball','letter','movmag','pagame','paymov','portos','provvigioni','rigbro',
           'rigdoc','rigmoc','rigmoi','spediz','staff','staff_skills','tesbro','tesdoc','tesmov','vettor','fae_flux');
 foreach ($tn as $v){

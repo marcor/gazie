@@ -855,19 +855,19 @@ $strScript = array ("admin_client.php" =>
                                            'err'=>'Ci sono degli errori che impediscono la stampa'
                                           ),
                            'partner'=>'Cliente ',
-                           'date_ini'=>'Data di riferimento ',
+                           'date_ini'=>'Data di registrazione',
+                           'account_target'=>'Cliente ',
                            'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
                                            ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
                                            ),
                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO'),
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
+                                           ),
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 2 caratteri!',
                                          'Cambia cliente'
                                           ),
-                           'header'=>array('Data'=>'','ID'=>'','Descrizione'=>'','N.Prot.'=>'',
-                                            'N.Doc.'=>'','Data Doc.' =>'','Dare'=>'','Avere'=>'',
-                                            'Saldo<br />progressivo'=>''
-                                           )
                            ),
                    "report_fae_sdi.php" =>
                    array(  'title'=>'TRAFFICO DATI FATTURAZIONE ELETTRONICA',
