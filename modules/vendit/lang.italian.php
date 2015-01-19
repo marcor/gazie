@@ -856,7 +856,9 @@ $strScript = array ("admin_client.php" =>
                                           ),
                            'partner'=>'Cliente ',
                            'date_ini'=>'Data di registrazione',
-                           'account_target'=>'Cliente ',
+                           'target_account'=>"Conto per l'incasso: ",
+                           'partner'=>'Cliente: ',
+                           'print_ticket'=>"Stampa ricevuta: ",
                            'accbal'=>'Saldo risultante dai movimenti contabili: ',
                            'paymovbal'=>'Saldo risultante dalle partite aperte: ',
                            'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
@@ -869,7 +871,8 @@ $strScript = array ("admin_client.php" =>
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 2 caratteri!',
                                          'Cambia cliente',
-                                         'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:'
+                                         'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
+                                         'Nessun importo è stato riscosso!'
                                           ),
                            ),
                    "report_fae_sdi.php" =>
