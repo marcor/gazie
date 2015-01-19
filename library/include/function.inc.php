@@ -51,10 +51,10 @@ function gaz_format_number($number=0)
 function gaz_format_date($date,$db=false)
 {
     if ($db){
-        $uts=mktime(0,0,0,substr($date,3,2),substr($date,0,2),substr($date,6,4));
+        $uts=mktime( 0,0,0,intval(substr($date,3,2)),intval(substr($date,0,2)),intval(substr($date,6,4)) );
         return date("Y-m-d",$uts);
     } else {
-        $uts=mktime(0,0,0,substr($date,5,2),substr($date,8,2),substr($date,0,4));
+        $uts=mktime( 0,0,0,intval(substr($date,5,2)),intval(substr($date,8,2)),intval(substr($date,0,4)) );
         return date("d-m-Y",$uts);
     }
 }
@@ -1732,7 +1732,7 @@ class Schedule
         $this->PartnerStatus=$acc;
     }
 
-    function updateItemsTable($data)
+    function updatePaymov($data)
     {
         global $gTables;
         if (isset($data['id']) && !empty($data['id'])) { // se c'è l'id vuol dire che è un rigo da aggiornare

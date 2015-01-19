@@ -29,7 +29,7 @@ if (isset($_POST['Delete'])) {
     while ($a_row = gaz_dbi_fetch_array($result)) {
         gaz_dbi_del_row($gTables['rigmoc'], "id_rig", $a_row['id_rig']);
         // elimino le eventuali partite aperte
-        $calc->updateItemsTable($a_row['id_rig']);
+        $calc->updatePaymov($a_row['id_rig']);
     }
     //cancello i righi iva
     $result = gaz_dbi_dyn_query("*", $gTables['rigmoi'],"id_tes = ".intval($_POST['id_tes']),"id_tes asc");

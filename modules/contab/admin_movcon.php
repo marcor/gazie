@@ -576,9 +576,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                         $new_paymov[$j]['id_rigmoc_pay']=$row_con['id_rig'];
                                   }
                                   $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
-                                  $calc->updateItemsTable($new_paymov[$j]);
+                                  $calc->updatePaymov($new_paymov[$j]);
                                } else {  // altrimenti lo elimino ma passando il SOLO id
-                                  $calc->updateItemsTable(array('id_del'=>$v['id']));
+                                  $calc->updatePaymov(array('id_del'=>$v['id']));
                                }
                                $count_newpaymov--;
                                $j++;
@@ -591,7 +591,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                      $new_paymov[$j]['id_rigmoc_pay']=$row_con['id_rig'];
                                }
                                $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
-                               $calc->updateItemsTable($new_paymov[$j]);
+                               $calc->updatePaymov($new_paymov[$j]);
                                $j++;
                             }
                         } else { // prima non li avevo quindi adesso devo introdurre TUTTI I NUOVI 
@@ -607,20 +607,20 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                      $new_paymov[$j]['id_rigmoc_pay']=$row_con['id_rig'];
                                }
                                $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
-                               $calc->updateItemsTable($new_paymov[$j]);
+                               $calc->updatePaymov($new_paymov[$j]);
                             }
                         }   
                     } else {
                         // NON HO PARTITE POSTATE SU QUESTO RIGO
                         if($count_oldpaymov > 0) { // ...e se prima li avevo: li devo eliminare  TUTTI   
-                            $calc->updateItemsTable($row_con['id_rig']);
+                            $calc->updatePaymov($row_con['id_rig']);
                         }    
                     }
                     // se su questo rigo ci sono rimasti 
                   } else { //altrimenti elimino i righi e le relative partite
                     gaz_dbi_del_row($gTables['rigmoc'], "id_rig", $row_con['id_rig']);
                     // ...elimino pure eventuali relativi movimenti di partite aperte
-                    $calc->updateItemsTable($row_con['id_rig']);
+                    $calc->updatePaymov($row_con['id_rig']);
                   }
                   $i++;
                }
@@ -631,6 +631,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                             $_POST['conto_rc'.$i]=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
                     }
                     rigmocInsert(array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
+                    $last_id_rig=gaz_dbi_last_id();
                     // INSERISCO PURE LE EVENTUALE PARTITE APERTE
                     if (isset($form['paymov'][$i])){
                             $new_paymov=array_values($form['paymov'][$i]);
@@ -642,12 +643,12 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                    $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].$form['registroiva'].$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
                                 }
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
-                                     $new_paymov[$j]['id_rigmoc_doc']=gaz_dbi_last_id();
+                                     $new_paymov[$j]['id_rigmoc_doc']=$last_id_rig;
                                } else {  // chiusura partita
-                                     $new_paymov[$j]['id_rigmoc_pay']=gaz_dbi_last_id();
+                                     $new_paymov[$j]['id_rigmoc_pay']=$last_id_rig;
                                }
                                $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
-                               $calc->updateItemsTable($new_paymov[$j]);
+                               $calc->updatePaymov($new_paymov[$j]);
                             }
                     }
                }
@@ -741,6 +742,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                             gaz_dbi_table_update('tesmov',array('id_tes',$ultimo_id),array('clfoco'=>$_POST['conto_rc'.$i]));
                     }
                     rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
+                    $last_id_rig=gaz_dbi_last_id();
                     // INSERISCO PURE LE EVENTUALE PARTITE APERTE
                     if (isset($form['paymov'][$i])){
                             $new_paymov=array_values($form['paymov'][$i]);
@@ -751,12 +753,12 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                    unset($new_paymov[$j]['id']);
                                 }
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
-                                     $new_paymov[$j]['id_rigmoc_doc']=gaz_dbi_last_id();
+                                     $new_paymov[$j]['id_rigmoc_doc']=$last_id_rig;
                                } else {  // chiusura partita
-                                     $new_paymov[$j]['id_rigmoc_pay']=gaz_dbi_last_id();
+                                     $new_paymov[$j]['id_rigmoc_pay']=$last_id_rig;
                                }
                                $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
-                               $calc->updateItemsTable($new_paymov[$j]);
+                               $calc->updatePaymov($new_paymov[$j]);
                             }
                    }
         
