@@ -52,9 +52,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    $form['hidden_req']=htmlentities($_POST['hidden_req']);
    $form['ritorno']=$_POST['ritorno'];
    if (isset($_POST['paymov'])){
+	  $desmov='';
+      $acc_tot=0.00;
       foreach($_POST['paymov'] as $k=>$v) {
+		 $desmov .= ' n.'.intval(substr($k,6)).'/'.substr($k,5,1);
          $form['paymov'][$k] = $v;  // qui devo ancora fare il parsing
-         $acc_tot=0.00;
          foreach($v as $ki=>$vi) { // calcolo il totale 
             $acc_tot +=$vi['amount'];
          }
@@ -62,7 +64,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       if ($acc_tot<=0){
          $msg .='4+';
       }
-   }  
+   }
    $form['date_ini_D']=intval($_POST['date_ini_D']);
    $form['date_ini_M']=intval($_POST['date_ini_M']);
    $form['date_ini_Y']=intval($_POST['date_ini_Y']);
@@ -78,23 +80,24 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    if (!checkdate( $form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y'])) {
       $msg .='0+';
    }
-
-
+   if (isset($_POST['ins']) && $form['target_account']<100000001) {
+      $msg='5+';
+   }
    // fine controlli
-   if (isset($_POST['ins'])&& $msg=='') {
+   if (isset($_POST['ins']) && $msg=='') {
       $tes_val=array('caucon'=>'',
-               'descri'=>'PAGATE FT.',
+               'descri'=>'RISCOSSO x FATT.'.$desmov,
                'datreg'=>$date,
                'clfoco'=>$form['partner']
                );
       tesmovInsert($tes_val);
       $tes_id = gaz_dbi_last_id();
-      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>'D','codcon'=>$form['partner'],'import'=>$acc_tot));
+      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>'D','codcon'=>$form['target_account'],'import'=>$acc_tot));
       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>'A','codcon'=>$form['partner'],'import'=>$acc_tot));
       $rig_id = gaz_dbi_last_id();
-      foreach($form['paymov'] as $k=>$v) {
+      foreach($form['paymov'] as $k=>$v) { //attraverso l'array delle partite
          $acc=0.00;
-         foreach($form['paymov'] as $ki=>$vi) {
+         foreach($v as $ki=>$vi) {
             $acc +=$vi['amount'];
          }
          if ($acc>=0.01){
@@ -102,13 +105,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
          }
       }
       if ($_POST['print_ticket']==" checked" ) {
-         $_SESSION['print_request']=array('script_name'=>'print_costumer_payment',
-                                     'date'=>$form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D']
-                                     );
-         //header("Location: sent_print.php");
+         $_SESSION['print_request']=array('script_name'=>'print_costumer_payment','id_rig'=>$rig_id);
+         header("Location: sent_print.php");
          exit;
       }
-      //header("Location: sent_print.php");
+      header("Location: report_schedule.php");
       exit;
    }
 }
@@ -165,7 +166,7 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['target_account']."</td>\n ";
 echo "<td class=\"FacetFieldCaptionTD\">";
-echo "\t <select name=\"target_account\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n"; //impropriamente usato per il numero di conto d'accredito
+echo "\t <select name=\"target_account\" tabindex=\"4\"   class=\"FacetSelect\" onchange=\"this.form.submit()\">\n"; //impropriamente usato per il numero di conto d'accredito
 
 $masban = $admin_aziend['masban']*1000000;
 $casse = substr($admin_aziend['cassa_'],0,3);
@@ -275,8 +276,6 @@ if ($form['partner']>100000000) { // partner selezionato
    echo '<td class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl['insert']).'!"></td>';
    echo "<tr>";
    echo "</table></form>";
-         print "<br>";print_r($form['paymov']);
-
 }
 ?>
 </body>

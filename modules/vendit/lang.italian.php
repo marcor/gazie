@@ -872,7 +872,8 @@ $strScript = array ("admin_client.php" =>
                                          'Inserire almeno 2 caratteri!',
                                          'Cambia cliente',
                                          'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
-                                         'Nessun importo è stato riscosso!'
+                                         'Nessun importo è stato riscosso!',
+										 "Non è stato selezionato il conto per l'incasso"
                                           ),
                            ),
                    "report_fae_sdi.php" =>
