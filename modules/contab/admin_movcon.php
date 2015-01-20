@@ -753,21 +753,40 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                    unset($new_paymov[$j]['id']);
                                 }
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
+                                     $new_paymov[$j]['id_tesdoc_ref']=intval($_POST['date_reg_Y']).
+                                                                      intval($_POST['registroiva']).
+                                                                      intval($_POST['sezioneiva']).
+                                                                      str_pad(intval($_POST['protocollo']),9,0,STR_PAD_LEFT);
                                      $new_paymov[$j]['id_rigmoc_doc']=$last_id_rig;
+                                     if ($v['amount']<0.01){  // se non ho messo manualmente le scadenze lo faccio in automatico
+                                        require("../../library/include/expiry_calc.php");
+                                        $ex= new Expiry;
+                                        $partner=$anagrafica->getPartner(intval($_POST['conto_rc'.$i]));
+                                        $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $partner['codpag']);
+                                        $rs_ex=$ex->CalcExpiry(floatval($_POST['importorc'][$i]),$datadoc,$pag['tipdec'],$pag['giodec'],$pag['numrat'],$pag['tiprat'],$pag['mesesc'],$pag['giosuc']);
+                                        foreach($rs_ex as $ve){ // attraverso le rate
+                                           $new_paymov[$j]['amount']=$ve['amount'];
+                                           $new_paymov[$j]['expiry']=$ve['date'];
+                                           $calc->updatePaymov($new_paymov[$j]);
+                                        }
+                                     } else {
+                                        $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
+                                        $calc->updatePaymov($new_paymov[$j]);
+                                     }
                                } else {  // chiusura partita
                                      $new_paymov[$j]['id_rigmoc_pay']=$last_id_rig;
+                                     $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
+                                     $calc->updatePaymov($new_paymov[$j]);
                                }
-                               $new_paymov[$j]['expiry']=gaz_format_date($new_paymov[$j]['expiry'],true);
-                               $calc->updatePaymov($new_paymov[$j]);
                             }
                    }
         
                }
             }
             if ($toDo == 'insert') {
-                header("Location: report_movcon.php");
+               header("Location: report_movcon.php");
             } else {
-                header("Location: ".$form['ritorno']);
+               header("Location: ".$form['ritorno']);
             }
             exit;
         }
