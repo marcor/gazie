@@ -33,6 +33,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    $form['date_ini_D']=date("d");
    $form['date_ini_M']=date("m");
    $form['date_ini_Y']=date("Y");
+   $date=$form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D'];
    $form['search']['partner']='';
    if (isset($_GET['partner'])) {
       $form['partner']=intval($_GET['partner']);
@@ -52,15 +53,20 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    $form['hidden_req']=htmlentities($_POST['hidden_req']);
    $form['ritorno']=$_POST['ritorno'];
    if (isset($_POST['paymov'])){
-	  $desmov='';
+      $desmov='';
       $acc_tot=0.00;
       foreach($_POST['paymov'] as $k=>$v) {
-		 $desmov .= ' n.'.intval(substr($k,6)).'/'.substr($k,5,1);
-         $form['paymov'][$k] = $v;  // qui devo ancora fare il parsing
+         $form['paymov'][$k] = $v;  // qui dovrei fare il parsing
+         $add_desc[$k]=0.00;
          foreach($v as $ki=>$vi) { // calcolo il totale 
             $acc_tot +=$vi['amount'];
+            $add_desc[$k]+=$vi['amount'];
          }
-      }
+         if ($add_desc[$k]>=0.01){ // posso mettere una descrizione perchè il pagamento interessa pure questa partita
+            $dd=$paymov->getDocumentData($k);
+            $desmov .= ' n.'.$dd['numdoc'].'/'.$dd['seziva'];
+         }
+     }
       if ($acc_tot<=0){
          $msg .='4+';
       }
@@ -205,7 +211,7 @@ if ($form['partner']>100000000) { // partner selezionato
    echo "</tr>\n";
    $paymov_bal=0.00;
    foreach ($paymov->PartnerStatus as $k=>$v){
-
+      $amount=0.00;
       echo "<tr>";
       echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=".$paymov->docData[$k]['id_tes']."\"><i class=\"glyphicon glyphicon-edit\"></i>".
       $paymov->docData[$k]['descri'].' n.'.
@@ -258,15 +264,18 @@ if ($form['partner']>100000000) { // partner selezionato
          echo "<td align=\"center\">".$cl_exp."</td>";
          echo "<td align=\"center\">".$expo."</td>";
          echo "<td align=\"center\">".$script_transl['status_value'][$vi['status']]." &nbsp;</td>";
-         if($vi['status']<>1 || $vi['status']<9 ) {
-            if(!isset($_POST['paymov'])){ // al primo accesso propongo il valore del saldo
-                $form['paymov'][$k][$ki]['amount']=round($vi['op_val']-$vi['cl_val'],2);
-            }
-            echo '<input type="hidden" id="post_'.$k.'_'.$ki.'_id_tesdoc_ref" name="paymov['.$k.']['.$ki.'][id_tesdoc_ref]" value="'.$k."\" />\n";
-            echo "<td align=\"center\"><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" value=\"".$form['paymov'][$k][$ki]['amount']."\"></td>";
+         if($vi['status']<>1 || $vi['status']<9 ) { // accumulo solo se non è chiusa
+                $amount+=round($vi['op_val']-$vi['cl_val'],2);
          }
          echo "</tr>\n";
       }
+      if(!isset($_POST['paymov'])){ 
+         $form['paymov'][$k][$ki]['amount']=$amount;
+         $form['paymov'][$k][$ki]['id_tesdoc_ref']=$k;
+      }
+      echo '<input type="hidden" id="post_'.$k.'_'.$ki.'_id_tesdoc_ref" name="paymov['.$k.']['.$ki.'][id_tesdoc_ref]" value="'.$k."\" />";
+      echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" value=\"".$form['paymov'][$k][$ki]['amount']."\"></td></tr>\n";
+
    }
    echo "<tr>";
    echo "<td colspan='3'>".$script_transl['paymovbal'].gaz_format_number($paymov_bal)."</td>";

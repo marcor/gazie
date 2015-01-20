@@ -1652,6 +1652,20 @@ class Schedule
         $this->Status=gaz_dbi_fetch_array($rs);
     }
     
+    function getDocumentData($id_tesdoc_ref)
+    {
+        /*
+         * restituisce i dati relativi al documento che ha aperto la partita 
+        */
+        global $gTables;
+	$sqlquery= "SELECT ".$gTables['tesmov'].".* 
+            FROM ".$gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig
+            LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
+            WHERE ".$gTables['paymov'].".id_rigmoc_doc > 0 AND ".$gTables['paymov'].".id_tesdoc_ref = $id_tesdoc_ref ORDER BY datreg ASC";
+        $rs = gaz_dbi_query($sqlquery);
+        return gaz_dbi_fetch_array($rs);
+    }
+    
     function getPartnerStatus($clfoco,$date=false)
     /*  
      * genera un array ($this->PartnerStatus)con i valori dell'esposizione verso un partner commerciale
