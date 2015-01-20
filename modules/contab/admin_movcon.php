@@ -22,7 +22,6 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $mastroclienti = $admin_aziend['mascli']."000000";
@@ -569,7 +568,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                         if($count_oldpaymov > 0) { // ...e se prima li avevo anche : li devo aggiornare    
                             $j=0;
                             foreach($calc->RigmocEntries as $v){ // attraverso il vecchio array
-                               if ($count_newpaymov>0){ //  se non è un rigo eccedente lo modifico mantenendo il vecchio indice
+                                if ($j<=($count_newpaymov-1)){ //  se non è un rigo eccedente lo modifico mantenendo il vecchio indice
                                   if ($form['paymov_op_cl'][$i]==1){ // apertura partita
                                         $new_paymov[$j]['id_rigmoc_doc']=$row_con['id_rig'];
                                   } else {  // chiusura partita
@@ -580,11 +579,13 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                } else {  // altrimenti lo elimino ma passando il SOLO id
                                   $calc->updatePaymov(array('id_del'=>$v['id']));
                                }
-                               $count_newpaymov--;
                                $j++;
                             }
                             // se i nuovi righi paymov eccedono i vecchi li inserisco
-                            for ($j = $j; $j <= $count_newpaymov; $j++) { // attraverso l'eccedenza dei nuovi righi
+                            for ($j = $j; $j < $count_newpaymov; $j++) { // attraverso l'eccedenza dei nuovi righi
+                               if ($new_paymov[$j]['id']=='new'){ // nuovo rigo
+                                   unset($new_paymov[$j]['id']);
+                               }
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
                                      $new_paymov[$j]['id_rigmoc_doc']=$row_con['id_rig'];
                                } else {  // chiusura partita
@@ -613,7 +614,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                     } else {
                         // NON HO PARTITE POSTATE SU QUESTO RIGO
                         if($count_oldpaymov > 0) { // ...e se prima li avevo: li devo eliminare  TUTTI   
-                            $calc->updatePaymov($row_con['id_rig']);
+                            foreach($calc->RigmocEntries as $v){ // attraverso il vecchio array
+                                  $calc->updatePaymov(array('id_del'=>$v['id']));
+                            }
                         }    
                     }
                     // se su questo rigo ci sono rimasti 
@@ -632,10 +635,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                     }
                     rigmocInsert(array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
                     $last_id_rig=gaz_dbi_last_id();
-                    // INSERISCO PURE LE EVENTUALE PARTITE APERTE
+                    // INSERISCO PURE LE EVENTUALI PARTITE APERTE
                     if (isset($form['paymov'][$i])){
                             $new_paymov=array_values($form['paymov'][$i]);
-                            $count_newpaymov=count($new_paymov);
                             foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
                                if ($v['id']=='new'){ // nuovo rigo
                                    $j=$k;
@@ -743,10 +745,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                     }
                     rigmocInsert(array('id_tes'=>$ultimo_id,'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>intval($_POST['conto_rc'.$i]),'import'=>floatval($_POST['importorc'][$i])));
                     $last_id_rig=gaz_dbi_last_id();
-                    // INSERISCO PURE LE EVENTUALE PARTITE APERTE
+                    // INSERISCO PURE LE EVENTUALI PARTITE APERTE
                     if (isset($form['paymov'][$i])){
                             $new_paymov=array_values($form['paymov'][$i]);
-                            $count_newpaymov=count($new_paymov);
                             foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
                                if ($v['id']=='new'){ // nuovo rigo
                                    $j=$k;
