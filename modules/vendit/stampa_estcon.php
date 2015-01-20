@@ -104,7 +104,7 @@ while ($movimenti = gaz_dbi_fetch_array($result)){
     $pdf->Cell(20,4,gaz_format_number($saldo),1,1,'R');
 }
 
-if ($_GET["dest"] && $_GET["dest"]=='E'){ // è stata richiesta una e-mail
+if (isset($_GET["dest"]) && $_GET["dest"]=='E'){ // è stata richiesta una e-mail
    $dest = 'S';     // Genero l'output pdf come stringa binaria
    // Costruisco oggetto con tutti i dati del file pdf da allegare
    $content->name = 'Estratto_conto_del_'.intval($_GET["annini"]).'_'.intval($_GET["annfin"]).'.pdf';
