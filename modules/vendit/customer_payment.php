@@ -70,6 +70,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       if ($acc_tot<=0){
          $msg .='4+';
       }
+   } else if (isset($_POST['ins'])) { // non ho movimenti ma ho chiesto di inserirli
+         $msg .='4+';
    }
    $form['date_ini_D']=intval($_POST['date_ini_D']);
    $form['date_ini_M']=intval($_POST['date_ini_M']);
