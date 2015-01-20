@@ -749,8 +749,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                     if (isset($form['paymov'][$i])){
                             $new_paymov=array_values($form['paymov'][$i]);
                             foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
-							print $k.'<br>'; print_r($v);
-                               $j=$k;
+							   $j=$k;
                                if (isset($v['id'])){ // nuovo rigo
                                    unset($new_paymov[$j]['id']);
                                 }
@@ -786,9 +785,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                }
             }
             if ($toDo == 'insert') {
-              // header("Location: report_movcon.php");
+              header("Location: report_movcon.php");
             } else {
-               header("Location: ".$form['ritorno']);
+              header("Location: ".$form['ritorno']);
             }
             exit;
         }
