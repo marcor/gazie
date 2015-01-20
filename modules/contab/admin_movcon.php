@@ -597,8 +597,8 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                             }
                         } else { // prima non li avevo quindi adesso devo introdurre TUTTI I NUOVI 
                             foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
+                               $j=$k;
                                if ($v['id']=='new'){ // nuovo rigo
-                                   $j=$k;
                                    unset($new_paymov[$j]['id']);
                                    $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].$form['registroiva'].$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
                                 }
@@ -639,8 +639,8 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                     if (isset($form['paymov'][$i])){
                             $new_paymov=array_values($form['paymov'][$i]);
                             foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
+                               $j=$k;
                                if ($v['id']=='new'){ // nuovo rigo
-                                   $j=$k;
                                    unset($new_paymov[$j]['id']);
                                    $new_paymov[$j]['id_tesdoc_ref']=$form['date_reg_Y'].$form['registroiva'].$form['sezioneiva'].str_pad($form['protocollo'],9,0,STR_PAD_LEFT);
                                 }
@@ -749,8 +749,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                     if (isset($form['paymov'][$i])){
                             $new_paymov=array_values($form['paymov'][$i]);
                             foreach($new_paymov as $k=>$v){ // attraverso il nuovo array
-                               if ($v['id']=='new'){ // nuovo rigo
-                                   $j=$k;
+							print $k.'<br>'; print_r($v);
+                               $j=$k;
+                               if (isset($v['id'])){ // nuovo rigo
                                    unset($new_paymov[$j]['id']);
                                 }
                                if ($form['paymov_op_cl'][$i]==1){ // apertura partita
@@ -785,7 +786,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                }
             }
             if ($toDo == 'insert') {
-               header("Location: report_movcon.php");
+              // header("Location: report_movcon.php");
             } else {
                header("Location: ".$form['ritorno']);
             }

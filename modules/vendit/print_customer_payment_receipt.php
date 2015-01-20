@@ -32,6 +32,9 @@ if (!isset($_GET['id_rig']) ) {
     header("Location: ".$_SERVER['HTTP_REFERER']);
     exit;
 }
+
+require("./lang.".$admin_aziend['lang'].".php");
+$script_transl = $strScript["print_customer_payment_receipt.php"];
 require("../../config/templates/report_template.php");
 
 function getData($id_rig)
@@ -58,14 +61,16 @@ function getData($id_rig)
 }
 
 $d=getData(intval($_GET['id_rig']));
-
-$luogo_data=$admin_aziend['citspe'].", lì ".ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+//print_r($d);
+$luogo_data=$admin_aziend['citspe'].", lì ".ucwords(strftime("%d %B %Y", mktime (0,0,0,substr($d['d'][1]['datreg'],5,2)
+																					  ,substr($d['d'][1]['datreg'],8,2)
+																					  ,substr($d['d'][1]['datreg'],0,4))));
 $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
                                 array('lun' => 25,'nam'=>'Numero Conto')
                                )
                    );
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>"RICEVUTA DI PAGAMENTO ".$d['partner']['ragso1'],
+               'title'=>$script_transl['title'],
                'hile'=>array(   array('lun' => 25,'nam'=>'ID Partita'),
                                 array('lun' => 45,'nam'=>'Descrizione'),
                                 array('lun' => 20,'nam'=>'Fattura'),
@@ -92,15 +97,18 @@ $pdf->AddPage();
 $config = new Config;
 $paymov = new Schedule;
 $ctrl_pm=0;
+$pdf->SetFont('helvetica','',8);
 while (list($k, $mv) = each($d['d'])) {
-    $pdf->Cell(25,4,$mv['id_tesdoc_ref'],'LTB',0,'',0,'',1);
-    $pdf->Cell(45,4,$mv['descri'],1,0,'C',0,'',1);
+	if ($ctrl_pm <> $mv["id_tesdoc_ref"]){
+		$pdf->Cell(25,4,$mv['id_tesdoc_ref'],'LTB',0,'',0,'',1);
+		$pdf->Cell(45,4,$mv['descri'],1,1,'C',0,'',1);
+	}
+    $pdf->Cell(70,4,'',1);
     $pdf->Cell(20,4,$mv['t']['seziva'],1,0,'R',0,'',2);
-    $pdf->Cell(11,4,$mv["numdoc"].'/'.$mv['seziva'],1,0,'R',0);
-    $pdf->Cell(15,4,$mv["datdoc"],1,0,'C',0);
+    $pdf->Cell(11,4,$mv['t']["numdoc"].'/'.$mv['t']['seziva'],1,0,'R',0);
+    $pdf->Cell(15,4,$mv['t']["datdoc"],1,0,'C',0);
     $pdf->Cell(15,4,gaz_format_date($mv["datreg"]),1,0,'C',0);
-    $pdf->Cell(12,4,$mv['amount'],1,0,'R',0);
-    $pdf->Cell(15,4,gaz_format_date($mv["expiry"]),1,1,'C',0);
+    $pdf->Cell(12,4,$mv['amount'],1,1,'R',0);
     $ctrl_pm=$mv["id_tesdoc_ref"];
 }
 $pdf->setRiporti('');

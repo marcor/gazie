@@ -876,6 +876,19 @@ $strScript = array ("admin_client.php" =>
 										 "Non è stato selezionato il conto per l'incasso"
                                           ),
                            ),
+                    "print_customer_payment_receipt.php" =>
+                    array( 'title'=>'RICEVUTA PER RISCOSSIONE credito da cliente come da dettaglio sottostante: ',
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>'', 'Riscuoti'=>''
+                                           ),
+                           'mesg'=>array('La ricerca non ha dato risultati!',
+                                         'Inserire almeno 2 caratteri!',
+                                         'Cambia cliente',
+                                         'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
+                                         'Nessun importo è stato riscosso!',
+										 "Non è stato selezionato il conto per l'incasso"
+                                          ),
+                           ),
                    "report_fae_sdi.php" =>
                    array(  'title'=>'TRAFFICO DATI FATTURAZIONE ELETTRONICA',
                            'table'=>'Tabella su cui stai lavorando: ',

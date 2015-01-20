@@ -138,10 +138,10 @@ $anagrafica = new Anagrafica();
 while ($a_row = gaz_dbi_fetch_array($result)) {
 	$paymov=false;
     if (substr($a_row["clfoco"],0,3) == $admin_aziend['mascli'] or substr($a_row["clfoco"],0,3) == $admin_aziend['masfor']) {
+	   $partner = $anagrafica->getPartner($a_row["clfoco"]);
+	   $title =  $partner['ragso1']." ".$partner['ragso2'];
        if (substr($a_row["clfoco"],0,3) == $admin_aziend['mascli']){ 
-		$partner = $anagrafica->getPartner($a_row["clfoco"]);
-		$title =  $partner['ragso1']." ".$partner['ragso2'];
-		$paymov = getPaymov($a_row["id_tes"],$a_row["clfoco"]);
+		 $paymov = getPaymov($a_row["id_tes"],$a_row["clfoco"]);
 	   }
     } else {
        $title = "";
