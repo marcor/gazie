@@ -144,6 +144,8 @@ else $auxil = "";
 	</div>
 </nav>
 <?php
-}
+} 
+} else {
+	echo "<br/>";
 }
 ?>

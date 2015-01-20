@@ -197,8 +197,8 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
     // Colonna "Mail"
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     if (!empty($r["e_mail"])) {
-        echo '<a onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="stampa_estcon.php?codice='.$r["codcon"].'&annini='.$annini.'&annfin='.$annfin.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
-        mail="'.$r["e_mail"].'" namedoc="Estratto conto '.$annini.'-'.$annfin.'"><img src="../../library/images/email.gif" border="0"></a>';
+        echo '<a class="btn btn-xs btn-default" onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="stampa_estcon.php?codice='.$r["codcon"].'&annini='.$annini.'&annfin='.$annfin.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+        mail="'.$r["e_mail"].'" namedoc="Estratto conto '.$annini.'-'.$annfin.'"><i class="glyphicon glyphicon-envelope"></i></a>';
     } else {
 		echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	} 
