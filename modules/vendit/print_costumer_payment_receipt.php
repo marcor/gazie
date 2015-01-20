@@ -40,21 +40,25 @@ function getData($id_rig)
      * restituisce tutti i dati relativi al rigo contabile del pagamento 
     */
     global $gTables;
+    $anagrafica = new Anagrafica();
+    $paymov = new Schedule;
     $sqlquery= "SELECT ".$gTables['tesmov'].".*, ".$gTables['paymov'].".* 
     FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['paymov']." ON ".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig
     LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
     WHERE ".$gTables['rigmoc'].".id_rig = $id_rig ORDER BY expiry ASC";
     $rs = gaz_dbi_query($sqlquery);
-    $acc=array();
+    $a=array();
+    $i=1;
     while ($r = gaz_dbi_fetch_array($rs)) {
-        $acc[] = $r;
+        $a[$i] = $r;
+        $a[$i]['t'] = $paymov->getDocumentData($r['id_tesdoc_ref']);
+        $i++;
     }
-    print_r($acc);
-    return $acc;
+    print_r($a);
+    return array('d'=>$a,'partner'=>$anagrafica->getPartner($a[0]['clfoco']));
 }
 
-getData(intval($_GET['id_rig']));
-
+$d=getData(intval($_GET['id_rig']));
 
 $luogo_data=$admin_aziend['citspe'].", lì ".ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
 $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
@@ -62,16 +66,14 @@ $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
                                )
                    );
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>"LISTA DELLE PARTITE APERTE ",
-               'hile'=>array(   array('lun' => 45,'nam'=>'Cliente'),
-                                array('lun' => 20,'nam'=>'ID Partita'),
-                                array('lun' => 41,'nam'=>'Descrizione'),
-                                array('lun' => 11,'nam'=>'N.Doc.'),
-                                array('lun' => 15,'nam'=>'Data Doc.'),
-                                array('lun' => 15,'nam'=>'Data Reg.'),
-                                array('lun' => 12,'nam'=>'Dare'),
-                                array('lun' => 12,'nam'=>'Avere'),
-                                array('lun' => 15,'nam'=>'Scadenza')
+               'title'=>"RICEVUTA DI PAGAMENTO ".$d['partner']['ragso1'],
+               'hile'=>array(   array('lun' => 25,'nam'=>'ID Partita'),
+                                array('lun' => 45,'nam'=>'Descrizione'),
+                                array('lun' => 20,'nam'=>'Fattura'),
+                                array('lun' => 20,'nam'=>'Data Fattura'),
+                                array('lun' => 30,'nam'=>'Importo'),
+                                array('lun' => 30,'nam'=>'Scadenza'),
+                                array('lun' => 30,'nam'=>'TOTALE')
                             )
               );
 $aRiportare = array('top'=>array(array('lun' => 166,'nam'=>'da riporto : '),
@@ -90,68 +92,26 @@ $pdf->setRiporti('');
 $pdf->AddPage();
 $config = new Config;
 $paymov = new Schedule;
-/*$m = $paymov->getScheduleEntries(intval($_GET['orderby']));
-if (sizeof($paymov->Entries) > 0) {
-      $ctrl_partner=0;
-      $ctrl_id_tes=0;
-      $ctrl_paymov=0;
-      while (list($key, $mv) = each($paymov->Entries)) {
-          $pdf->SetFont('helvetica','',6);
-          $class_partner='';
-          $class_paymov='';
-          $class_id_tes='';
-          $partner='';
-          $id_tes='';
-          $paymov='';
-          if ($mv["clfoco"]<>$ctrl_partner){
-              $class_partner='FacetDataTDred';
-              $partner=$mv["ragsoc"];
-          }
-          if ($mv["id_tes"]<>$ctrl_id_tes){
-              $class_id_tes='FacetFieldCaptionTD';
-              $id_tes=$mv["id_tes"];
-              $mv["datdoc"]=gaz_format_date($mv["datdoc"]);
-          } else {
-              $mv['descri']='';
-              $mv['numdoc']='';
-              $mv['seziva']='';
-              $mv['datdoc']='';
-              $class_partner='';
-              $partner='';
-          }
-          if ($mv["id_tesdoc_ref"]<>$ctrl_paymov){
-              $paymov=$mv["id_tesdoc_ref"];
-              $paymov->getStatus($paymov);
-              if($paymov->Status['diff_paydoc']<>0){
-                  $status_cl=false;
-              } else {
-                  $status_cl=true;
-              }
-          }
-          if (empty($mv["numdoc"])){
-              $mv["datdoc"]='';
-              $mv['seziva']='';
-          }
-          $pdf->Cell(45,4,$partner,'LTB',0,'',$status_cl,'',1);
-          $pdf->Cell(20,4,$paymov,1,0,'R',$status_cl,'',2);
-          $pdf->Cell(41,4,$mv['descri'],1,0,'C',$status_cl,'',1);
-          $pdf->Cell(11,4,$mv["numdoc"].'/'.$mv['seziva'],1,0,'R',$status_cl);
-          $pdf->Cell(15,4,$mv["datdoc"],1,0,'C',$status_cl);
-          $pdf->Cell(15,4,gaz_format_date($mv["datreg"]),1,0,'C',$status_cl);
-          if ($mv['id_rigmoc_pay']==0){
-              $pdf->Cell(12,4,$mv['amount'],1,0,'R',$status_cl);
-              $pdf->Cell(12,4,'',1,0,'R',$status_cl);
-          } else {
-              $pdf->Cell(12,4,'',1,0,'R',$status_cl);
-              $pdf->Cell(12,4,$mv['amount'],1,0,'R',$status_cl);
-          }
-          $pdf->Cell(15,4,gaz_format_date($mv["expiry"]),1,1,'C',$status_cl);
-          $ctrl_partner=$mv["clfoco"];
-          $ctrl_id_tes=$mv["id_tes"];
-          $ctrl_paymov=$mv["id_tesdoc_ref"];
-
-      }
-}*/
+$ctrl_pm=0;
+while (list($k, $mv) = each($d['d'])) {
+    $pdf->Cell(45,4,$partner,'LTB',0,'',$status_cl,'',1);
+    $pdf->Cell(20,4,$paymov,1,0,'R',$status_cl,'',2);
+    $pdf->Cell(41,4,$mv['descri'],1,0,'C',$status_cl,'',1);
+    $pdf->Cell(11,4,$mv["numdoc"].'/'.$mv['seziva'],1,0,'R',$status_cl);
+    $pdf->Cell(15,4,$mv["datdoc"],1,0,'C',$status_cl);
+    $pdf->Cell(15,4,gaz_format_date($mv["datreg"]),1,0,'C',$status_cl);
+    if ($mv['id_rigmoc_pay']==0){
+        $pdf->Cell(12,4,$mv['amount'],1,0,'R',$status_cl);
+        $pdf->Cell(12,4,'',1,0,'R',$status_cl);
+    } else {
+        $pdf->Cell(12,4,'',1,0,'R',$status_cl);
+        $pdf->Cell(12,4,$mv['amount'],1,0,'R',$status_cl);
+    }
+    $pdf->Cell(15,4,gaz_format_date($mv["expiry"]),1,1,'C',$status_cl);
+    $ctrl_partner=$mv["clfoco"];
+    $ctrl_id_tes=$mv["id_tes"];
+    $ctrl_pm=$mv["id_tesdoc_ref"];
+}
 $pdf->setRiporti('');
 $pdf->Output();
 ?>
