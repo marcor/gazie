@@ -111,7 +111,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
          }
       }
       if ($_POST['print_ticket']==" checked" ) {
-         $_SESSION['print_request']=array('script_name'=>'print_costumer_payment_receipt','id_rig'=>$rig_id);
+         $_SESSION['print_request']=array('script_name'=>'print_customer_payment_receipt','id_rig'=>$rig_id);
          header("Location: sent_print.php");
          exit;
       }

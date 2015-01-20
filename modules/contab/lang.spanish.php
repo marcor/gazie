@@ -216,8 +216,9 @@ $strScript = array ("select_liqiva.php" =>
                          'visacc'=>'Ver los libros de contabilidad',
                          'report'=>'Listar de las entradas de libros de contabilidad',
                          'del_this'=>'Entradas de libros de contabilidad',
-                           'sourcedoc'=>'Fuente del documento',
-                           'source'=>'Fluente'
+                         'sourcedoc'=>'Fuente del documento',
+                         'source'=>'Fluente',
+						 'customer_receipt'=>'Print receipt',
                          ),
                     "report_piacon.php" =>
                    array(  'title'=>'Plan de cuentas',

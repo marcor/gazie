@@ -26,6 +26,22 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 
+
+
+function getPaymov($id_tes,$clfoco) // restituisce l'id_rig se c'è un movimento di scadenzario
+{
+    global $gTables;
+    $rig_res = gaz_dbi_dyn_query ('*',$gTables['rigmoc'], "id_tes = ".$id_tes." AND codcon=".$clfoco,'id_rig ASC',0,1);
+	$rig_r = gaz_dbi_fetch_array ($rig_res);
+    $pay_res = gaz_dbi_dyn_query ('*',$gTables['paymov'], "id_rigmoc_pay = ".$rig_r['id_rig'],'expiry ASC',0,1);
+	$pay_r = gaz_dbi_fetch_array ($pay_res);
+    if ($pay_r) {
+		return $rig_r['id_rig'];
+	} else{
+		return false;
+	}
+}
+
 function getDocRef($data){
     global $gTables;
     $r='';
@@ -120,9 +136,13 @@ $recordnav = new recordnav($gTables['tesmov'], $where, $limit, $passo);
 $recordnav -> output();
 $anagrafica = new Anagrafica();
 while ($a_row = gaz_dbi_fetch_array($result)) {
+	$paymov=false;
     if (substr($a_row["clfoco"],0,3) == $admin_aziend['mascli'] or substr($a_row["clfoco"],0,3) == $admin_aziend['masfor']) {
-       $partner = $anagrafica->getPartner($a_row["clfoco"]);
-       $title =  $partner['ragso1']." ".$partner['ragso2'];
+       if (substr($a_row["clfoco"],0,3) == $admin_aziend['mascli']){ 
+		$partner = $anagrafica->getPartner($a_row["clfoco"]);
+		$title =  $partner['ragso1']." ".$partner['ragso2'];
+		$paymov = getPaymov($a_row["id_tes"],$a_row["clfoco"]);
+	   }
     } else {
        $title = "";
     }
@@ -143,7 +163,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $docref=getDocRef($a_row);
     if (!empty($docref)){
       echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"".$script_transl['sourcedoc']."\" href=\"$docref\"><i class=\"glyphicon glyphicon-print\"></i></a>";
-    }
+    } elseif($paymov)  {
+      echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"".$script_transl['customer_receipt']."\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=".$paymov."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
+	}
     print "</td>";
     print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movcon.php?id_tes=".$a_row["id_tes"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     print "</tr>\n";

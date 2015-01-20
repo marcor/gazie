@@ -54,8 +54,7 @@ function getData($id_rig)
         $a[$i]['t'] = $paymov->getDocumentData($r['id_tesdoc_ref']);
         $i++;
     }
-    print_r($a);
-    return array('d'=>$a,'partner'=>$anagrafica->getPartner($a[0]['clfoco']));
+    return array('d'=>$a,'partner'=>$anagrafica->getPartner($a[1]['clfoco']));
 }
 
 $d=getData(intval($_GET['id_rig']));
@@ -94,22 +93,14 @@ $config = new Config;
 $paymov = new Schedule;
 $ctrl_pm=0;
 while (list($k, $mv) = each($d['d'])) {
-    $pdf->Cell(45,4,$partner,'LTB',0,'',$status_cl,'',1);
-    $pdf->Cell(20,4,$paymov,1,0,'R',$status_cl,'',2);
-    $pdf->Cell(41,4,$mv['descri'],1,0,'C',$status_cl,'',1);
-    $pdf->Cell(11,4,$mv["numdoc"].'/'.$mv['seziva'],1,0,'R',$status_cl);
-    $pdf->Cell(15,4,$mv["datdoc"],1,0,'C',$status_cl);
-    $pdf->Cell(15,4,gaz_format_date($mv["datreg"]),1,0,'C',$status_cl);
-    if ($mv['id_rigmoc_pay']==0){
-        $pdf->Cell(12,4,$mv['amount'],1,0,'R',$status_cl);
-        $pdf->Cell(12,4,'',1,0,'R',$status_cl);
-    } else {
-        $pdf->Cell(12,4,'',1,0,'R',$status_cl);
-        $pdf->Cell(12,4,$mv['amount'],1,0,'R',$status_cl);
-    }
-    $pdf->Cell(15,4,gaz_format_date($mv["expiry"]),1,1,'C',$status_cl);
-    $ctrl_partner=$mv["clfoco"];
-    $ctrl_id_tes=$mv["id_tes"];
+    $pdf->Cell(25,4,$mv['id_tesdoc_ref'],'LTB',0,'',0,'',1);
+    $pdf->Cell(45,4,$mv['descri'],1,0,'C',0,'',1);
+    $pdf->Cell(20,4,$mv['t']['seziva'],1,0,'R',0,'',2);
+    $pdf->Cell(11,4,$mv["numdoc"].'/'.$mv['seziva'],1,0,'R',0);
+    $pdf->Cell(15,4,$mv["datdoc"],1,0,'C',0);
+    $pdf->Cell(15,4,gaz_format_date($mv["datreg"]),1,0,'C',0);
+    $pdf->Cell(12,4,$mv['amount'],1,0,'R',0);
+    $pdf->Cell(15,4,gaz_format_date($mv["expiry"]),1,1,'C',0);
     $ctrl_pm=$mv["id_tesdoc_ref"];
 }
 $pdf->setRiporti('');

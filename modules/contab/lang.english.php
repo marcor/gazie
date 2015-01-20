@@ -212,7 +212,8 @@ $strScript = array ("select_liqiva.php" =>
                            'report'=>'List of ledger entries',
                            'del_this'=>'Ledger entries',
                            'sourcedoc'=>'Source document',
-                           'source'=>'Source'
+                           'source'=>'Source',
+						   'customer_receipt'=>'Print receipt',
                            ),
                     "report_piacon.php" =>
                    array(  'title'=>'Chart of accounts',

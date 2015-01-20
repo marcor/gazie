@@ -213,7 +213,8 @@ $strScript = array ("select_liqiva.php" =>
                            'report'=>'Lista dei Movimenti Contabili',
                            'del_this'=>'Movimenti Contabili',
                            'sourcedoc'=>'Documento che ha originato il movimento',
-                           'source'=>'Origine'
+                           'source'=>'Origine',
+						   'customer_receipt'=>'Stampa la ricevuta',
                            ),
                     "report_piacon.php" =>
                    array(  'title'=>'Piano dei conti',
