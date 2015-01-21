@@ -86,7 +86,7 @@ $linkHeaders=new linkHeaders($script_transl['header']);
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
-echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['year'];
+echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['year'];
 $gForm->selectNumber('year',$form['year'],1,$form['year']-10,$form['year']+10,'FacetSelect','year');
 echo "\t </div>\n";
 echo "<table class=\"Tlarge\">\n";

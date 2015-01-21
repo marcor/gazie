@@ -82,9 +82,8 @@ function tutor_list($tutor,$configurazione,$script_transl)
     echo "</table></form>";
 }
 ?>
-<br />
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
-<br /><br />
+<br />
 <?php
 if ($configurazione['cvalue']) {
    $remote_id = http_get($configurazione['cvalue']);

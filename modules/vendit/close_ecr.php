@@ -291,7 +291,7 @@ require("../../library/include/header.php");
 $script_transl=HeadMain(0);
 echo "<form method=\"POST\" name=\"accounting\">\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
-echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title1'].$ecr['descri'].$script_transl['title2']."</div>\n";
+echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title1'].$ecr['descri'].$script_transl['title2']."</div>\n";
 $rs=getAccountedTickets($ecr['id_cash']);
 echo "<table class=\"Tlarge\">";
 echo "<th class=\"FacetFieldCaptionTD\">".$script_transl['date']."</th>

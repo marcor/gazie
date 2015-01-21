@@ -28,7 +28,6 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
-<br>
 <table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
 <tr>
 <td align="center" class="FacetFormHeaderFont"><a href="admin_docacq.php?tipdoc=ADT&Insert" accesskey="d">Ricevuto D.d.T. d'acquisto da Fornitore</a></td>

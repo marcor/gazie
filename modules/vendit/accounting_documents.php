@@ -370,7 +370,7 @@ echo "<input type=\"hidden\" value=\"".$form['proini']."\" name=\"proini\" />\n"
 echo "<input type=\"hidden\" value=\"".$form['year_ini']."\" name=\"year_ini\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['year_fin']."\" name=\"year_fin\" />\n";
 $gForm = new GAzieForm();
-echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['vat_section'];
+echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['vat_section'];
 $gForm->selectNumber('vat_section',$form['vat_section'],0,1,3,'FacetSelect','vat_section');
 echo "</div>\n";
 echo "<table class=\"Tsmall\">\n";

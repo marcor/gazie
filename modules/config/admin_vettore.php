@@ -150,7 +150,6 @@ $gForm = new GAzieForm();
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"".$form['codice']."\" name=\"codice\">\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\">\n";
-echo "<br />\n";
 
 if ($form['codice'] > 0) { // è una modifica
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." ".$form['codice']." </div>\n";

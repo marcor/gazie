@@ -99,7 +99,6 @@ if ($data){
 }
 echo "<form method=\"POST\" name=\"myform\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
-echo '<br>';
 echo '<div id="admin_main" ><table border="1" class="Tmiddle">';
 echo "<tr class=\"FacetFormHeaderFont\">\n";
 echo "<td class=\"FacetDataTD\"><A href=\"../config/admin_utente.php?Login=".$admin_aziend['Login']."&Update\"><img src=\"view.php?table=admin&field=Login&value=".$admin_aziend['Login']."\" alt=\"".$admin_aziend['Cognome'].' '.$admin_aziend['Nome']."\" width=100 title=\"".$script_transl['change_usr']."\" border=\"2\"></a>";

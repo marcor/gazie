@@ -234,7 +234,7 @@ echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
 //echo "<input type=\"hidden\" value=\"".$form['search']."\" name=\"search\" />\n";
 $gForm = new contabForm();
-echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
+echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
 echo "<table class=\"Tmiddle\">\n";
 if (!empty($msg)) {
