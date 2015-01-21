@@ -11,9 +11,13 @@ ALTER TABLE `gaz_aziend` CHANGE `ricbol` `taxstamp` DECIMAL(5,2) NOT NULL;
 ALTER TABLE `gaz_aziend` CHANGE `ivabol` `taxstamp_vat` INT(2) NOT NULL DEFAULT '0';
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '2', 'report_schedule.php', '', '', '11', '', '11'  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_schedule.php', '', '', '31', '', '3'  FROM `gaz_menu_script`;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_partner_status.php', '', '', '32', '', '4'  FROM `gaz_menu_script`;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'customer_payment.php', '', '', '21', '', '5'  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_partner_status.php', '', '', '32', '', '6'  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'customer_payment.php', '', '', '21', '', '9'  FROM `gaz_menu_script`;
 UPDATE `gaz_menu_script` SET `link` = 'customer_payment.php' WHERE `link` = 'salcon_credit.php';
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '3', 'report_schedule_acq.php', '', '', '8', '', '8'  FROM `gaz_menu_module`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_schedule.php', '', '', '12', '', '3'  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_partner_status.php', '', '', '13', '', '6'  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'supplier_payment.php', '', '', '11', '', '9'  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesdoc` ADD `taxstamp` DECIMAL(5,2) NOT NULL AFTER `stamp`;
 ALTER TABLE `gaz_XXXtesbro` ADD `taxstamp` DECIMAL(5,2) NOT NULL AFTER `stamp`;

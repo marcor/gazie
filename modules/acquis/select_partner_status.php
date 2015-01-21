@@ -24,7 +24,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg='';
 $paymov = new Schedule;
-$paymov->setScheduledPartner($admin_aziend['mascli']);
+$paymov->setScheduledPartner($admin_aziend['masfor']);
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
@@ -94,7 +94,7 @@ function setDate(name) {
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
-$gForm = new venditForm();
+$gForm = new acquisForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
 echo "<table class=\"Tmiddle\">\n";
@@ -175,7 +175,7 @@ if (isset($_POST['preview'])) {
                         $class_paymov='FacetDataTDevidenziaBL';
                         $vi['expiry']=$vi['cl_exp'];
                      } elseif($vi['status']==0){ // APERTA
-                        $lnk=" &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=".$p."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                        $lnk=" &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=".$p."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                      }
                   }
                   echo "<tr class='".$class_paymov."'>";

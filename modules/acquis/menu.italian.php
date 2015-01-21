@@ -30,7 +30,8 @@ $transl['acquis'] = array('name' => "Acquisti",
                                          4 =>array("Lista degli ordini di bonifico/addebito","Bonifici-Addebiti"),
                                          5 =>array("Gestione dell'Archivio dei Fornitori","Fornitori"),
                                          6 =>array("Visualizzazione e Stampa della Lista dei Debiti verso Fornitori","Lista Debiti"),
-                                         7 =>array("Stampa modulo Scheda Carburante","Scheda Carburante")
+                                         7 =>array("Stampa modulo Scheda Carburante","Scheda Carburante"),
+                                         8 =>array("Scadenzario a partite aperte","Scadenzario")
                                        ),
                           'm3' => array( 1 =>array("Richiedi un preventivo a fornitore","Richiedi preventivo"),
                                          2 =>array("Ordine a fornitore ","Ordina a fornitore"),
@@ -41,7 +42,10 @@ $transl['acquis'] = array('name' => "Acquisti",
                                          7 =>array("Contabilizzazione fatture di acquisto","Contabilizza fatture"),
                                          8 =>array("Inserisci un nuovo fornitore","Nuovo fornitore"),
                                          9 =>array("Lista D.d.T. d'acqisto","Lista D.d.T. d\'acquisto"),
-                                         10=>array("Ricevuto DdT da fornitore","Ricevuto DdT d\'acquisto")
+                                         10=>array("Ricevuto DdT da fornitore","Ricevuto DdT d\'acquisto"),
+                                         11=>array("Pagamento di un debito vantato da un fornitore","Pagamento debito verso fornitore"),
+                                         12=>array("Report partite aperte","Report partite aperte"),
+                                         13=>array("Selezione e stampa stato clienti","Stato delle scadenze")
                                        )
                           );
 ?>

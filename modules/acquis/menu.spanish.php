@@ -35,7 +35,8 @@ $transl['acquis'] = array('name' => "Compras",
                                          4 =>array("Reporte de cuentas pagables","Cuentas pagables"),
                                          5 =>array("Administracion de proveedores","Proveedores"),
                                          6 =>array("Ver e imprimir reporte de debito","Reporte de debito"),
-                                         7 =>array("Imprimir nota de combustible","Nota de combustible")
+                                         7 =>array("Imprimir nota de combustible","Nota de combustible"),
+                                         8 =>array("Scadenzario a partite aperte","Scadenzario")
                                        ),
                           'm3' => array( 1 =>array("Solicitar una cotizacion al proveedor","Solicitar cotizacion"),
                                          2 =>array("Pedido a proveedor","Pedido a proveedor"),
@@ -46,7 +47,10 @@ $transl['acquis'] = array('name' => "Compras",
                                          7 =>array("Contabilidad de facturas de compra","Contabilidad de facturas"),
                                          8 =>array("Inserte nuevo proveedor","Nuevo proveedor"),
                                          9 =>array("Reporte de Notas de Entrega de Compra","Reporte de Notas de Entrega"),
-                                         10=>array("Notas de Entrega recibidas del proveedor","Nuevas Notas de Entrega")
+                                         10=>array("Notas de Entrega recibidas del proveedor","Nuevas Notas de Entrega"),
+                                         11=>array("Pagamento di un debito vantato da un fornitore","Pagamento debito verso fornitore"),
+                                         12=>array("Report partite aperte","Report partite aperte"),
+                                         13=>array("Selezione e stampa stato clienti","Stato delle scadenze")
                                        )
                           );
 ?>
