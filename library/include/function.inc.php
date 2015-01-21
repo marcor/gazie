@@ -1569,7 +1569,7 @@ class Schedule
                 $this->Partners=$acc;               
         }
         
-    function getScheduleEntries($ob=0)
+    function getScheduleEntries($ob=0,$masclifor)
         {
             /*
              * genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
@@ -1591,7 +1591,7 @@ class Schedule
             }
             $select = "*, ".$gTables['tesmov'].".*, ".$gTables['clfoco'].".descri AS ragsoc";
             if ($this->target==0 ) {
-                $where = " 1";
+                $where = $gTables['clfoco'].".codice LIKE '$masclifor%' ";
             } else {
                 $where = $gTables['clfoco'].".codice = ".$this->target;
             }

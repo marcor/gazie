@@ -69,7 +69,7 @@ $pdf->setRiporti('');
 $pdf->AddPage();
 $config = new Config;
 $scdl = new Schedule;
-$m = $scdl->getScheduleEntries(intval($_GET['orderby']));
+$m = $scdl->getScheduleEntries(intval($_GET['orderby']),$admin_aziend['mascli']);
 if (sizeof($scdl->Entries) > 0) {
       $ctrl_partner=0;
       $ctrl_id_tes=0;

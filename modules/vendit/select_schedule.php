@@ -29,7 +29,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['this_date_D']=date("d");
-    $form['orderby']=0;
+    $form['orderby']=2;
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
     $form['ritorno']=$_POST['ritorno'];
@@ -79,7 +79,7 @@ echo "</table>\n";
 
 if (isset($_POST['preview'])) {
   $scdl = new Schedule;
-  $m = $scdl->getScheduleEntries($form['orderby']);
+  $m = $scdl->getScheduleEntries($form['orderby'],$admin_aziend['mascli']);
   echo "<table class=\"Tlarge\">";
   if (sizeof($scdl->Entries) > 0) {
         $ctrl_partner=0;
@@ -118,7 +118,8 @@ if (isset($_POST['preview'])) {
                 $scdl->getStatus($paymov);
                 if($scdl->Status['diff_paydoc']<>0){
                     $class_paymov='FacetDataTDevidenziaOK';
-                    $status_descr=$script_transl['status_value'][1];
+                    $status_descr=$script_transl['status_value'][1].
+                    " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=".$mv["clfoco"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                 } else {
                     $class_paymov='FacetDataTDevidenziaCL';
                     $status_descr=$script_transl['status_value'][0];

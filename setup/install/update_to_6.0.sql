@@ -12,6 +12,8 @@ ALTER TABLE `gaz_aziend` CHANGE `ivabol` `taxstamp_vat` INT(2) NOT NULL DEFAULT 
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '2', 'report_schedule.php', '', '', '11', '', '11'  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_schedule.php', '', '', '31', '', '3'  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_partner_status.php', '', '', '32', '', '4'  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'customer_payment.php', '', '', '21', '', '5'  FROM `gaz_menu_script`;
+UPDATE `gaz_menu_script` SET `link` = 'customer_payment.php' WHERE `link` = 'salcon_credit.php';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesdoc` ADD `taxstamp` DECIMAL(5,2) NOT NULL AFTER `stamp`;
 ALTER TABLE `gaz_XXXtesbro` ADD `taxstamp` DECIMAL(5,2) NOT NULL AFTER `stamp`;

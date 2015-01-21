@@ -45,7 +45,7 @@ function getData($id_rig)
     global $gTables;
     $anagrafica = new Anagrafica();
     $paymov = new Schedule;
-    $sqlquery= "SELECT ".$gTables['tesmov'].".*, ".$gTables['paymov'].".* 
+    $sqlquery= "SELECT ".$gTables['tesmov'].".*, ".$gTables['paymov'].".*, ".$gTables['rigmoc'].".import 
     FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['paymov']." ON ".$gTables['paymov'].".id_rigmoc_pay = ".$gTables['rigmoc'].".id_rig
     LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
     WHERE ".$gTables['rigmoc'].".id_rig = $id_rig ORDER BY expiry ASC";
@@ -70,14 +70,12 @@ $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
                                )
                    );
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>$script_transl['title'],
-               'hile'=>array(   array('lun' => 25,'nam'=>'ID Partita'),
-                                array('lun' => 45,'nam'=>'Descrizione'),
-                                array('lun' => 20,'nam'=>'Fattura'),
-                                array('lun' => 20,'nam'=>'Data Fattura'),
-                                array('lun' => 30,'nam'=>'Importo'),
-                                array('lun' => 30,'nam'=>'Scadenza'),
-                                array('lun' => 30,'nam'=>'TOTALE')
+               'title'=>$script_transl['title'].$d['partner']['ragso1'].' '.$d['partner']['ragso2'],
+               'hile'=>array(   array('lun' => 30,'nam'=>$script_transl['id_tesdoc_ref']),
+                                array('lun' => 70,'nam'=>$script_transl['descri']),
+                                array('lun' => 25,'nam'=>$script_transl['numfat']),
+                                array('lun' => 25,'nam'=>$script_transl['datfat']),
+                                array('lun' => 36,'nam'=>$script_transl['amount'])
                             )
               );
 $aRiportare = array('top'=>array(array('lun' => 166,'nam'=>'da riporto : '),
@@ -97,20 +95,29 @@ $pdf->AddPage();
 $config = new Config;
 $paymov = new Schedule;
 $ctrl_pm=0;
-$pdf->SetFont('helvetica','',8);
+$pdf->SetFont('helvetica','',10);
+$pdf->Cell(100,6,$d['d'][1]['descri'],1,1,'L',1,'',1);
+
 while (list($k, $mv) = each($d['d'])) {
-	if ($ctrl_pm <> $mv["id_tesdoc_ref"]){
-		$pdf->Cell(25,4,$mv['id_tesdoc_ref'],'LTB',0,'',0,'',1);
-		$pdf->Cell(45,4,$mv['descri'],1,1,'C',0,'',1);
-	}
-    $pdf->Cell(70,4,'',1);
-    $pdf->Cell(20,4,$mv['t']['seziva'],1,0,'R',0,'',2);
-    $pdf->Cell(11,4,$mv['t']["numdoc"].'/'.$mv['t']['seziva'],1,0,'R',0);
-    $pdf->Cell(15,4,$mv['t']["datdoc"],1,0,'C',0);
-    $pdf->Cell(15,4,gaz_format_date($mv["datreg"]),1,0,'C',0);
-    $pdf->Cell(12,4,$mv['amount'],1,1,'R',0);
+    if ($ctrl_pm <> $mv["id_tesdoc_ref"]){
+    }
+    $pdf->Cell(30,6,$mv['id_tesdoc_ref'],'LTB',0,'L',0,'',1);
+    $pdf->Cell(70,6,$mv['t']['descri'],1,0,'L',0,'',1);
+    $pdf->Cell(25,6,$mv['t']["numdoc"].'/'.$mv['t']['seziva'],1,0,'C',0);
+    $pdf->Cell(25,6,gaz_format_date($mv['t']["datdoc"]),1,0,'C',0);
+    $pdf->Cell(36,6,gaz_format_number($mv['amount']),1,1,'R',0);
     $ctrl_pm=$mv["id_tesdoc_ref"];
 }
+$pdf->Ln(10);
+$pdf->SetFont('helvetica','B',10);
+$pdf->Cell(150,6,$script_transl['tot'].': ','LTB',0,'R');
+$pdf->Cell(36,6,'€ '.gaz_format_number($d['d'][1]['import']),'RTB',1,'R',1,'',1);
+$pdf->Ln(10);
+$pdf->SetFont('courier','',8);
+$pdf->Cell(100,6,'');
+$pdf->Cell(60,6,$admin_aziend['Nome'].' '.$admin_aziend['Cognome'],0,1,'C');
+$pdf->Cell(100,6,'');
+$pdf->Cell(60,20,'____________________________',0,0,'C');
 $pdf->setRiporti('');
 $pdf->Output();
 ?>

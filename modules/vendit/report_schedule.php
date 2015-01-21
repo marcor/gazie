@@ -26,6 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl=HeadMain();
+print_r($where);
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>';
 $recordnav = new recordnav($gTables['paymov'], $where, $limit, $passo);
 $recordnav -> output();
