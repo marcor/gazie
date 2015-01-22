@@ -857,6 +857,7 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.draggable',
                                   'jquery/ui/jquery.ui.resizable',
+                                  'jquery/ui/jquery.ui.datepicker.min',
                                   'jquery/ui/jquery.effects.core',
                                   'jquery/ui/jquery.effects.scale',
                                   'jquery/modal_form'));
