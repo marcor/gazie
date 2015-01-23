@@ -50,8 +50,29 @@ function submenu($array) {
 	if ($numsub > 0) echo '</ul>';
 }
 
+//preparo la query per la seconda barra 
+$posizione = explode( '/',$_SERVER['REQUEST_URI'] );
+$posizione = array_pop( $posizione );
+$result = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
+if ( !gaz_dbi_num_rows($result)>0 ) {
+	$posizione = explode ("?",$posizione );
+	$result = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione[0].'" ',' id',0,1);	
+}
+//aggiungo classe per spaziare in caso di assenza seconda barra
+$classe_barra1 = "";
+$riga = gaz_dbi_fetch_array($result);
+if ( $riga["id"]!="" ) {
+	$result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
+	if ( gaz_dbi_num_rows($result2)<=0 ) {
+		$classe_barra1 = " nav-mb";
+	}
+} else { 
+	$classe_barra1 = " nav-mb";
+}
 ?>
-<nav class="navbar navbar-default nav-boot nav-first" role="navigation">
+
+
+<nav class="navbar navbar-default nav-boot nav-first<?php echo $classe_barra1; ?>" role="navigation">
     <div class="navbar-header navbar-right vcenter" >
 	  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
         <span class="sr-only">Visualizza Menù</span>
@@ -105,47 +126,36 @@ function submenu($array) {
     </div>
 </nav>
 <?php
-$posizione = explode( '/',$_SERVER['REQUEST_URI'] );
-$posizione = array_pop( $posizione );
-$result = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
-if ( !gaz_dbi_num_rows($result)>0 ) {
-	$posizione = explode ("?",$posizione );
-	$result = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione[0].'" ',' id',0,1);	
-}
-$riga = gaz_dbi_fetch_array($result);
+
 if ( $riga["id"]!="" ) {
 	$result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
 	if ( gaz_dbi_num_rows($result2)>0 ) {
 		if ( is_array( $posizione ) ) $posizione = $posizione[0];
 		if (isset($_GET['auxil'])) $auxil = $_GET['auxil'];
 		else $auxil = "";
-?>
-	<nav class="navbar navbar-default navbar-lower" role="navigation">
-		<div class="navbar-form navbar-left" role="search">
-			<div class="btn-group btn-group-xs">
-			<?php
-				while ($r = gaz_dbi_fetch_array($result2)) {
-					echo '<a href="'.$r["link"].'" class="btn btn-default">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a>';
-				}
-			?>
+		?>
+		<nav class="navbar navbar-default navbar-lower nav-mb" role="navigation">
+			<div class="navbar-form navbar-left" role="search">
+				<div class="btn-group btn-group-xs">
+				<?php
+					while ($r = gaz_dbi_fetch_array($result2)) {
+						echo '<a href="'.$r["link"].'" class="btn btn-default">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a>';
+					}
+				?>
+				</div>
 			</div>
-		</div>
-		
-		<div class="nav navbar-default navbar-right">
-			<div class="form-inline">
-				<form action="<?php echo $posizione; ?>" method="GET">
-					<input type="hidden" name="auxil" value="<?php echo $auxil; ?>">
-					<input disabled type="text" class="form-control input-xs" title="La ricerca viene effettuata nei campi ragione sociale 1 e 2, partita iva, codice fiscale e città" type="text" name="ricerca_completa" placeholder="Cerca nel modulo">
-					<button disabled type="submit" class="btn btn-xs btn-default">Go!</button>
-				</form>
+			
+			<div class="nav navbar-default navbar-right">
+				<div class="form-inline">
+					<form action="<?php echo $posizione; ?>" method="GET">
+						<input type="hidden" name="auxil" value="<?php echo $auxil; ?>">
+						<input disabled type="text" class="form-control input-xs" title="La ricerca viene effettuata nei campi ragione sociale 1 e 2, partita iva, codice fiscale e città" type="text" name="ricerca_completa" placeholder="Cerca nel modulo">
+						<button disabled type="submit" class="btn btn-xs btn-default">Go!</button>
+					</form>
+				</div>
 			</div>
-		</div>
-	</nav>
-	<?php
-	} else {
-		echo "<br/>";
+		</nav>
+		<?php
 	}
-} else {
-	echo "<br/>";
 }
 ?>

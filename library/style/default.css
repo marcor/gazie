@@ -375,6 +375,9 @@ div.help {
   line-height: 20px;
   padding: 10px 3px 10px 3px;
 }
+.nav-mb {
+	margin-bottom: 5px;
+}
 .nav-tabs {
     border-bottom: 0px;
 }

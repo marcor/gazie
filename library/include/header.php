@@ -124,7 +124,7 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
      la funzione createGazieJSCM serve per creare un
      array con il menu corrente orizzontale , si potrebbero creare
      altre forme di menu modificando questa funzione. */
-     echo "\n<title>".$admin_aziend['ragso1']."&raquo;".$menuArray[0]['title'];
+     echo "\n<title>".$menuArray[0]['title']."&raquo;".$admin_aziend['ragso1'];
      if (!empty($idScript)) {
         if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
             if ($idScript[0] == 2) {
