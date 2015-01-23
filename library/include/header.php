@@ -22,6 +22,9 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
+if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
+    $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">

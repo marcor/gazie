@@ -106,7 +106,13 @@ if (isset($_POST['actionflag'])) {
                 }
                 $newpass = true;
             } else {
-                header("Location: ../root/admin.php");
+                if (isset($_SESSION["lastpage"]) && !empty($_SESSION["lastpage"]) && !strstr($_SESSION["lastpage"], "login_admin")=="login_admin.php") {
+                    $lastpage = $_SESSION["lastpage"];
+                    $_SESSION['lastpage'] = "";
+                    header("Location: ".$lastpage);
+                } else {
+                    header("Location: ../root/admin.php");
+                }
                 exit;
             }
         }
