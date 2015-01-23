@@ -67,9 +67,14 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $desmov .= ' n.'.$dd['numdoc'].'/'.$dd['seziva'];
          }
      }
-      if ($acc_tot<=0){
+     if (strlen($desmov)<=35){ // la descrizione entra in 50 caratteri
+         $desmov = 'RISCOSSO x FAT.'.$desmov; 
+     } else { // la descrizione è troppo lunga
+         $desmov = 'RISCOSSO FINO A FAT.n.'.$dd['numdoc'].'/'.$dd['seziva']; 
+     }
+     if ($acc_tot<=0){
          $msg .='4+';
-      }
+     }
    } else if (isset($_POST['ins'])) { // non ho movimenti ma ho chiesto di inserirli
          $msg .='6+';
    }
@@ -94,7 +99,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    // fine controlli
    if (isset($_POST['ins']) && $msg=='') {
       $tes_val=array('caucon'=>'',
-               'descri'=>'RISCOSSO x FATT.'.$desmov,
+               'descri'=>$desmov,
                'datreg'=>$date,
                'clfoco'=>$form['partner']
                );
