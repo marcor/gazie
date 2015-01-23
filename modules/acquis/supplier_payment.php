@@ -61,7 +61,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $desmov .= ' n.'.$dd['numdoc'].'/'.$dd['seziva'];
          }
      }
-     if (strlen($desmov)<=35){ // la descrizione entra in 50 caratteri
+     if (strlen($desmov)<=85){ // la descrizione entra in 50 caratteri
          $desmov = 'PAGATO x FAT.'.$desmov; 
      } else { // la descrizione è troppo lunga
          $desmov = 'PAGATO FINO A FAT.n.'.$dd['numdoc'].'/'.$dd['seziva']; 

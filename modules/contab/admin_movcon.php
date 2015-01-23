@@ -695,7 +695,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                //modifico la testata
                $codice=array('id_tes',intval($_POST['id_testata']));
                $newValue=array('caucon'=>substr($_POST['codcausale'],0,3),
-                               'descri'=>substr($_POST['descrizion'],0,50),
+                               'descri'=>substr($_POST['descrizion'],0,100),
                                'datreg'=>$datareg,
                                'seziva'=>intval($_POST['sezioneiva']),
                                'protoc'=>intval($_POST['protocollo']),
@@ -710,7 +710,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
             } else { //se è un'inserimento
                //inserisco la testata
                $newValue=array('caucon'=>substr($_POST['codcausale'],0,3),
-                               'descri'=>substr($_POST['descrizion'],0,50),
+                               'descri'=>substr($_POST['descrizion'],0,100),
                                'datreg'=>$datareg,
                                'seziva'=>intval($_POST['sezioneiva']),
                                'protoc'=>intval($_POST['protocollo']),
@@ -1153,7 +1153,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['v_caucon']."!\" $tabsmt ></td></tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>\n";
-echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><input type=\"text\" name=\"descrizion\" value=\"".$form['descrizion']."\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><input type=\"text\" name=\"descrizion\" value=\"".$form['descrizion']."\" maxlength=\"100\" size=\"50\" /></td>\n";
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

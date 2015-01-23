@@ -131,7 +131,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $pdf->Cell(18,4,$datareg,1,0,'C');
       if (!empty($row['partner']) || !empty($row['numdoc'])){
           $pdf->SetFont('helvetica','',6);
-          $row['tesdes'].=' ('.substr($row['partner'],0,30);
+          $row['tesdes'].=' ('.$row['partner'];
           if (!empty($row['numdoc'])){
              $row['tesdes'] .= ' n.'.$row['numdoc'].' del '.$datadoc;
              if ($row['protoc']>0) {
@@ -140,7 +140,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
           }
           $row['tesdes'].=')';
       }
-      $pdf->Cell(108,4,$row['tesdes'],'LTB');
+      $pdf->Cell(108,4,$row['tesdes'],'LTB',0,'L',0,'',1);
       $pdf->SetFont('helvetica','',7);
       $pdf->Cell(20,4,$dare,1,0,'R');
       $pdf->Cell(20,4,$avere,1,0,'R');

@@ -116,9 +116,9 @@ while ($mov = gaz_dbi_fetch_array($result)) {
     if ($mov["id_tes"] != $ctrlmopre) {
         $pdf->Cell(10,4,$numrig,'LTR',0,'R');
         $pdf->Cell(18,4,$datamov,1,0,'L');
-        $pdf->Cell(60,4,substr($mov['descri'],0,37),1,0,'L');
+        $pdf->Cell(60,4,$mov['descri'],1,0,'L',0,'',1);
         $pdf->Cell(16,4,$mov['codcon'],'LT',0,'C');
-        $pdf->Cell(46,4,substr($clfoco['descri'],0,30),'LT',0,'L');
+        $pdf->Cell(46,4,$clfoco['descri'],'LT',0,'L',0,'',1);
         $pdf->Cell(20,4,$dare,'LT',0,'R');
         $pdf->Cell(20,4,$avere,'LRT',1,'R');
         if(!empty($mov["numdoc"])) {
@@ -130,7 +130,7 @@ while ($mov = gaz_dbi_fetch_array($result)) {
         $pdf->Cell(10,4,$numrig,'LR',0,'R');
         $pdf->Cell(78,4,'',0,0,'L');
         $pdf->Cell(16,4,$mov['codcon'],'L',0,'C');
-        $pdf->Cell(46,4,substr($clfoco['descri'],0,30),'L',0,'L');
+        $pdf->Cell(46,4,$clfoco['descri'],'L',0,'L',0,'',1);
         $pdf->Cell(20,4,$dare,'L',0,'R');
         $pdf->Cell(20,4,$avere,'LR',1,'R');
     }
