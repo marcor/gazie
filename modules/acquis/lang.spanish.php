@@ -224,6 +224,78 @@ $strScript = array("admin_fornit.php" =>
                            'vat'=>'IVA',
                            'stamp'=>'Sellos en las facturas',
                            'tot'=>'Total'
+                           ),
+                    "report_schedule_acq.php" =>
+                    array( 'title'=>'Lista dei movimenti delle partite',
+                           'header'=>array( 'ID'=>'id',
+                                            'Identificativo partita' => "id_tesdoc_ref",
+                                            'Movimento contabile apertura (documento)' => "id_rigmoc_doc",
+                                            'Movimento contabile chiusura (pagamento)' => "id_rigmoc_pay",
+                                            'Importo' => "amount",
+                                            'Scadenza' => "expiry"
+                                            ),
+                           ),
+                    "select_schedule.php" =>
+                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa delle partite aperte',
+                           'mesg'=>array('La ricerca non ha dato risultati!',
+                                         'Inserire almeno 2 caratteri!',
+                                         'Cambia fornitore'
+                                          ),
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'Non sono stati trovati movimenti!'
+                                          ),
+                           'account'=>'Fornitoree ',
+                           'orderby'=>'Ordina per: ',
+                           'orderby_value'=>array(0=>'Scadenza crescente',1=>'Scadenza decrescente',
+                                                  2=>'Fornitore crescente',3=>'Fornitore decrescente'
+                                           ),
+                           'header'=>array('Fornitore'=>'','ID Partita'=>'','Status'=>'','Mov.Cont.'=>'','Descrizione'=>'',
+                                            'N.Doc.'=>'','Data Doc.' =>'','Data Reg.' =>'','Dare'=>'','Avere'=>'',
+                                            'Scadenza'=>''
+                                           ),
+                           'status_value'=>array(0=>'Chiusa',1=>'Aperta'),
+                           ),
+                    "delete_schedule.php" =>
+                    array( 'title'=>'Cancellazione movimenti chiusi dello scadenzario',
+                           'ragsoc'=>'Fornitore',
+                           'id_tesdoc_ref'=>'Identificativo partita',
+                           'descri'=> 'Descrizione'
+                           ),
+                    "select_partner_status.php" =>
+                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei fornitori',
+                           'print_title'=>'SCADENZARIO FORNITORI ',
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'err'=>'Ci sono degli errori che impediscono la stampa'
+                                          ),
+                           'date_ini'=>'Data di riferimento ',
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
+                                           ),
+                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO')
+                           ),
+                    "supplier_payment.php" =>
+                    array( 'title'=>'Pagamento debito verso fornitoree (chiusura partita/e)',
+                           'errors'=>array('La data  non &egrave; corretta!'),
+                           'partner'=>'Fornitore ',
+                           'date_ini'=>'Data di registrazione',
+                           'target_account'=>"Conto per il pagamento: ",
+                           'accbal'=>'Saldo risultante dai movimenti contabili: ',
+                           'paymovbal'=>'Saldo risultante dalle partite aperte: ',
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
+                                           ),
+                           'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO'),
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>'', 'Paga'=>''
+                                           ),
+                           'mesg'=>array('La ricerca non ha dato risultati!',
+                                         'Inserire almeno 2 caratteri!',
+                                         'Cambia fornitore',
+                                         'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
+                                         'Nessun importo è stato pagato!',
+					 "Non è stato selezionato il conto per l'incasso",
+                                         'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
+                                          ),
                            )
 );
 ?>

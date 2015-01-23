@@ -29,8 +29,7 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     ini_set('memory_limit','128M');
     gaz_set_time_limit (0);
 }
-if (!isset($_GET['account']) ||
-    !isset($_GET['orderby']) ) {
+if (!isset($_GET['orderby']) ) {
     header("Location: ".$_SERVER['HTTP_REFERER']);
     exit;
 }
@@ -69,7 +68,7 @@ $pdf->setRiporti('');
 $pdf->AddPage();
 $config = new Config;
 $scdl = new Schedule;
-$m = $scdl->getScheduleEntries(intval($_GET['orderby']),$admin_aziend['mascli']);
+$m = $scdl->getScheduleEntries(intval($_GET['orderby']),$admin_aziend['masfor']);
 if (sizeof($scdl->Entries) > 0) {
       $ctrl_partner=0;
       $ctrl_id_tes=0;
@@ -118,11 +117,11 @@ if (sizeof($scdl->Entries) > 0) {
           $pdf->Cell(15,4,$mv["datdoc"],1,0,'C',$status_cl);
           $pdf->Cell(15,4,gaz_format_date($mv["datreg"]),1,0,'C',$status_cl);
           if ($mv['id_rigmoc_pay']==0){
-              $pdf->Cell(12,4,$mv['amount'],1,0,'R',$status_cl);
+              $pdf->Cell(12,4,gaz_format_number($mv['amount']),1,0,'R',$status_cl);
               $pdf->Cell(12,4,'',1,0,'R',$status_cl);
           } else {
               $pdf->Cell(12,4,'',1,0,'R',$status_cl);
-              $pdf->Cell(12,4,$mv['amount'],1,0,'R',$status_cl);
+              $pdf->Cell(12,4,gaz_format_number($mv['amount']),1,0,'R',$status_cl);
           }
           $pdf->Cell(15,4,gaz_format_date($mv["expiry"]),1,1,'C',$status_cl);
           $ctrl_partner=$mv["clfoco"];

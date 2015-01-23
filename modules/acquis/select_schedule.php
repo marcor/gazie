@@ -119,7 +119,7 @@ if (isset($_POST['preview'])) {
                 if($scdl->Status['diff_paydoc']<>0){
                     $class_paymov='FacetDataTDevidenziaOK';
                     $status_descr=$script_transl['status_value'][1].
-                    " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=".$mv["clfoco"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                    " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=".$mv["clfoco"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                 } else {
                     $class_paymov='FacetDataTDevidenziaCL';
                     $status_descr=$script_transl['status_value'][0];
@@ -156,7 +156,7 @@ if (isset($_POST['preview'])) {
 
         }
      echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-     echo '<td colspan="9" align="right"><input type="submit" name="print" value="';
+     echo '<td colspan="11" align="right"><input type="submit" name="print" value="';
      echo $script_transl['print'];
      echo '">';
      echo "\t </td>\n";

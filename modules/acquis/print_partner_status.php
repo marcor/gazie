@@ -71,7 +71,7 @@ $pdf->setTopMargin(43);
 $pdf->setRiporti('');
 $pdf->AddPage();
 $paymov = new Schedule;
-$paymov->setScheduledPartner($admin_aziend['mascli']);
+$paymov->setScheduledPartner($admin_aziend['masfor']);
 if (sizeof($paymov->Partners) > 0) {
       $anagrafica = new Anagrafica();
       foreach ($paymov->Partners as $p){

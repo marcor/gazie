@@ -233,7 +233,7 @@ $strScript = array("admin_fornit.php" =>
                                                    'AFC'=>'NOTA CREDITO DA FORNITORE',
                                                    'AFD'=>'NOTA DEBITO DA FORNITORE'
                                                    ),
-                           'customer'=>'Cliente',
+                           'customer'=>'Fornitore',
                            'taxable'=>'Imponibile',
                            'vat'=>'I.V.A.',
                            'stamp'=>'Bolli su tratte',
@@ -253,17 +253,17 @@ $strScript = array("admin_fornit.php" =>
                     array( 'title'=>'Selezione per la visualizzazzione e/o la stampa delle partite aperte',
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 2 caratteri!',
-                                         'Cambia cliente/fornitore'
+                                         'Cambia fornitore'
                                           ),
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'Non sono stati trovati movimenti!'
                                           ),
-                           'account'=>'Cliente ',
+                           'account'=>'Fornitoree ',
                            'orderby'=>'Ordina per: ',
                            'orderby_value'=>array(0=>'Scadenza crescente',1=>'Scadenza decrescente',
-                                                  2=>'Cliente crescente',3=>'Cliente decrescente'
+                                                  2=>'Fornitore crescente',3=>'Fornitore decrescente'
                                            ),
-                           'header'=>array('Cliente'=>'','ID Partita'=>'','Status'=>'','Mov.Cont.'=>'','Descrizione'=>'',
+                           'header'=>array('Fornitore'=>'','ID Partita'=>'','Status'=>'','Mov.Cont.'=>'','Descrizione'=>'',
                                             'N.Doc.'=>'','Data Doc.' =>'','Data Reg.' =>'','Dare'=>'','Avere'=>'',
                                             'Scadenza'=>''
                                            ),
@@ -271,12 +271,13 @@ $strScript = array("admin_fornit.php" =>
                            ),
                     "delete_schedule.php" =>
                     array( 'title'=>'Cancellazione movimenti chiusi dello scadenzario',
-                           'ragsoc'=>'Cliente',
+                           'ragsoc'=>'Fornitore',
                            'id_tesdoc_ref'=>'Identificativo partita',
                            'descri'=> 'Descrizione'
                            ),
                     "select_partner_status.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei clienti',
+                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei fornitori',
+                           'print_title'=>'SCADENZARIO FORNITORI ',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'err'=>'Ci sono degli errori che impediscono la stampa'
                                           ),

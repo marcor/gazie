@@ -156,7 +156,7 @@ if (isset($_POST['preview'])) {
 
         }
      echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-     echo '<td colspan="9" align="right"><input type="submit" name="print" value="';
+     echo '<td colspan="11" align="right"><input type="submit" name="print" value="';
      echo $script_transl['print'];
      echo '">';
      echo "\t </td>\n";

@@ -742,6 +742,7 @@ $strScript = array ("admin_client.php" =>
                            ),
                     "select_partner_status.php" =>
                     array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei clienti',
+                           'print_title'=>'SUPPLIERS DATETABLE ',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'err'=>'Ci sono degli errori che impediscono la stampa'
                                           ),
@@ -839,6 +840,82 @@ $strScript = array ("admin_client.php" =>
                            'checkbox'=>'This checkbox must be selected to process the row',
                            'alert1'=>'&sup1; Section IVA choice is not one normally used for the issuance of immediately invoice',
                            'alert2'=>'&sup1; The selected section IVA may not coincide with what will be used for the immediate issuance of the invoice for your choice will be equal to the last emitted.'
-                           )
+                           ),
+                    "select_partner_status.php" =>
+                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei clienti',
+                           'print_title'=>'SCADENZARIO CLIENTI ',
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'err'=>'Ci sono degli errori che impediscono la stampa'
+                                          ),
+                           'date_ini'=>'Data di riferimento ',
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
+                                           ),
+                            'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO')
+                           ),
+                    "customer_payment.php" =>
+                    array( 'title'=>'Riscossione credito da cliente (chiusura partita/e)',
+                           'errors'=>array('La data  non &egrave; corretta!',
+                                           'err'=>'Ci sono degli errori che impediscono la stampa'
+                                          ),
+                           'partner'=>'Cliente ',
+                           'date_ini'=>'Data di registrazione',
+                           'target_account'=>"Conto per l'incasso: ",
+                           'partner'=>'Cliente: ',
+                           'print_ticket'=>"Stampa ricevuta: ",
+                           'accbal'=>'Saldo risultante dai movimenti contabili: ',
+                           'paymovbal'=>'Saldo risultante dalle partite aperte: ',
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>''
+                                           ),
+                           'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO'),
+                           'header'=>array('ID'=>'','Importo apertura'=>'','Data Scadenza'=>'','Importo chiusura'=>''
+                                           ,'Data chiusura'=>'','Giorni esposizione' =>'','Stato'=>'', 'Riscuoti'=>''
+                                           ),
+                           'mesg'=>array('La ricerca non ha dato risultati!',
+                                         'Inserire almeno 2 caratteri!',
+                                         'Cambia cliente',
+                                         'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
+                                         'Nessun importo è stato riscosso!',
+					 "Non è stato selezionato il conto per l'incasso",
+                                         'Stai tentando di inserire il pagamento di un cliente senza movimenti'
+                                          ),
+                           ),
+                    "print_customer_payment_receipt.php" =>
+                    array( 'title'=>'RISCOSSIONE CREDITO DA ',
+                           'id_tesdoc_ref'=>'ID Partita',
+                           'descri'=>'Descrizione',
+                           'numfat'=>'Numero fattura',
+                           'datfat'=>'Data fattura',
+                           'amount'=>'Importo riscosso',
+                           'tot'=>'TOTALE DELLA RISCOSSIONE',
+                           ),
+                   "report_fae_sdi.php" =>
+                   array(  'title'=>'TRAFFICO DATI FATTURAZIONE ELETTRONICA',
+                           'table'=>'Tabella su cui stai lavorando: ',
+                           'id'=>'ID',
+                           'filename_ori'=>'Nome file primo invio',
+                           'numfat'=>'N.<br>fattura',
+                           'codice'=>'Cod. cliente',
+                           'ragso1'=>'Amministrazione',
+                           'exec_date'=>'Data di esecuzione ',
+                           'received_date'=>'Data ricezione ',
+                           'delivery_date'=>'Data consegna ',
+                           'filename_son'=>'Nome file padre',
+                           'id_SDI'=>'ID SDI',
+                           'filename_ret'=>'Nome file di ritorno',
+                           'mail_id'=>'UID della mail',
+                           'flux_status'=>'Stato',
+                           'flux_status_value'=>array(''=>'Generato',
+						                              '#'=>'Non ancora inviata',
+                                                      '@'=>'Inviata',
+                                                      'NS'=>'Notifica scarto',
+                                                      'MC'=>'Mancata Consegna',
+                                                      'RC'=>'Ricevuta consegna',
+                                                      'NE'=>'Notifica esito',
+                                                      'DT'=>'Decorrenza termini'),
+                           'progr_ret'=>'Progr.',
+                           'flux_descri'=>'Descrizione'
+                         )                           
                    );
 ?>
