@@ -251,8 +251,8 @@ function dialogSchedule(paymov) {
 		if (accu == tot_amount) {
 			return true; 
 		} else  { 
-			updateTips( "Errore ! " + n + " ("+accu+" - "+tot_amount+")");
-			return false;
+			$('#impoRC' + nrow ).val(accu);
+			return true;
 		}
 	}
 
