@@ -67,8 +67,13 @@ function gaz_format_datetime($date)
 
 function gaz_html_call_tel($tel_n)
 {
-    preg_match_all("/([\d]+)/",$tel_n,$r);
-    return '<a href="tel:'.implode("", $r[0]).'" >'.$tel_n."</a>\n";
+    if ($tel_n!="_") {
+		preg_match_all("/([\d]+)/",$tel_n,$r);
+		$ret = '<a href="tel:'.implode("", $r[0]).'" >'.$tel_n."</a>\n";
+	} else {
+		$ret = $tel_n;
+	}
+    return $ret;
 }
 
 function gaz_format_quantity($number,$comma=false,$decimal=false)
