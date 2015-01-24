@@ -97,7 +97,7 @@ $data=$checkUpd->TestDbAlign();
 if ($data){
    echo '<div class="FacetFormHeaderRed" align="center">'.$script_transl['warning'].'!<br />'.$script_transl['errors'][0].$data[0].$script_transl['errors'][1].$data[1].'<A href="../../setup/install/install.php?tp='.$table_prefix.'">'.$script_transl['errors'][2]."</A></div>\n";
 }
-echo "<br/><form method=\"POST\" name=\"myform\">\n";
+echo "<form method=\"POST\" name=\"myform\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo '<div id="admin_main" ><table border="1" class="Tmiddle">';
 echo "<tr class=\"FacetFormHeaderFont\">\n";

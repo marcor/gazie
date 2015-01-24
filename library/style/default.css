@@ -290,6 +290,7 @@ TABLE.selectTable TD {
 #admin_main{
   background-image: url("../../library/images/sfondo.png");
   background-attachment: fixed;
+  margin-top: 20px;
 }
 
 #admin_welcome{
