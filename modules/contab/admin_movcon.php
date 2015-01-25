@@ -199,8 +199,13 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                 $form['paymov_op_cl'][$i] = 2;
             }            
             if (isset($_POST['paymov'][$i])) { // se ho dati sul form delle partite aperte dei clienti/fornitori li ricarico
+              $paymov_tot[$i]=0.00;
               foreach($_POST['paymov'][$i] as $k=>$v) {
                  $form['paymov'][$i][$k] = $v;  // qui devo ancora fare il parsing
+                 $paymov_tot[$i] +=$v['amount'];
+              }
+              if ( $paymov_tot[$i]>=0.01 && $paymov_tot[$i] <> $form['importorc'][$i]){
+                $msg .= '15+';
               }
             } else {
               $form['paymov'][$i]['new']= array('id'=>'new','id_tesdoc_ref'=>'new','amount' => '0.00', 'expiry'=>''); 

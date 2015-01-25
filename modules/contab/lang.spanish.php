@@ -178,7 +178,8 @@ $strScript = array ("select_liqiva.php" =>
                                          'Ha olvidado colocar el n&uacute;mero de documento!',
                                          'La fecha del documento no debe ser posterior a la del registro!',
                                          'ADVERTENCIA que est&aacute; editando un movimiento que involucra un registro de IVA!',
-                                         'Usted está tratando de grabar un documento que ya está registrado'
+                                         'Usted está tratando de grabar un documento que ya está registrado',
+                                           'Il totale dei movimenti dello scadenziario non coincidono con l\'importo del rigo ad esso relativo'
                                         ),
                          'id_testata'=>'Nuacute;mero de entrada',
                          'date_reg'=>'Fecha de registro',
