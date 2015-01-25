@@ -252,6 +252,7 @@ function dialogSchedule(paymov) {
 			return true; 
 		} else  { 
 			$('#impoRC' + nrow ).val(accu);
+			$('#impoRC' + nrow).trigger('change');						
 			return true;
 		}
 	}

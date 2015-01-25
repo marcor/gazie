@@ -712,5 +712,10 @@ input.input-xs {
 	font-weight: normal;
 	margin: -1px;
 }
+
+/* fix: datepicker visible div 
+*/
+#ui-datepicker-div { display: none; }
+
 /*  FINE CSS di JQuery/UI
 */
