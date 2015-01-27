@@ -1455,7 +1455,8 @@ class Compute
                 $total_imp += $v['impcast'];
                 $row++;
             }
-            foreach ($vat_castle as $k=>$v) {   // riattraverso l'array del castelletto
+            if ($total_imp>=0.01){ // per evitare il divide by zero in caso di imponibile 0
+              foreach ($vat_castle as $k=>$v) {   // riattraverso l'array del castelletto
                                                 // per aggiungere proporzionalmente (ventilazione)
                 $vat = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
                 $new_castle[$k]['periva'] = $vat['aliquo'];
@@ -1478,6 +1479,7 @@ class Compute
                 }
                 $new_castle[$k]['ivacast'] = round(($new_imp*$vat['aliquo'])/ 100,2);
                 $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
+              }
             }
         } else {  // METODO DELL'AGGIUNTA DIRETTA (nuovo)
             $match=false;            
