@@ -131,16 +131,13 @@ while ($r = gaz_dbi_fetch_array($result)) {
        echo "<tr>";
        ?>
 			<td class="FacetDataTD" style="min-width:80px">
-				<a class="btn btn-xs btn-block btn-default " href="admin_artico.php?codice=<?php echo $r["codice"]; ?>&Update">
-				<div>
+				<div>		
 					<div style="float:left;vertical-align: middle;">
+						<a class="btn btn-xs btn-block btn-default " href="admin_artico.php?codice=<?php echo $r["codice"]; ?>&Update">
 						<?php echo $r["codice"]; ?>
-					</div>
-					<div style="text-align:right;">
-						<?php echo $image_src;?>
+						</a>
 					</div>
 				</div>
-				</a>
 			</td>
 		 <?php
        echo "<td class=\"FacetDataTD\" $boxover>".$r["descri"]." </td>";
