@@ -129,7 +129,7 @@ $recordnav -> output();
 
 <table class="Tlarge">
 <tr>
-<td colspan="3" class="FacetFieldCaptionTD">
+<td colspan="2" class="FacetFieldCaptionTD">
 <input type="text" placeholder="<?php echo $script_transl['number'];?>" class="input-xs form-control" name="numdoc" value="<?php if (isset($numero)) echo $numero; ?>" maxlength="14" size="14" tabindex="1" class="FacetInput">
 </td>
 <td>
@@ -145,7 +145,7 @@ echo '<input type="hidden" name="auxil" value="'.substr($_GET['auxil'],0,3).'">'
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_tesbro = array  (
               "ID" => "id_tes",
-              $script_transl['type'] => "tipdoc",
+              //$script_transl['type'] => "tipdoc",
               $script_transl['number'] => "numdoc",
               $script_transl['date'] => "datemi",
               "Cliente" => "clfoco",
@@ -176,11 +176,11 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "<tr>";
 	
     if (!empty ($modifi)) {
-       echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["id_tes"]."</td>";
+       echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-edit\" title=\"".$script_transl['type_value'][$r["tipdoc"]]."\" href=\"".$modifi."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["tipdoc"],1,2)."&nbsp;".$r["id_tes"]."</td>";
     } else {
-       echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default disabled\">".$r["id_tes"]." </button></td>";
+       echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default disabled\">&nbsp;".substr($r["tipdoc"],1,2)."&nbsp;".$r["id_tes"]." </button></td>";
     }
-    echo "<td class=\"FacetDataTD\">".$script_transl['type_value'][$r["tipdoc"]]." &nbsp;</td>";
+    //echo "<td class=\"FacetDataTD\">".$script_transl['type_value'][$r["tipdoc"]]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$r["numdoc"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$r["ragso1"]."&search=Cerca\">".$r["ragso1"]."</a> &nbsp;</td>";
@@ -222,7 +222,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if ($r["status"] != "GENERATO") {
             gaz_dbi_put_row ($gTables['tesbro'],"id_tes",$r["id_tes"],"status","RIGENERATO");
         }
-        echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"select_evaord.php?id_tes=".$r['id_tes']."\">evadi</a></td>";
+        echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=".$r['id_tes']."\">evadi</a></td>";
     } elseif ($remains_atleastone) {
         echo "<td class=\"FacetDataTD\">";
 
