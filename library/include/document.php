@@ -281,11 +281,12 @@ class DocContabVars
         $somma_spese = $this->tottraspo + $this->speseincasso + $this->tesdoc['spevar'];
         $calc->add_value_to_VAT_castle($this->body_castle,$somma_spese,$this->tesdoc['expense_vat']);
         if ($this->tesdoc['stamp'] > 0) {
-              $calc->payment_taxstamp($calc->total_imp+$this->totriport+$calc->total_vat-$this->tot_ritenute+$this->taxstamp, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
+              $calc->payment_taxstamp($calc->total_imp+$this->totriport+$calc->total_vat-$calc->total_isp-$this->tot_ritenute+$this->taxstamp, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
               $this->impbol = $calc->pay_taxstamp;  
         }
         $this->totimpfat=$calc->total_imp;
         $this->totivafat=$calc->total_vat;
+        $this->totivasplitpay=$calc->total_isp;
         // aggiungo gli eventuali bolli al castelletto
         if ($this->impbol > 0 || $this->taxstamp > 0) {
             $calc->add_value_to_VAT_castle($calc->castle,$this->taxstamp+$this->impbol,$this->azienda['taxstamp_vat']);

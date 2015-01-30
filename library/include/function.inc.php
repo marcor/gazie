@@ -1444,6 +1444,7 @@ class Compute
         $this->total_imp=0;
         $this->total_vat=0;
         $this->total_exc=0;
+        $this->total_isp=0; // totale degli inesigibili per split payment PA
         /* ho due metodi di calcolo del castelletto IVA:
          * 1 - quando non ho l'aliquota IVA allora uso la ventilazione
          * 2 - in presenza di aliquota IVA e quindi devo aggiungere al castelletto */
@@ -1478,6 +1479,9 @@ class Compute
                     $this->total_exc+=$new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
                 $new_castle[$k]['ivacast'] = round(($new_imp*$vat['aliquo'])/ 100,2);
+                if ($vat['tipiva']== 'T'){ // è un'IVA non esigibile per split payment PA
+                    $this->total_isp+=$new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
+                }
                 $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
               }
             }
@@ -1503,6 +1507,9 @@ class Compute
                 if ($vat['aliquo'] < 0.01){ // è senza IVA
                     $this->total_exc+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
+                if ($vat['tipiva']== 'T'){ // è un'IVA non esigibile per split payment PA
+                    $this->total_isp+=$new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
+                }
                 $this->total_imp+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
                 $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
             }
@@ -1518,23 +1525,14 @@ class Compute
                 if ($vat['aliquo'] < 0.01){ // è senza IVA
                     $this->total_exc+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
+                if ($vat['tipiva']== 'T'){ // è un'IVA non esigibile per split payment PA
+                    $this->total_isp+=$new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore 
+                }
                 $this->total_imp+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale
                 $this->total_vat+=$new_castle[$vat_rate]['ivacast']; // aggiungo anche l'IVA al totale
             }
         }
         $this->castle=$new_castle;
-    }
-
-    function compute_VAT_castle_totals($castle)
-    {
-        $this->total_imp=0;
-        $this->total_vat=0;
-        $this->row=0;
-        foreach ($castle as $k=>$v) { // attraverso dell'array per calcolare i totali
-            $this->total_imp += $v['impcast'];
-            $this->total_vat += $v['ivacast'];
-            $this->row++;
-        }
     }
 }
 

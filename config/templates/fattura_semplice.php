@@ -199,7 +199,7 @@ class FatturaSemplice extends Template
                 if ($this->tesdoc['id_tes'] > 0) {
                    $this->Cell(62);
                    $this->Cell(18, 4, gaz_format_number($value['impcast']).' ','LR', 0, 'R');
-                   $this->Cell(32, 4, $value['descriz'],0,0,'C');
+                   $this->Cell(32, 4, $value['descriz'],0,0,'C',0,'',1);
                    $this->Cell(18, 4, gaz_format_number($value['ivacast']).' ','LR',1,'R');
                 } else {
                    $this->Cell(62);
@@ -215,13 +215,14 @@ class FatturaSemplice extends Template
         $speseincasso = $this->docVars->speseincasso;
         $totimpfat = $this->docVars->totimpfat;
         $totivafat = $this->docVars->totivafat;
+        $totivasplitpay = $this->docVars->totivasplitpay;
         $vettor = $this->docVars->vettor;
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
 	$taxstamp=$this->docVars->taxstamp;
         //effettuo il calcolo degli importi delle scadenze
-        $totpag = $totimpfat+$taxstamp+$impbol+$totriport+$totivafat-$ritenuta;
+        $totpag = $totimpfat+$taxstamp+$impbol+$totriport+$totivafat-$ritenuta-$totivasplitpay ;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);
         if ($ratpag){
            //allungo l'array fino alla 4^ scadenza
@@ -285,20 +286,20 @@ class FatturaSemplice extends Template
         }
         $this->SetY(218);
         $this->Cell(130);
-        $totale = $totimpfat + $totivafat + $impbol + $taxstamp;
+        $totale = $totimpfat + $totivafat + $impbol + $taxstamp ;
         if ($this->tesdoc['id_tes'] > 0) {
            if ($ritenuta>0) {
                $this->SetFont('helvetica','B',12);
-               $this->Cell(56, 6, '€ '.gaz_format_number($totale),'LBR', 2, 'R');
+               $this->Cell(56, 6, '€ '.gaz_format_number($totale-$totivasplitpay),'LBR', 2, 'R');
                $this->SetFont('helvetica', '', 12);
                $this->Cell(56, 6,'Totale ritenute: € '.gaz_format_number($ritenuta),'LR', 2, 'R');
                $this->SetFont('helvetica', '', 9);
                $this->Cell(56, 6,'T O T A L E   A   P A G A R E','LTR', 2, 'C',1);
                $this->SetFont('helvetica','B',12);
-               $this->Cell(56, 6, '€ '.gaz_format_number($totale-$ritenuta),'LBR', 1, 'R');
+               $this->Cell(56, 6, '€ '.gaz_format_number($totale-$ritenuta-$totivasplitpay),'LBR', 1, 'R');
            } else {
                $this->SetFont('helvetica','B',18);
-               $this->Cell(56, 24, '€ '.gaz_format_number($totale),'LBR', 1, 'C');
+               $this->Cell(56, 24, '€ '.gaz_format_number($totale-$totivasplitpay),'LBR', 1, 'C');
            }
         } else {
            $this->Cell(56, 24,'','LBR',1);
