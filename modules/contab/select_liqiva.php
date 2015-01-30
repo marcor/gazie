@@ -75,11 +75,17 @@ function getMovements($date_ini,$date_fin)
         $m=array();
         $m['tot']=0;
         while ($r=gaz_dbi_fetch_array($rs)) {
-              if ($r['tipiva']=='D'){
+              if ($r['tipiva']=='D'){ // iva indetraibile
+                    $r['isp']=0;
                     $r['ind']=$r['iva'];
                     $r['iva']=0;
-              } else {
+              } elseif ($r['tipiva']=='T'){ // iva split payment
+                    $r['isp']=$r['iva'];
                     $r['ind']=0;
+                    $r['iva']=0;
+              } else { // iva normale
+                    $r['ind']=0;
+                    $r['isp']=0;
               }
               $m['data'][]=$r;
               if (!isset($m['tot_rate'][$r['codiva']])) {
@@ -88,6 +94,7 @@ function getMovements($date_ini,$date_fin)
                   $m['tot_rate'][$r['codiva']]['imp']+=$r['imp'];
                   $m['tot_rate'][$r['codiva']]['iva']+=$r['iva'];
                   $m['tot_rate'][$r['codiva']]['ind']+=$r['ind'];
+                  $m['tot_rate'][$r['codiva']]['isp']+=$r['isp'];
               }
               $m['tot']+=$r['iva'];
         }
@@ -314,7 +321,7 @@ if (isset($_POST['preview']) and $msg=='') {
            echo "<tr align=\"right\">\n";
            echo "<td>".$v['seziva']."</td><td align=\"center\">".$script_transl['regiva_value'][$v['regiva']]."</td><td>".$v['desvat']."</td><td>".gaz_format_number($v['imp'])."</td>";
            echo "<td>".$v['periva']."% </td><td>".gaz_format_number($v['iva'])."</td><td>".gaz_format_number($v['ind'])."</td>\n";
-           echo "<td>".gaz_format_number($v['ind']+$v['imp']+$v['iva'])."</td>\n";
+           echo "<td>".gaz_format_number($v['ind']+$v['imp']+$v['iva']+$v['isp'])."</td>\n";
            echo "</tr>\n";
         }
         echo "<tr><td colspan=8><HR></td></tr>";
@@ -322,7 +329,7 @@ if (isset($_POST['preview']) and $msg=='') {
            echo "<tr align=\"right\">\n";
            echo "<td colspan=\"2\"></td><td>".$v['desvat']."</td><td>".gaz_format_number($v['imp'])."</td>";
            echo "<td>".$v['periva']."% </td><td>".gaz_format_number($v['iva'])."</td><td>".gaz_format_number($v['ind'])."</td>\n";
-           echo "<td>".gaz_format_number($v['ind']+$v['imp']+$v['iva'])."</td>\n";
+           echo "<td>".gaz_format_number($v['ind']+$v['imp']+$v['iva']+$v['isp'])."</td>\n";
            echo "</tr>\n";
         }
         echo "<tr><td colspan=2></td><td colspan=6><HR></td></tr>";

@@ -62,6 +62,7 @@ $strScript = array ("select_liqiva.php" =>
                            'iva'=>'Imposta',
                            'rate'=>'%',
                            'ind'=>'Indetraibile',
+                           'isp'=>'Inesigibile',
                            'tot'=>'Totale',
                            't_reg'=>'Totale I.V.A. del registro ',
                            't_pos'=>' I.V.A A DEBITO',

@@ -150,6 +150,7 @@ function createRowsAndErrors($partner){
                  switch ($row['tipiva']) {
                         case 'I':
                         case 'D':
+                        case 'T':
                              $castel_partners[$row['clfoco']]['operazioni_imponibili'] = $value_imponi;
                              $total_column['operazioni_imponibili'] += $value_imponi;
                              $castel_partners[$row['clfoco']]['imposte_addebitate'] = $value_impost;
@@ -181,6 +182,7 @@ function createRowsAndErrors($partner){
                  switch ($row['tipiva']) {
                         case 'I':
                         case 'D':
+                        case 'T':
                              $castel_partners[$row['clfoco']]['operazioni_imponibili'] += $value_imponi;
                              $total_column['operazioni_imponibili'] += $value_imponi;
                              $castel_partners[$row['clfoco']]['imposte_addebitate'] += $value_impost;

@@ -95,7 +95,7 @@ class vatBook extends Standard_template
             }
             // aggiungo ai totali generali
             $this->taxable += $taxable;
-            if ($mov['tipiva'] != "D") {
+            if ($mov['tipiva'] != "D" || $mov['tipiva'] != "T") {  // indetraibile o split payment
                $this->tax += $tax;
             }
             
@@ -286,7 +286,7 @@ for( $i = 1; $i <= $p_max; $i++ ) {
                break;
         }
         $totimponi += $imponi;
-        if ($v['tipiva'] != "D") {
+        if ($v['tipiva'] != "D" || $v['tipiva'] != "T") {  // indetraibile o split payment
             $totimpost += $impost;
         }
         if ($ctrl != $v['id_tes']) { // primo rigo iva del movimento contabile

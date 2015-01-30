@@ -226,7 +226,7 @@ if (isset($_POST['Return'])) {
         } else {                 //registri iva acquisti
            if ($rs['operat'] == 1 ) {       //in caso di operazione somma su registro
               $form['totpas'] += $rs['imponibile'];
-              if ($rs['tipiva'] != 'D') {
+              if ($rs['tipiva'] != 'D' || $rs['tipiva'] != 'T') {
                  $form['ivapas'] += $rs['imposta'];
               }
               if ($rs['tipiva'] == 'E') {
@@ -236,7 +236,7 @@ if (isset($_POST['Return'])) {
               }
            } elseif ($rs['operat'] == 2 ) { //in caso di operazione sottrazione su registro
               $form['totpas'] -= $rs['imponibile'];
-              if ($rs['tipiva'] != 'D') {
+              if ($rs['tipiva'] != 'D' || $rs['tipiva'] != 'T') {
                  $form['ivapas'] -= $rs['imposta'];
               }
               if ($rs['tipiva'] == 'E') {
