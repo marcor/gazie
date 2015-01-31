@@ -133,20 +133,22 @@ $recordnav = new recordnav($gTables['tesdoc'].' LEFT JOIN '.$gTables['clfoco'].'
 $recordnav -> output();
 ?>
 <table class="Tlarge">
-  <tr>
-     <td class="FacetFieldCaptionTD">
-       <input placeholder="Cerca Numero" class="input-xs form-control" type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
-     </td>
-     <td colspan="2" class="FacetFieldCaptionTD">
-       <input placeholder="Cerca Cliente" class="input-xs form-control" type="text" name="cliente" value="<?php if ($cliente <> '') print $cliente; ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">
-     </td>
-     <td>
-       <input class="btn btn-xs btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
-     </td>
-     <td colspan="4">
-       <input class="btn btn-xs btn-default" type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
-     </td>
- </tr>
+	<tr>
+		<td class="FacetFieldCaptionTD">
+			<input placeholder="Cerca Numero" class="input-xs form-control" type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+		</td>
+		<td>
+		</td>
+		<td colspan="1" class="FacetFieldCaptionTD">
+			<input placeholder="Cerca Cliente" class="input-xs form-control" type="text" name="cliente" value="<?php if ($cliente <> '') print $cliente; ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">
+		</td>
+		<td>
+			<input class="btn btn-xs btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+		</td>
+		<td colspan="3">
+			<input class="btn btn-xs btn-default" type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+		</td>
+	</tr>
 
 <tr>
 <?php
@@ -187,7 +189,13 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			// Colonna data emissione
             echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
             // Colonna Cliente
-			echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
+				?>
+				<td class="FacetDataTD">
+					<a href="report_client.php?auxil=<?php echo $r["ragso1"]; ?>&search=Cerca">
+					<?php echo $r["ragso1"]; ?>
+					</a>
+				</td>
+				<?php
             // Colonna numero fattura
 	    if ($r['numfat'] > 0) {
                 echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"stampa la fattura differita n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. ".$r["numfat"]."</a></td>";
@@ -233,7 +241,13 @@ while ($r = gaz_dbi_fetch_array($result)) {
             echo "<tr>";
             echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a> &nbsp;</td>";
             echo "<td class=\"FacetDataTDred\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
-            echo "<td class=\"FacetDataTDred\">".$r["ragso1"]."&nbsp;</td>";
+            ?>
+				<td class="FacetDataTDred">
+					<a href="report_client.php?auxil=<?php echo $r["ragso1"]; ?>&search=Cerca">
+					<?php echo $r["ragso1"]; ?>
+					</a>
+				</td>
+				<?php
             echo "<td class=\"FacetDataTDred\" align=\"center\">D.d.T. a Fornitore &nbsp;</td>";
 
             $urlPrintDoc = "stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT";
@@ -265,7 +279,13 @@ while ($r = gaz_dbi_fetch_array($result)) {
             // Colonna Data emissione
 			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
             // Colonna Cliente
-			echo "<td class=\"FacetDataTD\">".$r["ragso1"]."&nbsp;</td>";
+			?>
+			<td class="FacetDataTD">
+				<a href="report_client.php?auxil=<?php echo $r["ragso1"]; ?>&search=Cerca">
+				<?php echo $r["ragso1"]; ?>
+				</a>
+			</td>
+			<?php
 			// Colonna Stato
             echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"stampa la fattura differita n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\">Fat ".$r["numfat"]."</a>";
             if ($r["id_con"] > 0) {
@@ -279,17 +299,16 @@ while ($r = gaz_dbi_fetch_array($result)) {
             <a class=\"btn btn-xs btn-default\" title=\"stampa il documento di trasporto n. ".$r["numdoc"]."\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>";
 
-            // Colonna "Mail"
+         // Colonna "Mail"
             echo "<td class=\"FacetDataTD\" align=\"center\">";
             if (!empty($r["e_mail"])) {
                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$urlPrintDoc.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
                 mail="'.$r["e_mail"].'" namedoc="DDT n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else {
-		echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+				echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	    }
             echo "</td>";
-
-			// Colonna
+				// Colonna
             echo "<td class=\"FacetDataTD\" align=\"center\">";
             $rigbro_result = gaz_dbi_dyn_query ('*',$gTables['rigbro'],"id_doc = ".$r['id_tes']." GROUP BY id_doc",'id_tes');
             while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {

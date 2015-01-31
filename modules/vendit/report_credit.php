@@ -119,7 +119,7 @@ if (! $message == "") {
 <td class="FacetFieldCaptionTD">Anno inizio &nbsp;</td>
 <td class="FacetDataTD">
 	<!--// select del anno-->
-	<select name=\"annini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">
+	<select name="annini" class="FacetSelect" onchange="this.form.submit()">
 <?php
 for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
     $selected = "";

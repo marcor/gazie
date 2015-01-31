@@ -252,7 +252,7 @@ $recordnav -> output();
    <td class="FacetFieldCaptionTD">
 		<input type="text" placeholder="Cerca Prot." class="input-xs form-control" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
    </td>
-   <td></td>
+   <!--<td></td>-->
    <td class="FacetFieldCaptionTD">
 		<input type="text" placeholder="Cerca Num." class="input-xs form-control" name="numerof" value="<?php if (isset($numerof)) { print $numerof;} ?>" maxlength="6" size="3" tabindex="2" class="FacetInput">
    </td>
@@ -275,7 +275,7 @@ $recordnav -> output();
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_tesdoc = array  (
             "Prot." => "protoc",
-            "Tipo" => "tipdoc",
+            //"Tipo" => "tipdoc",
             "Numero" => "numfat",
             "Data" => "datfat",
             "Cliente" => "ragso1",
@@ -300,29 +300,35 @@ $ctrl_eff = 999999;
 while ($r = gaz_dbi_fetch_array($result)) {
     $modulo_fae="electronic_invoice.php?id_tes=".$r['id_tes'];
     $modulo_fae_report="report_fae_sdi.php?id_tes=".$r['id_tes'];
-    if ($r["tipdoc"] == 'FAI') {
+    $classe_btn = "btn-default";
+	 if ($r["tipdoc"] == 'FAI') {
         $tipodoc="Fattura Immediata";
         $modulo="stampa_docven.php?id_tes=".$r['id_tes'];
         $modifi="admin_docven.php?Update&id_tes=".$r['id_tes'];
     } elseif ($r["tipdoc"] == 'FAD') {
         $tipodoc="Fattura Differita";
+		  $classe_btn = "btn-inverse";
         $modulo="stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat'];
         $modulo_fae="electronic_invoice.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&year=".substr($r['datfat'],0,4);
         $modifi="";
     } elseif ($r["tipdoc"] == 'FAP') {
         $tipodoc="Parcella";
+		  $classe_btn = "btn-primary";
         $modulo="stampa_docven.php?id_tes=".$r['id_tes'];
         $modifi="admin_docven.php?Update&id_tes=".$r['id_tes'];
     } elseif ($r["tipdoc"] == 'FNC') {
         $tipodoc="Nota Credito";
+		  $classe_btn = "btn-danger";
         $modulo="stampa_docven.php?id_tes=".$r['id_tes'];
         $modifi="admin_docven.php?Update&id_tes=".$r['id_tes'];
     } elseif ($r["tipdoc"] == 'FND') {
         $tipodoc="Nota Debito";
+		  $classe_btn = "btn-success";
         $modulo="stampa_docven.php?id_tes=".$r['id_tes'];
         $modifi="admin_docven.php?Update&id_tes=".$r['id_tes'];
     } else {
         $tipodoc="DOC.SCONOSCIUTO";
+		  $classe_btn = "btn-warning";
         $modulo="stampa_docven.php?id_tes=".$r['id_tes'];
         $modifi="admin_docven.php?Update&id_tes=".$r['id_tes'];
     }
@@ -331,12 +337,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "<tr>";
 		// Colonna protocollo
         if (! empty ($modifi)) {
-           echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\" class=\"btn btn-xs btn-default btn-edit\" title=\"Modifica il documento\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["protoc"]."</a></td>";
+           echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\" class=\"btn btn-xs ".$classe_btn." btn-edit\" title=\"Modifica ".$tipodoc." \">".$r["protoc"]."&nbsp;".$r["tipdoc"]."&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
         } else {
-           echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default btn-edit disabled\" title=\"Impossibile modificare questo tipo di documento, è stato generato automaticamente!\">".$r["protoc"]." &nbsp;</button></td>";
+           echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs ".$classe_btn." btn-edit disabled\" title=\"Impossibile modificare questa ".$tipodoc.", è stato generato automaticamente!\">".$r["protoc"]."&nbsp;".$r["tipdoc"]." &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
         }
 		// Colonna tipo documento
-        echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
+        //echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
 		// Colonna numero documento
         echo "<td class=\"FacetDataTD\" align=\"center\">".$r["numfat"]." &nbsp;</td>";
 		// Colonna data documento
