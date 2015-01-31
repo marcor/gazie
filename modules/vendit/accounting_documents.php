@@ -83,7 +83,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
     while ($tes = gaz_dbi_fetch_array($result)) {
            if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
                 if ($ctrlp>0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-					$calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+					$calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit-$ivasplitpay+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
 					$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$taxstamp+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
 					$doc[$ctrlp]['vat']=$calc->castle;
 					// aggiungo il castelleto conti
@@ -93,6 +93,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
 					$doc[$ctrlp]['acc'][$admin_aziend['boleff']]['import'] += $taxstamp+$calc->pay_taxstamp;
                 }    
                 $carry=0;
+                $ivasplitpay=0;
                 $cast_vat=array();
                 $cast_acc=array();
                 $somma_spese=0;
@@ -158,6 +159,10 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
                  }
                  $cast_acc[$r['codric']]['import']+=$importo;
                  $rit+=round($importo*$r['ritenuta']/100,2);
+                 // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)   
+                 if ($r['tipiva']=='T') {
+                    $ivasplitpay += $cast_vat[$r['codvat']]['ivacast'];
+                 }
               } elseif($r['tiprig'] == 3) {
                  $carry += $r['prelis'] ;
               }
@@ -165,6 +170,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
            $doc[$tes['protoc']]['tes']=$tes;
            $doc[$tes['protoc']]['acc']=$cast_acc;
            $doc[$tes['protoc']]['car']=$carry;
+           $doc[$tes['protoc']]['isp']=$ivasplitpay;
            $doc[$tes['protoc']]['rit']=$rit;
            $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'] ;
            $calc->add_value_to_VAT_castle($cast_vat,$somma_spese,$tes['expense_vat']);
@@ -172,9 +178,9 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
            $ctrlp=$tes['protoc'];
     }
     if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01 ) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
-        $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
+        $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit-$ivasplitpay+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
-		$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$taxstamp+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
+	$calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'],$taxstamp+$calc->pay_taxstamp,$admin_aziend['taxstamp_vat']);
         $doc[$ctrlp]['vat']=$calc->castle;
         // aggiungo il castelleto conti
         if (!isset($doc[$ctrlp]['acc'][$admin_aziend['boleff']])) {
@@ -332,6 +338,28 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                   }
                   // alla fine modifico le testate documenti introducendo il numero del movimento contabile
                   gaz_dbi_put_query($gTables['tesdoc'],"tipdoc = '".$v['tes']['tipdoc']."' AND datfat = '".$v['tes']['datfat']."' AND seziva = ".$v['tes']['seziva']." AND protoc = ".$v['tes']['protoc'],"id_con",$tes_id);
+                  // movimenti di storno in caso di split payment 
+                  if ($v['isp']>0){
+                      // inserisco la testata del movimento di storno Split payment
+                      $newValue=array('caucon'=>'ISP',
+                           'descri'=>'STORNO IVA SPLIT PAYMENT PA',
+                           'id_doc'=>$v['tes']['id_tes'],
+                           'datreg'=>$v['tes']['datfat'],
+                           'seziva'=>$v['tes']['seziva'],
+                           'protoc'=>$v['tes']['protoc'],
+                           'numdoc'=>$v['tes']['numfat'],
+                           'datdoc'=>$v['tes']['datfat'],
+                           'clfoco'=>$v['tes']['clfoco'],
+                           'regiva'=>'',
+                           'operat'=>''
+                           );
+                      tesmovInsert($newValue);
+                      $tes_id = gaz_dbi_last_id();
+                      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$kac,'import'=>$v['isp']));
+                      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$admin_aziend['split_payment'],'import'=>$v['isp']));
+                      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['split_payment'],'import'=>$v['isp']));
+                      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$v['tes']['clfoco'],'import'=>$v['isp']));
+                  }
           }
           header("Location: report_docven.php");
           exit;

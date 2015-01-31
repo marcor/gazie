@@ -91,6 +91,7 @@
                            'ivaven'=>'Conto I.V.A. vendite',
                            'ivacor'=>'Conto I.V.A. corrispettivi',
                            'ivaera'=>'Conto I.V.A. liquidazione',
+                           'split_payment'=>'Conto IVA Split Payment PA',
                            'impven'=>'Conto imponibile vendite',
                            'imptra'=>'Conto spese di trasporto',
                            'impimb'=>'Conto spese di imballo',

@@ -90,6 +90,7 @@ $strScript = array ("admin_aziend.php" =>
                            'ivaven'=>'Sales VAT account',
                            'ivacor'=>'Tickets VAT account',
                            'ivaera'=>'Treasury VAT account',
+                           'split_payment'=>'PA Split Payment VAT account',
                            'impven'=>'Taxable sales account',
                            'imptra'=>'Transport revenues account',
                            'impimb'=>'Packaging revenues account',

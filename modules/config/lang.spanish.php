@@ -94,6 +94,7 @@ $strScript = array ("admin_aziend.php" =>
                            'ivaven'=>'Cuenta de IVA Ventas',
                            'ivacor'=>'Cuenta de IVA Tickets',
                            'ivaera'=>'Cuenta de IVA Tesoreria',
+                           'split_payment'=>'Cuenta de  IVA Split Payment PA',
                            'impven'=>'Cuenta de Ventas Tributables',
                            'imptra'=>'Cuenta de Ingresos Transporte',
                            'impimb'=>'Cuenta de Ingresos Empaque',
