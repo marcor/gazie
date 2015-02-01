@@ -76,6 +76,12 @@ function gaz_html_call_tel($tel_n)
     return $ret;
 }
 
+function gaz_html_ae_checkiva($paese,$pariva)
+{
+	$htmlpariva = "<a target=\"_blank\" href=\"http://www1.agenziaentrate.gov.it/servizi/vies/vies.htm?s=".$paese."&p=".$pariva."\">".$paese." ".$pariva."</a>";
+	return $htmlpariva;	
+}
+
 function gaz_format_quantity($number,$comma=false,$decimal=false)
 {
     $number =  sprintf("%.3f",preg_replace("/\,/",'.',$number)); //max 3 decimal

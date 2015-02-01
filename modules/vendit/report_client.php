@@ -151,14 +151,16 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($telefono)." &nbsp;</td>";
     // colonna fiscali
 	if ($a_row['pariva'] > 0 and empty($a_row['codfis'])){
-        echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['pariva']."</td>";
+        echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['country']." ".$a_row['pariva']."</td>";
     } elseif($a_row['pariva'] == 0 and !empty($a_row['codfis'])) {
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['codfis']."</td>";
     } elseif($a_row['pariva'] > 0 and !empty($a_row['codfis']) ) {
 		if( $a_row['pariva'] == $a_row['codfis'] ) {
-			echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['pariva']."</td>";
+			echo "<td class=\"FacetDataTD\" align=\"center\">";
+			echo gaz_html_ae_checkiva( $a_row['country'], $a_row['pariva'] );
+			echo "</td>";
 		} else {
-			echo "<td class=\"FacetDataTDsmall\" align=\"center\">".$a_row['pariva']."<br>".$a_row['codfis']."</td>";
+			echo "<td class=\"FacetDataTDsmall\" align=\"center\">".gaz_html_ae_checkiva( $a_row['country'], $a_row['pariva'] )."<br>".$a_row['codfis']."</td>";
 		}
     } else {
         echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";

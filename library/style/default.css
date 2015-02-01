@@ -165,6 +165,10 @@ TABLE.selectTable TD {
 	border-right: 1px solid #fff;
 }
 
+.FacetDataTDsmall a {
+	font-size : 9px;
+}
+
 .FacetDataTDsmallRed  {
     background-color : #c9edc8;
     color : #FF0000;
