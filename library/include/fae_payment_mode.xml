@@ -30,7 +30,7 @@
     </record>
     <record id="payment_MP08" model="">
         <field name="code">MP08</field>
-        <field name="name">Carta di credito</field>
+        <field name="name">Carta di pagamento</field>
     </record>
     <record id="payment_MP09" model="">
         <field name="code">MP09</field>
@@ -67,5 +67,21 @@
     <record id="payment_MP17" model="">
         <field name="code">MP17</field>
         <field name="name">Domiciliazione postale</field>
+    </record>
+    <record id="payment_MP18" model="">
+        <field name="code">MP18</field>
+        <field name="name">Bollettino di c/c postale</field>
+    </record>
+    <record id="payment_MP19" model="">
+        <field name="code">MP19</field>
+        <field name="name">SEPA Direct Debit</field>
+    </record>
+    <record id="payment_MP20" model="">
+        <field name="code">MP20</field>
+        <field name="name">SEPA Direct Debit CORE</field>
+    </record>
+    <record id="payment_MP21" model="">
+        <field name="code">MP21</field>
+        <field name="name">SEPA Direct Debit B2B</field>
     </record>
 </data>

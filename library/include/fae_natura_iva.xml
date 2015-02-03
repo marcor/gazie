@@ -20,4 +20,8 @@
         <field name="code">N5</field>
         <field name="name">Regime del margine</field>
     </record>
+    <record id="natura_N6" model="">
+        <field name="code">N6</field>
+        <field name="name">Inversione contabile (reverse charge)</field>
+    </record>
 </data>

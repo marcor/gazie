@@ -134,7 +134,10 @@ class invoiceXMLvars
                 $this->destinazione = '';
             }
         }
-
+        $this->BolloVirtuale=''; 
+        if ( $tesdoc['virtual_taxstamp'] == 2 ) { // bollo virtualmente assolto
+           $this->BolloVirtuale=='SI'; 
+        }
         $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $this->tesdoc = $tesdoc;
@@ -251,6 +254,10 @@ class invoiceXMLvars
                 $this->totimp_body += $rigo['importo'];
                 $this->ritenuta += round($rigo['importo']*$rigo['ritenuta']/100,2);
                 $this->totimp_doc += $v_for_castle;
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)   
+                if ($rigo['tipiva']=='T') {
+                    $this->ivasplitpay += round(($v_for_castle*$rigo['pervat'])/ 100,2);
+                }
             } elseif ($rigo['tiprig']==2) { // descrittivo
                 // faccio prima il parsing XML e poi il push su un array ancora da indicizzare (0)
                 $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'],ENT_XML1);
@@ -335,7 +342,7 @@ class invoiceXMLvars
         // aggiungo gli eventuali bolli al castelletto
         if ($this->impbol > 0 || $this->taxstamp > 0) {
             $this->impbol += $this->taxstamp;  
-            $calc->add_value_to_VAT_castle($calc->castle,$this->taxstamp+$this->impbol,$this->azienda['taxstamp_vat']);
+            $calc->add_value_to_VAT_castle($calc->castle,$this->impbol,$this->azienda['taxstamp_vat']);
         }
         $this->cast=$calc->castle;
         $this->riporto=0;
@@ -403,6 +410,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     $XMLvars->virtual_taxstamp = 0;
     $XMLvars->tot_trasporto = 0;
     $XMLvars->body_castle=array();
+    $XMLvars->ivasplitpay = 0.00;
 
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
       $XMLvars->setXMLvars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
@@ -419,7 +427,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		   $results->appendChild($attrVal);
          
          $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);		
-		   $attrVal = $domDoc->createTextNode( "SDI10" );	   
+		   $attrVal = $domDoc->createTextNode( "SDI11" );	   
 		   $results->appendChild($attrVal);
       
          $codice_trasmittente=$XMLvars->IdCodice;
@@ -703,8 +711,8 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
     if ($XMLvars->impbol>0){     
        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);		
-               $el = $domDoc->createElement("DatiBollo","");					 
-			$el1= $domDoc->createElement("NumeroBollo", str_pad($XMLvars->azienda['virtual_stamp_auth_prot'].'/'.substr($XMLvars->azienda['virtual_stamp_auth_date'],0,4),14,' ',STR_PAD_LEFT));
+               $el = $domDoc->createElement("DatiBollo","");
+			$el1= $domDoc->createElement("BolloVirtuale", $XMLvars->BolloVirtuale);
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("ImportoBollo", number_format($XMLvars->impbol,2,'.',''));
 			$el->appendChild($el1);
@@ -756,8 +764,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     }
 
 // ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
-
-    $totpag = $XMLvars->totimpfat+$XMLvars->impbol+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->tot_ritenute;
+    $totpag = $XMLvars->totimpfat+$XMLvars->impbol+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->tot_ritenute-$XMLvars->ivasplitpay;
     $ex= new Expiry;
     $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'],$XMLvars->pagame['giodec'],$XMLvars->pagame['numrat'],$XMLvars->pagame['tiprat'],$XMLvars->pagame['mesesc'],$XMLvars->pagame['giosuc']);
     if ($XMLvars->pagame['numrat']>1){
