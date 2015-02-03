@@ -632,6 +632,25 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             if ($form['tipdoc'] == 'AFC') { // nel caso che si tratti di nota di credito
                $form['in_codric'] = $admin_aziend['purchases_return'];
             }
+         } elseif ($form['in_tiprig'] == 1) { //forfait
+            $form['rows'][$next_row]['codart'] = "";
+            $form['rows'][$next_row]['annota'] = "";
+            $form['rows'][$next_row]['pesosp'] = "";
+            $form['rows'][$next_row]['unimis'] = "";
+            $form['rows'][$next_row]['quanti'] = 0;
+            $form['rows'][$next_row]['prelis'] = 0;
+            $form['rows'][$next_row]['codric'] = $form['in_codric'];
+            $form['rows'][$next_row]['sconto'] = 0;
+            $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
+            $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['preeminent_vat']);
+            $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
+            $form['rows'][$next_row]['tipiva'] = $iva_azi['tipiva'];
+            if ($form['in_codvat'] > 0) {
+               $form['rows'][$next_row]['codvat'] = $form['in_codvat'];
+               $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
+               $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
+               $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
+            }
          } elseif ($form['in_tiprig'] == 2) { //descrittivo
             $form['rows'][$next_row]['codart'] = "";
             $form['rows'][$next_row]['annota'] = "";
