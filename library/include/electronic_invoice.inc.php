@@ -334,7 +334,7 @@ class invoiceXMLvars
         $somma_spese = $this->tot_trasporto + $this->speseincasso + $this->tesdoc['spevar'];
         $calc->add_value_to_VAT_castle($this->body_castle,$somma_spese,$this->tesdoc['expense_vat']);
         if ($this->tesdoc['stamp'] > 0) {
-              $calc->payment_taxstamp($calc->total_imp+$this->totriport+$calc->total_vat-$this->tot_ritenute+$this->taxstamp, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
+              $calc->payment_taxstamp($calc->total_imp+$this->totriport+$calc->total_vat-$this->tot_ritenute+$this->taxstamp-$this->ivasplitpay, $this->tesdoc['stamp'],$this->tesdoc['round_stamp']*$this->pagame['numrat']);
               $this->impbol = $calc->pay_taxstamp;  
         }
         $this->totimpfat=$calc->total_imp;
