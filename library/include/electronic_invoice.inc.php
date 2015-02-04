@@ -134,10 +134,6 @@ class invoiceXMLvars
                 $this->destinazione = '';
             }
         }
-        $this->BolloVirtuale=''; 
-        if ( $tesdoc['virtual_taxstamp'] == 2 ) { // bollo virtualmente assolto
-           $this->BolloVirtuale=='SI'; 
-        }
         $this->clientSedeLegale = ((trim($this->client['sedleg']) != '') ? preg_split("/\n/", trim($this->client['sedleg'])) : array());
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
         $this->tesdoc = $tesdoc;
@@ -316,6 +312,10 @@ class invoiceXMLvars
         $this->totimpmer = 0.00;
         $this->tot_ritenute = $this->ritenuta;
         $this->impbol = 0.00;
+        $this->BolloVirtuale = ''; // ovviamente il bollo potrà essere solo virtuale ma comunque lo setto per evidenziare l'errore
+        if ( $this->tesdoc['virtual_taxstamp'] == 2 ) { // bollo virtualmente assolto
+           $this->BolloVirtuale='SI'; 
+        }
         $this->totriport = $this->riporto;
         $this->speseincasso = $this->tesdoc['speban'] * $this->pagame['numrat'];
         if (!isset($this->castel)){
@@ -719,9 +719,6 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		    $results->appendChild($el);
     }
     
-   
-    
-    
     $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);	
     foreach ($XMLvars->cast as $key => $value) {          
         $el = $domDoc->createElement("DatiRiepilogo","");					 
@@ -823,25 +820,21 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 	
 	$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file.".xml");   
     if ($verifica == false) { 
-	
-	$valori=array('filename_ori'=>$nome_file.".xml",
+	 $valori=array('filename_ori'=>$nome_file.".xml",
          'id_tes_ref'=>$id_tes,
-				 'exec_date'=>$data_ora_ricezione,
+	 'exec_date'=>$data_ora_ricezione,
          'received_date'=>$data_ora_ricezione,
          'delivery_date'=>$data_ora_ricezione,
-				 'filename_son'=>'',
-				 'id_SDI'=>0,
+	 'filename_son'=>'',
+	 'id_SDI'=>0,
          'filename_ret'=>'',
          'mail_id'=>0,
-				 'data'=>'',
-				 'flux_status'=>'#',
+	 'data'=>'',
+	 'flux_status'=>'#',
          'progr_ret'=>'000',
-				 'flux_descri'=>'');
-    
-    fae_fluxInsert($valori);
-	}
-	
-	
+	 'flux_descri'=>'');
+         fae_fluxInsert($valori);
+    }
     header("Content-type: text/plain");
     header("Content-Disposition: attachment; filename=". $nome_file .".xml");
     print $domDoc->saveXML();
