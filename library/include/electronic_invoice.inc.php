@@ -224,6 +224,7 @@ class invoiceXMLvars
         $results = array();
         $dom = new DOMDocument;
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+            $rigo['imp_sconto'] = 0.00;
             if ($rigo['tiprig'] <= 1) {
                 $last_normal_row=$nr; // mi potrebbe servire se alla fine dei righi mi ritrovo con dei descrittivi non ancora indicizzati perché seguono l'ultimo rigo normale
                 // se ho avuto dei righi descrittivi che hanno preceduto  questo allora li inputo a questo rigo
@@ -234,6 +235,7 @@ class invoiceXMLvars
                 }
                 unset ($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
+                $rigo['imp_sconto'] = number_format(($rigo['quanti']*$rigo['prelis'])-$rigo['importo'],2,'.','');
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'],$this->tesdoc['sconto']));
                 if ($rigo['tiprig'] == 1) {
                     $rigo['importo'] = CalcolaImportoRigo(1,$rigo['prelis'],0);
@@ -549,7 +551,16 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                     $el = $domDoc->createElement("DettaglioLinee","");					 
 			$el1= $domDoc->createElement("NumeroLinea", $n_linea);
 			$el->appendChild($el1);
-			$el1= $domDoc->createElement("Descrizione", substr($rigo['descri'], 0, 100));
+                        if (isset($rigo['descrittivi'] )) {
+                          // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
+                            foreach($rigo['descrittivi'] as $k=>$v){
+                                if ($k<16){
+                                    $rigo['descri'] .= $v; // ogni $v è lungo al massimo 60 caratteri
+                                    unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
+                                }
+                            }                        
+                        }
+			$el1= $domDoc->createElement("Descrizione", $rigo['descri']);
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("Quantita", number_format($rigo['quanti'],2,'.',''));
 			$el->appendChild($el1); 
@@ -557,6 +568,22 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el->appendChild($el1); 
 			$el1= $domDoc->createElement("PrezzoUnitario",  number_format($rigo['prelis'],$XMLvars->decimal_price,'.',''));
 			$el->appendChild($el1);
+                        // sconto/maggiorazione rigo 2.2.1.10
+                        if (abs($rigo['imp_sconto'])>=0.01){
+                            $el1= $domDoc->createElement("ScontoMaggiorazione", "");
+        		    $el->appendChild($el1);
+                                    if($rigo['imp_sconto']<0) { // è una maggiorazione
+                                        $t='MG';
+                                    } else {
+                                        $t='SC';
+                                    }
+                                    $el2= $domDoc->createElement("Tipo",$t);
+                                    $el1->appendChild($el2);
+                                    $el2= $domDoc->createElement("Percentuale", abs($rigo['sconto']));
+                                    $el1->appendChild($el2);
+                                    $el2= $domDoc->createElement("Importo",number_format(abs($rigo['imp_sconto']),2,'.',''));
+                                    $el1->appendChild($el2);
+                        }
 			$el1= $domDoc->createElement("PrezzoTotale", number_format($rigo['importo'],2,'.',''));
 			$el->appendChild($el1);
 			$el1= $domDoc->createElement("AliquotaIVA", number_format($rigo['pervat'],2,'.',''));
@@ -569,7 +596,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                             $el1= $domDoc->createElement("Natura", $rigo['natura']);
                             $el->appendChild($el1);
                         }
-                        if (isset($rigo['descrittivi'] )) {
+                        if (isset($rigo['descrittivi']) && count($rigo['descrittivi'])>0) {
                             foreach($rigo['descrittivi'] as $k=>$v){
                                 $el1= $domDoc->createElement("AltriDatiGestionali", '');
                                 $el->appendChild($el1);
@@ -581,6 +608,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                         }
 		    $results->appendChild($el);
 		    $nl=true;
+                    $n_linea++;
                     break;
 
                 case "1":
@@ -606,6 +634,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                         }
 		    $results->appendChild($el);
 		    $nl=true;
+                    $n_linea++;
                     break;
                 case "2":       // descrittivo
                     /* ! ATTENZIONE: tipo rigo spostato in appendice <2.2.1.16> ai righi "normale" !!!
@@ -797,9 +826,26 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
             }
         $results->appendChild($el);
     }
-    
+
      //Modifica per il sicoge che richiede obbligatoriamente popolato il punto 2.1.1.9
     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);		
+    // sconto/maggiorazione totale documento 2.1.1.8
+    $sc = round($XMLvars->totimpmer*$XMLvars->tesdoc['sconto']/100,2);
+    if (abs($sc)>=0.01){
+        $el= $domDoc->createElement("ScontoMaggiorazione", "");
+                if($sc<0) { // è una maggiorazione
+                    $t='MG';
+                } else {
+                    $t='SC';
+                }
+                $el1= $domDoc->createElement("Tipo",$t);
+                $el->appendChild($el1);
+                $el1= $domDoc->createElement("Percentuale", $XMLvars->tesdoc['sconto']);
+                $el->appendChild($el1);
+                $el1= $domDoc->createElement("Importo",number_format(abs($sc),2,'.',''));
+                $el->appendChild($el1);
+        $results->appendChild($el);
+    }
     $el = $domDoc->createElement("ImportoTotaleDocumento",number_format($totpag, 2,'.',''));  // totimpfat
     $results->appendChild($el);
    
@@ -838,8 +884,5 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     header("Content-type: text/plain");
     header("Content-Disposition: attachment; filename=". $nome_file .".xml");
     print $domDoc->saveXML();
-	
 }
-
-
 ?>

@@ -413,6 +413,12 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                                     $form['protoc']
                                     );
                 }
+                $last_rigdoc_id = gaz_dbi_last_id();
+                if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
+                      bodytextInsert(array('table_name_ref'=>'rigdoc','id_ref'=>$last_rigdoc_id,'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
+                      gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
+                }
+
              }
              //modifico la testata con i nuovi dati...
              $old_head = gaz_dbi_get_row($gTables['tesdoc'],'id_tes',$form['id_tes']);
