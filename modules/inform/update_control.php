@@ -31,7 +31,7 @@ $tutor[1] = array('zone'   => 'Abruzzo',
                   'city'   => 'Montesilvano (PE)',
                   'sms'    => '+393383121161',
                   'web'    => 'http://www.devincentiis.it',
-                  'check'  => 'http://http://www.devincentiis.it/file_ver');
+                  'check'  => 'http://www.devincentiis.it/file_ver');
 // fine lista
 
 $configurazione = gaz_dbi_get_row($gTables['config'],'variable','update_url');
