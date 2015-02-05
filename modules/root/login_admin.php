@@ -96,7 +96,7 @@ if (isset($_POST['actionflag'])) {
                     $_POST['Confepass'] = '';
                 }
                 if($_POST['Password'] != $_POST['Nuovapass'] and $_POST['Nuovapass'] == $_POST['Confepass'] and  strlen($_POST['Nuovapass']) >= $config->getValue('psw_min_length') ) {
-                    gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"datpas",date("Y%-m%-d H:i:s"));
+                    gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"datpas",date("Y-m-d H:i:s"));
                     gaz_dbi_put_row($gTables['admin'], "Login",$form['Login'],"Password",$_POST['Nuovapass']);
                     cleanMemberSession($result["Abilit"], $result["Login"], $_POST["Nuovapass"], $result["Access"], $result['enterprise_id'],$tp);
                     header("Location: ../root/admin.php");
