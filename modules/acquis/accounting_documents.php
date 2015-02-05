@@ -72,7 +72,7 @@ function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=9999
     $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type"."_' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
-                        pay.tippag,pay.numrat,pay.incaut,
+                        pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
                         customer.codice,
                         customer.speban AS addebitospese,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta',
