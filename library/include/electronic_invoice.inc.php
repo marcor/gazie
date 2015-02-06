@@ -235,7 +235,7 @@ class invoiceXMLvars
                 }
                 unset ($righiDescrittivi[0]); // svuoto l'array per prepararlo ad eventuali nuovi righi descrittivi
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
-                $rigo['imp_sconto'] = number_format(($rigo['quanti']*$rigo['prelis'])-$rigo['importo'],2,'.','');
+                $rigo['imp_sconto'] = number_format(CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'],0)-$rigo['importo'],2,'.','');
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'],$this->tesdoc['sconto']));
                 if ($rigo['tiprig'] == 1) {
                     $rigo['importo'] = CalcolaImportoRigo(1,$rigo['prelis'],0);
