@@ -90,7 +90,7 @@ $ctrl_sezione = 0;
 $ctrl_registro = 0;
 $pdf->SetFont('helvetica','',10);
 $totale_iva_registro = 0.00;
-$saldo_totale = 0.00;
+$saldo_periodo = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
       if ($ctrl_sezione != $row['seziva']) {
          if ($ctrl_registro != 0) {
@@ -138,7 +138,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
          $row['isp']=0;
          $row['ind']=0;
          $totale_iva_registro += $row['imposta'];
-         $saldo_totale += $row['imposta'];
+         $saldo_periodo += $row['imposta'];
       }
       $pdf->Cell(20,6,gaz_format_number($row['imposta']),1,0,'R');
       $pdf->Cell(20,6,gaz_format_number($row['isp']),1,0,'R');
@@ -149,48 +149,45 @@ $pdf->Cell(114,6,$script_transl['t_reg'],0,0,'R');
 $pdf->Cell(20,6,gaz_format_number($totale_iva_registro),1,1,'R',1);
 $pdf->Ln(2);
 
-if ($saldo_totale < 0) {
-    $pdf->SetTextColor(255,0,0);
-    $pdf->Cell(54,6);
+// totale periodo
+$pdf->Cell(54,6);
+if ($saldo_periodo < 0) {
     $pdf->Cell(55,6,strtoupper($script_transl['tot'].' '.$script_transl['t_neg']),'LTB',0,'L',1);
-    $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
-    $pdf->Cell(20,6,gaz_format_number($saldo_totale),'RTB',1,'R',1);
-    $pdf->SetTextColor(0);
 } else {
+    $pdf->Cell(55,6,strtoupper($script_transl['tot'].' '.$script_transl['t_pos']),'LTB',0,'L',1);
+}    
+$pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
+$pdf->Cell(20,6,gaz_format_number($saldo_periodo),'RTB',1,'R',1);
+
+// credito riportato dal periodo precedente
+if ($_GET['cr']>0) {
     $pdf->Cell(54,6);
-    $pdf->Cell(55,6,strtoupper($script_transl['tot'].' '.$script_transl['t_pos']),'LTB',0,'L');
+    $pdf->Cell(55,6,$script_transl['carry'],'LTB',0,'L');
     $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L');
-    $pdf->Cell(20,6,gaz_format_number($saldo_totale),'RTB',1,'R',1);
-    if ($_GET['cr']>0) { // se c'è un credito riportato dal periodo precedente
-       $pdf->SetTextColor(255,0,0);
-       $pdf->Cell(34,6);
-       $pdf->Cell(75,6,$script_transl['carry'],'LTB',0,'R',1);
-       $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
-       $pdf->Cell(20,6,'-'.gaz_format_number($_GET['cr']),'RTB',1,'R',1);
-       $pdf->SetTextColor(0);
-       $saldo_totale-=floatval($_GET['cr']);
-    }
-    if ($admin_aziend['ivam_t'] == 'T'){
-       $interessi=0;
-       if ($saldo_totale>0) {
-          $interessi=round($saldo_totale*$admin_aziend['interessi']/100,2);
-       }
-       $pdf->Cell(114,6,$script_transl['inter'].$admin_aziend['interessi'].'% ',0,0,'R');
-       $pdf->Cell(20,6,gaz_format_number($interessi),1,1,'R');
-       $pdf->Ln(2);
-       $pdf->Cell(31,6);
-       $pdf->SetFont('helvetica','B',12);
-       $pdf->Cell(72,6,strtoupper($script_transl['tot'].$script_transl['pay']),'LTB',0,'L',1);
-       $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
-       $pdf->Cell(26,6,gaz_format_number($saldo_totale+$interessi),'RTB',1,'R',1);
-    } else {
-       $pdf->Ln(2);
-       $pdf->Cell(31,6);
-       $pdf->SetFont('helvetica','B',12);
-       $pdf->Cell(72,6,strtoupper($script_transl['tot'].$script_transl['pay']),'LTB',0,'L',1);
-       $pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
-       $pdf->Cell(26,6,gaz_format_number($saldo_totale),'RTB',1,'R',1);
-    }
+    $pdf->Cell(20,6,'-'.gaz_format_number($_GET['cr']),'RTB',1,'R');
+}
+
+$saldo_totale = $saldo_periodo - floatval($_GET['cr']);
+
+// calcolo interessi su iva trimestrale da versare
+if ($saldo_totale>0 && $admin_aziend['ivam_t'] == 'T') {
+    $interessi=0;
+    $interessi=round($saldo_totale*$admin_aziend['interessi']/100,2);
+    $pdf->Cell(114,6,$script_transl['inter'].$admin_aziend['interessi'].'% ',0,0,'R');
+    $pdf->Cell(20,6,gaz_format_number($interessi),1,1,'R');
+    $saldo_totale += $interessi;
+} 
+
+// totale
+$pdf->Ln(2);
+$pdf->Cell(31,6);
+$pdf->SetFont('helvetica','B',12);
+$pdf->Cell(72,6,strtoupper($script_transl['tot'].$script_transl['pay']),'LTB',0,'L',1);
+$pdf->Cell(5,6,$admin_aziend['symbol'],'TB',0,'L',1);
+$pdf->Cell(26,6,gaz_format_number($saldo_totale),'RTB',1,'R',1);
+
+// dati versamento
+if ($saldo_totale > 0) {
     $pdf->SetFont('helvetica','',8);
     $pdf->Ln(6);
     $pdf->Cell(50,6,$script_transl['pay_date'],0,0,'L');
@@ -198,6 +195,7 @@ if ($saldo_totale < 0) {
     $pdf->Cell(40,6,$script_transl['abi'],0,0,'L');
     $pdf->Cell(40,6,$script_transl['cab'],0,1,'L');
 }
+
 if ($_GET['sd']=='sta_def') {
     gaz_dbi_put_row($gTables['aziend'],'codice',1,'upgrie', $pdf->getGroupPageNo()+$n_page-1);
 }
