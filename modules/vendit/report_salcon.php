@@ -66,14 +66,14 @@ $anagrafica = new Anagrafica();
 while ($a_row = gaz_dbi_fetch_array($result)) {
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
     print "<tr>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"salcon_credit.php?codice=".$a_row['id_tes']."&Update\">".$a_row['id_tes']."</a></td>";
+    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"salcon_credit.php?codice=".$a_row['id_tes']."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row['id_tes']."</a></td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["numdoc"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datemi"])." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"left\">".$cliente["ragso1"]."&nbsp;</td>";
+    print "<td class=\"FacetDataTD\" align=\"left\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$cliente["ragso1"]."&search=Cerca\">".$cliente["ragso1"]."</a></td>";
     print "<td class=\"FacetDataTD\" align=\"right\">".$a_row["portos"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["status"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_salcon.php?id_tes=".$a_row['id_tes']."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_salcon.php?id_tes=".$a_row['id_tes']."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_salcon.php?id_tes=".$a_row['id_tes']."\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_salcon.php?id_tes=".$a_row['id_tes']."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     print "</tr>";
 }
 ?>

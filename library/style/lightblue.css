@@ -167,7 +167,7 @@ TABLE.selectTable TD {
 }
 
 .FacetAltDataTD  {
-    background-color : #D5F1D4;
+    background-color : #BED2D2;
     color : #000000;
     font-size : 16px;
 }
@@ -178,13 +178,13 @@ TABLE.selectTable TD {
 }
 
 .FacetFooterTD  {
-    background-color : #D5F1D4;
+    background-color : #BED2D2;
     color : #000000;
     font-size : 13px;
 }
 
 .FacetDisabledTD  {
-    background-color : #D5F1D4;
+    background-color : #BED2D2;
     color : #92ac7D;
     font-size : 13px;
 }
@@ -333,7 +333,7 @@ TABLE.selectTable TD {
   background-color: #7EB8CB;
 }
 .nav > li > a.row-menu {
-	padding: 11px 6px 11px 6px;
+	padding: 11px 2px 11px 2px;
 }
 .nav > li > a.icon-menu {
 	padding: 7px 6px 6px 6px;
@@ -421,6 +421,10 @@ input.input-xs {
 .nav-tabs {
     margin-bottom: 0px;
 }
+.nav-tabs > li > a {
+	margin-right: 1px;
+}
+
 .help-text {
 	font-size: 1.0em;
 }
