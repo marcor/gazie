@@ -101,7 +101,7 @@ while ($rigo_documenti = gaz_dbi_fetch_array($rs_documenti)) {
           $totali['max_quanti'] = $castelletto_articoli[$rigo_documenti['codart']]['quanti'];
           $totali['max_quacode'] = $rigo_documenti['codart'];
       }
-      if ($castelletto_articoli[$rigo_documenti['codart']]['quanti'] > $totali['max_valore']){
+      if ($castelletto_articoli[$rigo_documenti['codart']]['valore'] > $totali['max_valore']){
           $totali['max_valore'] = $castelletto_articoli[$rigo_documenti['codart']]['valore'];
           $totali['max_valcode'] = $rigo_documenti['codart'];
       }
