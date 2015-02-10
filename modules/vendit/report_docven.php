@@ -380,13 +380,6 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         if ($n_e==0 && ($r["tippag"]=='B' || $r["tippag"]=='T' || $r["tippag"]=='V')) {
               echo " <a class=\"btn btn-xs btn-effetti\" title=\"Genera gli effetti previsti per il regolamento delle fatture\" href=\"genera_effett.php\"> Genera effetti</a>";
-              if (strtoupper($r["geneff"])=='S'){
-                    // Gli effetti della fattura sono stati generati in passato, ma poi
-                    // sono stati rimossi tutti.
-                    /* gaz_dbi_put_row ($gTables['tesdoc'],"id_tes",$r["id_tes"],"geneff","");
-                       IN ALCUNE INSTALLAZIONI CREA PROBLEMI */
-              }
-
         }
         echo "</td>";
         // Colonna "Stampa"

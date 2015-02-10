@@ -113,6 +113,11 @@ function getDocumentsBill($upd=false)
            $somma_spese += $tes['traspo'] + $spese_incasso + $tes['spevar'] ;
            $calc->add_value_to_VAT_castle($cast_vat,$somma_spese,$tes['expense_vat']);
            $doc[$ctrlp]['vat']=$calc->castle;
+	   
+	   // segno l'effetto come generato
+	   if ($upd) {
+                gaz_dbi_query ("UPDATE ".$gTables['tesdoc']." SET geneff = 'S' WHERE id_tes = ".$tes['id_tes'].";");
+           }
     }
     if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01 ) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
         $calc->payment_taxstamp($calc->total_imp+$calc->total_vat+$carry-$rit+$taxstamp, $doc[$ctrlp]['tes']['stamp'],$doc[$ctrlp]['tes']['round_stamp']*$doc[$ctrlp]['tes']['numrat']);

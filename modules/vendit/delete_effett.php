@@ -43,6 +43,15 @@ if (isset($_POST['Delete'])){
             gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $effetto['id_con']);
     }
     $result = gaz_dbi_del_row($gTables['effett'], "id_tes", intval($_POST['id_tes']));
+    
+    // i dati univoci della fattura che ha originato l'effetto
+    $where = "protoc=$effetto[protoc] AND seziva=$effetto[seziva] AND datfat='$effetto[datfat]'";
+    // se la fattura non ha altri effetti associati resettiamo il flag geneff  
+    $altri_effetti = gaz_dbi_record_count($gTables['effett'], $where);
+    if (!$altri_effetti) {
+	gaz_dbi_query("UPDATE $gTables[tesdoc] SET geneff = '' WHERE $where");
+    }
+    
     header("Location: ".$ritorno);
     exit;
 } else {
