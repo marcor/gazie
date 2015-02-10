@@ -15,4 +15,4 @@ E' mia intenzione preporre l'astrazione del database e della rivisitazione del s
 Thanks:
 Un ringraziamento pubblico a tutti quelli che quotidianamente partecipano in qualche modo al miglioramento del software e delle nostre conoscenze.
  
-Antonio de Vincentiis, Montesilvano, 10 Gennaio 2015
+Antonio de Vincentiis, Montesilvano, 10 Febbraio 2015
