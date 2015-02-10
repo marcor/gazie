@@ -49,7 +49,7 @@ if (isset($_POST['Delete'])){
     // se la fattura non ha altri effetti associati resettiamo il flag geneff  
     $altri_effetti = gaz_dbi_record_count($gTables['effett'], $where);
     if (!$altri_effetti) {
-	gaz_dbi_query("UPDATE $gTables[tesdoc] SET geneff = '' WHERE $where");
+	gaz_dbi_query("UPDATE $gTables[tesdoc] SET geneff = '' WHERE $where AND tipdoc LIKE 'F%'");
     }
     
     header("Location: ".$ritorno);
