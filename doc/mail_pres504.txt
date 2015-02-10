@@ -1,9 +1,0 @@
-Titolo:
-Lucidus ordo.
-
-Modifiche appportate:
-- corretto errore di mancata stampa dei documenti diversi da quelli di vendita segnalato sul forum da lellosoft in data 12.04.2010.
-- corretto errore (ID: 2984422) segnalato da dg7 e relativo alla mancata possibilita' di scegliere tra costi o ricavi sui conti resi su vendite e acquisti in configurazione Azienda
-- j65feb F. Costantini ha corretto l'errore di calcolo interessi anche in presenza di credito IVA sulla stampa della liquidazione IVA trimestrale (segnalato sul forum in data 16.04.2010)
-
-Antonio de Vincentiis, Montesilvano, 19 Aprile 2010.

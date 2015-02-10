@@ -1,9 +1,0 @@
-Titolo:
-Omnis amor datus.
-
-Modifiche apportate:
-- Bugfix errore ID: 3607188 segnalato e corretto da Roberto Tonin sulla data registrazione in contabilizzazione acquisti
-- Corretti alcuni problemi che a volte si presentavano sul flusso RiBa cbi (non tutte le banche applicavano le correzioni automatiche).
-- Implementata la possibilità di scegliere di mettere i caratteri di fine linea sui tracciati CBI delle riba in base alle scelte fatte aull'archivio conti correnti bancari (integrazione del lavoro di ivano71b)
-
-Antonio de Vincentiis, Montesilvano, 12 Aprile 2013

@@ -1,8 +1,0 @@
-Titolo:
-Horas non numero nisi serenas.
-
-Modifiche apportate:
-- Spesometro: aggiunti i privati che hanno acquistato con fattura anzichè con scontrino
-- Spesometro: spostati in quadro FE gli sconntrini con fattura allegata e aggiunti i riferimenti ad essi
- 
-Antonio de Vincentiis, Montesilvano, 06 Aprile 2014
