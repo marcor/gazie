@@ -37,17 +37,17 @@ function print_querytime($prev)
 }
 
 if (isset($_GET['auxil'])) {
-   $auxil = $_GET['auxil'];
-   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
+   $seziva = $_GET['auxil'];
+   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
 } else {
-   $auxil = 1;
-   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
+   $seziva = "1";
+   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
 }
+
 if (isset($_GET['protoc'])) {
    if ($_GET['protoc'] > 0) {
       $protocollo = $_GET['protoc'];
-      $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' AND protoc = '$protocollo' GROUP BY protoc, datfat";
-      $auxil = $_GET['auxil']."&protoc=".$protocollo;
+      $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' AND protoc = '$protocollo' GROUP BY protoc, datfat";
       $passo = 1;
    }
 }  else {
@@ -57,8 +57,7 @@ if (isset($_GET['protoc'])) {
 if (isset($_GET['numerof'])) {
    if ($_GET['numerof'] > 0) {
       $numerof = $_GET['numerof'];
-      $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' AND numfat = '$numerof' GROUP BY protoc, datfat";
-      $auxil = $_GET['auxil']."&numerof=".$numerof;
+      $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' AND numfat = '$numerof' GROUP BY protoc, datfat";
       $passo = 1;
    }
 }  else {
@@ -68,8 +67,7 @@ if (isset($_GET['numerof'])) {
 if (isset($_GET['cliente'])) {
    if ($_GET['cliente'] <> '') {
       $cliente = $_GET['cliente'];
-      $where = " tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' and ".$gTables['clfoco'].".descri like '%".addslashes($cliente)."%' GROUP BY protoc, datfat";
-      $auxil = $_GET['auxil']."&cliente=".$cliente;
+      $where = " tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' and ".$gTables['clfoco'].".descri like '%".addslashes($cliente)."%' GROUP BY protoc, datfat";
       $passo = 50;
       unset($protocollo);
       unset($numerof);
@@ -78,8 +76,7 @@ if (isset($_GET['cliente'])) {
 
 if (isset($_GET['all'])) {
    gaz_set_time_limit (0);
-   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$auxil' GROUP BY protoc, datfat";
-   $auxil = $_GET['auxil']."&all=yes";
+   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
    $passo = 100000;
    unset($protocollo);
    unset($cliente);
@@ -194,7 +191,7 @@ switch($admin_aziend['fatimm']) {
         $sezfatimm = 3;
     break;
     case "R":
-        $sezfatimm = substr($auxil,0,1);
+        $sezfatimm = $seziva;
     break;
     case "U":
         $rs_ultimo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi LIKE '$anno%' AND tipdoc = 'FAI'","datfat desc",0,1);
@@ -202,7 +199,7 @@ switch($admin_aziend['fatimm']) {
         $sezfatimm = $ultimo['seziva'];
     break;
     default:
-        $sezfatimm = substr($auxil,0,1);
+        $sezfatimm = $seziva;
 }
 
 ?>
@@ -231,7 +228,7 @@ switch($admin_aziend['fatimm']) {
 <?php
 for ($sez = 1; $sez <= 3; $sez++) {
     $selected = "";
-    if(substr($auxil,0,1) == $sez) {
+    if($seziva == $sez) {
         $selected = " selected ";
     }
     echo "<option value=\"".$sez."\"".$selected.">".$sez."</option>";
@@ -291,7 +288,7 @@ $linkHeaders -> output();
 ?>
 </tr>
 <?php
-$rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'].' LEFT JOIN '.$gTables['clfoco'].' on '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where,'datfat DESC, CONVERT(numfat,UNSIGNED INTEGER) DESC',0,1);
+$rs_ultimo_documento = gaz_dbi_dyn_query("id_tes", $gTables['tesdoc'], "tipdoc LIKE 'F%' AND seziva = '$seziva'","datfat DESC, protoc DESC, id_tes DESC",0,1);
 $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesdoc'].".*, MAX(".$gTables['tesdoc'].".id_tes) AS reftes,".$gTables['anagra'].".fe_cod_univoco,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail,".$gTables['clfoco'].".codice,".$gTables['pagame'].".tippag", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id  LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice", $where, $orderby,$limit, $passo);
@@ -354,7 +351,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if ($r["id_con"] > 0) {
            echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont.".$r["id_con"]."</a> ";
         } else {
-           echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=".substr($auxil,0,1)."&last=".$r["protoc"]."\">Contabilizza</a>";
+           echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=".$seziva."&last=".$r["protoc"]."\">Contabilizza</a>";
         }
         $effett_result = gaz_dbi_dyn_query ('*',$gTables['effett'],"id_doc = ".$r["reftes"],'progre');
         while ($r_e = gaz_dbi_fetch_array ($effett_result)){
