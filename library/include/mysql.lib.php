@@ -71,7 +71,7 @@ function connectIsOk()
 {
     global $Host, $User, $Password, $link;
     $result = True;
-    $link = mysql_connect($Host, $User, $Password) or ($result = False); // In $result l'esito della connessione
+    $link = @mysql_connect($Host, $User, $Password) or ($result = False); // In $result l'esito della connessione
     return $result;
 }
 

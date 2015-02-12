@@ -1,5 +1,7 @@
 <?php
 
+define ( 'GAZ_ROOT', dirname(__FILE__).'/../' );
+ 
 include 'testGazie.php';
 
 include(GAZ_ROOT . "config/config/gconfig.php");
