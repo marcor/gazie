@@ -25,7 +25,12 @@
 if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\','/',__FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
     exit('Accesso diretto non consentito') ;
 }
+
+include('database/db.php');
+$database = new DB($NomeDB, $Host,  $User, $Password,$Database );
+
 connectToDB();
+
 session_cache_limiter('nocache');
 $scriptname=basename($_SERVER['PHP_SELF']);
 $direttorio = explode("/",dirname($_SERVER['PHP_SELF']));
