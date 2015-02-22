@@ -22,8 +22,14 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
+
+define('PATH_ROOT', realpath('../..') );
 require("../../library/include/datlib.inc.php");
-$admin_aziend=checkAdmin();
+
+$model = new ModelFactory('root/login');
+$model_root = $model->get();
+
+$admin_aziend=$model_root->checkAdmin();
 if (!isset($_POST['hidden_req'])){
 
     $form['hidden_req']='';
