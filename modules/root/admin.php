@@ -23,13 +23,9 @@
  --------------------------------------------------------------------------
 */
 
-define('PATH_ROOT', realpath('../..') );
 require("../../library/include/datlib.inc.php");
 
-$model = new ModelFactory('root/login');
-$model_root = $model->get();
-
-$admin_aziend=$model_root->checkAdmin();
+$admin_aziend=checkAdmin();
 if (!isset($_POST['hidden_req'])){
 
     $form['hidden_req']='';

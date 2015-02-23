@@ -27,12 +27,6 @@ require("../../config/config/gconfig.php");
 require('../../library/include/'.$NomeDB.'.lib.php');
 require("../../library/include/function.inc.php");
 
-// Data 22/02/2015 by DF
-require("mvc/model.php");
-require("database/db.php");
-$database = new DB($NomeDB, $Host,  $User, $Password,$Database );
-
-
 if (isset($_SESSION['table_prefix'])) {
   $table_prefix=substr($_SESSION['table_prefix'],0,12);
 } elseif (isset($_GET['tp'])) {
