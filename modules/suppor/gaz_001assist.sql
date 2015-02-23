@@ -41,7 +41,8 @@ CREATE TABLE IF NOT EXISTS `gaz_001assist` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=82 ;
 
 INSERT INTO `gaz_001assist` (`id`, `codice`, `utente`, `data`, `tecnico`, `oggetto`, `descrizione`, `clfoco`, `ore`, `stato`) VALUES
-(1, 12, '', '2015-02-01', '', 'Prova', 'Prova', 103000001, '1.00', 'aperto'),
+(1, 12, '', '2015-02-01', '', 'Prova2', 'Prova2', 103000001, '1.00', 'aperto'),
+(2, 13, '', '2015-01-30', '', 'Prova1', 'Prova1', 103000001, '1.00', 'chiuso');
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

@@ -24,8 +24,9 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$vrag = "";
 require("./lang.".$admin_aziend['lang'].".php");
-$script_transl = $strScript["select_partner_status.php"];
+//$script_transl = $strScript["select_partner_status.php"];
 
 if ( isset($_GET['auxil']) ) {
    $auxil = $_GET['auxil'];
@@ -63,9 +64,9 @@ $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
                                )
                    );
 $acc=array();
-foreach($script_transl['header'] as $k=>$v){
+/*foreach($script_transl['header'] as $k=>$v){
     $acc[]=$k;
-}
+}*/
 $title = array('luogo_data'=>$luogo_data,
                'title'=>'RESOCONTO INTERVENTI DI ASSISTENZA TECNICA'
               );

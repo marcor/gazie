@@ -24,6 +24,7 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$title = "";
 require("lang.".$admin_aziend['lang'].".php");
 if ( !isset($_GET['id'])) {
     header("Location: report_assist.php");
