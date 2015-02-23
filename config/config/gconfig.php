@@ -30,7 +30,7 @@ $versSw = '6.1';
 
 //nome DBMS usato per la libreria specifica (MySQL=mysql.lib, SQLite=sqlite.lib, ecc)
 //per il momento disponibile solo la libreria mysql.lib
-$NomeDB = "mysql";
+$NomeDB = "mysqli";
 
 ////////////////////////////////////////////////////////////////////////
 //
