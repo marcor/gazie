@@ -177,6 +177,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"255\" size=\"70\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['lot_or_serial']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->variousSelect('lot_or_serial',$script_transl['lot_or_serial_value'],$form['lot_or_serial']);
+echo "\t </td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['barcode']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"barcode\" value=\"".$form['barcode']."\" align=\"right\" maxlength=\"13\" size=\"13\" /></td>\n";
