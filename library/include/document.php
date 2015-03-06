@@ -345,7 +345,7 @@ function createDocument($testata, $templateName, $gTables, $rows='rigdoc', $dest
     $pdf->pageHeader();
     $pdf->compose();
     $pdf->pageFooter();
-	$doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1.'_'.$pdf->tipdoc.'.pdf');
+	$doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1.'_'.$pdf->tipdoc).'.pdf';
     if ($dest && $dest=='E'){ // è stata richiesta una e-mail
        $dest = 'S';     // Genero l'output pdf come stringa binaria
        // Costruisco oggetto con tutti i dati del file pdf da allegare
@@ -499,7 +499,7 @@ function createInvoiceFromDDT($result,$gTables,$dest=false) {
 	if ($n>1){ // è una stampa con molte fatture
 		$doc_name = $docVars->intesta1.'_Fatture_differite_da_DdT.pdf';
 	} else { // è la stampa di una sola fattura
-		$doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1.'_'.$pdf->tipdoc.'.pdf');
+		$doc_name = preg_replace("/[^a-zA-Z0-9]+/", "_", $docVars->intesta1.'_'.$pdf->tipdoc).'.pdf';
     }
 	$pdf->pageFooter();
     if ($dest && $dest=='E'){ // è stata richiesta una e-mail

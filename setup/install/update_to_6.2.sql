@@ -1,5 +1,6 @@
 UPDATE `gaz_config` SET `cvalue` = '89' WHERE `id` =2;
-DELETE FROM `gaz_menu_module` WHERE `id_module` = 10 OR `id_module` = 11;
+DELETE FROM `gaz_menu_module` WHERE `id_module` = (SELECT id FROM `gaz_module` WHERE `name`='gazpme' LIMIT 1);
+DELETE FROM `gaz_menu_module` WHERE `id_module` = (SELECT id FROM `gaz_module` WHERE `name`='gazpma' LIMIT 1);
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXartico` ADD `lot_or_serial` INT(1) NOT NULL AFTER `descri`;
 ALTER TABLE `gaz_XXXmovmag` ADD `id_lotmag` INT(9) NOT NULL AFTER `artico`;
