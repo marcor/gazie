@@ -765,7 +765,7 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                                                                       str_pad(intval($_POST['protocollo']),9,0,STR_PAD_LEFT);
                                      $new_paymov[$j]['id_rigmoc_doc']=$last_id_rig;
                                      if ($v['amount']<0.01){  // se non ho messo manualmente le scadenze lo faccio in automatico
-                                        require("../../library/include/expiry_calc.php");
+                                        require_once("../../library/include/expiry_calc.php");
                                         $ex= new Expiry;
                                         $partner=$anagrafica->getPartner(intval($_POST['conto_rc'.$i]));
                                         $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $partner['codpag']);
