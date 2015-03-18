@@ -1668,10 +1668,11 @@ class Schedule
     function getDocumentData($id_tesdoc_ref)
     {
         /*
-         * restituisce i dati relativi al documento che ha aperto la partita 
+          restituisce i dati relativi al documento che ha aperto la partita 
         */
+		if (!is_numeric($id_tesdoc_ref)){ $id_tesdoc_ref = "'".$id_tesdoc_ref."'";}
         global $gTables;
-	$sqlquery= "SELECT ".$gTables['tesmov'].".* 
+		$sqlquery= "SELECT ".$gTables['tesmov'].".* 
             FROM ".$gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig
             LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
             WHERE ".$gTables['paymov'].".id_rigmoc_doc > 0 AND ".$gTables['paymov'].".id_tesdoc_ref = $id_tesdoc_ref ORDER BY datreg ASC";
