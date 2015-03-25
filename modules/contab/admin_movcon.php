@@ -561,7 +561,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                             $new_clfoco = $anagrafica->getPartnerData($match[1],1);
                             $account_new=$anagrafica->anagra_to_clfoco($new_clfoco,substr($_POST['mastro_rc'][$i],0,3));
                     }
-                    gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
+                    rigmocUpdate(array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
+                    // questa era troppo lenta nelle macchine molto lente 
+                    //gaz_dbi_table_update('rigmoc',array('id_rig',$row_con['id_rig']),array('id_tes'=>intval($_POST['id_testata']),'darave'=>substr($_POST['darave_rc'][$i],0,1),'codcon'=>$account_new,'import'=>floatval($_POST['importorc'][$i])));
         
                     // MODIFICO PURE I RELATIVI MOVIMENTI DI PARTITE APERTE (in paymov)
                     $calc->setRigmocEntries($row_con['id_rig']);
@@ -790,9 +792,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
                }
             }
             if ($toDo == 'insert') {
-              header("Location: report_movcon.php");
+                header("Location: report_movcon.php");
             } else {
-              header("Location: ".$form['ritorno']);
+                header("Location: ".$form['ritorno']);
             }
             exit;
         }

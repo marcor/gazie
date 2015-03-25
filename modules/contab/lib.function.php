@@ -355,4 +355,11 @@ class contabForm extends GAzieForm
         }
     }
 }
+
+function rigmocUpdate($id, $newValue)
+{
+    $columns = array('id_tes','darave','codcon','import');
+    tableUpdate('rigmoc', $columns, $id, $newValue);
+}
+
 ?>
