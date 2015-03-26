@@ -146,12 +146,12 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
                  //creo il castelletto IVA
                  if (!isset($cast_vat[$r['codvat']]['impcast'])) {
                     $cast_vat[$r['codvat']]['impcast']=0;
-                    $cast_vat[$r['codvat']]['ivacast']=round(($importo*$r['pervat'])/ 100,2);;
+                    $cast_vat[$r['codvat']]['ivacast']=0;
                     $cast_vat[$r['codvat']]['periva']=$r['pervat'];
                     $cast_vat[$r['codvat']]['tipiva']=$r['tipiva'];
                  }
                  $cast_vat[$r['codvat']]['impcast']+=$importo;
-                 $cast_vat[$r['codvat']]['ivacast']+=round(($importo*$r['pervat'])/ 100,2);;
+                 $cast_vat[$r['codvat']]['ivacast']+=round(($importo*$r['pervat'])/ 100,2);
                  $totimpdoc += $importo;
                  //creo il castelletto conti
                  if (!isset($cast_acc[$r['codric']]['import'])) {
@@ -161,7 +161,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
                  $rit+=round($importo*$r['ritenuta']/100,2);
                  // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)   
                  if ($r['tipiva']=='T') {
-                    $ivasplitpay += $cast_vat[$r['codvat']]['ivacast'];
+                    $ivasplitpay += round(($importo*$r['pervat'])/ 100,2);
                  }
               } elseif($r['tiprig'] == 3) {
                  $carry += $r['prelis'] ;
