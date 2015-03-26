@@ -336,7 +336,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         if (! empty ($modifi)) {
            echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\" class=\"btn btn-xs ".$classe_btn." btn-edit\" title=\"Modifica ".$tipodoc." \">".$r["protoc"]."&nbsp;".$r["tipdoc"]."&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
         } else {
-           echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs ".$classe_btn." btn-edit disabled\" title=\"Impossibile modificare questa ".$tipodoc.", è stato generato automaticamente!\">".$r["protoc"]."&nbsp;".$r["tipdoc"]." &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
+           echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs ".$classe_btn." btn-edit disabled\" title=\"Per poter modificare questa ".$tipodoc." devi modificare i DdT in essa contenuti!\">".$r["protoc"]."&nbsp;".$r["tipdoc"]." &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
         }
 		// Colonna tipo documento
         //echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
