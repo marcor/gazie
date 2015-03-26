@@ -632,6 +632,7 @@ class selectartico extends SelectBox
         global $gTables,$script_transl,$script_transl;
         $msg = "";
         $tabula = " tabindex=\"4\" ";
+        $opera = "%'";
         if (strlen($cerca) >= 1) {
             if ($field == 'B'){        //ricerca per codice a barre
                 $field_sql = 'barcode';
@@ -639,8 +640,12 @@ class selectartico extends SelectBox
                 $field_sql = 'descri';
             } else {                   //ricerca per codice (default)
                 $field_sql = 'codice';
+                if (substr($cerca, 0,1) == "@") {
+                  $cerca = substr($cerca,1);
+                  $opera = "'";
+                }
             }
-            $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'],$field_sql." LIKE '".addslashes($cerca)."%'","descri DESC");
+            $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'],$field_sql." LIKE '".addslashes($cerca).$opera,"descri DESC");
             $numclfoco = gaz_dbi_num_rows($result);
             if ($numclfoco > 0) {
                 $tabula = "";
