@@ -1,0 +1,12 @@
+Titolo:
+Malus bonum ubi se simulat, tunc est pessimus.
+
+Presentazione:
+Il team del PHP ha reso deprecabile l'uso delle vecchie funzioni "mysql" e quindi imposto l'utilizzo delle più recenti "mysql improved" (mysqli) 
+e mi hanno costretto a riscrivere il nuovo driver, per fortuna il linguaggio ha delle funzioni molto simili ed in versione migliorata, richiamabili in modalità procedurale e che mi hanno facilitato il lavoro, inoltre sembrano essere anche più veloci. 
+Le modifiche di cui sopra saranno "trasparenti" sia agli utilizzatori che agli sviluppatori, mentre potranno essere valutate negli effetti e nella loro efficacia le seguenti altre:
+- Corretto il fatidioso errore relativo alla registrazione automatica del movimento di storno dello split payment , prima riportava un valore raddoppiato.
+- L'eliminazione di una fattura con split payment adesso comporta l'eliminazione contemporanea anche del relativo movimento di storno.
+- Creata la struttura sul database per la gestione/documentazione dei lotti/certificati/qualità.
+   
+Antonio de Vincentiis, Montesilvano, 31 Marzo 2015
