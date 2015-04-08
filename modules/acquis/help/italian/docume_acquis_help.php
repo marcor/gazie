@@ -1,7 +1,7 @@
 <div class="panel panel-default panel-body panel-help">
 <h3>Men&ugrave; Acquisti</h3>
 <p>Qui si raccolgono le funzioni
-relative alla gestine degli acquisti, la quale va a integrarsi con la
+relative alla gestione degli acquisti, la quale va a integrarsi con la
 contabilit&agrave; generale e la contabilità di magazzino, ma con meno
 automatismi rispetto alla gestione delle vendite, perché generalmente
 si tratta di documenti recepiti da fornitori.</p>
@@ -85,7 +85,7 @@ si tratta di documenti recepiti da fornitori.</p>
 
 
     <div id="Fornitori" class="tab-pane fade in">
-		<p class="help-text">Da qui &egrave; possibile accedere all'anagrafica dei fornitori
+		<p class="help-text">Da qui &egrave; possibile accedere alle anagrafiche dei fornitori
 		ed eventualmente controllare i pagamenti loro dovuti. Per inserire
 		un nuovo fornitore si deve scegliere la voce <strong>Nuovo
 		fornitore</strong>, mentre per accedere all'elenco dei fornitori

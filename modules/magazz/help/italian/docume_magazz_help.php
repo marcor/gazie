@@ -1,7 +1,7 @@
 <div class="panel panel-default panel-body panel-help">
 <h3>Men&ugrave; Magazzino</h3>
 <p>Qui si raccolgono le
-funzioni relative alla gestine della contabilit&agrave; di magazzino,
+funzioni relative alla gestione della contabilit&agrave; di magazzino,
 incluse le stampe periodiche.</p>
 
 <p>Per accedere agli elenchi degli articoli, delle categorie

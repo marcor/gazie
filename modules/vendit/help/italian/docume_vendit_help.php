@@ -1,6 +1,6 @@
 <div class="panel panel-default panel-body panel-help">
 	<h3>Men&ugrave; Vendite</h3>
-	<p>Qui si raccolgono le funzioni relative alla gestine delle vendite, la quale va a integrarsi con la contabilit&agrave; generale e la contabilità di magazzino.</p>
+	<p>Qui si raccolgono le funzioni relative alla gestione delle vendite, la quale va a integrarsi con la contabilit&agrave; generale e la contabilità di magazzino.</p>
 	<p>Per accedere agli elenchi dei corrispettivi, delle fatture, dei documenti di trasporto, dei preventivi, degli ordini, degli effetti, dei clienti, dei contratti e degli agenti, basta selezionare la voce principale relativa: <strong>Corrispettivi</strong>, <strong>Fatture</strong>, <strong>D.d.t.</strong>, <strong>Preventivi</strong>, <strong>Ordini</strong>, <strong>Effetti</strong>, <strong>Clienti</strong>, <strong>Contratti</strong>, <strong>Agenti</strong>, tralasciando le voci di men&ugrave; ulteriori che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 </div>
 
@@ -24,11 +24,11 @@
 		documenti di trasporto), si deve scegliere la voce <strong>Emetti
 		fattura</strong>; per  le note di credito o di debito, vanno usate
 		rispettivamente le voci <strong>Emetti nota credito</strong> e
-		<strong>Emetti nota debito</strong>, rispettivamente; per le fatture
+		<strong>Emetti nota debito</strong>; per le fatture
 		differite, va invece scelta la voce <strong>Fatturazione da
 		D.d.t.</strong></p>
 
-		<p class="help-text">Le fatture immediate, normali o accompagnatorie che sia, e le
+		<p class="help-text">Le fatture immediate, normali o accompagnatorie che siano, e le
 		note di credito, in condizioni normali comportano anche
 		l'aggiornamento dei movimenti di magazzino con gli scarichi o i
 		carichi relativi.</p>
@@ -53,7 +53,7 @@
 		<p class="help-text">Da qui &egrave; possibile emettere dei preventivi a clienti,
 		attraverso una maschera di inserimento equivalente a quella di una
 		fattura immediata normale. Il preventivo ha poi un aspetto finale
-		molto simile a quella di una fattura.</p>
+		molto simile a quello di una fattura.</p>
 
 		<p class="help-text">Per inserire un nuovo preventivo si deve scegliere la voce
 		<strong>Preventivo a cliente</strong>, mentre per accedere ai
@@ -84,7 +84,7 @@
 		clienti, emettendo contestualmente delle conferme d'ordine,
 		attraverso una maschera di inserimento equivalente a quella di una
 		fattura immediata accompagnatoria. La conferma d'ordine ha poi un
-		aspetto finale molto simile a quella di una fattura.</p>
+		aspetto finale molto simile a quello di una fattura.</p>
 
 		<p class="help-text">Per inserire una conferma d'ordine si deve scegliere la voce
 		<strong>Ordine da cliente</strong>, mentre per accedere agli
@@ -137,7 +137,7 @@
 	</div>
 	
 	<div id="Clienti" class="tab-pane fade in">
-	    <p>Da qui &egrave; possibile accedere all'anagrafica dei clienti ed
+	    <p>Da qui &egrave; possibile accedere alle anagrafiche dei clienti ed
 		eventualmente gestire delle ricevute di pagamento, quando si
 		riscuotono i crediti. Per inserire un nuovo cliente si deve
 		scegliere la voce <strong>Nuovo cliente</strong>; per conoscere lo

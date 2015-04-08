@@ -1,7 +1,7 @@
 <div class="panel panel-default panel-body panel-help">
 <h3>Men&ugrave; Contabilit&agrave;</h3>
 <p>Qui si raccolgono le
-funzioni relative alla gestine della contabilit&agrave; generale,
+funzioni relative alla gestione della contabilit&agrave; generale,
 incluse le stampe periodiche. Va osservato per&ograve; che i clienti e i
 fornitori sono accessibili da altri men&ugrave;. Inoltre, la stampa dei
 bilanci e le operazioni di chiusura e riapertura dei conti si trovano

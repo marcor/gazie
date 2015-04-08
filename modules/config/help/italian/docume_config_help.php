@@ -1,7 +1,7 @@
 <div class="panel panel-default panel-body panel-help">
 	<h3>Men&ugrave; Archivi di base</h3>
 	<p>Qui si raccolgono le
-	funzioni relative alla gestine delle tabelle che riguardano la procedura
+	funzioni relative alla gestione delle tabelle che riguardano la procedura
 	nel complesso. Tuttavia, non tutte le tabelle di codifica dei dati sono
 	raccolte in questa funzionalit&agrave;; per esempio, il piano dei conti,
 	i clienti e i fornitori, si trovano raccolti in contesti differenti.
@@ -63,9 +63,9 @@
 	    <p class="help-text">I conti correnti bancari a cui si accede attraverso questa voce
 		di men&ugrave; sono quelli intrattenuti dall'azienda gestita con i
 		rispettivi istituti di credito. Le banche presso le quali sono
-		gestiti tali conti correnti, devrebbero essere gi&agrave; elencate
+		gestiti tali conti correnti, dovrebbero essere gi&agrave; elencate
 		tra le banche di appoggio. Selezionando la voce principale del
-		men&ugrave; si ottiene l'elenco dei conti, mentre per inserirne un
+		men&ugrave; si ottiene l'elenco dei conti, mentre per inserire un
 		nuovo rapporto si aggiunge la voce <strong>Nuovo conto corrente
 		bancario</strong>.</p>
 
@@ -109,7 +109,7 @@
 
     <div id="Spedizioni" class="tab-pane fade in">
 		<p class="help-text"><strong>Spedizioni</strong>, <strong>Vettori</strong>, <strong>Imballi</strong>, <strong>Porti</strong> Questi men&ugrave; pemettono di intervenire negli elenchi dei
-		tipi di spezione, dei vettori, dei tipi di imballo e dei tipi di
+		tipi di spedizione, dei vettori, dei tipi di imballo e dei tipi di
 		porto o resa, rispettivamente. Si tratta pertanto di informazioni
 		relative all'accompagnamento delle merci trasportate.</p>
 	</div>

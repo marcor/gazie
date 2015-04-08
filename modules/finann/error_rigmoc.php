@@ -61,7 +61,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 }
 
 if ($message !=  "") {
-   echo "<tr><td class=\"FacetFormHeaderFont\" align=\"center\" colspan=\"5\">Il controllo effettuato non ha evidanziato movimenti con sbilanci DARE/AVERE !</td></tr>\n";
+   echo "<tr><td class=\"FacetFormHeaderFont\" align=\"center\" colspan=\"5\">Il controllo effettuato non ha evidenziato movimenti con sbilanci DARE/AVERE !</td></tr>\n";
 }
 ?>
 </table>
