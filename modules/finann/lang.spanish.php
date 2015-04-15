@@ -134,7 +134,9 @@ $strScript = array ("select_comiva.php" =>
                            "Balance",
                            "Firma",
                            " a presentar : ",
-                           " importe presentado :"
+                           " importe presentado :",
+                           "Clientes/Proveedores",
+                           "cf_value"=>array(1=>"Completi",2=>"Solo totali",3=>"Dettaglio in calce")
                            ),
                     "select_elencf.php" =>
                    array(  "Lista de Clientes y Proveedores",

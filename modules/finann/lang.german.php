@@ -132,7 +132,9 @@ $strScript = array ("select_comiva.php" =>
                            "Balance",
                            "Signature",
                            " to carry forward : ",
-                           " amount brought forward :"
+                           " amount brought forward :",
+                           "Clienti/Fornitori",
+                           "cf_value"=>array(1=>"Completi",2=>"Solo totali",3=>"Dettaglio in calce")
                            ),
                     "select_elencf.php" =>
                    array(  "Elenco clienti e fornitori",

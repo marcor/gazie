@@ -135,7 +135,10 @@ $strScript = array ("select_comiva.php" =>
                            "Saldo",
                            "Firma",
                            " a riporto : ",
-                           " riporto :" ),
+                           " riporto :",
+                           "Clienti/Fornitori",
+                           "cf_value"=>array(1=>"Completi",2=>"Solo totali",3=>"Dettaglio in calce"),
+                           ),
                     "select_elencf.php" =>
                    array(  "Elenco clienti e fornitori",
                            "Soggetti in elenco",

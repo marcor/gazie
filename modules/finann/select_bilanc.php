@@ -29,7 +29,7 @@ $msg = "";
 
 $anno = date("Y");
 
-function ValoriConti($datainizio,$datafine,$datadopo) //funzione per la creazione dell'array dei conti con saldo diverso da 0 e ordinati per tipo e numero di conto
+function ValoriConti($datainizio,$datafine,$datadopo,$mastrocli,$mastrofor,$dettcf) //funzione per la creazione dell'array dei conti con saldo diverso da 0 e ordinati per tipo e numero di conto
 {
     global $gTables;
     $sqlquery = 'SELECT codcon, SUM(import) AS somma, darave '.
@@ -43,12 +43,25 @@ function ValoriConti($datainizio,$datafine,$datadopo) //funzione per la creazion
     $rs_castel = gaz_dbi_query($sqlquery);
     $ctrlcodcon=0;
     $ctrlsaldo=0;
+	$totclienti=0;
+	$totfornitori=0;
     $costi =  array();
     $ricavi =  array();
     $attivo =  array();
     $passivo =  array();
+    $clienti =  array();
+    $fornitori =  array();
     while ($castel = gaz_dbi_fetch_array($rs_castel)) {
-         if ($castel["codcon"] != $ctrlcodcon and $ctrlcodcon != 0 ) {
+         if ($dettcf==2 && substr($castel["codcon"],0,3)==$mastrocli) {
+               $codcon=$mastrocli*1000000;
+		 } elseif ($dettcf==2 && substr($castel["codcon"],0,3)==$mastrofor) {
+               $codcon=$mastrofor*1000000;
+		 } else {
+               $codcon=$castel["codcon"];
+		 }
+
+
+         if ($codcon != $ctrlcodcon and $ctrlcodcon != 0 ) {
             if ($ctrlsaldo != 0) {
                $ctrltipcon = substr($ctrlcodcon,0,1);
                switch  ($ctrltipcon){
@@ -61,11 +74,19 @@ function ValoriConti($datainizio,$datafine,$datadopo) //funzione per la creazion
                        }
                        break;
                        default: //patrimoniali
-                       if  ($ctrlsaldo > 0) {
-                           $attivo[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
-                       } else {
-                           $passivo[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
-                       }
+					   if  ($dettcf==3 && substr($ctrlcodcon,0,3)==$mastrocli) {
+                            $clienti[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
+							$totclienti += $ctrlsaldo;
+					   } elseif ($dettcf==3 && substr($ctrlcodcon,0,3)==$mastrofor) {
+                            $fornitori[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
+							$totfornitori += $ctrlsaldo;
+					   } else {
+                          if  ($ctrlsaldo > 0) {
+                              $attivo[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
+                          } else {
+                              $passivo[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
+                          }
+					   }
                        break;
                 }
             }
@@ -76,7 +97,7 @@ function ValoriConti($datainizio,$datafine,$datadopo) //funzione per la creazion
         } else {
             $ctrlsaldo -= $castel["somma"];
         }
-        $ctrlcodcon=$castel["codcon"];
+        $ctrlcodcon=$codcon;
     }
     if ($ctrlsaldo != 0) {
         $ctrltipcon = substr($ctrlcodcon,0,1);
@@ -90,19 +111,33 @@ function ValoriConti($datainizio,$datafine,$datadopo) //funzione per la creazion
                        }
                 break;
                 default: //patrimoniali
-                if  ($ctrlsaldo > 0) {
-                    $attivo[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
-                } else {
-                    $passivo[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
-                }
-                break;
+					   if  ($dettcf==3 && substr($ctrlcodcon,0,3)==$mastrocli) {
+                            $clienti[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
+							$totclienti += $ctrlsaldo;
+					   } elseif ($dettcf==3 && substr($ctrlcodcon,0,3)==$mastrofor) {
+                            $fornitori[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
+							$totfornitori += $ctrlsaldo;
+					   } else {
+                          if  ($ctrlsaldo > 0) {
+                              $attivo[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
+                          } else {
+                              $passivo[$ctrlcodcon]=number_format($ctrlsaldo,2,'.','');
+                          }
+					   }
+                       break;
         }
+    }
+	if ($dettcf==3) {
+       $attivo[$mastrocli*1000000]=number_format($totclienti,2,'.','');
+       $passivo[$mastrofor*1000000]=number_format($totfornitori,2,'.','');
     }
     ksort($costi);
     ksort($ricavi);
     ksort($attivo);
     ksort($passivo);
-    $conti = array("cos" => $costi,"ric" => $ricavi,"att" => $attivo,"pas" => $passivo);
+    ksort($clienti);
+    ksort($fornitori);
+    $conti = array("cos" => $costi,"ric" => $ricavi,"att" => $attivo,"pas" => $passivo,"cli" => $clienti,"for" => $fornitori);
     return $conti;
 }
 
@@ -121,6 +156,11 @@ if (!isset($_GET['gioini'])) { //al primo accesso allo script
     $_GET['annfin'] = $anno-1;
     $_GET['stadef'] = 0;
     $_GET['pagini'] = $admin_aziend['upginv']+1;
+    $_GET['dettcf'] = 1;
+} else {
+	if (isset($_GET['stadef'])) {
+		$sd="checked=\"checked\"";
+	}
 }
 
 if (!checkdate( $_GET['mesini'], $_GET['gioini'], $_GET['annini'])){
@@ -142,7 +182,7 @@ if ($utsini >= $utsfin)
     $msg .="1-18-2+";
 
 if (isset($_GET['stampa'])) {
-    $locazione = "Location: stampa_bilanc.php?&di=".$datainizio."&df=".$datafine."&pi=".$_GET['pagini']."&sd=".$sd;
+    $locazione = "Location: stampa_bilanc.php?&di=".$datainizio."&df=".$datafine."&pi=".$_GET['pagini']."&sd=".$_GET['stadef']."&cf=".$_GET['dettcf'];
     header($locazione);
     exit;
 }
@@ -173,9 +213,9 @@ if (!empty($msg)) {
 }
 echo "<tr>
      <td class=\"FacetFieldCaptionTD\">".$script_transl[3]."</td>
-     <td class=\"FacetDataTD\"><input title=\"$script_transl[20]\" type=\"checkbox\" name=\"sd\" $sd></td>
+     <td class=\"FacetDataTD\"><input title=\"$script_transl[20]\" type=\"checkbox\" name=\"stadef\" $sd></td>
      <td class=\"FacetFieldCaptionTD\">".$script_transl[4]."</td>
-     <td class=\"FacetDataTD\" colspan=\"2\"><input title=\"$script_transl[21]\" type=\"text\" name=\"pagini\" value=\"".$_GET['pagini']."\" maxlength=\"4\" size=\"4\" class=\"FacetInput\"></td>
+     <td class=\"FacetDataTD\"><input title=\"$script_transl[21]\" type=\"text\" name=\"pagini\" value=\"".$_GET['pagini']."\" maxlength=\"4\" size=\"4\" class=\"FacetInput\"></td>
      </tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[1]."</td><td class=\"FacetDataTD\" colspan=\"3\">";
 echo "\t <select name=\"gioini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -229,13 +269,26 @@ for( $counter =  $anno-10; $counter <=  $anno+10; $counter++ ){
     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 echo "\t </select></td></tr>\n";
+echo "<tr>\n\t<td class=\"FacetFieldCaptionTD\">".$script_transl[28]."</td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"3\"><select name=\"dettcf\" class=\"FacetSelect\">\n";
+for($cf=1;$cf<4;$cf++){
+	echo "\t<option value=\"".$cf."\"";
+	if ($_GET['dettcf']==$cf){
+		echo "selected=\"selected\"";
+	}
+	echo ">".$script_transl['cf_value'][$cf]."</option>\n";
+}
+echo "\t</select>";
+echo "</td>\n</tr>\n";
+
 if ($msg == "") {
-    echo "<tr><td class=\"FacetFieldCaptionTD\"></td><td align=\"right\" colspan=\"4\"  class=\"FacetFooterTD\">
-         <input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">&nbsp;<input type=\"submit\" name=\"anteprima\" value=\"".$script_transl['view']."!\">&nbsp;</td></tr>\n";
+    echo "<tr><td align=\"center\" colspan=\"2\"> <input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\"></td>"
+	    ."<td align=\"center\" colspan=\"2\"><input type=\"submit\" name=\"anteprima\" value=\"".$script_transl['view']."!\">&nbsp;</td></tr>\n";
 }
 echo "</table>\n";
+
 if (isset($_GET['anteprima']) and $msg == "") {
-    $conti = ValoriConti($datainizio,$datafine,$datadopo);
+    $conti = ValoriConti($datainizio,$datafine,$datadopo,$admin_aziend['mascli'],$admin_aziend['masfor'],$_GET['dettcf']);
     if ($conti) {
         $loss = round(array_sum($conti['cos']),2);
         $profit = round(array_sum($conti['ric']),2);
@@ -243,7 +296,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
         $liabilities = round(array_sum($conti['pas']),2);
         $ctrl_bal = round($loss + $profit + $assets + $liabilities,2);
         $income = round($loss + $profit,2);
-        echo "<table class=\"Tlarge\">";
+        echo "<br /><table class=\"Tlarge\">";
         if ($ctrl_bal != 0 ) {
           echo "<tr><td colspan=\"4\" class=\"FacetDataTDred\">".$script_transl['error']."! -> ".$admin_aziend['symbol']." ".$ctrl_bal." ".$strScript['select_chiape.php'][14]." <a href=\"".$strMenu2[0][0]."\">".$strMenu2[0][1]."</a></td></tr>\n";
         }
@@ -361,6 +414,29 @@ if (isset($_GET['anteprima']) and $msg == "") {
             $loss -= $income;
         }
         echo "<tr><td colspan=\"2\"></td><td align=\"right\" class=\"FacetDataTD\">".$script_transl[16].$script_transl[14]."</td><td class=\"FacetDataTDred\" align=\"right\">".gaz_format_number($loss)."</td><tr>";
+        if ($_GET['dettcf']==3) {
+           echo "<tr><td align=\"center\" class=\"FacetDataTDred\">DETTAGLIO CLIENTI E FORNITORI</td><td colspan=\"2\"></td><tr>";
+           $totmas=0;
+           echo "<tr><td class=\"FacetDataTD\">".$admin_aziend['mascli']."</td><td class=\"FacetDataTD\">CLIENTI</td><td colspan=\"2\"></td><tr>";
+           foreach ($conti['cli'] as $key => $value){
+               $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
+               echo "<tr><td>".$key."</td><td>".$descri['descri']."</td><td align=\"right\">".gaz_format_number($value)."</td><td></td><tr>";
+               $totmas += $value;
+           }
+           $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$admin_aziend['mascli']*1000000);
+           echo "<tr><td colspan=\"2\"></td><td colspan=\"2\"><hr></td><tr>";
+           echo "<tr><td colspan=\"3\"></td><td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($totmas)."</td><tr>";
+           $totmas=0;
+           echo "<tr><td class=\"FacetDataTD\">".$admin_aziend['masfor']."</td><td class=\"FacetDataTD\">FORNITORI</td><td colspan=\"2\"></td><tr>";
+           foreach ($conti['for'] as $key => $value){
+               $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
+               echo "<tr><td>".$key."</td><td>".$descri['descri']."</td><td align=\"right\">".gaz_format_number(-$value)."</td><td></td><tr>";
+               $totmas += $value;
+           }
+           $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$admin_aziend['mascli']*1000000);
+           echo "<tr><td colspan=\"2\"></td><td colspan=\"2\"><hr></td><tr>";
+           echo "<tr><td colspan=\"3\"></td><td align=\"right\" class=\"FacetDataTD\">".gaz_format_number(-$totmas)."</td><tr>";
+	    }
         if ($ctrl_bal == 0 ) {
           echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"stampa\" value=\"".strtoupper($script_transl['print'].$script_transl[0])." !\"></TD></TR>";
         }
