@@ -757,9 +757,16 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                 $el1= $domDoc->createElement("Natura", $value['fae_natura']);
                 $el->appendChild($el1);
             }
+			// necessario per l'elemento 2.2.2.7
+			$value['esigibilita']='I'; // I=esigibiltà immediata
+			if ($value['tipiva']== 'T'){ // è un'IVA non esigibile per split payment PA
+				$value['esigibilita']='S'; // S=scissione dei pagamenti
+            }
             $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
 	    $el->appendChild($el1);
             $el1= $domDoc->createElement("Imposta", number_format($value['ivacast'],2,'.',''));
+	    $el->appendChild($el1);
+            $el1= $domDoc->createElement("EsigibilitaIVA", $value['esigibilita']);
 	    $el->appendChild($el1);
             $el1= $domDoc->createElement("RiferimentoNormativo", $value['descriz']);
 	    $el->appendChild($el1);
