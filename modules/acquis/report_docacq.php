@@ -27,24 +27,24 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $message = "";
 if (isset($_GET['auxil'])) {
-   $auxil = $_GET['auxil'];
-   $where = "tipdoc LIKE 'AF_' GROUP BY protoc, datfat";
+   $seziva = $_GET['auxil'];
+   $where = "tipdoc LIKE 'AF_' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
 } else {
-   $auxil = 1;
-   $where = "tipdoc LIKE 'AF_' GROUP BY protoc, datfat";
+   $seziva = 1;
+   $where = "tipdoc LIKE 'AF_' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
 }
 if (isset($_GET['protoc'])) {
    if ($_GET['protoc'] > 0) {
       $protocollo = $_GET['protoc'];
       $auxil = $_GET['auxil']."&protoc=".$protocollo;
-      $where = "tipdoc LIKE 'AF_' AND protoc = $protocollo GROUP BY protoc, datfat";
+      $where = "tipdoc LIKE 'AF_' AND ".$gTables['tesdoc'].".seziva = '$seziva'  AND protoc = $protocollo GROUP BY protoc, datfat";
       $passo = 1;
    }
 }  else {
    $protocollo ='';
 }
 if (isset($_GET['all'])) {
-   $where = "tipdoc LIKE 'AF_' GROUP BY protoc, datfat";
+   $where = "tipdoc LIKE 'AF_' AND ".$gTables['tesdoc'].".seziva = '$seziva'  GROUP BY protoc, datfat";
    $auxil = $_GET['auxil']."&all=yes";
    $passo = 100000;
    $protocollo ='';
@@ -56,6 +56,17 @@ $script_transl=HeadMain();
 ?>
 <form method="GET" >
 <div align="center" class="FacetFormHeaderFont"><?php echo $titolo; ?>
+<select name="auxil" class="FacetSelect" onchange="this.form.submit()">
+<?php
+for ($sez = 1; $sez <= 3; $sez++) {
+    $selected = "";
+    if($seziva == $sez) {
+        $selected = " selected ";
+    }
+    echo "<option value=\"".$sez."\"".$selected.">".$sez."</option>";
+}
+?>
+</select></font>
 </div>
 <?php
 if (!isset($_GET['field']) || ($_GET['field'] == 2) || (empty($_GET['field'])))
@@ -93,7 +104,7 @@ $linkHeaders -> output();
 ?>
 </tr>
 <?php
-$rs_last_doc = gaz_dbi_dyn_query("MAX(protoc) AS maxpro, YEAR(datfat) AS y", $gTables['tesdoc'],"tipdoc LIKE 'AF_' GROUP BY y " ,'protoc DESC');
+$rs_last_doc = gaz_dbi_dyn_query("MAX(protoc) AS maxpro, YEAR(datfat) AS y", $gTables['tesdoc'],"tipdoc LIKE 'AF_' AND seziva = '$seziva' GROUP BY y " ,'protoc DESC');
 while ($last_doc = gaz_dbi_fetch_array($rs_last_doc)){
        $lt_doc[$last_doc['y']]=$last_doc['maxpro'];
 }
