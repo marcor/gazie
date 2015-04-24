@@ -454,7 +454,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
     }
     $ctrl_doc = sprintf('%09d',$r['protoc']).$r['datfat'];
 }
-echo '<tr><td colspan="9" align="right">Querytime: ';
+echo '<tr><td class="FacetFieldCaptionTD" colspan="10" align="right">Querytime: ';
 print_querytime($querytime);
 echo ' sec.</td></tr>';
 ?>
