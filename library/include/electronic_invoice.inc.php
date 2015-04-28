@@ -445,7 +445,11 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
          $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0);		
 		   $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['pariva']));	   
 		   $results->appendChild($attrVal);
-    
+
+         //nodo 1.2.1.2 Codice Fiscale richiesto da alcune amministrazioni come obbligatorio 
+       $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);		
+		   $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['pariva']));	   
+		   $results->appendChild($attrVal);    
     
          $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);		
 		   $attrVal = $domDoc->createTextNode( trim( $XMLvars->client['fe_cod_univoco'] ));	   
