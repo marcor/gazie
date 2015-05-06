@@ -403,8 +403,8 @@ class selectPartner extends SelectBox
     function setWhat($m)
     {
         $this->what="a.id AS id,pariva,codfis,a.citspe AS citta, ragso1 AS ragsoc,
-                     (SELECT ".$this->gTables['clfoco'].".codice FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra AND ".$this->gTables['clfoco'].".codice BETWEEN ".$m."000001 AND ".$m."999999 ) AS codpart ,
-                     (SELECT ".$this->gTables['clfoco'].".codice FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra  LIMIT 1) AS codice,
+                     (SELECT ".$this->gTables['clfoco'].".codice FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra AND ".$this->gTables['clfoco'].".codice BETWEEN ".$m."000001 AND ".$m."999999 LIMIT 1) AS codpart ,
+                     (SELECT ".$this->gTables['clfoco'].".codice FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra LIMIT 1) AS codice,
                      (SELECT ".$this->gTables['clfoco'].".status FROM ".$this->gTables['clfoco']." WHERE a.id=".$this->gTables['clfoco'].".id_anagra LIMIT 1) AS status ";
     }
 
