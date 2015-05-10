@@ -69,9 +69,9 @@ $recordnav->output();
 ?>
 <table class="Tlarge">
 <tr>
-<td colspan="2">
+<td class="FacetFieldCaptionTD" colspan="2">
 </td>
-<td>
+<td class="FacetFieldCaptionTD" colspan="8">
 <input type="submit" class="btn btn-default btn-xs" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>

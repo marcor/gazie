@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $vrag = "";
+
 require("./lang.".$admin_aziend['lang'].".php");
 //$script_transl = $strScript["select_partner_status.php"];
 
@@ -68,7 +69,8 @@ $acc=array();
     $acc[]=$k;
 }*/
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>'RESOCONTO INTERVENTI DI ASSISTENZA TECNICA'
+               'title'=>'RESOCONTO INTERVENTI DI ASSISTENZA TECNICA',
+					'hile' => array()
               );
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
@@ -86,11 +88,21 @@ $result = gaz_dbi_dyn_query($gTables['assist'].".*,
 		" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
 		$where, "clfoco, DATA ASC", $limit, $passo);
 
+$totale_ore = -1;
 while ($row = gaz_dbi_fetch_array($result)) {
-	if ( $row["ragso1"] != $vrag ) {
-      $pdf->SetFont('helvetica','B',10);
-      $pdf->SetFillColor(255,255,255);
-      $pdf->Ln(2);
+	if ( $row["ragso1"] != $vrag ) {	
+		$pdf->SetFont('helvetica','B',10);
+		$pdf->SetFillColor(255,255,255);
+		if ( $totale_ore != -1 ) {	
+			$pdf->Cell(158,5,'Totale Ore :','LTB',0,'R',1,'',1);
+			$pdf->Cell(12,5,gaz_format_number($totale_ore),1,1,'R',1);
+		}
+		$totale_ore ++;
+		
+		//$pdf->SetFont('helvetica','B',10);
+      //$pdf->SetFillColor(255,255,255);
+      $pdf->Ln(2);		
+	
 		if ( $row['fax'] != "" ) $fax = "fax: ".$row['fax'];
 		else $fax = "";
 		if ( $row['cell'] != "" ) $mob = "mob:".$row['cell'];
@@ -101,6 +113,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		else $email = "";
       $pdf->Cell(188,6,$row['ragso1']." ".$row['ragso2']." ".$tel." ".$fax." ".$mob." ".$email,1,1,'',1,'',1);
 		$vrag = $row["ragso1"];
+		$totale_ore = 0;
 	}
    $pdf->SetFont('helvetica','',9);
 
@@ -109,9 +122,17 @@ while ($row = gaz_dbi_fetch_array($result)) {
    $pdf->Cell(62,5,$row['oggetto'],1,0,'L',1);
 
    $pdf->Cell(64,5,substr($row['descrizione'],0,50),1,0,'L',1);
-	$pdf->Cell(12,5,$row['ore'],1,0,'R',1);
+	$pdf->Cell(12,5,gaz_format_number($row['ore']),1,0,'R',1);
+	$totale_ore += $row['ore'];	
    $pdf->Cell(18,5,$row['stato'],1,1,'R',1);
 }
+$pdf->SetFont('helvetica','B',10);
+$pdf->SetFillColor(255,255,255);
+if ( $totale_ore != -1 ) {	
+	$pdf->Cell(158,5,'Totale Ore :','LTB',0,'R',1,'',1);
+	$pdf->Cell(12,5,gaz_format_number($totale_ore),1,1,'R',1);
+}
+		
 $pdf->setRiporti('');
 $pdf->Output();
 ?>

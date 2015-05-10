@@ -22,6 +22,13 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
+?>
+<script type="text/javascript">
+function updateInput(ish){
+    document.getElementById("stato").value = ish;
+}
+</script>
+<?php
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = '';
@@ -36,7 +43,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form=gaz_dbi_parse_post('assist');
 	$anagrafica = new Anagrafica();
    $cliente = $anagrafica->getPartner($_POST['clfoco']);
-   $form['hidden_req'] = $_POST['hidden_req'];
+	if ( isset($_POST['hidden_req']) ) $form['hidden_req'] = $_POST['hidden_req'];
    // ...e della testata
    foreach($_POST['search'] as $k=>$v){
       $form['search'][$k]=$v;
@@ -95,8 +102,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	//se e' il primo accesso per UPDATE    
 	$anagrafica = new Anagrafica();
    $cliente = $anagrafica->getPartner($assist['clfoco']);
-	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
 	$form = gaz_dbi_get_row($gTables['assist'], 'codice', $_GET['codice']);
+	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
    $form['ritorno']=$_SERVER['HTTP_REFERER'];
    $form['ref_code']=$form['codice'];
 } else { 
@@ -133,7 +140,6 @@ $select_cliente = new selectPartner('clfoco');
 <input type="hidden" name="ref_code" value="<?php echo $form['ref_code']; ?>">
 <input type="hidden" name="codice" value="<?php echo $form['codice']; ?>">
 <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
-
 <table class="Tmiddle">
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['codice']; ?> </td>
@@ -176,7 +182,17 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['stato']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input tabindex=5 type="text" name="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="70"/>
+		<select name="cstato" tabindex="5" onchange="updateInput(this.value)">
+			<?php
+			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist'],"", "stato", "0", "9999");
+			while ($stati = gaz_dbi_fetch_array($result)) {				
+					if ( $form['stato'] == $stati["stato"] ) $selected = "selected"; 
+					else $selected = "";
+					echo "<option value=\"".$stati["stato"]."\" ".$selected.">".$stati["stato"]."</option>";
+			}
+			?>
+		</select> 
+		<input tabindex=6 type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="70"/>
 	</td>
 </tr>
 <tr>

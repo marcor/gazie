@@ -1279,15 +1279,15 @@ if (!empty($msg)) {
     }
     echo '<td colspan="4" class="FacetDataTDred">'.$message."</td>\n";
 } else {
-    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td colspan=\"1\">".$cliente['indspe']."<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\" colspan=\"1\">".$cliente['indspe']."<br />";
     echo "</td>\n";
     
     if ($cliente['pariva'] > 0) {
-    echo "<td class=\"FacetFieldCaptionTD\">P.IVA</td><td colspan=\"1\">".$cliente['pariva']."<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">P.IVA</td><td class=\"FacetDataTD\" colspan=\"1\">".$cliente['pariva']."<br />";
     echo "</td>\n";
     } else
     {
-    echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td colspan=\"1\">".$cliente['codfis']."<br />";
+    echo "<td class=\"FacetFieldCaptionTD\">C.F.</td><td class=\"FacetDataTD\" colspan=\"1\">".$cliente['codfis']."<br />";
     echo "</td>\n";
     }    
 }
@@ -1339,7 +1339,7 @@ $select_pagame -> addSelected($form["pagame"]);
 $select_pagame -> output();
 echo "</td>";
 
-echo "<td class=\"FacetFieldCaptionTD\">Cod.Univoco</td><td colspan=\"1\">".$cliente['fe_cod_univoco']."<br />";
+echo "<td class=\"FacetFieldCaptionTD\">Cod.Univoco</td><td class=\"FacetDataTD\" colspan=\"1\">".$cliente['fe_cod_univoco']."<br />";
 echo "</td>\n";
 
 echo "<td class=\"FacetFieldCaptionTD\">$script_transl[9]</td><td  class=\"FacetDataTD\">\n";
@@ -1348,10 +1348,10 @@ $select_banapp -> addSelected($form["banapp"]);
 $select_banapp -> output();
 echo "</td></tr>\n";
 echo "<tr>\n";
-echo "<td align=\"right\" class=\"FacetFieldCaptionTD\" title=\"".$script_transl['traspo_title']."\">$script_transl[28]".$admin_aziend['symbol']."</td>\n";
+echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"".$script_transl['traspo_title']."\">$script_transl[28]".$admin_aziend['symbol']."</td>\n";
 echo "<td class=\"FacetDataTD\" title=\"".$script_transl['traspo_title']."\"><input type=\"text\" value=\"".$form['traspo']."\" name=\"traspo\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
-echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl[51]."</td><td class=\"FacetDataTD\">\n";
-echo "<select name=\"caumag\" class=\"FacetSelect\">\n";
+echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">".$script_transl[51]."</td><td class=\"FacetDataTD\">\n";
+echo "<select name=\"caumag\" class=\"FacetSelect\" width=\"20\">\n";
 $result = gaz_dbi_dyn_query("*", $gTables['caumag']," clifor = -1 AND operat = ".$docOperat[$form['tipdoc']],"codice asc, descri asc");
 while ($row = gaz_dbi_fetch_array($result)) {
     $selected="";
@@ -1575,6 +1575,11 @@ foreach ($form['rows'] as $k => $v) {
         }
         echo "<TD align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
     }
+	if ( count($form['rows'] ) == 0 ) {
+		echo "<tr>";
+		echo "<td colspan=\"12\" class=\"FacetDataTD\">Il documento non contiene articoli, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale</td>";
+		echo "</tr>";
+	}
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
 echo "<table class=\"Tlarge\">\n";
@@ -1689,7 +1694,7 @@ if ($form['tipdoc']=='DDT' || $form['template']=='FatturaImmediata' || $form['ti
     $gForm->variousSelect('virtual_taxstamp',$script_transl['virtual_taxstamp_value'],$form['virtual_taxstamp']);
     echo "</td>";
     echo "</tr>";
-    echo "<tr>\n";
+    //echo "<tr>\n";
 }
 
 echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
@@ -1701,7 +1706,8 @@ echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</
           <td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['stamp']."</td>
           <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] ".$admin_aziend['symbol']."</td>\n";
 foreach ($calc->castle as $k=> $v) {
-        echo "<tr><td align=\"right\">".gaz_format_number($v['impcast'])."</td><td align=\"right\">".$v['descriz']." ".gaz_format_number($v['ivacast'])."</td>\n";
+        echo "<tr><td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($v['impcast'])."</td>";
+		  echo "<td class=\"FacetDataTD\" align=\"right\">".$v['descriz']." ".gaz_format_number($v['ivacast'])."</td>\n";
 }
 
 if ($next_row > 0) {
@@ -1711,12 +1717,12 @@ if ($next_row > 0) {
         } else {
           $stamp = 0;
         }
-        echo "<td align=\"right\">".gaz_format_number($totimp_body)."</td>
-              <td align=\"right\">".gaz_format_number(($totimp_body-$calc->total_imp+$somma_spese),2, '.', '')."</td>
-              <td align=\"right\">".gaz_format_number($calc->total_imp)."</td>
-              <td align=\"right\">".gaz_format_number($calc->total_vat)."</td>
-              <td align=\"right\">".gaz_format_number($stamp)."</td>
-              <td align=\"right\" style=\"font-weight:bold;\">".gaz_format_number($calc->total_imp+$calc->total_vat+$stamp+$form['taxstamp'])."</td>\n";
+        echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($totimp_body)."</td>
+              <td align=\"right\" class=\"FacetDataTD\">".gaz_format_number(($totimp_body-$calc->total_imp+$somma_spese),2, '.', '')."</td>
+              <td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($calc->total_imp)."</td>
+              <td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($calc->total_vat)."</td>
+              <td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($stamp)."</td>
+              <td align=\"right\" class=\"FacetDataTD\" style=\"font-weight:bold;\">".gaz_format_number($calc->total_imp+$calc->total_vat+$stamp+$form['taxstamp'])."</td>\n";
         echo '<td colspan ="2" class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!"></td></tr>';
         if ($rit > 0) {
             echo "<tr>";

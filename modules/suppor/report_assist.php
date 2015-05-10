@@ -52,7 +52,7 @@ if ( isset($_GET['flt_stato']) ) {
 		}
 	}
 } else {
-	$flt_stato = "";
+	$flt_stato = "nochiusi";
 }
 
 if ( isset($_GET['flt_cliente']) ) {

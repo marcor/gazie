@@ -253,19 +253,14 @@ $recordnav -> output();
    <td class="FacetFieldCaptionTD">
 		<input type="text" placeholder="Cerca Num." class="input-xs form-control" name="numerof" value="<?php if (isset($numerof)) { print $numerof;} ?>" maxlength="6" size="3" tabindex="2" class="FacetInput">
    </td>
-   <td></td>
+   <td class="FacetFieldCaptionTD"></td>
    <td colspan="1" class="FacetFieldCaptionTD">
 		<input type="text" placeholder="Cerca Cliente" class="input-xs form-control" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="3" class="FacetInput">
    </td>
-   <td>
+   <td class="FacetFieldCaptionTD" colspan="6">
      <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
-   </td>
-   <td colspan="2">
      <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
    </td>
-   <td colspan="2">
-   
-     </td>
  </tr>
 <tr>
 <?php
