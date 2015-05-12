@@ -53,6 +53,7 @@ if ( isset($_GET['flt_stato']) ) {
 	}
 } else {
 	$flt_stato = "nochiusi";
+	$where .= " and stato != 'chiuso'";
 }
 
 if ( isset($_GET['flt_cliente']) ) {

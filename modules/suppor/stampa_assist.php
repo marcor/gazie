@@ -32,31 +32,48 @@ if ( !isset($_GET['id'])) {
 }
 require("../../config/templates/report_template.php");
 
-if ($_GET['id'] > 0){
+if ( isset($_GET['id']) ){
    $sql = $gTables['assist'].'.id = '.intval($_GET['id']).' ';
 } else {
    $sql = $gTables['assist'].'.id > 0 ';
 }
-
 $where = $sql;
 
-$what = $gTables['assist'].".* ";
-$table = $gTables['assist']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice
-                              LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra ";
-$result = gaz_dbi_dyn_query ($what, $table,$where,"id,clfoco");
+//$what = $gTables['assist'].".* ";
+/*$table = $gTables['assist']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice
+                              LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra ";*/
+
+$result = gaz_dbi_dyn_query($gTables['assist'].".*,
+		".$gTables['anagra'].".ragso1, ".$gTables['anagra'].".telefo, ".$gTables['anagra'].".cell, ".$gTables['anagra'].".fax, ".$gTables['clfoco'].".codice ",  $gTables['assist'].
+		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice". 
+		" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
+		$where, "id", $limit, $passo);
+		
+//$result = gaz_dbi_dyn_query ($what, $table,$where,"clfoco");
+//echo " what: ".$what. " table: ".$table. " where: ".$where." <br>";
+
+/*while ($a_row = gaz_dbi_fetch_array($result)) {
+	echo $a_row["descri"]."<br>";
+}*/
 
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
-$pdf->SetTopMargin(39);
+$pdf->SetTopMargin(32);
 $pdf->SetFooterMargin(20);
 $config = new Config;
 $pdf->AddPage('P',$config->getValue('page_format'));
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 
-    $result=gaz_dbi_dyn_query($what,$table);
-    $row = gaz_dbi_fetch_array($result);
+$row = gaz_dbi_fetch_array($result);
 
-$html = "
+$html = "<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">";
+$html .= "Cliente : <b>". $row["codice"] ." - ". $row["ragso1"]."</b><br>";
+if ( $row["telefo"] ) $html .= "Telefono : <b>".$row["telefo"]."</b><br>";
+if ( $row["telefo"] ) $html .= "Cellulare : <b>".$row["cell"]."</b><br>";
+if ( $row["telefo"] ) $html .= "Fax : <b>".$row["fax"]."</b><br>";
+$html .= "</span>";
+
+$html .= "
 	<p>
 					<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">Il cliente consegna al centro assistenza il seguente materiale :<br />
 					<strong>".$row["oggetto"]."</strong><br />
@@ -64,8 +81,6 @@ $html = "
 					<br />
 					dichiarando i seguenti difetti, malfunzionamento o lavori da effettuare :<br />
 					<strong>".$row["descrizione"]."</strong></span><br />
-					<br />
-					<br />
 					<br />
 					&nbsp;</p>
 				<p style=\"text-align: justify;\">
@@ -80,23 +95,8 @@ $html = "
 						&nbsp;</li>
 					<li style=\"text-align: justify;\">
 						<span style=\"font-size:28px;\"><span style=\"font-family: arial,helvetica,sans-serif;\">Salvo diversi accordi scritti, il cliente &egrave; tenuto a ritirare il prodotto recandosi presso il punto vendita secondo ti tempi indicati dal laboratorio medesimo. Nel caso in cui il cliente non ritiri il prodotto nel termine di 30gg. dalla data di riparazione, il cliente si impegna sin d&#39;ora a corrispondere al laboratorio una somma pari a 5,00 &euro; a titolo di deposito per ogni giorno di permanenza del prodotto presso il laboratorio.</span></span><br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						<br />
-						&nbsp;</li>
-				</ol>
+					</li>
+				</ol><table><tr><td align=\"center\">Firma cliente</td><td align=\"center\">Firma ABC Service</td></tr></table>
 			";
 
 /*<<<EOD
