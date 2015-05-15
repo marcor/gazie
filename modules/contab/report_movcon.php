@@ -89,12 +89,25 @@ if (isset($_GET['all'])) {
    $auxil = "&all=yes";
    $where = "caucon like '%'";
    $passo = 100000;
-} else {
+} else
+
+{
    if (isset($_GET['auxil'])) {
       $where = "caucon like '".addslashes($_GET['auxil'])."%'";
    }
 }
-
+ if (isset($_GET['mov']))
+{
+  if($_GET['mov']>0) {
+  $numero=$_GET['mov'];
+  $where = $gTables['tesmov'].".id_tes =".$numero;
+  $passo=1;
+  }
+  else
+  {
+  $numero='';
+  }
+ }
 if (!isset($_GET['flag_order'])) {
    $orderby = " id_tes desc";
 }
@@ -109,7 +122,10 @@ $script_transl=HeadMain('','','admin_movcon');
 <form method="GET">
 <table class="Tlarge">
 <tr>
-<td></td>
+<td class="FacetFieldCaptionTD">
+	  <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"
+	  value="<?php if (isset($numero)) print $numero; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
+</td>
 <td colspan="2" align="right" class="FacetFieldCaptionTD"><?php echo $script_transl['caucon']; ?>:
 <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") print $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 </td>
