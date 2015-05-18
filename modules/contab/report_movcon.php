@@ -126,14 +126,15 @@ $script_transl=HeadMain('','','admin_movcon');
 	  <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"
 	  value="<?php if (isset($numero)) print $numero; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
 </td>
-<td colspan="2" align="right" class="FacetFieldCaptionTD"><?php echo $script_transl['caucon']; ?>:
-<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") print $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+<td></td>
+<td align="right" class="FacetFieldCaptionTD">
+<input type="text" placeholder="<?php echo $script_transl['caucon']; ?>" class="input-xs form-control" name="auxil" value="<?php if ($auxil != "&all=yes") print $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 </td>
 <td>
-<input type="submit" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
+<input type="submit" name="search" class="btn btn-xs btn-default" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
 <td>
-<input type="submit" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
+<input type="submit" name="all" class="btn btn-xs btn-default" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <?php

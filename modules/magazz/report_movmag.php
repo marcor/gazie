@@ -41,7 +41,18 @@ if (isset($_GET['all'])) {
       $where = "caumag LIKE '".$_GET['auxil']."%'";
    }
 }
-
+ if (isset($_GET['mov']))
+{
+  if($_GET['mov']>0) {
+  $numero=$_GET['mov'];
+  $where = $gTables['movmag'].".id_mov =".$numero;
+  $passo=1;
+  }
+  else
+  {
+  $numero='';
+  }
+ }
 if (!isset($_GET['flag_order'])) {
    $orderby = " id_mov desc";
 }
@@ -50,17 +61,22 @@ if (!isset($_GET['auxil'])) {
    $auxil = "";
    $where = "caumag LIKE '$auxil%'";
 }
-echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$script_transl[3]$script_transl[0]</div>\n";
-echo "<form method=\"GET\">";
-echo "<table class=\"Tlarge\">\n";
-echo "<tr><td></td><td></td><td class=\"FacetFieldCaptionTD\">".$strScript["admin_movmag.php"][2].":\n";
-echo "<input type=\"text\" name=\"auxil\" value=\"";
-if ($auxil != "&all=yes"){
-    echo $auxil;
-}
-echo "\" maxlength=\"6\" size=\"3\" tabindex=\"1\" class=\"FacetInput\"></td>\n";
-echo "<td><input type=\"submit\" name=\"search\" value=\"".$script_transl['search']."\" tabindex=\"1\" onClick=\"javascript:document.report.all.value=1;\"></td>\n";
-echo "<td><input type=\"submit\" name=\"all\" value=\"".$script_transl['vall']."\" onClick=\"javascript:document.report.all.value=1;\"></td></tr>\n";
+?>
+<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl[3].$script_transl[0]; ?></div>
+<form method="GET">
+<table class="Tlarge">
+<tr>
+<td class="FacetFieldCaptionTD">
+	  <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"
+	  value="<?php if (isset($numero)) print $numero; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
+</td>
+<td></td><td class="FacetFieldCaptionTD">
+<input type="text" name="auxil" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-xs form-control"
+value="<?php if ($auxil != "&all=yes"){echo $auxil;}?>" maxlength="6" size="3" tabindex="1" class="FacetInput"></td>
+<td><input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;"></td>
+<td><input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;"></td></tr>
+
+<?php
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
          LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";

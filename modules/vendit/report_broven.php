@@ -56,6 +56,15 @@ if (isset($_GET['numdoc'])) {
    $numero ='';
 }
 
+if (isset($_GET['cliente'])){
+  if ($_GET['cliente']<>''){
+  $cliente=$_GET['cliente'];
+  $where = "tipdoc like '$auxil' and ".$gTables['anagra'].".ragso1 like '%".addslashes($cliente)."%'";
+  $passo=50;
+    }
+ }
+  
+
 if (isset($_GET['all'])) {
    $auxil = $_GET['auxil']."&all=yes";
    if ($_GET['auxil']=='VPR'){
@@ -133,6 +142,11 @@ $recordnav -> output();
 <input type="text" placeholder="<?php echo $script_transl['number'];?>" class="input-xs form-control" name="numdoc" value="<?php if (isset($numero)) echo $numero; ?>" maxlength="14" size="14" tabindex="1" class="FacetInput">
 </td>
 <td>
+</td>
+<td class=FacetFieldCaptionTD>
+<input type="text" placeholder="Cliente" class="input-xs form-control" name="cliente" value="<?php if (isset($cliente)) {print $cliente;} ?>" maxlength="40" size="30" tabindex=2 class=FacetInput>
+</td>
+<td>
 <input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
 <td>
@@ -163,6 +177,9 @@ if (!isset($_GET['flag_order']))
        $orderby = "datemi DESC, numdoc DESC";
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesbro'].".*,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail,".$gTables["clfoco"].".codice", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice  LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby,$limit, $passo);
+if ($result==false) {
+die(mysql_error());
+}
 $ctrlprotoc = "";
 while ($r = gaz_dbi_fetch_array($result)) {
     if ($r["tipdoc"] == 'VPR') {
