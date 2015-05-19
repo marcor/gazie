@@ -569,6 +569,10 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $id_des = $anagrafica->getPartner($form['id_des']);
     $form['search']['id_des']=substr($id_des['ragso1'],0,10);
     $form['in_codvat']=$cliente['aliiva'];
+	$form['expense_vat']=$admin_aziend['preeminent_vat'];
+	if ($cliente['aliiva']>0){
+		$form['expense_vat']=$cliente['aliiva'];
+	}
     if ($cliente['ritenuta']>0 && $admin_aziend['ritenuta']==0) { // carico la ritenuta se previsto
        $form['in_ritenuta']=$cliente['ritenuta'];
     }
@@ -1350,6 +1354,12 @@ echo "</td></tr>\n";
 echo "<tr>\n";
 echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"".$script_transl['traspo_title']."\">$script_transl[28]".$admin_aziend['symbol']."</td>\n";
 echo "<td class=\"FacetDataTD\" title=\"".$script_transl['traspo_title']."\"><input type=\"text\" value=\"".$form['traspo']."\" name=\"traspo\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
+echo "<td class=\"FacetFieldCaptionTD\" title=\"".$script_transl['speban_title']."\">".$script_transl['speban']."</td>
+      <td class=\"FacetDataTD\" title=\"".$script_transl['speban_title']."\"><input type=\"text\" value=\"".$form['speban']."\" name=\"speban\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /> x ".$form['numrat']." ";
+$sel_expensevat = new selectaliiva("expense_vat");
+$sel_expensevat -> addSelected($form["expense_vat"]);
+$sel_expensevat -> output();
+echo "</td>\n";
 echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">".$script_transl[51]."</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"caumag\" class=\"FacetSelect\" width=\"20\">\n";
 $result = gaz_dbi_dyn_query("*", $gTables['caumag']," clifor = -1 AND operat = ".$docOperat[$form['tipdoc']],"codice asc, descri asc");
@@ -1361,8 +1371,6 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<option value=\"".$row['codice']."\"".$selected.">".$row['codice']."-".substr($row['descri'],0,20)."</option>\n";
 }
 echo "</select></td>\n";
-echo "<td class=\"FacetFieldCaptionTD\" title=\"".$script_transl['speban_title']."\">".$script_transl['speban']."</td>
-      <td class=\"FacetDataTD\" title=\"".$script_transl['speban_title']."\"><input type=\"text\" value=\"".$form['speban']."\" name=\"speban\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /> x ".$form['numrat']."</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['id_agente']."</td>";
 echo "<td class=\"FacetDataTD\">\n";
      $select_agente = new selectAgente("id_agente");
@@ -1584,7 +1592,6 @@ echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<input type=\"hidden\" value=\"".$form['numrat']."\" name=\"numrat\">\n";
-echo "<input type=\"hidden\" value=\"".$form['expense_vat']."\" name=\"expense_vat\">\n";
 echo "<input type=\"hidden\" value=\"".$form['stamp']."\" name=\"stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['round_stamp']."\" name=\"round_stamp\">\n";
 echo "<input type=\"hidden\" value=\"".$form['spevar']."\" name=\"spevar\">\n";
