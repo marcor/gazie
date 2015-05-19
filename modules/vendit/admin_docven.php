@@ -565,6 +565,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
               }
            }
     }
+
     $form['id_des']=$cliente['id_des'];
     $id_des = $anagrafica->getPartner($form['id_des']);
     $form['search']['id_des']=substr($id_des['ragso1'],0,10);
@@ -576,6 +577,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     if ($cliente['ritenuta']>0 && $admin_aziend['ritenuta']==0) { // carico la ritenuta se previsto
        $form['in_ritenuta']=$cliente['ritenuta'];
     }
+	if ( $cliente['addbol']!='S' && $form['virtual_taxstamp'] > 1 ) { // in caso di cliente senza addebito di bollo virtuale 
+	    $form['virtual_taxstamp'] = 3;  // forzo al nuovo modo 3 (bollo a carico dell'emittente)
+	}
     $form['sconto']=$cliente['sconto'];
     $form['pagame']=$cliente['codpag'];
     $form['change_pag']=$cliente['codpag'];
@@ -1724,6 +1728,9 @@ if ($next_row > 0) {
         } else {
           $stamp = 0;
         }
+		if ( $form['virtual_taxstamp'] == 3 ) { // se senza addebito di bollo virtuale azzero il valore taxstamp
+			$form['taxstamp']=0;  // forzo al nuovo modo 3 (bollo a carico dell'emittente)
+		}
         echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($totimp_body)."</td>
               <td align=\"right\" class=\"FacetDataTD\">".gaz_format_number(($totimp_body-$calc->total_imp+$somma_spese),2, '.', '')."</td>
               <td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($calc->total_imp)."</td>
