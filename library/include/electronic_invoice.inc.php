@@ -808,7 +808,12 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
     }
 
 // ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
-    $totpag = $XMLvars->totimpfat+$XMLvars->impbol+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->tot_ritenute-$XMLvars->ivasplitpay;
+    $totpag = $XMLvars->totimpfat+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->tot_ritenute-$XMLvars->ivasplitpay;
+	
+	if ($XMLvars->virtual_taxstamp != 3) {
+	   $totpag = $totpag + $XMLvars->impbol;
+	}
+	
     $ex= new Expiry;
     $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'],$XMLvars->pagame['giodec'],$XMLvars->pagame['numrat'],$XMLvars->pagame['tiprat'],$XMLvars->pagame['mesesc'],$XMLvars->pagame['giosuc']);
     if ($XMLvars->pagame['numrat']>1){
