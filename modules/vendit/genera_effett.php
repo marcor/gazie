@@ -78,6 +78,9 @@ function getDocumentsBill($upd=false)
            if ($tes['taxstamp']>=0.01 && $taxstamp<0.01) {
                 $taxstamp=$tes['taxstamp'];
            }           
+	   if ($tes['virtual_taxstamp'] == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
+		$taxstamp = 0.00;
+	   }
            //recupero i dati righi per creare il castelletto
            $from =  $gTables['rigdoc'].' AS rows
                     LEFT JOIN '.$gTables['aliiva'].' AS vat
