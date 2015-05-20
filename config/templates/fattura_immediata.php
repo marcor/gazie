@@ -136,7 +136,7 @@ class FatturaImmediata extends Template_con_scheda
                 }
         }
         if ($this->taxstamp >= 0.01 ) {
-            if ($this->virtual_taxstamp == 2 ) {
+            if ($this->virtual_taxstamp == 2 || $this->virtual_taxstamp == 3) {
                 $this->Cell(186,5,'','LR',1);
                 $this->Cell(130,8,'','L',0,0);
                 $this->Cell(56,8,"Bollo assolto ai sensi del","TLR",1,"C");
