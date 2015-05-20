@@ -107,12 +107,12 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
                 $spese_incasso=0;
            }
            // aggiungo il bollo sugli esenti/esclusi se nel DdT c'è ma non è ancora stato mai aggiunto
-	   if ($tes['virtual_taxstamp'] == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
-		$taxstamp = 0.00;
-	   }
            if ($tes['taxstamp']>=0.01 && $taxstamp<0.01) {
                 $taxstamp=$tes['taxstamp'];
            }           
+	   if ($tes['virtual_taxstamp'] == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
+		$taxstamp = 0.00;
+	   }
            if ($tes['traspo']>=0.01) {
                    if (!isset($cast_acc[$admin_aziend['imptra']]['import'])) {
                       $cast_acc[$admin_aziend['imptra']]['import'] = $tes['traspo'];
