@@ -266,7 +266,8 @@ class DocContabVars
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
         $this->tot_ritenute = $this->ritenuta;
-        $this->impbol = 0.00;
+	$this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
+	$this->impbol = 0.00;
         $this->totriport = $this->riporto;
         $this->speseincasso = $this->tesdoc['speban'] * $this->pagame['numrat'];
         $this->cast = array();
@@ -288,7 +289,10 @@ class DocContabVars
         $this->totivafat=$calc->total_vat;
         $this->totivasplitpay=$calc->total_isp;
         // aggiungo gli eventuali bolli al castelletto
-        if ($this->impbol > 0 || $this->taxstamp > 0) {
+        if ($this->impbol >= 0.01 || $this->taxstamp >= 0.01) {
+            if ( $this->virtual_taxstamp == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
+		$this->taxstamp=0.00;
+	    }
             $calc->add_value_to_VAT_castle($calc->castle,$this->taxstamp+$this->impbol,$this->azienda['taxstamp_vat']);
         }
         $this->cast=$calc->castle;
