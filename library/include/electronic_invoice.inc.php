@@ -343,11 +343,14 @@ class invoiceXMLvars
         $this->totimpfat=$calc->total_imp;
         $this->totivafat=$calc->total_vat;
         // aggiungo gli eventuali bolli al castelletto
-        if ($this->impbol >= 0.01 || $this->taxstamp >= 0.01) {
-		    if ( $this->virtual_taxstamp == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
-		         $this->taxstamp=0.00;
-	        }
-            $this->impbol += $this->taxstamp;  
+	$chk_taxstamp=true;
+        if ( $this->virtual_taxstamp == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
+	    $chk_taxstamp=false;
+	}
+        if ($this->impbol >= 0.01 || $this->taxstamp >= 0.01)) {
+	    if ($chk_taxstamp){
+                $this->impbol += $this->taxstamp;  
+	    }
             $calc->add_value_to_VAT_castle($calc->castle,$this->impbol,$this->azienda['taxstamp_vat']);
         }
         $this->cast=$calc->castle;
@@ -746,7 +749,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		    $results->appendChild($el);
     }
 
-    if ($XMLvars->impbol>0 || $XMLvars->virtual_taxstamp == 3){     
+    if ($XMLvars->impbol >= 0.01) {     
        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);		
                $el = $domDoc->createElement("DatiBollo","");
 			$el1= $domDoc->createElement("BolloVirtuale", $XMLvars->BolloVirtuale);
