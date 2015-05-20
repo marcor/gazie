@@ -726,11 +726,17 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
             $el_datiOrdineAcquisto->appendChild($el1);
     }
     //occorre testare qui se presente il ddt altrimeni occorrera' fare l'insertbefore
-    if ($id_documento !="") {
-          $results->appendChild($el_datiOrdineAcquisto);
-    }        
-    
-    //iva
+    if ($id_documento !="") {        
+          $results1 = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiDDT")->item(0);
+          if (is_null($results1)) {
+              $results->appendChild($el_datiOrdineAcquisto);
+		  } else
+		   {
+		      $results->insertBefore($el_datiOrdineAcquisto, $results1);
+		   }
+	}        
+  
+
     
     
     //Attenzione qui 
