@@ -313,9 +313,10 @@ class invoiceXMLvars
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
         $this->tot_ritenute = $this->ritenuta;
+		$this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->impbol = 0.00;
         $this->BolloVirtuale = ''; // ovviamente il bollo potrà essere solo virtuale ma comunque lo setto per evidenziare l'errore
-        if ( $this->tesdoc['virtual_taxstamp'] == 2 ) { // bollo virtualmente assolto
+        if ( $this->tesdoc['virtual_taxstamp'] == 2 || $this->tesdoc['virtual_taxstamp'] == 3 ) { // bollo virtualmente assolto
            $this->BolloVirtuale='SI'; 
         }
         $this->totriport = $this->riporto;
@@ -342,7 +343,10 @@ class invoiceXMLvars
         $this->totimpfat=$calc->total_imp;
         $this->totivafat=$calc->total_vat;
         // aggiungo gli eventuali bolli al castelletto
-        if ($this->impbol > 0 || $this->taxstamp > 0) {
+        if ($this->impbol >= 0.01 || $this->taxstamp >= 0.01) {
+		    if ( $this->virtual_taxstamp == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
+		         $this->taxstamp=0.00;
+	        }
             $this->impbol += $this->taxstamp;  
             $calc->add_value_to_VAT_castle($calc->castle,$this->impbol,$this->azienda['taxstamp_vat']);
         }
@@ -742,7 +746,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		    $results->appendChild($el);
     }
 
-    if ($XMLvars->impbol>0){     
+    if ($XMLvars->impbol>0 || $XMLvars->virtual_taxstamp == 3){     
        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento")->item(0);		
                $el = $domDoc->createElement("DatiBollo","");
 			$el1= $domDoc->createElement("BolloVirtuale", $XMLvars->BolloVirtuale);
