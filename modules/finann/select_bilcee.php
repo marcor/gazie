@@ -1530,7 +1530,7 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<td align=\"center\">=</td>";
         echo "<td align=\"right\">".$bil["Aci/Ti"]."</td>\n";
         //
-        $bil["Aci/Im"] = ($bil["Im"] == 0 ? 0 : $bil["Aco"]/$bil["Im"]);
+        $bil["Aci/Im"] = ($bil["Im"] == 0 ? 0 : $bil["Aci"]/$bil["Im"]);
         $bil["Aci/Im"] = round ($bil["Aci/Im"], 4);
         echo "<tr><td align=\"center\">indice di elasticità</td>";
         echo "<td align=\"center\">=</td>";

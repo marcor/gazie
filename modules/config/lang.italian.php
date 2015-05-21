@@ -119,7 +119,7 @@
                            'sezione'=>'Sez. IVA ',
                            'acciva'=>'Percentuale d\'acconto I.V.A. (%)',
                            'taxstamp_limit'=>'Limite esenzione imposta di bollo',
-                           'taxstamp'=>'Importo bollo su ricevute',
+                           'taxstamp'=>'Importo bollo operazioni senza IVA',
                            'taxstamp_vat'=>'Aliquota IVA dei bolli',
                            'perbol'=>'Aliquota imposta di bollo su tratte (%)',
                            'round_bol'=>'Arrotondamento bolli',

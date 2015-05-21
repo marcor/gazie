@@ -168,7 +168,7 @@ foreach ($attivo as $keylet => $vallet) {
            $pdf->SetFont('helvetica','',8);
         foreach ($vallet as $keyrom => $valrom) {
                 $pdf->Cell(15,4,'','LR');
-                $pdf->Cell(50,4,$nromani[intval($keyrom)].$attdesc[$keylet][intval($keyrom)],'R',0,'R');
+                $pdf->Cell(50,4,$nromani[intval($keyrom)].@$attdesc[$keylet][intval($keyrom)],'R',0,'R');
                 $pdf->Cell(121,4,'','LR',1);
                 foreach ($valrom as $key => $value) {
                         $conto = substr($key,4,3);

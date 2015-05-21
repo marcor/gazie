@@ -118,7 +118,7 @@ $strScript = array ("admin_aziend.php" =>
                            'sezione'=>'VAT section ',
                            'acciva'=>'VAT advance rate (%)',
                            'taxstamp_limit'=>'Tax stamp exemption limit',
-                           'taxstamp'=>'Amount of stamp duty on receipts',
+                           'taxstamp'=>'Amount stamp operations without VAT',
                            'taxstamp_vat'=>'Taxstamp VAT rate',
                            'perbol'=>'Rate of stamps on draft (%)',
                            'round_bol'=>'Round of stamps',
