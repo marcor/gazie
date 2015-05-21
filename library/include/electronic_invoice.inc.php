@@ -292,7 +292,9 @@ class invoiceXMLvars
         if ($this->trasporto>=0.1){
             $rigo_T=array('tiprig'=>'T','descri'=>'TRASPORTO',
                           'importo'=>$this->trasporto,
-                          'pervat'=>$this->expense_pervat['aliquo'],'ritenuta'=>0);
+                          'pervat'=>$this->expense_pervat['aliquo'],
+			  'ritenuta'=>0,
+			  'natura'=>$this->expense_pervat['fae_natura']);
             $results[$nr] = $rigo_T;
             $nr++;
         }
