@@ -619,7 +619,6 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                         }
 		    $results->appendChild($el);
 		    $nl=true;
-                    $n_linea++;
                     break;
 
                 case "1":
@@ -645,7 +644,6 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                         }
 		    $results->appendChild($el);
 		    $nl=true;
-                    $n_linea++;
                     break;
                 case "2":       // descrittivo
                     /* ! ATTENZIONE: tipo rigo spostato in appendice <2.2.1.16> ai righi "normale" !!!
@@ -675,7 +673,6 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                     /*		*/
                 }
                 // se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
-                
                 if ($XMLvars->ddt_data && $nl) {
                     $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
                     $el_ddt = $domDoc->createElement("DatiDDT","");
@@ -685,29 +682,40 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			$el_ddt->appendChild($el1);
 			$el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
 			$el_ddt->appendChild($el1);
-          
                     $results->appendChild($el_ddt);
-                    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);		
-                    $n_linea++;
+                    $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
                 }
-
+		if ($nl) {
+		    $n_linea++;
+		}
+		    
         }
         $ctrl_doc =  $XMLvars->tesdoc['numdoc'];
-        // aggiungo le eventuali spese di incasso ma queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
-        if ($XMLvars->tesdoc['speban']>0){
-            $el = $domDoc->createElement("DettaglioLinee","");					 
-        	$el1= $domDoc->createElement("NumeroLinea", $n_linea);
-        	$el->appendChild($el1);
-        	$el1= $domDoc->createElement("Descrizione", 'SPESE INCASSO '.$XMLvars->pagame['numrat'].' EFFETTI');
-        	$el->appendChild($el1);
-        	$el1= $domDoc->createElement("PrezzoUnitario", number_format($XMLvars->tesdoc['speban'],2,'.',''));
-        	$el->appendChild($el1);
-        	$el1= $domDoc->createElement("PrezzoTotale", number_format(($XMLvars->tesdoc['speban']*$XMLvars->pagame['numrat']),2,'.',''));
-        	$el->appendChild($el1);
-        	$el1= $domDoc->createElement("AliquotaIVA", number_format($XMLvars->expense_pervat['aliquo'],2,'.',''));
-        	$el->appendChild($el1);
-            $results->appendChild($el);
-        }
+    }
+    // aggiungo le eventuali spese di incasso ma queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
+    if ($XMLvars->tesdoc['speban']>=0.01) {
+        $el = $domDoc->createElement("DettaglioLinee","");					 
+    	$el1= $domDoc->createElement("NumeroLinea", $n_linea);
+    	$el->appendChild($el1);
+    	$el1= $domDoc->createElement("Descrizione", 'SPESE INCASSO '.$XMLvars->pagame['numrat'].' EFFETTI');
+    	$el->appendChild($el1);
+    	$el1= $domDoc->createElement("PrezzoUnitario", number_format($XMLvars->tesdoc['speban'],2,'.',''));
+    	$el->appendChild($el1);
+    	$el1= $domDoc->createElement("PrezzoTotale", number_format(($XMLvars->tesdoc['speban']*$XMLvars->pagame['numrat']),2,'.',''));
+    	$el->appendChild($el1);
+    	$el1= $domDoc->createElement("AliquotaIVA", number_format($XMLvars->expense_pervat['aliquo'],2,'.',''));
+    	$el->appendChild($el1);
+        $results->appendChild($el);
+        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);		
+	    $el_ddt = $domDoc->createElement("DatiDDT","");
+	    $el1= $domDoc->createElement("NumeroDDT", $XMLvars->tesdoc['numdoc']);
+	    $el_ddt->appendChild($el1);
+	    $el1= $domDoc->createElement("DataDDT", $XMLvars->tesdoc['datemi']);
+	    $el_ddt->appendChild($el1);
+	    $el1= $domDoc->createElement("RiferimentoNumeroLinea", $n_linea--);
+	    $el_ddt->appendChild($el1);
+        $results->appendChild($el_ddt);
+	$n_linea++;
     }
     
     //dati ordine di acquisto
