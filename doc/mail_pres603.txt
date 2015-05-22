@@ -1,0 +1,16 @@
+Titolo:
+Nemo sua sorte contentus.
+
+Presentazione:
+Rilascio questa nuova versione perché la ritengo molto stabile, con poche nuove funzionalità ma con diversi piccoli bug rimossi.
+GAzie comincia ad essere abbastanza longevo, tanto tempo è passato dalla prima versione, me ne sono accorto osservando l'età di qualcuno di noi, alcuni con meno di trent'anni. Loro erano solo dei teenagers quando nell'estate di dodici anni fa cominciai a pensare quale fosse il miglior modo per scrivere un gestionale con la maggior possibilità di sopravvivenza all'impeto del progresso tecnologico basandomi sulle poche forze e le molte incompetenze a mia disposizione, scelsi la soluzione "web based", evidentemente non mi sbagliai. Ringrazio sia i giovanissimi che i più attempati ed esperti che hanno partecipato fattivamente alle modifiche ed ai miglioramenti che elenco:
+
+- Introdotta la possibilità di stampare il bilancio con 3 livelli di dettaglio (G.Zanella)
+- Ulteriori modifiche all'aspetto grafico e miglioramenti al modulo "suppor" - assistenza (A.Biasi)
+- Aggiunta di diversi filtri di ricerca sulle videate di report dei movimenti contabili, dei preventivi e ordini e dei movimenti di magazzino (T.Cosentino)
+- Diverse correzioni ortografiche, e ottimizzazione query al database (A.Romano)
+- Corretta mancata eliminazione partite chiuse modulo acquisti (lellosoft)
+- Corretta mancata definizione di variabile su stampa bilancio riclassificato CEE (Andrea R.)
+- Diverse correzioni sul tracciato XML della fattura elettronica PA: aggiunto elemento 2.2.2.7 EsigibilitaIVA, aggiunto elemento facoltativo 1.2.1.2-CodiceFiscale, aggiunta possibilità di bollo a carico dell'emittente, numerazione righi e ordine degli elementi nella fattura differita da DdT (A.De Vincentiis, G.Valentino)
+   
+Antonio de Vincentiis, Montesilvano, 22 Maggio 2015
