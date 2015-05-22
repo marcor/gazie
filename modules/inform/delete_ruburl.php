@@ -22,20 +22,11 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-$transl['inform'] = array( 'name' => "Tools & Info",
-                           'title' => "Utilit&agrave; ed informazioni",
-                           'm2' => array( 1 =>array("Selezione e stampa lettera","Lettere"),
-                                          2 =>array("Selezione e stampa carta intestata","Carta Intestata"),
-                                          3 =>array("Salvataggio dati","Backup"),
-                                          4 =>array("Controllo nuova versione","Aggiornamento"),
-                                          5 =>array("Aggiorna GAzieCart","Aggiorna Joomla!"),
-														6 =>array("Rubrica URL", "Siti Aziendali")
-                                        ),
-                           'm3' => array( 1 =>array("Controllo sbilancio dare-avere dei movimenti contabili","Controllo sbilancio movimenti contabili"),
-                                          2 =>array("Controllo numerazione protocolli IVA","Controllo numerazione protocoli IVA"),
-                                          3 =>array("Scrivi una nuova lettera","Scrivi nuova lettera"),
-														4 =>array("Gestisci URL","Gestione Siti"),
-														5 =>array("Aggiungi URL","Aggiungi Sito")
-                                        )
-                         );
-?>
+require("../../library/include/datlib.inc.php");
+$admin_aziend=checkAdmin();
+
+if (isset($_GET['id'])) {
+    gaz_dbi_del_row($gTables['company_config'], 'id', $_GET['id']);
+    header("Location: report_ruburl.php");
+    exit;
+}
