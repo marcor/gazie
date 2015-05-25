@@ -222,7 +222,7 @@ $strScript = array ("admin_aziend.php" =>
                            "Periodicity",
                            "Bank account",
                            "Note",
-                           array('C' => 'Simultaneous','D' => 'rimessa diretta','B' => 'Bank recepit','T' => 'Bill of exchange','V' => 'RID'),
+                           array('C' => 'Simultaneous','K'=>'Payment cards','D' => 'rimessa diretta','B' => 'Bank recepit','T' => 'Bill of exchange','V' => 'RID'),
                            array('S' => 'Yes','N' => 'No'),
                            array('D'=>'invoice date', 'G'=>'fix day','F'=>'end of month'),
                            array('Q' => 'quindicinali','M' => 'mensili','B' => 'bimestrali','T' => 'trimestrali','U' => 'quadrimestrali','S' => 'semestrali','A' => 'annuali'),

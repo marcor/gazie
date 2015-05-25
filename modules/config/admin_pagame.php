@@ -154,6 +154,7 @@ foreach ($script_transl[15] as $key => $value) {
             }
          echo "<option value=\"".$key."\"".$selected.">".$key.'-'.$value."</option>";
 }
+
 echo "</select></td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[5]."</td>
      <td class=\"FacetDataTD\">\n";

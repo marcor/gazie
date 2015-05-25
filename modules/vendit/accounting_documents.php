@@ -73,7 +73,7 @@ function getDocumentsAccounts($type='___',$vat_section=1,$date=false,$protoc=999
     $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type"."__' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
-                        pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
+                        pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
                         customer.codice,
                         customer.speban AS addebitospese,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta',
@@ -331,9 +331,13 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                   if ($v['rit']>0) {  // se ho una ritenuta d'acconto
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['c_ritenute'],'import'=>$v['rit']));
                   }
-                  if ($v['tes']['incaut']=='S') {  // se il pagamento prevede l'incasso automatico
+                  if (($v['tes']['incaut']=='S') && ($v['tes']['tippag']<>'K')){  // se il pagamento prevede l'incasso automatico 
+		      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$v['tes']['clfoco'],'import'=>($tot['tot']-$v['rit'])));
+		      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['cassa_'],'import'=>($tot['tot']-$v['rit'])));
+		  }elseif($v['tes']['tippag']=='K'){// se effettuato con carte viene incassato direttamente su C.C.
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$v['tes']['clfoco'],'import'=>($tot['tot']-$v['rit'])));
-                      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['cassa_'],'import'=>($tot['tot']-$v['rit'])));
+		      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$v['tes']['id_bank'],'import'=>($tot['tot']-$v['rit'])));
+                    
                   } else { // altrimenti inserisco le partite aperte
                       foreach($rate['import'] as $k_rate=>$v_rate) {
                           paymovInsert(array('id_tesdoc_ref'=>substr($v['tes']['datfat'],0,4).$reg.$v['tes']['seziva'].str_pad($v['tes']['protoc'],9,0,STR_PAD_LEFT),'id_rigmoc_doc'=>$paymov_id,'amount'=>$v_rate,'expiry'=>$rate['anno'][$k_rate].'-'.$rate['mese'][$k_rate].'-'.$rate['giorno'][$k_rate]));
@@ -475,6 +479,7 @@ if (isset($_POST['preview'])) {
       echo $script_transl['errors'][1];
       echo "\t </td>\n";
       echo "\t </tr>\n";
+                
    }
 }
 ?>
