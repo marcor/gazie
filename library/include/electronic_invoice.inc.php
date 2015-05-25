@@ -457,7 +457,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
          //nodo 1.2.1.2 Codice Fiscale richiesto da alcune amministrazioni come obbligatorio 
        $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);		
-		   $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['pariva']));	   
+		   $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['codfis']));	   
 		   $results->appendChild($attrVal);    
     
          $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);		
