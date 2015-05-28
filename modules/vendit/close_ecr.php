@@ -81,7 +81,7 @@ function getAccountedTickets($id_cash)
     $where = "id_con = 0 AND id_contract = ".intval($id_cash)." AND tipdoc = 'VCO'";
     $orderby = "datemi ASC, numdoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
-                    pay.tippag,pay.numrat,pay.incaut,
+                    pay.tippag,pay.numrat,pay.incaut,pay.id_bank,
                     customer.codice,
                     customer.speban AS addebitospese,
                     CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta',
@@ -129,8 +129,19 @@ function getAccountedTickets($id_cash)
                             $cast_acc[$tes['clfoco']]['D']=0;
                         }
                         $cast_acc[$tes['clfoco']]['D']+=$tot_row;
-                        if ($tes['incaut']=='S') { // ed ha pagato subito
+                      if ($tes['tippag']=='K') { // ha pagato con carta incasso direttamente sul CC/bancario
                            if (!isset($cast_acc[$tes['clfoco']]['A'])) {
+                               $cast_acc[$tes['clfoco']]['A']=0;
+                           }
+                           $cast_acc[$tes['clfoco']]['A']+=$tot_row;
+                           if (!isset($cast_acc[$tes['id_bank']]['D'])) {
+                               $cast_acc[$tes['id_bank']]['D']=0;
+                           }
+                           $cast_acc[$tes['id_bank']]['D']+=$tot_row;
+                        }else{
+                                                                
+                        if ($tes['incaut']=='S') { //  ha pagato contanti vado per cassa 
+                        if (!isset($cast_acc[$tes['clfoco']]['A'])) {
                                $cast_acc[$tes['clfoco']]['A']=0;
                            }
                            $cast_acc[$tes['clfoco']]['A']+=$tot_row;
@@ -139,13 +150,21 @@ function getAccountedTickets($id_cash)
                            }
                            $cast_acc[$admin_aziend['cassa_']]['D']+=$tot_row;
                         }
-                    } else {  // il cliente è anonimo lo passo direttamente per cassa
+                       }
+                    } else {  // il cliente è anonimo 
+                        if ($tes['tippag']=='K'){ // paga con carta incasso direttamente sul CC/bancario
+                        if (!isset($cast_acc[$tes['id_bank']]['D'])) {
+                               $cast_acc[$tes['id_bank']]['D']=0;
+                           }
+                           $cast_acc[$tes['id_bank']]['D']+=$tot_row;
+                         } else { //vado per cassa
                         if (!isset($cast_acc[$admin_aziend['cassa_']]['D'])) {
                             $cast_acc[$admin_aziend['cassa_']]['D']=0;
                         }
                         $cast_acc[$admin_aziend['cassa_']]['D']+=$tot_row;
                     }
                  }
+              }
            }
            $doc['all'][]= array('tes'=>$tes,
                                     'vat'=>$cast_vat,

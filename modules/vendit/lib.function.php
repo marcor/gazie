@@ -4,7 +4,7 @@ class venditForm extends GAzieForm
     function ticketPayments($name,$val,$class='FacetSelect')
     {
         global $gTables;
-        $query = 'SELECT codice,descri,tippag FROM `'.$gTables['pagame']."` WHERE tippag = 'D' OR tippag = 'C' ORDER BY tippag";
+        $query = 'SELECT codice,descri,tippag FROM `'.$gTables['pagame']."` WHERE tippag = 'D' OR tippag = 'C' OR tippag = 'K' ORDER BY tippag";
         echo "\t <select name=\"$name\" class=\"$class\">\n";
         $result = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($result)) {
