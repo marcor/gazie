@@ -863,6 +863,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
         $form['rows'][$i]['id_mag'] = $row['id_mag'];
         $form['rows'][$i]['annota'] = $articolo['annota'];
         $form['rows'][$i]['pesosp'] = $articolo['peso_specifico'];
+        $form['rows'][$i]['lot_or_serial'] = $articolo['lot_or_serial'];
         $form['rows'][$i]['status'] = "UPDATE";
         // recupero eventuale movimento di tracciabilità
         $form['lotmag'][$i] = gaz_dbi_get_row($gTables['lotmag'],'id_purchase',$row['id_rig']);
