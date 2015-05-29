@@ -325,7 +325,9 @@ $strScript = array ("browse_document.php" =>
                                            'Enter a valid code',
                                            'Enter a description',
                                            'Insert the unit sales',
-                                           'Enter the VAT rate'
+                                           'Enter the VAT rate',
+                                           'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda'
+                                          
                                           ),
                            'codice'=>"Code",
                            'descri'=>"Description",

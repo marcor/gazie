@@ -92,6 +92,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        $msg .= (empty($form["descri"]) ? "6+" : '');
        $msg .= (empty($form["unimis"]) ? "7+" : '');
        $msg .= (empty($form["aliiva"]) ? "8+" : '');
+       // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
+       $msg .= (($form["lot_or_serial"]>0 && $admin_aziend['conmag'] <= 1 )? "9+" : '');
        if (empty($msg)) { // nessun errore
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
              $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);

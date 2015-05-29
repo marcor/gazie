@@ -325,7 +325,8 @@ $strScript = array ("browse_document.php" =>
                                            'Inserire un codice valido',
                                            'Inserire una descrizione',
                                            'Inserire l\'unit&agrave; di misura delle vendite',
-                                           'Inserire l\'aliquota I.V.A.'
+                                           'Inserire l\'aliquota I.V.A.',
+                                           'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda'
                                           ),
                            'codice'=>"Codice",
                            'descri'=>"Descrizione",
