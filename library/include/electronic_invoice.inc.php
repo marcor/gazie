@@ -825,6 +825,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
 // ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
     $totpag = $XMLvars->totimpfat+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->tot_ritenute-$XMLvars->ivasplitpay;
+// ----- INSERITO variabile che calcola il totale della fattura al lordo della RDA
     $totpar = $XMLvars->totimpfat+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->ivasplitpay;
 	
 	if ($XMLvars->virtual_taxstamp != 3) {
