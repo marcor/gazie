@@ -825,6 +825,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
 // ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
     $totpag = $XMLvars->totimpfat+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->tot_ritenute-$XMLvars->ivasplitpay;
+    $totpar = $XMLvars->totimpfat+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->ivasplitpay;
 	
 	if ($XMLvars->virtual_taxstamp != 3) {
 	   $totpag = $totpag + $XMLvars->impbol;
@@ -885,7 +886,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                 $el->appendChild($el1);
         $results->appendChild($el);
     }
-    $el = $domDoc->createElement("ImportoTotaleDocumento",number_format($totpag, 2,'.',''));  // totimp
+    $el = $domDoc->createElement("ImportoTotaleDocumento",number_format($totpar, 2,'.',''));  // totale fatura al lordo di RDA
     $results->appendChild($el);
    
     // faccio l'encode per ricavare il progressivo unico di invio
