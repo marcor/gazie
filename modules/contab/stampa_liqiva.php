@@ -199,5 +199,5 @@ if ($saldo_totale > 0) {
 if ($_GET['sd']=='sta_def') {
     gaz_dbi_put_row($gTables['aziend'],'codice',1,'upgrie', $pdf->getGroupPageNo()+$n_page-1);
 }
-$pdf->Output();
+$pdf->Output($title.'.pdf');
 ?>

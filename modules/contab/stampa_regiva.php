@@ -409,5 +409,5 @@ if ($_GET['sd']=='sta_def') {
     }    
     gaz_dbi_put_row($gTables['aziend'],'codice',$admin_aziend['codice'],$azireg, $pdf->getGroupPageNo()+$ini_page-1);
 }
-$pdf->Output();
+$pdf->Output($descri_period .'.pdf');
 ?>
