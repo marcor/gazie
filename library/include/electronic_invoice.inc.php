@@ -885,7 +885,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                 $el->appendChild($el1);
         $results->appendChild($el);
     }
-    $el = $domDoc->createElement("ImportoTotaleDocumento",number_format($totpag, 2,'.',''));  // totimpfat
+    $el = $domDoc->createElement("ImportoTotaleDocumento",number_format($totpag, 2,'.',''));  // totimp
     $results->appendChild($el);
    
     // faccio l'encode per ricavare il progressivo unico di invio
