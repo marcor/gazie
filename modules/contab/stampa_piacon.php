@@ -257,5 +257,5 @@ while ($row = gaz_dbi_fetch_array($result)) {
     $ctrl_mas = $mas;
 }
 $pdf->Cell(135,1,'','T');
-$pdf->Output();
+$pdf->Output($title.'.pdf');
 ?>
