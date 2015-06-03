@@ -789,11 +789,19 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 			if ($value['tipiva']== 'T'){ // è un'IVA non esigibile per split payment PA
 				$value['esigibilita']='S'; // S=scissione dei pagamenti
             }
-            $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
+            
+      $el1= $domDoc->createElement("ImponibileImporto", number_format($value['impcast'],2,'.',''));
 	    $el->appendChild($el1);
             $el1= $domDoc->createElement("Imposta", number_format($value['ivacast'],2,'.',''));
-	    $el->appendChild($el1);
+             
+      
+      if ($value['fae_natura'] == 'N1' ||  $value['fae_natura'] == 'N2' || $value['fae_natura'] == 'N3' || $value['fae_natura'] == 'N4' || $value['fae_natura'] == 'N5' || $value['fae_natura'] == 'N6') {
+        //non viene inserito il nodo EsigibilitaIVA
+      } else {
+	          $el->appendChild($el1);
             $el1= $domDoc->createElement("EsigibilitaIVA", $value['esigibilita']);
+      }
+
 	    $el->appendChild($el1);
             $el1= $domDoc->createElement("RiferimentoNormativo", $value['descriz']);
 	    $el->appendChild($el1);
