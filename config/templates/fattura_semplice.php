@@ -32,6 +32,7 @@ class FatturaSemplice extends Template
     function setTesDoc()
     {
         $this->tesdoc = $this->docVars->tesdoc;
+        $this->destinazione = '';
         $this->giorno = substr($this->tesdoc['datfat'],8,2);
         $this->mese = substr($this->tesdoc['datfat'],5,2);
         $this->anno = substr($this->tesdoc['datfat'],0,4);
