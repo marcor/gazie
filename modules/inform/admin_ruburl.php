@@ -38,10 +38,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
    $form['id'] = intval($_POST['id']);
    $form['description'] = $_POST['description'];
 	$form['val'] = $_POST['indirizzo'];
-    
-/*   foreach($_POST['search'] as $k=>$v){
-      $form['search'][$k]=$v;
-   }*/
 
    if (isset($_POST['ins'])) {   // Se viene inviata la richiesta di conferma totale ...
       if ($msg == "") {// nessun errore
@@ -52,7 +48,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 				$newValue['description'] = $_POST['description'];
 				$newValue['var'] = "ruburl";
 				$newValue['val'] = $_POST['val'];
-				if ( substr($newValue['val'],1,4)!="http" ) {
+				if ( substr($newValue['val'],0,4)!="http" ) {
 					$newValue['val'] = "http://".$newValue['val'];
 				}
 				tableUpdate($table, $columns, $codice, $newValue);
@@ -64,7 +60,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 				$newValue['description'] = $_POST['description'];
 				$newValue['var'] = "ruburl";
 				$newValue['val'] = $_POST['val'];
-				if ( substr($newValue['val'],1,4)!="http" ) {
+				if ( substr($newValue['val'],0,4)!="http" ) {
 					$newValue['val'] = "http://".$newValue['val'];
 				}
 				tableInsert($table, $columns, $newValue);
@@ -85,8 +81,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
    $form['hidden_req']='';
    $form['id'] = "";
 	$form['description'] = "";
-   $form['val'] = "";   
-   
+   $form['val'] = "";     
 	$rs_ultima_lettera = gaz_dbi_dyn_query("*", $gTables['company_config'], "var=\"ruburl\"","id desc",0);
    $ultima_lettera = gaz_dbi_fetch_array($rs_ultima_lettera);
    if ($ultima_lettera) {
@@ -122,7 +117,7 @@ if (!empty($msg)) {
 }
 echo "<tr><td align=\"right\" class=\"FacetFieldCaptionTD\">ID : </td><td class=\"FacetDataTD\"> <input type=\"text\" value=\"".$form['id']."\" maxlength=\"20\" size=\"20\" name=\"id\"></td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">Descrizione : </td><td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['description']."\" maxlength=\"60\" size=\"60\" name=\"description\"></td></tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">Indirizzo : </td><td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['val']."\" maxlength=\"60\" size=\"60\" name=\"val\"></td></tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">Indirizzo : </td><td colspan=\"3\" class=\"FacetDataTD\"><input type=\"text\" value=\"".$form['val']."\" maxlength=\"255\" size=\"70\" name=\"val\"></td></tr>\n";
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"submit\" accesskey=\"i\" name=\"ins\" value=\"".$script_transl['submit']." !\" /></td></tr>";
 echo "</table>";
 ?>
