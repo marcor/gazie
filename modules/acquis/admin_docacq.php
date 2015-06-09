@@ -1443,6 +1443,7 @@ if (substr($form['tipdoc'],0,1) == 'A') { //piede adatto ad un documento d'acqui
 //fine piede
 echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"".$form["sconto"]."\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[35]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] ".$admin_aziend['symbol']."</td>\n";
 $chk_add_iva_tes = 0;
+$i=count($form['rows']);
 foreach ($castel as $key => $value) {
       $result = gaz_dbi_get_row($gTables['aliiva'],"codice",$key);
       $impcast = CalcolaImportoRigo(1, $value, $form['sconto']);
