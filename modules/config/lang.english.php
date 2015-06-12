@@ -58,6 +58,8 @@ $strScript = array ("admin_aziend.php" =>
                            'datnas'=>'Birthdate',
                            'luonas'=>'Place of Birth - County',
                            'indspe'=>'Address',
+                           'latitude'=>'Latitudine',
+                           'longitude'=>'Longitude',
                            'capspe'=>'Postal code',
                            'citspe'=>'City - Province',
                            'country'=>'Country',

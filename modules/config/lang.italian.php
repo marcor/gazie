@@ -58,6 +58,8 @@
                            'datnas'=>'Data di nascita',
                            'luonas'=>'Luogo di nascita - Provincia',
                            'indspe'=>'Indirizzo',
+                           'latitude'=>'Latitudine',
+                           'longitude'=>'Longitude',
                            'capspe'=>'Codice Postale',
                            'citspe'=>'Citt&agrave; - Provincia',
                            'country'=>'Nazione',
