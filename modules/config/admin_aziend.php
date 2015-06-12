@@ -301,6 +301,16 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"indspe\" value=\"".$form['indspe']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['latitude']." </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"latitude\" value=\"".$form['latitude']."\" align=\"right\" maxlength=\"10\" size=\"10\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['longitude']." </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"longitude\" value=\"".$form['longitude']."\" align=\"right\" maxlength=\"10\" size=\"10\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['capspe']." * </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"capspe\" id=\"search_location-capspe\" value=\"".$form['capspe']."\" align=\"right\" maxlength=\"10\" size=\"5\" /></td>\n";
