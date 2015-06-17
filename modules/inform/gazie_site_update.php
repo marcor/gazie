@@ -89,7 +89,7 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
                 fwrite($file,$r['imacat']);
                 fclose($file);
                 $imgd=getimagesize('gazie_data.tmp',$info);
-                $mime_elem=substr($imgd['mime'],-3);
+                $mime_elem=end(explode('/', $imgd['mime']));
                 $file = fopen('gazie_site'.$company_id.'/images/catmer_'.$r['codcat'].".".$mime_elem, "w");
                 fwrite($file, $r['imacat']);
                 fclose($file);
@@ -106,7 +106,7 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
             fwrite($file,$r['imaart']);
             fclose($file);
             $imgd=getimagesize('gazie_data.tmp',$info);
-            $mime_elem=substr($imgd['mime'],-3);
+            $mime_elem=end(explode('/', $imgd['mime']));
             $file = fopen('gazie_site'.$company_id.'/images/artico_'.$r['codart'].".".$mime_elem, "w");
             fwrite($file, $r['imaart']);
             fclose($file);
