@@ -15,4 +15,12 @@ function letterUpdate ($codice, $newValue)
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
+function company_dataUpdate ($codice, $newValue)
+{
+    $table = 'company_data';
+    $columns = array('description','var','data','ref');
+    tableUpdate($table, $columns, $codice, $newValue);
+}
+
+
 ?>

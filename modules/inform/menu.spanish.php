@@ -33,11 +33,16 @@ $transl['inform'] = array( 'name' => "Herramientas & Info",
                                           2 =>array("Seleccionar e imprimir encabezado de carta","Encabezado de carta"),
                                           3 =>array("Respaldo de datos","Respaldo"),
                                           4 =>array("Control para nueva version","Actualizacion"),
-                                          5 =>array("Actualizacion GAzieCart","Actualizacion Joomla!")
+                                          5 =>array("Actualizacion Website","Actualizacion Website"),
+					  6 =>array("Rubrica URL", "Siti Aziendali")
                                         ),
                            'm3' => array( 1 =>array("Control desequilibro debe-haber de movimientos contables","Control desequilibro debe-haber de movimientos contables"),
                                           2 =>array("Control numerico protocolos IVA","Control numerico protocolos IVA"),
-                                          3 =>array("Escribir una nueva carta","Nueva carta")
+                                          3 =>array("Escribir una nueva carta","Nueva carta"),
+					  4 =>array("Gestisci URL","Gestione Siti"),
+					  5 =>array("Aggiungi URL","Aggiungi Sito")
+                                          6 =>array("Aggiorna GAzieCart","Aggiorna GAzieCart"),
+                                          7 =>array("Aggiorna sito web","Crea/aggiorna sito Statico")
                                         )
                          );
 ?>

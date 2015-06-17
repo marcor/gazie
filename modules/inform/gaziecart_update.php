@@ -48,6 +48,8 @@ function updateGAzieCart($server,$user,$pass,$data,$filename)
             ftp_close($conn_id);
             return '1+'; // torno l'errore di login
     }
+    //turn passive mode on
+    ftp_pasv($conn_id, true);
     foreach( $fn_exp as $dir){
         // faccio i cambi di direttorio
         if (!@ftp_chdir($conn_id, $dir)) {

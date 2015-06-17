@@ -69,6 +69,24 @@ $strScript = array ("report_letter.php" =>
                            'check_title_value'=>array(0=>'Enable version control from this site!',1=>'Disable version control from this site!'),
                            'all_disabling'=>array(0=>'Disable all!',1=>'Disable all sites for Version Control!')
                          ),
+                    "gazie_site_update.php" =>
+                   array(  'title' => "Aggiornamento del sito web",
+                           'errors'=>array('Il server non &egrave; stato trovato',
+                                           'Impossibile fare il login, credenziali errate',
+                                           'Direttorio inesistente',
+                                           'Uno o pi&ugrave; file non sono stati aggiornati'
+                                          ),
+                           'server'=>'Nome del server FTP es: ftp.devincentiis.it',
+                           'user'=>'User - Nome utente per l\'autenticazione',
+                           'pass'=>'Password per l\'autenticazione',
+                           'path'=>'Directory radice del sito es. public_html/ opp. www/',
+                           'head_title'=>'Descrizione aggiuntiva al titolo',
+                           'head_subtitle'=>'Descrizione aggiuntiva al sottotitolo',
+                           'author'=>'Autore del sito (meta author)',
+                           'keywords'=>'Parole chiave del sito (meta keywords)',
+                           'listin'=>'Pubblicazione',
+                           'listin_value'=>array(0=>'Non pubblicare il listino',1=>'Listino senza prezzi',2=>'Listino con prezzi online')
+                         ),
                     "gaziecart_update.php" =>
                    array(  'title' => "Updating the online catalog, GAzieCart extension for Joomla!",
                            'errors'=>array('FTP server not found',

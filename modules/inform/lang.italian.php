@@ -73,7 +73,8 @@ $strScript = array ("report_letter.php" =>
                            'errors'=>array('Il server non &egrave; stato trovato',
                                            'Impossibile fare il login, credenziali errate',
                                            'Direttorio inesistente',
-                                           'Uno o pi&ugrave; file non sono stati aggiornati'
+                                           'Uno o pi&ugrave; file non sono stati aggiornati',
+                                           "COMPLETATO!!! L'upload sul server web è andato a buon fine!"
                                           ),
                            'server'=>'Nome del server FTP es: devincentiis.it',
                            'user'=>'User - Nome utente per l\'autenticazione',
@@ -81,6 +82,24 @@ $strScript = array ("report_letter.php" =>
                            'path'=>'Dir. radice di joomla es. joomla/ opp. nulla',
                            'listin'=>'Listino ',
                            'listin_value'=>array(1=>' di Vendita 1',2=>' di Vendita 2',3=>' di Vendita 3','web'=>' di Vendita Online')
+                         ),
+                    "gazie_site_update.php" =>
+                   array(  'title' => "Aggiornamento del sito web",
+                           'errors'=>array('Il server non &egrave; stato trovato',
+                                           'Impossibile fare il login, credenziali errate',
+                                           'Direttorio inesistente',
+                                           'Uno o pi&ugrave; file non sono stati aggiornati'
+                                          ),
+                           'server'=>'Nome del server FTP es: ftp.devincentiis.it',
+                           'user'=>'User - Nome utente per l\'autenticazione',
+                           'pass'=>'Password per l\'autenticazione',
+                           'path'=>'Directory radice del sito es. public_html/ opp. www/',
+                           'head_title'=>'Descrizione aggiuntiva al titolo',
+                           'head_subtitle'=>'Descrizione aggiuntiva al sottotitolo',
+                           'author'=>'Autore del sito (meta author)',
+                           'keywords'=>'Parole chiave del sito (meta keywords)',
+                           'listin'=>'Pubblicazione',
+                           'listin_value'=>array(0=>'Non pubblicare il listino',1=>'Listino senza prezzi',2=>'Listino con prezzi online')
                          ),
                     "backup.php" =>
                    array(  'title' => "Backup dei dati per mettere in sicurezza il lavoro!",
