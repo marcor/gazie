@@ -592,7 +592,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
                                     }
                                     $el2= $domDoc->createElement("Tipo",$t);
                                     $el1->appendChild($el2);
-                                    $el2= $domDoc->createElement("Percentuale", abs($rigo['sconto']));
+                                    $el2= $domDoc->createElement("Percentuale",number_format(abs($rigo['sconto']),2,'.',''));
                                     $el1->appendChild($el2);
                                     $el2= $domDoc->createElement("Importo",number_format(abs($rigo['imp_sconto']),2,'.',''));
                                     $el1->appendChild($el2);
