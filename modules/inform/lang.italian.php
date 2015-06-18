@@ -99,7 +99,8 @@ $strScript = array ("report_letter.php" =>
                            'author'=>'Autore del sito (meta author)',
                            'keywords'=>'Parole chiave del sito (meta keywords)',
                            'listin'=>'Pubblicazione',
-                           'listin_value'=>array(0=>'Non pubblicare il listino',1=>'Listino senza prezzi',2=>'Listino con prezzi online')
+                           'listin_value'=>array(0=>'Non pubblicare il listino',1=>'Listino senza prezzi',2=>'Listino con prezzi online'),
+                           'addpage'=>'Aggiungi una pagina al sito'
                          ),
                     "backup.php" =>
                    array(  'title' => "Backup dei dati per mettere in sicurezza il lavoro!",

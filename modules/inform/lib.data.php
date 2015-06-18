@@ -22,5 +22,11 @@ function company_dataUpdate ($codice, $newValue)
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
+function company_dataInsert ($newValue)
+{
+    $table = 'company_data';
+    $columns = array('description','var','data','ref');
+    tableInsert($table, $columns, $newValue);
+}
 
 ?>

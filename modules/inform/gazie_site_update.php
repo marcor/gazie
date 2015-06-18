@@ -71,7 +71,8 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
             <td>prezzo</td>
             <td>unità misura</td>
             <td>annotazione</td>
-            </tr>';     
+            </tr>
+            ';     
     while ($r = gaz_dbi_fetch_array($rs_art)) {
         if ($prezzi==2) { // articoli con prezzo  
             $price = gaz_format_quantity($r['prezzo']*$r['web_multiplier'],true,$decimal_price);
@@ -97,7 +98,8 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
             } else {
                 $src='gazie_site_noimage.png';
             }
-            $html .= '<tr><td colspan="5" bgcolor="#'.$backcolor.'">'.$r['codcat'].' - '.$r['descat'].'</td><td><img src="'.$src.'" height="50"></td></tr>';
+            $html .= '<tr><td colspan="5" bgcolor="#'.$backcolor.'">'.$r['codcat'].' - '.$r['descat'].'</td><td><img src="'.$src.'" height="50"></td>
+            </tr>';
         }
         // articolo
         if ( !empty($r['imaart']) ) {
@@ -106,7 +108,8 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
             fwrite($file,$r['imaart']);
             fclose($file);
             $imgd=getimagesize('gazie_data.tmp',$info);
-            $mime_elem=end(explode('/', $imgd['mime']));
+            $mime_r=explode('/', $imgd['mime']);
+            $mime_elem=end($mime_r);
             $file = fopen('gazie_site'.$company_id.'/images/artico_'.$r['codart'].".".$mime_elem, "w");
             fwrite($file, $r['imaart']);
             fclose($file);
@@ -114,7 +117,8 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
         } else {
             $src='gazie_site_noimage.png';
         }
-        $html .= '<tr><td><img src="'.$src.'" height="25"></td><td>'.$r['codart'].'</td><td>'.$r['desart'].'</td><td align="right">'.$price.' </td> <td>'.$um.' '.$vat.'</td><td>'.$r['annart'].'</td></tr>';
+        $html .= '<tr><td><img src="'.$src.'" height="25"></td><td>'.$r['codart'].'</td><td>'.$r['desart'].'</td><td align="right">'.$price.' </td> <td>'.$um.' '.$vat.'</td><td>'.$r['annart'].'</td>
+        </tr>';
         $ctrl_cm = $r['codcat'];
     }
     return $html."</tbody></table>\n";
@@ -263,10 +267,19 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
     $form['subtitle'] = substr($_POST['subtitle'],0,100);
     $form['author'] = substr($_POST['author'],0,100);
     $form['keywords'] = substr($_POST['keywords'],0,400);
+    $pn=1;
     foreach ($_POST['page'] as $k=>$v) {
         $v['var'] = 'website_page_'.substr($v['var'],0,20);
         $form['page'][$k] = $v;
+        $pn++;
     }
+    if (isset($_POST['addpage']) && $pn<11) {   // aggiungo una pagina ma solo se c'è capienza 
+        $k='new'.$pn;
+        $form['page'][$k]['var'] = 'website_page_pagenew'.$pn;
+        $form['page'][$k]['description'] = 'Pagina '.$pn;
+        $form['page'][$k]['data'] = '<p>NEW Pagina '.$pn.'</p>';
+    }
+
     if (isset($_POST['Return'])) { // torno indietro
           header("Location: ".$form['ritorno']);
           exit;
@@ -371,7 +384,7 @@ foreach ($form['page'] as $k=>$v) {
         echo '<input type="hidden" id="namepage_'.$k.'" name="page['.$k.'][var]" value="'.$pagename.'" />';
         echo "\t</td>\n";
         echo "\t<td class=\"FacetDataTD\">\n";
-        echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'"  size=\"5\" />';
+        echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'" maxlength="12" size="8" />';
         echo "</td>\n";
         echo "\t<td>\n";
         echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
@@ -383,16 +396,16 @@ foreach ($form['page'] as $k=>$v) {
         $gForm->variousSelect('listin',$script_transl['listin_value'],$form['listin'],'FacetSelect',false);
         echo "\t</td>\n";
         echo "\t<td class=\"FacetDataTD\">\n";
-        echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'"  size=\"5\" />';
+        echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'" maxlength="12" size="8" />';
         echo "</td>\n";
         echo "\t<td>\n";
         echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
         echo "</td>\n";
     } else {
-        echo '<input type="text" id="namepage_'.$k.'" name="page['.$k.'][var]" value="'.$pagename.'"  size=\"5\" />';
+        echo '<input type="text" id="namepage_'.$k.'" name="page['.$k.'][var]" value="'.$pagename.'" maxlength="12" size="8" />';
         echo "\t</td>\n";
         echo "\t<td class=\"FacetDataTD\">\n";
-        echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'"  size=\"5\" />';
+        echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'" maxlength="12" size="8" />';
         echo "</td>\n";
         echo "\t<td>\n";
         echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
@@ -400,6 +413,11 @@ foreach ($form['page'] as $k=>$v) {
     }
     echo "</tr>\n";
 }
+echo '<tr>
+        <td colspan=3 class="FacetDataTD" align="center">
+        <input name="addpage" type="submit" value="'.strtoupper($script_transl['addpage']).'">
+        </td>
+    </tr>';
 
     
 if (isset($_POST['Submit'])) { // conferma
@@ -412,6 +430,11 @@ if (isset($_POST['Submit'])) { // conferma
       copy('gazie_site_menu_le.png','gazie_site'.$company_id.'/gazie_site_menu_le.png');                                     
       copy('gazie_site_menu_ri.png','gazie_site'.$company_id.'/gazie_site_menu_ri.png');
       copy('gazie_site_noimage.png','gazie_site'.$company_id.'/gazie_site_noimage.png');
+      /* ATTENZIONE !!! Questi file vengono trasferiti sulla directory specifica per ogni azienda
+       * solo la prima volta pertanto chi vuole personalizzarli può farlo modificando a piacimento
+       * solo quelli della directory gazie_siteNNN mentre i file DI BASE presenti sul modulo "inform"
+       * vengono sovrascritti dagli aggiornamenti  
+       */
       @mkdir('gazie_site'.$company_id.'/images');
     }
     // creo la favicon
@@ -442,8 +465,14 @@ if (isset($_POST['Submit'])) { // conferma
         gaz_dbi_put_row($gTables['company_config'],'var','pass','val',$form['pass']);
         gaz_dbi_put_row($gTables['company_config'],'var','path','val',$form['path']);
         foreach ($pages_name_and_descri as $k=>$v) {
-            $form['page'][$k]['ref']='';
-            company_dataUpdate(array('id',$k),$db_data[$k]);
+            $db_data[$k]['ref']='';
+            $ks=str_split($k,3);
+            if ($ks[0]=='new') { // se ho aggiunto una pagina allora la devo inserire nel database
+                company_dataInsert($db_data[$k]);
+            } else {
+                company_dataUpdate(array('id',$k),$db_data[$k]);
+            }
+
         }
     } else {
         echo '<tr><td colspan=3 class="FacetDataTDred">ERROR!!!'.$r[1]." failed: ".$gForm->outputErrors($r[0],$script_transl['errors'])."</td></tr>\n";

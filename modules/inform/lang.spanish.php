@@ -89,7 +89,8 @@ $strScript = array ("report_letter.php" =>
                            'author'=>'Autore del sito (meta author)',
                            'keywords'=>'Parole chiave del sito (meta keywords)',
                            'listin'=>'Pubblicazione',
-                           'listin_value'=>array(0=>'Non pubblicare il listino',1=>'Listino senza prezzi',2=>'Listino con prezzi online')
+                           'listin_value'=>array(0=>'Non pubblicare il listino',1=>'Listino senza prezzi',2=>'Listino con prezzi online'),
+                           'addpage'=>'Aggiungi pagina al sito'
                          ),
                     "gaziecart_update.php" =>
                    array(  'title' => "Actualizaci&oacute;n del cat&aacute;logo en l&iacute;nea, extensi&oacute;n GAzieCart para Joomla!",
