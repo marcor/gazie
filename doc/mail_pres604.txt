@@ -1,0 +1,19 @@
+Titolo:
+Nemo dat quod non habet.
+
+Presentazione:
+Stufo di rincorrere gli aggiornamenti dei vari CMS che ho utilizzato durante gli anni per il sito aziendale mi sono permesso di snobbarli integrando nel nostro gestionale un algoritmo che prende i dati presenti naturalmente sul suo database e genera tutto il necessario per la realizzazione di una "vetrina" affacciata sulla rete globale. 
+Lo stato psichico di estraniazione dalla realtà è durato circa tre giorni, poi sono riemerso dagli abissi dell' overclocking mentale ed ecco che da oggi GAzie con un solo click riesce a generare il sito web aziendale con tanto di listino prezzi e immagini degli articoli, a salvarlo sul proprio server, e a fare contemporaneamente l'upload su quello di hosting. 
+Evidentemente il sito ottenuto da GAzie non è un e-commerce nel senso più ampio del termine ma, come detto prima: una "vetrina". L'interfaccia è raggiungibile dal menù Tools&Info ed è piuttosto spartana ma semplice ed intuitiva, vi basterà modificare con un contenuto attinente le quattro pagine proposte in automatico, ed eventualmente aggiungerne altre ( fino a 10 ) per avere un sito aziendale con pochissimo lavoro, facilmente aggiornabile pur essendo statico.
+Per mostrarvi il risultato ottenuto con un solo click dato su una installazione nuova intonsa appoggiata sull' hosting del mio sito personale vi invito a questo indirizzo: <http://devincentiis.it/gazie/index.html> 
+Descrivo brevemente e tecnicamente il lavoro: informo che il meccanismo è valido separatamente per tutte le aziende dell'installazione, alla prima richiesta di creazione del sito sul filesystem del server verrà generata una cartella nel direttorio modules/inform dal nome gazie_siteNNN dove NNN è il numero naturale identificativo dell'azienda interessata alla generazione. Siccome negli aggiornamenti successivi il contenuto di detta cartella verrà modificata solo nei file .html delle pagine, chi si volesse cimentare nella personalizzazione della grafica potrà farlo ad esempio modificando il foglio di stile gazie_site.css in essa contenuta che non sarà sovrascritta dai futuri aggiornamenti del software come invece accadrà all'omonimo file sulla radice del modulo.
+Altre piccoli aggiustamenti ed altri programmatori hanno donato le loro fatiche e contribuito al miglioramento o alla aggiunta di funzionalità importanti per mantenere vivo il nostro software, mi verrebbe di spendere parole di elogio per ognuno di loro, voglio evitare la sviolinata, li elenco sordamente.
+
+- aggiunto tipo di pagamento "K" per carte di pagamento (bancomat, carte di credito, ecc..) e inserito incasso diretto su conto corrente per i pagamenti con carte (T.Cosentino)
+- modificata e corretta la fattura elettronica - parcella per liberi professionisti nel calcolo Totale importo Fattura al lordo della Ritenuta d'Acconto (F.Tagliani)
+- omesso campo esigibilità IVA nel caso di natura_fattura N1,N2,N3,N4,N5,N6 ed altre modifiche sulla fattura elettronica PA (G.Valentino)
+- aggiunto gestore dell'archivio degli indirizzi dei siti web aziendali ( A.Biasi )
+- implementato generatore dei siti web aziendali ( A.De Vincentiis)
+- riviste tutte le procedure per la gestione del bollo sui documenti di vendita/ e sulle parcelle (A.De Vincentiis)
+
+Antonio de Vincentiis, Montesilvano, 19 Giugno 2015

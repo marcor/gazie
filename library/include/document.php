@@ -289,7 +289,7 @@ class DocContabVars
         $this->totivafat=$calc->total_vat;
         $this->totivasplitpay=$calc->total_isp;
         // aggiungo gli eventuali bolli al castelletto
-        if ( $this->virtual_taxstamp == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
+        if ( $this->virtual_taxstamp == 0 || $this->virtual_taxstamp == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
 	    $this->taxstamp=0.00;
 	}
         if ($this->impbol >= 0.01 || $this->taxstamp >= 0.01) {
