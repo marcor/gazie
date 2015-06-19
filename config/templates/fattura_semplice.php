@@ -222,6 +222,9 @@ class FatturaSemplice extends Template
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
 	$taxstamp=$this->docVars->taxstamp;
+        if ($this->virtual_taxstamp == 0 || $this->virtual_taxstamp == 3) { // azzero i bolli in caso di non addebito al cliente
+            $taxstamp=0;
+        }
         //effettuo il calcolo degli importi delle scadenze
         $totpag = $totimpfat+$taxstamp+$impbol+$totriport+$totivafat-$ritenuta-$totivasplitpay ;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);

@@ -26,7 +26,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\','/',__FILE__) == $_S
     exit('Accesso diretto non consentito') ;
 }
 //versione software
-$versSw = '6.3';
+$versSw = '6.4';
 
 //nome DBMS usato per la libreria specifica (MySQL=mysql.lib, SQLite=sqlite.lib, ecc)
 //per il momento disponibile solo la libreria mysql.lib

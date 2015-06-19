@@ -315,7 +315,7 @@ class invoiceXMLvars
         $this->totimpfat = 0.00;
         $this->totimpmer = 0.00;
         $this->tot_ritenute = $this->ritenuta;
-		$this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
+	$this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->impbol = 0.00;
         $this->BolloVirtuale = ''; // ovviamente il bollo potrà essere solo virtuale ma comunque lo setto per evidenziare l'errore
         if ( $this->tesdoc['virtual_taxstamp'] == 2 || $this->tesdoc['virtual_taxstamp'] == 3 ) { // bollo virtualmente assolto
@@ -346,7 +346,7 @@ class invoiceXMLvars
         $this->totivafat=$calc->total_vat;
         // aggiungo gli eventuali bolli al castelletto
 	$chk_taxstamp=true;
-        if ( $this->virtual_taxstamp == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
+        if ( $this->virtual_taxstamp == 0 || $this->virtual_taxstamp == 3 ) { //  se è a carico dell'emittente non lo aggiungo al castelletto IVA
 	    $chk_taxstamp=false;
 	}
         if ($this->impbol >= 0.01 || ($this->taxstamp >= 0.01 && $chk_taxstamp)) {
@@ -833,13 +833,12 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 
 // ----- CALCOLO TOTALI E RATE DEL PAGAMENTO
     $totpag = $XMLvars->totimpfat+$XMLvars->totriport+$XMLvars->totivafat-$XMLvars->tot_ritenute-$XMLvars->ivasplitpay;
-// ----- INSERITO variabile che calcola il totale della fattura al lordo della RDA e dell'IVA
+// ----- INSERITA variabile che calcola il totale della fattura al lordo della RDA e dell'IVA
     $totpar = $XMLvars->totimpfat+$XMLvars->totriport+$XMLvars->totivafat;
-	
-	if ($XMLvars->virtual_taxstamp != 3) {
-	   $totpag = $totpag + $XMLvars->impbol;
-	}
-	
+    if ($XMLvars->virtual_taxstamp == 1 || $XMLvars->virtual_taxstamp == 2) {
+       $totpag = $totpag + $XMLvars->impbol;
+       $totpar = $totpar + $XMLvars->impbol;
+    }
     $ex= new Expiry;
     $ratpag = $ex->CalcExpiry($totpag, $XMLvars->tesdoc["datfat"], $XMLvars->pagame['tipdec'],$XMLvars->pagame['giodec'],$XMLvars->pagame['numrat'],$XMLvars->pagame['tiprat'],$XMLvars->pagame['mesesc'],$XMLvars->pagame['giosuc']);
     if ($XMLvars->pagame['numrat']>1){

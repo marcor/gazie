@@ -36,6 +36,8 @@ class Parcella extends Template
         $this->mese = substr($this->tesdoc['datfat'],5,2);
         $this->anno = substr($this->tesdoc['datfat'],0,4);
         $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+        $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
+        $this->taxstamp=$this->tesdoc['taxstamp'];
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
         $this->tipdoc = 'Parcella n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
@@ -65,7 +67,6 @@ class Parcella extends Template
     {
         $this->setTesDoc();
         $this->AliasNbPages();
-        $this->tottraspo += $this->trasporto;
         $dataddt = substr($this->tesdoc['datemi'],8,2).'-'.substr($this->tesdoc['datemi'],5,2).'-'.substr($this->tesdoc['datemi'],0,4);
         if ($this->tesdoc['tipdoc'] == 'FAD') {
             $this->SetFont('helvetica','B',9);
@@ -81,7 +82,7 @@ class Parcella extends Template
     {
         $lines = $this->docVars->getRigo();
         while (list($key, $rigo) = each($lines)) {
-            if ($this->GetY() >= 195) {
+            if (($this->GetY() >= 166 && $this->taxstamp >= 0.01) || $this->GetY() >= 195 ) {
                 $this->Cell(186,6,'','T',1);
                 $this->SetFont('helvetica','',14);
                 $this->SetY(225);
@@ -134,6 +135,26 @@ class Parcella extends Template
                     $this->Cell(12, 5,'',1,1,'R');
                 }
         }
+        if ($this->taxstamp >= 0.01 ) {
+            if ($this->virtual_taxstamp == 2 || $this->virtual_taxstamp == 3) {
+                $this->Cell(186,5,'','LR',1);
+                $this->Cell(130,8,'','L',0,0);
+                $this->Cell(56,8,"Bollo assolto ai sensi del","TLR",1,"C");
+                $this->Cell(130,8,'','L',0,0);
+                $this->Cell(56,8,"decreto MEF 17.06.2014 (art.6)","LR",1,"C");
+                $this->Cell(130,8,'','L',0,0);
+                $this->Cell(56,8," € ".gaz_format_number($this->taxstamp),'LR',1,'C');
+            } else {
+                $this->Cell(186,5,'','LR',1);
+                $this->Cell(150,8,'','L',0,0);
+                $this->Cell(36,8,"Bollo applicato","TLR",1,"C");
+                $this->Cell(150,8,'','L',0,0);
+                $this->Cell(36,8,"sull'originale","LR",1,"C");
+                $this->Cell(150,8,'','L',0,0);
+                $this->Cell(36,8,"€ ".gaz_format_number($this->taxstamp),'LR',1,'C');
+            }
+        }
+
     }
 
     function pageFooter()
@@ -150,8 +171,7 @@ class Parcella extends Template
         $this->Cell(18,4,'Imponibile','LR',0,'C',1);
         $this->Cell(32,4,'Aliquota','LR',0,'C',1);
         $this->Cell(18,4,'Imposta','LR',1,'C',1);
-        $totTrasporto = $this->tottraspo;
-        $this->docVars->setTotal($totTrasporto);
+        $this->docVars->setTotal();
         foreach ($this->docVars->cast as $key => $value) {
                 if ($this->tesdoc['id_tes'] > 0) {
                    $this->Cell(62);
@@ -174,14 +194,17 @@ class Parcella extends Template
         $speseincasso = $this->docVars->speseincasso;
         $totimpfat = $this->docVars->totimpfat;
         $totivafat = $this->docVars->totivafat;
+        $totivasplitpay = $this->docVars->totivasplitpay;
         $vettor = $this->docVars->vettor;
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
-		$taxstamp=$this->docVars->taxstamp;
- 
+	$taxstamp=$this->docVars->taxstamp;
+        if ($this->virtual_taxstamp == 0 || $this->virtual_taxstamp == 3) { // azzero i bolli in caso di non addebito al cliente
+            $taxstamp=0;
+        }
         //effettuo il calcolo degli importi delle scadenze
-        $totpag = $totimpfat+$impbol+$totriport+$totivafat-$ritenuta+$taxstamp;
+        $totpag = $totimpfat+$impbol+$totriport+$totivafat-$ritenuta+$taxstamp-$totivasplitpay;
         $ratpag = CalcolaScadenze($totpag, $this->giorno, $this->mese, $this->anno, $this->pagame['tipdec'],$this->pagame['giodec'],$this->pagame['numrat'],$this->pagame['tiprat'],$this->pagame['mesesc'],$this->pagame['giosuc']);
         if ($ratpag){
            //allungo l'array fino alla 4^ scadenza
@@ -207,7 +230,7 @@ class Parcella extends Template
         $this->Cell(26, 6,'Trasporto','LTR',0,'C',1);
         $this->Cell(36, 6,'Tot.Imponibile','LTR',0,'C',1);
         $this->Cell(26, 6,'Tot. I.V.A.','LTR',0,'C',1);
-        $this->Cell(22, 6,'Bolli','LTR',1,'C',1);
+        $this->Cell(22, 6,'Bolli (tratte)','LTR',1,'C',1);
         if ($totimpmer > 0) {
            $this->Cell(36, 6, gaz_format_number($totimpmer),'LBR',0,'C');
         } else {
@@ -223,11 +246,7 @@ class Parcella extends Template
         } else {
            $this->Cell(24, 6,'','LBR');
         }
-        if ($totTrasporto > 0) {
-           $this->Cell(26, 6, gaz_format_number($totTrasporto),'LBR',0,'C');
-        } else {
-           $this->Cell(26, 6,'','LBR');
-        }
+        $this->Cell(26, 6,'','LBR');
         if ($totimpfat > 0) {
            $this->Cell(36, 6, gaz_format_number($totimpfat),'LBR',0,'C');
         } else {
