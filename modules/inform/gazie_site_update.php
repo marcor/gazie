@@ -90,7 +90,8 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
                 fwrite($file,$r['imacat']);
                 fclose($file);
                 $imgd=getimagesize('gazie_data.tmp',$info);
-                $mime_elem=end(explode('/', $imgd['mime']));
+                $mime_r=explode('/', $imgd['mime']);
+                $mime_elem=end($mime_r);
                 $file = fopen('gazie_site'.$company_id.'/images/catmer_'.$r['codcat'].".".$mime_elem, "w");
                 fwrite($file, $r['imacat']);
                 fclose($file);
@@ -460,10 +461,17 @@ if (isset($_POST['Submit'])) { // conferma
     $r=filesTransfer($form['server'],$form['user'],$form['pass'],$form['path'],$company_id);
     if (!$r){ //  tutto è andato a buon fine
         echo '<tr><td colspan=3 class="FacetDataTD">COMPLETED!!!</td></tr>';
+        // per ricordare le credenziali di accesso
         gaz_dbi_put_row($gTables['company_config'],'var','server','val',$form['server']);
         gaz_dbi_put_row($gTables['company_config'],'var','user','val',$form['user']);
         gaz_dbi_put_row($gTables['company_config'],'var','pass','val',$form['pass']);
         gaz_dbi_put_row($gTables['company_config'],'var','path','val',$form['path']);
+        // inserisco sul database le scelte fatte per l'head della pagina
+        gaz_dbi_put_row($gTables['company_data'],'var','website_title','data',$form['title']);
+        gaz_dbi_put_row($gTables['company_data'],'var','website_subtitle','data',$form['subtitle']);
+        gaz_dbi_put_row($gTables['company_data'],'var','website_meta_author','data',$form['author']);
+        gaz_dbi_put_row($gTables['company_data'],'var','website_meta_keywords','data',$form['keywords']);
+        // infine inserisco le pagine
         foreach ($pages_name_and_descri as $k=>$v) {
             $db_data[$k]['ref']='';
             $ks=str_split($k,3);
