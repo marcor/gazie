@@ -118,7 +118,7 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
         } else {
             $src='gazie_site_noimage.png';
         }
-        $html .= '<tr><td><img src="'.$src.'" height="25"></td><td>'.$r['codart'].'</td><td>'.$r['desart'].'</td><td align="right">'.$price.' </td> <td>'.$um.' '.$vat.'</td><td>'.$r['annart'].'</td>
+        $html .= '<tr><td><img src="'.$src.'" class="imgBox"></td><td>'.$r['codart'].'</td><td>'.$r['desart'].'</td><td align="right">'.$price.' </td> <td>'.$um.' '.$vat.'</td><td>'.$r['annart'].'</td>
         </tr>';
         $ctrl_cm = $r['codcat'];
     }
