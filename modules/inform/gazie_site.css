@@ -74,8 +74,8 @@ body{font-family: arial, serif;	font-size: 11pt;background: #fff;color: #000000;
 	color: #f0205e; 
 }
 .imgBox { 
-	height: 25px; 
+	width: 25px; 
 } 
 .imgBox:hover { 
-	height: 100px; 
+	width: 100px; 
 } 
