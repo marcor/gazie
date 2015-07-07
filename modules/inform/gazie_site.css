@@ -76,6 +76,3 @@ body{font-family: arial, serif;	font-size: 11pt;background: #fff;color: #000000;
 .imgBox { 
 	width: 25px; 
 } 
-.imgBox:hover { 
-	width: 100px; 
-} 
