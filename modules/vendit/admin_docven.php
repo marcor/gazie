@@ -173,7 +173,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
                $form["row_$next_row"] = $_POST["row_$next_row"];
             }
-            $form['rows'][$next_row]['descri'] = substr($v['descri'],0,50);
+            $form['rows'][$next_row]['descri'] = substr($v['descri'],0,100);
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
             $form['rows'][$next_row]['codart'] = substr($v['codart'],0,15);
             $form['rows'][$next_row]['pervat'] = preg_replace("/\,/",'.',$v['pervat']);
