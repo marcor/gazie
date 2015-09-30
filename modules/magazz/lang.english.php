@@ -138,7 +138,7 @@ $strScript = array ("browse_document.php" =>
                            " Non ci sono righi da trasferire in magazzino!"),
                     "select_giomag.php" =>
                     array( 0=>'Stampa giornale di magazzino',
-                           'title'=>'Selezione per la visualizzazzione e/o la stampa del giornale di magazzino',
+                           'title'=>'Selezione per la visualizzazione e/o la stampa del giornale di magazzino',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'La data di inizio dei movimenti contabili da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
                                            'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
@@ -326,7 +326,7 @@ $strScript = array ("browse_document.php" =>
                                            'Enter a description',
                                            'Insert the unit sales',
                                            'Enter the VAT rate',
-                                           'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda'
+                                           'Per avere la tracciabilitï¿½ per lotti ï¿½ necessario attivare la contabilitï¿½ di magazzino in configurazione azienda'
                                           
                                           ),
                            'codice'=>"Code",

@@ -231,7 +231,7 @@ $strScript = array("admin_fornit.php" =>
                                             ),
                            ),
                     "select_schedule.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa delle partite aperte',
+                    array( 'title'=>'Selezione per la visualizzazione e/o la stampa delle partite aperte',
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 2 caratteri!',
                                          'Cambia fornitore'
@@ -257,7 +257,7 @@ $strScript = array("admin_fornit.php" =>
                            'descri'=> 'Descrizione'
                            ),
                     "select_partner_status.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei fornitori',
+                    array( 'title'=>'Selezione per la visualizzazione e/o la stampa dello scadenzario dei fornitori',
                            'print_title'=>'SCADENZARIO FORNITORI ',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'err'=>'Ci sono degli errori che impediscono la stampa'

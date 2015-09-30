@@ -743,7 +743,7 @@ $strScript = array ("admin_client.php" =>
                                            )
                            ),
                     "select_partner_status.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dello scadenzario dei clienti',
+                    array( 'title'=>'Selezione per la visualizzazione e/o la stampa dello scadenzario dei clienti',
                            'print_title'=>'SUPPLIERS DATETABLE ',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'err'=>'Ci sono degli errori che impediscono la stampa'
@@ -793,7 +793,7 @@ $strScript = array ("admin_client.php" =>
                                             ),
                            ),
                     "select_schedule.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa delle partite aperte',
+                    array( 'title'=>'Selezione per la visualizzazione e/o la stampa delle partite aperte',
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 2 caratteri!',
                                          'Cambia cliente/fornitore'

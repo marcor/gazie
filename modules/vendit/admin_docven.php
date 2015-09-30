@@ -1,3 +1,8 @@
+<script language="Javascript">
+    function changeTest () { 
+        alert("ciao");
+    }
+</script>
 <?php
 /*
  --------------------------------------------------------------------------

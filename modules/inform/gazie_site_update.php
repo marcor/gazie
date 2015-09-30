@@ -90,8 +90,7 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
                 fwrite($file,$r['imacat']);
                 fclose($file);
                 $imgd=getimagesize('gazie_data.tmp',$info);
-                $mime_r=explode('/', $imgd['mime']);
-                $mime_elem=end($mime_r);
+                $mime_elem=end(explode('/', $imgd['mime']));
                 $file = fopen('gazie_site'.$company_id.'/images/catmer_'.$r['codcat'].".".$mime_elem, "w");
                 fwrite($file, $r['imacat']);
                 fclose($file);
@@ -118,7 +117,7 @@ function createProductTable($company_id,$prezzi=false,$decimal_price,$backcolor=
         } else {
             $src='gazie_site_noimage.png';
         }
-        $html .= '<tr><td><img src="'.$src.'" class="imgBox" title=" header=['.$r['codart'].'] body=[<center><img src=\''.$src.'\'>] fade=[on] fadespeed=[0.03] "></td><td>'.$r['codart'].'</td><td>'.$r['desart'].'</td><td align="right">'.$price.' </td> <td>'.$um.' '.$vat.'</td><td>'.$r['annart'].'</td>
+        $html .= '<tr><td><img src="'.$src.'" height="25"></td><td>'.$r['codart'].'</td><td>'.$r['desart'].'</td><td align="right">'.$price.' </td> <td>'.$um.' '.$vat.'</td><td>'.$r['annart'].'</td>
         </tr>';
         $ctrl_cm = $r['codcat'];
     }
@@ -142,7 +141,6 @@ function createHtmlPage($title,$subtitle,$author,$keywords,$pages_name_and_descr
     $html .= '<meta content="'.$keywords.'" name="keywords">';
     $html .='<link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
              <link rel="stylesheet" href="gazie_site.css" type="text/css" />
-             <script type="text/javascript" src="gazie_site_boxover.js"></script>
              </head>';
     // fine creazione HEAD
 
@@ -426,7 +424,6 @@ if (isset($_POST['Submit'])) { // conferma
     $noexist_dir = @mkdir('gazie_site'.$company_id);
     if ($noexist_dir) { // è stata creata la directory quindi andrò a copiarci il css e le immagini menu 
       copy('gazie_site.css','gazie_site'.$company_id.'/gazie_site.css');                                     
-      copy('gazie_site_boxover.js','gazie_site'.$company_id.'/gazie_site_boxover.js');                                     
       copy('gazie_site_header.jpg','gazie_site'.$company_id.'/gazie_site_header.jpg');                                     
       copy('gazie_site_depliant.png','gazie_site'.$company_id.'/gazie_site_depliant.png');                                     
       copy('gazie_site_menu_bo.png','gazie_site'.$company_id.'/gazie_site_menu_bo.png');                                     
@@ -463,17 +460,10 @@ if (isset($_POST['Submit'])) { // conferma
     $r=filesTransfer($form['server'],$form['user'],$form['pass'],$form['path'],$company_id);
     if (!$r){ //  tutto è andato a buon fine
         echo '<tr><td colspan=3 class="FacetDataTD">COMPLETED!!!</td></tr>';
-        // per ricordare le credenziali di accesso
         gaz_dbi_put_row($gTables['company_config'],'var','server','val',$form['server']);
         gaz_dbi_put_row($gTables['company_config'],'var','user','val',$form['user']);
         gaz_dbi_put_row($gTables['company_config'],'var','pass','val',$form['pass']);
         gaz_dbi_put_row($gTables['company_config'],'var','path','val',$form['path']);
-        // inserisco sul database le scelte fatte per l'head della pagina
-        gaz_dbi_put_row($gTables['company_data'],'var','website_title','data',$form['title']);
-        gaz_dbi_put_row($gTables['company_data'],'var','website_subtitle','data',$form['subtitle']);
-        gaz_dbi_put_row($gTables['company_data'],'var','website_meta_author','data',$form['author']);
-        gaz_dbi_put_row($gTables['company_data'],'var','website_meta_keywords','data',$form['keywords']);
-        // infine inserisco le pagine
         foreach ($pages_name_and_descri as $k=>$v) {
             $db_data[$k]['ref']='';
             $ks=str_split($k,3);

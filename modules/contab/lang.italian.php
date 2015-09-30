@@ -24,7 +24,7 @@
 */
 
 $strScript = array ("select_liqiva.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa della liquidazione IVA periodica',
+                    array( 'title'=>'Selezione per la visualizzazione e/o la stampa della liquidazione IVA periodica',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'La data di inizio non pu&ograve; essere successiva alla data di fine !'
                                           ),
@@ -76,7 +76,7 @@ $strScript = array ("select_liqiva.php" =>
                            'cab'=>' C.A.B. '
                            ),
                     "select_partit.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dei partitari',
+                    array( 'title'=>'Selezione per la visualizzazione e/o la stampa dei partitari',
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 2 caratteri!',
                                          'Cambia cliente/fornitore'
@@ -230,7 +230,7 @@ $strScript = array ("select_liqiva.php" =>
                            'msg2'=>'Saldi relativi all\'anno'
                          ),
                     "select_regiva.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dei registri IVA',
+                    array( 'title'=>'Selezione per la visualizzazione e/o la stampa dei registri IVA',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'La data di inizio non pu&ograve; essere successiva alla data di fine !',
                                            'P'=>'La sequenza dei numeri di protocollo non &egrave; corretta',
@@ -295,7 +295,7 @@ $strScript = array ("select_liqiva.php" =>
                            'amount'=>'importo'
                            ),
                     "select_libgio.php" =>
-                    array( 'title'=>'Selezione per la visualizzazzione e/o la stampa dei Libro giornale',
+                    array( 'title'=>'Selezione per la visualizzazione e/o la stampa dei Libro giornale',
                            'errors'=>array('La data di inizio non &egrave; corretta!',
                                            'La data di fine non &egrave; corretta!',
                                            'La data di inizio non pu&ograve; essere successiva alla data di fine !'
