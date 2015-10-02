@@ -4,7 +4,7 @@
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
+           <http://gazie.devincentiis.it>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -39,7 +39,7 @@ function getItems($cm_ini,$cm_fin,$art_ini,$art_fin) {
         }
         return $m;
 }
-function compute_new_price($base_price,$obj_price=0,$value=0,$mode='C',$round=3) {
+function compute_new_price($base_price,$obj_price=0,$value=0,$mode='C',$round=3,$weight_valadd=0,$specific_weight=0) {
 /* calcolo del nuovo prezzo in base ai valori passati come referenza:
 
 $base_price è il prezzo del listino preso a base di calcolo, ovvero il prezzo vecchio
@@ -53,25 +53,28 @@ $mode è il tipo di modifica da effettuare e può assumere i seguenti valori:
       E = divisione per valore
       F = azzeramento e somma in percentuale
 $round è il numero di decimali per l'arrotondamento (default valore scelto in anagrafica azienda)
-
+$weight_valadd e $specific_weight vengono utilizzati ad esempio per aggiungere un ulteriore valore
+      proporzionato a quello indicato nel campo "Peso specifico/moltiplicatore" degli articoli 
 */
+    $weight_valadd = $weight_valadd*$specific_weight;   
     switch ($mode) {
            case 'A': //sostituzione
-           $new_price = round($value,$round);
+           $new_price = round($value+$weight_valadd,$round);
            break;
            case 'B': //somma in percentuale
            $new_price = round($obj_price+$base_price*$value/100,$round);
            break;
            case 'C': //somma valore
-           $new_price = round($obj_price+$value,$round);
+           $new_price = round($obj_price+$value+$weight_valadd,$round);
            break;
            case 'D': //moltiplicazione per valore
-           $new_price = round($obj_price*$value,$round);
+           $new_price = round($obj_price*$value+$weight_valadd,$round);
            break;
            case 'E': //divisione per valore
-           $new_price = round($obj_price/$value,$round);
+           $new_price = round($obj_price/$value+$weight_valadd,$round);
            break;
            case 'F': //azzeramento e somma in percentuale
+           $base_price+=$weight_valadd;     
            $new_price = round($base_price+$base_price*$value/100,$round);
            break;
     }
@@ -93,6 +96,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['lis_bas']=1;
     $form['lis_obj']=1;
     $form['round_mode']=$admin_aziend['decimal_price'];
+    $form['weight_valadd']=0;
     if (isset($_GET['id'])) {
        $item=gaz_dbi_get_row($gTables['artico'],'codice',substr($_GET['id'],0,15));
        $form['art_ini']=$item['codice'];
@@ -131,6 +135,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['mode']=substr($_POST['mode'],0,1);
     $form['valore']=floatval(preg_replace("/\,/",'.',$_POST['valore']));
     $form['round_mode']=intval($_POST['round_mode']);
+    $form['weight_valadd']=floatval(preg_replace("/\,/",'.',$_POST['weight_valadd']));
     $form['cm_ini']=intval($_POST['cm_ini']);
     $form['cm_fin']=intval($_POST['cm_fin']);
     $form['art_ini']=substr($_POST['art_ini'],0,15);
@@ -175,7 +180,7 @@ if (isset($_POST['submit']) && $msg=='') {
            $name_obj='preve'.$form['lis_obj'];
         }
         while (list($key, $mv) = each($m)) {
-            $new_price=compute_new_price($mv[$name_bas],$mv[$name_obj],$form['valore'],$form['mode'],$form['round_mode']);
+            $new_price=compute_new_price($mv[$name_bas],$mv[$name_obj],$form['valore'],$form['mode'],$form['round_mode'],$form['weight_valadd'],$mv['peso_specifico']);
             // questo e' troppo lento: gaz_dbi_put_row($gTables['artico'],'codice',$mv['codice'],$name_obj,$new_price);
             gaz_dbi_query ("UPDATE ".$gTables['artico']." SET ".$name_obj." = ".$new_price." WHERE codice = '".$mv['codice']."';");
         }
@@ -233,6 +238,10 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['round_mode']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('round_mode',$script_transl['round_mode_value'],$form['round_mode'],'FacetSelect',false);
 echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['weight_valadd']."</td>\n";
+echo "\t<td class=\"FacetDataTD\"><input type=\"text\" name=\"weight_valadd\" value=\"".$form['weight_valadd']."\" align=\"right\" maxlength=\"9\" size=\"3\" /></td>\n";
+echo "</tr>\n";
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
 echo '<td align="right"> <input type="submit" accesskey="i" name="preview" value="';
@@ -275,8 +284,9 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "<td class=\"FacetDataTD\">".$mv['descri']." &nbsp;</td>";
             echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
             echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv[$name_bas],$admin_aziend['decimal_price'],',','')." &nbsp;</td>\n";
+            echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mv['peso_specifico']*$form['weight_valadd'],$admin_aziend['decimal_price'],',','')." (".$mv['peso_specifico'].") &nbsp;</td>\n";
             echo "<td align=\"right\" class=\"FacetDataTD\">".
-                 number_format(compute_new_price($mv[$name_bas],$mv[$name_obj],$form['valore'],$form['mode'],$form['round_mode']),$admin_aziend['decimal_price'],',','')." &nbsp;</td>";
+                 number_format(compute_new_price($mv[$name_bas],$mv[$name_obj],$form['valore'],$form['mode'],$form['round_mode'],$form['weight_valadd'],$mv['peso_specifico']),$admin_aziend['decimal_price'],',','')." &nbsp;</td>";
             echo "</tr>\n";
             $ctr_mv=$mv['catmer'];
          }

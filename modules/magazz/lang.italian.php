@@ -4,7 +4,7 @@
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
+           <http://gazie.devincentiis.it>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -138,7 +138,7 @@ $strScript = array ("browse_document.php" =>
                            " Non ci sono righi da trasferire in magazzino!"),
                     "select_giomag.php" =>
                     array( 0=>'Stampa giornale di magazzino',
-                           'title'=>'Selezione per la visualizzazione e/o la stampa del giornale di magazzino',
+                           'title'=>'Selezione per la visualizzazzione e/o la stampa del giornale di magazzino',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'La data di inizio dei movimenti contabili da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
                                            'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
@@ -191,7 +191,7 @@ $strScript = array ("browse_document.php" =>
                            ),
                     "select_schart.php" =>
                     array( 0=>'Stampa schedari di magazzino',
-                           'title'=>'Selezione per la visualizzazione e/o la stampa delle schede di magazzino',
+                           'title'=>'Selezione per la visualizzazzione e/o la stampa delle schede di magazzino',
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 1 carattere!',
                                          'Cambia articolo'
@@ -309,8 +309,9 @@ $strScript = array ("browse_document.php" =>
                            'valore'=>'Percentuale/valore',
                            'round_mode'=>'Arrotondamento matematico a',
                            'round_mode_value'=>array('1 '.$admin_aziend['curr_name'],'10 centesimi','1 centesimo','1 millesimo','0,1 millesimi','0,01 millesimi'),
+                           'weight_valadd'=>'Incidenza su peso specifico es. €/kg',
                            'header'=>array('Cat.Merceologica'=>'','Codice'=>'','Descrizione'=>'','U.M.'=>'',
-                                            'Prezzo vecchio'=>'','Prezzo nuovo'=>''
+                                            'Prezzo vecchio'=>'','Incidenza peso'=>'','Prezzo nuovo'=>''
                                           )
                            ),
                     "admin_artico.php" =>

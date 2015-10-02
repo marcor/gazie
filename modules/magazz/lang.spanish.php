@@ -4,7 +4,7 @@
                             GAzie - Gestione Azienda
     Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
+           <http://gazie.devincentiis.it>
  --------------------------------------------------------------------------
     Questo programma e` free software;   e` lecito redistribuirlo  e/o
     modificarlo secondo i  termini della Licenza Pubblica Generica GNU
@@ -293,8 +293,9 @@ $strScript = array ("browse_document.php" =>
                            'valore'=>'Porcentaje / Valor',
                            'round_mode'=>'Redondeo matem&aacute;tico a',
                            'round_mode_value'=>array('1 '.$admin_aziend['curr_name'],'10 centesimo','1 centesimo','1 milesima','0,1 milesima','0,01 milesima'),
+                           'weight_valadd'=>'Delivery add ex. €/kg',
                            'header'=>array('Cat. Mercaderia'=>'','Codigo'=>'','Descripcion'=>'','U.M.'=>'',
-                                            'Precio anterior'=>'','Precio nuevo'=>''
+                                            'Precio anterior'=>'','Weight add'=>'','Precio nuevo'=>''
                                           )
                            ),
                    "update_vatrate.php" =>
