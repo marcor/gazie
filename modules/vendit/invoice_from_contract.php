@@ -144,7 +144,7 @@ if (!isset($_POST['vat_section'])){ // al primo accesso
               $stamp=0;
               $round_stamp = 0;
               $taxstamp=0;
-              if ($calc->total_exc > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] > 0 ) {
+              if ($calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] > 0 ) {
                 $taxstamp = $admin_aziend['taxstamp'];
               }
               if ($paym['tippag'] == 'T') {  //se il pagamento prevede il bollo

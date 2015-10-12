@@ -1380,7 +1380,7 @@ echo "<input type=\"hidden\" value=\"".$form['caumag']."\" name=\"caumag\">\n";
 $somma_spese = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
 $calc = new Compute;
 $calc->add_value_to_VAT_castle($castle,$somma_spese,$form['expense_vat']);
-if ($calc->total_exc > $admin_aziend['taxstamp_limit'] && $form['virtual_taxstamp'] > 0 ) {
+if ($calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $form['virtual_taxstamp'] > 0 ) {
    $form['taxstamp'] = $admin_aziend['taxstamp'];
 }
 
