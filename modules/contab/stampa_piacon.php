@@ -100,7 +100,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
             $pdf->SetY($start_y+4); // mi riposiziono all'inizio
         } else {   //conti
             $pdf->Cell(15,4,$row['codice'],'L',0,'C');
-            $pdf->Cell(55,4,$row['descri'],'L');
+            $pdf->Cell(55,4,$row['descri'],'L',0,'L',false,'',1);
             $pdf->SetFont('helvetica','',6);
             $cee='';
             $ce_d=trim($row['ceedar']);
@@ -257,5 +257,5 @@ while ($row = gaz_dbi_fetch_array($result)) {
     $ctrl_mas = $mas;
 }
 $pdf->Cell(135,1,'','T');
-$pdf->Output($title.'.pdf');
+$pdf->Output($title['title'].'_'.$admin_aziend['ragso1'].'.pdf');
 ?>
