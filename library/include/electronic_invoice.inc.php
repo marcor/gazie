@@ -456,7 +456,7 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
 		   $results->appendChild($attrVal);
 
          //nodo 1.2.1.2 Codice Fiscale richiesto da alcune amministrazioni come obbligatorio 
-         $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);		
+       $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0);		
 		   $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['codfis']));	   
 		   $results->appendChild($attrVal);    
     
@@ -470,17 +470,6 @@ function create_XML_invoice($testata, $gTables, $rows='rigdoc', $dest=false)
          $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica")->item(0);
          $results->insertBefore($el, $results1);
             
-            
-         // nodo 1.4.1.1 partita IVA del committente, se disponibile
-         if (!empty($XMLvars->client['pariva'])) { 
-           $el = $domDoc->createElement("IdFiscaleIVA",'' );
-           $results = $el->appendChild($domDoc->createElement('IdPaese', 'IT'));
-           $results = $el->appendChild($domDoc->createElement('IdCodice', $XMLvars->client['pariva'] ));            
-           $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici")->item(0);	
-           $results1 = $xpath->query("//CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0);
-           $results->insertBefore($el, $results1);
-         }   
-         
          
          $results = $xpath->query("//CessionarioCommittente/DatiAnagrafici/Anagrafica/Denominazione")->item(0);		
 		   $attrVal = $domDoc->createTextNode( substr(trim( $XMLvars->client['ragso1']) . " " . trim($XMLvars->client['ragso2'] ), 0, 80) );	   

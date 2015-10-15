@@ -92,9 +92,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['round_stamp'] = intval($_POST['round_stamp']);
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
-    if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
+    if ($form['change_pag'] != $form['pagame']) {  //se ï¿½ stato cambiato il pagamento
        $new_pag = gaz_dbi_get_row($gTables['pagame'],"codice",$form['pagame']);
-       if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
+       if ($toDo == 'update') {  //se ï¿½ una modifica mi baso sulle vecchie spese
               $old_header = gaz_dbi_get_row($gTables['tesdoc'],"id_tes",$form['id_tes']);
               if ($cliente['speban'] == "S" && ($new_pag['tippag']=='T' || $new_pag['tippag']=='B')) {
                  if ($old_header['speban'] > 0) {
@@ -317,36 +317,36 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                  $form['rows'][$i]['id_tes'] = $form['id_tes'];
                  $codice = array('id_rig',$val_old_row['id_rig']);
                  rigbroUpdate($codice,$form['rows'][$i]);
-                 if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se è un rigo testo già presente lo modifico
+                 if (isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0) { //se ï¿½ un rigo testo giï¿½ presente lo modifico
                       bodytextUpdate(array('id_body',$val_old_row['id_body_text']),array('table_name_ref'=>'rigdoc','id_ref'=>$val_old_row['id_rig'],'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
                       gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', $val_old_row['id_body_text']);
                  } elseif (isset($form["row_$i"]) && $val_old_row['id_body_text'] == 0 ) { //prima era un rigo diverso da testo
                       bodytextInsert(array('table_name_ref'=>'rigbro','id_ref'=>$val_old_row['id_rig'],'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
                       gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $val_old_row['id_rig'], 'id_body_text', gaz_dbi_last_id());
-                 } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0){ //un rigo che prima era testo adesso non lo è più
+                 } elseif (!isset($form["row_$i"]) && $val_old_row['id_body_text'] > 0){ //un rigo che prima era testo adesso non lo ï¿½ piï¿½
                       gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
                  }
               } else { //altrimenti lo elimino
-                 if (intval($val_old_row['id_body_text']) > 0){  //se c'è un testo allegato al rigo elimino anch'esso
+                 if (intval($val_old_row['id_body_text']) > 0){  //se c'ï¿½ un testo allegato al rigo elimino anch'esso
                       gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigbro' AND id_ref", $val_old_row['id_rig']);
                  }
                  gaz_dbi_del_row($gTables['rigbro'], "id_rig", $val_old_row['id_rig']);
               }
               $i++;
              }
-             //qualora i nuovi rows fossero di più dei vecchi inserisco l'eccedenza
+             //qualora i nuovi rows fossero di piï¿½ dei vecchi inserisco l'eccedenza
              for ($i = $i; $i <= $count; $i++) {
                 $form['rows'][$i]['id_tes'] = $form['id_tes'];
                 rigbroInsert($form['rows'][$i]);
                 $last_rigbro_id = gaz_dbi_last_id();
-                if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
+                if (isset($form["row_$i"])) { //se ï¿½ un rigo testo lo inserisco il contenuto in body_text
                     bodytextInsert(array('table_name_ref'=>'rigbro','id_ref'=>$last_rigbro_id,'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
                     gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                 }
              }
              //modifico la testata con i nuovi dati...
              $old_head = gaz_dbi_get_row($gTables['tesbro'],'id_tes',$form['id_tes']);
-             if (substr($form['tipdoc'],0,2) == 'DD') { //se è un DDT non fatturato
+             if (substr($form['tipdoc'],0,2) == 'DD') { //se ï¿½ un DDT non fatturato
                $form['datfat'] = '';
                $form['numfat'] = 0;
              } else {
@@ -390,7 +390,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                   $form['rows'][$i]['id_tes'] = $ultimo_id;
                   rigbroInsert($form['rows'][$i]);
                   $last_rigbro_id = gaz_dbi_last_id();
-                  if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
+                  if (isset($form["row_$i"])) { //se ï¿½ un rigo testo lo inserisco il contenuto in body_text
                       bodytextInsert(array('table_name_ref'=>'rigbro','id_ref'=>$last_rigbro_id,'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
                       gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                   }
@@ -459,7 +459,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                   $form['rows'][$i]['id_tes'] = $ultimo_id;
                   rigbroInsert($form['rows'][$i]);
                   $last_rigbro_id = gaz_dbi_last_id();
-                  if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
+                  if (isset($form["row_$i"])) { //se ï¿½ un rigo testo lo inserisco il contenuto in body_text
                       bodytextInsert(array('table_name_ref'=>'rigbro','id_ref'=>$last_rigbro_id,'body_text'=>$form["row_$i"],'lang_id'=>$admin_aziend['id_language']));
                       gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                   }
@@ -549,7 +549,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     }
     $form['volume'] += $form['in_quanti']*$artico['volume_specifico'];
     // fine addizione peso,pezzi,volume
-    if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
+    if (substr($form['in_status'],0,6) == "UPDROW"){ //se ï¿½ un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
          $form['rows'][$old_key]['id_doc'] = $form['in_id_doc'];
@@ -623,7 +623,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$old_key]['sconto'] = 0;
          }
          ksort($form['rows']);
-    } else { //se è un rigo da inserire
+    } else { //se ï¿½ un rigo da inserire
          $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
          $form['rows'][$next_row]['id_doc'] = $form['in_id_doc'];
          $form['rows'][$next_row]['descri'] = $form['in_descri'];
@@ -1006,6 +1006,7 @@ $script_transl = HeadMain(0,array('tiny_mce/tiny_mce',
                                   'boxover/boxover',
                                   'calendarpopup/CalendarPopup',
                                   'jquery/jquery-1.7.1.min',
+                                  'jquery/jquery.mobile-1.4.2.min.js',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
@@ -1380,7 +1381,7 @@ echo "<input type=\"hidden\" value=\"".$form['caumag']."\" name=\"caumag\">\n";
 $somma_spese = $form['traspo'] + $form['speban']*$form['numrat'] + $form['spevar'];
 $calc = new Compute;
 $calc->add_value_to_VAT_castle($castle,$somma_spese,$form['expense_vat']);
-if ($calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $form['virtual_taxstamp'] > 0 ) {
+if ($calc->total_exc > $admin_aziend['taxstamp_limit'] && $form['virtual_taxstamp'] > 0 ) {
    $form['taxstamp'] = $admin_aziend['taxstamp'];
 }
 

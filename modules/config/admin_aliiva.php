@@ -43,7 +43,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['tipiva'] = substr($_POST['tipiva'],0,1);
     $form['descri'] = substr($_POST['descri'],0,50);
     $form['aliquo'] = floatval($_POST['aliquo']);
-    $form['taxstamp'] = intval($_POST['taxstamp']);
     $form['fae_natura'] = substr($_POST['fae_natura'],0,2);;
     $form['annota'] = substr($_POST['annota'],0,50);
     if (isset($_POST['Submit'])) { // conferma tutto
@@ -89,7 +88,6 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['tipiva'] = 'I';
     $form['descri'] = '';
     $form['aliquo'] = '';
-    $form['taxstamp'] = 1;
     $form['fae_natura'] = '';
     $form['annota'] = '';
 }
@@ -144,11 +142,6 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[3]."</td>
 echo "\t<input type=\"text\" name=\"aliquo\" value=\"".$form['aliquo']."\" maxlength=\"9\" size=\"5\" class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['taxstamp']."</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->variousSelect('taxstamp',$script_transl['yn_value'],$form['taxstamp']);
-echo "\t </td>\n";
-echo "</tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['fae_natura']."</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">";
 $gForm->selectFromXML('../../library/include/fae_natura_iva.xml', 'fae_natura','fae_natura',$form['fae_natura'],true);

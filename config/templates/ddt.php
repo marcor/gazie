@@ -78,7 +78,7 @@ class DDT extends Template_con_scheda
             }
                 if ($rigo['tiprig'] < 2) {
                     $this->Cell(30,6,$rigo['codart'],1,0,'L');
-                    $this->Cell(82,6,$rigo['descri'],1,0,'L',0,'',1);
+                    $this->Cell(82,6,$rigo['descri'],1,0,'L');
                     $this->Cell(10,6,$rigo['unimis'],1,0,'L');
                     $this->Cell(30,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if ($this->docVars->client['stapre'] == 'S') {
@@ -142,7 +142,7 @@ class DDT extends Template_con_scheda
             $this->Cell(26, 5,'','LR',1);
         }
         $this->Cell(187,5,'Pagamento - Banca','LTR',1,'C',1);
-        $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
+        $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C');
         $this->Cell(51,5,'Spedizione','LTR',0,'C',1);
         $this->Cell(114,5,'Vettore','LTR',0,'C',1);
         $this->Cell(22,5,'Trasporto','LTR',1,'C',1);
@@ -150,7 +150,7 @@ class DDT extends Template_con_scheda
         $this->Cell(114,5,$this->docVars->vettor['ragione_sociale'].' '.
                           $this->docVars->vettor['indirizzo'].' '.
                           $this->docVars->vettor['citta'].' '.
-                          $this->docVars->vettor['provincia'],'LBR',0,'C',0,'',1);
+                          $this->docVars->vettor['provincia'],'LBR',0,'C');
         if ($this->docVars->tesdoc['traspo'] == 0) {
             $ImportoTrasporto = "";
         } else {
@@ -158,12 +158,7 @@ class DDT extends Template_con_scheda
         }
         $this->Cell(22,5,$ImportoTrasporto,'LBR',1,'C');
         $this->Cell(51,5,'Inizio trasporto','LTR',0,'C',1);
-        if (empty($this->docVars->vettor['ragione_sociale'])){
-            $signature=' Firma del conducente ';
-        } else {
-            $signature=' Firma del vettore ';
-        }
-        $this->Cell(68,5,$signature,'LTR',0,'C',1);
+        $this->Cell(68,5,'Firma vettore','LTR',0,'C',1);
         $this->Cell(68,5,'Firma destinatario','LTR',1,'C',1);
         if ($this->day > 0) {
            $this->Cell(51,5,'data '.$this->day.'-'.$this->month.'-'.$this->year,'LR',0,'C');

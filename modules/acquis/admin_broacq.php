@@ -76,13 +76,13 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['numrat'] = $_POST['numrat'];
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
-    if ($form['change_pag'] != $form['pagame']){  //se Ã¨ stato cambiato il pagamento
+    if ($form['change_pag'] != $form['pagame']){  //se è stato cambiato il pagamento
        $new_pag = gaz_dbi_get_row($gTables['pagame'],"codice",$form['pagame']);
        $old_pag = gaz_dbi_get_row($gTables['pagame'],"codice",$form['change_pag']);
        if (($new_pag['tippag'] == 'B' or $new_pag['tippag'] == 'T' or $new_pag['tippag'] == 'V')
            and ($old_pag['tippag'] == 'C' or $old_pag['tippag'] == 'D')) { // se adesso devo mettere le spese e prima no
            $form['numrat'] = $new_pag['numrat'];
-           if ($toDo == 'update') {  //se Ã¨ una modifica mi baso sulle vecchie spese
+           if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
               $old_header = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$form['id_tes']);
               if ($old_header['speban'] > 0 and $fornitore['speban'] == "S"){
                  $form['speban'] = $old_header['speban'];
@@ -252,7 +252,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
               }
               $i++;
              }
-             //qualora i nuovi righi fossero di piÃ¹ dei vecchi inserisco l'eccedenza
+             //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
              for ($i = $i; $i <= $count; $i++) {
                   $form['righi'][$i]['id_tes'] = $form['id_tes'];
                   rigbroInsert($form['righi'][$i]);
@@ -344,7 +344,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   // Se viene inviata la richiesta di conferma rigo
   if (isset($_POST['in_submit_x'])) {
     $artico = gaz_dbi_get_row($gTables['artico'],"codice",$form['in_codart']);
-    if (substr($form['in_status'],0,6) == "UPDROW"){ //se Ã¨ un rigo da modificare
+    if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['righi'][$old_key]['tiprig'] = $form['in_tiprig'];
          $form['righi'][$old_key]['descri'] = $form['in_descri'];
@@ -390,7 +390,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['righi'][$old_key]['sconto'] = 0;
          }
          ksort($form['righi']);
-    } else { //se Ã¨ un rigo da inserire
+    } else { //se è un rigo da inserire
          $form['righi'][$next_row]['tiprig'] = $form['in_tiprig'];
          $form['righi'][$next_row]['descri'] = $form['in_descri'];
          $form['righi'][$next_row]['id_mag'] = $form['in_id_mag'];
@@ -405,7 +405,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
             $form['righi'][$next_row]['sconto'] = $form['in_sconto'];
             $form['righi'][$next_row]['prelis'] = $artico['preacq'];
-            if ($form['tipdoc'] == 'APR') {  // se Ã¨ un preventivo non conosco prezzo e sconto
+            if ($form['tipdoc'] == 'APR') {  // se è un preventivo non conosco prezzo e sconto
                 $form['righi'][$next_row]['sconto'] = 0;
                 $form['righi'][$next_row]['prelis'] = 0;
             }
@@ -426,7 +426,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                $form['righi'][$next_row]['codric'] = $artico['id_cost'];
                $form['in_codric'] = $artico['id_cost'];
             }
-         } elseif ($form['in_tiprig'] == 2) { //descrittivo
+         } elseif ($form['in_tiprig'] == 2) { //descittivo
             $form['righi'][$next_row]['codart'] = "";
             $form['righi'][$next_row]['annota'] = "";
             $form['righi'][$next_row]['pesosp'] = "";
@@ -447,15 +447,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['righi'][$next_row]['codric'] = $form['in_codric'];
             $form['righi'][$next_row]['sconto'] = 0;
             $form['righi'][$next_row]['codvat'] = $form['in_codvat'];
-            if ($form['in_codvat'] > 0) {
-                $form['righi'][$next_row]['codvat'] = $form['in_codvat'];
-                $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
-                $form['righi'][$next_row]['pervat'] = $iva_row['aliquo'];
-            } else {
-                $form['righi'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
-                $iva_azi = gaz_dbi_get_row($gTables['aliiva'],"codice",$admin_aziend['preeminent_vat']);
-                $form['righi'][$next_row]['pervat'] = $iva_azi['aliquo'];
-            }
+            $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
+            $form['righi'][$next_row]['pervat'] = $iva_row['aliquo'];
          }
     }
      // reinizializzo rigo di input tranne che per il tipo rigo e aliquota iva

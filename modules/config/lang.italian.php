@@ -243,9 +243,7 @@
                            'descri'=>"Descizione",
                            'type'=>"Tipo",
                            'aliquo'=>"Percentuale",
-                           'taxstamp'=>'Soggetto a bollo',
-                           'fae_natura'=>"Natura fatt.elettronica PA",
-                           'yn_value'=>array(1=>'Si',0=>'No')
+                           'fae_natura'=>"Natura fatt.elettronica PA"
                         ),
                      "admin_aliiva.php" =>
                    array(  "Aliquota IVA",
@@ -259,10 +257,7 @@
                            "% Aliquota non valida!",
                            "Tipo IVA",
                            "Indicare la natura dell'esenzione/esclusione!",
-                           'fae_natura'=>"Natura fatt.elettronica PA",
-                           'taxstamp'=>'Soggetto a bollo',
-                           'yn_value'=>array(1=>'Si',0=>'No')
-
+                           'fae_natura'=>"Natura fatt.elettronica PA"
                          ),
                     "admin_banapp.php" =>
                    array(  'title'=>'Gestione delle banche di appoggio',

@@ -239,7 +239,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         case "DDR":
         case "DDL":
             echo "<tr>";
-            echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"../acquis/admin_docacq.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a> &nbsp;</td>";
+            echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a> &nbsp;</td>";
             echo "<td class=\"FacetDataTDred\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
             ?>
 				<td class="FacetDataTDred">
@@ -250,7 +250,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				<?php
             echo "<td class=\"FacetDataTDred\" align=\"center\">D.d.T. a Fornitore &nbsp;</td>";
 
-            $urlPrintDoc = "../acquis/stampa_docacq.php?id_tes=".$r["id_tes"]."&template=DDT";
+            $urlPrintDoc = "stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT";
             echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>\n";
 
@@ -260,7 +260,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$urlPrintDoc.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
                 mail="'.$r["e_mail"].'" namedoc="'.$r['tipdoc'].' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else {
-		echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="../acquis/admin_fornit.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+		echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	    }
             echo "</td>\n";
 

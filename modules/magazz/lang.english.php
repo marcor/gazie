@@ -138,7 +138,7 @@ $strScript = array ("browse_document.php" =>
                            " Non ci sono righi da trasferire in magazzino!"),
                     "select_giomag.php" =>
                     array( 0=>'Stampa giornale di magazzino',
-                           'title'=>'Selezione per la visualizzazzione e/o la stampa del giornale di magazzino',
+                           'title'=>'Selezione per la visualizzazione e/o la stampa del giornale di magazzino',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'La data di inizio dei movimenti contabili da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
                                            'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
@@ -289,7 +289,7 @@ $strScript = array ("browse_document.php" =>
                            'valore'=>'Percentuale/valore',
                            'round_mode'=>'Arrotondamento matematico a',
                            'round_mode_value'=>array('1 '.$admin_aziend['curr_name'],'10 cents','1 cent','1 mils','0,1 mils','0,01 mils'),
-                           'weight_valadd'=>'Delivery add ex. €/kg',
+                           'weight_valadd'=>'Delivery add ex. ï¿½/kg',
                            'header'=>array('Cat.Merceologica'=>'','Codice'=>'','Descrizione'=>'','U.M.'=>'',
                                             'Old price'=>'','Weight add'=>'','New price'=>''
                                           )
@@ -327,7 +327,7 @@ $strScript = array ("browse_document.php" =>
                                            'Enter a description',
                                            'Insert the unit sales',
                                            'Enter the VAT rate',
-                                           'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda'
+                                           'Per avere la tracciabilitï¿½ per lotti ï¿½ necessario attivare la contabilitï¿½ di magazzino in configurazione azienda'
                                           
                                           ),
                            'codice'=>"Code",
@@ -338,10 +338,16 @@ $strScript = array ("browse_document.php" =>
                            'image'=>"Image (jpg,png,gif) max 10kb",
                            'unimis'=>"Measurement Unit for sales",
                            'catmer'=>"Product Category",
+/** inizio modifica FP 15/10/2015
+* aggiunto campo raggruppamento statistico
+*/
+                           'ragstat'=>"Raggruppamento statistico",
+/** fine modifica FP */
                            'preacq'=>'Purchase price',
                            'preve1'=>'Selling price of a list 1',
                            'preve2'=>'Selling price of a list 2',
                            'preve3'=>'Selling price of a list 3',
+                           'sconto'=>'Discount',
                            'aliiva'=>'VAT rate',
                            'esiste'=>'Actual existence',
                            'valore'=>'Value of the existing',

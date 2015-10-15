@@ -245,9 +245,7 @@ $strScript = array ("admin_aziend.php" =>
                            'descri'=>"Descripcion",
                            'type'=>"Tipo",
                            'aliquo'=>"Percentual",
-                           'fae_natura'=>"Nature - PA electronic invoice",
-                           'taxstamp'=>'Subject to stamp duty',
-                           'yn_value'=>array(1=>'Yes',0=>'No')
+                           'fae_natura'=>"Nature - PA electronic invoice"
                         ),
                     "admin_aliiva.php" =>
                    array(  "Tasa IVA",
@@ -261,8 +259,6 @@ $strScript = array ("admin_aziend.php" =>
                            "% Tasa no valida",
                            "Tipo IVA",
                            "Select the nature of the exemption / exclusion!",
-                           'taxstamp'=>'Subject to stamp duty',
-                           'yn_value'=>array(1=>'Yes',0=>'No'),
                            'fae_natura'=>"Nature - PA electronic invoice"
                          ),
                     "admin_banapp.php" =>

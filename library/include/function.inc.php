@@ -1456,7 +1456,7 @@ class Compute
         $row=0;
         $this->total_imp=0;
         $this->total_vat=0;
-        $this->total_exc_with_duty=0;
+        $this->total_exc=0;
         $this->total_isp=0; // totale degli inesigibili per split payment PA
         /* ho due metodi di calcolo del castelletto IVA:
          * 1 - quando non ho l'aliquota IVA allora uso la ventilazione
@@ -1488,8 +1488,8 @@ class Compute
                 $new_castle[$k]['impcast'] = $new_imp;
                 $new_castle[$k]['imponi'] = $new_imp;
                 $this->total_imp+=$new_imp; // aggiungo all'accumulatore del totale
-                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0 ){ // è senza aliquota ed è soggetto a bolli
-                    $this->total_exc_with_duty+=$new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                if ($vat['aliquo'] < 0.01){ // è senza IVA
+                    $this->total_exc+=$new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
                 $new_castle[$k]['ivacast'] = round(($new_imp*$vat['aliquo'])/ 100,2);
                 if ($vat['tipiva']== 'T'){ // è un'IVA non esigibile per split payment PA
@@ -1517,8 +1517,8 @@ class Compute
                     $new_castle[$k]['imponi'] = $v['impcast'];
                     $new_castle[$k]['ivacast'] = round(($v['impcast']*$vat['aliquo'])/ 100,2);
                 }
-                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0 ){ // è senza IVA ed è soggetto a bolli
-                    $this->total_exc_with_duty+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                if ($vat['aliquo'] < 0.01){ // è senza IVA
+                    $this->total_exc+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
                 if ($vat['tipiva']== 'T'){ // è un'IVA non esigibile per split payment PA
                     $this->total_isp+=$new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
@@ -1535,8 +1535,8 @@ class Compute
                 $new_castle[$vat_rate]['ivacast'] = round(($value*$vat['aliquo'])/ 100,2);
                 $new_castle[$vat_rate]['descriz'] = $vat['descri'];
                 $new_castle[$vat_rate]['fae_natura'] = $vat['fae_natura'];
-                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0 ){ // è senza IVA ed è soggetto a bolli
-                    $this->total_exc_with_duty+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                if ($vat['aliquo'] < 0.01){ // è senza IVA
+                    $this->total_exc+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
                 if ($vat['tipiva']== 'T'){ // è un'IVA non esigibile per split payment PA
                     $this->total_isp+=$new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore 

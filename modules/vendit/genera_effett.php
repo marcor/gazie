@@ -157,14 +157,14 @@ function getReceiptNumber($date)
     return $first;
 }
 
-function computeTot($data,$carry)
+function computeTot($data)
 {
 	$tax=0;$vat=0;
 	foreach($data as $k=>$v) {
           $tax += $v['impcast'];
           $vat += round($v['impcast']*$v['periva'])/ 100;
 	}
-	$tot=$vat+$tax+$carry;
+	$tot=$vat+$tax;
 	return array('taxable'=>$tax,'vat'=>$vat,'tot'=>$tot);
 }
 
@@ -190,8 +190,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 $stamp=$v['tes']['stamp'];
                 $round=$v['tes']['numrat']*$v['tes']['round_stamp'];
              }
-
-             $tot=computeTot($v['vat'],$v['car']-$v['rit']);
+             $tot=computeTot($v['vat'],$v['car']-$v['rit'],$stamp,$round);
              //fine calcolo totali
              $rate = CalcolaScadenze($tot['tot'],substr($v['tes']['datfat'],8,2),substr($v['tes']['datfat'],5,2),substr($v['tes']['datfat'],0,4),$v['tes']['tipdec'],$v['tes']['giodec'],$v['tes']['numrat'],$v['tes']['tiprat'],$v['tes']['mesesc'],$v['tes']['giosuc']);
              $tot_doc = $tot['tot'];
@@ -271,8 +270,8 @@ if (isset($_POST['preview'])) {
          // calcolo i totali
          $stamp=false;
          $round=0;
-         $tot=computeTot($v['vat'],$v['car']-$v['rit']);
-	 //fine calcolo totali
+         $tot=computeTot($v['vat']);
+		 //fine calcolo totali
          echo "<tr class=\"FacetDataTD\">
                <td align=\"center\">".gaz_format_date($v['tes']['datfat'])."</td>
                <td align=\"center\">".$v['tes']['protoc'].'/'.$v['tes']['seziva']."</td>
