@@ -108,6 +108,19 @@ $strScript = array ("browse_document.php" =>
                            "L'immagine non dev'essere pi&ugrave; grande di 10 kb",
                            'web_url'=>'Web url<br />(ex: http://site.com/group.html)'
                            ),
+                    "admin_ragstat.php" =>
+                   array(  "statistic groups ",
+                           "Numero ",
+                           "Descrizione ",
+                           "Immagine (jpg,png,gif) max 10kb: ",
+                           "% di ricarico ",
+                           "Annotazioni ",
+                           "codice gi&agrave; esistente!",
+                           "la descrizione &egrave; vuota!",
+                           "Il file immagine dev'essere nel formato PNG",
+                           "L'immagine non dev'essere pi&ugrave; grande di 10 kb",
+                           'web_url'=>'Web url<br />(es: http://site.com/group.html)'
+                           ),
                     "admin_caumag.php" =>
                    array(  "warehouse causal ",
                            "Code ",
@@ -138,7 +151,7 @@ $strScript = array ("browse_document.php" =>
                            " Non ci sono righi da trasferire in magazzino!"),
                     "select_giomag.php" =>
                     array( 0=>'Stampa giornale di magazzino',
-                           'title'=>'Selezione per la visualizzazzione e/o la stampa del giornale di magazzino',
+                           'title'=>'Selezione per la visualizzazione e/o la stampa del giornale di magazzino',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'La data di inizio dei movimenti contabili da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
                                            'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
@@ -338,6 +351,8 @@ $strScript = array ("browse_document.php" =>
                            'image'=>"Image (jpg,png,gif) max 10kb",
                            'unimis'=>"Measurement Unit for sales",
                            'catmer'=>"Product Category",
+                           'ragstat'=>"Statistic group",
+                           'sconto'=>'Discount',                           
                            'preacq'=>'Purchase price',
                            'preve1'=>'Selling price of a list 1',
                            'preve2'=>'Selling price of a list 2',

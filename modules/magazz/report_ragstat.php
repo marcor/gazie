@@ -47,7 +47,7 @@ if (!isset($_GET['auxil'])) {
    $where = "descri like '".addslashes($auxil)."%'";
 }
 ?>
-<div align="center" class="FacetFormHeaderFont">Categorie Merceologiche</div>
+<div align="center" class="FacetFormHeaderFont">Raggruppamenti statistici</div>
 <?php
 $recordnav = new recordnav($gTables['ragstat'], $where, $limit, $passo);
 $recordnav -> output();

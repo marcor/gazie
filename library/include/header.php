@@ -48,6 +48,7 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
 <script src="../../library/bootstrap/js/jquery.min.js"></script>
 <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
 <link rel="shortcut icon" href="../../library/images/favicon.ico">
+<link rel="stylesheet" href="../../js/jquery/toast/resources/css/jquery.toastmessage.css" />
 <?php
 
 function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray='')

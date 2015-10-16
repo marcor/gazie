@@ -201,6 +201,15 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['catmer']."</td><td col
 $gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,1,' - ','descri');
 echo "</td>\n";
 echo "</tr>\n";
+/** inizio modifica FP 15/10/2015
+* aggiunto campo raggruppamento statistico
+*/
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['ragstat']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->selectFromDB('ragstat','ragstat','codice',$form['ragstat'],false,1,' - ','descri');
+echo "</td>\n";
+echo "</tr>\n";
+/** fine modifica FP */
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['preacq']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">

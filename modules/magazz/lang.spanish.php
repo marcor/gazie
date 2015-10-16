@@ -112,6 +112,19 @@ $strScript = array ("browse_document.php" =>
                            "La imagen no debe ser mayor de 10 KB",
                            'web_url'=>'Web url<br />(es: http://site.com/group.html)'
                            ),
+                    "admin_ragstat.php" =>
+                   array(  "statistic groups ",
+                           "Numero ",
+                           "Descrizione ",
+                           "Immagine (jpg,png,gif) max 10kb: ",
+                           "% di ricarico ",
+                           "Annotazioni ",
+                           "codice gi&agrave; esistente!",
+                           "la descrizione &egrave; vuota!",
+                           "Il file immagine dev'essere nel formato PNG",
+                           "L'immagine non dev'essere pi&ugrave; grande di 10 kb",
+                           'web_url'=>'Web url<br />(es: http://site.com/group.html)'
+                           ),
                     "admin_caumag.php" =>
                    array(  "Causal Bodega ",
                            "Codigo ",
@@ -342,10 +355,12 @@ $strScript = array ("browse_document.php" =>
                            'image'=>"Image (jpg,png,gif) max 10kb",
                            'unimis'=>"Measurement Unit for sales",
                            'catmer'=>"Product Category",
+                           'ragstat'=>"Statistic group",
                            'preacq'=>'Purchase price',
                            'preve1'=>'Selling price of a list 1',
                            'preve2'=>'Selling price of a list 2',
                            'preve3'=>'Selling price of a list 3',
+                           'sconto'=>'Discount',
                            'aliiva'=>'VAT rate',
                            'esiste'=>'Actual existence',
                            'valore'=>'Value of the existing',

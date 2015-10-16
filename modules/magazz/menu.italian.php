@@ -25,13 +25,14 @@
 $transl['magazz'] = array('name' => "Magazzino",
                           'title' => "Gestione Magazzino",
                           'm2' => array( 1 =>array("Gestione Articoli di Magazzino","Articoli"),
-                                         2 =>array("Gestione Categorie Merceologiche","Cat. Merceologiche"),
+                                         2 =>array("Gestione Categorie Merceologiche","Cat.Merceologiche"),
                                          3 =>array("Giornale di Magazzino","Movimenti"),
                                          4 =>array("Causali di Magazzino","Causali"),
                                          5 =>array("Selezione articoli per la stampa del listino","Listini"),
                                          6 =>array("Modifica i prezzi degli articoli","Modifica prezzi"),
                                          7 =>array("Selezione articoli per la creazione del depliant","Catalogo"),
-                                         8 =>array("Statistiche del magazzino","Statistiche")
+                                         8 =>array("Statistiche del magazzino","Statistiche"),
+                                         9 =>array("Gestione Raggruppamenti Statistici","Raggr.Statistici")
                                          ),
                           'm3' => array( 1 =>array("Inserisci un nuovo articolo di magazzino","Nuovo articolo di magazzino"),
                                          2 =>array("Inserisci un nuova categoria merceologica","Nuova categoria merceologica"),
@@ -43,7 +44,8 @@ $transl['magazz'] = array('name' => "Magazzino",
                                          8 =>array("Rivalutazione esistente articoli","Rivalutazione esistente"),
                                          9 =>array("Inventario di magazzino","Inventario di magazzino"),
                                          10 =>array("Documenti e/o certificazioni prodotti","Documenti e/o certificazioni"),
-                                         11 =>array("Modifica aliquota IVA degli articoli","Cambio IVA articoli")
+                                         11 =>array("Modifica aliquota IVA degli articoli","Cambio IVA articoli"),
+                                         12 =>array("Inserisci un nuovo raggruppamento statistico","Nuovo Raggruppamento statistico")
 
                                       )
                           );

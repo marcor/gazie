@@ -36,7 +36,8 @@ $transl['magazz'] = array('name' => "Bodega",
                                          5 =>array("Itemes elegidos para lista de precios","Lista de Precios"),
                                          6 =>array("Actualizar precios de articulos","Actualizar Precios"),
                                          7 =>array("Seleccion de Articulos para la creacion de folleto","Catalogo"),
-                                         8 =>array("Estadisticas de existencias","Estadisticas")
+                                         8 =>array("Estadisticas de existencias","Estadisticas"),
+                                         9 =>array("Statistic groups manage","Statistic groups")
                                          ),
                           'm3' => array( 1 =>array("Insertar nuevo item","Nuevo item"),
                                          2 =>array("Insertar nuevo grupo de items","Nuevo grupo de itemes"),
@@ -48,7 +49,8 @@ $transl['magazz'] = array('name' => "Bodega",
                                          8 =>array("Reevaluacion de articulos existentes","Reevaluacion existencias"),
                                          9 =>array("Inventario de Existencias","Inventario de Existencias"),
                                          10 =>array("Documentos y / o certificación de productos","Documentos y/o certificación"),
-                                         11 =>array("Cambio de la tasa del IVA de los Articulos","Cambio IVA articulos")
+                                         11 =>array("Cambio de la tasa del IVA de los Articulos","Cambio IVA articulos"),
+                                         12 =>array("Insert new statistic group","New statistic group")
                                       )
                           );
 ?>

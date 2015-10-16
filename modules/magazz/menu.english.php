@@ -31,7 +31,8 @@ $transl['magazz'] = array('name' => "Warehouse",
                                          5 =>array("Chosen items for price list","Price List"),
                                          6 =>array("Update of the articles prices","Update Prices"),
                                          7 =>array("Articles selection for deply creation","Catalogue"),
-                                         8 =>array("Stock statistics","Statistics")
+                                         8 =>array("Stock statistics","Statistics"),
+                                         9 =>array("Statistic groups manage","Statistic groups")
                                          ),
                           'm3' => array( 1 =>array("Insert new item","New item"),
                                          2 =>array("Insert new item group","New item group"),
@@ -43,7 +44,8 @@ $transl['magazz'] = array('name' => "Warehouse",
                                          8 =>array("Item existing revaluation","Existing revaluation"),
                                          9 =>array("Inventory stock","Inventory stock"),
                                          10 =>array("Documents and / or certification of products","Documents and/or certification"),
-                                         11 =>array("Changing the VAT rate of Items","Change items VAT")
+                                         11 =>array("Changing the VAT rate of Items","Change items VAT"),
+                                         12 =>array("Insert new statistic group","New statistic group")
                                       )
                           );
 ?>
