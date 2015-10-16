@@ -15,9 +15,6 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 <ul class="nav nav-tabs">
    <li class="active"><a data-toggle="tab" href="#Articoli">Articoli</a></li>
    <li ><a data-toggle="tab" href="#CatMerc">Categorie Merceologiche</a></li>
-<!--inizio modifica FP 15/10/2015-->
-   <li ><a data-toggle="tab" href="#RagStat">Raggruppamenti Statistici</a></li>
-<!--fine modifica FP-->
    <li ><a data-toggle="tab" href="#Movimenti">Movimenti</a></li>
    <li ><a data-toggle="tab" href="#Causali">Causali</a></li>
    <li ><a data-toggle="tab" href="#Listini">Listini</a></li>
@@ -47,19 +44,6 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		principale di questo men&ugrave;.</p>
 	</div>
 
-    <!--inizio modifica FP 15/10/2015-->
-	<div id="RagStat" class="tab-pane fade in">
-		<p class="help-text">Gli articoli di magazzino sono raggruppati in raggruppamenti statistici, a cui
-		si accede da questa voce di men&ugrave;. Se non si intende suddividere
-		gli articoli in gruppi, &egrave; comunque necessario definire almeno
-		un raggruppamento generico.</p>
-
-		<p class="help-text">Per inserire un nuovo raggruppamento si deve scegliere la voce
-		<menuitem>Nuovo raggruppamento statistico</menuitem>, mentre per accedere
-		ai raggruppamenti gi&agrave; esistenti, si deve selezionare la voce
-		principale di questo men&ugrave;.</p>
-	</div>
-<!--fine modifica FP-->
 	<div id="Movimenti" class="tab-pane fade in">
 		<p class="help-text">Da qui &egrave; possibile intervenire nei movimenti di magazzino
 		(scritture di carico e scarico). Per inserire un nuovo movimento si

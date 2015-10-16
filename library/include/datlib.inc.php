@@ -72,13 +72,7 @@ if(@file_exists('./lib.data.php') ) {
 $tn=array('aliiva','agenti','artico','banapp','body_text','cash_register','catmer',
           'caucon','caumag','clfoco','company_config','company_data','contract','effett','extcon','files',
           'imball','letter','lotmag','movmag','pagame','paymov','portos','provvigioni','rigbro',
-          'rigdoc','rigmoc','rigmoi','spediz','staff','staff_skills','tesbro','tesdoc','tesmov','vettor','fae_flux','assist', 
-/** inizio modifica FP 15/10/2015
-* aggiunta tabella raggruppamento statistico
-*/
-          'ragstat'
-/** fine modifica FP */
-    );
+          'rigdoc','rigmoc','rigmoi','spediz','staff','staff_skills','tesbro','tesdoc','tesmov','vettor','fae_flux','assist');
 foreach ($tn as $v){
   $gTables[$v]= $table_prefix."_".$id.$v;
 }

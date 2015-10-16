@@ -138,7 +138,7 @@ $strScript = array ("browse_document.php" =>
                            " Non ci sono righi da trasferire in magazzino!"),
                     "select_giomag.php" =>
                     array( 0=>'Stampa giornale di magazzino',
-                           'title'=>'Selezione per la visualizzazione e/o la stampa del giornale di magazzino',
+                           'title'=>'Selezione per la visualizzazzione e/o la stampa del giornale di magazzino',
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'La data di inizio dei movimenti contabili da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
                                            'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
@@ -191,7 +191,7 @@ $strScript = array ("browse_document.php" =>
                            ),
                     "select_schart.php" =>
                     array( 0=>'Stampa schedari di magazzino',
-                           'title'=>'Selezione per la visualizzazione e/o la stampa delle schede di magazzino',
+                           'title'=>'Selezione per la visualizzazzione e/o la stampa delle schede di magazzino',
                            'mesg'=>array('La ricerca non ha dato risultati!',
                                          'Inserire almeno 1 carattere!',
                                          'Cambia articolo'
@@ -337,16 +337,10 @@ $strScript = array ("browse_document.php" =>
                            'image'=>"Immagine (jpg,png,gif) max 10kb",
                            'unimis'=>"Unit&agrave; di misura vendite",
                            'catmer'=>"Categoria merceologica",
-/** inizio modifica FP 15/10/2015
-* aggiunto campo raggruppamento statistico
-*/
-                           'ragstat'=>"Raggruppamento statistico",
-/** fine modifica FP */
                            'preacq'=>'Prezzo d\'acquisto',
                            'preve1'=>'Prezzo di vendita listino 1',
                            'preve2'=>'Prezzo di vendita listino 2',
                            'preve3'=>'Prezzo di vendita listino 3',
-                           'sconto'=>'Sconto',
                            'aliiva'=>'Aliquota IVA',
                            'esiste'=>'Esistenza attuale',
                            'valore'=>'Valore dell\'esistente',

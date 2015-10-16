@@ -1,8 +1,8 @@
-@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
+@import "../../js/jquery/ui/css/ui-@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
 
 BODY {
-    /*background-image : url("../../library/images/sfondo.png");
-    background-attachment : fixed;*/
+     /*background-image : url("../../library/images/sfondo.png");
+     background-attachment : fixed;*/
 }
 
 DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL  {
@@ -12,14 +12,14 @@ DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL  {
 }
 
 TABLE {
-    border-collapse: separate;
-    border-spacing: 2px;
+	border-collapse: separate;
+	border-spacing: 2px;
 }
 TABLE.Tlarge{
     width : 99%;
     border : solid 1px #000000;
-    margin-top: -1px;
-    margin-left: 6px;
+	margin-top: -1px;
+	margin-left: 6px;
 }
 
 TABLE.Tmiddle{
@@ -37,37 +37,37 @@ TABLE.Tsmall{
 }
 
 TABLE.selectTable TR.even {
-    background-color:#E3AC76;
+	background-color:#E3AC76;
     color : #000000;
 }
 TABLE.selectTable TR.odd {
-    background-color:#FFFFFF;
-    color : #000000;
+   background-color:#FFFFFF;
+   color : #000000;
 }
 
 TABLE.selectTable TD {
-    height:10px;
-    border-bottom:1px solid #ddd;
-    font-family:Arial, Tahoma, Verdana, Helvetica;
-    color:#333;
-    font-size:8px;
+	height:10px;
+	border-bottom:1px solid #ddd;
+	font-family:Arial, Tahoma, Verdana, Helvetica;
+	color:#333;
+	font-size:8px;
 }
 
 .selectContainer {
-    width:300px;
-    position: absolute;
-    border:1px solid #222;
+	width:300px;
+	position: absolute;
+	border:1px solid #222;
 }
 .selectHeader {
-    background-repeat:repeat-x;
-    background-position:top center;
-    color:#eee;
-    font-family:Arial, Tahoma, Verdana, Helvetica;
-    font-weight:bold;
-    font-size:9px;
-    margin:0;
-    padding:1px 1px 1px 1px;
-    background-color:#000;
+	background-repeat:repeat-x;
+	background-position:top center;
+	color:#eee;
+	font-family:Arial, Tahoma, Verdana, Helvetica;
+	font-weight:bold;
+	font-size:9px;
+	margin:0;
+	padding:1px 1px 1px 1px;
+	background-color:#000;
 }
 
 .topmenu {
@@ -107,33 +107,33 @@ TABLE.selectTable TD {
 }
 
 .FacetFieldCaptionTD  {
-    background-color : #E3AC76;
-    color : #000000;
-    font-size : 13px;
-    padding: 0px 3px 0px 5px;
-    border: 1px solid #b07943;
+   background-color : #E3AC76;
+   color : #000000;
+   font-size : 13px;
+	padding: 0px 3px 0px 5px;
+	border: 1px solid #b07943;
 }
 
 .FacetDataTRstart td  {
-    border-top: 2px solid white;
+     border-top: 2px solid white;
 
 }
 
 .FacetDataTRend td  {
-    border-bottom: 5px solid #FFFFFF;
+     border-bottom: 5px solid #FFFFFF;
 }
 
 .FacetDataTD  {
     background-color : #eee;
     color : #000000;
     font-size : 13px;
-    margin: 2px 2px;
-    padding: 2px 5px 2px 5px;
-    border-bottom: 1px solid #ddd;
-
+	margin: 2px 2px;
+	padding: 2px 5px 2px 5px;
+	border-bottom: 1px solid #ddd;
+	
 }
 .dispari {
-    background-color : #D68738;
+	background-color : #D68738;
 }
 
 .FacetDataTDevidenziaOK  {
@@ -164,12 +164,12 @@ TABLE.selectTable TD {
     background-color : #FFFFFF;
     color : #000000;
     font-size : 9px;
-    border-bottom: 1px solid #fff;
-    border-right: 1px solid #fff;
+	border-bottom: 1px solid #fff;
+	border-right: 1px solid #fff;
 }
 
 .FacetDataTDsmall a {
-    font-size : 9px;
+	font-size : 9px;
 }
 
 .FacetDataTDsmallRed  {
@@ -188,7 +188,7 @@ TABLE.selectTable TD {
     color : #000000;
     background-color : #FFD9B3;
     font-size : 13px;
-    border: 1px solid #cca691;
+	 border: 1px solid #cca691;
 }
 
 .FacetAltDataTD  {
@@ -284,132 +284,132 @@ TABLE.selectTable TD {
 
 .ThemeGazieMainItemHover,.ThemeGazieMainItemActive
 {
-    background:		url(../../js/jscookmenu/mainmenubg.png);
+	background:		url(../../js/jscookmenu/mainmenubg.png);
 }
 
 .ThemeGazieMainItem
 {
-    background-color:	#FFFFFF;
+	background-color:	#FFFFFF;
 }
 .ThemeGazieMenuItemHover,.ThemeGazieMenuItemActive
 {
-    background-color:	#FFEEC2;
+	background-color:	#FFEEC2;
 }
 #admin_main{
-    /*background-image: url("../../library/images/sfondo.png");
-    background-attachment: fixed;*/
-    margin-top: 20px;
+  /*background-image: url("../../library/images/sfondo.png");
+  background-attachment: fixed;*/
+  margin-top: 20px;
 }
 
 #admin_welcome{
-    padding: 30px 40px;
-    position: relative;
+  padding: 30px 40px;
+  position: relative;
 }
 
 #admin_p_logout{
-    margin-top: 20px;
+  margin-top: 20px;
 }
 
 #admin_footer{
-    position: absolute;
-    bottom: 0px;
-    opacity:0.5;
-    filter:alpha(opacity=50);
-    z-index: -1;
+  position: absolute;
+  bottom: 0px;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  z-index: -1;
 }
 
 #admin_footer:hover{
-    opacity:1;
-    filter:alpha(opacity=100);
+  opacity:1;
+  filter:alpha(opacity=100);
 }
 
 .nav>li>a:hover,.nav>li>a:focus {
-    background-color: #E3AC76;
-    color: #123311;
+  background-color: #E3AC76;
+  color: #123311;
 }
 .nav>li>ul>li>a:hover,.nav>li>a:focus {
-    background-color: #E3AC76;
-    color: #123311;
+  background-color: #E3AC76;
+  color: #123311;
 }
 .nav>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
-    background-color: #E3AC76;
-    color: #123311;
+  background-color: #E3AC76;
+  color: #123311;
 }
 .nav>li>ul>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
-    background-color: #E3AC76;
-    color: #123311;
+  background-color: #E3AC76;
+  color: #123311;
 }
 .navbar {
-    border-top: 0px;
-    border-bottom: 1px solid #000000;
-    border-left: 1px solid #000000;
-    border-right: 1px solid #000000;
-    border-radius: 0px;
-    font-size : 14px;
-    min-height: 40px;
+  border-top: 0px;
+  border-bottom: 1px solid #000000;
+  border-left: 1px solid #000000;
+  border-right: 1px solid #000000;
+  border-radius: 0px;
+  font-size : 14px;
+  min-height: 40px;
 }
 
 .nav > li > a {
     padding: 5px 10px;
-    border-radius: 0px;
+	border-radius: 0px;
 }
 .nav > li > a:hover {
-    background-color: #D68738;
+  background-color: #D68738;
 }
 .nav > li > a.row-menu {
-    padding: 11px 6px 11px 6px;
+	padding: 11px 6px 11px 6px;
 }
 .nav > li > a.icon-menu {
-    padding: 7px 6px 6px 6px;
+	padding: 7px 6px 6px 6px;
 }
 div.help {
-    margin: 15px 20px;
-    text-align: justify;
+	margin: 15px 20px;
+	text-align: justify;
 }
 .nav-boot {
-    background-color : #E3AC76;
-    color : #000000;
-    font-size : 13px;
+  background-color : #E3AC76;
+  color : #000000;
+  font-size : 13px;
 }
 .nav-first {
-    margin-bottom: 0px;
-    padding-top: auto;
-    padding-bottom: auto;
+  margin-bottom: 0px;
+  padding-top: auto;
+  padding-bottom: auto;
 }
 .navbar-brand {
-    padding: 3px 3px 3px 3px;
-    float: right;
-    font-size: 16px;
-    height: 43px;
-    line-height: 20px;
-    padding: 10px 3px 10px 3px;
+  padding: 3px 3px 3px 3px;
+  float: right;
+  font-size: 16px;
+  height: 43px;
+  line-height: 20px;
+  padding: 10px 3px 10px 3px;
 }
 .nav-mb {
-    margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 .nav-tabs {
     border-bottom: 0px;
 }
 table.submenu {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
     margin-top: -20px;
 }
 .navbar-left {
-    border: #fff 0px solid;
+	border: #fff 0px solid;
 }
 .navbar-lower {
-    background-color: #FFD9B3;
-    min-height: 20px;
+  background-color: #FFD9B3;
+  min-height: 20px;
 }
 div.FacetFormHeaderFont {
-    margin-top: 1px;
-    margin-bottom: 1px;
+  margin-top: 1px;
+  margin-bottom: 1px;
 }
 .vcenter {
     display: inline-block;
     vertical-align: middle;
     float: none;
-    padding-right:5px;
+	padding-right:5px;
 }
 input.input-xs {
     height: 24px;
@@ -419,30 +419,30 @@ input.input-xs {
     border-radius: 3px;
 }
 .caret {
-    text-color: #fff;
-    border-top-color: white !important;
+	text-color: #fff;
+	border-top-color: white !important;
 }
 
 .container-fluid {
-    padding-left: 0px;
+	padding-left: 0px;
     padding-right: 5px;
 }
 .navbar-collapse {
-    padding-left: 0;
+	padding-left: 0;
     padding-right: 5px;
 }
 .opzione {
-    margin-top: 10px;
-    margin-left: -8px;
+	margin-top: 10px;
+	margin-left: -8px;
 }
 .progress {
-    margin: 5px 5px 7px 5px;
+	margin: 5px 5px 7px 5px;
 }
 .navbar-toggle {
-    margin-left: 20px;
+	margin-left: 20px;
 }
 .contenuto-help {
-    background: #fff;
+	background: #fff;
     border: 1px solid #ddd;
     padding: 20px;
 }
@@ -450,42 +450,42 @@ input.input-xs {
     margin-bottom: 0px;
 }
 .help-text {
-    font-size: 1.0em;
+	font-size: 1.0em;
 }
 
 .help-text a {
-    color: #916A4A;
-    text-transform: uppercase;
+	color: #916A4A;
+	text-transform: uppercase;
 }
 /*    --------------------------------------------------
-        :: Login Section
-        -------------------------------------------------- */
+	:: Login Section
+	-------------------------------------------------- */
 
 .panel-title {
-    vertical-align: middle;
+	vertical-align: middle;
 }
 .panel-info {
-    border-color: #D68738;
+	border-color: #D68738;
 }
 .panel-info > .panel-gazie {
-    background-color: #E3AC76;
+	background-color: #E3AC76;
     border-color: #D68738;
-    color: #123311;
+	color: #123311;
 }
 #formlogin {
     padding-top: 50px
 }
 #formlogin .form-wrap {
     margin: 0 auto;
-    float:right;
+	float:right;
 }
 .form-logo {
-    float:left;
+	float:left;
 }
 .form-main {
-    margin: 10px 30%;
-    background-color: #C77405;
-    border: 1px solid #000;
+	margin: 10px 30%;
+	background-color: #C77405;
+	border: 1px solid #000;
 }
 #formlogin h1 {
     color: #C77405;
@@ -531,67 +531,67 @@ input.input-xs {
 }
 #formlogin .btn.btn-custom {
     font-size: 14px;
-    margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 #formlogin .forget {
     font-size: 13px;
-    text-align: center;
-    display: block;
+	text-align: center;
+	display: block;
 }
 .panel-help {
-    background-color: #FFD9B3;
+  background-color: #FFD9B3;
 }
 
 /*    --------------------------------------------------
-        :: Inputs & Buttons
-        -------------------------------------------------- */
+	:: Inputs & Buttons
+	-------------------------------------------------- */
 .form-control {
     color: #212121;
 }
 .btn-custom {
     color: #fff;
-    background-color: #D68738;
+	background-color: #D68738;
 }
 .btn-custom:hover,
 .btn-custom:focus {
     color: #fff;
 }
 .btn-edit {
-    /*float: right;*/
-    background-color: #eee2a8;
+	/*float: right;*/
+	background-color: ;
 }
 .btn-cont {
-    background-color: #E3AC76;
+	background-color: #E3AC76;
 }
 .btn-elimina {
-    color: #ff3939;
+	color: #ff3939;
 }
 .btn-xml {
-    color: #0000ff;
+	color: #0000ff;
 }
 .btn.disabled {
     pointer-events: auto;
 }
 .btn-effetti {
-    background-color: #D4CB6A;
+	background-color: #D4CB6A;
 }
 .btn-riba {
-    background-color: #FFF7AA;
+	background-color: #FFF7AA;
 }
 .btn-fatt {
-    background-color: #d4cb6a;
+	background-color: #d4cb6a;
 }
 .btn-pagamento {
-    color: #D77F00;
+	color: #D77F00;
 }
 .btn-articolo {
-    padding: 3px 2px 5px 2px;
+	padding: 3px 2px 5px 2px;
 }
 .form-inline {
-    width: 200px;
-    padding-top: 7px;
-    background-color: #FFD9B3;
-    padding-right: 10px;
+	{width: 200px};
+	padding-top: 7px;
+	background-color: #FFD9B3;
+	padding-right: 10px;
 }
 /* INIZIO CSS di JQuery/UI
 
@@ -675,7 +675,7 @@ input.input-xs {
  * http://docs.jquery.com/UI/Autocomplete#theming
  */
 .ui-autocomplete { position: absolute; cursor: default;
-                   font-size : 8px;  }
+	font-size : 8px;  }
 
 /* workarounds */
 * html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
@@ -690,35 +690,35 @@ input.input-xs {
  * http://docs.jquery.com/UI/Menu#theming
  */
 .ui-menu {
-    list-style:none;
-    padding: 2px;
-    margin: 0;
-    display:block;
-    float: left;
+	list-style:none;
+	padding: 2px;
+	margin: 0;
+	display:block;
+	float: left;
 }
 .ui-menu .ui-menu {
-    margin-top: -3px;
+	margin-top: -3px;
 }
 .ui-menu .ui-menu-item {
-    margin:0;
-    padding: 0;
-    zoom: 1;
-    float: left;
-    clear: left;
-    width: 100%;
+	margin:0;
+	padding: 0;
+	zoom: 1;
+	float: left;
+	clear: left;
+	width: 100%;
 }
 .ui-menu .ui-menu-item a {
-    font-size : 14px;
-    text-decoration:none;
-    display:block;
-    padding:.2em .4em;
-    line-height:1.5;
-    zoom:1;
+	font-size : 14px;
+	text-decoration:none;
+	display:block;
+	padding:.2em .4em;
+	line-height:1.5;
+	zoom:1;
 }
 .ui-menu .ui-menu-item a.ui-state-hover,
 .ui-menu .ui-menu-item a.ui-state-active {
-    font-weight: normal;
-    margin: -1px;
+	font-weight: normal;
+	margin: -1px;
 }
 
 /* fix: datepicker visible div 

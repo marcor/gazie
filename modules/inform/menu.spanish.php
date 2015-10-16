@@ -40,7 +40,7 @@ $transl['inform'] = array( 'name' => "Herramientas & Info",
                                           2 =>array("Control numerico protocolos IVA","Control numerico protocolos IVA"),
                                           3 =>array("Escribir una nueva carta","Nueva carta"),
 					  4 =>array("Gestisci URL","Gestione Siti"),
-					  5 =>array("Aggiungi URL","Aggiungi Sito"),
+					  5 =>array("Aggiungi URL","Aggiungi Sito")
                                           6 =>array("Aggiorna GAzieCart","Aggiorna GAzieCart"),
                                           7 =>array("Aggiorna sito web","Crea/aggiorna sito Statico")
                                         )

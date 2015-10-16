@@ -42,7 +42,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve1"] = number_format($form['preve1'],$admin_aziend['decimal_price'],'.','');
     $form["preve2"] = number_format($form['preve2'],$admin_aziend['decimal_price'],'.','');
     $form["preve3"] = number_format($form['preve3'],$admin_aziend['decimal_price'],'.','');
-//    $form["sconto"] = number_format($form['sconto'],$admin_aziend['decimal_price'],'.','');
     $form["web_price"] = number_format($form['web_price'],$admin_aziend['decimal_price'],'.','');
     $form['rows'] = array();
     // inizio documenti/certificati
@@ -202,17 +201,6 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['catmer']."</td><td col
 $gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,1,' - ','descri');
 echo "</td>\n";
 echo "</tr>\n";
-
-/** inizio modifica FP 15/10/2015
-* aggiunto campo raggruppamento statistico
-*/
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['ragstat']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectFromDB('ragstat','ragstat','codice',$form['ragstat'],false,1,' - ','descri');
-echo "</td>\n";
-echo "</tr>\n";
-/** fine modifica FP */
-
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['preacq']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
@@ -234,14 +222,6 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"preve3\" value=\"".$form['preve3']."\" style=\"text-align:right;\" maxlength=\"15\" size=\"15\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sconto']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"sconto\" value=\"".$form['sconto']."\" style=\"text-align:right;\" maxlength=\"6\" size=\"6\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['aliiva']." * </td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('aliiva','aliiva','codice',$form['aliiva'],'codice',1,' - ','descri');
 echo "</td>\n";

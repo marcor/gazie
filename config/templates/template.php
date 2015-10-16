@@ -115,32 +115,32 @@ class Template extends TCPDF
         $this->SetFont('helvetica','',10);
         $this->SetXY(110,$interlinea+3);
         $this->Cell(15,5,'Spett.le ',0,0,'R');
-        $this->Cell(75,5,$this->cliente1,0,1,'L');
+        $this->Cell(75,5,$this->cliente1,0,1,'L',0,'',1);
         if (!empty ($this->cliente2)) {
             $this->Cell(115);
-            $this->Cell(75,5,$this->cliente2,0,1,'L');
+            $this->Cell(75,5,$this->cliente2,0,1,'L',0,'',1);
         }
         $this->SetFont('helvetica','',10);
         $this->Cell(115);
-        $this->Cell(75,5,$this->cliente3,0,1,'L');
+        $this->Cell(75,5,$this->cliente3,0,1,'L',0,'',1);
         $this->Cell(115);
-        $this->Cell(75,5,$this->cliente4,0,1,'L');
+        $this->Cell(75,5,$this->cliente4,0,1,'L',0,'',1);
         if (!empty ($this->cliente4b)) {
             $this->Cell(115);
-            $this->Cell(75,5,$this->cliente4b,0,1,'L');
+            $this->Cell(75,5,$this->cliente4b,0,1,'L',0,'',1);
         }
         $this->SetFont('helvetica','',7);
         $this->Cell(115);
-        $this->Cell(75,5,$this->cliente5,0,1,'L');
+        $this->Cell(75,5,$this->cliente5,0,1,'L',0,'',1);
         if (!empty ($this->c_Attenzione)) {
             $this->SetFont('helvetica','',10);
             $this->Cell(115,8,'alla C.A.',0,0,'R');
-            $this->Cell(75,8,$this->c_Attenzione,0,1);
+            $this->Cell(75,8,$this->c_Attenzione,0,1,'L',0,'',1);
         }
         $this->SetFont('helvetica','',7);
         if (!empty ($this->clientSedeLegale)) {
             $this->Cell(115,8,'Sede legale: ',0,0,'R');
-            $this->Cell(75,8,$this->clientSedeLegale,0,1);
+            $this->Cell(75,8,$this->clientSedeLegale,0,1,'L',0,'',1);
         } else {
             $this->Ln(4);
         }

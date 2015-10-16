@@ -80,8 +80,9 @@ if ( $riga["id"]!="" ) {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-	  <a class="navbar-brand vcenter" href="../../modules/root/admin.php"><?php echo strtoupper( $admin_aziend["ragso1"]); ?></a>
+	  <a class="navbar-brand vcenter" href="../../modules/root/admin.php"><?php echo strtoupper( $admin_aziend["ragso1"]); ?>
 	  <img src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend["enterprise_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>">
+	  </a>
     </div>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav nav-tabs">

@@ -32,7 +32,7 @@ $transl['inform'] = array( 'name' => "Tools & Info",
 					  6 =>array("Rubrica URL", "Siti Aziendali")
                                         ),
                            'm3' => array( 1 =>array("Controllo sbilancio dare-avere dei movimenti contabili","Controllo sbilancio movimenti contabili"),
-                                          2 =>array("Controllo numerazione protocolli IVA","Controllo numerazione protocoli IVA"),
+                                          2 =>array("Controllo numerazione protocolli IVA","Controllo numerazione protocolli IVA"),
                                           3 =>array("Scrivi una nuova lettera","Scrivi nuova lettera"),
 					  4 =>array("Gestisci URL","Gestione Siti"),
 					  5 =>array("Aggiungi URL","Aggiungi Sito"),

@@ -1,0 +1,2 @@
+DirectoryIndex admin.php /404.html
+php_flag magic_quotes_gpc off

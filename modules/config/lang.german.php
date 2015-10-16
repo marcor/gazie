@@ -233,7 +233,9 @@ $strScript = array ("admin_aziend.php" =>
                            'descri'=>"Beschreibung",
                            'type'=>"Typ",
                            'aliquo'=>"Rate",
-                           'fae_natura'=>"Nature - PA electronic invoice"
+                           'fae_natura'=>"Nature - PA electronic invoice",
+                           'taxstamp'=>'Subject to stamp duty',
+                           'yn_value'=>array(1=>'Yes',0=>'No')
                         ),
                     "admin_aliiva.php" =>
                    array(  "MwSt-Satz",
@@ -247,6 +249,8 @@ $strScript = array ("admin_aziend.php" =>
                            "% Rate ungültig!",
                            "Typ MwSt.",
                            "Select the nature of the exemption / exclusion!",
+                           'taxstamp'=>'Subject to stamp duty',
+                           'yn_value'=>array(1=>'Yes',0=>'No'),
                            'fae_natura'=>"Nature - PA electronic invoice"
                          ),
                     "admin_banapp.php" =>

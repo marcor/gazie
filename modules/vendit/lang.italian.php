@@ -232,15 +232,6 @@ $strScript = array ("admin_client.php" =>
                            'taxstamp'=>'Bollo',
                            'virtual_taxstamp'=>'Modo',
                            'virtual_taxstamp_value'=>array(0=>'No',1=>'Materiale',2=>'Virtuale',3=>'Virtuale senza addebito'),
-/** inizio modifica FP 15/10/2015
-* se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo 
-*/
-                           "Raggr.Bolle",
-                           'ragbol_title'=>'Raggruppamento bolle',
-                           "Data Ordine",
-                           "Da fatturare",
-                           'da_fatturare_title'=>'Indica se il DDT deve essere fatturato automaticamente',
-/** fine modifica FP*/
 
                            ),
                     "select_docforprint.php" =>

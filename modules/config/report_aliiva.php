@@ -33,6 +33,7 @@ $headers = array  (
             $script_transl['descri']=>'descri',
             $script_transl['type']=>'tipiva',
             $script_transl['aliquo']=>'aliquo',
+            $script_transl['taxstamp']=>'taxstamp',
             $script_transl['fae_natura']=>'fae_natura',
             $script_transl['delete']=>''
             );
@@ -46,6 +47,7 @@ while ($a_row = gaz_dbi_fetch_array($result))
     echo "<td class=\"FacetDataTD\">".$a_row["descri"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['tipiva'][$a_row["tipiva"]]."</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["aliquo"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".$script_transl['yn_value'][$a_row["taxstamp"]]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["fae_natura"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_aliiva.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
