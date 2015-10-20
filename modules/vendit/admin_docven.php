@@ -1450,6 +1450,11 @@ if ($form['tipdoc'] == "DDT") {
    echo "</tr></table>\n";
 } else {
    echo "</td></tr></table>\n";
+   echo "<input type=\"hidden\" value=\"" . $form['gioord'] . "\" name=\"gioord\">\n";
+   echo "<input type=\"hidden\" value=\"" . $form['mesord'] . "\" name=\"mesord\">\n";
+   echo "<input type=\"hidden\" value=\"" . $form['annord'] . "\" name=\"annord\">\n";
+   echo "<input type=\"hidden\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\">\n";
+   echo "<input type=\"hidden\" value=\"" . $form['da_fatturare'] . "\" name=\"da_fatturare\">\n";
 }
 /** fine modifica FP */
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
