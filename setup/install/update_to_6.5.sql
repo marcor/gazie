@@ -9,7 +9,7 @@ ALTER TABLE `gaz_XXXartico` ADD `ragstat` CHAR(15) NOT NULL AFTER `catmer`;
 ALTER TABLE `gaz_XXXartico` ADD FOREIGN KEY (ragstat) REFERENCES gaz_XXXragstat(codice);
 ALTER TABLE `gaz_XXXartico` ADD `sconto` decimal(6,3);
 ALTER TABLE `gaz_XXXrigdoc` MODIFY COLUMN `sconto` decimal(6,3);
-ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE;
-ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` char(1) NOT NULL DEFAULT 'A';
+ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE DEFAULT null;
+ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` int NOT NULL DEFAULT 0;
 ALTER TABLE `gaz_XXXtesdoc` ADD `da_fatturare` boolean DEFAULT true;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

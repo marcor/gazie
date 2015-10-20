@@ -1,4 +1,4 @@
-@import "../../js/jquery/ui/css/ui-@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
+@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
 
 BODY {
      /*background-image : url("../../library/images/sfondo.png");
@@ -558,7 +558,7 @@ input.input-xs {
 }
 .btn-edit {
 	/*float: right;*/
-	background-color: ;
+	background-color: #aa00a8;
 }
 .btn-cont {
 	background-color: #E3AC76;
@@ -588,7 +588,7 @@ input.input-xs {
 	padding: 3px 2px 5px 2px;
 }
 .form-inline {
-	{width: 200px};
+	width: 200px;
 	padding-top: 7px;
 	background-color: #FFD9B3;
 	padding-right: 10px;

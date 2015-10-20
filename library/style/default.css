@@ -553,7 +553,7 @@ input.input-xs {
 }
 .btn-edit {
 	/*float: right;*/
-	background-color: ;
+	background-color: #aa00a8;
 }
 .btn-cont {
 	background-color: #aae2a8;
@@ -583,7 +583,7 @@ input.input-xs {
 	padding: 3px 2px 5px 2px;
 }
 .form-inline {
-	{width: 200px};
+	width: 200px;
 	padding-top: 7px;
 	background-color: #dafed9;
 	padding-right: 10px;
