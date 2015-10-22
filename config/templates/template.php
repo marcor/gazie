@@ -35,6 +35,7 @@ class Template extends TCPDF
         $this->aliiva = $docVars->gTables['aliiva'];
         $this->tesdoc = $docVars->tesdoc;
         $this->testat = $docVars->testat;
+        $this->caumag = $docVars->caumag;
         $this->pagame = $docVars->pagame;
         $this->banapp = $docVars->banapp;
         $this->banacc = $docVars->banacc;

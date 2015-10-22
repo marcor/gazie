@@ -33,6 +33,9 @@ class DocContabVars
         $this->azienda = $admin_aziend;
         $this->user = gaz_dbi_get_row($gTables['admin'], 'Login', $_SESSION['Login']);
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
+/** inizio modifica FP 22/10/15*/
+        $this->caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $tesdoc['caumag']);
+/** fine modifica FP*/
         $this->banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$tesdoc['banapp']);
         $anagrafica = new Anagrafica();
         $this->banacc = $anagrafica->getPartner($this->pagame['id_bank']);
