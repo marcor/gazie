@@ -806,10 +806,13 @@ $strScript = array ("admin_client.php" =>
                            'orderby_value'=>array(0=>'Scadenza crescente',1=>'Scadenza decrescente',
                                                   2=>'Cliente crescente',3=>'Cliente decrescente'
                                            ),
+										   /** ENRICO FEDELE */
+										   /* Aggiunto header per ultima colonna della tabella, per abbellire il layout */
                            'header'=>array('Cliente'=>'','ID Partita'=>'','Status'=>'','Mov.Cont.'=>'','Descrizione'=>'',
                                             'N.Doc.'=>'','Data Doc.' =>'','Data Reg.' =>'','Dare'=>'','Avere'=>'',
-                                            'Scadenza'=>''
+                                            'Scadenza'=>'', 'Opzioni' => ''
                                            ),
+										   /** ENRICO FEDELE */
                            'status_value'=>array(0=>'CLOSE',1=>'OPEN'),
                            ),
                     "delete_schedule.php" =>

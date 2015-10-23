@@ -90,7 +90,7 @@ if (sizeof($scdl->Entries) > 0) {
       $ctrl_paymov=0;
 	  
 	  /* ENRICO FEDELE */
-	  /* Inizializzo la variabile per il totale */
+	  /* Inizializzo la variabili per il totale */
 	  $tot_dare  = 0;
 	  $tot_avere = 0;
 	  /* ENRICO FEDELE */
@@ -175,8 +175,8 @@ if (sizeof($scdl->Entries) > 0) {
 		  
           $pdf->Cell(15,4,gaz_format_number($tot_dare),1,0,'R',false);
           $pdf->Cell(15,4,gaz_format_number($tot_avere),1,0,'R',true);
-			  
-          $pdf->Cell(13,4,'',1,1,'C',false);
+		  /* Aggiunta la percentuale dell'avere rispetto al totale dare+avere, colorata come la cella avere per renderla intuitiva */
+          $pdf->Cell(13,4,gaz_format_number(100*$tot_avere/($tot_dare+$tot_avere))." %",1,1,'C',true);
 		  /* ENRICO FEDELE */
 }
 $pdf->setRiporti('');

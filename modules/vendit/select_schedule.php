@@ -56,28 +56,39 @@ $script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min','calendarpopup/Calenda
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',
                                   'jquery/autocomplete_location'));
-echo "<form method=\"POST\" name=\"select\">\n";
-echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
-$gForm = new venditForm();
-echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
-echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['orderby']."</td><td  class=\"FacetDataTD\">\n";
-$gForm->variousSelect('orderby',$script_transl['orderby_value'],$form['orderby'],'FacetSelect',0,'orderby');
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
-echo '<td align="right" colspan="2"> <input type="submit" accesskey="i" name="preview" value="';
-echo $script_transl['view'];
-echo '" tabindex="100" >';
-echo "\t </td>\n";
-echo "\t </tr>\n";
-echo "</table>\n";
-
-if (isset($_POST['preview'])) {
+/** ENRICO FEDELE */
+/** Modifico il form per l'ordinamento, lo rendo più snello, niente più tasto anteprima (vedi considerazioni di seguito)*/
+echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>
+	  <table class="Tmiddle">
+	  	<tr>
+			<td class="FacetFieldCaptionTD">'.$script_transl['orderby'].'</td>
+			<td class="FacetDataTD">';
+				$gForm->variousSelect('orderby',$script_transl['orderby_value'],$form['orderby'],'FacetSelect',0,'orderby');
+echo '		</td>
+			<td align="left">
+				<input type="submit" name="return" value="'.$script_transl['return'].'" />
+			</td>
+		</tr>
+	  </table>
+	  <br />';
+/*
+		//	Avendo eliminato il pulsante "preview, questo pezzo di tabella non serve più, e guadagnamo un pò di spazio
+		//	in verticale, visto che i monitor di oggi sono sempre meno "alti"
+		</tr>
+		<tr class="FacetFieldCaptionTD">
+			<td align="right" colspan="2">
+				<input type="submit" accesskey="i" name="preview" value="'.$script_transl['view'].'" tabindex="100" />
+	  		</td>
+	  	</tr>
+	  </table>';
+*/
+/* A mio modo di vedere il tasto preview è una inutile complicazione e un click in più
+   credo che per rendere meno macchinoso il sistema si possa eliminare questo pulsante.
+   Di default la pagina viene caricata per "cliente" crescente, poi si può selezionare 
+   un ordinamento diverso dal menu a tendina, e la pagina viene ricaricata in automatico
+*/
+//if (isset($_POST['preview'])) {
+/** ENRICO FEDELE */
   $scdl = new Schedule;
   $m = $scdl->getScheduleEntries($form['orderby'],$admin_aziend['mascli']);
   echo "<table class=\"Tlarge\">";
@@ -85,6 +96,13 @@ if (isset($_POST['preview'])) {
         $ctrl_partner=0;
         $ctrl_id_tes=0;
         $ctrl_paymov=0;
+		
+	    /* ENRICO FEDELE */
+	    /* Inizializzo le variabili per il totale */
+	    $tot_dare  = 0;
+	    $tot_avere = 0;
+	    /* ENRICO FEDELE */
+
         echo "<tr>";
         $linkHeaders = new linkHeaders($script_transl['header']);
         $linkHeaders -> output();
@@ -135,13 +153,21 @@ if (isset($_POST['preview'])) {
             echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["numdoc"]." &nbsp;</td>";
             echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["datdoc"]." &nbsp;</td>";
             echo "<td align=\"center\" class=\"FacetDataTD\">".gaz_format_date($mv["datreg"])." &nbsp;</td>";
+            /* ENRICO FEDELE */
             if ($mv['id_rigmoc_pay']==0){
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["amount"]." &nbsp;</td>";
+				/* Incremento il totale del dare */
+			    $tot_dare += $mv['amount'];
+			    /* Allineo a destra il testo, i numeri sono così più leggibili e ordinati, li formatto con apposita funzione */
+                echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($mv["amount"])." &nbsp;</td>";
                 echo "<td class=\"FacetDataTD\"></td>";
             } else {
+			    /* Incremento il totale dell'avere, e decremento quello del dare */
+	  		    $tot_avere += $mv['amount'];
+			    $tot_dare  -= $mv['amount'];
                 echo "<td class=\"FacetDataTD\"></td>";
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["amount"]." &nbsp;</td>";
+                echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($mv["amount"])." &nbsp;</td>";
             }
+		    /* ENRICO FEDELE */
             echo "<td align=\"center\" class=\"FacetDataTD\">".gaz_format_date($mv["expiry"])." &nbsp;</td>";
             echo "<td align=\"center\" class=\"FacetDataTD\"> ";
             // Permette di cancellare il documento.
@@ -155,17 +181,28 @@ if (isset($_POST['preview'])) {
             $ctrl_paymov=$mv["id_tesdoc_ref"];
 
         }
-     echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-     echo '<td colspan="11" align="right"><input type="submit" name="print" value="';
-     echo $script_transl['print'];
-     echo '">';
-     echo "\t </td>\n";
-     echo "\t </tr>\n";
+	/** ENRICO FEDELE */
+	/* Stampo il totale del dare, dell'avere, e la percentuale dell'avere rispetto al totale dare+avere */
+	/* Aumento il colspan nell'ultima riga per ricomprendere anche l'ultima colonna, il pulsante stampa ora va sotto opzioni */
+	echo '<tr>
+			<td colspan="8" class="FacetFormHeaderFont" align="right">TOTALE</td>
+			<td class="FacetFormHeaderFont" align="right">'.gaz_format_number($tot_dare).'</td>
+			<td class="FacetFormHeaderFont" align="right">'.gaz_format_number($tot_avere).'</td>
+			<td class="FacetFormHeaderFont">'.gaz_format_number(100*$tot_avere/($tot_dare+$tot_avere)).' %</td>
+			<td class="FacetFormHeaderFont">&nbsp;</td>
+		  </tr>
+		  <tr class="FacetFieldCaptionTD">
+	 			<td colspan="12" align="right"><input type="submit" name="print" value="'.$script_transl['print'].'"></td>
+	 	  </tr>';
+	 /** ENRICO FEDELE */
   } else {
      echo "<tr><td class=\"FacetDataTDred\" align=\"center\">".$script_transl['errors'][1]."</TD></TR>\n";
   }
   echo "</table></form>";
-}
+	 /** ENRICO FEDELE */
+	 /* Chiudeva il controllo if (isset($_POST['preview'])) */
+//}
+	 /** ENRICO FEDELE */
 ?>
 </body>
 </html>
