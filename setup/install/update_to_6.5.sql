@@ -1,5 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '91' WHERE `id` =2;
-INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '5', 'report_ragstat.php', '', '', '9', '', '3'  FROM `gaz_menu_module`;
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '5', 'report_ragstat.php', '', '', '9', '', '9'  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'admin_ragstat.php', '', '', '12', '', '5'  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXaliiva` ADD `taxstamp` INT(1) NOT NULL AFTER `aliquo`;
