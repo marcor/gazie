@@ -34,24 +34,39 @@ if (!isset($_GET['orderby']) ) {
     exit;
 }
 require("../../config/templates/report_template.php");
+/* ENRICO FEDELE */
+/* strftime effettivamente formatta sulla base della lingua del server, ma se l'italiano non è installato, comunque la data sarà in inglese
+   stessa cosa dicasi per il fuso orario (sul mio NAS non so perchè se stampo l'ora, mi rendo conto che il fuso orario è quello cinese!!!
+   mi chiedo perchè è stato usato mktime invete di lasciare che sia il sistema a prendere data/ora correnti con time(), forse per tentare di
+   bypassare il problema del fuso orario?
+   Per avere sicuramente data e ora nella lingua impostata dall'utente, occorrerebbe predisporre degli apposity array di localizzazione
+   $date = array("month" => array(1=> "Gennaio", 2 => "Febbraio", ...., 12 => "Dicembre"), 
+   				 "day"	 => array(1=> "Lunedì",  2 => "Martedì", ...., 7 => "Domenica"));
+   da richiamare poi con $date["month"][date("n")]
+   						 $date["day"][date("N")]
+ */
 $luogo_data=$admin_aziend['citspe'].", lì ".ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
+	  /* ENRICO FEDELE */
 $item_head = array('top'=>array(array('lun' => 80,'nam'=>'Descrizione'),
                                 array('lun' => 25,'nam'=>'Numero Conto')
                                )
                    );
+	  /* ENRICO FEDELE */
+	  /* Modifico larghezza e intestazione delle colonne */
 $title = array('luogo_data'=>$luogo_data,
                'title'=>"LISTA DELLE PARTITE APERTE ",
                'hile'=>array(   array('lun' => 45,'nam'=>'Cliente'),
                                 array('lun' => 20,'nam'=>'ID Partita'),
                                 array('lun' => 41,'nam'=>'Descrizione'),
                                 array('lun' => 11,'nam'=>'N.Doc.'),
-                                array('lun' => 15,'nam'=>'Data Doc.'),
-                                array('lun' => 15,'nam'=>'Data Reg.'),
-                                array('lun' => 12,'nam'=>'Dare'),
-                                array('lun' => 12,'nam'=>'Avere'),
-                                array('lun' => 15,'nam'=>'Scadenza')
+                                array('lun' => 13,'nam'=>'D. Doc.'),
+                                array('lun' => 13,'nam'=>'D. Reg.'),
+                                array('lun' => 15,'nam'=>'Dare'),
+                                array('lun' => 15,'nam'=>'Avere'),
+                                array('lun' => 13,'nam'=>'Scad.')
                             )
               );
+	  /* ENRICO FEDELE */
 $aRiportare = array('top'=>array(array('lun' => 166,'nam'=>'da riporto : '),
                            array('lun' => 20,'nam'=>'')
                            ),
@@ -73,6 +88,13 @@ if (sizeof($scdl->Entries) > 0) {
       $ctrl_partner=0;
       $ctrl_id_tes=0;
       $ctrl_paymov=0;
+	  
+	  /* ENRICO FEDELE */
+	  /* Inizializzo la variabile per il totale */
+	  $tot_dare  = 0;
+	  $tot_avere = 0;
+	  /* ENRICO FEDELE */
+
       while (list($key, $mv) = each($scdl->Entries)) {
           $pdf->SetFont('helvetica','',6);
           $class_partner='';
@@ -114,21 +136,48 @@ if (sizeof($scdl->Entries) > 0) {
           $pdf->Cell(20,4,$paymov,1,0,'R',$status_cl,'',2);
           $pdf->Cell(41,4,$mv['descri'],1,0,'C',$status_cl,'',1);
           $pdf->Cell(11,4,$mv["numdoc"].'/'.$mv['seziva'],1,0,'R',$status_cl);
-          $pdf->Cell(15,4,$mv["datdoc"],1,0,'C',$status_cl);
-          $pdf->Cell(15,4,gaz_format_date($mv["datreg"]),1,0,'C',$status_cl);
+		  
+		  /* ENRICO FEDELE */
+		  /* Modifico la larghezza delle celle */
+          $pdf->Cell(13,4,$mv["datdoc"],1,0,'C',$status_cl);
+          $pdf->Cell(13,4,gaz_format_date($mv["datreg"]),1,0,'C',$status_cl);
           if ($mv['id_rigmoc_pay']==0){
-              $pdf->Cell(12,4,gaz_format_number($mv['amount']),1,0,'R',$status_cl);
-              $pdf->Cell(12,4,'',1,0,'R',$status_cl);
+			  /* Incremento il totale del dare */
+			  $tot_dare += $mv['amount'];
+			  /* Modifico la larghezza delle celle */
+              $pdf->Cell(15,4,gaz_format_number($mv['amount']),1,0,'R',$status_cl);
+              $pdf->Cell(15,4,'',1,0,'R',$status_cl);
           } else {
-              $pdf->Cell(12,4,'',1,0,'R',$status_cl);
-              $pdf->Cell(12,4,gaz_format_number($mv['amount']),1,0,'R',$status_cl);
+			  /* Incremento il totale dell'avere, e decremento quello del dare */
+	  		  $tot_avere += $mv['amount'];
+			  $tot_dare  -= $mv['amount'];
+			  /* Modifico la larghezza delle celle */
+              $pdf->Cell(15,4,'',1,0,'R',$status_cl);
+              $pdf->Cell(15,4,gaz_format_number($mv['amount']),1,0,'R',$status_cl);
           }
-          $pdf->Cell(15,4,gaz_format_date($mv["expiry"]),1,1,'C',$status_cl);
+		  /* Modifico la larghezza della cella */
+          $pdf->Cell(13,4,gaz_format_date($mv["expiry"]),1,1,'C',$status_cl);		  
+		  /* ENRICO FEDELE */
           $ctrl_partner=$mv["clfoco"];
           $ctrl_id_tes=$mv["id_tes"];
           $ctrl_paymov=$mv["id_tesdoc_ref"];
-
       }
+		  /* ENRICO FEDELE */
+		  /* Stampo una riga vuota sottile per separare leggermente il totale e metterlo in evidenza */
+		  $pdf->SetFillColor(235, 235,235 );
+          $pdf->SetFont('helvetica','',1);
+		  $pdf->Cell(186,1,'',1,1,'C',true);
+		  
+		  /* Stampo la riga del totale, in grassetto italico "BI" */
+		  $pdf->SetFillColor(160, 255,220 );
+          $pdf->SetFont('helvetica','BI',6);
+          $pdf->Cell(143,4,'TOTALE',1,0,'R',false);
+		  
+          $pdf->Cell(15,4,gaz_format_number($tot_dare),1,0,'R',false);
+          $pdf->Cell(15,4,gaz_format_number($tot_avere),1,0,'R',true);
+			  
+          $pdf->Cell(13,4,'',1,1,'C',false);
+		  /* ENRICO FEDELE */
 }
 $pdf->setRiporti('');
 $pdf->Output();

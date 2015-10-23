@@ -53,6 +53,19 @@ if (isset($_GET['all'])) {
   $numero='';
   }
  }
+ 
+ /** ENRICO FEDELE */ 
+ /* Leggo i dati inviati con il form */
+if (isset($_GET['documento'])) {
+	$documento = $_GET['documento'];
+   if (isset($_GET['auxil'])) {
+      $where .= " AND desdoc LIKE '%".$documento."%'";
+   } else {
+   		$where = "desdoc LIKE '%".$documento."%'";
+   }
+}
+/** ENRICO FEDELE */
+
 if (!isset($_GET['flag_order'])) {
    $orderby = " id_mov desc";
 }
@@ -70,7 +83,18 @@ if (!isset($_GET['auxil'])) {
 	  <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"
 	  value="<?php if (isset($numero)) print $numero; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
 </td>
-<td></td><td class="FacetFieldCaptionTD">
+
+    <!-- ENRICO FEDELE - Inizio modifica form -->
+<td class="FacetFieldCaptionTD"></td>
+	<td class="FacetFieldCaptionTD">
+		<input type="text" name="auxil" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-xs form-control" value="<?php if ($auxil != "&all=yes"){echo $auxil;}?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+	</td>
+	<td class="FacetFieldCaptionTD">
+		<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-xs form-control" value="<?php if (isset($documento)) print $documento; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+	</td>
+    <!-- ENRICO FEDELE - Fine modifica form -->
+
+<td class="FacetFieldCaptionTD">
 <input type="text" name="auxil" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-xs form-control"
 value="<?php if ($auxil != "&all=yes"){echo $auxil;}?>" maxlength="6" size="3" tabindex="1" class="FacetInput"></td>
 <td><input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;"></td>
@@ -97,6 +121,12 @@ $linkHeaders -> output();
 $recordnav = new recordnav($gTables['movmag'], $where, $limit, $passo);
 $recordnav -> output();
 $anagrafica = new Anagrafica();
+
+/** ENRICO FEDELE */
+/* Inizializzo la variabile */
+$tot_movimenti = 0;
+/** ENRICO FEDELE */
+
 while ($a_row = gaz_dbi_fetch_array($result)) {
     $partner = $anagrafica->getPartner($a_row["clfoco"]);
     $title =  $partner['ragso1']." ".$partner['ragso2'];
@@ -122,7 +152,22 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($valore)." </td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
     echo "</tr>\n";
+	/** ENRICO FEDELE */
+	/* Incremento il totale */
+	$tot_movimenti += $valore;
+	/** ENRICO FEDELE */
 }
+	/** ENRICO FEDELE */
+	/* Stampo il totale */
+	//if($tot_movimenti!=0) {	//	Inizialmente avevo pensato di stampare il totale solo se diverso da zero, ma la cosa risulta fuorviante in alcuni casi
+								//	meglio stamparlo sempre
+		echo "<tr>
+				<td colspan=\"6\" class=\"FacetFormHeaderFont\" align=\"right\"><strong>TOTALE</strong></td>
+				<td class=\"FacetFormHeaderFont\" align=\"right\"><strong>".gaz_format_number($tot_movimenti)."</strong></td>
+				<td class=\"FacetFormHeaderFont\">&nbsp;</td>
+			  </tr>";
+	//}
+	/** ENRICO FEDELE */
 ?>
 </table>
 </body>
