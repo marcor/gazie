@@ -24,7 +24,7 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-
+print_r($_POST);
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -41,7 +41,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 }
 // fine controlli
 
-if (isset($_POST['print']) && $msg=='') {
+if (isset($_POST['print']) ) {
     $_SESSION['print_request']=array('script_name'=>'print_schedule',
                                      'orderby'=>$form['orderby']
                                      );
@@ -57,6 +57,8 @@ $script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min','calendarpopup/Calenda
                                   'jquery/ui/jquery.ui.autocomplete',
                                   'jquery/autocomplete_location'));
 /** ENRICO FEDELE */
+echo "<form method=\"POST\" name=\"select\">\n";
+$gForm = new venditForm();
 /** Modifico il form per l'ordinamento, lo rendo più snello, niente più tasto anteprima (vedi considerazioni di seguito)*/
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>
 	  <table class="Tmiddle">
