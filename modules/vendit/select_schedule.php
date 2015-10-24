@@ -24,7 +24,6 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-print_r($_POST);
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
