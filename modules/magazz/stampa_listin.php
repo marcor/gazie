@@ -82,27 +82,43 @@ switch($_GET['li']) {
         break;
 }
 
+/** ENRICO FEDELE */
+/* 
+   Tolgo dalle intestazioni tabella i campi Descrizione e Annotazioni perchè li ripeterò ad ogni elemento del listino
+   in una riga apposita, per aumentare la leggibilità dello stesso
+
+   array('lun' => 85,'nam'=>'Descrizione'),,
+   array('lun' => 70,'nam'=>'Annotazioni')
+*/
 $title=array('luogo_data'=>$luogo_data,
-               'title'=>"Listino ".$descrlis,
-               'hile'=>array(array('lun' => 35,'nam'=>'Codice'),
-                             array('lun' => 85,'nam'=>'Descrizione'),
-                             array('lun' => 15,'nam'=>'U.M.'),
-                             array('lun' => 25,'nam'=>'Prezzo'),
-                             array('lun' => 25,'nam'=>'Esistenza'),
-                             array('lun' => 15,'nam'=>'% I.V.A.'),
-                             array('lun' => 70,'nam'=>'Annotazioni')
-                             )
-            );
+             'title'=>"Listino ".$descrlis,
+             'hile'=>array(array('lun' => 190,'nam'=>'Codice'),
+                           array('lun' => 15,'nam'=>'U.M.'),
+                           array('lun' => 25,'nam'=>'Prezzo'),
+                           array('lun' => 25,'nam'=>'Esistenza'),
+                           array('lun' => 15,'nam'=>'% I.V.A.')
+                           )
+             );
+/** ENRICO FEDELE */
 $gForm = new magazzForm();
-$pdf = new Report_template();
+$pdf   = new Report_template();
 $pdf->setVars($admin_aziend,$title,'L');
 $pdf->setAuthor($admin_aziend['ragso1'].' '.$_SESSION['Login']);
 $pdf->setTitle($title['title']);
-$pdf->SetTopMargin(39);
+$pdf->SetTopMargin(35);
 $pdf->setFooterMargin(10);
 $pdf->AddPage('L');
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $ctrlcatmer=0;
+
+/** ENRICO FEDELE */
+/* Inizializzo le variabili e setto la dimensione del font a 9*/
+$color  = 0;
+$color1 = array(255,255,255);
+$color2 = array(240,240,240);	  
+$pdf->SetFont('helvetica','',9);
+/** ENRICO FEDELE */
+
 while ($row = gaz_dbi_fetch_array($result)) {
        $mv=$gForm->getStockValue(false,$row['codice']);
        $magval=array_pop($mv);
@@ -125,17 +141,34 @@ while ($row = gaz_dbi_fetch_array($result)) {
         $row['unimis'] = $row['web_mu'];
         break;
       }
+	  /** ENRICO FEDELE */
+	  /* Modifico il layout della tabella, grassetto corsivo per categoria merceologica e codice articolo */
+	  $pdf->SetFont('helvetica','BI',9);
       if ($row["catmer"] <> $ctrlcatmer) {
         gaz_set_time_limit (30);
-        $pdf->Cell(120,5,'Categoria Merceologica n.'.$row['codcat'].' = '.$row['descat'],1,1,'L',1);
+	    $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
+        /* Riga della categoria merceologica impostata a tutta larghezza */
+		$pdf->Cell(270,4,'Categoria Merceologica n.'.$row['codcat'].' = '.$row['descat'],1,1,'L',1);
       }
-      $pdf->Cell(35,5,$row['codart'],1);
-      $pdf->Cell(85,5,$row['desart'],1);
-      $pdf->Cell(15,5,$row['unimis'],1,0,'C');
-      $pdf->Cell(25,5,number_format($price,$admin_aziend['decimal_price'],',','.'),1,0,'R');
-      $pdf->Cell(25,5,number_format($magval['q_g'],$admin_aziend['decimal_quantity'],',','.'),1,0,'R');
-      $pdf->Cell(15,5,$row['aliquo'],1,0,'C');
-      $pdf->Cell(70,5,$row['annota'],1,1,'C');
+	  /* Alterno il colore delle righe per maggiore leggibilità */
+	  $color == $color1 ? $color=$color2 : $color=$color1;
+	  $pdf->SetFillColor($color[0], $color[1], $color[2]);
+	  
+	  /* Celle con riempimento */
+      $pdf->Cell(190,4,$row['codart'],1,0,'C',true);
+	  /* Reimposto il font per proseguire la stampa senza grassetto/italico */  
+      $pdf->SetFont('helvetica','',9);
+      $pdf->Cell(15,4,$row['unimis'],1,0,'C', true);
+      $pdf->Cell(25,4,number_format($price,$admin_aziend['decimal_price'],',','.'),1,0,'R',true);
+      $pdf->Cell(25,4,number_format($magval['q_g'],$admin_aziend['decimal_quantity'],',','.'),1,0,'R',true);
+      $pdf->Cell(15,4,$row['aliquo'],1,1,'C',true); /* A capo dopo questa cella */
+      /* Descrizione articolo a capo per evitare testo sovrapposto con descrizioni lunghe */
+      $pdf->Cell(20,4,'Descrizione',1,0,'L',true);
+      $pdf->Cell(250,4,$row['desart'],1,1,'L',true); /* A capo dopo questa cella */
+      /* Annotazioni a capo per evitare testo sovrapposto con descrizioni lunghe */	  
+      $pdf->Cell(20,4,'Annotazioni',1,0,'L',true);
+      $pdf->Cell(250,4,$row['annota'],1,1,'L',true); /* A capo dopo questa cella */
+	  /** ENRICO FEDELE */
       $ctrlcatmer=$row["catmer"];
 }
 $pdf->Output();

@@ -56,7 +56,9 @@ $script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min','calendarpopup/Calenda
                                   'jquery/ui/jquery.ui.autocomplete',
                                   'jquery/autocomplete_location'));
 /** ENRICO FEDELE */
-echo "<form method=\"POST\" name=\"select\">\n";
+echo '<form method="POST" name="select">
+		<input type="hidden" value="'.$form['hidden_req'].'" name="hidden_req" />
+		<input type="hidden" value="'.$form['ritorno'].'" name="ritorno" />';
 $gForm = new venditForm();
 /** Modifico il form per l'ordinamento, lo rendo più snello, niente più tasto anteprima (vedi considerazioni di seguito)*/
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>
@@ -71,6 +73,7 @@ echo '		</td>
 			</td>
 		</tr>
 	  </table>
+	  </form>
 	  <br />';
 /*
 		//	Avendo eliminato il pulsante "preview, questo pezzo di tabella non serve più, e guadagnamo un pò di spazio
@@ -199,7 +202,7 @@ echo '		</td>
   } else {
      echo "<tr><td class=\"FacetDataTDred\" align=\"center\">".$script_transl['errors'][1]."</TD></TR>\n";
   }
-  echo "</table></form>";
+  echo "</table>";
 	 /** ENRICO FEDELE */
 	 /* Chiudeva il controllo if (isset($_POST['preview'])) */
 //}
