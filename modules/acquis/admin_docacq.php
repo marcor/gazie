@@ -613,7 +613,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             $form['rows'][$i]['annota'] = $artico['annota'];
             $form['rows'][$i]['pesosp'] = $artico['peso_specifico'];
             $form['rows'][$i]['descri'] = $artico['descri'];
-            $form['rows'][$i]['unimis'] = $artico['uniacq'];
+            $form['rows'][$i]['unimis'] = $artico['unimis'];
             $form['rows'][$i]['lot_or_serial'] = $artico['lot_or_serial'];
             $form['rows'][$i]['codric'] = $form['in_codric'];
             $form['rows'][$i]['quanti'] = $form['in_quanti'];

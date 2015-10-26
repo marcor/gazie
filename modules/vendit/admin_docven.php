@@ -25,8 +25,8 @@
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 
-$msgtoast = "";
 $admin_aziend = checkAdmin();
+$msgtoast = "";
 $msg = '';
 $calc = new Compute;
 $upd_mm = new magazzForm;
