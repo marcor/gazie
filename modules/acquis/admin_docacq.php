@@ -576,7 +576,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
          if ($form['in_tiprig'] == 0 and !empty($form['in_codart'])) {  //rigo normale
             $form['rows'][$old_key]['annota'] = $artico['annota'];
             $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
-            $form['rows'][$old_key]['unimis'] = $artico['unimis'];
+            $form['rows'][$old_key]['unimis'] = $artico['uniacq'];
             $form['rows'][$old_key]['descri'] = $artico['descri'];
             $form['rows'][$i]['lot_or_serial'] = $artico['lot_or_serial'];
             $form['rows'][$old_key]['prelis'] = number_format($artico['preacq'],$admin_aziend['decimal_price'],'.','');
