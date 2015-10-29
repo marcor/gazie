@@ -29,7 +29,7 @@
                            'errors'=>array('&Egrave; necessario indicare la Ragione Sociale',
                                            '&Egrave; necessario indicare il sesso',
                                            'La data di nascita &egrave; sbagliata',
-                                           '&Egrave; necessario indicare l\'inidirizzo',
+                                           '&Egrave; necessario indicare l\'indirizzo',
                                            '&Egrave; necessario indicare la citt&agrave;',
                                            '&Egrave; necessario indicare la provincia',
                                            'Il codice fiscale &egrave; formalmente errato',
@@ -234,7 +234,6 @@
                            "Il codice dev'essere compreso tra 1 e 99",
                            'ins_this'=>'Inserisci una nuova modalit&agrave; di pagamento',
                            'fae_mode'=>"Modalità fatt.elettronica PA"
-                           
                          ),
                     "report_aliiva.php" =>
                    array(  'title'=>"Aliquote I.V.A.",
@@ -262,7 +261,6 @@
                            'fae_natura'=>"Natura fatt.elettronica PA",
                            'taxstamp'=>'Soggetto a bollo',
                            'yn_value'=>array(1=>'Si',0=>'No')
-
                          ),
                     "admin_banapp.php" =>
                    array(  'title'=>'Gestione delle banche di appoggio',
