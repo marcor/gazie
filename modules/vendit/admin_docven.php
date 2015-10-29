@@ -32,6 +32,49 @@ $calc = new Compute;
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 
+function getFAIseziva($tipdoc) {
+    global $admin_aziend, $gTables, $auxil;
+    if ($tipdoc == 'FAI') { // se è una fattura immediata
+        switch ($admin_aziend['fatimm']) {
+            case "1":
+                $si = 1;
+                break;
+            case "2":
+                $si = 2;
+                break;
+            case "3":
+                $si = 3;
+                break;
+            case "R":
+                $si = substr($auxil, 0, 1);
+                break;
+            case "U":
+                $rs_ultimo = gaz_dbi_dyn_query("seziva", $gTables['tesdoc'], "tipdoc = '" . $tipdoc . "'", "datfat desc", 0, 1);
+                $ultimo = gaz_dbi_fetch_array($rs_ultimo);
+                if ($ultimo) {
+                    $si = $ultimo['seziva'];
+                } else {
+                    $si = 1;
+                }
+                break;
+            default:
+                $si = 1;
+        }
+    } else { // per gli altri documenti mi baso sull'ultimo
+        if ($tipdoc == 'DDT') {
+            $tipdoc .= "' OR tipdoc ='FAD";
+        }
+        $rs_ultimo = gaz_dbi_dyn_query("seziva", $gTables['tesdoc'], "tipdoc = '" . $tipdoc . "'", "datfat desc", 0, 1);
+        $ultimo = gaz_dbi_fetch_array($rs_ultimo);
+        if ($ultimo) {
+            $si = $ultimo['seziva'];
+        } else {
+            $si = 1;
+        }
+    }
+    return $si;
+}
+
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 } else {
@@ -277,8 +320,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $initra = $form['anntra'] . "-" . $form['mestra'] . "-" . $form['giotra'];
             $utstra = mktime(0, 0, 0, $form['mestra'], $form['giotra'], $form['anntra']);
         }
-        if (!checkdate($form['mestra'], $form['giotra'], $form['anntra']))
+        if (!checkdate($form['mestra'], $form['giotra'], $form['anntra'])){
             $msg .= "37+";
+        }
         if ($utstra < $utsemi) {
             $msg .= "38+";
         }
@@ -505,6 +549,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 exit;
             }
         }
+    }
+    // Se viene cambiata la tipologia di documento e la nuova è una fattura immediata ricontrollo la modalità di assegnazione della sezione IVA
+    if ($_POST['hidden_req'] == 'tipdoc' && !isset($_GET['seziva'])) {
+        $form['seziva'] = getFAIseziva($form['tipdoc']);
+        $form['hidden_req'] = '';
     }
     // Se viene inviata la richiesta di conferma cliente
     if ($_POST['hidden_req'] == 'clfoco') {
@@ -1094,32 +1143,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // fine rigo input
     $form['search']['clfoco'] = '';
     $form['cosear'] = "";
-    if (!isset($_GET['seziva']) and $form['tipdoc'] == 'FAI') {
-        switch ($admin_aziend['fatimm']) {
-            case "1":
-                $form['seziva'] = 1;
-                break;
-            case "2":
-                $form['seziva'] = 2;
-                break;
-            case "3":
-                $form['seziva'] = 3;
-                break;
-            case "R":
-                $form['seziva'] = substr($auxil, 0, 1);
-                break;
-            case "U":
-                $rs_ultimo = gaz_dbi_dyn_query("seziva", $gTables['tesdoc'], "tipdoc = 'FAI'", "datfat desc", 0, 1);
-                $ultimo = gaz_dbi_fetch_array($rs_ultimo);
-                if ($ultimo) {
-                    $form['seziva'] = $ultimo['seziva'];
-                } else {
-                    $form['seziva'] = 1;
-                }
-                break;
-            default:
-                $form['seziva'] = 1;
-        }
+    if (!isset($_GET['seziva']) && $form['tipdoc'] == 'FAI') {
+        $form['seziva'] = getFAIseziva($form['tipdoc']);
     } elseif (!isset($_GET['seziva'])) {
         $form['seziva'] = 1;
     } else {
@@ -1670,7 +1695,7 @@ foreach ($form['rows'] as $k => $v) {
 }
 if (count($form['rows']) == 0) {
     echo "<tr>";
-    echo "<td colspan=\"12\" class=\"FacetDataTDred\">".$script_transl['zero_rows']."</td>";
+    echo "<td colspan=\"12\" class=\"FacetDataTDred\">" . $script_transl['zero_rows'] . "</td>";
     echo "</tr>";
 }
 echo "</table>\n";
