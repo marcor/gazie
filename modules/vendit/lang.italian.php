@@ -151,7 +151,8 @@ $strScript = array("admin_client.php" =>
         "Data periodo fine"
     ),
     "admin_docven.php" =>
-    array(array("DDT" => "D.d.T. di Vendita",
+    array('none',
+        'doc_name' => array("DDT" => "D.d.T. di Vendita",
             "FAD" => "D.d.T. di Vendita",
             "FAI" => "Fattura Immediata",
             "FAP" => "Parcella",
@@ -160,6 +161,7 @@ $strScript = array("admin_client.php" =>
             "VCO" => "Vendita Corrispettivo",
             "VRI" => "Ricevuta"
         ),
+        'tipdoc' => ' documento di vendita tipo: ',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia cliente/fornitore'),
@@ -238,11 +240,12 @@ $strScript = array("admin_client.php" =>
          */
         'ragbol' => "Raggr.DDT",
         'ragbol_title' => 'Raggruppamento DDT',
-        "Data Ordine",
-        "Da fatturare",
+        'order_date' => "Data Ordine",
+        'da_fatturare' => "Da fatturare",
         'da_fatturare_title' => 'Indica se il DDT deve essere fatturato automaticamente',
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
-        'da_fatturare_value' => array(0 => 'No', 1 => 'Sì'),
+        'da_fatturare_value' => array(0 => 'No', 1 => 'Si'),
+        'zero_rows'=>'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale'
     /** fine modifica FP */
     ),
     "select_docforprint.php" =>
@@ -783,13 +786,13 @@ $strScript = array("admin_client.php" =>
         'orderby_value' => array(0 => 'Scadenza crescente', 1 => 'Scadenza decrescente',
             2 => 'Cliente crescente', 3 => 'Cliente decrescente'
         ),
-		/** ENRICO FEDELE */
-		/* Aggiunto header per ultima colonna della tabella, per abbellire il layout */
+        /** ENRICO FEDELE */
+        /* Aggiunto header per ultima colonna della tabella, per abbellire il layout */
         'header' => array('Cliente' => '', 'ID Partita' => '', 'Status' => '', 'Mov.Cont.' => '', 'Descrizione' => '',
             'N.Doc.' => '', 'Data Doc.' => '', 'Data Reg.' => '', 'Dare' => '', 'Avere' => '',
             'Scadenza' => '', 'Opzioni' => ''
         ),
-		/** ENRICO FEDELE */
+        /** ENRICO FEDELE */
         'status_value' => array(0 => 'Chiusa', 1 => 'Aperta'),
     ),
     "delete_schedule.php" =>
