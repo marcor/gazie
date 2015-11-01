@@ -34,7 +34,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form=gaz_dbi_parse_post('artico');
-    $form['codice'] = trim($form['codice']);
+    $form['id'] = trim($form['id']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code']= substr($_POST['ref_code'],0,15);
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
@@ -59,9 +59,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
     if (isset($_POST['Submit'])) { // conferma tutto
        if ($toDo == 'update') {  // controlli in caso di modifica
-         if ($form['codice'] != $form['ref_code']) { // se sto modificando il codice originario
+         if ($form['id'] != $form['ref_code']) { // se sto modificando il codice originario
           // controllo che l'articolo ci sia gia'
-          $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '".$form['codice']."'","codice DESC",0,1);
+          $rs_articolo = gaz_dbi_dyn_query('id', $gTables['artico'], "codice = '".$form['id']."'","codice DESC",0,1);
           $rs = gaz_dbi_fetch_array($rs_articolo);
           if ($rs) { $msg .= "0+"; }
           // controllo che il precedente non abbia movimenti di magazzino associati
@@ -71,7 +71,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
          }
        } else {
           // controllo che l'articolo ci sia gia'
-          $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '".$form['codice']."'","codice DESC",0,1);
+          $rs_articolo = gaz_dbi_dyn_query('id', $gTables['artico'], "codice = '".$form['id']."'","codice DESC",0,1);
           $rs = gaz_dbi_fetch_array($rs_articolo);
           if ($rs) {
              $msg .= "2+";
@@ -99,7 +99,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
              $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
           } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
-             $oldimage = gaz_dbi_get_row($gTables['artico'],'codice',$form['ref_code']);
+             $oldimage = gaz_dbi_get_row($gTables['artico'],'id',$form['ref_code']);
              $form['image'] = $oldimage['image'];
           } else {
              $form['image'] = '';
@@ -118,9 +118,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           exit;
     }
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
-    $form = gaz_dbi_get_row($gTables['artico'], 'codice',substr($_GET['codice'],0,15));
+    $form = gaz_dbi_get_row($gTables['artico'], 'id',substr($_GET['id'],0,15));
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
-    $form['ref_code']=$form['codice'];
+    $form['ref_code']=$form['id'];
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
     $form["preacq"] = number_format($form['preacq'],$admin_aziend['decimal_price'],'.','');
     $form["preve1"] = number_format($form['preve1'],$admin_aziend['decimal_price'],'.','');
@@ -130,7 +130,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['rows'] = array();
     // inizio documenti/certificati
     $next_row = 0;
-    $rs_row = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '".$form['codice']."'","id_doc DESC");
+    $rs_row = gaz_dbi_dyn_query("*", $gTables['files'], "item_ref = '".$form['id']."'","id_doc DESC");
     while ($row = gaz_dbi_fetch_array($rs_row)) {
            $form['rows'][$next_row] = $row;
            $next_row++;
@@ -158,21 +158,21 @@ echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n"
 echo "<input type=\"hidden\" name=\"ref_code\" value=\"".$form['ref_code']."\">\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
 $gForm = new magazzForm();
-$mv=$gForm->getStockValue(false,$form['codice']);
+$mv=$gForm->getStockValue(false,$form['id']);
 $magval=array_pop($mv);
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
 } else {
-   echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." '".$form['codice']."'</div>\n";
+   echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." '".$form['id']."'</div>\n";
 }
 echo "<table class=\"Tmiddle\">\n";
 if (!empty($msg)) {
     echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['codice']."* </td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['id']."* </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" align=\"right\" maxlength=\"15\" size=\"15\" /></td>\n";
+      <input type=\"text\" name=\"codice\" value=\"".$form['id']."\" align=\"right\" maxlength=\"15\" size=\"15\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."* </td>\n";
@@ -189,7 +189,7 @@ echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['barcode']." </td>\n"
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"barcode\" value=\"".$form['barcode']."\" align=\"right\" maxlength=\"13\" size=\"13\" /></td>\n";
 echo "</tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=artico&value=".$form['codice']."\" width=\"100\"></td>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=artico&value=".$form['id']."\" width=\"100\"></td>\n";
 echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\">".$script_transl['image']." <input name=\"userfile\" type=\"file\">";
 echo "</td></tr>";
 echo "<tr>\n";
@@ -199,7 +199,7 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['catmer']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,1,' - ','descri');
+$gForm->selectFromDB('catmer','catmer','id',$form['catmer'],false,1,' - ','descri');
 echo "</td>\n";
 echo "</tr>\n";
 /** inizio modifica FP 15/10/2015
@@ -207,7 +207,7 @@ echo "</tr>\n";
 */
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['ragstat']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectFromDB('ragstat','ragstat','codice',$form['ragstat'],false,1,' - ','descri');
+$gForm->selectFromDB('ragstat','ragstat','id',$form['ragstat'],false,1,' - ','descri');
 echo "</td>\n";
 echo "</tr>\n";
 /** fine modifica FP */
@@ -241,7 +241,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['aliiva']." * </td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectFromDB('aliiva','aliiva','codice',$form['aliiva'],'codice',1,' - ','descri');
+$gForm->selectFromDB('aliiva','aliiva','id',$form['aliiva'],'id',1,' - ','descri');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
@@ -321,10 +321,10 @@ if ($toDo == 'update') {
             echo "<td align=\"right\" ><input type=\"button\" value=\"".ucfirst($script_transl['update'])." \" onclick=\"location.href='admin_document.php?id_doc=".$val['id_doc']."&Update';\"></td>";
             echo "\t </tr>\n";
     }
-    echo "<tr><td align=\"right\" colspan=\"4\"><input type=\"button\" value=\"".ucfirst($script_transl['insert'])." \" onclick=\"location.href='admin_document.php?item_ref=".$form['codice']."&Insert';\"></td></tr>\n";
+    echo "<tr><td align=\"right\" colspan=\"4\"><input type=\"button\" value=\"".ucfirst($script_transl['insert'])." \" onclick=\"location.href='admin_document.php?item_ref=".$form['id']."&Insert';\"></td></tr>\n";
     echo "\t </table></td></tr>\n";
   } else {
-    echo "\t <input type=\"button\" value=\"".ucfirst($script_transl['insert'])." \" onclick=\"location.href='admin_document.php?item_ref=".$form['codice']."&Insert';\"></td></tr>\n";
+    echo "\t <input type=\"button\" value=\"".ucfirst($script_transl['insert'])." \" onclick=\"location.href='admin_document.php?item_ref=".$form['id']."&Insert';\"></td></tr>\n";
   }
 }
 echo "<tr>\n";

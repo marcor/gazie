@@ -34,7 +34,8 @@ $transl['vendit'] = array('name' => "Vendite",
                                          8 =>array("Gestione Agenti di Vendita","Agenti"),
                                          9 =>array("Statistiche delle Vendite","Statistiche"),
                                          10=>array("Abbonamenti - Contratti","Contratti"),
-                                         11=>array("Scadenzario a partite aperte","Scadenzario")
+                                         11=>array("Scadenzario a partite aperte","Scadenzario"),
+                                         12 =>array("Gestione degli indirizzi di destinazione dei Clienti","Destinazioni")
                                         ),
                           'm3' => array( 1 =>array("Emissione Scontrini Fiscali","Emetti Scontrino"),
                                          2 =>array("Emissione Fattura di Vendita","Emetti Fattura"),
@@ -67,7 +68,8 @@ $transl['vendit'] = array('name' => "Vendite",
                                          29=>array("Genera file RiBa standard CBI","Genera file MAV"),
                                          30=>array("Report fatture elettroniche","Report fatture elettroniche"),
                                          31=>array("Report partite aperte","Report partite aperte"),
-                                         32=>array("Selezione e stampa stato clienti","Stato delle scadenze")
+                                         32=>array("Selezione e stampa stato clienti","Stato delle scadenze"),
+                                         33=>array("Inserimento nuovo indirizzo di destinazione","Nuova destinazione")
                                       )
                           );
 ?>

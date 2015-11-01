@@ -929,6 +929,35 @@ $strScript = array("admin_client.php" =>
             'DT' => 'Decorrenza termini'),
         'progr_ret' => 'Progr.',
         'flux_descri' => 'Descrizione'
+    ),
+    "admin_destinazioni.php" =>
+    array('title' => 'Gestione degli indirizzi di destinazione',
+        'ins_this' => 'Inserimento destinazione',
+        'upd_this' => 'Modifica la destinazione con cod.',
+        'errors' => array('Devi associare la destinazione ad una anagrafica',
+            "Manca l'indirizzo",
+            "Manca il cap",
+            "Manca la citta'"
+        ),
+        'codice' => "codice",
+        'ragso1' => "Ragione Sociale 1",
+        'ragso2' => "Ragione Sociale 2",
+        'indspe' => 'Indirizzo',
+        'capspe' => 'Codice Postale',
+        'citspe' => 'Citt&agrave; - Provincia',
+        'prospe' => 'Provincia',
+        'country' => 'Nazione',
+        'telefo' => 'Telefono',
+        'fax' => 'Fax',
+        'cell' => 'Cellulare',
+        'e_mail' => 'e mail',
+        'status' => 'Visibilit&agrave; alla ricerca',
+        'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
+        'annota' => 'Annotazioni',
+        'id_anagra' => 'Destinazione legata a',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia anagrafica'),
     )
 );
 ?>

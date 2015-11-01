@@ -621,5 +621,9 @@ function checkAccessRights($adminid, $module, $enterprise_id = 0) {
    $row = gaz_dbi_fetch_array($result);
    return $row['access'];
 }
+function gaz_dbi_fetch_all($resource) {
+   $result = mysqli_fetch_all($resource);
+   return $result;
+}
 
 ?>

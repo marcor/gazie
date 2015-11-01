@@ -10,3 +10,8 @@ function toast(msg) {
         }
     });
 }
+function cambiaDestinazione(valoreSelezionato) {
+//    if(valoreSelezionato.value!=""){
+        document.getElementsByName("destin")[0].value=valoreSelezionato.value;
+//    }
+}
