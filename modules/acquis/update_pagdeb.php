@@ -147,8 +147,12 @@ if (isset($_POST['Return']))
         exit;
         }
     // Quando viene inviata la richiesta di aggiungere un rigo
-    if (isset($_POST['add_x']))
-    {
+// Quando viene inviata la richiesta di aggiungere un rigo
+/** ENRICO FEDELE */
+/* Con button non funziona _x */
+//if (isset($_POST['add_x'])) {
+/** ENRICO FEDELE */
+if(isset($_POST['add'])) {
     $rigo = $_POST['rigbon'];
     $_POST['righi'][$rigo]['prelis'] = 0.00;
     $_POST['righi'][$rigo]['descri'] = "";
@@ -272,7 +276,17 @@ foreach ($_POST['delrig'] as $key => $value)
     {
     print "<input type=\"hidden\" value=\"{$value}\" name=\"delrig[{$key}]\">\n";
     }
-print "<tr><td colspan=\"3\" align=\"right\">Aggiungi un rigo --&raquo; <input type=\"image\" name=\"add\" src=\"../../library/images/vbut.gif\" title=\"Aggiunta rigo! \"></td></tr>\n";
+	/*
+print "<tr><td colspan=\"3\" align=\"right\">Aggiungi un rigo --&raquo; <input type=\"image\" name=\"add\" src=\"../../library/images/vbut.gif\" title=\"Aggiunta rigo! \"></td></tr>\n";*/
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  <tr>
+		  <td colspan="3" align="right">Aggiungi un rigo --&raquo; 
+			<button type="submit" class="btn btn-default" name="add" title="Aggiunta rigo!"><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	   </tr>';
+	   /** ENRICO FEDELE */
 if ($_POST['rigbon'] > 0)
   print "<tr><th class=\"FacetFieldCaptionTD\">Descrizione</th><th class=\"FacetFieldCaptionTD\">Importo</th><th class=\"FacetFieldCaptionTD\">Selez.</th></tr>\n";
   print "<input type=\"hidden\" value=\"{$_POST['rigbon']}\" name=\"rigbon\">\n";
@@ -283,8 +297,18 @@ if ($_POST['rigbon'] > 0)
         $importo=number_format($value['prelis'],2, '.', '');
         print "<tr><td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"{$value['descri']}\" maxlength=\"50\" size=\"50\"></td>\n";
         print "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" maxlength=\"11\" size=\"11\"></td>\n";
-        print "<td align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"Elimina rigo!\"></td></tr>\n";
-        print "<input type=\"hidden\" name=\"righi[{$key}][id_rig]\" value=\"{$value['id_rig']}\">\n";
+        
+		//print "<td align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"Elimina rigo!\"></td></tr>\n";
+        
+		/** ENRICO FEDELE */
+		/* glyph icon */
+		echo '  <td align="right">
+				  <button type="submit" class="btn btn-default" name="del['.$key.']" title="Elimina rigo!"><i class="glyphicon glyphicon-remove"></i></button>
+				</td>
+			  </tr>';
+		/** ENRICO FEDELE */
+		
+		print "<input type=\"hidden\" name=\"righi[{$key}][id_rig]\" value=\"{$value['id_rig']}\">\n";
        }
 if($_POST['rigbon'] > 0)
         print "<tr><td></td><td align=\"right\"class=\"FacetAltDataTD\">Totale € ".number_format($totale,2, '.', '')."&nbsp;</td><td align=\"right\"><input type=\"submit\" title=\"Modifica l'$descridoc e proponi la stampa\" value=\"MODIFICA !\" accesskey=\"i\" name=\"update\" ></td></tr>\n";

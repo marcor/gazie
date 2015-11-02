@@ -156,7 +156,12 @@ if ($form['id_agente'] == 0) {
    }
    echo "\t<input type=\"text\" name=\"cerca_agente\" accesskey=\"e\" value=\"".$form['cerca_agente']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
    echo $messaggio;
-   echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
+   //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
+
+   /** ENRICO FEDELE */
+   /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+   echo '&nbsp;<button type="submit" class="btn btn-default" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
+   /** ENRICO FEDELE */
 } else {
    $agente = gaz_dbi_get_row($gTables['agenti']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['agenti'].".id_fornitore = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $gTables['agenti'].'.id_agente', intval($form['id_agente']));
    echo "<input type=\"submit\" value=\"".$agente['ragso1'].' '.$agente['ragso2']."\" name=\"newagente\" title=\" MODIFICA ! \">\n";

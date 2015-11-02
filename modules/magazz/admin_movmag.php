@@ -122,7 +122,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['search_partner'] = $_POST['search_partner'];
     $form['search_item'] = $_POST['search_item'];
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
-    if (isset($_POST['inscau_x'])) {
+   	/** ENRICO FEDELE */
+	/* Con button non funziona _x */
+    //if (isset($_POST['inscau_x'])) {
+	/** ENRICO FEDELE */
+   if (isset($_POST['inscau'])) {
             $causa = gaz_dbi_get_row($gTables['caumag'],"codice",$form['caumag']);
             $form['operat'] = $causa['operat'];
             $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
@@ -319,7 +323,15 @@ while ($row = gaz_dbi_fetch_array($result)) {
     }
     echo "<option value=\"".$row['codice']."\"".$selected.">".$row['codice']." - ".$row['descri']."</option>\n";
 }
-echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit']." !\"></td></tr>\n";
+/*echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit']." !\"></td></tr>\n";*/
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  </select>&nbsp;<button type="submit" class="btn btn-default" name="inscau" title="'.$script_transl['submit'].'!"><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	   </tr>';
+	   /** ENRICO FEDELE */
+	   
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[3]."&hArr;".$script_transl[4]."</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
 $ric_mastro = substr($form['clfoco'],0,3);
@@ -359,7 +371,11 @@ if ($form['clfoco']==0) {
    }
    echo "\t<input type=\"text\" name=\"search_partner\" accesskey=\"e\" value=\"".$form['search_partner']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
    echo $messaggio;
-   echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\">\n";
+   //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\">\n";
+	/** ENRICO FEDELE */
+	/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+	echo '&nbsp;<button type="submit" class="btn btn-default" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button>';
+	/** ENRICO FEDELE */
 } else {
    $anagrafica = new Anagrafica();
    $partner = $anagrafica->getPartner($form['clfoco']);
@@ -427,7 +443,11 @@ if ($form['artico']=='') {
    }
    echo "\t<input type=\"text\" name=\"search_item\" accesskey=\"e\" value=\"".$form['search_item']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
    echo $messaggio;
-   echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
+  // echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
+  /** ENRICO FEDELE */
+  /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+  echo '&nbsp;<button type="submit" class="btn btn-default" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
+  /** ENRICO FEDELE */
 } else {
    $item = gaz_dbi_get_row($gTables['artico'],"codice",$form['artico']);
    $print_unimis = $item[$unimis];

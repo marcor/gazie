@@ -223,7 +223,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   }
 
   // Se viene inviata la richiesta di conferma rigo
-  if (isset($_POST['in_submit_x'])) {
+  /** ENRICO FEDELE */
+  /* Con button non funziona _x */
+  //if (isset($_POST['in_submit_x'])) {
+  /** ENRICO FEDELE */
+  if (isset($_POST['in_submit'])) {
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['rows'][$old_key]['status'] = "UPDATE";
@@ -568,7 +572,13 @@ echo "<td>\n";
 echo "<input type=\"text\" style=\"text-align:right\" value=\"".$form['in_discount']."\" maxlength=\"4\" size=\"1\" name=\"in_discount\">";
 echo "\t </td>\n";
 echo "<td align=\"right\">\n";
-echo "<input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";
+//echo "<input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  <button type="submit" class="btn btn-default" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-ok"></i></button>';
+	   /** ENRICO FEDELE */
+
 echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "\t<tr class=\"FacetColumnTD\">\n";
@@ -596,8 +606,18 @@ if ($next_row>0) {
             echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][quanti]\" value=\"".$val['quanti']."\" maxlength=\"11\" size=\"7\" /></td>\n";
             echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][price]\" value=\"".$val['price']."\" maxlength=\"15\" size=\"7\" /></td>\n";
             echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][discount]\" value=\"".$val['discount']."\" maxlength=\"4\" size=\"3\" /></td>\n";
-            echo "<td align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
-            echo "\t </tr>\n";
+            
+			//echo "<td align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
+            
+		   /** ENRICO FEDELE */
+		   /* glyph icon */
+		   echo '  <td align="right">
+					 <button type="submit" class="btn btn-default" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+				   </td>
+				 </tr>';
+		   /** ENRICO FEDELE */
+			
+			echo "\t </tr>\n";
     }
 }
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";

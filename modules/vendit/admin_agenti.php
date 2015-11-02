@@ -79,7 +79,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
             if ( (!empty($value['cod_articolo']) && $value['cod_articolo'] == $form['in_cod_articolo'] ) ||
                  (!empty($value['cod_catmer']) && $value['cod_catmer'] == $form['in_cod_catmer'] ) ) { //codice esistente
                    $msg = "7-8-11+";
-                   unset($_POST['in_submit_x']);
+                   //unset($_POST['in_submit_x']);
+				   unset($_POST['in_submit']);
             }
             // fine controllo impedimento inserimento codici esistenti
             $form['righi'][$next_row]['id_provvigione'] = intval($value['id_provvigione']);
@@ -104,7 +105,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     }
 
   // Se viene inviata la richiesta di conferma rigo
-  if (isset($_POST['in_submit_x'])) {
+   	/** ENRICO FEDELE */
+	/* Con button non funziona _x */
+    //if (isset($_POST['in_submit_x'])) {
+	/** ENRICO FEDELE */
+   if (isset($_POST['in_submit'])) {
    if ((!empty($form['in_cod_articolo']) || $form['in_cod_catmer'] > 0) && $form['in_percentuale'] > 0) {
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
@@ -305,7 +310,11 @@ if ($form['id_fornitore'] == 0) {
    }
    echo "\t<input type=\"text\" name=\"cerca_fornitore\" accesskey=\"e\" value=\"".$form['cerca_fornitore']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
    echo $messaggio;
-   echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
+   //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
+   /** ENRICO FEDELE */
+   /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+   echo '&nbsp;<button type="submit" class="btn btn-default" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
+   /** ENRICO FEDELE */
 } else {
    $anagrafica = new Anagrafica();
    $fornitore = $anagrafica->getPartner($form['id_fornitore']);
@@ -331,7 +340,17 @@ $select_artico = new selectartico('in_cod_articolo');
 $select_artico -> addSelected($form['in_cod_articolo']);
 $select_artico -> output($form['cosear'],'C');
 echo "</td><td class=\"FacetColumnTD\">$script_transl[9] : <input type=\"text\" value=\"".$form['in_percentuale']."\" maxlength=\"5\" size=\"5\" name=\"in_percentuale\">\n";
-echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";
+/*echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";*/
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  </td>
+		<td class="FacetColumnTD" align="right"> 
+			<button type="submit" class="btn btn-default" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	  </tr>';
+	   /** ENRICO FEDELE */
+
 echo "</td></tr>\n";
 // fine rigo inserimento
 echo "<tr><td colspan=\"5\"><hr></td></tr>\n";
@@ -354,7 +373,17 @@ foreach ($form['righi'] as $key => $value) {
                   ".$artico['descri']."</td>\n";
         }
         echo "<td><input type=\"text\" name=\"righi[$key][percentuale]\" value=\"".$value['percentuale']."\" maxlength=\"5\" size=\"5\" class=\"FacetInput\"></td>\n";
-        echo "<td align=\"right\"><input type=\"image\" name=\"del[$key]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
+        
+		//echo "<td align=\"right\"><input type=\"image\" name=\"del[$key]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
+
+		/** ENRICO FEDELE */
+		/* glyph icon */
+		echo '  <td align="right">
+				  <button type="submit" class="btn btn-default" name="del['.$key.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'!"><i class="glyphicon glyphicon-remove"></i></button>
+				</td>
+			  </tr>';
+		/** ENRICO FEDELE */
+
 }
 // fine righi inseriti
 if ($toDo == 'update') {

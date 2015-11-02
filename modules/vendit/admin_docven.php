@@ -652,7 +652,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 
     // Se viene inviata la richiesta di conferma rigo
-    if (isset($_POST['in_submit_x'])) {
+   	/** ENRICO FEDELE */
+	/* Con button non funziona _x */
+    //if (isset($_POST['in_submit_x'])) {
+	/** ENRICO FEDELE */
+   if (isset($_POST['in_submit'])) {
         $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
         // addizione ai totali peso,pezzi,volume
         $form['net_weight'] += $form['in_quanti'] * $artico['peso_specifico'];
@@ -1521,7 +1525,17 @@ $gForm->selSearchItem('in_artsea', $form['in_artsea']);
 echo "\n$script_transl[17]:";
 $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
 echo "</TD><TD class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
-echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"" . $script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";
+/*
+echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"" . $script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";*/
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  </td>
+		<td class="FacetColumnTD" align="right"> 
+			<button type="submit" class="btn btn-default" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	  </tr>';
+	   /** ENRICO FEDELE */
 echo "</td></tr>\n";
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
 $ric = intval(substr($form['in_codric'], 0, 1));
@@ -1708,7 +1722,15 @@ foreach ($form['rows'] as $k => $v) {
             echo "<td></td>\n";
             break;
     }
-    echo "<TD align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"" . $script_transl['delete'] . $script_transl['thisrow'] . "!\" /></td></tr>\n";
+//    echo "<TD align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"" . $script_transl['delete'] . $script_transl['thisrow'] . "!\" /></td></tr>\n";
+	
+   /** ENRICO FEDELE */
+   /* glyph icon */
+   echo '  <td align="right">
+		     <button type="submit" class="btn btn-default" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+		   </td>
+	     </tr>';
+   /** ENRICO FEDELE */
 }
 if (count($form['rows']) == 0) {
     echo "<tr>";

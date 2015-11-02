@@ -233,7 +233,11 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
 
 
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
-    if (isset($_POST['inscau_x'])) {
+	/** ENRICO FEDELE */
+	/* Con button non funziona _x */
+	//if (isset($_POST['inscau_x'])) {
+	/** ENRICO FEDELE */
+	if(isset($_POST['inscau'])) {
        // Se la descrizione è vuota e la causale è stata selezionata
        if (!empty($form['codcausale']) and empty($form['descrizion'])) {
 
@@ -338,7 +342,11 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
       }
    }
    // Se viene inviata la richiesta si aggiunge un rigo contabile
-   if (isset($_POST['add_x'])) {
+   	/** ENRICO FEDELE */
+	/* Con button non funziona _x */
+    //if (isset($_POST['add_x'])) {
+	/** ENRICO FEDELE */
+   if (isset($_POST['add'])) {
       $rigo = $_POST['rigcon'];
       $form['id_rig_rc'][$rigo] = "";
       $form['mastro_rc'][$rigo] = intval($_POST['insert_mastro']);
@@ -378,7 +386,11 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
    if (isset($_POST['insert_imponi'])){
       $_POST['insert_imponi'] = preg_replace("/\,/",'.',$_POST['insert_imponi']);
    }
-   if (isset($_POST['adi_x']) && $_POST['insert_imponi'] <> 0) {
+   	/** ENRICO FEDELE */
+	/* Con button non funziona _x */
+    //if (isset($_POST['adi_x']) && $_POST['insert_imponi'] <> 0) {
+	/** ENRICO FEDELE */
+	if (isset($_POST['adi']) && $_POST['insert_imponi'] <> 0) {
       if ($_POST['insert_codiva'] > 0) {
          $causa = gaz_dbi_get_row($gTables['caucon'],"codice",$form['codcausale']);
          $riiv = $_POST['rigiva'];
@@ -1157,7 +1169,16 @@ while ($row = gaz_dbi_fetch_array($result)) {
     }
     echo "<option value=\"".$row['codice']."\"".$selected.">".$row['codice']." - ".$row['descri']."</option>\n";
 }
-echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['v_caucon']."!\" $tabsmt ></td></tr>\n";
+/*
+echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['v_caucon']."!\" $tabsmt ></td></tr>\n";*/
+
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  </select>&nbsp;<button type="submit" class="btn btn-default" name="inscau" title="'.$script_transl['v_caucon'].'!" '.$tabsmt.'><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	   </tr>';
+	   /** ENRICO FEDELE */
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>\n";
 echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><input type=\"text\" name=\"descrizion\" value=\"".$form['descrizion']."\" maxlength=\"100\" size=\"50\" /></td>\n";
@@ -1232,7 +1253,14 @@ if($form["registroiva"] > 0) {
     $select_aliiva -> addSelected($form["insert_codiva"]);
     $select_aliiva -> output();
     echo "</td>";
-    echo "<td class=\"FacetColumnTD\"></td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"adi\" src=\"../../library/images/vbut.gif\" title=\"Aggiungi il rigo\" $tabsmt >";
+	/*
+    echo "<td class=\"FacetColumnTD\"></td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"adi\" src=\"../../library/images/vbut.gif\" title=\"Aggiungi il rigo\" $tabsmt >";*/
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  <td class="FacetColumnTD"></td>
+		<td class="FacetColumnTD" align="right"> 
+			<button type="submit" class="btn btn-default" name="adi" title="'.$script_transl['addrow'].'" '.$tabsmt.'><i class="glyphicon glyphicon-ok"></i></button>';
+	   /** ENRICO FEDELE */
     echo "<input type=\"hidden\" value=\"".$_POST['rigiva']."\" name=\"rigiva\"></td></tr>\n";
     echo "<TR><td class=\"FacetColumnTD\" colspan=\"4\"><hr></td></tr>";
     echo "<tr>";
@@ -1250,8 +1278,18 @@ if($form["registroiva"] > 0) {
         echo "<td class=\"FacetDataTD\"><input type=\"text\" align=\"right\" name=\"imponi_ri[$i]\" value=\"".sprintf("%01.2f",preg_replace("/\,/",'.',$form['imponi_ri'][$i]))."\" maxlength=\"13\" size=\"13\"></td>\n";
         echo "<td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id_rig_ri[$i]\" value=\"{$form['id_rig_ri'][$i]}\"><input type=\"hidden\" name=\"codiva_ri[$i]\" value=\"{$form['codiva_ri'][$i]}\">".$rigoi['descri']."</td>\n";
         echo "<td class=\"FacetDataTDred\"><input type=\"text\" align=\"right\" name=\"impost_ri[$i]\" value=\"".sprintf("%01.2f",preg_replace("/\,/",'.',$form['impost_ri'][$i]))."\" maxlength=\"13\" size=\"13\"></td>\n";
-        echo "<TD  class=\"FacetDataTD\" align=\"right\"><input type=\"image\" name=\"dei[$i]\"  src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delrow']."!\" ><br></td></tr>\n";
-        echo "</tr>";
+        
+		//echo "<TD  class=\"FacetDataTD\" align=\"right\"><input type=\"image\" name=\"dei[$i]\"  src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delrow']."!\" ><br></td></tr>\n";
+        
+		/** ENRICO FEDELE */
+		/* glyph icon */
+		echo '  <td class="FacetDataTD" align="right">
+				  <button type="submit" class="btn btn-default" name="dei['.$i.']" title="'.$script_transl['delrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+				</td>
+			  </tr>';
+		/** ENRICO FEDELE */
+		
+		echo "</tr>";
     }
 echo "</table>";
 }
@@ -1274,7 +1312,16 @@ echo "</td>";
 echo "\t<td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('insert_darave',$script_transl['daav_value'],$form['insert_darave'],'FacetSelect',false);
 echo "\t </td>\n";
-echo "<td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"add\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['addrow']."\"></td></tr>\n";
+//echo "<td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"add\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['addrow']."\"></td></tr>\n";
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  <td class="FacetColumnTD" align="right"> 
+			<button type="submit" class="btn btn-default" name="add" title="'.$script_transl['addrow'].'"><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	  </tr>';
+	   /** ENRICO FEDELE */
+
 echo "<TR><td class=\"FacetColumnTD\" colspan=\"5\"><hr></td></tr>";
 //fine rigo inserimento
 
@@ -1371,7 +1418,15 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
         echo "<option value=\"".$key."\"".$selected.">".$value."</option>\n";
     }
     echo "</select></td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"right\"><input type=\"image\" name=\"del[$i]\"  src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delrow']."!\" ></td></tr>\n";
+	
+    //echo "<td class=\"FacetDataTD\" align=\"right\"><input type=\"image\" name=\"del[$i]\"  src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delrow']."!\" ></td></tr>\n";
+	/** ENRICO FEDELE */
+	/* glyph icon */
+	echo '  <td class="FacetDataTD" align="right">
+			  <button type="submit" class="btn btn-default" name="del['.$i.']" title="'.$script_transl['delrow'].'!"><i class="glyphicon glyphicon-remove"></i></button>
+			</td>
+		  </tr>';
+	/** ENRICO FEDELE */
 
 }
 

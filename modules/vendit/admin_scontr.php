@@ -403,7 +403,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   }
 
   // Se viene inviata la richiesta di conferma rigo
-  if (isset($_POST['in_submit_x'])) {
+   	/** ENRICO FEDELE */
+	/* Con button non funziona _x */
+    //if (isset($_POST['in_submit_x'])) {
+	/** ENRICO FEDELE */
+   if (isset($_POST['in_submit'])) {
     $artico = gaz_dbi_get_row($gTables['artico'],"codice",$form['in_codart']);
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
@@ -838,7 +842,12 @@ echo $script_transl['quanti'].": \n";
 echo "<input type=\"text\" value=\"".$form['in_quanti']."\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"25\">\n";
 echo "\t </td>\n";
 echo "<td>\n";
-echo "<input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\" tabindex=\"26\">\n";
+/*echo "<input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\" tabindex=\"26\">\n";*/
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  <button type="submit" class="btn btn-default" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="26"><i class="glyphicon glyphicon-ok"></i></button>';
+	   /** ENRICO FEDELE */
 echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "\t<tr class=\"FacetColumnTD\">\n";
@@ -976,6 +985,15 @@ if ($next_row>0) {
                    break;
             }
             echo "<td align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
+			
+		   /** ENRICO FEDELE */
+		   /* glyph icon */
+		   echo '  <td align="right">
+					 <button type="submit" class="btn btn-default" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+				   </td>
+				 </tr>';
+		   /** ENRICO FEDELE */
+   
             echo "\t </tr>\n";
     }
     echo "</table>\n";

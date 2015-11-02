@@ -465,7 +465,11 @@ class selectPartner extends SelectBox {
       echo $put_anagra;
       echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $cerca . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
       echo $msg;
-      echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" " . $tabula . " name=\"clfoco\" src=\"../../library/images/cerbut.gif\" title=\"" . $script_transl['search'] . "\">\n";
+      //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" " . $tabula . " name=\"clfoco\" src=\"../../library/images/cerbut.gif\" title=\"" . $script_transl['search'] . "\">\n";
+		/** ENRICO FEDELE */
+		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+		echo '<button type="submit" class="btn btn-default" accesskey="c" name="clfoco" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>';
+		/** ENRICO FEDELE */
    }
 
    function selectDocPartner($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $m = 0, $anonimo = -1, $tab = 1) {
@@ -568,7 +572,11 @@ class selectPartner extends SelectBox {
          if (isset($msg)) {
             echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">\n";
          }
-         echo "\t<input type=\"image\" $tab3 align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
+         //echo "\t<input type=\"image\" $tab3 align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
+		/** ENRICO FEDELE */
+		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+		echo '<button type="submit" class="btn btn-default" name="search_str" '.$tab3.'><i class="glyphicon glyphicon-search"></i></button>';
+		/** ENRICO FEDELE */
       }
    }
 
@@ -620,7 +628,11 @@ class selectPartner extends SelectBox {
          if (isset($msg)) {
             echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">";
          }
-         echo "\t<input type=\"image\"  $tab3  align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
+         //echo "\t<input type=\"image\"  $tab3  align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
+		/** ENRICO FEDELE */
+		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+		echo '<button type="submit" class="btn btn-default" name="search_str" '.$tab3.'><i class="glyphicon glyphicon-search"></i></button>';
+		/** ENRICO FEDELE */
       }
    }
 
@@ -669,7 +681,11 @@ class selectartico extends SelectBox {
       }
       echo "\t<input type=\"text\" name=\"cosear\" value=\"" . $cerca . "\" " . $tabula . " maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
       echo "<font style=\"color:#ff0000;\">$msg </font>";
-      echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" " . $tabula . " src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
+        //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
+		/** ENRICO FEDELE */
+		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+		echo '<button type="submit" class="btn btn-default" accesskey="c" name="artico" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>';
+		/** ENRICO FEDELE */
    }
 
 }

@@ -163,7 +163,11 @@ if ($_POST['cod_partner'] == 0) {
    }
    echo "\t<input type=\"text\" name=\"cerca_partner\" accesskey=\"e\" value=\"".$_POST['cerca_partner']."\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
    echo $messaggio;
-   echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
+   //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
+   /** ENRICO FEDELE */
+   /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+   echo '&nbsp;<button type="submit" class="btn btn-default" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
+   /** ENRICO FEDELE */
 } else {
    $anagrafica = new Anagrafica();
    $partner = $anagrafica->getPartner($_POST['cod_partner']);

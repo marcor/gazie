@@ -358,7 +358,11 @@ HeadMain(6);
                 echo "\t </select>\n";
                 echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $_POST['ragso1'] . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
                 echo $messaggio;
-                echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" " . $tabula . " name=\"clfoco\" src=\"../../library/images/cerbut.gif\">\n";
+                //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" " . $tabula . " name=\"clfoco\" src=\"../../library/images/cerbut.gif\">\n";
+			   /** ENRICO FEDELE */
+			   /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+			   echo '&nbsp;<button type="submit" class="btn btn-default" name="clfoco" accesskey="c" '.$tabula.'><i class="glyphicon glyphicon-search"></i></button>';
+			   /** ENRICO FEDELE */
                 ?>
             </td>
         </tr>

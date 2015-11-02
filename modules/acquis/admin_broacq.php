@@ -25,7 +25,6 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = "";
-
 //Creo l'array associativo delle descrizioni dei documenti e dei relativi operatori
 $TipoDocumento = array ("AOR" => 0,"APR" => 0);
 if (isset($_POST['newdestin'])) {
@@ -342,7 +341,11 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
   }
 
   // Se viene inviata la richiesta di conferma rigo
-  if (isset($_POST['in_submit_x'])) {
+    //if (isset($_POST['in_submit_x'])) {
+	/** ENRICO FEDELE */
+	/* con button non funziona _x*/
+	if (isset($_POST['in_submit'])) {
+	/** ENRICO FEDELE */
     $artico = gaz_dbi_get_row($gTables['artico'],"codice",$form['in_codart']);
     if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
@@ -645,7 +648,7 @@ require("./lang.".$admin_aziend['lang'].".php");
 $script_transl = $strScript["admin_docacq.php"]+HeadMain(0,array('tiny_mce/tiny_mce',
                                   'boxover/boxover',
                                   'calendarpopup/CalendarPopup',
-                                  'jquery/jquery-1.7.1.min',
+                                  /*'jquery/jquery-1.7.1.min',*/
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
@@ -794,8 +797,17 @@ echo "</select>\n";
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> '.$script_transl['add_article'].'</a>';
 /** ENRICO FEDELE */
 
-echo "</TD><TD class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
-echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";
+echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
+/*
+echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";*/
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  </td>
+		<td class="FacetColumnTD" align="right">
+			<button type="submit" class="btn btn-default" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'!" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	   </tr>';
+	   /** ENRICO FEDELE */
 echo "</td></tr>\n";
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[17]: <select name=\"in_tiprig\" class=\"FacetSelect\">\n";
 $selArray = array('0'=>'Normale', '1'=>'Forfait','2'=>'Descrittivo', '3'=>'Var.totale fatt');
@@ -917,7 +929,15 @@ foreach ($form['righi'] as $key => $value) {
         echo "<td></td>\n";
         break;
         }
-        echo "<TD align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
+		/*
+        echo "<TD align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";*/
+	/** ENRICO FEDELE */
+	/* glyph icon */
+	echo '  <td class="FacetColumnTD" align="right">
+			  <button type="submit" class="btn btn-default" name="del['.$key.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'!"><i class="glyphicon glyphicon-remove"></i></button>
+			</td>
+		  </tr>';
+	/** ENRICO FEDELE */
     }
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
