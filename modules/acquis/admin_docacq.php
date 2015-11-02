@@ -908,23 +908,33 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $fornitore['indspe'] = "";
 }
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('tiny_mce/tiny_mce',
-    'boxover/boxover',
-    'calendarpopup/CalendarPopup',
-    'jquery/jquery-1.7.1.min',
-    'jquery/ui/jquery.ui.core',
-    'jquery/ui/jquery.ui.widget',
-    'jquery/ui/jquery.ui.position',
-    'jquery/ui/jquery.ui.autocomplete',
-    'jquery/autocomplete_anagra',
-    'jquery/ui/jquery.ui.dialog',
-    'jquery/ui/jquery.ui.position',
-    'jquery/ui/jquery.ui.draggable',
-    'jquery/ui/jquery.ui.resizable',
-    'jquery/ui/jquery.ui.datepicker.min',
-    'jquery/ui/jquery.effects.core',
-    'jquery/ui/jquery.effects.scale',
-    'jquery/modal_form'));
+/** Mi pare che jquery in questa pagina venga caricato per la seconda volta
+  * non è il caso di caricare differenti versioni di jquery perchè si possono generare conflitti
+  * forse è il caso di caricare tutti i js utili per il sistema in un solo posto, nell'header
+  * così è più semplice tenere traccia di quello che si carica, il sistema è organico e coerente e manutenibile
+  * La versione scaricata dal repository di questa pagina dà due errori javascript, che inibiscono il caricamento della finestra modale
+  * commentando i due script di seguito e inibendone il caricamento, rimane ancora un errore attivo, ma il caricamento della modale funziona
+*/
+$script_transl = HeadMain(0,array('tiny_mce/tiny_mce',
+                                  'boxover/boxover',
+                                  'calendarpopup/CalendarPopup',
+                                  /*'jquery/jquery-1.7.1.min',*/
+                                  'jquery/ui/jquery.ui.core',
+                                  'jquery/ui/jquery.ui.widget',
+                                  'jquery/ui/jquery.ui.position',
+                                  'jquery/ui/jquery.ui.autocomplete',
+                                  'jquery/autocomplete_anagra',
+                                  'jquery/ui/jquery.ui.dialog',
+								  /** ENRICO FEDELE */
+								  /* sembra una voce duplicata */
+                                  //'jquery/ui/jquery.ui.position',
+								  /** ENRICO FEDELE */
+                                  'jquery/ui/jquery.ui.draggable',
+                                  'jquery/ui/jquery.ui.resizable',
+                                  'jquery/ui/jquery.ui.datepicker.min',
+                                  'jquery/ui/jquery.effects.core',
+                                  'jquery/ui/jquery.effects.scale',
+                                  'jquery/modal_form'));
 
 echo '<script type="text/javascript" src="./dialog_lotmag.js"></script>';
 ?>
@@ -1153,16 +1163,24 @@ echo "<tr><td class=\"FacetColumnTD\">$script_transl[15]: ";
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 $select_artico->output($form['cosear'], $form['in_artsea']);
-echo "ricerca per <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
-$selArray = array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione');
+
+echo $script_transl['search_for']." <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
+$selArray = array('C'=>$script_transl['art_code'], 'B'=>$script_transl['art_barcode'],'D'=>$script_transl['art_descr']);
+
+
 foreach ($selArray as $key => $value) {
-    $selected = "";
-    if (isset($form["in_artsea"]) and $form["in_artsea"] == $key) {
+    $selected="";
+    if(isset($form["in_artsea"]) and $form["in_artsea"] == $key) {
         $selected = " selected ";
     }
     echo "<option value=\"$key\" $selected > $value </option>";
 }
 echo "</select>\n";
+
+/** ENRICO FEDELE */
+/* Aggiunto link per finestra modale aggiunta articolo */
+echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal">'.$script_transl['add_article'].'</a>';
+/** ENRICO FEDELE */
 echo "</TD><TD class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"" . $script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";
 echo "</td></tr>\n";
@@ -1435,5 +1453,39 @@ if ($i > 0) {
 echo "</table><br />";
 ?>
 </form>
+<!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->
+<div id="edit-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header active">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel"><?php echo $script_transl['add_article']; ?></h4>
+      </div>
+      <div class="modal-body edit-content small"></div>
+      <!--<div class="modal-footer"></div>-->
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(function() {
+    //twitter bootstrap script
+    $("#addmodal").click(function(){
+        $.ajax({
+            type: "POST",
+            url: "../../modules/magazz/admin_artico.php",
+            data: 'mode=modal',
+            success: function(msg){
+                $("#edit-modal .modal-sm").css('width','850px');
+                $("#edit-modal .modal-sm").css('min-width','850px');
+                $("#edit-modal .modal-body").html(msg); 
+            },
+            error: function(){
+                alert("failure");
+            }
+        });
+    });
+});
+</script>
+<!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 </body>
 </html>

@@ -189,7 +189,14 @@ $strScript = array("admin_fornit.php" =>
                            "Zahl ",
                            "Der Stichtag kann nicht früher als um das Dokument zu erfassen!",
                            "Das Datum des Dokuments zu erfassen ist falsch!",
-                           "War das nicht in den Aktenzeichen enthalten!"
+                           "War das nicht in den Aktenzeichen enthalten!", 
+						   /** ENRICO FEDELE */
+						   "add_article" => "Aggiungi un nuovo articolo", 
+						   'art_code'=>'Codice articolo', 
+						   'art_barcode'=>'Codice a barre', 
+						   'art_descr'=>'Descrizione', 
+						   'search_for'=>'Cerca per'
+						   /** ENRICO FEDELE */
                            ),
                     "accounting_documents.php" =>
                      array('title'=>'Neues vom steuerbaren Bewegungen Rechnungslegung Dokumente',

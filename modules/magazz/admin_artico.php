@@ -26,6 +26,13 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = '';
 
+/** ENRICO FEDELE */
+/* Inizializzo la variabile per aprire in finestra modale */
+$modal = false;
+if (isset($_POST['mode']) || isset($_GET['mode'])) {
+	$modal = true;
+	}
+/** ENRICO FEDELE */
 if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'update';
 } else {
@@ -56,8 +63,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        }
     }
     // fine documenti/certificati
-
-    if (isset($_POST['Submit'])) { // conferma tutto
+	/** ENRICO FEDELE */
+	/* Controllo se il submit viene da una modale */
+    if (isset($_POST['Submit']) || ($modal===true && isset($_POST['mode-act']))) { // conferma tutto
+	/** ENRICO FEDELE*/
        if ($toDo == 'update') {  // controlli in caso di modifica
          if ($form['codice'] != $form['ref_code']) { // se sto modificando il codice originario
           // controllo che l'articolo ci sia gia'
@@ -95,6 +104,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        $msg .= (empty($form["aliiva"]) ? "8+" : '');
        // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
        $msg .= (($form["lot_or_serial"]>0 && $admin_aziend['conmag'] <= 1 )? "9+" : '');
+	   
        if (empty($msg)) { // nessun errore
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
              $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
@@ -110,16 +120,32 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           } elseif ($toDo == 'update') {
              gaz_dbi_table_update('artico',$form['ref_code'],$form);
           }
-          header("Location: ".$form['ritorno']);
+		  /** ENRICO FEDELE */
+		  /* Niente redirect se sono in finestra modale */
+		  if($modal===false) {
+          	header("Location: ".$form['ritorno']);
+		  } else {
+          	header("Location: ../../modules/magazz/admin_artico.php?mode=modal");			 
+		  }
+		  /** ENRICO FEDELE */
           exit;
        }
-    } elseif (isset($_POST['Return'])) { // torno indietro
+	/** ENRICO FEDELE */
+    } elseif (isset($_POST['Return']) && $modal===false) { // torno indietro
+		  /* Solo se non sono in finestra modale */
+		  /** ENRICO FEDELE */
           header("Location: ".$form['ritorno']);
           exit;
     }
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['artico'], 'codice',substr($_GET['codice'],0,15));
-    $form['ritorno']=$_SERVER['HTTP_REFERER'];
+	/** ENRICO FEDELE */
+	if($modal===false) {
+    	$form['ritorno']=$_SERVER['HTTP_REFERER'];
+	} else {
+    	$form['ritorno']='admin_artico.php';
+	}
+	/** ENRICO FEDELE */
     $form['ref_code']=$form['codice'];
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
     $form["preacq"] = number_format($form['preacq'],$admin_aziend['decimal_price'],'.','');
@@ -139,7 +165,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
 } else { //se e' il primo accesso per INSERT
     $form=gaz_dbi_fields('artico');
-    $form['ritorno']=$_SERVER['HTTP_REFERER'];
+	/** ENRICO FEDELE */
+	if($modal===false) {
+    	$form['ritorno']=$_SERVER['HTTP_REFERER'];
+	} else {
+    	$form['ritorno']='admin_artico.php';
+	}
+	/** ENRICO FEDELE */
     $form['ref_code']='';
     $form['aliiva']=$admin_aziend['preeminent_vat'];
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
@@ -151,220 +183,335 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['web_url']='';
 }
 
-require("../../library/include/header.php");
-$script_transl = HeadMain();
-echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
-echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
-echo "<input type=\"hidden\" name=\"ref_code\" value=\"".$form['ref_code']."\">\n";
-echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
+/** ENRICO FEDELE */
+/* Solo se non sono in finestra modale carico il file di lingua del modulo */
+if($modal===false) {
+	require("../../library/include/header.php");
+	$script_transl = HeadMain();
+} else {
+	$script = basename($_SERVER['PHP_SELF']);
+	require("../../language/".$admin_aziend['lang']."/menu.inc.php");
+	require("../../modules/magazz/lang.".$admin_aziend['lang'].".php");
+	if (isset($script)){ // se è stato tradotto lo script lo ritorno al chiamante
+		$script_transl=$strScript[$script];
+	}
+	
+	$script_transl=$strCommon+$script_transl;
+}
+/** ENRICO FEDELE */
+/* Assegno un id al form, quindi distinguo tra modale e non 
+ * in caso di finestra modale, aggiungo un campo nascosto che mi serve per salvare nel database
+*/
+echo '<form method="POST" name="form" enctype="multipart/form-data" id="add-product">';
+
+if($modal===true) {
+    echo '<input type="hidden" name="mode" value="modal" />
+		  <input type="hidden" name="mode-act" value="submit" />';
+} else {
+	echo '<input type="hidden" name="ritorno" value="'.$form['ritorno'].'" />';
+}
+echo '<input type="hidden" name="ref_code" value="'.$form['ref_code'].'" />
+	  <input type="hidden" name="'.ucfirst($toDo).'" value="" />';
+/** ENRICO FEDELE */
 $gForm = new magazzForm();
 $mv=$gForm->getStockValue(false,$form['codice']);
 $magval=array_pop($mv);
-if ($toDo == 'insert') {
-   echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
-} else {
-   echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['upd_this']." '".$form['codice']."'</div>\n";
+
+/** ENRICO FEDELE */
+/* Se sono in finestra modale, non visualizzo questo titolo */
+if($modal===false) {
+	if ($toDo == 'insert') {
+	   echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['ins_this'].'</div>';
+
+	} else {
+	   echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['upd_this'].' '.$form['codice'].'</div>';
+	}
 }
-echo "<table class=\"Tmiddle\">\n";
+/** ENRICO FEDELE */
+echo '<table class="Tmiddle">';
 if (!empty($msg)) {
-    echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
+    echo '<tr><td colspan="3" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors']).'</td></tr>';
 }
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['codice']."* </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" align=\"right\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."* </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" align=\"right\" maxlength=\"255\" size=\"70\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['lot_or_serial']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo '<tr>
+		<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['codice'].'*</td>
+		<td colspan="2" class="FacetDataTD">
+			<input type="text" name="codice" value="'.$form['codice'].'" align="right" maxlength="15" size="15" />
+
+
+		</td>
+	  </tr>
+	  <tr>
+		<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['descri'].'*</td>
+		<td colspan="2" class="FacetDataTD">
+			<input type="text" name="descri" value="'.$form['descri'].'" align="right" maxlength="255" size="70" />
+		</td>
+	  </tr>
+	  <tr>
+	    <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['lot_or_serial'].'</td>
+		<td colspan="2" class="FacetDataTD">';
 $gForm->variousSelect('lot_or_serial',$script_transl['lot_or_serial_value'],$form['lot_or_serial']);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['barcode']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"barcode\" value=\"".$form['barcode']."\" align=\"right\" maxlength=\"13\" size=\"13\" /></td>\n";
-echo "</tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=artico&value=".$form['codice']."\" width=\"100\"></td>\n";
-echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\">".$script_transl['image']." <input name=\"userfile\" type=\"file\">";
-echo "</td></tr>";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['unimis']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"unimis\" value=\"".$form['unimis']."\" align=\"right\" maxlength=\"3\" size=\"3\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['catmer']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo '  </td>
+      </tr>
+	  <tr>
+	    <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['barcode'].'</td>
+		<td colspan="2" class="FacetDataTD">
+			<input type="text" name="barcode" value="'.$form['barcode'].'" align="right" maxlength="13" size="15" />
+
+		</td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap"><img src="../root/view.php?table=artico&value='.$form['codice'].'" width="100" /></td>
+		<td colspan="2" class="FacetFieldCaptionTD">'.$script_transl['image'].' <input name="userfile" type="file" /></td>
+
+
+	  </tr>
+	  <tr>
+	    <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['unimis'].'*</td>
+		<td colspan="2" class="FacetDataTD">
+			<input type="text" name="unimis" value="'.$form['unimis'].'" align="right" maxlength="3" size="15" />
+
+
+		</td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['catmer'].'</td>
+		<td colspan="2" class="FacetDataTD">';
 $gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,1,' - ','descri');
-echo "</td>\n";
-echo "</tr>\n";
 /** inizio modifica FP 15/10/2015
 * aggiunto campo raggruppamento statistico
 */
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['ragstat']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo '	  </td>
+        </tr>
+		<tr>
+		  <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['ragstat'].'</td>
+		  <td colspan="2" class="FacetDataTD">';
 $gForm->selectFromDB('ragstat','ragstat','codice',$form['ragstat'],false,1,' - ','descri');
-echo "</td>\n";
-echo "</tr>\n";
 /** fine modifica FP */
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['preacq']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"preacq\" value=\"".$form['preacq']."\" style=\"text-align:right;\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['preve1']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"preve1\" value=\"".$form['preve1']."\" style=\"text-align:right;\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['preve2']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"preve2\" value=\"".$form['preve2']."\" style=\"text-align:right;\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['preve3']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"preve3\" value=\"".$form['preve3']."\" style=\"text-align:right;\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sconto']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"sconto\" value=\"".$form['sconto']."\" style=\"text-align:right;\" maxlength=\"6\" size=\"6\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['aliiva']." * </td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo '  </td>
+      </tr>
+	  <tr>
+	    <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['preacq'].'</td>
+		<td colspan="2" class="FacetDataTD">
+			<input type="text" name="preacq" value="'.$form['preacq'].'" style="text-align:right;" maxlength="15" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['preve1'].'</td>
+	  	<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="preve1" value="'.$form['preve1'].'" style="text-align:right;" maxlength="15" size="15" />
+	  	</td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['preve2'].'</td>
+	  	<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="preve2" value="'.$form['preve2'].'" style="text-align:right;" maxlength="15" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	 	 <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['preve3'].'</td>
+	  	<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="preve3" value="'.$form['preve3'].'" style="text-align:right;" maxlength="15" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	    <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['sconto'].'</td>
+		<td colspan="2" class="FacetDataTD">
+			<input type="text" name="sconto" value="'.$form['sconto'].'" style="text-align:right;" maxlength="6" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['aliiva'].' * </td><td colspan="2" class="FacetDataTD">';
 $gForm->selectFromDB('aliiva','aliiva','codice',$form['aliiva'],'codice',1,' - ','descri');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['esiste']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">";
-echo $magval['q_g'];
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['valore']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">".$admin_aziend['symbol'];
-echo $magval['v_g'];
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['last_cost']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"last_cost\" value=\"".$form['last_cost']."\" style=\"text-align:right;\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['scorta']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"scorta\" value=\"".$form['scorta']."\" style=\"text-align:right;\" maxlength=\"13\" size=\"13\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['riordino']." </td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"riordino\" value=\"".$form['riordino']."\" style=\"text-align:right;\" maxlength=\"13\" size=\"13\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['uniacq']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"uniacq\" value=\"".$form['uniacq']."\" align=\"right\" maxlength=\"3\" size=\"3\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['peso_specifico']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"peso_specifico\" value=\"".$form['peso_specifico']."\" align=\"right\" maxlength=\"13\" size=\"13\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['volume_specifico']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"volume_specifico\" value=\"".$form['volume_specifico']."\" style=\"text-align:right;\" maxlength=\"13\" size=\"13\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pack_units']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"pack_units\" value=\"".$form['pack_units']."\" style=\"text-align:right;\" maxlength=\"6\" size=\"6\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['codcon']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo '</td>
+	  </tr>
+	  <tr>
+		<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['esiste'].'</td>
+		<td colspan="2" class="FacetDataTD">'.$magval['q_g'].'</td>
+	  </tr>
+	  <tr>
+		<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['valore'].'</td>
+		<td colspan="2" class="FacetDataTD">'.$admin_aziend['symbol'].$magval['v_g'].'</td>
+	  </tr>
+	  <tr>
+		<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['last_cost'].'</td>
+		<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="last_cost" value="'.$form['last_cost'].'" style="text-align:right;" maxlength="15" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	    <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['scorta'].'</td>
+	    <td colspan="2" class="FacetDataTD">
+      		<input type="text" name="scorta" value="'.$form['scorta'].'" style="text-align:right;" maxlength="13" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['riordino'].'</td>
+	  	<td class="FacetDataTD" colspan="2">
+      		<input type="text" name="riordino" value="'.$form['riordino'].'" style="text-align:right;" maxlength="13" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['uniacq'].'</td>
+	  	<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="uniacq" value="'.$form['uniacq'].'" align="right" maxlength="3" size="15" />
+
+
+		</td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['peso_specifico'].'</td>
+	  	<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="peso_specifico" value="'.$form['peso_specifico'].'" align="right" maxlength="13" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	 	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['volume_specifico'].'</td>
+	  	<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="volume_specifico" value="'.$form['volume_specifico'].'" style="text-align:right;" maxlength="13" size="15" />
+		</td>
+	  </tr>
+	  <tr>
+	    <td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['pack_units'].'</td>
+		<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="pack_units" value="'.$form['pack_units'].'" style="text-align:right;" maxlength="6" size="15" />
+		</td>
+	</tr>
+	<tr>
+		<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['codcon'].'</td><td colspan="2" class="FacetDataTD">';
 $gForm->selectAccount('codcon',$form['codcon'],4);
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['id_cost']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo '  </td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['id_cost'].'</td><td colspan="2" class="FacetDataTD">';
 $gForm->selectAccount('id_cost',$form['id_cost'],3);
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['annota']."</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" /></td>\n";
-echo "</tr>\n";
+echo '  </td>
+	  </tr>
+	  <tr>
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['annota'].'</td>
+		<td colspan="2" class="FacetDataTD">
+      		<input type="text" name="annota" value="'.$form['annota'].'" maxlength="50" size="50" /></td>
+	  </tr>';
 if ($toDo == 'update') {
-  echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['document']." :</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+  echo '  <tr>
+  			<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['document'].' :</td>
+			<td class="FacetDataTD" colspan="2">';
   if ($next_row>0) {
-    echo "<table>\n";
+    echo '<table>';
     foreach ($form['rows'] as $k=>$val) {
-            echo "<input type=\"hidden\" value=\"".$val['id_doc']."\" name=\"rows[$k][id_doc]\">\n";
-            echo "<input type=\"hidden\" value=\"".$val['extension']."\" name=\"rows[$k][extension]\">\n";
-            echo "<input type=\"hidden\" value=\"".$val['title']."\" name=\"rows[$k][title]\">\n";
-            echo "<tr class=\"FacetFieldCaptionTD\">\n";
-            echo "<td>".DATA_DIR."files/".$val['id_doc'].".".$val['extension']."</td>\n";
-            echo "<td><a href=\"../root/retrieve.php?id_doc=".$val["id_doc"]."\"><img src=\"../../library/images/doc.png\" title=\"".$script_transl['view']."!\" border=\"0\"></a></td>";
-            echo "<td>".$val['title']."</td>\n";
-            echo "<td align=\"right\" ><input type=\"button\" value=\"".ucfirst($script_transl['update'])." \" onclick=\"location.href='admin_document.php?id_doc=".$val['id_doc']."&Update';\"></td>";
-            echo "\t </tr>\n";
+            echo '	<input type="hidden" value="'.$val['id_doc'].'" name="rows['.$k.'][id_doc]">
+					<input type="hidden" value="'.$val['extension'].'" name="rows['.$k.'][extension]">
+					<input type="hidden" value="'.$val['title'].'" name="rows['.$k.'][title]">
+					<tr class="FacetFieldCaptionTD">
+						<td>".DATA_DIR."files/'.$val['id_doc'].'.'.$val['extension'].'</td>
+						<td>
+							<a href="../root/retrieve.php?id_doc='.$val["id_doc"].'"><img src="../../library/images/doc.png" title="'.$script_transl['view'].'!" border="0" /></a>
+						</td>
+						<td>'.$val['title'].'</td>
+						<td align="right" >
+							<input type="button" value="'.ucfirst($script_transl['update']).' " onclick="location.href=\'admin_document.php?id_doc='.$val['id_doc'].'&Update\';" />
+						</td>
+					</tr>';
     }
-    echo "<tr><td align=\"right\" colspan=\"4\"><input type=\"button\" value=\"".ucfirst($script_transl['insert'])." \" onclick=\"location.href='admin_document.php?item_ref=".$form['codice']."&Insert';\"></td></tr>\n";
-    echo "\t </table></td></tr>\n";
+    echo '		<tr>
+					<td align="right" colspan="4">
+						<input type="button" value="'.ucfirst($script_transl['insert']).'" onclick="location.href=\'admin_document.php?item_ref='.$form['codice'].'&Insert\';" />
+
+					</td>
+				</tr>
+		  	</table>
+		  	</td>
+		  </tr>';
   } else {
-    echo "\t <input type=\"button\" value=\"".ucfirst($script_transl['insert'])." \" onclick=\"location.href='admin_document.php?item_ref=".$form['codice']."&Insert';\"></td></tr>\n";
+    echo ' <input type="button" value="'.ucfirst($script_transl['insert']).'" onclick="location.href=\'admin_document.php?item_ref='.$form['codice'].'&Insert\';">
+		  	</td>
+		  </tr>';
   }
 }
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_mu']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"web_mu\" value=\"".$form['web_mu']."\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_price']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"web_price\" value=\"".$form['web_price']."\" style=\"text-align:right;\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_multiplier']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"web_multiplier\" value=\"".$form['web_multiplier']."\" style=\"text-align:right;\" maxlength=\"15\" size=\"15\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_url']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\" size=\"50\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['web_public']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->variousSelect('web_public',$script_transl['web_public_value'],$form['web_public']);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
-echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\">\n";
-echo '<input name="none" type="submit" value="" disabled>';
-echo '<input name="Return" type="submit" value="'.$script_transl['return'].'!">';
-echo "\t </td>\n";
-echo "\t<td  class=\"FacetDataTD\" align=\"right\">\n";
-echo '<input name="Submit" type="submit" value="'.strtoupper($script_transl[$toDo]).'!">';
-echo "\t </td>\n";
-echo "</tr>\n";
+echo '<tr>
+			<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['web_mu'].'</td>
+			<td colspan="2" class="FacetDataTD">
+			  <input type="text" name="web_mu" value="'.$form['web_mu'].'" maxlength="15" size="15" />
+			</td>
+		</tr>
+		<tr>
+			<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['web_price'].'</td>
+			<td colspan="2" class="FacetDataTD">
+			  <input type="text" name="web_price" value="'.$form['web_price'].'" style="text-align:right;" maxlength="15" size="15" />
+			</td>
+		</tr>
+		<tr>
+			<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['web_multiplier'].'</td>
+			<td colspan="2" class="FacetDataTD">
+			  <input type="text" name="web_multiplier" value="'.$form['web_multiplier'].'" style="text-align:right;" maxlength="15" size="15" />
+			</td>
+		</tr>
+		<tr>
+			<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['web_url'].'</td>
+			<td colspan="2" class="FacetDataTD">
+			  <input type="text" name="web_url" value="'.$form['web_url'].'" maxlength="255" size="50" />
+			</td>
+		</tr>
+		<tr>
+			<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['web_public'].'</td>
+			<td colspan="2" class="FacetDataTD">';
+			$gForm->variousSelect('web_public',$script_transl['web_public_value'],$form['web_public']);
+echo '		</td>
+		</tr>
+		<tr>
+			<td class="FacetFieldCaptionTD" nowrap="nowrap">'.$script_transl['sqn'].'</td>
+			<td class="FacetDataTD">';
+/** ENRICO FEDELE */
+/* SOlo se non sono in finestra modale */
+if($modal===false) {
+	echo '<input name="none" type="submit" value="" disabled>&nbsp;<input name="Return" type="submit" value="'.$script_transl['return'].'!">';
+
+}
+/** ENRICO FEDELE */
+echo '  </td>
+		<td class="FacetDataTD" align="right">
+			<input name="Submit" type="submit" value="'.strtoupper($script_transl[$toDo]).'!" />
+		</td>
+	  </tr>';
 ?>
 </table>
 </form>
-</body>
-</html>
+
+
+
+<?php 
+/** ENRICO FEDELE */
+/* SOlo se non sono in finestra modale */
+if($modal===false) {
+	echo '	</body>
+		  </html>';
+} else {
+?>
+<script type="text/javascript">
+/*$(function() {
+	$('#add-product').submit(function( event ) {
+  		event.preventDefault();
+	});
+});*/
+// this is the id of the form
+$("#add-product").submit(function(e) {
+
+    $.ajax({
+           type: "POST",
+           url: "../../modules/magazz/admin_artico.php",
+           data: $("#add-product").serialize(), // serializes the form's elements.
+           success: function(data) {
+                $("#edit-modal .modal-sm").css('width','850px');
+                $("#edit-modal .modal-sm").css('min-width','850px');
+                $("#edit-modal .modal-body").html(data); 
+           }
+         });
+
+    e.preventDefault(); // avoid to execute the actual submit of the form.
+});
+</script>
+
+
+<?php
+}
+/** ENRICO FEDELE */
+?>

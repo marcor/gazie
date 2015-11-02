@@ -192,7 +192,14 @@ $strScript = array("admin_fornit.php" =>
                            "Numero ",
                            "La fecha de registro no puede ser antecedente a aquella del documento a registrar!",
                            "La fecha del documento a registrar no es correcta!",
-                           "No se incluy&oacute; el n&uacute;mero del documento!"
+                           "No se incluy&oacute; el n&uacute;mero del documento!", 
+						   /** ENRICO FEDELE */
+						   "add_article" => "Añadir un nuevo artículo", 
+						   'art_code'=>'Número de artículo', 
+						   'art_barcode'=>'Código de barras', 
+						   'art_descr'=>'Descripción', 
+						   'search_for'=>'Cerca per'
+						   /** ENRICO FEDELE */
                            ),
                    "accounting_documents.php" =>
                      array('title'=>'Crear movimientos contables de los documentos tributables',

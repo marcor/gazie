@@ -187,7 +187,14 @@ $strScript = array("admin_fornit.php" =>
                            "Numero ",
                            "La data di registrazione non pu&ograve; essere antecedente a quella del documento da registrare!",
                            "La data del documento da registrare non &egrave; corretta!",
-                           "Non &egrave; stato inserito il numero del documento!"
+                           "Non &egrave; stato inserito il numero del documento!",
+						   /** ENRICO FEDELE */
+						   "add_article" => "Add a new article", 
+						   'art_code'=>'Article code', 
+						   'art_barcode'=>'Bar code', 
+						   'art_descr'=>'Description', 
+						   'search_for'=>'Search by'
+						   /** ENRICO FEDELE */
                            ),
                     "accounting_documents.php" =>
                      array('title'=>'Create movements accounting from taxable documents',

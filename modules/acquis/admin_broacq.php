@@ -776,8 +776,11 @@ echo "<tr><td class=\"FacetColumnTD\">$script_transl[15]: ";
 $select_artico = new selectartico("in_codart");
 $select_artico -> addSelected($form['in_codart']);
 $select_artico -> output($form['cosear'],$form['in_artsea']);
-echo "ricerca per <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
-$selArray = array('C'=>'Codice articolo', 'B'=>'Codice a barre','D'=>'Descrizione');
+/** ENRICO FEDELE */
+/* Completata traduzione */
+echo $script_transl['search_for']." <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
+$selArray = array('C'=>$script_transl['art_code'], 'B'=>$script_transl['art_barcode'],'D'=>$script_transl['art_descr']);
+
 foreach ($selArray as $key => $value) {
     $selected="";
     if(isset($form["in_artsea"]) and $form["in_artsea"] == $key) {
@@ -786,6 +789,11 @@ foreach ($selArray as $key => $value) {
     echo "<option value=\"$key\" $selected > $value </option>";
 }
 echo "</select>\n";
+
+/* Aggiunto link per finestra modale aggiunta articolo */
+echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal">'.$script_transl['add_article'].'</a>';
+/** ENRICO FEDELE */
+
 echo "</TD><TD class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n";
 echo "</td></tr>\n";
@@ -972,5 +980,39 @@ if ($next_row > 0) {
 echo "</table><br />";
 ?>
 </form>
+<!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->
+<div id="edit-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header active">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel"><?php echo $script_transl['add_article']; ?></h4>
+      </div>
+      <div class="modal-body edit-content small"></div>
+      <!--<div class="modal-footer"></div>-->
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(function() {
+    //twitter bootstrap script
+    $("#addmodal").click(function(){
+        $.ajax({
+            type: "POST",
+            url: "../../modules/magazz/admin_artico.php",
+            data: 'mode=modal',
+            success: function(msg){
+                $("#edit-modal .modal-sm").css('width','850px');
+                $("#edit-modal .modal-sm").css('min-width','850px');
+                $("#edit-modal .modal-body").html(msg); 
+            },
+            error: function(){
+                alert("failure");
+            }
+        });
+    });
+});
+</script>
+<!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 </body>
 </html>
