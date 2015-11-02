@@ -1,6 +1,11 @@
 UPDATE `gaz_config` SET `cvalue` = '91' WHERE `id` =2;
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '5', 'report_ragstat.php', '', '', '9', '', '9'  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'admin_ragstat.php', '', '', '12', '', '5'  FROM `gaz_menu_script`;
+
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '2', 'report_destinazioni.php', '', '', '12', '', '12'  FROM `gaz_menu_module`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'admin_destinazioni.php', '', '', '33', '', '5'  FROM `gaz_menu_script`;
+CREATE TABLE `gaz_destina` (`codice` int(9) NOT NULL AUTO_INCREMENT,`ragso1` varchar(50) NOT NULL DEFAULT  '',`ragso2` varchar(50) NOT NULL DEFAULT  '',`indspe` varchar(50) NOT NULL DEFAULT  '',`capspe` varchar(10) NOT NULL DEFAULT  '',`citspe` varchar(50) NOT NULL DEFAULT  '',`prospe` char(2) NOT NULL DEFAULT  '',`country` varchar(3) NOT NULL,`latitude` decimal(8,5) NOT NULL,`longitude` decimal(8,5) NOT NULL,`telefo` varchar(50) NOT NULL DEFAULT  '',`fax` varchar(32) NOT NULL DEFAULT  '',`cell` varchar(32) NOT NULL DEFAULT  '',`e_mail` varchar(50) NOT NULL DEFAULT  '',`annota` varchar(50) NOT NULL DEFAULT  '',`id_anagra` int(9) NOT NULL ,PRIMARY KEY (`codice`));
+
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXaliiva` ADD `taxstamp` INT(1) NOT NULL AFTER `aliquo`;
 UPDATE `gaz_XXXaliiva` SET `taxstamp` = '1' WHERE `aliquo` <= 0.1;
