@@ -220,11 +220,12 @@ echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />
 	  <input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
 
 if ($modal_ok_insert === true) {
-    echo '<DIV>' . $script_transl['modal_ok_insert'] . '</DIV>';
+    echo '<div class="alert alert-success" role="alert">' . $script_transl['modal_ok_insert'] . '</div>';
     foreach ($form as $k => $v) {
         echo '<input type="hidden" name="' . $k . '" value="' . $v . '" />';
     }
-    echo '<DIV><input name="none" type="submit" value="' . $script_transl['iterate_invitation'] . '" /></DIV>';
+	echo '<div class=" text-center"><button class="btn btn-lg btn-default" type="submit" name="none">'.$script_transl['iterate_invitation'].'</button></div>';
+//    echo '<div><input name="none" type="submit" value="' . $script_transl['iterate_invitation'] . '" /></div>';
 } else {
     $gForm = new magazzForm();
     $mv = $gForm->getStockValue(false, $form['codice']);
