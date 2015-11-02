@@ -1783,8 +1783,9 @@ if ($form['tipdoc'] == 'DDT' || $form['template'] == 'FatturaImmediata' || $form
     echo "<td colspan=\"3\" class=\"FacetDataTD\"><INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"giotra\" VALUE=\"" . $form['giotra'] . "\" size=\"2\">\n";
     echo "<INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"mestra\" VALUE=\"" . $form['mestra'] . "\" size=\"2\">\n";
     echo "<INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"anntra\" VALUE=\"" . $form['anntra'] . "\" size=\"2\">\n";
-    echo "<A HREF=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" TITLE=\" cambia la data! \" NAME=\"anchor\" ID=\"anchor\">\n";
-    echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
+    echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default\">\n";
+    //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
+	echo '<i class="glyphicon glyphicon-calendar"></i></a>'.$script_transl[31];
     // select dell'ora
     echo "\t <select name=\"oratra\" class=\"FacetText\" >\n";
     for ($counter = 0; $counter <= 23; $counter++) {

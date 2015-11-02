@@ -1126,9 +1126,10 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (no
     echo "<td class=\"FacetDataTD\"><INPUT TYPE=\"text\" NAME=\"giotra\" VALUE=\"" . $form['giotra'] . "\" size=\"2\">\n";
     echo "<INPUT TYPE=\"text\" NAME=\"mestra\" VALUE=\"" . $form['mestra'] . "\" size=\"2\">\n";
     echo "<INPUT TYPE=\"text\" NAME=\"anntra\" VALUE=\"" . $form['anntra'] . "\" size=\"2\">\n";
-    echo "<A HREF=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" TITLE=\" cambia la data! \" NAME=\"anchor\" ID=\"anchor\">\n";
-    echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>";
-    echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
+    echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default\">\n";
+    //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></a>";
+    echo '<i class="glyphicon glyphicon-calendar"></i></a>';
+	echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['imball'] . "\" name=\"imball\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['destin'] . "\" name=\"destin\">\n";
@@ -1394,9 +1395,10 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acq
     echo "<td colspan=\"2\" class=\"FacetDataTD\"><INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"giotra\" VALUE=\"" . $form['giotra'] . "\" size=\"2\">\n";
     echo "<INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"mestra\" VALUE=\"" . $form['mestra'] . "\" size=\"2\">\n";
     echo "<INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"anntra\" VALUE=\"" . $form['anntra'] . "\" size=\"2\">\n";
-    echo "<A HREF=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" TITLE=\" cambia la data! \" NAME=\"anchor\" ID=\"anchor\">\n";
-    echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
-    // select dell'ora
+    echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default\">\n";
+    //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
+    echo '<i class="glyphicon glyphicon-calendar"></i></a>'.$script_transl[31];
+	// select dell'ora
     echo "\t <select name=\"oratra\" class=\"FacetText\" >\n";
     for ($counter = 0; $counter <= 23; $counter++) {
         $selected = "";
