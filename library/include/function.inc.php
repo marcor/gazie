@@ -1022,7 +1022,7 @@ class GAzieForm {
       }
       echo "\t </select>\n";
       echo "\t <input type=\"text\" name=\"" . $name . "_Y\" id=\"" . $name . "_Y\" value=\"" . $year . "\" class=\"$class\"  maxlength=\"4\" size=\"4\" $refresh />\n ";
-      echo "\t <a class=\"btn btn-default\" href=\"#\" onClick=\"setDate('$name'); return false;\" TITLE=\"" . $script_transl['changedate'] . "\" name=\"anchor\" id=\"anchor\">\n";
+      echo "\t <a class=\"btn btn-default btn-sm\" href=\"#\" onClick=\"setDate('$name'); return false;\" TITLE=\"" . $script_transl['changedate'] . "\" name=\"anchor\" id=\"anchor\">\n";
       //echo "\t<img border=\"0\" src=\"../../library/images/cal.png\"></A>\n";
 	  echo '<i class="glyphicon glyphicon-calendar"></i></a>';
    }
