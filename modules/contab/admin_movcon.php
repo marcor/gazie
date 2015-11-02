@@ -1175,7 +1175,7 @@ echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/
 
 /** ENRICO FEDELE */
 /* glyph-icon */
-echo '  </select>&nbsp;<button type="submit" class="btn btn-default" name="inscau" title="'.$script_transl['v_caucon'].'!" '.$tabsmt.'><i class="glyphicon glyphicon-ok"></i></button>
+echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="'.$script_transl['v_caucon'].'!" '.$tabsmt.'><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
 	   /** ENRICO FEDELE */
@@ -1259,7 +1259,7 @@ if($form["registroiva"] > 0) {
 /* glyph-icon */
 echo '  <td class="FacetColumnTD"></td>
 		<td class="FacetColumnTD" align="right"> 
-			<button type="submit" class="btn btn-default" name="adi" title="'.$script_transl['addrow'].'" '.$tabsmt.'><i class="glyphicon glyphicon-ok"></i></button>';
+			<button type="submit" class="btn btn-default btn-sm" name="adi" title="'.$script_transl['addrow'].'" '.$tabsmt.'><i class="glyphicon glyphicon-ok"></i></button>';
 	   /** ENRICO FEDELE */
     echo "<input type=\"hidden\" value=\"".$_POST['rigiva']."\" name=\"rigiva\"></td></tr>\n";
     echo "<TR><td class=\"FacetColumnTD\" colspan=\"4\"><hr></td></tr>";
@@ -1284,7 +1284,7 @@ echo '  <td class="FacetColumnTD"></td>
 		/** ENRICO FEDELE */
 		/* glyph icon */
 		echo '  <td class="FacetDataTD" align="right">
-				  <button type="submit" class="btn btn-default" name="dei['.$i.']" title="'.$script_transl['delrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+				  <button type="submit" class="btn btn-default btn-sm" name="dei['.$i.']" title="'.$script_transl['delrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
 				</td>
 			  </tr>';
 		/** ENRICO FEDELE */
@@ -1317,7 +1317,7 @@ echo "\t </td>\n";
 /** ENRICO FEDELE */
 /* glyph-icon */
 echo '  <td class="FacetColumnTD" align="right"> 
-			<button type="submit" class="btn btn-default" name="add" title="'.$script_transl['addrow'].'"><i class="glyphicon glyphicon-ok"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="add" title="'.$script_transl['addrow'].'"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
 	   /** ENRICO FEDELE */
@@ -1423,7 +1423,7 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
 	/** ENRICO FEDELE */
 	/* glyph icon */
 	echo '  <td class="FacetDataTD" align="right">
-			  <button type="submit" class="btn btn-default" name="del['.$i.']" title="'.$script_transl['delrow'].'!"><i class="glyphicon glyphicon-remove"></i></button>
+			  <button type="submit" class="btn btn-default btn-sm" name="del['.$i.']" title="'.$script_transl['delrow'].'!"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
 		  </tr>';
 	/** ENRICO FEDELE */

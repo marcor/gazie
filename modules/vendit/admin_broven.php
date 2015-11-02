@@ -1248,7 +1248,7 @@ echo "</TD><TD class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" 
 /* glyph-icon */
 echo '  </td>
 		<td class="FacetColumnTD" align="right"> 
-			<button type="submit" class="btn btn-default" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
 	   /** ENRICO FEDELE */
@@ -1415,7 +1415,7 @@ foreach ($form['rows'] as $k => $v) {
    /** ENRICO FEDELE */
    /* glyph icon */
    echo '  <td align="right">
-		     <button type="submit" class="btn btn-default" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+		     <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
 		   </td>
 	     </tr>';
    /** ENRICO FEDELE */

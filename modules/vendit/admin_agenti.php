@@ -313,7 +313,7 @@ if ($form['id_fornitore'] == 0) {
    //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
    /** ENRICO FEDELE */
    /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-   echo '&nbsp;<button type="submit" class="btn btn-default" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
+   echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
    /** ENRICO FEDELE */
 } else {
    $anagrafica = new Anagrafica();
@@ -346,7 +346,7 @@ echo "</td><td class=\"FacetColumnTD\">$script_transl[9] : <input type=\"text\" 
 /* glyph-icon */
 echo '  </td>
 		<td class="FacetColumnTD" align="right"> 
-			<button type="submit" class="btn btn-default" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
 	   /** ENRICO FEDELE */
@@ -379,7 +379,7 @@ foreach ($form['righi'] as $key => $value) {
 		/** ENRICO FEDELE */
 		/* glyph icon */
 		echo '  <td align="right">
-				  <button type="submit" class="btn btn-default" name="del['.$key.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'!"><i class="glyphicon glyphicon-remove"></i></button>
+				  <button type="submit" class="btn btn-default btn-sm" name="del['.$key.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'!"><i class="glyphicon glyphicon-remove"></i></button>
 				</td>
 			  </tr>';
 		/** ENRICO FEDELE */

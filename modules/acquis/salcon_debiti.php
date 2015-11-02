@@ -426,7 +426,7 @@ echo "<table class=\"Tlarge\">\n";
 /* glyph-icon */
 echo '  <tr>
 		  <td colspan="3" align="right">Aggiungi un rigo --&raquo; 
-			<button type="submit" class="btn btn-default" name="add" title="Aggiunta rigo!"><i class="glyphicon glyphicon-ok"></i></button>
+			<button type="submit" class="btn btn-default btn-sm" name="add" title="Aggiunta rigo!"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
 	   /** ENRICO FEDELE */
@@ -445,7 +445,7 @@ foreach ($_POST['righi'] as $key => $value) {
 		/** ENRICO FEDELE */
 	/* glyph icon */
 	echo '  <td align="right">
-			  <button type="submit" class="btn btn-default" name="del['.$key.']" title="Elimina rigo!"><i class="glyphicon glyphicon-remove"></i></button>
+			  <button type="submit" class="btn btn-default btn-sm" name="del['.$key.']" title="Elimina rigo!"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
 		  </tr>';
 	/** ENRICO FEDELE */

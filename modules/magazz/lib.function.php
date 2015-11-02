@@ -68,7 +68,7 @@ class magazzForm extends GAzieForm {
         //echo "\t<input type=\"image\" align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
 		/** ENRICO FEDELE */
 		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default" name="search_str"><i class="glyphicon glyphicon-search"></i></button>';
+		echo '<button type="submit" class="btn btn-default btn-sm" name="search_str"><i class="glyphicon glyphicon-search"></i></button>';
 		/** ENRICO FEDELE */
       }
    }

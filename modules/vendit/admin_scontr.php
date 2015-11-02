@@ -846,7 +846,7 @@ echo "<td>\n";
 
 /** ENRICO FEDELE */
 /* glyph-icon */
-echo '  <button type="submit" class="btn btn-default" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="26"><i class="glyphicon glyphicon-ok"></i></button>';
+echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="26"><i class="glyphicon glyphicon-ok"></i></button>';
 	   /** ENRICO FEDELE */
 echo "\t </td>\n";
 echo "\t </tr>\n";
@@ -989,7 +989,7 @@ if ($next_row>0) {
 		   /** ENRICO FEDELE */
 		   /* glyph icon */
 		   echo '  <td align="right">
-					 <button type="submit" class="btn btn-default" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+					 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
 				   </td>
 				 </tr>';
 		   /** ENRICO FEDELE */

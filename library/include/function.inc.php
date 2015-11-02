@@ -468,7 +468,7 @@ class selectPartner extends SelectBox {
       //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" " . $tabula . " name=\"clfoco\" src=\"../../library/images/cerbut.gif\" title=\"" . $script_transl['search'] . "\">\n";
 		/** ENRICO FEDELE */
 		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default" accesskey="c" name="clfoco" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>';
+		echo '<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="clfoco" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>';
 		/** ENRICO FEDELE */
    }
 
@@ -575,7 +575,7 @@ class selectPartner extends SelectBox {
          //echo "\t<input type=\"image\" $tab3 align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
 		/** ENRICO FEDELE */
 		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default" name="search_str" '.$tab3.'><i class="glyphicon glyphicon-search"></i></button>';
+		echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" '.$tab3.'><i class="glyphicon glyphicon-search"></i></button>';
 		/** ENRICO FEDELE */
       }
    }
@@ -631,7 +631,7 @@ class selectPartner extends SelectBox {
          //echo "\t<input type=\"image\"  $tab3  align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
 		/** ENRICO FEDELE */
 		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default" name="search_str" '.$tab3.'><i class="glyphicon glyphicon-search"></i></button>';
+		echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" '.$tab3.'><i class="glyphicon glyphicon-search"></i></button>';
 		/** ENRICO FEDELE */
       }
    }
@@ -684,7 +684,7 @@ class selectartico extends SelectBox {
         //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
 		/** ENRICO FEDELE */
 		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default" accesskey="c" name="artico" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>';
+		echo '<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>';
 		/** ENRICO FEDELE */
    }
 
