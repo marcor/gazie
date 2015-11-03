@@ -202,13 +202,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'custom/autocomplete_location',
+                                  'custom/jquery.simple-color.min'
 								  /** ENRICO FEDELE */
                                   /*'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',*/
-                                  /*'jquery/jquery.simple-color'*/
 								  /** ENRICO FEDELE */));
 echo "<script type=\"text/javascript\">
 $(document).ready(function(){

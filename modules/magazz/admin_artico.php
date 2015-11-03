@@ -26,7 +26,6 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
 $modal_ok_insert = false;
-error_reporting(E_ALL);
 /** ENRICO FEDELE */
 /* Inizializzo la variabile per aprire in finestra modale */
 $modal = false;
