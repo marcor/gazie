@@ -361,7 +361,7 @@ class magazzForm extends GAzieForm {
          $desdoc = $strScript['admin_artico.php']['esiste'];
       } else {//documento di vendita
          require("../../modules/vendit/lang." . $admin_aziend['lang'] . ".php");
-         $desdoc = $strScript['admin_docven.php'][0][$tipdoc];
+         $desdoc = $strScript['admin_docven.php']['doc_name'][$tipdoc];
       }
       if (substr($tipdoc, 0, 1) == 'D' || $tipdoc == 'VCO') {
          $desdoc .= " n." . $numdoc;
