@@ -196,7 +196,7 @@ function selectDestinazione($rs_destinazioni) {
                  . getStringaNonVuota($rigaDest[7]);
 
          $retVal = $retVal . "<option value=\"" . $destinazione . "\">"
-                 . $destinazione
+                 . $rigaDest[1].'-'. $rigaDest[5].'('.$rigaDest[6].')'
                  . "</option>\n";
       }
       $retVal = $retVal . "</select><p>\n";
