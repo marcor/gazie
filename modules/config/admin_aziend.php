@@ -22,6 +22,7 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
+
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin(9);
 $msg = '';
@@ -90,8 +91,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
              $msg .= "8+";
            }
        }
-       $lumix = hexdec(substr($form["colore"],0,2))+hexdec(substr($form["colore"],2,2))+hexdec(substr($form["colore"],4,2));
-       if ($lumix < 408){
+	   
+	  /** ENRICO FEDELE */
+	  /* Compatibilità con il nuovo simple pick color */
+	   $form["colore"] = substr($form["colore"],1);
+	  /** ENRICO FEDELE */
+       $lumix = hexdec(substr($form["colore"],0,2))+hexdec(substr($form["colore"],0,2))+hexdec(substr($form["colore"],0,2));
+	   if ($lumix < 408){
           $msg .= "13+";
        }
 
@@ -202,7 +208,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'custom/autocomplete_location',
-                                  'custom/jquery.simple-color.min'
+                                  'custom/jquery.simple-color'
 								  /** ENRICO FEDELE */
                                   /*'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
@@ -210,6 +216,7 @@ $script_transl = HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',*/
 								  /** ENRICO FEDELE */));
+								  //simplecolordisplay
 echo "<script type=\"text/javascript\">
 $(document).ready(function(){
 	$('.simple_color_custom').simpleColor({
@@ -217,7 +224,7 @@ $(document).ready(function(){
 			border: '1px solid #333333',
 			buttonClass: 'button',
 			displayColorCode: true,
-                        colorCodeColor: '#000'
+            colorCodeColor: '#000'
 	});
 	
 	
@@ -692,11 +699,15 @@ if ($handle = opendir($relativePath)) {
     closedir($handle);
 }
 echo "</select></td></tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['colore']."</td>\n";
-echo "<td colspan=\"2\" style=\"color:white; background-color:#".$form['colore'].";\">\n";
-echo "<INPUT class='simple_color_custom' TYPE=\"text\" NAME=\"colore\" SIZE=\"6\" VALUE=\"".$form['colore']."\">\n";
-echo "\t </td>\n";
-echo "</tr>\n";
+	  /** ENRICO FEDELE */
+	  /* Compatibilità con il nuovo simple pick color */
+echo '<tr>
+		<td class="FacetFieldCaptionTD">'.$script_transl['colore'].'</td>
+		<td colspan="2" style="color:white; background-color:#'.$form['colore'].';">
+			<input class="simple_color_custom" type="text" name="colore" size="6" value="#'.$form['colore'].'" />
+	    </td>
+	  </tr>';
+	  /** ENRICO FEDELE */
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['conmag']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->variousSelect('conmag',$script_transl['conmag_value'],$form['conmag']);
