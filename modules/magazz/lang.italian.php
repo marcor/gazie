@@ -378,7 +378,8 @@ $strScript = array("browse_document.php" =>
         'web_public_value' => array(0 => 'No', 1 => 'Si'),
         'web_url' => 'Web url<br />(es: http://site.com/item.html)',
         'modal_ok_insert'=>'Articolo inserito con successo clicca sulla X in alto a destra per uscire oppure...',
-        'iterate_invitation'=>'INSERISCI UN ALTRO ARTICOLO DI MAGAZZINO'
+        'iterate_invitation'=>'INSERISCI UN ALTRO ARTICOLO DI MAGAZZINO', 
+		'browse_for_file' => 'Sfoglia'
     )
 );
 ?>

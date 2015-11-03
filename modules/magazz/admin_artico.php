@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
 $modal_ok_insert = false;
-
+error_reporting(E_ALL);
 /** ENRICO FEDELE */
 /* Inizializzo la variabile per aprire in finestra modale */
 $modal = false;
@@ -212,17 +212,16 @@ if ($modal === false) {
 echo '<form method="POST" name="form" enctype="multipart/form-data" id="add-product">';
 
 if ($modal === true) {
-    echo '<input type="hidden" name="mode" value="modal" />'
-    . ' <input type="hidden" name="mode-act" value="submit" />';
+    echo '<input type="hidden" name="mode" value="modal" />
+		  <input type="hidden" name="mode-act" value="submit" />';
 }
 echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
-echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />
-	  <input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
+echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
 
 if ($modal_ok_insert === true) {
     echo '<div class="alert alert-success" role="alert">' . $script_transl['modal_ok_insert'] . '</div>';
     foreach ($form as $k => $v) {
-        echo '<input type="hidden" name="' . $k . '" value="' . $v . '" />';
+        //echo '<input type="hidden" name="' . $k . '" value="' . $v . '" />';
     }
 	echo '<div class=" text-center"><button class="btn btn-lg btn-default" type="submit" name="none">'.$script_transl['iterate_invitation'].'</button></div>';
 //    echo '<div><input name="none" type="submit" value="' . $script_transl['iterate_invitation'] . '" /></div>';
@@ -240,6 +239,7 @@ if ($modal_ok_insert === true) {
             echo '<div align="center" class="FacetFormHeaderFont">' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</div>';
         }
     }
+	echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
     /** ENRICO FEDELE */
     echo '<table class="Tmiddle">';
     if (!empty($msg)) {
@@ -273,17 +273,15 @@ if ($modal_ok_insert === true) {
 		</td>
 	  </tr>
 	  <tr>
-	  	<td class="FacetFieldCaptionTD" nowrap="nowrap"><img src="../root/view.php?table=artico&value=' . $form['codice'] . '" width="100" /></td>
-		<td colspan="2" class="FacetFieldCaptionTD">' . $script_transl['image'] . ' <input name="userfile" type="file" /></td>
-
-
+	  	<td class="FacetFieldCaptionTD" nowrap="nowrap"><img src="../root/view.php?table=artico&value='.$form['codice'].'" width="100" /></td>
+		<td colspan="2" class="FacetFieldCaptionTD">
+			'.$script_transl['image'].'&nbsp;<span class="file-input btn btn-default btn-file">'.$script_transl['browse_for_file'].'<input name="userfile" type="file" /></span>
+		</td>
 	  </tr>
 	  <tr>
 	    <td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['unimis'] . '*</td>
 		<td colspan="2" class="FacetDataTD">
 			<input type="text" name="unimis" value="' . $form['unimis'] . '" align="right" maxlength="3" size="15" />
-
-
 		</td>
 	  </tr>
 	  <tr>

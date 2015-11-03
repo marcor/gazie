@@ -382,7 +382,8 @@ $strScript = array("browse_document.php" =>
         'web_public_value' => array(0 => 'No', 1 => 'Yes'),
         'web_url' => 'Web url<br />(es: http://site.com/item.html)',
         'modal_ok_insert'=>'Product inserted successfully, click on the X on the upper right corner to exit or...',
-        'iterate_invitation'=>'INSERT ANOTHER ITEM IN STOCK!'
+        'iterate_invitation'=>'INSERT ANOTHER ITEM IN STOCK!', 
+		'browse_for_file' => 'Seleccionar un archivo'
     )
 );
 ?>
