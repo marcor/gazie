@@ -1,5 +1,5 @@
-@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
-
+/*@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
+*/
 BODY {
      background-image : url("../../library/images/sfondo.png");
      background-attachment : fixed;
@@ -745,5 +745,6 @@ input.input-xs {
     cursor: inherit;
     display: block;
 }
+.navbar-brand > img {display:inline;}
 /* fine stile per il pulsante di tipo file */
 /** ENRICO FEDELE */

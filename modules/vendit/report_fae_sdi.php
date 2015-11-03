@@ -70,7 +70,8 @@ if (isset($_GET['all'])) {
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
-                                  'jquery/jquery-1.7.1.min',
+                                  /** ENRICO FEDELE */
+								  /*'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.mouse',
@@ -81,9 +82,10 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.draggable',
                                   'jquery/ui/jquery.ui.resizable',
                                   'jquery/ui/jquery.effects.core',
-                                  'jquery/ui/jquery.effects.scale',
-                                  'jquery/modal_form',
-                                  'jquery/varie'));
+                                  'jquery/ui/jquery.effects.scale',*/
+								  /** ENRICO FEDELE */
+                                  'custom/modal_form',
+                                  'custom/varie'));
 $gForm = new GAzieForm();
 echo '<form method="GET">';
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";

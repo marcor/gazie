@@ -195,8 +195,10 @@ if (isset($_POST['Submit'])) {
 
 }
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array('jquery/jquery-1.3.2.min',
-                                'jquery/capslock'));
+$script_transl=HeadMain(0,array(/** ENRICO FEDELE */
+								/*'jquery/jquery-1.3.2.min',*/
+                                /** ENRICO FEDELE */
+								'custom/capslock'));
 echo '<script type="text/javascript">
       $(document).ready(function() {
 

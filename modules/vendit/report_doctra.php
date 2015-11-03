@@ -63,7 +63,8 @@ if (isset($_GET['all'])) {
 
 $titolo="Documenti di trasporto";
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min',
+$script_transl=HeadMain(0,array(/** ENRICO FEDELE */
+								  /*'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.mouse',
@@ -73,8 +74,9 @@ $script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.draggable',
                                   'jquery/ui/jquery.ui.resizable',
                                   'jquery/ui/jquery.effects.core',
-                                  'jquery/ui/jquery.effects.scale',
-                                  'jquery/modal_form'));
+                                  'jquery/ui/jquery.effects.scale',*/
+								  /** ENRICO FEDELE */
+                                  'custom/modal_form'));
 echo '<script>
 $(function() {
    $( "#dialog" ).dialog({

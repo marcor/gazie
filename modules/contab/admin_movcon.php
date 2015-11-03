@@ -866,7 +866,9 @@ if ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo 
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
-                                  'jquery/jquery-1.7.1.min',
+                                'custom/modal_form'
+								/** ENRICO FEDELE */
+                                /*  'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.mouse',
@@ -878,8 +880,8 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.resizable',
                                   'jquery/ui/jquery.ui.datepicker.min',
                                   'jquery/ui/jquery.effects.core',
-                                  'jquery/ui/jquery.effects.scale',
-                                  'jquery/modal_form'));
+                                  'jquery/ui/jquery.effects.scale',*/
+								  /** ENRICO FEDELE */));
 echo '<SCRIPT type="text/javascript">
       $(function() {
            $( "#search_insert_conto" ).autocomplete({

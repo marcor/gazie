@@ -37,18 +37,37 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 <?php
 $menuclass = ' class="FacetMainMenu" ';
 $style = 'default.css';
-if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin_aziend['style'] ) ){
+/** ENRICO FEDELE */
+/* Sembrerebbe esserci la possibilità di caricare un css personalizzato, ma non trovo dove impostare il parametro */
+if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin_aziend['style'])){
     $style = $admin_aziend['style'];
-}
-
+} 
 ?>
-<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-<link href="../../library/bootstrap/css/ml_dropdown.css" rel="stylesheet" type="text/css" >
-<link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" >
-<script src="../../library/bootstrap/js/jquery.min.js"></script>
-<script src="../../library/bootstrap/js/bootstrap.min.js"></script>
+
 <link rel="shortcut icon" href="../../library/images/favicon.ico">
+<script src="../../js/jquery/jquery-1.11.3.js"></script>
+<script src="../../js/jquery.ui/jquery-ui.min.js"></script>
+
+<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+<script src="../../library/bootstrap/js/bootstrap.min.js"></script>
+<link href="../../library/style/ml_dropdown.css" rel="stylesheet" type="text/css" />
+<!--<script src="../../library/bootstrap/js/jquery.min.js"></script>-->
+
 <link rel="stylesheet" href="../../js/jquery/toast/resources/css/jquery.toastmessage.css" />
+<link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" />
+<?php
+/** ENRICO FEDELE */
+/* Dunque ho creato questo escamotage, basta mettere un file .css nella cartella lybrary/style con nome 
+   uguale al lower case della ragione sociale 1, con spazi sostituiti da underscores 
+   
+   ATTENZIONE: sarebbe meglio mettere tutti i temi custom in una cartella a parte, fuori da tutto, nella radice
+   			   così nel caso in cui si debba aggiornare lo script, non si fanno danni!
+*/
+if (file_exists("../../library/style/".strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])).'.css')) {
+    echo '<link href="../../library/style/'.strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])).'.css" rel="stylesheet" type="text/css" />';
+}
+?>
+
 <?php
 
 function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray='')

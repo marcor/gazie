@@ -66,12 +66,15 @@ if (isset($_POST['print']) && $msg=='') {
 }
 
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array('jquery/jquery-1.7.1.min','calendarpopup/CalendarPopup',
-                                  'jquery/ui/jquery.ui.core',
+$script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
+                                'custom/autocomplete_location'
+								/** ENRICO FEDELE */
+								  /*'jquery/jquery-1.7.1.min',
+								  'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',
-                                  'jquery/autocomplete_location'));
+								  /** ENRICO FEDELE */));
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';

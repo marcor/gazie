@@ -657,12 +657,14 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('boxover/boxover',
                                   'calendarpopup/CalendarPopup',
-                                  'jquery/jquery-1.7.1.min',
+                                  /** ENRICO FEDELE */
+								  /*'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.autocomplete',
-                                  'jquery/autocomplete_anagra'));
+                                  'jquery/ui/jquery.ui.autocomplete',*/
+								  /** ENRICO FEDELE */
+                                  'custom/autocomplete_anagra'));
 ?>
 <SCRIPT LANGUAGE="JavaScript">
 function pulldown_menu(selectName, destField)
