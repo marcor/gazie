@@ -127,13 +127,13 @@ echo "</tr>\n";
 
 
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso1'] . "</td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['unita_locale1'] . "</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ragso1\" value=\"" . $form['ragso1'] . "\" align=\"right\" maxlength=\"255\" size=\"70\" /></td>\n";
+      <input type=\"text\" name=\"unita_locale1\" value=\"" . $form['unita_locale1'] . "\" align=\"right\" maxlength=\"255\" size=\"70\" /></td>\n";
 echo "</tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso2'] . "</td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['unita_locale2'] . "</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ragso2\" value=\"" . $form['ragso2'] . "\" align=\"right\" maxlength=\"255\" size=\"70\" /></td>\n";
+      <input type=\"text\" name=\"unita_locale2\" value=\"" . $form['unita_locale2'] . "\" align=\"right\" maxlength=\"255\" size=\"70\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['indspe'] . " * </td>\n";

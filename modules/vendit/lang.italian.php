@@ -940,8 +940,8 @@ $strScript = array("admin_client.php" =>
             "Manca la citta'"
         ),
         'codice' => "codice",
-        'ragso1' => "Ragione Sociale 1",
-        'ragso2' => "Ragione Sociale 2",
+        'unita_locale1' => "Unita' Locale 1",
+        'unita_locale2' => "Unita' Locale 2",
         'indspe' => 'Indirizzo',
         'capspe' => 'Codice Postale',
         'citspe' => 'Citt&agrave; - Provincia',

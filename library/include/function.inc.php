@@ -196,7 +196,8 @@ function selectDestinazione($rs_destinazioni) {
                  . getStringaNonVuota($rigaDest[7]);
 
          $retVal = $retVal . "<option value=\"" . $destinazione . "\">"
-                 . $rigaDest[1].'-'. $rigaDest[5].'('.$rigaDest[6].')'
+//                 . $rigaDest[1].'-'. $rigaDest[5].'('.$rigaDest[6].')'
+                 . $destinazione
                  . "</option>\n";
       }
       $retVal = $retVal . "</select><p>\n";
@@ -466,10 +467,10 @@ class selectPartner extends SelectBox {
       echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $cerca . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
       echo $msg;
       //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" " . $tabula . " name=\"clfoco\" src=\"../../library/images/cerbut.gif\" title=\"" . $script_transl['search'] . "\">\n";
-		/** ENRICO FEDELE */
-		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="clfoco" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>';
-		/** ENRICO FEDELE */
+      /** ENRICO FEDELE */
+      /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+      echo '<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="clfoco" ' . $tabula . ' title="' . $script_transl['search'] . '"><i class="glyphicon glyphicon-search"></i></button>';
+      /** ENRICO FEDELE */
    }
 
    function selectDocPartner($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $m = 0, $anonimo = -1, $tab = 1) {
@@ -573,10 +574,10 @@ class selectPartner extends SelectBox {
             echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">\n";
          }
          //echo "\t<input type=\"image\" $tab3 align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
-		/** ENRICO FEDELE */
-		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" '.$tab3.'><i class="glyphicon glyphicon-search"></i></button>';
-		/** ENRICO FEDELE */
+         /** ENRICO FEDELE */
+         /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+         echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" ' . $tab3 . '><i class="glyphicon glyphicon-search"></i></button>';
+         /** ENRICO FEDELE */
       }
    }
 
@@ -629,10 +630,10 @@ class selectPartner extends SelectBox {
             echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">";
          }
          //echo "\t<input type=\"image\"  $tab3  align=\"middle\" name=\"search_str\" src=\"../../library/images/cerbut.gif\">\n";
-		/** ENRICO FEDELE */
-		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" '.$tab3.'><i class="glyphicon glyphicon-search"></i></button>';
-		/** ENRICO FEDELE */
+         /** ENRICO FEDELE */
+         /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+         echo '<button type="submit" class="btn btn-default btn-sm" name="search_str" ' . $tab3 . '><i class="glyphicon glyphicon-search"></i></button>';
+         /** ENRICO FEDELE */
       }
    }
 
@@ -681,11 +682,11 @@ class selectartico extends SelectBox {
       }
       echo "\t<input type=\"text\" name=\"cosear\" value=\"" . $cerca . "\" " . $tabula . " maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
       echo "<font style=\"color:#ff0000;\">$msg </font>";
-        //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
-		/** ENRICO FEDELE */
-		/* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-		echo '<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>';
-		/** ENRICO FEDELE */
+      //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
+      /** ENRICO FEDELE */
+      /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
+      echo '<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" ' . $tabula . ' title="' . $script_transl['search'] . '"><i class="glyphicon glyphicon-search"></i></button>';
+      /** ENRICO FEDELE */
    }
 
 }
@@ -1024,7 +1025,7 @@ class GAzieForm {
       echo "\t <input type=\"text\" name=\"" . $name . "_Y\" id=\"" . $name . "_Y\" value=\"" . $year . "\" class=\"$class\"  maxlength=\"4\" size=\"4\" $refresh />\n ";
       echo "\t <a class=\"btn btn-default btn-sm\" href=\"#\" onClick=\"setDate('$name'); return false;\" TITLE=\"" . $script_transl['changedate'] . "\" name=\"anchor\" id=\"anchor\">\n";
       //echo "\t<img border=\"0\" src=\"../../library/images/cal.png\"></A>\n";
-	  echo '<i class="glyphicon glyphicon-calendar"></i></a>';
+      echo '<i class="glyphicon glyphicon-calendar"></i></a>';
    }
 
    function variousSelect($name, $transl, $sel, $class = 'FacetSelect', $bridge = true, $refresh = '', $maxlenght = false) {

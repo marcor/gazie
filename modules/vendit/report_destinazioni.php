@@ -62,13 +62,13 @@ if (isset($_GET['all'])) {
 }
 
 if (!isset($_GET['field'])) {
-   $orderby =  "$dbAnagrafe.ragso1, $dbAnagrafe.ragso2, $dbDestinazioni.ragso1, $dbDestinazioni.ragso2";
+   $orderby =  "$dbAnagrafe.ragso1, $dbAnagrafe.ragso2, $dbDestinazioni.unita_locale1, $dbDestinazioni.unita_locale2";
 }
 
 if (isset($_GET['ricerca_completa'])) {
    $ricerca_testo = $_GET['ricerca_completa'];
-   $where .= " and ( ragso1 like '%" . $ricerca_testo . "%' ";
-   $where .= " or ragso2 like '%" . $ricerca_testo . "%' ";
+   $where .= " and ( unita_locale1 like '%" . $ricerca_testo . "%' ";
+   $where .= " or unita_locale2 like '%" . $ricerca_testo . "%' ";
    $where .= " or pariva like '%" . $ricerca_testo . "%' ";
    $where .= " or pariva like '%" . $ricerca_testo . "%' ";
    $where .= " or codfis like '%" . $ricerca_testo . "%' ";
@@ -95,7 +95,7 @@ if (isset($_GET['ricerca_completa'])) {
         <?php
         $result = gaz_dbi_dyn_query("$dbDestinazioni.codice as codice, "
                 . "concat($dbAnagrafe.ragso1,space(1),$dbAnagrafe.ragso2) as anagrafe,"
-                . "concat($dbDestinazioni.ragso1,space(1),$dbDestinazioni.ragso2) as destinazione,"
+                . "concat($dbDestinazioni.unita_locale1,space(1),$dbDestinazioni.unita_locale2) as destinazione,"
                 . "$dbDestinazioni.indspe, $dbDestinazioni.capspe, $dbDestinazioni.citspe, "
                 . "$dbDestinazioni.prospe, $dbDestinazioni.country, $dbDestinazioni.telefo, $dbDestinazioni.e_mail", "$dbDestinazioni LEFT JOIN $dbAnagrafe ON $dbDestinazioni.id_anagra = $dbAnagrafe.id", $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
