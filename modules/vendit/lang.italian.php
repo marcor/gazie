@@ -245,7 +245,7 @@ $strScript = array("admin_client.php" =>
         'da_fatturare_title' => 'Indica se il DDT deve essere fatturato automaticamente',
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
         'da_fatturare_value' => array(0 => 'No', 1 => 'Si'),
-        'zero_rows'=>'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale'
+        'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale'
     /** fine modifica FP */
     ),
     "select_docforprint.php" =>
@@ -958,6 +958,28 @@ $strScript = array("admin_client.php" =>
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia anagrafica'),
+    ),
+    "select_situazione_contabile.php" =>
+    array('title' => 'Stampa situazione contabile',
+        'date' => 'Data Stampa',
+        'id_anagra' => 'Anagrafica (vuoto per tutti)<p><p>'
+        . '<strong>ATTENZIONE: Se questo campo &egrave; lasciato vuoto, <br>'
+        . 'l\'operazione potrebbe impiegare molto tempo</strong>',
+        'clfr' => 'Stampare situazione di',
+        'aperte_tutte' => 'Cosa Stampare',
+        'id_agente' => 'Agente',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia anagrafica'),
+        'errors' => array('La data  non &egrave; corretta!',
+            'Non sono stati trovati movimenti!'
+        ),
+        'header' => array('Cliente' => '', 'ID Partita' => '', 'Status' => '', 'Mov.Cont.' => '', 'Descrizione' => '',
+            'N.Doc.' => '', 'Data Doc.' => '', 'Data Reg.' => '', 'Dare' => '', 'Avere' => '',
+            'Scadenza' => '', 'Opzioni' => ''
+        ),
+        /** ENRICO FEDELE */
+        'status_value' => array(0 => 'Chiusa', 1 => 'Aperta'),
     )
 );
 ?>

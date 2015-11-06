@@ -1,6 +1,38 @@
 <?php
 class venditForm extends GAzieForm
 {
+      function CalendarPopup($name, $day, $month, $year, $class = 'FacetSelect', $refresh = '') {
+      global $script_transl;
+      if (!empty($refresh)) {
+         $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
+      }
+
+      echo "\t <select name=\"" . $name . "_D\" id=\"" . $name . "_D\" class=\"$class\" $refresh>\n";
+      for ($i = 1; $i <= 31; $i++) {
+         $selected = "";
+         if ($i == $day) {
+            $selected = "selected";
+         }
+         echo "\t\t <option value=\"$i\" $selected >$i</option>\n";
+      }
+      echo "\t </select>\n";
+      echo "\t <select name=\"" . $name . "_M\" id=\"" . $name . "_M\" class=\"$class\" $refresh>\n";
+      for ($i = 1; $i <= 12; $i++) {
+         $selected = "";
+         if ($i == $month) {
+            $selected = "selected";
+         }
+         $month_name = ucwords(strftime("%B", mktime(0, 0, 0, $i, 1, 0)));
+         echo "\t\t <option value=\"$i\"  $selected >$month_name</option>\n";
+      }
+      echo "\t </select>\n";
+      echo "\t <input type=\"text\" name=\"" . $name . "_Y\" id=\"" . $name . "_Y\" value=\"" . $year . "\" class=\"$class\"  maxlength=\"4\" size=\"4\" $refresh />\n ";
+      echo "\t <a class=\"btn btn-default btn-sm\" href=\"#\" onClick=\"setDate('$name'); return false;\" TITLE=\"" . $script_transl['changedate'] . "\" name=\"anchor\" id=\"anchor\">\n";
+      //echo "\t<img border=\"0\" src=\"../../library/images/cal.png\"></A>\n";
+      echo '<i class="glyphicon glyphicon-calendar"></i></a>';
+   }
+
+
     function ticketPayments($name,$val,$class='FacetSelect')
     {
         global $gTables;
