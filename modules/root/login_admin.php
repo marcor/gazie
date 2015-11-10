@@ -155,7 +155,7 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 <script language="JavaScript1.2" src="../../js/cookies/cookies.js"></script>
 <script language="JavaScript" src="../../js/md5/md5.js"></script>
 <!-- ENRICO FEDELE -->
-<script language="JavaScript" src="../../js/jquery/jquery-1.11.3.js"></script>
+<script language="JavaScript" src="../../js/jquery/jquery.js"></script>
 <script language="JavaScript" src="../../js/custom/capslock.js"></script>
 <!-- ENRICO FEDELE -->
 

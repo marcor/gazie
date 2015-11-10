@@ -22,6 +22,7 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
+error_reporting(0);
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = "";
@@ -646,7 +647,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 require("../../library/include/header.php");
 require("./lang.".$admin_aziend['lang'].".php");
 $script_transl = $strScript["admin_docacq.php"]+HeadMain(0,array('tiny_mce/tiny_mce',
-                                  'boxover/boxover',
+                                  /*'boxover/boxover',*/
                                   'calendarpopup/CalendarPopup',
 								  /** ENRICO FEDELE */
                                   /*'jquery/jquery-1.7.1.min',*/
@@ -877,20 +878,43 @@ foreach ($form['righi'] as $key => $value) {
         switch($value['tiprig']) {
         case "0":
         echo "<tr>";
-        if ( file_exists ( "../../data/files/fotoart/".$value["codart"].".gif" ) ) {
+        /*if ( file_exists ( "../../data/files/fotoart/".$value["codart"].".gif" ) ) {
 			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$value['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$value["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";		
 		} else {
 			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$value['annota']}] body=[<center><img src='../root/view.php?table=artico&value=".$value['codart']."'>] fade=[on] fadespeed=[0.03] \"";
-		}
-        if ($value['pesosp'] != 0){
+		}*/
+        /*if ($value['pesosp'] != 0){
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[quantit&agrave; &divide; peso specifico = ".gaz_format_number($value['quanti'] /  $value['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
         } else {
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso specifico = 0]  fade=[on] fadespeed=[0.03] \"";
-        }
-        echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"".$value['codart']."\" /></td>\n";
-        echo "<td $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
-        echo "<td $boxpeso><input type=\"text\" name=\"righi[{$key}][unimis]\" value=\"{$value['unimis']}\" maxlength=\"3\" size=\"1\" /></td>\n";
-        echo "<td $boxpeso><input type=\"text\" name=\"righi[{$key}][quanti]\" value=\"{$value['quanti']}\" align=\"right\" maxlength=\"11\" size=\"4\" onchange=\"this.form.submit()\" /></td>\n";
+        }*/
+		/** ENRICO FEDELE */
+        echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
+				<input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$value['codart'].'" />
+			  </td>';
+        //echo "<td title=\"ASASASA\" $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        
+		/** ENRICO FEDELE */
+		/* Tooltip e glyphicon */
+		echo '<td>
+				<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="righi['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
+			  </td>
+			  <td>
+			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!"><i class="glyphicon glyphicon-arrow-up"></i></button>
+			  </td>';
+		/* Peso */
+		$peso = 0;
+		if($value['pesosp']<>0) {
+			$peso = gaz_format_number($value['quanti']/$value['pesosp']);	
+		}
+				/*<input class="myTooltip" data-type="product" data-id="firefox" data-title=""  />*/
+		echo '<td>
+				<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="righi['.$key.'][unimis]" value="'.$value['unimis'].'" maxlength="3" size="1" />
+			  </td>
+			  <td>
+			  	<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="righi['.$key.'][quanti]" value="'.$value['quanti'].'" align="right" maxlength="11" size="4" onchange="this.form.submit();" />
+			  </td>';
+		/** ENRICO FEDELE */
         echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
         echo "<td><input type=\"text\" name=\"righi[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
         echo "<td align=\"right\">".gaz_format_number($imprig)."</td>\n";

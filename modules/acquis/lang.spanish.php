@@ -198,7 +198,8 @@ $strScript = array("admin_fornit.php" =>
 						   'art_code'=>'Número de artículo', 
 						   'art_barcode'=>'Código de barras', 
 						   'art_descr'=>'Descripción', 
-						   'search_for'=>'Cerca per'
+						   'search_for'=>'Cerca per',
+						   'weight'=>'Peso specifico:'
 						   /** ENRICO FEDELE */
                            ),
                    "accounting_documents.php" =>

@@ -1127,7 +1127,7 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (no
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td>";
     echo "<td class=\"FacetDataTD\"><INPUT TYPE=\"text\" NAME=\"giotra\" VALUE=\"" . $form['giotra'] . "\" size=\"2\">\n";
     echo "<INPUT TYPE=\"text\" NAME=\"mestra\" VALUE=\"" . $form['mestra'] . "\" size=\"2\">\n";
-    echo "<INPUT TYPE=\"text\" NAME=\"anntra\" VALUE=\"" . $form['anntra'] . "\" size=\"2\">\n";
+    echo "<INPUT TYPE=\"text\" id=\"datepicker\" class=\"hasDatepicker\" NAME=\"anntra\" VALUE=\"" . $form['anntra'] . "\" size=\"2\">\n";
     echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></a>";
     echo '<i class="glyphicon glyphicon-calendar"></i></a>';

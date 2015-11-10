@@ -113,7 +113,7 @@ $strScript = array("admin_fornit.php" =>
                          'title'=>'Preventivi e ordini',
                          'mail_alert0'=>'Invio documento con email',
                          'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
-                         'mail_alert2'=>'con allegato il seguente documento:',
+                         'mail_alert2'=>'con allegato il seguente documento:'
                         ),
                    "report_debiti.php" =>
                    array(  'title'=>'Lista dei debiti verso i fornitori',
@@ -211,7 +211,8 @@ $strScript = array("admin_fornit.php" =>
 						   'art_code'=>'Codice articolo', 
 						   'art_barcode'=>'Codice a barre', 
 						   'art_descr'=>'Descrizione', 
-						   'search_for'=>'Cerca per'
+						   'search_for'=>'Cerca per',
+						   'weight'=>'Peso specifico:'
 						   /** ENRICO FEDELE */
                            ),
                     "accounting_documents.php" =>
