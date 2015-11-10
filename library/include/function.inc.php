@@ -373,7 +373,7 @@ class SelectBox {
       if (!empty($refresh)) {
          $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
       }
-      echo "\t <select name=\"$this->name\" class=\"FacetSelect\" $refresh >\n";
+      echo "\t <select id=\"$this->name\" name=\"$this->name\" class=\"FacetSelect\" $refresh >\n";
       if ($empty) {
          echo "\t\t <option value=\"\"></option>\n";
       }
@@ -421,6 +421,18 @@ class selectPartner extends SelectBox {
          $anagrafiche[] = $r;
       }
       return $anagrafiche;
+   }
+
+   function queryNomeAgente($id_agente) {
+      $retVal="";
+      $rs = gaz_dbi_dyn_query("b.descri as nomeAgente", 
+              $this->gTables['agenti'] . ' AS a join '.$this->gTables['clfoco']. " as b on a.id_fornitore=b.codice ",
+              "a.id_agente=$id_agente");
+      $anagrafiche = array();
+      if ($r = gaz_dbi_fetch_array($rs)) {
+         $retVal = $r["nomeAgente"];
+      }
+      return $retVal;
    }
 
    function output($mastro, $cerca) {
@@ -489,18 +501,18 @@ class selectPartner extends SelectBox {
       if ($val > 100000000) { //vengo da una modifica della precedente select case quindi non serve la ricerca
          $partner = gaz_dbi_get_row($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', "codice", $val);
          echo "\t<input type=\"submit\" value=\"&rArr;\" name=\"fantoccio\" disabled>\n";
-         echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+         echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
          echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
          echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
       } elseif (preg_match("/^id_([0-9]+)$/", $val, $match)) { // e' stato selezionata la sola anagrafica
          $partner = gaz_dbi_get_row($gTables['anagra'], 'id', $match[1]);
          echo "\t<input type=\"submit\" value=\"&rArr;\" name=\"fantoccio\" disabled>\n";
-         echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+         echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
          echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
          echo "\t<input type=\"submit\" tabindex=\"999\" style=\"background:#FFBBBB\"; value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
       } elseif ($val == $anonimo) { // e' un cliente anonimo
          echo "\t<input type=\"submit\" value=\"&rArr;\" name=\"fantoccio\" disabled>\n";
-         echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+         echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
          echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"\">\n";
          echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $mesg[5] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
       } else {
@@ -581,7 +593,7 @@ class selectPartner extends SelectBox {
       }
    }
 
-   function selectAnagra($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $tab = false) {
+   function selectAnagra($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $tab = false, $where=1) {
       global $gTables;
       $tab1 = '';
       $tab2 = '';
@@ -593,17 +605,17 @@ class selectPartner extends SelectBox {
       }
       if ($val > 1) { //vengo da una modifica della precedente select case quindi non serve la ricerca
          $partner = gaz_dbi_get_row($gTables['anagra'], "id", $val);
-         echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
+         echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
          echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
          echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
       } else {
          if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
             if (is_numeric($strSearch)) {                      //ricerca per partita iva
-               $partner = $this->queryAnagra(" pariva = " . intval($strSearch));
+               $partner = $this->queryAnagra(" pariva = " . intval($strSearch)." and $where");
             } elseif (is_numeric(substr($strSearch, 6, 2))) {   //ricerca per codice fiscale
-               $partner = $this->queryAnagra(" a.codfis LIKE '%" . addslashes($strSearch) . "%'");
+               $partner = $this->queryAnagra(" a.codfis LIKE '%" . addslashes($strSearch) . "%' and $where");
             } else {                                      //ricerca per ragione sociale
-               $partner = $this->queryAnagra(" a.ragso1 LIKE '" . addslashes($strSearch) . "%'");
+               $partner = $this->queryAnagra(" a.ragso1 LIKE '" . addslashes($strSearch) . "%' and $where");
             }
             if (count($partner) > 0) {
                echo "\t<select name=\"$name\" $tab1 class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
@@ -637,9 +649,12 @@ class selectPartner extends SelectBox {
       }
    }
 
-   function queryClfoco($codiceAnagrafe) {
+   function queryClfoco($codiceAnagrafe, $mastro) {
       $retVal = 0;
-      $rs = gaz_dbi_dyn_query('codice', $this->gTables['clfoco'] . ' AS a', "id_anagra=$codiceAnagrafe");
+      $codiceAnagrafe=addslashes ($codiceAnagrafe);
+//      $where = "id_anagra='$codiceAnagrafe' and codice like '$mastro%'";
+      $where = "codice='$codiceAnagrafe'";
+      $rs = gaz_dbi_dyn_query('codice', $this->gTables['clfoco'] . ' AS a', $where);
       if ($r = gaz_dbi_fetch_array($rs)) {
          $retVal = $r['codice'];
       }

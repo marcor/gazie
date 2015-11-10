@@ -30,24 +30,37 @@ $form['orderby'] = 2;
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    $form['hidden_req'] = '';
    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-   $form['this_date_Y'] = date("Y");
-   $form['this_date_M'] = date("m");
-   $form['this_date_D'] = date("d");
+//   $form['this_date_Y'] = date("Y");
+//   $form['this_date_M'] = date("m");
+//   $form['this_date_D'] = date("d");
    $form['id_anagra'] = '';
    $form['search']['id_anagra'] = '';
    $form['id_agente'] = 0;
+   $check_tutte_aperte0 = "checked";
+   $check_tutte_aperte1 = "";
+   $check_clfr0 = "checked";
+   $check_clfr1 = "";
+   $form['clfr'] = 0;
 } else { // accessi successivi
    $form['hidden_req'] = htmlentities($_POST['hidden_req']);
    $form['ritorno'] = $_POST['ritorno'];
-   $form['this_date_Y'] = intval($_POST['this_date_Y']);
-   $form['this_date_M'] = intval($_POST['this_date_M']);
-   $form['this_date_D'] = intval($_POST['this_date_D']);
+//   $form['this_date_Y'] = intval($_POST['this_date_Y']);
+//   $form['this_date_M'] = intval($_POST['this_date_M']);
+//   $form['this_date_D'] = intval($_POST['this_date_D']);
    $form['id_anagra'] = $_POST['id_anagra'];
    $form['id_agente'] = intval($_POST['id_agente']);
-
+   $form['clfr'] = $_POST['clfr'];
+   $check_tutte_aperte0 = ($_POST['aperte_tutte'] == 0 ? "checked" : "");
+   $check_tutte_aperte1 = ($_POST['aperte_tutte'] == 1 ? "checked" : "");
+   $check_clfr0 = ($form['clfr'] == 0 ? "checked" : "");
+   $check_clfr1 = ($form['clfr'] == 1 ? "checked" : "");
+//   if (isset($_POST['search'])) {
    foreach ($_POST['search'] as $k => $v) {
       $form['search'][$k] = $v;
    }
+//   } else {
+//      $form['search']['id_anagra'] = '';
+//   }
    if (isset($_POST['return'])) {
       header("Location: " . $form['ritorno']);
       exit;
@@ -55,15 +68,19 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 }
 
 //controllo i campi
-if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y'])) {
-   $msg .='0+';
-}
-$utsexe = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
+//if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y'])) {
+//   $msg .='0+';
+//}
+//$utsexe = mktime(0, 0, 0, $form['this_date_M'], $form['this_date_D'], $form['this_date_Y']);
 // fine controlli
 
 if (isset($_POST['print']) && $msg == '') {
-   $_SESSION['print_request'] = array('script_name' => 'print_schedule',
-       'orderby' => $form['orderby']
+   $_SESSION['print_request'] = array('script_name' => 'print_situazione_contabile',
+       'orderby' => $form['orderby'],
+       'id_anagra' => $form['id_anagra'],
+       'clfr' => $form['clfr'],
+       'id_agente' => $form['id_agente'],
+       'aperte_tutte' => $_POST['aperte_tutte'],
    );
    header("Location: sent_print.php");
    exit;
@@ -88,7 +105,19 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
-
+function doConfirm() {
+   retVal=true;
+   id_anagra=document.getElementById('id_anagra');
+   id_agente=document.getElementById('id_agente');
+   val_id_anagra=(id_anagra?id_anagra.value:0);
+   val_id_agente=(id_agente?id_agente.value:0);
+//   alert(val_id_anagra+' - '+val_id_agente);
+   
+   if(val_id_anagra==0 && val_id_agente==0){
+      retVal=confirm('Se non si seleziona un\'anagrafica o un agente, l\'operazione potrebbe impiegare molto tempo. Vuoi continuare?');
+   }
+   return retVal;
+}
 </script>
 ";
 echo "<form method=\"POST\" name=\"select\">\n";
@@ -105,21 +134,22 @@ if (!empty($msg)) {
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['clfr'] . "</td><td  colspan=\"2\" class=\"FacetDataTD\">\n";
-echo "\t\t <input type=\"radio\" name=\"clfr\" value=0 checked> clienti \n";
-echo "\t\t <input type=\"radio\" name=\"clfr\" value=1 > fornitori \n";
+echo "\t\t <input type=\"radio\" name=\"clfr\" value=0 $check_clfr0> clienti \n";
+echo "\t\t <input type=\"radio\" name=\"clfr\" value=1 $check_clfr1> fornitori \n";
 echo "</td>\n";
 
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_anagra'] . " </td><td class=\"FacetDataTD\" colspan=\"2\">\n";
 $select_id_anagra = new selectPartner("id_anagra");
-$select_id_anagra->selectAnagra('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg']);
+//$select_id_anagra->selectAnagra('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], false, "codice like '" . ($form['clfr'] == 0 ? $admin_aziend['mascli'] : $admin_aziend['masfor']) . "%'");
+$select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], ($form['clfr'] == 0 ? $admin_aziend['mascli'] : $admin_aziend['masfor']));
 echo "</td>\n";
 echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['aperte_tutte'] . "</td><td  colspan=\"2\" class=\"FacetDataTD\">\n";
-echo "\t\t <input type=\"radio\" name=\"aperte_tutte\" value=0 checked> solo partite aperte \n";
-echo "\t\t <input type=\"radio\" name=\"aperte_tutte\" value=1 > estratto conto \n";
+echo "\t\t <input type=\"radio\" name=\"aperte_tutte\" value=0 $check_tutte_aperte0> solo partite aperte \n";
+echo "\t\t <input type=\"radio\" name=\"aperte_tutte\" value=1 $check_tutte_aperte1> estratto conto \n";
 echo "</td>\n";
 
 echo "<tr>\n";
@@ -130,18 +160,20 @@ $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
 echo "</td></tr>\n";
 
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date'] . "</td><td  colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 'FacetSelect', 1);
-echo "</td>\n";
-echo "</tr>\n";
+//echo "<tr>\n";
+//echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date'] . "</td><td  colspan=\"2\" class=\"FacetDataTD\">\n";
+//$gForm->CalendarPopup('this_date', $form['this_date_D'], $form['this_date_M'], $form['this_date_Y'], 'FacetSelect', 1);
+//echo "</td>\n";
+//echo "</tr>\n";
 
 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
 echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"" . $script_transl['return'] . "\">\n";
 echo '<td align="right" colspan="2"> <input type="submit" accesskey="i" name="preview" value="';
 echo $script_transl['view'];
-echo '" tabindex="100" >';
-echo "\t </td>\n";
+echo '" tabindex="100" onclick="return doConfirm()">';
+//echo "\t </td>\n";
+//echo '<td colspan="12" align="right">';
+echo '<input type="submit" name="print" value="' . $script_transl['print'] . '"  onclick="return doConfirm()"></td>';
 echo "\t </tr>\n";
 echo "</table>\n";
 
@@ -149,11 +181,12 @@ if (isset($_POST['preview']) and $msg == '') {
    $scdl = new Schedule;
    $select_id_anagra = new selectPartner("id_anagra");
    if (!empty($form['id_anagra'])) {
-      $cosaStampare = $select_id_anagra->queryClfoco($form['id_anagra']); // anagrafe selezionata
+//      $cosaStampare = $select_id_anagra->queryClfoco($form['id_anagra'], ($form['clfr'] == 0 ? $admin_aziend['mascli'] : $admin_aziend['masfor'])); // anagrafe selezionata
+      $cosaStampare = $form['id_anagra']; // anagrafe selezionata
    } else {// voglio tutti
       ini_set('memory_limit', '128M'); // mi occorre tanta memoria
       gaz_set_time_limit(0);  // e tanto tempo
-      if ($_POST['clfr'] == 0) {
+      if ($form['clfr'] == 0) {
          $cosaStampare = $admin_aziend['mascli']; // clienti
       } else {
          $cosaStampare = $admin_aziend['masfor']; // fornitori
@@ -174,6 +207,8 @@ if (isset($_POST['preview']) and $msg == '') {
       $tot_dare = 0;
       $tot_avere = 0;
       /* ENRICO FEDELE */
+
+      $tot_diff_anagrafe = 0;
 
       echo "<tr>";
       $linkHeaders = new linkHeaders($script_transl['header']);
@@ -207,6 +242,8 @@ if (isset($_POST['preview']) and $msg == '') {
          if ($tot_diff_tmp == 0 && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
             continue;
          }
+         $tot_diff_anagrafe+=$tot_diff_tmp;
+
          $primo = true;
          foreach ($dati_partite as $mv_tmp) {
             if ($primo) {
@@ -255,7 +292,7 @@ if (isset($_POST['preview']) and $msg == '') {
             } else {
                /* Incremento il totale dell'avere, e decremento quello del dare */
                $tot_avere += $mv_tmp['amount'];
-               $tot_dare -= $mv_tmp['amount'];
+//               $tot_dare -= $mv_tmp['amount'];
                echo "<td class=\"FacetDataTD\"></td>";
                echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["amount"]) . " &nbsp;</td>";
             }
@@ -272,15 +309,33 @@ if (isset($_POST['preview']) and $msg == '') {
          }
          $ctrl_id_tes = $mv["id_tes"];
          $ctrl_paymov = $mv["id_tesdoc_ref"];
+
+         /* TOTALI PARTITA */
+         echo '<tr">
+			<td colspan="10" align="right" class="' . $class_paymov . '">SALDO PARTITA</td>
+			<td colspan="2" title="saldo" align="right" class="' . $class_paymov . '">' . gaz_format_number(-$tot_diff_tmp) . '</td>
+		  </tr>';
+         /* TOTALI ANAGRAFE */
+         if (!$mv || $mv["clfoco"] != $ctrl_partner) { // si cambia anagrafe alla prossima iterazione
+            echo '<tr class="FacetDataTRTotAnagrafe">'
+            . '<td colspan="10" align="right">'
+            . 'SALDO ANAGRAFE</td><td colspan="2" title="saldo" align="right">'
+            . gaz_format_number(-$tot_diff_anagrafe)
+            . '</td></tr>';
+            $tot_diff_anagrafe = 0;
+         }
       }
       /** ENRICO FEDELE */
       /* Stampo il totale del dare, dell'avere, e la percentuale dell'avere rispetto al totale dare+avere */
       /* Aumento il colspan nell'ultima riga per ricomprendere anche l'ultima colonna, il pulsante stampa ora va sotto opzioni */
+//			<td class="FacetFormHeaderFont" title="% dare-avere">' . gaz_format_number(100 * $tot_avere / ($tot_dare + $tot_avere)) . ' %</td>
+
       echo '<tr>
 			<td colspan="8" class="FacetFormHeaderFont" align="right">TOTALE</td>
 			<td class="FacetFormHeaderFont" align="right">' . gaz_format_number($tot_dare) . '</td>
 			<td class="FacetFormHeaderFont" align="right">' . gaz_format_number($tot_avere) . '</td>
-			<td class="FacetFormHeaderFont">' . gaz_format_number(100 * $tot_avere / ($tot_dare + $tot_avere)) . ' %</td>
+			<td class="FacetFormHeaderFont" title="% avere/dare">' . gaz_format_number(100 * $tot_avere / $tot_dare) . ' %</td>
+			<td class="FacetFormHeaderFont" title="saldo">' . gaz_format_number(-$tot_dare + $tot_avere) . '</td>
 			<td class="FacetFormHeaderFont">&nbsp;</td>
 		  </tr>
 		  <tr class="FacetFieldCaptionTD">

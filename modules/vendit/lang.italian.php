@@ -960,11 +960,9 @@ $strScript = array("admin_client.php" =>
             'Cambia anagrafica'),
     ),
     "select_situazione_contabile.php" =>
-    array('title' => 'Stampa situazione contabile',
+    array('title' => 'Analisi situazione contabile',
         'date' => 'Data Stampa',
-        'id_anagra' => 'Anagrafica (vuoto per tutti)<p><p>'
-        . '<strong>ATTENZIONE: Se questo campo &egrave; lasciato vuoto, <br>'
-        . 'l\'operazione potrebbe impiegare molto tempo</strong>',
+        'id_anagra' => 'Anagrafica (vuoto per tutti)',
         'clfr' => 'Stampare situazione di',
         'aperte_tutte' => 'Cosa Stampare',
         'id_agente' => 'Agente',
