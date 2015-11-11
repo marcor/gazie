@@ -835,9 +835,34 @@ $quatot= 0;
 $totimpmer=0.00;
 $totivafat=0.00;
 $totimpfat=0.00;
+/*
 echo "</table>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td><td colspan=\"2\" class=\"FacetFieldCaptionTD\">$script_transl[21]</td><td class=\"FacetFieldCaptionTD\">$script_transl[22]</td><td class=\"FacetFieldCaptionTD\">$script_transl[16]</td><td class=\"FacetFieldCaptionTD\">$script_transl[23]</td><td class=\"FacetFieldCaptionTD\">%".substr($script_transl[24],0,2)."</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[25]</td><td class=\"FacetFieldCaptionTD\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\">$script_transl[18]</td><td class=\"FacetFieldCaptionTD\"></td></tr>\n";
+*/
+
+/** ENRICO FEDELE */
+/* Cominciamo la transizione verso le tabelle bootstrap */
+echo '</table>
+	  <br />
+	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+		  <thead>
+			<tr>
+				<th class="FacetFieldCaptionTD">'.$script_transl[20].'</th>
+				<th class="FacetFieldCaptionTD" colspan="2">'.$script_transl[21].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[22].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[16].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[23].'</th>
+				<th class="FacetFieldCaptionTD">%'.substr($script_transl[24], 0, 2).'</th>
+				<th class="FacetFieldCaptionTD" align="right">'.$script_transl[25].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[19].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[18].'</th>
+				<th class="FacetFieldCaptionTD"></th>
+			</tr>
+		   </thead>
+		   <tbody>';
+/** ENRICO FEDELE */
+
 $castel=array();
 foreach ($form['righi'] as $key => $value) {
     //calcolo il totale del peso in kg
@@ -887,10 +912,13 @@ foreach ($form['righi'] as $key => $value) {
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[quantit&agrave; &divide; peso specifico = ".gaz_format_number($value['quanti'] /  $value['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
         } else {
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso specifico = 0]  fade=[on] fadespeed=[0.03] \"";
-        }*/
+        }
+				<input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$value['codart'].'" />*/
 		/** ENRICO FEDELE */
         echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
-				<input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$value['codart'].'" />
+				<button name="upd_row['.$key.']" class="btn btn-success btn-xs" type="submit">
+					<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
+				</button>
 			  </td>';
         //echo "<td title=\"ASASASA\" $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
         
@@ -965,7 +993,8 @@ foreach ($form['righi'] as $key => $value) {
 		  </tr>';
 	/** ENRICO FEDELE */
     }
-echo "</table>\n";
+echo '	</tbody>
+	  </table>';
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\">\n";

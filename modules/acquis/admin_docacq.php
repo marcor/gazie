@@ -920,7 +920,7 @@ require("../../library/include/header.php");
   * commentando i due script di seguito e inibendone il caricamento, rimane ancora un errore attivo, ma il caricamento della modale funziona
 */
 $script_transl = HeadMain(0,array('tiny_mce/tiny_mce',
-                                  'boxover/boxover',
+                                  /*'boxover/boxover',*/
                                   'calendarpopup/CalendarPopup',
                                   'custom/autocomplete_anagra',
                                   'custom/modal_form'
@@ -1214,9 +1214,28 @@ $quatot = 0;
 $totimpmer = 0.00;
 $totivafat = 0.00;
 $totimpfat = 0.00;
-echo "</table>\n";
-echo "<table class=\"Tlarge\">\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td><td colspan=\"2\" class=\"FacetFieldCaptionTD\">$script_transl[21]</td><td class=\"FacetFieldCaptionTD\">$script_transl[22]</td><td class=\"FacetFieldCaptionTD\">$script_transl[16]</td><td class=\"FacetFieldCaptionTD\">$script_transl[23]</td><td class=\"FacetFieldCaptionTD\">%" . substr($script_transl[24], 0, 2) . "</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[25]</td><td class=\"FacetFieldCaptionTD\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\">$script_transl[18]</td><td class=\"FacetFieldCaptionTD\"></td></tr>\n";
+
+/** ENRICO FEDELE */
+/* Cominciamo la transizione verso le tabelle bootstrap */
+echo '</table>
+	  <br />
+	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+		  <thead>
+			<tr>
+				<th class="FacetFieldCaptionTD">'.$script_transl[20].'</th>
+				<th class="FacetFieldCaptionTD" colspan="2">'.$script_transl[21].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[22].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[16].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[23].'</th>
+				<th class="FacetFieldCaptionTD">%'.substr($script_transl[24], 0, 2).'</th>
+				<th class="FacetFieldCaptionTD" align="right">'.$script_transl[25].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[19].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl[18].'</th>
+				<th class="FacetFieldCaptionTD"></th>
+			</tr>
+		   </thead>
+		   <tbody>';
+/** ENRICO FEDELE */
 $castel = array();
 foreach ($form['rows'] as $key => $value) {
     //calcolo il totale del peso in kg
@@ -1257,7 +1276,9 @@ foreach ($form['rows'] as $key => $value) {
     switch ($value['tiprig']) {
         case "0":
             echo "<tr>";
-            if (file_exists("../../data/files/fotoart/" . $value["codart"] . ".gif")) {
+			/** ENRICO FEDELE */
+			/* Tooltip */
+            /*if (file_exists("../../data/files/fotoart/" . $value["codart"] . ".gif")) {
                 $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[" . $value['annota'] . "] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/" . $value["codart"] . ".gif'>] fade=[on] fadespeed=[0.03] \"";
             } else {
                 $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$value['annota']}] body=[<center><img src='../root/view.php?table=artico&value=" . $value['codart'] . "'>] fade=[on] fadespeed=[0.03] \"";
@@ -1266,16 +1287,46 @@ foreach ($form['rows'] as $key => $value) {
                 $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[quantit&agrave; &divide; peso specifico = " . gaz_format_number($value['quanti'] / $value['pesosp']) . "]  fade=[on] fadespeed=[0.03] \"";
             } else {
                 $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso specifico = 0]  fade=[on] fadespeed=[0.03] \"";
-            }
+            }*/
+			/** ENRICO FEDELE */
+/*
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"> <input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"" . $script_transl['3'] . "!\" /> <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"" . $value['codart'] . "\" /></td>\n";
             echo "<td $boxover><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td>\n";
             if ($value['lot_or_serial'] >= 1) {
                 echo "<input type=\"image\" onclick=\"dialogLotmag(this);return false;\" href=\"#\" id=\"lotmag" . $key . "\" src=\"../../library/images/trace.png\" />\n";
             }
-            echo "</td>\n";
+            echo "</td>\n";*/
+
+        echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
+				<button name="upd_row['.$key.']" class="btn btn-success btn-xs" type="submit">
+					<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
+				</button>
+			  </td>';
+
+		echo '<td>
+			  	<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="rows['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
+			  </td>
+			  <td>
+			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!"><i class="glyphicon glyphicon-arrow-up"></i></button>
+			  </td>';
+		/* Peso */
+		$peso = 0;
+		if($value['pesosp']<>0) {
+			$peso = gaz_format_number($value['quanti']/$value['pesosp']);	
+		}
+				/*<input class="myTooltip" data-type="product" data-id="firefox" data-title=""  />*/
+		echo '<td>
+				<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="rows['.$key.'][unimis]" value="'.$value['unimis'].'" maxlength="3" size="1" />
+			  </td>
+			  <td>
+			  	<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="rows['.$key.'][quanti]" value="'.$value['quanti'].'" align="right" maxlength="11" size="4" onchange="this.form.submit();" />
+			  </td>';
+			
+			/*
             echo "<td $boxpeso><input type=\"text\" name=\"rows[{$key}][unimis]\" value=\"{$value['unimis']}\" maxlength=\"3\" size=\"1\" /></td>\n";
             echo "<td $boxpeso><input type=\"text\" name=\"rows[{$key}][quanti]\" value=\"{$value['quanti']}\" align=\"right\" maxlength=\"11\" size=\"4\" onchange=\"this.form.submit()\" />\n";
-            echo "</td>\n";
+            echo "</td>\n";*/
+			/** ENRICO FEDELE */
             echo "<td><input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"rows[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
             echo "<td align=\"right\">" . gaz_format_number($imprig) . "</td>\n";
@@ -1339,7 +1390,8 @@ foreach ($form['rows'] as $key => $value) {
 		  </tr>';
 	/** ENRICO FEDELE */
 }
-echo "</table>\n";
+echo '	</tbody>
+	  </table>';
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
 echo "<table class=\"Tlarge\">\n";
 echo "<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\">\n";

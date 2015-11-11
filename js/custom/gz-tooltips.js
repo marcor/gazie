@@ -24,6 +24,7 @@ this.gazieTooltip = function(){
 	$('.gazie-tooltip').tooltip(
 		{html:true,
 		 placement:'bottom',
+		 delay: {show: 50},
 		 title:function(){
 			   var codeDtls = this.getAttribute('data-type');
 				if(codeDtls=="product-thumb") {
