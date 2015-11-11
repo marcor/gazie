@@ -92,10 +92,10 @@ function confirMail(link){
       show: "blind",
       hide: "explode",
          buttons: {
-                      " '.$script_transl['submit'].' ": function() {
+                      " <?php echo $script_transl['submit']; ?> ": function() {
                          window.location.href = targetUrl;
                       },
-                      " '.$script_transl['cancel'].' ": function() {
+                      " <?php echo $script_transl['cancel']; ?> ": function() {
                         $(this).dialog("close");
                       }
                   }
