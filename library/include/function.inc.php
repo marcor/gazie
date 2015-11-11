@@ -1817,7 +1817,7 @@ class Schedule {
                }
             }
             if (count($acc[$k]) == 0) {
-               $acc[$k][] = array('id' => $r['id'], 'op_val' => 0, 'expiry' => 0, 'cl_val' => $r['amount'], 'cl_exp' => $r['expiry'], 'expo_day' => 0, 'status' => 9, 'op_id_rig' => 0, 'cl_rig_data' => array(0 => array('id_rig' => $r['id_rig'], 'descri' => $r['descri'], 'id_tes' => $r['id_tes'])));
+               $acc[$k][] = array('id' => $r['id'], 'op_val' => 0, 'expiry' => 0, 'cl_val' => $r['amount'], 'cl_exp' => $r['expiry'], 'expo_day' => 0, 'status' => 9, 'op_id_rig' => 0, 'cl_rig_data' => array(0 => array('id_rig' => $r['id_rig'], 'descri' => $r['descri'], 'import' => $r['import'], 'id_tes' => $r['id_tes'])));
             }
          }
          $ctrl_id = $r['id_tesdoc_ref'];
