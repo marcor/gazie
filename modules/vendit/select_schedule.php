@@ -76,7 +76,6 @@ echo '		</td>
 			</td>
 		</tr>
 	  </table>
-	  </form>
 	  <br />';
 /*
 		//	Avendo eliminato il pulsante "preview, questo pezzo di tabella non serve più, e guadagnamo un pò di spazio
@@ -205,7 +204,8 @@ echo '		</td>
   } else {
      echo "<tr><td class=\"FacetDataTDred\" align=\"center\">".$script_transl['errors'][1]."</TD></TR>\n";
   }
-  echo "</table>";
+  echo "</table>
+	  </form>";
 	 /** ENRICO FEDELE */
 	 /* Chiudeva il controllo if (isset($_POST['preview'])) */
 //}
