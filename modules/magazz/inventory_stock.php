@@ -273,10 +273,10 @@ $script_transl=HeadMain(0,array(/** ENRICO FEDELE */
 	*/
 </script>
 <?php
-echo "<form method=\"POST\" name=\"maschera\">
-		<input type=\"hidden\" name=\"hidden_req\" value=\"\" />
-		<input type=\"hidden\" name=\"ritorno\" value=\"".$_POST['ritorno']."\" />
-		<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl['title'])." ". $script_transl['del'];
+echo '<form method="POST" name="maschera">
+		<input type="hidden" name="hidden_req" value="" />
+		<input type="hidden" name="ritorno" value="'.$_POST['ritorno'].'" />
+		<div align="center" class="FacetFormHeaderFont">'.ucfirst($script_transl['title']).' '. $script_transl['del'];
 		$gForm->Calendar('date',$form['date_D'],$form['date_M'],$form['date_Y'],'FacetSelect','date');
 echo 	$script_transl['catmer'];
 		$gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,false,'-','descri','catmer','FacetSelect',array('value'=>100,'descri'=>'*** '.$script_transl['all'].' ***'));
@@ -300,7 +300,8 @@ echo '	<thead>
 				<th class="FacetFieldCaptionTD" align="right">'.$script_transl['g_r'].'</th>
 				<th class="FacetFieldCaptionTD">'.$script_transl['g_v'].'</th>
 			</tr>
-		</tbody>';
+		</thead>
+		<tbody>';
 $ctrl_cm=0;
 if (isset($form['a'])) {
    $elem_n=0;
@@ -313,8 +314,8 @@ if (isset($form['a'])) {
         if ($ctrl_cm <> $v['i_g']) {
             //$cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_d']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
 			$cm_tooltip = ' class="gazie-tooltip" data-type="catmer-thumb" data-id="'.$v['i_g'].'" data-title="'.$v['g_d'].'"';
-            echo "			<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">
-						<tr>\n";
+            echo '			<input type="hidden" value="'.$v['g_d'].'" name="a['.$k.'][g_d]" />
+						<tr>';
             if ($ctrl_cm == 0) {
 									/*<input type="checkbox" class="checkAll" title="'.$script_transl['selall'].'" />&nbsp;*/
                 echo '			<td>
@@ -334,60 +335,62 @@ if (isset($form['a'])) {
 						</tr>';
         }
 
-        echo "		<input type=\"hidden\" value=\"".$v['i_a']."\" name=\"a[$k][i_a]\">
-					<input type=\"hidden\" value=\"".$v['col']."\" name=\"a[$k][col]\">
-					<input type=\"hidden\" value=\"".$v['i_g']."\" name=\"a[$k][i_g]\">
-					<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">
-					<input type=\"hidden\" value=\"".$v['i_d']."\" name=\"a[$k][i_d]\">
-					<input type=\"hidden\" value=\"".$v['i_u']."\" name=\"a[$k][i_u]\">
-					<input type=\"hidden\" value=\"".$v['v_a']."\" name=\"a[$k][v_a]\">
-					<input type=\"hidden\" value=\"".$v['v_r']."\" name=\"a[$k][v_r]\">
-					<input type=\"hidden\" value=\"".$v['g_a']."\" name=\"a[$k][g_a]\">
-					<input type=\"hidden\" value=\"".$v['v_g']."\" name=\"a[$k][v_g]\">
+        echo '		<input type="hidden" value="'.$v['i_a'].'" name="a['.$k.'][i_a]" />
+					<input type="hidden" value="'.$v['col'].'" name="a['.$k.'][col]" />
+					<input type="hidden" value="'.$v['i_g'].'" name="a['.$k.'][i_g]" />
+					<input type="hidden" value="'.$v['g_d'].'" name="a['.$k.'][g_d]" />
+					<input type="hidden" value="'.$v['i_d'].'" name="a['.$k.'][i_d]" />
+					<input type="hidden" value="'.$v['i_u'].'" name="a['.$k.'][i_u]" />
+					<input type="hidden" value="'.$v['v_a'].'" name="a['.$k.'][v_a]" />
+					<input type="hidden" value="'.$v['v_r'].'" name="a['.$k.'][v_r]" />
+					<input type="hidden" value="'.$v['g_a'].'" name="a['.$k.'][g_a]" />
+					<input type="hidden" value="'.$v['v_g'].'" name="a['.$k.'][v_g]" />
 					<tr>
-						<td class=\"FacetFieldCaptionTD\" align=\"center\">
-							<input class=\"jq_chk\" name=\"chk$k\" ".$form['chk_on'.$k]." type=\"checkbox\" />
+						<td class="FacetFieldCaptionTD" align="center">
+							<input class="jq_chk" name="chk'.$k.'" '.$form['chk_on'.$k].' type="checkbox" />
 						</td>
-						<td $class align=\"left\"><span ".$tooltip.">".$k."</span></td>
-						<td $class align=\"left\"><span ".$tooltip.">".$v['i_d']."</span></td>
-						<td $class align=\"center\">".$v['i_u']."</td>
-						<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price'])."</td>
-						<td $class align=\"right\">
-							<input id=\"vac$k\" name=\"vac$k\" ".$form['vac_on'.$k]." onClick=\"toggle('vac$k', 'a[$k][v_r]')\" type=\"checkbox\" />
-							<input type=\"text\" size=\"10\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" id=\"a[$k][v_r]\" name=\"a[$k][v_r]\" value=\"".gaz_format_quantity($v['v_r'],0,$admin_aziend['decimal_price'])."\" disabled=\"disabled\" />
+						<td '.$class.' align="left"><span '.$tooltip.'>'.$k.'</span></td>
+						<td '.$class.' align="left"><span '.$tooltip.'>'.$v['i_d'].'</span></td>
+						<td '.$class.' align="center">'.$v['i_u'].'</td>
+						<td '.$class.' align="center" align="right">'.gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price']).'</td>
+						<td '.$class.' align="right">
+							<input id="vac'.$k.'" name="vac'.$k.'" '.$form['vac_on'.$k].' onClick="toggle(\'vac'.$k.'\', \'a['.$k.'][v_r]\')" type="checkbox" />
+							<input type="text" size="10" style="text-align:right" onchange="document.maschera.chk'.$k.'.checked=true" id="a['.$k.'][v_r]" name="a['.$k.'][v_r]" value="'.gaz_format_quantity($v['v_r'],0,$admin_aziend['decimal_price']).'" disabled="disabled" />
 						</td>
-						<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'])."</td>
-						<td $class align=\"right\"><input type=\"text\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" name=\"a[$k][g_r]\" value=\"".$v['g_r']."\"></td>
-						<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_g'],0,$admin_aziend['decimal_price'])."</td>
-					</tr>\n";
+						<td '.$class.' align="center" align="right">'.gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity']).'</td>
+						<td '.$class.' align="right">
+							<input type="text" style="text-align:right" onchange="document.maschera.chk'.$k.'.checked=true" name="a['.$k.'][g_r]" value="'.$v['g_r'].'">
+						</td>
+						<td '.$class.' align="center" align="right">'.gaz_format_quantity($v['v_g'],0,$admin_aziend['decimal_price']).'</td>
+					</tr>';
         $ctrl_cm = $v['i_g'];
         $elem_n++;
    }
-   echo "		<tr>
-   					<td colspan=\"2\" class=\"FacetFieldCaptionTD\">
-						<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">
+   echo '		<tr>
+   					<td colspan="2" class="FacetFieldCaptionTD">
+						<input type="submit" name="Return" value="'.$script_transl['return'].'" />
 					</td>
-					<td align=\"center\" colspan=\"6\" class=\"FacetFooterTD\">
-						<input type=\"submit\" name=\"preview\" value=\"".$script_transl['view']."!\">
+					<td align="center" colspan="6" class="FacetFooterTD">
+						<input type="submit" name="preview" value="'.$script_transl['view'].'!\" />
 					</td>
-					<td align=\"center\" class=\"FacetFormHeaderFont\">Tot. ".gaz_format_number($tot_val_giac)."</td>
-				</tr>\n";
+					<td align="center" class="FacetFormHeaderFont">Tot. '.gaz_format_number($tot_val_giac).'</td>
+				</tr>';
    if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
-       echo "	</table>
-	   			<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
+       echo '	</table>
+	   			<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 					<tr>
-	   					<td colspan=\"8\" class=\"FacetFormHeaderFont\">".$script_transl['preview_title']."</td>
+	   					<td colspan="8" class="FacetFormHeaderFont">'.$script_transl['preview_title'].'</td>
 					</tr>
 					<tr>
-	   					<td class=\"FacetFieldCaptionTD\"></td>
-						<td class=\"FacetFieldCaptionTD\">".$script_transl['code']."</td>
-						<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>
-						<td class=\"FacetFieldCaptionTD\">".$script_transl['mu']."</td>
-						<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['load']."</td>
-						<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['unload']."</td>
-						<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['v_r']."</td>
-						<td class=\"FacetFieldCaptionTD\">".$script_transl['value']."</td>
-					</tr>\n";
+	   					<td class="FacetFieldCaptionTD"></td>
+						<td class="FacetFieldCaptionTD">'.$script_transl['code'].'</td>
+						<td class="FacetFieldCaptionTD">'.$script_transl['descri'].'</td>
+						<td class="FacetFieldCaptionTD">'.$script_transl['mu'].'</td>
+						<td class="FacetFieldCaptionTD" align="right">'.$script_transl['load'].'</td>
+						<td class="FacetFieldCaptionTD" align="right">'.$script_transl['unload'].'</td>
+						<td class="FacetFieldCaptionTD" align="right">'.$script_transl['v_r'].'</td>
+						<td class="FacetFieldCaptionTD">'.$script_transl['value'].'</td>
+					</tr>';
        foreach ($form['a'] as $k=>$v) { // ciclo delle singole righe (a)
          if ($form['chk_on'.$k] == ' checked ') {   // e' un rigo da movimentare
            $load='';
@@ -395,41 +398,41 @@ if (isset($form['a'])) {
            if ($v['g_a']>$v['g_r']) { // in caso di giacenza reale minore
              // devo fare prima uno storno per scaricare
              $mq=$v['g_a']-$v['g_r'];
-             echo "		<tr>
-			 				<td class=\"FacetDataTD\">98-".$cau98['descri']."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$k."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>
-							<td class=\"FacetDataTD\"></td>
-							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity'])."</td>
-							<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>
-							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price'])."</td>
-						</tr>\n";
+             echo '		<tr>
+			 				<td class="FacetDataTD">98-'.$cau98['descri'].'</td>
+							<td class="FacetDataTD" align="left">'.$k.'</td>
+							<td class="FacetDataTD" align="left">'.$v['i_d'].'</td>
+							<td class="FacetDataTD" align="left">'.$v['i_u'].'</td>
+							<td class="FacetDataTD"></td>
+							<td class="FacetDataTD" align="right">'.gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity']).'</td>
+							<td class="FacetDataTD" align="right">'.$v['v_r'].'</td>
+							<td class="FacetDataTD" align="right">'.gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price']).'</td>
+						</tr>';
 
            } elseif ($v['g_a']<$v['g_r']) { // se maggiore carico
              // devo fare prima uno storno per caricare
              $mq=$v['g_r']-$v['g_a'];
-             echo "		<tr>
-			 				<td class=\"FacetDataTD\">98-".$cau98['descri']."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$k."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>
-							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity'])."</td>
-							<td class=\"FacetDataTD\"></td>
-							<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>
-							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price'])."</td>
-						</tr>\n";
+             echo '		<tr>
+			 				<td class="FacetDataTD">98-'.$cau98['descri'].'</td>
+							<td class="FacetDataTD" align="left">'.$k.'</td>
+							<td class="FacetDataTD" align="left">'.$v['i_d'].'</td>
+							<td class="FacetDataTD" align="left">'.$v['i_u'].'</td>
+							<td class="FacetDataTD" align="right">'.gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity']).'</td>
+							<td class="FacetDataTD"></td>
+							<td class="FacetDataTD" align="right">'.$v['v_r'].'</td>
+							<td class="FacetDataTD" align="right">'.gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price']).'</td>
+						</tr>';
            }
-           echo "		<tr>
-							<td class=\"FacetDataTD\">99-".$cau99['descri']."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$k."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>
-							<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>
-							<td class=\"FacetDataTD\" align=\"right\">".$v['g_r']."</td>
-							<td class=\"FacetDataTD\"></td>
-							<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>
-							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$v['g_r'],0,$admin_aziend['decimal_price'])."</td>
-						</tr>\n";
+           echo '		<tr>
+							<td class="FacetDataTD">99-'.$cau99['descri'].'</td>
+							<td class="FacetDataTD" align="left">'.$k.'</td>
+							<td class="FacetDataTD" align="left">'.$v['i_d'].'</td>
+							<td class="FacetDataTD" align="left">'.$v['i_u'].'</td>
+							<td class="FacetDataTD" align="right">'.$v['g_r'].'</td>
+							<td class="FacetDataTD"></td>
+							<td class="FacetDataTD" align="right">'.$v['v_r'].'</td>
+							<td class="FacetDataTD" align="right">'.gaz_format_quantity($v['v_r']*$v['g_r'],0,$admin_aziend['decimal_price']).'</td>
+						</tr>';
          }
        }
        echo '		<tr>

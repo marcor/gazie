@@ -745,6 +745,7 @@ input.input-xs {
     cursor: inherit;
     display: block;
 }
+/* fine stile per il pulsante di tipo file */
 .navbar-brand > img {display:inline;}
 
 input[type="text"]:focus, textarea:focus, select:focus {
@@ -752,5 +753,4 @@ input[type="text"]:focus, textarea:focus, select:focus {
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(26, 77, 25, 0.6);
     outline: 0 none;
 }
-/* fine stile per il pulsante di tipo file */
 /** ENRICO FEDELE */
