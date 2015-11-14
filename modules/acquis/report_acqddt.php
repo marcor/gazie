@@ -71,8 +71,16 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\">".$a_row["datemi"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$cliente["ragso1"]."&nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$a_row["status"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\"><a href=\"stampa_docacq.php?id_tes=".$a_row["id_tes"]."\"><center><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
-    echo "<td class=\"FacetDataTD\"><a href=\"delete_docacq.php?id_tes=".$a_row["id_tes"]."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\">
+			<a class=\"btn btn-xs btn-default\" href=\"stampa_docacq.php?id_tes=".$a_row["id_tes"]."\" title=\"Stampa\">
+				<i class=\"glyphicon glyphicon-print\"></i>
+			</a>
+		  </td>
+		  <td class=\"FacetDataTD\">
+		  	<a class=\"btn btn-xs btn-default\" href=\"delete_docacq.php?id_tes=".$a_row["id_tes"]."\" title=\"Cancella\">
+				<i class=\"glyphicon glyphicon-remove\"></i>
+			</a>
+		  </td>";
     echo "</tr>";
 }
 ?>

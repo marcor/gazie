@@ -242,7 +242,8 @@ $strScript = array("admin_client.php" =>
         'da_fatturare_title' => 'Indica se il DDT deve essere fatturato automaticamente',
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
         'da_fatturare_value' => array(0 => 'No', 1 => 'Yes'),
-        'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search'
+        'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search',
+		'weight' => 'peso'
     ),
     "select_docforprint.php" =>
     array(array(1 => "D.d.T. de venta", 2 => "Factura diferida", 3 => "Factura inmediata que acompa&ntilde;a", 4 => "Factura inmediata simple", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),
@@ -342,6 +343,7 @@ $strScript = array("admin_client.php" =>
         'taxstamp' => 'Taxstamp',
         'virtual_taxstamp' => 'Mode',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Material', 2 => 'Virtual'),
+		'weight' => 'peso'
     ),
     "report_contract.php" =>
     array('title' => 'Reporte de los contratos concluidos',
@@ -484,7 +486,10 @@ $strScript = array("admin_client.php" =>
         'vat_constrain' => '(forza) IVA al ',
         'taxstamp' => 'Bollo',
         'virtual_taxstamp' => 'Modo',
-        'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale')
+        'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'), 
+	    /** ENRICO FEDELE */
+	    'add_article' => 'Añadir un nuevo artículo',
+		'weight' => 'peso'
     ),
     "genera_effett.php" =>
     array('title' => 'Generar los efectos de los documentos tributables',

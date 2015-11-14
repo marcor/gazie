@@ -140,7 +140,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">".$form['id_doc']."</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">File : </td>\n";
-echo "\t<td class=\"FacetDataTD\"><a href=\"../root/retrieve.php?id_doc=".$form["id_doc"]."\"><img src=\"../../library/images/vis.gif\" title=\"".$script_transl['view']."!\" border=\"0\"> ".DATA_DIR."files/".$form['id_doc'].".".$form['extension']."</a></td>\n";
+echo "\t<td class=\"FacetDataTD\">
+			<a class=\"btn btn-xs btn-default\" href=\"../root/retrieve.php?id_doc=".$form["id_doc"]."\" title=\"".$script_transl['view']."!\">
+				<i class=\"glyphicon glyphicon-eye-open\"></i>&nbsp;".DATA_DIR."files/".$form['id_doc'].".".$form['extension']."
+			</a>
+		</td>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['update']." :  <input name=\"userfile\" type=\"file\"> </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

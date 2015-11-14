@@ -1367,7 +1367,9 @@ if ($toDo == 'insert') {
                     $gForm->lockSubtoMaster($form["mastro_rc"][$i], 'conto_rc' . $i);
                     $gForm->sub_Account('conto_rc' . $i, $form['conto_rc' . $i], $form['search']['conto_rc' . $i], $form['hidden_req'], $script_transl['mesg']);
                     if (!preg_match("/^id_([0-9]+)$/", $form['conto_rc' . $i], $match)) { // non è un partner da inserire sul piano dei conti
-                        echo "<a href=\"select_partit.php?id=" . $form['conto_rc' . $i] . "\" target=\"_new\"> <img src=\"../../library/images/vis.gif\" title=\"" . $script_transl['visacc'] . "\" border=\"0\"> </a>\n";
+                        echo '<a class="btn btn-xs btn-default" href="select_partit.php?id='.$form['conto_rc' . $i].'" title="'.$script_transl['visacc'].'" target="_new">
+								<i class="glyphicon glyphicon-eye-open"></i>
+							  </a>';
                     }
                     echo "</td>\n";
 

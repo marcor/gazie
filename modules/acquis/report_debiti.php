@@ -129,8 +129,19 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['dare'])." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\" align=\"center\" title=\"".$script_transl['pay_title'].$r['ragso1']."\"><a href=\"salcon_debiti.php?codice=".$r["codcon"]."\"><img src=\"../../library/images/pay.gif\"\" border=\"0\"></a></td>";
-         echo "<td class=\"FacetDataTD\" align=\"center\" title=\"".$script_transl['statement_title'].$r['ragso1']."\"><a href=\"../contab/select_partit.php?id=".$r['codcon']."&yi=".$annini."&yf=".$annfin."\"><img src=\"../../library/images/vis.gif\" border=\"0\"><img src=\"../../library/images/stampa.gif\" border=\"0\"></a></td>";
+         echo "<td class=\"FacetDataTD\" align=\"center\" title=\"".$script_transl['pay_title'].$r['ragso1']."\">
+		 		<a class=\"btn btn-xs btn-default\" href=\"salcon_debiti.php?codice=".$r["codcon"]."\">
+					<i class=\"glyphicon glyphicon-piggy-bank\"></i>
+				</a>
+			</td>";
+         
+			/** ENRICO FEDELE */
+		 echo "<td class=\"FacetDataTD\" align=\"center\" title=\"".$script_transl['statement_title'].$r['ragso1']."\">
+		 		<a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r['codcon']."&yi=".$annini."&yf=".$annfin."\">
+					<i class=\"glyphicon glyphicon-eye-open\"></i>
+					<i class=\"glyphicon glyphicon-print\"></i>
+				</a>
+			  </td>";
          echo "</tr>\n";
          $tot += $r['saldo'];
       }

@@ -655,7 +655,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
 }
 
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array('boxover/boxover',
+$script_transl=HeadMain(0,array(/*'boxover/boxover',*/
                                   'calendarpopup/CalendarPopup',
                                   /** ENRICO FEDELE */
 								  /*'jquery/jquery-1.7.1.min',
@@ -666,7 +666,7 @@ $script_transl=HeadMain(0,array('boxover/boxover',
 								  /** ENRICO FEDELE */
                                   'custom/autocomplete_anagra'));
 ?>
-<SCRIPT LANGUAGE="JavaScript">
+<script type="text/javascript">
 function pulldown_menu(selectName, destField)
 {
     // Create a variable url to contain the value of the
@@ -707,15 +707,24 @@ function sconta(percsconto)
 }
 
 </script>
-<SCRIPT LANGUAGE="JavaScript" ID="datapopup">
-var cal = new CalendarPopup();
-cal.setReturnFunction("setMultipleValues");
-function setMultipleValues(y,m,d) {
-  document.myform.initra_Y.value=y;
-  document.myform.initra_M.value=LZ(m);
-  document.myform.initra_D.value=LZ(d);
-  }
-</SCRIPT>
+<script type="text/javascript" id="datapopup">
+	var cal = new CalendarPopup();
+	cal.setReturnFunction("setMultipleValues");
+	function setMultipleValues(y,m,d) {
+		document.getElementById(calName+'_Y').value=y;
+		document.getElementById(calName+'_M').selectedIndex=m*1-1;
+		document.getElementById(calName+'_D').selectedIndex=d*1-1;
+	}
+	function setDate(name) {
+		calName = name.toString();
+		var year = document.getElementById(calName+'_Y').value.toString();
+		var month = document.getElementById(calName+'_M').value.toString();
+		var day = document.getElementById(calName+'_D').value.toString();
+		var mdy = month+'/'+day+'/'+year;
+		cal.setReturnFunction('setMultipleValues');
+		cal.showCalendar('anchor', mdy);
+	}
+</script>
 <form method="POST" name="myform">
 <?php
 $gForm = new venditForm();

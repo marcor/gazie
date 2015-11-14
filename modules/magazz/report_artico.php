@@ -69,9 +69,11 @@ if (!isset($_GET['auxil'])) {
 
 $recordnav   = new recordnav($gTables['artico'], $where, $limit, $passo);
 $recordnav   -> output();
+/** ENRICO FEDELE */
+/* pulizia del codice, eliminato boxover, aggiunte classi bootstrap alla tabella, convertite immagini in glyphicons */
 ?>
 <form method="GET">
-    <table class="TlargeTlarge table table-striped table-bordered table-condensed table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <thead>
             <tr>
                 <th class="FacetFieldCaptionTD" colspan="2"><?php echo $search_field_Array[$admin_aziend['artsea']][1]; ?>:
@@ -139,8 +141,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
        $iva = gaz_dbi_get_row($gTables['aliiva'],"codice",$r["aliiva"]);
        echo '<tr>
 	   			<td class="FacetDataTD">
-					<a class="btn btn-xs btn-block btn-success " href="admin_artico.php?codice='.$r["codice"].'&amp;Update">
-						'.$r["codice"].'
+					<a class="btn btn-xs btn-success btn-block" href="admin_artico.php?codice='.$r["codice"].'&amp;Update">
+						<i class="glyphicon glyphicon-edit"></i>&nbsp;'.$r["codice"].'
 					</a>
 				</td>';
        ?>

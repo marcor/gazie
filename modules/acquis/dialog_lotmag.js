@@ -15,8 +15,8 @@ function dialogLotmag(lotmag) {
 			'<td class="ui-widget ui-widget-content " >ID lotto </td>' +
 			'<td class="ui-widget ui-widget-content " >Scadenza</td>' +
 			'<td class="ui-widget-right ui-widget-content ">Importo</td>' + 
-			'<td class="ui-widget-right ui-widget-content "><button id="addOpenExpiry'+ nrow + '" value="' + nrow +'">'+
-			'<img src="../../library/images/add.png" /></button></td></tr></tbody>');
+			'<td class="ui-widget-right ui-widget-content "><button id="addOpenExpiry'+ nrow + '" value="' + nrow +'" class="btn btn-xs btn-default">'+
+			'<i class="glyphicon glyphicon-plus"></i></button></td></tr></tbody>');
     }
     
     function updateOpenForm() {
@@ -74,7 +74,7 @@ function dialogLotmag(lotmag) {
                 $.each(data, function(i,value){
 					if(j==0){
 						if (link){
-							link_ref = '<button id="linking_same_'+ j +'"><img src="../../library/images/link.png" width="12"/></button>';
+							link_ref = '<button id="linking_same_'+ j +'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button>';
 						};
 						$( "#db-contain" + nrow + " tbody").append( "<tr>" +
 						"<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa lotto ' + tes_ref + ' ' + link_ref + "</td></tr>");
@@ -86,7 +86,7 @@ function dialogLotmag(lotmag) {
                     "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                     "<td" + ' class="ui-widget-right ui-widget-content " >' + value.id_doc + "</td>" +
                      '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
-                     '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
+                     '<td class="ui-widget-right ui-widget-content "><a target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i></a></td>' +
                      "</tr>" );
                     
                     $( "#linking_same_" + j).click(function() {
@@ -115,7 +115,7 @@ function dialogLotmag(lotmag) {
 					};
 					
 					if (link){
-						link_ref = '<button id="linking_'+j+'"><img src="../../library/images/link.png" width="12"/></button>';
+						link_ref = '<button id="linking_'+j+'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button>';
 					};
 					
                     $( "#db-contain" + nrow + " tbody").append( "<tr>" +
@@ -125,7 +125,7 @@ function dialogLotmag(lotmag) {
                        "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                        "<td" + ' class="ui-widget-right ui-widget-content " >' + value.id_doc + "</td>" +
                         '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
-                        '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
+                        '<td class="ui-widget-right ui-widget-content "><a target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i></a></td>' +
                         "</tr>" );
                     
 						$( "#linking_" + j).click(function() { 

@@ -37,6 +37,10 @@ this.gzTooltip = function(){
 				   codeDtls='<img src="../root/view.php?table=catmer&value='+this.getAttribute('data-id')+'" onerror="this.src=\'../../library/images/link_break.png\'" alt="'+this.getAttribute('data-title')+'" />';
 				   return codeDtls;
 				
+				} else if(codeDtls=="ragstat-thumb") {
+				   codeDtls='<img src="../root/view.php?table=ragstat&value='+this.getAttribute('data-id')+'" onerror="this.src=\'../../library/images/link_break.png\'" alt="'+this.getAttribute('data-title')+'" />';
+				   return codeDtls;
+				
 				}
 		}
 	});

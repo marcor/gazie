@@ -20,8 +20,8 @@ function dialogSchedule(paymov) {
 			'<td class="ui-widget ui-widget-content " >ID partita </td>' +
 			'<td class="ui-widget ui-widget-content " >Data Chiusura</td>' +
 			'<td class="ui-widget-right ui-widget-content ">Importo</td>' + 
-			'<td class="ui-widget-right ui-widget-content "><button id="addCloseExpiry'+ nrow + '" value="' + nrow +'">'+
-			'<img src="../../library/images/add.png" /></button></td></tr></tbody>');
+			'<td class="ui-widget-right ui-widget-content "><button id="addCloseExpiry'+ nrow + '" value="' + nrow +'" class="btn btn-xs btn-default">'+
+			'<i class="glyphicon glyphicon-plus"></i></button></td></tr></tbody>');
     }
     
     //ridisegno tutta la table tranne la prima riga
@@ -47,7 +47,7 @@ function dialogSchedule(paymov) {
 			'<td><button id="unlink_' + id_sub + '"><img id="image_unlink_' + id_sub + '" src="../../library/images/link_break.png" width="12" /></button> ' + id +'</td>'+
 			'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
 			'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
-			'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
+			'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-remove"></i></button></td>' +
 			'</tr>' );
 		
 		$('#form_' + nrow + '_' + id_sub + '_expiry' ).change(function(){
@@ -87,8 +87,8 @@ function dialogSchedule(paymov) {
 			'<td class="ui-widget ui-widget-content " >ID partita </td>' +
 			'<td class="ui-widget ui-widget-content " >Scadenza</td>' +
 			'<td class="ui-widget-right ui-widget-content ">Importo</td>' + 
-			'<td class="ui-widget-right ui-widget-content "><button id="addOpenExpiry'+ nrow + '" value="' + nrow +'">'+
-			'<img src="../../library/images/add.png" /></button></td></tr></tbody>');
+			'<td class="ui-widget-right ui-widget-content "><button id="addOpenExpiry'+ nrow + '" value="' + nrow +'" class="btn btn-xs btn-default">'+
+			'<i class="glyphicon glyphicon-plus"></i></button></td></tr></tbody>');
     }
     
     function updateOpenForm() {
@@ -112,7 +112,7 @@ function dialogSchedule(paymov) {
 			'<td>' + id +'</td>'+
 			'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
 			'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
-			'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '"><img src="../../library/images/x.gif" /></button></td>' +
+			'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-remove"></i></button></td>' +
 			"</tr>" );
 		
 		$('#form_' + nrow + '_' + id_sub + '_expiry' ).change(function(){
@@ -147,7 +147,7 @@ function dialogSchedule(paymov) {
                 $.each(data, function(i,value){
 					if(j==0){
 						if (link){
-							link_ref = '<button id="linking_same_'+ j +'"><img src="../../library/images/link.png" width="12"/></button>';
+							link_ref = '<button id="linking_same_'+ j +'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button>';
 						};
 						$( "#db-contain" + nrow + " tbody").append( "<tr>" +
 						"<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti della stessa partita ' + tes_ref + ' ' + link_ref + "</td></tr>");
@@ -159,7 +159,7 @@ function dialogSchedule(paymov) {
                     "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                     "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
                      '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
-                     '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
+                     '<td class="ui-widget-right ui-widget-content "><a target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"> class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i></a></td>' +
                      "</tr>" );
                     
                     $( "#linking_same_" + j).click(function() {
@@ -189,7 +189,7 @@ function dialogSchedule(paymov) {
 					};
 					
 					if (link){
-						link_ref = '<button id="linking_'+j+'"><img src="../../library/images/link.png" width="12"/></button>';
+						link_ref = '<button id="linking_'+j+'" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button>';
 					};
 					
                     $( "#db-contain" + nrow + " tbody").append( "<tr>" +
@@ -199,7 +199,7 @@ function dialogSchedule(paymov) {
                        "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                        "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
                         '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
-                        '<td class="ui-widget-right ui-widget-content "><A target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><img src="../../library/images/new.png" width="12"/></A></td>' +
+                        '<td class="ui-widget-right ui-widget-content "><a target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i></a></td>' +
                         "</tr>" );
                     
 						$( "#linking_" + j).click(function() { 

@@ -422,7 +422,9 @@ if ($modal_ok_insert === true) {
 					<tr class="FacetFieldCaptionTD">
 						<td>".DATA_DIR."files/' . $val['id_doc'] . '.' . $val['extension'] . '</td>
 						<td>
-							<a href="../root/retrieve.php?id_doc=' . $val["id_doc"] . '"><img src="../../library/images/doc.png" title="' . $script_transl['view'] . '!" border="0" /></a>
+							<a href="../root/retrieve.php?id_doc=' . $val["id_doc"] . '" title="'.$script_transl['view'].'!" class="btn btn-default btn-sm">
+								<i class="glyphicon glyphicon-file"></i>
+							</a>
 						</td>
 						<td>' . $val['title'] . '</td>
 						<td align="right" >

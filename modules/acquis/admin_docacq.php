@@ -1157,7 +1157,7 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (no
 }
 echo "</td></tr></table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_pervat']}\" name=\"in_pervat\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" />\n";
@@ -1188,7 +1188,7 @@ echo "</select>\n";
 /* Aggiunto link per finestra modale aggiunta articolo */
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> '.$script_transl['add_article'].'</a>';
 /** ENRICO FEDELE */
-echo "</TD><TD class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
+echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 /*
 echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"" . $script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";*/
 /** ENRICO FEDELE */
@@ -1298,7 +1298,7 @@ foreach ($form['rows'] as $key => $value) {
             echo "</td>\n";*/
 
         echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
-				<button name="upd_row['.$key.']" class="btn btn-success btn-xs" type="submit">
+				<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
 					<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
 				</button>
 			  </td>';
@@ -1307,7 +1307,9 @@ foreach ($form['rows'] as $key => $value) {
 			  	<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="rows['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
 			  </td>
 			  <td>
-			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!"><i class="glyphicon glyphicon-arrow-up"></i></button>
+			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">
+					<i class="glyphicon glyphicon-arrow-up"></i>
+				</button>
 			  </td>';
 		/* Peso */
 		$peso = 0;
@@ -1335,7 +1337,12 @@ foreach ($form['rows'] as $key => $value) {
             break;
         case "1":
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" /></td>\n";
-            echo "<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"" . $script_transl['3'] . "!\" /></td>\n";
+            echo "	<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
+					<td>
+						<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";
@@ -1346,7 +1353,14 @@ foreach ($form['rows'] as $key => $value) {
             break;
         case "2":
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" /></td>\n";
-            echo "<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"" . $script_transl['3'] . "!\" /></td>\n";
+            echo "	<td>
+						<input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" />
+					</td>
+					<td>
+						<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][prelis]\" value=\"\" /></td>\n";
@@ -1357,7 +1371,12 @@ foreach ($form['rows'] as $key => $value) {
             break;
         case "3":
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" /></td>\n";
-            echo "<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"" . $script_transl['3'] . "!\" /></td>\n";
+            echo "	<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td>
+					<td>
+						<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>\n";

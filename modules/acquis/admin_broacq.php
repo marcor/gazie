@@ -769,7 +769,7 @@ $select_banapp -> output();
 echo "</td></tr>\n";
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_pervat']}\" name=\"in_pervat\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_unimis']}\" name=\"in_unimis\" />\n";
@@ -826,11 +826,11 @@ $select_codric = new selectconven("in_codric");
 $select_codric -> addSelected($form['in_codric']);
 $select_codric -> output(substr($form['in_codric'],0,1));
 echo " %$script_transl[24]: <input type=\"text\" value=\"{$form['in_sconto']}\" maxlength=\"4\" size=\"1\" name=\"in_sconto\">";
-echo "</TD><TD class=\"FacetColumnTD\"> $script_transl[19]: ";
+echo "</td><td class=\"FacetColumnTD\"> $script_transl[19]: ";
 $select_in_codvat = new selectaliiva("in_codvat");
 $select_in_codvat -> addSelected($form["in_codvat"]);
 $select_in_codvat -> output();
-echo "</td><TD class=\"FacetColumnTD\"></TD></tr>\n";
+echo "</td><td class=\"FacetColumnTD\"></TD></tr>\n";
 $quatot= 0;
 $totimpmer=0.00;
 $totivafat=0.00;
@@ -916,7 +916,7 @@ foreach ($form['righi'] as $key => $value) {
 				<input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$value['codart'].'" />*/
 		/** ENRICO FEDELE */
         echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
-				<button name="upd_row['.$key.']" class="btn btn-success btn-xs" type="submit">
+				<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
 					<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
 				</button>
 			  </td>';
@@ -953,7 +953,12 @@ foreach ($form['righi'] as $key => $value) {
         break;
         case "1":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "	<td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
+				<td>
+					<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+						<i class=\"glyphicon glyphicon-arrow-up\"></i>
+					</button>
+				</td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
@@ -964,7 +969,12 @@ foreach ($form['righi'] as $key => $value) {
         break;
         case "2":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
+				<td>
+					<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+						<i class=\"glyphicon glyphicon-arrow-up\"></i>
+					</button>
+				</td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][prelis]\" value=\"\" /></td>\n";
@@ -975,7 +985,12 @@ foreach ($form['righi'] as $key => $value) {
         break;
         case "3":
         echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" /></td>\n";
-        echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td>
+				<td>
+					<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+						<i class=\"glyphicon glyphicon-arrow-up\"></i>
+					</button>
+				</td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
         echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";

@@ -1034,8 +1034,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
    $cliente['indspe'] = "";
 }
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('tiny_mce/tiny_mce',
-    'boxover/boxover',
+require("./lang.".$admin_aziend['lang'].".php");
+$script_transl = $strScript["admin_broven.php"]+HeadMain(0, array('tiny_mce/tiny_mce',
+    /*'boxover/boxover',*/
     'calendarpopup/CalendarPopup',
     'custom/autocomplete_anagra',
     'custom/miojs'
@@ -1213,46 +1214,53 @@ echo "<td  class=\"FacetDataTD\">\n";
 $select_agente = new selectAgente("id_agente");
 $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
-echo "</td></tr></table>\n";
-echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
-echo "<table class=\"Tlarge\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_descri'] . "\" name=\"in_descri\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_pervat'] . "\" name=\"in_pervat\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_tipiva'] . "\" name=\"in_tipiva\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_ritenuta'] . "\" name=\"in_ritenuta\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_unimis'] . "\" name=\"in_unimis\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_prelis'] . "\" name=\"in_prelis\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_id_mag'] . "\" name=\"in_id_mag\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_id_doc'] . "\" name=\"in_id_doc\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_annota'] . "\" name=\"in_annota\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_scorta'] . "\" name=\"in_scorta\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_pesosp'] . "\" name=\"in_pesosp\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['in_status'] . "\" name=\"in_status\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
-echo "<tr><td class=\"FacetColumnTD\">$script_transl[15]: ";
+echo '		</td>
+		</tr>
+	  </table>
+	  <div class="FacetSeparatorTD" align="center">'.$script_transl[1].'</div>
+	  <input type="hidden" value="'.$form['in_descri'] . '" name="in_descri" />
+	  <input type="hidden" value="'.$form['in_pervat'] . '" name="in_pervat" />
+	  <input type="hidden" value="'.$form['in_tipiva'] . '" name="in_tipiva" />
+	  <input type="hidden" value="'.$form['in_ritenuta'].'" name="in_ritenuta" />
+	  <input type="hidden" value="'.$form['in_unimis'] . '" name="in_unimis" />
+	  <input type="hidden" value="'.$form['in_prelis'] . '" name="in_prelis" />
+	  <input type="hidden" value="'.$form['in_id_mag'] . '" name="in_id_mag" />
+	  <input type="hidden" value="'.$form['in_id_doc'] . '" name="in_id_doc" />
+	  <input type="hidden" value="'.$form['in_annota'] . '" name="in_annota" />
+	  <input type="hidden" value="'.$form['in_scorta'] . '" name="in_scorta" />
+	  <input type="hidden" value="'.$form['in_pesosp'] . '" name="in_pesosp" />
+	  <input type="hidden" value="'.$form['in_status'] . '" name="in_status" />
+	  <input type="hidden" value="'.$form['hidden_req'] .'" name="hidden_req" />
+	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	  	<tr>
+			<td class="FacetColumnTD">'.$script_transl[15].':&nbsp;';
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 $select_artico->output($form['cosear'], $form['in_artsea']);
-echo "ricerca per <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
+echo 'ricerca per <select name="in_artsea" class="FacetDataTDsmall">';
 $selArray = array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione');
 foreach ($selArray as $k => $v) {
    $selected = "";
    if (isset($form["in_artsea"]) and $form["in_artsea"] == $k) {
       $selected = " selected ";
    }
-   echo "<option value=\"$k\" $selected > $v </option>";
+   echo '<option value="'.$k.'" '.$selected.' > '.$v.' </option>';
 }
-echo "</select>\n";
-echo "</TD><TD class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 /*echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"" . $script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";*/
 
 /** ENRICO FEDELE */
 /* glyph-icon */
-echo '  </td>
-		<td class="FacetColumnTD" align="right"> 
-			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
-		</td>
-	  </tr>';
+echo '			</select>
+			</td>
+			<td class="FacetColumnTD">
+				'.$script_transl[16].':&nbsp;<input type="text" value="'.$form['in_quanti'].'" maxlength="11" size="7" name="in_quanti" tabindex="5" accesskey="q" />
+			</td>
+			<td class="FacetColumnTD" align="right"> 
+				<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6">
+					<i class="glyphicon glyphicon-ok"></i>
+				</button>
+			</td>
+		</tr>';
 	   /** ENRICO FEDELE */
 
 echo "</td></tr>\n";
@@ -1265,25 +1273,31 @@ $select_codric->addSelected($form['in_codric']);
 $select_codric->output(substr($form['in_codric'], 0, 1));
 echo " %$script_transl[24]: <input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"in_sconto\">";
 echo " %$script_transl[56]: <input type=\"text\" value=\"" . $form['in_provvigione'] . "\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">";
-echo "</TD><TD class=\"FacetColumnTD\">" . $script_transl['vat_constrain'];
+echo "</td><td class=\"FacetColumnTD\">" . $script_transl['vat_constrain'];
 $select_in_codvat = new selectaliiva("in_codvat");
 $select_in_codvat->addSelected($form['in_codvat']);
 $select_in_codvat->output();
-echo "</td><TD class=\"FacetColumnTD\"></TD></tr>\n";
-echo "</table>\n";
-echo "<table class=\"Tlarge\">\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td>
-          <td colspan=\"2\" class=\"FacetFieldCaptionTD\">$script_transl[21]</td>
-          <td class=\"FacetFieldCaptionTD\">$script_transl[22]</td>
-          <td class=\"FacetFieldCaptionTD\">$script_transl[16]</td>
-          <td class=\"FacetFieldCaptionTD\">$script_transl[23]</td>
-          <td class=\"FacetFieldCaptionTD\">%" . substr($script_transl[24], 0, 2) . ".</td>
-          <td class=\"FacetFieldCaptionTD\">%" . substr($script_transl[56], 0, 5) . ".</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[25]</td>
-          <td class=\"FacetFieldCaptionTD\">$script_transl[19]</td>
-          <td class=\"FacetFieldCaptionTD\">$script_transl[18]</td>
-          <td class=\"FacetFieldCaptionTD\"></td>
-          </tr>\n";
+echo "		</td>
+			<td class=\"FacetColumnTD\"></td>
+		</tr>
+	  </table>
+	  <table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
+		<thead>
+			<tr>
+				<td class=\"FacetFieldCaptionTD\">$script_transl[20]</td>
+				<td colspan=\"2\" class=\"FacetFieldCaptionTD\">$script_transl[21]</td>
+				<td class=\"FacetFieldCaptionTD\">$script_transl[22]</td>
+				<td class=\"FacetFieldCaptionTD\">$script_transl[16]</td>
+				<td class=\"FacetFieldCaptionTD\">$script_transl[23]</td>
+				<td class=\"FacetFieldCaptionTD\">%" . substr($script_transl[24], 0, 2) . ".</td>
+				<td class=\"FacetFieldCaptionTD\">%" . substr($script_transl[56], 0, 5) . ".</td>
+				<td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[25]</td>
+				<td class=\"FacetFieldCaptionTD\">$script_transl[19]</td>
+				<td class=\"FacetFieldCaptionTD\">$script_transl[18]</td>
+				<td class=\"FacetFieldCaptionTD\"></td>
+			</tr>
+		</thead>
+		<tbody>\n";
 $totimp_body = 0.00;
 $totivafat = 0.00;
 $totimpfat = 0.00;
@@ -1333,25 +1347,54 @@ foreach ($form['rows'] as $k => $v) {
    switch ($v['tiprig']) {
       case "0":
          echo "<tr>";
-         if (file_exists("../../data/files/fotoart/" . $v["codart"] . ".gif")) {
+         /*if (file_exists("../../data/files/fotoart/" . $v["codart"] . ".gif")) {
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[" . $v['annota'] . "] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/" . $v["codart"] . ".gif'>] fade=[on] fadespeed=[0.03] \"";
          } else {
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[" . $v['annota'] . "] body=[<center><img src='../root/view.php?table=artico&value=" . $v['codart'] . "'>] fade=[on] fadespeed=[0.03] \"";
-         }
-         if ($v['pesosp'] != 0) {
+         }*/
+         /*if ($v['pesosp'] != 0) {
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso = " . gaz_format_number($v['quanti'] * $v['pesosp']) . "]  fade=[on] fadespeed=[0.03] \"";
          } else {
             $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[]  fade=[on] fadespeed=[0.03] \"";
-         }
+         }*/
          if ($v['scorta'] < 0) {
-            $scorta_col = 'FacetDataTDsmallRed';
+            //$scorta_col = 'FacetDataTDsmallRed';
+			$btn_class = 'btn-danger';
          } else {
-            $scorta_col = 'FacetDataTDsmall';
+            //$scorta_col = 'FacetDataTDsmall';
+			$btn_class = 'btn-success';
          }
-         echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "! Sottoscorta =" . $v['scorta'] . "\"><input class=\"$scorta_col\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $v['codart'] . "\" /></td>\n";
-         echo "<td $boxover><input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"" . $script_transl['3'] . "!\" /></td>\n";
-         echo "<td $boxpeso><input type=\"text\" name=\"rows[$k][unimis]\" value=\"" . $v['unimis'] . "\" maxlength=\"3\" size=\"1\" /></td>\n";
-         echo "<td $boxpeso><input type=\"text\" name=\"rows[$k][quanti]\" value=\"" . $v['quanti'] . "\" align=\"right\" maxlength=\"11\" size=\"4\" onchange=\"this.form.hidden_req.value='ROW'; this.form.submit();\" /></td>\n";
+		 /* Peso */
+		$peso = 0;
+		if($v['pesosp']<>0) {
+			$peso = gaz_format_number($v['quanti']/$v['pesosp']);	
+		}
+		/*
+        echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'! Sottoscorta = '.$v['scorta'].'">
+		 			<input class="'.$scorta_col.'" type="submit" name="upd_row['.$k.']" value="'.$v['codart'].'" />
+				</td>
+				';
+		*/
+		
+         echo '	<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
+					<button name="upd_row['.$k.']" class="btn btn-xs '.$btn_class.' btn-block" type="submit">
+						<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$v['codart'].'
+					</button>
+			 	</td>
+				<td>
+		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$v["codart"].'" data-title="'.$v['annota'].'" type="text" name="rows['.$k.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
+			   	</td>
+				<td>
+					<button type="image" name="upper_row['.$k.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">
+						<i class="glyphicon glyphicon-arrow-up"></i>
+					</button>
+			  	</td>
+				<td>
+					<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="rows['.$k.'][unimis]" value="'.$v['unimis'].'" maxlength="3" size="1" />
+				</td>
+				<td>
+					<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="rows['.$k.'][quanti]" value="'.$v['quanti'].'" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+				</td>';
          echo "<td><input type=\"text\" name=\"rows[$k][prelis]\" value=\"" . $v['prelis'] . "\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
          echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
          echo "<td><input type=\"text\" name=\"rows[$k][provvigione]\" value=\"" . $v['provvigione'] . "\" maxlength=\"6\" size=\"1\" /></td>\n";
@@ -1360,22 +1403,48 @@ foreach ($form['rows'] as $k => $v) {
          echo "<td align=\"right\">" . $v['codric'] . "</td>\n";
          break;
       case "1":
-         echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-              <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>\n";
-         echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"" . $script_transl['3'] . "!\" /></td>\n";
-         echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
-         echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
-         echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
-         echo "<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>\n";
-         echo "<td></td>\n";
-         echo "<td align=\"right\"><input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
-         echo "<td align=\"right\">" . $v['pervat'] . "%</td>\n";
-         echo "<td align=\"right\">" . $v['codric'] . "</td>\n";
+         echo '		<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
+              			<input class="FacetDataTDsmall" type="submit" name="upd_row['.$k.']" value="'.$script_transl['typerow'][$v['tiprig']].'" />
+					</td>
+			  		<td>
+		 				<input type="text" name="rows['.$k.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
+					</td>
+					<td>
+						<button type="image" name="upper_row['.$k.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</button>
+					</td>
+					<td>
+						<input type="hidden" name="rows['.$k.'][unimis]" value="" />
+					</td>
+					<td>
+						<input type="hidden" name="rows['.$k.'][quanti]" value="" />
+					</td>
+					<td>
+						<input type="hidden" name="rows['.$k.'][sconto]" value="" />
+					</td>
+					<td>
+						<input type="hidden" name="rows['.$k.'][provvigione]" value="" />
+					</td>
+					<td></td>
+					<td align="right">
+						<input style="text-align:right" type="text" name="rows[$k][prelis]" value="'.number_format($v['prelis'], 2, '.', '').'" align="right" maxlength="11" size="7" onchange="this.form.submit()" />
+					</td>
+					<td align="right">'.$v['pervat'].'%</td>
+					<td align="right">"'.$v['codric'].'</td>';
          break;
       case "2":
-         echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-              <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>\n";
-         echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"" . $script_transl['3'] . "!\" /></td>\n";
+         echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+              		<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+				</td>
+				<td>
+					<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" />
+				</td>
+				<td>
+					<button type=\"image\" name=\"upper_row[".$k."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+						<i class=\"glyphicon glyphicon-arrow-up\"></i>
+					</button>
+				</td>\n";
          echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
          echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
          echo "<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>\n";
@@ -1386,30 +1455,41 @@ foreach ($form['rows'] as $k => $v) {
          echo "<td></td>\n";
          break;
       case "3":
-         echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-              <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>\n";
-         echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td><td><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"" . $script_transl['3'] . "!\" /></td>\n";
-         echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
-         echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
-         echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
-         echo "<td></td>\n";
-         echo "<td></td>\n";
-         echo "<td align=\"right\"><input type=\"text\" name=\"rows[$k][prelis]\" value=\"" . $v['prelis'] . "\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>\n";
-         echo "<td></td>\n";
-         echo "<td></td>\n";
+         echo "	<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
+              		<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$script_transl['typerow'][$v['tiprig']]."\" />
+				</td>
+			  	<td>
+		 			<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\">
+				</td>
+				<td>
+					<button type=\"image\" name=\"upper_row[".$k."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+						<i class=\"glyphicon glyphicon-arrow-up\"></i>
+					</button>
+				</td>
+				<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
+				<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+				<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
+				<td></td>
+				<td></td>
+				<td align=\"right\"><input type=\"text\" name=\"rows[$k][prelis]\" value=\"".$v['prelis']."\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>
+				<td></td>
+				<td></td>\n";
          break;
       case "6":
       case "7":
       case "8":
-         echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-              <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>\n";
-         echo "<td colspan=\"10\"><textarea id=\"row_$k\" name=\"row_$k\" class=\"mceClass$k\" style=\"width:100%;height:100px;\">" . $form["row_$k"] . "</textarea></td>\n";
-         echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"\" />\n";
-         echo "<input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />\n";
-         echo "<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />\n";
-         echo "<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />\n";
-         echo "<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />\n";
-         echo "<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>\n";
+         echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+		 			<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+				</td>
+				<td colspan=\"10\">
+					<textarea id=\"row_$k\" name=\"row_$k\" class=\"mceClass$k\" style=\"width:100%;height:100px;\">" . $form["row_$k"] . "</textarea>
+				</td>
+				<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"\" />
+				<input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" />
+				<input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" />
+				<input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+				<input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+				<input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />\n";
          break;
    }
    //echo "<TD align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"" . $script_transl['delete'] . $script_transl['thisrow'] . "!\" /></td></tr>\n";
@@ -1422,17 +1502,18 @@ foreach ($form['rows'] as $k => $v) {
 	     </tr>';
    /** ENRICO FEDELE */
 }
-echo "</table>\n";
-echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
-echo "<table class=\"Tlarge\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['numrat'] . "\" name=\"numrat\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['expense_vat'] . "\" name=\"expense_vat\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['spevar'] . "\" name=\"spevar\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['stamp'] . "\" name=\"stamp\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['round_stamp'] . "\" name=\"round_stamp\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['cauven'] . "\" name=\"cauven\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['caucon'] . "\" name=\"caucon\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['caumag'] . "\" name=\"caumag\">\n";
+echo "		</tbody>
+		</table>\n
+		<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
+		<table class=\"Tlarge\">
+		<input type=\"hidden\" value=\"" . $form['numrat'] . "\" name=\"numrat\">
+		<input type=\"hidden\" value=\"" . $form['expense_vat'] . "\" name=\"expense_vat\">
+		<input type=\"hidden\" value=\"" . $form['spevar'] . "\" name=\"spevar\">
+		<input type=\"hidden\" value=\"" . $form['stamp'] . "\" name=\"stamp\">
+		<input type=\"hidden\" value=\"" . $form['round_stamp'] . "\" name=\"round_stamp\">
+		<input type=\"hidden\" value=\"" . $form['cauven'] . "\" name=\"cauven\">
+		<input type=\"hidden\" value=\"" . $form['caucon'] . "\" name=\"caucon\">
+		<input type=\"hidden\" value=\"" . $form['caumag'] . "\" name=\"caumag\">\n";
 
 $somma_spese = $form['traspo'] + $form['speban'] * $form['numrat'] + $form['spevar'];
 $calc = new Compute;

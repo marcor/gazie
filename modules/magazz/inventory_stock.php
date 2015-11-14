@@ -210,7 +210,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     }
 }
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array(/** ENRICO FEDELE */
+require("./lang.".$admin_aziend['lang'].".php");
+$script_transl=$strScript["inventory_stock.php"]+HeadMain(0,array(/** ENRICO FEDELE */
 								/*'jquery/jquery-1.3.2.min',
 								'boxover/boxover'*/
 								/** ENRICO FEDELE */));
@@ -371,7 +372,7 @@ if (isset($form['a'])) {
 						<input type="submit" name="Return" value="'.$script_transl['return'].'" />
 					</td>
 					<td align="center" colspan="6" class="FacetFooterTD">
-						<input type="submit" name="preview" value="'.$script_transl['view'].'!\" />
+						<input type="submit" name="preview" value="'.$script_transl['view'].'!" />
 					</td>
 					<td align="center" class="FacetFormHeaderFont">Tot. '.gaz_format_number($tot_val_giac).'</td>
 				</tr>';

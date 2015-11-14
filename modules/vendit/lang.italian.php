@@ -245,7 +245,8 @@ $strScript = array("admin_client.php" =>
         'da_fatturare_title' => 'Indica se il DDT deve essere fatturato automaticamente',
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
         'da_fatturare_value' => array(0 => 'No', 1 => 'Si'),
-        'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale'
+        'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
+		'weight' => 'peso'
     /** fine modifica FP */
     ),
     "select_docforprint.php" =>
@@ -352,6 +353,7 @@ $strScript = array("admin_client.php" =>
         'taxstamp' => 'Bollo',
         'virtual_taxstamp' => 'Modo',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'),
+		'weight' => 'peso'
     ),
     "report_contract.php" =>
     array('title' => 'Elenco dei contratti stipulati',
@@ -549,7 +551,10 @@ $strScript = array("admin_client.php" =>
         'volume' => 'Volume',
         'taxable' => 'Imponibile',
         'tax' => 'I.V.A.',
-        'confirm' => 'Confermi invio dati al registratore di cassa?'
+        'confirm' => 'Confermi invio dati al registratore di cassa?',
+	    /** ENRICO FEDELE */
+	    'add_article' => 'Aggiungi un nuovo articolo', 
+		'weight' => 'peso'
     ),
     "genera_effett.php" =>
     array('title' => 'Genera gli effetti a partire dai documenti fiscali',

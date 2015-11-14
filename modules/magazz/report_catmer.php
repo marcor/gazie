@@ -27,7 +27,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $titolo = 'Categorie Merceologiche';
 require("../../library/include/header.php");
-$script_transl =HeadMain();
+$script_transl = HeadMain();
 
 if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
@@ -46,6 +46,8 @@ if (!isset($_GET['auxil'])) {
    $auxil = "";
    $where = "descri like '".addslashes($auxil)."%'";
 }
+/** ENRICO FEDELE */
+/* pulizia del codice, eliminato boxover, aggiunte classi bootstrap alla tabella, convertite immagini in glyphicons */
 ?>
 <div align="center" class="FacetFormHeaderFont">Categorie Merceologiche</div>
 <?php
@@ -53,51 +55,65 @@ $recordnav = new recordnav($gTables['catmer'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-<table class="Tlarge">
-<tr>
-<td></td>
-<td class="FacetFieldCaptionTD">Descrizione:
-<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
-</td>
-<td>
-<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
-</td>
-<td>
-<input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
-</td>
-</tr>
-<tr>
+    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    	<thead>
+            <tr>
+                <td></td>
+                <td class="FacetFieldCaptionTD">Descrizione:
+                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput" />
+                </td>
+                <td>
+                    <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;" />
+                </td>
+                <td>
+                    <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;" />
+                </td>
+            </tr>
+            <tr>
 <?php
-$result = gaz_dbi_dyn_query ('*', $gTables['catmer'], $where, $orderby, $limit, $passo);
-// creo l'array (header => campi) per l'ordinamento dei record
-$headers_catmer = array  (
-            "Codice" => "codice",
-            "Descrizione" => "descri",
-            "% Ricarico" => "ricarico",
-            "Annotazioni" => "annota",
-            "Cancella" => ""
-            );
-$linkHeaders = new linkHeaders($headers_catmer);
-$linkHeaders -> output();
+	$result = gaz_dbi_dyn_query ('*', $gTables['catmer'], $where, $orderby, $limit, $passo);
+	// creo l'array (header => campi) per l'ordinamento dei record
+	$headers_catmer = array("Codice"      => "codice",
+							"Descrizione" => "descri",
+							"% Ricarico"  => "ricarico",
+							"Annotazioni" => "annota",
+							"Cancella"    => ""
+							);
+	$linkHeaders = new linkHeaders($headers_catmer);
+	$linkHeaders -> output();
 ?>
-</tr>
+        	</tr>
+        </thead>
+        <tbody>
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    if(!isset($_GET['all']) and !empty($a_row["image"])){
+    /*if(!isset($_GET['all']) and !empty($a_row["image"])){
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$a_row['annota']}] body=[<center><img src='../root/view.php?table=catmer&value=".$a_row['codice']."'>] fade=[on] fadespeed=[0.03] \"";
     } else {
             $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$a_row['annota']}]  fade=[on] fadespeed=[0.03] \"";
-    }
-    echo "<tr>";
-    echo "<td class=\"FacetDataTD\" $boxover><a class=\"btn btn-xs btn-default\" href=\"admin_catmer.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> </td>";
-    echo "<td class=\"FacetDataTD\" $boxover>".$a_row["descri"]." </td>";
-    echo "<td class=\"FacetDataTD\">".$a_row["ricarico"]." </td>";
-    echo "<td class=\"FacetDataTD\">".$a_row["annota"]." </td>";
-    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_catmer.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    echo "</tr>\n";
+    }*/
+	//' class="gazie-tooltip" data-type="catmer-thumb" data-id="'.$a_row['codice'].'" data-title="$a_row['annota']"';
+    echo '<tr>
+			<td class="FacetDataTD">
+				<a class="btn btn-xs btn-success btn-block" href="admin_catmer.php?Update&codice='.$a_row["codice"].'">
+					<i class="glyphicon glyphicon-edit"></i>&nbsp;'.$a_row["codice"].'
+				</a>
+			</td>
+			<td class="FacetDataTD">
+				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="'.$a_row['codice'].'" data-title='.$a_row['annota'].'">'.$a_row["descri"].'</span>
+			</td>
+			<td class="FacetDataTD">'.$a_row["ricarico"].'</td>
+			<td class="FacetDataTD">'.$a_row["annota"].'</td>
+			<td class="FacetDataTD">
+				<a class="btn btn-xs btn-default btn-elimina" href="delete_catmer.php?codice='.$a_row["codice"].'">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>
+			</td>
+		</tr>';
 }
 ?>
-</table>
-</body>
+    		</tbody>
+        </table>
+    </body>
 </html>
-<script src="../../js/boxover/boxover.js"></script>
+<!--<script src="../../js/boxover/boxover.js"></script>-->

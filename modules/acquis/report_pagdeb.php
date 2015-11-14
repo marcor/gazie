@@ -76,20 +76,28 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
 
-    print "<tr>";
+    echo "<tr>";
     if (! empty ($modifi)) {
-       print "<td class=\"FacetDataTD\"><a href=\"".$modifi."\">".$a_row["id_tes"]."</td>";
+       echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\">".$a_row["id_tes"]."</td>";
     } else {
-       print "<td class=\"FacetDataTD\">".$a_row["id_tes"]." &nbsp;</td>";
+       echo "<td class=\"FacetDataTD\">".$a_row["id_tes"]." &nbsp;</td>";
     }
-    print "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["numdoc"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["datemi"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\">".$cliente["ragso1"]."&nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"right\">".$a_row["portos"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"".$modulo."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_pagdeb.php?id_tes=".$a_row['id_tes']."\"><center><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
-    print "</tr>";
+    echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["numdoc"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["datemi"]." &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\">".$cliente["ragso1"]."&nbsp;</td>";
+    echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["portos"]." &nbsp;</td>";
+	echo "	  <td class=\"FacetDataTD\">
+				<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" title=\"Stampa\">
+					<i class=\"glyphicon glyphicon-print\"></i>
+				</a>
+			  </td>
+			  <td class=\"FacetDataTD\">
+				<a class=\"btn btn-xs btn-default\" href=\"delete_pagdeb.php?id_tes=".$a_row['id_tes']."\" title=\"Cancella\">
+					<i class=\"glyphicon glyphicon-remove\"></i>
+				</a>
+			  </td>
+		  </tr>";
 }
 ?>
 </table>

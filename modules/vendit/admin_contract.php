@@ -401,7 +401,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('tiny_mce/tiny_mce',
-                                  'boxover/boxover',
+                                  /*'boxover/boxover',*/
                                   'calendarpopup/CalendarPopup',
                                   'custom/autocomplete_anagra'
                                   /** ENRICO FEDELE */
@@ -461,7 +461,7 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 $select_cliente = new selectPartner("id_customer");
 $select_cliente->selectDocPartner('id_customer',$form['id_customer'],$form['search']['id_customer'],'id_customer',$script_transl['mesg'],$admin_aziend['mascli']);
 echo ' n.'.$form['doc_number']."</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['vat_section']."</td><td class=\"FacetDataTD\">\n";
 $gForm->selectNumber('vat_section',$form['vat_section'],0,1,3);

@@ -729,7 +729,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('boxover/boxover',
+$script_transl = HeadMain(0,array(/*'boxover/boxover',*/
 								  'calendarpopup/CalendarPopup',
                                   'custom/autocomplete_anagra'
 								  /** ENRICO FEDELE */
@@ -820,39 +820,37 @@ echo "\t </td>\n";
 echo "</tr>\n";
 echo "</table>\n";
 echo '<div class="FacetSeparatorTD" align="center">'.$script_transl['in_rows_title']."</div>\n";
-echo "<table class=\"Tlarge\">\n";
-echo "<input type=\"hidden\" value=\"".$form['in_descri']."\" name=\"in_descri\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_pervat']."\" name=\"in_pervat\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_unimis']."\" name=\"in_unimis\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_prezzo']."\" name=\"in_prezzo\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_id_mag']."\" name=\"in_id_mag\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_annota']."\" name=\"in_annota\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_scorta']."\" name=\"in_scorta\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_pesosp']."\" name=\"in_pesosp\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['in_status']."\" name=\"in_status\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
-echo "<tr>\n";
-echo "<tr class=\"FacetColumnTD\">\n";
-echo "<td>".$script_transl['item'].": \n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
+		<input type=\"hidden\" value=\"".$form['in_descri']."\" name=\"in_descri\" />
+		<input type=\"hidden\" value=\"".$form['in_pervat']."\" name=\"in_pervat\" />
+		<input type=\"hidden\" value=\"".$form['in_unimis']."\" name=\"in_unimis\" />
+		<input type=\"hidden\" value=\"".$form['in_prezzo']."\" name=\"in_prezzo\" />
+		<input type=\"hidden\" value=\"".$form['in_id_mag']."\" name=\"in_id_mag\" />
+		<input type=\"hidden\" value=\"".$form['in_annota']."\" name=\"in_annota\" />
+		<input type=\"hidden\" value=\"".$form['in_scorta']."\" name=\"in_scorta\" />
+		<input type=\"hidden\" value=\"".$form['in_pesosp']."\" name=\"in_pesosp\" />
+		<input type=\"hidden\" value=\"".$form['in_status']."\" name=\"in_status\" />
+		<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />
+		  <tr class=\"FacetColumnTD\">
+			  <td>".$script_transl['item'].": \n";
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 $select_artico->output(substr($form['cosear'],0,20),$form['in_artsea']);
 echo $script_transl['search']."\n";
 $gForm->variousSelect('in_artsea',$script_transl['in_artsea_value'],$form['in_artsea'],'FacetDataTDsmall',false);
-echo "\t </td>\n";
-echo "<td>\n";
-echo $script_transl['quanti'].": \n";
-echo "<input type=\"text\" value=\"".$form['in_quanti']."\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"25\">\n";
-echo "\t </td>\n";
-echo "<td>\n";
-/*echo "<input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\" tabindex=\"26\">\n";*/
-
+/* Aggiunto link per finestra modale aggiunta articolo */
+echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> '.$script_transl['add_article'].'</a>';
 /** ENRICO FEDELE */
-/* glyph-icon */
-echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="26"><i class="glyphicon glyphicon-ok"></i></button>';
-	   /** ENRICO FEDELE */
-echo "\t </td>\n";
-echo "\t </tr>\n";
+echo '		</td>
+			  <td>
+				  '.$script_transl['quanti'].':&nbsp;<input type="text" value="'.$form['in_quanti'].'" maxlength="11" size="7" name="in_quanti" tabindex="25" />
+			  </td>
+			  <td>
+				  <button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="26">
+					  <i class="glyphicon glyphicon-ok"></i>
+				  </button>
+			  </td>
+		  </tr>';
 echo "\t<tr class=\"FacetColumnTD\">\n";
 echo "\t<td colspan=\"3\">".$script_transl['tiprig'].": \n";
 $gForm->variousSelect('in_tiprig',$script_transl['tiprig_value'],$form['in_tiprig']);
@@ -871,21 +869,25 @@ echo "\t </tr>\n";
 echo "</table>\n";
 if ($next_row>0) {
     echo '<div class="FacetSeparatorTD" align="center">'.$script_transl['body_title']."</div>\n";
-    echo "<table class=\"Tlarge\">\n";
-    echo "\t<tr class=\"FacetColumnTD\" align=\"center\">\n";
-    echo "\t<td></td>\n";
-    echo "\t<td>".$script_transl['codart']."</td>\n";
-    echo "\t<td>".$script_transl['descri']."</td>\n";
-    echo "\t<td>".$script_transl['unimis']."</td>\n";
-    echo "\t<td>".$script_transl['quanti']."</td>\n";
-    echo "\t<td>".$script_transl['prezzo']."</td>\n";
-    echo "\t<td>".$script_transl['sconto']."</td>\n";
-    echo "\t<td>".$script_transl['provvigione']."</td>\n";
-    echo "\t<td>".$script_transl['amount']."</td>\n";
-    echo "\t<td>".$script_transl['codvat']."</td>\n";
-    echo "\t<td>".$script_transl['codric']."</td>\n";
-    echo "\t<td>".$script_transl['total']."</td>\n";
-    echo "</tr>\n";
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
+			<thead>
+				<tr class=\"FacetColumnTD\" align=\"center\">
+					<td></td>
+					<td>".$script_transl['codart']."</td>
+					<td>".$script_transl['descri']."</td>
+					<td>".$script_transl['unimis']."</td>
+					<td>".$script_transl['quanti']."</td>
+					<td>".$script_transl['prezzo']."</td>
+					<td>".$script_transl['sconto']."</td>
+					<td>".$script_transl['provvigione']."</td>
+					<td>".$script_transl['amount']."</td>
+					<td>".$script_transl['codvat']."</td>
+					<td>".$script_transl['codric']."</td>
+					<td>".$script_transl['total']."</td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody>\n";
     $tot=0;
     $form['net_weight']=0;
     $form['units']=0;
@@ -929,11 +931,11 @@ if ($next_row>0) {
             echo "<input type=\"hidden\" value=\"".$v['provvigione']."\" name=\"rows[$k][provvigione]\">\n";
             echo "<input type=\"hidden\" value=\"".$v['pesosp']."\" name=\"rows[$k][pesosp]\">\n";
             echo "<tr class=\"FacetFieldCaptionTD\">\n";
-            echo "<td style=\"text-align:right\"><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['upper_row']."\" /> $nr</td>\n";
+            /*echo "<td style=\"text-align:right\"><input type=\"image\" name=\"upper_row[$k]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['upper_row']."\" /> $nr</td>\n";*/
             //stampo i righi in modo diverso a secondo del tipo
             switch ($v['tiprig']) {
                 case "0":
-               		if ( file_exists ( "../../data/files/fotoart/".$v['codart'].".gif" ) ) {
+               		/*if ( file_exists ( "../../data/files/fotoart/".$v['codart'].".gif" ) ) {
 						$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$v['codart'].".gif'>] fade=[on] fadespeed=[0.03] \"";
 					} else {
 						$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['annota']."] body=[<center><img src='../root/view.php?table=artico&value=".$v['codart']."'>] fade=[on] fadespeed=[0.03] \"";
@@ -942,16 +944,38 @@ if ($next_row>0) {
                       $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso = ".gaz_format_number($v['quanti'] * $v['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
                    } else {
                       $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[]  fade=[on] fadespeed=[0.03] \"";
-                   }
-                   if ($v['scorta'] < 0) {
-                      $scorta_col = 'FacetDataTDsmallRed';
-                   } else {
-                      $scorta_col = 'FacetDataTDsmall';
-                   }
-                   echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."! Sottoscorta =".$v['scorta']."\"><input class=\"$scorta_col\" type=\"submit\" name=\"upd_row[$k]\" value=\"".$v['codart']."\" /></td>\n";
-                   echo "<td $boxover><input type=\"text\" name=\"rows[$k][descri]\" value=\"".$descrizione."\" maxlength=\"100\" size=\"50\" /></td>\n";
-                   echo "<td $boxpeso><input type=\"text\" name=\"rows[$k][unimis]\" value=\"".$v['unimis']."\" maxlength=\"3\" size=\"2\" /></td>\n";
-                   echo "<td $boxpeso><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][quanti]\" value=\"".$v['quanti']."\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
+                   }*/
+					if ($v['scorta'] < 0) {
+						//$scorta_col = 'FacetDataTDsmallRed';
+						$btn_class = 'btn-danger';
+					} else {
+						//$scorta_col = 'FacetDataTDsmall';
+						$btn_class = 'btn-success';
+					}
+					/* Peso */
+					$peso = 0;
+					if($v['pesosp']<>0) {
+						$peso = gaz_format_number($v['quanti']/$v['pesosp']);	
+					}
+                   echo '	<td>
+								<button type="image" name="upper_row['.$k.']" class="btn btn-default btn-sm" title="'.$script_transl['upper_row'].'!">
+									<i class="glyphicon glyphicon-arrow-up"></i>
+								</button>
+							</td>
+							<td title="'.$script_transl['update'].$script_transl['thisrow'].'! Sottoscorta ='.$v['scorta'].'">
+								<button name="upd_row['.$k.']" class="btn btn-xs '.$btn_class.' btn-block" type="submit">
+									<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$v['codart'].'
+								</button>
+							</td>
+							<td>
+								<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$v["codart"].'" data-title="'.$v['annota'].'" type="text" name="rows['.$k.'][descri]" value="'.$descrizione.'" maxlength="100" size="50" />
+							</td>
+							<td>
+								<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="rows['.$k.'][unimis]" value="'.$v['unimis'].'" maxlength="3" size="2" />
+							</td>
+							<td>
+								<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" style="text-align:right" name="rows['.$k.'][quanti]" value="'.$v['quanti'].'" maxlength="11" size="7" onchange="this.form.submit();" />
+							</td>';
                    echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][prelis]\" value=\"".$v['prelis']."\" maxlength=\"15\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
                    echo "<td><input type=\"text\" style=\"text-align:right\" name=\"rows[$k][sconto]\" value=\"".$v['sconto']."\" maxlength=\"4\" size=\"3\" onchange=\"this.form.submit()\" /></td>\n";
                    echo "<td class=\"FacetDataTDsmall\" style=\"text-align:center\">".$v['provvigione']."</td>\n";
@@ -987,22 +1011,25 @@ if ($next_row>0) {
                    echo "<td></td>\n";
                    break;
             }
-            echo "<td align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";
+			/*
+            echo "<td align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";*/
 			
 		   /** ENRICO FEDELE */
 		   /* glyph icon */
 		   echo '  <td align="right">
-					 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'"><i class="glyphicon glyphicon-remove"></i></button>
+					 <button type="submit" class="btn btn-default btn-sm" name="del['.$k.']" title="'.$script_transl['delete'].$script_transl['thisrow'].'">
+					 	<i class="glyphicon glyphicon-remove"></i>
+					</button>
 				   </td>
 				 </tr>';
 		   /** ENRICO FEDELE */
    
             echo "\t </tr>\n";
     }
-    echo "</table>\n";
+    echo "</tbody></table>\n";
     echo '<div class="FacetSeparatorTD" align="center">'.$script_transl['foot_title']."</div>\n";
-    echo "<table class=\"Tlarge\">\n";
-    echo "\t<tr class=\"FacetColumnTD\" align=\"center\">\n";
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+    echo "\t<thead><tr class=\"FacetColumnTD\" align=\"center\">\n";
     echo "\t<td>".$script_transl['taxable']."</td>\n";
     echo "\t<td colspan=\"2\">".$script_transl['tax']."</td>\n";
     echo "\t<td>".$script_transl['net']."</td>\n";
@@ -1010,7 +1037,7 @@ if ($next_row>0) {
     echo "\t<td>".$script_transl['volume']."</td>\n";
     echo "\t<td>".$script_transl['total']."</td>\n";
     echo "\t<td></td>\n";
-    echo "</tr>\n";
+    echo "</tr></thead><body>\n";
     $last_castle_row=count($castel);
     echo "\t<tr align=\"center\">\n";
     foreach ($castel as $k=>$v) {
@@ -1034,9 +1061,43 @@ if ($next_row>0) {
                                    <td colspan=\"5\"></td></tr>\n";
       }
     }
-    echo "</table>\n";
+    echo "</tbody></table>\n";
 }
 ?>
 </form>
+<!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->
+<div id="edit-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header active">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h4 class="modal-title" id="myModalLabel"><?php echo $script_transl['add_article']; ?></h4>
+      </div>
+      <div class="modal-body edit-content small"></div>
+      <!--<div class="modal-footer"></div>-->
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+$(function() {
+    //twitter bootstrap script
+    $("#addmodal").click(function(){
+        $.ajax({
+            type: "POST",
+            url: "../../modules/magazz/admin_artico.php",
+            data: 'mode=modal',
+            success: function(msg){
+                $("#edit-modal .modal-sm").css('width','850px');
+                $("#edit-modal .modal-sm").css('min-width','850px');
+                $("#edit-modal .modal-body").html(msg); 
+            },
+            error: function(){
+                alert("failure");
+            }
+        });
+    });
+});
+</script>
+<!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 </body>
 </html>

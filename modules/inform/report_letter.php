@@ -146,15 +146,23 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["tipo"]."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['ragso1']." ".$a_row['ragso2']."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["oggetto"]." &nbsp;</td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"center\"> <a href=\"stampa_letter.php?id_let=".$a_row["id_let"]."\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\" /></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">
+			<a href=\"stampa_letter.php?id_let=".$a_row["id_let"]."\" title=\"Stampa\" class=\"btn btn-xs btn-default\">
+				<i class=\"glyphicon glyphicon-print\"></i>
+			</a>
+		  </td>";
     // Colonna "Mail"
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     if (!empty($a_row["e_mail"])) {
         echo '<a onclick="confirMail(this);return false;" id="doc'.$a_row["id_let"].'" url="stampa_letter.php?id_let='.$a_row["id_let"].'&dest=E" href="#" title="mailto: '.$a_row["e_mail"].'"
-        mail="'.$a_row["e_mail"].'" namedoc="Lettera n.'.$a_row["numero"].' del '.gaz_format_date($a_row["write_date"]).'"><img src="../../library/images/email.gif" border="0"></a>';
+        mail="'.$a_row["e_mail"].'" namedoc="Lettera n.'.$a_row["numero"].' del '.gaz_format_date($a_row["write_date"]).'" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-envelope\"></i></a>';
     }  
     echo "</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_letter.php?id_let=".$a_row["id_let"]."\"><img src=\"../../library/images/x.gif\" title=\"".$script_transl['delete']."!\" border=\"0\"></a></td>\n";
+    echo "<td class=\"FacetDataTD\" align=\"center\">
+			<a href=\"delete_letter.php?id_let=".$a_row["id_let"]."\" title=\"".$script_transl['delete']."!\" class=\"btn btn-xs btn-default\">
+				<i class=\"glyphicon glyphicon-remove\"></i>
+			</a>
+		  </td>\n";
     echo "</tr>\n";
 }
 ?>

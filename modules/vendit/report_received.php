@@ -113,9 +113,17 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\">".$row["datfat"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$row["ragso1"]."&nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$row["telefo"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"stampa_docven.php?id_tes=".$row["id_tes"]."&template=Received\"><img src=\"../../library/images/stampa.gif\" alt=\"Stampa\" border=\"0\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\">
+			<a href=\"stampa_docven.php?id_tes=".$row["id_tes"]."&template=Received\" title=\"Stampa\" class=\"btn btn-xs btn-default\">
+				<i class=\"glyphicon glyphicon-print\"></i>
+			</a>
+		  </td>";
     if ($last_n == $row["numfat"] && $row["id_con"] == 0){
-       echo "<td class=\"FacetDataTD\" align=\"center\"><a href=\"delete_docven.php?id_tes=".$row["id_tes"]."\"><img src=\"../../library/images/x.gif\" alt=\"Cancella\" border=\"0\"></a></td>";
+       echo "<td class=\"FacetDataTD\" align=\"center\">
+	   			<a href=\"delete_docven.php?id_tes=".$row["id_tes"]."\" title=\"Cancella\" class=\"btn btn-xs btn-default\">
+					<i class=\"glyphicon glyphicon-remove\"></i>
+			 	</a>
+			 </td>";
     } else {
         echo "<td class=\"FacetDataTD\"></td>";
     }

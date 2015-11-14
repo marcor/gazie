@@ -452,7 +452,7 @@ function dir_writable($folder)
                      echo '<input  onClick="location.href=\'../../modules/root/admin.php\'" name="'.$form['install_upgrade'].'" type="button" value="'.$msg['gi_is_align'].'">';
                      echo "\n <br />".$msg['gi_usr_psw']." <br />";
                   } else {
-                     echo '<img src="../../library/images/x.gif" ><br /> ';
+                     echo '<span class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-remove\"></i></span><br /> ';
                  }
                }
             }

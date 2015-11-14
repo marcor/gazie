@@ -1,7 +1,10 @@
 <?php
 class venditForm extends GAzieForm
 {
-      function CalendarPopup($name, $day, $month, $year, $class = 'FacetSelect', $refresh = '') {
+	/* Questa funzione dovrebbe essere perfettamente inutile poichè è un duplicato di quella che sta nella classe GAzieForm
+	   Se questa classe estende GAZieForm, ne eredita tutto, di conseguenza è inutile ripetere codice
+	*/
+     /* function CalendarPopup($name, $day, $month, $year, $class = 'FacetSelect', $refresh = '') {
       global $script_transl;
       if (!empty($refresh)) {
          $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
@@ -30,7 +33,7 @@ class venditForm extends GAzieForm
       echo "\t <a class=\"btn btn-default btn-sm\" href=\"#\" onClick=\"setDate('$name'); return false;\" TITLE=\"" . $script_transl['changedate'] . "\" name=\"anchor\" id=\"anchor\">\n";
       //echo "\t<img border=\"0\" src=\"../../library/images/cal.png\"></A>\n";
       echo '<i class="glyphicon glyphicon-calendar"></i></a>';
-   }
+   }*/
 
 
     function ticketPayments($name,$val,$class='FacetSelect')
