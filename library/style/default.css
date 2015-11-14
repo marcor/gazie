@@ -746,5 +746,11 @@ input.input-xs {
     display: block;
 }
 .navbar-brand > img {display:inline;}
+
+input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: #66afe9;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(26, 77, 25, 0.6);
+    outline: 0 none;
+}
 /* fine stile per il pulsante di tipo file */
 /** ENRICO FEDELE */

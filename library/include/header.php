@@ -59,8 +59,7 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
 <![endif]-->
 <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
 <link href="../../library/style/ml_dropdown.css" rel="stylesheet" type="text/css" />
-<script src="../../js/custom/gz-tooltips.js"></script>
-
+<script src="../../js/custom/gz-library.js"></script>
 <link rel="stylesheet" href="../../js/jquery/toast/resources/css/jquery.toastmessage.css" />
 <link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" />
 <?php

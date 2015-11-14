@@ -920,7 +920,7 @@ foreach ($form['righi'] as $key => $value) {
 					<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
 				</button>
 			  </td>';
-        //echo "<td title=\"ASASASA\" $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+        //echo "<td $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
         
 		/** ENRICO FEDELE */
 		/* Tooltip e glyphicon */
@@ -928,7 +928,9 @@ foreach ($form['righi'] as $key => $value) {
 				<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="righi['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
 			  </td>
 			  <td>
-			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!"><i class="glyphicon glyphicon-arrow-up"></i></button>
+			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">
+					<i class="glyphicon glyphicon-arrow-up"></i>
+				</button>
 			  </td>';
 		/* Peso */
 		$peso = 0;

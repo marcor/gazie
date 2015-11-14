@@ -19,7 +19,7 @@
   data-title="TITOLO DA DARE" (è possibile passare una stringa di testo, al momento presa in considerazione solo per il peso)
 */
 /** ENRICO FEDELE */
-this.gazieTooltip = function(){
+this.gzTooltip = function(){
 
 	$('.gazie-tooltip').tooltip(
 		{html:true,
@@ -33,11 +33,23 @@ this.gazieTooltip = function(){
 				} else if(codeDtls=="weight") {
 				   codeDtls = this.getAttribute('data-title')+'&nbsp;'+this.getAttribute('data-id')+'kg';
 				   return codeDtls;
+				} else if(codeDtls=="catmer-thumb") {
+				   codeDtls='<img src="../root/view.php?table=catmer&value='+this.getAttribute('data-id')+'" onerror="this.src=\'../../library/images/link_break.png\'" alt="'+this.getAttribute('data-title')+'" />';
+				   return codeDtls;
+				
 				}
 		}
 	});
 };
 // starting the script on page load
 $(document).ready(function(){
-	gazieTooltip();
+	gzTooltip();
 });
+
+/* Abilita/disabilita un textbox sulla base dello stato di un checkbox collegato */
+function toggle(boxID, toggleID) {
+	var box      = document.getElementById(boxID);
+	var toggle   = document.getElementById(toggleID);
+	updateToggle = box.checked ? toggle.disabled=false : toggle.disabled=true;
+	toggle.focus();
+}

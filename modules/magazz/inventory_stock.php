@@ -211,116 +211,183 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 }
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array(/** ENRICO FEDELE */
-								/*'jquery/jquery-1.3.2.min',*/
-								/** ENRICO FEDELE */
-								'boxover/boxover'));
+								/*'jquery/jquery-1.3.2.min',
+								'boxover/boxover'*/
+								/** ENRICO FEDELE */));
 ?>
-<SCRIPT LANGUAGE="JavaScript" ID="datapopup">
-function toggle(boxID, toggleID) {
-  var box = document.getElementById(boxID);
-  var toggle = document.getElementById(toggleID);
-  updateToggle = box.checked ? toggle.disabled=false : toggle.disabled=true;
-}
+<script type="text/javascript" language="javascript" ID="datapopup">
+	$( function() {
+		// ENRICO FEDELE, .live è stato eliminato a partire dalla jquery 1.7, adesso si deve usare .on
+		// la vecchia funzione dunque non andava più, ho scritto questa
+		// devo essere noesto, non mi piace granchè, ma funziona.
+		// IMPORTANTE: sarebbe opportuno rimuovere questo codice da qui e farlo confluire in gz-library.js
+		$('.checkAll').on('click', function() {
+				var goTo = false;
+				if($(this).hasClass('all')) {
+					var goTo = true;
+					$(this).toggleClass('none all');
+					$(this).children('i').toggleClass('glyphicon-check glyphicon-unchecked');
+				} else {
+					$(this).toggleClass('all none');
+					$(this).children('i').toggleClass('glyphicon-unchecked glyphicon-check');
+				}
+				changeCheckboxes(allCheckboxes, goTo);
+		});
 
-$( function() {
-  $( '.checkAll' ).live( 'change', function() {
-    $( '.jq_chk' ).attr( 'checked', $( this ).is( ':checked' ) ? 'checked' : '' );
-  });
-  $( '.invertSelection' ).live( 'click', function() {
-    $( '.jq_chk' ).each( function() {
-      $( this ).attr( 'checked', $( this ).is( ':checked' ) ? '' : 'checked' );
-    }).trigger( 'change' );
-  });
-});
-</SCRIPT>
+		$('.invertSelection').on('click', function() {
+			changeCheckboxes(allCheckboxes);
+			$('.checkAll').removeClass('all none');
+			$('.checkAll').addClass('all');
+			$('.checkAll').children('i').removeClass('glyphicon-check');
+			$('.checkAll').children('i').addClass('glyphicon-unchecked');
+		});
+		function changeCheckboxes(list, value){
+			for(var i = list.length - 1 ; i >=0 ; i--){
+				list[i].checked = (typeof value === 'boolean') ? value : !list[i].checked ;
+		   }
+		}
+		//var inputs = document.getElementsByTagName('input');
+		var inputs = document.getElementsByClassName('jq_chk');
+		var allCheckboxes = [] ;
+		for (var j = inputs.length-1 ; j >= 0 ; j--){
+			if (inputs[j].type === 'checkbox'){
+				allCheckboxes.push(inputs[j]);
+			}
+		}
+	});
+	
+	
+	/*
+	$( function() {
+		// ENRICO FEDELE, .live è stato eliminato a partire dalla jquery 1.7, adesso si deve usare .on
+
+	  $( '.checkAll' ).on( 'change', function() {
+		$( '.jq_chk' ).attr( 'checked', $( this ).is( ':checked' ) ? 'checked' : '' );
+	  });
+	  $( '.invertSelection' ).on( 'click', function() {
+		$( '.jq_chk' ).each( function() {
+		  $( this ).attr( 'checked', $( this ).is( ':checked' ) ? '' : 'checked' );
+		}).trigger( 'change' );
+	  });
+	});
+	*/
+</script>
 <?php
-echo "<form method=\"POST\" name=\"maschera\">\n";
-echo "<input type=\"hidden\" name=\"hidden_req\" value=\"\" />";
-echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$_POST['ritorno']."\" />";
-echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl['title'])." ". $script_transl['del'];
-$gForm->Calendar('date',$form['date_D'],$form['date_M'],$form['date_Y'],'FacetSelect','date');
-echo $script_transl['catmer'];
-$gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,false,'-','descri','catmer','FacetSelect',array('value'=>100,'descri'=>'*** '.$script_transl['all'].' ***'));
-echo "</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<form method=\"POST\" name=\"maschera\">
+		<input type=\"hidden\" name=\"hidden_req\" value=\"\" />
+		<input type=\"hidden\" name=\"ritorno\" value=\"".$_POST['ritorno']."\" />
+		<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl['title'])." ". $script_transl['del'];
+		$gForm->Calendar('date',$form['date_D'],$form['date_M'],$form['date_Y'],'FacetSelect','date');
+echo 	$script_transl['catmer'];
+		$gForm->selectFromDB('catmer','catmer','codice',$form['catmer'],false,false,'-','descri','catmer','FacetSelect',array('value'=>100,'descri'=>'*** '.$script_transl['all'].' ***'));
+echo 	'	</div>
+			<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
 if (!empty($msg)) {
-    echo '<tr><td colspan="9" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
+    echo '	<tr>
+				<td colspan="9" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors']).'
+				</td>
+			</tr>';
 }
-echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['select']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['code']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['mu']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['v_a']."</td>
-         <td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['v_r']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['g_a']."</td>
-         <td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['g_r']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['g_v']."</td>
-         </tr>\n";
+echo '	<thead>
+			<tr>
+				<th class="FacetFieldCaptionTD">'.$script_transl['select'].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl['code'].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl['descri'].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl['mu'].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl['v_a'].'</th>
+				<th class="FacetFieldCaptionTD" align="right">'.$script_transl['v_r'].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl['g_a'].'</th>
+				<th class="FacetFieldCaptionTD" align="right">'.$script_transl['g_r'].'</th>
+				<th class="FacetFieldCaptionTD">'.$script_transl['g_v'].'</th>
+			</tr>
+		</tbody>';
 $ctrl_cm=0;
 if (isset($form['a'])) {
    $elem_n=0;
    foreach($form['a'] as $k=>$v) {
         //ini default value
-        $title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['i_a']."] body=[<center><img src='../root/view.php?table=artico&value=".$k."'>] fade=[on] fadespeed=[0.03] \"";
-        $class= ' class="FacetDataTD'.$v['col'].'" ';
+        //$title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['i_a']."] body=[<center><img src='../root/view.php?table=artico&value=".$k."'>] fade=[on] fadespeed=[0.03] \"";
+		$tooltip = ' class="gazie-tooltip" data-type="product-thumb" data-id="'.$k.'" data-title="'.$v['i_a'].'"';
+        $class  = ' class="FacetDataTD'.$v['col'].'" ';
         // end default value
         if ($ctrl_cm <> $v['i_g']) {
-            $cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_d']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
-            echo "<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">\n";
-            echo "<tr>\n";
+            //$cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_d']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
+			$cm_tooltip = ' class="gazie-tooltip" data-type="catmer-thumb" data-id="'.$v['i_g'].'" data-title="'.$v['g_d'].'"';
+            echo "			<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">
+						<tr>\n";
             if ($ctrl_cm == 0) {
-                echo "<td><input type=\"checkbox\" class=\"checkAll\" title=\"".$script_transl['selall']."\" /><br /><a href=\"javascript:void(0);\" class=\"invertSelection\" title=\"".$script_transl['invsel']."\" > <img src=\"../../library/images/recy.gif\" width=\"14\" border=\"0\"/></a></td>";
+									/*<input type="checkbox" class="checkAll" title="'.$script_transl['selall'].'" />&nbsp;*/
+                echo '			<td>
+									<a href="javascript:void(0);" class="checkAll all btn btn-default btn-xs" title="'.$script_transl['selall'].'" >
+										<i class="glyphicon glyphicon-unchecked"></i>
+									</a>
+									<a href="javascript:void(0);" class="invertSelection btn btn-default btn-xs" title="'.$script_transl['invsel'].'" >
+										<i class="glyphicon glyphicon-refresh"></i>
+									</a>
+								</td>';
             } else {
-                echo "<td></td>";
-            }echo "<td $cm_title class=\"FacetFieldCaptionTD\" colspan=\"8\" align=\"left\">".$v['i_g'].' - '.$v['g_d']."</td>\n";
-            echo "</tr>\n";
+                echo '			<td></td>';
+            }
+			echo '			<td class="FacetFieldCaptionTD" colspan="8" align="left">
+								<span '.$cm_tooltip.'>'.$v['i_g'].' - '.$v['g_d'].'</span>
+							</td>
+						</tr>';
         }
 
-        echo "<input type=\"hidden\" value=\"".$v['i_a']."\" name=\"a[$k][i_a]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['col']."\" name=\"a[$k][col]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['i_g']."\" name=\"a[$k][i_g]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['i_d']."\" name=\"a[$k][i_d]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['i_u']."\" name=\"a[$k][i_u]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['v_a']."\" name=\"a[$k][v_a]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['v_r']."\" name=\"a[$k][v_r]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['g_a']."\" name=\"a[$k][g_a]\">\n";
-        echo "<input type=\"hidden\" value=\"".$v['v_g']."\" name=\"a[$k][v_g]\">\n";
-
-        echo "<tr>\n";
-        echo "<td class=\"FacetFieldCaptionTD\" align=\"center\">\n
-             <input class=\"jq_chk\" name=\"chk$k\" ".$form['chk_on'.$k]." type=\"checkbox\" /></td>\n";
-        echo "<td $title $class align=\"left\">".$k."</td>\n";
-        echo "<td $title $class align=\"left\">".$v['i_d']."</td>\n";
-        echo "<td $class align=\"center\">".$v['i_u']."</td>\n";
-        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price'])."</td>\n";
-        echo "<td $class align=\"right\">
-              <input id=\"vac$k\" name=\"vac$k\" ".$form['vac_on'.$k]." onClick=\"toggle('vac$k', 'a[$k][v_r]')\" type=\"checkbox\" />
-              <input type=\"text\" size=\"10\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" id=\"a[$k][v_r]\" name=\"a[$k][v_r]\" value=\"".gaz_format_quantity($v['v_r'],0,$admin_aziend['decimal_price'])."\" disabled ></td>\n";
-        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'])."</td>\n";
-        echo "<td $class align=\"right\"><input type=\"text\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" name=\"a[$k][g_r]\" value=\"".$v['g_r']."\"></td>\n";
-        echo "<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_g'],0,$admin_aziend['decimal_price'])."</td>\n";
-        echo "</tr>\n";
+        echo "		<input type=\"hidden\" value=\"".$v['i_a']."\" name=\"a[$k][i_a]\">
+					<input type=\"hidden\" value=\"".$v['col']."\" name=\"a[$k][col]\">
+					<input type=\"hidden\" value=\"".$v['i_g']."\" name=\"a[$k][i_g]\">
+					<input type=\"hidden\" value=\"".$v['g_d']."\" name=\"a[$k][g_d]\">
+					<input type=\"hidden\" value=\"".$v['i_d']."\" name=\"a[$k][i_d]\">
+					<input type=\"hidden\" value=\"".$v['i_u']."\" name=\"a[$k][i_u]\">
+					<input type=\"hidden\" value=\"".$v['v_a']."\" name=\"a[$k][v_a]\">
+					<input type=\"hidden\" value=\"".$v['v_r']."\" name=\"a[$k][v_r]\">
+					<input type=\"hidden\" value=\"".$v['g_a']."\" name=\"a[$k][g_a]\">
+					<input type=\"hidden\" value=\"".$v['v_g']."\" name=\"a[$k][v_g]\">
+					<tr>
+						<td class=\"FacetFieldCaptionTD\" align=\"center\">
+							<input class=\"jq_chk\" name=\"chk$k\" ".$form['chk_on'.$k]." type=\"checkbox\" />
+						</td>
+						<td $class align=\"left\"><span ".$tooltip.">".$k."</span></td>
+						<td $class align=\"left\"><span ".$tooltip.">".$v['i_d']."</span></td>
+						<td $class align=\"center\">".$v['i_u']."</td>
+						<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price'])."</td>
+						<td $class align=\"right\">
+							<input id=\"vac$k\" name=\"vac$k\" ".$form['vac_on'.$k]." onClick=\"toggle('vac$k', 'a[$k][v_r]')\" type=\"checkbox\" />
+							<input type=\"text\" size=\"10\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" id=\"a[$k][v_r]\" name=\"a[$k][v_r]\" value=\"".gaz_format_quantity($v['v_r'],0,$admin_aziend['decimal_price'])."\" disabled=\"disabled\" />
+						</td>
+						<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'])."</td>
+						<td $class align=\"right\"><input type=\"text\" style=\"text-align:right\" onchange=\"document.maschera.chk$k.checked=true\" name=\"a[$k][g_r]\" value=\"".$v['g_r']."\"></td>
+						<td $class align=\"center\" align=\"right\">".gaz_format_quantity($v['v_g'],0,$admin_aziend['decimal_price'])."</td>
+					</tr>\n";
         $ctrl_cm = $v['i_g'];
         $elem_n++;
    }
-   echo "<tr>
-      <td  colspan=\"2\" class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">&nbsp;</td>
-      <td align=\"center\" colspan=\"6\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"preview\" value=\"".$script_transl['view']."!\">&nbsp;</td>
-      <td align=\"center\" class=\"FacetFormHeaderFont\">Tot. ".gaz_format_number($tot_val_giac)."</td>
-      </tr>\n";
+   echo "		<tr>
+   					<td colspan=\"2\" class=\"FacetFieldCaptionTD\">
+						<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">
+					</td>
+					<td align=\"center\" colspan=\"6\" class=\"FacetFooterTD\">
+						<input type=\"submit\" name=\"preview\" value=\"".$script_transl['view']."!\">
+					</td>
+					<td align=\"center\" class=\"FacetFormHeaderFont\">Tot. ".gaz_format_number($tot_val_giac)."</td>
+				</tr>\n";
    if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
-       echo "</table><table class=\"Tlarge\">\n";
-       echo "<tr><td colspan=\"8\" class=\"FacetFormHeaderFont\">".$script_transl['preview_title']."</td></tr>\n";
-       echo "<tr><td class=\"FacetFieldCaptionTD\"></td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['code']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['mu']."</td>
-         <td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['load']."</td>
-         <td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['unload']."</td>
-         <td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['v_r']."</td>
-         <td class=\"FacetFieldCaptionTD\">".$script_transl['value']."</td>
-         </tr>\n";
+       echo "	</table>
+	   			<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
+					<tr>
+	   					<td colspan=\"8\" class=\"FacetFormHeaderFont\">".$script_transl['preview_title']."</td>
+					</tr>
+					<tr>
+	   					<td class=\"FacetFieldCaptionTD\"></td>
+						<td class=\"FacetFieldCaptionTD\">".$script_transl['code']."</td>
+						<td class=\"FacetFieldCaptionTD\">".$script_transl['descri']."</td>
+						<td class=\"FacetFieldCaptionTD\">".$script_transl['mu']."</td>
+						<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['load']."</td>
+						<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['unload']."</td>
+						<td class=\"FacetFieldCaptionTD\" align=\"right\">".$script_transl['v_r']."</td>
+						<td class=\"FacetFieldCaptionTD\">".$script_transl['value']."</td>
+					</tr>\n";
        foreach ($form['a'] as $k=>$v) { // ciclo delle singole righe (a)
          if ($form['chk_on'.$k] == ' checked ') {   // e' un rigo da movimentare
            $load='';
@@ -328,53 +395,58 @@ if (isset($form['a'])) {
            if ($v['g_a']>$v['g_r']) { // in caso di giacenza reale minore
              // devo fare prima uno storno per scaricare
              $mq=$v['g_a']-$v['g_r'];
-             echo "<tr>\n";
-             echo "<td class=\"FacetDataTD\">98-".$cau98['descri']."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"left\">".$k."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>\n";
-             echo "<td class=\"FacetDataTD\"></td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity'])."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price'])."</td>\n";
-             echo "</tr>\n";
+             echo "		<tr>
+			 				<td class=\"FacetDataTD\">98-".$cau98['descri']."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$k."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>
+							<td class=\"FacetDataTD\"></td>
+							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity'])."</td>
+							<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>
+							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price'])."</td>
+						</tr>\n";
 
            } elseif ($v['g_a']<$v['g_r']) { // se maggiore carico
              // devo fare prima uno storno per caricare
              $mq=$v['g_r']-$v['g_a'];
-             echo "<tr>\n";
-             echo "<td class=\"FacetDataTD\">98-".$cau98['descri']."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"left\">".$k."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity'])."</td>\n";
-             echo "<td class=\"FacetDataTD\"></td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>\n";
-             echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price'])."</td>\n";
-             echo "</tr>\n";
+             echo "		<tr>
+			 				<td class=\"FacetDataTD\">98-".$cau98['descri']."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$k."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>
+							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($mq,0,$admin_aziend['decimal_quantity'])."</td>
+							<td class=\"FacetDataTD\"></td>
+							<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>
+							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$mq,0,$admin_aziend['decimal_price'])."</td>
+						</tr>\n";
            }
-           echo "<tr>\n";
-           echo "<td class=\"FacetDataTD\">99-".$cau99['descri']."</td>\n";
-           echo "<td class=\"FacetDataTD\" align=\"left\">".$k."</td>\n";
-           echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>\n";
-           echo "<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>\n";
-           echo "<td class=\"FacetDataTD\" align=\"right\">".$v['g_r']."</td>\n";
-           echo "<td class=\"FacetDataTD\"></td>\n";
-           echo "<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>\n";
-           echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$v['g_r'],0,$admin_aziend['decimal_price'])."</td>\n";
-           echo "</tr>\n";
+           echo "		<tr>
+							<td class=\"FacetDataTD\">99-".$cau99['descri']."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$k."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$v['i_d']."</td>
+							<td class=\"FacetDataTD\" align=\"left\">".$v['i_u']."</td>
+							<td class=\"FacetDataTD\" align=\"right\">".$v['g_r']."</td>
+							<td class=\"FacetDataTD\"></td>
+							<td class=\"FacetDataTD\" align=\"right\">".$v['v_r']."</td>
+							<td class=\"FacetDataTD\" align=\"right\">".gaz_format_quantity($v['v_r']*$v['g_r'],0,$admin_aziend['decimal_price'])."</td>
+						</tr>\n";
          }
        }
-       echo "<tr><td align=\"right\" colspan=\"8\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"insert\" value=\"".$script_transl['submit']."!\">&nbsp;</td></tr>\n";
+       echo '		<tr>
+	   					<td align="right" colspan="8" class="FacetFooterTD">
+							<input type="submit" name="insert" value="'.$script_transl['submit'].'!">
+						</td>
+					</tr>';
    }
 } else {
-   echo "<tr>
-      <td colspan=\"9\" class=\"FacetDataTDred\">".$script_transl['noitem']."</td>
-      </tr>\n";
+   echo '		<tr>
+   					<td colspan="9" class="FacetDataTDred">'.$script_transl['noitem'].'</td>
+				</tr>';
 
 }
-echo "</table>\n";
 ?>
-</form>
-</body>
+            	</tbody>
+            </table>
+        </form>
+    </body>
 </html>
