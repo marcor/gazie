@@ -259,9 +259,11 @@ $strScript = array("admin_fornit.php" =>
                                            ),
                            'header'=>array('Fornitore'=>'','ID Partita'=>'','Status'=>'','Mov.Cont.'=>'','Descrizione'=>'',
                                             'N.Doc.'=>'','Data Doc.' =>'','Data Reg.' =>'','Dare'=>'','Avere'=>'',
-                                            'Scadenza'=>''
+                                            'Scadenza'=>'', 
+                                            'Opciones' => ''
                                            ),
                            'status_value'=>array(0=>'Chiusa',1=>'Aperta'),
+						   'total_open' => 'Total de partidas abiertas'
                            ),
                     "delete_schedule.php" =>
                     array( 'title'=>'Cancellazione movimenti chiusi dello scadenzario',

@@ -59,39 +59,48 @@ $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',*/
 								  /** ENRICO FEDELE */));
-echo "<form method=\"POST\" name=\"select\">\n";
-echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
-echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
+echo '<form method="POST" name="select">
+		<input type="hidden" value="'.$form['hidden_req'].'" name="hidden_req" />
+		<input type="hidden" value="'.$form['ritorno'].'" name="ritorno" />';
 $gForm = new acquisForm();
-echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
-echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['orderby']."</td><td  class=\"FacetDataTD\">\n";
+echo '	<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>
+	  	<table class="Tmiddle table table-striped table-bordered table-condensed table-responsive">
+			<tr>
+				<td class="FacetFieldCaptionTD">'.$script_transl['orderby'].'</td>
+				<td  class="FacetDataTD">';
 $gForm->variousSelect('orderby',$script_transl['orderby_value'],$form['orderby'],'FacetSelect',0,'orderby');
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-echo "<td align=\"left\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\">\n";
-echo '<td align="right" colspan="2"> <input type="submit" accesskey="i" name="preview" value="';
-echo $script_transl['view'];
-echo '" tabindex="100" >';
-echo "\t </td>\n";
-echo "\t </tr>\n";
-echo "</table>\n";
+echo '			</td>
+			</tr>';
+/*			<tr class="FacetFieldCaptionTD">
+				<td align="left">
+					<input type="submit" name="return" value="'.$script_transl['return'].'" />
+				</td>
+				  <td align="right" colspan="2">';
+					  <input type="submit" accesskey="i" name="preview" value="'.$script_transl['view'].'" tabindex="100" />
+			  </td>
+			 </tr>*/
+echo '		  </table>';
 
-if (isset($_POST['preview'])) {
+//if (isset($_POST['preview'])) {
   $scdl = new Schedule;
   $m = $scdl->getScheduleEntries($form['orderby'],$admin_aziend['masfor']);
-  echo "<table class=\"Tlarge\">";
+  
+  echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
+  
   if (sizeof($scdl->Entries) > 0) {
-        $ctrl_partner=0;
-        $ctrl_id_tes=0;
-        $ctrl_paymov=0;
-        echo "<tr>";
+        $ctrl_partner = 0;
+        $ctrl_id_tes  = 0;
+        $ctrl_paymov  = 0;
+		$tot = array('dare' => 0, 'avere' => 0);
+		
+        echo '	<thead>
+					<tr>';
         $linkHeaders = new linkHeaders($script_transl['header']);
         $linkHeaders -> output();
-        echo "</tr>";
+        echo ' 		</tr>
+				</thead>
+				<tbody>';
+				
         while (list($key, $mv) = each($scdl->Entries)) {
             $class_partner='';
             $class_paymov='';
@@ -122,53 +131,64 @@ if (isset($_POST['preview'])) {
                 if($scdl->Status['diff_paydoc']<>0){
                     $class_paymov='FacetDataTDevidenziaOK';
                     $status_descr=$script_transl['status_value'][1].
-                    " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=".$mv["clfoco"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                    ' &nbsp;<a title="Riscuoti" class="btn btn-xs btn-default btn-pagamento" href="supplier_payment.php?partner='.$mv["clfoco"].'"><i class="glyphicon glyphicon-euro"></i></a>';
                 } else {
                     $class_paymov='FacetDataTDevidenziaCL';
                     $status_descr=$script_transl['status_value'][0];
                     $status_del=true;
                 }
             }
-            echo "<tr>";
-            echo "<td class=\"$class_partner\">".$partner." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"$class_paymov\">".$paymov." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"$class_paymov\">".$status_descr." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"$class_id_tes\"><a href=\"../contab/admin_movcon.php?id_tes=".$mv["id_tes"]."&Update\">".$id_tes."</a> &nbsp</td>";
-            echo "<td class=\"$class_id_tes\"><a href=\"../contab/admin_movcon.php?id_tes=".$mv["id_tes"]."&Update\">".$mv['descri']."</a> &nbsp;</td>";
-            echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["numdoc"]." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["datdoc"]." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"FacetDataTD\">".gaz_format_date($mv["datreg"])." &nbsp;</td>";
+            echo '		<tr>
+							<td class="'.$class_partner.'">'.$partner.'&nbsp;</td>
+							<td class="'.$class_paymov.' text-center">'.$paymov.'&nbsp;</td>
+							<td class="'.$class_paymov.' text-center">'.$status_descr.'&nbsp;</td>
+							<td class="'.$class_id_tes.' text-center"><a href="../contab/admin_movcon.php?id_tes='.$mv["id_tes"].'&Update">'.$id_tes.'</a>&nbsp</td>
+							<td class="'.$class_id_tes.' text-center"><a href="../contab/admin_movcon.php?id_tes='.$mv["id_tes"].'&Update">'.$mv['descri'].'</a>&nbsp;</td>
+							<td class="FacetDataTD text-center">'.$mv["numdoc"].'&nbsp;</td>
+							<td class="FacetDataTD text-center">'.$mv["datdoc"].'&nbsp;</td>
+							<td class="FacetDataTD text-center">'.gaz_format_date($mv["datreg"]).'&nbsp;</td>';
             if ($mv['id_rigmoc_pay']==0){
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["amount"]." &nbsp;</td>";
-                echo "<td class=\"FacetDataTD\"></td>";
-            } else {
-                echo "<td class=\"FacetDataTD\"></td>";
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["amount"]." &nbsp;</td>";
+				$tot['dare']  += $mv["amount"];
+				$tot['avere'] -= $mv["amount"];
+
+                echo '			<td class="FacetDataTD text-center">'.gaz_format_number($mv["amount"]).'&nbsp;</td>
+								<td class="FacetDataTD text-center"></td>';
+            } else {				$tot['avere'] += $mv["amount"];
+                echo '			<td class="FacetDataTD text-center"></td>
+								<td class="FacetDataTD text-center">'.gaz_format_number($mv["amount"]).'&nbsp;</td>';
             }
-            echo "<td align=\"center\" class=\"FacetDataTD\">".gaz_format_date($mv["expiry"])." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"FacetDataTD\"> ";
+            echo '				<td class="FacetDataTD text-center">'.gaz_format_date($mv["expiry"]).'&nbsp;</td>
+								<td class="FacetDataTD text-center">';
             // Permette di cancellare il documento.
             if ($status_del) {
-                echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)\" href=\"delete_schedule.php?id_tesdoc_ref=".$paymov."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
+                echo '					<a class="btn btn-xs btn-default btn-elimina" title="Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)" href="delete_schedule.php?id_tesdoc_ref='.$paymov.'"><i class="glyphicon glyphicon-remove"></i></a>';
             } else {
-                echo "<button title=\"Non &egrave; possibile cancellare una partita ancora aperta\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button>";
+                echo '					<button title="Non &egrave; possibile cancellare una partita ancora aperta" class="btn btn-xs btn-default btn-elimina disabled"><i class="glyphicon glyphicon-remove"></i></button>';
             }
-            echo "</td></tr>\n";
+            echo '				</td>
+							</tr>';
             $ctrl_id_tes=$mv["id_tes"];
             $ctrl_paymov=$mv["id_tesdoc_ref"];
 
         }
-     echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-     echo '<td colspan="11" align="right"><input type="submit" name="print" value="';
-     echo $script_transl['print'];
-     echo '">';
-     echo "\t </td>\n";
-     echo "\t </tr>\n";
+     echo '					<tr class="FacetFormHeaderFont">
+	 							<td class="FacetFormHeaderFont text-right" colspan="8">'.$script_transl['total_open'].'</td>
+								<td class="FacetFormHeaderFont text-center">'.gaz_format_number($tot['dare']).'</td>
+								<td class="FacetFormHeaderFont text-center">'.gaz_format_number($tot['avere']).'</td>
+								<td class="FacetFormHeaderFont text-center">'.gaz_format_number(100*$tot['avere']/($tot['dare']+$tot['avere'])).' %</td>
+								<td class="FacetFormHeaderFont text-center">
+									<input type="submit" name="print" value="'.$script_transl['print'].'" />
+								</td>
+							</tr>';
   } else {
-     echo "<tr><td class=\"FacetDataTDred\" align=\"center\">".$script_transl['errors'][1]."</TD></TR>\n";
+     echo '					<tr>
+	 							<td class="FacetDataTDred text-center">'.$script_transl['errors'][1].'</td>
+							</tr>';
   }
-  echo "</table></form>";
-}
+  echo '		</tbody>
+ 			</table>
+		</form>';
+//}
 ?>
 </body>
 </html>

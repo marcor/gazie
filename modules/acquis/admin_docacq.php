@@ -282,6 +282,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datfat'], 5, 2), substr($ultimo_tipo['datfat'], 8, 2), substr($ultimo_tipo['datfat'], 0, 4));
                 if ($ultimo_tipo and ( $utsUltimoProtocollo > $utsemi)) {
                     $msg .= "45+";
+					echo print_r($ultimo_tipo);
                 }
             }
         }

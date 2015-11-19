@@ -65,7 +65,7 @@ echo '<form method="POST" name="select">
 $gForm = new venditForm();
 /** Modifico il form per l'ordinamento, lo rendo più snello, niente più tasto anteprima (vedi considerazioni di seguito)*/
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>
-	  <table class="Tmiddle">
+	  <table class="Tmiddle table table-striped table-bordered table-condensed table-responsive">
 	  	<tr>
 			<td class="FacetFieldCaptionTD">'.$script_transl['orderby'].'</td>
 			<td class="FacetDataTD">';
@@ -97,7 +97,8 @@ echo '		</td>
 /** ENRICO FEDELE */
   $scdl = new Schedule;
   $m = $scdl->getScheduleEntries($form['orderby'],$admin_aziend['mascli']);
-  echo "<table class=\"Tlarge\">";
+  echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+  			<thead>';
   if (sizeof($scdl->Entries) > 0) {
         $ctrl_partner=0;
         $ctrl_id_tes=0;
@@ -105,14 +106,17 @@ echo '		</td>
 		
 	    /* ENRICO FEDELE */
 	    /* Inizializzo le variabili per il totale */
-	    $tot_dare  = 0;
-	    $tot_avere = 0;
+	    /*$tot_dare  = 0;
+	    $tot_avere = 0;*/
+		$tot = array('dare' => 0, 'avere' => 0);
 	    /* ENRICO FEDELE */
 
-        echo "<tr>";
+        echo '	<tr>';
         $linkHeaders = new linkHeaders($script_transl['header']);
         $linkHeaders -> output();
-        echo "</tr>";
+        echo '		</tr>
+				</thead>
+				<tbody>';
         while (list($key, $mv) = each($scdl->Entries)) {
             $class_partner='';
             $class_paymov='';
@@ -162,14 +166,14 @@ echo '		</td>
             /* ENRICO FEDELE */
             if ($mv['id_rigmoc_pay']==0){
 				/* Incremento il totale del dare */
-			    $tot_dare += $mv['amount'];
+			    $tot['dare'] += $mv['amount'];
 			    /* Allineo a destra il testo, i numeri sono così più leggibili e ordinati, li formatto con apposita funzione */
                 echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($mv["amount"])." &nbsp;</td>";
                 echo "<td class=\"FacetDataTD\"></td>";
             } else {
 			    /* Incremento il totale dell'avere, e decremento quello del dare */
-	  		    $tot_avere += $mv['amount'];
-			    $tot_dare  -= $mv['amount'];
+	  		    $tot['avere'] += $mv['amount'];
+			    $tot['dare']  -= $mv['amount'];
                 echo "<td class=\"FacetDataTD\"></td>";
                 echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($mv["amount"])." &nbsp;</td>";
             }
@@ -191,21 +195,25 @@ echo '		</td>
 	/* Stampo il totale del dare, dell'avere, e la percentuale dell'avere rispetto al totale dare+avere */
 	/* Aumento il colspan nell'ultima riga per ricomprendere anche l'ultima colonna, il pulsante stampa ora va sotto opzioni */
 	echo '<tr>
-			<td colspan="8" class="FacetFormHeaderFont" align="right">TOTALE</td>
-			<td class="FacetFormHeaderFont" align="right">'.gaz_format_number($tot_dare).'</td>
-			<td class="FacetFormHeaderFont" align="right">'.gaz_format_number($tot_avere).'</td>
-			<td class="FacetFormHeaderFont">'.gaz_format_number(100*$tot_avere/($tot_dare+$tot_avere)).' %</td>
-			<td class="FacetFormHeaderFont">&nbsp;</td>
-		  </tr>
+			<td class="FacetFormHeaderFont text-right" colspan="8">'.$script_transl['total_open'].'</td>
+			<td class="FacetFormHeaderFont text-right">'.gaz_format_number($tot['dare']).'</td>
+			<td class="FacetFormHeaderFont text-right">'.gaz_format_number($tot['avere']).'</td>
+			<td class="FacetFormHeaderFont text-center">'.gaz_format_number(100*$tot['avere']/($tot['dare']+$tot['avere'])).' %</td>
+			<td class="FacetFormHeaderFont text-center"><input type="submit" name="print" value="'.$script_transl['print'].'"></td>
+		  </tr>';
+		  /*
 		  <tr class="FacetFieldCaptionTD">
-	 			<td colspan="12" align="right"><input type="submit" name="print" value="'.$script_transl['print'].'"></td>
-	 	  </tr>';
+	 			<td colspan="12" class="text-center"></td>
+	 	  </tr>';*/
 	 /** ENRICO FEDELE */
   } else {
-     echo "<tr><td class=\"FacetDataTDred\" align=\"center\">".$script_transl['errors'][1]."</TD></TR>\n";
+     echo '	<tr>
+	 			<td class="FacetDataTDred" align="center">'.$script_transl['errors'][1].'</td>
+			</tr>';
   }
-  echo "</table>
-	  </form>";
+  echo '		</body>
+  			</table>
+	  	</form>';
 	 /** ENRICO FEDELE */
 	 /* Chiudeva il controllo if (isset($_POST['preview'])) */
 //}

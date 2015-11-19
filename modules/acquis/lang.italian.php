@@ -254,8 +254,7 @@ $strScript = array("admin_fornit.php" =>
                                             'Movimento contabile apertura (documento)' => "id_rigmoc_doc",
                                             'Movimento contabile chiusura (pagamento)' => "id_rigmoc_pay",
                                             'Importo' => "amount",
-                                            'Scadenza' => "expiry"
-                                            ),
+                                            'Scadenza' => "expiry"),
                            ),
                     "select_schedule.php" =>
                     array( 'title'=>'Selezione per la visualizzazione e/o la stampa delle partite aperte',
@@ -266,16 +265,18 @@ $strScript = array("admin_fornit.php" =>
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'Non sono stati trovati movimenti!'
                                           ),
-                           'account'=>'Fornitoree ',
+                           'account'=>'Fornitore ',
                            'orderby'=>'Ordina per: ',
                            'orderby_value'=>array(0=>'Scadenza crescente',1=>'Scadenza decrescente',
                                                   2=>'Fornitore crescente',3=>'Fornitore decrescente'
                                            ),
                            'header'=>array('Fornitore'=>'','ID Partita'=>'','Status'=>'','Mov.Cont.'=>'','Descrizione'=>'',
                                             'N.Doc.'=>'','Data Doc.' =>'','Data Reg.' =>'','Dare'=>'','Avere'=>'',
-                                            'Scadenza'=>''
+                                            'Scadenza'=>'', 
+                                            'Opzioni' => ''
                                            ),
                            'status_value'=>array(0=>'Chiusa',1=>'Aperta'),
+						   'total_open' => 'Totale partite aperte'
                            ),
                     "delete_schedule.php" =>
                     array( 'title'=>'Cancellazione movimenti chiusi dello scadenzario',

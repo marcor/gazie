@@ -799,6 +799,7 @@ $strScript = array("admin_client.php" =>
         ),
         /** ENRICO FEDELE */
         'status_value' => array(0 => 'Chiusa', 1 => 'Aperta'),
+		'total_open' => 'Totale partite aperte'
     ),
     "delete_schedule.php" =>
     array('title' => 'Cancellazione movimenti chiusi dello scadenzario',
