@@ -148,6 +148,8 @@ $strScript = array("admin_client.php" =>
     "admin_docven.php" =>
     array('none',
         'doc_name' => array("DDT" => "Sales delivery note",
+            "DDV" => "D.d.T. per cessionne in conto Visione",
+            "DDY" => "D.d.T. per cessionne in triangolazione",
             "FAD" => "Invoiced delivery note",
             "FAI" => "Immediately invoice",
             "FAP" => "Bill",

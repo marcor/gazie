@@ -185,6 +185,8 @@ $result = gaz_dbi_dyn_query($gTables['tesdoc'].".*,".$gTables['anagra'].".ragso1
 while ($r = gaz_dbi_fetch_array($result)) {
     switch($r['tipdoc']) {
         case "DDT":
+        case "DDV":
+        case "DDY":
             echo "<tr>";
 			// Colonna protocollo
             echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a> &nbsp;</td>";
