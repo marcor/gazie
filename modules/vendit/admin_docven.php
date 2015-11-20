@@ -457,6 +457,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['datfat'] = $datemi;
                     $form['numfat'] = $old_head['numfat'];
                 }
+                $form['ddt_type'] = substr($old_head['tipdoc'],-1);
                 $form['geneff'] = $old_head['geneff'];
                 $form['id_contract'] = $old_head['id_contract'];
                 $form['id_con'] = $old_head['id_con'];
@@ -518,6 +519,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['numfat'] = 0;
                     $form['datfat'] = 0;
                     $form['status'] = 'FATTURARE';
+                    $form['ddt_type'] = substr($form['tipdoc'],-1);
                 } else { //in tutti gli altri casi coincide con il numero documento.
                     $form['numdoc'] = $form['numfat'];
                     $form['datfat'] = $datemi;
@@ -1310,7 +1312,7 @@ if ($form['id_tes'] > 0) { // è una modifica
     echo "<input type=\"hidden\" value=\"" . $form['tipdoc'] . "\" name=\"tipdoc\">\n";
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 } else { // è un inserimento
-    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT' => '','DDV' => '','DDY' => '', 'FAI' => '', 'FAP' => '', 'FNC' => '', 'FND' => ''));
+    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT' => '', 'FAI' => '', 'FAP' => '', 'FNC' => '', 'FND' => '','DDV' => '','DDY' => ''));
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[$toDo]) . $script_transl['tipdoc'];
     $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
 }

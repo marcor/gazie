@@ -15,6 +15,8 @@ ALTER TABLE `gaz_XXXartico` ADD `ragstat` CHAR(15) NOT NULL AFTER `catmer`;
 ALTER TABLE `gaz_XXXartico` ADD FOREIGN KEY (ragstat) REFERENCES gaz_XXXragstat(codice);
 ALTER TABLE `gaz_XXXartico` ADD `sconto` decimal(6,3);
 ALTER TABLE `gaz_XXXrigdoc` MODIFY COLUMN `sconto` decimal(6,3);
+ALTER TABLE `gaz_XXXtesdoc` ADD `ddt_type` CHAR(1) NOT NULL AFTER `tipdoc`;
+UPDATE `gaz_XXXtesdoc` SET `ddt_type` = 'T' WHERE (`tipdoc` = 'DDT' OR `tipdoc` = 'FAD');
 ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE DEFAULT null;
 ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` int NOT NULL DEFAULT 0;
 ALTER TABLE `gaz_XXXtesdoc` ADD `da_fatturare` boolean DEFAULT true;

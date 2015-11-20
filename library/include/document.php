@@ -156,6 +156,8 @@ class DocContabVars
             case "DDT":
             case "DDL":
             case "DDR":
+            case "DDV":
+            case "DDY":
             default:
                 $this->docRelNum  = $this->tesdoc["numdoc"];    // Numero del documento relativo
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo

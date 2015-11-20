@@ -503,7 +503,7 @@ function tesbroUpdate($codice, $newValue) {
 
 function tesdocInsert($newValue) {
    $table = 'tesdoc';
-   $columns = array('seziva', 'tipdoc', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
+   $columns = array('seziva', 'tipdoc','ddt_type', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
        'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
        'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
        'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
@@ -516,7 +516,7 @@ function tesdocInsert($newValue) {
 
 function tesdocUpdate($codice, $newValue) {
    $table = 'tesdoc';
-   $columns = array('seziva', 'tipdoc', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
+   $columns = array('seziva', 'tipdoc','ddt_type', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
        'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
        'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
        'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',

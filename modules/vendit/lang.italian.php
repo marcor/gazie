@@ -153,14 +153,14 @@ $strScript = array("admin_client.php" =>
     "admin_docven.php" =>
     array('none',
         'doc_name' => array("DDT" => "D.d.T. di Vendita",
-            "DDV" => "D.d.T. per Cessionne in Conto Visione",
-            "DDY" => "D.d.T. per Cessionne in Triangolazione",
             "FAD" => "D.d.T. di Vendita",
             "FAI" => "Fattura Immediata",
             "FAP" => "Parcella",
             "FNC" => "Nota Credito a Cliente",
             "FND" => "Nota Debito a Cliente",
             "VCO" => "Vendita Corrispettivo",
+            "DDV" => "D.d.T. per Cessione in Conto Visione",
+            "DDY" => "D.d.T. per Cessione in Triangolazione",
             "VRI" => "Ricevuta"
         ),
         'tipdoc' => ' documento di vendita tipo: ',

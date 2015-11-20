@@ -39,6 +39,10 @@ class DDT extends Template_con_scheda
             $descri='D.d.T. per Reso n.';
         } elseif ($this->tesdoc['tipdoc'] == 'DDL') {
             $descri='D.d.T. c/lavorazione n.';
+        } elseif ($this->tesdoc['tipdoc'] == 'DDV') {
+            $descri='D.d.T. cessione in c/visione n.';
+        } elseif ($this->tesdoc['tipdoc'] == 'DDY') {
+            $descri='D.d.T. cessione per triangolazione n.';
         } else {
             $descri='Documento di Trasporto n.';
         }
