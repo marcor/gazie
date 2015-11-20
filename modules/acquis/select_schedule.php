@@ -149,11 +149,13 @@ echo '		  </table>';
 							<td class="FacetDataTD text-center">'.gaz_format_date($mv["datreg"]).'&nbsp;</td>';
             if ($mv['id_rigmoc_pay']==0){
 				$tot['dare']  += $mv["amount"];
-				$tot['avere'] -= $mv["amount"];
+				//$tot['avere'] -= $mv["amount"];
 
                 echo '			<td class="FacetDataTD text-center">'.gaz_format_number($mv["amount"]).'&nbsp;</td>
 								<td class="FacetDataTD text-center"></td>';
-            } else {				$tot['avere'] += $mv["amount"];
+            } else {
+				$tot['avere'] += $mv["amount"];
+				$tot['dare']  -= $mv["amount"];
                 echo '			<td class="FacetDataTD text-center"></td>
 								<td class="FacetDataTD text-center">'.gaz_format_number($mv["amount"]).'&nbsp;</td>';
             }
@@ -175,7 +177,7 @@ echo '		  </table>';
 	 							<td class="FacetFormHeaderFont text-right" colspan="8">'.$script_transl['total_open'].'</td>
 								<td class="FacetFormHeaderFont text-center">'.gaz_format_number($tot['dare']).'</td>
 								<td class="FacetFormHeaderFont text-center">'.gaz_format_number($tot['avere']).'</td>
-								<td class="FacetFormHeaderFont text-center">'.gaz_format_number(100*$tot['avere']/($tot['dare']+$tot['avere'])).' %</td>
+								<td class="FacetFormHeaderFont text-center">'.gaz_format_number(100*abs($tot['dare']/($tot['dare']+$tot['avere']))).' %</td>
 								<td class="FacetFormHeaderFont text-center">
 									<input type="submit" name="print" value="'.$script_transl['print'].'" />
 								</td>

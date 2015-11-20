@@ -229,8 +229,13 @@ $strScript = array ("select_liqiva.php" =>
                            'header'=>array('Maestro'=>'','Cuenta'=>'','Descripcion'=>'','Debitos'=>'',
                                             'Creditos'=>'','Balance'=>'','Ver<br />y/o imprimir'=>'',
                                             'Borrar'=>''),
-                           'msg1'=>'Recuerde que Ud debe ser admin para introducir las actividades entre 100 y 199, entre 200 y 299 pasivos, costos entre 300 y 399, ingreso entre 400 y 499 y las cuentas memorandum o transitorias entre 500 y 599',
-                           'msg2'=>'Balances para un a&ntilde;o '
+                           'msg1'=>'Recuerde que Ud debe ser admin para introducir las actividades entre 100 y 199, entre 200 y 299 pasivos, costos entre 300 y 399, ingreso entre 400 y 499 y las cuentas memorandum o transitorias entre 500 y 599. Haga clic en la l&iacute;nea de la maestra (en rojo) para expandir y ver las subcuentas.',
+                           'msg2'=>'Balances para un a&ntilde;o ', 
+						   /** ENRICO FEDELE */
+						   'edit_master' => 'Modifica il mastro', 
+						   'edit_account' => 'Modifica il conto', 
+						   'print_ledger' => 'Visualizza e stampa il paritario'
+						   /** ENRICO FEDELE */
                          ),
                     "select_regiva.php" =>
                     array( 'title'=>'Seleccione vista previa y/o impresion de registro IVA',

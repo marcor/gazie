@@ -226,8 +226,13 @@ $strScript = array ("select_liqiva.php" =>
                            'header'=>array('Mastro'=>'','Conto'=>'','Descrizione'=>'','Dare'=>'',
                                             'Avere'=>'','Saldo'=>'','Visualizza<br />e/o stampa'=>'',
                                             'Cancella'=>''),
-                           'msg1'=>'Ricorda che devi introdurre i mastri per le attivit&agrave; compresi tra 100 e 199, le passivit&agrave; tra 200 e 299, i costi tra 300 e 399, i ricavi tra 400 e 499 e i conti d\'ordine o transitori tra 500 e 599',
-                           'msg2'=>'Saldi relativi all\'anno'
+                           'msg1'=>'Ricorda che devi introdurre i mastri per le attivit&agrave; compresi tra 100 e 199, le passivit&agrave; tra 200 e 299, i costi tra 300 e 399, i ricavi tra 400 e 499 e i conti d\'ordine o transitori tra 500 e 599. Clicca sulle righe dei mastri (in rosso) per espandere e visualizzare i sotto conti.',
+                           'msg2'=>'Saldi relativi all\'anno', 
+						   /** ENRICO FEDELE */
+						   'edit_master' => 'Modifica il mastro', 
+						   'edit_account' => 'Modifica il conto', 
+						   'print_ledger' => 'Visualizza e stampa il paritario'
+						   /** ENRICO FEDELE */
                          ),
                     "select_regiva.php" =>
                     array( 'title'=>'Selezione per la visualizzazione e/o la stampa dei registri IVA',

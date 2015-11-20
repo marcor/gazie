@@ -224,8 +224,13 @@ $strScript = array ("select_liqiva.php" =>
                            'header'=>array('Master'=>'','Account'=>'','Description'=>'','Debits'=>'',
                                             'Credits'=>'','Balance'=>'','View<br />and/or print'=>'',
                                             'Delete'=>''),
-                           'msg1'=>'Remember that you must master to introduce the activities between 100 and 199, between 200 and 299 liabilities, costs between 300 and 399, income between 400 and 499 and the memorandum accounts or transient between 500 and 599',
-                           'msg2'=>'Balances for the year '
+                           'msg1'=>'Remember that you must add master between 100 and 199 for assets, between 200 and 299 for liabilities, between 300 and 399 for costs, between 400 and 499 for incomings and  between 500 and 599 for memorandum accounts or transient. Click on master rows (in red) to expand and display children accounts.',
+                           'msg2'=>'Balances for the year ', 
+						   /** ENRICO FEDELE */
+						   'edit_master' => 'Edit master', 
+						   'edit_account' => 'Edit accounting causal', 
+						   'print_ledger' => 'View and print the ledger'
+						   /** ENRICO FEDELE */
                          ),
                     "select_regiva.php" =>
                     array( 'title'=>'Select for prewiev and/or print VAT register',

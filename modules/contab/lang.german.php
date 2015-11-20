@@ -226,8 +226,13 @@ $strScript = array ("select_liqiva.php" =>
                            'header'=>array('Master'=>'','Konto'=>'','Beschreibung'=>'','Schuld'=>'',
                                             'Credits'=>'','Balance'=>'','Profil <br /> und / oder ausdrucken'=>'',
                                             'Löschen'=>''),
-                           'msg1'=>'Profil <br /> und / oder printRemember dass Sie beherrschen müssen, um die Aktivitäten zwischen 100 und 199, zwischen 200 und 299 Verbindlichkeiten einzuführen, kostet zwischen 300 und 399, Einkommen zwischen 400 und 499 und das Memorandum Konten oder transiente zwischen 500 und 599',
-                           'msg2'=>'Guthaben für das Jahr '
+                           'msg1'=>'Profil <br /> und / oder printRemember dass Sie beherrschen müssen, um die Aktivitäten zwischen 100 und 199, zwischen 200 und 299 Verbindlichkeiten einzuführen, kostet zwischen 300 und 399, Einkommen zwischen 400 und 499 und das Memorandum Konten oder transiente zwischen 500 und 599. Clicca sulle righe dei mastri (in rosso) per espandere e visualizzare i sotto conti.',
+                           'msg2'=>'Guthaben für das Jahr ', 
+						   /** ENRICO FEDELE */
+						   'edit_master' => 'Modifica il mastro', 
+						   'edit_account' => 'Modifica il conto', 
+						   'print_ledger' => 'Visualizza e stampa il paritario'
+						   /** ENRICO FEDELE */
                          ),
                     "select_regiva.php" =>
                     array( 'title'=>'Wählen Sie für prewiev und / oder ausdrucken MwSt.-Register',

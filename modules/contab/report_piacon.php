@@ -41,39 +41,59 @@ if ($last_opening) {
 
 require("../../library/include/header.php");
 $strTransl=HeadMain();
+
+/**
+Tentativo di breadcrumb, ma credo sia inutile, il menu è sempre bello in alto... si allungherebbe solo la pagina, costringendo a scrollare
+<div class="breadcrumb">
+	<li><a href="../../modules/root/admin.php">Home</a></li>
+	<li><a href="../../modules/contab/docume_contab.php">Contabilit&agrave;</a></li>
+	<li class="active"><?php echo $strTransl['title']; ?></li>
+</div>
+*/
+
 ?>
-<table border="0" align="center" width="90%">
-<div colspan="3" class="FacetFormHeaderFont" align="center"><?php echo $strTransl['title']; ?></div>
-<div colspan="3" align="center" class="FacetDataTDred" ><?php echo $strTransl['msg1']; ?></div>
-</table>
-<table class="Tlarge">
-<tr>
+<div class="FacetFormHeaderFont text-center"><?php echo $strTransl['title']; ?></div>
+<div class="alert alert-danger text-center" role="alert"><?php echo $strTransl['msg1']; ?></div>
+
+<form method="POST">
+    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+        <thead>
+            <tr>
 <?php
 foreach ($strTransl['header'] as $k=>$v) {
-        echo '<th class="FacetFieldCaptionTD">'.$k."</th>\n";
+	echo '				<th class="FacetFieldCaptionTD">'.$k.'</th>';
 }
 ?>
-</tr>
-<form method="POST">
+			</tr>
+		</thead>
+	    <tbody>
 <?php
-echo "<tr><td colspan=\"6\" align=\"right\" class=\"FacetDataTD\">".$strTransl['msg2']." : ";
-echo "\t <select name=\"annrip\" class=\"FacetSelect\" onchange=\"this.form.submit();\">\n";
+echo '			<tr>
+					<td colspan="8" class="FacetDataTD text-right">'.$strTransl['msg2'].' : <select name="annrip" class="FacetSelect" onchange="this.form.submit();">';
 for( $counter = date("Y")-3; $counter <= date("Y"); $counter++ ) {
      $selected = "";
      if($counter == $_POST['annrip']) {
-        $selected = "selected";
+        $selected = ' selected=""';
      }
-     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+     echo '						<option value="'.$counter.'"'.$selected.'>'.$counter.'</option>';
 }
-echo "\t </select></td></tr>\n";
-$where = "(codice < ".$admin_aziend['mascli']."000001 OR codice > ".$admin_aziend['mascli']."999999)
-       AND (codice < ".$admin_aziend['masfor']."000001 OR codice > ".$admin_aziend['masfor']."999999)";
+echo '					</select>
+					</td>
+				</tr>';
+$where = "    (codice < ".$admin_aziend['mascli']."000001 OR codice > ".$admin_aziend['mascli']."999999)
+          AND (codice < ".$admin_aziend['masfor']."000001 OR codice > ".$admin_aziend['masfor']."999999)";
 
-$select = "SUM(import*(darave='D')) AS dare, SUM(import*(darave='A')) AS avere";
-$table = $gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes ";
-$where2 = " AND datreg BETWEEN $date_ini AND ".$final_date." GROUP BY codcon";
+$select = " SUM(import*(darave='D')) AS dare, 
+			SUM(import*(darave='A')) AS avere";
 
-$rs=gaz_dbi_dyn_query ('codice,descri', $gTables['clfoco'], $where, 'codice');
+$table  = $gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes ";
+
+$where2 = " AND datreg BETWEEN ".$date_ini." AND ".$final_date." GROUP BY codcon";
+
+$rs     = gaz_dbi_dyn_query ('codice,descri', $gTables['clfoco'], $where, 'codice');
+
+$collapse = 0;
+
 while ($r = gaz_dbi_fetch_array($rs)) {
        $r2=array('dare'=>0,'avere'=>0);
        $rs2=gaz_dbi_dyn_query ($select, $table, 'codcon='.$r['codice'].$where2, 'codcon');
@@ -81,24 +101,49 @@ while ($r = gaz_dbi_fetch_array($rs)) {
           $r2=gaz_dbi_fetch_array($rs2);
        }
        if (substr($r["codice"],3) == '000000') {
-           echo "<td class=\"FacetData\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_piacon.php?Update&codice=".$r["codice"]."\" title=\"Modifica il mastro\" ><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],0,3)."</a> </td>";
-           echo "<td class=\"FacetData\">".substr($r["codice"],3)." </td><td class=\"FacetData\" style=\"color: #f00;\" colspan=\"5\" >".$r["descri"]." </td>";
-           echo "<td class=\"FacetData\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-           echo "</tr>\n";
+		   $collapse = $r["codice"];
+           echo '			<tr data-toggle="collapse" data-target=".'.$collapse.'">	
+								<td class="FacetData">
+									<a class="btn btn-xs btn-default btn-edit" href="admin_piacon.php?Update&amp;codice='.$r["codice"].'" title="'.$strTransl['edit_master'].'" >
+										<i class="glyphicon glyphicon-edit"></i>&nbsp;'.substr($r["codice"],0,3).'
+									</a>
+								</td>
+								<td class="FacetData">'.substr($r["codice"],3).'</td>
+								<td class="FacetData text-danger" colspan="5"><strong>'.$r["descri"].'</strong></td>
+								<td class="FacetData text-center">
+									<a class="btn btn-xs btn-default btn-elimina" href="delete_piacon.php?codice='.$r["codice"].'">
+										<i class="glyphicon glyphicon-remove"></i>
+									</a>
+								</td>
+							</tr>';
        } else {
-           echo "<td class=\"FacetDataTD\">".substr($r["codice"],0,3)." </td>";
-           echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_piacon.php?Update&codice=".$r["codice"]."\" title=\"Modifica il conto\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> ";
-           echo "</td><td class=\"FacetDataTD\">".$r["descri"]." </td>";
-           echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r2["dare"])." </td>";
-           echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r2["avere"])." </td>";
-           echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r2["dare"]-$r2["avere"])." </td>";
-           echo "<td title=\"Visualizza e stampa il paritario\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"select_partit.php?id=".$r["codice"]."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
-           echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-           echo "</tr>\n";
+           echo '			<tr class="'.$collapse.' collapse" aria-expanded="false">
+								<td class="FacetDataTD">'.substr($r["codice"],0,3).' </td>
+								<td class="FacetDataTD">
+									<a class="btn btn-xs btn-default btn-edit" href="admin_piacon.php?Update&amp;codice='.$r["codice"].'" title="'.$strTransl['edit_account'].'">
+										<i class="glyphicon glyphicon-edit"></i>&nbsp;'.substr($r["codice"],3).'
+									</a>
+								</td>
+								<td class="FacetDataTD">'.$r["descri"].' </td>
+								<td class="FacetDataTD text-right">'.gaz_format_number($r2["dare"]).' </td>
+								<td class="FacetDataTD text-right">'.gaz_format_number($r2["avere"]).' </td>
+								<td class="FacetDataTD text-right">'.gaz_format_number($r2["dare"]-$r2["avere"]).' </td>
+								<td class="FacetDataTD text-center" title="Visualizza e stampa il paritario">
+									<a class="btn btn-xs btn-default" href="select_partit.php?id='.$r["codice"].'">
+										<i class="glyphicon glyphicon-check"></i>&nbsp;<i class="glyphicon glyphicon-print"></i>
+									</a>
+								</td>
+								<td class="FacetDataTD text-center">
+									<a class="btn btn-xs btn-default btn-elimina" href="delete_piacon.php?codice='.$r["codice"].'">
+										<i class="glyphicon glyphicon-remove"></i>
+									</a>
+								</td>
+							</tr>';
        }
 }
 ?>
-</table>
+		</tbody>
+	</table>
 </form>
 </body>
 </html>
