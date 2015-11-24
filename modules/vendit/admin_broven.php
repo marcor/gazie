@@ -1039,14 +1039,15 @@ $script_transl = $strScript["admin_broven.php"]+HeadMain(0, array('tiny_mce/tiny
     /*'boxover/boxover',*/
     'calendarpopup/CalendarPopup',
     'custom/autocomplete_anagra',
-    'custom/miojs'
+    'jquery/toast/javascript/jquery.toastmessage',
+	'custom/miojs'
 	/** ENRICO FEDELE */
     /*'jquery/jquery-1.7.1.min',
     'jquery/ui/jquery.ui.core',
     'jquery/ui/jquery.ui.widget',
     'jquery/ui/jquery.ui.position',
     'jquery/ui/jquery.ui.autocomplete',*/
-    /*'jquery/toast/javascript/jquery.toastmessage',*/
+    /**/
 	/** ENRICO FEDELE */));
 if ($form['id_tes'] > 0) {
    $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]) . " n." . $form['numdoc'];

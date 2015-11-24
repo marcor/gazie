@@ -1238,14 +1238,14 @@ $script_transl = HeadMain(0, array('tiny_mce/tiny_mce',
     /*'boxover/boxover',*/
     'calendarpopup/CalendarPopup',
     'custom/autocomplete_anagra',
-    'custom/miojs'
+    'custom/miojs',
+    'jquery/toast/javascript/jquery.toastmessage'
     /** ENRICO FEDELE */
 	/*'jquery/jquery-1.7.1.min',
     'jquery/ui/jquery.ui.core',
     'jquery/ui/jquery.ui.widget',
     'jquery/ui/jquery.ui.position',
-    'jquery/ui/jquery.ui.autocomplete',
-    'jquery/toast/javascript/jquery.toastmessage',*/
+    'jquery/ui/jquery.ui.autocomplete',*/
 	/** ENRICO FEDELE */));
 
 echo "<script type=\"text/javascript\">";
