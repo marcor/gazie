@@ -342,7 +342,8 @@ $strScript = array("admin_client.php" =>
         'taxstamp' => 'Taxstamp',
         'virtual_taxstamp' => 'Mode',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Material', 2 => 'Virtual'),
-		'weight' => 'weight'
+		'weight' => 'weight',
+        'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search'
     ),
     "report_contract.php" =>
     array('title' => 'Report of concluded contracts',

@@ -355,7 +355,8 @@ $strScript = array("admin_client.php" =>
         'taxstamp' => 'Bollo',
         'virtual_taxstamp' => 'Modo',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'),
-		'weight' => 'peso'
+		'weight' => 'peso',
+        'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
     ),
     "report_contract.php" =>
     array('title' => 'Elenco dei contratti stipulati',

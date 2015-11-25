@@ -400,7 +400,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('tiny_mce/tiny_mce',
+$script_transl = HeadMain(0,array(/*'tiny_mce/tiny_mce',*/
                                   /*'boxover/boxover',*/
                                   'calendarpopup/CalendarPopup',
                                   'custom/autocomplete_anagra'
@@ -415,6 +415,7 @@ $title = ucfirst($script_transl['ins_this']);
 if ($toDo=='update'){
   $title = ucfirst($script_transl['upd_this']);
 }
+/*
 echo "<script type=\"text/javascript\">
           // Initialize TinyMCE with the new plugin and menu button
           tinyMCE.init({
@@ -431,8 +432,8 @@ echo "<script type=\"text/javascript\">
           theme_advanced_toolbar_location : \"external\",
           theme_advanced_toolbar_align : \"left\",
           editor_selector  : \"mceClass\",
-          });\n";
-echo "
+          });\n";*/
+echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
 function setMultipleValues(y,m,d) {
