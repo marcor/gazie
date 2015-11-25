@@ -705,7 +705,10 @@ class selectartico extends SelectBox {
          echo "\t<input type=\"hidden\" name=\"$this->name\" value=\"\">\n";
       }
       echo "\t<input type=\"text\" name=\"cosear\" value=\"" . $cerca . "\" " . $tabula . " maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
-      echo "<font style=\"color:#ff0000;\">$msg </font>";
+      //echo "<font style=\"color:#ff0000;\">$msg </font>";
+	  if($msg!="") {
+	  	echo '<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'.$msg.'</span>&nbsp;';
+	  }
       //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
       /** ENRICO FEDELE */
       /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
