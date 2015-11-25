@@ -28,7 +28,7 @@ this.gzTooltip = function(){
 		 title:function(){
 			   var codeDtls = this.getAttribute('data-type');
 				if(codeDtls=="product-thumb") {
-				   codeDtls='<img src="../root/view.php?table=artico&value='+this.getAttribute('data-id')+'" onerror="this.src=\'../../library/images/link_break.png\'" alt="'+this.getAttribute('data-title')+'" />';
+				   codeDtls='<span class="label">'+this.getAttribute('data-title')+'</span><img src="../root/view.php?table=artico&value='+this.getAttribute('data-id')+'" onerror="this.src=\'../../library/images/link_break.png\'" alt="'+this.getAttribute('data-title')+'" />';
 				   return codeDtls;
 				} else if(codeDtls=="weight") {
 				   codeDtls = this.getAttribute('data-title')+'&nbsp;'+this.getAttribute('data-id')+'kg';
