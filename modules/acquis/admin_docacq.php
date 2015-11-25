@@ -920,7 +920,7 @@ require("../../library/include/header.php");
   * La versione scaricata dal repository di questa pagina dà due errori javascript, che inibiscono il caricamento della finestra modale
   * commentando i due script di seguito e inibendone il caricamento, rimane ancora un errore attivo, ma il caricamento della modale funziona
 */
-$script_transl = HeadMain(0,array('tiny_mce/tiny_mce',
+$script_transl = HeadMain(0,array(/*'tiny_mce/tiny_mce',*/
                                   /*'boxover/boxover',*/
                                   'calendarpopup/CalendarPopup',
                                   'custom/autocomplete_anagra',
@@ -973,7 +973,7 @@ if ($form['id_tes'] > 0 and substr($form['tipdoc'], 0, 1) == 'D') {
 }
 echo "<script type=\"text/javascript\">";
 foreach ($form['rows'] as $k => $v) {
-    if ($v['tiprig'] > 5 || $v['tiprig'] < 9) {
+    /*if ($v['tiprig'] > 5 || $v['tiprig'] < 9) {
         echo "\n// Initialize TinyMCE with the new plugin and menu button
           tinyMCE.init({
           mode : \"specific_textareas\",
@@ -990,7 +990,7 @@ foreach ($form['rows'] as $k => $v) {
           theme_advanced_toolbar_align : \"left\",
           editor_selector  : \"mceClass" . $k . "\",
           });\n";
-    }
+    }*/
     echo '   $( "#dialog_open' . $i . '").dialog({
               autoOpen: false
            });
@@ -1391,7 +1391,7 @@ foreach ($form['rows'] as $key => $value) {
         case "8":
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
               <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$key]\" value=\"" . $script_transl['typerow'][$value['tiprig']] . "\" /></td>\n";
-            echo "<td colspan=\"10\"><textarea id=\"row_$key\" name=\"row_$key\" class=\"mceClass$key\" style=\"width:100%;height:100px;\">" . $form["row_$key"] . "</textarea></td>\n";
+            echo "<td colspan=\"10\"><textarea id=\"row_$key\" name=\"row_$key\" class=\"mceClass\" style=\"width:100%;height:100px;\">" . $form["row_$key"] . "</textarea></td>\n";
             echo "<input type=\"hidden\" name=\"rows[$key][descri]\" value=\"\" />\n";
             echo "<input type=\"hidden\" name=\"rows[$key][unimis]\" value=\"\" />\n";
             echo "<input type=\"hidden\" name=\"rows[$key][quanti]\" value=\"\" />\n";

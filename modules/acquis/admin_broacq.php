@@ -646,7 +646,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 }
 require("../../library/include/header.php");
 require("./lang.".$admin_aziend['lang'].".php");
-$script_transl = $strScript["admin_docacq.php"]+HeadMain(0,array('tiny_mce/tiny_mce',
+$script_transl = $strScript["admin_docacq.php"]+HeadMain(0,array(/*'tiny_mce/tiny_mce',*/
                                   /*'boxover/boxover',*/
                                   'calendarpopup/CalendarPopup',
 								  /** ENRICO FEDELE */
