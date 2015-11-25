@@ -57,3 +57,12 @@ function toggle(boxID, toggleID) {
 	updateToggle = box.checked ? toggle.disabled=false : toggle.disabled=true;
 	toggle.focus();
 }
+
+
+$(document).ready (function(){
+	//$("#success-alert").hide();
+		//$("#success-alert").alert();
+		$("#alert-discount").fadeTo(2500, 500).slideUp(750, function(){
+			$("#alert-discount").alert('close');
+		});
+ });
