@@ -248,7 +248,7 @@ $strScript = array("admin_client.php" =>
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
         'da_fatturare_value' => array(0 => 'No', 1 => 'Si'),
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
-		'weight' => 'peso'
+        'weight' => 'peso'
     /** fine modifica FP */
     ),
     "select_docforprint.php" =>
@@ -355,8 +355,8 @@ $strScript = array("admin_client.php" =>
         'taxstamp' => 'Bollo',
         'virtual_taxstamp' => 'Modo',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'),
-		'weight' => 'peso',
-        'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
+        'weight' => 'peso',
+        'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale'
     ),
     "report_contract.php" =>
     array('title' => 'Elenco dei contratti stipulati',
@@ -555,9 +555,9 @@ $strScript = array("admin_client.php" =>
         'taxable' => 'Imponibile',
         'tax' => 'I.V.A.',
         'confirm' => 'Confermi invio dati al registratore di cassa?',
-	    /** ENRICO FEDELE */
-	    'add_article' => 'Aggiungi un nuovo articolo', 
-		'weight' => 'peso'
+        /** ENRICO FEDELE */
+        'add_article' => 'Aggiungi un nuovo articolo',
+        'weight' => 'peso'
     ),
     "genera_effett.php" =>
     array('title' => 'Genera gli effetti a partire dai documenti fiscali',
@@ -770,6 +770,30 @@ $strScript = array("admin_client.php" =>
             'Cliente' => '', 'Fattura' => '', 'Appoggio' => ''
         )
     ),
+    "emissi_fatdif.php" =>
+    array('title' => 'Selezione per la fatturazione dei Documenti di Trasporto della sezione IVA ',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia cliente'
+        ),
+        'errors' => array('Una data  non &egrave; corretta!',
+            'La data di emissione non pu&ograve; essere antecedente alla data dell\'ultimo DdT !',
+            'La data di inizio dei DdT da emettere non pu&ograve; essere successivo alla data dell\'ultimo!',
+            'L\'ultimo documento emesso ha una data successiva a quella di emissione!'
+        ),
+        'cliente' => 'Cliente: ',
+        'date_exe' => 'Data di emissione ',
+        'date_ini' => 'Data inizio periodo ',
+        'date_fin' => 'Data fine periodo ',
+        'doc_type'=>' Tipo Documenti',
+        'n_inv'=>' Fatturabili nel periodo',
+        'n_rem'=>' Rimanenti (successivi)',
+        'alert_pay' => 'Pagamento che prevede l\'incasso automatico',
+        'alert_bank' => 'ATTENZIONE! MANCA LA BANCA D\'APPOGGIO',
+        'alert_customer' => 'Cliente con diversi pagamenti',
+        'preview_inv' => 'ANTEPRIMA DI FATTURAZIONE',
+        'submit_inv' => 'CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA'
+    ),
     "report_schedule.php" =>
     array('title' => 'Lista dei movimenti delle partite',
         'header' => array('ID' => 'id',
@@ -802,7 +826,7 @@ $strScript = array("admin_client.php" =>
         ),
         /** ENRICO FEDELE */
         'status_value' => array(0 => 'Chiusa', 1 => 'Aperta'),
-		'total_open' => 'Totale partite aperte'
+        'total_open' => 'Totale partite aperte'
     ),
     "delete_schedule.php" =>
     array('title' => 'Cancellazione movimenti chiusi dello scadenzario',

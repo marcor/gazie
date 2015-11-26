@@ -12,12 +12,11 @@ ALTER TABLE `gaz_XXXaliiva` ADD `taxstamp` INT(1) NOT NULL AFTER `aliquo`;
 UPDATE `gaz_XXXaliiva` SET `taxstamp` = '1' WHERE `aliquo` <= 0.1;
 CREATE TABLE `gaz_XXXragstat` ( `codice` char(15) NOT NULL, `descri` varchar(50) NOT NULL DEFAULT '', `image` blob NOT NULL, `web_url` varchar(255) NOT NULL, `ricarico` decimal(4,1) NOT NULL, `annota` varchar(50) DEFAULT NULL, `adminid` varchar(20) NOT NULL DEFAULT '', `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, PRIMARY KEY (codice)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `gaz_XXXartico` ADD `ragstat` CHAR(15) NOT NULL AFTER `catmer`;
-ALTER TABLE `gaz_XXXartico` ADD FOREIGN KEY (ragstat) REFERENCES gaz_XXXragstat(codice);
-ALTER TABLE `gaz_XXXartico` ADD `sconto` decimal(6,3);
+ALTER TABLE `gaz_XXXartico` ADD FOREIGN KEY (ragstat)REFERENCES gaz_XXXragstat(codice);
+ALTER TABLE `gaz_XXXartico` ADD `sconto` decimal(6,3) AFTER `preve3`;
 ALTER TABLE `gaz_XXXrigdoc` MODIFY COLUMN `sconto` decimal(6,3);
 ALTER TABLE `gaz_XXXtesdoc` ADD `ddt_type` CHAR(1) NOT NULL AFTER `tipdoc`;
 UPDATE `gaz_XXXtesdoc` SET `ddt_type` = 'T' WHERE (`tipdoc` = 'DDT' OR `tipdoc` = 'FAD');
-ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE DEFAULT null;
-ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` int NOT NULL DEFAULT 0;
-ALTER TABLE `gaz_XXXtesdoc` ADD `da_fatturare` boolean DEFAULT true;
+ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE DEFAULT null AFTER `datemi`;
+ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` int NOT NULL DEFAULT 0 AFTER `pagame`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

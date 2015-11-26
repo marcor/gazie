@@ -508,7 +508,7 @@ function tesdocInsert($newValue) {
        'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
        'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
        /** inizio modifica FP 19/10/2015 */
-       'ragbol', 'data_ordine', 'da_fatturare'
+       'ragbol', 'data_ordine'
        /** fine modifica FP */);
    $newValue['adminid'] = $_SESSION['Login'];
    tableInsert($table, $columns, $newValue);
@@ -521,7 +521,7 @@ function tesdocUpdate($codice, $newValue) {
        'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
        'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
        /** inizio modifica FP 19/10/2015 */
-       'ragbol', 'data_ordine', 'da_fatturare'
+       'ragbol', 'data_ordine'
        /** fine modifica FP */
    );
    $newValue['adminid'] = $_SESSION['Login'];
