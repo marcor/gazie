@@ -1035,11 +1035,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 }
 require("../../library/include/header.php");
 require("./lang.".$admin_aziend['lang'].".php");
-$script_transl = $strScript["admin_broven.php"]+HeadMain(0, array('tiny_mce/tiny_mce',
+$script_transl = $strScript["admin_broven.php"]+HeadMain(0, array(/*'tiny_mce/tiny_mce',*/
     /*'boxover/boxover',*/
     'calendarpopup/CalendarPopup',
-    'custom/autocomplete_anagra',
-    'jquery/toast/javascript/jquery.toastmessage',
+    'custom/autocomplete',
+    /*'jquery/toast/javascript/jquery.toastmessage',*/
 	'custom/miojs'
 	/** ENRICO FEDELE */
     /*'jquery/jquery-1.7.1.min',
@@ -1055,7 +1055,7 @@ if ($form['id_tes'] > 0) {
    $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
 echo "<script type=\"text/javascript\">";
-foreach ($form['rows'] as $k => $v) {
+/*foreach ($form['rows'] as $k => $v) {
    if ($v['tiprig'] > 5 || $v['tiprig'] < 9) {
       echo "\n// Initialize TinyMCE with the new plugin and menu button
           tinyMCE.init({
@@ -1074,7 +1074,7 @@ foreach ($form['rows'] as $k => $v) {
           editor_selector  : \"mceClass" . $k."\",
           });\n";
    }
-}
+}*/
 
 echo "
 function pulldown_menu(selectName, destField)
@@ -1511,7 +1511,7 @@ foreach ($form['rows'] as $k => $v) {
 		 			<input class="FacetDataTDsmall" type="submit" name="upd_row['.$k.']" value="'.$script_transl['typerow'][$v['tiprig']].'" />
 				</td>
 				<td colspan="10">
-					<textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
+					<textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
 				</td>
 				<input type="hidden" value="" name="rows['.$k.'][descri]" />
 				<input type="hidden" value="" name="rows['.$k.'][unimis]" />

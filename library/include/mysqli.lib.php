@@ -70,6 +70,22 @@ function gaz_dbi_fetch_array($resource) {
    $result = mysqli_fetch_array($resource);
    return $result;
 }
+/** ENRICO FEDELE */
+/* Possiamo usare questa funzione in futuro?
+*  Ritengo che sia decisamente più i mmediata, perchè restituisce giù un array associativo
+*  e ci evita di dover creare un array apposito in cui mettere quello che ci interessa
+*/
+function gaz_dbi_fetch_assoc ($resource)
+{
+    $result = mysqli_fetch_assoc($resource);
+    return $result;
+}
+function gaz_dbi_real_escape_string ($resource)
+{
+	global $link;
+    $result = mysqli_real_escape_string($link, $resource);
+    return $result;
+}
 
 function gaz_dbi_fetch_row($resource) {
    $result = mysqli_fetch_row($resource);
@@ -201,18 +217,19 @@ function gaz_dbi_record_count($table, $where) {
 // funzione che compone una query con i parametri: tabella, where, orderby, limit e passo (riga di inizio e n. record)
 function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit = 0, $passo = 2000000) {
    global $link, $session;
-   $query = "SELECT $select FROM $tabella ";
+   $query = "SELECT ".$select." FROM ".$tabella;
    if ($where != '') {
-      $query .= "WHERE $where ";
+      $query .= " WHERE $where ";
    }
    if ($orderby == '2') {
-      $query .= "LIMIT $limit, $passo";
+      $query .= " LIMIT ".$limit.", ".$passo;
    } else {
-      $query .= "ORDER BY $orderby LIMIT $limit, $passo";
+      $query .= " ORDER BY ".$orderby." LIMIT ".$limit.", ".$passo;
    }
+   //echo $query;
    $result = mysqli_query($link, $query);
    if (!$result)
-      die(" Errore di gaz_dbi_dyn_query:<b> $query </b> " . mysqli_error($link));
+      die(" Errore di gaz_dbi_dyn_query:<strong> ".$query." </strong> " . mysqli_error($link));
    return $result;
 }
 

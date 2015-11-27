@@ -146,7 +146,7 @@ $script_transl = HeadMain(0,array(/** ENRICO FEDELE */
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',*/
                                   /** ENRICO FEDELE */
-								  'custom/autocomplete_location'));
+								  'custom/autocomplete'));
 echo "<form method=\"POST\" name=\"vettore\">\n";
 $gForm = new GAzieForm();
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";

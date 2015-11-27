@@ -600,39 +600,40 @@ input.input-xs {
 
 /* Layout helpers
 ----------------------------------*/
+/*
 .ui-helper-hidden { display: none; }
 .ui-helper-hidden-accessible { position: absolute; left: -99999999px; }
 .ui-helper-reset { margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none; }
 .ui-helper-clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
 .ui-helper-clearfix { display: inline-block; }
-/* required comment for clearfix to work in Opera \*/
+/* required comment for clearfix to work in Opera \* /
 * html .ui-helper-clearfix { height:1%; }
 .ui-helper-clearfix { display:block; }
-/* end clearfix */
+/* end clearfix * /
 .ui-helper-zfix { width: 100%; height: 100%; top: 0; left: 0; position: absolute; opacity: 0; filter:Alpha(Opacity=0); }
 
 
 /* Interaction Cues
-----------------------------------*/
+----------------------------------* /
 .ui-state-disabled { cursor: default !important; }
 
 
 /* Icons
 ----------------------------------*/
 
-/* states and images */
+/* states and images * /
 .ui-icon { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
 
 
 /* Misc visuals
 ----------------------------------*/
 
-/* Overlays */
+/* Overlays * /
 .ui-widget-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
 
 
 /* Component containers
-----------------------------------*/
+----------------------------------* /
 .ui-widget { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1.1em; }
 .ui-widget .ui-widget { font-size: 1em; }
 .ui-widget .ui-widget-right { font-size: 1em; text-align:right;}
@@ -643,7 +644,7 @@ input.input-xs {
 .ui-widget-header a { color: #ffffff; }
 
 /* Interaction states
-----------------------------------*/
+----------------------------------* /
 .ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #cccccc; background: #f6f6f6; font-weight: bold; color: #1c94c4; }
 .ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #1c94c4; text-decoration: none; }
 .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #fbcb09; background: #fdf5ce; font-weight: bold; color: #c77405; }
@@ -657,7 +658,7 @@ input.input-xs {
 /* Misc visuals
 ----------------------------------*/
 
-/* Corner radius */
+/* Corner radius * /
 
 .ui-corner-all { -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }
 
@@ -670,10 +671,11 @@ input.input-xs {
  *
  * http://docs.jquery.com/UI/Autocomplete#theming
  */
+ /*
 .ui-autocomplete { position: absolute; cursor: default;
-	font-size : 8px;  }
+	font-size : 8px;  }*/
 
-/* workarounds */
+/* workarounds * /
 * html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
 
 /*
@@ -685,7 +687,7 @@ input.input-xs {
  *
  * http://docs.jquery.com/UI/Menu#theming
  */
-.ui-menu {
+/*.ui-menu {
 	list-style:none;
 	padding: 2px;
 	margin: 0;
@@ -715,14 +717,49 @@ input.input-xs {
 .ui-menu .ui-menu-item a.ui-state-active {
 	font-weight: normal;
 	margin: -1px;
-}
+}*/
 
 /* fix: datepicker visible div 
-*/
+* /
 #ui-datepicker-div { display: none; }
-
+*/
 /*  FINE CSS di JQuery/UI
 */
+
+/** ENRICO FEDELE */
+/* Inizio stili custom pper jquery-ui */
+/* highlight results */
+.ui-autocomplete span.hl_results {
+    background-color: #ffff66;
+}
+ 
+/* loading - the AJAX indicator */
+.ui-autocomplete-loading {
+    background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat;
+}
+ 
+/* scroll results */
+.ui-autocomplete {
+    /*max-height: 250px;*/
+    overflow-y: hidden;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+    /* add padding for vertical scrollbar */
+    /*padding-right: 5px;*/
+}
+ 
+.ui-autocomplete li {
+    /*font-size: 16px;*/
+}
+ 
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+    height: 250px;
+}
+/* Fine */
+/** ENRICO FEDELE */
 
 /** ENRICO FEDELE */
 /* stile per il pulsante di tipo file */
@@ -752,5 +789,10 @@ input[type="text"]:focus, textarea:focus, select:focus {
     border-color: #66afe9;
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(26, 77, 25, 0.6);
     outline: 0 none;
+}
+
+/* highlight results */
+.ui-autocomplete span.hl_results {
+    background-color: #ffff66;
 }
 /** ENRICO FEDELE */

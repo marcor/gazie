@@ -923,7 +923,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0,array(/*'tiny_mce/tiny_mce',*/
                                   /*'boxover/boxover',*/
                                   'calendarpopup/CalendarPopup',
-                                  'custom/autocomplete_anagra',
+                                  'custom/autocomplete',
                                   'custom/modal_form'
 								  /** ENRICO FEDELE */
                                   /*'jquery/jquery-1.7.1.min',
@@ -1305,7 +1305,7 @@ foreach ($form['rows'] as $key => $value) {
 			  </td>';
 
 		echo '<td>
-			  	<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="rows['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
+			  	<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$value['annota'].'" type="text" name="rows['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
 			  </td>
 			  <td>
 			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">

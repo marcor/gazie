@@ -27,12 +27,12 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <html xmlns="http://www.w3.org/1999/xhtml" dir="ltr">
+        <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+            <meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <?php
 $menuclass = ' class="FacetMainMenu" ';
@@ -43,25 +43,30 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
     $style = $admin_aziend['style'];
 } 
 ?>
+			
+			<link rel="shortcut icon" href="../../library/images/favicon.ico">			
+            
+			<script src="../../js/jquery/jquery.js"></script>
+			<script src="../../js/jquery.ui/jquery-ui.min.js"></script>
+            <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
+            <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+			<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+			<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+			<![endif]-->            
+			<script src="../../library/bootstrap/js/bootstrap.min.js"></script>
+			<script src="../../js/custom/gz-library.js"></script>
+			<!--<link rel="stylesheet" href="../../js/jquery/toast/resources/css/jquery.toastmessage.css" />-->
+            <script src="../../js/tinymce/tinymce.min.js"></script>
+            <script src="../../js/custom/tinymce.js"></script>
 
-<link rel="shortcut icon" href="../../library/images/favicon.ico">
-<link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-<link href="../../js/jquery.ui/jquery-ui.theme.css" rel="stylesheet">
-<script src="../../js/jquery/jquery.js"></script>
-<script src="../../js/jquery.ui/jquery-ui.min.js"></script>
+			<link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
+<!--			<link href="../../js/jquery.ui/jquery-ui.theme.css" rel="stylesheet">-->
+			<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+			<link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" />
 
-<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-<!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
-<script src="../../library/bootstrap/js/bootstrap.min.js"></script>
-<link href="../../library/style/ml_dropdown.css" rel="stylesheet" type="text/css" />
-<script src="../../js/custom/gz-library.js"></script>
-<link rel="stylesheet" href="../../js/jquery/toast/resources/css/jquery.toastmessage.css" />
-<link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" />
+			<link href="../../library/style/ml_dropdown.css" rel="stylesheet" type="text/css" />
 <?php
 /** ENRICO FEDELE */
 /* Dunque ho creato questo escamotage, basta mettere un file .css nella cartella lybrary/style con nome 
@@ -71,30 +76,30 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
    			   così nel caso in cui si debba aggiornare lo script, non si fanno danni!
 */
 if (file_exists("../../library/style/".strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])).'.css')) {
-    echo '<link href="../../library/style/'.strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])).'.css" rel="stylesheet" type="text/css" />';
+    echo '			<link href="../../library/style/'.strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])).'.css" rel="stylesheet" type="text/css" />';
 }
 ?>
 
 <?php
 
-function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray='')
-{
+function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray='') {
+  global $module,$admin_aziend,$radix,$scriptname;
   /* - In $idScript si deve passare l'id dell'array submenu (m2) in menu.language.php (per mettere nel tag <TITLE> )
              oltre che il nome del modulo anche quello dello script tradotto
      - In $jsArray di devono passare i nomi dei file javascript che si vogliono caricare e presenti nella directory 'js'
      */
   if (is_array($jsArray)){
       foreach ($jsArray as $v){
-              echo "\n<script type=\"text/javascript\" src=\"../../js/".$v.".js\"></script>";
+              echo '			<script type="text/javascript" src="../../js/'.$v.'.js"></script>';
       }
   }
   if (is_array($cssArray)){
     foreach ($cssArray as $v){
-      echo "\n<link rel=\"stylesheet\" type=\"text/css\" href=\"../../modules/".$v."\">";
+      echo '			<link rel="stylesheet" type="text/css" href="../../modules/'.$v.'">';
     }
   }
-  global $module,$admin_aziend,$radix,$scriptname;
   $result = getAccessRights($_SESSION['Login'],$_SESSION['enterprise_id']);
+  
   if (gaz_dbi_num_rows($result) > 0) {
      // creo l'array associativo per la generazione del menu con JSCookMenu
      $ctrl_m1=0;
@@ -108,11 +113,13 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
                 require("../../modules/".$row['name']."/menu.".$admin_aziend['lang'].".php");
              }
              if ($row['name'] == $module) {
-               $row['weight']=0;
-                 if ($row['m3_link'] == $scriptname) {
+				 $row['weight']=0;
+                 
+				 if ($row['m3_link'] == $scriptname) {
                      $title_from_menu = $transl[$row['name']]['m3'][$row['m3_trkey']][0];
                  }
-                 if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) {
+                 
+				 if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) {
                     require("../../modules/".$row['name']."/lang.".$admin_aziend['lang'].".php");
                     if (isset($strScript[$scriptname])){ // se è stato tradotto lo script lo ritorno al chiamante
                           $translated_script=$strScript[$scriptname];
@@ -120,21 +127,49 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
                              $title_from_menu = $translated_script['title'];
                           }
                     }
-                }
+                 }
              }
              if (isset($row['m3_id']) and $row['m3_id']>0) { // è un menu3
                 if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) { // è pure il primo di menu2 e menu1
-                    $menuArray[$row['weight']] = array('link'=>'../'.$row['name'].'/'.$row['link'],'icon'=>'../'.$row['name'].'/'.$row['icon'],'name'=>$transl[$row['name']]['name'],'title'=>$transl[$row['name']]['title'],'class'=>$row['class']);
-                    $menuArray[$row['weight']][$row['m2_weight']] = array('link'=>'../'.$row['name'].'/'.$row['m2_link'],'icon'=>'../'.$row['name'].'/'.$row['m2_icon'],'name'=>$transl[$row['name']]['m2'][$row['m2_trkey']][1],'title'=>$transl[$row['name']]['m2'][$row['m2_trkey']][0],'class'=>$row['m2_class']);
+                    $menuArray[$row['weight']] = array('link'  => '../'.$row['name'].'/'.$row['link'],
+													   'icon'  => '../'.$row['name'].'/'.$row['icon'],
+													   'name'  => $transl[$row['name']]['name'],
+													   'title' => $transl[$row['name']]['title'],
+													   'class' => $row['class']);
+                    $menuArray[$row['weight']][$row['m2_weight']] = array('link'  => '../'.$row['name'].'/'.$row['m2_link'],
+																		  'icon'  => '../'.$row['name'].'/'.$row['m2_icon'],
+																		  'name'  => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
+																		  'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
+																		  'class' => $row['m2_class']);
                 } elseif ($ctrl_m2 != $row['m2_id']) { // è solo il primo di menu2
-                    $menuArray[$row['weight']][$row['m2_weight']] = array('link'=>'../'.$row['name'].'/'.$row['m2_link'],'icon'=>'../'.$row['name'].'/'.$row['m2_icon'],'name'=>$transl[$row['name']]['m2'][$row['m2_trkey']][1],'title'=>$transl[$row['name']]['m2'][$row['m2_trkey']][0],'class'=>$row['m2_class']);
+                    $menuArray[$row['weight']][$row['m2_weight']] = array('link'  => '../'.$row['name'].'/'.$row['m2_link'],
+																		  'icon'  => '../'.$row['name'].'/'.$row['m2_icon'],
+																		  'name'  => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
+																		  'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
+																		  'class' => $row['m2_class']);
                 }
-                $menuArray[$row['weight']][$row['m2_weight']][$row['m3_weight']] = array('link'=>'../'.$row['name'].'/'.$row['m3_link'],'icon'=>'../'.$row['name'].'/'.$row['m3_icon'],'name'=>$transl[$row['name']]['m3'][$row['m3_trkey']][1],'title'=>$transl[$row['name']]['m3'][$row['m3_trkey']][0],'class'=>$row['m3_class']);
+                $menuArray[$row['weight']][$row['m2_weight']][$row['m3_weight']] = array('link'=>'../'.$row['name'].'/'.$row['m3_link'],
+																						 'icon'=>'../'.$row['name'].'/'.$row['m3_icon'],
+																						 'name'=>$transl[$row['name']]['m3'][$row['m3_trkey']][1],
+																						 'title'=>$transl[$row['name']]['m3'][$row['m3_trkey']][0],
+																						 'class'=>$row['m3_class']);
              } elseif ($ctrl_m1!=$row['m1_id']) { // è il primo di menu2
-                $menuArray[$row['weight']] = array('link'=>'../'.$row['name'].'/'.$row['link'],'icon'=>'../'.$row['name'].'/'.$row['icon'],'name'=>$transl[$row['name']]['name'],'title'=>$transl[$row['name']]['title'],'class'=>$row['class']);
-                $menuArray[$row['weight']][$row['m2_weight']] = array('link'=>'../'.$row['name'].'/'.$row['m2_link'],'icon'=>'../'.$row['name'].'/'.$row['m2_icon'],'name'=>$transl[$row['name']]['m2'][$row['m2_trkey']][1],'title'=>$transl[$row['name']]['m2'][$row['m2_trkey']][0],'class'=>$row['m2_class']);
+                $menuArray[$row['weight']] = array('link'  => '../'.$row['name'].'/'.$row['link'],
+												   'icon'  => '../'.$row['name'].'/'.$row['icon'],
+												   'name'  => $transl[$row['name']]['name'],
+												   'title' => $transl[$row['name']]['title'],
+												   'class' => $row['class']);
+                $menuArray[$row['weight']][$row['m2_weight']] = array('link'  => '../'.$row['name'].'/'.$row['m2_link'],
+																	  'icon'  => '../'.$row['name'].'/'.$row['m2_icon'],
+																	  'name'  => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
+																	  'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
+																	  'class' => $row['m2_class']);
              } else { // non è il primo di menu2
-                $menuArray[$row['weight']][$row['m2_weight']] = array('link'=>'../'.$row['name'].'/'.$row['m2_link'],'icon'=>'../'.$row['name'].'/'.$row['m2_icon'],'name'=>$transl[$row['name']]['m2'][$row['m2_trkey']][1],'title'=>$transl[$row['name']]['m2'][$row['m2_trkey']][0],'class'=>$row['m2_class']);
+                $menuArray[$row['weight']][$row['m2_weight']] = array('link'  => '../'.$row['name'].'/'.$row['m2_link'],
+																	  'icon'  => '../'.$row['name'].'/'.$row['m2_icon'],
+																	  'name'  => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
+																	  'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
+																	  'class'=>$row['m2_class']);
              }
         }
         $ctrl_m1=$row['m1_id'];
@@ -151,27 +186,28 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
      la funzione createGazieJSCM serve per creare un
      array con il menu corrente orizzontale , si potrebbero creare
      altre forme di menu modificando questa funzione. */
-     echo "\n<title>".$menuArray[0]['title']."&raquo;".$admin_aziend['ragso1'];
-     if (!empty($idScript)) {
+     echo '			<title>'.$menuArray[0]['title'].'&raquo;'.$admin_aziend['ragso1'];
+     
+	 if (!empty($idScript)) {
         if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
             if ($idScript[0] == 2) {
-                echo "&raquo;".$transl[$module]['m2'][$idScript[1]][0];
+                echo '			&raquo;'.$transl[$module]['m2'][$idScript[1]][0];
             } elseif ($idScript[0] == 3){
-                echo "&raquo;".$transl[$module]['m3'][$idScript[1]][0];
+                echo '			&raquo;'.$transl[$module]['m3'][$idScript[1]][0];
             }
         } elseif ($idScript > 0) {
-            echo "&raquo;".$transl[$module]['m3'][$idScript][0];
+            echo '			&raquo;'.$transl[$module]['m3'][$idScript][0];
         }
      } elseif (isset($title_from_menu)) {
-            echo "&raquo;".$title_from_menu;
+            echo '			&raquo;'.$title_from_menu;
      }
-     echo "</title>\n";
-     echo "</head>\n";
-     echo "<body>\n";
+     echo '			</title>
+	 			</head>
+			<body>';
 
     // cambia il tipo di menu
     $tipomenu = substr ( $admin_aziend['style'], 0, -4 );
-	if ( file_exists( "../../library/style/header_menu_".$tipomenu.".php" ) ) {
+	if (file_exists( "../../library/style/header_menu_".$tipomenu.".php" ) ) {
 		require("../../library/style/header_menu_".$tipomenu.".php");
 	} else {
 		require("../../library/style/header_menu_default.php");
@@ -186,27 +222,27 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
   }
   require("../../language/".$admin_aziend['lang']."/menu.inc.php");
   echo '<script type="text/javascript">
-     countclick = 0;
-     function chkSubmit() {
-        if(countclick > 0) {
-            alert("'.$strCommon['wait_al'].'");
-            document.getElementById(\'preventDuplicate\').disabled=true;
-            return false;
-        } else {
-            var alPre = document.getElementById(\'confirmSubmit\').value.toString();
-            if (alPre) {
-                var conf = confirm (alPre);
-                if (!conf) {
-                    document.getElementById(\'preventDuplicate\').disabled=true;
-                    return true;
-                }
-            }
-            countclick++;
-            document.getElementById(\'preventDuplicate\').hidden=true;
-            return true;
-        }
-     }
-     </script>';
+		 countclick = 0;
+		 function chkSubmit() {
+			if(countclick > 0) {
+				alert("'.$strCommon['wait_al'].'");
+				document.getElementById(\'preventDuplicate\').disabled=true;
+				return false;
+			} else {
+				var alPre = document.getElementById(\'confirmSubmit\').value.toString();
+				if (alPre) {
+					var conf = confirm (alPre);
+					if (!conf) {
+						document.getElementById(\'preventDuplicate\').disabled=true;
+						return true;
+					}
+				}
+				countclick++;
+				document.getElementById(\'preventDuplicate\').hidden=true;
+				return true;
+			}
+		 }
+		 </script>';
   return ($strCommon+$translated_script);
 }
 ?>

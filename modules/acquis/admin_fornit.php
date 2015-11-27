@@ -204,9 +204,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('custom/autocomplete_location'
+$script_transl = HeadMain(0,array('custom/autocomplete',
+								  'calendarpopup/CalendarPopup',
 								  /** ENRICO FEDELE */
-								  /*'jquery/jquery-1.7.1.min','calendarpopup/CalendarPopup',
+								  /*'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',
                                   'jquery/ui/jquery.ui.widget',
                                   'jquery/ui/jquery.ui.position',
@@ -308,6 +309,15 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['sexper']."*</td><td co
 $gForm->variousSelect('sexper',$script_transl['sexper_value'],$form['sexper']);
 echo "\t </td>\n";
 echo "</tr>\n";
+/** ENRICO FEDELE */
+/* Cambiato l'ordine dei campi per renderlo più coerente con l'autocompletamento (prima il campo comune che ha la funzione attiva) */
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['citspe']." *  </td>\n";
+echo "\t<td class=\"FacetDataTD\">
+      <input type=\"text\" name=\"citspe\" id=\"search_location\" value=\"".$form['citspe']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\">
+      <input type=\"text\" name=\"prospe\" id=\"search_location-prospe\" value=\"".$form['prospe']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
+echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['indspe']." * </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
@@ -319,17 +329,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"capspe\" id=\"search_location-capspe\" value=\"".$form['capspe']."\" align=\"right\" maxlength=\"10\" size=\"5\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['citspe']." *  </td>\n";
-echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"citspe\" id=\"search_location\" value=\"".$form['citspe']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
-echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"prospe\" id=\"search_location-prospe\" value=\"".$form['prospe']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['country']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('country','country','iso',$form['country'],'iso',0,' - ','name');
 echo "</td>\n";
 echo "</tr>\n";
+/** ENRICO FEDELE */
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['id_language']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('languages','id_language','lang_id',$form['id_language'],'lang_id',1,' - ','title_native');
@@ -351,14 +355,16 @@ $gForm->CalendarPopup('datnas',$form['datnas_D'],$form['datnas_M'],$form['datnas
 echo "\t</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+/** ENRICO FEDELE */
+/* Aggiunto id per autocompletamento */
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['luonas']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"luonas\" value=\"".$form['luonas']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" id=\"search_luonas\" name=\"luonas\" value=\"".$form['luonas']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pronas']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"pronas\" value=\"".$form['pronas']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
+      <input type=\"text\" id=\"search_pronas\" name=\"pronas\" value=\"".$form['pronas']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['counas']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";

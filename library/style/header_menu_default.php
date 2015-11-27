@@ -53,14 +53,17 @@ function submenu($array) {
 //preparo la query per la seconda barra 
 $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
 $posizione = array_pop( $posizione );
-$result = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
+$result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
+
 if ( !gaz_dbi_num_rows($result)>0 ) {
 	$posizione = explode ("?",$posizione );
-	$result = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione[0].'" ',' id',0,1);	
+	$result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione[0].'" ',' id',0,1);	
 }
+
 //aggiungo classe per spaziare in caso di assenza seconda barra
 $classe_barra1 = "";
 $riga = gaz_dbi_fetch_array($result);
+
 if ( $riga["id"]!="" ) {
 	$result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
 	if ( gaz_dbi_num_rows($result2)<=0 ) {
@@ -73,15 +76,15 @@ if ( $riga["id"]!="" ) {
 
 
 <nav class="navbar navbar-default nav-boot nav-first<?php echo $classe_barra1; ?>" role="navigation">
-    <div class="navbar-header navbar-right vcenter" >
-	  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-        <span class="sr-only">Visualizza Menù</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-	  <a class="navbar-brand vcenter" href="../../modules/root/admin.php"><?php echo strtoupper( $admin_aziend["ragso1"]); ?>
-	  <img src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend["enterprise_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>">
+	<div class="navbar-header navbar-right vcenter" >
+    	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Visualizza Men&ugrave;</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand vcenter" href="../../modules/root/admin.php"><?php echo strtoupper( $admin_aziend["ragso1"]); ?>
+        <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["enterprise_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>">
 	  </a>
     </div>
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -90,16 +93,23 @@ if ( $riga["id"]!="" ) {
 		$i = 0;
 		foreach ($menuArray as $link) {
 			if ( $i==0 ) {
-				echo '<li class="dropdown">';
-				echo '<a ><img src="'.$link["icon"].'"/>&nbsp;'.$link['name'].'<span class="caret"></span></a>';
-				echo '<ul class="dropdown-menu">';
+				echo '		<li class="dropdown">
+								<a>
+									<img src="'.$link["icon"].'"/>&nbsp;'.$link['name'].'<span class="caret"></span>
+								</a>
+								<ul class="dropdown-menu">';
 			} else {
-				echo '<li class="dropdown-submenu"><a href="'.$link['link'].'"><img src="'.$link["icon"].'"/>&nbsp;'.$link['name'].'</a>';
+				echo '		<li class="dropdown-submenu">
+								<a href="'.$link['link'].'">
+									<img src="'.$link["icon"].'"/>&nbsp;'.$link['name'].'
+								</a>';
 			}
 			submenu($link);
 			$i++;
 		}
-		echo "</li></ul></li>";
+		echo '		</li>
+			  	</ul>
+			  </li>';
 
 		$i=0;
 		foreach ( $menuArray[0] as $menu ) {
@@ -122,8 +132,9 @@ if ( $riga["id"]!="" ) {
 		echo '</li>';
 		?>
 		</ul>
-		</li>
-      </ul>
+		<!-- Mi pare che siano di troppo 
+          </li>
+      </ul>-->
     </div>
 </nav>
 <?php

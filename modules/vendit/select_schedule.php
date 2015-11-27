@@ -50,7 +50,7 @@ if (isset($_POST['print']) ) {
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
-                                'custom/autocomplete_location'
+                                'custom/autocomplete'
 								/** ENRICO FEDELE */
 								  /*'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',

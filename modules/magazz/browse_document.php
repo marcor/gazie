@@ -27,7 +27,7 @@ $admin_aziend=checkAdmin();
 $msg = "";
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('tiny_mce/tiny_mce',
+$script_transl = HeadMain(0,array(/*'tiny_mce/tiny_mce',*/
                                   /*'boxover/boxover'*/));
 
 if (isset($_GET['auxil'])) {
@@ -103,7 +103,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				<a href="admin_document.php?id_doc='.$a_row["id_doc"].'&Update" title="'.ucfirst($script_transl['update']).'!">'.$a_row["id_doc"].'</a>
 			</td>
 			<td class="FacetDataTD" align="center">
-				<span class="gazie-tooltip" data-type="product-thumb" data-id="'.$a_row['item_ref'].'" data-title="'.$annota.'">'.$a_row["item_ref"].'</span>
+				<span class="gazie-tooltip" data-type="product-thumb" data-id="'.$a_row['item_ref'].'" data-title="'.$a_row['annota'].'">'.$a_row["item_ref"].'</span>
 			</td>
 			<td class="FacetDataTD" align="center">'.$a_row["table_name_ref"].'</td>
 			<td class="FacetDataTD" align="center">'.$a_row["title"].'</td>

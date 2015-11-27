@@ -106,6 +106,22 @@ function gaz_dbi_fetch_array ($resource)
     $result = mysql_fetch_array($resource);
     return $result;
 }
+/** ENRICO FEDELE */
+/* Possiamo usare questa funzione in futuro?
+*  Ritengo che sia decisamente più i mmediata, perchè restituisce giù un array associativo
+*  e ci evita di dover creare un array apposito in cui mettere quello che ci interessa
+*/
+function gaz_dbi_fetch_assoc ($resource)
+{
+    $result = mysql_fetch_assoc($resource);
+    return $result;
+}
+function gaz_dbi_real_escape_string ($resource)
+{
+	global $link;
+    $result = mysql_real_escape_string($link, $resource);
+    return $result;
+}
 
 function gaz_dbi_fetch_row ($resource)
 {

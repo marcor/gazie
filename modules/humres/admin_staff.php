@@ -216,7 +216,7 @@ $script_transl = HeadMain(0,array(/** ENRICO FEDELE */
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',*/
                                   /** ENRICO FEDELE */
-								  'custom/autocomplete_location'));
+								  'custom/autocomplete'));
 echo "<SCRIPT type=\"text/javascript\">\n";
 echo "function toggleContent(currentContent) {
         var thisContent = document.getElementById(currentContent);
@@ -313,6 +313,15 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['sexper']."*</td><td co
 $gForm->variousSelect('sexper',$script_transl['sexper_value'],$form['sexper']);
 echo "\t </td>\n";
 echo "</tr>\n";
+/** ENRICO FEDELE */
+/* Cambiato l'ordine dei campi per renderlo più coerente con l'autocompletamento (prima il campo comune che ha la funzione attiva) */
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['citspe']." *  </td>\n";
+echo "\t<td class=\"FacetDataTD\">
+      <input type=\"text\" name=\"citspe\" id=\"search_location\" value=\"".$form['citspe']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\">
+      <input type=\"text\" name=\"prospe\" id=\"search_location-prospe\" value=\"".$form['prospe']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
+echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['indspe']." * </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
@@ -324,17 +333,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"capspe\" id=\"search_location-capspe\" value=\"".$form['capspe']."\" align=\"right\" maxlength=\"10\" size=\"5\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['citspe']." *  </td>\n";
-echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"citspe\" id=\"search_location\" value=\"".$form['citspe']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
-echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"prospe\" id=\"search_location-prospe\" value=\"".$form['prospe']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['country']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('country','country','iso',$form['country'],'iso',0,' - ','name');
 echo "</td>\n";
 echo "</tr>\n";
+/** ENRICO FEDELE */
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sedleg']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
@@ -346,15 +349,19 @@ $gForm->CalendarPopup('datnas',$form['datnas_D'],$form['datnas_M'],$form['datnas
 echo "\t</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+
+/** ENRICO FEDELE */
+/* Aggiunto id per autocompletamento */
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['luonas']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"luonas\" value=\"".$form['luonas']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" id=\"search_luonas\" name=\"luonas\" value=\"".$form['luonas']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pronas']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"pronas\" value=\"".$form['pronas']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
+      <input type=\"text\" id=\"search_pronas\" name=\"pronas\" value=\"".$form['pronas']."\" align=\"right\" maxlength=\"2\" size=\"2\" /></td>\n";
 echo "</tr>\n";
+/** ENRICO FEDELE */
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['counas']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('country','counas','iso',$form['counas'],'iso',1,' - ','name');

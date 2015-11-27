@@ -154,7 +154,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('tiny_mce/tiny_mce'));
+$script_transl = HeadMain(0,array(/*'tiny_mce/tiny_mce'*/));
+/*
 echo "<script type=\"text/javascript\">
 // Initialize TinyMCE with the new plugin and menu button
 tinyMCE.init({
@@ -173,7 +174,7 @@ tinyMCE.init({
   theme_advanced_resizing : true,
   editor_selector  : \"mceClass1\",
 });
-</script>\n";
+</script>\n";*/
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl[$toDo].$script_transl['title'].$script_transl[0][$form['tipo']])."</div>\n";
 echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
@@ -251,7 +252,8 @@ if (isset($partner['indspe'])){
 }
 echo "</td></tr>\n";
 echo "<tr><td colspan=\"6\" class=\"FacetFieldCaptionTD\" align=\"center\">$script_transl[8]</td></tr>\n";
-echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass1\" style=\"width:100%;height:200px;\">".$form["corpo"]."</textarea></td></tr>\n";
+//echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass1\" style=\"width:100%;height:200px;\">".$form["corpo"]."</textarea></td></tr>\n";
+echo "<tr><td colspan=\"6\"><textarea id=\"corpo\" name=\"corpo\" class=\"mceClass\" style=\"width:100%;height:200px;\">".$form["corpo"]."</textarea></td></tr>\n";
 echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[9]<input type=\"checkbox\" name=\"signature\" ".$form['signature']."></td>
           <td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\"><input type=\"submit\" accesskey=\"i\" name=\"ins\" value=\"".$script_transl['submit']." !\" /></td>
           </tr>";

@@ -669,7 +669,7 @@ class selectartico extends SelectBox {
    function output($cerca, $field = 'C') {
       global $gTables, $script_transl, $script_transl;
       $msg = "";
-      $tabula = " tabindex=\"4\" ";
+      $tabula = ' tabindex="4" ';
       $opera = "%'";
       if (strlen($cerca) >= 1) {
          if ($field == 'B') {        //ricerca per codice a barre
@@ -687,24 +687,25 @@ class selectartico extends SelectBox {
          $numclfoco = gaz_dbi_num_rows($result);
          if ($numclfoco > 0) {
             $tabula = "";
-            echo "\t <select tabindex=\"4\" name=\"$this->name\" class=\"FacetSelect\">\n";
+            echo ' <select tabindex="4" name="'.$this->name.'" class="FacetSelect">';
             while ($a_row = gaz_dbi_fetch_array($result)) {
                $selected = "";
                if ($a_row["codice"] == $this->selected) {
-                  $selected = "selected";
+                  $selected = ' selected=""';
                }
-               echo "\t\t <option value=\"" . $a_row["codice"] . "\" $selected >" . $a_row["codice"] . "-" . $a_row["descri"] . "</option>\n";
+               echo ' <option value="'.$a_row["codice"].'"'.$selected.'>'.$a_row["codice"].'-'.$a_row["descri"].'</option>';
             }
-            echo "\t </select>\n";
+            echo ' </select>';
          } else {
-            $msg = $script_transl['notfound'] . "!\n";
-            echo "\t<input type=\"hidden\" name=\"$this->name\" value=\"\">\n";
+            $msg = $script_transl['notfound'] . '!';
+            echo '<input type="hidden" name="'.$this->name.'" value="">';
          }
       } else {
-         $msg = $script_transl['minins'] . " 1 " . $script_transl['charat'] . "!\n";
+         $msg = $script_transl['minins'].' 1 '.$script_transl['charat'].'!';
          echo "\t<input type=\"hidden\" name=\"$this->name\" value=\"\">\n";
       }
-      echo "\t<input type=\"text\" name=\"cosear\" value=\"" . $cerca . "\" " . $tabula . " maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
+      //echo "\t<input type=\"text\" name=\"cosear\" id=\"search_cosear\" value=\"".$cerca."\" ".$tabula." maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
+	  echo '<input type="text" name="cosear" id="search_cosear" value="'.$cerca.'" '.$tabula.' maxlength="16" size="50">';
       //echo "<font style=\"color:#ff0000;\">$msg </font>";
 	  if($msg!="") {
 	  	echo '<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'.$msg.'</span>&nbsp;';

@@ -731,7 +731,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,array(/*'boxover/boxover',*/
 								  'calendarpopup/CalendarPopup',
-                                  'custom/autocomplete_anagra'
+                                  'custom/autocomplete'
 								  /** ENRICO FEDELE */
                                   /*'jquery/jquery-1.7.1.min',
                                   'jquery/ui/jquery.ui.core',

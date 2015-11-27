@@ -656,7 +656,7 @@ $script_transl = $strScript["admin_docacq.php"]+HeadMain(0,array(/*'tiny_mce/tin
                                   'jquery/ui/jquery.ui.position',
                                   'jquery/ui/jquery.ui.autocomplete',*/
 								  /** ENRICO FEDELE */
-                                  'custom/autocomplete_anagra'));
+                                  'custom/autocomplete'));
 if ($form['id_tes'] > 0) {
    $title = ucfirst($script_transl[$toDo].$script_transl[0][$form['tipdoc']])." n.".$form['numdoc'];
 } else {
@@ -925,7 +925,7 @@ foreach ($form['righi'] as $key => $value) {
 		/** ENRICO FEDELE */
 		/* Tooltip e glyphicon */
 		echo '<td>
-				<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$descrizione.'" type="text" name="righi['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
+				<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$value['annota'].'" type="text" name="righi['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
 			  </td>
 			  <td>
 			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">

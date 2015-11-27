@@ -622,7 +622,7 @@ $script_transl = HeadMain(0, array(/* 'boxover/boxover', */
       'jquery/ui/jquery.ui.position',
       'jquery/ui/jquery.ui.autocomplete', */
     /** ENRICO FEDELE */
-    'custom/autocomplete_anagra'));
+    'custom/autocomplete'));
 ?>
 <script type="text/javascript">
     function pulldown_menu(selectName, destField)

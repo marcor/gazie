@@ -425,7 +425,17 @@ class magazzForm extends GAzieForm {
     /* sends a Javascript toast to the client */
 
     function toast($message) {
-        echo "<script type='text/javascript'>toast('$message');</script>";
+		/*
+        echo "<script type='text/javascript'>toast('$message');</script>";*/
+		if(!empty($message)) {
+			echo '<div id="alert-discount" class="alert alert-warning fade in">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<span class="glyphicon glyphicon-alert" aria-hidden="true"></span>&nbsp;'.$message.'
+				  </div>';
+		}
+	    return '';
     }
 
 }

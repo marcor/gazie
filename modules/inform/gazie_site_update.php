@@ -312,9 +312,9 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('tiny_mce/tiny_mce'
-                                 ));
-echo "<script type=\"text/javascript\">";
+$script_transl = HeadMain(0,array(/*'tiny_mce/tiny_mce'*/
+                                ));
+/* echo "<script type=\"text/javascript\">";
 foreach ($form['page'] as $k => $v) {
      echo "\n// Initialize TinyMCE with the new plugin and menu button
           tinyMCE.init({
@@ -334,7 +334,7 @@ foreach ($form['page'] as $k => $v) {
           content_css : \"gazie_site.css\",
           });\n";
 }
-echo "</script>\n";
+echo "</script>\n";*/
 echo "<form method=\"POST\" autocomplete=\"off\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 $gForm = new GAzieForm();
@@ -389,7 +389,8 @@ foreach ($form['page'] as $k=>$v) {
         echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'" maxlength="12" size="8" />';
         echo "</td>\n";
         echo "\t<td>\n";
-        echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
+       // echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
+        echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
         echo "</td>\n";
     } elseif ($pagename=='product' ) { // la pagina product è modificabile solo nel valore del listino
         echo $pagename;
@@ -401,7 +402,8 @@ foreach ($form['page'] as $k=>$v) {
         echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'" maxlength="12" size="8" />';
         echo "</td>\n";
         echo "\t<td>\n";
-        echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
+        //echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
+        echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
         echo "</td>\n";
     } else {
         echo '<input type="text" id="namepage_'.$k.'" name="page['.$k.'][var]" value="'.$pagename.'" maxlength="12" size="8" />';
@@ -410,7 +412,8 @@ foreach ($form['page'] as $k=>$v) {
         echo '<input type="text" id="descpage_'.$k.'" name="page['.$k.'][description]" value="'.$v['description'].'" maxlength="12" size="8" />';
         echo "</td>\n";
         echo "\t<td>\n";
-        echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
+        //echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
+        echo '<textarea id="datapage_'.$k.'" name="page['.$k.'][data]" class="mceClass" style="width:100%;height:100px;">'.$v['data']."</textarea>\n";
         echo "</td>\n";
     }
     echo "</tr>\n";
