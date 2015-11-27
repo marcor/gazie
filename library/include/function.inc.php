@@ -698,22 +698,22 @@ class selectartico extends SelectBox {
             echo ' </select>';
          } else {
             $msg = $script_transl['notfound'] . '!';
-            echo '<input type="hidden" name="'.$this->name.'" value="">';
+            echo '<input type="hidden" name="'.$this->name.'" value="" />';
          }
       } else {
          $msg = $script_transl['minins'].' 1 '.$script_transl['charat'].'!';
-         echo "\t<input type=\"hidden\" name=\"$this->name\" value=\"\">\n";
+         echo '<input type="hidden" name="'.$this->name.'" value="" />';
       }
       //echo "\t<input type=\"text\" name=\"cosear\" id=\"search_cosear\" value=\"".$cerca."\" ".$tabula." maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
-	  echo '<input type="text" name="cosear" id="search_cosear" value="'.$cerca.'" '.$tabula.' maxlength="16" size="50">';
+	  echo '&nbsp;<input type="text" name="cosear" id="search_cosear" value="'.$cerca.'" '.$tabula.' maxlength="16" size="25">';
       //echo "<font style=\"color:#ff0000;\">$msg </font>";
 	  if($msg!="") {
-	  	echo '<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'.$msg.'</span>&nbsp;';
+	  	echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'.$msg.'</span>';
 	  }
       //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
       /** ENRICO FEDELE */
       /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-      echo '<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" ' . $tabula . ' title="' . $script_transl['search'] . '"><i class="glyphicon glyphicon-search"></i></button>';
+      echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" ' . $tabula . ' title="' . $script_transl['search'] . '"><i class="glyphicon glyphicon-search"></i></button>&nbsp;';
       /** ENRICO FEDELE */
    }
 
