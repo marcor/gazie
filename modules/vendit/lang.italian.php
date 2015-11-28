@@ -991,26 +991,6 @@ $strScript = array("admin_client.php" =>
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia anagrafica'),
-    ),
-    "select_situazione_contabile.php" =>
-    array('title' => 'Analisi situazione contabile',
-        'date' => 'Data Stampa',
-        'id_anagra' => 'Anagrafica (vuoto per tutti)',
-        'clfr' => 'Stampare situazione di',
-        'aperte_tutte' => 'Cosa Stampare',
-        'id_agente' => 'Agente',
-        'mesg' => array('La ricerca non ha dato risultati!',
-            'Inserire almeno 2 caratteri!',
-            'Cambia anagrafica'),
-        'errors' => array('La data  non &egrave; corretta!',
-            'Non sono stati trovati movimenti!'
-        ),
-        'header' => array('Cliente' => '', 'ID Partita' => '', 'Status' => '', 'Mov.Cont.' => '', 'Descrizione' => '',
-            'N.Doc.' => '', 'Data Doc.' => '', 'Data Reg.' => '', 'Dare' => '', 'Avere' => '',
-            'Scadenza' => '', 'Opzioni' => ''
-        ),
-        /** ENRICO FEDELE */
-        'status_value' => array(0 => 'Chiusa', 1 => 'Aperta'),
     )
 );
 ?>

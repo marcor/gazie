@@ -23,6 +23,7 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+require("../../modules/vendit/lib.function.php");
 $admin_aziend = checkAdmin();
 $msg = "";
 

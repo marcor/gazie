@@ -29,13 +29,15 @@ $transl['contab'] = array('name' => "Contabilit&agrave;",
                                          3 =>array("Gestione dell'Archivio delle Causali Contabili","Causali Contabili"),
                                          4 =>array("Visualizzazione e stampa dei registri I.V.A.","Registri IVA"),
                                          5 =>array("Visualizzazione e stampa del registro riepilogativo I.V.A.","Liquidazione IVA"),
-                                         6 =>array("Visualizzazione e stampa del Libro Giornale","Libro Giornale")
+                                         6 =>array("Visualizzazione e stampa del Libro Giornale","Libro Giornale"),
+                                         7 =>array("Visualizzazione e stampa della situazione contabile","Situazione contabile")
                                        ),
                          'm3' => array(  1 =>array("Inserisci un nuovo movimento contabile","Nuovo movimento contabile"),
                                          2 =>array("Inserisci un nuovo conto","Nuovo conto"),
                                          3 =>array("Visulalizza e/o stampa dei partitari","Visualizza/stampa partitari"),
                                          4 =>array("Inserisci un nuova causale contabile","Nuova causale contabile"),
-                                         5 =>array("Stampa il piano dei conti","Stampa Piano dei Conti")
+                                         5 =>array("Stampa il piano dei conti","Stampa Piano dei Conti"),
+                                         6 =>array("Visualizzazione e stampa di estratti conto o partite aperte","Estratti Conto/Partite Aperte")
                                       )
                          );
 ?>
