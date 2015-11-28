@@ -53,9 +53,8 @@ if(isset($_GET['term'])) {	//	Evitiamo errori se lo script viene chiamato dirett
 	$term = preg_replace('/\s+/', ' ', $term);
 	 
 	// SECURITY HOLE ***************************************************************
-	// allow space, any unicode letter and digit, underscore dash and %
-	//if(preg_match("/[^\040\pL\pN\%_-]/u", $term)) {
-	if(preg_match("/[^\040\pL\pN\%\/\._-]/u", $term)) {
+	// allow space, any unicode letter and digit, underscore, dash, slash, percent, dot,
+	if(preg_match("/[^\040\pL\pN_-\/\%\.]/u", $term)) {
 	  print $json_invalid;
 	  exit;
 	}
@@ -63,10 +62,7 @@ if(isset($_GET['term'])) {	//	Evitiamo errori se lo script viene chiamato dirett
 	if(strlen($term)<2) {	//	Equivalente del precedente strlen($term)>1
 		return;
 	}
-/*
-	if($term!='%%') {
-		$term = str_replace('%', '', $term);
-	} */
+
 	$parts = explode(' ', $term);
 
 	//$result = gaz_dbi_dyn_query("id,ragso1,citspe",$gTables['anagra'],"ragso1 LIKE '%".$term."%'",'ragso1');
@@ -76,14 +72,14 @@ if(isset($_GET['term'])) {	//	Evitiamo errori se lo script viene chiamato dirett
 	switch($opt) {
 		case 'product':
 			foreach($parts as $id => $part) {
-				$like[] = like_prepare("descri", $part);
+				$like[] = "CONCAT(codice,descri,barcode) LIKE '%".$part."%'";
 			}
 			$like = implode(" AND ", $like);	//	creo la porzione di query per il like
-			$result = gaz_dbi_dyn_query("codice AS id, descri AS label, descri AS value", $gTables['artico'], $like, "descri ASC");
+			$result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode) AS label, codice AS value", $gTables['artico'], $like, "catmer, codice");
 			break;
 		case 'location':
 			foreach($parts as $id => $part) {
-				$like[] = like_prepare($gTables['municipalities'].".name", $part);
+				$like[] = $gTables['municipalities'].".name LIKE '%".$part."%'";
 			}
 			$like = implode(" AND ", $like);	//	creo la porzione di query per il like
 			$result = gaz_dbi_dyn_query("UPPER(".$gTables['municipalities'].".name) AS value,
@@ -103,39 +99,31 @@ if(isset($_GET['term'])) {	//	Evitiamo errori se lo script viene chiamato dirett
 			break;
 		default:
 			foreach($parts as $id => $part) {
-				$like[] = like_prepare("ragso1", $part);
+				$like[] = "CONCAT(ragso1,ragso2) LIKE '%".$part."%'";
 			}
 			$like = implode(" AND ", $like);	//	creo la porzione di query per il like
-		$result = gaz_dbi_dyn_query("id, ragso1 AS label, ragso1 AS value",$gTables['anagra'],$like,'ragso1');
+		$result = gaz_dbi_dyn_query("id, CONCAT(ragso1,' ',ragso2) AS label, ragso1 AS value",$gTables['anagra'],$like,'ragso1');
 	}
 	while($row = gaz_dbi_fetch_assoc($result)) {
+		/* l'array è già associativo, questo codice non serve
+		$r['id']=$row['id'];
+		$r['label']=$row['ragso1'];
+		$r['value']=$row['ragso1'];*/
+		//	meglio usare $return_arr[], si risparmia overhead
+		//	array_push($return_arr,$r);
 		$return_arr[] = $row;
 	}
-
-	if($term!='%%') {
-		$return_arr = apply_highlight($return_arr, str_replace("%", '', $parts));
-	}
+	$return_arr = apply_highlight($return_arr, $parts);
 	echo json_encode($return_arr);
 } else {
   return;
 }
 
-/** ENRICO FEDELE */
-/**
- * prepara la porzione di like per la query
- * se l'utente non ha inserito
- *
- * @param string $dbfield: campo del db sul quale fare la like
- * @param string $txtsearch: testo da cercare nel campo
- * @return array or false
- */
-function like_prepare($dbfield, $txtsearch) {
-	if(mb_stripos_all($txtsearch, '%')===false) {	//	L'utente non ha inserito il carattere jolly
-		return $dbfield." LIKE '%".$txtsearch."%'";
-	} else {	//	L'utente sta usanto il carattere jolly %, quindi non devo inserirlo nella query
-		return $dbfield." LIKE '".$txtsearch."'";
-	}
-}
+
+
+
+
+
 
 /** ENRICO FEDELE */
 /* Codice preso da
@@ -152,23 +140,25 @@ function like_prepare($dbfield, $txtsearch) {
  * @return array or false
  */
 function mb_stripos_all($haystack, $needle) {
-	$s = 0;
-	$i = 0;
-	
-	while(is_integer($i)) {
-		$i = mb_stripos($haystack, $needle, $s);
-		
-		if(is_integer($i)) {
-			$aStrPos[] = $i;
-			$s         = $i + mb_strlen($needle);
-		}
-	}
-	
-	if(isset($aStrPos)) {
-		return $aStrPos;
-	} else {
-		return false;
-	}
+ 
+  $s = 0;
+  $i = 0;
+ 
+  while(is_integer($i)) {
+ 
+    $i = mb_stripos($haystack, $needle, $s);
+ 
+    if(is_integer($i)) {
+      $aStrPos[] = $i;
+      $s = $i + mb_strlen($needle);
+    }
+  }
+ 
+  if(isset($aStrPos)) {
+    return $aStrPos;
+  } else {
+    return false;
+  }
 }
  
 /**
@@ -179,54 +169,66 @@ function mb_stripos_all($haystack, $needle) {
  * @return array
  */
 function apply_highlight($a_json, $parts) {
-	$p    = count($parts);
-	$rows = count($a_json);
-	
-	for($row = 0; $row < $rows; $row++) {
-		$label         = $a_json[$row]["label"];
-		$a_label_match = array();
-	
-		for($i = 0; $i < $p; $i++) {
-			$part_len      = mb_strlen($parts[$i]);
-			$a_match_start = mb_stripos_all($label, $parts[$i]);
-	
-			foreach($a_match_start as $part_pos) {	
-				$overlap = false;
-				foreach($a_label_match as $pos => $len) {
-					if($part_pos - $pos >= 0 && $part_pos - $pos < $len) {
-						$overlap = true;
-						break;
-					}
-				}
-				if(!$overlap) {
-					$a_label_match[$part_pos] = $part_len;
-				}
-			}
-		}
-		if(count($a_label_match) > 0) {
-			ksort($a_label_match);
-			
-			$label_highlight = '';
-			$start           = 0;
-			$label_len       = mb_strlen($label);
-	
-			foreach($a_label_match as $pos => $len) {
-				if($pos - $start > 0) {
-					$no_highlight     = mb_substr($label, $start, $pos - $start);
-					$label_highlight .= $no_highlight;
-				}
-				$highlight        = '<span class="hl_results">' . mb_substr($label, $pos, $len) . '</span>';
-				$label_highlight .= $highlight;
-				$start            = $pos + $len;
-			}
-			if($label_len - $start > 0) {
-				$no_highlight     = mb_substr($label, $start);
-				$label_highlight .= $no_highlight;
-			}
-			$a_json[$row]["label"] = $label_highlight;
-		}
-	}
-	return $a_json;
+ 
+  $p = count($parts);
+  $rows = count($a_json);
+ 
+  for($row = 0; $row < $rows; $row++) {
+ 
+    $label = $a_json[$row]["label"];
+    $a_label_match = array();
+ 
+    for($i = 0; $i < $p; $i++) {
+ 
+      $part_len = mb_strlen($parts[$i]);
+      $a_match_start = mb_stripos_all($label, $parts[$i]);
+ 
+      foreach($a_match_start as $part_pos) {
+ 
+        $overlap = false;
+        foreach($a_label_match as $pos => $len) {
+          if($part_pos - $pos >= 0 && $part_pos - $pos < $len) {
+            $overlap = true;
+            break;
+          }
+        }
+        if(!$overlap) {
+          $a_label_match[$part_pos] = $part_len;
+        }
+ 
+      }
+ 
+    }
+ 
+    if(count($a_label_match) > 0) {
+      ksort($a_label_match);
+ 
+      $label_highlight = '';
+      $start = 0;
+      $label_len = mb_strlen($label);
+ 
+      foreach($a_label_match as $pos => $len) {
+        if($pos - $start > 0) {
+          $no_highlight = mb_substr($label, $start, $pos - $start);
+          $label_highlight .= $no_highlight;
+        }
+        $highlight = '<span class="hl_results">' . mb_substr($label, $pos, $len) . '</span>';
+        $label_highlight .= $highlight;
+        $start = $pos + $len;
+      }
+ 
+      if($label_len - $start > 0) {
+        $no_highlight = mb_substr($label, $start);
+        $label_highlight .= $no_highlight;
+      }
+ 
+      $a_json[$row]["label"] = $label_highlight;
+    }
+ 
+  }
+ 
+  return $a_json;
+ 
 }
 ?>
 
