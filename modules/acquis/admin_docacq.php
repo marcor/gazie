@@ -1172,18 +1172,18 @@ $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 $select_artico->output($form['cosear'], $form['in_artsea']);
 
-echo $script_transl['search_for']." <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
-$selArray = array('C'=>$script_transl['art_code'], 'B'=>$script_transl['art_barcode'],'D'=>$script_transl['art_descr']);
+echo $script_transl['search_for'].'&nbsp;<select name="in_artsea" class="FacetDataTDsmall">';
 
+$selArray = array('C'=>$script_transl['art_code'], 'B'=>$script_transl['art_barcode'],'D'=>$script_transl['art_descr']);
 
 foreach ($selArray as $key => $value) {
     $selected="";
     if(isset($form["in_artsea"]) and $form["in_artsea"] == $key) {
-        $selected = " selected ";
+        $selected = ' selected=""';
     }
-    echo "<option value=\"$key\" $selected > $value </option>";
+    echo '<option value="'.$key.'"'.$selected.'>'.$value.'</option>';
 }
-echo "</select>\n";
+echo '</select>';
 
 /** ENRICO FEDELE */
 /* Aggiunto link per finestra modale aggiunta articolo */
