@@ -143,7 +143,7 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_anagra'] . " </td><td class=\"FacetDataTD\" colspan=\"2\">\n";
 $select_id_anagra = new selectPartner("id_anagra");
 //$select_id_anagra->selectAnagra('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], false, "codice like '" . ($form['clfr'] == 0 ? $admin_aziend['mascli'] : $admin_aziend['masfor']) . "%'");
-$select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], ($form['clfr'] == 0 ? $admin_aziend['mascli'] : $admin_aziend['masfor']));
+$select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], ($form['clfr'] == 0 ? $admin_aziend['mascli'] : $admin_aziend['masfor']), -1, 1, true);
 echo "</td>\n";
 echo "</tr>\n";
 
@@ -258,7 +258,7 @@ if (isset($_POST['preview']) and $msg == '') {
                if ($tot_diff_tmp != 0) {
                   $class_paymov = 'FacetDataTDevidenziaOK';
                   $status_descr = $script_transl['status_value'][1] .
-                          " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../vendit/customer_payment.php?partner=" . $mv_tmp["clfoco"] . "&numdoc=".$mv_tmp["numdoc"]."&datdoc=".$mv_tmp["datdoc"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                          " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../vendit/customer_payment.php?partner=" . $mv_tmp["clfoco"] . "&numdoc=" . $mv_tmp["numdoc"] . "&datdoc=" . $mv_tmp["datdoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                } else {
                   $class_paymov = 'FacetDataTDevidenziaCL';
                   $status_descr = $script_transl['status_value'][0];

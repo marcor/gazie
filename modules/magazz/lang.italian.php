@@ -278,7 +278,17 @@ $strScript = array("browse_document.php" =>
         'cm_fin' => 'Categoria merceologica fine ',
         'art_fin' => 'Articolo fine ',
         'listino' => 'Listino',
-        'listino_value' => array(0 => 'd\'Acquisto', 1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 'web' => ' di Vendita Online')
+        'listino_value' => array(0 => 'd\'Acquisto', 1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 'web' => ' di Vendita Online'),
+        'id_anagra' => 'Fornitore (vuoto per tutti)',
+        'ordineStampa' => 'Ordine di Stampa',
+        'alternativeOrdineStampa' => array('default',
+            'codice articolo',
+            'descrizione articolo',
+            'categoria articolo'
+        ),
+        'tipoStampa' => 'Tipo di Stampa',
+        'alternativeTipoStampa' => array('espansa','compatta'),
+
     ),
     "update_vatrate.php" =>
     array('title' => 'Modifica aliquota IVA degli articoli',
@@ -326,8 +336,7 @@ $strScript = array("browse_document.php" =>
         'weight_valadd' => 'Incidenza su peso specifico es. €/kg',
         'header' => array('Cat.Merceologica' => '', 'Codice' => '', 'Descrizione' => '', 'U.M.' => '',
             'Prezzo vecchio' => '', 'Incidenza peso' => '', 'Prezzo nuovo' => ''
-        )
-    ),
+        )    ),
     "admin_artico.php" =>
     array('title' => 'Gestione degli articoli',
         'ins_this' => 'Inserimento articolo',

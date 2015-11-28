@@ -424,10 +424,8 @@ class selectPartner extends SelectBox {
    }
 
    function queryNomeAgente($id_agente) {
-      $retVal="";
-      $rs = gaz_dbi_dyn_query("b.descri as nomeAgente", 
-              $this->gTables['agenti'] . ' AS a join '.$this->gTables['clfoco']. " as b on a.id_fornitore=b.codice ",
-              "a.id_agente=$id_agente");
+      $retVal = "";
+      $rs = gaz_dbi_dyn_query("b.descri as nomeAgente", $this->gTables['agenti'] . ' AS a join ' . $this->gTables['clfoco'] . " as b on a.id_fornitore=b.codice ", "a.id_agente=$id_agente");
       $anagrafiche = array();
       if ($r = gaz_dbi_fetch_array($rs)) {
          $retVal = $r["nomeAgente"];
@@ -485,9 +483,10 @@ class selectPartner extends SelectBox {
       /** ENRICO FEDELE */
    }
 
-   function selectDocPartner($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $m = 0, $anonimo = -1, $tab = 1) {
+   function selectDocPartner($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $m = 0, $anonimo = -1, $tab = 1, $soloMastroSelezionato = false) {
       /* se passo $m=-1 ottengo tutti i partner nel piano dei conti indistintamente
         passare false su $tab se non si vuole la tabulazione
+        $soloMastroSelezionato = true se si vogliono visualizzare solo i clienti (o i fornitori) in base a $m
        */
       global $gTables;
       $tab1 = '';
@@ -566,7 +565,12 @@ class selectPartner extends SelectBox {
                   } elseif ($r["codice"] < 1) {
                      $style = 'style="background:#FF6666";';
                      $r['codice'] = 'id_' . $r['id'];
-                  } elseif (substr($r["codice"], 0, 3) != $m) {
+                  } elseif (substr($r["codice"], 0, 3) != $m) {// non appartiene al mastro passato in $m
+                     /** inizio modifica FP 28/11/2015 */
+                     if ($soloMastroSelezionato) { // voglio solo le anagrafi di questo mastro
+                        continue;   // salto questa riga
+                     }
+                     /** fine modifica FP */
                      $style = 'style="background:#FFBBBB";';
                      $r['codice'] = 'id_' . $r['id'];
                   }
@@ -593,7 +597,7 @@ class selectPartner extends SelectBox {
       }
    }
 
-   function selectAnagra($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $tab = false, $where=1) {
+   function selectAnagra($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $tab = false, $where = 1) {
       global $gTables;
       $tab1 = '';
       $tab2 = '';
@@ -611,7 +615,7 @@ class selectPartner extends SelectBox {
       } else {
          if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
             if (is_numeric($strSearch)) {                      //ricerca per partita iva
-               $partner = $this->queryAnagra(" pariva = " . intval($strSearch)." and $where");
+               $partner = $this->queryAnagra(" pariva = " . intval($strSearch) . " and $where");
             } elseif (is_numeric(substr($strSearch, 6, 2))) {   //ricerca per codice fiscale
                $partner = $this->queryAnagra(" a.codfis LIKE '%" . addslashes($strSearch) . "%' and $where");
             } else {                                      //ricerca per ragione sociale
@@ -651,7 +655,7 @@ class selectPartner extends SelectBox {
 
    function queryClfoco($codiceAnagrafe, $mastro) {
       $retVal = 0;
-      $codiceAnagrafe=addslashes ($codiceAnagrafe);
+      $codiceAnagrafe = addslashes($codiceAnagrafe);
 //      $where = "id_anagra='$codiceAnagrafe' and codice like '$mastro%'";
       $where = "codice='$codiceAnagrafe'";
       $rs = gaz_dbi_dyn_query('codice', $this->gTables['clfoco'] . ' AS a', $where);
@@ -687,29 +691,29 @@ class selectartico extends SelectBox {
          $numclfoco = gaz_dbi_num_rows($result);
          if ($numclfoco > 0) {
             $tabula = "";
-            echo ' <select tabindex="4" name="'.$this->name.'" class="FacetSelect">';
+            echo ' <select tabindex="4" name="' . $this->name . '" class="FacetSelect">';
             while ($a_row = gaz_dbi_fetch_array($result)) {
                $selected = "";
                if ($a_row["codice"] == $this->selected) {
                   $selected = ' selected=""';
                }
-               echo ' <option value="'.$a_row["codice"].'"'.$selected.'>'.$a_row["codice"].'-'.$a_row["descri"].'</option>';
+               echo ' <option value="' . $a_row["codice"] . '"' . $selected . '>' . $a_row["codice"] . '-' . $a_row["descri"] . '</option>';
             }
             echo ' </select>';
          } else {
             $msg = $script_transl['notfound'] . '!';
-            echo '<input type="hidden" name="'.$this->name.'" value="" />';
+            echo '<input type="hidden" name="' . $this->name . '" value="" />';
          }
       } else {
-         $msg = $script_transl['minins'].' 1 '.$script_transl['charat'].'!';
-         echo '<input type="hidden" name="'.$this->name.'" value="" />';
+         $msg = $script_transl['minins'] . ' 1 ' . $script_transl['charat'] . '!';
+         echo '<input type="hidden" name="' . $this->name . '" value="" />';
       }
       //echo "\t<input type=\"text\" name=\"cosear\" id=\"search_cosear\" value=\"".$cerca."\" ".$tabula." maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
-	  echo '&nbsp;<input type="text" name="cosear" id="search_cosear" value="'.$cerca.'" '.$tabula.' maxlength="16" size="25">';
+      echo '&nbsp;<input type="text" name="cosear" id="search_cosear" value="' . $cerca . '" ' . $tabula . ' maxlength="16" size="25">';
       //echo "<font style=\"color:#ff0000;\">$msg </font>";
-	  if($msg!="") {
-	  	echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>'.$msg.'</span>';
-	  }
+      if ($msg != "") {
+         echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';
+      }
       //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
       /** ENRICO FEDELE */
       /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
@@ -1028,30 +1032,30 @@ class GAzieForm {
    function CalendarPopup($name, $day, $month, $year, $class = 'FacetSelect', $refresh = '') {
       global $script_transl;
       if (!empty($refresh)) {
-         $refresh = ' onchange="this.form.hidden_req.value='.$refresh.'; this.form.submit();"';
+         $refresh = ' onchange="this.form.hidden_req.value=' . $refresh . '; this.form.submit();"';
       }
 
-      echo '<select name="'.$name.'_D" id="'.$name.'_D" class="'.$class.'"'.$refresh.'>';
+      echo '<select name="' . $name . '_D" id="' . $name . '_D" class="' . $class . '"' . $refresh . '>';
       for ($i = 1; $i <= 31; $i++) {
          $selected = "";
          if ($i == $day) {
             $selected = ' selected=""';
          }
-         echo '		<option value="'.$i.'"'.$selected.'>'.$i.'</option>';
+         echo '		<option value="' . $i . '"' . $selected . '>' . $i . '</option>';
       }
       echo '	</select>
-	  			<select name="'.$name.'_M" id="'.$name.'_M" class="'.$class.'"'.$refresh.'>';
+	  			<select name="' . $name . '_M" id="' . $name . '_M" class="' . $class . '"' . $refresh . '>';
       for ($i = 1; $i <= 12; $i++) {
          $selected = "";
          if ($i == $month) {
             $selected = ' selected=""';
          }
          $month_name = ucwords(strftime("%B", mktime(0, 0, 0, $i, 1, 0)));
-         echo '		<option value="'.$i.'"'.$selected.'>'.$month_name.'</option>';
+         echo '		<option value="' . $i . '"' . $selected . '>' . $month_name . '</option>';
       }
       echo '</select>
-	  		<input type="text" name="'.$name.'_Y" id="'.$name.'_Y" value="'.$year.'" class="'.$class.'"  maxlength="4" size="4"'.$refresh.' />
-	  		<a class="btn btn-default btn-sm" href="#" onClick="setDate(\''.$name.'\'); return false;" title="'.$script_transl['changedate'].'" name="anchor" id="anchor">
+	  		<input type="text" name="' . $name . '_Y" id="' . $name . '_Y" value="' . $year . '" class="' . $class . '"  maxlength="4" size="4"' . $refresh . ' />
+	  		<a class="btn btn-default btn-sm" href="#" onClick="setDate(\'' . $name . '\'); return false;" title="' . $script_transl['changedate'] . '" name="anchor" id="anchor">
 				<i class="glyphicon glyphicon-calendar"></i>
 			</a>';
    }
