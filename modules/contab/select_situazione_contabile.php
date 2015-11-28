@@ -258,7 +258,7 @@ if (isset($_POST['preview']) and $msg == '') {
                if ($tot_diff_tmp != 0) {
                   $class_paymov = 'FacetDataTDevidenziaOK';
                   $status_descr = $script_transl['status_value'][1] .
-                          " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv_tmp["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                          " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../vendit/customer_payment.php?partner=" . $mv_tmp["clfoco"] . "&numdoc=".$mv_tmp["numdoc"]."&datdoc=".$mv_tmp["datdoc"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                } else {
                   $class_paymov = 'FacetDataTDevidenziaCL';
                   $status_descr = $script_transl['status_value'][0];
