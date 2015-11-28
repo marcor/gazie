@@ -29,89 +29,190 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
 $msg = '';
 $clienti = $admin_aziend['mascli'];
 
-function getInvoiceableBillLimits($Y, $M, $D, $sez = 1, $set_newdate = false) {
+function getDateLimits($sez = 1) {
     $acc = array();
-    global $gTables;
-    $utsexe = mktime(0, 0, 0, $M, $D, $Y);
-    $acc['date_exe'] = date("Y-m-d", $utsexe);
+    $now = new DateTime;
+    $acc['date_exe'] = $now->format("Y-m-d");
+    $acc['date_fin'] = $acc['date_exe'];
     $acc['date_ini'] = $acc['date_exe'];
-    $acc['date_fin'] = $acc['date_ini'];
-    $ini_ctrl = new DateTime($acc['date_exe']);
-    $fin_ctrl = $ini_ctrl;
+    global $gTables;
     // ricavo i limiti di fatturabilità e le date dei vari tipi di DdT
     $doctype = array('DDT', 'DDV', 'DDY');
     foreach ($doctype as $k => $v) {
         switch ($v) {
             default :
             case 'DDT':
-                $utsddt = mktime(0, 0, 0, $M, $D, $Y);
-                $dateddt = date("Y-m-d", $utsddt);
-                $acc[$v]['n_invoiceable'] = gaz_dbi_record_count($gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi <= '" . $dateddt . "'");
-                $acc[$v]['n_remainder'] = gaz_dbi_record_count($gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi > '" . $dateddt . "'");
-                $rs_first = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi <= '" . $dateddt . "'", "numdoc ASC", 0, 1);
-                $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi <= '" . $dateddt . "'", "numdoc DESC", 0, 1);
+                $rs_first = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez", "numdoc ASC", 0, 1);
+                $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez", "numdoc DESC", 0, 1);
+                // in questo caso modifico la data di emissione e di fine periodo con l'ultimo del mese del primo ddt fatturabile
+                $ddtfirst = gaz_dbi_fetch_array($rs_first);
+                if ($ddtfirst) {
+                    $nd = new DateTime($ddtfirst['datemi']);
+                    $acc['date_ini'] = $ddtfirst['datemi'];
+                    $nd->modify('last day of this month');
+                    $acc['date_fin'] = $nd->format('Y-m-d');
+                    $acc['date_exe'] = $acc['date_fin'];
+                }
                 break;
             case 'DDV':
-                // se sono in conto visione ho l'obbligo di fatturazione solo dopo 1 anno dall'emissione
-                $utsddv = mktime(0, 0, 0, $M, $D, $Y - 1);
-                $dateddv = date("Y-m-d", $utsddv);
-                $acc[$v]['n_invoiceable'] = gaz_dbi_record_count($gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi <= '" . $dateddv . "'");
-                $acc[$v]['n_remainder'] = gaz_dbi_record_count($gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi > '" . $dateddv . "'");
-                $rs_first = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi <= '" . $dateddv . "'", "numdoc ASC", 0, 1);
-                $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi <= '" . $dateddv . "'", "numdoc DESC", 0, 1);
+                // per quelli in c/visione non apporto modifiche ai limiti di date, mi baso sulla 
+                // data di emissione e quindi sull'obbligo di fatturazione  dopo 1 anno 
+                $nd = new DateTime($acc['date_exe']);
+                $nd->modify('-1 year');
                 break;
             case 'DDY':
-                // se sono in conto triangolazione che faccio? Al momento non li fatturo!
-                $utsddy = mktime(0, 0, 0, $M, $D, $Y);
-                $dateddy = date("Y-m-d", $utsddy);
-                $acc[$v]['n_invoiceable'] = gaz_dbi_record_count($gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi <= '" . $dateddy . "'");
-                $acc[$v]['n_remainder'] = gaz_dbi_record_count($gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi > '" . $dateddy . "'");
+                // anche se sono in conto triangolazione non apporto modifiche e al momento non li fatturo salvo richiesta contraria
                 break;
         }
-        $first = gaz_dbi_fetch_array($rs_first);
-        if ($first) {
-            // faccio il push solo se ho una data precedente 
-            $nd = new DateTime($first['datemi']);
-            if ($nd < $ini_ctrl) {
-                $acc['date_ini'] = $first['datemi'];
-                $ini_ctrl = $nd;
-            }
-        }
-        $last = gaz_dbi_fetch_array($rs_last);
-        if ($last) {
-            // faccio il push solo se ho una data precedente
-            $nd = new DateTime($last['datemi']);
-            if ($nd < $fin_ctrl) {
-                $acc['date_fin'] = $last['datemi'];
-                $fin_ctrl = $nd;
-            }
-        }
     }
+    $acc['date_exe_Y'] = date("Y", strtotime($acc['date_exe']));
+    $acc['date_exe_M'] = date("m", strtotime($acc['date_exe']));
+    $acc['date_exe_D'] = date("d", strtotime($acc['date_exe']));
+    $acc['date_ini_Y'] = date("Y", strtotime($acc['date_ini']));
+    $acc['date_ini_M'] = date("m", strtotime($acc['date_ini']));
+    $acc['date_ini_D'] = date("d", strtotime($acc['date_ini']));
+    $acc['date_fin_Y'] = date("Y", strtotime($acc['date_fin']));
+    $acc['date_fin_M'] = date("m", strtotime($acc['date_fin']));
+    $acc['date_fin_D'] = date("d", strtotime($acc['date_fin']));
+    return $acc;
+}
+
+function getBillsStatus($data_fin, $sez = 1) {
+    $acc['n'][$v]['n_invoiceable'] = gaz_dbi_record_count($gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi <= '" . $nd->format('Y-m-d') . "'");
+    $acc['n'][$v]['n_remainder'] = gaz_dbi_record_count($gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez AND datemi > '" . $nd->format('Y-m-d') . "'");
+}
+
+function getInvoiceableBills($date, $sez = 1, $cliente = 0, $DdtStatus) {
+    global $gTables;
+    $df = new DateTime($date['exe']);
+
+    $Y = $df->format('Y');
     // ricavo il progressivo annuo del numero protocollo
     $rs_last_invoice_protoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $Y AND tipdoc LIKE 'F%' AND seziva = $sez", "protoc DESC", 0, 1);
     $last_invoice_protoc = gaz_dbi_fetch_array($rs_last_invoice_protoc);
     if ($last_invoice_protoc) {
-        $acc['last_pr'] = $last_invoice_protoc['protoc'];
+        $last_pr = $last_invoice_protoc['protoc'];
     } else {
-        $acc['last_pr'] = 0;
+        $last_pr = 0;
     }
     // ricavo il progressivo annuo del numero fattura
     $rs_last_invoice_numfat = gaz_dbi_dyn_query("numdoc, numfat*1 AS fattura", $gTables['tesdoc'], "YEAR(datemi) = $Y AND tipdoc LIKE 'FA%' AND seziva = $sez", "fattura DESC", 0, 1);
     $last_invoice_numfat = gaz_dbi_fetch_array($rs_last_invoice_numfat);
     if ($last_invoice_numfat) {
-        $acc['last_nu'] = $last_invoice_numfat['fattura'];
+        $last_nu = $last_invoice_numfat['fattura'];
     } else {
-        $acc['last_nu'] = 0;
+        $last_nu = 0;
     }
-    if ($set_newdate) {
-        $acc['date_ini_Y'] = date("Y", strtotime($acc['date_ini']));
-        $acc['date_ini_M'] = date("m", strtotime($acc['date_ini']));
-        $acc['date_ini_D'] = date("d", strtotime($acc['date_ini']));
-        $acc['date_fin_Y'] = date("Y", strtotime($acc['date_fin']));
-        $acc['date_fin_M'] = date("m", strtotime($acc['date_fin']));
-        $acc['date_fin_D'] = date("d", strtotime($acc['date_fin']));
+    //preparo la query al database
+    $clientesel = '';
+    if ($cliente > 0) {
+        $clientesel = ' AND clfoco = ' . $cliente;
     }
-    return $acc;
+    $orderby = "ragso1 ASC, ragbol ASC, pagame ASC, numdoc ASC, id_rig ASC";
+    // mi serve la data di un anno prima per fare la ricerca dei DDV
+    $df->modify('-1 year');
+    $where = " seziva = '$sez'" . $clientesel." AND ("
+            . "(tipdoc = 'DDT' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
+            . " OR "
+            . "(tipdoc = 'DDV' AND datemi BETWEEN '".$df->format('Y-m-d')."' AND '" . $date['fin'] . "')"
+            . " OR "
+            . "(tipdoc = 'DDY' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
+            . ")";
+    //recupero i dati dal DB (testate+cliente+pagamento+righi)
+    $field = 'tes.id_tes,tes.clfoco,tes.numdoc,tes.pagame,tes.traspo,tes.speban,tes.banapp,tes.datemi,tes.ragbol,
+              CONCAT(ana.ragso1,\' \',ana.ragso2,\' \',ana.citspe,\' \',ana.prospe) AS ragsoc,
+              cli.codice,cli.ragdoc,
+              pag.tippag,pag.incaut,pag.numrat,pag.descri AS despag,
+              rig.id_tes,rig.id_rig,rig.codart,rig.descri,rig.unimis,rig.quanti,rig.prelis,rig.tiprig,rig.sconto';
+    $from = $gTables['tesdoc'] . ' AS tes ' .
+            'LEFT JOIN ' . $gTables['clfoco'] . ' AS cli ON tes.clfoco=cli.codice ' .
+            'LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON cli.id_anagra=ana.id ' .
+            'LEFT JOIN ' . $gTables['pagame'] . ' AS pag ON pag.codice=tes.pagame ' .
+            'LEFT JOIN ' . $gTables['rigdoc'] . ' AS rig ON rig.id_tes=tes.id_tes ';
+    $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
+    $ctrlnum = gaz_dbi_num_rows($result);
+    $invoices = array();
+    if ($ctrlnum) {
+        //creo l'array associativo testate-righi
+        $ctrlc = 0;
+        $ctrlp = 0;
+        $ctrld = 0;
+        $ctrlr = 0;    // rappresenta il raggruppamento bolle
+        $totale_imponibile = 0;
+        while ($row = gaz_dbi_fetch_array($result)) {
+            if (in_array($row['id_tes'], $DdtStatus) and $ctrld != $row['id_tes']) { // se è tra gli esclusi vado avanti ma mantengo il riferimento
+                $invoices['no'][] = array('id' => $row['id_tes'],
+                    'ragionesociale' => $row['ragsoc'],
+                    'numero' => $row['numdoc'],
+                    'data' => $row['datemi'],
+                    'pagamento' => $row['despag']
+                );
+                continue;
+            }
+            if ($row['clfoco'] != $ctrlc or $row['pagame'] != $ctrlp or $row['ragbol'] != $ctrlr or ( $row['id_tes'] != $ctrld and $row['ragdoc'] == 'N')) {
+                //se è un'altro cliente o il cliente ha un pagamento diverso dal precedente o è cambiato il raggruppamento bolle
+                if ($ctrlc > 0 and $ctrlp > 0) {  //se non è la prima fattura pongo il totale della precedente nell'array
+                    $invoices['yes'][$last_pr]['totale'] = $totale_imponibile;
+                }
+                $totale_imponibile = 0;
+                $last_pr ++;
+                $last_nu ++;
+                // nuova testata fattura
+                $invoices['yes'][$last_pr] = array('numero' => $last_nu, 'codicecliente' => $row['clfoco'], 'ragionesociale' => $row['ragsoc']);
+                $invoices['yes'][$last_pr]['speseincasso'] = $row['numrat'] * $row['speban'];
+            }
+            if ($row['id_tes'] != $ctrld) {  //se è un'altro ddt
+                if ($row['clfoco'] == $ctrlc and $row['pagame'] != $ctrlp) {
+                    $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
+                        'descrizione' => ' Cliente con diversi pagamenti! '
+                    );
+                }
+                $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_DES_',
+                    'numero' => $row['numdoc'],
+                    'id' => $row['id_tes'],
+                    'data' => $row['datemi'],
+                    'codpag' => $row['pagame'],
+                    'despag' => $row['despag']
+                );
+                if ($row['incaut'] == 'S') {
+                    $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
+                        'descrizione' => ' Pagamento che prevede l\'incasso automatico! '
+                    );
+                }
+                if (($row['tippag'] == 'B' or $row['tippag'] == 'T') and $row['banapp'] == 0) {
+                    $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
+                        'descrizione' => ' ATTENZIONE! MANCA LA BANCA D\'APPOGGIO ! '
+                    );
+                }
+                if ($row['traspo'] > 0) {
+                    $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_TRA_',
+                        'descrizione' => 'TRASPORTO',
+                        'importo' => $row['traspo']
+                    );
+                    $totale_imponibile += $row['traspo'];
+                }
+            }
+            $importo_rigo = CalcolaImportoRigo($row['quanti'], $row['prelis'], $row['sconto']);
+            if ($row['tiprig'] == 1) {
+                $importo_rigo = CalcolaImportoRigo(1, $row['prelis'], 0);
+            }
+            $totale_imponibile += $importo_rigo;
+            //aggiungo il rigo
+            $invoices['yes'][$last_pr]['righi'][] = array('codice' => $row['codart'],
+                'descrizione' => $row['descri'],
+                'unitamisura' => $row['unimis'],
+                'quantita' => $row['quanti'],
+                'prezzo' => $row['prelis'],
+                'sconto' => $row['sconto'],
+                'importo' => $importo_rigo);
+            $ctrld = $row['id_tes'];
+            $ctrlc = $row['clfoco'];
+            $ctrlp = $row['pagame'];
+            $ctrlr = $row['ragbol'];
+        }
+        $invoices['yes'][$last_pr]['totale'] = $totale_imponibile;
+    }
+    return $invoices;
 }
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
@@ -124,11 +225,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     $form['clfoco'] = 0;
     $form['search']['clfoco'] = '';
-    $form['excludedDtT'] = array();
-    $form['date_exe_Y'] = date("Y");
-    $form['date_exe_M'] = date("m");
-    $form['date_exe_D'] = date("d");
-    $ini_data = getInvoiceableBillLimits($form['date_exe_Y'], $form['date_exe_M'], $form['date_exe_D'], $form['seziva'], true);
+    $form['DdtStatus'] = array();
+    $ini_data = getDateLimits($form['seziva']);
     $form += $ini_data;
 } else { // accessi successivi
     $form['hidden_req'] = filter_input(INPUT_POST, 'hidden_req');
@@ -137,6 +235,13 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['clfoco'] = substr($_POST['clfoco'], 0, 15);
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
+    }
+    if (isset($_POST['DdtStatus'])) {
+        foreach ($_POST['DdtStatus'] as $k => $v) {
+            $form['DdtStatus'][$k] = $v;
+        }
+    } else {
+        $form['DdtStatus'] = array();
     }
     $form['date_ini_D'] = intval($_POST['date_ini_D']);
     $form['date_ini_M'] = intval($_POST['date_ini_M']);
@@ -147,7 +252,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_exe_Y'] = intval($_POST['date_exe_Y']);
     $form['date_exe_M'] = intval($_POST['date_exe_M']);
     $form['date_exe_D'] = intval($_POST['date_exe_D']);
-    $form['excludedDtT'] = filter_input(INPUT_POST, 'excludedDtT');
     if ($form['hidden_req'] == 'clfoco') {
         $anagrafica = new Anagrafica();
         if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
@@ -160,14 +264,14 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 
     // escludo un ddt
     if (isset($_POST['add_ex'])) {
-        $form['preview'] = '';
-        $form['excludedDtT'][] = key($_POST['add_ex']);
+        $_POST['preview'] = '';
+        $form['DdtStatus'][] = key($_POST['add_ex']);
     }
     // ripristino il ddt
     if (isset($_POST['del_ex'])) {
-        $form['preview'] = '';
-        $key = array_search(key($form['del_ex']), $form['excludedDtT']);
-        unset($form['excludedDtT'][$key]);
+        $_POST['preview'] = '';
+        $key = array_search(key($form['del_ex']), $form['DdtStatus']);
+        unset($form['DdtStatus'][$key]);
     }
     if (!checkdate($form['date_exe_M'], $form['date_exe_D'], $form['date_exe_Y']) ||
             !checkdate($form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']) ||
@@ -183,126 +287,17 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     if ($utsini > $utsfin) {
         $msg .="2+";
     }
-    $ini_data = getInvoiceableBillLimits($form['date_exe_Y'], $form['date_exe_M'], $form['date_exe_D'], $form['seziva']);
-    $form += $ini_data;
 }
 
-function InvoiceFromBills($period, $sez = 1, $cliente = 0, $excludeDdt = array()) {
-    //preparo la query al database
-    $clientesel = '';
-    if ($cliente > 0) {
-        $clientesel = ' AND clfoco = ' . $cliente;
-    }
-    $orderby = "search ASC, ragbol ASC, pagame ASC, numdoc ASC, id_rig ASC";
-    $where = "tipdoc = 'DDT' AND datemi BETWEEN '" . $period['inizio'] . "' AND '" . $period['fine'] . "' AND seziva = '$sez' and da_fatturare=true " . $clientesel;
-    //recupero i dati dal DB (testate+cliente+pagamento+righi)
-    $field = 'tes.id_tes,tes.clfoco,tes.numdoc,tes.pagame,tes.traspo,tes.speban,tes.banapp,tes.datemi,
-              CONCAT(ana.search,\' \',ana.ragso2,\' \',ana.citspe,\' \',ana.prospe) AS ragsoc,
-              cli.codice,cli.ragdoc,
-              pag.tippag,pag.incaut,pag.numrat,pag.descri AS despag,
-              rig.id_tes,rig.id_rig,rig.codart,rig.descri,rig.unimis,rig.quanti,rig.prelis,rig.tiprig,rig.sconto,' .
-            /** inizio modifica FP 20/10/15 */
-            'tes.da_fatturare,tes.data_ordine,tes.ragbol ';
-    /** fine modifica FP */
-    $from = $gTables['tesdoc'] . ' AS tes ' .
-            'LEFT JOIN ' . $gTables['clfoco'] . ' AS cli ON tes.clfoco=cli.codice ' .
-            'LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON cli.id_anagra=ana.id ' .
-            'LEFT JOIN ' . $gTables['pagame'] . ' AS pag ON pag.codice=tes.pagame ' .
-            'LEFT JOIN ' . $gTables['rigdoc'] . ' AS rig ON rig.id_tes=tes.id_tes ';
-    $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
-    $ctrlnum = gaz_dbi_num_rows($result);
-    $fatture = array();
-    if ($ctrlnum) {
-        //creo l'array associativo testate-righi
-        $ctrlc = 0;
-        $ctrlp = 0;
-        $ctrld = 0;
-        $ctrlr = 0;    // rappresenta il raggruppamento bolle
-        $totale_imponibile = 0;
-        while ($row = gaz_dbi_fetch_array($result)) {
-            if (in_array($row['id_tes'], $excludedDtT) and $ctrld != $row['id_tes']) { // se è tra gli esclusi vado avanti ma mantengo il riferimento
-                $fatture['no'][] = array('id' => $row['id_tes'],
-                    'ragionesociale' => $row['ragsoc'],
-                    'numero' => $row['numdoc'],
-                    'data' => $row['datemi'],
-                    'pagamento' => $row['despag']
-                );
-                continue;
-            }
-            if ($row['clfoco'] != $ctrlc or $row['pagame'] != $ctrlp or $row['ragbol'] != $ctrlr or ( $row['id_tes'] != $ctrld and $row['ragdoc'] == 'N')) {  //se è un'altro cliente o il cliente ha un pagamento diverso dal precedente o è cambiato il raggruppamento bolle
-                if ($ctrlc > 0 and $ctrlp > 0) {  //se non è la prima fattura pongo il totale della precedente nell'array
-                    $fatture['yes'][$last_pr]['totale'] = $totale_imponibile;
-                }
-                $totale_imponibile = 0;
-                $last_pr ++;
-                $last_nu ++;
-                // nuova testata fattura
-                $fatture['yes'][$last_pr] = array('numero' => $last_nu, 'codicecliente' => $row['clfoco'], 'ragionesociale' => $row['ragsoc']);
-                $fatture['yes'][$last_pr]['speseincasso'] = $row['numrat'] * $row['speban'];
-                //$totale_imponibile += $fatture['yes'][$last_pr]['speseincasso'];
-            }
-            if ($row['id_tes'] != $ctrld) {  //se è un'altro ddt
-                if ($row['clfoco'] == $ctrlc and $row['pagame'] != $ctrlp) {
-                    $fatture['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
-                        'descrizione' => ' Cliente con diversi pagamenti! '
-                    );
-                }
-                $fatture['yes'][$last_pr]['righi'][] = array('codice' => '_DES_',
-                    'numero' => $row['numdoc'],
-                    'id' => $row['id_tes'],
-                    'data' => $row['datemi'],
-                    'codpag' => $row['pagame'],
-                    'despag' => $row['despag']
-                );
-                if ($row['incaut'] == 'S') {
-                    $fatture['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
-                        'descrizione' => ' Pagamento che prevede l\'incasso automatico! '
-                    );
-                }
-                if (($row['tippag'] == 'B' or $row['tippag'] == 'T') and $row['banapp'] == 0) {
-                    $fatture['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
-                        'descrizione' => ' ATTENZIONE! MANCA LA BANCA D\'APPOGGIO ! '
-                    );
-                }
-                if ($row['traspo'] > 0) {
-                    $fatture['yes'][$last_pr]['righi'][] = array('codice' => '_TRA_',
-                        'descrizione' => 'TRASPORTO',
-                        'importo' => $row['traspo']
-                    );
-                    $totale_imponibile += $row['traspo'];
-                }
-            }
-            $importo_rigo = CalcolaImportoRigo($row['quanti'], $row['prelis'], $row['sconto']);
-            if ($row['tiprig'] == 1) {
-                $importo_rigo = CalcolaImportoRigo(1, $row['prelis'], 0);
-            }
-            $totale_imponibile += $importo_rigo;
-            //aggiungo il rigo
-            $fatture['yes'][$last_pr]['righi'][] = array('codice' => $row['codart'],
-                'descrizione' => $row['descri'],
-                'unitamisura' => $row['unimis'],
-                'quantita' => $row['quanti'],
-                'prezzo' => $row['prelis'],
-                'sconto' => $row['sconto'],
-                'importo' => $importo_rigo);
-            $ctrld = $row['id_tes'];
-            $ctrlc = $row['clfoco'];
-            $ctrlp = $row['pagame'];
-            $ctrlr = $row['ragbol'];
-        }
-        $fatture['yes'][$last_pr]['totale'] = $totale_imponibile;
-    }
-    return $fatture;
-}
 
 if (isset($_POST['genera']) and $msg == "") {
-    $periodo = array('inizio' => sprintf("%04d-%02d-%02d", $_POST['annini'], $_POST['mesini'], $_POST['gioini']),
-        'fine' => sprintf("%04d-%02d-%02d", $_POST['annfin'], $_POST['mesfin'], $_POST['giofin'])
+    $periodo = array('ini' => sprintf("%04d-%02d-%02d", $_POST['annini'], $_POST['mesini'], $_POST['gioini']),
+        'fin' => sprintf("%04d-%02d-%02d", $_POST['annfin'], $_POST['mesfin'], $_POST['giofin'])
     );
     $data_emissione = sprintf("%04d-%02d-%02d", $_POST['annemi'], $_POST['mesemi'], $_POST['gioemi']);
-    $fatture = FattureDaDdt($periodo, $sez, $_POST['clfoco'], $_POST['excludedDtT']);
+    $invoices = getInvoiceableBills($periodo, $sez, $form['clfoco'], $form['DdtStatus']);
     $protocollo_inizio = 0;
-    foreach ($fatture['yes'] as $kt => $vt) {
+    foreach ($invoices['yes'] as $kt => $vt) {
         // rilevamento protocollo iniziale
         if ($protocollo_inizio == 0) {
             $protocollo_inizio = $kt;
@@ -334,7 +329,6 @@ if (isset($_POST['return'])) {
     exit;
 }
 
-$titolo = 'Emissione fatture differite da D.d.T.';
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup',
     'custom/autocomplete_anagra'));
@@ -392,19 +386,6 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_fin'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_fin', $form['date_fin_D'], $form['date_fin_M'], $form['date_fin_Y'], 'FacetSelect', 1);
 echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetDataTDred\">" . $script_transl['doc_type'] . "</td>\n";
-echo "<td class=\"FacetDataTDred\">" . $script_transl['n_inv'] . "</td>\n";
-echo "<td class=\"FacetDataTDred\">" . $script_transl['n_rem'] . "</td></tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">DDT</td>"
- . "<td class=\"FacetDataTD\">\n" . $form['DDT']['n_invoiceable'] . "<td class=\"FacetDataTD\">\n" . $form['DDT']['n_remainder'] . " </td></tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">DDV</td>"
- . "<td class=\"FacetDataTD\">\n" . $form['DDV']['n_invoiceable'] . "<td class=\"FacetDataTD\">\n" . $form['DDV']['n_remainder'] . " </td></tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">DDY</td>"
- . "<td class=\"FacetDataTD\">\n" . $form['DDY']['n_invoiceable'] . "<td class=\"FacetDataTD\">\n" . $form['DDY']['n_remainder'] . " </td></tr>\n";
 ?>
 <tr>
     <td class="FacetFieldCaptionTD">&nbsp;</td>
@@ -415,15 +396,16 @@ echo "<td class=\"FacetFieldCaptionTD\">DDY</td>"
 </tr>
 </table>
 <?php
-if (isset($form['preview']) and $msg == "") {
-    $periodo = array('inizio' => sprintf("%04d-%02d-%02d", $form['annini'], $form['mesini'], $form['gioini']),
-        'fine' => sprintf("%04d-%02d-%02d", $form['annfin'], $form['mesfin'], $form['giofin'])
-    );
-    $fatture = FattureDaDdt($periodo, $sez, $form['clfoco'], $form['excludedDtT']);
-    echo '<div align="center"><b>ANTEPRIMA DI FATTURAZIONE</b></div>';
+if (isset($_POST['preview']) and $msg == "") {
+    $date_exe = new DateTime($form['date_exe_Y'].'-'.$form['date_exe_M'].'-'.$form['date_exe_D']);
+    $date_ini = new DateTime($form['date_ini_Y'].'-'.$form['date_ini_M'].'-'.$form['date_ini_D']);
+    $date_fin = new DateTime($form['date_fin_Y'].'-'.$form['date_fin_M'].'-'.$form['date_fin_D']);
+    $date= array('exe' => $date_exe->format('Y-m-d'),'ini' => $date_ini->format('Y-m-d'),'fin' => $date_fin->format('Y-m-d'));
+    $invoices = getInvoiceableBills($date, $form['seziva'], $form['clfoco'], $form['DdtStatus']);
+    echo '<div align="center"><b>' . $script_transl['preview_inv'] . '</b></div>';
     echo "<table class=\"Tlarge\">";
-    if (isset($fatture['yes']) && !isset($fatture['yes'][0]['totale'])) {
-        foreach ($fatture['yes'] as $kt => $vt) {
+    if (isset($invoices['yes']) && !isset($invoices['yes'][0]['totale'])) {
+        foreach ($invoices['yes'] as $kt => $vt) {
             echo "<tr>";
             echo "<td> " . $vt['codicecliente'] . " &nbsp;</td>";
             echo "<td colspan=\"4\"> " . $vt['ragionesociale'] . " &nbsp;</td>";
@@ -472,12 +454,12 @@ if (isset($form['preview']) and $msg == "") {
     } else {
         echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
     }
-    if (isset($fatture['no'])) {
+    if (isset($invoices['no'])) {
         echo "<tr><td class=\"FacetDataTDred\" colspan=\"3\" align=\"right\">I DdT sottosegnati sono stati esclusi dalla fatturazione&darr; </td></TR>";
         $ctrld = 0;
-        foreach ($fatture['no'] as $key => $value) {
+        foreach ($invoices['no'] as $key => $value) {
             if ($ctrld != $value['id']) {
-                echo "<input type=\"hidden\" name=\"excludedDtT[{$key}]\" value=\"" . $value['id'] . "\" />\n";
+                echo "<input type=\"hidden\" name=\"DdtStatus[{$key}]\" value=\"" . $value['id'] . "\" />\n";
                 echo "<tr>";
                 echo "<td class=\"FacetDisabledTD\" colspan=\"7\"><input class=\"FacetText\" type=\"submit\" name=\"del_ex[{$value['id']}]\" value=\"Ripristina!\" /> il DdT n.<a href=\"admin_docven.php?Update&id_tes=" . $value['id'] . "\">" . $value['numero'] . "</a> del " . $value['data'] . " a:" . $value['ragionesociale'] . " &hArr; " . $value['pagamento'] . "</td>";
                 echo "</tr>\n";

@@ -285,7 +285,7 @@ $linkHeaders -> output();
 ?>
 </tr>
 <?php
-$rs_ultimo_documento = gaz_dbi_dyn_query("id_tes", $gTables['tesdoc'], "tipdoc LIKE 'F%' AND seziva = '$seziva'","datfat DESC, protoc DESC, id_tes DESC",0,1);
+$rs_ultimo_documento = gaz_dbi_dyn_query("id_tes,tipdoc,protoc", $gTables['tesdoc'], "tipdoc LIKE 'F%' AND seziva = '$seziva'","datfat DESC, protoc DESC, id_tes DESC",0,1);
 $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesdoc'].".*, MAX(".$gTables['tesdoc'].".id_tes) AS reftes,".$gTables['anagra'].".fe_cod_univoco,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".e_mail,".$gTables['clfoco'].".codice,".$gTables['pagame'].".tippag", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id  LEFT JOIN ".$gTables['pagame']." ON ".$gTables['tesdoc'].".pagame = ".$gTables['pagame'].".codice", $where, $orderby,$limit, $passo);
@@ -437,7 +437,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         // Colonna "Cancella"
         echo "<td class=\"FacetDataTD\" align=\"center\">";
-        if ($ultimo_documento['id_tes'] == $r["id_tes"] ) {
+        if ($ultimo_documento['id_tes'] == $r["id_tes"] || ($ultimo_documento['tipdoc'] == 'FAD' && $ultimo_documento['protoc'] == $r['protoc'])) {
            // Permette di cancellare il documento.
            if ($r["id_con"] > 0) {
                echo "<a class=\"btn btn-xs btn-default btn-elimina\" title=\"Cancella il documento e la registrazione contabile relativa\" href=\"delete_docven.php?seziva=".$r["seziva"]."&protoc=".$r['protoc']."&anno=".substr($r["datfat"],0,4)."\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
