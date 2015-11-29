@@ -61,22 +61,8 @@ if (isset($_GET['all'])) {
    unset($cliente);
 }
 
-$titolo="Documenti di trasporto";
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array(/** ENRICO FEDELE */
-								  /*'jquery/jquery-1.7.1.min',
-                                  'jquery/ui/jquery.ui.core',
-                                  'jquery/ui/jquery.ui.widget',
-                                  'jquery/ui/jquery.ui.mouse',
-                                  'jquery/ui/jquery.ui.button',
-                                  'jquery/ui/jquery.ui.dialog',
-                                  'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.draggable',
-                                  'jquery/ui/jquery.ui.resizable',
-                                  'jquery/ui/jquery.effects.core',
-                                  'jquery/ui/jquery.effects.scale',*/
-								  /** ENRICO FEDELE */
-                                  'custom/modal_form'));
+$script_transl=HeadMain(0,array('custom/modal_form'));
 echo '<script>
 $(function() {
    $( "#dialog" ).dialog({
@@ -116,7 +102,7 @@ function confirMail(link){
       <p class="ui-state-highlight" id="mail_attc"></p>
 </div>
 
-<div align="center" class="FacetFormHeaderFont"> D.d.T. della sezione
+<div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
 <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
 <?php
 for ($sez = 1; $sez <= 3; $sez++) {
@@ -154,21 +140,9 @@ $recordnav -> output();
 
 <tr>
 <?php
-// creo l'array (header => campi) per l'ordinamento dei record
-$headers_tesdoc = array  (
-              "Numero" => "numdoc",
-              "Data" => "datemi",
-              "Cliente" => "ragso1",
-              "Status" => "",
-              "Stampa" => "",
-              "Mail" => "",
-              "Origine" => "",
-              "Cancella" => ""
-              );
-$urlPrintDoc = "";
-$linkHeaders = new linkHeaders($headers_tesdoc);
-$linkHeaders -> output();
-?>
+$linkHeaders = new linkHeaders($script_transl['header']);
+$linkHeaders->setAlign(array('left','center','center','left','center','center','center','center','center'));
+$linkHeaders->output();?>
 </tr>
 <?php
 $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'].' LEFT JOIN '.$gTables['clfoco'].' on '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where,"datemi desc, numdoc desc",0,1);
@@ -190,6 +164,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
             echo "<tr>";
 			// Colonna protocollo
             echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a> &nbsp;</td>";
+			// Colonna type
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\">&nbsp;".$script_transl['ddt_type'][$r["ddt_type"]]."</a> &nbsp;</td>";
 			// Colonna data emissione
             echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
             // Colonna Cliente

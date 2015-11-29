@@ -248,8 +248,8 @@ $strScript = array("admin_client.php" =>
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
         'da_fatturare_value' => array(0 => 'No', 1 => 'Si'),
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
-        'weight' => 'peso', 
-		'discount_alert' => 'sconto da anagrafe articoli'
+        'weight' => 'peso',
+        'discount_alert' => 'sconto da anagrafe articoli'
     /** fine modifica FP */
     ),
     "select_docforprint.php" =>
@@ -357,8 +357,8 @@ $strScript = array("admin_client.php" =>
         'virtual_taxstamp' => 'Modo',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'),
         'weight' => 'peso',
-        'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale', 
-		'discount_alert' => 'sconto da anagrafe articoli'
+        'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
+        'discount_alert' => 'sconto da anagrafe articoli'
     ),
     "report_contract.php" =>
     array('title' => 'Elenco dei contratti stipulati',
@@ -772,6 +772,29 @@ $strScript = array("admin_client.php" =>
             'Cliente' => '', 'Fattura' => '', 'Appoggio' => ''
         )
     ),
+    "report_doctra.php" =>
+    array('title' => 'Documenti di trasporto della sezione: ',
+        'ddt_type' => array("T" => "vendita",
+            "V" => "c/visione",
+            "Y" => "triangolazione"
+        ),
+        'header' => array(
+            "Numero" => "numdoc",
+            "Tipo"=>'ddt_type',
+            "Data" => "datemi",
+            "Cliente" => "ragso1",
+            "Status" => "",
+            "Stampa" => "",
+            "Mail" => "",
+            "Origine" => "",
+            "Cancella" => ""
+        ),
+        'mail_alert0' => 'Invio documento con email',
+        'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
+        'mail_alert2' => 'con allegato il seguente documento di vendita:',
+        'report_alert0' => 'Mostra tutti i documenti',
+        'report_alert1' => 'Sicuro di voler mostrare tutti i documenti?'
+    ),
     "emissi_fatdif.php" =>
     array('title' => 'Selezione per la fatturazione dei Documenti di Trasporto della sezione IVA ',
         'mesg' => array('La ricerca non ha dato risultati!',
@@ -781,19 +804,18 @@ $strScript = array("admin_client.php" =>
         'errors' => array('Una data  non &egrave; corretta!',
             'La data di emissione non pu&ograve; essere antecedente alla data dell\'ultimo DdT !',
             'La data di inizio dei DdT da emettere non pu&ograve; essere successivo alla data dell\'ultimo!',
-            'L\'ultimo documento emesso ha una data successiva a quella di emissione!'
+            'L\'ultimo documento emesso ha una data successiva a quella di emissione!',
+            'aut_pay' => 'Pagamento che prevede l\'incasso automatico',
+            'no_bank' => 'ATTENZIONE! MANCA LA BANCA D\'APPOGGIO',
+            'cust_pay' => 'Cliente con diversi pagamenti',
         ),
         'cliente' => 'Cliente: ',
         'date_exe' => 'Data di emissione ',
         'date_ini' => 'Data inizio periodo ',
         'date_fin' => 'Data fine periodo ',
-        'doc_type'=>' Tipo Documenti',
-        'n_inv'=>' Fatturabili nel periodo',
-        'n_rem'=>' Rimanenti (successivi)',
-        'alert_pay' => 'Pagamento che prevede l\'incasso automatico',
-        'alert_bank' => 'ATTENZIONE! MANCA LA BANCA D\'APPOGGIO',
-        'alert_customer' => 'Cliente con diversi pagamenti',
-        'preview_inv' => 'ANTEPRIMA DI FATTURAZIONE',
+        'doc_type' => ' Tipo Documenti',
+        'n_inv' => ' Fatturabili nel periodo',
+        'n_rem' => ' Rimanenti (successivi)',
         'submit_inv' => 'CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA'
     ),
     "report_schedule.php" =>

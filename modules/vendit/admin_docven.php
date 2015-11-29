@@ -192,7 +192,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
      */
     $form['ragbol'] = $_POST['ragbol'];
     $form['data_ordine'] = $_POST['data_ordine'];
-    $form['da_fatturare'] = $_POST['da_fatturare'];
     $form['gioord'] = $_POST['gioord'];
     $form['mesord'] = $_POST['mesord'];
     $form['annord'] = $_POST['annord'];
@@ -1076,7 +1075,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
      */
     $form['ragbol'] = $tesdoc['ragbol'];
     $form['data_ordine'] = $tesdoc['data_ordine'];
-    $form['da_fatturare'] = $tesdoc['da_fatturare'];
     $form['gioord'] = substr($tesdoc['data_ordine'], 8, 2);
     $form['mesord'] = substr($tesdoc['data_ordine'], 5, 2);
     $form['annord'] = substr($tesdoc['data_ordine'], 0, 4);
@@ -1224,7 +1222,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
      */
     $form['ragbol'] = 0;
     $form['data_ordine'] = "";
-    $form['da_fatturare'] = true;
     /** fine modifica FP */
     $form['sconto'] = 0;
     $cliente['indspe'] = "";
@@ -1498,10 +1495,6 @@ if ($form['tipdoc'] == "DDT") {
         echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
     }
     echo "\t </select></td>";
-    echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['da_fatturare_title'] . "\">" . $script_transl['da_fatturare'] . "</td>\n";
-    echo "<td class=\"FacetFieldCaptionTD\">";
-    $gForm->variousSelect('da_fatturare', $script_transl['da_fatturare_value'], $form['da_fatturare']);
-    echo "</td>";
     echo "</tr></table>\n";
 } else {
     echo "</td></tr></table>\n";
@@ -1509,7 +1502,6 @@ if ($form['tipdoc'] == "DDT") {
     echo "<input type=\"hidden\" value=\"" . $form['mesord'] . "\" name=\"mesord\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['annord'] . "\" name=\"annord\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['da_fatturare'] . "\" name=\"da_fatturare\">\n";
 }
 /** fine modifica FP */
 echo '<div class="FacetSeparatorTD" align="center">'.$script_transl[1].'</div>
