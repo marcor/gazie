@@ -717,7 +717,8 @@ class selectartico extends SelectBox {
       //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
       /** ENRICO FEDELE */
       /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-      echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>&nbsp;';
+      /* Non serve più, la ricerca è automatica alla selezione di un elemento dalla tendina
+	  	echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>&nbsp;';*/
       /** ENRICO FEDELE */
    }
 

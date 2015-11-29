@@ -8,7 +8,11 @@ $(function() {
       // optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
-        }
+        },
+		select: function(event, ui) {
+			$("#search_clfoco").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
 	});
 	$( "#search_id_customer" ).autocomplete({
 		source: "../../modules/root/search.php",
@@ -19,7 +23,11 @@ $(function() {
       // optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
-        }
+        },
+		select: function(event, ui) {
+			$("#search_id_customer").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
 	});
 	$( "#search_cosear" ).autocomplete({
 		source: "../../modules/root/search.php?opt=product",
@@ -30,7 +38,11 @@ $(function() {
       	// optional (if other layers overlap autocomplete list)
         open: function(event, ui) {
             $(".ui-autocomplete").css("z-index", 1000);
-        }
+        },
+		select: function(event, ui) {
+			$("#search_cosear").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
 	});
 	$( "#search_location" ).autocomplete({
 		minLength: 2,
