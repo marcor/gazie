@@ -676,7 +676,7 @@ class selectartico extends SelectBox {
       $tabula = ' tabindex="4" ';
       $opera = "%'";
       if (strlen($cerca) >= 1) {
-         if ($field == 'B') {        //ricerca per codice a barre
+         /*if ($field == 'B') {        //ricerca per codice a barre
             $field_sql = 'barcode';
          } elseif ($field == 'D') { //ricerca per descrizione
             $field_sql = 'descri';
@@ -686,8 +686,8 @@ class selectartico extends SelectBox {
                $cerca = substr($cerca, 1);
                $opera = "'";
             }
-         }
-         $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], $field_sql . " LIKE '" . addslashes($cerca) . $opera, "descri DESC");
+         }*/
+         $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], "codice LIKE '" . addslashes($cerca) . $opera, "descri DESC");
          $numclfoco = gaz_dbi_num_rows($result);
          if ($numclfoco > 0) {
             $tabula = "";
@@ -709,7 +709,7 @@ class selectartico extends SelectBox {
          echo '<input type="hidden" name="' . $this->name . '" value="" />';
       }
       //echo "\t<input type=\"text\" name=\"cosear\" id=\"search_cosear\" value=\"".$cerca."\" ".$tabula." maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
-      echo '&nbsp;<input type="text" name="cosear" id="search_cosear" value="' . $cerca . '" ' . $tabula . ' maxlength="16" size="25">';
+      echo '&nbsp;<input type="text" name="cosear" id="search_cosear" value="' . $cerca . '" ' . $tabula . ' maxlength="16" size="50">';
       //echo "<font style=\"color:#ff0000;\">$msg </font>";
       if ($msg != "") {
          echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';
@@ -717,7 +717,7 @@ class selectartico extends SelectBox {
       //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
       /** ENRICO FEDELE */
       /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-      echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" ' . $tabula . ' title="' . $script_transl['search'] . '"><i class="glyphicon glyphicon-search"></i></button>&nbsp;';
+      echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>&nbsp;';
       /** ENRICO FEDELE */
    }
 

@@ -194,7 +194,9 @@ $strScript = array("admin_fornit.php" =>
 						   'art_barcode'=>'Bar code', 
 						   'art_descr'=>'Description', 
 						   'search_for'=>'Search by',
-						   'weight'=>'Peso specifico:'
+						   'weight'=>'Weight:',
+        					'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search', 
+							'discount_alert' => 'discount taken from article\'s informations'
 						   /** ENRICO FEDELE */
                            ),
                     "accounting_documents.php" =>

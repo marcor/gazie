@@ -249,7 +249,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain();
+$script_transl = HeadMain(0, array('custom/autocomplete'));
 echo "<form method=\"POST\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".ucfirst($script_transl[$toDo].$script_transl[1])."</div> ";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
@@ -361,16 +361,33 @@ foreach ($form['righi'] as $key => $value) {
         echo "<tr>\n";
         if  ($value['cod_catmer']>0){
             $catmer = gaz_dbi_get_row($gTables['catmer'],'codice',$value['cod_catmer']);
-            echo "<td><input type=\"hidden\" value=\"".$value['cod_catmer']."\" name=\"righi[$key][cod_catmer]\">\n
+            /*echo "<td><input type=\"hidden\" value=\"".$value['cod_catmer']."\" name=\"righi[$key][cod_catmer]\">\n
                   <input type=\"hidden\" value=\"\" name=\"righi[$key][cod_articolo]\" />\n
                   <input class=\"FacetDataTD\" type=\"submit\" name=\"upd_row[$key]\" value=\"".$value['cod_catmer']."\" />
-                  ".$catmer['descri']."</td><td></td>\n";
+                  ".$catmer['descri']."</td><td></td>\n";*/
+				echo '<td>
+						<input type="hidden" value="'.$value['cod_catmer'].'" name="righi['.$key.'][cod_catmer]">
+						<input type="hidden" value="" name="righi['.$key.'][cod_articolo]" />						  
+						<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
+							<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$catmer['descri'].'
+						</button>
+					  </td>
+					  <td></td>';
         } else {
             $artico = gaz_dbi_get_row($gTables['artico'],'codice',$value['cod_articolo']);
+				echo '<td></td>
+					  <td>
+						<input type="hidden" value="'.$value['cod_articolo'].'" name="righi['.$key.'][cod_articolo]">
+						<input type="hidden" value="" name="righi['.$key.'][cod_catmer]" />						  
+						<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
+							<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$catmer['descri'].'
+						</button>
+					  </td>';
+					  /*
             echo "<td></td><td><input type=\"hidden\" value=\"".$value['cod_articolo']."\" name=\"righi[$key][cod_articolo]\" />\n
                   <input type=\"hidden\" value=\"\" name=\"righi[$key][cod_catmer]\" />\n
                   <input class=\"FacetDataTD\" type=\"submit\" name=\"upd_row[$key]\" value=\"".$value['cod_articolo']."\" />
-                  ".$artico['descri']."</td>\n";
+                  ".$artico['descri']."</td>\n";*/
         }
         echo "<td><input type=\"text\" name=\"righi[$key][percentuale]\" value=\"".$value['percentuale']."\" maxlength=\"5\" size=\"5\" class=\"FacetInput\"></td>\n";
         

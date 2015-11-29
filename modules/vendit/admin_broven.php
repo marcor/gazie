@@ -147,7 +147,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
    $form['in_descri'] = $_POST['in_descri'];
    $form['in_tiprig'] = $_POST['in_tiprig'];
    $form['in_id_doc'] = $_POST['in_id_doc'];
-   $form['in_artsea'] = $_POST['in_artsea'];
+/*   $form['in_artsea'] = $_POST['in_artsea'];*/
    $form['in_codart'] = $_POST['in_codart'];
    $form['in_pervat'] = $_POST['in_pervat'];
    $form['in_tipiva'] = $_POST['in_tipiva'];
@@ -223,15 +223,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
                $form['in_pesosp'] = $form['rows'][$k_row]['pesosp'];
                $form['in_status'] = "UPDROW" . $k_row;
-               if ($form['in_artsea'] == 'D') {
+               /*if ($form['in_artsea'] == 'D') {
                   $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
                   $form['cosear'] = $artico_u['descri'];
                } elseif ($form['in_artsea'] == 'B') {
                   $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
                   $form['cosear'] = $artico_u['barcode'];
-               } else {
+               } else {*/
                   $form['cosear'] = $form['rows'][$k_row]['codart'];
-               }
+               //}
                array_splice($form['rows'], $k_row, 1);
                $next_row--;
             }
@@ -831,7 +831,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
    $form['in_descri'] = "";
    $form['in_tiprig'] = 0;
    $form['in_id_doc'] = 0;
-   $form['in_artsea'] = $admin_aziend['artsea'];
+/*   $form['in_artsea'] = $admin_aziend['artsea'];*/
    $form['in_codart'] = "";
    $form['in_pervat'] = 0;
    $form['in_tipiva'] = 0;
@@ -963,7 +963,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
    $form['in_descri'] = "";
    $form['in_tiprig'] = 0;
    $form['in_id_doc'] = 0;
-   $form['in_artsea'] = $admin_aziend['artsea'];
+/*   $form['in_artsea'] = $admin_aziend['artsea'];*/
    $form['in_codart'] = "";
    $form['in_pervat'] = "";
    $form['in_tipiva'] = "";
@@ -1263,7 +1263,9 @@ echo '		</td>
 			<td class="FacetColumnTD">'.$script_transl[15].':&nbsp;';
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
-$select_artico->output($form['cosear'], $form['in_artsea']);
+//$select_artico->output($form['cosear'], $form['in_artsea']);
+$select_artico->output($form['cosear']);
+/*
 echo 'ricerca per <select name="in_artsea" class="FacetDataTDsmall">';
 $selArray = array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione');
 foreach ($selArray as $k => $v) {
@@ -1273,12 +1275,12 @@ foreach ($selArray as $k => $v) {
    }
    echo '<option value="'.$k.'" '.$selected.' > '.$v.' </option>';
 }
-/*echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";*/
+/ *echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";* /
 
+echo '			</select>*/
 /** ENRICO FEDELE */
 /* glyph-icon */
-echo '			</select>
-			</td>
+echo '			</td>
 			<td class="FacetColumnTD">
 				'.$script_transl[16].':&nbsp;<input type="text" value="'.$form['in_quanti'].'" maxlength="11" size="7" name="in_quanti" tabindex="5" accesskey="q" />
 			</td>

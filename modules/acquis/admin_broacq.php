@@ -120,7 +120,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
-    $form['in_artsea'] = $_POST['in_artsea'];
+/*    $form['in_artsea'] = $_POST['in_artsea']; Non serve più */
     $form['in_codart'] = $_POST['in_codart'];
     $form['in_pervat'] = $_POST['in_pervat'];
     $form['in_unimis'] = $_POST['in_unimis'];
@@ -169,15 +169,15 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                   $form['in_annota'] = $form['righi'][$key_row]['annota'];
                   $form['in_pesosp'] = $form['righi'][$key_row]['pesosp'];
                   $form['in_status'] = "UPDROW".$key_row;
-                  if ($form['in_artsea'] == 'D'){
+                  /*if ($form['in_artsea'] == 'D'){
                     $artico_u = gaz_dbi_get_row($gTables['artico'],'codice',$form['righi'][$key_row]['codart']);
                     $form['cosear'] = $artico_u['descri'];
                   } elseif ($form['in_artsea'] == 'B') {
                     $artico_u = gaz_dbi_get_row($gTables['artico'],'codice',$form['righi'][$key_row]['codart']);
                     $form['cosear'] = $artico_u['barcode'];
-                  } else {
+                  } else {*/
                     $form['cosear'] = $form['righi'][$key_row]['codart'];
-                  }
+                  //}
                   array_splice($form['righi'],$key_row,1);
                   $next_row--;
                }
@@ -508,7 +508,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    $form['in_artsea'] = $admin_aziend['artsea'];
+/*    $form['in_artsea'] = $admin_aziend['artsea']; Non serve più */
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
     $form['in_unimis'] = "";
@@ -598,7 +598,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    $form['in_artsea'] = $admin_aziend['artsea'];
+/*    $form['in_artsea'] = $admin_aziend['artsea']; Non serve più */
     $form['in_codart'] = "";
     $form['in_pervat'] = "";
     $form['in_unimis'] = "";
@@ -781,10 +781,11 @@ echo "<input type=\"hidden\" value=\"{$form['in_status']}\" name=\"in_status\" /
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[15]: ";
 $select_artico = new selectartico("in_codart");
 $select_artico -> addSelected($form['in_codart']);
-$select_artico -> output($form['cosear'],$form['in_artsea']);
+//$select_artico -> output($form['cosear'],$form['in_artsea']);
+$select_artico -> output($form['cosear']);
 /** ENRICO FEDELE */
 /* Completata traduzione */
-echo $script_transl['search_for']." <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
+/*echo $script_transl['search_for']." <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
 $selArray = array('C'=>$script_transl['art_code'], 'B'=>$script_transl['art_barcode'],'D'=>$script_transl['art_descr']);
 
 foreach ($selArray as $key => $value) {
@@ -795,7 +796,7 @@ foreach ($selArray as $key => $value) {
     echo "<option value=\"$key\" $selected > $value </option>";
 }
 echo "</select>\n";
-
+*/
 /* Aggiunto link per finestra modale aggiunta articolo */
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> '.$script_transl['add_article'].'</a>';
 /** ENRICO FEDELE */
@@ -1010,6 +1011,12 @@ foreach ($form['righi'] as $key => $value) {
 		  </tr>';
 	/** ENRICO FEDELE */
     }
+	
+if(count($form['righi'])==0) {
+    echo '<tr id="alert-zerorows">
+			<td colspan="12"class="alert alert-danger">'.$script_transl['zero_rows'].'</td>
+		  </tr>';
+}
 echo '	</tbody>
 	  </table>';
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";

@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
+$msgtoast = "";
 $msg = "";
 
 $upd_mm = new magazzForm;
@@ -132,7 +133,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
-    $form['in_artsea'] = $_POST['in_artsea'];
+/*    $form['in_artsea'] = $_POST['in_artsea']; Non serve più */
     $form['in_codart'] = $_POST['in_codart'];
     $form['in_pervat'] = $_POST['in_pervat'];
     $form['in_unimis'] = $_POST['in_unimis'];
@@ -188,15 +189,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_annota'] = $form['rows'][$key_row]['annota'];
                     $form['in_pesosp'] = $form['rows'][$key_row]['pesosp'];
                     $form['in_status'] = "UPDROW" . $key_row;
-                    if ($form['in_artsea'] == 'D') {
+                    /* in_artsea non viene usato ora, spero di aver commentato le righe corrette
+					if ($form['in_artsea'] == 'D') {
                         $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$key_row]['codart']);
                         $form['cosear'] = $artico_u['descri'];
                     } elseif ($form['in_artsea'] == 'B') {
                         $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$key_row]['codart']);
                         $form['cosear'] = $artico_u['barcode'];
-                    } else {
+                    } else {*/
                         $form['cosear'] = $form['rows'][$key_row]['codart'];
-                    }
+                    //}
                     array_splice($form['rows'], $key_row, 1);
                     $i--;
                 }
@@ -577,6 +579,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['codric'] = $form['in_codric'];
                 $form['rows'][$i]['quanti'] = $form['in_quanti'];
                 $form['rows'][$i]['sconto'] = $form['in_sconto'];
+                /** inizio modifica FP 09/10/2015
+                 * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo 
+                 */
+                $in_sconto = $form['in_sconto'];
+                if ($in_sconto != "0") {
+                    $form['rows'][$i]['sconto'] = $in_sconto;
+                } else {
+                    $form['rows'][$i]['sconto'] = $artico['sconto'];
+                    if ($artico['sconto'] != 0) {
+                        $msgtoast = $form['rows'][$i]['codart'].": sconto da anagrafe articoli";
+                    }
+                }
+                /* fine modifica FP */
+				
                 $form['rows'][$i]['prelis'] = number_format($artico['preacq'], $admin_aziend['decimal_price'], '.', '');
                 $form['rows'][$i]['codvat'] = $admin_aziend['preeminent_vat'];
                 $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
@@ -723,7 +739,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    $form['in_artsea'] = $admin_aziend['artsea'];
+/*    $form['in_artsea'] = $admin_aziend['artsea'];*/
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
     $form['in_unimis'] = "";
@@ -853,7 +869,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    $form['in_artsea'] = $admin_aziend['artsea'];
+/*    $form['in_artsea'] = $admin_aziend['artsea'];*/
     $form['in_codart'] = "";
     $form['in_pervat'] = "";
     $form['in_unimis'] = "";
@@ -1170,8 +1186,9 @@ echo "<input type=\"hidden\" value=\"{$form['in_status']}\" name=\"in_status\" /
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[15]: ";
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
-$select_artico->output($form['cosear'], $form['in_artsea']);
-
+//$select_artico->output($form['cosear'], $form['in_artsea']);
+$select_artico->output($form['cosear']);	//	Ormai la ricerca si fa solo per codice
+/*	Non serve più
 echo $script_transl['search_for'].'&nbsp;<select name="in_artsea" class="FacetDataTDsmall">';
 
 $selArray = array('C'=>$script_transl['art_code'], 'B'=>$script_transl['art_barcode'],'D'=>$script_transl['art_descr']);
@@ -1184,7 +1201,7 @@ foreach ($selArray as $key => $value) {
     echo '<option value="'.$key.'"'.$selected.'>'.$value.'</option>';
 }
 echo '</select>';
-
+*/
 /** ENRICO FEDELE */
 /* Aggiunto link per finestra modale aggiunta articolo */
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> '.$script_transl['add_article'].'</a>';
@@ -1409,6 +1426,13 @@ foreach ($form['rows'] as $key => $value) {
 			</td>
 		  </tr>';
 	/** ENRICO FEDELE */
+}
+if(count($form['rows'])>0) {
+	$msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
+} else {
+    echo '<tr id="alert-zerorows">
+			<td colspan="12"class="alert alert-danger">'.$script_transl['zero_rows'].'</td>
+		  </tr>';
 }
 echo '	</tbody>
 	  </table>';

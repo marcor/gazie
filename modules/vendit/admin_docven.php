@@ -204,7 +204,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
-    $form['in_artsea'] = $_POST['in_artsea'];
+/*    $form['in_artsea'] = $_POST['in_artsea'];*/
     $form['in_codart'] = $_POST['in_codart'];
     $form['in_pervat'] = $_POST['in_pervat'];
     $form['in_tipiva'] = $_POST['in_tipiva'];
@@ -279,15 +279,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
                     $form['in_pesosp'] = $form['rows'][$k_row]['pesosp'];
                     $form['in_status'] = "UPDROW" . $k_row;
-                    if ($form['in_artsea'] == 'D') {
+                    /*if ($form['in_artsea'] == 'D') {
                         $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
                         $form['cosear'] = $artico_u['descri'];
                     } elseif ($form['in_artsea'] == 'B') {
                         $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
                         $form['cosear'] = $artico_u['barcode'];
-                    } else {
+                    } else {*/
                         $form['cosear'] = $form['rows'][$k_row]['codart'];
-                    }
+                    //}
                     array_splice($form['rows'], $k_row, 1);
                     $next_row--;
                 }
@@ -978,7 +978,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    $form['in_artsea'] = $admin_aziend['artsea'];
+/*    $form['in_artsea'] = $admin_aziend['artsea'];*/
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
     $form['in_tipiva'] = 0;
@@ -1131,7 +1131,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    $form['in_artsea'] = $admin_aziend['artsea'];
+/*    $form['in_artsea'] = $admin_aziend['artsea'];*/
     $form['in_codart'] = "";
     $form['in_pervat'] = "";
     $form['in_tipiva'] = "";
@@ -1531,9 +1531,10 @@ echo '<div class="FacetSeparatorTD" align="center">'.$script_transl[1].'</div>
 
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
-$select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea']);
-echo $script_transl['in_artsea'];
-$gForm->selSearchItem('in_artsea', $form['in_artsea']);
+//$select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea']);
+$select_artico->output(substr($form['cosear'], 0, 20));
+/*echo $script_transl['in_artsea'];
+$gForm->selSearchItem('in_artsea', $form['in_artsea']);*/
 echo "\n$script_transl[17]:";
 $gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
 

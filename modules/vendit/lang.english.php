@@ -241,7 +241,8 @@ $strScript = array("admin_client.php" =>
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
         'da_fatturare_value' => array(0 => 'No', 1 => 'Yes'),
         'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search',
-		'weight' => 'weight'
+		'weight' => 'weight', 
+		'discount_alert' => 'discount taken from article\'s informations'
     ),
     "select_docforprint.php" =>
     array(array(1 => "D.d.T. di Vendita", 2 => "Fattura Differita", 3 => "Fattura Immediata Accompagnatoria", 4 => "Fattura Immediata Semplice", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),
@@ -343,7 +344,8 @@ $strScript = array("admin_client.php" =>
         'virtual_taxstamp' => 'Mode',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Material', 2 => 'Virtual'),
 		'weight' => 'weight',
-        'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search'
+        'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search', 
+		'discount_alert' => 'discount taken from article\'s informations'
     ),
     "report_contract.php" =>
     array('title' => 'Report of concluded contracts',

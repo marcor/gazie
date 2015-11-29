@@ -196,7 +196,9 @@ $strScript = array("admin_fornit.php" =>
 						   'art_barcode'=>'Codice a barre', 
 						   'art_descr'=>'Descrizione', 
 						   'search_for'=>'Cerca per',
-						   'weight'=>'Peso specifico:'
+						   'weight'=>'Peso specifico:', 
+						   'zero_rows'=>'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale', 
+		'discount_alert' => 'sconto da anagrafe articoli'
 						   /** ENRICO FEDELE */
                            ),
                     "accounting_documents.php" =>
