@@ -60,9 +60,27 @@ function toggle(boxID, toggleID) {
 
 
 $(document).ready (function(){
-	//$("#success-alert").hide();
-		//$("#success-alert").alert();
-		$("#alert-discount").fadeTo(2500, 500).slideUp(750, function(){
-			$("#alert-discount").alert('close');
-		});
- });
+	$("#alert-discount").fadeTo(2500, 1500).slideUp(750, function(){
+		$("#alert-discount").alert('close');
+	});
+	
+	var current = $("#alert-last-row").css( 'color' );
+	$("#alert-last-row")
+		.animate( { backgroundColor: '#faebcc' }, 2000 )
+		.animate( { backgroundColor: '#d6e9c6' }, 2000 )
+		.animate( { backgroundColor: '#faebcc' }, 2000 )
+		.animate( { backgroundColor: '#d6e9c6' }, 2000 );
+});
+ 
+ $(document).ready(function() {
+	//var lRow = $('#products-list-last');
+	//alert(lRow);
+	//$('#products-list-last').remove();
+	//$('#product-list > tbody > tr').eq(index-1).before(lRow);
+    $('#products-list > tbody > tr:first').before($('#products-list-last'));
+/*	$('.products-list-last').effect("pulsate", { times:3 }, 2500);*/
+	$('.products-list-last').effect("highlight", { times:1 }, 5000);
+	$('#products-list-last').toggleClass('products-list-last products-list-last-moved');
+	/** Animazione da fare solo la prima volta */
+	//$("#product-list-last").insertBefore($("#product-list > tbody tr:first"));
+});

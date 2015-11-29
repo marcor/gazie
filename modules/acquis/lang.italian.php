@@ -214,7 +214,8 @@ $strScript = array("admin_fornit.php" =>
 						   'search_for'=>'Cerca per',
 						   'weight'=>'Peso specifico:', 
 						   'zero_rows'=>'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale', 
-						   'discount_alert' => 'sconto da anagrafe articoli'
+						   'discount_alert' => 'sconto da anagrafe articoli',
+						   'last_row' => 'Ultimo rigo inserito'
 						   /** ENRICO FEDELE */
                            ),
                     "accounting_documents.php" =>
