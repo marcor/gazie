@@ -88,6 +88,23 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
     $de = new DateTime($date['exe']);
     $di = new DateTime($date['ini']);
     $df = new DateTime($date['fin']);
+    $Y = $de->format('Y');
+    // ricavo il progressivo annuo del numero protocollo
+    $rs_last_invoice_protoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $Y AND tipdoc LIKE 'F%' AND seziva = $sez", "protoc DESC", 0, 1);
+    $last_invoice_protoc = gaz_dbi_fetch_array($rs_last_invoice_protoc);
+    if ($last_invoice_protoc) {
+        $acc['last_protoc'] = $last_invoice_protoc['protoc'];
+    } else {
+        $acc['last_protoc'] = 0;
+    }
+    // ricavo il progressivo annuo del numero fattura
+    $rs_last_invoice_numfat = gaz_dbi_dyn_query("numdoc, numfat*1 AS fattura", $gTables['tesdoc'], "YEAR(datemi) = $Y AND tipdoc LIKE 'FA%' AND seziva = $sez", "fattura DESC", 0, 1);
+    $last_invoice_numfat = gaz_dbi_fetch_array($rs_last_invoice_numfat);
+    if ($last_invoice_numfat) {
+        $acc['last_numfat'] = $last_invoice_numfat['fattura'];
+    } else {
+        $acc['last_numfat'] = 0;
+    }
     //preparo la query al database
     $clientesel = '';
     if ($cliente > 0) {
@@ -122,8 +139,8 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
         $de->modify('-1 year');
         while ($row = gaz_dbi_fetch_array($result)) {
             $dm = new DateTime($row['datemi']);
-            if ($row['clfoco'] != $ctrlc || $row['pagame'] != $ctrlp || $row['ragbol'] != $ctrlr || ( $row['id_tes'] != $ctrld && $row['ragdoc'] == 'N')) {
-                //se è un'altro cliente o il cliente ha un pagamento diverso dal precedente o è non c'è il raggruppamento bolle 
+            if ($row['clfoco'] != $ctrlc || $row['pagame'] != $ctrlp || $row['ragbol'] != $ctrlr || ( $row['id_tes'] != $ctrld && $row['ragdoc'] == 'N') || $row['tipdoc'] == 'DDV') {
+                //se è un'altro cliente o il cliente ha un pagamento diverso dal precedente o  non c'è il raggruppamento bolle o è in conto visione
                 $i++;
             }
             if ($row['tipdoc'] == 'DDV') { // CONTO VISIONE
@@ -133,7 +150,7 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
                     $acc['data'][$i][$row['id_tes']] = 'maybe';
                 }
             } elseif ($row['tipdoc'] == 'DDY') { // TRIANGOLAZIONE
-                $acc['data'][$i][$row['id_tes']] = 'no';
+                $acc['excluded'][$i][$row['id_tes']] = 'no';
             } else {                            // DDT
                 $acc['data'][$i][$row['id_tes']] = 'yes';
             }
@@ -155,141 +172,6 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
     return $acc;
 }
 
-function getInvoiceableBills2($date, $sez = 1, $cliente = 0, $updStatus) {
-    global $gTables;
-    $df = new DateTime($date['exe']);
-
-    $Y = $df->format('Y');
-    // ricavo il progressivo annuo del numero protocollo
-    $rs_last_invoice_protoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $Y AND tipdoc LIKE 'F%' AND seziva = $sez", "protoc DESC", 0, 1);
-    $last_invoice_protoc = gaz_dbi_fetch_array($rs_last_invoice_protoc);
-    if ($last_invoice_protoc) {
-        $last_pr = $last_invoice_protoc['protoc'];
-    } else {
-        $last_pr = 0;
-    }
-    // ricavo il progressivo annuo del numero fattura
-    $rs_last_invoice_numfat = gaz_dbi_dyn_query("numdoc, numfat*1 AS fattura", $gTables['tesdoc'], "YEAR(datemi) = $Y AND tipdoc LIKE 'FA%' AND seziva = $sez", "fattura DESC", 0, 1);
-    $last_invoice_numfat = gaz_dbi_fetch_array($rs_last_invoice_numfat);
-    if ($last_invoice_numfat) {
-        $last_nu = $last_invoice_numfat['fattura'];
-    } else {
-        $last_nu = 0;
-    }
-    //preparo la query al database
-    $clientesel = '';
-    if ($cliente > 0) {
-        $clientesel = ' AND clfoco = ' . $cliente;
-    }
-    $orderby = "ragso1 ASC, ragbol ASC, pagame ASC, numdoc ASC, id_rig ASC";
-    // mi serve la data di un anno prima per fare la ricerca dei DDV
-    $df->modify('-1 year');
-    $where = " seziva = '$sez'" . $clientesel . " AND ("
-            . "(tipdoc = 'DDT' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
-            . " OR "
-            . "(tipdoc = 'DDV' AND datemi <= '" . $date['fin'] . "')"
-            . " OR "
-            . "(tipdoc = 'DDY' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
-            . ")";
-    //recupero i dati dal DB (testate+cliente+pagamento+righi)
-    $field = 'tes.id_tes,tes.clfoco,tes.numdoc,tes.pagame,tes.traspo,tes.speban,tes.banapp,tes.datemi,tes.ragbol,
-              CONCAT(ana.ragso1,\' \',ana.ragso2,\' \',ana.citspe,\' \',ana.prospe) AS ragsoc,
-              cli.codice,cli.ragdoc,
-              pag.tippag,pag.incaut,pag.numrat,pag.descri AS despag,
-              rig.id_tes,rig.id_rig,rig.codart,rig.descri,rig.unimis,rig.quanti,rig.prelis,rig.tiprig,rig.sconto';
-    $from = $gTables['tesdoc'] . ' AS tes ' .
-            'LEFT JOIN ' . $gTables['clfoco'] . ' AS cli ON tes.clfoco=cli.codice ' .
-            'LEFT JOIN ' . $gTables['anagra'] . ' AS ana ON cli.id_anagra=ana.id ' .
-            'LEFT JOIN ' . $gTables['pagame'] . ' AS pag ON pag.codice=tes.pagame ' .
-            'LEFT JOIN ' . $gTables['rigdoc'] . ' AS rig ON rig.id_tes=tes.id_tes ';
-    $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
-    $ctrlnum = gaz_dbi_num_rows($result);
-    $invoices = array();
-    if ($ctrlnum) {
-        //creo l'array associativo testate-righi
-        $ctrlc = 0;
-        $ctrlp = 0;
-        $ctrld = 0;
-        $ctrlr = 0;    // rappresenta il raggruppamento bolle
-        $totale_imponibile = 0;
-        while ($row = gaz_dbi_fetch_array($result)) {
-            if (in_array($row['id_tes'], $updStatus) and $ctrld != $row['id_tes']) {
-                // se è tra gli esclusi vado avanti ma mantengo il riferimento
-                $invoices['no'][] = array('id' => $row['id_tes'],
-                    'ragionesociale' => $row['ragsoc'],
-                    'numero' => $row['numdoc'],
-                    'data' => $row['datemi'],
-                    'pagamento' => $row['despag'],
-                    'tipdoc' => $row['tipdoc']
-                );
-                continue;
-            }
-            if ($row['clfoco'] != $ctrlc or $row['pagame'] != $ctrlp or $row['ragbol'] != $ctrlr or ( $row['id_tes'] != $ctrld and $row['ragdoc'] == 'N')) {
-                //se è un'altro cliente o il cliente ha un pagamento diverso dal precedente o è cambiato il raggruppamento bolle
-                if ($ctrlc > 0 and $ctrlp > 0) {  //se non è la prima fattura pongo il totale della precedente nell'array
-                    $invoices['yes'][$last_pr]['totale'] = $totale_imponibile;
-                }
-                $totale_imponibile = 0;
-                $last_pr ++;
-                $last_nu ++;
-                // nuova testata fattura
-                $invoices['yes'][$last_pr] = array('numero' => $last_nu, 'codicecliente' => $row['clfoco'], 'ragionesociale' => $row['ragsoc']);
-                $invoices['yes'][$last_pr]['speseincasso'] = $row['numrat'] * $row['speban'];
-            }
-            if ($row['id_tes'] != $ctrld) {  //se è un'altro ddt
-                if ($row['clfoco'] == $ctrlc and $row['pagame'] != $ctrlp) {
-                    $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
-                        'descrizione' => ' Cliente con diversi pagamenti! '
-                    );
-                }
-                $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_DES_',
-                    'numero' => $row['numdoc'],
-                    'id' => $row['id_tes'],
-                    'data' => $row['datemi'],
-                    'codpag' => $row['pagame'],
-                    'despag' => $row['despag']
-                );
-                if ($row['incaut'] == 'S') {
-                    $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
-                        'descrizione' => ' Pagamento che prevede l\'incasso automatico! '
-                    );
-                }
-                if (($row['tippag'] == 'B' or $row['tippag'] == 'T') and $row['banapp'] == 0) {
-                    $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_MSG_',
-                        'descrizione' => ' ATTENZIONE! MANCA LA BANCA D\'APPOGGIO ! '
-                    );
-                }
-                if ($row['traspo'] > 0) {
-                    $invoices['yes'][$last_pr]['righi'][] = array('codice' => '_TRA_',
-                        'descrizione' => 'TRASPORTO',
-                        'importo' => $row['traspo']
-                    );
-                    $totale_imponibile += $row['traspo'];
-                }
-            }
-            $importo_rigo = CalcolaImportoRigo($row['quanti'], $row['prelis'], $row['sconto']);
-            if ($row['tiprig'] == 1) {
-                $importo_rigo = CalcolaImportoRigo(1, $row['prelis'], 0);
-            }
-            $totale_imponibile += $importo_rigo;
-            //aggiungo il rigo
-            $invoices['yes'][$last_pr]['righi'][] = array('codice' => $row['codart'],
-                'descrizione' => $row['descri'],
-                'unitamisura' => $row['unimis'],
-                'quantita' => $row['quanti'],
-                'prezzo' => $row['prelis'],
-                'sconto' => $row['sconto'],
-                'importo' => $importo_rigo);
-            $ctrld = $row['id_tes'];
-            $ctrlc = $row['clfoco'];
-            $ctrlp = $row['pagame'];
-            $ctrlr = $row['ragbol'];
-        }
-        $invoices['yes'][$last_pr]['totale'] = $totale_imponibile;
-    }
-    return $invoices;
-}
-
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -300,7 +182,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     $form['clfoco'] = 0;
     $form['search']['clfoco'] = '';
-    $form['updStatus'] = array();
+    $form['changeStatus'] = array();
     $ini_data = getDateLimits($form['seziva']);
     $form += $ini_data;
 } else { // accessi successivi
@@ -311,12 +193,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
-    if (isset($_POST['updStatus'])) {
-        foreach ($_POST['updStatus'] as $k => $v) {
-            $form['updStatus'][$k] = $v;
+    if (isset($_POST['changeStatus'])) {
+        foreach ($_POST['changeStatus'] as $k => $v) {
+            $form['changeStatus'][$k] = $v;
         }
     } else {
-        $form['updStatus'] = array();
+        $form['changeStatus'] = array();
     }
     $form['date_ini_D'] = intval($_POST['date_ini_D']);
     $form['date_ini_M'] = intval($_POST['date_ini_M']);
@@ -337,16 +219,14 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         $form['hidden_req'] = '';
     }
 
-    // escludo un ddt
-    if (isset($_POST['add_ex'])) {
-        $_POST['preview'] = '';
-        $form['updStatus'][] = key($_POST['add_ex']);
+    // cambio lo stato ddt
+    if (isset($_POST['yes_change'])) {
+        $form['changeStatus'][] = key($_POST['yes_change']);
     }
-    // ripristino il ddt
-    if (isset($_POST['del_ex'])) {
-        $_POST['preview'] = '';
-        $key = array_search(key($form['del_ex']), $form['updStatus']);
-        unset($form['updStatus'][$key]);
+    // ripristino lo stato del ddt
+    if (isset($_POST['no_change'])) {
+        $key = array_search(key($_POST['no_change']), $form['changeStatus']);
+        unset($form['changeStatus'][$key]);
     }
     if (!checkdate($form['date_exe_M'], $form['date_exe_D'], $form['date_exe_Y']) ||
             !checkdate($form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']) ||
@@ -369,7 +249,7 @@ if (isset($_POST['genera']) and $msg == "") {
         'fin' => sprintf("%04d-%02d-%02d", $_POST['annfin'], $_POST['mesfin'], $_POST['giofin'])
     );
     $data_emissione = sprintf("%04d-%02d-%02d", $_POST['annemi'], $_POST['mesemi'], $_POST['gioemi']);
-    $invoices = getInvoiceableBills($periodo, $sez, $form['clfoco'], $form['updStatus']);
+    $invoices = getInvoiceableBills($periodo, $sez, $form['clfoco'], $form['changeStatus']);
 
 
     $protocollo_inizio = 0;
@@ -406,7 +286,7 @@ if (isset($_POST['return'])) {
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete_anagra'));
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete_anagra'));
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
@@ -467,71 +347,152 @@ $date_exe = new DateTime($form['date_exe_Y'] . '-' . $form['date_exe_M'] . '-' .
 $date_ini = new DateTime($form['date_ini_Y'] . '-' . $form['date_ini_M'] . '-' . $form['date_ini_D']);
 $date_fin = new DateTime($form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' . $form['date_fin_D']);
 $date = array('exe' => $date_exe->format('Y-m-d'), 'ini' => $date_ini->format('Y-m-d'), 'fin' => $date_fin->format('Y-m-d'));
-$invoices = getInvoiceableBills($date, $form['seziva'], $form['clfoco']);
-print_r($invoices);
+$invoices = getInvoiceableBills($date, $form['seziva'], $form['clfoco'], $form['changeStatus']);
 echo '<div align="center"><b>' . $script_transl['preview_inv'] . '</b></div>';
 echo "<table class=\"Tlarge\">";
-if (isset($invoices['yes']) && !isset($invoices['yes'][0]['totale'])) {
-    foreach ($invoices['yes'] as $kt => $vt) {
-        echo "<tr>";
-        echo "<td> " . $vt['codicecliente'] . " &nbsp;</td>";
-        echo "<td colspan=\"4\"> " . $vt['ragionesociale'] . " &nbsp;</td>";
-        echo "<td> Fatt. n." . $vt['numero'] . " &nbsp;</td>";
-        echo "<td> Prot. n." . $kt . "</td>";
-        echo "</tr>\n";
-        foreach ($vt['righi'] as $kr => $vr) {
-            if ($vr['codice'] == '_MSG_') {
+// qui faccio il push all'array dei fatturabili se richiesti esplicitamente  
+if (isset($invoices['excluded'])) {
+    print_r($invoices['excluded']);
+    print '<br>';
+    print_r($form['changeStatus']);
+    foreach ($invoices['excluded'] as $k => $v) {
+        $id_tes = key($v);
+        if (in_array($id_tes, $form['changeStatus'])) {
+            // lo aggiungo ai fatturabili
+            $invoices['data'][][$id_tes] = 'maybe';
+            // e lo tolgo dagli esclusi
+            unset($invoices['excluded'][$k]);
+        }
+    }
+}
+if (isset($invoices['data'])) {
+    $protoc = $invoices['last_protoc'];
+    $numfat = $invoices['last_numfat'];
+    foreach ($invoices['data'] as $vt) {
+        $ctrl_first = true;
+        // attraverso l'array delle fatture proposte
+        foreach ($vt as $kr => $vr) {
+            $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
+            $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
+            if (in_array($kr, $form['changeStatus'])) {
+                
+            }
+            if ($vr == 'yes' || in_array($kr, $form['changeStatus'])) {
+                if ($ctrl_first) {
+                    $protoc++;
+                    $numfat++;
+                    $tot = 0.00;
+                    $anagrafica = new Anagrafica();
+                    $cliente = $anagrafica->getPartner($tes['clfoco']);
+                    echo "<tr>";
+                    echo "<td colspan=\"7\">" . $script_transl['add_invoice'] . $numfat . '/' . $tes['seziva'] . ' pr.' . $protoc . " a " . $cliente['ragso1'] . ' ' . $cliente['ragso2'] . " &nbsp;</td>";
+                    echo "</tr>\n";
+                    $ctrl_first = false;
+                }
                 echo "<tr>";
-                echo "<td class=\"FacetDataTDred\" colspan=\"7\">" . $vr['descrizione'] . " </td>";
+                echo "<td colspan=\"3\"> " . $tes['tipdoc'] . ' ' . $script_transl['ddt_type'][$tes['ddt_type']] .
+                " &nbsp;<a class=\"btn btn-xs btn-default btn-edit\"  href=\"admin_docven.php?Update&id_tes=" . $kr .
+                "\" ><i class=\"glyphicon glyphicon-edit\"></i>" . $tes['numdoc'] . '/' . $tes['seziva'] . " </a>"
+                . " del " . gaz_format_date($tes['datemi']) . " &nbsp;</td>";
+                echo "<td  colspan=\"3\" class=\"FacetDataTD\" >  &hArr; " . $pag['descri'] . "</td>";
+                echo "<td >";
+                if ($vr == 'maybe') {
+                    echo "<input class=\"btn btn-xs btn-warning\" type=\"submit\" name=\"no_change[$kr]\" value=\"Escludi!\" />";
+                } else {
+                    echo "<input class=\"btn btn-xs btn-warning\" type=\"submit\" name=\"yes_change[$kr]\" value=\"Escludi!\" />";
+                }
+                echo "</td>";
+                echo "<td > </td>";
                 echo "</tr>\n";
-            } elseif ($vr['codice'] == '_TRA_') {
-                echo "<tr>";
-                echo "<td class=\"FacetDataTD\"></td><td class=\"FacetDataTD\" colspan=\"5\" align=\"right\">" . $vr['descrizione'] . " </td>";
-                echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_number($vr['importo']) . " &nbsp;</td>";
-                echo "</tr>\n";
-            } elseif ($vr['codice'] == '_DES_') {
-                echo "<tr>";
-                echo "<td class=\"FacetDataTD\" colspan=\"2\">da D.d.T. n.<a href=\"admin_docven.php?Update&id_tes=" . $vr['id'] . "\">" . $vr['numero'] . "</a> del " . $vr['data'] . " &hArr; " . $vr['despag'] . "</td>";
-                echo "<td ><input class=\"FacetText\" type=\"submit\" name=\"add_ex[{$vr['id']}]\" value=\"Escludi!\" /></td>";
-                echo "</tr>\n";
-            } else {
-                echo "<tr>";
-                echo "<td class=\"FacetDataTD\">" . $vr['codice'] . " &nbsp;</td>";
-                echo "<td class=\"FacetDataTD\">" . $vr['descrizione'] . " </td>";
-                echo "<td class=\"FacetDataTD\"> " . $vr['unitamisura'] . " &nbsp;</td>";
-                echo "<td class=\"FacetDataTD\" align=\"right\"> " . $vr['quantita'] . " &nbsp;</td>";
-                echo "<td class=\"FacetDataTD\" align=\"right\"> " . number_format($vr['prezzo'], 3, ',', '.') . " &nbsp;</td>";
-                echo "<td class=\"FacetDataTD\" align=\"right\"> " . $vr['sconto'] . " &nbsp;</td>";
-                echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_number($vr['importo']) . " &nbsp;</td>";
+                // attraverso l'array delle testate proposte
+                // recupero i righi
+                $rs_row = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $kr, "id_rig asc");
+                while ($row = gaz_dbi_fetch_array($rs_row)) {
+                    $row_amount = CalcolaImportoRigo($row['quanti'], $row['prelis'], $row['sconto']);
+                    if ($row['tiprig'] == 1) {
+                        $row_amount = CalcolaImportoRigo(1, $row['prelis'], 0);
+                    }
+                    $tot += $row_amount;
+
+                    echo "<tr>";
+                    echo "<td class=\"FacetDataTD\">" . $row['codart'] . " &nbsp;</td>";
+                    echo "<td class=\"FacetDataTD\">" . $row['descri'] . " </td>";
+                    echo "<td class=\"FacetDataTD\"> " . $row['unimis'] . " &nbsp;</td>";
+                    echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_quantity($row['quanti'], true) . " &nbsp;</td>";
+                    echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_quantity($row['prelis'], true, $admin_aziend['decimal_price']) . " &nbsp;</td>";
+                    echo "<td class=\"FacetDataTD\" align=\"right\"> " . floatval($row['sconto']) . " &nbsp;</td>";
+                    echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_number($row['pervat']) . " &nbsp;</td>";
+                    echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_number($row_amount) . " &nbsp;</td>";
+                    echo "</tr>\n";
+                }
+                if ($tes['traspo'] > 0) {
+                    echo "<tr>";
+                    echo "<td> &nbsp;</td>";
+                    echo "<td class=\"FacetDataTD\">" . $script_transl['traspo'] . " </td>";
+                    echo "<td colspan=\"5\">  &nbsp;</td>";
+                    echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_number($tes['traspo']) . " &nbsp;</td>";
+                    echo "</tr>\n";
+                    $tot += $tes['traspo'];
+                }
+            } elseif ($vr == 'maybe') {
+                $tes['speban'] = 0;
+                $tot = 0.00;
+                echo "<tr class=\"alert alert-danger\">";
+                echo "<td>" . $tes['tipdoc'] . ' ' . $script_transl['ddt_type'][$tes['ddt_type']] . " &nbsp;</td>";
+                echo "<td colspan=\"5\"><a href=\"admin_docven.php?Update&id_tes=" . $kr . "\" > n." . $tes['numdoc'] . '/' . $tes['seziva'] . " </a> del " . gaz_format_date($tes['datemi']) . " &nbsp;</td>";
+                echo "<td><input class=\"btn btn-xs btn-warning\" type=\"submit\" name=\"yes_change[$kr]\" value=\"FATTURA!\" /></td>";
+                echo "<td > </td>";
                 echo "</tr>\n";
             }
         }
-        echo "<tr>";
-        echo "<td class=\"FacetDataTDred\"></td><td class=\"FacetDataTD\" colspan=\"5\" align=\"right\">TOTALE</td>";
-        echo "<td class=\"FacetDataTDred\" align=\"right\"> " . gaz_format_number($vt['totale']) . " &nbsp;</td>";
-        echo "</tr>\n";
-        if ($vt['speseincasso'] > 0) {
+        if ($tes['speban'] >= 0.01) {
             echo "<tr>";
-            echo "<td class=\"FacetFooterTD\"></td><td class=\"FacetFooterTD\" colspan=\"5\" align=\"right\">SPESE INCASSO</td>";
-            echo "<td class=\"FacetFooterTD\" align=\"right\"> " . gaz_format_number($vt['speseincasso']) . " &nbsp;</td>";
+            echo "<td> &nbsp;</td>";
+            echo "<td class=\"FacetDataTD\">" . $script_transl['incasso'] . " </td>";
+            echo "<td colspan=\"5\">  &nbsp;</td>";
+            echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_number($tes['speban'] * $pag['numrat']) . " &nbsp;</td>";
             echo "</tr>\n";
+            $tot += $tes['traspo'];
         }
+        echo "<tr>";
+        echo "<td> &nbsp;</td>";
+        echo "<td class=\"FacetDataTD\">TOTALE </td>";
+        echo "<td colspan=\"5\">  &nbsp;</td>";
+        echo "<td class=\"FacetDataTD\" align=\"right\"> " . gaz_format_number($tot) . " &nbsp;</td>";
+        echo "</tr>\n";
     }
     echo "<tr><td  align=\"right\" colspan=\"7\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA !\"></TD></TR>";
 } else {
     echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
 }
-if (isset($invoices['no'])) {
-    echo "<tr><td class=\"FacetDataTDred\" colspan=\"3\" align=\"right\">I DdT sottosegnati sono stati esclusi dalla fatturazione&darr; </td></TR>";
-    $ctrld = 0;
-    foreach ($invoices['no'] as $key => $value) {
-        if ($ctrld != $value['id']) {
-            echo "<input type=\"hidden\" name=\"updStatus[{$key}]\" value=\"" . $value['id'] . "\" />\n";
-            echo "<tr>";
-            echo "<td class=\"FacetDisabledTD\" colspan=\"7\"><input class=\"FacetText\" type=\"submit\" name=\"del_ex[{$value['id']}]\" value=\"Ripristina!\" /> il DdT n.<a href=\"admin_docven.php?Update&id_tes=" . $value['id'] . "\">" . $value['numero'] . "</a> del " . $value['data'] . " a:" . $value['ragionesociale'] . " &hArr; " . $value['pagamento'] . "</td>";
-            echo "</tr>\n";
-        }
-        $ctrld = $value['id'];
+if (count($invoices['excluded'])) {
+    echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\">I seguenti ddt non verranno mai fatturati a meno di richiesta espicita</td></tr>";
+    foreach ($invoices['excluded'] as $v) {
+        $id_tes = key($v);
+        $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $id_tes);
+        $anagrafica = new Anagrafica();
+        $cliente = $anagrafica->getPartner($tes['clfoco']);
+        echo "<tr>";
+        echo "<td> " . $tes['clfoco'] . " &nbsp;</td>";
+        echo "<td> " . $cliente['ragso1'] . ' ' . $cliente['ragso2'] . " &nbsp;</td>";
+        echo "<td colspan=\"4\"> N." . $tes['numdoc'] . "/" . $tes['seziva'] . " del " . gaz_format_date($tes['datemi']) . " </td>";
+        echo "<td><input class=\"btn btn-xs btn-warning\" type=\"submit\" name=\"yes_change[$id_tes]\" value=\"FORZA FATTURAZIONE!\" /></td>";
+        echo "</tr>\n";
+    }
+}
+
+if (count($form['changeStatus']) > 0) {
+    echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\">Ai Ddt sottosegnati è stato cambiato manualmente il loro stato rispetto alla proposta automatica:  </td></TR>";
+    foreach ($form['changeStatus'] as $k => $id_tes) {
+        $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $id_tes);
+        $anagrafica = new Anagrafica();
+        $cliente = $anagrafica->getPartner($tes['clfoco']);
+        echo "\n<input type=\"hidden\" name=\"changeStatus[$k]\" value=\"" . $id_tes . "\" />\n";
+        echo "<tr>";
+        echo "<td colspan=\"6\">" . $tes['tipdoc'] . ' ' . $script_transl['ddt_type'][$tes['ddt_type']] .
+        " &nbsp;. <a href=\"admin_docven.php?Update&id_tes=" . $id_tes . "\">" . $tes['numdoc'] . "</a></td>"
+        . "<td><input class=\"FacetText\" type=\"submit\" name=\"no_change[" . $id_tes . "]\" value=\"Ripristina lo stato iniziale!\" /></td>";
+        echo "</tr>\n";
     }
 }
 echo "</table>\n";

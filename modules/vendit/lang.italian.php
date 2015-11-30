@@ -780,7 +780,7 @@ $strScript = array("admin_client.php" =>
         ),
         'header' => array(
             "Numero" => "numdoc",
-            "Tipo"=>'ddt_type',
+            "Tipo" => 'ddt_type',
             "Data" => "datemi",
             "Cliente" => "ragso1",
             "Status" => "",
@@ -797,6 +797,10 @@ $strScript = array("admin_client.php" =>
     ),
     "emissi_fatdif.php" =>
     array('title' => 'Selezione per la fatturazione dei Documenti di Trasporto della sezione IVA ',
+        'ddt_type' => array("T" => "vendita",
+            "V" => "c/visione",
+            "Y" => "triangolazione"
+        ),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia cliente'
@@ -814,8 +818,11 @@ $strScript = array("admin_client.php" =>
         'date_ini' => 'Data inizio periodo ',
         'date_fin' => 'Data fine periodo ',
         'doc_type' => ' Tipo Documenti',
+        'traspo' => 'SPESE DI TRASPORTO',
+        'incasso' => 'SPESE INCASSO',
         'n_inv' => ' Fatturabili nel periodo',
-        'n_rem' => ' Rimanenti (successivi)',
+        'add_invoice' => 'Verrà generata la FATTURA DIFFERITA N.',
+        'preview_inv' => 'Anteprima di fatturazione',
         'submit_inv' => 'CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA'
     ),
     "report_schedule.php" =>
