@@ -249,7 +249,7 @@ $strScript = array("admin_fornit.php" =>
                            'errors'=>array('La data  non &egrave; corretta!',
                                            'Non sono stati trovati movimenti!'
                                           ),
-                           'account'=>'Fornitoree ',
+                           'account'=>'Fornitore ',
                            'orderby'=>'Ordina per: ',
                            'orderby_value'=>array(0=>'Scadenza crescente',1=>'Scadenza decrescente',
                                                   2=>'Fornitore crescente',3=>'Fornitore decrescente'
@@ -281,7 +281,7 @@ $strScript = array("admin_fornit.php" =>
                             'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO')
                            ),
                     "supplier_payment.php" =>
-                    array( 'title'=>'Pagamento debito verso fornitoree (chiusura partita/e)',
+                    array( 'title'=>'Pagamento debito verso fornitore (chiusura partita/e)',
                            'errors'=>array('La data  non &egrave; corretta!'),
                            'partner'=>'Fornitore ',
                            'date_ini'=>'Data di registrazione',

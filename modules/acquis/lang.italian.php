@@ -300,7 +300,7 @@ $strScript = array("admin_fornit.php" =>
                             'status_value'=>array(0=>'APERTA',1=>'CHIUSA',2=>'ESPOSTA',3=>'SCADUTA',9=>'ANTICIPO')
                            ),
                     "supplier_payment.php" =>
-                    array( 'title'=>'Pagamento debito verso fornitoree (chiusura partita/e)',
+                    array( 'title'=>'Pagamento debito verso fornitore (chiusura partita/e)',
                            'errors'=>array('La data  non &egrave; corretta!'),
                            'partner'=>'Fornitore ',
                            'date_ini'=>'Data di registrazione',
