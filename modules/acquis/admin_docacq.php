@@ -1351,10 +1351,10 @@ foreach ($form['rows'] as $key => $value) {
             echo "</td>\n";*/
 			/** ENRICO FEDELE */
             echo '	<td>
-						<input type="text" name="rows['.$key.'][prelis]" value="'.gaz_format_number($value['prelis']).'" align="right" maxlength="11" size="7" onchange="this.form.submit();" />
+						<input type="text" name="rows['.$key.'][prelis]" value="'.number_format($value['prelis'], 2, '.', '').'" align="right" maxlength="11" size="7" onchange="this.form.submit();" />
 					</td>
 					<td>
-						<input type="text" name="rows['.$key.'][sconto]" value="'.gaz_format_number($value['sconto']).'" maxlength="4" size="1" onchange="this.form.submit();" />
+						<input type="text" name="rows['.$key.'][sconto]" value="'.number_format($value['sconto'], 2, '.', '').'" maxlength="4" size="1" onchange="this.form.submit();" />
 					</td>
 				  	<td align="right">'.gaz_format_number($imprig).'</td>
 					<td>'.$value['pervat'].'%</td>
@@ -1469,19 +1469,19 @@ if(count($form['rows'])>0) {
 }
 echo '	</tbody>
 	  </table>';
-echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
-echo "<table class=\"Tlarge\">\n";
-echo "<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\">\n";
-echo "<input type=\"hidden\" value=\"{$form['traspo']}\" name=\"traspo\">\n";
-echo "<input type=\"hidden\" value=\"{$form['numrat']}\" name=\"numrat\">\n";
-echo "<input type=\"hidden\" value=\"{$form['spevar']}\" name=\"spevar\">\n";
-echo "<input type=\"hidden\" value=\"{$form['ivaspe']}\" name=\"ivaspe\">\n";
-echo "<input type=\"hidden\" value=\"{$form['pervat']}\" name=\"pervat\">\n";
-echo "<input type=\"hidden\" value=\"{$form['cauven']}\" name=\"cauven\">\n";
-echo "<input type=\"hidden\" value=\"{$form['caucon']}\" name=\"caucon\">\n";
-echo "<input type=\"hidden\" value=\"{$form['caumag']}\" name=\"caumag\">\n";
-echo "<input type=\"hidden\" value=\"{$form['id_agente']}\" name=\"id_agente\">\n";
-echo "<input type=\"hidden\" value=\"{$form['id_pro']}\" name=\"id_pro\">\n";
+echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
+		<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
+		<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\" />
+		<input type=\"hidden\" value=\"{$form['traspo']}\" name=\"traspo\" />
+		<input type=\"hidden\" value=\"{$form['numrat']}\" name=\"numrat\" />
+		<input type=\"hidden\" value=\"{$form['spevar']}\" name=\"spevar\" />
+		<input type=\"hidden\" value=\"{$form['ivaspe']}\" name=\"ivaspe\" />
+		<input type=\"hidden\" value=\"{$form['pervat']}\" name=\"pervat\" />
+		<input type=\"hidden\" value=\"{$form['cauven']}\" name=\"cauven\" />
+		<input type=\"hidden\" value=\"{$form['caucon']}\" name=\"caucon\" />
+		<input type=\"hidden\" value=\"{$form['caumag']}\" name=\"caumag\" />
+		<input type=\"hidden\" value=\"{$form['id_agente']}\" name=\"id_agente\" />
+		<input type=\"hidden\" value=\"{$form['id_pro']}\" name=\"id_pro\" />\n";
 //inizio piede
 if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acquisto ricevuto (non fiscale)
     echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[27]</td>\n";
@@ -1592,19 +1592,29 @@ if ($chk_add_iva_tes == 0) {// se le spese della testata non sono state aggiunte
 }
 
 if ($i > 0) {
-    echo "<td align=\"right\">" . number_format($totimpmer, 2, '.', '') . "</td>
-               <td align=\"right\">" . gaz_format_number(($totimpfat - $totimpmer - $form['traspo'] - ($form['speban'] * $form['numrat']) - $form['spevar']), 2, '.', '') . "</td>
-               <td align=\"right\">" . number_format($totimpfat, 2, '.', '') . "</td>
-               <td align=\"right\">" . number_format($totivafat, 2, '.', '') . "</td>
-               <td align=\"right\">" . $quatot . "</td>
-               <td align=\"right\">" . number_format(($totimpfat + $totivafat), 2, '.', '') . "</td>\n";
+    echo "	<td align=\"right\">".number_format($totimpmer, 2, '.', '')."</td>
+			<td align=\"right\">".gaz_format_number(($totimpfat - $totimpmer - $form['traspo'] - ($form['speban'] * $form['numrat']) - $form['spevar']), 2, '.', '')."</td>
+			<td align=\"right\">".number_format($totimpfat, 2, '.', '')."</td>
+			<td align=\"right\">".number_format($totivafat, 2, '.', '')."</td>
+			<td align=\"right\">".$quatot . "</td>
+			<td align=\"right\">".number_format(($totimpfat + $totivafat), 2, '.', '')."</td>
+		   </tr>\n";
+			   
     if ($toDo == 'update') {
-        echo '<td class="FacetFieldCaptionTD" align="right"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !"></td></tr>';
+        echo '<tr>
+				<td colspan="8" class="text-right alert alert-success">
+					<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !" />
+			  	</td>
+			  </tr>';
     } else {
-        echo '<td class="FacetFieldCaptionTD" align="right"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !"></td></tr>';
+        echo '<tr>
+				<td colspan="8" class="text-right alert alert-success">
+					<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !" />
+				</td>
+			  </tr>';
     }
 }
-echo "</table><br />";
+echo '</table>';
 ?>
 </form>
 <!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->

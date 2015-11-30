@@ -43,8 +43,9 @@ $where = "tipdoc = 'ADT'";
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
-<tr>
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	<thead>
+		<tr>
 <?php
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_tesdoc = array  (
@@ -59,31 +60,39 @@ $headers_tesdoc = array  (
 $linkHeaders = new linkHeaders($headers_tesdoc);
 $linkHeaders -> output();
 ?>
-</tr>
+		</tr>
+       </thead>
+       <tbody>
 <?php
 $result = gaz_dbi_dyn_query ('*', $gTables['tesdoc'], $where, $orderby, $limit, $passo);
 $anagrafica = new Anagrafica();
+
 while ($a_row = gaz_dbi_fetch_array($result)) {
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
-    echo "<tr>";
-    echo "<td class=\"FacetDataTD\"><a href=\"admin_docacq.php?id_tes=".$a_row["id_tes"]."&Update\">".$a_row["id_tes"]."</a> &nbsp</td>";
-    echo "<td class=\"FacetDataTD\">".$a_row["numfat"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\">".$a_row["datemi"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\">".$cliente["ragso1"]."&nbsp;</td>";
-    echo "<td class=\"FacetDataTD\">".$a_row["status"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\">
-			<a class=\"btn btn-xs btn-default\" href=\"stampa_docacq.php?id_tes=".$a_row["id_tes"]."\" title=\"Stampa\">
-				<i class=\"glyphicon glyphicon-print\"></i>
-			</a>
-		  </td>
-		  <td class=\"FacetDataTD\">
-		  	<a class=\"btn btn-xs btn-default\" href=\"delete_docacq.php?id_tes=".$a_row["id_tes"]."\" title=\"Cancella\">
-				<i class=\"glyphicon glyphicon-remove\"></i>
-			</a>
-		  </td>";
-    echo "</tr>";
+    echo '			<tr>
+						<td class="FacetDataTD">
+							<a class="btn btn-xs btn-default btn-edit" href="admin_docacq.php?id_tes='.$a_row["id_tes"].'&Update">
+								<i class="glyphicon glyphicon-edit"></i>'.$a_row["id_tes"].'
+							</a>
+						</td>
+						<td class="FacetDataTD">'.$a_row["numfat"].'</td>
+						<td class="FacetDataTD">'.$a_row["datemi"].'</td>
+						<td class="FacetDataTD">'.$cliente["ragso1"].'</td>
+						<td class="FacetDataTD">'.$a_row["status"].'</td>
+						<td class="FacetDataTD">
+							<a class="btn btn-xs btn-default" href="stampa_docacq.php?id_tes='.$a_row["id_tes"].'" title="Stampa">
+								<i class="glyphicon glyphicon-print"></i>
+							</a>
+						</td>
+						<td class="FacetDataTD">
+							<a class="btn btn-xs btn-default" href="delete_docacq.php?id_tes='.$a_row["id_tes"].'" title="Cancella">
+								<i class="glyphicon glyphicon-remove"></i>
+							</a>
+						</td>
+					</tr>';
 }
 ?>
-</table>
-</body>
+			<tbody>
+		</table>
+	</body>
 </html>
