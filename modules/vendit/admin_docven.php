@@ -1504,61 +1504,7 @@ if ($form['tipdoc'] == "DDT") {
     echo "<input type=\"hidden\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\">\n";
 }
 /** fine modifica FP */
-echo '<div class="FacetSeparatorTD" align="center">'.$script_transl[1].'</div>
-		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
-		<input type="hidden" value="'.$form['in_descri'].'" name="in_descri" />
-		<input type="hidden" value="'.$form['in_pervat'].'" name="in_pervat" />
-		<input type="hidden" value="'.$form['in_tipiva'].'" name="in_tipiva" />
-		<input type="hidden" value="'.$form['in_ritenuta'].'" name="in_ritenuta" />
-		<input type="hidden" value="'.$form['in_unimis'].'" name="in_unimis" />
-		<input type="hidden" value="'.$form['in_prelis'].'" name="in_prelis" />
-		<input type="hidden" value="'.$form['in_id_mag'].'" name="in_id_mag" />
-		<input type="hidden" value="'.$form['in_annota'].'" name="in_annota" />
-		<input type="hidden" value="'.$form['in_scorta'].'" name="in_scorta" />
-		<input type="hidden" value="'.$form['in_pesosp'].'" name="in_pesosp" />
-		<input type="hidden" value="'.$form['in_status'].'" name="in_status" />
-		<input type="hidden" value="'.$form['hidden_req'].'" name="hidden_req" />
-		<tr>
-			<td class="FacetColumnTD">'.$script_transl[15].':';
-
-$select_artico = new selectartico("in_codart");
-$select_artico->addSelected($form['in_codart']);
-//$select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea']);
-$select_artico->output(substr($form['cosear'], 0, 20));
-/*echo $script_transl['in_artsea'];
-$gForm->selSearchItem('in_artsea', $form['in_artsea']);*/
-echo "\n$script_transl[17]:";
-$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
-
-echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
-/*
-echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"" . $script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";*/
-
-/** ENRICO FEDELE */
-/* glyph-icon */
-echo '  </td>
-		<td class="FacetColumnTD" align="right"> 
-			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
-		</td>
-	  </tr>';
-	   /** ENRICO FEDELE */
-echo "</td></tr>\n";
-echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
-$ric = intval(substr($form['in_codric'], 0, 1));
-if ($form['tipdoc'] == 'FAP') {
-    $ric = array('sub', 1, 2, 4, 5);
-}
-$gForm->selectAccount('in_codric', $form['in_codric'], $ric);
-echo " %$script_transl[24]: <input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"in_sconto\" title=\"# = sconto standard dell'articolo\">";
-echo " %$script_transl[56]: <input type=\"text\" value=\"" . $form['in_provvigione'] . "\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">";
-echo ' %' . $script_transl['ritenuta'] . ": <input type=\"text\" value=\"" . $form['in_ritenuta'] . "\" maxlength=\"6\" size=\"1\" name=\"in_ritenuta\">";
-echo "</TD><TD class=\"FacetColumnTD\">" . $script_transl['vat_constrain'];
-$select_in_codvat = new selectaliiva("in_codvat");
-$select_in_codvat->addSelected($form["in_codvat"]);
-$select_in_codvat->output();
-echo "</td><td class=\"FacetColumnTD\"></td></tr>\n";
-
-echo "</table>";
+echo '<div class="FacetSeparatorTD" align="center">'.$script_transl[1].'</div>';
 
 echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 		  <thead>
@@ -1829,6 +1775,59 @@ if(count($form['rows'])>0) {
 }
 echo '		</tbody>
 		</table>
+		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+		<input type="hidden" value="'.$form['in_descri'].'" name="in_descri" />
+		<input type="hidden" value="'.$form['in_pervat'].'" name="in_pervat" />
+		<input type="hidden" value="'.$form['in_tipiva'].'" name="in_tipiva" />
+		<input type="hidden" value="'.$form['in_ritenuta'].'" name="in_ritenuta" />
+		<input type="hidden" value="'.$form['in_unimis'].'" name="in_unimis" />
+		<input type="hidden" value="'.$form['in_prelis'].'" name="in_prelis" />
+		<input type="hidden" value="'.$form['in_id_mag'].'" name="in_id_mag" />
+		<input type="hidden" value="'.$form['in_annota'].'" name="in_annota" />
+		<input type="hidden" value="'.$form['in_scorta'].'" name="in_scorta" />
+		<input type="hidden" value="'.$form['in_pesosp'].'" name="in_pesosp" />
+		<input type="hidden" value="'.$form['in_status'].'" name="in_status" />
+		<input type="hidden" value="'.$form['hidden_req'].'" name="hidden_req" />
+		<tr>
+			<td class="FacetColumnTD">'.$script_transl[15].':';
+
+$select_artico = new selectartico("in_codart");
+$select_artico->addSelected($form['in_codart']);
+//$select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea']);
+$select_artico->output(substr($form['cosear'], 0, 20));
+/*echo $script_transl['in_artsea'];
+$gForm->selSearchItem('in_artsea', $form['in_artsea']);*/
+echo "\n$script_transl[17]:";
+$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+
+echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
+/*
+echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"" . $script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";*/
+
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  </td>
+		<td class="FacetColumnTD" align="right"> 
+			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="'.$script_transl['submit'].$script_transl['thisrow'].'" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
+		</td>
+	  </tr>';
+	   /** ENRICO FEDELE */
+echo "</td></tr>\n";
+echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
+$ric = intval(substr($form['in_codric'], 0, 1));
+if ($form['tipdoc'] == 'FAP') {
+    $ric = array('sub', 1, 2, 4, 5);
+}
+$gForm->selectAccount('in_codric', $form['in_codric'], $ric);
+echo " %$script_transl[24]: <input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"in_sconto\" title=\"# = sconto standard dell'articolo\">";
+echo " %$script_transl[56]: <input type=\"text\" value=\"" . $form['in_provvigione'] . "\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">";
+echo ' %' . $script_transl['ritenuta'] . ": <input type=\"text\" value=\"" . $form['in_ritenuta'] . "\" maxlength=\"6\" size=\"1\" name=\"in_ritenuta\">";
+echo "</TD><TD class=\"FacetColumnTD\">" . $script_transl['vat_constrain'];
+$select_in_codvat = new selectaliiva("in_codvat");
+$select_in_codvat->addSelected($form["in_codvat"]);
+$select_in_codvat->output();
+echo "</td><td class=\"FacetColumnTD\"></td></tr>\n";
+echo '</table>
 		<div class="FacetSeparatorTD" align="center">'.$script_transl[2].'</div>
 		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 			<input type="hidden" value="'.$form['numrat'].'" name="numrat">
