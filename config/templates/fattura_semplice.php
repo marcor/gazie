@@ -79,7 +79,13 @@ class FatturaSemplice extends Template
         $dataddt = substr($this->tesdoc['datemi'],8,2).'-'.substr($this->tesdoc['datemi'],5,2).'-'.substr($this->tesdoc['datemi'],0,4);
         if ($this->tesdoc['tipdoc'] == 'FAD') {
             $this->SetFont('helvetica','B',9);
-            $this->Cell(105,6,' DA D.d.T. n. '.$this->tesdoc['numdoc'].' del '.$dataddt,1,0,'L');
+            $ddtdescri='D.d.T.';
+            if ($this->tesdoc['ddt_type'] == 'Y') {
+                $ddtdescri .= ' in triangolazione';
+            }  elseif ($this->tesdoc['ddt_type'] == 'V') {
+                $ddtdescri .= ' in c/visione';
+            }              
+            $this->Cell(105,6,' DA '.$ddtdescri.' n. '.$this->tesdoc['numdoc'].' del '.$dataddt,1,0,'L');
             $this->Cell(81,6,'','BR',1);
             $this->SetFont('helvetica','',9);
         }
