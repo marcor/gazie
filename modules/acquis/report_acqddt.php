@@ -29,12 +29,13 @@ require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
 <table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
-<tr>
-<td align="center" class="FacetFormHeaderFont"><a href="admin_docacq.php?tipdoc=ADT&Insert" accesskey="d">Ricevuto D.d.T. d'acquisto da Fornitore</a></td>
-</tr>
+	<tr>
+		<td align="center" class="FacetFormHeaderFont">
+        	<a href="admin_docacq.php?tipdoc=ADT&Insert" accesskey="d">Ricevuto D.d.T. d'acquisto da Fornitore</a>
+        </td>
+    </tr>
 </table>
-<div align="center" class="FacetFormHeaderFont"> Documenti di Trasporto d'Acquisto
-</div>
+<div align="center" class="FacetFormHeaderFont">Documenti di Trasporto d'Acquisto</div>
 <?php
 if (!isset($_GET['flag_order'])) {
     $orderby = "datemi DESC";
@@ -67,24 +68,24 @@ $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['tesdoc'], $where, $orderby, $limit, $passo);
 $anagrafica = new Anagrafica();
 
-while ($a_row = gaz_dbi_fetch_array($result)) {
+while ($a_row = gaz_dbi_fetch_assoc($result)) {
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
     echo '			<tr>
-						<td class="FacetDataTD">
+						<td>
 							<a class="btn btn-xs btn-default btn-edit" href="admin_docacq.php?id_tes='.$a_row["id_tes"].'&Update">
 								<i class="glyphicon glyphicon-edit"></i>'.$a_row["id_tes"].'
 							</a>
 						</td>
-						<td class="FacetDataTD">'.$a_row["numfat"].'</td>
-						<td class="FacetDataTD">'.$a_row["datemi"].'</td>
-						<td class="FacetDataTD">'.$cliente["ragso1"].'</td>
-						<td class="FacetDataTD">'.$a_row["status"].'</td>
-						<td class="FacetDataTD">
+						<td>'.$a_row["numfat"].'</td>
+						<td>'.$a_row["datemi"].'</td>
+						<td>'.$cliente["ragso1"].'</td>
+						<td>'.$a_row["status"].'</td>
+						<td>
 							<a class="btn btn-xs btn-default" href="stampa_docacq.php?id_tes='.$a_row["id_tes"].'" title="Stampa">
 								<i class="glyphicon glyphicon-print"></i>
 							</a>
 						</td>
-						<td class="FacetDataTD">
+						<td>
 							<a class="btn btn-xs btn-default" href="delete_docacq.php?id_tes='.$a_row["id_tes"].'" title="Cancella">
 								<i class="glyphicon glyphicon-remove"></i>
 							</a>
@@ -92,7 +93,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 					</tr>';
 }
 ?>
-			<tbody>
+			</tbody>
 		</table>
+        </div>
 	</body>
 </html>

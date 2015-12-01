@@ -970,7 +970,7 @@ echo '<script type="text/javascript" src="./dialog_lotmag.js"></script>';
         document.docacq[destField].value = url;
     }
 </script>
-<SCRIPT LANGUAGE="JavaScript" ID="datapopup">
+<script language="JavaScript" ID="datapopup">
     var cal = new CalendarPopup();
     cal.setReturnFunction("setMultipleValues");
     function setMultipleValues(y, m, d) {
@@ -978,7 +978,7 @@ echo '<script type="text/javascript" src="./dialog_lotmag.js"></script>';
         document.docacq.mestra.value = LZ(m);
         document.docacq.giotra.value = LZ(d);
     }
-</SCRIPT>
+</script>
 <?php
 if ($form['id_tes'] > 0 and substr($form['tipdoc'], 0, 1) == 'D') {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]) . " n." . $form['numdoc'];
@@ -1020,30 +1020,21 @@ $gForm = new gazieForm();
 // INIZIO creazione dialog-lotmag 
 foreach ($form['rows'] as $i => $v) {
     if ($v['lot_or_serial'] >= 1) {
-        echo '
-        <div id="lm_post_container_' . $i . '">';
-        echo '<div id="lm_post_' . $i . '">
-                  </div>
-                 ';
-        echo '</div>
-        ';
-        echo '
-        <div id="lotmag_last_id' . $i . '" value="LOTMAGVALUE"></div>
-        ';
         $partnersel = 'descrizione_qui';
-        echo '<div id="dialog_open' . $i . '" partner="' . $partnersel . '" title="Apertura: ' . $partnersel . ' - ' . $admin_aziend['html_symbol'] . '">';
-        echo '<p class="validateTips"></p>
-        <table id="lm_form_container_' . $i . '" class="ui-widget ui-widget-content" width="800">
-        <tbody>';
-        echo '
-             </tbody>
-            </table>
-            <table  width="800" id="db-contain' . $i . '" class="ui-widget ui-widget-content">
-             <tbody>
-             </tbody>
-            </table>
-        </div>
-        ';
+        echo '<div id="lm_post_container_'.$i.'">
+				<div id="lm_post_'.$i.'"></div>
+			  </div>
+			  <div id="lotmag_last_id'.$i.'" value="LOTMAGVALUE"></div>
+			  <div id="dialog_open'.$i.'" partner="'.$partnersel.'" title="Apertura: '.$partnersel.' - '.$admin_aziend['html_symbol'].'">
+			  	<p class="validateTips"></p>
+				<table id="lm_form_container_'.$i.'" class="ui-widget ui-widget-content" width="800">
+					<tbody></tbody>
+				</table>
+				<table  width="800" id="db-contain'.$i.'" class="ui-widget ui-widget-content">
+					<tbody>
+					</tbody>
+				</table>
+				</div>';
     }
 }
 // FINE creazione form dialog-lotmag
@@ -1142,9 +1133,9 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (no
     echo "<td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl[0][$form['tipdoc']] . " " . $script_transl[52] . " </td>\n";
     echo "<td><input type=\"text\" name=\"numfat\" value=\"" . $form['numfat'] . "\" maxlength=\"20\" size=\"20\"></td>\n";
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td>";
-    echo "<td class=\"FacetDataTD\"><INPUT TYPE=\"text\" NAME=\"giotra\" VALUE=\"" . $form['giotra'] . "\" size=\"2\">\n";
-    echo "<INPUT TYPE=\"text\" NAME=\"mestra\" VALUE=\"" . $form['mestra'] . "\" size=\"2\">\n";
-    echo "<INPUT TYPE=\"text\" id=\"datepicker\" class=\"hasDatepicker\" NAME=\"anntra\" VALUE=\"" . $form['anntra'] . "\" size=\"2\">\n";
+    echo "<td class=\"FacetDataTD\"><input TYPE=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">\n";
+    echo "<input TYPE=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">\n";
+    echo "<input TYPE=\"text\" id=\"datepicker\" class=\"hasDatepicker\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">\n";
     echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></a>";
     echo '<i class="glyphicon glyphicon-calendar"></i></a>';
@@ -1317,7 +1308,7 @@ foreach ($form['rows'] as $key => $value) {
                 echo "<input type=\"image\" onclick=\"dialogLotmag(this);return false;\" href=\"#\" id=\"lotmag" . $key . "\" src=\"../../library/images/trace.png\" />\n";
             }
             echo "</td>\n";*/
-			$last_row[] = array_unshift($last_row,$script_transl['last_row'].': '.$value['codart'].', '.$value['descri'].', '.$value['quanti'].$value['unimis'].', <strong>'.$script_transl[23].'</strong>: '.gaz_format_number($value['prelis']).', %<strong>'.substr($script_transl[24], 0, 2).'</strong>: '.gaz_format_number($value['sconto']).', <strong>'.$script_transl[25].'</strong>: '.gaz_format_number($imprig).', <strong>'.$script_transl[19].'</strong>: '.$value['pervat'].'%, <strong>'.$script_transl[18].'</strong>: '.$value['codric']);
+			$last_row[] = array_unshift($last_row,''.$value['codart'].', '.$value['descri'].', '.$value['quanti'].$value['unimis'].', <strong>'.$script_transl[23].'</strong>: '.gaz_format_number($value['prelis']).', %<strong>'.substr($script_transl[24], 0, 2).'</strong>: '.gaz_format_number($value['sconto']).', <strong>'.$script_transl[25].'</strong>: '.gaz_format_number($imprig).', <strong>'.$script_transl[19].'</strong>: '.$value['pervat'].'%, <strong>'.$script_transl[18].'</strong>: '.$value['codric']);
 			echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
 					<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
 						<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
@@ -1361,7 +1352,7 @@ foreach ($form['rows'] as $key => $value) {
 					<td>'.$value['codric'].'</td>';
             break;
         case "1":
-            $last_row[] = array_unshift($last_row,$script_transl['last_row'].': forfait');
+            $last_row[] = array_unshift($last_row,'forfait');
 			echo "	<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" />
 				  	</td>
@@ -1382,7 +1373,7 @@ foreach ($form['rows'] as $key => $value) {
 					<td>".$value['codric']."</td>\n";
             break;
         case "2":
-            $last_row[] = array_unshift($last_row,$script_transl['last_row'].': descrittivo');
+            $last_row[] = array_unshift($last_row,'descrittivo');
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" />
 					</td>
@@ -1403,7 +1394,7 @@ foreach ($form['rows'] as $key => $value) {
 					<td></td>\n";
             break;
         case "3":
-            $last_row[] = array_unshift($last_row,$script_transl['last_row'].': var.tot.fattura');
+            $last_row[] = array_unshift($last_row,'var.tot.fattura');
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" />
 					</td>
@@ -1426,7 +1417,7 @@ foreach ($form['rows'] as $key => $value) {
         case "6":
         case "7":
         case "8":
-            $last_row[] = array_unshift($last_row,$script_transl['last_row'].': '.$script_transl['typerow'][$value['tiprig']]);
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$value['tiprig']]);
             echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
               		<input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$script_transl['typerow'][$value['tiprig']].'" />
 				  </td>
@@ -1455,12 +1446,12 @@ foreach ($form['rows'] as $key => $value) {
 if(count($form['rows'])>0) {
 	$msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
 
-	if(isset($_POST['in_submit']) && count($form['rows'])>20) {
+	if(isset($_POST['in_submit']) && count($form['rows'])>5) {
 		/*for($i=0;$i<3;$i++) {	//	Predisposizione per mostrare gli ultimi n articoli inseriti (in ordine inverso ovviamente)
 			$msgtoast .= $last_row[$i].'<br />';
 		}*/
 		$msgtoast .= $last_row[0];
-		$msgtoast = $upd_mm->toast($msgtoast, 'alert-last-row', 'alert-success');  //lo mostriamo
+		$msgtoast = $upd_mm->toast($script_transl['last_row'].': '.$msgtoast, 'alert-last-row', 'alert-success');  //lo mostriamo
 	}
 } else {
     echo '<tr id="alert-zerorows">
@@ -1468,20 +1459,20 @@ if(count($form['rows'])>0) {
 		  </tr>';
 }
 echo '	</tbody>
-	  </table>';
-echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
-		<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
-		<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\" />
-		<input type=\"hidden\" value=\"{$form['traspo']}\" name=\"traspo\" />
-		<input type=\"hidden\" value=\"{$form['numrat']}\" name=\"numrat\" />
-		<input type=\"hidden\" value=\"{$form['spevar']}\" name=\"spevar\" />
-		<input type=\"hidden\" value=\"{$form['ivaspe']}\" name=\"ivaspe\" />
-		<input type=\"hidden\" value=\"{$form['pervat']}\" name=\"pervat\" />
-		<input type=\"hidden\" value=\"{$form['cauven']}\" name=\"cauven\" />
-		<input type=\"hidden\" value=\"{$form['caucon']}\" name=\"caucon\" />
-		<input type=\"hidden\" value=\"{$form['caumag']}\" name=\"caumag\" />
-		<input type=\"hidden\" value=\"{$form['id_agente']}\" name=\"id_agente\" />
-		<input type=\"hidden\" value=\"{$form['id_pro']}\" name=\"id_pro\" />\n";
+	  </table>
+	  <div class="FacetSeparatorTD" align="center">'.$script_transl[2].'</div>
+		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+		<input type="hidden" value="'.$form['speban'].'" name="speban" />
+		<input type="hidden" value="'.$form['traspo'].'" name="traspo" />
+		<input type="hidden" value="'.$form['numrat'].'" name="numrat" />
+		<input type="hidden" value="'.$form['spevar'].'" name="spevar" />
+		<input type="hidden" value="'.$form['ivaspe'].'" name="ivaspe" />
+		<input type="hidden" value="'.$form['pervat'].'" name="pervat" />
+		<input type="hidden" value="'.$form['cauven'].'" name="cauven" />
+		<input type="hidden" value="'.$form['caucon'].'" name="caucon" />
+		<input type="hidden" value="'.$form['caumag'].'" name="caumag" />
+		<input type="hidden" value="'.$form['id_agente'].'" name="id_agente" />
+		<input type="hidden" value="'.$form['id_pro'].'" name="id_pro" />';
 //inizio piede
 if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acquisto ricevuto (non fiscale)
     echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[27]</td>\n";
@@ -1523,9 +1514,9 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acq
     $select_spediz = new SelectValue("portoresa");
     $select_spediz->output('portos', 'portos');
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[30]</td>\n";
-    echo "<td colspan=\"2\" class=\"FacetDataTD\"><INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"giotra\" VALUE=\"" . $form['giotra'] . "\" size=\"2\">\n";
-    echo "<INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"mestra\" VALUE=\"" . $form['mestra'] . "\" size=\"2\">\n";
-    echo "<INPUT class=\"FacetText\" TYPE=\"text\" NAME=\"anntra\" VALUE=\"" . $form['anntra'] . "\" size=\"2\">\n";
+    echo "<td colspan=\"2\" class=\"FacetDataTD\"><input class=\"FacetText\" TYPE=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">\n";
+    echo "<input class=\"FacetText\" TYPE=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">\n";
+    echo "<input class=\"FacetText\" TYPE=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">\n";
     echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
     echo '<i class="glyphicon glyphicon-calendar"></i></a>'.$script_transl[31];

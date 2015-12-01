@@ -60,6 +60,10 @@ function toggle(boxID, toggleID) {
 
 
 $(document).ready (function(){
+	//$("body").wrapInner('<div class="container" role="main" id="wrapper"></div>');
+	//$("</div>DICOANTANTE").appendTo('body');
+	$('body').append('</div>');
+	$(".Tlarge").addClass('table table-striped table-bordered table-condensed table-responsive');
 	$("#alert-discount").fadeTo(2500, 1500).slideUp(750, function(){
 		$("#alert-discount").alert('close');
 	});

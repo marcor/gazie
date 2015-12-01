@@ -106,21 +106,34 @@ if ($t>4 && $t<=13) {
 } else {
     $msg=$script_transl['night'];
 }
-echo "<form method=\"POST\" name=\"myform\">\n";
-echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
-echo '<div id="admin_main" ><table border="1" class="Tmiddle">';
-echo "<tr class=\"FacetFormHeaderFont\">\n";
-echo "<td class=\"FacetDataTD\"><A href=\"../config/admin_utente.php?Login=".$admin_aziend['Login']."&Update\"><img src=\"view.php?table=admin&field=Login&value=".$admin_aziend['Login']."\" alt=\"".$admin_aziend['Cognome'].' '.$admin_aziend['Nome']."\" width=100 title=\"".$script_transl['change_usr']."\" border=\"2\"></a>";
-echo "</td>";
-echo "<td id='admin_welcome'>";
-echo ucfirst($msg)." ".$admin_aziend['Nome'].' (ip='.$admin_aziend['last_ip'].')'.
-"\n";
-echo "".$script_transl['access'].$admin_aziend['Access'].$script_transl['pass'].gaz_format_date($admin_aziend['datpas'])."<br>";
-echo "<div id='admin_p_logout'>".$script_transl['logout']." &rarr; <input name=\"logout\" type=\"submit\" value=\" Logout \"></div></td>\n";
-echo "<td align=\"center\" bgcolor=\"#".$admin_aziend['colore']."\">".$script_transl['company']."<a href=\"../config/admin_aziend.php\"><img src=\"view.php?table=aziend&value=".$form['enterprise_id']."\" width=\"200\" alt=\"Logo\" border=\"0\" title=\"".$script_transl['upd_company']."\"></a><br />".$script_transl['mesg_co'][2]." &rarr; ";
-echo selectCompany('enterprise_id',$form['enterprise_id'],$form['search']['enterprise_id'],$form['hidden_req'],$script_transl['mesg_co']);
-echo "</td>\n";
-echo "</tr></table></div>\n";
+echo '<form method="POST" name="myform">
+		<input type="hidden" value="'.$form['hidden_req'].'" name="hidden_req" />
+		<div id="admin_main" >
+			<table border="1" class="Tmiddle">
+				<tr class="FacetFormHeaderFont">
+					<td class="FacetDataTD text-center">
+						<a href="../config/admin_utente.php?Login='.$admin_aziend['Login'].'&Update">
+							<img src="view.php?table=admin&field=Login&value='.$admin_aziend['Login'].'" alt="'.$admin_aziend['Cognome'].' '.$admin_aziend['Nome'].'" width="100" title="'.$script_transl['change_usr'].'" border="2">
+						</a>
+					</td>
+					<td id="admin_welcome">
+						'.ucfirst($msg)." ".$admin_aziend['Nome'].' (ip='.$admin_aziend['last_ip'].')&nbsp;'.$script_transl['access'].$admin_aziend['Access'].$script_transl['pass'].gaz_format_date($admin_aziend['datpas']).'<br />
+						<div id="admin_p_logout">
+							'.$script_transl['logout'].' &rarr; <input name="logout" type="submit" value=" Logout ">
+						</div>
+					</td>
+					<td align="center" bgcolor="#'.$admin_aziend['colore'].'">
+						'.$script_transl['company'].'
+						<a href="../config/admin_aziend.php">
+							<img src="view.php?table=aziend&value='.$form['enterprise_id'].'" width="200" alt="Logo" border="0" title="'.$script_transl['upd_company'].'" />
+						</a>
+						<br />'.$script_transl['mesg_co'][2].' &rarr; ';
+selectCompany('enterprise_id',$form['enterprise_id'],$form['search']['enterprise_id'],$form['hidden_req'],$script_transl['mesg_co']);
+echo '				</td>
+				</tr>
+			</table>
+		</div>';
+
 echo "<div id='admin_footer'>";
 echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) ".$script_transl['business']." ".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://http://www.devincentiis.it\"> http://www.devincentiis.it</a></div>\n";
 echo '<div><table border="0" class="Tmiddle">';

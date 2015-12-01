@@ -161,20 +161,20 @@ function table_prefix_get($table_name) {
 // Una funzione per segnalare errori fatali in modo molto semplice.
 //
 function message_fatal_error($text) {
-   echo "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//IT\" \"http://www.w3.org/TR/html4/loose.dtd\">\n";
-   echo "<html>\n";
-   echo "<head>\n";
-   echo "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\">\n";
-   echo "<meta name=\"author\" content=\"Antonio De Vincentiis http://www.devincentiis.it\">\n";
-   echo "<link rel=\"stylesheet\" type=\"text/css\" href=\"../../library/style/stylesheet.css\">\n";
-   echo "<link rel=\"shortcut icon\" href=\"../../library/images/favicon.ico\">\n";
-   echo "<title>Fatal error</title>\n";
-   echo "</head>\n";
-   echo "<body>\n";
-   echo "<h1>Fatal error</h1>\n";
-   echo "<p><strong>$text</strong></p>\n";
-   echo "</body>\n";
-   echo "</html>\n";
+   echo '<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//IT\" \"http://www.w3.org/TR/html4/loose.dtd\">
+   			<html>
+				<head>
+					<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+					<meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
+					<link rel="stylesheet" type="text/css" href="../../library/style/stylesheet.css">
+					<link rel="shortcut icon" href="../../library/images/favicon.ico">
+					<title>Fatal error</title>
+				</head>
+				<body>
+					<h1>Fatal error</h1>
+					<p><strong>'.$text.'</strong></p>
+				</body>
+			</html>';
 }
 
 /**
@@ -709,7 +709,7 @@ class selectartico extends SelectBox {
          echo '<input type="hidden" name="' . $this->name . '" value="" />';
       }
       //echo "\t<input type=\"text\" name=\"cosear\" id=\"search_cosear\" value=\"".$cerca."\" ".$tabula." maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
-      echo '&nbsp;<input type="text" name="cosear" id="search_cosear" value="' . $cerca . '" ' . $tabula . ' maxlength="16" size="50">';
+      echo '&nbsp;<input type="text" name="cosear" id="search_cosear" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
       //echo "<font style=\"color:#ff0000;\">$msg </font>";
       if ($msg != "") {
          echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';

@@ -75,67 +75,68 @@ if ( $riga["id"]!="" ) {
 ?>
 
 
-<nav class="navbar navbar-default nav-boot nav-first<?php echo $classe_barra1; ?>" role="navigation">
-	<div class="navbar-header navbar-right vcenter" >
+<nav class="navbar navbar-fixed-top navbar-default nav-boot" role="navigation">
+	<!--<div class="navbar-header navbar-right vcenter" >-->
+        <a class="navbar-brand pull-right vcenter" href="../../modules/root/admin.php">
+			<?php echo strtoupper( $admin_aziend["ragso1"]); ?>
+        	<img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["enterprise_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
+	  </a>
     	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
             <span class="sr-only">Visualizza Men&ugrave;</span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand vcenter" href="../../modules/root/admin.php"><?php echo strtoupper( $admin_aziend["ragso1"]); ?>
-        <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["enterprise_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>">
-	  </a>
-    </div>
-    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-      <ul class="nav nav-tabs">
-	    <?php
-		$i = 0;
-		foreach ($menuArray as $link) {
-			if ( $i==0 ) {
-				echo '		<li class="dropdown">
-								<a>
-									<img src="'.$link["icon"].'"/>&nbsp;'.$link['name'].'<span class="caret"></span>
-								</a>
-								<ul class="dropdown-menu">';
-			} else {
-				echo '		<li class="dropdown-submenu">
-								<a href="'.$link['link'].'">
-									<img src="'.$link["icon"].'"/>&nbsp;'.$link['name'].'
-								</a>';
-			}
-			submenu($link);
-			$i++;
-		}
-		echo '		</li>
-			  	</ul>
-			  </li>';
-
-		$i=0;
-		foreach ( $menuArray[0] as $menu ) {
-			$icon_lnk=''; $css_class='row-menu';
-			if (isset($menu['icon']) && preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/",$menu['icon'])){
-				$icon_lnk='<img src="'.$menu['icon'].'"/>';
-				$css_class='icon-menu';
-			}
-			if ( $i > 4 ) {
-				if ( count($menu)>5 ) {
-					echo '<li class="dropdown"><a class="'.$css_class.'" href="'.$menu['link'].'">'.$icon_lnk.' '.$menu['name'].'<span class="caret"></span></a>';
-				} else {
-					echo '<li><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'</a>';
-				}
-				submenu($menu);
-				$livello3 = $menu;
-			}
-			$i++;
-		}
-		echo '</li>';
-		?>
-		</ul>
-		<!-- Mi pare che siano di troppo 
-          </li>
-      </ul>-->
-    </div>
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav nav-tabs">
+            <?php
+            $i = 0;
+            foreach ($menuArray as $link) {
+                if ( $i==0 ) {
+                    echo '		<li class="dropdown">
+                                    <a>
+                                        <img src="'.$link["icon"].'"/>&nbsp;'.$link['name'].'<span class="caret"></span>
+                                    </a>
+                                    <ul class="dropdown-menu">';
+                } else {
+                    echo '		<li class="dropdown-submenu">
+                                    <a href="'.$link['link'].'">
+                                        <img src="'.$link["icon"].'"/>&nbsp;'.$link['name'].'
+                                    </a>';
+                }
+                submenu($link);
+                $i++;
+            }
+            echo '		</li>
+                    </ul>
+                  </li>';
+    
+            $i=0;
+            foreach ( $menuArray[0] as $menu ) {
+                $icon_lnk=''; $css_class='row-menu';
+                if (isset($menu['icon']) && preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/",$menu['icon'])){
+                    $icon_lnk='<img src="'.$menu['icon'].'"/>';
+                    $css_class='icon-menu';
+                }
+                if ( $i > 4 ) {
+                    if ( count($menu)>5 ) {
+                        echo '<li class="dropdown"><a class="'.$css_class.'" href="'.$menu['link'].'">'.$icon_lnk.' '.$menu['name'].'<span class="caret"></span></a>';
+                    } else {
+                        echo '<li><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'</a>';
+                    }
+                    submenu($menu);
+                    $livello3 = $menu;
+                }
+                $i++;
+            }
+            echo '</li>';
+            ?>
+            </ul>
+            <!-- Mi pare che siano di troppo 
+              </li>
+          </ul>-->
+        <!--</div>-->
+	</div>
 </nav>
 <?php
 
@@ -160,7 +161,7 @@ if ( $riga["id"]!="" ) {
 				</div>
 			</div>
 			
-			<div class="nav navbar-default navbar-right">
+			<div class="navbar-default navbar-right">
 				<div class="form-inline">
 					<form action="<?php echo $posizione; ?>" method="GET">
 						<input type="hidden" name="auxil" value="<?php echo $auxil; ?>">

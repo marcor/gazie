@@ -196,7 +196,7 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
 <form method="post" onsubmit="document.forms[0].Password.value=hex_hmac_md5(document.forms[0].Password.value, GetCookie('<?php echo session_name(); ?>'));" action="<?php echo "login_admin.php?tp=".$tp; ?> ">
 <input type="hidden" name="tp" value="<?php echo $tp; ?>" />
 <div class="container">    
-    <div id="loginbox" style="margin-top:50px;" class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">                    
+    <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-lg-push-4 col-lg-4 col-sm-8 col-sm-push-1">                    
         <div class="panel panel-info" >
             <div class="panel-heading panel-gazie">
                 <div class="panel-title"><img width="5%" src="../../library/images/gazie.gif" /> <?php echo $script_transl['log']; ?> <?php echo $server_lang; ?> <img width="5%" src="../../language/<?php echo $lang;?>/flag.png" /></div>

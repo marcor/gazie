@@ -49,6 +49,10 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
 			<script src="../../js/jquery/jquery.js"></script>
 			<script src="../../js/jquery.ui/jquery-ui.min.js"></script>
             <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
+
+			<link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
+<!--			<link href="../../js/jquery.ui/jquery-ui.theme.css" rel="stylesheet">-->
+			<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
             <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
 			<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 			<!--[if lt IE 9]>
@@ -60,10 +64,6 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
 			<!--<link rel="stylesheet" href="../../js/jquery/toast/resources/css/jquery.toastmessage.css" />-->
             <script src="../../js/tinymce/tinymce.min.js"></script>
             <script src="../../js/custom/tinymce.js"></script>
-
-			<link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-<!--			<link href="../../js/jquery.ui/jquery-ui.theme.css" rel="stylesheet">-->
-			<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
 			<link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" />
 
 			<link href="../../library/style/ml_dropdown.css" rel="stylesheet" type="text/css" />
@@ -203,7 +203,7 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
      }
      echo '			</title>
 	 			</head>
-			<body>';
+				<body role="document">';
 
     // cambia il tipo di menu
     $tipomenu = substr ( $admin_aziend['style'], 0, -4 );
@@ -242,7 +242,8 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
 				return true;
 			}
 		 }
-		 </script>';
+		 </script>
+		 <div class="container" rome="main">';
   return ($strCommon+$translated_script);
 }
 ?>
