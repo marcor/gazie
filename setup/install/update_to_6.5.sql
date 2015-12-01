@@ -19,7 +19,7 @@ ALTER TABLE `gaz_XXXartico` ADD `sconto` decimal(6,3) AFTER `preve3`;
 ALTER TABLE `gaz_XXXrigdoc` MODIFY COLUMN `sconto` decimal(6,3);
 ALTER TABLE `gaz_XXXtesdoc` ADD `ddt_type` CHAR(1) NOT NULL AFTER `tipdoc`;
 UPDATE `gaz_XXXtesdoc` SET `ddt_type` = 'T' WHERE (`tipdoc` = 'DDT' OR `tipdoc` = 'FAD');
-ALTER TABLE `gaz_XXXtesdoc` ADD `id_NC_ritorno` int(9) NOT NULL DEFAULT 0 AFTER `ddt_type`;
+ALTER TABLE `gaz_XXXtesdoc` ADD `id_doc_ritorno` int(9) NOT NULL DEFAULT 0 AFTER `ddt_type`;
 ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE DEFAULT null AFTER `datemi`;
 ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` int NOT NULL DEFAULT 0 AFTER `pagame`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

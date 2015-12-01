@@ -28,7 +28,7 @@ $admin_aziend=checkAdmin();
 $message = "";
 $anno = date("Y");
 if (isset($_GET['auxil'])) {
-   $auxil = $_GET['auxil'];
+   $auxil = filter_input(INPUT_GET,'auxil');
 } else {
    $auxil = 1;
 }
@@ -37,28 +37,28 @@ $documento ='';
 $cliente='';
 if (isset($_GET['numdoc'])) {
    if ($_GET['numdoc'] > 0) {
-      $documento = $_GET['numdoc'];
+      $documento = filter_input(INPUT_GET,'numdoc');
       $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil' and numdoc = '$documento'";
       $passo = 1;
-      $auxil = $_GET['auxil']."&numdoc=".$documento;
+      $auxil = filter_input(INPUT_GET,'auxil')."&numdoc=".$documento;
    }
 }
 if (isset($_GET['cliente'])) {
    if ($_GET['cliente'] <> '') {
-      $cliente = $_GET['cliente'];
+      $cliente = filter_input(INPUT_GET,'cliente');
       $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil' and descri like '%$cliente%'";
       $passo = 50;
-      $auxil = $_GET['auxil']."&cliente=".$cliente;
+      $auxil = filter_input(INPUT_GET,'auxil')."&cliente=".$cliente;
 	  unset($documento);
    }
 }
 if (isset($_GET['all'])) {
    gaz_set_time_limit (0);
-   $auxil = $_GET['auxil']."&all=yes";
+   $auxil = filter_input(INPUT_GET,'auxil')."&all=yes";
    $passo = 100000;
    $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil'";
    unset($documento);
-   unset($cliente);
+   $cliente='';
 }
 
 require("../../library/include/header.php");
@@ -141,7 +141,7 @@ $recordnav -> output();
 <tr>
 <?php
 $linkHeaders = new linkHeaders($script_transl['header']);
-$linkHeaders->setAlign(array('left','center','center','left','center','center','center','center','center'));
+$linkHeaders->setAlign(array('left','left','center','center','left','center','center','center','center','center'));
 $linkHeaders->output();?>
 </tr>
 <?php
@@ -162,10 +162,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
         case "DDV":
         case "DDY":
             echo "<tr>";
+			// Colonna id
+            echo "<td class=\"FacetDataTD\" align=\"left\"><a href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\">".$r["id_tes"]."</a></td>";
 			// Colonna protocollo
             echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a> &nbsp;</td>";
 			// Colonna type
-            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\">&nbsp;".$script_transl['ddt_type'][$r["ddt_type"]]."</a> &nbsp;</td>";
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\">&nbsp;".$script_transl['ddt_type'][$r["ddt_type"]]."</a> &nbsp;</td>";
 			// Colonna data emissione
             echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
             // Colonna Cliente
@@ -178,12 +180,12 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				<?php
             // Colonna numero fattura
 	    if ($r['numfat'] > 0) {
-                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"stampa la fattura differita n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. ".$r["numfat"]."</a></td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"".$script_transl['print_invoice']." n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. ".$r["numfat"]."</a></td>";
                 if ($r["id_con"] > 0) {
-                    echo "<a title=\"visualizza la registrazione contabile della fattura differita\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">cont. n.".$r["id_con"]."</a>";
+                    echo "<a title=\"".$script_transl['acc_entry']."\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">cont. n.".$r["id_con"]."</a>";
                 }
             } else {
-                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-success\" title=\"fattuazione da d.d.t.\" href=\"emissi_fatdif.php\">da fatturare</a></td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php\">".$script_transl['to_invoice']."</a></td>";
             }
 
             $urlPrintDoc = "stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT";
@@ -196,7 +198,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$urlPrintDoc.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
                 mail="'.$r["e_mail"].'" namedoc="'.$r['tipdoc'].' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else {
-		echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+		echo '<a title="'.$script_transl['no_mail'].'" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	    }
             echo "</td>\n";
 
@@ -205,7 +207,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
             while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {
                 $r_d = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$rigbro_r["id_tes"]);
                 if ($r_d["id_tes"] > 0) {
-                    echo " <a class=\"btn btn-xs btn-default\" title=\"visualizza l'Ordine\" href=\"stampa_ordcli.php?id_tes=".$r_d['id_tes']."\" style=\"font-size:10px;\">Ord.".$r_d['numdoc']."</a>\n";
+                    echo " <a class=\"btn btn-xs btn-default\" title=\"".$script_transl['view_ord']."\" href=\"stampa_ordcli.php?id_tes=".$r_d['id_tes']."\" style=\"font-size:10px;\">Ord.".$r_d['numdoc']."</a>\n";
                 }
             }
             echo "</td>\n";
@@ -219,43 +221,51 @@ while ($r = gaz_dbi_fetch_array($result)) {
         case "DDR":
         case "DDL":
             echo "<tr>";
-            echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"../acquis/admin_docacq.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a> &nbsp;</td>";
-            echo "<td class=\"FacetDataTDred\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
+			// Colonna id
+            echo "<td class=\"alert alert-danger\" align=\"left\"><a href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\">".$r["id_tes"]."</a></td>";
+            echo "<td class=\"alert alert-danger\"  align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"../acquis/admin_docacq.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a> &nbsp;</td>";
+			// Colonna type
+            echo "<td class=\"alert alert-danger\"  align=\"center\"><a class=\"btn btn-xs btn-warning \" href=\"../acquis/admin_docacq.php?Update&id_tes=".$r["id_tes"]."\">&nbsp;".$script_transl['ddt_type'][$r["tipdoc"]]."</a> &nbsp;</td>";
+            echo "<td class=\"alert alert-danger\"  align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
             ?>
-				<td class="FacetDataTDred">
+				<td  class="alert alert-danger" >
 					<a href="report_client.php?auxil=<?php echo $r["ragso1"]; ?>&search=Cerca">
 					<?php echo $r["ragso1"]; ?>
 					</a>
 				</td>
 				<?php
-            echo "<td class=\"FacetDataTDred\" align=\"center\">D.d.T. a Fornitore &nbsp;</td>";
+            echo "<td class=\"alert alert-danger\"  align=\"center\"><div class=\"btn btn-xs btn-warning\">".$script_transl['from_suppl']."</div></td>";
 
             $urlPrintDoc = "../acquis/stampa_docacq.php?id_tes=".$r["id_tes"]."&template=DDT";
-            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+            echo "<td class=\"alert alert-danger\"  align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>\n";
 
             // Colonna "Mail"
-            echo "<td class=\"FacetDataTD\" align=\"center\">";
+            echo "<td class=\"alert alert-danger\"  align=\"center\">";
             if (!empty($r["e_mail"])) {
                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$urlPrintDoc.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
                 mail="'.$r["e_mail"].'" namedoc="'.$r['tipdoc'].' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else {
-		echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="../acquis/admin_fornit.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+		echo '<a title="'.$script_transl['no_mail'].'" target="_blank" href="../acquis/admin_fornit.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	    }
             echo "</td>\n";
 
-            echo "<td class=\"FacetDataTD\" align=\"center\"></td>";
+            echo "<td class=\"alert alert-danger\"  align=\"center\"></td>";
             if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
             // Colonna Elimina
-			echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=".$r["id_tes"]."\"><center><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+			echo "<td class=\"alert alert-danger\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
             else
-                echo "<td class=\"FacetDataTD\" align=\"center\"></td>";
+                echo "<td class=\"alert alert-danger\" align=\"center\"></td>";
             echo "</tr>\n";
             break;
         case "FAD":
             echo "<tr>";
+			// Colonna id
+            echo "<td class=\"FacetDataTD\" align=\"left\"><a href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\">".$r["id_tes"]."</a></td>";
 			// Colonna protocollo
             echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["numdoc"]."</a></td>";
+			// Colonna type
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=".$r["id_tes"]."\">&nbsp;".$script_transl['ddt_type'][$r["ddt_type"]]."</a> &nbsp;</td>";
             // Colonna Data emissione
 			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datemi"])." &nbsp;</td>";
             // Colonna Cliente
@@ -267,16 +277,16 @@ while ($r = gaz_dbi_fetch_array($result)) {
 			</td>
 			<?php
 			// Colonna Stato
-            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"stampa la fattura differita n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\">Fat ".$r["numfat"]."</a>";
+            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"".$script_transl['print_invoice']." n. ".$r["numfat"]."\" href=\"stampa_docven.php?td=2&si=".$r["seziva"]."&pi=".$r['protoc']."&pf=".$r['protoc']."&di=".$r['datfat']."&df=".$r['datfat']."\">Fat ".$r["numfat"]."</a>";
             if ($r["id_con"] > 0) {
-                echo "&nbsp;<a class=\"btn btn-xs btn-default btn-registrazione\" title=\"visualizza la registrazione contabile della fattura differita\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont ".$r["id_con"]."</a>";
+                echo "&nbsp;<a class=\"btn btn-xs btn-default btn-registrazione\" title=\"".$script_transl['acc_entry']."\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont ".$r["id_con"]."</a>";
             }
             echo "</td>";
 
             $urlPrintDoc = "stampa_docven.php?id_tes=".$r["id_tes"]."&template=DDT";
 			// Colonna stampa
             echo "<td class=\"FacetDataTD\" align=\"center\">
-            <a class=\"btn btn-xs btn-default\" title=\"stampa il documento di trasporto n. ".$r["numdoc"]."\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+            <a class=\"btn btn-xs btn-default\" title=\"".$script_transl['print_ddt']." n. ".$r["numdoc"]."\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>";
 
          // Colonna "Mail"
@@ -285,7 +295,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$urlPrintDoc.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
                 mail="'.$r["e_mail"].'" namedoc="DDT n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
             } else {
-				echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
+				echo '<a title="'.$script_transl['no_mail'].'" target="_blank" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	    }
             echo "</td>";
 				// Colonna
@@ -294,7 +304,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
             while ($rigbro_r = gaz_dbi_fetch_array ($rigbro_result)) {
                 $r_d = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$rigbro_r["id_tes"]);
                 if ($r_d["id_tes"] > 0) {
-                    echo "<a title=\"visualizza l'Ordine\" href=\"stampa_ordcli.php?id_tes=".$r_d['id_tes']."\" style=\"font-size:10px;\">Ord.".$r_d['numdoc']."</a>\n";
+                    echo "<a title=\"".$script_transl['view_ord']."\" href=\"stampa_ordcli.php?id_tes=".$r_d['id_tes']."\" style=\"font-size:10px;\">Ord.".$r_d['numdoc']."</a>\n";
                 }
             }
             echo "</td>";

@@ -776,9 +776,12 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Documenti di trasporto della sezione: ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "triangolazione"
+            "Y" => "triangolazione",
+            "DDR" => "reso da fornitore",
+            "DDL" => "c/lavorazione"
         ),
         'header' => array(
+            "ID" => 'id_tes',
             "Numero" => "numdoc",
             "Tipo" => 'ddt_type',
             "Data" => "datemi",
@@ -789,6 +792,13 @@ $strScript = array("admin_client.php" =>
             "Origine" => "",
             "Cancella" => ""
         ),
+        'to_invoice' => 'da fatturare',
+        'print_invoice'=>'stampa la fattura differita',
+        'print_ddt'=>'stampa il documento di trasporto',
+        'from_suppl' => 'DdT a fornitore',
+        'view_ord'=>'visualizza l\'ordine',
+        'acc_entry' => 'visualizza la registrazione contabile della fattura differita',
+        'no_mail' => 'Non hai memorizzato l\'email fallo ora',
         'mail_alert0' => 'Invio documento con email',
         'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
         'mail_alert2' => 'con allegato il seguente documento di vendita:',
@@ -821,7 +831,7 @@ $strScript = array("admin_client.php" =>
         'traspo' => 'SPESE DI TRASPORTO',
         'incasso' => 'SPESE INCASSO',
         'n_inv' => ' Fatturabili nel periodo',
-        'add_invoice' => 'Verrà generata la FATTURA DIFFERITA N.',
+        'add_invoice' => 'Dal/i seguente/i DdT verrà generata la FATTURA DIFFERITA N.',
         'preview_inv' => 'Anteprima di fatturazione',
         'submit_inv' => 'CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA'
     ),
