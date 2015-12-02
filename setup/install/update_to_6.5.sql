@@ -6,7 +6,7 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 7, 'admin_destinazioni.php', '',
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, '4', 'select_situazione_contabile.php', '', '', '7', '', '7'  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_situazione_contabile.php', '', '', '6', '', '1'  FROM `gaz_menu_script`;
 CREATE TABLE `gaz_destina` (`codice` int(9) NOT NULL AUTO_INCREMENT,`unita_locale1` varchar(50) NOT NULL DEFAULT  '',`unita_locale2` varchar(50) NOT NULL DEFAULT  '',`indspe` varchar(50) NOT NULL DEFAULT  '',`capspe` varchar(10) NOT NULL DEFAULT  '',`citspe` varchar(50) NOT NULL DEFAULT  '',`prospe` char(2) NOT NULL DEFAULT  '',`country` varchar(3) NOT NULL,`latitude` decimal(8,5) NOT NULL,`longitude` decimal(8,5) NOT NULL,`telefo` varchar(50) NOT NULL DEFAULT  '',`fax` varchar(32) NOT NULL DEFAULT  '',`cell` varchar(32) NOT NULL DEFAULT  '',`e_mail` varchar(50) NOT NULL DEFAULT  '',`annota` varchar(50) NOT NULL DEFAULT  '',`id_anagra` int(9) NOT NULL ,PRIMARY KEY (`codice`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
+ALTER TABLE `gaz_admin` ADD `skin` VARCHAR(60) NOT NULL DEFAULT 'default.css' AFTER `style`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXaliiva` ADD `taxstamp` INT(1) NOT NULL AFTER `aliquo`;
 UPDATE `gaz_XXXaliiva` SET `taxstamp` = '1' WHERE `aliquo` <= 0.1;
@@ -22,5 +22,4 @@ UPDATE `gaz_XXXtesdoc` SET `ddt_type` = 'T' WHERE (`tipdoc` = 'DDT' OR `tipdoc` 
 ALTER TABLE `gaz_XXXtesdoc` ADD `id_doc_ritorno` int(9) NOT NULL DEFAULT 0 AFTER `ddt_type`;
 ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE DEFAULT null AFTER `datemi`;
 ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` int NOT NULL DEFAULT 0 AFTER `pagame`;
-ALTER TABLE `gaz_admin` ADD `skin` VARCHAR(60) NOT NULL DEFAULT 'default.css' AFTER `style`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
