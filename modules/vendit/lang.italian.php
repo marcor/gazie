@@ -160,6 +160,7 @@ $strScript = array("admin_client.php" =>
             "FND" => "Nota Debito a Cliente",
             "VCO" => "Vendita Corrispettivo",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
+            "DDX" => "Ricevuto DdT di Reso da C/Visione",
             "DDY" => "D.d.T. per Cessione in Triangolazione",
             "VRI" => "Ricevuta"
         ),
