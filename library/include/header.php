@@ -37,10 +37,14 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 <?php
 $menuclass = ' class="FacetMainMenu" ';
 $style = 'default.css';
+$skin = 'default.css';
 /** ENRICO FEDELE */
 /* Sembrerebbe esserci la possibilità di caricare un css personalizzato, ma non trovo dove impostare il parametro */
 if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin_aziend['style'])){
     $style = $admin_aziend['style'];
+}
+if (!empty($admin_aziend['skin']) && file_exists( "../../library/style/skins/".$admin_aziend['skin'])){
+    $skin = $admin_aziend['skin'];
 } 
 ?>
 			
@@ -65,6 +69,7 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
             <script src="../../js/tinymce/tinymce.min.js"></script>
             <script src="../../js/custom/tinymce.js"></script>
 			<link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" />
+			<link href="../../library/style/skins/<?php echo $skin;?>" rel="stylesheet" type="text/css" />
 
 			<link href="../../library/style/ml_dropdown.css" rel="stylesheet" type="text/css" />
 <?php

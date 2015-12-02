@@ -62,6 +62,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["Nome"] = substr($_POST['Nome'],0,30);
     $form["lang"] = substr($_POST['lang'],0,15);
     $form["style"] = substr($_POST['style'],0,30);
+	 $form["skin"] = substr($_POST['skin'],0,30);
     $form["Abilit"] = intval($_POST['Abilit']);
     $form["Access"] = intval($_POST['Access']);
     $form["Login"] = substr($_POST['Login'],0,15);
@@ -90,6 +91,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["Nome"] = "";
     $form["image"] = "";
     $form["style"] = $admin_aziend['style'];
+	 $form["skin"] = $admin_aziend['skin'];
     $form["lang"] = $admin_aziend['lang'];
     $form["Abilit"] = 5;
     $form["Access"] = 0;
@@ -287,6 +289,28 @@ if ($handle = opendir($relativePath)) {
         } 
         $selected="";
         if ($form["style"] == $file) {
+            $selected = " selected ";
+        }
+        echo "<option value=\"".$file."\"".$selected.">".$file."</option>";
+    }
+    closedir($handle);
+}
+echo "</td></tr>\n";
+?>
+<tr>
+<td class="FacetFieldCaptionTD">Skin</td>
+<?php
+echo '<td colspan=\"2\" class="FacetDataTD">';
+echo '<select name="skin" class="FacetSelect">';
+$relativePath = '../../library/style/skins';
+if ($handle = opendir($relativePath)) {
+    while ($file = readdir($handle)) {
+        // accetto solo i file css
+        if (!preg_match("/^[a-z0-9\s\_]+\.css$/",$file)){
+            continue;
+        } 
+        $selected="";
+        if ($form["skin"] == $file) {
             $selected = " selected ";
         }
         echo "<option value=\"".$file."\"".$selected.">".$file."</option>";
