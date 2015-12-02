@@ -320,8 +320,7 @@ function dialogSchedule(paymov) {
       autoOpen: false,
       show: "scale",
       width: 820,
-      modal: true,
-	  position: "top",	  
+      modal: true,	  
 	  open: function(){
 		  	updateOpenFormOnStart(); 
 		  	updateOpenForm();
@@ -350,7 +349,7 @@ function dialogSchedule(paymov) {
       show: "scale",
       width: 820,
       modal: true,
-	  position: "top",	  
+		
 	  open: function(){
 		  	updateCloseFormOnStart();
 			updateCloseForm(); 
