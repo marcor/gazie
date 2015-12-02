@@ -159,7 +159,7 @@ function dialogSchedule(paymov) {
                     "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                     "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
                      '<td class="ui-widget-right ui-widget-content " >'+value.darave+'</td>' +
-                     '<td class="ui-widget-right ui-widget-content "><a target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"> class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i></a></td>' +
+                     '<td class="ui-widget-right ui-widget-content "><a target="NEW" href="admin_movcon.php?id_tes=' + value.id_tes + '&Update"><button class="btn btn-xs btn-default"><i class="glyphicon glyphicon-new-window"></i></a></td>' +
                      "</tr>" );
                     
                     $( "#linking_same_" + j).click(function() {
