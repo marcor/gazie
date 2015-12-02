@@ -2,7 +2,6 @@ $(function() {
 	$( "#search_clfoco" ).autocomplete({
 		source: "../../modules/root/search.php",
 		minLength: 2,
- 
         html: true, // optional (jquery.ui.autocomplete.html.js required)
  
       // optional (if other layers overlap autocomplete list)
@@ -17,7 +16,6 @@ $(function() {
 	$( "#search_id_customer" ).autocomplete({
 		source: "../../modules/root/search.php",
 		minLength: 2,
- 
         html: true, // optional (jquery.ui.autocomplete.html.js required)
  
       // optional (if other layers overlap autocomplete list)
@@ -32,7 +30,6 @@ $(function() {
 	$( "#search_cosear" ).autocomplete({
 		source: "../../modules/root/search.php?opt=product",
 		minLength: 2,
- 
         html: true, // optional (jquery.ui.autocomplete.html.js required)
  
       	// optional (if other layers overlap autocomplete list)
@@ -45,8 +42,9 @@ $(function() {
 		}
 	});
 	$( "#search_location" ).autocomplete({
-		minLength: 2,
 		source: "../../modules/root/search.php?opt=location",
+		minLength: 2,
+		html: true, // optional (jquery.ui.autocomplete.html.js required)
 		focus: function( event, ui ) {
 			$( "#search_location" ).val( ui.item.value );
 			$( "#search_location-capspe" ).val( ui.item.id );
@@ -60,8 +58,7 @@ $(function() {
 			$( "#search_location-prospe" ).val( ui.item.prospe );
 			$( "#country").val( ui.item.country );  //grazie ad Emanuele Ferrarini
 			return false;
-		},
-		html: true, // optional (jquery.ui.autocomplete.html.js required)
+		}
 	});
 	$('#search_location').blur(function() {
 		if( !$(this).val() ) {
@@ -72,8 +69,9 @@ $(function() {
 	});
 	
 	$( "#search_luonas" ).autocomplete({
-		minLength: 2,
 		source: "../../modules/root/search.php?opt=location",
+		minLength: 2,
+		html: true, // optional (jquery.ui.autocomplete.html.js required)
 		focus: function( event, ui ) {
 			$( "#search_luonas" ).val( ui.item.value );
 			$( "#search_pronas" ).val( ui.item.prospe );
@@ -85,8 +83,7 @@ $(function() {
 			$( "#search_pronas" ).val( ui.item.prospe );
 			$( "#cuonas").val( ui.item.country );  //grazie ad Emanuele Ferrarini
 			return false;
-		},
-		html: true, // optional (jquery.ui.autocomplete.html.js required)
+		}
 	});
 	$('#search_luonas').blur(function() {
 		if( !$(this).val() ) {

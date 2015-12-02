@@ -878,11 +878,13 @@ echo '<SCRIPT type="text/javascript">
            $( "#search_insert_conto" ).autocomplete({
            source: "../../modules/root/search.php",
            minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
            });';
 for ($i = 0; $i < $_POST['rigcon']; $i++) {
     echo '   $( "#search_conto_rc' . $i . '" ).autocomplete({
            source: "../../modules/root/search.php",
            minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
            });
         ';
     if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
