@@ -3,12 +3,10 @@
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 body {
-	/*background-image : url("../../library/images/sfondo.png");*/
 	font-family : Arial, Tahoma, Verdana, Helvetica;
 	background-attachment : fixed;
 	padding-bottom : 30px;
 	padding-top : 51px;
-	/*color : #000;*/
 }
 
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
@@ -38,51 +36,48 @@ table.Tsmall {
 }
 
 table.selectTable tr.even {
-	/*background-color: #AAE2A8;*/
-	/*color : #000000;*/
 }
+
 table.selectTable tr.odd {
-	/*background-color: #C9EDC8;*/
-	/*color : #000000;*/
 }
+
 table.selectTable td {
 	height: 10px;
 	border-bottom: 1px solid #ddd;
-	/*color: #333;*/
-	/*font-size: 8px;*/
 }
+
 .selectContainer {
 	width: 300px;
 	position: absolute;
 	border: 1px solid #222;
 }
+
 .selectHeader {
 	background-repeat: repeat-x;
 	background-position: top center;
-	/*color: #eee;*/
 	font-weight: bold;
 	margin: 0;
 	padding: 1px 1px 1px 1px;
-	/*background-color: #000;*/
 }
 .topmenu {
 	position : relative;
 	top : -4px;
 	font-weight: bold;
-	/*color : #000000;*/
-	/*background-color: #d9fdd8;*/
 }
+
 .bottomMenu {
 	position : relative;
 	top : -4px;
 }
+
 .FacetFormTABLE {
 	border : solid 1px #000000;
 }
+
 .FacetFormHeaderFont {
 	font-weight : bold;
-	/*background-color : #AAE2A8;*/
 }
+
 .FacetFormHeaderRed {
 	font-weight : bold;
 }

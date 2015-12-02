@@ -298,7 +298,7 @@ if ($handle = opendir($relativePath)) {
 echo "</td></tr>\n";
 ?>
 <tr>
-<td class="FacetFieldCaptionTD">Skin</td>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['skin']; ?></td>
 <?php
 echo '<td colspan=\"2\" class="FacetDataTD">';
 echo '<select name="skin" class="FacetSelect">';

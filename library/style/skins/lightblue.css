@@ -5,6 +5,9 @@ BODY {
 DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL  {
     color : #000000;
 }
+input {
+	background-color: #daf0f8;
+}
 table {
 	background-color: #daf0f8;
 }
@@ -161,7 +164,6 @@ TABLE.selectTable TD {
 
 .FacetInput  {
     border-color : #000000;
-    background-color : #FFFFFF;
     font-size : 100%;
 }
 

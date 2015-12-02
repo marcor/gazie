@@ -1,9 +1,6 @@
 ﻿body {
-	/*background-image : url("../../library/images/sfondo.png");*/
-	/*font-family : Arial, Tahoma, Verdana, Helvetica;*/
-	/*color : #000;*/
-	padding-bottom : 30px;
-	padding-top : 51px;
+	background-image : url("../../library/images/sfondo.png");
+	color : #000;
 }
 
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
@@ -87,21 +84,21 @@ table.selectTable td {
 
 }
 .FacetDataTDred {
-	/*background-color : #C9EDC8;*/
+
 }
 .FacetColumnTD {
-	/*background-color : #DAEADA;*/
+
 }
 .FacetAltDataTD {
-	/*background-color : #D5F1D4;*/
+
 }
 .FacetSeparatorTD {
 }
 .FacetFooterTD {
-	/*background-color : #D5F1D4;*/
+
 }
 .FacetDisabledTD {
-	/*background-color : #D5F1D4;*/
+
 }
 .FacetMainMenu {
 
@@ -116,14 +113,14 @@ table.selectTable td {
 
 }
 .FacetSelect {
-	/*background-color : #C9EDC8;*/
+
 }
 .FacetSmall {
 }
 .FacetText {
 }
 .FacetSelectBil {
-	/*background-color : #AAE2A8;*/
+
 }
 .error {
 

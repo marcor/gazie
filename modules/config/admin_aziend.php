@@ -377,7 +377,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['codfis']." *</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"codfis\" value=\"".$form['codfis']."\" align=\"right\" maxlength=\"16\" size=\"16\" /></td>\n";
+      <input type=\"text\" name=\"codfis\" value=\"".$form['codfis']."\" align=\"right\" maxlength=\"16\" size=\"20\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pariva']." </td>\n";

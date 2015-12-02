@@ -415,6 +415,7 @@ $strScript = array ("admin_aziend.php" =>
                            'rep_pass'=>'Repeat password',
                            'lang'=>'Language',
                            'style'=>'Theme / style',
+									'skin'=>'Skin',
                            'mod_perm'=>'Modules permit',
                            'report'=>'Users list',
                            'del_this'=>'User',

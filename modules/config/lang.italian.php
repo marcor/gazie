@@ -416,6 +416,7 @@
                            'rep_pass'=>'Ripeti la Password',
                            'lang'=>'Language',
                            'style'=>'Tema / stile',
+									'skin'=>'Skin',
                            'mod_perm'=>'Permessi dei moduli',
                            'report'=>'Lista degli Utenti',
                            'del_this'=>'Utente',

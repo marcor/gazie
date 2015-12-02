@@ -1,0 +1,642 @@
+@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
+
+BODY {
+     background-color : #000000;
+     color : #FFFFFF;
+}
+
+DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL, INPUT  {
+    font-family : Arial, Tahoma, Verdana, Helvetica;
+    font-size : 13px;
+    color : #FFFFFF;
+}
+
+TABLE.Tlarge{
+    width : 100%;
+    border : solid 1px #898989;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+TABLE.Tmiddle{
+    width : 70%;
+    border : solid 1px #898989;
+    margin-left: auto;
+    margin-right: auto;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+TABLE.Tsmall{
+    width : 50%;
+    border : solid 1px #898989;
+    margin-left: auto;
+    margin-right: auto;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+TABLE.selectTable TR.even {
+	background-color:#000000;
+    color : #FFFFFF;
+}
+TABLE.selectTable TR.odd {
+    background-color:#000000;
+    color : #FFFFFF;
+}
+
+TABLE.selectTable TD {
+	background-color:#000000;
+	height:10px;
+	border-bottom:1px solid #ddd;
+	font-family:Arial, Tahoma, Verdana, Helvetica;
+	color:#FFFFFF;
+	font-size:8px;
+}
+
+.selectContainer {
+	width:300px;
+	position: absolute;
+	border:1px solid #898989;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+.selectHeader {
+	background-repeat:repeat-x;
+	background-position:top center;
+	color:#FFFFFF;
+	font-family:Arial, Tahoma, Verdana, Helvetica;
+	font-weight:bold;
+	font-size:9px;
+	margin:0;
+	padding:1px 1px 1px 1px;
+	background-color:#000000;
+}
+		
+.topmenu {
+    font-family : Arial, Tahoma, Verdana, Helvetica;
+    font-size : 11px;
+    position : relative;
+    top : -4px;
+    font-weight: bold;
+    color : #FFFFFF;
+    background-color: #000000;
+}
+
+.bottomMenu {
+    font-family : Arial, Tahoma, Verdana, Helvetica;
+    font-size : 10px;
+    position : relative;
+    top : -4px;
+    color : #FFFFFF;
+}
+
+.FacetFormTABLE  {
+    border : solid 1px #898989;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetFormHeaderFont  {
+    font-family : Verdana,Arial;
+    background-color : #000000;
+    color : #FFFFFF;
+    font-size : 14px;
+    font-weight : bold;
+}
+
+.FacetFormHeaderRed  {
+    font-family : Verdana,Arial;
+    color : #FF0000;
+    font-size : 14px;
+    font-weight : bold;
+}
+
+.FacetFieldCaptionTD  {
+    background-color : #444444;
+    color : #FFFFFF;
+    font-size : 13px;
+}
+
+.FacetDataTD  {
+    background-color : #222222;
+    color : #FFFFFF;
+    font-size : 13px;
+	 border-bottom : 1px solid #aaa;
+}
+
+.FacetDataTDsmall  {
+    background-color : #000000;
+    color : #FFFFFF;
+    font-size : 9px;
+}
+
+.FacetDataTDsmallRed  {
+    background-color : #000000;
+    color : #FF0000;
+    font-size : 9px;
+}
+
+.FacetDataTDred  {
+    background-color : #000000;
+    color : #FF0000;
+    font-size : 13px;
+}
+
+.FacetColumnTD  {
+    color : #FFFFFF;
+    background-color : #000000;
+    font-size : 13px;
+}
+
+.FacetAltDataTD  {
+    background-color : #000000;
+    color : #FFFFFF;
+    font-size : 16px;
+}
+
+.FacetSeparatorTD  {
+    font-family : Arial;
+    font-size : 10px;
+}
+
+.FacetFooterTD  {
+    background-color : #000000;
+    color : #FFFFFF;
+    font-size : 13px;
+}
+
+.FacetDisabledTD  {
+    background-color : #000000;
+    color : #FFFFFF;
+    font-size : 13px;
+}
+
+.FacetMainMenu {
+    color : yellow;
+    background-color: blue;
+}
+
+.FacetButton  {
+    border-left : 1px solid #FFFFFF;
+    border-right : 1px solid #FFFFFF;
+    border-top : 1px solid #FFFFFF;
+    border-bottom : 1px solid #FFFFFF;
+    background-color : #000000;
+    color : #FFFFFF;
+    font-size : 13px;
+    font-family : Tahoma, Verdana, Arial, Helvetica;
+}
+
+.FacetInput  {
+    border-bottom : 1px solid #FFFFFF;
+    border-left : 1px solid #FFFFFF;
+    border-right : 1px solid #FFFFFF;
+    border-top : 1px solid #FFFFFF;
+    background-color : #000000;
+    color : #FFFFFF;
+    font-size : 13px;
+    font-family : Tahoma, Verdana, Arial, Helvetica;
+}
+
+.FacetTextarea  {
+    border-bottom : 1px solid #FFFFFF;
+    border-left : 1px solid #FFFFFF;
+    border-right : 1px solid #FFFFFF;
+    border-top : 1px solid #FFFFFF;
+    background-color : #000000;
+    font-size : 13px;
+    font-family : Arial, Tahoma, Verdana, Helvetica;
+    color : #FFFFFF;
+}
+
+.FacetSelect  {
+    font-size : 12px;
+    font-family : Arial,Tahoma, Verdana, Helvetica;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetSmall  {
+    font-size : 10px;
+    color : #FFFFFF;
+    font-family : Arial, Tahoma, Verdana, Helvetica;
+}
+.FacetText  {
+    font-size : 10px;
+    background-color : #000000;
+    color : #FFFFFF;
+    font-family : Arial, Tahoma, Verdana, Helvetica;
+}
+.FacetSelectBil  {
+    background-color : #000000;
+    color : #FFFFFF;
+    font-size : 10px;
+}
+.error {
+    color : red;
+    font-weight: bold;
+    font-size : larger;
+}
+.error_box {
+    margin: 40px;
+    padding: 20px;
+    border: 1px solid #8C8C8C;
+    text-align: center;
+}
+.ThemeGazieMainItemHover,.ThemeGazieMainItemActive
+{
+	background:  #777799;
+}
+.ThemeGazieMainItem
+{
+	background-color:	#555555;
+}
+.ThemeGazieMenuItemHover,.ThemeGazieMenuItemActive
+{
+	background-color:	#999999;
+}
+#admin_main{
+  background-image: url("../../library/images/sfondo.png");
+  background-attachment: fixed;
+}
+
+#admin_welcome{
+  padding: 30px 40px;
+  position: relative;
+}
+
+#admin_p_logout{
+  margin-top: 20px;
+}
+
+#admin_footer{
+  position: absolute;
+  bottom: 0px;
+  opacity:0.5;
+  filter:alpha(opacity=50);
+  z-index: -1;
+}
+
+#admin_footer:hover{
+  opacity:1;
+  filter:alpha(opacity=100);
+}
+.nav>li>a:hover,.nav>li>a:focus {
+  background-color: #BABABA;
+  color: #123311;
+}
+.nav>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #BABABA;
+  color: #123311;
+}
+.nav>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #BABABA;
+  color: #123311;
+}
+.nav>li>ul>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #BABABA;
+  color: #123311;
+}
+.navbar {
+  border-top: 0px;
+  border-bottom: 1px solid #8C8C8C;
+  border-left: 1px solid #8C8C8C;
+  border-right: 1px solid #8C8C8C;
+  border-radius: 0px;
+  font-size : 14px;
+  min-height: 40px;
+}
+.navbar-default .navbar-brand {
+	color: #fff;
+}
+.nav > li > a {
+    padding: 5px 10px;
+	border-radius: 0px;
+}
+.nav > li > a:hover {
+  background-color: #999999;
+}
+.nav > li > a.row-menu {
+	padding: 11px 6px 11px 6px;
+}
+.nav > li > a.icon-menu {
+	padding: 7px 6px 6px 6px;
+}
+div.help {
+	margin: 25px 20px;
+	text-align: justify;
+}
+.nav-boot {
+  background-color : #565656;
+  color : #000000;
+  font-size : 13px;
+}
+.nav-first {
+  margin-bottom: 0px;
+  padding-top: auto;
+  padding-bottom: auto;
+}
+.navbar-brand {
+  padding: 3px 3px 3px 3px;
+  float: right;
+  font-size: 16px;
+  height: 43px;
+  line-height: 20px;
+  padding: 10px 3px 10px 3px;
+}
+.nav-tabs {
+    border-bottom: 0px;
+}
+table.submenu {
+  margin-bottom: 20px;
+    margin-top: -20px;
+}
+.navbar-left {
+	border: #fff 0px solid;
+}
+.navbar-lower {
+  background-color: #848A84;
+  min-height: 20px;
+}
+div.FacetFormHeaderFont {
+  margin-top: 20px;
+}
+.vcenter {
+    display: inline-block;
+    vertical-align: middle;
+    float: none;
+	padding-right:5px;
+}
+input.input-xs {
+    height: 22px;
+    padding: 5px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+    border-radius: 3px;
+}
+.caret {
+	text-color: #fff;
+	border-top-color: white !important;
+}
+
+.container-fluid {
+	padding-left: 0px;
+    padding-right: 5px;
+}
+.navbar-collapse {
+	padding-left: 0;
+    padding-right: 5px;
+}
+.opzione {
+	margin-top: 10px;
+	margin-left: -8px;
+}
+.progress {
+	margin: 5px 5px 7px 5px;
+}
+.navbar-toggle {
+	margin-left: 20px;
+}
+.contenuto-help {
+	background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
+}
+.nav-tabs {
+    margin-bottom: 0px;
+}
+.help-text {
+	font-size: 1.0em;
+}
+
+.help-text a {
+	color: #121212;
+	text-transform: uppercase;
+}
+/*    --------------------------------------------------
+	:: Login Section
+	-------------------------------------------------- */
+
+.panel-title {
+	vertical-align: middle;
+}
+.panel-info {
+	border-color: #898989;
+}
+.panel-info > .panel-gazie {
+	background-color: #BABABA;
+    border-color: #898989;
+	color: #123311;
+}
+#formlogin {
+    padding-top: 50px
+}
+#formlogin .form-wrap {
+    margin: 0 auto;
+	float:right;
+}
+.form-logo {
+	float:left;
+}
+.form-main {
+	margin: 10px 30%;
+	background-color: #999999;
+	border: 1px solid #898989;
+}
+#formlogin h1 {
+    color: #1fa67b;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 20px;
+}
+#formlogin .form-group {
+    margin-bottom: 25px;
+}
+#formlogin .checkbox {
+    margin-bottom: 20px;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+}
+#formlogin .checkbox.show:before {
+    content: '\e013';
+    color: #1fa67b;
+    font-size: 17px;
+    margin: 1px 0 0 3px;
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Glyphicons Halflings';
+}
+#formlogin .checkbox .character-checkbox {
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    /*border-radius: 3px;*/
+    border: 1px solid #898989;
+    vertical-align: middle;
+    display: inline-block;
+}
+#formlogin .checkbox .label {
+    color: #6d6d6d;
+    font-size: 13px;
+    font-weight: normal;
+}
+#formlogin .btn.btn-custom {
+    font-size: 14px;
+	margin-bottom: 20px;
+}
+#formlogin .forget {
+    font-size: 13px;
+	text-align: center;
+	display: block;
+}
+.panel-help {
+  background-color: #999999;
+}
+/*    --------------------------------------------------
+	:: Inputs & Buttons
+	-------------------------------------------------- */
+.form-control {
+    color: #212121;
+}
+.btn-custom {
+    color: #fff;
+	background-color: #999999;
+}
+.btn-custom:hover,
+.btn-custom:focus {
+    color: #fff;
+}
+/* INIZIO CSS di JQuery/UI 
+
+ * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Theming/API
+ */
+
+/* Layout helpers
+----------------------------------*/
+.ui-helper-hidden { display: none; }
+.ui-helper-hidden-accessible { position: absolute; left: -99999999px; }
+.ui-helper-reset { margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none; }
+.ui-helper-clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.ui-helper-clearfix { display: inline-block; }
+/* required comment for clearfix to work in Opera \*/
+* html .ui-helper-clearfix { height:1%; }
+.ui-helper-clearfix { display:block; }
+/* end clearfix */
+.ui-helper-zfix { width: 100%; height: 100%; top: 0; left: 0; position: absolute; opacity: 0; filter:Alpha(Opacity=0); }
+
+
+/* Interaction Cues
+----------------------------------*/
+.ui-state-disabled { cursor: default !important; }
+
+
+/* Icons
+----------------------------------*/
+
+/* states and images */
+.ui-icon { display: block; text-indent: -99999px; overflow: hidden; background-repeat: no-repeat; }
+
+
+/* Misc visuals
+----------------------------------*/
+
+/* Overlays */
+.ui-widget-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; }
+
+
+/* Component containers
+----------------------------------*/
+.ui-widget { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1.1em; }
+.ui-widget .ui-widget { font-size: 1em; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Trebuchet MS, Tahoma, Verdana, Arial, sans-serif; font-size: 1em; }
+.ui-widget-content { border: 1px solid #dddddd; background: #eeeeee; color: #333333; }
+.ui-widget-content a { color: #e78f08; }
+.ui-widget-header { border: 1px solid #e78f08; background: #f6a828;  color: #ffffff; font-weight: bold; }
+.ui-widget-header a { color: #ffffff; }
+
+/* Interaction states
+----------------------------------*/
+.ui-state-default, .ui-widget-content .ui-state-default, .ui-widget-header .ui-state-default { border: 1px solid #cccccc; background: #f6f6f6; font-weight: bold; color: #1c94c4; }
+.ui-state-default a, .ui-state-default a:link, .ui-state-default a:visited { color: #1c94c4; text-decoration: none; }
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus { border: 1px solid #fbcb09; background: #fdf5ce; font-weight: bold; color: #c77405; }
+.ui-state-hover a, .ui-state-hover a:hover { color: #c77405; text-decoration: none; }
+.ui-state-active, .ui-widget-content .ui-state-active, .ui-widget-header .ui-state-active { border: 1px solid #fbd850; background: #ffffff; font-weight: bold; color: #eb8f00; }
+.ui-state-active a, .ui-state-active a:link, .ui-state-active a:visited { color: #eb8f00; text-decoration: none; }
+.ui-widget :active { outline: none; }
+
+
+
+/* Misc visuals
+----------------------------------*/
+
+/* Corner radius */
+
+.ui-corner-all { -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }
+
+/*
+ * jQuery UI Autocomplete 1.8.6
+ *
+ * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Autocomplete#theming
+ */
+.ui-autocomplete { position: absolute; cursor: default;
+	font-size : 8px;  }	
+
+/* workarounds */
+* html .ui-autocomplete { width:1px; } /* without this, the menu expands to 100% in IE6 */
+
+/*
+ * jQuery UI Menu 1.8.6
+ *
+ * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Menu#theming
+ */
+.ui-menu {
+	list-style:none;
+	padding: 2px;
+	margin: 0;
+	display:block;
+	float: left;
+}
+.ui-menu .ui-menu {
+	margin-top: -3px;
+}
+.ui-menu .ui-menu-item {
+	margin:0;
+	padding: 0;
+	zoom: 1;
+	float: left;
+	clear: left;
+	width: 100%;
+}
+.ui-menu .ui-menu-item a {
+	font-size : 8px;
+	text-decoration:none;
+	display:block;
+	padding:.2em .4em;
+	line-height:1.5;
+	zoom:1;
+}
+.ui-menu .ui-menu-item a.ui-state-hover,
+.ui-menu .ui-menu-item a.ui-state-active {
+	font-weight: normal;
+	margin: -1px;
+}
+/*  FINE CSS di JQuery/UI 
+*/
