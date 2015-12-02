@@ -196,7 +196,8 @@ $strScript = array("admin_fornit.php" =>
 						   'search_for'=>'Search by',
 						   'weight'=>'Weight:',
         					'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search', 
-							'discount_alert' => 'discount taken from article\'s informations'
+							'discount_alert' => 'discount taken from article\'s informations',
+						   'last_row' => 'Last row'
 						   /** ENRICO FEDELE */
                            ),
                     "accounting_documents.php" =>

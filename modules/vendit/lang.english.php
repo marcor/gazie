@@ -243,7 +243,8 @@ $strScript = array("admin_client.php" =>
         'da_fatturare_value' => array(0 => 'No', 1 => 'Yes'),
         'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search',
 		'weight' => 'weight', 
-		'discount_alert' => 'discount taken from article\'s informations'
+		'discount_alert' => 'discount taken from article\'s informations',
+		'last_row' => 'Last row'
     ),
     "select_docforprint.php" =>
     array(array(1 => "D.d.T. di Vendita", 2 => "Fattura Differita", 3 => "Fattura Immediata Accompagnatoria", 4 => "Fattura Immediata Semplice", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),

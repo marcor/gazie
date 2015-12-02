@@ -1308,7 +1308,7 @@ foreach ($form['rows'] as $key => $value) {
                 echo "<input type=\"image\" onclick=\"dialogLotmag(this);return false;\" href=\"#\" id=\"lotmag" . $key . "\" src=\"../../library/images/trace.png\" />\n";
             }
             echo "</td>\n";*/
-			$last_row[] = array_unshift($last_row,''.$value['codart'].', '.$value['descri'].', '.$value['quanti'].$value['unimis'].', <strong>'.$script_transl[23].'</strong>: '.gaz_format_number($value['prelis']).', %<strong>'.substr($script_transl[24], 0, 2).'</strong>: '.gaz_format_number($value['sconto']).', <strong>'.$script_transl[25].'</strong>: '.gaz_format_number($imprig).', <strong>'.$script_transl[19].'</strong>: '.$value['pervat'].'%, <strong>'.$script_transl[18].'</strong>: '.$value['codric']);
+			
 			echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
 					<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
 						<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
@@ -1350,10 +1350,11 @@ foreach ($form['rows'] as $key => $value) {
 				  	<td align="right">'.gaz_format_number($imprig).'</td>
 					<td>'.$value['pervat'].'%</td>
 					<td>'.$value['codric'].'</td>';
+					
+				$last_row[] = array_unshift($last_row,''.$value['codart'].', '.$value['descri'].', '.$value['quanti'].$value['unimis'].', <strong>'.$script_transl[23].'</strong>: '.gaz_format_number($value['prelis']).', %<strong>'.substr($script_transl[24], 0, 2).'</strong>: '.gaz_format_number($value['sconto']).', <strong>'.$script_transl[25].'</strong>: '.gaz_format_number($imprig).', <strong>'.$script_transl[19].'</strong>: '.$value['pervat'].'%, <strong>'.$script_transl[18].'</strong>: '.$value['codric']);
             break;
         case "1":
-            $last_row[] = array_unshift($last_row,'forfait');
-			echo "	<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
+            echo "	<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" />
 				  	</td>
 				  	<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
@@ -1371,9 +1372,9 @@ foreach ($form['rows'] as $key => $value) {
 					</td>
 					<td>{$value['pervat']}%</td>
 					<td>".$value['codric']."</td>\n";
+			$last_row[] = array_unshift($last_row,'forfait');
             break;
         case "2":
-            $last_row[] = array_unshift($last_row,'descrittivo');
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" />
 					</td>
@@ -1392,9 +1393,9 @@ foreach ($form['rows'] as $key => $value) {
 					<td></td>
 					<td></td>
 					<td></td>\n";
+            $last_row[] = array_unshift($last_row,'descrittivo');
             break;
         case "3":
-            $last_row[] = array_unshift($last_row,'var.tot.fattura');
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" />
 					</td>
@@ -1413,11 +1414,11 @@ foreach ($form['rows'] as $key => $value) {
 					</td>
 					<td></td>
 					<td></td>\n";
+            $last_row[] = array_unshift($last_row,'var.tot.fattura');
             break;
         case "6":
         case "7":
         case "8":
-            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$value['tiprig']]);
             echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
               		<input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$script_transl['typerow'][$value['tiprig']].'" />
 				  </td>
@@ -1430,6 +1431,7 @@ foreach ($form['rows'] as $key => $value) {
 				  <input type="hidden" name="rows['.$key.'][prelis]" value="" />
 				  <input type="hidden" name="rows['.$key.'][sconto]" value="" />
 				  <input type="hidden" name="rows['.$key.'][provvigione]" value="" />';
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$value['tiprig']]);
             break;
     }
 	/*

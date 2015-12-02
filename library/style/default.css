@@ -17,7 +17,7 @@ table {
 }
 table.Tlarge {
 	/*width : 99%;*/
-	margin-bottom: 0px;
+/*	margin-bottom: 0px;*/
 	border : solid 1px #000000;/*margin-top: -1px;
 	margin-left: 6px;*/
 }
@@ -739,12 +739,12 @@ input.input-xs {
 /* fine stile per il pulsante di tipo file */
 .navbar-brand > img {
 	display: inline;
-}
+}/*
 input[type="text"]:focus, textarea:focus, select:focus {
 	border-color: #66afe9;
 	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(26, 77, 25, 0.6);
 	outline: 0 none;
-}
+}*/
 /* highlight results */
 .ui-autocomplete span.hl_results {
 	background-color: #ffff66;
@@ -762,3 +762,4 @@ input[type="text"]:focus, textarea:focus, select:focus {
 	top: 0;
 }
 .navbar-right{margin-right: 0;}
+.usr-picture{max-width:150px; border:4px solid #aae2a8; border-radius:50% !important;}

@@ -33,6 +33,9 @@ this.gzTooltip = function(){
 				} else if(codeDtls=="weight") {
 				   codeDtls = this.getAttribute('data-title')+'&nbsp;'+this.getAttribute('data-id')+'kg';
 				   return codeDtls;
+				} else if(codeDtls=="ritenuta") {
+				   codeDtls = this.getAttribute('data-title')+'&nbsp;'+this.getAttribute('data-id')+'€';
+				   return codeDtls;
 				} else if(codeDtls=="catmer-thumb") {
 				   codeDtls='<img src="../root/view.php?table=catmer&value='+this.getAttribute('data-id')+'" onerror="this.src=\'../../library/images/link_break.png\'" alt="'+this.getAttribute('data-title')+'" />';
 				   return codeDtls;
@@ -62,7 +65,7 @@ function toggle(boxID, toggleID) {
 $(document).ready (function(){
 	//$("body").wrapInner('<div class="container" role="main" id="wrapper"></div>');
 	//$("</div>DICOANTANTE").appendTo('body');
-	$('body').append('</div>');
+	$('body').append('</div><!-- Chiusura del div container main -->');
 	$(".Tlarge").addClass('table table-striped table-bordered table-condensed table-responsive');
 	$("#alert-discount").fadeTo(2500, 1500).slideUp(750, function(){
 		$("#alert-discount").alert('close');

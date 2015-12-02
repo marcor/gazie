@@ -113,7 +113,7 @@ echo '<form method="POST" name="myform">
 				<tr class="FacetFormHeaderFont">
 					<td class="FacetDataTD text-center">
 						<a href="../config/admin_utente.php?Login='.$admin_aziend['Login'].'&Update">
-							<img src="view.php?table=admin&field=Login&value='.$admin_aziend['Login'].'" alt="'.$admin_aziend['Cognome'].' '.$admin_aziend['Nome'].'" width="100" title="'.$script_transl['change_usr'].'" border="2">
+							<img class="img-circle usr-picture" src="view.php?table=admin&field=Login&value='.$admin_aziend['Login'].'" alt="'.$admin_aziend['Cognome'].' '.$admin_aziend['Nome'].'" title="'.$script_transl['change_usr'].'" />
 						</a>
 					</td>
 					<td id="admin_welcome">

@@ -429,7 +429,7 @@ class magazzForm extends GAzieForm {
         echo "<script type='text/javascript'>toast('$message');</script>";*/
 		if(!empty($message)) {
 			echo '<div class="container">
-					<div id="'.$id.'" class="row alert '.$class.' fade in">
+					<div id="'.$id.'" class="row alert '.$class.' fade in" role="alert">
 						<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
 							<span aria-hidden="true">&times;</span>
 						</button>

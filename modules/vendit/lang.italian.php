@@ -250,7 +250,8 @@ $strScript = array("admin_client.php" =>
         'da_fatturare_value' => array(0 => 'No', 1 => 'Si'),
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'weight' => 'peso',
-        'discount_alert' => 'sconto da anagrafe articoli'
+        'discount_alert' => 'sconto da anagrafe articoli',
+		'last_row' => 'Ultimo rigo inserito'
     /** fine modifica FP */
     ),
     "select_docforprint.php" =>

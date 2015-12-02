@@ -1511,275 +1511,6 @@ if ($form['tipdoc'] == "DDT") {
 echo '<div class="FacetSeparatorTD" align="center">' . $script_transl[1] . '</div>';
 
 echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
-		  <thead>
-			<tr>
-				<th class="FacetFieldCaptionTD"></th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[21] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[23] . '</th>
-				<th class="FacetFieldCaptionTD">%' . substr($script_transl[24], 0, 2) . '.</th>
-				<th class="FacetFieldCaptionTD">%' . substr($script_transl[56], 0, 5) . '.</th>
-				<th class="FacetFieldCaptionTD" align="right">' . $script_transl[25] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[19] . '</th>
-				<th class="FacetFieldCaptionTD">' . $script_transl[18] . '</th>
-				<th class="FacetFieldCaptionTD"></th>
-			</tr>
-		  </thead>
-		  <tbody>';
-$totimp_body = 0.00;
-$totivafat = 0.00;
-$totimpfat = 0.00;
-$castle = array();
-$rit = 0;
-$carry = 0;
-foreach ($form['rows'] as $k => $v) {
-    //creo il castelletto IVA
-    $imprig = 0;
-    if ($v['tiprig'] <= 1) {
-        $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
-        $v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));
-        if ($v['tiprig'] == 1) {//ma se del tipo forfait
-            $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
-            $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
-        }
-        if (!isset($castle[$v['codvat']])) {
-            $castle[$v['codvat']]['impcast'] = 0.00;
-        }
-        $totimp_body += $imprig;
-        $castle[$v['codvat']]['impcast'] += $v_for_castle;
-        $rit+=round($imprig * $v['ritenuta'] / 100, 2);
-    } elseif ($v['tiprig'] == 3) {
-        $carry+=$v['prelis'];
-    }
-    /** inizio modifica FP 09/10/2015 */
-    /* if (!empty($msgtoast)) {   //c'è un messaggio da mostrare (toast)
-      $upd_mm->toast($msgtoast);  //lo mostriamo
-      $msgtoast = "";   //lo cancelliamo
-      } */
-    /* fine modifica FP */
-    $descrizione = $v['descri'];
-    echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['codvat'] . "\" name=\"rows[$k][codvat]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['pervat'] . "\" name=\"rows[$k][pervat]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['tipiva'] . "\" name=\"rows[$k][tipiva]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['ritenuta'] . "\" name=\"rows[$k][ritenuta]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
-    $rit_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[" . $script_transl['ritenuta'] . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . "]  fade=[on] fadespeed=[0.03] \"";
-    //stampo i righi in modo diverso a secondo del tipo
-    switch ($v['tiprig']) {
-        case "0":
-            echo "<tr>";
-            /* if (file_exists("../../data/files/fotoart/" . $v["codart"] . ".gif")) {
-              $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[" . $v['annota'] . "] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/" . $v["codart"] . ".gif'>] fade=[on] fadespeed=[0.03] \"";
-              } else {
-              $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[" . $v['annota'] . "] body=[<center><img src='../root/view.php?table=artico&value=" . $v['codart'] . "'>] fade=[on] fadespeed=[0.03] \"";
-              }
-              if ($v['pesosp'] != 0) {
-              $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso = " . gaz_format_number($v['quanti'] * $v['pesosp']) . "]  fade=[on] fadespeed=[0.03] \"";
-              } else {
-              $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[]  fade=[on] fadespeed=[0.03] \"";
-              } */
-
-            if ($v['scorta'] < 0) {
-                //$scorta_col = 'FacetDataTDsmallRed';
-                $btn_class = 'btn-danger';
-            } else {
-                //$scorta_col = 'FacetDataTDsmall';
-                $btn_class = 'btn-success';
-            }
-            /* Peso */
-            $peso = 0;
-            if ($v['pesosp'] <> 0) {
-                $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
-            }
-            echo '	<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
-							<i class="glyphicon glyphicon-arrow-up"></i>
-						</button>
-					</td>
-					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Sottoscorta =' . $v['scorta'] . '">
-						<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
-							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
-						</button>
-			 		</td>
-					<td>
-						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="60" size="50" />
-					</td>
-					<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
-					</td>
-					<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
-					</td>
-					<td>
-						<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" align="right" maxlength="11" size="7" onchange="this.form.submit()" />
-					</td>
-					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="1" onchange="this.form.submit();" /></td>
-					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" size="1" /></td>
-					<td ' . $rit_title . ' align="right">' . gaz_format_number($imprig) . '</td>
-					<td ' . $rit_title . ' align="right">' . $v['pervat'] . '%</td>
-					<td ' . $rit_title . ' align="right">' . $v['codric'] . '</td>';
-            break;
-        case "1":
-            /*
-             */
-            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
-					</td>
-					  <td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" />
-					</td>
-					<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
-						</button>
-					</td>
-					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-					<td></td>
-					<td $rit_title align=\"right\">
-						<input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" />
-					</td>
-					<td $rit_title align=\"right\">" . $v['pervat'] . "%</td>
-					<td $rit_title align=\"right\">" . $v['codric'] . "</td>\n";
-            break;
-        case "2":
-            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
-					</td>
-					<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" />
-					</td>
-					<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
-						</button>
-					</td>
-					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-					<td></td>
-					<td></td>
-					<td></td>\n";
-            break;
-        case "3":
-            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
-					</td>
-					<td>
-						<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\">
-					</td>
-					<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
-						</button>
-					</td>
-					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-					<td></td>
-					<td align=\"right\">
-						<input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" />
-					</td>
-					<td></td>
-					<td></td>\n";
-            break;
-        case "6":
-        case "7":
-        case "8":
-            //<textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
-            echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-						<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
-					</td>
-					<td colspan="10">
-						<textarea id="row_' . $k . '" name="row_' . $k . '" class="mceClass" style="width:100%;height:100px;">' . $form["row_$k"] . '</textarea>
-					</td>
-					<input type="hidden" value="" name="rows[' . $k . '][descri]" />
-					<input type="hidden" value="" name="rows[' . $k . '][unimis]" />
-					<input type="hidden" value="" name="rows[' . $k . '][quanti]" />
-					<input type="hidden" value="" name="rows[' . $k . '][prelis]" />
-					<input type="hidden" value="" name="rows[' . $k . '][sconto]" />
-					<input type="hidden" value="" name="rows[' . $k . '][provvigione]" />';
-            break;
-        case "11":
-        case "12":
-            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-              <input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" /></td>\n";
-            echo "	<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"16\" />
-					</td>
-					<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
-						</button>
-					</td>
-					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-					<td></td>
-					<td></td>
-					<td></td>\n";
-            break;
-
-        case "13":
-            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-              			<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
-					</td>
-			  		<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"21\" />
-					</td>
-					<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
-						</button>
-					</td>
-					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-					<td></td>
-					<td></td>
-					<td></td>\n";
-            break;
-    }
-//    echo "<TD align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"" . $script_transl['delete'] . $script_transl['thisrow'] . "!\" /></td></tr>\n";
-
-    /** ENRICO FEDELE */
-    /* glyph icon */
-    echo '  <td align="right">
-		     <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
-		   </td>
-	     </tr>';
-    /** ENRICO FEDELE */
-}
-/** ENRICO FEDELE */
-/* Nuovo alert per scontistica, da visualizzare rigorosamente dopo l'ultima riga inserita */
-if (count($form['rows']) > 0) {
-    $msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
-} else {
-    echo '<tr id="alert-zerorows">
-			<td colspan="12"class="alert alert-danger">' . $script_transl['zero_rows'] . '</td>
-		  </tr>';
-}
-echo '		</tbody>
-		</table>
-		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 		<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
 		<input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
 		<input type="hidden" value="' . $form['in_tipiva'] . '" name="in_tipiva" />
@@ -1826,20 +1557,333 @@ $gForm->selectAccount('in_codric', $form['in_codric'], $ric);
 echo " %$script_transl[24]: <input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"in_sconto\" title=\"# = sconto standard dell'articolo\">";
 echo " %$script_transl[56]: <input type=\"text\" value=\"" . $form['in_provvigione'] . "\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">";
 echo ' %' . $script_transl['ritenuta'] . ": <input type=\"text\" value=\"" . $form['in_ritenuta'] . "\" maxlength=\"6\" size=\"1\" name=\"in_ritenuta\">";
-echo "</TD><TD class=\"FacetColumnTD\">" . $script_transl['vat_constrain'];
+echo "</td><td class=\"FacetColumnTD\">" . $script_transl['vat_constrain'];
 $select_in_codvat = new selectaliiva("in_codvat");
 $select_in_codvat->addSelected($form["in_codvat"]);
 $select_in_codvat->output();
-echo "</td><td class=\"FacetColumnTD\"></td></tr>\n";
-echo '</table>
-		<div class="FacetSeparatorTD" align="center">' . $script_transl[2] . '</div>
+echo '			</td>
+				<td class="FacetColumnTD"></td>
+			</tr>
+		</table>';
+
+echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+		  <thead>
+			<tr>
+				<th class="FacetFieldCaptionTD"></th>
+				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
+				<th class="FacetFieldCaptionTD">' . $script_transl[21] . '</th>
+				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
+				<th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
+				<th class="FacetFieldCaptionTD">' . $script_transl[23] . '</th>
+				<th class="FacetFieldCaptionTD">%' . substr($script_transl[24], 0, 2) . '.</th>
+				<th class="FacetFieldCaptionTD">%' . substr($script_transl[56], 0, 5) . '.</th>
+				<th class="FacetFieldCaptionTD" align="right">' . $script_transl[25] . '</th>
+				<th class="FacetFieldCaptionTD">' . $script_transl[19] . '</th>
+				<th class="FacetFieldCaptionTD">' . $script_transl[18] . '</th>
+				<th class="FacetFieldCaptionTD"></th>
+			</tr>
+		  </thead>
+		  <tbody>';
+$totimp_body = 0.00;
+$totivafat = 0.00;
+$totimpfat = 0.00;
+$castle = array();
+$rit = 0;
+$carry = 0;
+$last_row = array();
+foreach ($form['rows'] as $k => $v) {
+    //creo il castelletto IVA
+    $imprig = 0;
+    if ($v['tiprig'] <= 1) {
+        $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
+        $v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));
+        if ($v['tiprig'] == 1) {//ma se del tipo forfait
+            $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
+            $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
+        }
+        if (!isset($castle[$v['codvat']])) {
+            $castle[$v['codvat']]['impcast'] = 0.00;
+        }
+        $totimp_body += $imprig;
+        $castle[$v['codvat']]['impcast'] += $v_for_castle;
+        $rit+=round($imprig * $v['ritenuta'] / 100, 2);
+    } elseif ($v['tiprig'] == 3) {
+        $carry+=$v['prelis'];
+    }
+    /** inizio modifica FP 09/10/2015 */
+    /* if (!empty($msgtoast)) {   //c'è un messaggio da mostrare (toast)
+      $upd_mm->toast($msgtoast);  //lo mostriamo
+      $msgtoast = "";   //lo cancelliamo
+      } */
+    /* fine modifica FP */
+    $descrizione = $v['descri'];
+    echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['codvat'] . "\" name=\"rows[$k][codvat]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['pervat'] . "\" name=\"rows[$k][pervat]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['tipiva'] . "\" name=\"rows[$k][tipiva]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['ritenuta'] . "\" name=\"rows[$k][ritenuta]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
+    //$rit_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$script_transl['ritenuta'].$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2))."]  fade=[on] fadespeed=[0.03] \"";
+    //stampo i righi in modo diverso a secondo del tipo
+    switch ($v['tiprig']) {
+        case "0":
+            echo '<tr>';
+            /* if (file_exists("../../data/files/fotoart/" . $v["codart"] . ".gif")) {
+              $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[" . $v['annota'] . "] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/" . $v["codart"] . ".gif'>] fade=[on] fadespeed=[0.03] \"";
+              } else {
+              $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[" . $v['annota'] . "] body=[<center><img src='../root/view.php?table=artico&value=" . $v['codart'] . "'>] fade=[on] fadespeed=[0.03] \"";
+              }
+              if ($v['pesosp'] != 0) {
+              $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso = " . gaz_format_number($v['quanti'] * $v['pesosp']) . "]  fade=[on] fadespeed=[0.03] \"";
+              } else {
+              $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[]  fade=[on] fadespeed=[0.03] \"";
+              } */
+
+            if ($v['scorta'] < 0) {
+                //$scorta_col = 'FacetDataTDsmallRed';
+                $btn_class = 'btn-danger';
+            } else {
+                //$scorta_col = 'FacetDataTDsmall';
+                $btn_class = 'btn-success';
+            }
+            /* Peso */
+            $peso = 0;
+            if ($v['pesosp'] <> 0) {
+                $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
+            }
+            echo '	<td>
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</button>
+					</td>
+					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Sottoscorta =' . $v['scorta'] . '">
+						<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
+							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
+						</button>
+			 		</td>
+					<td>
+						<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$v["codart"].'" data-title="'.$v['annota'].'" type="text" name="rows['.$k.'][descri]" value="'.$descrizione.'" maxlength="60" size="50" />
+					</td>
+					<td>
+						<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="rows['.$k.'][unimis]" value="'.$v['unimis'].'" maxlength="3" size="1" />
+					</td>
+					<td>
+						<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="rows['.$k.'][quanti]" value="'.$v['quanti'].'" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+					</td>
+					<td>
+						<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" align="right" maxlength="11" size="7" onchange="this.form.submit()" />
+					</td>
+					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="1" onchange="this.form.submit();" /></td>
+					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" size="1" /></td>
+					<td class="text-right">
+						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="'.$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)).'" data-title="'.$script_transl['ritenuta'].'">
+							' . gaz_format_number($imprig) . '
+						</span>
+					</td>
+					<td class="text-right">
+						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="'.$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)).'" data-title="'.$script_transl['ritenuta'].'">
+							' . $v['pervat'] . '%
+						</span>
+					</td>
+					<td class="text-right">
+						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="'.$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)).'" data-title="'.$script_transl['ritenuta'].'">
+							' . $v['codric'] . '
+						</span>
+					</td>';
+			$last_row[] = array_unshift($last_row,''.$v['codart'].', '.$v['descri'].', '.$v['quanti'].$v['unimis'].', <strong>'.$script_transl[23].'</strong>: '.gaz_format_number($v['prelis']).', %<strong>'.substr($script_transl[24], 0, 2).'</strong>: '.gaz_format_number($v['sconto']).', <strong>'.$script_transl[25].'</strong>: '.gaz_format_number($imprig).', <strong>'.$script_transl[19].'</strong>: '.$v['pervat'].'%, <strong>'.$script_transl[18].'</strong>: '.$v['codric']);
+            break;
+        case "1":
+            /*
+             */
+            echo '	<td>
+						<button type="image" name="upper_row['.$k.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</button>
+					</td>
+					<td title="'.$script_transl['update'] . $script_transl['thisrow'].'!\">
+						<input class="btn btn-xs btn-success btn-block" type="submit" name="upd_row['.$k.']" value="'.$script_transl['typerow'][$v['tiprig']].'" />
+					</td>
+					  <td>
+						<input type="text"   name="rows['.$k.'][descri]" value="'.$descrizione.'" maxlength="60" size="50" />
+					</td>
+					<td><input type="hidden" name="rows['.$k.'][unimis]" value="" /></td>
+					<td><input type="hidden" name="rows['.$k.'][quanti]" value="" /></td>
+					<td><input type="hidden" name="rows['.$k.'][sconto]" value="" /></td>
+					<td><input type="hidden" name="rows['.$k.'][provvigione]" value="" /></td>
+					<td></td>
+					<td class="text-right">
+						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="'.$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)).'" data-title="'.$script_transl['ritenuta'].'" type="text" name="rows['.$k.'][prelis]" value="'.number_format($v['prelis'], 2, '.', '').'" maxlength="11" size="7" onchange="this.form.submit()" />
+					</td>
+					<td class="text-right">
+						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="'.$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)).'" data-title="'.$script_transl['ritenuta'].'">'.$v['pervat'].'%
+						</span>
+					</td>
+					<td class="text-right">
+						<span class="gazie-tooltip" data-type="ritenuta" data-id="'.$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)).'" data-title="'.$script_transl['ritenuta'].'">
+							'.$v['codric'].'
+						</span>
+					</td>';
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "2":
+            echo "	<td>
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>
+					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+					</td>
+					<td>
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" />
+					</td>
+					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
+					<td></td>
+					<td></td>
+					<td></td>\n";
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "3":
+            echo "	<td>
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>
+					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+					</td>
+					<td>
+						<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\">
+					</td>
+					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
+					<td></td>
+					<td align=\"right\">
+						<input style=\"text-align:right\" type=\"text\" name=\"rows[$k][prelis]\" value=\"" . number_format($v['prelis'], 2, '.', '') . "\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" />
+					</td>
+					<td></td>
+					<td></td>\n";
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "6":
+        case "7":
+        case "8":
+            //<textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
+            echo '	<td>
+						<button type="image" name="upper_row['.$k.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!\">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</button>
+					</td>
+					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
+						<input class="btn btn-xs btn-success btn-block" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
+					</td>
+					<td colspan="9">
+						<textarea id="row_' . $k . '" name="row_' . $k . '" class="mceClass">' . $form["row_$k"] . '</textarea>
+					</td>
+					<input type="hidden" value="" name="rows[' . $k . '][descri]" />
+					<input type="hidden" value="" name="rows[' . $k . '][unimis]" />
+					<input type="hidden" value="" name="rows[' . $k . '][quanti]" />
+					<input type="hidden" value="" name="rows[' . $k . '][prelis]" />
+					<input type="hidden" value="" name="rows[' . $k . '][sconto]" />
+					<input type="hidden" value="" name="rows[' . $k . '][provvigione]" />';
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "11":
+        case "12":
+            echo "	<td>
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>
+					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+					</td>
+					<td>
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"50\" />
+					</td>
+					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
+					<td></td>
+					<td></td>
+					<td></td>\n";
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
+            break;
+
+        case "13":
+            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+              			<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+					</td>
+			  		<td>
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>
+					<td>
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
+					</td>
+					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
+					<td></td>
+					<td></td>
+					<td></td>\n";
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
+            break;
+    }
+//    echo "<TD align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"" . $script_transl['delete'] . $script_transl['thisrow'] . "!\" /></td></tr>\n";
+
+    /** ENRICO FEDELE */
+    /* glyph icon */
+    echo '  <td align="right">
+		     <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
+		   </td>
+	     </tr>';
+    /** ENRICO FEDELE */
+}
+/** ENRICO FEDELE */
+/* Nuovo alert per scontistica, da visualizzare rigorosamente dopo l'ultima riga inserita */
+if (count($form['rows']) > 0) {
+    $msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
+
+	if(isset($_POST['in_submit']) && count($form['rows'])>5) {
+		/*for($i=0;$i<3;$i++) {	//	Predisposizione per mostrare gli ultimi n articoli inseriti (in ordine inverso ovviamente)
+			$msgtoast .= $last_row[$i].'<br />';
+		}*/
+		$msgtoast .= $last_row[0];
+		$msgtoast = $upd_mm->toast($script_transl['last_row'].': '.$msgtoast, 'alert-last-row', 'alert-success');  //lo mostriamo
+	}
+} else {
+    echo '<tr id="alert-zerorows">
+			<td colspan="12"class="alert alert-danger">' . $script_transl['zero_rows'] . '</td>
+		  </tr>';
+}
+echo '		</tbody>
+		</table>
+		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div>
 		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
-			<input type="hidden" value="' . $form['numrat'] . '" name="numrat">
-			<input type="hidden" value="' . $form['stamp'] . '" name="stamp">
-			<input type="hidden" value="' . $form['round_stamp'] . '" name="round_stamp">
-			<input type="hidden" value="' . $form['spevar'] . '" name="spevar">
-			<input type="hidden" value="' . $form['cauven'] . '" name="cauven">
-			<input type="hidden" value="' . $form['caucon'] . '" name="caucon">';
+			<input type="hidden" value="'.$form['numrat'].'" name="numrat">
+			<input type="hidden" value="'.$form['stamp'].'" name="stamp">
+			<input type="hidden" value="'.$form['round_stamp'].'" name="round_stamp">
+			<input type="hidden" value="'.$form['spevar'].'" name="spevar">
+			<input type="hidden" value="'.$form['cauven'].'" name="cauven">
+			<input type="hidden" value="'.$form['caucon'].'" name="caucon">';
 
 $somma_spese = $form['traspo'] + $form['speban'] * $form['numrat'] + $form['spevar'];
 $calc->add_value_to_VAT_castle($castle, $somma_spese, $form['expense_vat']);
@@ -1860,7 +1904,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     echo "			</td>
 					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[27]</td>
 					<td class=\"FacetDataTD\">
-						<input type=\"text\" name=\"spediz\" value=\"" . $form["spediz"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
+						<input type=\"text\" name=\"spediz\" value=\"" . $form["spediz"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
     $select_spediz = new SelectValue("spedizione");
     $select_spediz->output('spediz', 'spediz');
     /** ENRICO FEDELE */
@@ -1874,25 +1918,29 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     echo "			</td>
 					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[29]</td>
 					<td class=\"FacetDataTD\">
-						<input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
+						<input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
     $select_spediz = new SelectValue("portoresa");
     $select_spediz->output('portos', 'portos');
-    echo "			</tr>
-				<tr>";
-    echo "			<td class=\"FacetFieldCaptionTD text-right\">$script_transl[30]</td>
+    echo "		
+					</td>
+				</tr>
+				<!-- PRIMA RIGA - 8 colonne -->
+				<tr>
+					<td class=\"FacetFieldCaptionTD text-right\">$script_transl[30]</td>
 					<td class=\"FacetDataTD\">
 						<input class=\"FacetText\" type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">
 						<input class=\"FacetText\" type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">
 						<input class=\"FacetText\" type=\"text\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">
 						<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></A>$script_transl[31]";
-    echo '					<i class="glyphicon glyphicon-calendar"></i></a>' . $script_transl[31];
+    echo '					<i class="glyphicon glyphicon-calendar"></i>
+						</a>' . $script_transl[31];
     // select dell'ora
     echo "\t <select name=\"oratra\" class=\"FacetText\" >\n";
     for ($counter = 0; $counter <= 23; $counter++) {
         $selected = "";
         if ($counter == $form['oratra'])
-            $selected = "selected";
+            $selected = ' selected=""';
         echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
     }
     echo "\t </select>\n ";
@@ -1901,79 +1949,93 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     for ($counter = 0; $counter <= 59; $counter++) {
         $selected = "";
         if ($counter == $form['mintra'])
-            $selected = "selected";
+            $selected = ' selected=""';
         echo "\t\t <option value=\"" . sprintf('%02d', $counter) . "\" $selected >" . sprintf('%02d', $counter) . "</option>\n";
     }
-    echo "\t</select></td>\n";
-    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[10]</td>\n";
+    echo "				\t</select>
+						</td>
+						<td class=\"FacetFieldCaptionTD\">$script_transl[10]</td>\n";
     if ($form['id_des'] > 0) { // la destinazione è un'altra anagrafica
-        echo "<td class=\"FacetDataTD\">\n";
+        echo "			<td class=\"FacetDataTD\">\n";
         $select_id_des = new selectPartner('id_des');
         $select_id_des->selectDocPartner('id_des', 'id_' . $form['id_des'], $form['search']['id_des'], 'id_des', $script_transl['mesg'], $admin_aziend['mascli']);
-        echo "<input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\">\n";
+        echo "				<input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" />
+						</td>\n";
     } else {
         /** inizio modifica FP 28/10/2015 */
 // rimossa      echo "<td class=\"FacetDataTD\"><textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea></td>\n";
-        echo "<td class=\"FacetDataTD\">";
+        echo "			<td class=\"FacetDataTD\">";
         echo selectDestinazione($array_destinazioni);
-        echo "<textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea></td>\n";
-        /** fine modifica FP */
-        echo "<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\"></td>\n";
-        echo "<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
+        echo "				<textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
+						</td>
+						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
+						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
+		/** fine modifica FP */
     }
     echo "			<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[54]</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>
 					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[55]</td>
-					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['volume'] . "\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>\n";
-    echo "\t</tr>\n";
-    echo "<tr>\n";
-    echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[52]</td>\n";
-    echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\" size=\"5\" ></td>\n";
-    echo "<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[53]</td>\n";
-    echo "<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\" size=\"5\" ></td>\n";
-
-    echo "<td class=\"FacetFieldCaptionTD\" colspan=\"4\">" . $script_transl['taxstamp'] . "&nbsp;<input type=\"text\" value=\"" . $form['taxstamp'] . "\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" >&nbsp;" . $script_transl['virtual_taxstamp'] . "&nbsp;";
+					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['volume'] . "\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>
+				</tr>
+				<tr>
+					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[52]</td>
+					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['net_weight']."\" name=\"net_weight\" maxlength=\"9\" size=\"5\" ></td>
+					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[53]</td>
+					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['gross_weight']."\" name=\"gross_weight\" maxlength=\"9\" size=\"5\" ></td>
+					<td class=\"FacetFieldCaptionTD\" colspan=\"4\">
+						".$script_transl['taxstamp']."&nbsp;<input type=\"text\" value=\"".$form['taxstamp']."\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" >&nbsp;" . $script_transl['virtual_taxstamp'] . "&nbsp;";
     $gForm->variousSelect('virtual_taxstamp', $script_transl['virtual_taxstamp_value'], $form['virtual_taxstamp']);
-    echo "</td>";
-    echo "</tr>";
+    echo "			</td>
+				</tr>";
 } else {
-    echo "<input type=\"hidden\" value=\"" . $form['imball'] . "\" name=\"imball\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['spediz'] . "\" name=\"spediz\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['portos'] . "\" name=\"portos\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['anntra'] . "\" name=\"anntra\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['mestra'] . "\" name=\"mestra\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['giotra'] . "\" name=\"giotra\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['oratra'] . "\" name=\"oratra\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['mintra'] . "\" name=\"mintra\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
-    echo "<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['destin'] . "\" name=\"destin\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['units'] . "\" name=\"units\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['volume'] . "\" name=\"volume\">\n";
-    echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['taxstamp'] . "<input type=\"text\" value=\"" . $form['taxstamp'] . "\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" > " . $script_transl['virtual_taxstamp'];
+    echo '	<input type="hidden" value="'.$form['imball'].'" name="imball" />
+			<input type="hidden" value="'.$form['spediz'].'" name="spediz" />
+			<input type="hidden" value="'.$form['vettor'].'" name="vettor" />
+			<input type="hidden" value="'.$form['portos'].'" name="portos" />
+			<input type="hidden" value="'.$form['anntra'].'" name="anntra" />
+			<input type="hidden" value="'.$form['mestra'].'" name="mestra" />
+			<input type="hidden" value="'.$form['giotra'].'" name="giotra" />
+			<input type="hidden" value="'.$form['oratra'].'" name="oratra" />
+			<input type="hidden" value="'.$form['mintra'].'" name="mintra" />
+			<input type="hidden" value="'.$form['id_des'].'" name="id_des" />
+			<input type="hidden" value="'.$form['search']['id_des'].'" name="search[id_des]" />
+			<input type="hidden" value="'.$form['destin'].'" name="destin" />
+			<input type="hidden" value="'.$form['net_weight'].'" name="net_weight" />
+			<input type="hidden" value="'.$form['gross_weight'].'" name="gross_weight" />
+			<input type="hidden" value="'.$form['units'].'" name="units" />
+			<input type="hidden" value="'.$form['volume'].'" name="volume" />
+			<tr>
+				<td class="FacetFieldCaptionTD">
+					'.$script_transl['taxstamp'].'<input type="text" value="'.$form['taxstamp'].'" name="taxstamp" maxlength="6" size="4" />'.$script_transl['virtual_taxstamp'];
     $gForm->variousSelect('virtual_taxstamp', $script_transl['virtual_taxstamp_value'], $form['virtual_taxstamp']);
-    echo "</td>";
-    echo "</tr>";
-    //echo "<tr>\n";
+    echo '		</td>
+		  	</tr>';
 }
 
-echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">% $script_transl[24] <input type=\"text\" name=\"sconto\" value=\"" . $form["sconto"] . "\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['stamp'] . "</td>
-          <td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] " . $admin_aziend['symbol'] . "</td>\n";
+echo '	<tr>
+			<td class="FacetFieldCaptionTD text-right">'.$script_transl[32].'</td>
+			<td class="FacetFieldCaptionTD text-right">'.$script_transl[33].'</td>
+			<td class="FacetFieldCaptionTD text-right">'.$script_transl[34].'</td>
+			<td class="FacetFieldCaptionTD text-right">
+				% '.$script_transl[24].' <input type="text" name="sconto" value="'.$form["sconto"].'" maxlength="6" size="1" onchange="this.form.submit()" />
+			</td>
+			<td class="FacetFieldCaptionTD text-right">'.$script_transl[32].'</td>
+			<td class="FacetFieldCaptionTD text-right">'.$script_transl[19].'</td>
+			<td class="FacetFieldCaptionTD text-right">'.$script_transl['stamp'].'</td>
+			<td class="FacetFieldCaptionTD text-right">'.$script_transl[36].' '.$admin_aziend['symbol'].'</td>
+		</tr>';
+		$i=0;
 foreach ($calc->castle as $k => $v) {
-    echo "<tr><td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($v['impcast']) . "</td>";
-    echo "<td class=\"FacetDataTD\" align=\"right\">" . $v['descriz'] . " " . gaz_format_number($v['ivacast']) . "</td>\n";
+    echo '	<tr>
+				<td class="text-right">'.gaz_format_number($v['impcast']).'</td>
+				<td class="text-right">'.$v['descriz'].' '.gaz_format_number($v['ivacast']).'</td>
+				<td colspan="6"></td>
+			</tr>';
 }
 
 if ($next_row > 0) {
+	echo '<tr>
+			<td colspan="2"></td>';
     if ($form['stamp'] > 0) {
         $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit + $form['taxstamp'], $form['stamp'], $form['round_stamp'] * $form['numrat']);
         $stamp = $calc->pay_taxstamp;
@@ -1983,21 +2045,22 @@ if ($next_row > 0) {
     if ($form['virtual_taxstamp'] == 3) { // se senza addebito di bollo virtuale azzero il valore taxstamp
         $form['taxstamp'] = 0;  // forzo al nuovo modo 3 (bollo a carico dell'emittente)
     }
-    echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($totimp_body) . "</td>
-              <td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number(($totimp_body - $calc->total_imp + $somma_spese), 2, '.', '') . "</td>
-              <td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($calc->total_imp) . "</td>
-              <td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($calc->total_vat) . "</td>
-              <td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($stamp) . "</td>
-              <td align=\"right\" class=\"FacetDataTD\" style=\"font-weight:bold;\">" . gaz_format_number($calc->total_imp + $calc->total_vat + $stamp + $form['taxstamp']) . "</td>\n";
+    echo '		<td class="text-right">'.gaz_format_number($totimp_body).'</td>
+				<td class="text-right">'.gaz_format_number(($totimp_body - $calc->total_imp + $somma_spese), 2, '.', '').'</td>
+				<td class="text-right">'.gaz_format_number($calc->total_imp).'</td>
+				<td class="text-right">'.gaz_format_number($calc->total_vat).'</td>
+				<td class="text-right">'.gaz_format_number($stamp).'</td>
+				<td class="text-right"><strong>'.gaz_format_number($calc->total_imp + $calc->total_vat + $stamp + $form['taxstamp']).'</strong></td>
+			</tr>';
     if ($rit > 0) {
-        echo "<tr>";
-        echo "<td colspan=\"7\" align=\"right\">" . $script_transl['ritenuta'] . "</td>";
-        echo "<td align=\"right\">" . gaz_format_number($rit) . "</td>";
-        echo "</tr>\n";
-        echo "<tr>";
-        echo "<td colspan=\"7\" align=\"right\">" . $script_transl['netpay'] . "</td>";
-        echo "<td align=\"right\">" . gaz_format_number($calc->total_imp + $calc->total_vat + $stamp - $rit + $form['taxstamp']) . "</td>";
-        echo "</tr>\n";
+        echo '	<tr>
+					<td class="text-right" colspan="7">'.$script_transl['ritenuta'].'</td>
+					<td class="text-right">'.gaz_format_number($rit).'</td>
+				</tr>
+				<tr>
+					<td class="text-right" colspan="7">'.$script_transl['netpay'].'</td>
+					<td class="text-right">'.gaz_format_number($calc->total_imp + $calc->total_vat + $stamp - $rit + $form['taxstamp']).'</td>
+				</tr>';
     }
 
     echo '		<tr>
@@ -2006,7 +2069,7 @@ if ($next_row > 0) {
 					</td>
 				</tr>';
 }
-echo "</table>";
+echo '</table>';
 ?>
 </form>
 </body>
