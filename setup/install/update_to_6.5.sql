@@ -22,5 +22,5 @@ UPDATE `gaz_XXXtesdoc` SET `ddt_type` = 'T' WHERE (`tipdoc` = 'DDT' OR `tipdoc` 
 ALTER TABLE `gaz_XXXtesdoc` ADD `id_doc_ritorno` int(9) NOT NULL DEFAULT 0 AFTER `ddt_type`;
 ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE DEFAULT null AFTER `datemi`;
 ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` int NOT NULL DEFAULT 0 AFTER `pagame`;
-ALTER TABLE `gaz_admin` ADD `skin` VARCHAR(60) NOT NULL DEFAULT `default.css` AFTER `style`;
+ALTER TABLE `gaz_admin` ADD `skin` VARCHAR(60) NOT NULL DEFAULT 'default.css' AFTER `style`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
