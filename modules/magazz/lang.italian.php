@@ -287,8 +287,7 @@ $strScript = array("browse_document.php" =>
             'categoria articolo'
         ),
         'tipoStampa' => 'Tipo di Stampa',
-        'alternativeTipoStampa' => array('espansa','compatta'),
-
+        'alternativeTipoStampa' => array('espansa', 'compatta'),
     ),
     "update_vatrate.php" =>
     array('title' => 'Modifica aliquota IVA degli articoli',
@@ -336,7 +335,7 @@ $strScript = array("browse_document.php" =>
         'weight_valadd' => 'Incidenza su peso specifico es. €/kg',
         'header' => array('Cat.Merceologica' => '', 'Codice' => '', 'Descrizione' => '', 'U.M.' => '',
             'Prezzo vecchio' => '', 'Incidenza peso' => '', 'Prezzo nuovo' => ''
-        )    ),
+        )),
     "admin_artico.php" =>
     array('title' => 'Gestione degli articoli',
         'ins_this' => 'Inserimento articolo',
@@ -386,9 +385,14 @@ $strScript = array("browse_document.php" =>
         'web_public' => 'Pubblica sul sito web',
         'web_public_value' => array(0 => 'No', 1 => 'Si'),
         'web_url' => 'Web url<br />(es: http://site.com/item.html)',
-        'modal_ok_insert'=>'Articolo inserito con successo clicca sulla X in alto a destra per uscire oppure...',
-        'iterate_invitation'=>'INSERISCI UN ALTRO ARTICOLO DI MAGAZZINO', 
-		'browse_for_file' => 'Sfoglia'
+        'modal_ok_insert' => 'Articolo inserito con successo clicca sulla X in alto a destra per uscire oppure...',
+        'iterate_invitation' => 'INSERISCI UN ALTRO ARTICOLO DI MAGAZZINO',
+        'browse_for_file' => 'Sfoglia',
+        'id_anagra' => 'Fornitore',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 1 carattere!',
+            'Cambia fornitore'
+        ),
     )
 );
 ?>
