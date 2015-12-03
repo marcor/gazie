@@ -1547,7 +1547,7 @@ echo '  </td>
 		</td>
 	  </tr>';
 /** ENRICO FEDELE */
-echo "</td></tr>\n";
+//echo "</td></tr>\n";
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
 $ric = intval(substr($form['in_codric'], 0, 1));
 if ($form['tipdoc'] == 'FAP') {

@@ -155,6 +155,7 @@ if (file_exists("help/".$admin_aziend['lang']."/admin_help.php")) {
     include("help/".$admin_aziend['lang']."/admin_help.php");
 }
 echo "</div>";
+echo "</div><!-- Chiusura main container -->"
 ?>
 </body>
 </html>
