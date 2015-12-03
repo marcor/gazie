@@ -37,6 +37,8 @@ if (isset($_GET['id_tes'])) { //sto eliminando un singolo documento
     $row = gaz_dbi_fetch_array($result);
     if (substr($row['tipdoc'], 0, 2) == 'DD') {
         $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = '" . substr($row['datemi'], 0, 4) . "' AND tipdoc LIKE '" . substr($row['tipdoc'], 0, 2) . "_' AND seziva = " . $row['seziva'] . " ", "numdoc DESC", 0, 1);
+    } elseif ($row['tipdoc'] == 'RDV') { 
+        $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = " . intval($_GET['id_tes']));
     } elseif ($row['tipdoc'] == 'VCO') {
         $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi = '" . $row['datemi'] . "' AND tipdoc = 'VCO' AND seziva = " . $row['seziva'], "datemi DESC, numdoc DESC", 0, 1);
     } else {
@@ -60,7 +62,9 @@ if (isset($_POST['Delete'])) {
     //controllo se sono stati emessi documenti nel frattempo...
     $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
     if ($ultimo_documento) {
-        if (($ultimo_documento['tipdoc'] == 'VRI' || $ultimo_documento['tipdoc'] == 'VCO' || substr($ultimo_documento['tipdoc'], 0, 2) == 'DD') and $ultimo_documento['numdoc'] == $row['numdoc']) {
+        if (($ultimo_documento['tipdoc'] == 'VRI' || $ultimo_documento['tipdoc'] == 'VCO' 
+            || substr($ultimo_documento['tipdoc'], 0, 2) == 'DD' || $ultimo_documento['tipdoc'] == 'RDV' ) 
+            && $ultimo_documento['numdoc'] == $row['numdoc']) {
             gaz_dbi_del_row($gTables['tesdoc'], 'id_tes', $row['id_tes']);
             gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
             gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
@@ -74,6 +78,10 @@ if (isset($_POST['Delete'])) {
                 }
                 gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $val_old_row['id_rig']);
                 gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
+            }
+            // in caso di eliminazione di un reso da c/visione che quindi ha un link su un DDV
+            if ($ultimo_documento['id_doc_ritorno'] > 0 ) {
+                    gaz_dbi_put_row($gTables['tesdoc'], 'id_tes', $ultimo_documento['id_doc_ritorno'], 'id_doc_ritorno',0);
             }
             header("Location: " . $_POST['ritorno']);
             exit;
@@ -100,9 +108,9 @@ if (isset($_POST['Delete'])) {
             }
             header("Location: " . $_POST['ritorno']);
             exit;
-        } elseif ($ultimo_documento['protoc'] == $_GET['protoc'] and $ultimo_documento['tipdoc'] == 'FAD') {
+        } elseif ($ultimo_documento['protoc'] == intval($_GET['protoc']) and $ultimo_documento['tipdoc'] == 'FAD') {
             //allora procedo alla modifica delle testate per ripristinare i DdT...
-            gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "tipdoc", "DD".$row["ddt_type"]);
+            gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "tipdoc", "DD" . $row["ddt_type"]);
             gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "protoc", "");
             gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "numfat", "");
             gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "datfat", "");
@@ -110,7 +118,7 @@ if (isset($_POST['Delete'])) {
             gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
             gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
             while ($a_row = gaz_dbi_fetch_array($result)) {
-                gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "tipdoc", "DD".$a_row["ddt_type"]);
+                gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "tipdoc", "DD" . $a_row["ddt_type"]);
                 gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "protoc", "");
                 gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "numfat", "");
                 gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "datfat", "");

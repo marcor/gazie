@@ -160,8 +160,8 @@ $strScript = array("admin_client.php" =>
             "FND" => "Nota Debito a Cliente",
             "VCO" => "Vendita Corrispettivo",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
-            "DDX" => "Ricevuto DdT di Reso da C/Visione",
             "DDY" => "D.d.T. per Cessione in Triangolazione",
+            "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Ricevuta"
         ),
         'tipdoc' => ' documento di vendita tipo: ',
@@ -226,6 +226,7 @@ $strScript = array("admin_client.php" =>
         "Provvigioni",
         "Vuoi modificare un D.d.T. gi&agrave; fatturato!",
         "Questo documento &egrave; gi&agrave; stato contabilizzato!",
+        "Per questo documento è obbligatorio selezionare il DdT di cessione in c/visione di riferimento",
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
@@ -238,21 +239,16 @@ $strScript = array("admin_client.php" =>
         'taxstamp' => 'Bollo',
         'virtual_taxstamp' => 'Modo',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale', 3 => 'Virtuale senza addebito'),
-        /** inizio modifica FP 15/10/2015
-         * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo 
-         */
         'ragbol' => "Raggr.DDT",
         'ragbol_title' => 'Raggruppamento DDT',
         'order_date' => "Data Ordine",
-        'da_fatturare' => "Da fatturare",
-        'da_fatturare_title' => 'Indica se il DDT deve essere fatturato automaticamente',
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
-        'da_fatturare_value' => array(0 => 'No', 1 => 'Si'),
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'weight' => 'peso',
         'discount_alert' => 'sconto da anagrafe articoli',
-		'last_row' => 'Ultimo rigo inserito'
-    /** fine modifica FP */
+        'last_row' => 'Ultimo rigo inserito',
+        'id_doc_ritorno_title' => 'Seleziona il DdT per cessione in c/visione di riferimento',
+        'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento'
     ),
     "select_docforprint.php" =>
     array(array(1 => "D.d.T. di Vendita",
@@ -795,10 +791,12 @@ $strScript = array("admin_client.php" =>
             "Cancella" => ""
         ),
         'to_invoice' => 'da fatturare',
-        'print_invoice'=>'stampa la fattura differita',
-        'print_ddt'=>'stampa il documento di trasporto',
+        'print_invoice' => 'stampa la fattura differita',
+        'print_ddt' => 'stampa il documento di trasporto',
+        'doc_returned' => 'Reso da c/visione',
+        'delete_returned' => 'Elimina il reso',
         'from_suppl' => 'DdT a fornitore',
-        'view_ord'=>'visualizza l\'ordine',
+        'view_ord' => 'visualizza l\'ordine',
         'acc_entry' => 'visualizza la registrazione contabile della fattura differita',
         'no_mail' => 'Non hai memorizzato l\'email fallo ora',
         'mail_alert0' => 'Invio documento con email',

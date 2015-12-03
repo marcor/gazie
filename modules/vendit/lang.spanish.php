@@ -159,8 +159,8 @@ $strScript = array("admin_client.php" =>
             "FND" => "Nota de debito al cliente",
             "VCO" => "Boleta de venta",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
-            "DDX" => "Ricevuto DdT di Reso da C/Visione",
             "DDY" => "D.d.T. per Cessione in Triangolazione",
+            "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Recibido"
         ),
         'tipdoc' => ' documento de venta tipo: ',
@@ -226,6 +226,7 @@ $strScript = array("admin_client.php" =>
         "Comisiones",
         "Quieres modificar un D.d.T. ya facturado!",
         "Este documento ya esta contabilizado",
+        "Per questo documento è obbligatorio selezionare il DdT di cessione in c/visione di riferimento",
         'speban' => "Gastos de recaudaci&oacute;n",
         'speban_title' => 'Gastos de recaudaci&oacute;n no documentados/prorratas',
         'traspo_title' => 'Gastos de transporte no documentados',
@@ -241,14 +242,14 @@ $strScript = array("admin_client.php" =>
         'ragbol' => "Raggr.DDT",
         'ragbol_title' => 'Raggruppamento DDT',
         'order_date' => "Data Ordine",
-        'da_fatturare' => "Da fatturare",
-        'da_fatturare_title' => 'Indica se il DDT deve essere fatturato automaticamente',
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
-        'da_fatturare_value' => array(0 => 'No', 1 => 'Yes'),
-        'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search',
-		'weight' => 'weight', 
-		'discount_alert' => 'discount taken from article\'s informations',
-		'last_row' => 'Last row'
+        'zero_rows' => 'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search',
+        'weight' => 'weight',
+        'discount_alert' => 'discount taken from article\'s informations',
+        'last_row' => 'Last row',
+        'id_doc_ritorno_title' => 'Seleziona il DdT per cessione in c/visione di riferimento',
+        'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento'
+
     ),
     "select_docforprint.php" =>
     array(array(1 => "D.d.T. de venta", 2 => "Factura diferida", 3 => "Factura inmediata que acompa&ntilde;a", 4 => "Factura inmediata simple", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),
@@ -348,9 +349,9 @@ $strScript = array("admin_client.php" =>
         'taxstamp' => 'Taxstamp',
         'virtual_taxstamp' => 'Mode',
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Material', 2 => 'Virtual'),
-		'weight' => 'peso',
-        'zero_rows'=>'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search', 
-		'discount_alert' => 'discount taken from article\'s informations'
+        'weight' => 'peso',
+        'zero_rows' => 'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search',
+        'discount_alert' => 'discount taken from article\'s informations'
     ),
     "report_contract.php" =>
     array('title' => 'Reporte de los contratos concluidos',
@@ -493,10 +494,10 @@ $strScript = array("admin_client.php" =>
         'vat_constrain' => '(forza) IVA al ',
         'taxstamp' => 'Bollo',
         'virtual_taxstamp' => 'Modo',
-        'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'), 
-	    /** ENRICO FEDELE */
-	    'add_article' => 'Añadir un nuevo artículo',
-		'weight' => 'peso'
+        'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'),
+        /** ENRICO FEDELE */
+        'add_article' => 'Añadir un nuevo artículo',
+        'weight' => 'peso'
     ),
     "genera_effett.php" =>
     array('title' => 'Generar los efectos de los documentos tributables',
@@ -790,10 +791,12 @@ $strScript = array("admin_client.php" =>
             "Delete" => ""
         ),
         'to_invoice' => 'invoiceable',
-        'print_invoice'=>'Printing deferred invoice',
-        'print_ddt'=>'Print bill',
+        'print_invoice' => 'Printing deferred invoice',
+        'print_ddt' => 'Print bill',
         'from_suppl' => 'Bill to supplier',
-        'view_ord'=>'order view',
+        'doc_returned' => 'Reso da c/visione',
+        'delete_returned' => 'Elimina il reso',
+        'view_ord' => 'order view',
         'acc_entry' => 'view accounting entry of deferred invoice',
         'no_mail' => 'Email not present',
         'mail_alert0' => 'Invio documento con email',
@@ -876,7 +879,7 @@ $strScript = array("admin_client.php" =>
         ),
         /** ENRICO FEDELE */
         'status_value' => array(0 => 'Chiusa', 1 => 'Aperta'),
-		'total_open' => 'Todal partidas abiertas'
+        'total_open' => 'Todal partidas abiertas'
     ),
     "delete_schedule.php" =>
     array('title' => 'Cancellazione movimenti chiusi dello scadenziario',
