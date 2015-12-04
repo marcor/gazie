@@ -379,7 +379,12 @@ $strScript = array("browse_document.php" =>
         'web_url' => 'Web url<br />(ex: http://site.com/item.html)',
         'modal_ok_insert'=>'Product inserted successfully, click on the X on the upper right corner to exit or...',
         'iterate_invitation'=>'INSERT ANOTHER ITEM IN STOCK!', 
-		'browse_for_file' => 'Browse'
+		'browse_for_file' => 'Browse',
+        'id_anagra' => 'Supplier',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 1 carattere!',
+            'Cambia fornitore'
+        )
     )
 );
 ?>
