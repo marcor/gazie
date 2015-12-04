@@ -42,7 +42,7 @@ if ($form['acqven'] == 0 ) {
 } else {
      $where = " tipdoc like 'A__' ";
 }
-$sqlquery = 'SELECT datemi,clfoco,tiprig,codart,'.$gTables['rigdoc'].'.descri,'.$gTables['rigdoc'].'.unimis,catmer,quanti,prelis,'
+$sqlquery = 'SELECT datemi,'.$gTables['tesdoc'].'.clfoco,tiprig,codart,'.$gTables['rigdoc'].'.descri,'.$gTables['rigdoc'].'.unimis,catmer,quanti,prelis,'
             .$gTables['tesdoc'].'.sconto as scotes, '.$gTables['rigdoc'].'.sconto as scorig,'.
             $gTables['clfoco'].'.codice,'.$gTables['tesdoc'].'. id_tes, ragso1, ragso2 FROM '.$gTables['rigdoc'].' LEFT JOIN '.
             $gTables['tesdoc'].' ON '.$gTables['rigdoc'].'.id_tes = '.$gTables['tesdoc'].
