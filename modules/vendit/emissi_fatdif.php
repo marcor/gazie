@@ -283,35 +283,6 @@ if (isset($_POST['genera']) && $msg == "") {
                 }
             }
         }
-        /*    $periodo = array('ini' => sprintf("%04d-%02d-%02d", $_POST['annini'], $_POST['mesini'], $_POST['gioini']),
-          'fin' => sprintf("%04d-%02d-%02d", $_POST['annfin'], $_POST['mesfin'], $_POST['giofin'])
-          );
-          $data_emissione = sprintf("%04d-%02d-%02d", $_POST['annemi'], $_POST['mesemi'], $_POST['gioemi']);
-          $invoices = getInvoiceableBills($periodo, $sez, $form['clfoco'], $form['changeStatus']);
-
-
-          $protocollo_inizio = 0;
-          foreach ($invoices['yes'] as $kt => $vt) {
-          // rilevamento protocollo iniziale
-          if ($protocollo_inizio == 0) {
-          $protocollo_inizio = $kt;
-          }
-          foreach ($vt['righi'] as $kr => $vr) {
-          if (isset($vr['id'])) {
-          //vado a modificare la testata cambiando il tipo e introducendo protocollo,numero,data fattura
-          $data['tipdoc'] = 'FAD';
-          $data['protoc'] = $kt;
-          $data['numfat'] = $vt['numero'];
-          $data['datfat'] = $data_emissione;
-          // questo e' troppo lento: gaz_dbi_table_update('tesdoc', array('id_tes',$vr['id']),$data);
-          gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET tipdoc = 'FAD', protoc = " . $kt .
-          ", numfat = '" . $vt['numero'] .
-          "', datfat = '" . $data_emissione . "' WHERE id_tes = " . $vr['id'] . ";");
-          }
-          }
-          $protocollo_fine = $kt;
-          } */
-
         //Mando in stampa le fatture generate
         $locazione = "Location: select_docforprint.php?tipdoc=2&seziva=" . $sez . "&proini=" . $invoices['last_protoc'] . "&profin=" . $protoc;
         header($locazione);
@@ -325,7 +296,7 @@ if (isset($_POST['return'])) {
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete_anagra'));
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete'));
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
@@ -404,6 +375,7 @@ if (isset($invoices['excluded'])) {
 if (isset($invoices['data'])) {
     $protoc = $invoices['last_protoc'];
     $numfat = $invoices['last_numfat'];
+    $tot=0.00;
     foreach ($invoices['data'] as $vt) {
         $ctrl_first = true;
         // attraverso l'array delle fatture proposte
