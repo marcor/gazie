@@ -106,6 +106,9 @@ if ($t>4 && $t<=13) {
 } else {
     $msg=$script_transl['night'];
 }
+?>
+
+<?php
 echo '<form method="POST" name="myform">
 		<input type="hidden" value="'.$form['hidden_req'].'" name="hidden_req" />
 		<div id="admin_main" >
@@ -133,8 +136,49 @@ echo '				</td>
 				</tr>
 			</table>
 		</div>';
+	echo '<div class="container custom-tab">';	
+	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' click desc',0,10);
+	if ( gaz_dbi_num_rows($result)>0 ) {
+		while ($r = gaz_dbi_fetch_array($result)) {
+			echo '<a href="'.$r["link"].'">'.$r["link"].'</a><br><br>';
+			
+		}
+	}
+	echo '</div>';
+	
+?>
 
-echo "<div id='admin_footer'>";
+<!--<div class="container custom-tab">
+    <div class="row">
+        <div class="col-md-10">
+		
+		<ul class="nav dash-tabs">
+			<li>
+				<a href="#user" title="news">
+				<span class="rounded">
+                    <i class="glyphicon glyphicon-euro"></i>
+                </span></a>
+            </li>
+            <li>
+                <a href="#user" title="Users">
+                <span class="rounded">
+                    <i class="glyphicon glyphicon-star"></i>
+                </span></a>
+            </li>
+            <li>
+                <a href="#widget" title="Widgets">
+                <span class="rounded">
+                    <i class="glyphicon glyphicon-home"></i>
+                </span></a>
+            </li>
+        </ul>
+		
+        </div>     
+    </div>
+</div>-->
+
+<?php
+/*echo "<div align='center' id='admin_footer'>";
 echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) ".$script_transl['business']." ".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://http://www.devincentiis.it\"> http://www.devincentiis.it</a></div>\n";
 echo '<div><table border="0" class="Tmiddle">';
 echo "<tr align=\"center\"><td>\n";
@@ -145,17 +189,9 @@ foreach ($script_transl['strBottom'] as $value){
         echo "<img src=\"../../library/images/".$value['img']."\" border=\"0\" ></a>\n";
 }
 echo '</td></tr></table></div>';
-echo '</form>';
-
-//
-// Se esiste, viene incluso il file "help/italian/docume_admin_help.php",
-// o l'equivalente di un altro linguaggio.
-//
 if (file_exists("help/".$admin_aziend['lang']."/admin_help.php")) {
     include("help/".$admin_aziend['lang']."/admin_help.php");
-}
-echo "</div>";
-echo "</div><!-- Chiusura main container -->"
+}*/
 ?>
 </body>
 </html>
