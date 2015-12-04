@@ -55,17 +55,9 @@ if (!empty($admin_aziend['skin']) && file_exists( "../../library/style/skins/".$
             <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
 
 			<link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-<!--			<link href="../../js/jquery.ui/jquery-ui.theme.css" rel="stylesheet">-->
 			<link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-            <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-			<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-			<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-			<![endif]-->            
 			<script src="../../library/bootstrap/js/bootstrap.min.js"></script>
 			<script src="../../js/custom/gz-library.js"></script>
-			<!--<link rel="stylesheet" href="../../js/jquery/toast/resources/css/jquery.toastmessage.css" />-->
             <script src="../../js/tinymce/tinymce.min.js"></script>
             <script src="../../js/custom/tinymce.js"></script>
 			<link href="../../library/style/<?php echo $style;?>" rel="stylesheet" type="text/css" />
