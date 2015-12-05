@@ -140,7 +140,7 @@ echo '				</td>
 		echo '<div class="container custom-tab">';	
 		
 		
-	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' click desc,last_use desc',0,100);
+	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' click desc,last_use desc',0,8);
 	if ( gaz_dbi_num_rows($result)>0 ) {
 		while ($r = gaz_dbi_fetch_array($result)) {
 			echo '<div class="row">';
