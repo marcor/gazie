@@ -48,21 +48,6 @@ if (!empty($admin_aziend['skin']) && file_exists( "../../library/style/skins/".$
     $skin = $admin_aziend['skin'];
 } 
 
-//preparo il menu usage
-$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" and link="'.$_SERVER['REQUEST_URI'].'" ',' adminid',0,1);
-$value = array();
-
-if ( gaz_dbi_num_rows($result)==0 ) {
-	$value['adminid'] = $admin_aziend['Login'];
-    $value['link'] = $_SERVER['REQUEST_URI'];
-	$value['click'] = 1;
-	$value['last_use'] = date('Y-m-d H:i:s');
-	gaz_dbi_table_insert('menu_usage',$value);
-} else {
-	$usage = gaz_dbi_fetch_array($result);
-	if ( strpos($usage['link'],'modules/root/admin.php')==0 )
-		gaz_dbi_put_query($gTables['menu_usage'], ' link="'.$_SERVER['REQUEST_URI'].'"', 'click', $usage['click']+1 );
-}
 ?>
 			
 			<link rel="shortcut icon" href="../../library/images/favicon.ico">			
@@ -92,9 +77,62 @@ if ( gaz_dbi_num_rows($result)==0 ) {
 if (file_exists("../../library/style/".strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])).'.css')) {
     echo '			<link href="../../library/style/'.strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])).'.css" rel="stylesheet" type="text/css" />';
 }
-?>
 
-<?php
+function pesca_nome ( $rlink ) 
+{
+	Global $gTables;
+	$clink = explode ( '/',$rlink );
+	$nome1 = gaz_dbi_dyn_query("*", $gTables['module'], ' link="'.end($clink).'" ',' id ',0,999);
+	if ( gaz_dbi_num_rows($nome1)>0 ) {		
+				while ( $n1 = gaz_dbi_fetch_array($nome1) ) {		
+				if ( $n1['link']==end($clink)) {
+					include "../../modules/".$clink[1]."/menu.italian.php";
+					return $transl[$clink[1]]['title'];
+				}
+				}
+			} else {		
+				$nome2 = gaz_dbi_dyn_query("*", $gTables['menu_module'], ' link="'.end($clink).'" ',' id ',0,999);
+				if ( gaz_dbi_num_rows($nome2)>0 ) {		
+					while ( $n2 = gaz_dbi_fetch_array($nome2) ) {
+					if ( $n2['link']==end($clink)) {
+						include "../../modules/".$clink[1]."/menu.italian.php";
+						return $transl[$clink[1]]['m2'][$n2['translate_key']][0];
+					}
+					}
+				} else {
+					$nome3 = gaz_dbi_dyn_query("*", $gTables['menu_script'], ' link="'.end($clink).'" ',' id ',0,999);
+					if ( gaz_dbi_num_rows($nome3)>0 ) {		
+						while ( $n3 = gaz_dbi_fetch_array($nome3) ) {
+						if ( $n3['link']==end($clink)) {
+							include "../../modules/".$clink[1]."/menu.italian.php";
+							return $transl[$clink[1]]['m3'][$n3['translate_key']][0];
+						}
+						}
+					}
+				}
+			}
+}
+
+//preparo il menu usage
+$exp_uri = explode("/", $_SERVER['REQUEST_URI']);
+$mod_uri = "/".$exp_uri[count($exp_uri)-2]."/".$exp_uri[count($exp_uri)-1];
+$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" and link="'.$mod_uri.'" ',' adminid',0,1);
+$value = array();
+if ( gaz_dbi_num_rows($result)==0 ) {
+	if ( strpos($mod_uri,'root/admin.php')==0 ) {
+		$value['name'] = pesca_nome( $mod_uri );
+		$value['adminid'] = $admin_aziend['Login'];
+		$value['link'] = $mod_uri;
+		$value['click'] = 1;
+		$value['last_use'] = date('Y-m-d H:i:s');
+		gaz_dbi_table_insert('menu_usage',$value);
+	}
+} else {
+	$usage = gaz_dbi_fetch_array($result);
+	if ( strpos($usage['link'],'root/admin.php')==0 )
+		gaz_dbi_put_query($gTables['menu_usage'], ' link="'.$mod_uri.'"', 'click', $usage['click']+1 );
+}
+
 
 function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray='') {
   global $module,$admin_aziend,$radix,$scriptname;

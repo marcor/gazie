@@ -136,49 +136,26 @@ echo '				</td>
 				</tr>
 			</table>
 		</div>';
-	echo '<div class="container custom-tab">';	
-	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' click desc',0,10);
+
+		echo '<div class="container custom-tab">';	
+		
+		
+	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' click desc,last_use desc',0,100);
 	if ( gaz_dbi_num_rows($result)>0 ) {
 		while ($r = gaz_dbi_fetch_array($result)) {
-			echo '<a href="'.$r["link"].'">'.$r["link"].'</a><br><br>';
-			
+			echo '<div class="row">';
+			echo '<div class="col-md-20">';
+			echo '<a href="../../modules'.$r["link"].'" type="button" class="btn btn-default">';
+			echo '<span width="100%"">'.$r['click'].' - '.$r["name"].'</span>';
+			echo '</a>';
+			echo '</div>';
+			echo '</div>';
 		}
 	}
+
 	echo '</div>';
-	
-?>
 
-<!--<div class="container custom-tab">
-    <div class="row">
-        <div class="col-md-10">
-		
-		<ul class="nav dash-tabs">
-			<li>
-				<a href="#user" title="news">
-				<span class="rounded">
-                    <i class="glyphicon glyphicon-euro"></i>
-                </span></a>
-            </li>
-            <li>
-                <a href="#user" title="Users">
-                <span class="rounded">
-                    <i class="glyphicon glyphicon-star"></i>
-                </span></a>
-            </li>
-            <li>
-                <a href="#widget" title="Widgets">
-                <span class="rounded">
-                    <i class="glyphicon glyphicon-home"></i>
-                </span></a>
-            </li>
-        </ul>
-		
-        </div>     
-    </div>
-</div>-->
-
-<?php
-/*echo "<div align='center' id='admin_footer'>";
+	echo "<div align='center' id='admin_footer'>";
 echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) ".$script_transl['business']." ".$script_transl['proj']."<a  target=\"_new\" title=\"".$script_transl['auth']."\" href=\"http://http://www.devincentiis.it\"> http://www.devincentiis.it</a></div>\n";
 echo '<div><table border="0" class="Tmiddle">';
 echo "<tr align=\"center\"><td>\n";
@@ -191,7 +168,7 @@ foreach ($script_transl['strBottom'] as $value){
 echo '</td></tr></table></div>';
 if (file_exists("help/".$admin_aziend['lang']."/admin_help.php")) {
     include("help/".$admin_aziend['lang']."/admin_help.php");
-}*/
+}
 ?>
 </div><!-- chiude div container role main --></body>
 </html>

@@ -50,9 +50,6 @@ function submenu($array) {
 	if ($numsub > 0) echo '</ul>';
 }
 
-
-
-
 //preparo la query per la seconda barra 
 $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
 $posizione = array_pop( $posizione );
