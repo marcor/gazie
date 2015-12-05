@@ -275,6 +275,6 @@ echo "</table>\n";
 echo "</form>\n";
 
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>
 

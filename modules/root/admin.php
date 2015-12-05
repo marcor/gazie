@@ -193,5 +193,5 @@ if (file_exists("help/".$admin_aziend['lang']."/admin_help.php")) {
     include("help/".$admin_aziend['lang']."/admin_help.php");
 }*/
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

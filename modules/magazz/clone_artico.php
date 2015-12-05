@@ -45,7 +45,7 @@ if (isset($_GET['codice']) and !isset($_POST['back'])) {
                     echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\">\n";
                     echo "<div>Codice(".$new_codice.") esistente usare l'apposita procedura se lo si vuole modificare ! \n";
                     echo "<input type=\"submit\" value=\"Torna indietro\" name=\"back\"></div>\n";
-                    echo "</form>\n</body>\n</html>\n";
+                    echo "</form>\n</div><!-- chiude div container role main --></body>\n</html>\n";
     } else { // se non è mai stato duplicato posso farlo
            $originalArtico = gaz_dbi_get_row($gTables['artico'], 'codice', substr($_GET['codice'],0,15)); //prelevo l'originale
            $originalArtico['codice']=$new_codice;

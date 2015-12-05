@@ -296,6 +296,6 @@ echo "\n";
 echo "\n";
 echo "</form>\n";
 //
-echo "</body>\n";
+echo "</div><!-- chiude div container role main --></body>\n";
 echo "</html>\n";
 ?>

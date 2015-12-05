@@ -212,5 +212,5 @@ for ($i=1; $i<=6; $i++) {
 ?>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

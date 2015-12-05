@@ -845,7 +845,6 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td><td colspan=\
 /** ENRICO FEDELE */
 /* Cominciamo la transizione verso le tabelle bootstrap */
 echo '</table>
-	  <br />
 	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 		  <thead>
 			<tr>
@@ -865,6 +864,7 @@ echo '</table>
 /** ENRICO FEDELE */
 
 $castel=array();
+$last_row = array();
 foreach ($form['righi'] as $key => $value) {
     //calcolo il totale del peso in kg
     switch(strtolower($value['unimis']))
@@ -902,104 +902,109 @@ foreach ($form['righi'] as $key => $value) {
         echo "<input type=\"hidden\" value=\"{$value['pesosp']}\" name=\"righi[{$key}][pesosp]\">\n";
         //stampo i righi in modo diverso a secondo del tipo
         switch($value['tiprig']) {
-        case "0":
-        echo "<tr>";
-        /*if ( file_exists ( "../../data/files/fotoart/".$value["codart"].".gif" ) ) {
-			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$value['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$value["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";		
-		} else {
-			$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$value['annota']}] body=[<center><img src='../root/view.php?table=artico&value=".$value['codart']."'>] fade=[on] fadespeed=[0.03] \"";
-		}*/
-        /*if ($value['pesosp'] != 0){
-            $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[quantit&agrave; &divide; peso specifico = ".gaz_format_number($value['quanti'] /  $value['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
-        } else {
-            $boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso specifico = 0]  fade=[on] fadespeed=[0.03] \"";
-        }
-				<input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$value['codart'].'" />*/
-		/** ENRICO FEDELE */
-        echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
-				<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
-					<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
-				</button>
-			  </td>';
-        //echo "<td $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
-        
-		/** ENRICO FEDELE */
-		/* Tooltip e glyphicon */
-		echo '<td>
-				<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$value['annota'].'" type="text" name="righi['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
-			  </td>
-			  <td>
-			  	<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">
-					<i class="glyphicon glyphicon-arrow-up"></i>
-				</button>
-			  </td>';
-		/* Peso */
-		$peso = 0;
-		if($value['pesosp']<>0) {
-			$peso = gaz_format_number($value['quanti']/$value['pesosp']);	
-		}
-				/*<input class="myTooltip" data-type="product" data-id="firefox" data-title=""  />*/
-		echo '<td>
-				<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="righi['.$key.'][unimis]" value="'.$value['unimis'].'" maxlength="3" size="1" />
-			  </td>
-			  <td>
-			  	<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="righi['.$key.'][quanti]" value="'.$value['quanti'].'" align="right" maxlength="11" size="4" onchange="this.form.submit();" />
-			  </td>';
-		/** ENRICO FEDELE */
-        echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
-        echo "<td><input type=\"text\" name=\"righi[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
-        echo "<td align=\"right\">".gaz_format_number($imprig)."</td>\n";
-        echo "<td>{$value['pervat']}%</td>\n";
-        echo "<td>".$value['codric']."</td>\n";
-        break;
-        case "1":
-        echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" /></td>\n";
-        echo "	<td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
-				<td>
-					<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
-						<i class=\"glyphicon glyphicon-arrow-up\"></i>
-					</button>
-				</td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
-        echo "<td></td>\n";
-        echo "<td align=\"right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
-        echo "<td>{$value['pervat']}%</td>\n";
-        echo "<td>".$value['codric']."</td>\n";
-        break;
-        case "2":
-        echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" /></td>\n";
-        echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
-				<td>
-					<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
-						<i class=\"glyphicon glyphicon-arrow-up\"></i>
-					</button>
-				</td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][prelis]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
-        echo "<td></td>\n";
-        echo "<td></td>\n";
-        echo "<td></td>\n";
-        break;
-        case "3":
-        echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" /></td>\n";
-        echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td>
-				<td>
-					<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
-						<i class=\"glyphicon glyphicon-arrow-up\"></i>
-					</button>
-				</td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
-        echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
-        echo "<td></td>\n";
-        echo "<td align=\"right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>\n";
-        echo "<td></td>\n";
-        echo "<td></td>\n";
-        break;
+			case "0":
+				echo '<tr>';
+				/*if ( file_exists ( "../../data/files/fotoart/".$value["codart"].".gif" ) ) {
+					$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$value['annota']."] body=[<center><img width='50%' height='50%' src='../../data/files/fotoart/".$value["codart"].".gif'>] fade=[on] fadespeed=[0.03] \"";		
+				} else {
+					$boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$value['annota']}] body=[<center><img src='../root/view.php?table=artico&value=".$value['codart']."'>] fade=[on] fadespeed=[0.03] \"";
+				}*/
+				/*if ($value['pesosp'] != 0){
+					$boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[quantit&agrave; &divide; peso specifico = ".gaz_format_number($value['quanti'] /  $value['pesosp'])."]  fade=[on] fadespeed=[0.03] \"";
+				} else {
+					$boxpeso = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[peso specifico = 0]  fade=[on] fadespeed=[0.03] \"";
+				}
+						<input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$value['codart'].'" />*/
+				/** ENRICO FEDELE */
+				echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
+						<button name="upd_row['.$key.']" class="btn btn-xs btn-success btn-block" type="submit">
+							<i class="glyphicon glyphicon-refresh"></i>&nbsp;'.$value['codart'].'
+						</button>
+					  </td>';
+				//echo "<td $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
+				
+				/** ENRICO FEDELE */
+				/* Tooltip e glyphicon */
+				echo '<td>
+						<input class="gazie-tooltip" data-type="product-thumb" data-id="'.$value['codart'].'" data-title="'.$value['annota'].'" type="text" name="righi['.$key.'][descri]" value="'.$descrizione.'" maxlength="50" size="50" />
+					  </td>
+					  <td>
+						<button type="image" name="upper_row['.$key.']" class="btn btn-default btn-sm" title="'.$script_transl['3'].'!">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</button>
+					  </td>';
+				/* Peso */
+				$peso = 0;
+				if($value['pesosp']<>0) {
+					$peso = gaz_format_number($value['quanti']/$value['pesosp']);	
+				}
+						/*<input class="myTooltip" data-type="product" data-id="firefox" data-title=""  />*/
+				echo '<td>
+						<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="righi['.$key.'][unimis]" value="'.$value['unimis'].'" maxlength="3" size="1" />
+					  </td>
+					  <td>
+						<input class="gazie-tooltip" data-type="weight" data-id="'.$peso.'" data-title="'.$script_transl['weight'].'" type="text" name="righi['.$key.'][quanti]" value="'.$value['quanti'].'" align="right" maxlength="11" size="4" onchange="this.form.submit();" />
+					  </td>';
+				/** ENRICO FEDELE */
+				echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
+				echo "<td><input type=\"text\" name=\"righi[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
+				echo "<td class=\"text-right\">".gaz_format_number($imprig)."</td>\n";
+				echo "<td>{$value['pervat']}%</td>\n";
+				echo "<td>".$value['codric']."</td>\n";
+			
+				$last_row[] = array_unshift($last_row, '' . $value['codart'] . ', ' . $value['descri'] . ', ' . $value['quanti'] . $value['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($value['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($value['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $value['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $value['codric']);
+			break;
+			case "1":
+				echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" /></td>\n";
+				echo "	<td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
+						<td>
+							<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+								<i class=\"glyphicon glyphicon-arrow-up\"></i>
+							</button>
+						</td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
+				echo "<td></td>\n";
+				echo "<td class=\"text-right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
+				echo "<td>{$value['pervat']}%</td>\n";
+				echo "<td>".$value['codric']."</td>\n";
+				$last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+			break;
+			case "2":
+				echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" /></td>\n";
+				echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
+						<td>
+							<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+								<i class=\"glyphicon glyphicon-arrow-up\"></i>
+							</button>
+						</td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][prelis]\" value=\"\" /></td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
+				echo "<td></td>\n";
+				echo "<td></td>\n";
+				echo "<td></td>\n";
+				$last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+			break;
+			case "3":
+				echo "<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" /></td>\n";
+				echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td>
+						<td>
+							<button type=\"image\" name=\"upper_row[".$key."]\" class=\"btn btn-default btn-sm\" title=\"".$script_transl['3']."!\">
+								<i class=\"glyphicon glyphicon-arrow-up\"></i>
+							</button>
+						</td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
+				echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
+				echo "<td></td>\n";
+				echo "<td class=\"text-right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>\n";
+				echo "<td></td>\n";
+				echo "<td></td>\n";
+				$last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+			break;
         }
 		/*
         echo "<TD align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n";*/
@@ -1010,47 +1015,78 @@ foreach ($form['righi'] as $key => $value) {
 			</td>
 		  </tr>';
 	/** ENRICO FEDELE */
-    }
+}
 	
-if(count($form['righi'])==0) {
+/** ENRICO FEDELE */
+/* Nuovo alert per scontistica, da visualizzare rigorosamente dopo l'ultima riga inserita */
+if (count($form['righi']) > 0) {
+	
+	require("../../modules/magazz/lib.function.php");
+    $upd_mm = new magazzForm;
+
+    if (isset($_POST['in_submit']) && count($form['righi']) > 5) {
+        /* for($i=0;$i<3;$i++) {	//	Predisposizione per mostrare gli ultimi n articoli inseriti (in ordine inverso ovviamente)
+          $msgtoast .= $last_row[$i].'<br />';
+          } */
+        //$msgtoast .= $last_row[0];
+        $msgtoast = $upd_mm->toast($script_transl['last_row'] . ': ' . $last_row[0], 'alert-last-row', 'alert-success');  //lo mostriamo
+    }
+} else {
     echo '<tr id="alert-zerorows">
 			<td colspan="12"class="alert alert-danger">'.$script_transl['zero_rows'].'</td>
 		  </tr>';
 }
 echo '	</tbody>
 	  </table>';
-echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>\n";
-echo "<table class=\"Tlarge\">\n";
-echo "<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\">\n";
-echo "<input type=\"hidden\" value=\"{$form['numrat']}\" name=\"numrat\">\n";
-echo "<input type=\"hidden\" value=\"{$form['spevar']}\" name=\"spevar\">\n";
-echo "<input type=\"hidden\" value=\"{$form['cauven']}\" name=\"cauven\">\n";
-echo "<input type=\"hidden\" value=\"{$form['caucon']}\" name=\"caucon\">\n";
-echo "<input type=\"hidden\" value=\"{$form['caumag']}\" name=\"caumag\">\n";
-echo "<input type=\"hidden\" value=\"{$form['id_agente']}\" name=\"id_agente\">\n";
-echo "<input type=\"hidden\" value=\"{$form['id_pro']}\" name=\"id_pro\">\n";
-//inizio piede
-  echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[27]</td>\n";
-  echo "<td colspan=\"2\" class=\"FacetDataTD\"><input type=\"text\" name=\"spediz\" value=\"".$form["spediz"]."\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
+echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
+		<table class=\"Tlarge\">
+			<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\" />
+			<input type=\"hidden\" value=\"{$form['numrat']}\" name=\"numrat\" />
+			<input type=\"hidden\" value=\"{$form['spevar']}\" name=\"spevar\" />
+			<input type=\"hidden\" value=\"{$form['cauven']}\" name=\"cauven\" />
+			<input type=\"hidden\" value=\"{$form['caucon']}\" name=\"caucon\" />
+			<input type=\"hidden\" value=\"{$form['caumag']}\" name=\"caumag\" />
+			<input type=\"hidden\" value=\"{$form['id_agente']}\" name=\"id_agente\" />
+			<input type=\"hidden\" value=\"{$form['id_pro']}\" name=\"id_pro\" />
+			<tr>
+				<td class=\"FacetFieldCaptionTD\">$script_transl[27]</td>
+				<td class=\"FacetDataTD\">
+					<input type=\"text\" name=\"spediz\" value=\"".$form["spediz"]."\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
   $select_spediz = new SelectValue("spedizione");
   $select_spediz -> output('spediz', 'spediz');
-  echo "</td><td class=\"FacetFieldCaptionTD\">$script_transl[29]</td>\n";
-  echo "<td colspan=\"2\" class=\"FacetDataTD\"><input type=\"text\" name=\"portos\" value=\"".$form["portos"]."\" maxlength=\"50\" size=\"25\" class=\"FacetInput\">\n";
+  echo "		</td>
+  				<td class=\"FacetFieldCaptionTD\">$script_transl[29]</td>
+				<td colspan=\"2\" class=\"FacetDataTD\">
+					<input type=\"text\" name=\"portos\" value=\"".$form["portos"]."\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
   $select_spediz = new SelectValue("portoresa");
   $select_spediz -> output('portos', 'portos');
-  echo "<td class=\"FacetFieldCaptionTD\">".$script_transl[51]."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-  echo "<select name=\"caumag\" class=\"FacetSelect\">\n";
+  echo "		</td>
+				<td class=\"FacetFieldCaptionTD\">".$script_transl[51]."</td>
+  				<td colspan=\"2\" class=\"FacetDataTD\">
+					<select name=\"caumag\" class=\"FacetSelect\">\n";
   $result = gaz_dbi_dyn_query("*", $gTables['caumag']," clifor = 1 AND operat = ".$TipoDocumento[$form['tipdoc']],"codice asc, descri asc");
   while ($row = gaz_dbi_fetch_array($result)) {
     $selected="";
     if($form["caumag"] == $row['codice']) {
-       $selected = " selected ";
+       $selected = ' selected=""';
     }
-    echo "<option value=\"".$row['codice']."\"".$selected.">".$row['codice']."-".substr($row['descri'],0,20)."</option>\n";
+    echo "				<option value=\"".$row['codice']."\"".$selected.">".$row['codice']."-".substr($row['descri'],0,20)."</option>\n";
   }
-  echo "</select></tr>\n";
-//fine piede
-echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"".$form["sconto"]."\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[35]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] ".$admin_aziend['symbol']."</td>\n";
+  echo "			</select>
+  				</td>
+			</tr>
+			<tr>
+				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[32]</td>
+				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[33]</td>
+				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[34]</td>
+				<td class=\"FacetFieldCaptionTD text-right\">
+					%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"".$form["sconto"]."\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" />
+				</td>
+				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[32]</td>
+				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[19]</td>
+				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[35]</td>
+				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[36] ".$admin_aziend['symbol']."</td>
+			 </tr>\n";
 foreach ($castel as $key => $value) {
       $result = gaz_dbi_get_row($gTables['aliiva'],"codice",$key);
       $impcast = CalcolaImportoRigo(1, $value, $form['sconto']);
@@ -1059,22 +1095,32 @@ foreach ($castel as $key => $value) {
       $totimpfat += $impcast;
       $totivafat += $ivacast;
       if ($next_row > 0) {
-        echo "<tr><td align=\"right\">".number_format ($impcast,2, '.', '')."</td><td align=\"right\">".$result['descri']." ".number_format ($ivacast,2, '.', '')."</td>\n";
+        echo "<tr>
+				<td class=\"text-right\">".number_format ($impcast,2, '.', '')."</td>
+				<td class=\"text-right\">".$result['descri']." ".number_format ($ivacast,2, '.', '')."</td>
+				<td colspan=\"6\"></td>
+			  </tr>\n";
       }
 }
 
 if ($next_row > 0) {
-        echo "<td align=\"right\">".number_format ($totimpmer,2, '.', '')."</td>
-               <td align=\"right\">".gaz_format_number (($totimpfat-$totimpmer-$form['traspo']-$form['spevar']),2, '.', '')."</td>
-               <td align=\"right\">".number_format ($totimpfat,2, '.', '')."</td>
-               <td align=\"right\">".number_format ($totivafat,2, '.', '')."</td>
-               <td align=\"right\">".$quatot."</td>
-               <td align=\"right\">".number_format (($totimpfat+$totivafat),2, '.', '')."</td>\n";
-        if ($toDo == 'update') {
-           echo '<td class="FacetFieldCaptionTD" align="right"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !"></td></tr>';
+        echo "<tr>
+				<td colspan=\"2\"></td>
+				<td class=\"text-right\">".number_format ($totimpmer,2, '.', '')."</td>
+				<td class=\"text-right\">".gaz_format_number (($totimpfat-$totimpmer-$form['traspo']-$form['spevar']),2, '.', '')."</td>
+				<td class=\"text-right\">".number_format ($totimpfat,2, '.', '')."</td>
+				<td class=\"text-right\">".number_format ($totivafat,2, '.', '')."</td>
+				<td class=\"text-right\">".$quatot."</td>
+				<td class=\"text-right\">".number_format (($totimpfat+$totivafat),2, '.', '')."</td>
+			  </tr>
+			  <tr>\n";
+        
+		if ($toDo == 'update') {
+           echo '<td colspan="8" class="text-right alert alert-success"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !" /></td></tr>';
         } else {
-           echo '<td class="FacetFieldCaptionTD" align="right"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !"></td></tr>';
+           echo '<td colspan="8" class="text-right alert alert-success"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !" /></td></tr>';
         }
+		echo "</tr>";
 }
 echo "</table><br />";
 ?>
@@ -1113,5 +1159,5 @@ $(function() {
 });
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

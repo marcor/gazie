@@ -352,5 +352,5 @@ if (count($rs['all']) > 0) {
 }
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

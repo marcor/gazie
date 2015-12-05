@@ -134,5 +134,5 @@ function http_get($url)
    }
 }
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

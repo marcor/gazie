@@ -211,7 +211,7 @@ if (isset($_POST['Submit'])) { // conferma
 }
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>
 
 

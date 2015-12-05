@@ -326,5 +326,5 @@ if (isset($_POST['anteprima']) and $message == "") {
 }
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

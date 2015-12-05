@@ -194,5 +194,5 @@ foreach ($castelletto_articoli as $key=>$value) {
 }
 echo "</table>";
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

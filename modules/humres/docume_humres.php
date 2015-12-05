@@ -31,5 +31,5 @@ require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
 </table>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

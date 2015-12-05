@@ -88,7 +88,7 @@ if ($form['do_backup'] != 1)
     echo "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\"></td>
               <td class=\"FacetDataTD\" align=\"right\"><input type=\"submit\" id=\"preventDuplicate\" onClick=\"chkSubmit();\" name=\"submit\" value=\"".$script_transl['submit']."\"></td></tr>";
     echo "</form>";
-    echo "</body>";
+    echo "</div><!-- chiude div container role main --></body>";
     echo "</html>";
 } else {
     if (isset($_POST['return'])) {
@@ -274,5 +274,5 @@ function createTable($table)
 ?>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

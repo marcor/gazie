@@ -356,7 +356,8 @@ $strScript = array("admin_client.php" =>
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale'),
         'weight' => 'peso',
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
-        'discount_alert' => 'sconto da anagrafe articoli'
+        'discount_alert' => 'sconto da anagrafe articoli',
+        'last_row' => 'Ultimo rigo inserito'
     ),
     "report_contract.php" =>
     array('title' => 'Elenco dei contratti stipulati',

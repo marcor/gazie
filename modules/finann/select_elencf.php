@@ -643,5 +643,5 @@ if (isset($_GET['view'])) {
 }
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

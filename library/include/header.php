@@ -22,6 +22,7 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
+
 if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
     $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
 }
@@ -240,7 +241,7 @@ function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray=
 			}
 		 }
 		 </script>
-		 <div class="container" rome="main">';
+		 <div class="container" role="main">';
   return ($strCommon+$translated_script);
 }
 ?>

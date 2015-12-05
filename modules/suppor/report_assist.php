@@ -202,5 +202,5 @@ $passi = array(20, 50, 100, 10000 );
 </tr>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

@@ -63,7 +63,7 @@ foreach($result as $r) {
 }
 ?>
 </table>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>
 
 

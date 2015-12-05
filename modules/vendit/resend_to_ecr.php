@@ -118,6 +118,6 @@ echo "<tr><td colspan=\"2\" align=\"center\">".$script_transl['total'].' '.$admi
 echo "<tr><td align=\"left\"> <input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\" /></td><td align=\"right\"><input  style=\"color:red;\" type=\"submit\" name=\"ins\" value=\"".$script_transl['submit']."\" /></td></tr>\n";
 echo "</table>\n";
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </form>
 </html>

@@ -565,7 +565,7 @@ if ($modal_ok_insert === true) {
 /** ENRICO FEDELE */
 /* SOlo se non sono in finestra modale */
 if ($modal === false) {
-   echo '	</body>
+   echo '	</div><!-- chiude div container role main --></body>
 		  </html>';
 } else {
    ?>

@@ -344,5 +344,5 @@ if (count($form['rows']) > 0) {
 echo "</table>\n";
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

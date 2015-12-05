@@ -120,5 +120,5 @@ if (sizeof($m) > 0) {
 }
 echo "</table></form>";
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

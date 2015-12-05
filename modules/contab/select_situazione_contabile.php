@@ -350,5 +350,5 @@ if (isset($_POST['preview']) and $msg == '') {
    echo "</table>";
 }
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

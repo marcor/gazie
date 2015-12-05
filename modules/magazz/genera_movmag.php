@@ -204,5 +204,5 @@ if (isset($_GET['anteprima']) and $msg == "") {
 }
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

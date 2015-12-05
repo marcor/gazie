@@ -169,5 +169,5 @@ echo '<input name="Submit" title="Accetta tutto e modifica" type="submit" value=
 </tr>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

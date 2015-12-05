@@ -44,5 +44,5 @@ Non esiteremo a recepire ed evidenziare rapidamente il contributo sul sito del p
 </td></tr></table>\n";
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

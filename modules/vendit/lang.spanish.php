@@ -351,7 +351,8 @@ $strScript = array("admin_client.php" =>
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Material', 2 => 'Virtual'),
         'weight' => 'peso',
         'zero_rows' => 'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search',
-        'discount_alert' => 'discount taken from article\'s informations'
+        'discount_alert' => 'discount taken from article\'s informations',
+        'last_row' => 'Last row'
     ),
     "report_contract.php" =>
     array('title' => 'Reporte de los contratos concluidos',

@@ -110,5 +110,5 @@ $cliente = $anagrafica->getPartner($form['clfoco']);
 </tr>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

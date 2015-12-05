@@ -74,5 +74,5 @@ $result = gaz_dbi_dyn_query('*',$gTables['company_config'], "var=\"ruburl\"", $o
 	}
 	?>	
 	</table>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

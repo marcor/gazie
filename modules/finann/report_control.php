@@ -34,5 +34,5 @@ $script_transl=HeadMain();
 Queste routine eseguono un controllo formale sugli archivi.
 </td></tr>
 </table>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

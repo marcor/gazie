@@ -372,5 +372,5 @@ if (isset($_POST['preview']) and $msg=='') {
 }
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

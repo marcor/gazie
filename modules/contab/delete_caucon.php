@@ -77,5 +77,5 @@ echo ' <input type="submit" accesskey="d" name="Delete" value="'.$script_transl[
 </tr>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

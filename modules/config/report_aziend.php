@@ -75,5 +75,5 @@ while ($r = gaz_dbi_fetch_array($rs)) {
 ?>
 </form>
 </table>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

@@ -280,5 +280,5 @@ if ($form['partner']>100000000) { // partner selezionato
    echo "</table></form>";
 }
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

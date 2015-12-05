@@ -39,5 +39,5 @@ if (file_exists("help/".$admin_aziend['lang']."/docume_magazz_help.php")) {
 ?>
 </div>
 </table>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

@@ -33,5 +33,5 @@ foreach ($script_transl[$str] as $v){
     echo "<div class=\"FacetFormHeaderFont\" style=\"color:red\">".$v."</div>";
 }
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

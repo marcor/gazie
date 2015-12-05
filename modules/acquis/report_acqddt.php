@@ -96,5 +96,5 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
 			</tbody>
 		</table>
         </div>
-	</body>
+	</div><!-- chiude div container role main --></body>
 </html>

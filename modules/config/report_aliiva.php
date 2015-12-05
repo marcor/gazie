@@ -54,5 +54,5 @@ while ($a_row = gaz_dbi_fetch_array($result))
     }
 ?>
 </table>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

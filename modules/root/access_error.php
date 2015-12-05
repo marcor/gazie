@@ -38,5 +38,5 @@ echo '<input name="logout" type="submit" value=" Logout ">';
 echo '</div>';
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

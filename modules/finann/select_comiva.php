@@ -370,5 +370,5 @@ print "<tr><td class=\"FacetDataTD\"> CD6 </td><td class=\"FacetDataTD\">".$scri
 </tr>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

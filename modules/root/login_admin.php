@@ -249,5 +249,5 @@ ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Java
             </div>  
         </div>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

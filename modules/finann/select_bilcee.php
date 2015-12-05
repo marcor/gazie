@@ -1865,5 +1865,5 @@ if (isset($_GET['visualizza']) and $message == "")
   }
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

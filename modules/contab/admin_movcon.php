@@ -1480,5 +1480,5 @@ if ($toDo == 'insert') {
 // FINE creazione form dialog-schedule
                 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

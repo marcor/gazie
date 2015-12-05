@@ -477,5 +477,5 @@ if (isset($_POST['preview'])) {
 }
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

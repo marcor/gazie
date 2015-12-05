@@ -946,7 +946,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       $next_row++;
    }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
-   $form['tipdoc'] = $_GET['tipdoc'];
+   if(!isset($_GET['tipdoc'])) {
+	   $form['tipdoc'] = "VPR";
+   } else {
+   		$form['tipdoc'] = $_GET['tipdoc'];
+   }
    $form['id_tes'] = "";
    $form['gioemi'] = date("d");
    $form['mesemi'] = date("m");
@@ -1332,6 +1336,8 @@ $totimpfat = 0.00;
 $castle = array();
 $rit = 0;
 $carry = 0;
+
+$last_row = array();
 foreach ($form['rows'] as $k => $v) {
    //creo il castelletto IVA
    $imprig = 0;
@@ -1429,6 +1435,8 @@ foreach ($form['rows'] as $k => $v) {
          echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
          echo "<td class=\"text-right\">" . $v['pervat'] . "%</td>\n";
          echo "<td class=\"text-right\">" . $v['codric'] . "</td>\n";
+					
+				$last_row[] = array_unshift($last_row,''.$v['codart'].', '.$v['descri'].', '.$v['quanti'].$v['unimis'].', <strong>'.$script_transl[23].'</strong>: '.gaz_format_number($v['prelis']).', %<strong>'.substr($script_transl[24], 0, 2).'</strong>: '.gaz_format_number($v['sconto']).', <strong>'.$script_transl[25].'</strong>: '.gaz_format_number($imprig).', <strong>'.$script_transl[19].'</strong>: '.$v['pervat'].'%, <strong>'.$script_transl[18].'</strong>: '.$v['codric']);
          break;
       case "1":
          echo '		<td title="'.$script_transl['update'].$script_transl['thisrow'].'!">
@@ -1460,6 +1468,7 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td class="text-right">'.$v['pervat'].'%</td>
 					<td class="text-right">"'.$v['codric'].'</td>';
+            $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
          break;
       case "2":
          echo "	<td title=\"".$script_transl['update'] . $script_transl['thisrow'] . "!\">
@@ -1481,6 +1490,7 @@ foreach ($form['rows'] as $k => $v) {
          echo "<td></td>\n";
          echo "<td></td>\n";
          echo "<td></td>\n";
+         $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
          break;
       case "3":
          echo "	<td title=\"".$script_transl['update'].$script_transl['thisrow']."!\">
@@ -1502,6 +1512,7 @@ foreach ($form['rows'] as $k => $v) {
 				<td class=\"text-right\"><input type=\"text\" name=\"rows[$k][prelis]\" value=\"".$v['prelis']."\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>
 				<td></td>
 				<td></td>\n";
+         $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
          break;
       case "6":
       case "7":
@@ -1521,6 +1532,7 @@ foreach ($form['rows'] as $k => $v) {
 				<input type="hidden" value="" name="rows['.$k.'][prelis]" />
 				<input type="hidden" value="" name="rows['.$k.'][sconto]" />
 				<input type="hidden" value="" name="rows['.$k.'][provvigione]" />';
+         $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
          break;
    }
    //echo "<TD align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'] . $script_transl['thisrow'] . "!\" /></td></tr>\n";
@@ -1537,6 +1549,14 @@ foreach ($form['rows'] as $k => $v) {
 	/* Nuovo alert per scontistica, da visualizzare rigorosamente dopo l'ultima riga inserita */
 if(count($form['rows'])>0) {
 	$msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
+
+    if (isset($_POST['in_submit']) && count($form['rows']) > 5) {
+        /* for($i=0;$i<3;$i++) {	//	Predisposizione per mostrare gli ultimi n articoli inseriti (in ordine inverso ovviamente)
+          $msgtoast .= $last_row[$i].'<br />';
+          } */
+        //$msgtoast .= $last_row[0];
+        $msgtoast = $upd_mm->toast($script_transl['last_row'] . ': ' . $last_row[0], 'alert-last-row', 'alert-success');  //lo mostriamo
+    }
 } else {
     echo '<tr id="alert-zerorows">
 			<td colspan="12" class="alert alert-danger">'.$script_transl['zero_rows'].'</td>
@@ -1728,5 +1748,5 @@ if ($next_row > 0) {
 echo "	</table>";
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

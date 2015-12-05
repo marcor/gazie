@@ -114,6 +114,6 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
     		</tbody>
         </table>
-    </body>
+    </div><!-- chiude div container role main --></body>
 </html>
 <!--<script src="../../js/boxover/boxover.js"></script>-->

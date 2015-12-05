@@ -452,5 +452,5 @@ if ($nummov > 0) {
 }
 print "</table></form>";
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

@@ -59,5 +59,5 @@ window.onresize=resize_iframe;
 <!--<iframe style="position: absolute; height: 90%; width: 100%;" frameborder="0" src="<?php //echo $row["indirizzo"]; ?>"></iframe>-->
 <iframe id="glu" width="100%" onload="resize_iframe()" src="<?php echo $row["val"]; ?>"></iframe>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

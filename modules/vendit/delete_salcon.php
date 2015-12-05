@@ -105,5 +105,5 @@ per eliminare anche i movimenti contabili<br>seleziona questa checkbox.
 </tr>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

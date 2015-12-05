@@ -211,7 +211,7 @@ echo '		</td>
 	 			<td class="FacetDataTDred" align="center">'.$script_transl['errors'][1].'</td>
 			</tr>';
   }
-  echo '		</body>
+  echo '		</div><!-- chiude div container role main --></body>
   			</table>
 	  	</form>';
 	 /** ENRICO FEDELE */
@@ -219,5 +219,5 @@ echo '		</td>
 //}
 	 /** ENRICO FEDELE */
 ?>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

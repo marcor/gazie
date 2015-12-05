@@ -224,5 +224,5 @@ echo "<input type=\"submit\" name=\"stampa\" value=\"STAMPA !\" >\n";
 </tr>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

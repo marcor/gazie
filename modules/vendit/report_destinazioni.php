@@ -163,5 +163,5 @@ if (isset($_GET['ricerca_completa'])) {
         ?>
 </form>
 </table>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

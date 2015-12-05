@@ -185,7 +185,7 @@ function createHtmlPage($title,$subtitle,$author,$keywords,$pages_name_and_descr
       </div>
     ';
     // fine corpo
-    $html .='</body>';
+    $html .='</div><!-- chiude div container role main --></body>';
     return $html;
 }
 
@@ -505,5 +505,5 @@ if (isset($_POST['Submit'])) { // conferma
 echo "</table>\n";
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

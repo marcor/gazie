@@ -35,5 +35,5 @@ if (file_exists("help/".$admin_aziend['lang']."/docume_suppor_help.php")) {
 }
 ?>
 </div>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

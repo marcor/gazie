@@ -2105,5 +2105,5 @@ if ($next_row > 0) {
 echo '</table>';
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

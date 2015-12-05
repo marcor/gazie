@@ -126,5 +126,5 @@ $script_transl=HeadMain();
   </tr>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

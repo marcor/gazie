@@ -122,5 +122,5 @@ echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\"><input
 echo "</table>";
 ?>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>

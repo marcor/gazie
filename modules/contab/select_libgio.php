@@ -162,5 +162,5 @@ echo "<tr><td class=\"FacetFieldCaptionTD\"> &nbsp;</td><td align=\"right\" clas
 ?>
 </table>
 </form>
-</body>
+</div><!-- chiude div container role main --></body>
 </html>
