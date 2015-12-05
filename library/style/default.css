@@ -774,9 +774,9 @@ input[type="text"]:focus, textarea:focus, select:focus {
 	margin-right: auto;
 }
 
-.tab-content {
+/*.tab-content {
     margin: 18px 25px;
-}
+}*/
 
 .custom-tab .dash-tabs {
     position: relative;
