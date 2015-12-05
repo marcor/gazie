@@ -47,6 +47,22 @@ if (!empty($admin_aziend['style']) && file_exists( "../../library/style/".$admin
 if (!empty($admin_aziend['skin']) && file_exists( "../../library/style/skins/".$admin_aziend['skin'])){
     $skin = $admin_aziend['skin'];
 } 
+
+//preparo il menu usage
+$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" and link="'.$_SERVER['REQUEST_URI'].'" ',' adminid',0,1);
+$value = array();
+
+if ( gaz_dbi_num_rows($result)==0 ) {
+	$value['adminid'] = $admin_aziend['Login'];
+    $value['link'] = $_SERVER['REQUEST_URI'];
+	$value['click'] = 1;
+	$value['last_use'] = date('Y-m-d H:i:s');
+	gaz_dbi_table_insert('menu_usage',$value);
+} else {
+	$usage = gaz_dbi_fetch_array($result);
+	if ( strpos($usage['link'],'modules/root/admin.php')==0 )
+		gaz_dbi_put_query($gTables['menu_usage'], ' link="'.$_SERVER['REQUEST_URI'].'"', 'click', $usage['click']+1 );
+}
 ?>
 			
 			<link rel="shortcut icon" href="../../library/images/favicon.ico">			
