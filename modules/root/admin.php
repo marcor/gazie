@@ -141,18 +141,33 @@ echo '				</td>
 		
 		
 	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' click desc,last_use desc',0,8);
+	$res_last  = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' last_use desc, click desc',0,8);
+	
 	if ( gaz_dbi_num_rows($result)>0 ) {
 		while ($r = gaz_dbi_fetch_array($result)) {
-			echo '<div class="row">';
-			echo '<div class="col-md-20">';
-			echo '<a href="../../modules'.$r["link"].'" type="button" class="btn btn-default">';
-			echo '<span width="100%"">'.$r['click'].' - '.$r["name"].'</span>';
-			echo '</a>';
-			echo '</div>';
-			echo '</div>';
+			$rl = gaz_dbi_fetch_array($res_last);
+			?>
+			<div class="row">
+				<div class="col-xs-6">
+					<a href="<?php 
+						if ( $r["link"]!="" ) echo '../../modules'.$r["link"];
+						else echo "&nbsp;";
+					?>" type="button" class="btn btn-default btn-success btn-lista">
+					<span ><?php echo $r["click"].' click - <b>'.$r["name"].'</b>'; ?></span></a>
+				</div>
+				<div class="col-xs-6">
+					<a href="<?php 
+						if ( $rl["link"]!="" ) echo '../../modules'.$rl["link"];
+						else echo "&nbsp;";
+					?>" type="button" class="btn btn-default btn-success btn-lista">
+					<span ><?php 
+						echo gaz_time_from(strtotime($rl["last_use"])).' - <b>'.$rl["name"].'</b>'; 
+					?></span></a>
+				</div>
+			</div>
+			<?php
 		}
 	}
-
 	echo '</div>';
 
 	echo "<div align='center' id='admin_footer'>";

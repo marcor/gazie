@@ -1112,7 +1112,7 @@ echo '	<input type="hidden" name="'.ucfirst($toDo).'" value="">
 		<input type="hidden" value="'.$form['numdoc'].'" name="numdoc">
 		<input type="hidden" value="'.$form['numfat'].'" name="numfat">
 		<input type="hidden" value="'.$form['datfat'].'" name="datfat">
-		<div align="center" class="FacetFormHeaderFont\">'.$title.'  a :';
+		<div align="center" class="FacetFormHeaderFont">'.$title.'  a :';
 $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
 echo '	</div>

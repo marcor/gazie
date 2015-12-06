@@ -46,6 +46,26 @@ $prev_script=$prev[0];
 $script_uri=basename($_SERVER['REQUEST_URI']);
 $mod_uri='/'.$module.'/'.$script_uri;
 
+function gaz_time_from ($time)
+					{
+						$time = time() - $time; // to get the time since that moment
+						$time = ($time<1)? 1 : $time;
+						$tokens = array (
+							31536000 => 'anni',
+							2592000 => 'mesi',
+							604800 => 'settimane',
+							86400 => 'giorni',
+							3600 => 'ore',
+							60 => 'minuti',
+							1 => 'secondi'
+						);
+						foreach ($tokens as $unit => $text) {
+							if ($time < $unit) continue;
+								$numberOfUnits = floor($time / $unit);
+								return $numberOfUnits.' '.$text." fa"; //.(($numberOfUnits>1)?'i':'o');
+						}
+					} 
+					
 function gaz_format_number($number = 0) {
    global $gTables;
    $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.enterprise_id = ' . $gTables['aziend'] . '.codice

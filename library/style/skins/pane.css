@@ -1,204 +1,135 @@
 BODY {
 }
-
 DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL  {
-    color : #000000;
+   color : #000000;
 }
-
 TABLE {
-
 }
 TABLE.Tlarge{
-
 }
-
 TABLE.Tmiddle{
     border-color : #000000;
 }
-
 TABLE.Tsmall{
-    width : 50%;
     border-color : #000000;
-    margin-left: auto;
-    margin-right: auto;
 }
-
 TABLE.selectTable TR.even {
 	background-color:#E3AC76;
-    color : #000000;
+   color : #000000;
 }
 TABLE.selectTable TR.odd {
    background-color:#FFFFFF;
    color : #000000;
 }
-
 TABLE.selectTable TD {
-	height:10px;
-	border-bottom:1px solid #ddd;
-	font-family:Arial, Tahoma, Verdana, Helvetica;
+	border-bottom-color : #ddd;
 	color:#333;
-	font-size:8px;
 }
-
 .selectContainer {
-	width:300px;
-	position: absolute;
-	border:1px solid #222;
+	border-color : #222;
 }
 .selectHeader {
-	background-repeat:repeat-x;
-	background-position:top center;
 	color:#eee;
-	font-family:Arial, Tahoma, Verdana, Helvetica;
-	font-weight:bold;
-	font-size:9px;
-	margin:0;
-	padding:1px 1px 1px 1px;
 	background-color:#000;
 }
-
 .topmenu {
-    font-family : Arial, Tahoma, Verdana, Helvetica;
-    font-size : 11px;
-    position : relative;
-    top : -4px;
-    font-weight: bold;
-    color : #000000;
-    background-color: #FFD9B3;
+   color : #000000;
+   background-color: #FFD9B3;
 }
-
 .bottomMenu {
-    font-family : Arial, Tahoma, Verdana, Helvetica;
-    font-size : 10px;
-    position : relative;
-    top : -4px;
-    color : #000000;
+   color : #000000;
 }
-
 .FacetFormTABLE  {
-    border-color : #000000;
+   border-color : #000000;
 }
-
 .FacetFormHeaderFont  {
-    font-family : Verdana,Arial;
-    color : #000000;
-    font-size : 14px;
-    font-weight : bold;
+   color : #000000;
 }
-
 .FacetFormHeaderRed  {
-    font-family : Verdana,Arial;
-    color : #FF0000;
-    font-size : 14px;
-    font-weight : bold;
+   color : #FF0000;
 }
-
 .FacetFieldCaptionTD  {
    background-color : #E3AC76;
    color : #000000;
-   font-size : 13px;
-	padding: 0px 3px 0px 5px;
-	border: 1px solid #b07943;
+	border-color : #b07943;
 }
-
 .FacetDataTRstart td  {
-     border-top: 2px solid white;
-
+   border-top-color : white;
 }
-
 .FacetDataTRend td  {
-     border-bottom: 5px solid #FFFFFF;
+     border-bottom-color: #FFFFFF;
 }
 
 .FacetDataTD  {
-    background-color : #eee;
-    color : #000000;
-    font-size : 13px;
-	margin: 2px 2px;
-	padding: 2px 5px 2px 5px;
-	border-bottom: 1px solid #ddd;
-	
+   background-color : #eee;
+   color : #000000;
+	border-bottom-color : #ddd;
 }
 .dispari {
 	background-color : #D68738;
 }
-
 .FacetDataTDevidenziaOK  {
     background-color : #FFE13C;
     color : #000000;
-    font-size : 13px;
-}
+ }
 
 .FacetDataTDevidenziaCL  {
     background-color : #00FF3C;
     color : #000000;
-    font-size : 13px;
-}
+ }
 
 .FacetDataTDevidenziaBL  {
     background-color : #AAAAFF;
     color : #000000;
-    font-size : 13px;
-}
+ }
 
 .FacetDataTDevidenziaKO  {
     background-color : #FF8888;
     color : #000000;
-    font-size : 13px;
-}
+ }
 
 .FacetDataTDsmall  {
-    background-color : #FFFFFF;
-    color : #000000;
-    font-size : 9px;
-	border-bottom: 1px solid #fff;
-	border-right: 1px solid #fff;
+   background-color : #FFFFFF;
+   color : #000000;
+ 	border-bottom-color: #fff;
+	border-right-color: #fff;
 }
 
 .FacetDataTDsmall a {
-	font-size : 9px;
 }
 
 .FacetDataTDsmallRed  {
     background-color : #FFFFFF;
     color : #FF0000;
-    font-size : 9px;
 }
 
 .FacetDataTDred  {
     background-color : #FFFFFF;
     color : #FF0000;
-    font-size : 13px;
 }
 
 .FacetColumnTD  {
     color : #000000;
     background-color : #FFD9B3;
-    font-size : 13px;
-	 border: 1px solid #cca691;
+	 border-color: #cca691;
 }
 
 .FacetAltDataTD  {
     background-color : #FFD9B3;
     color : #000000;
-    font-size : 16px;
 }
 
 .FacetSeparatorTD  {
-    font-family : Arial;
-    font-size : 10px;
 }
 
 .FacetFooterTD  {
     background-color : #FFD9B3;
     color : #000000;
-    font-size : 13px;
 }
 
 .FacetDisabledTD  {
     background-color : #FFD9B3;
     color : #C77405;
-    font-size : 13px;
 }
 
 .FacetMainMenu {
@@ -207,23 +138,13 @@ TABLE.selectTable TD {
 }
 
 .FacetButton  {
-    border-left : 1px solid #000000;
-    border-right : 1px solid #000000;
-    border-top : 1px solid #000000;
-    border-bottom : 1px solid #000000;
+    border-color : #000000;
     background-color : #EFEFEF;
-    font-size : 13px;
-    font-family : Tahoma, Verdana, Arial, Helvetica;
 }
 
 .FacetInput  {
-    border-bottom : 1px solid #000000;
-    border-left : 1px solid #000000;
-    border-right : 1px solid #000000;
-    border-top : 1px solid #000000;
-    background-color : #FFFFFF;
-    font-size : 13px;
-    font-family : Tahoma, Verdana, Arial, Helvetica;
+   border-color : #000000;
+   background-color : #FFFFFF;
 }
 
 .FacetTextarea  {
@@ -574,6 +495,10 @@ input.input-xs {
 .btn-articolo {
 	padding: 3px 2px 5px 2px;
 }
+.btn-lista {
+
+}
+
 .form-inline {
 	width: 200px;
 	padding-top: 7px;

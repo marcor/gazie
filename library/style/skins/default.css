@@ -1,8 +1,5 @@
-/*@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
-*/
 body {
-	background-image : url("../../library/images/sfondo.png");
-	
+	background-image : url("../../../library/images/sfondo.png");
 }
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
 	color : #000000;
@@ -44,7 +41,7 @@ table.selectTable td {
 	background-color: #d9fdd8;
 }
 .bottomMenu {
-	font-size : 90%;
+	font-size : 90%90%;
 	color : #000000;
 }
 .FacetFormTABLE {
@@ -52,9 +49,6 @@ table.selectTable td {
 }
 .FacetFormHeaderFont {
 	color : #000000;
-	font-size : 100%;
-	font-weight : bold;
-	background-color : #AAE2A8;
 }
 .FacetFormHeaderRed {
 	color : #FF0000;
@@ -125,7 +119,6 @@ table.selectTable td {
 	font-size : 110%;
 }
 .FacetSeparatorTD {
-	font-size : 90%;
 }
 .FacetFooterTD {
 	background-color : #D5F1D4;
@@ -179,7 +172,7 @@ table.selectTable td {
 	border-color: #000000;
 }
 .ThemeGazieMainItemHover, .ThemeGazieMainItemActive {
-	background: url(../../js/jscookmenu/mainmenubg.png);
+	background: url(../../../js/jscookmenu/mainmenubg.png);
 }
 .ThemeGazieMainItem {
 	background-color: #c9edc8;
@@ -258,7 +251,6 @@ div.FacetFormHeaderFont {
 	font-size: 100%;
 }
 input.input-xs {
-	font-size: 90%;
 }
 .caret {
 	text-color: #fff;
@@ -325,11 +317,9 @@ input.input-xs {
 }
 #formlogin .checkbox .label {
 	color: #6d6d6d;
-	font-size: 100%;
 	font-weight: normal;
 }
 #formlogin .btn.btn-custom {
-	font-size: 100%;
 }
 #formlogin .forget {
 	font-size: 100%;
@@ -384,6 +374,10 @@ input.input-xs {
 .form-inline {
 	background-color: #dafed9;
 }
+.btn-lista {
+	background-color: #AAE2A8;
+	color: #000;
+}
 
 /** ENRICO FEDELE */
 /* Inizio stili custom pper jquery-ui */
@@ -393,7 +387,7 @@ input.input-xs {
 }
 /* loading - the AJAX indicator */
 .ui-autocomplete-loading {
-	background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat;
+	background: white url('../../images/ui-anim_basic_16x16.gif') right center no-repeat;
 }
 /* scroll results */
 .ui-autocomplete {
@@ -450,7 +444,7 @@ input[type="text"]:focus, textarea:focus, select:focus {
 
 /* andrea biasi */
 .custom-tab {
-    border-color: 1px solid #dddddd;
+    border-color: #dddddd;
 }
 
 .row {
