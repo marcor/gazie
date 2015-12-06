@@ -423,3 +423,6 @@ input.input-xs {
 .btn-custom:focus {
    color: #fff;
 }
+.usr-picture {
+	border:4px solid lightblue;
+}

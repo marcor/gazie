@@ -1,37 +1,24 @@
-@import "../../js/jquery/ui/css/ui-lightness/jquery-ui-1.8.10.custom.css";
-
 BODY {
-     /*background-image : url("../../library/images/sfondo.png");
-     background-attachment : fixed;*/
 }
 
 DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL  {
-    font-family : Arial, Tahoma, Verdana, Helvetica;
-    font-size : 13px;
     color : #000000;
 }
 
 TABLE {
-	border-collapse: separate;
-	border-spacing: 2px;
+
 }
 TABLE.Tlarge{
-    width : 99%;
-    border : solid 1px #000000;
-	margin-top: -1px;
-	margin-left: 6px;
+
 }
 
 TABLE.Tmiddle{
-    width : 70%;
-    border : solid 1px #000000;
-    margin-left: auto;
-    margin-right: auto;
+    border-color : #000000;
 }
 
 TABLE.Tsmall{
     width : 50%;
-    border : solid 1px #000000;
+    border-color : #000000;
     margin-left: auto;
     margin-right: auto;
 }
@@ -89,7 +76,7 @@ TABLE.selectTable TD {
 }
 
 .FacetFormTABLE  {
-    border : solid 1px #000000;
+    border-color : #000000;
 }
 
 .FacetFormHeaderFont  {
