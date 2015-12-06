@@ -41,7 +41,8 @@ if (strlen($radix) > 1) {
    session_name(_SESSION_NAME);
 }
 session_start();
-
+$precedente=explode("?",basename($_SERVER["HTTP_REFERER"]));
+print 'vengo dallo script=>'.$precedente[0].'<br/> invece adesso sto esequendo=>'.$scriptname;
 function gaz_format_number($number = 0) {
    global $gTables;
    $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.enterprise_id = ' . $gTables['aziend'] . '.codice
