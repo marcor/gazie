@@ -80,7 +80,7 @@ if (file_exists("../../library/style/".strtolower(str_replace(" ", "_", $admin_a
 
 function pesca_nome ( $rlink ) 
 {
-	Global $gTables;
+	global $gTables;
 	$clink = explode ( '/',$rlink );
 	$nome1 = gaz_dbi_dyn_query("*", $gTables['module'], ' link="'.end($clink).'" ',' id ',0,999);
 	if ( gaz_dbi_num_rows($nome1)>0 ) {		
@@ -113,29 +113,22 @@ function pesca_nome ( $rlink )
 	}
 }
 
-//preparo il menu usage
-$exp_uri = explode("/", $_SERVER['REQUEST_URI']);
-$mod_uri = "/".$exp_uri[count($exp_uri)-2]."/".$exp_uri[count($exp_uri)-1];
-$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" and link="'.$mod_uri.'" ',' adminid',0,1);
-$exp_ref = explode( "/",$_SERVER['HTTP_REFERER']);
-$value = array();
-if ( gaz_dbi_num_rows($result)==0 ) {
-	if ( strpos($mod_uri,'root/admin.php')==0 && $exp_uri[count($exp_uri)-2]!=$exp_ref[count($exp_ref)-2] )  {
+//aggiornamento automatico della tabella gaz_menu_usage
+if ($scriptname!=$prev_script && $scriptname != 'admin.php'){ // aggiorno le statistiche solo in caso di cambio script
+	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" and link="'.$mod_uri.'" ',' adminid',0,1);
+	$value = array();
+	if ( gaz_dbi_num_rows($result)==0 ) {
 		$value['name'] = pesca_nome( $mod_uri );
-		if ( $value['name']!="" ) {
-			$value['adminid'] = $admin_aziend['Login'];
-			$value['link'] = $mod_uri;
-			$value['click'] = 1;
-			$value['last_use'] = date('Y-m-d H:i:s');
-			gaz_dbi_table_insert('menu_usage',$value);
-		}
-	}
-} else {
-	$usage = gaz_dbi_fetch_array($result);
-	if ( strpos($usage['link'],'root/admin.php')==0 )
+		$value['adminid'] = $admin_aziend['Login'];
+		$value['link'] = $mod_uri;
+		$value['click'] = 1;
+		$value['last_use'] = date('Y-m-d H:i:s');
+		gaz_dbi_table_insert('menu_usage',$value);
+	} else {
+		$usage = gaz_dbi_fetch_array($result);
 		gaz_dbi_put_query($gTables['menu_usage'], ' link="'.$mod_uri.'"', 'click', $usage['click']+1 );
+	}
 }
-
 
 function HeadMain ($idScript='',$jsArray='',$alternative_transl=false,$cssArray='') {
   global $module,$admin_aziend,$radix,$scriptname;
