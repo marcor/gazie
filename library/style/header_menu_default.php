@@ -53,6 +53,7 @@ function submenu($array) {
 //preparo la query per la seconda barra 
 $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
 $posizione = array_pop( $posizione );
+if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
 $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
 
 if ( !gaz_dbi_num_rows($result)>0 ) {

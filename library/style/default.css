@@ -207,15 +207,12 @@ table.selectTable td {
 	margin-top: 20px;
 }
 #admin_footer {
+	margin-top: 1%;
 	position: relative;
 	bottom: 0px;
-	opacity: 0.5;
-	filter: alpha(opacity=50);
 	z-index: -1;
 }
 #admin_footer:hover {
-	opacity: 1;
-	filter: alpha(opacity=100);
 }
 .nav>li>a:hover, .nav>li>a:focus {
 /*	background-color: #aae2a8;*/
