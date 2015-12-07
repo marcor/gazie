@@ -77,45 +77,42 @@ function pesca_nome($rlink) {
     global $gTables;
     $clink = explode('/', $rlink);
     $n1 = gaz_dbi_get_row($gTables['module'], 'link', end($clink));
-    // $nome1 = gaz_dbi_dyn_query("*", $gTables['module'], ' link="'.end($clink).'" ',' id ',0,999);
     if ($n1) {
         include "../../modules/" . $clink[1] . "/menu.italian.php";
-        return $transl[$clink[1]]['title'];
+        return 'm1-'.$n1['id'];
     } else {
         $n2 = gaz_dbi_get_row($gTables['menu_module'], 'link', end($clink));
         if ($n2) {
             include "../../modules/" . $clink[1] . "/menu.italian.php";
-            return $transl[$clink[1]]['m2'][$n2['translate_key']][0];
+            return 'm2-'.$n2['id'];
         } else {
             $n3 = gaz_dbi_get_row($gTables['menu_script'], 'link', end($clink));
             if ($n3) {
                 include "../../modules/" . $clink[1] . "/menu.italian.php";
-                return $transl[$clink[1]]['m3'][$n3['translate_key']][0];
+                return 'm3-'.$n3['id'];
             } else { // non l'ho trovato neanche nel m3, provo sui file di traduzione
                 include "../../modules/" . $clink[1] . "/lang.italian.php";
                 // tento di risalire allo script giusto
                 $n_scr = explode('?', end($clink));
                 if (isset($strScript[$n_scr[0]])) { // ho trovato una traduzione per lo script
-                    if (isset($strScript[$n_scr[0]]['title'])) { // ho trovato una traduzione per lo script
+                    if (isset($strScript[$n_scr[0]]['title'])) { // ho trovato una traduzione per lo script con index specifico
                         if (is_array($strScript[$n_scr[0]]['title'])){
-                            return array_shift(array_slice($strScript[$n_scr[0]]['title'], 0, 1));
+                            return 'sc-'.$clink[1].'-'.$n_scr[0].'-title-'.array_shift(array_slice($strScript[$n_scr[0]]['title'], 0, 1));
                         } else {
-                            return $strScript[$n_scr[0]]['title'];
+                            return 'sc-'.$clink[1].'-'.$n_scr[0].'-title';
                         }
-                    } elseif(isset($strScript[$n_scr[0]][0])) {
+                    } elseif(isset($strScript[$n_scr[0]][0])) { // ho trovato una traduzione per lo script nel primo elemento
                         if (is_array($strScript[$n_scr[0]][0])){
-                            return array_shift(array_slice($strScript[$n_scr[0]][0], 0, 1));
+                            return 'sc-'.$clink[1].'-'.$n_scr[0].'-0-'.array_shift(array_slice($strScript[$n_scr[0]][0], 0, 1));
                         } else {
-                            return $strScript[$n_scr[0]][0];
+                            return 'sc-'.$clink[1].'-'.$n_scr[0].'-0';
                         }
                     } else {
-                        return "Nome non trovato (script)";
+                        return "none-script";
                     }                  
                 } else { // non c'è traduzione per questo script 
-                    return "Nome non trovato (script+menu)";    
+                    return "none-script_menu";    
                 }
-                
-                return end($clink);
             }
         }
     }

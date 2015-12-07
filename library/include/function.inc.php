@@ -1470,7 +1470,10 @@ function checkAdmin($Livaut = 0) {
         header("Location: ../root/access_error.php?module=" . $module);
         exit;
     }
-    $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.company_id = ' . $gTables['aziend'] . '.codice', "Login", $_SESSION["Login"]);
+    $test = gaz_dbi_query("SHOW COLUMNS FROM `".$gTables['admin']."` LIKE 'enterprise_id'");
+    $exists = (gaz_dbi_num_rows($test))?TRUE:FALSE;   
+    if ($exists) { $c_e='enterprise_id'; } else { $c_e='company_id'; }
+    $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.'.$c_e.'= ' . $gTables['aziend'] . '.codice', "Login", $_SESSION["Login"]);
     $currency = array();
     if (isset($admin_aziend['id_currency'])) {
         $currency = gaz_dbi_get_row($gTables['currencies'], "id", $admin_aziend['id_currency']);
