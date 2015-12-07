@@ -102,6 +102,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td class="FacetDataTD">
 				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="'.$a_row['codice'].'" data-title='.$a_row['annota'].'">'.$a_row["descri"].'</span>
 			</td>
+			<td class="FacetDataTD">'.$a_row["descri"].'</td>
 			<td class="FacetDataTD">'.$a_row["ricarico"].'</td>
 			<td class="FacetDataTD">'.$a_row["annota"].'</td>
 			<td class="FacetDataTD">

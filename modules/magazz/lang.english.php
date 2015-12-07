@@ -51,7 +51,7 @@ $strScript = array("browse_document.php" =>
         " of the year ",
         " Item ",
         " Quantity ",
-        " Amount - " . $admin_aziend['curr_name'],
+        " Amount - ",
         "Out of warehouse"),
     "report_movmag.php" =>
     array("warehouse movements ",
@@ -90,7 +90,7 @@ $strScript = array("browse_document.php" =>
         'operat_value' => array(-1 => "Unloading", 0 => "Nop", 1 => "Loading"),
         'partner' => 'Partner',
         'del_this' => 'Delete stock movement',
-        'amount' => " Amount - " . $admin_aziend['curr_name'],
+        'amount' => " Amount - ",
     ),
     "report_caumag.php" =>
     array("warehouse causals ",
@@ -225,7 +225,7 @@ $strScript = array("browse_document.php" =>
         'date_fin' => 'Data registrazione fine ',
         'header' => array('Date' => '', 'Causal' => '', 'Document<br \>description' => '',
             'Price' => '', 'UM' => '', 'Quantity' => '',
-            $admin_aziend['symbol'] . '<br \>loading' => '', $admin_aziend['symbol'] . '<br \>unloadig' => '',
+            '<br \>loading' => '', '<br \>unloadig' => '',
             'Storage<br \>quantity' => '', 'Storage<br \>value' => ''
         ),
         'tot' => 'Consistenza'
@@ -237,7 +237,7 @@ $strScript = array("browse_document.php" =>
         'item_head' => array('Code', 'Group', 'Description', 'MU', 'Min.Stock'),
         'header' => array('Date', 'Causal', 'Document description',
             'Price', 'MU', 'Quantity',
-            $admin_aziend['symbol'] . ' load', $admin_aziend['symbol'] . ' unload',
+             ' load',  ' unload',
             'Q.ty stock', 'Val. stock'
         ),
         'tot' => 'Consistency at '
@@ -302,7 +302,7 @@ $strScript = array("browse_document.php" =>
             'D' => 'Moltiplicazione per valore', 'E' => 'Divisione per valore', 'F' => 'Azzeramento e somma percentuale'),
         'valore' => 'Percentuale/valore',
         'round_mode' => 'Arrotondamento matematico a',
-        'round_mode_value' => array('1 ' . $admin_aziend['curr_name'], '10 cents', '1 cent', '1 mils', '0,1 mils', '0,01 mils'),
+        'round_mode_value' => array('1 ' , '10 cents', '1 cent', '1 mils', '0,1 mils', '0,01 mils'),
         'weight_valadd' => 'Delivery add ex. �/kg',
         'header' => array('Cat.Merceologica' => '', 'Codice' => '', 'Descrizione' => '', 'U.M.' => '',
             'Old price' => '', 'Weight add' => '', 'New price' => ''

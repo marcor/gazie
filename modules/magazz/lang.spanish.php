@@ -55,7 +55,7 @@ $strScript = array("browse_document.php" =>
         " del a&ntilde;o ",
         " Item ",
         " Cantidad ",
-        " Cantidad - " . $admin_aziend['curr_name'],
+        " Cantidad - ",
         "Fuera de bodega"),
     "report_movmag.php" =>
     array("movimientos de bodega",
@@ -94,7 +94,7 @@ $strScript = array("browse_document.php" =>
         'operat_value' => array(-1 => "Descarga", 0 => "No", 1 => "Subida"),
         'partner' => 'Cliente/Proveedor',
         'del_this' => 'Borrar el movimientos de bodega',
-        'amount' => " Cantidad -  " . $admin_aziend['curr_name'],
+        'amount' => " Cantidad -  ",
     ),
     "report_caumag.php" =>
     array("Causales de bodega",
@@ -229,7 +229,7 @@ $strScript = array("browse_document.php" =>
         'date_fin' => 'Fecha registro termino ',
         'header' => array('Fecha' => '', 'Causal' => '', 'Documento<br \>descripcion' => '',
             'Precio' => '', 'UM' => '', 'Cantidad' => '',
-            $admin_aziend['symbol'] . '<br \>carga' => '', $admin_aziend['symbol'] . '<br \>descarga' => '',
+            '<br \>carga' => '', '<br \>descarga' => '',
             'Cantidad<br \>existencias' => '', 'Existencias<br />valor' => ''
         ),
         'tot' => 'Consistencia'
@@ -241,7 +241,7 @@ $strScript = array("browse_document.php" =>
         'item_head' => array('Codigo', 'Cat.Merc', 'Descripcion', 'UM', 'Min.Exist.'),
         'header' => array('Fecha', 'Causal', 'Documento descripcion',
             'Precio', 'UM', 'Cantidad',
-            $admin_aziend['symbol'] . ' carga', $admin_aziend['symbol'] . ' descarga',
+            ' carga', ' descarga',
             'Cantid. exist.', 'Val. exist.'
         ),
         'tot' => 'Consistencia de '
@@ -306,7 +306,7 @@ $strScript = array("browse_document.php" =>
             'D' => 'Multiplicacion para valor', 'E' => 'Division por valor', 'F' => 'Ajuste a cero y suma percentual'),
         'valore' => 'Porcentaje / Valor',
         'round_mode' => 'Redondeo matem&aacute;tico a',
-        'round_mode_value' => array('1 ' . $admin_aziend['curr_name'], '10 centesimo', '1 centesimo', '1 milesima', '0,1 milesima', '0,01 milesima'),
+        'round_mode_value' => array('1 ', '10 centesimo', '1 centesimo', '1 milesima', '0,1 milesima', '0,01 milesima'),
         'weight_valadd' => 'Delivery add ex. €/kg',
         'header' => array('Cat. Mercaderia' => '', 'Codigo' => '', 'Descripcion' => '', 'U.M.' => '',
             'Precio anterior' => '', 'Weight add' => '', 'Precio nuevo' => ''

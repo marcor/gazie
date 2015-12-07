@@ -144,7 +144,7 @@ $strScript = array("admin_fornit.php" =>
                            " dell'anno ",
                            " Categoria merc. ",
                            " Quantit&agrave; ",
-                           " Valore in ".$admin_aziend['curr_name'],
+                           " Valore in ",
                            " Fuori "),
                    "admin_docacq.php" =>
                    array(  array("DDR" => "D.d.T. di Reso a Fornitore","DDL" => "D.d.T. c/lavorazione","AFA" => "Fattura d'Acquisto","ADT" => "D.d.T. d'Acquisto","AFC" => "Nota Credito da Fornitore","AOR" => "Ordine a Fornitore","APR" => "Richiesta di Preventivo a Fornitore"),

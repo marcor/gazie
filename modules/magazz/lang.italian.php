@@ -51,7 +51,7 @@ $strScript = array("browse_document.php" =>
         " dell'anno ",
         " Categoria merc. ",
         " Quantit&agrave; ",
-        " Valore in " . $admin_aziend['curr_name'],
+        " Valore in ",
         " Fuori "),
     "report_movmag.php" =>
     array("movimenti di magazzino ",
@@ -90,7 +90,7 @@ $strScript = array("browse_document.php" =>
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
         'del_this' => 'Elimina il movimento di magazzino',
-        'amount' => " Valore in " . $admin_aziend['curr_name'],
+        'amount' => " Valore in ",
     ),
     "report_caumag.php" =>
     array("causali di magazzino ",
@@ -225,7 +225,7 @@ $strScript = array("browse_document.php" =>
         'date_fin' => 'Data registrazione fine ',
         'header' => array('Data' => '', 'Causale' => '', 'Descrizione<br \>documento' => '',
             'Prezzo' => '', 'UM' => '', 'Quantit&agrave;' => '',
-            $admin_aziend['symbol'] . '<br \>carico' => '', $admin_aziend['symbol'] . '<br \> scarico' => '',
+            '<br \>carico' => '', '<br \> scarico' => '',
             'Quantit&agrave;<br \>giacenza' => '', 'Valore<br \>giacenza' => ''
         ),
         'tot' => 'Consistenza'
@@ -237,7 +237,7 @@ $strScript = array("browse_document.php" =>
         'item_head' => array('Codice', 'Cat.Merc', 'Descrizione', 'U.M.', 'ScortaMin.'),
         'header' => array('Data', 'Causale', 'Descrizione documento',
             'Prezzo', 'UM', 'Quantita',
-            $admin_aziend['symbol'] . ' carico', $admin_aziend['symbol'] . ' scarico',
+            ' carico', ' scarico',
             'Q.ta giacenza', 'Val. giacenza'
         ),
         'tot' => 'Consistenza al '
@@ -331,7 +331,7 @@ $strScript = array("browse_document.php" =>
             'D' => 'Moltiplicazione per valore', 'E' => 'Divisione per valore', 'F' => 'Azzeramento e somma percentuale'),
         'valore' => 'Percentuale/valore',
         'round_mode' => 'Arrotondamento matematico a',
-        'round_mode_value' => array('1 ' . $admin_aziend['curr_name'], '10 centesimi', '1 centesimo', '1 millesimo', '0,1 millesimi', '0,01 millesimi'),
+        'round_mode_value' => array('1 ', '10 centesimi', '1 centesimo', '1 millesimo', '0,1 millesimi', '0,01 millesimi'),
         'weight_valadd' => 'Incidenza su peso specifico es. €/kg',
         'header' => array('Cat.Merceologica' => '', 'Codice' => '', 'Descrizione' => '', 'U.M.' => '',
             'Prezzo vecchio' => '', 'Incidenza peso' => '', 'Prezzo nuovo' => ''
