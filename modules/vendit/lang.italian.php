@@ -252,7 +252,8 @@ $strScript = array("admin_client.php" =>
         'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento'
     ),
     "select_docforprint.php" =>
-    array(array(1 => "D.d.T. di Vendita",
+    array('title'=>'Ristampa documenti',
+        array(1 => "D.d.T. di Vendita",
             2 => "Fattura Differita",
             3 => "Fattura Immediata Accompagnatoria",
             4 => "Fattura Immediata Semplice",

@@ -249,7 +249,8 @@ $strScript = array("admin_client.php" =>
 
     ),
     "select_docforprint.php" =>
-    array(array(1 => "D.d.T. di Vendita", 2 => "Fattura Differita", 3 => "Fattura Immediata Accompagnatoria", 4 => "Fattura Immediata Semplice", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),
+    array('title'=>'Ristampa documenti',
+        array(1 => "D.d.T. di Vendita", 2 => "Fattura Differita", 3 => "Fattura Immediata Accompagnatoria", 4 => "Fattura Immediata Semplice", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),
         " nella sezione ",
         "Data",
         "Protocollo",
