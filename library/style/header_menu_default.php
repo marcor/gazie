@@ -79,7 +79,7 @@ if ( $riga["id"]!="" ) {
 	<!--<div class="navbar-header navbar-right vcenter" >-->
         <a class="navbar-brand pull-right vcenter" href="../../modules/root/admin.php">
 			<?php echo strtoupper( $admin_aziend["ragso1"]); ?>
-        	<img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["enterprise_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
+        	<img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
 	  </a>
     	<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
             <span class="sr-only">Visualizza Men&ugrave;</span>

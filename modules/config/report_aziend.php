@@ -31,10 +31,10 @@ if (isset($_GET['change_co'])){
 $admin_aziend=checkAdmin(9);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-$table=$gTables['aziend'].' LEFT JOIN '. $gTables['admin_module'].' ON '.$gTables['admin_module'].'.enterprise_id = '.$gTables['aziend'].'.codice';
-$where=$gTables['admin_module'].'.adminid=\''.$admin_aziend['Login'].'\' GROUP BY enterprise_id';
+$table=$gTables['aziend'].' LEFT JOIN '. $gTables['admin_module'].' ON '.$gTables['admin_module'].'.company_id = '.$gTables['aziend'].'.codice';
+$where=$gTables['admin_module'].'.adminid=\''.$admin_aziend['Login'].'\' GROUP BY company_id';
 $rs = gaz_dbi_dyn_query ('*',$table,$where, $orderby, $limit, $passo);
-echo '<div align="center" class="FacetFormHeaderFont"><a href="create_new_enterprise.php">'.$script_transl['ins_this']."</a></div>\n";
+echo '<div align="center" class="FacetFormHeaderFont"><a href="create_new_company.php">'.$script_transl['ins_this']."</a></div>\n";
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title']."</div>\n";
 echo '<table class="Tlarge">';
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -54,7 +54,7 @@ echo "<form method=\"GET\" name=\"myform\">\n";
 echo "<input type=\"hidden\" name=\"change_co\" value=\"\">\n";
 while ($r = gaz_dbi_fetch_array($rs)) {
     $style=" class=\"FacetDataTD\" ";
-    if ($r['codice']==$_SESSION['enterprise_id']) {
+    if ($r['codice']==$_SESSION['company_id']) {
        $style=" style=\"background:#FF9999;\" ";
        echo "<tr $style>";
        echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"admin_aziend.php\" title=\"".$script_transl['update']."\" ><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["codice"]."</a></td>\n";

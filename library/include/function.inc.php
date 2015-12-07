@@ -71,7 +71,7 @@ function gaz_time_from($time) {
 
 function gaz_format_number($number = 0) {
     global $gTables;
-    $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.enterprise_id = ' . $gTables['aziend'] . '.codice
+    $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.company_id = ' . $gTables['aziend'] . '.codice
                                                     LEFT JOIN ' . $gTables['currencies'] . ' ON ' . $gTables['currencies'] . '.id = ' . $gTables['aziend'] . '.id_currency', "Login", $_SESSION["Login"]);
     return number_format(floatval($number), $currency['decimal_place'], $currency['decimal_symbol'], $currency['thousands_symbol']);
 }
@@ -269,7 +269,7 @@ class configTemplate {
 
     function configTemplate() {
         global $gTables;
-        $row = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['enterprise_id']);
+        $row = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->template = $row['template'];
     }
 
@@ -1439,13 +1439,13 @@ class linkHeaders {
 
 }
 
-function cleanMemberSession($abilit, $login, $password, $count, $enterprise_id, $table_prefix) {
+function cleanMemberSession($abilit, $login, $password, $count, $company_id, $table_prefix) {
     global $gTables;
     $_SESSION["Abilit"] = true;
     $_SESSION["Login"] = $login;
     $_SESSION["Password"] = $password;
     $_SESSION["logged_in"] = true;
-    $_SESSION["enterprise_id"] = $enterprise_id;
+    $_SESSION["company_id"] = $company_id;
     $_SESSION["table_prefix"] = $table_prefix;
     $count++;
     //incremento il contatore d'accessi
@@ -1464,13 +1464,13 @@ function checkAdmin($Livaut = 0) {
         header("Location: ../root/login_admin.php?tp=" . $table_prefix);
         exit;
     }
-    if (checkAccessRights($_SESSION['Login'], $module, $_SESSION['enterprise_id']) == 0) {
+    if (checkAccessRights($_SESSION['Login'], $module, $_SESSION['company_id']) == 0) {
         // Se utente non ha il diritto di accedere al modulo, lo mostriamo
         // il messaggio di errore, ma senza obligarlo di fare un altro (inutile) login
         header("Location: ../root/access_error.php?module=" . $module);
         exit;
     }
-    $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.enterprise_id = ' . $gTables['aziend'] . '.codice', "Login", $_SESSION["Login"]);
+    $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.company_id = ' . $gTables['aziend'] . '.codice', "Login", $_SESSION["Login"]);
     $currency = array();
     if (isset($admin_aziend['id_currency'])) {
         $currency = gaz_dbi_get_row($gTables['currencies'], "id", $admin_aziend['id_currency']);
@@ -1492,8 +1492,8 @@ function checkAdmin($Livaut = 0) {
 
 function changeEnterprise($new_co = 1) {
     global $gTables;
-    gaz_dbi_put_row($gTables['admin'], 'Login', $_SESSION['Login'], 'enterprise_id', $new_co);
-    $_SESSION['enterprise_id'] = $new_co;
+    gaz_dbi_put_row($gTables['admin'], 'Login', $_SESSION['Login'], 'company_id', $new_co);
+    $_SESSION['company_id'] = $new_co;
 }
 
 class Compute {

@@ -194,7 +194,7 @@ $strScript = array("admin_aziend.php" =>
         'ivam_t' => 'Frequencia IVA',
         'ivam_t_value' => array('M' => 'Mensualmente', 'T' => 'Trimestralmente')
     ),
-    "create_new_enterprise.php" =>
+    "create_new_company.php" =>
     array('title' => 'Crear una nueva empresa',
         'errors' => array('El c&oacute;digo debe estar entre 1 y 999!',
             'C&oacute;digo de la compa&ntilde;&iacute;a ya est&aacute; en uso!'

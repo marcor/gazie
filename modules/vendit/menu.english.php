@@ -70,7 +70,8 @@ $transl['vendit'] = array('name' => "Sales",
         31 => array("Select & print open items schedule", "Open items report"),
         32 => array("Selezione e stampa stato clienti", "Stato delle scadenze"),
         33 => array("Gestione degli indirizzi di destinazione dei Clienti", "Destinazioni"),
-        34 => array("Inserimento nuovo indirizzo di destinazione", "Nuova destinazione")
+        34 => array("Inserimento nuovo indirizzo di destinazione", "Nuova destinazione"),
+        35 => array("Emetti Ricevuta Fiscale", "Emetti Ricevuta")
     )
 );
 ?>

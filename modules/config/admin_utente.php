@@ -145,10 +145,10 @@ if (isset($_POST['Submit'])) {
                 if (preg_match ("/^([0-9]{3})acc_/",$key,$id)) {
                     updateAccessRights($form['Login'], preg_replace("/^[0-9]{3}acc_/",'', $key), $value,$id[1]);
                 } elseif (preg_match ("/^([0-9]{3})nusr_/",$key,$id)) {
-                    updateAccessRights($form['Login'],1,3,$user_data['enterprise_id']);
+                    updateAccessRights($form['Login'],1,3,$user_data['company_id']);
                     $mod_data = gaz_dbi_get_row($gTables['module'],'name', preg_replace("/^[0-9]{3}nusr_/", '', $key));
                     if (!empty($mod_data)) {
-                         updateAccessRights($form['Login'],$mod_data['id'],$value,$user_data['enterprise_id']);
+                         updateAccessRights($form['Login'],$mod_data['id'],$value,$user_data['company_id']);
                     }
                 } elseif (preg_match("/^([0-9]{3})new_/",$key,$id) && $value==3) { // il nuovo modulo non  presente in gaz_module
                     $name = preg_replace("/^[0-9]{3}new_/",'',$key);
@@ -181,7 +181,7 @@ if (isset($_POST['Submit'])) {
            }
         }
         if ($toDo == 'insert') {
-            $form['enterprise_id']=$user_data['enterprise_id'];
+            $form['company_id']=$user_data['company_id'];
             gaz_dbi_table_insert('admin',$form);
         } elseif ($toDo == 'update') {
             //cambio la data di modifica password
@@ -344,7 +344,7 @@ if ($toDo == 'insert') {
 </tr>
 <?php
 if ($user_data["Abilit"] == 9) {
-    function getModule($login,$enterprise_id)
+    function getModule($login,$company_id)
     {
        global $gTables,$admin_aziend;
        //trovo i moduli installati
@@ -358,7 +358,7 @@ if ($user_data["Abilit"] == 9) {
                  || $exist_mod == "root" ) continue;
                  $rs_mod = gaz_dbi_dyn_query(" am.access ,am.moduleid, module.name", $gTables['admin_module'].' AS am LEFT JOIN '.$gTables['module'].
                                ' AS module ON module.id=am.moduleid ',
-                               " am.adminid = '".$login."' AND module.name = '$exist_mod' AND am.enterprise_id = '$enterprise_id'","am.adminid",0,1);
+                               " am.adminid = '".$login."' AND module.name = '$exist_mod' AND am.company_id = '$company_id'","am.adminid",0,1);
                  require("../../modules/$exist_mod/menu.".$admin_aziend['lang'].".php");
                  $row = gaz_dbi_fetch_array($rs_mod);
                  if (!isset($row['moduleid'])){
@@ -376,7 +376,7 @@ if ($user_data["Abilit"] == 9) {
 
     //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
     $table=$gTables['aziend'].' AS a';
-    $what="a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM ".$gTables['admin_module']." WHERE a.codice=".$gTables['admin_module'].".enterprise_id AND ".$gTables['admin_module'].".adminid='".$form['Login']."') AS set_co ";
+    $what="a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM ".$gTables['admin_module']." WHERE a.codice=".$gTables['admin_module'].".company_id AND ".$gTables['admin_module'].".adminid='".$form['Login']."') AS set_co ";
     $co_rs=gaz_dbi_dyn_query($what,$table,1,"ragsoc ASC");
     while($co=gaz_dbi_fetch_array($co_rs)) {
       echo "<tr><td align=\"center\" colspan=\"3\">".$co['ragsoc'].'  - '.$co['set_co']."</tr>\n";

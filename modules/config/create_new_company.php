@@ -43,10 +43,10 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
     $form['artico_catmer'] = intval($_POST['artico_catmer']);
     if (isset($_POST['users'])){
        $form['users']=substr($_POST['users'],0,8);
-       $where_user="enterprise_id = ".$form['ref_co'];
+       $where_user="company_id = ".$form['ref_co'];
     } else {
        $form['users']='';
-       $where_user="enterprise_id = ".$form['ref_co']." AND adminid = '".$_SESSION['Login']."'";
+       $where_user="company_id = ".$form['ref_co']." AND adminid = '".$_SESSION['Login']."'";
     }
     if (isset($_POST['Submit'])) { // conferma tutto
        //eseguo i controlli formali
@@ -156,7 +156,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
           // procedo all'abilitazione degli utenti in base alla scelta fatta dal'operatore
           $user_abilit = gaz_dbi_dyn_query('*',$gTables['admin_module'],$where_user,'moduleid');
           while ($r = gaz_dbi_fetch_array($user_abilit)) {
-                 $r['enterprise_id']=$form['codice'];
+                 $r['company_id']=$form['codice'];
                  gaz_dbi_table_insert('admin_module',$r);
           }
           changeEnterprise($form['codice']);

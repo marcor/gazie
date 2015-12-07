@@ -29,7 +29,7 @@ class DocContabVars
     {
         $this->ecr=$ecr;
         $this->gTables = $gTables;
-        $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['enterprise_id']);
+        $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->azienda = $admin_aziend;
         $this->user = gaz_dbi_get_row($gTables['admin'], 'Login', $_SESSION['Login']);
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);

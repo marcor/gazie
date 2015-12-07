@@ -191,7 +191,7 @@ $strScript = array("admin_aziend.php" =>
         'ivam_t' => 'Periodicit&agrave; IVA',
         'ivam_t_value' => array('M' => 'Mensile', 'T' => 'Trimestrale')
     ),
-    "create_new_enterprise.php" =>
+    "create_new_company.php" =>
     array('title' => 'Crea una nuova azienda',
         'errors' => array('Il codice deve essere compreso tra 1 e 999!',
             'Codice azienda gi&agrave; in uso!'

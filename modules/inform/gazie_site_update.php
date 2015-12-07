@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 require("../../library/php-ico/class-php-ico.php");
 $admin_aziend=checkAdmin(9);
-$company_id=sprintf('%03d',$admin_aziend['enterprise_id']);
+$company_id=sprintf('%03d',$admin_aziend['company_id']);
 //print_r($admin_aziend);
 function getConfig($var)
 {

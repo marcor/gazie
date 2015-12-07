@@ -102,7 +102,7 @@ class magazzForm extends GAzieForm {
 
     function getStockEvalMethod() {  // Prendo il metodo di valorizzazione del magazzino impostato in configurazione azienda
         global $gTables;
-        $enterprise = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['enterprise_id']);
+        $enterprise = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         return $enterprise['stock_eval_method'];
     }
 

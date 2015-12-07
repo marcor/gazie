@@ -181,7 +181,7 @@ $strScript = array ("admin_aziend.php" =>
                            'ivam_t'=>'MwSt. Frequenz',
                            'ivam_t_value'=>array('M'=>'Monatlich','T'=>'Vierteljährlich')
                          ),
-                     "create_new_enterprise.php" =>
+                     "create_new_company.php" =>
                    array(  'title'=>'Erstellen Sie ein neues Unternehmen',
                            'errors'=>array('Code muss zwischen 1 und 999 sein!',
                                            'Buchungskreis bereits im Einsatz!'

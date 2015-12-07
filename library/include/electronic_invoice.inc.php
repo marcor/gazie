@@ -30,7 +30,7 @@ class invoiceXMLvars
     function setXMLvars($gTables, $tesdoc, $testat, $tableName,$ecr=false)
     {
         $this->gTables = $gTables;
-        $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['enterprise_id']);
+        $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->azienda = $admin_aziend;
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
         $this->banapp = gaz_dbi_get_row($gTables['banapp'],"codice",$tesdoc['banapp']);

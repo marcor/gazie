@@ -576,26 +576,26 @@ function movmagUpdate($codice, $newValue) {
 //===============================================================
 // Gestione Access Rights
 //===============================================================
-function updateAccessRights($adminid, $moduleid, $access, $enterprise_id = 1) {
+function updateAccessRights($adminid, $moduleid, $access, $company_id = 1) {
    global $gTables, $link;
 
-   $result = mysqli_query($link, "SELECT * FROM " . $gTables['admin_module'] . " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND enterprise_id=' . $enterprise_id);
+   $result = mysqli_query($link, "SELECT * FROM " . $gTables['admin_module'] . " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id);
    if (gaz_dbi_num_rows($result) < 1) {
       $query = "INSERT INTO " . $gTables['admin_module'] .
-              " (adminid, enterprise_id, moduleid, access) VALUES ('" . $adminid . "',$enterprise_id,$moduleid,$access)";
+              " (adminid, company_id, moduleid, access) VALUES ('" . $adminid . "',$company_id,$moduleid,$access)";
    } else {
       $query = "UPDATE " . $gTables['admin_module'] .
               " SET access=" . $access .
-              " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND enterprise_id=' . $enterprise_id;
+              " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id;
    }
    $result = mysqli_query($link, $query) or die("Errore di updateAccessRights " . mysqli_error($link));
 }
 
-function getAccessRights($userid = '', $enterprise_id = 1) {
+function getAccessRights($userid = '', $company_id = 1) {
    global $gTables, $link;
-   $query_co = " AND am.enterprise_id='" . $enterprise_id . "'";
+   $query_co = " AND am.company_id='" . $company_id . "'";
    $ck_co = gaz_dbi_fields('admin_module');
-   if (!array_key_exists('enterprise_id', $ck_co)) {
+   if (!array_key_exists('company_id', $ck_co)) {
       $query_co = '';
    };
    if ($userid == '') {
@@ -619,17 +619,17 @@ function getAccessRights($userid = '', $enterprise_id = 1) {
    return $result;
 }
 
-function checkAccessRights($adminid, $module, $enterprise_id = 0) {
+function checkAccessRights($adminid, $module, $company_id = 0) {
    global $gTables, $link;
    $ck_co = gaz_dbi_fields('admin_module');
-   if ($enterprise_id == 0 || (!array_key_exists('enterprise_id', $ck_co))) {  // vengo da una vecchia versione (<4.0.12)
+   if ($company_id == 0 || (!array_key_exists('company_id', $ck_co))) {  // vengo da una vecchia versione (<4.0.12)
       $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
               ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
               " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "'";
    } else {   //nuove versione >= 4.0.12
       $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
               ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
-              " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.enterprise_id = $enterprise_id ";
+              " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.company_id = $company_id ";
    }
    $result = mysqli_query($link, $query) or die('Errore in query: ' . $query . ' Errore checkAccessRights ' . mysqli_error($link));
    if (gaz_dbi_num_rows($result) < 1) {

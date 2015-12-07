@@ -26,7 +26,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin(9);
 $msg = '';
-$rs_azienda = gaz_dbi_dyn_query('*',$gTables['aziend'],intval($_SESSION['enterprise_id']),'codice DESC',0,1);
+$rs_azienda = gaz_dbi_dyn_query('*',$gTables['aziend'],intval($_SESSION['company_id']),'codice DESC',0,1);
 $exist_true = gaz_dbi_fetch_array($rs_azienda);
 
 if ($exist_true) {
@@ -161,7 +161,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           exit;
     }
 } elseif ($exist_true) { //se e' il primo accesso per UPDATE
-    $form = gaz_dbi_get_row($gTables['aziend'], 'codice',intval($_SESSION['enterprise_id']));
+    $form = gaz_dbi_get_row($gTables['aziend'], 'codice',intval($_SESSION['company_id']));
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $form['datnas_Y'] = substr($form['datnas'],0,4);
     $form['datnas_M'] = substr($form['datnas'],5,2);

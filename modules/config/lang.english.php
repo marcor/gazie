@@ -190,7 +190,7 @@ $strScript = array("admin_aziend.php" =>
         'ivam_t' => 'VAT Frequency',
         'ivam_t_value' => array('M' => 'Monthly', 'T' => 'Quarterly')
     ),
-    "create_new_enterprise.php" =>
+    "create_new_company.php" =>
     array('title' => 'Create a new enterprise',
         'errors' => array('Code must be between 1 and 999!',
             'Company code already in use!'

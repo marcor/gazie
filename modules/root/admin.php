@@ -29,25 +29,25 @@ $admin_aziend=checkAdmin();
 if (!isset($_POST['hidden_req'])){
 
     $form['hidden_req']='';
-    $form['enterprise_id']=$admin_aziend['enterprise_id'];
-    $form['search']['enterprise_id']='';
+    $form['company_id']=$admin_aziend['company_id'];
+    $form['search']['company_id']='';
 } else {
   if (isset($_POST['logout'])) {
       header("Location: logout.php");
       exit;
   }
   $form['hidden_req']=$_POST['hidden_req'];
-  $form['enterprise_id']=$_POST['enterprise_id'];
-  $form['search']['enterprise_id']=$_POST['search']['enterprise_id'];
+  $form['company_id']=$_POST['company_id'];
+  $form['search']['company_id']=$_POST['search']['company_id'];
 }
 
 function selectCompany($name,$val,$strSearch='',$val_hiddenReq='',$mesg,$class='FacetSelect')
 {
     global $gTables,$admin_aziend;
-    $table=$gTables['aziend'].' LEFT JOIN '. $gTables['admin_module'].' ON '.$gTables['admin_module'].'.enterprise_id = '.$gTables['aziend'].'.codice';
-    $where=$gTables['admin_module'].'.adminid=\''.$admin_aziend['Login'].'\' GROUP BY enterprise_id';
+    $table=$gTables['aziend'].' LEFT JOIN '. $gTables['admin_module'].' ON '.$gTables['admin_module'].'.company_id = '.$gTables['aziend'].'.codice';
+    $where=$gTables['admin_module'].'.adminid=\''.$admin_aziend['Login'].'\' GROUP BY company_id';
     if ($val>0 && $val<1000) { // vengo da una modifica della precedente select case quindi non serve la ricerca
-          $co_rs=gaz_dbi_dyn_query("*",$table,'enterprise_id = '.$val.' AND '.$where,"ragso1 ASC");
+          $co_rs=gaz_dbi_dyn_query("*",$table,'company_id = '.$val.' AND '.$where,"ragso1 ASC");
           $co=gaz_dbi_fetch_array($co_rs);
           changeEnterprise(intval($val));
           echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
@@ -61,10 +61,10 @@ function selectCompany($name,$val,$strSearch='',$val_hiddenReq='',$mesg,$class='
                echo "<option value=\"0\"> ---------- </option>";
                while ($r = gaz_dbi_fetch_array($co_rs)) {
                      $selected = '';
-                     if ($r['enterprise_id'] == $val) {
+                     if ($r['company_id'] == $val) {
                          $selected = "selected";
                      }
-                     echo "\t\t <option value=\"".$r['enterprise_id']."\" $selected >".intval($r['enterprise_id'])."-".$r["ragso1"]."</option>\n";
+                     echo "\t\t <option value=\"".$r['company_id']."\" $selected >".intval($r['company_id'])."-".$r["ragso1"]."</option>\n";
                }
                echo "\t </select>\n";
           } else {
@@ -128,10 +128,10 @@ echo '<form method="POST" name="myform">
 					<td align="center" bgcolor="#'.$admin_aziend['colore'].'">
 						'.$script_transl['company'].'
 						<a href="../config/admin_aziend.php">
-							<img src="view.php?table=aziend&value='.$form['enterprise_id'].'" width="200" alt="Logo" border="0" title="'.$script_transl['upd_company'].'" />
+							<img src="view.php?table=aziend&value='.$form['company_id'].'" width="200" alt="Logo" border="0" title="'.$script_transl['upd_company'].'" />
 						</a>
 						<br />'.$script_transl['mesg_co'][2].' &rarr; ';
-selectCompany('enterprise_id',$form['enterprise_id'],$form['search']['enterprise_id'],$form['hidden_req'],$script_transl['mesg_co']);
+selectCompany('company_id',$form['company_id'],$form['search']['company_id'],$form['hidden_req'],$script_transl['mesg_co']);
 echo '				</td>
 				</tr>
 			</table>
@@ -140,8 +140,8 @@ echo '				</td>
 		echo '<div class="container custom-tab">';	
 		
 		
-	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' click desc,last_use desc',0,8);
-	$res_last  = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' adminid="'.$admin_aziend['Login'].'" ',' last_use desc, click desc',0,8);
+	$result    = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' company_id="'. $form['company_id'].'" AND adminid="'.$admin_aziend['Login'].'" ',' click DESC, last_use DESC',0,8);
+	$res_last  = gaz_dbi_dyn_query("*", $gTables['menu_usage'] , ' company_id="'. $form['company_id'].'" AND adminid="'.$admin_aziend['Login'].'" ',' last_use DESC, click DESC',0,8);
 	
 	if ( gaz_dbi_num_rows($result)>0 ) {
 		while ($r = gaz_dbi_fetch_array($result)) {

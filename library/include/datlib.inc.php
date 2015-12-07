@@ -56,8 +56,8 @@ if ($gazie_locale != "") {
 }
 
 $id=1;
-if (isset($_SESSION['enterprise_id'])) {
-  $id=sprintf('%03d',$_SESSION['enterprise_id']);
+if (isset($_SESSION['company_id'])) {
+  $id=sprintf('%03d',$_SESSION['company_id']);
 }
 
 /* controllo anche se includere il file dei nomi di tabelle specifico del modulo
