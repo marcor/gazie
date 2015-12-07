@@ -367,7 +367,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
                     $msg .= "44+";
                 }
-            } else if ( $form['tipodoc']=='VRI' ) {
+            } else if ( $form['tipdoc'] == 'VRI' ) {
 				/*$rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " AND (tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND seziva = " . $sezione, "datemi DESC ,numdoc DESC ", 0, 1);
                 $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
                 $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
@@ -576,6 +576,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     header("Location: report_doctra.php");
                     exit;
                 } else {
+					echo $form['template'];
                     $_SESSION['print_request'] = $ultimo_id;
                     header("Location: invsta_docven.php");
                     exit;

@@ -44,7 +44,9 @@ if (isset($_SESSION['print_request'])) {
          $documento = gaz_dbi_fetch_array($result);
          if (substr($documento['tipdoc'],0,2) == 'DD'){
             $template = '&template=DDT';
-         } else {
+         } else if ( $documento['tipdoc'] == 'VRI' ){
+            $template = '&template=Received';
+		 } else {
             $template = '';
          }
          if ($documento['numdoc'] > 0) {
