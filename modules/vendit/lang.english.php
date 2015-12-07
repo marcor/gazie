@@ -159,6 +159,7 @@ $strScript = array("admin_client.php" =>
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Received"
         ),
+        'title' => 'Sales documents',
         'tipdoc' => ' sales document type: ',
         'mesg' => array('The search yielded no results!',
             'Insert at least 2 characters!',

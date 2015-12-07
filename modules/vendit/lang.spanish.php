@@ -163,6 +163,7 @@ $strScript = array("admin_client.php" =>
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Recibido"
         ),
+        'title' => 'Documento de venta',
         'tipdoc' => ' documento de venta tipo: ',
         'mesg' => array('La busqueda no dio resultados!',
             'Inserte al menos 2 caracteres!',
@@ -249,7 +250,6 @@ $strScript = array("admin_client.php" =>
         'last_row' => 'Last row',
         'id_doc_ritorno_title' => 'Seleziona il DdT per cessione in c/visione di riferimento',
         'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento'
-
     ),
     "select_docforprint.php" =>
     array(array(1 => "D.d.T. de venta", 2 => "Factura diferida", 3 => "Factura inmediata que acompa&ntilde;a", 4 => "Factura inmediata simple", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),
