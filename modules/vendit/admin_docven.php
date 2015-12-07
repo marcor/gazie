@@ -367,7 +367,21 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
                     $msg .= "44+";
                 }
-            } else { //se sono altri documenti
+            } else if ( $form['tipodoc']=='VRI' ) {
+				/*$rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " AND (tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND seziva = " . $sezione, "datemi DESC ,numdoc DESC ", 0, 1);
+                $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
+                $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
+                if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
+                    $msg .= "44+";
+                }*/
+				$rs_last_n = gaz_dbi_dyn_query("numdoc", $gTables['tesdoc'], "tipdoc = 'VRI' AND id_con = 0",'datemi DESC, numdoc DESC',0,1);
+				$last_n = gaz_dbi_fetch_array($rs_last_n);
+				if ($last_n) {
+					$form['numdoc'] = $last_n['numdoc'] + 1;
+				} else {
+					$form['numdoc'] = 1;
+				}
+			} else { //se sono altri documenti
                 $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' and seziva = $sezione", "protoc desc, datfat desc, datemi desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
                 $utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datfat'], 5, 2), substr($ultimo_tipo['datfat'], 8, 2), substr($ultimo_tipo['datfat'], 0, 4));
@@ -1198,7 +1212,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['template'] = $ultimo_template['template'];
     } elseif ($form['tipdoc'] == 'FAP') {  //se e' una parcella
         $form['template'] = 'Parcella';
-    } else {
+    } elseif ($form['tipdoc'] == 'VRI') {  //se e' una ricevuta
+        $form['template'] = 'Received';
+	} else {
         $form['template'] = "FatturaSemplice";
     }
     $form['protoc'] = "";
@@ -1325,7 +1341,7 @@ if ($form['id_tes'] > 0) { // è una modifica
     echo "<input type=\"hidden\" value=\"" . $form['tipdoc'] . "\" name=\"tipdoc\">\n";
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 } else { // è un inserimento
-    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT' => '', 'FAI' => '', 'FAP' => '', 'FNC' => '', 'FND' => '', 'DDV' => '', 'RDV' => '', 'DDY' => ''));
+    $tidoc_selectable = array_intersect_key($script_transl['doc_name'], array('DDT' => '', 'FAI' => '', 'FAP' => '', 'FNC' => '', 'FND' => '', 'DDV' => '', 'RDV' => '', 'DDY' => '', 'VRI' =>'' ));
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . ucfirst($script_transl[$toDo]) . $script_transl['tipdoc'];
     $gForm->variousSelect('tipdoc', $tidoc_selectable, $form['tipdoc'], 'FacetFormHeaderFont', true, 'tipdoc');
 }
