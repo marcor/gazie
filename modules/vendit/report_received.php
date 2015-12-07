@@ -106,7 +106,7 @@ else
 //recupero le testate in base alle scelte impostate
 $result = gaz_dbi_dyn_query($gTables['tesdoc'].".*,".$gTables['anagra'].".ragso1,".$gTables['anagra'].".telefo", $gTables['tesdoc']."
                             LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice
-                            LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra", $where, $orderby,$limit, $passo);
+                            LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra", $where, "id_tes desc",$limit, $passo);
 while ($row = gaz_dbi_fetch_array($result)) {
     echo "<tr>";
     echo "<td class=\"FacetDataTD\"><a href=\"admin_docven.php?Update&id_tes=".$row["id_tes"]."\">".$row["numdoc"]."</a> &nbsp;</td>";
