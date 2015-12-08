@@ -25,29 +25,36 @@
 global $gTables;
 
 function submenu($array) {
-	$level = 0;
+	if(!is_array($array)) { return ;}
+
 	$numsub = 0;
-	for ($i=1; $i < 15; $i++) {
-		if (array_key_exists($i, $array)) {
-			$icon_lnk='';
-			if ($numsub === 0) {
-				echo '<ul class="dropdown-menu">';
-			}
-			if ( array_key_exists($i, $array[$i]) || count($array[$i])>5 ) {
-				echo '<li class="dropdown-submenu">';
-			}
-			else {
-				echo '<li>';
-			}
-			if (preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/",$array[$i]['icon'])){
-				$icon_lnk='<img src="'.$array[$i]['icon'].'"/> ';
-			}
-			echo '<a href="' . $array[$i]['link'] . '">'.$icon_lnk . stripslashes ( $array[$i]['name'] ). '</a>';
-			submenu($array[$i]);
-			$numsub++;
+	$submenu = '';
+
+	foreach($array as $i => $mnu) {
+		if(!is_array($mnu)) {continue;}
+		$submnu = '';
+
+		if ($numsub === 0) {
+			echo '<ul class="dropdown-menu">';
 		}
+		
+		if (preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/" ,$mnu['icon'])){
+			$submnu='<img src="'.$mnu['icon'].'" /> ';
+		}
+		$submnu = '<a href="'.$mnu['link'].'">'.$submnu.stripslashes($mnu['name']).'</a>';
+
+		if (count($mnu)>5) {	//	Esiste un sotto menu
+			echo '<li class="dropdown-submenu">'.$submnu;
+			submenu($mnu);
+			echo '</li>';
+		} else {
+			echo '<li>'.$submnu.'</li>';
+		}
+
+		$numsub++;
 	}
-	if ($numsub > 0) echo '</ul>';
+
+	if ($numsub > 0) {echo '</ul>';}
 }
 
 //preparo la query per la seconda barra 
@@ -116,7 +123,7 @@ if ( $riga["id"]!="" ) {
             foreach ( $menuArray[0] as $menu ) {
                 $icon_lnk=''; $css_class='row-menu';
                 if (isset($menu['icon']) && preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/",$menu['icon'])){
-                    $icon_lnk='<img src="'.$menu['icon'].'"/>';
+                    $icon_lnk='<img src="'.$menu['icon'].'" />';
                     $css_class='icon-menu';
                 }
                 if ( $i > 4 ) {
@@ -133,10 +140,6 @@ if ( $riga["id"]!="" ) {
             echo '</li>';
             ?>
             </ul>
-            <!-- Mi pare che siano di troppo 
-              </li>
-          </ul>-->
-        <!--</div>-->
 	</div>
 </nav>
 <?php

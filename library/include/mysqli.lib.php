@@ -599,21 +599,47 @@ function getAccessRights($userid = '', $company_id = 1) {
       $query_co = '';
    };
    if ($userid == '') {
-      $query = 'SELECT module.name,module.link,module.id AS m1_id,module.access,module.weight ' .
-              'FROM ' . $gTables['module'] . ' AS module ' .
-              "ORDER BY weight";
+      $query = 'SELECT  module.name,
+	  					module.link,
+						module.id AS m1_id,
+						module.access,
+						module.weight 
+				FROM  '.$gTables['module'].' AS module 
+				ORDER BY weight';
    } else {
       /* LA: 17-02-2008  */
-      $query = 'SELECT am.adminid, am.access,
-        m1.id AS m1_id, m1.name, m1.link, m1.icon, m1.class, m1.weight,
-        m2.id AS m2_id,m2.link AS m2_link,m2.icon AS m2_icon,m2.class AS m2_class,m2.translate_key AS m2_trkey,m2.accesskey AS m2_ackey,m2.weight AS m2_weight,
-        m3.id AS m3_id,m3.link AS m3_link,m3.icon AS m3_icon,m3.class AS m3_class,m3.translate_key AS m3_trkey,m3.accesskey AS m3_ackey,m3.weight AS m3_weight
-        FROM ' . $gTables['menu_module'] . ' AS m2 ' .
-              'LEFT JOIN ' . $gTables['module'] . ' AS m1 ON m1.id=m2.id_module ' .
-              'LEFT JOIN ' . $gTables['admin_module'] . ' AS am ON am.moduleid=m1.id ' .
-              'LEFT JOIN ' . $gTables['menu_script'] . ' AS m3 ON m3.id_menu=m2.id ' .
-              "WHERE am.adminid='" . $userid . "' " . $query_co .
-              "ORDER BY m1.weight,m1_id,m2.weight,m2_id,m3.weight";
+      $query = 'SELECT am.adminid, 
+	  				   am.access, 
+					   m1.id AS m1_id, 
+					   m1.name,
+					   m1.link, 
+					   m1.icon, 
+					   m1.class, 
+					   m1.weight,
+					   m2.id AS m2_id,
+					   m2.link AS m2_link,
+					   m2.icon AS m2_icon,
+					   m2.class AS m2_class,
+					   m2.translate_key AS m2_trkey,
+					   m2.accesskey AS m2_ackey,
+					   m2.weight AS m2_weight,
+					   m3.id AS m3_id,
+					   m3.link AS m3_link,
+					   m3.icon AS m3_icon,
+					   m3.class AS m3_class,
+					   m3.translate_key AS m3_trkey,
+					   m3.accesskey AS m3_ackey,
+					   m3.weight AS m3_weight 
+				FROM '.$gTables['menu_module'].'       AS m2 
+				LEFT JOIN '.$gTables['module'].'       AS m1 ON m1.id      = m2.id_module 
+				LEFT JOIN '.$gTables['admin_module'].' AS am ON am.moduleid= m1.id 
+				LEFT JOIN '.$gTables['menu_script'].'  AS m3 ON m3.id_menu = m2.id 
+				WHERE am.adminid=\''.$userid.'\' '.$query_co.' 
+				ORDER BY m1.weight,
+						 m1_id,
+						 m2.weight,
+						 m2_id,
+						 m3.weight';
    }
    $result = mysqli_query($link, $query) or die("Query failed getAccessRights " . mysqli_error($link));
    return $result;
