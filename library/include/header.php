@@ -84,12 +84,12 @@ function get_transl_referer($rlink) {
         $n2 = gaz_dbi_get_row($gTables['menu_module'], 'link', end($clink));
         if ($n2) {
             include "../../modules/" . $clink[1] . "/menu.italian.php";
-            return $clink[1].'-m2-'.$n2['id'];
+            return $clink[1].'-m2-'.$n2['translate_key'];
         } else {
             $n3 = gaz_dbi_get_row($gTables['menu_script'], 'link', end($clink));
             if ($n3) {
                 include "../../modules/" . $clink[1] . "/menu.italian.php";
-                return $clink[1].'-m3-'.$n3['id'];
+                return $clink[1].'-m3-'.$n3['translate_key'];
             } else { // non l'ho trovato neanche nel m3, provo sui file di traduzione
                 include "../../modules/" . $clink[1] . "/lang.italian.php";
                 // tento di risalire allo script giusto
@@ -122,7 +122,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
     $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
     $value = array();
     if (gaz_dbi_num_rows($result) == 0) {
-        $value['name'] = get_transl_referer($mod_uri);
+        $value['transl_ref'] = get_transl_referer($mod_uri);
         $value['adminid'] = $admin_aziend['Login'];
         $value['company_id'] = $admin_aziend['company_id'];
         $value['link'] = $mod_uri;
