@@ -127,6 +127,7 @@ $script_transl = HeadMain(0,array('calendarpopup/CalendarPopup',
 echo '<SCRIPT type="text/javascript">
       $(function() {
            $( "#search_partner" ).autocomplete({
+           html:true,
            source: "../../modules/root/search.php",
            minLength: 2,
            });})';

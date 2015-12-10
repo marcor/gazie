@@ -212,7 +212,7 @@ function apply_highlight($a_json, $parts) {
 					$no_highlight     = mb_substr($label, $start, $pos - $start);
 					$label_highlight .= $no_highlight;
 				}
-				$highlight        =  mb_substr($label, $pos, $len);
+				$highlight        =  '<span class="hl_results">' . mb_substr($label, $pos, $len) . '</span>';
 				$label_highlight .= $highlight;
 				$start            = $pos + $len;
 			}
