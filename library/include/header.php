@@ -84,12 +84,12 @@ function get_transl_referer($rlink) {
         $n2 = gaz_dbi_get_row($gTables['menu_module'], 'link', end($clink));
         if ($n2) {
             include "../../modules/" . $clink[1] . "/menu.italian.php";
-            return $clink[1].'-m2-'.$n2['id'];
+            return $clink[1].'-m2-'.$n2['translate_key'];
         } else {
             $n3 = gaz_dbi_get_row($gTables['menu_script'], 'link', end($clink));
             if ($n3) {
                 include "../../modules/" . $clink[1] . "/menu.italian.php";
-                return $clink[1].'-m3-'.$n3['id'];
+                return $clink[1].'-m3-'.$n3['translate_key'];
             } else { // non l'ho trovato neanche nel m3, provo sui file di traduzione
                 include "../../modules/" . $clink[1] . "/lang.italian.php";
                 // tento di risalire allo script giusto
@@ -122,7 +122,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
     $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
     $value = array();
     if (gaz_dbi_num_rows($result) == 0) {
-        $value['name'] = get_transl_referer($mod_uri);
+        $value['transl_ref'] = get_transl_referer($mod_uri);
         $value['adminid'] = $admin_aziend['Login'];
         $value['company_id'] = $admin_aziend['company_id'];
         $value['link'] = $mod_uri;
@@ -297,43 +297,4 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 		 <div class="container" role="main">';
                                     return ($strCommon + $translated_script);
 }
-/*
-Temporaneamente disabilitato, non funziona l'include (ho dovuto mettere percorso assoluto) e non va bene il footer
-viene visualizzato male
-function print_footer() {
-	global $admin_aziend, $strScript, $versSw;
-	if (!is_file("G:/xampp/htdocs/gazie/modules/root/lang.".$admin_aziend['lang'].".php")) {
-		return false;
-	}
-
-	include("G:/xampp/htdocs/gazie/modules/root/lang.".$admin_aziend['lang'].".php");
-	$script_transl = $strScript['admin.php'];
-	echo '<footer id="footer" class="footer small">
-			<div align="center">
-				GAzie Version: '.$versSw.' Software Open Source (lic. GPL) '.$script_transl['business'].' '.$script_transl['proj'].'<a  target="_new" title="'.$script_transl['auth'].'" href="http://http://www.devincentiis.it"> http://www.devincentiis.it</a>
-			</div>
-			<div>
-			<table border="0" class="Tmiddle">
-				<tr align="center">
-					<td>
-						<a href="http://gazie.sourceforge.net" target="_new" title="'.$script_transl['devel'].' www.gazie.it">
-							<img src="../../library/images/gazie.gif" height="38" border="0" />
-						</a>';
-	foreach ($script_transl['strBottom'] as $value){
-			echo '<a href="'.$value['href'].'" title="'.$value['title'].'" target="_new">
-					<img src="../../library/images/'.$value['img'].'" border="0" />
-				  </a>';
-	}
-	echo '			</td>
-				</tr>
-			</table>';
-	if (file_exists("G:/xampp/htdocs/gazie/modules/root/help/".$admin_aziend['lang']."/admin_help.php")) {
-		include("G:/xampp/htdocs/gazie/modules/root/help/".$admin_aziend['lang']."/admin_help.php");
-	}
-	echo '</footer>
-</div><!-- chiude div container role main --></body>
-</html>';
-
-}
-register_shutdown_function('print_footer');*/
 ?>
