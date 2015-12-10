@@ -169,7 +169,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
         }
         if ($row['numfat']>0) {
            $cliente = $anagrafica->getPartner($row['clfoco']);
-           $invoice="<a href=\"stampa_docven.php?id_tes=".$row['id_tes']."&template=FatturaAllegata\" class=\"btn btn-xs btn-default\" title=\"Stampa\">n.".$row['numfat']." del ".gaz_format_date($row['datfat']).' a '.$cliente['ragso1']."&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>\n";
+           $invoice="<a href=\"stampa_docven.php?id_tes=".$row['id_tes']."&template=FatturaAllegata\" class=\"btn btn-xs btn-default\" title=\"Stampa\" target=\"_blank\">n.".$row['numfat']." del ".gaz_format_date($row['datfat']).' a '.$cliente['ragso1']."&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>\n";
         } else {
            $invoice='';
         }

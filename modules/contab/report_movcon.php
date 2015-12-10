@@ -183,9 +183,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     print "<td class=\"FacetDataTD\" align=\"center\">";
     $docref=getDocRef($a_row);
     if (!empty($docref)){
-      echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"".$script_transl['sourcedoc']."\" href=\"$docref\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+      echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"".$script_transl['sourcedoc']."\" href=\"$docref\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
     } elseif($paymov)  {
-      echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"".$script_transl['customer_receipt']."\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=".$paymov."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
+      echo "<a class=\"btn btn-xs btn-default btn-default\" title=\"".$script_transl['customer_receipt']."\" href=\"../vendit/print_customer_payment_receipt.php?id_rig=".$paymov."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-euro\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></i></a>";
     }
     print "</td>";
     print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movcon.php?id_tes=".$a_row["id_tes"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";

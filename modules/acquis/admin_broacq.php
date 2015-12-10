@@ -1104,25 +1104,54 @@ foreach ($castel as $key => $value) {
 }
 
 if ($next_row > 0) {
-        echo "<tr>
-				<td colspan=\"2\"></td>
-				<td class=\"text-right\">".number_format ($totimpmer,2, '.', '')."</td>
-				<td class=\"text-right\">".gaz_format_number (($totimpfat-$totimpmer-$form['traspo']-$form['spevar']),2, '.', '')."</td>
-				<td class=\"text-right\">".number_format ($totimpfat,2, '.', '')."</td>
-				<td class=\"text-right\">".number_format ($totivafat,2, '.', '')."</td>
-				<td class=\"text-right\">".$quatot."</td>
-				<td class=\"text-right\">".number_format (($totimpfat+$totivafat),2, '.', '')."</td>
-			  </tr>
-			  <tr>\n";
+        echo '	<tr>
+					<td colspan="2"></td>
+					<td class="text-right">'.number_format ($totimpmer,2, '.', '').'</td>
+					<td class="text-right">'.gaz_format_number (($totimpfat-$totimpmer-$form['traspo']-$form['spevar']),2, '.', '').'</td>
+					<td class="text-right">'.number_format ($totimpfat,2, '.', '').'</td>
+					<td class="text-right">'.number_format ($totivafat,2, '.', '').'</td>
+					<td class="text-right">'.$quatot.'</td>
+					<td class="text-right">'.number_format (($totimpfat+$totivafat),2, '.', '').'</td>
+				  </tr>';
         
 		if ($toDo == 'update') {
-           echo '<td colspan="8" class="text-right alert alert-success"><input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !" /></td></tr>';
+           echo '<tr>
+		   			<td colspan="8" class="text-right alert alert-success">
+		   				<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="MODIFICA !" />
+					</td>
+				 </tr>';
         } else {
-           echo '<td colspan="8" class="text-right alert alert-success"><input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !" /></td></tr>';
+           echo '<tr>
+		   			<td colspan="8" class="text-right alert alert-success">
+		   				<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="INSERISCI !" />
+					</td>
+				</tr>';
         }
-		echo "</tr>";
 }
-echo "</table><br />";
+if ($toDo == 'update' and $form['tipdoc'] == 'APR') {
+   echo '			<tr>
+   						<td colspan="8" class="text-right alert alert-info">
+							<script type="text/javascript">
+								$("input[name=tipdoc]").val("AOR");
+							</script>
+							<input type="submit" accesskey="o" name="ord" value="GENERA ORDINE!" />
+						</td>
+					</tr>';
+}
+/*
+Per sviluppi futuri: l'idea è quella di permettere il seguente flusso:
+1. richiesta preventivo
+2. accettazione preventivo e dunque conversione dello stesso in ordine (vedi if qui sopra)
+3. alla ricezione del ddt o fattura, conversione del preventivo in acquisto 8e quindi carico in magazzino)
+IL putno 3. è un pò più complesso da realizzare, occorre pensarci su
+  elseif($toDo == 'update' and $form['tipdoc'] == 'AOR') {
+   echo '			<tr>
+   						<td colspan="8" class="text-right alert alert-warning">
+							<input type="submit" accesskey="o" name="ord" value="GENERA ACQUISTO!" />
+						</td>
+					</tr>';
+}*/
+echo '	</table>';
 ?>
 </form>
 <!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->

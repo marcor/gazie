@@ -377,7 +377,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         echo "</td>";
         // Colonna "Stampa"
-        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"".$modulo."\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
         echo "</td>";
         
         // Colonna "Fattura elettronica"

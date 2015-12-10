@@ -129,7 +129,7 @@ while ($r = gaz_dbi_fetch_array($rs)) {
 								<td class="FacetDataTD text-right">'.gaz_format_number($r2["avere"]).' </td>
 								<td class="FacetDataTD text-right">'.gaz_format_number($r2["dare"]-$r2["avere"]).' </td>
 								<td class="FacetDataTD text-center" title="Visualizza e stampa il paritario">
-									<a class="btn btn-xs btn-default" href="select_partit.php?id='.$r["codice"].'">
+									<a class="btn btn-xs btn-default" href="select_partit.php?id='.$r["codice"].'" target="_blank">
 										<i class="glyphicon glyphicon-check"></i>&nbsp;<i class="glyphicon glyphicon-print"></i>
 									</a>
 								</td>

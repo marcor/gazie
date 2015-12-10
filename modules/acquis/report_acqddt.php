@@ -81,7 +81,7 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
 						<td>'.$cliente["ragso1"].'</td>
 						<td>'.$a_row["status"].'</td>
 						<td>
-							<a class="btn btn-xs btn-default" href="stampa_docacq.php?id_tes='.$a_row["id_tes"].'" title="Stampa">
+							<a class="btn btn-xs btn-default" href="stampa_docacq.php?id_tes='.$a_row["id_tes"].'" title="Stampa" target="_blank">
 								<i class="glyphicon glyphicon-print"></i>
 							</a>
 						</td>

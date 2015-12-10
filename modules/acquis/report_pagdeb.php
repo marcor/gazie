@@ -88,7 +88,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\">".$cliente["ragso1"]."&nbsp;</td>";
     echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["portos"]." &nbsp;</td>";
 	echo "	  <td class=\"FacetDataTD\">
-				<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" title=\"Stampa\">
+				<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" title=\"Stampa\" target=\"_blank\">
 					<i class=\"glyphicon glyphicon-print\"></i>
 				</a>
 			  </td>

@@ -29,18 +29,30 @@ $admin_aziend=checkAdmin();
 if (isset($_SESSION['print_request'])){
     $id_tes = $_SESSION['print_request'];
     unset ($_SESSION['print_request']);
-    $result = gaz_dbi_dyn_query("*", $gTables['tesbro'], "id_tes = '$id_tes' and status = 'GENERATO'","id_tes desc");
-    $documento = gaz_dbi_fetch_array($result);
+    $result        = gaz_dbi_dyn_query("*", $gTables['tesbro'], "id_tes = '$id_tes' and status = 'GENERATO'","id_tes desc");
+    $documento     = gaz_dbi_fetch_array($result);
     $TipoDocumento = array ("AOR" => "l'Ordine a Fornitore","APR" => "il Preveventivo d'Acquisto");
     if ($documento['numdoc'] > 0) {
-        echo "<HTML><HEAD><TITLE>Wait for PDF</TITLE>\n";
-        echo "<script type=\"text/javascript\">\n";
+        echo '<html>
+				<head>
+					<title>Wait for PDF</title>
+					<script type="text/javascript">';
+		/** Un pò di documentazione per capire bene la sintassi */
+		//http://www.w3schools.com/jsref/met_win_settimeout.asp
+		//https://developer.mozilla.org/en-US/docs/Web/API/WindowTimers/setTimeout
         if ($documento['tipdoc'] == 'AOR') {
-            echo "setTimeout(\"window.location='stampa_ordfor.php?id_tes=".$documento['id_tes']."'\",1000)\n";
+			//\"window.location='stampa_ordfor.php?id_tes=".$documento['id_tes']."'\",1000
+            echo 'setTimeout(function(){location.href="stampa_ordfor.php?id_tes='.$documento['id_tes'].'"} , 1000)';
         } else {
-            echo "setTimeout(\"window.location='stampa_prefor.php?id_tes=".$documento['id_tes']."'\",1000)\n";
+			//\"window.location='stampa_prefor.php?id_tes=".$documento['id_tes']."'\",1000
+            echo 'setTimeout(function(){location.href="stampa_prefor.php?id_tes='.$documento['id_tes'].'"} , 1000)';
         }
-        echo "</script></HEAD>\n<BODY><DIV align=\"center\">Wait for PDF</DIV></BODY></HTML>";
+        echo '			</script>
+					</head>
+					<body>
+						<div align="center">Wait for PDF</div>
+					</body>
+				</html>';
     } else {
         header("Location:report_broacq.php");
         exit;

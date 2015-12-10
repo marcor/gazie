@@ -57,7 +57,7 @@ foreach($result as $r) {
     } else {
        echo "<td class=\"FacetDataTD\" colspan=\"4\">".$script_transl['msg'][0]."</td>\n";
     }
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r["codice"]."\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"../contab/delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }

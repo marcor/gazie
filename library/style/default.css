@@ -5,7 +5,7 @@
 body {
 	font-family : Arial, Tahoma, Verdana, Helvetica;
 	background-attachment : fixed;
-	padding-bottom : 30px;
+	/*padding-bottom : 30px;*/
 	padding-top : 51px;
 }
 
@@ -618,3 +618,11 @@ div.danger li.active span.rounded{
 	text-align: left;
 	font-size: 90%;
 }
+/*
+.footer {
+    background-color: #f5f5f5;
+    bottom: 0;
+    height: 85px;
+    position: absolute;
+    width: 100%;
+}*/

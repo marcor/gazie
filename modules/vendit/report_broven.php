@@ -325,7 +325,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         echo "</td>";
     }
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"".$modulo."\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"".$modulo."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
     echo "</td>";
      // Colonna "Mail"
     echo "<td class=\"FacetDataTD\" align=\"center\">";

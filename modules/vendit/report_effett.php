@@ -158,7 +158,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
     }
     // Colonna "Stampa"
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"stampa_effett.php?id_tes=".$r["id_tes"]."\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"stampa_effett.php?id_tes=".$r["id_tes"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
     // Colonna "Origine"
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     //

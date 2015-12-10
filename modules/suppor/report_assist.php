@@ -166,7 +166,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<td class="FacetDataTD"><?php echo $a_row["ore"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["stato"]; ?></td>
 		<td class="FacetDataTD">
-			<a class="btn btn-xs btn-default" href="stampa_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>"><i class="glyphicon glyphicon-print"></i></a>
+			<a class="btn btn-xs btn-default" href="stampa_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>
 		</td>
 		<td class="FacetDataTD">
 			<a class="btn btn-xs btn-default btn-elimina" href="delete_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>">

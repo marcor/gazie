@@ -180,7 +180,7 @@ function confirMail(link){
                     <?php
                     // Colonna status
                     if ($r['numfat'] > 0) {
-                        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
+                        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
                         if ($r["id_con"] > 0) {
                             echo "<a title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">cont. n." . $r["id_con"] . "</a>";
                         }
@@ -197,7 +197,7 @@ function confirMail(link){
                     // Colonna stampa
 
                     $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
-                    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+                    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
                     echo "</td>\n";
 
                     // Colonna "Mail"
@@ -245,7 +245,7 @@ function confirMail(link){
                     echo "<td class=\"alert alert-danger\"  align=\"center\"><div class=\"btn btn-xs btn-warning\">" . $script_transl['from_suppl'] . "</div></td>";
 
                     $urlPrintDoc = "../acquis/stampa_docacq.php?id_tes=" . $r["id_tes"] . "&template=DDT";
-                    echo "<td class=\"alert alert-danger\"  align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+                    echo "<td class=\"alert alert-danger\"  align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
                     echo "</td>\n";
 
                     // Colonna "Mail"
@@ -294,7 +294,7 @@ function confirMail(link){
                     $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                     // Colonna stampa
                     echo "<td class=\"FacetDataTD\" align=\"center\">
-            <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_ddt'] . " n. " . $r["numdoc"] . "\" href=\"$urlPrintDoc\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+            <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_ddt'] . " n. " . $r["numdoc"] . "\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
                     echo "</td>";
 
                     // Colonna "Mail"

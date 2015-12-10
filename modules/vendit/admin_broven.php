@@ -1682,16 +1682,9 @@ echo "			</select>
 			<td class=\"FacetFieldCaptionTD\" colspan=\"2\">
 				" . $script_transl['taxstamp'] . "<input type=\"text\" value=\"".$form['taxstamp']."\" name=\"taxstamp\" maxlength=\"6\" size=\"4\" /> " . $script_transl['virtual_taxstamp'];
 $gForm->variousSelect('virtual_taxstamp', $script_transl['virtual_taxstamp_value'], $form['virtual_taxstamp']);
-echo '		</td>
-		</tr>';
-
-if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
-   echo '			<tr>
-   						<td colspan="8" class="text-right alert alert-info"><input type="submit" accesskey="o" name="ord" value="GENERA ORDINE!"></td>
-					</tr>';
-}
-
-echo '		<tr>
+echo '			</td>
+			</tr>
+			<tr>
 				<td class="FacetFieldCaptionTD text-right">'.$script_transl[32].'</td>
 				<td class="FacetFieldCaptionTD text-right">'.$script_transl[33].'</td>
 				<td class="FacetFieldCaptionTD text-right">'.$script_transl[34].'</td>
@@ -1744,6 +1737,11 @@ if ($next_row > 0) {
 						<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="'.strtoupper($script_transl[$toDo]).'!">
 					</td>
 				</tr>';
+}
+if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
+   echo '			<tr>
+   						<td colspan="8" class="text-right alert alert-info"><input type="submit" accesskey="o" name="ord" value="GENERA ORDINE!" /></td>
+					</tr>';
 }
 echo "	</table>";
 ?>

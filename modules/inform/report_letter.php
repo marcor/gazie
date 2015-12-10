@@ -147,7 +147,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['ragso1']." ".$a_row['ragso2']."</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["oggetto"]." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">
-			<a href=\"stampa_letter.php?id_let=".$a_row["id_let"]."\" title=\"Stampa\" class=\"btn btn-xs btn-default\">
+			<a href=\"stampa_letter.php?id_let=".$a_row["id_let"]."\" title=\"Stampa\" class=\"btn btn-xs btn-default\" target=\"_blank\">
 				<i class=\"glyphicon glyphicon-print\"></i>
 			</a>
 		  </td>";

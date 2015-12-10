@@ -97,7 +97,7 @@ echo "\t </select>\n";
 <td colspan="3" align="right" nowrap class="FacetFooterTD">
 <input type="submit" name="Return" value="Indietro">
 <?php
-echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']."!\" > &nbsp;";
+echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']."!\" /> &nbsp;";
 ?>
 </td>
 </tr>
@@ -137,7 +137,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          
 			/** ENRICO FEDELE */
 		 echo "<td class=\"FacetDataTD\" align=\"center\" title=\"".$script_transl['statement_title'].$r['ragso1']."\">
-		 		<a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r['codcon']."&yi=".$annini."&yf=".$annfin."\">
+		 		<a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r['codcon']."&yi=".$annini."&yf=".$annfin."\"  target=\"_blank\">
 					<i class=\"glyphicon glyphicon-eye-open\"></i>
 					<i class=\"glyphicon glyphicon-print\"></i>
 				</a>

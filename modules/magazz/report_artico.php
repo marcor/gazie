@@ -177,7 +177,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 				</td>';
        if ($admin_aziend['conmag']>0) {
           echo '	<td class="FacetDataTD" align="center" title="Visualizza e/o stampa la scheda di magazzino">
-		  				<a class="btn btn-xs btn-default" href="../magazz/select_schart.php?di=0101'.date('Y').'&df='.date('dmY').'&id='.$r['codice'].'">
+		  				<a class="btn btn-xs btn-default" href="../magazz/select_schart.php?di=0101'.date('Y').'&df='.date('dmY').'&id='.$r['codice'].'" target="_blank">
 							<i class="glyphicon glyphicon-check"></i><i class="glyphicon glyphicon-print"></i>
 						</a>
 					</td>';
