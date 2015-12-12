@@ -42,6 +42,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['web_url'] = trim($form['web_url']);
     $form['mascli'] = intval(substr($_POST['mascli'],0,3));
     $form['masfor'] = intval(substr($_POST['masfor'],0,3));
+    $form['mas_staff'] = intval(substr($_POST['mas_staff'],0,3));
     $form['masban'] = intval(substr($_POST['masban'],0,3));
     $form['virtual_stamp_auth_date_Y'] = intval($_POST['virtual_stamp_auth_date_Y']);
     $form['virtual_stamp_auth_date_M'] = intval($_POST['virtual_stamp_auth_date_M']);
@@ -208,15 +209,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('calendarpopup/CalendarPopup',
                                   'custom/autocomplete',
-                                  'custom/jquery.simple-color'
-								  /** ENRICO FEDELE */
-                                  /*'jquery/jquery-1.7.1.min',
-                                  'jquery/ui/jquery.ui.core',
-                                  'jquery/ui/jquery.ui.widget',
-                                  'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.autocomplete',*/
-								  /** ENRICO FEDELE */));
-								  //simplecolordisplay
+                                  'custom/jquery.simple-color'));
+//simplecolordisplay
 echo "<script type=\"text/javascript\">
 $(document).ready(function(){
 	$('.simple_color_custom').simpleColor({
@@ -455,12 +449,12 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['masban']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectAccount('masban',$form['masban'].'000000',array(1,5));
+$gForm->selectAccount('masban',$form['masban'].'000000',array(1,9));
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['mas_staff']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectAccount('mas_staff',$form['mas_staff'].'000000',array(2));
+$gForm->selectAccount('mas_staff',$form['mas_staff'].'000000',array(2,9));
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

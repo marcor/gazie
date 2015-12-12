@@ -23,38 +23,80 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-
-/*
- * Translated by: Antonio De Vincentiis
- * Revised by:
- */
-
-$strScript = array ("report_letter.php" =>
-                   array(  "Reporte de Cartas ",
-                           "Fecha ",
-                           "Numero ",
-                           "Tipo ",
-                           "Nombre de Empresa ",
-                           "Objeto ",
-                           "Escribir nueva carta"),
-                    "admin_letter.php" =>
-                   array(  'title' => " Carta ",
-                           'mesg'=>array('La busqueda no arrojo resultados!',
-                                         'Inserte al menos 2 caracteres!',
-                                         'Cambiando cliente'
-                                          ),
-                           array("LET" => " Normal ","DIC" => "Declaracion","SOL" => " Solicitud "),
-                           " de ",
-                           " a las ",
-                           " numero ",
-                           "Objeto ",
-                           " atencion para ",
-                           "adjuntar la firma del usuario ",
-                           "Tipo ",
-                           "Cuerpo ",
-                           "Nombre de usuario",
-                           "La fecha no es correcta!",
-                           "Debe seleccionar un cliente o un proveedor!"
-                        )
-                    );
+$strScript = array("admin_staff.php" =>
+    array('title' => 'Gestione del personale',
+        'ins_this' => 'Inserisci un lavoratore',
+        'upd_this' => 'Modifica  dati del lavoratore ',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia anagrafica'),
+        'errors' => array('&Egrave; necessario indicare la Ragione Sociale',
+            '&Egrave; necessario indicare l\'indirizzo',
+            'Il codice di avviamento postale (CAP) &egrave; sbagliato',
+            '&Egrave; necessario indicare la citt&agrave;',
+            '&Egrave; necessario indicare la provincia',
+            '&Egrave; necessario indicare il sesso',
+            'L\'IBAN non &egrave; corretto',
+            'L\'IBAN e la nazione sono diversi',
+            'Codice fiscale sbagliato per una persona fisica',
+            'La partita IVA &egrave; formalmente errata!',
+            'Esiste gi&agrave un Cliente con la stessa Partita IVA',
+            'Il codice fiscale &egrave; formalmente errato',
+            'Esiste gi&agrave; un Cliente con lo stesso Codice Fiscale',
+            'C.F. mancante! In automatico &egrave; stato<br />impostato con lo stesso valore della Partita IVA!',
+            'E\' una persona fisica, inserire il codice fiscale',
+            'Esiste una anagrafica con la stessa partita IVA',
+            'Esiste una anagrafica con lo stesso Codice Fiscale',
+            '&Egrave; necessario scegliere la modalit&agrave; di pagamento',
+            'Il codice del cliente &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
+            'La data di nascita &egrave; sbagliata',
+            'Indirizzo email formalmente sbagliato'
+        ),
+        'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
+        'codice' => "Codice ",
+        'ragso1' => "Cognome",
+        'ragso2' => "Nome",
+        'luonas' => 'Luogo di nascita',
+        'datnas' => 'Data di Nascita',
+        'pronas' => 'Provincia di nascita',
+        'counas' => 'Nazione di Nascita',
+        'sexper' => "Sesso/pers.giuridica ",
+        'sexper_value' => array('' => '-', 'M' => 'Maschio', 'F' => 'Femmina'),
+        'indspe' => 'Indirizzo',
+        'capspe' => 'Codice Postale',
+        'citspe' => 'Citt&agrave; - Provincia',
+        'prospe' => 'Provincia',
+        'country' => 'Nazione',
+        'telefo' => 'Telefono',
+        'cell' => 'Cellulare',
+        'codfis' => 'Codice Fiscale',
+        'e_mail' => 'e mail',
+        'id_agente' => 'Agente',
+        'iban' => 'IBAN',
+        'op_type' => 'Tipologia operazioni',
+        'op_type_value' => array(1 => 'Cessione di beni', 2 => 'Prestazione di servizi'),
+        'allegato' => 'Allegato IVA - Elenco Clienti',
+        'yn_value' => array('S' => 'Si', 'N' => 'No'),
+        'aliiva' => 'Riduzione I.V.A.',
+        'ritenuta' => '% Ritenuta',
+        'status' => 'Visibilit&agrave; alla ricerca',
+        'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
+        'annota' => 'Annotazioni',
+        'job_title' => 'Mansione'
+    ),
+    "staff_report.php" =>
+    array('title' => 'Lista dei lavoratori',
+        'header' => array(
+            "Codice" => "codice",
+            "Cognome" => "ragso1",
+            "Nome" => "ragso2",
+            "Sesso" => "sexper",
+            "Mansione" => "job_title",
+            "Città"=>"citspe",
+            "Telefono" => "telefo",
+            "C.F." => "",
+            "Visualizza <br /> e/o stampa" => "",
+            "Cancella" => "")
+    )
+);
 ?>

@@ -86,45 +86,19 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           $msg.='7+';
        }
        $cf_pi = new check_VATno_TAXcode();
-       $r_pi = $cf_pi->check_VAT_reg_no($form['pariva'],$form['country']);
-       if(strlen(trim($form['codfis'])) == 11) {
-           $r_cf = $cf_pi->check_VAT_reg_no($form['codfis'],$form['country']);
-           if ($form['sexper'] != 'G') {
-              $r_cf = 'Codice fiscale sbagliato per una persona fisica';
-              $msg .= '8+';
-           }
-       } else {
-           $r_cf = $cf_pi->check_TAXcode($form['codfis'],$form['country']);
-       }
+       $r_cf = $cf_pi->check_TAXcode($form['codfis'],$form['country']);
        if (!empty($r_pi)) {
           $msg .= "9+";
        }
-       if ($form['codpag']<1) {
-          $msg .= "17+";
-       }
        $anagrafica= new Anagrafica();
-       if (!($form['pariva']=="") && !($form['pariva']=="00000000000")) {
-           $partner_with_same_pi= $anagrafica->queryPartners('*', "codice <> ".$real_code." AND codice BETWEEN ".$admin_aziend['mas_staff']."000000 AND ".$admin_aziend['mas_staff']."999999 AND pariva = '".$form['pariva']."'","pariva DESC",0,1);
-           if ($partner_with_same_pi) { // c'� gi� un cliente sul piano dei conti
-              $msg .= "10+";
-           } elseif ($form['id_anagra']==0) { // � un nuovo cliente senza anagrafica
-              $rs_anagra_with_same_pi=gaz_dbi_dyn_query('*',$gTables['anagra']," pariva = '".$form['pariva']."'","pariva DESC",0,1);
-              $anagra_with_same_pi=gaz_dbi_fetch_array($rs_anagra_with_same_pi);
-              if($anagra_with_same_pi) { // c'� gi� un'anagrafica con la stessa PI non serve reinserirlo ma avverto
-                 // devo attivare tutte le interfacce per la scelta!
-                 $anagra=$anagra_with_same_pi;
-                 $msg .= '15+';
-              }
-           }
-       }
        if (!empty($r_cf)) {
           $msg .= "11+";
        }
        if (!($form['codfis']=="") && !($form['codfis']=="00000000000")) {
           $partner_with_same_cf=$anagrafica->queryPartners('*',  "codice <> ".$real_code." AND codice BETWEEN ".$admin_aziend['mas_staff']."000000 AND ".$admin_aziend['mas_staff']."999999 AND codfis = '".$form['codfis']."'","codfis DESC",0,1);
-          if ($partner_with_same_cf) { // c'� gi� un cliente sul piano dei conti
+          if ($partner_with_same_cf) { // c'� gi� un lavoratore sul piano dei conti
              $msg .= "12+";
-          } elseif ($form['id_anagra']==0) { // � un nuovo cliente senza anagrafica
+          } elseif ($form['id_anagra']==0) { // � un nuovo lavoratore senza anagrafica
              $rs_anagra_with_same_cf=gaz_dbi_dyn_query('*',$gTables['anagra']," codfis = '".$form['codfis']."'","codfis DESC",0,1);
              $anagra_with_same_cf=gaz_dbi_fetch_array($rs_anagra_with_same_cf);
              if($anagra_with_same_cf) { // c'� gi� un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
@@ -136,12 +110,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        }
 
        if (empty($form['codfis'])) {
-          if ($form['sexper'] == 'G') {
-             $msg .= "13+" ;
-             $form['codfis'] = $form['pariva'];
-          } else {
              $msg .= "14+" ;
-          }
        }
 
        $uts_datnas = mktime(0,0,0,$form['datnas_M'],$form['datnas_D'],$form['datnas_Y']);
@@ -154,17 +123,20 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
        if (empty($msg)) { // nessun errore
           $form['codice']=$real_code;
+          $form['id_clfoco']=$real_code;
           $form['datnas']=date("Ymd", $uts_datnas );
           if ($toDo == 'insert') {
             if ($form['id_anagra']>0) {
                 gaz_dbi_table_insert('clfoco',$form);
+                gaz_dbi_table_insert('staff',$form);
             } else {
                 $anagrafica->insertPartner($form);
+                gaz_dbi_table_insert('staff',$form);
             }
           } elseif ($toDo == 'update') {
              $anagrafica->updatePartners($form['codice'],$form);
           }
-          header("Location: report_client.php");
+          header("Location: staff_report.php");
           exit;
        }
 
@@ -175,7 +147,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
     $anagrafica = new Anagrafica();
-    $form = $anagrafica->getPartner(intval($admin_aziend['mas_staff']*1000000+$_GET['codice']));
+    $form = $anagrafica->getPartner(intval($admin_aziend['mas_staff']*1000000+intval($_GET['codice'])));
+    $staff = gaz_dbi_get_row($gTables['staff'],'id_clfoco',$form['codice']);
+    $form += $staff ;
     $form['codice'] = intval(substr($form['codice'],3));
     $toDo = 'update';
     $form['search']['id_des']='';
@@ -200,23 +174,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_M'] =1;
     $form['datnas_D'] =1;
     $form['counas']=$admin_aziend['country'];
-    $form['codpag']=1;
-    $form['spefat']='N';
-    $form['stapre']='N';
-    $form['allegato']=1;
     $form['ritorno']=$_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array(/** ENRICO FEDELE */
-								  /*'jquery/jquery-1.7.1.min','calendarpopup/CalendarPopup',
-                                  'jquery/ui/jquery.ui.core',
-                                  'jquery/ui/jquery.ui.widget',
-                                  'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.autocomplete',*/
-                                  /** ENRICO FEDELE */
-								  'custom/autocomplete'));
+$script_transl = HeadMain(0,array('custom/autocomplete'));
 echo "<SCRIPT type=\"text/javascript\">\n";
 echo "function toggleContent(currentContent) {
         var thisContent = document.getElementById(currentContent);
@@ -304,9 +267,9 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"ragso2\" value=\"".$form['ragso2']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['legrap']." </td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['job_title']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"legrap\" value=\"".$form['legrap']."\" align=\"right\" maxlength=\"100\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"job_title\" value=\"".$form['job_title']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['sexper']."*</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
@@ -339,11 +302,6 @@ echo "</td>\n";
 echo "</tr>\n";
 /** ENRICO FEDELE */
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sedleg']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <textarea name=\"sedleg\" rows=\"2\" cols=\"30\" maxlength=\"100\" size=\"50\">".$form['sedleg']."</textarea></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['datnas']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('datnas',$form['datnas_D'],$form['datnas_M'],$form['datnas_Y']);
 echo "\t</td>\n";
@@ -373,11 +331,6 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"telefo\" value=\"".$form['telefo']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['fax']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"fax\" value=\"".$form['fax']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['cell']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"cell\" value=\"".$form['cell']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
@@ -388,34 +341,14 @@ echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <input type=\"text\" name=\"codfis\" value=\"".$form['codfis']."\" align=\"right\" maxlength=\"16\" size=\"20\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pariva']." </td>\n";
-echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"pariva\" value=\"".$form['pariva']."\" align=\"right\" maxlength=\"11\" size=\"11\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['e_mail']."</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <input type=\"text\" name=\"e_mail\" value=\"".$form['e_mail']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['codpag']."</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->selectFromDB('pagame','codpag','codice',$form['codpag'],'codice',1,' - ','descri');
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['iban']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"iban\" value=\"".$form['iban']."\" align=\"right\" maxlength=\"27\" size=\"36\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['ritenuta']."</td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ritenuta\" value=\"".$form['ritenuta']."\" align=\"right\" maxlength=\"4\" size=\"4\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['allegato']."</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->selectNumber('allegato',$form['allegato'],true);
-echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['status']."</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
