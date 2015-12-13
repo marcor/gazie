@@ -109,7 +109,7 @@ $result = gaz_dbi_dyn_query($gTables['tesdoc'].".*,".$gTables['anagra'].".ragso1
                             LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra", $where, "id_tes desc",$limit, $passo);
 while ($row = gaz_dbi_fetch_array($result)) {
     echo "<tr>";
-    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_docven.php?Update&id_tes=".$row["id_tes"]."\">".$row["numdoc"]."</a> &nbsp;</td>";
+    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=".$row["id_tes"]."\">".$row["numdoc"]."</a> &nbsp;</td>";
     echo "<td class=\"FacetDataTD\">".$row["datfat"]." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$r["ragso1"]."&search=Cerca\">".$row["ragso1"]."&nbsp;</a></td>";
     echo "<td class=\"FacetDataTD\">".$row["telefo"]." &nbsp;</td>";

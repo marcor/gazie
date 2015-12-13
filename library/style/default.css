@@ -1,5 +1,5 @@
 /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-								STRUTTURA
+            STRUTTURA E FONTS
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 body {
@@ -552,7 +552,7 @@ input[type="text"]:focus, textarea:focus, select:focus {
 
 /* andrea biasi */
 .custom-tab {
-    border: 1px solid;
+    border: 0px solid;
 	margin-top: 20px;
 	width: 70%;
 	margin-left: auto;
