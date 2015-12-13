@@ -264,7 +264,7 @@ class Parcella extends Template
         }
         $this->SetY(218);
         $this->Cell(130);
-        $totale = $totimpfat + $totivafat + $impbol;
+        $totale = $totimpfat + $totivafat + $impbol+ $taxstamp;
         if ($this->tesdoc['id_tes'] > 0) {
            if ($ritenuta>0) {
                $this->SetFont('helvetica','B',12);
