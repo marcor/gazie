@@ -22,15 +22,14 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-?>
-<script type="text/javascript">
-function updateInput(ish){
-    document.getElementById("stato").value = ish;
-}
-</script>
-<?php
+
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+?>
+<pre>
+<?php //print_r( get_defined_vars() ); ?>
+</pre>
+<?php
 $msg = '';
 
 if (isset($_POST['Update']) || isset($_GET['Update'])) {    
@@ -54,7 +53,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['ritorno'] = $_POST['ritorno'];
 	$form['ref_code']= $_POST['ref_code'];
 	$form['ore']=	$_POST['ore'];
-	
+	$form['utente'] = $_SESSION["Login"];
+    
 	$form['rows'] = array();	
    if (isset($_POST['Submit'])) {
 		// conferma tutto       
@@ -101,11 +101,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$assist = gaz_dbi_get_row($gTables['assist'],"codice",$_GET['codice']);
 	//se e' il primo accesso per UPDATE    
 	$anagrafica = new Anagrafica();
-   $cliente = $anagrafica->getPartner($assist['clfoco']);
+    $cliente = $anagrafica->getPartner($assist['clfoco']);
 	$form = gaz_dbi_get_row($gTables['assist'], 'codice', $_GET['codice']);
 	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
-   $form['ritorno']=$_SERVER['HTTP_REFERER'];
-   $form['ref_code']=$form['codice'];
+    $form['ritorno']=$_SERVER['HTTP_REFERER'];
+    $form['ref_code']=$form['codice'];
 } else { 
 	//se e' il primo accesso per INSERT   
 	$form=gaz_dbi_fields('assist');
@@ -117,6 +117,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	} else {      
 		$form['codice'] = 1;
 	}   
+    $form['utente'] = $_SESSION["Login"];
 	$form['data'] = date("Y-m-d");
 	$form['ore'] = "0.00";
 	$form['stato'] = 'aperto';
@@ -162,15 +163,37 @@ $select_cliente = new selectPartner('clfoco');
 </td>
 </tr>
 <tr>
-	<td class="FacetFieldCaptionTD"><?php echo $script_transl['descrizione']; ?> </td>
+	<td class="FacetFieldCaptionTD"><?php echo $script_transl['tecnico']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input tabindex=3 type="text" name="descrizione" value="<?php echo $form['descrizione']; ?>" align="right" maxlength="255" size="70"/>
+		<select name="ctecnico" tabindex="5" onchange="updateInput(this.value)">
+			<?php
+			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
+			while ($tecnici = gaz_dbi_fetch_array($result)) {				
+					if ( $form['tecnico'] == $tecnici["tecnico"] ) $selected = "selected"; 
+					else $selected = "";
+					echo "<option value=\"".$tecnici["tecnico"]."\" ".$selected.">".$tecnici["tecnico"]."</option>";
+			}
+			?>
+		</select> 
+		<input tabindex=6 type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['oggetto']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
 		<input tabindex=4 type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255" size="70"/>
+	</td>
+</tr>
+<tr>
+	<td class="FacetFieldCaptionTD"><?php echo $script_transl['descrizione']; ?> </td>
+	<td colspan="2" class="FacetDataTD">
+		<textarea tabindex=3 type="text" name="descrizione" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['descrizione']; ?></textarea>
+	</td>
+</tr>
+<tr>
+	<td class="FacetFieldCaptionTD"><?php echo $script_transl['info_agg']; ?> </td>
+	<td colspan="2" class="FacetDataTD">
+		<input tabindex=4 type="text" name="info_agg" value="<?php echo $form['info_agg']; ?>" align="right" maxlength="255" size="70"/>
 	</td>
 </tr>
 <tr>
@@ -192,7 +215,7 @@ $select_cliente = new selectPartner('clfoco');
 			}
 			?>
 		</select> 
-		<input tabindex=6 type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="70"/>
+		<input tabindex=6 type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
 	</td>
 </tr>
 <tr>
@@ -209,3 +232,8 @@ $select_cliente = new selectPartner('clfoco');
 </form>
 </div><!-- chiude div container role main --></body>
 </html>
+<script type="text/javascript">
+function updateInput(ish){
+    document.getElementById("stato").value = ish;
+}
+</script>

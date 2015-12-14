@@ -29,4 +29,5 @@ ALTER TABLE `gaz_XXXtesdoc` ADD `id_doc_ritorno` int(9) NOT NULL DEFAULT 0 AFTER
 ALTER TABLE `gaz_XXXtesdoc` ADD `data_ordine` DATE DEFAULT null AFTER `datemi`;
 ALTER TABLE `gaz_XXXtesdoc` ADD `ragbol` int NOT NULL DEFAULT 0 AFTER `pagame`;
 CREATE TABLE IF NOT EXISTS `gaz_XXXassist` ( `id` int(11) NOT NULL AUTO_INCREMENT, `codice` int(10) NOT NULL, `utente` varchar(50) NOT NULL, `data` date NOT NULL, `tecnico` varchar(50) NOT NULL, `oggetto` varchar(80) NOT NULL, `descrizione` text NOT NULL, `clfoco` int(9) NOT NULL, `ore` decimal(6,2) NOT NULL, `stato` varchar(20) NOT NULL, PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+ALTER TABLE `gaz_XXXassist` ADD `info_agg` VARCHAR(80) NULL AFTER `descrizione`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

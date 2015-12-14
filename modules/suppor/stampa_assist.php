@@ -67,6 +67,7 @@ $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($ad
 $row = gaz_dbi_fetch_array($result);
 
 $html = "<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">";
+$html .= "Nome Tecnico : <b>".$row["tecnico"]."</b><br/>";
 $html .= "Cliente : <b>". $row["codice"] ." - ". $row["ragso1"]."</b><br>";
 if ( $row["telefo"] ) $html .= "Telefono : <b>".$row["telefo"]."</b><br>";
 if ( $row["telefo"] ) $html .= "Cellulare : <b>".$row["cell"]."</b><br>";
@@ -78,11 +79,15 @@ $html .= "
 					<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">Il cliente consegna al centro assistenza il seguente materiale :<br />
 					<strong>".$row["oggetto"]."</strong><br />
 					<br />
-					<br />
 					dichiarando i seguenti difetti, malfunzionamento o lavori da effettuare :<br />
-					<strong>".$row["descrizione"]."</strong></span><br />
-					<br />
-					&nbsp;</p>
+					<strong>".$row["descrizione"]."</strong><br /><br />
+					<br />";
+if ( $row["info_agg"] ) {
+                    $html .= "dichiarando o consegnando anche :<br />
+                    <strong>".$row["info_agg"]."</strong><br />";
+}
+$html .= "</span>
+    </p>
 				<p style=\"text-align: justify;\">
 					<span style=\"font-size:28px;\"><span style=\"font-family: arial,helvetica,sans-serif;\"><strong>Condizioni e termini per la presa in carico e ritiro del prodotto :</strong></span></span><br />
 					&nbsp;</p>
@@ -96,7 +101,7 @@ $html .= "
 					<li style=\"text-align: justify;\">
 						<span style=\"font-size:28px;\"><span style=\"font-family: arial,helvetica,sans-serif;\">Salvo diversi accordi scritti, il cliente &egrave; tenuto a ritirare il prodotto recandosi presso il punto vendita secondo ti tempi indicati dal laboratorio medesimo. Nel caso in cui il cliente non ritiri il prodotto nel termine di 30gg. dalla data di riparazione, il cliente si impegna sin d&#39;ora a corrispondere al laboratorio una somma pari a 5,00 &euro; a titolo di deposito per ogni giorno di permanenza del prodotto presso il laboratorio.</span></span><br />
 					</li>
-				</ol><table><tr><td align=\"center\">Firma cliente</td><td align=\"center\">Firma ABC Service</td></tr></table>
+				</ol><table><tr><td align=\"center\">Firma cliente</td><td align=\"center\">Firma tecnico</td></tr></table>
 			";
 
 /*<<<EOD

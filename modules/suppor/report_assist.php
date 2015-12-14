@@ -42,6 +42,15 @@ if ( isset($_GET['flt_passo']) ) {
 	$passo = 20;
 }
 
+if ( isset($_GET['flt_tecnico']) ) {
+	$flt_tecnico = $_GET['flt_tecnico'];
+	if ( $flt_tecnico!="tutti" ) {
+		$where .= " and tecnico = '".$flt_tecnico."'";
+	}
+} else {
+	$flt_tecnico = "tutti";
+	//$where .= " and tecnico = 'chiuso'";
+}
 if ( isset($_GET['flt_stato']) ) {
 	$flt_stato = $_GET['flt_stato'];
 	if ( $flt_stato!="tutti" ) {
@@ -93,6 +102,19 @@ if ( $flt_cliente!="tutti" ) {
 		</select>
 		</td>
 		<td class="FacetFieldCaptionTD">&nbsp;</td>
+        <td class="FacetFieldCaptionTD"><select name="flt_tecnico" onchange="this.form.submit()">
+			<?php
+			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
+			echo "<option value=\"tutti\" ".($flt_tecnico=="tutti"?"selected":"").">tutti</option>";
+			//echo "<option value=\"nochiusi\" ".($flt_tecnico=="nochiusi"?"selected":"").">non chiusi</option>";
+			while ($tecnici = gaz_dbi_fetch_array($result)) {
+					
+					if ( $flt_tecnico == $tecnici["tecnico"] ) $selected = "selected"; 
+					else $selected = "";
+					echo "<option value=\"".$tecnici["tecnico"]."\" ".$selected.">".$tecnici["tecnico"]."</option>";
+			}
+			?>
+		</select></td>
 		<td class="FacetFieldCaptionTD"><select name="flt_stato" onchange="this.form.submit()">
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist'],"", "stato", "0", "9999");
@@ -121,6 +143,7 @@ if ( $flt_cliente!="tutti" ) {
 			"Oggetto" 	=> "oggetto",
 			"Descrizione" => "descrizione",             
 			"Ore"			=> "ore",
+            "Tecnico"       => "tecnico",
 			"Stato" 		=> "stato",	
 			"Stampa" 	=> "",
 			"Elimina" 	=> ""
@@ -164,6 +187,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<td class="FacetDataTD"><?php echo $a_row["oggetto"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["descrizione"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["ore"]; ?></td>
+        <td class="FacetDataTD"><?php echo $a_row["tecnico"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["stato"]; ?></td>
 		<td class="FacetDataTD">
 			<a class="btn btn-xs btn-default" href="stampa_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>
@@ -180,7 +204,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 $passi = array(20, 50, 100, 10000 );
 ?>
 <tr>
-	<td class="FacetFieldCaptionTD" colspan="7" align="right">Totale Ore : 
+	<td class="FacetFieldCaptionTD" colspan="8" align="right">Totale Ore : 
 		<?php echo floatval($totale_ore); ?>
 	</td>
 	<td class="FacetFieldCaptionTD" colspan="3" align="right">Totale Euro : 
@@ -188,7 +212,7 @@ $passi = array(20, 50, 100, 10000 );
 	</td>
 </tr>
 <tr>
-	<td class="FacetFieldCaptionTD" align="center" colspan="10">Numero elementi : 
+	<td class="FacetFieldCaptionTD" align="center" colspan="11">Numero elementi : 
 		<select name="flt_passo" onchange="this.form.submit()">		
 		<?php
 		foreach ( $passi as $val ) {

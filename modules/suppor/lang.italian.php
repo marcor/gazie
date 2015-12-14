@@ -24,29 +24,31 @@
 */
 
 $strScript = array (
-					"admin_assist.php" =>
-                   array(  'title'=>'Gestione Assistenze Tecniche',
-                           'ins_this'=>'Inserimento assistenza tecnica',
-                           'upd_this'=>'Modifica l\'assistenza ',
-                           'mesg'=>array('La ricerca non ha dato risultati!',
-                                         'Inserire almeno 2 caratteri!',
-                                         'Cambia anagrafica'),
-                           'errors'=>array('Il codice articolo &egrave; gi&agrave; esistente',
-                                           'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
-                                           'Codice di un articolo gi&agrave; esistente',
-                                           'Il file dev\'essere nel formato PNG',
-                                           'L\'immagine non dev\'essere pi&ugrave; grande di 10 kb',
-                                           'Inserire un codice valido',
-                                           'Inserire una descrizione',
-                                           'Inserire l\'unit&agrave; di misura delle vendite',
-                                           'Inserire l\'aliquota I.V.A.'
-                                          ),
-                           'codice'=>"Numero",
-                           'descrizione'=>"Descrizione",
-									'cliente'=>"Cliente",
-									'telefono'=>"Telefono",
-                           'oggetto'=>"Oggetto",
-									'stato'=>"Stato"
-                         )
+                    "admin_assist.php" =>
+                    array(  'title'=>'Gestione Assistenze Tecniche',
+                        'ins_this'=>'Inserimento assistenza tecnica',
+                        'upd_this'=>'Modifica l\'assistenza ',
+                        'mesg'=>array('La ricerca non ha dato risultati!',
+                                'Inserire almeno 2 caratteri!',
+                                'Cambia anagrafica'),
+                        'errors'=>array('Il codice articolo &egrave; gi&agrave; esistente',
+                                'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
+                                'Codice di un articolo gi&agrave; esistente',
+                                'Il file dev\'essere nel formato PNG',
+                                'L\'immagine non dev\'essere pi&ugrave; grande di 10 kb',
+                                'Inserire un codice valido',
+                                'Inserire una descrizione',
+                                'Inserire l\'unit&agrave; di misura delle vendite',
+                                'Inserire l\'aliquota I.V.A.'
+                                ),
+                        'codice'=>"Numero",
+                        'descrizione'=>"Descrizione",
+						'cliente'=>"Cliente",
+						'telefono'=>"Telefono",
+                        'oggetto'=>"Oggetto",
+						'stato'=>"Stato",
+                        'info_agg'=>"Informazioni aggiuntive",
+                        'tecnico'=>"Tecnico"
+                        )
                     );
 ?>
