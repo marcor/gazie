@@ -68,6 +68,22 @@ $strScript = array ("report_letter.php" =>
                            'check_title_value'=>array(0=>'Abilita il controllo di versione da questo sito!',1=>'Disabilita il controllo di versione da questo sito!'),
                            'all_disabling'=>array(0=>'Disabilita tutti!',1=>'Disabilita tutti i siti per il controllo della versione!')
                          ),
+                    "report_anagra.php" =>
+                   array(  'title' => " Anagrafica contatti ",
+                           'new_ver1'=>'E\' disponibile una <b>nuova</b> versione (',
+                           'new_ver2'=>') di GAzie! <br>Per effettuare l\'aggiornamento puoi scaricare i files da',
+                           'is_align'=>'Non ci sono nuovi aggiornamenti disponibili. Questa versione di GAzie &egrave; aggiornata all\'ultima disponibile.',
+                           'no_conn'=>'Ci sono problemi di connessione al server per il controllo della versione!',
+                           'disabled'=>'Il controllo delle versioni aggiornate &egrave; stato disabilitato. &Egrave; possibile riattivarlo scegliendo uno dei servizi di check messi a disposizione dai seguenti siti',
+                           'zone'=>'ZONA',
+                           'city'=>'CITT&Agrave;',
+                           'sms'=>'SMS',
+                           'web'=>'Indirizzo WEB',
+                           'choice'=>'SCEGLI',
+                           'check_value'=>array(0=>'Abilita!',1=>'Abilitato'),
+                           'check_title_value'=>array(0=>'Abilita il controllo di versione da questo sito!',1=>'Disabilita il controllo di versione da questo sito!'),
+                           'all_disabling'=>array(0=>'Disabilita tutti!',1=>'Disabilita tutti i siti per il controllo della versione!')
+                         ),
                     "gaziecart_update.php" =>
                    array(  'title' => "Aggiornamento del catalogo online, estensione GAzieCart per Joomla!",
                            'errors'=>array('Il server non &egrave; stato trovato',

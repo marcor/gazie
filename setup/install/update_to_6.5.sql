@@ -3,6 +3,7 @@ ALTER TABLE `gaz_admin` CHANGE `enterprise_id` `company_id` INT(3) NOT NULL;
 ALTER TABLE `gaz_admin_module` CHANGE `enterprise_id` `company_id` INT(3) NOT NULL;
 UPDATE `gaz_menu_script` SET `link` = 'create_new_company.php' WHERE `link` = 'create_new_enterprise.php';
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, 5, 'report_ragstat.php', '', '', 9, '', 9  FROM `gaz_menu_module`;
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, 8, 'report_anagra.php', '', '', 7, '', 8  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'admin_ragstat.php', '', '', '12', '', '5'  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 7, 'report_destinazioni.php', '', '', 33, '', 4  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 7, 'admin_destinazioni.php', '', '', 34, '', 5  FROM `gaz_menu_script`;

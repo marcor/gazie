@@ -170,7 +170,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
    <tr>
 		<td class="FacetDataTD">
-			<a href="admin_assist.php?codice=<?php echo $a_row["codice"]; ?>&Update">
+			<a class="btn btn-xs btn-edit" href="admin_assist.php?codice=<?php echo $a_row["codice"]; ?>&Update">
 			<?php echo $a_row["codice"]; ?></a>
 		</td>
 		<td class="FacetDataTD"><?php echo $a_row["data"]; ?></td>

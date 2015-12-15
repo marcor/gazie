@@ -22,8 +22,8 @@
     Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-$transl['suppor'] = array( 'name' => "Supporto",
-                           'title' => "Gestione supporto clienti",
+$transl['suppor'] = array( 'name' => "Support",
+                           'title' => "Customer support management",
                            'm2' => array( 1 =>array("Assistenza clienti","Assistenza Clienti")
                                         ),
                            'm3' => array( 1 =>array("Inserisci nuovo assistenza","Nuova assistenza")
