@@ -25,11 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-?>
-<pre>
-<?php //print_r( get_defined_vars() ); ?>
-</pre>
-<?php
+
 $msg = '';
 
 if (isset($_POST['Update']) || isset($_GET['Update'])) {    
@@ -165,7 +161,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['tecnico']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<select name="ctecnico" tabindex="5" onchange="updateInput(this.value)">
+            <select name="ctecnico" tabindex="5" onchange="updateInput(this.value)">
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
 			while ($tecnici = gaz_dbi_fetch_array($result)) {				
@@ -174,8 +170,9 @@ $select_cliente = new selectPartner('clfoco');
 					echo "<option value=\"".$tecnici["tecnico"]."\" ".$selected.">".$tecnici["tecnico"]."</option>";
 			}
 			?>
-		</select> 
-		<input tabindex=6 type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>
+            </select> 
+        <input tabindex=6 type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>       
+        <button id="toggleTec" type="button">Altro</button>
 	</td>
 </tr>
 <tr>
@@ -216,6 +213,7 @@ $select_cliente = new selectPartner('clfoco');
 			?>
 		</select> 
 		<input tabindex=6 type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
+        <button id="toggleSta" type="button">Altro</button>
 	</td>
 </tr>
 <tr>
@@ -236,4 +234,16 @@ $select_cliente = new selectPartner('clfoco');
 function updateInput(ish){
     document.getElementById("stato").value = ish;
 }
+</script>
+<script>
+$( document.getElementById("toggleTec") ).click(function() {
+  $( "#tecnico" ).fadeIn('fast');//toggle( "fold" );
+});
+$( document.getElementById("toggleSta") ).click(function() {
+  $( "#stato" ).fadeIn('fast');
+});
+$(function() {
+ $("#tecnico").fadeOut('fast');//toggle('fold');
+ $("#stato").toggle('fold');
+})
 </script>

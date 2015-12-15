@@ -626,3 +626,30 @@ div.danger li.active span.rounded{
     position: absolute;
     width: 100%;
 }*/
+
+.conto_attivo {
+    background-color: #82d0db;
+}
+.conto_passivo {
+    background-color: #e5f2a9;
+}
+.conto_costi {
+    background-color: #efd4f3;
+}
+.costo_ricavi {
+    background-color: #fae896;
+}
+.conto_transitori {
+    background-color: #fee8fd;
+}
+.noborder {
+    border: 0px solid #fff;
+}
+.tr_piacon  {
+    border-spacing: 0px;
+    border: none;
+    
+}
+.table_piacon {
+    
+}

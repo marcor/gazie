@@ -55,9 +55,9 @@ $strTransl = HeadMain();
 <div class="alert alert-danger text-center" role="alert"><?php echo $strTransl['msg1']; ?></div>
 
 <form method="POST">
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    <table class="table_piacon table table-striped table-bordered table-condensed table-responsive">
         <thead>
-            <tr>
+            <tr class="tr_piacon">
                 <?php
                 foreach ($strTransl['header'] as $k => $v) {
                     echo '				<th class="FacetFieldCaptionTD">' . $k . '</th>';
@@ -92,47 +92,50 @@ $strTransl = HeadMain();
             $rs = gaz_dbi_dyn_query('codice,descri', $gTables['clfoco'], $where, 'codice');
 
             $collapse = 0;
-
+            
+            $css_class = array ("conto_attivo","conto_passivo","conto_costi","costo_ricavi","conto_transitori");
+            
             while ($r = gaz_dbi_fetch_array($rs)) {
                 $r2 = array('dare' => 0, 'avere' => 0);
                 $rs2 = gaz_dbi_dyn_query($select, $table, 'codcon=' . $r['codice'] . $where2, 'codcon');
                 if ($rs2) {
                     $r2 = gaz_dbi_fetch_array($rs2);
                 }
+                $color_class = $css_class[substr($r["codice"],0,1)-1];
                 if (substr($r["codice"], 3) == '000000') {
                     $collapse = $r["codice"];
                     echo '<tr data-toggle="collapse" data-target=".' . $collapse . '">	
-			<td class="FacetData">
+			<td class="'.$color_class.'">
 				<a class="btn btn-xs btn-default btn-edit" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $strTransl['edit_master'] . '" >
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 0, 3) . '
 				</a>
 			</td>
-			<td class="FacetData"></td>
-			<td class="FacetData text-danger" colspan="5"><strong>' . $r["descri"] . '</strong></td>
-			<td class="FacetData text-center">
+			<td class="'.$color_class.'"></td>
+			<td class="'.$color_class.' text-danger" colspan="5"><strong><i class="glyphicon glyphicon-list"></i> ' . $r["descri"] . '</strong></td>
+			<td class="'.$color_class.' text-center">
 				<a class="btn btn-xs btn-default btn-elimina" href="delete_piacon.php?codice=' . $r["codice"] . '">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
 			</tr>';
                 } else {
-                    echo '<tr class="' . $collapse . ' collapse" aria-expanded="false">
-			<td class="FacetDataTD">' . substr($r["codice"], 0, 3) . ' </td>
-			<td class="FacetDataTD">
+                    echo '<tr class="' . $collapse.' collapse tr_piacon" aria-expanded="false">
+			<td class="noborder tr_piacon"> </td>
+			<td class="'.$color_class.'">
 				<a class="btn btn-xs btn-default" href="admin_piacon.php?Update&amp;codice=' . $r["codice"] . '" title="' . $strTransl['edit_account'] . '">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;' . substr($r["codice"], 3) . '
 				</a>
 			</td>
-			<td class="FacetDataTD">' . $r["descri"] . ' </td>
-			<td class="FacetDataTD text-right">' . gaz_format_number($r2["dare"]) . ' </td>
-			<td class="FacetDataTD text-right">' . gaz_format_number($r2["avere"]) . ' </td>
-			<td class="FacetDataTD text-right">' . gaz_format_number($r2["dare"] - $r2["avere"]) . ' </td>
-			<td class="FacetDataTD text-center" title="Visualizza e stampa il paritario">
+			<td class="'.$color_class.'">' . $r["descri"] . ' </td>
+			<td class="'.$color_class.' text-right">' . gaz_format_number($r2["dare"]) . ' </td>
+			<td class="'.$color_class.' text-right">' . gaz_format_number($r2["avere"]) . ' </td>
+			<td class="'.$color_class.' text-right">' . gaz_format_number($r2["dare"] - $r2["avere"]) . ' </td>
+			<td class="'.$color_class.' text-center" title="Visualizza e stampa il paritario">
 				<a class="btn btn-xs btn-default" href="select_partit.php?id=' . $r["codice"] . '" target="_blank">
 					<i class="glyphicon glyphicon-check"></i>&nbsp;<i class="glyphicon glyphicon-print"></i>
 				</a>
 			</td>
-			<td class="FacetDataTD text-center">
+			<td class="'.$color_class.' text-center">
 				<a class="btn btn-xs btn-default btn-elimina" href="delete_piacon.php?codice=' . $r["codice"] . '">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
