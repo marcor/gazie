@@ -108,10 +108,38 @@ if ($t > 4 && $t <= 13) {
 ?>
 
 <?php
+$interval = 0;
+$files = array();
+if ($handle = opendir('../../data/files/backups/')) {
+    while (false !== ($file = readdir($handle))) {
+        if ($file != "." && $file != "..") {
+           $files[filemtime('../../data/files/backups/'.$file)] = $file;
+        }
+    }
+    closedir($handle);
+    ksort($files);
+    $reallyLastModified = end($files);
+
+    foreach($files as $file) {
+        $lastModified = date('YmdHi',filemtime('../../data/files/backups/'.$file));
+        if(strlen($file)-strpos($file,".sql")== 4){
+           if ($file == $reallyLastModified) {
+               if ( date('YmdHi')-substr($file, 5, 12)>100000) {
+                    $interval = date('YmdHi')-substr($file, 5, 12);
+//                    echo $interval . " " . $file;
+                }
+           }
+        }
+    }
+}
 echo '<form method="POST" name="myform">
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
-		<div id="admin_main" >
-			<table border="1" class="Tmiddle">
+		<div id="admin_main" >';
+        if ( $interval > 100000 ) {
+            ?><div class="alert alert-danger text-center" role="alert">Attenzione il backup risale a più di 10 giorni, effettua un <a href="../inform/backup.php">backup locale</a> oppure un <a href="../inform/backup.php?auto">backup automatico</a>!<?php //echo $strTransl['msg1']; ?></div><?php
+        }
+
+        echo '<table border="1" class="Tmiddle">
 				<tr class="FacetFormHeaderFont">
 					<td class="FacetDataTD text-center">
 						<a href="../config/admin_utente.php?Login=' . $admin_aziend['Login'] . '&Update">
