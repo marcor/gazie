@@ -50,7 +50,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     $form['do_backup']=0;
 }
 
-if ($form['do_backup'] != 1)
+if ( $form['do_backup'] != 1 && !isset($_GET['auto']) )
   {
     //
     // Mostra il modulo form e poi termina la visualizzazione.
@@ -99,15 +99,19 @@ if ($form['do_backup'] != 1)
     // Esegue il backup.
     //
     // Impostazione degli header per l'opozione "save as" dello standard input che verra` generato
-    header('Content-Type: text/x-sql; charset=utf-8');
-    header("Content-Disposition: attachment; filename=".$Database.date("YmdHi").'.sql');
-    header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up pi�� volte.
-    if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Pragma: public');
-    } else {
-        header('Pragma: no-cache');
+    if ( !isset($_GET['auto']) ) {
+        header('Content-Type: text/x-sql; charset=utf-8');
+        header("Content-Disposition: attachment; filename=".$Database.date("YmdHi").'.sql');
+        header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT');// per poter ripetere l'operazione di back-up pi�� volte.
+        if(strpos($_SERVER['HTTP_USER_AGENT'], 'MSIE')) {
+            header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+            header('Pragma: public');
+        } else {
+            header('Pragma: no-cache');
+        }
     }
+    ob_start();
+    
     echo "-- GAzie SQL Dump\n";
     echo "-- version: ".$versSw."\n";
     echo "-- http://gazie.sourceforge.net\n";
@@ -260,6 +264,11 @@ if ($form['do_backup'] != 1)
               echo "UNLOCK TABLES;\n\n";
         }
     }
+    $content = ob_get_contents();
+
+    $f = fopen('../../data/files/backups/'.$Database.date("YmdHi").'.sql', "w");
+    fwrite($f, $content);
+    fclose($f); 
   }
 exit;
 
