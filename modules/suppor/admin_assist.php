@@ -161,7 +161,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['tecnico']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-            <select name="ctecnico" tabindex="5" onchange="updateInput(this.value)">
+            <select name="ctecnico" tabindex="5" onchange="updateInputTecnico(this.value)">
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
 			while ($tecnici = gaz_dbi_fetch_array($result)) {				
@@ -202,7 +202,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['stato']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<select name="cstato" tabindex="5" onchange="updateInput(this.value)">
+		<select name="cstato" tabindex="5" onchange="updateInputStato(this.value)">
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist'],"", "stato", "0", "9999");
 			while ($stati = gaz_dbi_fetch_array($result)) {				
@@ -231,8 +231,11 @@ $select_cliente = new selectPartner('clfoco');
 </div><!-- chiude div container role main --></body>
 </html>
 <script type="text/javascript">
-function updateInput(ish){
+function updateInputStato(ish){
     document.getElementById("stato").value = ish;
+}
+function updateInputTecnico(ish){
+    document.getElementById("tecnico").value = ish;
 }
 </script>
 <script>
