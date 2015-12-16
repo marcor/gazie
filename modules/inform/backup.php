@@ -269,6 +269,7 @@ if ( $form['do_backup'] != 1 && !isset($_GET['auto']) )
     $f = fopen('../../data/files/backups/'.$Database.date("YmdHi").'.sql', "w");
     fwrite($f, $content);
     fclose($f); 
+    if ( isset($_GET['auto']) ) header("Location: ../root/admin.php");       
   }
 exit;
 

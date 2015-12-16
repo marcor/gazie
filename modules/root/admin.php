@@ -123,12 +123,11 @@ if ($handle = opendir('../../data/files/backups/')) {
     foreach($files as $file) {
         $lastModified = date('YmdHi',filemtime('../../data/files/backups/'.$file));
         if(strlen($file)-strpos($file,".sql")== 4){
-           if ($file == $reallyLastModified) {
-               if ( date('YmdHi')-substr($file, 5, 12)>100000) {
+            if ($file == $reallyLastModified) {
+                if ( date('YmdHi')-substr($file, 5, 12)>100000) {
                     $interval = date('YmdHi')-substr($file, 5, 12);
-//                    echo $interval . " " . $file;
                 }
-           }
+            }
         }
     }
 }
