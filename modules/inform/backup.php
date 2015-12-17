@@ -254,10 +254,8 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         }
     }
     $content = ob_get_contents();
-
-    if (isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
-        gaz_dbi_put_row($gTables['config'],'variable','last_backup','cvalue', date('Y-m-d'));
-    } else { // è stato un backup esterno allora aggiorno il database per ricordarmi la data
+    gaz_dbi_put_row($gTables['config'],'variable','last_backup','cvalue', date('Y-m-d'));
+    if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
         $f = fopen('../../data/files/backups/' . $Database . date("YmdHi") . '.sql', "w");
         fwrite($f, $content);
         fclose($f);

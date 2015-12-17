@@ -58,32 +58,6 @@ class CheckDbAlign {
         }
     }
     
-    function testDbServerBackup() {
-        $interval = 0;
-        $files = array();
-        if ($handle = opendir('../../data/files/backups/')) {
-            while (false !== ($file = readdir($handle))) {
-                if ($file != "." && $file != "..") {
-                    $files[filemtime('../../data/files/backups/'.$file)] = $file;
-                }
-            }
-            closedir($handle);
-            ksort($files);
-            $reallyLastModified = end($files);
-            foreach($files as $file) {
-                $lastModified = date('YmdHi',filemtime('../../data/files/backups/'.$file));
-                if(strlen($file)-strpos($file,".sql")== 4){
-                    if ($file == $reallyLastModified) {
-                        if ( date('YmdHi')-substr($file, 5, 12)>100000) {
-                            $interval = date('YmdHi')-substr($file, 5, 12);
-                        }
-                    }
-                }
-            }
-        }
-        return $interval;
-    }
-
     function getSqlFileVersion() {
         // Luigi Rambaldi 13 Ottobre 2005
         $fileArray = Array();

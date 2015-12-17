@@ -92,14 +92,7 @@ if ($data) {
     header("Location: ../../setup/install/install.php?tp=" . $table_prefix);
     exit;
 }
-
-if ( $backup == "client" ) {
-    $lastBackup = $checkUpd->testDbBackup();
-} else if ( $backup == "server" ) {
-    //controllo l'ultimo backup sul server
-    $lastBackup = $checkUpd->testDbServerBackup();
-    if ( $lastBackup > 10000 ) $lastBackup = true;
-}
+$lastBackup = $checkUpd->testDbBackup();
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -117,11 +110,14 @@ if ($t > 4 && $t <= 13) {
 echo '<form method="POST" name="myform">
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 		<div id="admin_main" >';
-        if ( $lastBackup ) {
-            ?><div class="alert alert-danger text-center" role="alert"><?php echo $script_transl['errors'][4]; ?> : <a href="../inform/backup.php?auto">BACKUP!</a></div><?php
-        }
+if ($lastBackup) {
+    ?>
+    <div class="alert alert-danger text-center" role="alert">
+        <?php
+        echo $script_transl['errors'][4].' : <a href="../inform/backup.php?'.$backup.'">BACKUP!</a>('.$backup.')</div>';
+    }
 
-        echo '<table border="1" class="Tmiddle">
+    echo '<table border="1" class="Tmiddle">
 				<tr class="FacetFormHeaderFont">
 					<td class="FacetDataTD text-center">
 						<a href="../config/admin_utente.php?Login=' . $admin_aziend['Login'] . '&Update">
@@ -140,106 +136,105 @@ echo '<form method="POST" name="myform">
 							<img src="view.php?table=aziend&value=' . $form['company_id'] . '" width="200" alt="Logo" border="0" title="' . $script_transl['upd_company'] . '" />
 						</a>
 						<br />' . $script_transl['mesg_co'][2] . ' &rarr; ';
-selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
-echo '				</td>
+    selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
+    echo '				</td>
 				</tr>
 			</table>
 		</div>';
 
-echo '<div class="container custom-tab">';
-$result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
-$res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
+    echo '<div class="container custom-tab">';
+    $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
+    $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
 
-if (gaz_dbi_num_rows($result) > 0) {
-    while ($r = gaz_dbi_fetch_array($result)) {
-        $rref = explode('-', $r['transl_ref']);
-        $rl = gaz_dbi_fetch_array($res_last);
-        $rlref = explode('-', $rl['transl_ref']);
-        switch ($rref[1]) {
-            case 'm1':
-                require '../'.$rref[0].'/menu.'.$admin_aziend['lang'].'.php';                
-                $rref_name = $transl[$rref[0]]['title'];
-                break;
-            case 'm2':
-                require '../'.$rref[0].'/menu.'.$admin_aziend['lang'].'.php';                
-                $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
-            break;
-            case 'm3':
-                require '../'.$rref[0].'/menu.'.$admin_aziend['lang'].'.php';                
-                $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
-            break;
-            case 'sc':
-                require '../'.$rref[0].'/lang.'.$admin_aziend['lang'].'.php';                
-                $rref_name = $strScript[$rref[2]][$rref[3]];
-            break;
-            default:
-                $rref_name = 'Nome script non trovato';
-            break;
-        }
-        switch ($rlref[1]) {
-            case 'm1':
-                require '../'.$rlref[0].'/menu.'.$admin_aziend['lang'].'.php';                
-                $rlref_name = $transl[$rlref[0]]['title'];
-                break;
-            case 'm2':
-                require '../'.$rlref[0].'/menu.'.$admin_aziend['lang'].'.php';                
-                $rlref_name = $transl[$rlref[0]]['m2'][$rlref[2]][0];
-            break;
-            case 'm3':
-                require '../'.$rlref[0].'/menu.'.$admin_aziend['lang'].'.php';                
-                $rlref_name = $transl[$rlref[0]]['m3'][$rlref[2]][0];
-            break;
-            case 'sc':
-                require '../'.$rlref[0].'/lang.'.$admin_aziend['lang'].'.php';                
-                $rlref_name = $strScript[$rlref[2]][$rlref[3]];
-            break;
-            default:
-                $rlref_name = 'Nome script non trovato';
-            break;
-        }
-        ?>
-        <div class="row">
-            <div class="col-xs-6">
-                <a href="<?php
-        if ($r["link"] != "")
-            echo '../../modules' . $r["link"];
-        else
-            echo "&nbsp;";
-        ?>" type="button" class="btn btn-default btn-success btn-lista">
-                    <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
+    if (gaz_dbi_num_rows($result) > 0) {
+        while ($r = gaz_dbi_fetch_array($result)) {
+            $rref = explode('-', $r['transl_ref']);
+            $rl = gaz_dbi_fetch_array($res_last);
+            $rlref = explode('-', $rl['transl_ref']);
+            switch ($rref[1]) {
+                case 'm1':
+                    require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                    $rref_name = $transl[$rref[0]]['title'];
+                    break;
+                case 'm2':
+                    require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                    $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
+                    break;
+                case 'm3':
+                    require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                    $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
+                    break;
+                case 'sc':
+                    require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                    $rref_name = $strScript[$rref[2]][$rref[3]];
+                    break;
+                default:
+                    $rref_name = 'Nome script non trovato';
+                    break;
+            }
+            switch ($rlref[1]) {
+                case 'm1':
+                    require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                    $rlref_name = $transl[$rlref[0]]['title'];
+                    break;
+                case 'm2':
+                    require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                    $rlref_name = $transl[$rlref[0]]['m2'][$rlref[2]][0];
+                    break;
+                case 'm3':
+                    require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                    $rlref_name = $transl[$rlref[0]]['m3'][$rlref[2]][0];
+                    break;
+                case 'sc':
+                    require '../' . $rlref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                    $rlref_name = $strScript[$rlref[2]][$rlref[3]];
+                    break;
+                default:
+                    $rlref_name = 'Nome script non trovato';
+                    break;
+            }
+            ?>
+            <div class="row">
+                <div class="col-xs-6">
+                    <a href="<?php
+                    if ($r["link"] != "")
+                        echo '../../modules' . $r["link"];
+                    else
+                        echo "&nbsp;";
+                    ?>" type="button" class="btn btn-default btn-success btn-lista">
+                        <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
+                </div>
+                <div class="col-xs-6">
+                    <a href="<?php
+                    if ($rl["link"] != "")
+                        echo '../../modules' . $rl["link"];
+                    else
+                        echo "&nbsp;";
+                    ?>" type="button" class="btn btn-default btn-success btn-lista">
+                        <span ><?php
+                            echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>' . $rlref_name . '</b>';
+                            ?></span></a>
+                </div>
             </div>
-            <div class="col-xs-6">
-                <a href="<?php
-                if ($rl["link"] != "")
-                    echo '../../modules' . $rl["link"];
-                else
-                    echo "&nbsp;";
-                ?>" type="button" class="btn btn-default btn-success btn-lista">
-                    <span ><?php
-                echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>' . $rlref_name . '</b>';
-                ?></span></a>
-            </div>
-        </div>
-        <?php
-     
+            <?php
+        }
     }
-}
-echo '</div>';
+    echo '</div>';
 
-echo "<div align='center' id='admin_footer'>";
-echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) " . $script_transl['business'] . " " . $script_transl['proj'] . "<a  target=\"_new\" title=\"" . $script_transl['auth'] . "\" href=\"http://http://www.devincentiis.it\"> http://www.devincentiis.it</a></div>\n";
-echo '<div><table border="0" class="Tmiddle">';
-echo "<tr align=\"center\"><td>\n";
-echo "<a href=\"http://gazie.sourceforge.net\" target=\"_new\" title=\"" . $script_transl['devel'] . " www.gazie.it\"><img src=\"../../library/images/gazie.gif\" height=\"38\" border=\"0\"></a>\n";
-foreach ($script_transl['strBottom'] as $value) {
-    echo "<a href=\"" . $value['href'] . "\" title=\"" . $value['title'] . "\" target=\"_NEW\" >";
-    // echo "<img src=\"http://".$_SERVER['HTTP_HOST']."/".$radix."/library/images/".$value['img']."\" border=\"0\" ></a>\n";
-    echo "<img src=\"../../library/images/" . $value['img'] . "\" border=\"0\" ></a>\n";
-}
-echo '</td></tr></table></div>';
-if (file_exists("help/" . $admin_aziend['lang'] . "/admin_help.php")) {
-    include("help/" . $admin_aziend['lang'] . "/admin_help.php");
-}
-?>
+    echo "<div align='center' id='admin_footer'>";
+    echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) " . $script_transl['business'] . " " . $script_transl['proj'] . "<a  target=\"_new\" title=\"" . $script_transl['auth'] . "\" href=\"http://http://www.devincentiis.it\"> http://www.devincentiis.it</a></div>\n";
+    echo '<div><table border="0" class="Tmiddle">';
+    echo "<tr align=\"center\"><td>\n";
+    echo "<a href=\"http://gazie.sourceforge.net\" target=\"_new\" title=\"" . $script_transl['devel'] . " www.gazie.it\"><img src=\"../../library/images/gazie.gif\" height=\"38\" border=\"0\"></a>\n";
+    foreach ($script_transl['strBottom'] as $value) {
+        echo "<a href=\"" . $value['href'] . "\" title=\"" . $value['title'] . "\" target=\"_NEW\" >";
+        // echo "<img src=\"http://".$_SERVER['HTTP_HOST']."/".$radix."/library/images/".$value['img']."\" border=\"0\" ></a>\n";
+        echo "<img src=\"../../library/images/" . $value['img'] . "\" border=\"0\" ></a>\n";
+    }
+    echo '</td></tr></table></div>';
+    if (file_exists("help/" . $admin_aziend['lang'] . "/admin_help.php")) {
+        include("help/" . $admin_aziend['lang'] . "/admin_help.php");
+    }
+    ?>
 </div><!-- chiude div container role main --></body>
 </html>

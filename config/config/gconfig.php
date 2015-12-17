@@ -80,9 +80,9 @@ $default_user = "amministratore";
 //
 $Timezone = "Europe/Rome";
 // 
-// Specifica come verrà fatto il backup sul "server" o sul "client"
+// Specifica come verrà fatto il backup interno (internal o anche empty ) sul server o esterno (external) sul client
 //
-$backup = "client"; // SAREBBE PIU' LOGICO METTERLO SULLA TABELLA GAZ_CONFIG...
+$backup = "external"; 
 //
 // È ammesso inviare messaggi di posta elettronica?
 //

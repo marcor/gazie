@@ -34,7 +34,7 @@ $strScript = array("admin.php" =>
             ' alla versione ',
             '  cliccando QUI ',
             ' Ricordati che per il buon funzionamento dell\'appicazione la direttiva magic_quotes_gpc deve essere posta a Off nel file php.ini!',
-            ' Attenzione il backup esterno risale a più di 10 giorni, fallo adesso '
+            ' Attenzione l\'ultimo backup risale a più di 10 giorni, fallo adesso '
         ),
         'access' => ", questo &egrave; il tuo ",
         'pass' => "&ordm; accesso!<br />La tua password &egrave; del ",
