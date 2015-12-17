@@ -79,6 +79,10 @@ $default_user = "amministratore";
 // in modo indipendente le date di accesso alle tabelle.
 //
 $Timezone = "Europe/Rome";
+// 
+// Specifica come verrà fatto il backup sul "server" o sul "client"
+//
+$backup = "client";
 //
 // È ammesso inviare messaggi di posta elettronica?
 //

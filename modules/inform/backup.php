@@ -50,7 +50,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     $form['do_backup'] = 0;
 }
 
-if ($form['do_backup'] != 1 && isset($_GET['auto'])) {
+if ($form['do_backup'] != 1 && !isset($_GET['auto'])) {
     //
     // Mostra il modulo form e poi termina la visualizzazione.
     //
@@ -255,7 +255,7 @@ if ($form['do_backup'] != 1 && isset($_GET['auto'])) {
     }
     $content = ob_get_contents();
 
-    if (!isset($_GET['auto'])) { // se non è un backup esterno allora scrivo sul FS del server
+    if (isset($_GET['auto'])) { // se non è un backup esterno allora scrivo sul FS del server
         $f = fopen('../../data/files/backups/' . $Database . date("YmdHi") . '.sql', "w");
         fwrite($f, $content);
         fclose($f);

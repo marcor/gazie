@@ -93,7 +93,13 @@ if ($data) {
     exit;
 }
 
-$lastBackup = $checkUpd->testDbBackup();
+if ( $backup == "client" ) {
+    $lastBackup = $checkUpd->testDbBackup();
+} else if ( $backup == "server" ) {
+    //controllo l'ultimo backup sul server
+    $lastBackup = $checkUpd->testDbServerBackup();
+    if ( $lastBackup > 10000 ) $lastBackup = true;
+}
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -107,7 +113,6 @@ if ($t > 4 && $t <= 13) {
 } else {
     $msg = $script_transl['night'];
 }
-
 
 echo '<form method="POST" name="myform">
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
