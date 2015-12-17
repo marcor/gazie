@@ -106,7 +106,7 @@ $script_transl = HeadMain();
             while ($a_row = gaz_dbi_fetch_array($result)) {
                 echo "<tr>";
                 // Colonna codice staffe
-                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" . substr($a_row["codice"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . substr($a_row["codice"], 3) . "</a> &nbsp</td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" .$a_row["codice"]. "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .$a_row["codice"] . "</a> &nbsp</td>";
                 // Colonna cognome
                 echo "<td class=\"FacetDataTD\" >" . $a_row["ragso1"] . " &nbsp;</td>";
                 // Colonna nome

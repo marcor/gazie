@@ -91,5 +91,17 @@ $(function() {
 			$( "#cuonas").val("IT");
 		}
 	});
+	$( "#search_Codice_CCNL" ).autocomplete({
+		source: "../../modules/humres/get_contract.php",
+		minLength: 2,
+		html: true, // optional (jquery.ui.autocomplete.html.js required)
+		focus: function( event, ui ) {
+			$( "#search_Codice_CCNL" ).val( ui.item.value );
+		},
+		select: function( event, ui ) {
+			$( "#search_Codice_CCNL" ).val( ui.item.value );
+			return false;
+		}
+	});
 });
 

@@ -50,7 +50,8 @@ $strScript = array("admin_staff.php" =>
             '&Egrave; necessario scegliere la modalit&agrave; di pagamento',
             'Il codice del cliente &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
             'La data di nascita &egrave; sbagliata',
-            'Indirizzo email formalmente sbagliato'
+            'Indirizzo email formalmente sbagliato',
+            '&Egrave; necessario indicare il conto Mastro collaboratori in configurazione Azienda'
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
         'codice' => "Codice ",
@@ -82,6 +83,7 @@ $strScript = array("admin_staff.php" =>
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
+        'Codice_CCNL' => 'CCNL code',
         'job_title' => 'Mansione'
     ),
     "staff_report.php" =>

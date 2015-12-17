@@ -41,9 +41,9 @@ $strScript = array("admin_staff.php" =>
             'L\'IBAN e la nazione sono diversi',
             'Codice fiscale sbagliato per una persona fisica',
             'La partita IVA &egrave; formalmente errata!',
-            'Esiste gi&agrave un Cliente con la stessa Partita IVA',
+            'Esiste gi&agrave un lavoratore con la stessa Partita IVA',
             'Il codice fiscale &egrave; formalmente errato',
-            'Esiste gi&agrave; un Cliente con lo stesso Codice Fiscale',
+            'Esiste gi&agrave; un lavoratore con lo stesso Codice Fiscale',
             'C.F. mancante! In automatico &egrave; stato<br />impostato con lo stesso valore della Partita IVA!',
             'E\' una persona fisica, inserire il codice fiscale',
             'Esiste una anagrafica con la stessa partita IVA',
@@ -51,7 +51,8 @@ $strScript = array("admin_staff.php" =>
             '&Egrave; necessario scegliere la modalit&agrave; di pagamento',
             'Il codice del cliente &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
             'La data di nascita &egrave; sbagliata',
-            'Indirizzo email formalmente sbagliato'
+            'Indirizzo email formalmente sbagliato',
+            '&Egrave; necessario indicare il conto Mastro collaboratori in configurazione Azienda',
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
         'codice' => "Codice ",
@@ -83,6 +84,7 @@ $strScript = array("admin_staff.php" =>
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
+        'Codice_CCNL' => 'Codice CCNL',
         'job_title' => 'Mansione'
     ),
     "staff_report.php" =>
@@ -93,7 +95,7 @@ $strScript = array("admin_staff.php" =>
             "Nome" => "ragso2",
             "Sesso" => "sexper",
             "Mansione" => "job_title",
-            "Città"=>"citspe",
+            "Città" => "citspe",
             "Telefono" => "telefo",
             "C.F." => "",
             "Visualizza <br /> e/o stampa" => "",

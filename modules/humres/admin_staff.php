@@ -33,9 +33,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
-    foreach($_POST['search'] as $k=>$v){
-       $form['search'][$k]=$v;
-    }
 
     $toDo = 'update';
     if (isset($_POST['Insert'])){
@@ -94,7 +91,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        if (!empty($r_cf)) {
           $msg .= "11+";
        }
-       if (!($form['codfis']=="") && !($form['codfis']=="00000000000")) {
+       if ($admin_aziend['mas_staff'] <= 199 ) { // non ho messo il mastro collaboratori in configurazione azienda
+          $msg .= "21+";
+       }
+       if (!($form['codfis']=="") && !($form['codfis']=="00000000000") && $toDo == 'insert') {
           $partner_with_same_cf=$anagrafica->queryPartners('*',  "codice <> ".$real_code." AND codice BETWEEN ".$admin_aziend['mas_staff']."000000 AND ".$admin_aziend['mas_staff']."999999 AND codfis = '".$form['codfis']."'","codfis DESC",0,1);
           if ($partner_with_same_cf) { // c'� gi� un lavoratore sul piano dei conti
              $msg .= "12+";
@@ -168,7 +168,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $form['codice']=1;
     }
     $toDo = 'insert';
-    $form['search']['id_des']='';
+    $form['search']='';
     $form['country']=$admin_aziend['country'];
     $form['datnas_Y'] =1900;
     $form['datnas_M'] =1;
@@ -179,7 +179,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0,array('custom/autocomplete'));
+$script_transl = HeadMain(0,array('calendarpopup/CalendarPopup','custom/autocomplete'));
 echo "<SCRIPT type=\"text/javascript\">\n";
 echo "function toggleContent(currentContent) {
         var thisContent = document.getElementById(currentContent);
@@ -217,7 +217,7 @@ echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n"
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['id_anagra']."\" name=\"id_anagra\" />\n";
 echo "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">";
-$gForm = new humresForm();
+$gForm = new GAzieForm();
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['ins_this']."</div>\n";
 } else {
@@ -265,11 +265,15 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['ragso2']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"ragso2\" value=\"".$form['ragso2']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
-echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['job_title']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"job_title\" value=\"".$form['job_title']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "</tr>\n";
+echo "</tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['Codice_CCNL']." </td>\n";
+echo "\t<td class=\"FacetDataTD\">
+      <input type=\"text\" name=\"Codice_CCNL\" id=\"search_Codice_CCNL\" value=\"".$form['Codice_CCNL']."\" align=\"right\" maxlength=\"30\" size=\"30\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['sexper']."*</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
