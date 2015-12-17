@@ -93,6 +93,8 @@ if ($data) {
     exit;
 }
 
+$lastBackup = $checkUpd->testDbBackup();
+
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $t = strftime("%H");
@@ -105,37 +107,13 @@ if ($t > 4 && $t <= 13) {
 } else {
     $msg = $script_transl['night'];
 }
-?>
 
-<?php
-$interval = 0;
-$files = array();
-if ($handle = opendir('../../data/files/backups/')) {
-    while (false !== ($file = readdir($handle))) {
-        if ($file != "." && $file != "..") {
-           $files[filemtime('../../data/files/backups/'.$file)] = $file;
-        }
-    }
-    closedir($handle);
-    ksort($files);
-    $reallyLastModified = end($files);
 
-    foreach($files as $file) {
-        $lastModified = date('YmdHi',filemtime('../../data/files/backups/'.$file));
-        if(strlen($file)-strpos($file,".sql")== 4){
-            if ($file == $reallyLastModified) {
-                if ( date('YmdHi')-substr($file, 5, 12)>100000) {
-                    $interval = date('YmdHi')-substr($file, 5, 12);
-                }
-            }
-        }
-    }
-}
 echo '<form method="POST" name="myform">
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 		<div id="admin_main" >';
-        if ( $interval > 100000 ) {
-            ?><div class="alert alert-danger text-center" role="alert">Attenzione il backup risale a più di 10 giorni, effettua un <a href="../inform/backup.php">backup locale</a> oppure un <a href="../inform/backup.php?auto">backup automatico</a>!<?php //echo $strTransl['msg1']; ?></div><?php
+        if ( $lastBackup ) {
+            ?><div class="alert alert-danger text-center" role="alert"><?php echo $script_transl['errors'][4]; ?> : <a href="../inform/backup.php?auto">BACKUP!</a></div><?php
         }
 
         echo '<table border="1" class="Tmiddle">
