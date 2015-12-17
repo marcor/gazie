@@ -82,7 +82,7 @@ $Timezone = "Europe/Rome";
 // 
 // Specifica come verrà fatto il backup sul "server" o sul "client"
 //
-$backup = "client";
+$backup = "client"; // SAREBBE PIU' LOGICO METTERLO SULLA TABELLA GAZ_CONFIG...
 //
 // È ammesso inviare messaggi di posta elettronica?
 //

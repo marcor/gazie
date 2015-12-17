@@ -50,7 +50,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     $form['do_backup'] = 0;
 }
 
-if ($form['do_backup'] != 1 && !isset($_GET['auto'])) {
+if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     //
     // Mostra il modulo form e poi termina la visualizzazione.
     //
@@ -90,7 +90,7 @@ if ($form['do_backup'] != 1 && !isset($_GET['auto'])) {
     // Esegue il backup.
     //
     // Impostazione degli header per l'opozione "save as" dello standard input che verra` generato
-    if (!isset($_GET['auto'])) {
+    if (isset($_GET['external'])) {
         header('Content-Type: text/x-sql; charset=utf-8');
         header("Content-Disposition: attachment; filename=" . $Database . date("YmdHi") . '.sql');
         header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // per poter ripetere l'operazione di back-up pi�� volte.
@@ -255,13 +255,13 @@ if ($form['do_backup'] != 1 && !isset($_GET['auto'])) {
     }
     $content = ob_get_contents();
 
-    if (isset($_GET['auto'])) { // se non è un backup esterno allora scrivo sul FS del server
+    if (isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
+        gaz_dbi_put_row($gTables['config'],'variable','last_backup','cvalue', date('Y-m-d'));
+    } else { // è stato un backup esterno allora aggiorno il database per ricordarmi la data
         $f = fopen('../../data/files/backups/' . $Database . date("YmdHi") . '.sql', "w");
         fwrite($f, $content);
         fclose($f);
         header("Location: ../root/admin.php");
-    } else { // è stato un backup esterno allora aggiorno il database per ricordarmi la data
-        gaz_dbi_put_row($gTables['config'],'variable','last_backup','cvalue', date('Y-m-d'));
     }
 }
 exit;
