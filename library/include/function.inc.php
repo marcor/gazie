@@ -69,6 +69,29 @@ function gaz_time_from($time) {
     }
 }
 
+function formatSizeUnits($bytes)
+    {
+        if ($bytes >= 1073741824) {
+            $bytes = number_format($bytes / 1073741824, 2) . ' GB';
+        }
+        elseif ($bytes >= 1048576) {
+            $bytes = number_format($bytes / 1048576, 2) . ' MB';
+        }
+        elseif ($bytes >= 1024) {
+            $bytes = number_format($bytes / 1024, 2) . ' KB';
+        }
+        elseif ($bytes > 1) {
+            $bytes = $bytes . ' bytes';
+        }
+        elseif ($bytes == 1) {
+            $bytes = $bytes . ' byte';
+        }
+        else {
+            $bytes = '0 bytes';
+        }
+        return $bytes;
+    }
+
 function gaz_format_number($number = 0) {
     global $gTables;
     $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.company_id = ' . $gTables['aziend'] . '.codice

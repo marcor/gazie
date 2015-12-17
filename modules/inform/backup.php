@@ -256,9 +256,13 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     $content = ob_get_contents();
     gaz_dbi_put_row($gTables['config'],'variable','last_backup','cvalue', date('Y-m-d'));
     if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
-        $f = fopen('../../data/files/backups/' . $Database . date("YmdHi") . '.sql', "w");
+        /*$f = fopen('../../data/files/backups/' . $Database . date("YmdHi") . '.sql', "w");
         fwrite($f, $content);
-        fclose($f);
+        fclose($f);*/
+        $fp = gzopen ('../../data/files/backups/'.$Database.date("YmdHi").'.sql.gaz', 'w9');
+        gzwrite ($fp, $content);
+        gzclose($fp);
+        
         header("Location: ../root/admin.php");
     }
 }

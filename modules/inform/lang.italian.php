@@ -126,6 +126,16 @@ $strScript = array ("report_letter.php" =>
                            'table_selection_value'=>array(0=>' tutte le tabelle della base di dati ',1=>' le sole tabelle con prefisso '),
                            'text_encoding'=>'Codifica',
                            'sql_submit'=>'Genera il file sql',
+                        ),
+                    "report_backup.php" =>
+                   array(  'title' => "Backup dei dati per mettere in sicurezza il lavoro!",
+                           'errors'=>array(),
+                           'id'=>'Identificativo',
+                           'name'=>'Nome file',
+                           'size'=>'Dimensione',
+                           'rec'=>'Ripristina',
+                           'dow'=>'Scarica',
+                           'del'=>'Elimina',
                         )
                     );
 ?>

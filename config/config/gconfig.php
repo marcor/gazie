@@ -82,7 +82,7 @@ $Timezone = "Europe/Rome";
 // 
 // Specifica come verrà fatto il backup interno (internal o anche empty ) sul server o esterno (external) sul client
 //
-$backup = "external"; 
+$backup = "internal"; 
 //
 // È ammesso inviare messaggi di posta elettronica?
 //
