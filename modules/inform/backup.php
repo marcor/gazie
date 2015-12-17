@@ -90,7 +90,7 @@ if ($form['do_backup'] != 1 && !isset($_GET['auto'])) {
     // Esegue il backup.
     //
     // Impostazione degli header per l'opozione "save as" dello standard input che verra` generato
-    if (isset($_GET['auto'])) {
+    if (!isset($_GET['auto'])) {
         header('Content-Type: text/x-sql; charset=utf-8');
         header("Content-Disposition: attachment; filename=" . $Database . date("YmdHi") . '.sql');
         header('Expires: ' . gmdate('D, d M Y H:i:s') . ' GMT'); // per poter ripetere l'operazione di back-up pi�� volte.
