@@ -110,6 +110,16 @@ $strScript = array ("report_letter.php" =>
                            'table_selection_value'=>array(0=>' all tables of database ',1=>' only tables with prefix '),
                            'text_encoding'=>'Encoding',
                            'sql_submit'=>'Generate sql file',
+                        ),
+                    "report_backup.php" =>
+                   array(  'title' => "Lista dei backup interni ",
+                           'errors'=>array(),
+                           'id'=>'Identificativo',
+                           'name'=>'Nome file',
+                           'size'=>'Dimensione',
+                           'rec'=>'Ripristina',
+                           'dow'=>'Scarica',
+                           'del'=>'Elimina',
                         )
                    );
 ?>

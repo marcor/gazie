@@ -128,7 +128,7 @@ $strScript = array ("report_letter.php" =>
                            'sql_submit'=>'Genera il file sql',
                         ),
                     "report_backup.php" =>
-                   array(  'title' => "Backup dei dati per mettere in sicurezza il lavoro!",
+                   array(  'title' => "Lista dei backup interni ",
                            'errors'=>array(),
                            'id'=>'Identificativo',
                            'name'=>'Nome file',

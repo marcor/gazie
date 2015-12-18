@@ -11,7 +11,8 @@ INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, 4, 'select_situazione_contabile.
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'select_situazione_contabile.php', '', '', 6, '', 1  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 1, 'admin_docven.php?Insert&tipdoc=VRI', '', '', 35, '', 3 FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 49, 'backup.php?external', '', '', 8, '', 2  FROM `gaz_menu_script`;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 49, 'report_backup.php', '', '', 9, '', 1  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 49, 'backup.php?internal', '', '', 9, '', 1  FROM `gaz_menu_script`;
+UPDATE `gaz_menu_module` SET `link` = 'report_backup.php' WHERE `link` = 'backup.php' ;
 UPDATE `gaz_menu_script` SET `weight` = 5 WHERE `link` = 'accounting_documents.php?type=VRI';
 CREATE TABLE `gaz_destina` (`codice` int(9) NOT NULL AUTO_INCREMENT,`unita_locale1` varchar(50) NOT NULL DEFAULT  '',`unita_locale2` varchar(50) NOT NULL DEFAULT  '',`indspe` varchar(50) NOT NULL DEFAULT  '',`capspe` varchar(10) NOT NULL DEFAULT  '',`citspe` varchar(50) NOT NULL DEFAULT  '',`prospe` char(2) NOT NULL DEFAULT  '',`country` varchar(3) NOT NULL,`latitude` decimal(8,5) NOT NULL,`longitude` decimal(8,5) NOT NULL,`telefo` varchar(50) NOT NULL DEFAULT  '',`fax` varchar(32) NOT NULL DEFAULT  '',`cell` varchar(32) NOT NULL DEFAULT  '',`e_mail` varchar(50) NOT NULL DEFAULT  '',`annota` varchar(50) NOT NULL DEFAULT  '',`id_anagra` int(9) NOT NULL ,PRIMARY KEY (`codice`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `gaz_admin` ADD `skin` VARCHAR(60) NOT NULL DEFAULT 'default.css' AFTER `style`;
