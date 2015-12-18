@@ -138,23 +138,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["telefo"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["cell"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["fax"])." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["e_mail"]."</a> &nbsp;</td>";
-	/*if ($a_row['pariva'] > 0 and empty($a_row['codfis'])){
-        echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['country']." ".$a_row['pariva']."</td>";
-    } elseif($a_row['pariva'] == 0 and !empty($a_row['codfis'])) {
-        echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['codfis']."</td>";
-    } elseif($a_row['pariva'] > 0 and !empty($a_row['codfis']) ) {
-		if( $a_row['pariva'] == $a_row['codfis'] ) {
-			echo "<td class=\"FacetDataTD\" align=\"center\">";
-			echo gaz_html_ae_checkiva( $a_row['country'], $a_row['pariva'] );
-			echo "</td>";
-		} else {
-			echo "<td class=\"FacetDataTDsmall\" align=\"center\">".gaz_html_ae_checkiva( $a_row['country'], $a_row['pariva'] )."<br>".$a_row['codfis']."</td>";
-		}
-    } else {
-        echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
-    }*/
-    
+    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["e_mail"]."</a> &nbsp;</td>";   
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_anagra.php?codice=".$a_row["id"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>\n";
 }
