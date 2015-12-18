@@ -1,125 +1,184 @@
 <?php
+
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation,  Inc.,   59
-    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation,  Inc.,   59
+  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 
-$strScript = array ("report_letter.php" =>
-                   array(  "Letters Report ",
-                           "Date ",
-                           "Number ",
-                           "Type ",
-                           "Company name ",
-                           "Object ",
-                           "Write new letter",
-                         'mail_alert0'=>'Invio lettera con email',
-                         'mail_alert1'=>'Hai scelto di inviare una e-mail all\'indirizzo: ',
-                         'mail_alert2'=>'con allegato la seguente lettera:'),
-                    "admin_letter.php" =>
-                   array(  'title' => " Letter ",
-                           'mesg'=>array('The search yielded no results!',
-                                         'Insert at least 2 characters!',
-                                         'Changing customer'
-                                          ),
-                           array("LET" => " Normal ","DIC" => "Declaration","SOL" => " Sollecito "),
-                           " of ",
-                           " at ",
-                           " number ",
-                           "Object ",
-                           "to the kind attention ",
-                           "affix user signature ",
-                           "Type ",
-                           "Body ",
-                           "User Name",
-                           "The date is not corrected!",
-                           "You must select a customer or a supplier!"
-                    ),
-                    "update_control.php" =>
-                    array(  'title' => " Check for updates ",
-                           'new_ver1'=>'It\'s available upgrade to new version (',
-                           'new_ver2'=>') of GAzie! <br>To upgrade you can download files from: ',
-                           'is_align'=>'No new updates. This version is updated to the latest available GAzie.',
-                           'no_conn'=>'There are problems connecting to the server to version control!',
-                           'disabled'=>'The latest version control has been disabled. You can reactivate it by choosing one of the services available to check the following sites',
-                           'zone'=>'Zone',
-                           'city'=>'City',
-                           'sms'=>'SMS',
-                           'web'=>'WEB',
-                           'choice'=>'CHOICE',
-                           'check_value'=>array(0=>'Enable!',1=>'Enabled'),
-                           'check_title_value'=>array(0=>'Enable version control from this site!',1=>'Disable version control from this site!'),
-                           'all_disabling'=>array(0=>'Disable all!',1=>'Disable all sites for Version Control!')
-                         ),
-                    "gazie_site_update.php" =>
-                   array(  'title' => "Aggiornamento del sito web",
-                           'errors'=>array('Il server non &egrave; stato trovato',
-                                           'Impossibile fare il login, credenziali errate',
-                                           'Direttorio inesistente',
-                                           'Uno o pi&ugrave; file non sono stati aggiornati'
-                                          ),
-                           'server'=>'Nome del server FTP es: ftp.devincentiis.it',
-                           'user'=>'User - Nome utente per l\'autenticazione',
-                           'pass'=>'Password per l\'autenticazione',
-                           'path'=>'Directory radice del sito es. public_html/ opp. www/',
-                           'head_title'=>'Descrizione aggiuntiva al titolo',
-                           'head_subtitle'=>'Descrizione aggiuntiva al sottotitolo',
-                           'author'=>'Autore del sito (meta author)',
-                           'keywords'=>'Parole chiave del sito (meta keywords)',
-                           'listin'=>'Pubblicazione',
-                           'listin_value'=>array(0=>'Non pubblicare il listino',1=>'Listino senza prezzi',2=>'Listino con prezzi online'),
-                           'addpage'=>'Aggiungi pagina al sito'
-                         ),
-                    "gaziecart_update.php" =>
-                   array(  'title' => "Updating the online catalog, GAzieCart extension for Joomla!",
-                           'errors'=>array('FTP server not found',
-                                           'Authentication: the credentials are incorrect',
-                                           'Directory not found',
-                                           'One or more files were not updated'
-                                          ),
-                           'server'=>'Name of FTP server Ex: devincentiis.it',
-                           'user'=>'User - User name for authentication',
-                           'pass'=>'Password for authentication',
-                           'path'=>'Joomla root directory Ex: joomla/ or nothing',
-                           'listin'=>'Price list',
-                           'listin_value'=>array(1=>' of sales 1',2=>' of sales 2',3=>' of sales 3','web'=>'of web sales')
-                         ),
-                    "backup.php" =>
-                   array(  'title' => "Store up data to avoid losing work!",
-                           'errors'=>array(),
-                           'instructions'=>'Add the following statements',
-                           'table_selection'=>'Backup of',
-                           'table_selection_value'=>array(0=>' all tables of database ',1=>' only tables with prefix '),
-                           'text_encoding'=>'Encoding',
-                           'sql_submit'=>'Generate sql file',
-                        ),
-                    "report_backup.php" =>
-                   array(  'title' => "Lista dei backup interni ",
-                           'errors'=>array(),
-                           'id'=>'Identificativo',
-                           'name'=>'Nome file',
-                           'size'=>'Dimensione',
-                           'rec'=>'Ripristina',
-                           'dow'=>'Scarica',
-                           'del'=>'Elimina',
-                        )
-                   );
+$strScript = array("report_letter.php" =>
+    array("Letters Report ",
+        "Date ",
+        "Number ",
+        "Type ",
+        "Company name ",
+        "Object ",
+        "Write new letter",
+        'mail_alert0' => 'Invio lettera con email',
+        'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
+        'mail_alert2' => 'con allegato la seguente lettera:'),
+    "admin_letter.php" =>
+    array('title' => " Letter ",
+        'mesg' => array('The search yielded no results!',
+            'Insert at least 2 characters!',
+            'Changing customer'
+        ),
+        array("LET" => " Normal ", "DIC" => "Declaration", "SOL" => " Sollecito "),
+        " of ",
+        " at ",
+        " number ",
+        "Object ",
+        "to the kind attention ",
+        "affix user signature ",
+        "Type ",
+        "Body ",
+        "User Name",
+        "The date is not corrected!",
+        "You must select a customer or a supplier!"
+    ),
+    "update_control.php" =>
+    array('title' => " Check for updates ",
+        'new_ver1' => 'It\'s available upgrade to new version (',
+        'new_ver2' => ') of GAzie! <br>To upgrade you can download files from: ',
+        'is_align' => 'No new updates. This version is updated to the latest available GAzie.',
+        'no_conn' => 'There are problems connecting to the server to version control!',
+        'disabled' => 'The latest version control has been disabled. You can reactivate it by choosing one of the services available to check the following sites',
+        'zone' => 'Zone',
+        'city' => 'City',
+        'sms' => 'SMS',
+        'web' => 'WEB',
+        'choice' => 'CHOICE',
+        'check_value' => array(0 => 'Enable!', 1 => 'Enabled'),
+        'check_title_value' => array(0 => 'Enable version control from this site!', 1 => 'Disable version control from this site!'),
+        'all_disabling' => array(0 => 'Disable all!', 1 => 'Disable all sites for Version Control!')
+    ),
+    "gazie_site_update.php" =>
+    array('title' => "Aggiornamento del sito web",
+        'errors' => array('Il server non &egrave; stato trovato',
+            'Impossibile fare il login, credenziali errate',
+            'Direttorio inesistente',
+            'Uno o pi&ugrave; file non sono stati aggiornati'
+        ),
+        'server' => 'Nome del server FTP es: ftp.devincentiis.it',
+        'user' => 'User - Nome utente per l\'autenticazione',
+        'pass' => 'Password per l\'autenticazione',
+        'path' => 'Directory radice del sito es. public_html/ opp. www/',
+        'head_title' => 'Descrizione aggiuntiva al titolo',
+        'head_subtitle' => 'Descrizione aggiuntiva al sottotitolo',
+        'author' => 'Autore del sito (meta author)',
+        'keywords' => 'Parole chiave del sito (meta keywords)',
+        'listin' => 'Pubblicazione',
+        'listin_value' => array(0 => 'Non pubblicare il listino', 1 => 'Listino senza prezzi', 2 => 'Listino con prezzi online'),
+        'addpage' => 'Aggiungi pagina al sito'
+    ),
+    "gaziecart_update.php" =>
+    array('title' => "Updating the online catalog, GAzieCart extension for Joomla!",
+        'errors' => array('FTP server not found',
+            'Authentication: the credentials are incorrect',
+            'Directory not found',
+            'One or more files were not updated'
+        ),
+        'server' => 'Name of FTP server Ex: devincentiis.it',
+        'user' => 'User - User name for authentication',
+        'pass' => 'Password for authentication',
+        'path' => 'Joomla root directory Ex: joomla/ or nothing',
+        'listin' => 'Price list',
+        'listin_value' => array(1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 'web' => 'of web sales')
+    ),
+    "backup.php" =>
+    array('title' => "Store up data to avoid losing work!",
+        'errors' => array(),
+        'instructions' => 'Add the following statements',
+        'table_selection' => 'Backup of',
+        'table_selection_value' => array(0 => ' all tables of database ', 1 => ' only tables with prefix '),
+        'text_encoding' => 'Encoding',
+        'sql_submit' => 'Generate sql file',
+    ),
+    "report_backup.php" =>
+    array('title' => "Lista dei backup interni ",
+        'errors' => array(),
+        'id' => 'Identificativo',
+        'name' => 'Nome file',
+        'size' => 'Dimensione',
+        'rec' => 'Ripristina',
+        'dow' => 'Scarica',
+        'del' => 'Elimina',
+    ),
+    "report_anagra.php" =>
+    array('title' => "Anagrafiche comuni"
+    ),
+    "admin_anagra.php" =>
+    array('title' => 'Gestione anagrafica',
+        'ins_this' => 'Inserisci una anagrafica',
+        'upd_this' => 'Modifica  l\'anagrafica ',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia anagrafica'),
+        'errors' => array('&Egrave; necessario indicare la Ragione Sociale',
+            '&Egrave; necessario indicare l\'indirizzo',
+            'Il codice di avviamento postale (CAP) &egrave; sbagliato',
+            '&Egrave; necessario indicare la citt&agrave;',
+            '&Egrave; necessario indicare la provincia',
+            '&Egrave; necessario indicare il sesso',
+            'L\'IBAN non &egrave; corretto',
+            'L\'IBAN e la nazione sono diversi',
+            'Codice fiscale sbagliato per una persona fisica',
+            'La partita IVA &egrave; formalmente errata!',
+            'Esiste gi&agrave una anagrafica con la stessa Partita IVA',
+            'Il codice fiscale &egrave; formalmente errato',
+            'Esiste gi&agrave; una anagrafica con lo stesso Codice Fiscale',
+            'C.F. mancante! In automatico &egrave; stato<br />impostato con lo stesso valore della Partita IVA!',
+            'E\' una persona fisica, inserire il codice fiscale',
+            'Esiste una anagrafica con la stessa partita IVA',
+            'Esiste una anagrafica con lo stesso Codice Fiscale',
+            '&Egrave; necessario scegliere la modalit&agrave; di pagamento',
+            'Il codice del cliente &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
+            'La data di nascita &egrave; sbagliata',
+            'Indirizzo email formalmente sbagliato',
+        ),
+        'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
+        'codice' => "Codice ",
+        'ragso1' => "Ragione sociale 1",
+        'ragso2' => "Ragione sociale 2",
+        'luonas' => 'Luogo di nascita',
+        'datnas' => 'Data di Nascita',
+        'pronas' => 'Provincia di nascita',
+        'counas' => 'Nazione di Nascita',
+        'legrap' => 'Legale rappresentante',
+        'id_language' => 'Lingua',
+        'id_currency' => 'Valuta',
+        'sexper' => "Sesso/pers.giuridica ",
+        'sexper_value' => array('' => '-', 'M' => 'Maschio', 'F' => 'Femmina', 'G' => 'Giuridica'),
+        'indspe' => 'Indirizzo',
+        'capspe' => 'Codice Postale',
+        'citspe' => 'Citt&agrave; - Provincia',
+        'prospe' => 'Provincia',
+        'country' => 'Nazione',
+        'telefo' => 'Telefono',
+        'fax' => 'Fax',
+        'cell' => 'Cellulare',
+        'codfis' => 'Codice Fiscale',
+        'pariva' => 'Partita IVA',
+        'fe_cod_univoco' => 'Cod.Univoco Destinatario (fatt.elettronica)',
+        'e_mail' => 'e mail',
+    )
+);
 ?>

@@ -55,7 +55,7 @@ $strScript = array("admin_staff.php" =>
             '&Egrave; necessario indicare il conto Mastro collaboratori in configurazione Azienda',
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
-        'codice' => "Codice ",
+        'id' => "ID ",
         'ragso1' => "Cognome",
         'ragso2' => "Nome",
         'luonas' => 'Luogo di nascita',

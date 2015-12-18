@@ -23,12 +23,7 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend=checkAdmin();
-
-$titolo = 'Anagrafica';
-
-
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 

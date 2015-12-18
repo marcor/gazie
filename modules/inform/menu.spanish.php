@@ -36,7 +36,7 @@ $transl['inform'] = array('name' => "Herramientas & Info",
         4 => array("Control para nueva version", "Actualizacion"),
         5 => array("Actualizacion Website", "Actualizacion Website"),
         6 => array("Rubrica URL", "Siti Aziendali"), 
-        7 => array("Anagrafica Contatti", "Anagrafica Contatti")
+        7 => array("Anagrafiche comuni a tutte le aziende", "Anagrafiche comuni")
     ),
     'm3' => array(1 => array("Control desequilibro debe-haber de movimientos contables", "Control desequilibro debe-haber de movimientos contables"),
         2 => array("Control numerico protocolos IVA", "Control numerico protocolos IVA"),
