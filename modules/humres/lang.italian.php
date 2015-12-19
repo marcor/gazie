@@ -31,7 +31,7 @@ $strScript = array("admin_staff.php" =>
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia anagrafica'),
-        'errors' => array('&Egrave; necessario indicare la Ragione Sociale',
+        'errors' => array('&Egrave; necessario indicare Nome e Cognome',
             '&Egrave; necessario indicare l\'indirizzo',
             'Il codice di avviamento postale (CAP) &egrave; sbagliato',
             '&Egrave; necessario indicare la citt&agrave;',
@@ -55,7 +55,7 @@ $strScript = array("admin_staff.php" =>
             '&Egrave; necessario indicare il conto Mastro collaboratori in configurazione Azienda',
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
-        'id' => "ID ",
+        'codice' => "Codice ",
         'ragso1' => "Cognome",
         'ragso2' => "Nome",
         'luonas' => 'Luogo di nascita',
@@ -89,6 +89,7 @@ $strScript = array("admin_staff.php" =>
     ),
     "staff_report.php" =>
     array('title' => 'Lista dei lavoratori',
+        'errors' => '&Egrave; necessario indicare il conto Mastro collaboratori in configurazione Azienda',
         'header' => array(
             "Codice" => "codice",
             "Cognome" => "ragso1",
@@ -98,8 +99,18 @@ $strScript = array("admin_staff.php" =>
             "Città" => "citspe",
             "Telefono" => "telefo",
             "C.F." => "",
-            "Visualizza <br /> e/o stampa" => "",
             "Cancella" => "")
+    ),
+    "delete_staff.php" =>
+    array('title' => 'Cancella l\'anagrafica del collaboratore',
+        'errors' => 'Cliente non cancellabile perché ha  movimenti contabili!',
+        "codice" => 'Codice',
+        "ragso1" => 'Cognome',
+        "ragso2" => 'Nome',
+        "sexper" => 'Sesso',
+        "job_title" => 'Mansione',
+        "citspe" => 'Città',
+        "telefo" => 'Telefono'
     )
 );
 ?>

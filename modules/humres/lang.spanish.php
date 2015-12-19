@@ -88,6 +88,7 @@ $strScript = array("admin_staff.php" =>
     ),
     "staff_report.php" =>
     array('title' => 'Lista dei lavoratori',
+        'errors' => '&Egrave; necessario indicare il conto Mastro collaboratori in configurazione Azienda',
         'header' => array(
             "Codice" => "codice",
             "Cognome" => "ragso1",

@@ -70,7 +70,12 @@ if (isset($_GET['ricerca_completa'])) {
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
-<div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
+<div align="center" class="FacetFormHeaderFont"> <?php
+    echo $script_transl['title'] . '</div>';
+    if ($admin_aziend['mas_staff'] <= 199) {
+        echo '<div class="alert alert-danger text-center" role="alert">' . $script_transl['errors'] . '</div>';
+    }
+    ?>
     <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
         <table class="Tlarge">
             <tr>
@@ -106,7 +111,7 @@ $script_transl = HeadMain();
             while ($a_row = gaz_dbi_fetch_array($result)) {
                 echo "<tr>";
                 // Colonna codice staffe
-                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" .$a_row["codice"]. "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" .$a_row["codice"] . "</a> &nbsp</td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" . substr($a_row["id_clfoco"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . intval(substr($a_row["id_clfoco"], 3)) . "</a> &nbsp</td>";
                 // Colonna cognome
                 echo "<td class=\"FacetDataTD\" >" . $a_row["ragso1"] . " &nbsp;</td>";
                 // Colonna nome
@@ -145,8 +150,7 @@ $script_transl = HeadMain();
                 // colonna fiscali
                 echo "<td class=\"FacetDataTD\" align=\"center\">" . $a_row['codfis'] . "</td>";
                 // colonna stampa privacy
-                echo "<td title=\"stampa informativa sulla privacy\" class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=" . $a_row["codice"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_staff.php?codice=" . substr($a_row["codice"], 3) . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_staff.php?codice=" . $a_row["id_clfoco"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                 echo "</tr>\n";
             }
             ?>
