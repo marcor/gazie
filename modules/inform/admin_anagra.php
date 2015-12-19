@@ -214,53 +214,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup',/** ENRICO FEDELE */
-	/*'jquery/jquery-1.7.1.min',*/
-    /*'jquery/ui/jquery.ui.core',
-    'jquery/ui/jquery.ui.widget',
-    'jquery/ui/jquery.ui.position',
-    'jquery/ui/jquery.ui.autocomplete',*/
-	/** ENRICO FEDELE */
-    'custom/autocomplete'));
-echo "<SCRIPT type=\"text/javascript\">\n";
-echo "function toggleContent(currentContent) {
-        var thisContent = document.getElementById(currentContent);
-        if ( thisContent.style.display == 'none') {
-           thisContent.style.display = '';
-           return;
-        }
-        thisContent.style.display = 'none';
-      }
-      function selectValue(currentValue) {
-         document.form.id_anagra.value=currentValue;
-         document.form.hidden_req.value='toggle';
-         document.form.submit();
-      }
-var cal = new CalendarPopup();
-var calName = '';
-function setMultipleValues(y,m,d) {
-     document.getElementById(calName+'_Y').value=y;
-     document.getElementById(calName+'_M').selectedIndex=m*1-1;
-     document.getElementById(calName+'_D').selectedIndex=d*1-1;
-}
-function setDate(name) {
-  calName = name.toString();
-  var year = document.getElementById(calName+'_Y').value.toString();
-  var month = document.getElementById(calName+'_M').value.toString();
-  var day = document.getElementById(calName+'_D').value.toString();
-  var mdy = month+'/'+day+'/'+year;
-  cal.setReturnFunction('setMultipleValues');
-  cal.showCalendar('anchor', mdy);
-}
-</script>
-";
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
+
 $gForm = new venditForm();
 echo "<form method=\"POST\" name=\"form\">\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 //echo "<input type=\"hidden\" value=\"" . $form['id_anagra'] . "\" name=\"id_anagra\" />\n";
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">";
-//$gForm = new venditForm();
+
 if ($toDo == 'insert') {
    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
 } else {
@@ -341,7 +303,6 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['country'] . "</td><t
 $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' - ', 'name');
 echo "</td>\n";
 echo "</tr>\n";
-/** ENRICO FEDELE */
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_language'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language'], 'lang_id', 1, ' - ', 'title_native');
@@ -409,3 +370,35 @@ echo "</tr>\n";
 </form>
 </div><!-- chiude div container role main --></body>
 </html>
+
+<SCRIPT type="text javascript">
+echo "function toggleContent(currentContent) {
+        var thisContent = document.getElementById(currentContent);
+        if ( thisContent.style.display == 'none') {
+           thisContent.style.display = '';
+           return;
+        }
+        thisContent.style.display = 'none';
+      }
+      function selectValue(currentValue) {
+         document.form.id_anagra.value=currentValue;
+         document.form.hidden_req.value='toggle';
+         document.form.submit();
+      }
+var cal = new CalendarPopup();
+var calName = '';
+function setMultipleValues(y,m,d) {
+     document.getElementById(calName+'_Y').value=y;
+     document.getElementById(calName+'_M').selectedIndex=m*1-1;
+     document.getElementById(calName+'_D').selectedIndex=d*1-1;
+}
+function setDate(name) {
+  calName = name.toString();
+  var year = document.getElementById(calName+'_Y').value.toString();
+  var month = document.getElementById(calName+'_M').value.toString();
+  var day = document.getElementById(calName+'_D').value.toString();
+  var mdy = month+'/'+day+'/'+year;
+  cal.setReturnFunction('setMultipleValues');
+  cal.showCalendar('anchor', mdy);
+}
+</script>

@@ -627,21 +627,6 @@ div.danger li.active span.rounded{
     width: 100%;
 }*/
 
-.conto_attivo {
-    background-color: #82d0db;
-}
-.conto_passivo {
-    background-color: #e5f2a9;
-}
-.conto_costi {
-    background-color: #efd4f3;
-}
-.costo_ricavi {
-    background-color: #fae896;
-}
-.conto_transitori {
-    background-color: #fee8fd;
-}
 .noborder {
     border: 0px solid #fff;
 }
@@ -652,4 +637,28 @@ div.danger li.active span.rounded{
 }
 .table_piacon {
     
+}
+.div_config {
+    border-collapse: separate;
+    border-spacing: 2px;
+    border: 1px solid #000;
+}
+.div-table{
+    display:table;
+    background-color:#eee;
+    border:1px solid  #666666;
+    border-spacing:5px;
+}
+.div-table-row{
+    display:table-row;
+    width:auto;
+    clear:both;
+}
+.div-table-col{
+    float:left;
+    display:table-column;
+    padding: 10px 10px 10px 10px;
+}
+.row {
+	padding: 2px 10px 2px 10px;
 }

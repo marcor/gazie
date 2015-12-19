@@ -447,6 +447,18 @@ input[type="text"]:focus, textarea:focus, select:focus {
     border-color: #dddddd;
 }
 
-.row {
-	padding: 2px 10px 2px 10px;
+.conto_attivo {
+    background-color: #82d0db;
+}
+.conto_passivo {
+    background-color: #e5f2a9;
+}
+.conto_costi {
+    background-color: #efd4f3;
+}
+.costo_ricavi {
+    background-color: #fae896;
+}
+.conto_transitori {
+    background-color: #fee8fd;
 }

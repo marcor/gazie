@@ -76,10 +76,10 @@ if ( isset($_GET['ricerca_completa'])) {
 <td class="FacetFieldCaptionTD">
 <input placeholder="Cerca Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
 </td>
-<td>
+<td class="FacetFieldCaptionTD">
 <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
-<td colspan="3">
+<td class="FacetFieldCaptionTD" colspan="6">
 <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
