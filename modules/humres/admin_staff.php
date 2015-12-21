@@ -135,6 +135,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 }
             } elseif ($toDo == 'update') {
                 $anagrafica->updatePartners($form['codice'], $form);
+                gaz_dbi_table_update('staff',array('id_clfoco',$form['codice']), $form);
             }
             header("Location: staff_report.php");
             exit;
