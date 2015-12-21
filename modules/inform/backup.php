@@ -262,8 +262,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         $fp = gzopen ('../../data/files/backups/'.$Database.date("YmdHi").'.sql.gaz', 'w9');
         gzwrite ($fp, $content);
         gzclose($fp);
-        
-        header("Location: ../root/admin.php");
+        header("Location:".$form['ritorno']);
     }
 }
 exit;
