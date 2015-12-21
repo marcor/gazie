@@ -255,13 +255,14 @@ class magazzForm extends GAzieForm {
                         $giacenza['q_g']+=$r['quanti'];
                         $giacenza['v_g']+=$r['quanti'] * $row_val;
                     } elseif ($r['operat'] == -1) { //scarico
-                        if ($giacenza['q_g'] <= 0) {
+                        if ($giacenza['q_g'] <= 0) { // se la quantità è già sotto zero forzo anche il valore a 0
                             $giacenza['v_g'] = 0;
                             $row_val = 0;
                         } else {
                             $row_val = $giacenza['v_g'] / $giacenza['q_g'];
                         }
-                        if ($giacenza['q_g'] <= $r['quanti']) {
+                        if ($giacenza['q_g'] <= $r['quanti']) { // se la quantità andrà sotto zero forzo anche il valore a 0
+                            $giacenza['v_g']=0;
                             $row_val = 0;
                         }
                         $giacenza['q_g']-=$r['quanti'];
@@ -271,6 +272,7 @@ class magazzForm extends GAzieForm {
                         $return_val[0] = array('q' => $r['quanti'], 'v' => $row_val,
                             'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
                     }
+
                 }
                 break;
             case "2": // LIFO
@@ -424,20 +426,20 @@ class magazzForm extends GAzieForm {
 
     /* sends a Javascript toast to the client */
 
-    function toast($message, $id='alert-discount', $class='alert-warning') {
-		/*
-        echo "<script type='text/javascript'>toast('$message');</script>";*/
-		if(!empty($message)) {
-			echo '<div class="container">
-					<div id="'.$id.'" class="row alert '.$class.' fade in" role="alert">
+    function toast($message, $id = 'alert-discount', $class = 'alert-warning') {
+        /*
+          echo "<script type='text/javascript'>toast('$message');</script>"; */
+        if (!empty($message)) {
+            echo '<div class="container">
+					<div id="' . $id . '" class="row alert ' . $class . ' fade in" role="alert">
 						<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
 							<span aria-hidden="true">&times;</span>
 						</button>
-						<span class="glyphicon glyphicon-alert" aria-hidden="true"></span>&nbsp;'.$message.'
+						<span class="glyphicon glyphicon-alert" aria-hidden="true"></span>&nbsp;' . $message . '
 					</div>
 				  </div>';
-		}
-	    return '';
+        }
+        return '';
     }
 
 }
