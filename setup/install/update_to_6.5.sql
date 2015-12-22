@@ -17,7 +17,7 @@ UPDATE `gaz_menu_script` SET `weight` = 5 WHERE `link` = 'accounting_documents.p
 CREATE TABLE `gaz_destina` (`codice` int(9) NOT NULL AUTO_INCREMENT,`unita_locale1` varchar(50) NOT NULL DEFAULT  '',`unita_locale2` varchar(50) NOT NULL DEFAULT  '',`indspe` varchar(50) NOT NULL DEFAULT  '',`capspe` varchar(10) NOT NULL DEFAULT  '',`citspe` varchar(50) NOT NULL DEFAULT  '',`prospe` char(2) NOT NULL DEFAULT  '',`country` varchar(3) NOT NULL,`latitude` decimal(8,5) NOT NULL,`longitude` decimal(8,5) NOT NULL,`telefo` varchar(50) NOT NULL DEFAULT  '',`fax` varchar(32) NOT NULL DEFAULT  '',`cell` varchar(32) NOT NULL DEFAULT  '',`e_mail` varchar(50) NOT NULL DEFAULT  '',`annota` varchar(50) NOT NULL DEFAULT  '',`id_anagra` int(9) NOT NULL ,PRIMARY KEY (`codice`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `gaz_admin` ADD `skin` VARCHAR(60) NOT NULL DEFAULT 'default.css' AFTER `style`;
 CREATE TABLE `gaz_menu_usage` ( `adminid` varchar(30) NOT NULL, `company_id` int(3) NOT NULL, `transl_ref` varchar(50) NOT NULL, `link` varchar(255) NOT NULL, `click` int(5) DEFAULT NULL, `last_use` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Last external backup', 'last_backup', DATE_FORMAT(NOW(),'%Y-%m-%d'));
+INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Last backup', 'last_backup', DATE_FORMAT(NOW(),'%Y-%m-%d'));
 INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Where to send backup file (external or internal )', 'backup_mode', 'external');
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXaliiva` ADD `taxstamp` INT(1) NOT NULL AFTER `aliquo`;
@@ -27,7 +27,7 @@ ALTER TABLE `gaz_XXXartico` ADD `ragstat` CHAR(15) NOT NULL AFTER `catmer`;
 ALTER TABLE `gaz_XXXartico` ADD FOREIGN KEY (ragstat)REFERENCES gaz_XXXragstat(codice);
 ALTER TABLE `gaz_XXXartico` ADD `clfoco` CHAR(15) DEFAULT NULL;
 ALTER TABLE `gaz_XXXartico` ADD FOREIGN KEY (clfoco) REFERENCES gaz_XXXclfoco(codice);
-ALTER TABLE `gaz_XXXartico` ADD `sconto` decimal(6,3) AFTER `preve3`;
+ALTER TABLE `gaz_XXXartico` ADD `sconto` decimal(6,3) DEFAULT '0.0000'  AFTER `preve3`;
 ALTER TABLE `gaz_XXXrigdoc` MODIFY COLUMN `sconto` decimal(6,3);
 ALTER TABLE `gaz_XXXtesdoc` ADD `ddt_type` CHAR(1) NOT NULL AFTER `tipdoc`;
 UPDATE `gaz_XXXtesdoc` SET `ddt_type` = 'T' WHERE (`tipdoc` = 'DDT' OR `tipdoc` = 'FAD');
