@@ -24,10 +24,8 @@
 */
 
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend=checkAdmin();
 require("../../modules/magazz/lib.function.php");
-$admin_aziend=checkAdmin();
 
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
@@ -57,10 +55,13 @@ if (isset($_POST['Delete'])) {
     if ($ultimo_documento and $ultimo_documento['id_tes'] == $testata['id_tes']) {
            //allora procedo all'eliminazione della testata e dei righi...
            gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $testata['id_tes']);
+           gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $testata['id_con']);
+           gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $testata['id_con']);
+           gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $testata['id_con']);
            $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$testata['id_tes']."'","id_tes desc");
            while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
                   gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
-                  if (intval($a_row['id_mag']) > 0){  //se c'è stato un movimento di magazzino lo azzero
+                  if (intval($a_row['id_mag']) > 0){  //se c'ï¿½ stato un movimento di magazzino lo azzero
                      $upd_mm->uploadMag('DEL',$testata['tipdoc'],'','','','','','','','','','',$a_row['id_mag'],$admin_aziend['stock_eval_method']);
                   }
            }
@@ -85,7 +86,9 @@ $script_transl=HeadMain();
 <form method="POST">
 <input type="hidden" name="id_tes" value="<?php print $_GET['id_tes']; ?>">
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno'];?>">
-<div align="center" class="FacetFormHeaderFont">Attenzione!!! <?php print $titolo;?> </div>
+<?php        
+echo '<div class="alert alert-danger text-center" role="alert">' . $script_transl['title'] . '</div>';
+?>
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
   <!-- BEGIN Error -->
   <tr>

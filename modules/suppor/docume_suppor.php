@@ -23,12 +23,9 @@
 --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend=checkAdmin();
-
 require("../../library/include/header.php");
 $script_transl=HeadMain();
-
 echo '<div class="help">';
 if (file_exists("help/".$admin_aziend['lang']."/docume_suppor_help.php")) {
     include("help/".$admin_aziend['lang']."/docume_suppor_help.php");

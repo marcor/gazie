@@ -114,7 +114,7 @@ if ($lastBackup) {
     ?>
     <div class="alert alert-danger text-center" role="alert">
         <?php
-        echo $script_transl['errors'][4].' : <a href="../inform/backup.php?'.$backup.'">BACKUP!</a>('.$backup.')</div>';
+        echo $script_transl['errors'][4].' : <a href="../inform/backup.php?'.$checkUpd->backupMode().'">BACKUP!</a>('.$checkUpd->backupMode().')</div>';
     }
 
     echo '<table border="1" class="Tmiddle">

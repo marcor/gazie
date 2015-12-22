@@ -18,6 +18,7 @@ CREATE TABLE `gaz_destina` (`codice` int(9) NOT NULL AUTO_INCREMENT,`unita_local
 ALTER TABLE `gaz_admin` ADD `skin` VARCHAR(60) NOT NULL DEFAULT 'default.css' AFTER `style`;
 CREATE TABLE `gaz_menu_usage` ( `adminid` varchar(30) NOT NULL, `company_id` int(3) NOT NULL, `transl_ref` varchar(50) NOT NULL, `link` varchar(255) NOT NULL, `click` int(5) DEFAULT NULL, `last_use` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Last external backup', 'last_backup', DATE_FORMAT(NOW(),'%Y-%m-%d'));
+INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Where to send backup file (external or internal )', 'backup_mode', 'external');
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXaliiva` ADD `taxstamp` INT(1) NOT NULL AFTER `aliquo`;
 UPDATE `gaz_XXXaliiva` SET `taxstamp` = '1' WHERE `aliquo` <= 0.1;

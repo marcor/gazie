@@ -1,29 +1,30 @@
 <?php
+
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation,  Inc.,   59
-    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
-if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\','/',__FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
-    exit('Accesso diretto non consentito') ;
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation,  Inc.,   59
+  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
+if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $_SERVER['SCRIPT_FILENAME'])) {
+    exit('Accesso diretto non consentito');
 }
 //versione software
 $versSw = '6.4';
@@ -43,7 +44,7 @@ $NomeDB = "mysqli";
 //
 // $Host = "mysql.2freehosting.com:3306";
 //
-$Host     = "localhost";
+$Host = "localhost";
 //
 // Nome della base di dati a cui ci si connette.
 //
@@ -52,7 +53,7 @@ $Database = "gazie";
 // Utente della base di dati che ha il permesso di accedervi con tutti
 // i privilegi necessari.
 //
-$User     = "root";
+$User = "root";
 //
 // Parola d'ordine necessaria per accedere alla base di dati
 // in qualità di utente $User.
@@ -79,10 +80,6 @@ $default_user = "amministratore";
 // in modo indipendente le date di accesso alle tabelle.
 //
 $Timezone = "Europe/Rome";
-// 
-// Specifica come verrà fatto il backup interno (internal o anche empty ) sul server o esterno (external) sul client
-//
-$backup = "external"; 
 //
 // È ammesso inviare messaggi di posta elettronica?
 //
@@ -120,15 +117,11 @@ define('DATA_DIR', '../../data/');
 define('K_PATH_CACHE', '../../library/tcpdf/cache/');
 
 ////////////////////////////////////////////////////////////////////////
-
-
 // definisce il nome della sessione ma solo in caso di uso dei domini di livello superiore al secondo, in
 // caso di installazione su domini di secondo livello viene attribuito automaticamente
 // il nome del direttorio di installazione che normalmente e', appunto:  gazie
-define('_SESSION_NAME','gazie');
+define('_SESSION_NAME', 'gazie');
 
 //url di default per l'aggiornamento di GAzie
-$update_URI_files= "http://sourceforge.net/projects/gazie";
-
-
+$update_URI_files = "http://sourceforge.net/projects/gazie";
 ?>

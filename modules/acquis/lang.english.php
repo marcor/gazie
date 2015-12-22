@@ -243,6 +243,8 @@ $strScript = array("admin_fornit.php" =>
             'Scadenza' => "expiry"
         ),
     ),
+    "delete_docacq.php" =>
+    array('title' => 'Eliminazione Documento d\'Acquisto' ),
     "select_schedule.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa delle partite aperte',
         'mesg' => array('La ricerca non ha dato risultati!',

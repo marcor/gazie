@@ -44,6 +44,21 @@ class CheckDbAlign {
         return $r['cvalue'];
     }
 
+    function backupMode($new_mode = false) {
+        /* in $new_mode di deve passare il valore della nuova modalità 
+         * (external o internal) se la si vuole modificare tramite l'apposita
+         * interfaccia sul report, altrimenti restituisce il valore presente sul db
+         */
+        global $gTables;
+        if ($new_mode) {
+            gaz_dbi_put_row($gTables['config'], 'variable', 'backup_mode', 'cvalue', $new_mode);
+            return true;
+        } else {
+            $r = gaz_dbi_get_row($gTables['config'], 'variable', 'backup_mode');
+            return $r['cvalue'];
+        }
+    }
+
     function testDbBackup() {
         // Antonio De Vincentiis 2 Luglio 2009
         global $gTables;
@@ -57,7 +72,7 @@ class CheckDbAlign {
             return FALSE;
         }
     }
-    
+
     function getSqlFileVersion() {
         // Luigi Rambaldi 13 Ottobre 2005
         $fileArray = Array();

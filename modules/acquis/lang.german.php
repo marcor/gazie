@@ -202,6 +202,8 @@ $strScript = array("admin_fornit.php" =>
         'last_row' => 'Ultimo rigo inserito'
     /** ENRICO FEDELE */
     ),
+    "delete_docacq.php" =>
+    array('title' => 'Eliminazione Documento d\'Acquisto' ),
     "accounting_documents.php" =>
     array('title' => 'Neues vom steuerbaren Bewegungen Rechnungslegung Dokumente',
         'errors' => array('Falscher Zeitpunkt',

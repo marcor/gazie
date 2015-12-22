@@ -13,10 +13,6 @@
     <div id="Assistenze" class="tab-pane fade in active">
 		<p class="help-text">Da qui &egrave; possibile gestire le Assistenze</p>
 
-		<p class="help-text">Esempi: <br/>
-		- <a target="_blank" title="guarda il video"
-		href="http://www.youtube.com/watch?v=QL3NBjXj2Ro">emissione di una
-		fatture immediata normale</a><br/>
-		</p>
+
 	</div>
 </div>

@@ -70,9 +70,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['size']; ?></th>            
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['rec']; ?></th>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['dow']; ?></th>
-                    <th class="FacetFieldCaptionTD" align="center"> 
-                        <a class="btn btn-xs btn-default" name="elimina" value="Elimina vecchi backup">Elimina vecchi</a>
-                    </th>
+                    <th class="FacetFieldCaptionTD" align="center"><?php echo $script_transl['delete']; ?></th>
                 </tr>
                 <?php
                 $interval = 0;

@@ -261,7 +261,7 @@ class magazzForm extends GAzieForm {
                         } else {
                             $row_val = $giacenza['v_g'] / $giacenza['q_g'];
                         }
-                        if ($giacenza['q_g'] <= $r['quanti']) { // se la quantità andrà sotto zero forzo anche il valore a 0
+                        if ($giacenza['q_g'] <= $r['quanti']) { // se la quantità è andata sotto zero forzo anche il valore a 0
                             $giacenza['v_g']=0;
                             $row_val = 0;
                         }
