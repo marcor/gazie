@@ -211,6 +211,7 @@ $select_cliente = new selectPartner('clfoco');
 					echo "<option value=\"".$stati["stato"]."\" ".$selected.">".$stati["stato"]."</option>";
 			}
 			?>
+            <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo '"selected"'; ?>>chiuso</option>";
 		</select> 
 		<input tabindex=6 type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
         <button id="toggleSta" type="button">Altro</button>

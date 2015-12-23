@@ -54,7 +54,7 @@ $bm = $checkUpd->backupMode();
     <div class="container">
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="pill" href="#lista"><?php echo $script_transl['title']; ?></a></li>
-            <li><a data-toggle="pill" href="#config">Configurazione</a></li>
+            <li><a data-toggle="pill" href="#config"><?php echo $script_transl['config']; ?></a></li>
         </ul>
     </div>
 

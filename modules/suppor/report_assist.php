@@ -106,11 +106,10 @@ if ( $flt_cliente!="tutti" ) {
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
 			echo "<option value=\"tutti\" ".($flt_tecnico=="tutti"?"selected":"").">tutti</option>";
-			//echo "<option value=\"nochiusi\" ".($flt_tecnico=="nochiusi"?"selected":"").">non chiusi</option>";
 			while ($tecnici = gaz_dbi_fetch_array($result)) {
-					
-					if ( $flt_tecnico == $tecnici["tecnico"] ) $selected = "selected"; 
-					else $selected = "";
+					if ( $flt_tecnico == $tecnici["tecnico"] ) {
+                        $selected = "selected"; 
+                    } else $selected = "";
 					echo "<option value=\"".$tecnici["tecnico"]."\" ".$selected.">".$tecnici["tecnico"]."</option>";
 			}
 			?>
@@ -119,7 +118,8 @@ if ( $flt_cliente!="tutti" ) {
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist'],"", "stato", "0", "9999");
 			echo "<option value=\"tutti\" ".($flt_stato=="tutti"?"selected":"").">tutti</option>";
-			echo "<option value=\"nochiusi\" ".($flt_stato=="nochiusi"?"selected":"").">non chiusi</option>";
+			echo "<option value=\"nochiusi\" ".($flt_stato=="nochiusi"?"selected":"").">non chiuso</option>";
+            echo "<option value=\"chiuso\" ".($flt_stato=="chiuso"?"selected":"").">chiuso</option>";
 			while ($stati = gaz_dbi_fetch_array($result)) {
 					
 					if ( $flt_stato == $stati["stato"] ) $selected = "selected"; 

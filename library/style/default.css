@@ -5,8 +5,10 @@
 body {
 	font-family : Arial, Tahoma, Verdana, Helvetica;
 	background-attachment : fixed;
-	/*padding-bottom : 30px;*/
 	padding-top : 51px;
+	
+	/* impostare qua la dimensione dei caratteri*/
+	font-size: 14px;
 }
 
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
@@ -296,6 +298,9 @@ input.input-xs {
 	font-size: 100%;
 	line-height: 1.5;
 	border-radius: 3px;
+}
+.dropdown-menu {
+	font-size: 100%;
 }
 .caret {
 	color: #fff;

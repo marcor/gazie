@@ -138,11 +138,17 @@ $strScript = array(
         'rec' => 'Ripristina',
         'dow' => 'Scarica',
         'del' => 'Elimina',
+        'config' => 'Configurazione',
         'backup_mode'=>'Modalità di backup',
         'backup_mode_value'=>array('automatic'=>'Automatico','internal'=>'Locale','external'=>'Remoto')
     ),
     "report_anagra.php" =>
     array('title' => "Anagrafiche comuni"
+    ),
+    "delete_backup.php"=>
+    array('title' => 'Eliminazione backup in corso',
+            'sure' => 'Sei sicuro di voler cancellare il file?',
+            'warning' => 'Attenzione'
     ),
     "admin_anagra.php" =>
     array('title' => 'Gestione anagrafica',
