@@ -24,11 +24,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
-
-if (!ini_get('safe_mode')) { //se me lo posso permettere...
-    ini_set('memory_limit', '128M');
-    gaz_set_time_limit(0);
-}
+require("../root/lib.function.php");
+$checkUpd = new CheckDbAlign;
 //
 // Verifica i parametri della chiamata.
 //
@@ -39,11 +36,16 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     $form['hidden_req'] = $_POST["hidden_req"];
     $form['ritorno'] = $_POST['ritorno'];
     $form['do_backup'] = $_POST["do_backup"];
+    if (isset($_POST['save_config'])) { // ho chiesto la modifica della configurazione
+        $nv = filter_input(INPUT_POST, 'backup_mode');
+        $checkUpd->backupMode($nv); // passando un valore alla stessa funzione faccio l'update
+    }
 } else {
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['do_backup'] = 0;
 }
+$bm = $checkUpd->backupMode();
 ?>
 <div align="center" class="FacetFormHeaderFont">
     <?php echo $script_transl['title']; ?>
@@ -51,7 +53,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
 <form method="POST">
     <div class="container">
         <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="pill" href="#lista">Lista Backups</a></li>
+            <li class="active"><a data-toggle="pill" href="#lista"><?php echo $script_transl['title']; ?></a></li>
             <li><a data-toggle="pill" href="#config">Configurazione</a></li>
         </ul>
     </div>
@@ -122,21 +124,22 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
             <div class="Tlarge FacetDataTD div-config div-table">
                 <div class="div-table-row">
                     <div class="div-table-col">
-                        Tipo di backup<br/>
-                        interno <input type="radio" name="back_internal" value="internal"/>
-                        esterno <input type="radio" name="back_external" value="external"/>
-                        automatica <input type="radio" name="back_auto" value="auto"/>
-                    </div>
-                </div>
-                <div class="div-table-row">
-                    <div class="div-table-col">
-                        Pulizia sistema<br/>
-                        Numero di backups da mantenere <input disabled name="num_backup" value="30" />
+                        <?php
+                        echo $script_transl['backup_mode'] . ': <br/>';
+
+                        foreach ($script_transl['backup_mode_value'] as $k => $v) {
+                            echo ' ' . $v . ' <input type="radio" name="backup_mode" value="' . $k . '"';
+                            if ($bm == $k) {
+                                echo ' checked ';
+                            }
+                            echo '/>';
+                        }
+                        ?>
                     </div>
                 </div>
                 <div class="div-table-row">
                     <div class="div-table-col" >
-                        <input disabled type="submit" name="save_config" value="Salva" />
+                        <input type="submit" name="save_config" value="<?php echo $script_transl['update']; ?>" />
                     </div>
                 </div>
             </div>

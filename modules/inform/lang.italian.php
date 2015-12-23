@@ -138,6 +138,8 @@ $strScript = array(
         'rec' => 'Ripristina',
         'dow' => 'Scarica',
         'del' => 'Elimina',
+        'backup_mode'=>'Modalità di backup',
+        'backup_mode_value'=>array('automatic'=>'Automatico','internal'=>'Locale','external'=>'Remoto')
     ),
     "report_anagra.php" =>
     array('title' => "Anagrafiche comuni"
