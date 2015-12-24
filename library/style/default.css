@@ -21,7 +21,10 @@ table {
 }
 
 table.Tlarge {
-	border : solid 1px;
+	border : solid 1px;    
+}
+.table {
+    margin-bottom: 5px;
 }
 
 table.Tmiddle {
