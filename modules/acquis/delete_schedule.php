@@ -28,7 +28,7 @@ $rs = gaz_dbi_dyn_query($gTables['paymov'].".id_tesdoc_ref,".$gTables['tesmov'].
                         $gTables['paymov']." LEFT JOIN ".$gTables['rigmoc']." ON ".$gTables['paymov'].".id_rigmoc_doc = ".$gTables['rigmoc'].".id_rig
                         LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['tesmov'].".id_tes = ".$gTables['rigmoc'].".id_tes
                         LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['clfoco'].".codice = ".$gTables['tesmov'].".clfoco",
-                        $gTables['paymov'].".id_tesdoc_ref = ".substr($_GET['id_tesdoc_ref'],0,15));
+                        $gTables['paymov'].".id_tesdoc_ref = '".substr($_GET['id_tesdoc_ref'],0,15)."'");
 $form = gaz_dbi_fetch_array($rs);
 if (!isset($_POST['ritorno'])) {
         $form['ritorno'] = $_SERVER['HTTP_REFERER'];
