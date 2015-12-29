@@ -448,17 +448,17 @@ input[type="text"]:focus, textarea:focus, select:focus {
 }
 
 .conto_attivo {
-    background-color: #82d0db;
+    background-color: #88D6FF;
 }
 .conto_passivo {
-    background-color: #e5f2a9;
+    background-color: #D6FF88;
 }
 .conto_costi {
-    background-color: #efd4f3;
+    background-color: #D688FF;
 }
 .costo_ricavi {
-    background-color: #fae896;
+    background-color: #FFD688;
 }
 .conto_transitori {
-    background-color: #fee8fd;
+    background-color: #FF88D6;
 }
