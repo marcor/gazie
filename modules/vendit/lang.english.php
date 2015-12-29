@@ -155,7 +155,7 @@ $strScript = array("admin_client.php" =>
             "FND" => "Debit Note to customer",
             "VCO" => "Ticket Sales",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
-            "DDY" => "D.d.T. per Cessione in Triangolazione",
+            "DDY" => "D.d.T. da non fatturare automaticamente",
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Received"
         ),
@@ -806,7 +806,7 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Selezione per la fatturazione dei Documenti di Trasporto della sezione IVA ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "triangolazione"
+            "Y" => ""   //triangolazione"
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',

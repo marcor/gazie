@@ -197,14 +197,17 @@ function confirMail(link){
                     // Colonna stampa
 
                     $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
-                    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+                    $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
+                    echo "<td class=\"FacetDataTD\" align=\"center\">";
+                    echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
+                    echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintEtichette\" target=\"_blank\"><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
                     echo "</td>\n";
 
                     // Colonna "Mail"
                     echo "<td class=\"FacetDataTD\" align=\"center\">";
                     if (!empty($r["e_mail"])) {
                         echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
-                mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+                mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope" title=\"Invia documento per email\"></i></a>';
                     } else {
                         echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="admin_client.php?codice=' . substr($r["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                     }

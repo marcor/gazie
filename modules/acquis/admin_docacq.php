@@ -583,7 +583,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                  * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo 
                  */
                 $in_sconto = $form['in_sconto'];
-                if ($in_sconto != "0") {
+                if ($in_sconto != "#") {
                     $form['rows'][$i]['sconto'] = $in_sconto;
                 } else {
                     $form['rows'][$i]['sconto'] = $artico['sconto'];

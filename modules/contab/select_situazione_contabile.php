@@ -240,7 +240,8 @@ if (isset($_POST['preview']) and $msg == '') {
             }
             $mv = gaz_dbi_fetch_array($rs);
          } while ($mv && ($mv["clfoco"] == $ctrl_partner) && ($mv["id_tesdoc_ref"] == $ctrl_id_tesdoc_ref));
-         if ($tot_diff_tmp == 0 && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
+//         if ($tot_diff_tmp == 0 && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
+         if ($tot_diff_tmp < 0.01 /*meno di 1 centesimo contabilmente è uguale a zero */ && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
             continue;
          }
          $tot_diff_anagrafe+=$tot_diff_tmp;

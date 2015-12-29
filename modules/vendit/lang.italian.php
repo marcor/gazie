@@ -104,7 +104,9 @@ $strScript = array("admin_client.php" =>
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
-        'fe_cod_univoco' => 'Cod.Univoco Destinatario (fatt.elettronica)'
+        'fe_cod_univoco' => 'Cod.Univoco Destinatario (fatt.elettronica)',
+        'fatt_email' => 'Inviare fattura via email',
+        'fatt_email_value' => array(0 => 'No', 1 => 'Si')
     ),
     "report_docven.php" =>
     array('title' => 'Lista dei documenti di vendita',
@@ -160,7 +162,7 @@ $strScript = array("admin_client.php" =>
             "FND" => "Nota Debito a Cliente",
             "VCO" => "Vendita Corrispettivo",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
-            "DDY" => "D.d.T. per Cessione in Triangolazione",
+            "DDY" => "D.d.T. da non fatturare automaticamente",
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Ricevuta"
         ),
@@ -278,7 +280,11 @@ $strScript = array("admin_client.php" =>
         "La data inizio non &egrave; corretta !",
         "La data fine non &egrave; corretta !",
         "La data fine dev'essere successiva a quella di inizio !",
-        "Non ci sono documenti stampabili negli intervalli selezionati !"
+        "Non ci sono documenti stampabili negli intervalli selezionati !",
+        'id_agente' => 'Agente',
+        'tipoSelezione' => 'Seleziona usando',
+        'tipoStampa' => 'Stampa',
+        
     ),
     "admin_broven.php" =>
     array(array("VPR" => "Preventivo a Cliente", "VOR" => "Ordine da Cliente", "VOW" => "Ordine dal Web"),
@@ -777,7 +783,7 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Documenti di trasporto della sezione: ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "triangolazione",
+            "Y" => "",   //triangolazione",
             "DDR" => "reso da fornitore",
             "DDL" => "c/lavorazione"
         ),
@@ -812,7 +818,7 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Selezione per la fatturazione dei Documenti di Trasporto della sezione IVA ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "triangolazione"
+            "Y" => "" //triangolazione"
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',

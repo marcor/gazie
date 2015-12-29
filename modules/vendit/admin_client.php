@@ -408,6 +408,15 @@ echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <input type=\"text\" id=\"email\" name=\"e_mail\" value=\"" . $form['e_mail'] . "\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 
+
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['fatt_email'] . "</td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">";
+//echo "<input type=\"checkbox\" name=\"fatt_email\" value=\"" . $form['fatt_email'] . "\"  /></td>\n";
+$gForm->variousSelect('fatt_email', $script_transl['fatt_email_value'], $form['fatt_email']);
+echo "</tr>\n";
+
+
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"http://www.indicepa.gov.it/documentale/ricerca.php\" target=\"blank\">" . $script_transl['fe_cod_univoco'] . "</a></td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">

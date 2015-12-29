@@ -159,7 +159,7 @@ $strScript = array("admin_client.php" =>
             "FND" => "Nota de debito al cliente",
             "VCO" => "Boleta de venta",
             "DDV" => "D.d.T. per Cessione in Conto Visione",
-            "DDY" => "D.d.T. per Cessione in Triangolazione",
+            "DDY" => "D.d.T. da non fatturare automaticamente",
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
             "VRI" => "Recibido"
         ),
@@ -252,7 +252,7 @@ $strScript = array("admin_client.php" =>
         'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento'
     ),
     "select_docforprint.php" =>
-    array('title'=>'Ristampa documenti',
+    array('title' => 'Ristampa documenti',
         array(1 => "D.d.T. de venta", 2 => "Factura diferida", 3 => "Factura inmediata que acompa&ntilde;a", 4 => "Factura inmediata simple", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),
         " en la secci&oacute;n ",
         "Fecha",
@@ -811,7 +811,7 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Selezione per la fatturazione dei Documenti di Trasporto della sezione IVA ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "triangolazione"
+            "Y" => ""   //triangolazione"
         ),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',

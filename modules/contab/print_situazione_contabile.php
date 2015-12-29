@@ -88,7 +88,7 @@ $pdf->setFooterMargin(22);
 $pdf->setTopMargin(43);
 $pdf->SetFillColor(160, 255, 220);
 $pdf->setRiporti('');
-$pdf->AddPage();
+//$pdf->AddPage();
 $config = new Config;
 $scdl = new Schedule;
 if (!empty($form['id_anagra'])) {
@@ -141,7 +141,7 @@ if ($rs->num_rows > 0) {
          }
          $mv = gaz_dbi_fetch_array($rs);
       } while ($mv && ($mv["clfoco"] == $ctrl_partner) && ($mv["id_tesdoc_ref"] == $ctrl_id_tesdoc_ref));
-      if ($tot_diff_tmp == 0 && $form['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
+      if ($tot_diff_tmp < 0.01 /* meno di 1 centesimo contabilmente è uguale a zero */ && $form['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
          continue;
       }
       $tot_diff_anagrafe+=$tot_diff_tmp;
@@ -151,6 +151,7 @@ if ($rs->num_rows > 0) {
          if ($primo) {
             $partner = $mv_tmp["ragsoc"];
             $id_tes = $mv_tmp["id_tes"];
+            $codPartner = substr($mv_tmp["clfoco"], 4);  // salto il codice del mastro
             $mv_tmp["datdoc"] = gaz_format_date($mv_tmp["datdoc"]);
             $paymov = $mv_tmp["id_tesdoc_ref"];
             if ($tot_diff_tmp != 0) {
@@ -159,9 +160,10 @@ if ($rs->num_rows > 0) {
                $status_cl = true;
             }
             if ($nuova_anagrafe) {
+               $pdf->AddPage();
                $pdf->SetFont('helvetica', '', 12);
                $pdf->SetFillColor(255, 214, 255);
-               $pdf->Cell(186, 4, $partner, 'LTBR', 1, 'C', true, '', 1);
+               $pdf->Cell(186, 4, $codPartner . " - " . $partner, 'LTBR', 1, 'C', true, '', 1);
                $nuova_anagrafe = false;
             }
             $primo = false;

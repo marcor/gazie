@@ -276,7 +276,8 @@ function gaz_dbi_parse_post($table) {
    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    for ($j = 0; $j < $field_meta['num']; $j++) {
-      if (isset($_POST[$field_meta['data'][$j]->name])) {
+      $nomeCampo=$field_meta['data'][$j]->name;
+      if (isset($_POST[$nomeCampo])) {
          switch ($field_meta['data'][$j]->type) {
             // i numerici
             case 1:
