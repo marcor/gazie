@@ -958,7 +958,7 @@ class GAzieMail {
       $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "-Trasmissione documenti"; //subject
       $email_disclaimer = ("" . $email_disclaimer != "") ? "<p>" . $email_disclaimer . "</p>" : "";
       // Costruisco il testo HTML dell'email
-      $body_text['body_text'] .= "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">Company: " . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
+      $body_text['body_text'] = "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">Company: " . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
       $admin_data['web_url'] = trim($admin_data['web_url']);
       $body_text['body_text'] .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
       $body_text['body_text'] .= "<address><span style=\"color: #" . $admin_data['colore'] . ";\">User: " . $user['Nome'] . " " . $user['Cognome'] . "</span><br /></address>";

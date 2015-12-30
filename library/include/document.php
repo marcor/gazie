@@ -323,7 +323,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 
    $config = new Config;
    $configTemplate = new configTemplate;
-   require("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
+   require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
    $pdf = new $templateName();
    $ecr = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $_SESSION['Login']);
    if (!empty($ecr['driver'])) {
@@ -352,6 +352,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
       $dest = 'S';     // Genero l'output pdf come stringa binaria
       // Costruisco oggetto con tutti i dati del file pdf da allegare
+      $content = new StdClass;
       $content->name = $doc_name;
       $content->string = $pdf->Output($doc_name, $dest);
       $content->encoding = "base64";
@@ -431,6 +432,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false) {
    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
       $dest = 'S';     // Genero l'output pdf come stringa binaria
       // Costruisco oggetto con tutti i dati del file pdf da allegare
+      $content=new stdClass();
       $content->name = $docVars->intesta1 . '_' . $templateName . '_n.' . $docVars->docRelNum . '_del_' . gaz_format_date($docVars->docRelDate) . '.pdf';
       $content->string = $pdf->Output($docVars->intesta1 . '_' . $templateName . '_n.' . $docVars->docRelNum . '_del_' . gaz_format_date($docVars->docRelDate) . '.pdf', $dest);
       $content->encoding = "base64";

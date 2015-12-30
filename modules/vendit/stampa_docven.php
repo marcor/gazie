@@ -158,11 +158,13 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
       $fattEmail = " AND B.fatt_email = $invioPerEmail";
    }
    //recupero i documenti da stampare
-   $where = $where . " AND seziva = " . intval($_GET['si']) . " AND
-                                                 $date_name BETWEEN '" . substr($_GET['di'], 0, 10) . "' AND '" . substr($_GET['df'], 0, 10) . "' AND
-                                                 $num_name BETWEEN " . intval($_GET['ni']) . " AND " . intval($_GET['nf']) . " AND
-                                                 protoc BETWEEN " . intval($_GET['pi']) . " AND " . intval($_GET['pf']) .
-           $cliente . $agente . $fattEmail;
+   $where = $where
+           . " AND seziva = "
+           . intval($_GET['si'])
+           . " AND $date_name BETWEEN '" . substr($_GET['di'], 0, 10) . "' AND '" . substr($_GET['df'], 0, 10)
+           . "' AND $num_name BETWEEN " . intval($_GET['ni']) . " AND " . intval($_GET['nf'])
+           . " AND protoc BETWEEN " . intval($_GET['pi']) . " AND " . intval($_GET['pf'])
+           . $cliente . $agente . $fattEmail;
    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice ";
    //recupero i documenti da stampare
    $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
@@ -174,5 +176,6 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
    } else {
       createMultiDocument($testate, $template, $gTables);
    }
+//   createMultiDocument($testate, $template, $gTables, ($invioPerEmail ? "E" : false)); non funziona, invia tutte le fatture allo stesso destinatario
 }
 ?>
