@@ -142,6 +142,7 @@ if ($rs->num_rows > 0) {
          $mv = gaz_dbi_fetch_array($rs);
       } while ($mv && ($mv["clfoco"] == $ctrl_partner) && ($mv["id_tesdoc_ref"] == $ctrl_id_tesdoc_ref));
       if ($tot_diff_tmp < 0.01 /* meno di 1 centesimo contabilmente è uguale a zero */ && $form['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
+         stampaTotaleCliente();
          continue;
       }
       $tot_diff_anagrafe+=$tot_diff_tmp;
@@ -168,7 +169,7 @@ if ($rs->num_rows > 0) {
             }
             $primo = false;
          } else {
-            $mv_tmp['descri'] = '';
+//            $mv_tmp['descri'] = '';
             $mv_tmp['numdoc'] = '';
             $mv_tmp['datdoc'] = '';
             $id_tes = '';
@@ -219,18 +220,20 @@ if ($rs->num_rows > 0) {
       $pdf->Cell(173, 4, 'SALDO PARTITA', 1, 0, 'R', false);
       $pdf->Cell(13, 4, gaz_format_number(-$tot_diff_tmp), 1, 1, 'C', true);
       /* ENRICO FEDELE */
-      if (!$mv || $mv["clfoco"] != $ctrl_partner) { // si cambia anagrafe alla prossima iterazione
-         /* Stampo la riga del totale, in grassetto italico "BI" */
-         $pdf->SetFillColor(255, 214, 255);
-         $pdf->SetFont('helvetica', 'BI', 6);
-         $pdf->Cell(173, 4, 'SALDO ANAGRAFE', 1, 0, 'R', false);
-         $pdf->Cell(13, 4, gaz_format_number(-$tot_diff_anagrafe), 1, 1, 'C', true);
-         $pdf->SetFillColor(235, 235, 235);
-         $pdf->SetFont('helvetica', '', 1);
-         $pdf->Cell(186, 1, '', 1, 1, 'C', true);
-         $tot_diff_anagrafe = 0;
-         $nuova_anagrafe = true;
-      }
+      $tmp = $mv["clfoco"];
+//      if (!$mv || $mv["clfoco"] != $ctrl_partner) { // si cambia anagrafe alla prossima iterazione
+//         /* Stampo la riga del totale, in grassetto italico "BI" */
+//         $pdf->SetFillColor(255, 214, 255);
+//         $pdf->SetFont('helvetica', 'BI', 6);
+//         $pdf->Cell(173, 4, 'SALDO ANAGRAFE', 1, 0, 'R', false);
+//         $pdf->Cell(13, 4, gaz_format_number(-$tot_diff_anagrafe), 1, 1, 'C', true);
+//         $pdf->SetFillColor(235, 235, 235);
+//         $pdf->SetFont('helvetica', '', 1);
+//         $pdf->Cell(186, 1, '', 1, 1, 'C', true);
+//         $tot_diff_anagrafe = 0;
+//         $nuova_anagrafe = true;
+//      }
+      stampaTotaleCliente();
    }
    /* Stampo la riga del totale generale, in grassetto italico "BI" */
    $pdf->SetFillColor(255, 214, 255);
@@ -244,4 +247,21 @@ if ($rs->num_rows > 0) {
 
 $pdf->setRiporti('');
 $pdf->Output();
+
+function stampaTotaleCliente() {
+   global $mv, $ctrl_partner, $pdf, $tot_diff_anagrafe, $nuova_anagrafe;
+   if (!$nuova_anagrafe && (!$mv || $mv["clfoco"] != $ctrl_partner)) { // si cambia anagrafe alla prossima iterazione
+      /* Stampo la riga del totale, in grassetto italico "BI" */
+      $pdf->SetFillColor(255, 214, 255);
+      $pdf->SetFont('helvetica', 'BI', 6);
+      $pdf->Cell(173, 4, 'SALDO ANAGRAFE', 1, 0, 'R', false);
+      $pdf->Cell(13, 4, gaz_format_number(-$tot_diff_anagrafe), 1, 1, 'C', true);
+      $pdf->SetFillColor(235, 235, 235);
+      $pdf->SetFont('helvetica', '', 1);
+      $pdf->Cell(186, 1, '', 1, 1, 'C', true);
+      $tot_diff_anagrafe = 0;
+      $nuova_anagrafe = true;
+   }
+}
+
 ?>

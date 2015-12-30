@@ -266,7 +266,7 @@ if (isset($_POST['preview']) and $msg == '') {
                }
                $primo = false;
             } else {
-               $mv_tmp['descri'] = '';
+//               $mv_tmp['descri'] = '';
                $mv_tmp['numdoc'] = '';
                $mv_tmp['datdoc'] = '';
                $id_tes = '';
