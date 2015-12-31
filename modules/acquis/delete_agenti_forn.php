@@ -45,7 +45,7 @@ if (isset($_POST['Return'])) {
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain('','','admin_agenti');
+$script_transl = HeadMain('','','admin_agenti_forn');
 ?>
 <form method="POST">
 <input type="hidden" name="id_agente" value="<?php print $form['id_agente']; ?>">
