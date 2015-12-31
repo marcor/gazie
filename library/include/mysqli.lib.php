@@ -70,21 +70,21 @@ function gaz_dbi_fetch_array($resource) {
    $result = mysqli_fetch_array($resource);
    return $result;
 }
+
 /** ENRICO FEDELE */
 /* Possiamo usare questa funzione in futuro?
-*  Ritengo che sia decisamente più i mmediata, perchè restituisce giù un array associativo
-*  e ci evita di dover creare un array apposito in cui mettere quello che ci interessa
-*/
-function gaz_dbi_fetch_assoc ($resource)
-{
-    $result = mysqli_fetch_assoc($resource);
-    return $result;
+ *  Ritengo che sia decisamente più i mmediata, perchè restituisce giù un array associativo
+ *  e ci evita di dover creare un array apposito in cui mettere quello che ci interessa
+ */
+function gaz_dbi_fetch_assoc($resource) {
+   $result = mysqli_fetch_assoc($resource);
+   return $result;
 }
-function gaz_dbi_real_escape_string ($resource)
-{
-	global $link;
-    $result = mysqli_real_escape_string($link, $resource);
-    return $result;
+
+function gaz_dbi_real_escape_string($resource) {
+   global $link;
+   $result = mysqli_real_escape_string($link, $resource);
+   return $result;
 }
 
 function gaz_dbi_fetch_row($resource) {
@@ -209,7 +209,8 @@ function gaz_dbi_last_id() {
 // restituisce il numero record di una query
 function gaz_dbi_record_count($table, $where) {
    global $link;
-   $result = mysqli_query($link, "SELECT * FROM " . $table . (($where != "") ? " WHERE " . $where : ""));
+   $sql = "SELECT * FROM " . $table . (($where != "") ? " WHERE " . $where : "");
+   $result = mysqli_query($link, $sql);
    $count = mysqli_num_rows($result);
    return $count;
 }
@@ -217,19 +218,19 @@ function gaz_dbi_record_count($table, $where) {
 // funzione che compone una query con i parametri: tabella, where, orderby, limit e passo (riga di inizio e n. record)
 function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit = 0, $passo = 2000000) {
    global $link, $session;
-   $query = "SELECT ".$select." FROM ".$tabella;
+   $query = "SELECT " . $select . " FROM " . $tabella;
    if ($where != '') {
       $query .= " WHERE $where ";
    }
    if ($orderby == '2') {
-      $query .= " LIMIT ".$limit.", ".$passo;
+      $query .= " LIMIT " . $limit . ", " . $passo;
    } else {
-      $query .= " ORDER BY ".$orderby." LIMIT ".$limit.", ".$passo;
+      $query .= " ORDER BY " . $orderby . " LIMIT " . $limit . ", " . $passo;
    }
    //echo $query;
    $result = mysqli_query($link, $query);
    if (!$result)
-      die(" Errore di gaz_dbi_dyn_query:<strong> ".$query." </strong> " . mysqli_error($link));
+      die(" Errore di gaz_dbi_dyn_query:<strong> " . $query . " </strong> " . mysqli_error($link));
    return $result;
 }
 
@@ -276,7 +277,7 @@ function gaz_dbi_parse_post($table) {
    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    for ($j = 0; $j < $field_meta['num']; $j++) {
-      $nomeCampo=$field_meta['data'][$j]->name;
+      $nomeCampo = $field_meta['data'][$j]->name;
       if (isset($_POST[$nomeCampo])) {
          switch ($field_meta['data'][$j]->type) {
             // i numerici
@@ -521,26 +522,26 @@ function tesbroUpdate($codice, $newValue) {
 
 function tesdocInsert($newValue) {
    $table = 'tesdoc';
-   $columns = array('seziva', 'tipdoc','ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
+   $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
        'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
        'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
        'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
        /** inizio modifica FP 19/10/2015 */
        'ragbol', 'data_ordine'
-       /** fine modifica FP */);
+           /** fine modifica FP */           );
    $newValue['adminid'] = $_SESSION['Login'];
    tableInsert($table, $columns, $newValue);
 }
 
 function tesdocUpdate($codice, $newValue) {
    $table = 'tesdoc';
-   $columns = array('seziva', 'tipdoc','ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
+   $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
        'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
        'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
        'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
        /** inizio modifica FP 19/10/2015 */
        'ragbol', 'data_ordine'
-       /** fine modifica FP */
+           /** fine modifica FP */
    );
    $newValue['adminid'] = $_SESSION['Login'];
    tableUpdate($table, $columns, $codice, $newValue);
@@ -605,7 +606,7 @@ function getAccessRights($userid = '', $company_id = 1) {
 						module.id AS m1_id,
 						module.access,
 						module.weight 
-				FROM  '.$gTables['module'].' AS module 
+				FROM  ' . $gTables['module'] . ' AS module 
 				ORDER BY weight';
    } else {
       /* LA: 17-02-2008  */
@@ -631,11 +632,11 @@ function getAccessRights($userid = '', $company_id = 1) {
 					   m3.translate_key AS m3_trkey,
 					   m3.accesskey AS m3_ackey,
 					   m3.weight AS m3_weight 
-				FROM '.$gTables['menu_module'].'       AS m2 
-				LEFT JOIN '.$gTables['module'].'       AS m1 ON m1.id      = m2.id_module 
-				LEFT JOIN '.$gTables['admin_module'].' AS am ON am.moduleid= m1.id 
-				LEFT JOIN '.$gTables['menu_script'].'  AS m3 ON m3.id_menu = m2.id 
-				WHERE am.adminid=\''.$userid.'\' '.$query_co.' 
+				FROM ' . $gTables['menu_module'] . '       AS m2 
+				LEFT JOIN ' . $gTables['module'] . '       AS m1 ON m1.id      = m2.id_module 
+				LEFT JOIN ' . $gTables['admin_module'] . ' AS am ON am.moduleid= m1.id 
+				LEFT JOIN ' . $gTables['menu_script'] . '  AS m3 ON m3.id_menu = m2.id 
+				WHERE am.adminid=\'' . $userid . '\' ' . $query_co . ' 
 				ORDER BY m1.weight,
 						 m1_id,
 						 m2.weight,
@@ -665,6 +666,7 @@ function checkAccessRights($adminid, $module, $company_id = 0) {
    $row = gaz_dbi_fetch_array($result);
    return $row['access'];
 }
+
 function gaz_dbi_fetch_all($resource) {
    $result = mysqli_fetch_assoc($resource);
    return $result;
