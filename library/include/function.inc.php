@@ -262,6 +262,41 @@ function startsWith($haystack, $needle) {
    return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== FALSE;
 }
 
+function alert($message) {
+// This is in the PHP file and sends a Javascript alert to the client
+
+   echo "<script type='text/javascript'>alert('$message');</script>";
+}
+
+function tornaPaginaPrecedente() {
+   echo "<script type='text/javascript'>javascript:history.go(-1);</script>";
+}
+
+class selectAgente extends SelectBox {
+
+   private $tipo;
+
+   public function __construct($name, $tipo = "C") {
+      parent::__construct($name);
+      $this->tipo = $tipo;
+   }
+
+   function output() {
+      if ($this->tipo == "C") {
+         $nomeTabella = 'agenti';
+      } else {
+         $nomeTabella = 'agenti_forn';
+      }
+      global $gTables;
+      $query = "SELECT " . $gTables[$nomeTabella] . ".id_agente," . $gTables[$nomeTabella] . ".id_fornitore," . $gTables['anagra'] . ".ragso1," . $gTables['clfoco'] . ".codice
+                  FROM " . $gTables[$nomeTabella] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables[$nomeTabella] . ".id_fornitore = " . $gTables['clfoco'] . ".codice
+                  LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id";
+//        SelectBox::_output($query, 'ragso1', True,'','',"id_agente",'AGENTE');
+      SelectBox::_output($query, 'ragso1', True, '', '', "id_agente", '');
+   }
+
+}
+
 class Config {
 
    function Config() {

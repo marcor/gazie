@@ -130,19 +130,6 @@ class Agenti
     }
 }
 
-class selectAgente extends SelectBox
-{
-  function output()
-  {
-        global $gTables;
-        $query = "SELECT ".$gTables['agenti'].".id_agente,".$gTables['agenti'].".id_fornitore,".$gTables['anagra'].".ragso1,".$gTables['clfoco'].".codice
-                  FROM ".$gTables['agenti']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['agenti'].".id_fornitore = ".$gTables['clfoco'].".codice
-                  LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id";
-//        SelectBox::_output($query, 'ragso1', True,'','',"id_agente",'AGENTE');
-        SelectBox::_output($query, 'ragso1', True,'','',"id_agente",'');
-  }
-}
-
 class venditCalc extends Compute
 {
   function contractCalc($id_contract)

@@ -107,7 +107,8 @@ $strScript = array("admin_fornit.php" =>
         'ritenuta' => '% Ritenuta',
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
-        'annota' => 'Annotazioni'
+        'annota' => 'Annotazioni',
+        'id_agente' => 'Agente',
     ),
     "report_broacq.php" =>
     array('Nuovo Preventivo', 'Nuovo Ordine',
@@ -302,7 +303,7 @@ $strScript = array("admin_fornit.php" =>
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO')
     ),
     "delete_docacq.php" =>
-    array('title' => 'Eliminazione Documento d\'Acquisto' ),
+    array('title' => 'Eliminazione Documento d\'Acquisto'),
     "supplier_payment.php" =>
     array('title' => 'Pagamento debito verso fornitore (chiusura partita/e)',
         'errors' => array('La data  non &egrave; corretta!'),

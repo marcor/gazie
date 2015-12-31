@@ -462,7 +462,7 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$select_agente = new selectAgente("id_agente");
+$select_agente = new selectAgente("id_agente", "C");
 $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
 echo "</td>\n";

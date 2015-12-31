@@ -53,7 +53,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        require("../../library/include/check.inc.php");
        $rs_same_code=gaz_dbi_dyn_query('*',$gTables['clfoco']," codice = ".$real_code,"codice",0,1);
        $same_code=gaz_dbi_fetch_array($rs_same_code);
-       if ($same_code && ($toDo == 'insert')) { // c'è già uno stesso codice
+       if ($same_code && ($toDo == 'insert')) { // c'ï¿½ giï¿½ uno stesso codice
           $form['codice']++; // lo aumento di 1
           $msg .= "18+";
        }
@@ -105,12 +105,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        $anagrafica= new Anagrafica();
        if (!($form['pariva']=="") && !($form['pariva']=="00000000000")) {
            $partner_with_same_pi= $anagrafica->queryPartners('*', "codice <> ".$real_code." AND codice BETWEEN ".$admin_aziend['masfor']."000000 AND ".$admin_aziend['masfor']."999999 AND pariva = '".$form['pariva']."'","pariva DESC",0,1);
-           if ($partner_with_same_pi) { // c'è già un fornitore sul piano dei conti
+           if ($partner_with_same_pi) { // c'ï¿½ giï¿½ un fornitore sul piano dei conti
               $msg .= "10+";
-           } elseif ($form['id_anagra']==0) { // è un nuovo fornitore senza anagrafica
+           } elseif ($form['id_anagra']==0) { // ï¿½ un nuovo fornitore senza anagrafica
               $rs_anagra_with_same_pi=gaz_dbi_dyn_query('*',$gTables['anagra']," pariva = ".$form['pariva'],"pariva DESC",0,1);
               $anagra_with_same_pi=gaz_dbi_fetch_array($rs_anagra_with_same_pi);
-              if($anagra_with_same_pi) { // c'è già un'anagrafica con la stessa PI non serve reinserirlo ma avverto
+              if($anagra_with_same_pi) { // c'ï¿½ giï¿½ un'anagrafica con la stessa PI non serve reinserirlo ma avverto
                  // devo attivare tutte le interfacce per la scelta!
                  $anagra=$anagra_with_same_pi;
                  $msg .= '15+';
@@ -122,12 +122,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        }
        if (!($form['codfis']=="") && !($form['codfis']=="00000000000")) {
           $partner_with_same_cf=$anagrafica->queryPartners('*',  "codice <> ".$real_code." AND codice BETWEEN ".$admin_aziend['masfor']."000000 AND ".$admin_aziend['masfor']."999999 AND codfis = '".$form['codfis']."'","codfis DESC",0,1);
-          if ($partner_with_same_cf) { // c'è già un fornitore sul piano dei conti
+          if ($partner_with_same_cf) { // c'ï¿½ giï¿½ un fornitore sul piano dei conti
              $msg .= "12+";
-          } elseif ($form['id_anagra']==0) { // è un nuovo fornitore senza anagrafica
+          } elseif ($form['id_anagra']==0) { // ï¿½ un nuovo fornitore senza anagrafica
              $rs_anagra_with_same_cf=gaz_dbi_dyn_query('*',$gTables['anagra']," codfis = '".$form['codfis']."'","codfis DESC",0,1);
              $anagra_with_same_cf=gaz_dbi_fetch_array($rs_anagra_with_same_cf);
-             if($anagra_with_same_cf) { // c'è già un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
+             if($anagra_with_same_cf) { // c'ï¿½ giï¿½ un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
                 // devo attivare tutte le interfacce per la scelta!
                 $anagra=$anagra_with_same_cf;
                 $msg .= '16+';
@@ -310,7 +310,7 @@ $gForm->variousSelect('sexper',$script_transl['sexper_value'],$form['sexper']);
 echo "\t </td>\n";
 echo "</tr>\n";
 /** ENRICO FEDELE */
-/* Cambiato l'ordine dei campi per renderlo più coerente con l'autocompletamento (prima il campo comune che ha la funzione attiva) */
+/* Cambiato l'ordine dei campi per renderlo piï¿½ coerente con l'autocompletamento (prima il campo comune che ha la funzione attiva) */
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['citspe']." *  </td>\n";
 echo "\t<td class=\"FacetDataTD\">
@@ -443,6 +443,16 @@ echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cosric']."</td><td cla
 $gForm->selectAccount('cosric',$form['cosric'],3);
 echo "</td>\n";
 echo "</tr>\n";
+
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+$select_agente = new selectAgente("id_agente","F");
+$select_agente->addSelected($form["id_agente"]);
+$select_agente->output();
+echo "</td>\n";
+echo "</tr>\n";
+
+
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['destin']." </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
