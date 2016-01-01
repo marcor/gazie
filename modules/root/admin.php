@@ -94,6 +94,38 @@ if ($data) {
 }
 $lastBackup = $checkUpd->testDbBackup();
 
+//andrea backup automatico
+$backupMode = $checkUpd->backupMode();
+if ( $backupMode=="automatic" ) {   
+    if ( $checkUpd->testDbBackup(0) != date("Y-m-d") ) {
+        $sysdisk = $checkUpd->get_system_disk();
+        $gazpath = $checkUpd->get_backup_path();
+        $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup');
+        $percspace = (disk_total_space($sysdisk)/100)*$freespace["cvalue"];
+        
+        $files = glob( $gazpath.'*.gaz' );
+        array_multisort( array_map( 'filemtime', $files ), SORT_NUMERIC, SORT_ASC, $files );
+        
+        $keep = gaz_dbi_get_row($gTables['config'], 'variable', 'keep_backup');            
+        if ( count($files) > $keep["cvalue"] ) {
+            if ( count($files) > $keep["cvalue"] && $keep["cvalue"]>0 ) {
+                for ( $i=0; $i<count($files)-($keep["cvalue"]); $i++ )
+                    unlink ($files[$i]);
+            }
+        } 
+        if ( disk_free_space($sysdisk) < $percspace ) {
+            $i=0;
+            while ( disk_free_space($sysdisk) < $freespace && $i < count($files) ) {
+                if ( $i <= count($files)-30 ) {
+                    unlink ($files[$i]);
+                }
+                $i++;
+            }
+        }
+        header("Location: ../../modules/inform/backup.php?internal");
+    }
+}
+
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $t = strftime("%H");

@@ -38,7 +38,11 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     $form['do_backup'] = $_POST["do_backup"];
     if (isset($_POST['save_config'])) { // ho chiesto la modifica della configurazione
         $nv = filter_input(INPUT_POST, 'backup_mode');
+        $kb = filter_input(INPUT_POST, 'keep_backup');
+        $fs = filter_input(INPUT_POST, 'freespace_backup');        
         $checkUpd->backupMode($nv); // passando un valore alla stessa funzione faccio l'update
+        gaz_dbi_put_row($gTables['config'], 'variable', 'keep_backup', 'cvalue', $kb);
+        gaz_dbi_put_row($gTables['config'], 'variable', 'freespace_backup', 'cvalue', $fs);
     }
 } else {
     $form['hidden_req'] = '';
@@ -46,6 +50,8 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     $form['do_backup'] = 0;
 }
 $bm = $checkUpd->backupMode();
+$keep = gaz_dbi_get_row($gTables['config'], 'variable', 'keep_backup');
+$freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup');
 ?>
 <div align="center" class="FacetFormHeaderFont">
     <?php echo $script_transl['title']; ?>
@@ -68,6 +74,7 @@ $bm = $checkUpd->backupMode();
             <table class="Tlarge">
                 <tr>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['id']; ?></th>
+                    <th class="FacetFieldCaptionTD"><?php echo $script_transl['ver']; ?></th>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['name']; ?></th>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['size']; ?></th>            
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['rec']; ?></th>
@@ -94,6 +101,12 @@ $bm = $checkUpd->backupMode();
                             <tr><td class="FacetDataTD"><a class="btn btn-xs btn-default" href="">
                                         <?php echo $id; ?>
                                     </a></td>
+                                <td class="FacetDataTD">
+                                    <?php 
+                                        if ( preg_match('/-v(.*?).sql/',$file, $versione)>0 )                                      
+                                            echo $versione[1];
+                                    ?>
+                                </td>
                                 <td class="FacetDataTD">
                                     <?php echo $file; ?>
                                 </td>
@@ -124,17 +137,30 @@ $bm = $checkUpd->backupMode();
             <div class="Tlarge FacetDataTD div-config div-table">
                 <div class="div-table-row">
                     <div class="div-table-col">
+                        <h4><?php echo $script_transl['backup_mode']; ?></h4>
+                        <ul class="licheck">
+
                         <?php
-                        echo $script_transl['backup_mode'] . ': <br/>';
+                        // . ': <br/>';
 
                         foreach ($script_transl['backup_mode_value'] as $k => $v) {
-                            echo ' ' . $v . ' <input type="radio" name="backup_mode" value="' . $k . '"';
+                            echo '<li><input type="radio" name="backup_mode" value="' . $k . '"';
                             if ($bm == $k) {
                                 echo ' checked ';
                             }
-                            echo '/>';
+                            echo '/>&nbsp;' . $v . '</li>';
                         }
                         ?>
+                        </ul>
+                    </div>
+                </div>
+                <div class="div-table-row">
+                    <div class="div-table-col">
+                        <h4>Automatico</h4>
+                        <ul class="licheck">
+                            <li>Numero di backup da conservare : <input type="text" name="keep_backup" value="<?php echo $keep['cvalue']; ?>" /> inserire 0 per tutti</li>
+                            <li>Spazio da lasciare libero (%) : <input type="text" name="freespace_backup" value="<?php echo $freespace['cvalue']; ?>" /> raggiunto il limite i backup vecchi verranno cancellati</li>
+                        </ul>
                     </div>
                 </div>
                 <div class="div-table-row">

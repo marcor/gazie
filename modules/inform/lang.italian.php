@@ -133,6 +133,7 @@ $strScript = array(
     array('title' => "Lista dei backup interni ",
         'errors' => array(),
         'id' => 'Identificativo',
+        'ver' => 'Versione',
         'name' => 'Nome file',
         'size' => 'Dimensione',
         'rec' => 'Ripristina',

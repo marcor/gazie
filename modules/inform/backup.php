@@ -259,7 +259,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         /*$f = fopen('../../data/files/backups/' . $Database . date("YmdHi") . '.sql', "w");
         fwrite($f, $content);
         fclose($f);*/
-        $fp = gzopen ('../../data/files/backups/'.$Database.date("YmdHi").'.sql.gaz', 'w9');
+        $fp = gzopen ('../../data/files/backups/'.$Database.date("YmdHi").'-v'.$versSw.'.sql.gaz', 'w9');
         gzwrite ($fp, $content);
         gzclose($fp);
         header("Location:".$form['ritorno']);

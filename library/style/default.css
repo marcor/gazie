@@ -670,3 +670,10 @@ div.danger li.active span.rounded{
 .row {
 	padding: 2px 10px 2px 10px;
 }
+.licheck {
+	list-style-type: none;
+}
+
+ul.licheck li {
+    padding-bottom: 4px;
+}

@@ -81,9 +81,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['clfoco']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
          }
 			// aggiorno il db          
-			if ($toDo == 'insert') {             		
+			if ($toDo == 'insert') {
+                if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
 				gaz_dbi_table_insert('assist',$form);
 			} elseif ($toDo == 'update') {             
+                if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
 				gaz_dbi_table_update('assist',$form['ref_code'],$form);
 			}          
 			header("Location: ".$form['ritorno']);
@@ -147,7 +149,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Data</td>
 	<td colspan="2" class="FacetDataTD">
-		<input tabindex=2 type="text" name="data" value="<?php echo $form['data']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="data" value="<?php echo $form['data']; ?>" align="right" maxlength="255" size="70"/>
 	</td>
 </tr>
 <tr>
@@ -161,7 +163,7 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['tecnico']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-            <select name="ctecnico" tabindex="5" onchange="updateInputTecnico(this.value)">
+            <select name="ctecnico" onchange="updateInputTecnico(this.value)">
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
 			while ($tecnici = gaz_dbi_fetch_array($result)) {				
@@ -171,38 +173,38 @@ $select_cliente = new selectPartner('clfoco');
 			}
 			?>
             </select> 
-        <input tabindex=6 type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>       
+        <input type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>       
         <button id="toggleTec" type="button">Altro</button>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['oggetto']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input tabindex=4 type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="oggetto" value="<?php echo $form['oggetto']; ?>" align="right" maxlength="255" size="70"/>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['descrizione']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<textarea tabindex=3 type="text" name="descrizione" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['descrizione']; ?></textarea>
+		<textarea type="text" name="descrizione" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['descrizione']; ?></textarea>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['info_agg']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input tabindex=4 type="text" name="info_agg" value="<?php echo $form['info_agg']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="info_agg" value="<?php echo $form['info_agg']; ?>" align="right" maxlength="255" size="70"/>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD">Ore</td>
 	<td colspan="2" class="FacetDataTD">
-		<input tabindex=5 type="text" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" size="70"/>
+		<input type="text" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" size="70"/>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['stato']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<select name="cstato" tabindex="5" onchange="updateInputStato(this.value)">
+		<select name="cstato" onchange="updateInputStato(this.value)">
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist'],"", "stato", "0", "9999");
 			while ($stati = gaz_dbi_fetch_array($result)) {				
@@ -213,17 +215,17 @@ $select_cliente = new selectPartner('clfoco');
 			?>
             <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo '"selected"'; ?>>chiuso</option>";
 		</select> 
-		<input tabindex=6 type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
+		<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
         <button id="toggleSta" type="button">Altro</button>
 	</td>
 </tr>
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['sqn']; ?></td>
 	<td  class="FacetDataTD">
-		<input tabindex=6 name="Return" type="submit" value="<?php echo $script_transl['return']; ?>!">
+		<input name="Return" type="submit" value="<?php echo $script_transl['return']; ?>!">
 	</td>
 	<td  class="FacetDataTD" align="right">
-		<input tabindex=7 name="Submit" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
+		<input name="Submit" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
 	</td>
 </tr>
 </table>

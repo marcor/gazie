@@ -58,18 +58,46 @@ class CheckDbAlign {
             return $r['cvalue'];
         }
     }
+    
+    function get_backup_path() {
+        $sysdisk = getcwd();
+        if(php_uname('s')=='Windows NT'){
+            $sysdisk=explode("\\", $sysdisk );
+            $sysdisk = array_slice( $sysdisk, 0, count($sysdisk)-2);
+            return implode("\\", $sysdisk)."\\data\\files\\backups\\";
+        } else {
+            $sysdisk = array_slice( $sysdisk, 0, count($sysdisk)-2);
+            return implode("/", $sysdisk)."/data/files/backup/";
+        }
+    }
+    
+    function get_system_disk() {
+        $sysdisk = getcwd();
+        if(php_uname('s')=='Windows NT'){
+            $sysdisk=explode("\\", $sysdisk );
+            return $sysdisk[0];
+        } else {
+            $sysdisk=explode("/", $sysdisk );
+            $sysdisk = array_slice( $sysdisk, 0, count($sysdisk)-2);
+            return $sysdisk;
+        }
+    }
 
-    function testDbBackup() {
+    function testDbBackup( $days = 10 ) {
         // Antonio De Vincentiis 2 Luglio 2009
         global $gTables;
         $r = gaz_dbi_get_row($gTables['config'], 'variable', 'last_backup');
-        $dl = new DateTime($r['cvalue']);
-        $dl->modify('+10 days');
-        $dn = new DateTime("now");
-        if ($dn > $dl) {
-            return TRUE;
+        if ( $days>0) {
+            $dl = new DateTime($r['cvalue']);
+            $dl->modify('+'.$days.' days');
+            $dn = new DateTime("now");
+            if ($dn > $dl) {
+                return TRUE;
+            } else {
+                return FALSE;
+            }
         } else {
-            return FALSE;
+            return $r['cvalue'];
         }
     }
 
