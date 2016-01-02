@@ -229,18 +229,16 @@ function selectDestinazione($rs_destinazioni) {
    if (count($rs_destinazioni) > 0) {
       $retVal = $retVal . "<select name=\"destina\" class=\"FacetSelect\" onchange=\"cambiaDestinazione(this)\">\n";
       $retVal = $retVal . "<option value=\"\" selected>-------</option>\n";
-      for ($counter = 1; $counter <= count($rs_destinazioni); $counter++) {
-         $rigaDest = $rs_destinazioni[$counter - 1];
-         $destinazione = getStringaNonVuota($rigaDest[1], "\n")
-                 . getStringaNonVuota($rigaDest[2], "\n")
-                 . getStringaNonVuota($rigaDest[3], "\n")
-                 . getStringaNonVuota($rigaDest[4], " ")
-                 . getStringaNonVuota($rigaDest[5], " ")
-                 . getStringaNonVuota($rigaDest[6], "\n")
-                 . getStringaNonVuota($rigaDest[7]);
+      foreach ( $rs_destinazioni as $dest ) {
+         $destinazione = //getStringaNonVuota($dest['codice'], "-")
+                 getStringaNonVuota($dest['unita_locale1'], "\n")
+                 . getStringaNonVuota($dest['unita_locale2'], "\n")
+                 . getStringaNonVuota($dest['indspe'], " ")
+                 . getStringaNonVuota($dest['capspe'], " ")
+                 . getStringaNonVuota($dest['citspe'], "\n")
+                 . getStringaNonVuota($dest['country']);
 
          $retVal = $retVal . "<option value=\"" . $destinazione . "\">"
-//                 . $rigaDest[1].'-'. $rigaDest[5].'('.$rigaDest[6].')'
                  . $destinazione
                  . "</option>\n";
       }
@@ -250,11 +248,11 @@ function selectDestinazione($rs_destinazioni) {
 }
 
 function getStringaNonVuota($stringa, $daAggiungere = "") {
-   $retVal = "";
+   $returnVal = "";
    if (!empty($stringa)) {
-      $retVal = $retVal . $stringa . $daAggiungere;
+      $returnVal = $returnVal . $stringa . $daAggiungere;
    }
-   return $retVal;
+   return $returnVal;
 }
 
 function startsWith($haystack, $needle) {

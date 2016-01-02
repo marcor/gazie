@@ -668,8 +668,10 @@ function checkAccessRights($adminid, $module, $company_id = 0) {
 }
 
 function gaz_dbi_fetch_all($resource) {
-   $result = mysqli_fetch_assoc($resource);
-   return $result;
+    while ($row = mysqli_fetch_assoc($resource)) {
+        $result[] = $row;
+    }
+    return $result;
 }
 
 ?>
