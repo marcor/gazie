@@ -99,7 +99,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     print "<td class=\"FacetDataTD\">".$a_row["status"]." &nbsp;</td>";
     print "<td class=\"FacetDataTD\">
 			<a class=\"btn btn-xs btn-default\" href=\"stampa_docacq.php?id_tes=".$a_row["id_tes"]."&template=DDT\" title=\"Stampa\">
-					<i class=\"glyphicon glyphicon-remove\"></i>
+					<i class=\"glyphicon glyphicon-print\"></i>
 			</a>
 		  </td>";
     if ($ultimoddt == $a_row["numdoc"] and $a_row['numfat'] == 0) {
