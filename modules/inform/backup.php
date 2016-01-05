@@ -255,14 +255,49 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     }
     gaz_dbi_put_row($gTables['config'], 'variable', 'last_backup', 'cvalue', date('Y-m-d'));
     if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
-        $content = ob_get_contents();
-        $fp = gzopen('../../data/files/backups/' . $Database . date("YmdHi") . '-v' . $versSw . '.sql.gaz', 'w9');
-        gzwrite($fp, $content);
-        gzclose($fp);
+        $content = ob_get_contents();       
+        $zip = new ZipArchive();
+        $filename = '../../data/files/backups/' . $Database . date("YmdHi") . '-v' . $versSw . '.sql.gaz';
+        if ($zip->open($filename, ZipArchive::CREATE)!==TRUE) {
+            exit("cannot open <$filename>\n");
+        }
+        $zip->addFromString($Database . date("YmdHi") . '-v' . $versSw . '.sql', $content);       
+        chdir('../../');
+        Zip('./', $zip);
+        $zip->close();
         header("Location:" . $form['ritorno']);
     }
 }
 exit;
+
+function Zip($source, $zip)
+{
+    /*if (!extension_loaded('zip') || !file_exists($source)) {
+        return false;
+    }
+    $zip = new ZipArchive();
+    if (!$zip->open($destination, ZIPARCHIVE::CREATE)) {
+        return false;
+    }*/
+    $source = str_replace('\\', '/', realpath($source));
+    if (is_dir($source) === true) {
+        $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
+        foreach ($files as $file) {
+            $file = str_replace('\\', '/', $file);
+            if( in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) ) continue;
+            if( strpos($file, 'backups' )>0 || strrpos($file, '.svn' )>0 ) continue;
+            //$file = realpath($file);
+            if (is_dir($file) === true) {
+                $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+            } else if (is_file($file) === true) {
+                $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+            }
+        }
+    } else if (is_file($source) === true) {
+        $zip->addFromString(basename($source), file_get_contents($source));
+    }
+    //return $zip->close();
+}
 
 // Coded By Louis
 // ############### FUNZIONI DI SUPPORTO ###############
