@@ -100,9 +100,9 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         } else {
             header('Pragma: no-cache');
         }
+    } else {
+        ob_start();
     }
-    ob_start();
-
     echo "-- GAzie SQL Dump\n";
     echo "-- version: " . $versSw . "\n";
     echo "-- http://gazie.sourceforge.net\n";
@@ -253,16 +253,13 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
             echo "UNLOCK TABLES;\n\n";
         }
     }
-    $content = ob_get_contents();
-    gaz_dbi_put_row($gTables['config'],'variable','last_backup','cvalue', date('Y-m-d'));
+    gaz_dbi_put_row($gTables['config'], 'variable', 'last_backup', 'cvalue', date('Y-m-d'));
     if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
-        /*$f = fopen('../../data/files/backups/' . $Database . date("YmdHi") . '.sql', "w");
-        fwrite($f, $content);
-        fclose($f);*/
-        $fp = gzopen ('../../data/files/backups/'.$Database.date("YmdHi").'-v'.$versSw.'.sql.gaz', 'w9');
-        gzwrite ($fp, $content);
+        $content = ob_get_contents();
+        $fp = gzopen('../../data/files/backups/' . $Database . date("YmdHi") . '-v' . $versSw . '.sql.gaz', 'w9');
+        gzwrite($fp, $content);
         gzclose($fp);
-        header("Location:".$form['ritorno']);
+        header("Location:" . $form['ritorno']);
     }
 }
 exit;

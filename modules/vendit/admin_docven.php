@@ -474,7 +474,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                $form['datfat'] = $datemi;
                $form['numfat'] = $old_head['numfat'];
             }
-            $form['ddt_type'] = substr($old_head['tipdoc'], -1);
+            $form['ddt_type'] = $old_head['ddt_type'];
             $form['geneff'] = $old_head['geneff'];
             $form['id_contract'] = $old_head['id_contract'];
             $form['id_con'] = $old_head['id_con'];
