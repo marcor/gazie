@@ -39,10 +39,12 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
     if (isset($_POST['save_config'])) { // ho chiesto la modifica della configurazione
         $nv = filter_input(INPUT_POST, 'backup_mode');
         $kb = filter_input(INPUT_POST, 'keep_backup');
-        $fs = filter_input(INPUT_POST, 'freespace_backup');        
+        $fs = filter_input(INPUT_POST, 'freespace_backup');
+        $fi = filter_input(INPUT_POST, 'filebackup');
         $checkUpd->backupMode($nv); // passando un valore alla stessa funzione faccio l'update
         gaz_dbi_put_row($gTables['config'], 'variable', 'keep_backup', 'cvalue', $kb);
         gaz_dbi_put_row($gTables['config'], 'variable', 'freespace_backup', 'cvalue', $fs);
+        gaz_dbi_put_row($gTables['config'], 'variable', 'file_backup', 'cvalue', $fi);
     }
 } else {
     $form['hidden_req'] = '';
@@ -52,6 +54,7 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
 $bm = $checkUpd->backupMode();
 $keep = gaz_dbi_get_row($gTables['config'], 'variable', 'keep_backup');
 $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup');
+$filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
 ?>
 <div align="center" class="FacetFormHeaderFont">
     <?php echo $script_transl['title']; ?>
@@ -95,11 +98,12 @@ $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup')
                     $reallyLastModified = end($files);
                     $index = 0;
                     foreach ($files as $file) {
-                        $id = substr($file, 5, 12);
+                        preg_match('/-(.*?)-/',$file, $id);
+                        
                         if ($index < 30) {
                             ?>
                             <tr><td class="FacetDataTD"><a class="btn btn-xs btn-default" href="">
-                                        <?php echo $id; ?>
+                                        <?php echo $id[1]; ?>
                                     </a></td>
                                 <td class="FacetDataTD">
                                     <?php 
@@ -120,7 +124,7 @@ $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup')
                                     <a class="btn btn-xs btn-default" href=""><i class="glyphicon glyphicon-download"></i></a>
                                 </td>
                                 <td align="center" class="FacetDataTD">
-                                    <a class="btn btn-xs btn-default" href="delete_backup.php?id=<?php echo $id ?>"><i class="glyphicon glyphicon-remove"></i></a>
+                                    <a class="btn btn-xs btn-default" href="delete_backup.php?id=<?php echo $file ?>"><i class="glyphicon glyphicon-remove"></i></a>
                                 </td>
                             </tr>
                             <?php
@@ -158,6 +162,7 @@ $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup')
                     <div class="div-table-col">
                         <h4>Automatico</h4>
                         <ul class="licheck">
+                            <li>Esegui backup dei files (la cartella di gazie verrà salvata) : <input <?php echo ($filebackup['cvalue']==1) ? 'checked="checked"' : ''; ?> type="checkbox" name="filebackup" value="1" /> </li>
                             <li>Numero di backup da conservare : <input type="text" name="keep_backup" value="<?php echo $keep['cvalue']; ?>" /> inserire 0 per tutti</li>
                             <li>Spazio da lasciare libero (%) : <input type="text" name="freespace_backup" value="<?php echo $freespace['cvalue']; ?>" /> raggiunto il limite i backup vecchi verranno cancellati</li>
                         </ul>

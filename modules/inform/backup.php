@@ -257,13 +257,16 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
         $content = ob_get_contents();       
         $zip = new ZipArchive();
-        $filename = '../../data/files/backups/' . $Database . date("YmdHi") . '-v' . $versSw . '.sql.gaz';
+        $filename = '../../data/files/backups/' . $Database ."-". date("YmdHi") . '-v' . $versSw . '.sql.gaz';
         if ($zip->open($filename, ZipArchive::CREATE)!==TRUE) {
             exit("cannot open <$filename>\n");
         }
         $zip->addFromString($Database . date("YmdHi") . '-v' . $versSw . '.sql', $content);       
-        chdir('../../');
-        Zip('./', $zip);
+        $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
+        if ( $filebackup['cvalue'] == 1 ) {
+            chdir('../../');
+            Zip('./', $zip);
+        }
         $zip->close();
         header("Location:" . $form['ritorno']);
     }
