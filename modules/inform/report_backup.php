@@ -97,13 +97,14 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                     krsort($files);
                     $reallyLastModified = end($files);
                     $index = 0;
+                    $id = array ();
                     foreach ($files as $file) {
                         preg_match('/-(.*?)-/',$file, $id);
                         
                         if ($index < 30) {
                             ?>
                             <tr><td class="FacetDataTD"><a class="btn btn-xs btn-default" href="">
-                                        <?php echo $id[1]; ?>
+                                        <?php echo (count($id)>0) ? $id[1] : "nd"; ?>
                                     </a></td>
                                 <td class="FacetDataTD">
                                     <?php 
