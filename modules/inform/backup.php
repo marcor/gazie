@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
 
 if (!ini_get('safe_mode')) { //se me lo posso permettere...
-    ini_set('memory_limit', '128M');
+    ini_set('memory_limit', '512M');
     gaz_set_time_limit(0);
 }
 //
