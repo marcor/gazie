@@ -845,7 +845,8 @@ class selectpagame extends SelectBox {
 
    function output($refresh = '') {
       global $gTables;
-      $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `codice`';
+//      $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `codice`';
+      $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `descri`, `codice`';
       SelectBox::_output($query, 'descri', True, '', '', 'codice', $refresh);
    }
 
@@ -1764,19 +1765,26 @@ class Schedule {
          default:
             $orderby = "id_tesdoc_ref, expiry, codice,  caucon, datreg, numdoc ASC ";
       }
-      $select = "*, " . $gTables['tesmov'] . ".*, " . $gTables['clfoco'] . ".descri AS ragsoc";
+//      $select = "*, " . $gTables['tesmov'] . ".*, " . $gTables['clfoco'] . ".descri AS ragsoc";
+      $select = "*, C.*, A.descri AS ragsoc";
       if ($this->target == 0) {
-         $where = $gTables['clfoco'] . ".codice LIKE '$masclifor%' ";
+         $where = "A.codice LIKE '$masclifor%' ";
       } else {
-         $where = $gTables['clfoco'] . ".codice = " . $this->target;
+         $where = "A.codice = " . $this->target;
       }
       if (!empty($id_agente)) {
-         $where.=" and " . $gTables['clfoco'] . ".id_agente =$id_agente";
+         $where.=" and A.id_agente =$id_agente";
       }
-      $table = $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig )"
-              . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
-              . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['rigmoc'] . ".codcon "
-              . "LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra ";
+//      $table = $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig )"
+//              . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
+//              . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['rigmoc'] . ".codcon "
+//              . "LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra ";
+
+      $table = $gTables['clfoco'] . " A LEFT JOIN " . $gTables['rigmoc'] . " B ON A.codice = B.codcon "
+              . "LEFT JOIN " . $gTables['tesmov'] . " C ON B.id_tes = C.id_tes "
+              . "LEFT JOIN " . $gTables['anagra'] . " D ON D.id = A.id_anagra "
+              . "LEFT JOIN " . $gTables['paymov'] . " E ON (E.id_rigmoc_pay = B.id_rig OR E.id_rigmoc_doc = B.id_rig )";
+
 
 //      $this->Entries = array();
       $rs = gaz_dbi_dyn_query($select, $table, $where, $orderby);

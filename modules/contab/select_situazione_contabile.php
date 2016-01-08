@@ -178,6 +178,14 @@ echo '<input type="submit" name="print" value="' . $script_transl['print'] . '" 
 echo "\t </tr>\n";
 echo "</table>\n";
 
+if ($form['clfr'] == 0) {
+   $cosaStampare = $admin_aziend['mascli']; // clienti
+   $linkPagamento = "vendit/customer_payment.php";
+} else {
+   $cosaStampare = $admin_aziend['masfor']; // fornitori
+   $linkPagamento = "acquis/supplier_payment.php";
+}
+
 if (isset($_POST['preview']) and $msg == '') {
    $scdl = new Schedule;
    $select_id_anagra = new selectPartner("id_anagra");
@@ -187,11 +195,6 @@ if (isset($_POST['preview']) and $msg == '') {
    } else {// voglio tutti
       ini_set('memory_limit', '128M'); // mi occorre tanta memoria
       gaz_set_time_limit(0);  // e tanto tempo
-      if ($form['clfr'] == 0) {
-         $cosaStampare = $admin_aziend['mascli']; // clienti
-      } else {
-         $cosaStampare = $admin_aziend['masfor']; // fornitori
-      }
    }
 
 //   $cosaStampare = "103000974";
@@ -216,6 +219,7 @@ if (isset($_POST['preview']) and $msg == '') {
       $linkHeaders->output();
       echo "</tr>";
       $mv = gaz_dbi_fetch_array($rs);
+      calcNumPartitaAperta($mv);
 //      while (list($key, $mv) = each($scdl->Entries)) {
       while ($mv) {
          $class_partner = '';
@@ -232,16 +236,18 @@ if (isset($_POST['preview']) and $msg == '') {
          $tot_avere_tmp = 0;
          do {
             $dati_partite[] = $mv;
-            if ($mv['id_rigmoc_pay'] == 0) {
+//            if ($mv['id_rigmoc_pay'] == 0) {
+            if ($mv['darave'] == 'D') {
                /* Incremento il totale del dare */
-               $tot_diff_tmp += $mv['amount'];
+               $tot_diff_tmp += $mv['import'];
             } else {
-               $tot_diff_tmp -= $mv['amount'];
+               $tot_diff_tmp -= $mv['import'];
             }
             $mv = gaz_dbi_fetch_array($rs);
+            calcNumPartitaAperta($mv);
          } while ($mv && ($mv["clfoco"] == $ctrl_partner) && ($mv["id_tesdoc_ref"] == $ctrl_id_tesdoc_ref));
 //         if ($tot_diff_tmp == 0 && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
-         if ($tot_diff_tmp < 0.01 /*meno di 1 centesimo contabilmente è uguale a zero */ && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
+         if (abs($tot_diff_tmp) < 0.01 /* meno di 1 centesimo contabilmente è uguale a zero */ && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
             continue;
          }
          $tot_diff_anagrafe+=$tot_diff_tmp;
@@ -259,7 +265,7 @@ if (isset($_POST['preview']) and $msg == '') {
                if ($tot_diff_tmp != 0) {
                   $class_paymov = 'FacetDataTDevidenziaOK';
                   $status_descr = $script_transl['status_value'][1] .
-                          " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../vendit/customer_payment.php?partner=" . $mv_tmp["clfoco"] . "&numdoc=" . $mv_tmp["numdoc"] . "&datdoc=" . $mv_tmp["datdoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                          " &nbsp;<a target=\"_blank\" title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../" . $linkPagamento . "?partner=" . $mv_tmp["clfoco"] . "&numdoc=" . $mv_tmp["numdoc"] . "&datdoc=" . $mv_tmp["datdoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                } else {
                   $class_paymov = 'FacetDataTDevidenziaCL';
                   $status_descr = $script_transl['status_value'][0];
@@ -285,18 +291,18 @@ if (isset($_POST['preview']) and $msg == '') {
             echo "<td align=\"center\" class=\"FacetDataTD\">" . $mv_tmp["datdoc"] . " &nbsp;</td>";
             echo "<td align=\"center\" class=\"FacetDataTD\">" . gaz_format_date($mv_tmp["datreg"]) . " &nbsp;</td>";
             /* ENRICO FEDELE */
-            if ($mv_tmp['id_rigmoc_pay'] == 0) {
+            if ($mv_tmp['darave'] == 'D') {
                /* Incremento il totale del dare */
-               $tot_dare += $mv_tmp['amount'];
+               $tot_dare += $mv_tmp['import'];
                /* Allineo a destra il testo, i numeri sono così più leggibili e ordinati, li formatto con apposita funzione */
-               echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["amount"]) . " &nbsp;</td>";
+               echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["import"]) . " &nbsp;</td>";
                echo "<td class=\"FacetDataTD\"></td>";
             } else {
                /* Incremento il totale dell'avere, e decremento quello del dare */
-               $tot_avere += $mv_tmp['amount'];
-//               $tot_dare -= $mv_tmp['amount'];
+               $tot_avere += $mv_tmp['import'];
+//               $tot_dare -= $mv_tmp['import'];
                echo "<td class=\"FacetDataTD\"></td>";
-               echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["amount"]) . " &nbsp;</td>";
+               echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["import"]) . " &nbsp;</td>";
             }
             /* ENRICO FEDELE */
             echo "<td align=\"center\" class=\"FacetDataTD\">" . gaz_format_date($mv_tmp["expiry"]) . " &nbsp;</td>";
@@ -336,7 +342,7 @@ if (isset($_POST['preview']) and $msg == '') {
 			<td colspan="8" class="FacetFormHeaderFont" align="right">TOTALE</td>
 			<td class="FacetFormHeaderFont" align="right">' . gaz_format_number($tot_dare) . '</td>
 			<td class="FacetFormHeaderFont" align="right">' . gaz_format_number($tot_avere) . '</td>
-			<td class="FacetFormHeaderFont" title="% avere/dare">' . gaz_format_number(100 * $tot_avere / $tot_dare) . ' %</td>
+			<td class="FacetFormHeaderFont" title="% avere/dare">' . /* gaz_format_number(100 * $tot_avere / $tot_dare) . */ ' %</td>
 			<td class="FacetFormHeaderFont" title="saldo">' . gaz_format_number(-$tot_dare + $tot_avere) . '</td>
 			<td class="FacetFormHeaderFont">&nbsp;</td>
 		  </tr>

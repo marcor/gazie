@@ -322,9 +322,9 @@ $strScript = array("admin_fornit.php" =>
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia fornitore',
-            'Il saldo contabile è diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
-            'Nessun importo è stato pagato!',
-            "Non è stato selezionato il conto per l'incasso",
+            'Il saldo contabile &egrave; diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
+            'Nessun importo &egrave; stato pagato!',
+            "Non &egrave; stato selezionato il conto per l'incasso",
             'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
         ),
     ),

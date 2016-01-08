@@ -121,6 +121,7 @@ if ($rs->num_rows > 0) {
    $tot_diff_anagrafe = 0;
 
    $mv = gaz_dbi_fetch_array($rs);
+   calcNumPartitaAperta($mv);
    while ($mv) {
       $partner = '';
       $id_tes = '';
@@ -133,15 +134,16 @@ if ($rs->num_rows > 0) {
       $tot_avere_tmp = 0;
       do {
          $dati_partite[] = $mv;
-         if ($mv['id_rigmoc_pay'] == 0) {
+         if ($mv['darave'] == 'D') {
             /* Incremento il totale del dare */
-            $tot_diff_tmp += $mv['amount'];
+            $tot_diff_tmp += $mv['import'];
          } else {
-            $tot_diff_tmp -= $mv['amount'];
+            $tot_diff_tmp -= $mv['import'];
          }
          $mv = gaz_dbi_fetch_array($rs);
+         calcNumPartitaAperta($mv);
       } while ($mv && ($mv["clfoco"] == $ctrl_partner) && ($mv["id_tesdoc_ref"] == $ctrl_id_tesdoc_ref));
-      if ($tot_diff_tmp < 0.01 /* meno di 1 centesimo contabilmente è uguale a zero */ && $form['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
+      if (abs($tot_diff_tmp) < 0.01 /* meno di 1 centesimo contabilmente è uguale a zero */ && $form['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
          stampaTotaleCliente();
          continue;
       }
@@ -178,24 +180,24 @@ if ($rs->num_rows > 0) {
             $status_del = true;
          }
          $pdf->SetFont('helvetica', '', 6);
-         $pdf->Cell(20, 4, $paymov, 1, 0, 'R', false, '', 2);
+         $pdf->Cell(20, 4, $paymov, 1, 0, 'L', false, '', 0);
          $pdf->Cell(65, 4, $mv_tmp['descri'], 1, 0, 'C', false, '', 1);
          $pdf->Cell(32, 4, $mv_tmp["numdoc"], 1, 0, 'R', false);
          /* ENRICO FEDELE */
          $pdf->Cell(13, 4, $mv_tmp["datdoc"], 1, 0, 'C', false);
          $pdf->Cell(13, 4, gaz_format_date($mv_tmp["datreg"]), 1, 0, 'C', false);
-         if ($mv_tmp['id_rigmoc_pay'] == 0) {
+         if ($mv_tmp['darave'] == 'D') {
             /* Incremento il totale del dare */
-            $tot_dare += $mv_tmp['amount'];
-            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false);
+            $tot_dare += $mv_tmp['import'];
+            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['import']), 1, 0, 'R', false);
             $pdf->Cell(15, 4, '', 1, 0, 'R', false);
          } else {
             /* Incremento il totale dell'avere, e decremento quello del dare */
-            $tot_avere += $mv_tmp['amount'];
-//               $tot_dare -= $mv_tmp['amount'];
+            $tot_avere += $mv_tmp['import'];
+//               $tot_dare -= $mv_tmp['import'];
             /* Modifico la larghezza delle celle */
             $pdf->Cell(15, 4, '', 1, 0, 'R', false);
-            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false);
+            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['import']), 1, 0, 'R', false);
          }
          /* ENRICO FEDELE */
          /* Modifico la larghezza della cella */
