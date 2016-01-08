@@ -21,19 +21,6 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-
-function componiDescrizione($paymov, $k) {
-   $desmov = '';
-   $dd = $paymov->getDocumentData($k);
-   $desmov .= ' n.' . $dd['numdoc'] . '/' . $dd['seziva'];
-   if (strlen($desmov) <= 85) { // la descrizione entra in 50 caratteri
-      $desmov = 'RISCOSSO x FAT.' . $desmov;
-   } else { // la descrizione è troppo lunga
-      $desmov = 'RISCOSSO FINO A FAT.n.' . $dd['numdoc'] . '/' . $dd['seziva'];
-   }
-   return $desmov;
-}
-
 $admin_aziend = checkAdmin();
 $msg = '';
 $paymov = new Schedule;
@@ -76,7 +63,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    $form['hidden_req'] = htmlentities($_POST['hidden_req']);
    $form['ritorno'] = $_POST['ritorno'];
    if (isset($_POST['paymov'])) {
-//      $desmov = '';
+      $desmov = '';
       $acc_tot = 0.00;
       foreach ($_POST['paymov'] as $k => $v) {
          $form['paymov'][$k] = $v;  // qui dovrei fare il parsing
@@ -87,15 +74,14 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
          }
          if ($add_desc[$k] >= 0.01) { // posso mettere una descrizione perchè il pagamento interessa pure questa partita
             $dd = $paymov->getDocumentData($k);
-//            $desmov .= ' n.' . $dd['numdoc'] . '/' . $dd['seziva'];
-            $desmov = $form['paymov'][$k][$ki]['descr'];
+            $desmov .= ' n.' . $dd['numdoc'] . '/' . $dd['seziva'];
          }
       }
-//      if (strlen($desmov) <= 85) { // la descrizione entra in 50 caratteri
-//         $desmov = 'RISCOSSO x FAT.' . $desmov;
-//      } else { // la descrizione è troppo lunga
-//         $desmov = 'RISCOSSO FINO A FAT.n.' . $dd['numdoc'] . '/' . $dd['seziva'];
-//      }
+      if (strlen($desmov) <= 85) { // la descrizione entra in 50 caratteri
+         $desmov = 'RISCOSSO x FAT.' . $desmov;
+      } else { // la descrizione è troppo lunga
+         $desmov = 'RISCOSSO FINO A FAT.n.' . $dd['numdoc'] . '/' . $dd['seziva'];
+      }
       if ($acc_tot <= 0) {
          $msg .='4+';
       }
@@ -249,7 +235,8 @@ if ($form['partner'] > 100000000) { // partner selezionato
    $kd_paymov = 0;
    $date_ctrl = new DateTime($date);
    $saldo = 0.00;
-   echo "<table class=\"Tlarge\">\n";
+//   echo "<table class=\"Tlarge\">\n"; rimosso perchè falsa i colori con lo stripe
+   echo "<table border=\"1\" width=\"100%\">\n";
    echo "<tr>";
    echo "<td colspan='8'>" . $script_transl['accbal'] . gaz_format_number($acc_bal) . "</td>";
    echo "<tr>";
@@ -290,14 +277,17 @@ if ($form['partner'] > 100000000) { // partner selezionato
             $paymov_bal-=$vi['cl_val'];
          }
          $expo = '';
+         $diffValClOp = abs($vi['cl_val'] - (float) $vi['op_val']);
          if ($vi['expo_day'] >= 1) {
             $expo = $vi['expo_day'];
-            if ($vi['cl_val'] == $vi['op_val']) {
+//            if ($vi['cl_val'] == (float) $vi['op_val']) {
+            if ($diffValClOp < 0.01) {
                $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
                $class_paymov = 'FacetDataTDevidenziaOK';
             }
          } else {
-            if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta
+//            if ($vi['cl_val'] == (float) $vi['op_val']) {
+            if ($diffValClOp < 0.01) {
                $cl_exp = '';
                $class_paymov = 'FacetDataTD';
             } elseif ($vi['status'] == 3) { // SCADUTA
@@ -327,13 +317,10 @@ if ($form['partner'] > 100000000) { // partner selezionato
       }
       if (!isset($_POST['paymov'])) {
          $form['paymov'][$k][$ki]['amount'] = $amount;
-         $form['paymov'][$k][$ki]['descr'] = componiDescrizione($paymov, $k);
          $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
       }
-//      $tmp=$form['paymov'][$k][$ki]['descr'];
       echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
-      echo "<tr>Descrizione <td colspan='7'><input type=\"text\" size=\"80\" name=\"paymov[$k][$ki][descr]\" value=\"" . $form['paymov'][$k][$ki]['descr'] . "\"></td>"
-      . "<td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" value=\"" . $form['paymov'][$k][$ki]['amount'] . "\"></td></tr>\n";
+      echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" value=\"" . $form['paymov'][$k][$ki]['amount'] . "\"></td></tr>\n";
    }
    echo "<tr>";
    echo "<td colspan='3'>" . $script_transl['paymovbal'] . gaz_format_number($paymov_bal) . "</td>";

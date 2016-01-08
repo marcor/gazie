@@ -8,4 +8,8 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_m
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE gaz_XXXagenti_forn (`id_agente` int(9) NOT NULL,`id_fornitore` int(9) NOT NULL,`base_percent` decimal(4,2) NOT NULL,`tipo_contratto` tinyint(1) NOT NULL,`adminid` varchar(20) NOT NULL,`last_modified` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 UPDATE `gaz_XXXtesdoc` SET `ddt_type`= 'T' WHERE `ddt_type`='D';
+ALTER TABLE gaz_XXXclfoco ADD INDEX `id_agente` (`id_agente`);
+ALTER TABLE gaz_XXXrigmoc ADD INDEX `codcon` (`codcon`);
+ALTER TABLE gaz_XXXpaymov ADD INDEX `id_rigmoc_pay` (`id_rigmoc_pay`);
+ALTER TABLE gaz_XXXpaymov ADD INDEX `id_rigmoc_doc` (`id_rigmoc_doc`);
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

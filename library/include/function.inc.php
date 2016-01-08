@@ -229,7 +229,7 @@ function selectDestinazione($rs_destinazioni) {
    if (count($rs_destinazioni) > 0) {
       $retVal = $retVal . "<select name=\"destina\" class=\"FacetSelect\" onchange=\"cambiaDestinazione(this)\">\n";
       $retVal = $retVal . "<option value=\"\" selected>-------</option>\n";
-      foreach ( $rs_destinazioni as $dest ) {
+      foreach ($rs_destinazioni as $dest) {
          $destinazione = //getStringaNonVuota($dest['codice'], "-")
                  getStringaNonVuota($dest['unita_locale1'], "\n")
                  . getStringaNonVuota($dest['unita_locale2'], "\n")
@@ -1757,7 +1757,7 @@ class Schedule {
             $orderby = "id_tesdoc_ref, expiry DESC, codice, caucon, datreg, numdoc ASC ";
             break;
          case 2:
-            $orderby = "ragso1, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
+            $orderby = "ragsoc, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
             break;
          case 3:
             $orderby = "ragso1 DESC, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
@@ -1766,24 +1766,27 @@ class Schedule {
             $orderby = "id_tesdoc_ref, expiry, codice,  caucon, datreg, numdoc ASC ";
       }
 //      $select = "*, " . $gTables['tesmov'] . ".*, " . $gTables['clfoco'] . ".descri AS ragsoc";
-      $select = "*, C.*, A.descri AS ragsoc";
+//      $select = "*, tesmov.*, clfoco.descri AS ragsoc";
+      $select = "tesmov.clfoco, paymov.id_tesdoc_ref, rigmoc.darave, rigmoc.import, rigmoc.id_tes, "
+              . "tesmov.datdoc, tesmov.numdoc, tesmov.datreg, paymov.expiry, clfoco.descri AS ragsoc, "
+              . "tesmov.descri, tesmov.caucon ";
       if ($this->target == 0) {
-         $where = "A.codice LIKE '$masclifor%' ";
+         $where = "clfoco.codice LIKE '$masclifor%' ";
       } else {
-         $where = "A.codice = " . $this->target;
+         $where = "clfoco.codice = " . $this->target;
       }
       if (!empty($id_agente)) {
-         $where.=" and A.id_agente =$id_agente";
+         $where.=" and clfoco.id_agente =$id_agente";
       }
 //      $table = $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig )"
 //              . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
 //              . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['rigmoc'] . ".codcon "
 //              . "LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra ";
 
-      $table = $gTables['clfoco'] . " A LEFT JOIN " . $gTables['rigmoc'] . " B ON A.codice = B.codcon "
-              . "LEFT JOIN " . $gTables['tesmov'] . " C ON B.id_tes = C.id_tes "
-              . "LEFT JOIN " . $gTables['anagra'] . " D ON D.id = A.id_anagra "
-              . "LEFT JOIN " . $gTables['paymov'] . " E ON (E.id_rigmoc_pay = B.id_rig OR E.id_rigmoc_doc = B.id_rig )";
+      $table = $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON clfoco.codice = rigmoc.codcon "
+              . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON rigmoc.id_tes = tesmov.id_tes "
+//              . "LEFT JOIN " . $gTables['anagra'] . " D ON D.id = clfoco.id_anagra "
+              . "LEFT JOIN " . $gTables['paymov'] . " paymov ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )";
 
 
 //      $this->Entries = array();
