@@ -50,6 +50,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       $form['numdoc'] = 0;
       $form['datdoc'] = 0;
    }
+   /* aggiunta descrizione modificabile */
+   $form['descr_mov'] = '';
    /** fine modifica FP */
    $form['target_account'] = 0;
    $_POST['print_ticket'] = "";
@@ -100,6 +102,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     */
    $form['numdoc'] = $_POST['numdoc'];
    $form['datdoc'] = $_POST['datdoc'];
+   /* aggiunta descrizione modificabile */
+   $form['descr_mov'] = $_POST['descr_mov'];
    /** fine modifica FP */
    $form['target_account'] = intval($_POST['target_account']);
    if (isset($_POST['return'])) {
@@ -115,6 +119,13 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    }
    // fine controlli
    if (isset($_POST['ins']) && $msg == '') {
+      /** inizio modifica FP 09/01/2016
+       * descrizione modificabile
+       */
+      if (!empty($form['descr_mov'])) {
+         $desmov = $form['descr_mov'];
+      }
+      /** fine modifica FP */
       $tes_val = array('caucon' => '',
           'descri' => $desmov,
           'datreg' => $date,
@@ -227,6 +238,14 @@ while ($a = gaz_dbi_fetch_array($res)) {
 echo "\t </select></td>\n";
 echo "<td class=\"FacetDataTD\">" . $script_transl['print_ticket'] . "<input type=\"checkbox\" title=\"Per stampare la ricevuta seleziona questa checkbox\" name=\"print_ticket\" " . $_POST['print_ticket'] . " ></td>\n";
 echo "</tr>";
+/** inizio modifica FP 09/01/2016
+ * descrizione modificabile
+ */
+echo "<tr>";
+echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['descr_mov'] . "</td>\n ";
+echo "<td class=\"FacetDataTD\"> <input type=\"text\" name=\"descr_mov\" value=\"" . $form['descr_mov'] . "\" maxlength=\"85\" size=\"85\"></td>";
+echo "</tr>";
+/** fine modifica FP */
 echo "</table>\n";
 if ($form['partner'] > 100000000) { // partner selezionato
    // ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario

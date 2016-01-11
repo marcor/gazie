@@ -218,8 +218,13 @@ $strScript = array("admin_fornit.php" =>
         'weight' => 'Peso specifico:',
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
-        'last_row' => 'Ultimo rigo inserito'
-    /** ENRICO FEDELE */
+        'last_row' => 'Ultimo rigo inserito',
+        /** ENRICO FEDELE */
+        "Causale mag.",
+        "Peso netto",
+        "Peso lordo",
+        "N.Colli",
+        "Volume",
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti d\'acquisto',
@@ -327,6 +332,7 @@ $strScript = array("admin_fornit.php" =>
             "Non &egrave; stato selezionato il conto per l'incasso",
             'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
         ),
+        'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
     ),
     "admin_agenti_forn.php" =>
     array("Agenti di Fornitori ",

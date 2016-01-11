@@ -254,7 +254,7 @@ $strScript = array("admin_client.php" =>
         'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento'
     ),
     "select_docforprint.php" =>
-    array('title'=>'Ristampa documenti',
+    array('title' => 'Ristampa documenti',
         array(1 => "D.d.T. di Vendita",
             2 => "Fattura Differita",
             3 => "Fattura Immediata Accompagnatoria",
@@ -284,7 +284,6 @@ $strScript = array("admin_client.php" =>
         'id_agente' => 'Agente',
         'tipoSelezione' => 'Seleziona usando',
         'tipoStampa' => 'Stampa',
-        
     ),
     "admin_broven.php" =>
     array(array("VPR" => "Preventivo a Cliente", "VOR" => "Ordine da Cliente", "VOW" => "Ordine dal Web"),
@@ -783,7 +782,7 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Documenti di trasporto della sezione: ',
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
-            "Y" => "",   //triangolazione",
+            "Y" => "", //triangolazione",
             "DDR" => "reso da fornitore",
             "DDL" => "c/lavorazione"
         ),
@@ -976,6 +975,7 @@ $strScript = array("admin_client.php" =>
             "Non è stato selezionato il conto per l'incasso",
             'Stai tentando di inserire il pagamento di un cliente senza movimenti'
         ),
+        'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
     ),
     "print_customer_payment_receipt.php" =>
     array('title' => 'RISCOSSIONE CREDITO DA ',

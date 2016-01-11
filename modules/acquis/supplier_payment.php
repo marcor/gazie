@@ -51,6 +51,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       $form['numdoc'] = 0;
       $form['datdoc'] = 0;
    }
+   /* aggiunta descrizione modificabile */
+   $form['descr_mov'] = '';
    /** fine modifica FP */
 } else { // accessi successivi
    $first = false;
@@ -87,6 +89,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     */
    $form['numdoc'] = $_POST['numdoc'];
    $form['datdoc'] = $_POST['datdoc'];
+   /* aggiunta descrizione modificabile */
+   $form['descr_mov'] = $_POST['descr_mov'];
    /** fine modifica FP */
    $form['date_ini_D'] = intval($_POST['date_ini_D']);
    $form['date_ini_M'] = intval($_POST['date_ini_M']);
@@ -108,6 +112,13 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
    }
    // fine controlli
    if (isset($_POST['ins']) && $msg == '') {
+      /** inizio modifica FP 09/01/2016
+       * descrizione modificabile
+       */
+      if (!empty($form['descr_mov'])) {
+         $desmov = $form['descr_mov'];
+      }
+      /** fine modifica FP */
       $tes_val = array('caucon' => '',
           'descri' => $desmov,
           'datreg' => $date,
@@ -208,6 +219,14 @@ while ($a = gaz_dbi_fetch_array($res)) {
 }
 echo "\t </select></td>\n";
 echo "</tr>";
+/** inizio modifica FP 09/01/2016
+ * descrizione modificabile
+ */
+echo "<tr>";
+echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['descr_mov'] . "</td>\n ";
+echo "<td class=\"FacetDataTD\"> <input type=\"text\" name=\"descr_mov\" value=\"" . $form['descr_mov'] . "\" maxlength=\"85\" size=\"85\"></td>";
+echo "</tr>";
+/** fine modifica FP */
 echo "</table>\n";
 if ($form['partner'] > 100000000) { // partner selezionato
    // ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario

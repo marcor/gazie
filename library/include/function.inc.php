@@ -233,9 +233,10 @@ function selectDestinazione($rs_destinazioni) {
          $destinazione = //getStringaNonVuota($dest['codice'], "-")
                  getStringaNonVuota($dest['unita_locale1'], "\n")
                  . getStringaNonVuota($dest['unita_locale2'], "\n")
-                 . getStringaNonVuota($dest['indspe'], " ")
+                 . getStringaNonVuota($dest['indspe'], "\n")
                  . getStringaNonVuota($dest['capspe'], " ")
-                 . getStringaNonVuota($dest['citspe'], "\n")
+                 . getStringaNonVuota($dest['citspe'], " - ")
+                 . getStringaNonVuota($dest['prospe'], " - ")
                  . getStringaNonVuota($dest['country']);
 
          $retVal = $retVal . "<option value=\"" . $destinazione . "\">"
@@ -268,6 +269,10 @@ function alert($message) {
 
 function tornaPaginaPrecedente() {
    echo "<script type='text/javascript'>javascript:history.go(-1);</script>";
+}
+
+function isDDT($tipdoc) {
+   return (startsWith($tipdoc, 'DD') || $tipdoc == "RDV");
 }
 
 class selectAgente extends SelectBox {
