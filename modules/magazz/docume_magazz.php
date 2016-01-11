@@ -2,7 +2,7 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
                              (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
@@ -18,8 +18,8 @@
 
     Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
     Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation,  Inc.,   59
-    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
+    scriva   alla   Free  Software Foundation, 51 Franklin Street,
+    Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");

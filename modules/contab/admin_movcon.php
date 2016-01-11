@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -18,8 +18,8 @@
 
   Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
   Generica GNU insieme a   questo programma; in caso  contrario,  si
-  scriva   alla   Free  Software Foundation,  Inc.,   59
-  Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
@@ -1258,7 +1258,7 @@ if ($toDo == 'insert') {
 			<button type="submit" class="btn btn-default btn-sm" name="adi" title="' . $script_transl['addrow'] . '" ' . $tabsmt . '><i class="glyphicon glyphicon-ok"></i></button>';
                     /** ENRICO FEDELE */
                     echo "<input type=\"hidden\" value=\"" . $_POST['rigiva'] . "\" name=\"rigiva\"></td></tr>\n";
-                    echo "<TR><td class=\"FacetColumnTD\" colspan=\"4\"><hr></td></tr>";
+                    echo "<TR><td class=\"FacetColumnTD\" colspan=\"4\"></td></tr>";
                     echo "<tr>";
                     for ($i = 0; $i < $_POST['rigiva']; $i++) {
                         if (!isset($form['imponi_ri'][$i])) {
@@ -1316,7 +1316,7 @@ if ($toDo == 'insert') {
 		</td>
 	  </tr>';
                 /** ENRICO FEDELE */
-                echo "<TR><td class=\"FacetColumnTD\" colspan=\"5\"><hr></td></tr>";
+                echo "<TR><td class=\"FacetColumnTD\" colspan=\"5\"></td></tr>";
 //fine rigo inserimento
 // inizio righi già inseriti
 // faccio un primo ciclo del form per sommare e analizzare gli sbilanciamenti
