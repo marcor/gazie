@@ -268,7 +268,8 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
             Zip('./', $zip);
         }
         $zip->close();
-        header("Location:" . $form['ritorno']);
+        if ( isset($_GET['internal']))
+            header("Location:" . $form['ritorno']);
     }
 }
 exit;
