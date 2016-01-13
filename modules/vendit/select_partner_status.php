@@ -23,8 +23,6 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg='';
-$paymov = new Schedule;
-$paymov->setScheduledPartner($admin_aziend['mascli']);
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
@@ -119,6 +117,8 @@ echo "\t </tr>\n";
 echo "</table>\n";
 
 if (isset($_POST['preview'])) {
+$paymov = new Schedule;
+$paymov->setScheduledPartner($admin_aziend['mascli']);
   echo "<table class=\"Tlarge\">";
   if (sizeof($paymov->Partners) > 0) {
         $anagrafica = new Anagrafica();
@@ -131,8 +131,8 @@ if (isset($_POST['preview'])) {
             $anagrafica = new Anagrafica();
             $prt = $anagrafica->getPartner($p);
             echo "<tr></tr>";
-            echo "<tr class=\"FacetFieldCaptionTD\">";
-            echo "<td colspan='5'>".$prt['ragso1']." ".$prt['ragso2'].
+            echo "<tr>";
+            echo "<td class=\"FacetFieldCaptionTD\" colspan='5'>".$prt['ragso1']." ".$prt['ragso2'].
                   " tel:".gaz_html_call_tel($prt['telefo']).
                   " fax:".$prt['fax'].
                   " mob:".gaz_html_call_tel($prt['cell'])."</td>";
@@ -181,20 +181,20 @@ if (isset($_POST['preview'])) {
                         $lnk=" &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=".$p."\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                      }
                   }
-                  echo "<tr class='".$class_paymov."'>";
-                  echo "<td align=\"right\">".$vi['id']."</td>";
-                  echo "<td align=\"right\">".$v_op."</td>";
-                  echo "<td align=\"center\">".gaz_format_date($vi['expiry'])."</td>";
-                  echo "<td align=\"right\">".$v_cl."</td>";
-                  echo "<td align=\"center\">".$cl_exp."</td>";
-                  echo "<td align=\"center\">".$expo."</td>";
-                  echo "<td align=\"center\">".$script_transl['status_value'][$vi['status']]." &nbsp; $lnk</td>";
+                  echo "<tr>";
+                  echo "<td class='".$class_paymov."' align=\"right\">".$vi['id']."</td>";
+                  echo "<td class='".$class_paymov."' align=\"right\">".$v_op."</td>";
+                  echo "<td class='".$class_paymov."' align=\"center\">".gaz_format_date($vi['expiry'])."</td>";
+                  echo "<td class='".$class_paymov."' align=\"right\">".$v_cl."</td>";
+                  echo "<td class='".$class_paymov."' align=\"center\">".$cl_exp."</td>";
+                  echo "<td class='".$class_paymov."' align=\"center\">".$expo."</td>";
+                  echo "<td class='".$class_paymov."' align=\"center\">".$script_transl['status_value'][$vi['status']]." &nbsp; $lnk</td>";
                   echo "</tr>\n";
                }
             }
         }
-     echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-     echo '<td colspan="9" align="right"><input type="submit" name="print" value="';
+     echo "\t<tr>\n";
+     echo '<td class=\"FacetFieldCaptionTD\" colspan="9" align="right"><input type="submit" name="print" value="';
      echo $script_transl['print'];
      echo '">';
      echo "\t </td>\n";
