@@ -267,6 +267,11 @@ function alert($message) {
    echo "<script type='text/javascript'>alert('$message');</script>";
 }
 
+function windowsClose() {
+// This is in the PHP file and sends a Javascript alert to the client
+
+   echo "<script type='text/javascript'>window.close();</script>";
+}
 function tornaPaginaPrecedente() {
    echo "<script type='text/javascript'>javascript:history.go(-1);</script>";
 }
@@ -1751,7 +1756,7 @@ class Schedule {
       }
    }
 
-   function getPartite($ob = 0, $masclifor, $id_agente) {
+   function getPartite($ob = 0, $masclifor, $id_agente, $soloAperte=false) {
       /*
        * genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
        * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso 
@@ -1774,7 +1779,7 @@ class Schedule {
 //      $select = "*, tesmov.*, clfoco.descri AS ragsoc";
       $select = "tesmov.clfoco, paymov.id_tesdoc_ref, rigmoc.darave, rigmoc.import, rigmoc.id_tes, "
               . "tesmov.datdoc, tesmov.numdoc, tesmov.datreg, paymov.expiry, clfoco.descri AS ragsoc, "
-              . "tesmov.descri, tesmov.caucon ";
+              . "tesmov.descri, tesmov.caucon, amount ";
       if ($this->target == 0) {
          $where = "clfoco.codice LIKE '$masclifor%' ";
       } else {
@@ -1783,16 +1788,17 @@ class Schedule {
       if (!empty($id_agente)) {
          $where.=" and clfoco.id_agente =$id_agente";
       }
-//      $table = $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig )"
-//              . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
-//              . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['rigmoc'] . ".codcon "
-//              . "LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra ";
-
-      $table = $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON clfoco.codice = rigmoc.codcon "
-              . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON rigmoc.id_tes = tesmov.id_tes "
+      if ($soloAperte) {
+         $table = $gTables['paymov'] . " paymov LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )"
+                 . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON rigmoc.id_tes = tesmov.id_tes "
+                 . "LEFT JOIN " . $gTables['clfoco'] . " clfoco ON clfoco.codice = rigmoc.codcon "
+                 . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ";
+      } else {
+         $table = $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON clfoco.codice = rigmoc.codcon "
+                 . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON rigmoc.id_tes = tesmov.id_tes "
 //              . "LEFT JOIN " . $gTables['anagra'] . " D ON D.id = clfoco.id_anagra "
-              . "LEFT JOIN " . $gTables['paymov'] . " paymov ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )";
-
+                 . "LEFT JOIN " . $gTables['paymov'] . " paymov ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )";
+      }
 
 //      $this->Entries = array();
       $rs = gaz_dbi_dyn_query($select, $table, $where, $orderby);
@@ -1899,7 +1905,7 @@ class Schedule {
                $s = 3; // SCADUTA
             }
             $acc[$k][] = array('id' => $r['id'], 'op_val' => $r['amount'], 'expiry' => $r['expiry'], 'cl_val' => 0, 'cl_exp' => '', 'expo_day' => 0, 'status' => $s, 'op_id_rig' => $r['id_rig'], 'cl_rig_data' => array());
-         } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTUTRE (in ordine di scadenza)
+         } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTURE (in ordine di scadenza)
             if ($date_ctrl < $ex) { //  se è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
                $expo = true;
             }

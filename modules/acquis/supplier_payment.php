@@ -235,7 +235,8 @@ if ($form['partner'] > 100000000) { // partner selezionato
    $kd_paymov = 0;
    $date_ctrl = new DateTime($date);
    $saldo = 0.00;
-   echo "<table class=\"Tlarge\">\n";
+//   echo "<table class=\"Tlarge\">\n"; rimosso perchè falsa i colori con lo stripe
+   echo "<table border=\"1\" width=\"100%\">\n";
    echo "<tr>";
    echo "<td colspan='8'>" . $script_transl['accbal'] . gaz_format_number($acc_bal) . "</td>";
    echo "<tr>";
@@ -249,9 +250,10 @@ if ($form['partner'] > 100000000) { // partner selezionato
        */
       $tmpNumDoc = $paymov->docData[$k]['numdoc'];
       $tmpDatDoc = $paymov->docData[$k]['datdoc'];
-      if ($isDocumentoSelezionato && ($tmpNumDoc != $form['numdoc'] || $tmpDatDoc != $form['datdoc'])) {
+      if ($isDocumentoSelezionato && ($tmpNumDoc != $form['numdoc'] /*|| $tmpDatDoc != $form['datdoc']*/)) {
          continue;   // salto il record
       }
+      $tmpData=$paymov->docData[$k];
       /** fine modifica FP */
       $amount = 0.00;
       echo "<tr>";

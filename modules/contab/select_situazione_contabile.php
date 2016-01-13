@@ -180,11 +180,14 @@ echo "</table>\n";
 
 if ($form['clfr'] == 0) {
    $cosaStampare = $admin_aziend['mascli']; // clienti
-   $linkPagamento = "vendit/customer_payment.php";
+//   $linkPagamento = "vendit/customer_payment.php";
+   $clfr = "C";
 } else {
    $cosaStampare = $admin_aziend['masfor']; // fornitori
-   $linkPagamento = "acquis/supplier_payment.php";
+//   $linkPagamento = "acquis/supplier_payment.php";
+   $clfr = "F";
 }
+$linkPagamento = "contab/payment.php?clfr=$clfr";
 
 if (isset($_POST['preview']) and $msg == '') {
    $scdl = new Schedule;
@@ -198,7 +201,8 @@ if (isset($_POST['preview']) and $msg == '') {
    }
 
 //   $cosaStampare = "103000974";
-   $rs = $scdl->getPartite($form['orderby'], $cosaStampare, $form['id_agente']);
+   $soloAperte = ($_POST['aperte_tutte'] == 0);
+   $rs = $scdl->getPartite($form['orderby'], $cosaStampare, $form['id_agente'], $soloAperte);
    echo "<table class=\"Tlarge\">";
 //   if (sizeof($scdl->Entries) > 0) {
    if ($rs->num_rows > 0) {
@@ -239,15 +243,15 @@ if (isset($_POST['preview']) and $msg == '') {
 //            if ($mv['id_rigmoc_pay'] == 0) {
             if ($mv['darave'] == 'D') {
                /* Incremento il totale del dare */
-               $tot_diff_tmp += $mv['import'];
+               $tot_diff_tmp += $mv['amount'];
             } else {
-               $tot_diff_tmp -= $mv['import'];
+               $tot_diff_tmp -= $mv['amount'];
             }
             $mv = gaz_dbi_fetch_array($rs);
             calcNumPartitaAperta($mv);
          } while ($mv && ($mv["clfoco"] == $ctrl_partner) && ($mv["id_tesdoc_ref"] == $ctrl_id_tesdoc_ref));
 //         if ($tot_diff_tmp == 0 && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
-         if (abs($tot_diff_tmp) < 0.01 /* meno di 1 centesimo contabilmente è uguale a zero */ && $_POST['aperte_tutte'] == 0) {// la partita è chiusa ed io voglio solo le partite aperte
+         if (abs($tot_diff_tmp) < 0.01 /* meno di 1 centesimo contabilmente è uguale a zero */ && $soloAperte) {// la partita è chiusa ed io voglio solo le partite aperte
             continue;
          }
          $tot_diff_anagrafe+=$tot_diff_tmp;
@@ -262,10 +266,10 @@ if (isset($_POST['preview']) and $msg == '') {
                $mv_tmp["datdoc"] = gaz_format_date($mv_tmp["datdoc"]);
                $paymov = $mv_tmp["id_tesdoc_ref"];
 //               $scdl->getStatus($paymov);
-               if ($tot_diff_tmp != 0) {
+               if (abs($tot_diff_tmp) > 0.01) {
                   $class_paymov = 'FacetDataTDevidenziaOK';
                   $status_descr = $script_transl['status_value'][1] .
-                          " &nbsp;<a target=\"_blank\" title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../" . $linkPagamento . "?partner=" . $mv_tmp["clfoco"] . "&numdoc=" . $mv_tmp["numdoc"] . "&datdoc=" . $mv_tmp["datdoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                          " &nbsp;<a target=\"_blank\" title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"../" . $linkPagamento . "&partner=" . $mv_tmp["clfoco"] . "&numdoc=" . $mv_tmp["numdoc"] . "&datdoc=" . $mv_tmp["datdoc"] . "&numpar=" . $mv_tmp["id_tesdoc_ref"] . "&importo=" . (-$tot_diff_tmp) . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                } else {
                   $class_paymov = 'FacetDataTDevidenziaCL';
                   $status_descr = $script_transl['status_value'][0];
@@ -293,14 +297,14 @@ if (isset($_POST['preview']) and $msg == '') {
             /* ENRICO FEDELE */
             if ($mv_tmp['darave'] == 'D') {
                /* Incremento il totale del dare */
-               $tot_dare += $mv_tmp['import'];
+               $tot_dare += $mv_tmp['amount'];
                /* Allineo a destra il testo, i numeri sono così più leggibili e ordinati, li formatto con apposita funzione */
                echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["import"]) . " &nbsp;</td>";
                echo "<td class=\"FacetDataTD\"></td>";
             } else {
                /* Incremento il totale dell'avere, e decremento quello del dare */
-               $tot_avere += $mv_tmp['import'];
-//               $tot_dare -= $mv_tmp['import'];
+               $tot_avere += $mv_tmp['amount'];
+//               $tot_dare -= $mv_tmp['amount'];
                echo "<td class=\"FacetDataTD\"></td>";
                echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["import"]) . " &nbsp;</td>";
             }

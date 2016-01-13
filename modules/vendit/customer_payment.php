@@ -154,6 +154,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       exit;
    }
 }
+/** inizio modifica FP 28/11/2015 */
+$isDocumentoSelezionato = !empty($form['numdoc']) && !empty($form['datdoc']);
+/** fine modifica FP */
+
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'
         /** ENRICO FEDELE */
@@ -214,10 +218,6 @@ echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['target_account'] . "</td>\n ";
 echo "<td class=\"FacetFieldCaptionTD\">";
 echo "\t <select name=\"target_account\" tabindex=\"4\"   class=\"FacetSelect\" onchange=\"this.form.submit()\">\n"; //impropriamente usato per il numero di conto d'accredito
-
-/** inizio modifica FP 28/11/2015 */
-$isDocumentoSelezionato = !empty($form['numdoc']) && !empty($form['datdoc']);
-/** fine modifica FP */
 $masban = $admin_aziend['masban'] * 1000000;
 $casse = substr($admin_aziend['cassa_'], 0, 3);
 $mascas = $casse * 1000000;
