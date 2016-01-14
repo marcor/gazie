@@ -273,13 +273,13 @@ if (isset($_POST['preview'])) {
          $round=0;
          $tot=computeTot($v['vat'],$v['car']-$v['rit']);
 	 //fine calcolo totali
-         echo "<tr class=\"FacetDataTD\">
-               <td align=\"center\">".gaz_format_date($v['tes']['datfat'])."</td>
-               <td align=\"center\">".$v['tes']['protoc'].'/'.$v['tes']['seziva']."</td>
-               <td>".$script_transl['doc_type_value'][$v['tes']['tipdoc']]."</td>
-               <td>".$v['tes']['numfat']."</td>
-               <td>".$v['tes']['ragsoc']."</td>
-               <td align=\"right\">".gaz_format_number($tot['tot'])."</td>
+         echo "<tr>
+               <td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($v['tes']['datfat'])."</td>
+               <td class=\"FacetDataTD\" align=\"center\">".$v['tes']['protoc'].'/'.$v['tes']['seziva']."</td>
+               <td class=\"FacetDataTD\">".$script_transl['doc_type_value'][$v['tes']['tipdoc']]."</td>
+               <td class=\"FacetDataTD\">".$v['tes']['numfat']."</td>
+               <td class=\"FacetDataTD\">".$v['tes']['ragsoc']."</td>
+               <td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($tot['tot'])."</td>
                </tr>\n";
                $rate = CalcolaScadenze($tot['tot'],substr($v['tes']['datfat'],8,2),substr($v['tes']['datfat'],5,2),substr($v['tes']['datfat'],0,4),$v['tes']['tipdec'],$v['tes']['giodec'],$v['tes']['numrat'],$v['tes']['tiprat'],$v['tes']['mesesc'],$v['tes']['giosuc']);
                foreach($rate['import'] as $k_r=>$v_r) {
@@ -290,12 +290,12 @@ if (isset($_POST['preview'])) {
                        }
                        echo "<tr>";
                        echo "</td>
-                       <td align=\"right\" colspan=\"6\">";
+                       <td class=\"FacetDataTD\" align=\"right\" colspan=\"6\">";
                        echo $script_transl['gen'].$script_transl['type_value'][$v['tes']['tippag']].
                             ' n.'.$n[$n_type].' '.$script_transl['end'].$rate['giorno'][$k_r].'-'.$rate['mese'][$k_r].'-'.$rate['anno'][$k_r].
                             ' '.$admin_aziend['symbol'];
                        echo "</td>
-                       <td align=\"right\">";
+                       <td class=\"FacetDataTD\" align=\"right\">";
                        echo gaz_format_number($v_r);
                        echo "</td>
                        </tr>\n";
@@ -306,18 +306,18 @@ if (isset($_POST['preview'])) {
    if (count($rs) > 0) {
        foreach ($tot_type as $k_t=>$v_t) {
               if ( $v_t>0 ) {
-                 echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-                 echo '<td colspan="6" align="right">';
+                 echo "\t<tr>\n";
+                 echo '<td class=\"FacetFieldCaptionTD\" colspan="6" align="right">';
                  echo $script_transl['total_value'][$k_t];
                  echo "</td>
-                       <td align=\"right\">";
+                       <td class=\"FacetFieldCaptionTD\" align=\"right\">";
                  echo $admin_aziend['symbol'].' '.gaz_format_number($v_t);
                  echo "\t </td>\n";
                  echo "\t </tr>\n";
               }
       }
-      echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-      echo '<td colspan="7" align="right"><input type="submit" name="submit" value="';
+      echo "\t<tr>\n";
+      echo '<td class=\"FacetFieldCaptionTD\" colspan="7" align="right"><input type="submit" name="submit" value="';
       echo $script_transl['submit'];
       echo '">';
       echo "\t </td>\n";
