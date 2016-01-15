@@ -92,7 +92,7 @@ function salvaMovimento($descrizione, $importo, $target_account, $dataRegistrazi
        "caucon" => "",
        "descri" => $descrizione,
        "datreg" => $dataRegistrazione,
-       "seziva" => "1", // eventualmente
+       "seziva" => "1", // eventualmente da modificare
        "id_doc" => 0,
        "protoc" => 0,
        "numdoc" => $numpar,

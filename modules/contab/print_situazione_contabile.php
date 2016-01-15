@@ -105,7 +105,9 @@ if (!empty($form['id_anagra'])) {
 }
 
 //   $cosaStampare = "103000974";
-$rs = $scdl->getPartite($form['orderby'], $cosaStampare, $form['id_agente']);
+//$rs = $scdl->getPartite($form['orderby'], $cosaStampare, $form['id_agente']);
+$soloAperte = ($form['aperte_tutte'] == 0);
+$rs = $scdl->getPartite($form['orderby'], $cosaStampare, $form['id_agente'], $soloAperte);
 if ($rs->num_rows > 0) {
    $ctrl_partner = 0;
    $ctrl_id_tes = 0;
@@ -136,9 +138,9 @@ if ($rs->num_rows > 0) {
          $dati_partite[] = $mv;
          if ($mv['darave'] == 'D') {
             /* Incremento il totale del dare */
-            $tot_diff_tmp += $mv['import'];
+            $tot_diff_tmp += $mv['amount'];
          } else {
-            $tot_diff_tmp -= $mv['import'];
+            $tot_diff_tmp -= $mv['amount'];
          }
          $mv = gaz_dbi_fetch_array($rs);
          calcNumPartitaAperta($mv);
@@ -188,16 +190,16 @@ if ($rs->num_rows > 0) {
          $pdf->Cell(13, 4, gaz_format_date($mv_tmp["datreg"]), 1, 0, 'C', false);
          if ($mv_tmp['darave'] == 'D') {
             /* Incremento il totale del dare */
-            $tot_dare += $mv_tmp['import'];
-            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['import']), 1, 0, 'R', false);
+            $tot_dare += $mv_tmp['amount'];
+            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false);
             $pdf->Cell(15, 4, '', 1, 0, 'R', false);
          } else {
             /* Incremento il totale dell'avere, e decremento quello del dare */
-            $tot_avere += $mv_tmp['import'];
-//               $tot_dare -= $mv_tmp['import'];
+            $tot_avere += $mv_tmp['amount'];
+//               $tot_dare -= $mv_tmp['amount'];
             /* Modifico la larghezza delle celle */
             $pdf->Cell(15, 4, '', 1, 0, 'R', false);
-            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['import']), 1, 0, 'R', false);
+            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false);
          }
          /* ENRICO FEDELE */
          /* Modifico la larghezza della cella */
