@@ -77,24 +77,6 @@ echo '		</td>
 		</tr>
 	  </table>
 	  <br />';
-/*
-		//	Avendo eliminato il pulsante "preview, questo pezzo di tabella non serve più, e guadagnamo un pò di spazio
-		//	in verticale, visto che i monitor di oggi sono sempre meno "alti"
-		</tr>
-		<tr class="FacetFieldCaptionTD">
-			<td align="right" colspan="2">
-				<input type="submit" accesskey="i" name="preview" value="'.$script_transl['view'].'" tabindex="100" />
-	  		</td>
-	  	</tr>
-	  </table>';
-*/
-/* A mio modo di vedere il tasto preview è una inutile complicazione e un click in più
-   credo che per rendere meno macchinoso il sistema si possa eliminare questo pulsante.
-   Di default la pagina viene caricata per "cliente" crescente, poi si può selezionare 
-   un ordinamento diverso dal menu a tendina, e la pagina viene ricaricata in automatico
-*/
-//if (isset($_POST['preview'])) {
-/** ENRICO FEDELE */
   $scdl = new Schedule;
   $m = $scdl->getScheduleEntries($form['orderby'],$admin_aziend['mascli']);
   echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">

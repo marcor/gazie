@@ -1720,6 +1720,7 @@ class Schedule {
             $acc[$r['codcon']] = $partner['descri'];
         }
         asort($acc);
+        $res = array();
         foreach ($acc as $k => $v) {
             $res[] = $k;
         }
@@ -1732,34 +1733,44 @@ class Schedule {
          * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso 
          */
         global $gTables;
-        switch ($ob) {
-            case 1:
-                $orderby = "id_tesdoc_ref, expiry DESC, codice, caucon, datreg, numdoc ASC ";
-                break;
-            case 2:
-                $orderby = "ragso1, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
-                break;
-            case 3:
-                $orderby = "ragso1 DESC, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
-                break;
-            default:
-                $orderby = "id_tesdoc_ref, expiry, codice,  caucon, datreg, numdoc ASC ";
-        }
-        $select = "*, " . $gTables['tesmov'] . ".*, " . $gTables['clfoco'] . ".descri AS ragsoc";
         if ($this->target == 0) {
-            $where = $gTables['clfoco'] . ".codice LIKE '$masclifor%' ";
+            $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $masclifor . "000001 AND " . $masclifor . "999999";
         } else {
-            $where = $gTables['clfoco'] . ".codice = " . $this->target;
+            $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $this->target . "000001 AND " . $this->target . "999999";
         }
-        $table = $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig )"
-                . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
-                . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['rigmoc'] . ".codcon "
-                . "LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra ";
-
+        $sqlquery = "SELECT * FROM " . $gTables['paymov']
+                . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig ) "
+                . " WHERE  " . $where . " ORDER BY id_tesdoc_ref, expiry";
+        $rs = gaz_dbi_query($sqlquery);
         $this->Entries = array();
-        $rs = gaz_dbi_dyn_query($select, $table, $where, $orderby);
+        $acc = array();
         while ($r = gaz_dbi_fetch_array($rs)) {
-            $this->Entries[] = $r;
+            $anagrafica = new Anagrafica();
+            $partner = $anagrafica->getPartner($r['codcon']);
+            $tes = gaz_dbi_get_row($gTables['tesmov'], 'id_tes', $r['id_tes']);
+            $tes['ragsoc']=$partner['ragso1'].' '.$partner['ragso2'];
+            switch ($ob) {
+                case 1:
+                    $acc[$r['expiry']][] = $r + $tes + $partner;
+                    break;
+                case 2:
+                case 3:
+                    $acc[$partner['ragso1']][] = $r + $tes + $partner;
+                    break;
+                default:
+                    $acc[$r['expiry']][] = $r + $tes + $partner;
+            }
+        }
+        if ($ob == 1 || $ob == 3) {
+            krsort($acc);
+        } else {
+            ksort($acc);
+        }
+        $res = array();
+        foreach ($acc as $v1) {
+            foreach ($v1 as $v2) {
+                $this->Entries[] = $v2;
+            }
         }
     }
 
