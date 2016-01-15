@@ -108,7 +108,7 @@ echo '		</td>
             $paymov='';
             $status_del=false;
             if ($mv["clfoco"]<>$ctrl_partner){
-                $class_partner='FacetDataTDred';
+                $class_partner='FacetDataTD';
                 $partner=$mv["ragsoc"];
             }
             if ($mv["id_tes"]<>$ctrl_id_tes){
@@ -171,7 +171,7 @@ echo '		</td>
             echo "</td></tr>\n";
             $ctrl_id_tes=$mv["id_tes"];
             $ctrl_paymov=$mv["id_tesdoc_ref"];
-
+            $ctrl_partner=$mv["clfoco"];
         }
 	/** ENRICO FEDELE */
 	/* Stampo il totale del dare, dell'avere, e la percentuale dell'avere rispetto al totale dare+avere */
