@@ -111,7 +111,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	/** ENRICO FEDELE */
    if (isset($_POST['in_submit'])) {
    if ((!empty($form['in_cod_articolo']) || $form['in_cod_catmer'] > 0) && $form['in_percentuale'] > 0) {
-    if (substr($form['in_status'],0,6) == "UPDROW"){ //se è un rigo da modificare
+    if (substr($form['in_status'],0,6) == "UPDROW"){ //se ï¿½ un rigo da modificare
          $old_key = intval(substr($form['in_status'],6));
          $form['righi'][$old_key]['id_provvigione'] = $form['id_provvigione'];
          $form['righi'][$old_key]['cod_articolo'] = $form['in_cod_articolo'];
@@ -119,7 +119,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
          $form['righi'][$old_key]['percentuale'] = $form['in_percentuale'];
          $form['righi'][$old_key]['status'] = "UPDATE";
          ksort($form['righi']);
-    } else { //se è un rigo da inserire
+    } else { //se ï¿½ un rigo da inserire
          $form['righi'][$next_row]['id_provvigione'] = 0;
          $form['righi'][$next_row]['cod_articolo'] = $form['in_cod_articolo'];
          $form['righi'][$next_row]['cod_catmer'] = $form['in_cod_catmer'];
@@ -141,8 +141,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
-       if ($form['base_percent'] <= 0.01 )
-          $msg .= "13+";
+//       if ($form['base_percent'] <= 0.01 )
+//          $msg .= "13+"; ci sono agenti che non prendono provvigioni, quindi questo controllo non va bene
        if ($form['id_fornitore'] < $inifornitori || $form['id_fornitore'] > $finfornitori) {
           $msg .= "14+";
        }
@@ -150,7 +150,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           $msg .= "15+";
        }
        $fornitore_exist = gaz_dbi_get_row($gTables['agenti'],'id_fornitore',$form['id_fornitore']);
-       if (!empty($fornitore_exist) && $fornitore_exist['id_agente'] != $form['id_agente']) { // il fornitore è già un agente (ma non ha lo stesso id)
+       if (!empty($fornitore_exist) && $fornitore_exist['id_agente'] != $form['id_agente']) { // il fornitore ï¿½ giï¿½ un agente (ma non ha lo stesso id)
              $msg .= "16+";
        }
        if ($toDo == 'insert') {
@@ -173,7 +173,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                    }
                    $i++;
                 }
-                //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
+                //qualora i nuovi righi fossero di piï¿½ dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
                     $form['righi'][$i]['id_agente'] = $form['id_agente'];
                     provvigioniInsert($form['righi'][$i]);
@@ -354,7 +354,7 @@ echo '  </td>
 echo "</td></tr>\n";
 // fine rigo inserimento
 echo "<tr><td colspan=\"5\"><hr></td></tr>\n";
-// inizio righi già inseriti
+// inizio righi giï¿½ inseriti
 foreach ($form['righi'] as $key => $value) {
         echo "<input type=\"hidden\" value=\"".$value['status']."\" name=\"righi[$key][status]\">\n";
         echo "<input type=\"hidden\" value=\"".$value['id_provvigione']."\" name=\"righi[$key][id_provvigione]\">\n";

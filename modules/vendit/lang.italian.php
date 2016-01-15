@@ -141,7 +141,8 @@ $strScript = array("admin_client.php" =>
         "Stai elimimando un agente!",
         "Lista Provvigioni",
         'title' => 'Gestione degli Agenti di vendita',
-        'ins_this' => 'Inserisci un nuovo agente di vendita'
+        'ins_this' => 'Inserisci un nuovo agente di vendita',
+        "Lista Clienti",
     ),
     "select_provvigioni.php" =>
     array("Selezione per Stampa lista Provvigioni",

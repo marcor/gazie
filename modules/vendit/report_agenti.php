@@ -75,6 +75,7 @@ $headers_tesdoc = array  (
             $script_transl[3] => 'ragso1',
             $script_transl[4]=> 'telefo',
             $script_transl[5]=> 'fax',
+            $script_transl[20]=> '',
             $script_transl[19] => '',
             $script_transl[6] => 'base_percent',
             $script_transl['delete'] => ''
@@ -90,6 +91,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"FacetDataTD\">".$a_row["ragso1"]." ".$a_row["ragso2"]." &nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["telefo"]."&nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["fax"]." &nbsp;</td>";
+        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"print_clienti_agenti.php?id_agente=".$a_row['id_agente']."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i>&nbsp;</a></td>";
         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"select_provvigioni.php?id_agente=".$a_row['id_agente']."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i>&nbsp;</a></td>";
         echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["base_percent"]." &nbsp;</td>";
         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_agenti.php?id_agente=".$a_row['id_agente']."\"><i class=\"glyphicon glyphicon-remove\"></i>&nbsp;</a></td>";

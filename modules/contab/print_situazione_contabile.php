@@ -66,12 +66,12 @@ $title = array('luogo_data' => $luogo_data,
     'hile' => array(/* array('lun' => 45, 'nam' => 'Cliente'), */
         array('lun' => 20, 'nam' => 'ID Partita'),
         array('lun' => 65, 'nam' => 'Descrizione'),
-        array('lun' => 32, 'nam' => 'N.Doc.'),
-        array('lun' => 13, 'nam' => 'D. Doc.'),
-        array('lun' => 13, 'nam' => 'D. Reg.'),
+        array('lun' => 26, 'nam' => 'N.Doc.'),
+        array('lun' => 18, 'nam' => 'D. Doc.'),
+        array('lun' => 18, 'nam' => 'D. Reg.'),
         array('lun' => 15, 'nam' => 'Dare'),
         array('lun' => 15, 'nam' => 'Avere'),
-        array('lun' => 13, 'nam' => 'Scad.')
+        array('lun' => 18, 'nam' => 'Scad.')
     )
 );
 /* ENRICO FEDELE */
@@ -86,6 +86,7 @@ $pdf = new Report_template();
 $pdf->setVars($admin_aziend, $title);
 $pdf->setFooterMargin(22);
 $pdf->setTopMargin(43);
+$pdf->SetLeftMargin(5);
 $pdf->SetFillColor(160, 255, 220);
 $pdf->setRiporti('');
 //$pdf->AddPage();
@@ -168,7 +169,7 @@ if ($rs->num_rows > 0) {
                $pdf->AddPage();
                $pdf->SetFont('helvetica', '', 12);
                $pdf->SetFillColor(255, 214, 255);
-               $pdf->Cell(186, 4, $codPartner . " - " . $partner, 'LTBR', 1, 'C', true, '', 1);
+               $pdf->Cell(195, 4, $codPartner . " - " . $partner, 'LTBR', 1, 'C', true, '', 1);
                $nuova_anagrafe = false;
             }
             $primo = false;
@@ -181,29 +182,29 @@ if ($rs->num_rows > 0) {
             $status_descr = '';
             $status_del = true;
          }
-         $pdf->SetFont('helvetica', '', 6);
+         $pdf->SetFont('helvetica', '', 9);
          $pdf->Cell(20, 4, $paymov, 1, 0, 'L', false, '', 0);
-         $pdf->Cell(65, 4, $mv_tmp['descri'], 1, 0, 'C', false, '', 1);
-         $pdf->Cell(32, 4, $mv_tmp["numdoc"], 1, 0, 'R', false);
+         $pdf->Cell(65, 4, $mv_tmp['descri'], 1, 0, 'L', false, '', 1);
+         $pdf->Cell(26, 4, $mv_tmp["numdoc"], 1, 0, 'L', false, '', 1);
          /* ENRICO FEDELE */
-         $pdf->Cell(13, 4, $mv_tmp["datdoc"], 1, 0, 'C', false);
-         $pdf->Cell(13, 4, gaz_format_date($mv_tmp["datreg"]), 1, 0, 'C', false);
+         $pdf->Cell(18, 4, $mv_tmp["datdoc"], 1, 0, 'L', false, '', 1);
+         $pdf->Cell(18, 4, gaz_format_date($mv_tmp["datreg"]), 1, 0, 'L', false, '', 1);
          if ($mv_tmp['darave'] == 'D') {
             /* Incremento il totale del dare */
             $tot_dare += $mv_tmp['amount'];
-            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false);
-            $pdf->Cell(15, 4, '', 1, 0, 'R', false);
+            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false,'',1);
+            $pdf->Cell(15, 4, '', 1, 0, 'R', false,'',1);
          } else {
             /* Incremento il totale dell'avere, e decremento quello del dare */
             $tot_avere += $mv_tmp['amount'];
 //               $tot_dare -= $mv_tmp['amount'];
             /* Modifico la larghezza delle celle */
-            $pdf->Cell(15, 4, '', 1, 0, 'R', false);
-            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false);
+            $pdf->Cell(15, 4, '', 1, 0, 'R', false,'',1);
+            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false,'',1);
          }
          /* ENRICO FEDELE */
          /* Modifico la larghezza della cella */
-         $pdf->Cell(13, 4, gaz_format_date($mv_tmp["expiry"]), 1, 1, 'C', false);
+         $pdf->Cell(18, 4, gaz_format_date($mv_tmp["expiry"]), 1, 1, 'L', false,'',1);
       }
       $ctrl_id_tes = $mv["id_tes"];
       $ctrl_paymov = $mv["id_tesdoc_ref"];
@@ -211,8 +212,8 @@ if ($rs->num_rows > 0) {
       /* ENRICO FEDELE */
       /* Stampo una riga vuota sottile per separare leggermente il totale e metterlo in evidenza */
       $pdf->SetFillColor(235, 235, 235);
-      $pdf->SetFont('helvetica', '', 1);
-      $pdf->Cell(186, 1, '', 1, 1, 'C', true);
+//      $pdf->SetFont('helvetica', '', 1);
+      $pdf->Cell(195, 1, '', 1, 1, 'C', true);
 
       /* Stampo la riga del totale, in grassetto italico "BI" */
       if ($tot_diff_tmp != 0) {  // partita chiusa
@@ -220,9 +221,9 @@ if ($rs->num_rows > 0) {
       } else {// partita aperta
          $pdf->SetFillColor(0, 255, 60);
       }
-      $pdf->SetFont('helvetica', 'BI', 6);
-      $pdf->Cell(173, 4, 'SALDO PARTITA', 1, 0, 'R', false);
-      $pdf->Cell(13, 4, gaz_format_number(-$tot_diff_tmp), 1, 1, 'C', true);
+      $pdf->SetFont('helvetica', 'BI', 9);
+      $pdf->Cell(177, 4, 'SALDO PARTITA', 1, 0, 'R', false);
+      $pdf->Cell(18, 4, gaz_format_number(-$tot_diff_tmp), 1, 1, 'R', true,'',1);
       /* ENRICO FEDELE */
       $tmp = $mv["clfoco"];
 //      if (!$mv || $mv["clfoco"] != $ctrl_partner) { // si cambia anagrafe alla prossima iterazione
@@ -233,7 +234,7 @@ if ($rs->num_rows > 0) {
 //         $pdf->Cell(13, 4, gaz_format_number(-$tot_diff_anagrafe), 1, 1, 'C', true);
 //         $pdf->SetFillColor(235, 235, 235);
 //         $pdf->SetFont('helvetica', '', 1);
-//         $pdf->Cell(186, 1, '', 1, 1, 'C', true);
+//         $pdf->Cell(195, 1, '', 1, 1, 'C', true);
 //         $tot_diff_anagrafe = 0;
 //         $nuova_anagrafe = true;
 //      }
@@ -241,11 +242,11 @@ if ($rs->num_rows > 0) {
    }
    /* Stampo la riga del totale generale, in grassetto italico "BI" */
    $pdf->SetFillColor(255, 214, 255);
-   $pdf->SetFont('helvetica', 'BI', 6);
+   $pdf->SetFont('helvetica', 'BI', 9);
    $pdf->Cell(143, 4, 'SALDO TOTALE', 1, 0, 'R', TRUE);
-   $pdf->Cell(15, 4, gaz_format_number($tot_dare), 1, 0, 'R', true);
-   $pdf->Cell(15, 4, gaz_format_number($tot_avere), 1, 0, 'R', true);
-   $pdf->Cell(13, 4, gaz_format_number(-$tot_dare + $tot_avere), 1, 1, 'C', true);
+   $pdf->Cell(15, 4, gaz_format_number($tot_dare), 1, 0, 'R', true,'',1);
+   $pdf->Cell(15, 4, gaz_format_number($tot_avere), 1, 0, 'R', true,'',1);
+   $pdf->Cell(18, 4, gaz_format_number(-$tot_dare + $tot_avere), 1, 1, 'R', true,'',1);
 }
 
 
@@ -257,12 +258,12 @@ function stampaTotaleCliente() {
    if (!$nuova_anagrafe && (!$mv || $mv["clfoco"] != $ctrl_partner)) { // si cambia anagrafe alla prossima iterazione
       /* Stampo la riga del totale, in grassetto italico "BI" */
       $pdf->SetFillColor(255, 214, 255);
-      $pdf->SetFont('helvetica', 'BI', 6);
-      $pdf->Cell(173, 4, 'SALDO ANAGRAFE', 1, 0, 'R', false);
-      $pdf->Cell(13, 4, gaz_format_number(-$tot_diff_anagrafe), 1, 1, 'C', true);
+      $pdf->SetFont('helvetica', 'BI', 9);
+      $pdf->Cell(177, 4, 'SALDO ANAGRAFE', 1, 0, 'R', false,'',1);
+      $pdf->Cell(18, 4, gaz_format_number(-$tot_diff_anagrafe), 1, 1, 'R', true,'',1);
       $pdf->SetFillColor(235, 235, 235);
-      $pdf->SetFont('helvetica', '', 1);
-      $pdf->Cell(186, 1, '', 1, 1, 'C', true);
+//      $pdf->SetFont('helvetica', '', 1);
+      $pdf->Cell(195, 1, '', 1, 1, 'C', true);
       $tot_diff_anagrafe = 0;
       $nuova_anagrafe = true;
    }

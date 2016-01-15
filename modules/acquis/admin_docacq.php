@@ -1253,24 +1253,24 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (no
    echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
    echo "<input type=\"hidden\" value=\"" . $form['destin'] . "\" name=\"destin\">\n";
 } else { //documento fiscale (DDR,DDL)
-   echo "<td></td><td></td>\n";
-   echo "<td class=\"FacetFieldCaptionTD\">$script_transl[10]</td>\n";
-   echo "<input type=\"hidden\" value=\"" . $form['numfat'] . "\" name=\"numfat\">\n";
-   if ($form['id_des'] > 0) {
-      echo "<td class=\"FacetDataTD\">\n";
-      $select_id_des = new selectPartner('id_des');
-      $select_id_des->selectDocPartner('id_des', 'id_' . $form['id_des'], $form['search']['id_des'], 'id_des', $script_transl['mesg'], $admin_aziend['masfor']);
-      echo "<input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\">\n";
-   } else {
-      echo "<td class=\"FacetDataTD\"><textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea></td>\n";
-      echo "<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\"></td>\n";
-      echo "<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
-   }
-   echo "<td class=\"FacetFieldCaptionTD\">$script_transl[14]</td>";
-   echo "<td  class=\"FacetDataTD\">\n";
-   $select_vettor = new selectvettor("vettor");
-   $select_vettor->addSelected($form["vettor"]);
-   $select_vettor->output();
+//   echo "<td></td><td></td>\n";
+//   echo "<td class=\"FacetFieldCaptionTD\">$script_transl[10]</td>\n";
+//   echo "<input type=\"hidden\" value=\"" . $form['numfat'] . "\" name=\"numfat\">\n";
+//   if ($form['id_des'] > 0) {
+//      echo "<td class=\"FacetDataTD\">\n";
+//      $select_id_des = new selectPartner('id_des');
+//      $select_id_des->selectDocPartner('id_des', 'id_' . $form['id_des'], $form['search']['id_des'], 'id_des', $script_transl['mesg'], $admin_aziend['masfor']);
+//      echo "<input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\">\n";
+//   } else {
+//      echo "<td class=\"FacetDataTD\"><textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea></td>\n";
+//      echo "<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\"></td>\n";
+//      echo "<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
+//   }
+//   echo "<td class=\"FacetFieldCaptionTD\">$script_transl[14]</td>";
+//   echo "<td  class=\"FacetDataTD\">\n";
+//   $select_vettor = new selectvettor("vettor");
+//   $select_vettor->addSelected($form["vettor"]);
+//   $select_vettor->output();
 }
 echo "</td></tr></table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
@@ -1755,6 +1755,20 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acq
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\" size=\"5\" ></td>
 					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[58]</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\" size=\"5\" ></td>";
+
+   echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">" . $script_transl[51] . "</td><td class=\"FacetDataTD\">\n";
+   echo "<select name=\"caumag\" class=\"FacetSelect\" width=\"20\">\n";
+   $result = gaz_dbi_dyn_query("*", $gTables['caumag'], " clifor = 1 AND operat = " . $docOperat[$form['tipdoc']], "codice asc, descri asc");
+   while ($row = gaz_dbi_fetch_array($result)) {
+      $selected = "";
+      if ($form["caumag"] == $row['codice']) {
+         $selected = " selected ";
+      }
+      echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . "-" . $row['descri'] . "</option>\n";
+   }
+   echo "</select></td>\n";
+   echo "<td class=\"FacetFieldCaptionTD\"></td><td class=\"FacetDataTD\"></td>";
+
    echo "	</tr>";
 }
 //fine piede

@@ -519,7 +519,7 @@ class selectPartner extends SelectBox {
     function queryNomeAgente($id_agente) {
         $retVal = "";
         $rs = gaz_dbi_dyn_query("b.descri as nomeAgente", $this->gTables['agenti'] . ' AS a join ' . $this->gTables['clfoco'] . " as b on a.id_fornitore=b.codice ", "a.id_agente=$id_agente");
-        $anagrafiche = array();
+//        $anagrafiche = array();
         if ($r = gaz_dbi_fetch_array($rs)) {
             $retVal = $r["nomeAgente"];
         }
