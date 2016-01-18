@@ -133,10 +133,10 @@ if (isset($_POST['Delete'])) {
             header("Location: " . $_POST['ritorno']);
             exit;
         } elseif ($ultimo_documento['protoc'] != $protocollo) {
-            $message = "Si st&agrave; tentando di eliminare un documento <br /> diverso dall'ultimo emesso!";
+            $message = "Si sta tentando di eliminare un documento <br /> diverso dall'ultimo emesso!";
         }
     } else {
-        $message = "Si st&agrave; tentando di eliminare un documento <br /> inesistente o contabilizzato!";
+        $message = "Si sta tentando di eliminare un documento <br /> inesistente o contabilizzato!";
     }
 }
 
