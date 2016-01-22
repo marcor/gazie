@@ -77,6 +77,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         $cliente = $anagrafica->getPartner($form['clfoco']);
         $form['search']['clfoco'] = substr($cliente['ragso1'], 0, 10);
         $form['seziva'] = $testate['seziva'];
+        $form['tipdoc'] = $testate['tipdoc'];
         $form['indspe'] = $cliente['indspe'];
         $form['traspo'] = $testate['traspo'];
         $form['speban'] = $testate['speban'];
@@ -124,6 +125,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
 } else { //negli accessi successivi riporto solo il form
     $form['id_tes'] = $_POST['id_tes'];
     $form['seziva'] = $_POST['seziva'];
+    $form['tipdoc'] = substr($_POST['tipdoc'],0,3);
     $form['datemi_Y'] = intval($_POST['datemi_Y']);
     $form['datemi_M'] = intval($_POST['datemi_M']);
     $form['datemi_D'] = intval($_POST['datemi_D']);
@@ -169,7 +171,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
         $anagrafica = new Anagrafica();
         $cliente = $anagrafica->getPartner($form['clfoco']);
         //$ctrl_testate = 0;
-        $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc = 'VOR' and status not like 'EV%' ", "datemi asc");
+        $rs_testate = gaz_dbi_dyn_query("*", $gTables['tesbro'], "clfoco = '" . $form['clfoco'] . "' and tipdoc = 'VOR' AND status NOT LIKE 'EV%' ", "datemi ASC");
         while ($testate = gaz_dbi_fetch_array($rs_testate)) {
             $form['traspo'] += $testate['traspo'];
             $form['speban'] = $testate['speban'];
@@ -184,6 +186,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['id_agente'] = $testate['id_agente'];
             $form['banapp'] = $testate['banapp'];
             $form['sconto'] = $testate['sconto'];
+            $form['tipdoc'] = $testate['tipdoc'];
             $ctrl_testate = $testate['id_tes'];
             $rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $testate['id_tes'], "id_rig asc");
             while ($rigo = gaz_dbi_fetch_array($rs_righi)) {
@@ -251,6 +254,8 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
     }
     if ($msg == "") {//procedo all'inserimento
         $iniziotrasporto .= " " . $_POST['initra_H'] . ":" . $_POST['initra_I'] . ":00";
+        require("lang.".$admin_aziend['lang'].".php");
+        $script_transl=$strScript['select_evaord.php'];
         //ricavo il numero progressivo
         $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi LIKE '" . $_POST['datemi_Y'] . "%' AND (tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = " . $_POST['seziva'], "numdoc DESC", 0, 1);
         $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
@@ -274,7 +279,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         foreach ($form['righi'] as $k => $v) {
             if ($v['id_tes'] != $ctrl_tes) {  //se fa parte di un'ordine diverso dal precedente
                 //inserisco un rigo descrittivo per il riferimento all'ordine sul DdT
-                $row_descri['descri'] = "da Conferma d'Ordine n." . $v['numdoc'] . " del " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
+                $row_descri['descri'] = " da ".$script_transl['doc_name'][$v['tipdoc']]." n." . $v['numdoc'] . " del " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
                 $row_descri['id_tes'] = $last_id;
                 $row_descri['tiprig'] = 2;
                 rigdocInsert($row_descri);
@@ -362,6 +367,8 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         $msg .= "6+";
     }
     if ($msg == "") {//procedo all'inserimento
+        require("lang.".$admin_aziend['lang'].".php");
+        $script_transl=$strScript['select_evaord.php'];
         $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend['Login']);
         if (!$ecr_user) {
             header("Location: error_msg.php?ref=admin_scontr");
@@ -399,7 +406,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         foreach ($form['righi'] as $k => $v) {
             if ($v['id_tes'] != $ctrl_tes) {  //se fa parte di un'ordine diverso dal precedente
                 //inserisco un rigo descrittivo per il riferimento all'ordine sul corrispettivo
-                $row_descri['descri'] = "ORD. DEL " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
+                $row_descri['descri'] = $script_transl['doc_name'][$v['tipdoc']]." " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
                 $row_descri['id_tes'] = $last_id;
                 $row_descri['tiprig'] = 2;
                 rigdocInsert($row_descri);
@@ -524,6 +531,8 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         $msg .= "6+";
     }
     if ($msg == "") {//procedo all'inserimento
+        require("lang.".$admin_aziend['lang'].".php");
+        $script_transl=$strScript['select_evaord.php'];
         $iniziotrasporto .= " " . $form['initra_H'] . ":" . $form['initra_I'] . ":00";
         //ricavo il progressivo del numero fattura
         $rs_ultima_fat = gaz_dbi_dyn_query("numfat*1 AS documento", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'FA_' AND seziva = " . $form['seziva'], "documento DESC", 0, 1);
@@ -559,7 +568,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         foreach ($form['righi'] as $k => $v) {
             if ($v['id_tes'] != $ctrl_tes) {  //se fa parte di un'ordine diverso dal precedente
                 //inserisco un rigo descrittivo per il riferimento all'ordine sulla fattura immediata
-                $row_descri['descri'] = "da Conferma d'Ordine n." . $v['numdoc'] . " del " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
+                $row_descri['descri'] = "da ".$script_transl['doc_name'][$v['tipdoc']]." n." . $v['numdoc'] . " del " . substr($v['datemi'], 8, 2) . "-" . substr($v['datemi'], 5, 2) . "-" . substr($v['datemi'], 0, 4);
                 $row_descri['id_tes'] = $last_id;
                 $row_descri['tiprig'] = 2;
                 rigdocInsert($row_descri);
@@ -613,16 +622,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array(/* 'boxover/boxover', */
-    'calendarpopup/CalendarPopup',
-    /** ENRICO FEDELE */
-    /* 'jquery/jquery-1.7.1.min',
-      'jquery/ui/jquery.ui.core',
-      'jquery/ui/jquery.ui.widget',
-      'jquery/ui/jquery.ui.position',
-      'jquery/ui/jquery.ui.autocomplete', */
-    /** ENRICO FEDELE */
-    'custom/autocomplete'));
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
 ?>
 <script type="text/javascript">
     function pulldown_menu(selectName, destField)
@@ -702,6 +702,7 @@ echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden
 ?>
     <input type="hidden" name="ritorno" value="<?php echo $_POST['ritorno']; ?>">
     <input type="hidden" name="id_tes" value="<?php echo $form['id_tes']; ?>">
+    <input type="hidden" name="tipdoc" value="<?php echo $form['tipdoc']; ?>">
     <input type="hidden" name="speban" value="<?php echo $form['speban']; ?>">
     <input type="hidden" name="stamp" value="<?php echo $form['stamp']; ?>">
     <input type="hidden" name="listin" value="<?php echo $form['listin']; ?>">
@@ -711,6 +712,7 @@ echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden
     <input type="hidden" name="volume" value="<?php echo $form['volume']; ?>">
     <input type="hidden" name="id_agente" value="<?php echo $form['id_agente']; ?>">
     <input type="hidden" name="caumag" value="<?php echo $form['caumag']; ?>">
+    
     <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?>
 <?php
 $select_cliente = new selectPartner('clfoco');
@@ -847,7 +849,7 @@ if (!empty($form['righi'])) {
                 break;
         }
         if ($ctrl_tes != $v['id_tes']) {
-            echo "<tr><td class=\"FacetDataTD\" colspan=\"7\"> " . $script_transl['from'] . "<a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\">" . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td></tr>";
+            echo "<tr><td class=\"FacetDataTD\" colspan=\"7\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td></tr>";
         }
         echo "<tr>";
         echo "<input type=\"hidden\" name=\"righi[$k][id_tes]\" value=\"" . $v['id_tes'] . "\">\n";
