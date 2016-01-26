@@ -1,0 +1,19 @@
+Titolo:
+Materiam superabat opus
+
+Presentazione:
+Questo rilascio oltre a ricordare il giorno del dodicesimo anno di vita del nostro software ha come scopo quello di eliminare alcuni difetti di cui non è scevra la precedente versione, nostro malgrado. Serve, altresì, ad ottimizzare alcune funzionalità recenti che non brillavano sotto il punto di vista delle performance, della velocità in particolare.
+Questa volta non mi dilungo a raccontarvi del backstage che lo ha maturato perché gli interventi sono stati pochi, brevi e concisi; li elenco di seguito:
+    
+. Corretta funzione fetch_all che causava il malfunzionamento su alcune versioni del PHP
+. Corretto errore di cancellazione delle partite chiuse
+. Corretto l'errore che dopo la modifica ad un DdT fatturato faceva perdere il riferimento al tipo (ddt_type)
+. Corretto l'errore che in fase di modifica del preventivo a fornitore lo trasformava sempre e comunque in ordine
+. Cambiato il sistema di backup, con il metodo backup locale ora vengono salvati anche i file e le cartelle di GAzie in formato compresso
+. Aggiunta la possibilità di scaricare nei computer client i backup di cui sopra
+. Risolto il mancato match dei caratteri spazio o del carattere "&" nella ricerca dei clienti
+. Ripristinata la giusta larghezza delle immagini sulla pagina "prodotti" del sito statico generabile automaticamente da GAzie stesso
+. Accelerato in maniera superlativa il rendering dei report dello scadenzario attraverso l'ottimizzazione delle query alla base dati; prima con database corposi arrivava ad impegare decine di secondi adesso sono praticamente immediati
+. Predisposta la struttura del database ad accettare l'impostazione "strict-mode" di MySQL (>= 5.7), in particolare sono state eliminati gli zero per default sui campi date
+
+Antonio de Vincentiis, Montesilvano, 27 Gennaio 2016
