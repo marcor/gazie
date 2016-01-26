@@ -509,6 +509,9 @@ function createInvoiceFromDDT($result, $gTables, $dest = false) {
    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
       $dest = 'S';     // Genero l'output pdf come stringa binaria
       // Costruisco oggetto con tutti i dati del file pdf da allegare
+      if (!is_object($content)) {
+         $content = new stdClass;
+      } 
       $content->name = $doc_name;
       $content->string = $pdf->Output($doc_name, $dest);
       $content->encoding = "base64";
