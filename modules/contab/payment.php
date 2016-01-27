@@ -135,7 +135,8 @@ function salvaMovimento($descrizione, $importo, $target_account, $dataRegistrazi
        "id_tesdoc_ref" => $numpar,
        "id_rigmoc_pay" => ($clfr != "C" ? $codiceOp1 : 0),
        "id_rigmoc_doc" => ($clfr != "C" ? 0 : $codiceOp2),
-       "amount" => $importo);
+       "amount" => $importo,
+       "expiry" => $dataRegistrazione);
    gaz_dbi_table_insert("paymov", $valore);
    fine();
 }

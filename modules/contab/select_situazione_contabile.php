@@ -346,7 +346,7 @@ if (isset($_POST['preview']) and $msg == '') {
 			<td colspan="8" class="FacetFormHeaderFont" align="right">TOTALE</td>
 			<td class="FacetFormHeaderFont" align="right">' . gaz_format_number($tot_dare) . '</td>
 			<td class="FacetFormHeaderFont" align="right">' . gaz_format_number($tot_avere) . '</td>
-			<td class="FacetFormHeaderFont" title="% avere/dare">' . /* gaz_format_number(100 * $tot_avere / $tot_dare) . */ ' %</td>
+			<td class="FacetFormHeaderFont" title="% avere/dare"></td>
 			<td class="FacetFormHeaderFont" title="saldo">' . gaz_format_number(-$tot_dare + $tot_avere) . '</td>
 			<td class="FacetFormHeaderFont">&nbsp;</td>
 		  </tr>

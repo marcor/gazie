@@ -64,9 +64,9 @@ $title = array('luogo_data' => $luogo_data,
     'title' => ($form['aperte_tutte'] == 0 ? "PARTITE APERTE" : "ESTRATTO CONTO")
     . ($form['id_agente'] == 0 ? "" : " - AGENTE: " . $select_id_anagra->queryNomeAgente($form['id_agente'])),
     'hile' => array(/* array('lun' => 45, 'nam' => 'Cliente'), */
-        array('lun' => 20, 'nam' => 'ID Partita'),
+        array('lun' => 25, 'nam' => 'ID Partita'),
         array('lun' => 65, 'nam' => 'Descrizione'),
-        array('lun' => 26, 'nam' => 'N.Doc.'),
+        array('lun' => 21, 'nam' => 'N.Doc.'),
         array('lun' => 18, 'nam' => 'D. Doc.'),
         array('lun' => 18, 'nam' => 'D. Reg.'),
         array('lun' => 15, 'nam' => 'Dare'),
@@ -183,9 +183,9 @@ if ($rs->num_rows > 0) {
             $status_del = true;
          }
          $pdf->SetFont('helvetica', '', 9);
-         $pdf->Cell(20, 4, $paymov, 1, 0, 'L', false, '', 0);
+         $pdf->Cell(25, 4, $paymov, 1, 0, 'L', false, '', 1);
          $pdf->Cell(65, 4, $mv_tmp['descri'], 1, 0, 'L', false, '', 1);
-         $pdf->Cell(26, 4, $mv_tmp["numdoc"], 1, 0, 'L', false, '', 1);
+         $pdf->Cell(21, 4, $mv_tmp["numdoc"], 1, 0, 'L', false, '', 1);
          /* ENRICO FEDELE */
          $pdf->Cell(18, 4, $mv_tmp["datdoc"], 1, 0, 'L', false, '', 1);
          $pdf->Cell(18, 4, gaz_format_date($mv_tmp["datreg"]), 1, 0, 'L', false, '', 1);
@@ -209,12 +209,6 @@ if ($rs->num_rows > 0) {
       $ctrl_id_tes = $mv["id_tes"];
       $ctrl_paymov = $mv["id_tesdoc_ref"];
 
-      /* ENRICO FEDELE */
-      /* Stampo una riga vuota sottile per separare leggermente il totale e metterlo in evidenza */
-      $pdf->SetFillColor(235, 235, 235);
-//      $pdf->SetFont('helvetica', '', 1);
-      $pdf->Cell(195, 1, '', 1, 1, 'C', true);
-
       /* Stampo la riga del totale, in grassetto italico "BI" */
       if ($tot_diff_tmp != 0) {  // partita chiusa
          $pdf->SetFillColor(255, 255, 60);
@@ -224,6 +218,12 @@ if ($rs->num_rows > 0) {
       $pdf->SetFont('helvetica', 'BI', 9);
       $pdf->Cell(177, 4, 'SALDO PARTITA', 1, 0, 'R', false);
       $pdf->Cell(18, 4, gaz_format_number(-$tot_diff_tmp), 1, 1, 'R', true,'',1);
+      /* ENRICO FEDELE */
+      /* Stampo una riga vuota sottile per separare leggermente il totale e metterlo in evidenza */
+      $pdf->SetFillColor(235, 235, 235);
+//      $pdf->SetFont('helvetica', '', 1);
+      $pdf->Cell(195, 1, '', 1, 1, 'C', true);
+
       /* ENRICO FEDELE */
       $tmp = $mv["clfoco"];
 //      if (!$mv || $mv["clfoco"] != $ctrl_partner) { // si cambia anagrafe alla prossima iterazione
@@ -243,7 +243,7 @@ if ($rs->num_rows > 0) {
    /* Stampo la riga del totale generale, in grassetto italico "BI" */
    $pdf->SetFillColor(255, 214, 255);
    $pdf->SetFont('helvetica', 'BI', 9);
-   $pdf->Cell(143, 4, 'SALDO TOTALE', 1, 0, 'R', TRUE);
+   $pdf->Cell(147, 4, 'SALDO TOTALE', 1, 0, 'R', TRUE);
    $pdf->Cell(15, 4, gaz_format_number($tot_dare), 1, 0, 'R', true,'',1);
    $pdf->Cell(15, 4, gaz_format_number($tot_avere), 1, 0, 'R', true,'',1);
    $pdf->Cell(18, 4, gaz_format_number(-$tot_dare + $tot_avere), 1, 1, 'R', true,'',1);
