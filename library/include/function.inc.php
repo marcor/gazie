@@ -1041,14 +1041,16 @@ class GAzieMail {
       if ($config_notif['val'] == 'yes') {
          $mail->AddCustomHeader($mail->HeaderLine("Disposition-notification-to", $admin_data['e_mail']));
       }
+      /* Imposto email a cui rispondere (se è stata impostata nella tabella gaz_xxxcompany_config`)
+       * deve stare prima di $mail->SetFrom perchè altrimenti aggiunge il from al reply
+       */
+      if (isset($config_replyTo) && !empty($config_replyTo['val'])) {
+         $mail->AddReplyTo($config_replyTo['val']);
+      }
       // Imposto email del mittente
       $mail->SetFrom($admin_data['e_mail'], $admin_data['ragso1'] . " " . $admin_data['ragso2']);
       // Imposto email del destinatario
       $mail->AddAddress($mailto);
-      // Imposto email a cui rispondere (se è stata impostata nella tabella gaz_xxxcompany_config`
-      if (isset($config_replyTo) && !empty($config_replyTo['val'])) {
-         $mail->AddReplyTo($config_replyTo['val']);
-      }
       // Aggiungo l'email del mittente tra i destinatari in cc
       $mail->AddCC($admin_data['e_mail'], $admin_data['ragso1'] . " " . $admin_data['ragso2']);
       // Imposto l'oggetto dell'email
