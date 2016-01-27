@@ -1,5 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '92' WHERE `id` =2;
-ALTER TABLE `gaz_config` CHANGE COLUMN `last_modified` `last_modified` DATETIME NULL ON UPDATE CURRENT_TIMESTAMP AFTER `show`;
+ALTER TABLE `gaz_config` CHANGE COLUMN `last_modified` `last_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP AFTER `show`;
 INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('backup to keep', 'keep_backup', '200');
 INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('leave free space in backup', 'freespace_backup', '10');
 INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('backup files', 'file_backup', '0');
