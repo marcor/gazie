@@ -432,7 +432,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false) {
    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
       $dest = 'S';     // Genero l'output pdf come stringa binaria
       // Costruisco oggetto con tutti i dati del file pdf da allegare
-      $content=new stdClass();
+      $content = new stdClass();
       $content->name = $docVars->intesta1 . '_' . $templateName . '_n.' . $docVars->docRelNum . '_del_' . gaz_format_date($docVars->docRelDate) . '.pdf';
       $content->string = $pdf->Output($docVars->intesta1 . '_' . $templateName . '_n.' . $docVars->docRelNum . '_del_' . gaz_format_date($docVars->docRelDate) . '.pdf', $dest);
       $content->encoding = "base64";
@@ -509,9 +509,9 @@ function createInvoiceFromDDT($result, $gTables, $dest = false) {
    if ($dest && $dest == 'E') { // è stata richiesta una e-mail
       $dest = 'S';     // Genero l'output pdf come stringa binaria
       // Costruisco oggetto con tutti i dati del file pdf da allegare
-      if (!is_object($content)) {
+      if (!isset($content)) {
          $content = new stdClass;
-      } 
+      }
       $content->name = $doc_name;
       $content->string = $pdf->Output($doc_name, $dest);
       $content->encoding = "base64";

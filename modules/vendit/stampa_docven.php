@@ -72,16 +72,51 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
    } else {
       $cliente = ' AND clfoco = ' . intval($_GET['cl']);
    }
-   //recupero i documenti da stampare
-   $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = 'FAD' AND seziva = " . intval($_GET['si']) . " AND
-                                                 datfat BETWEEN '" . substr($_GET['di'], 0, 10) . "' AND '" . substr($_GET['df'], 0, 10) . "' AND
-                                                 numfat BETWEEN " . intval($_GET['ni']) . " AND " . intval($_GET['nf']) . " AND
-                                                 protoc BETWEEN " . intval($_GET['pi']) . " AND " . intval($_GET['pf']) .
-           $cliente, "datfat ASC, protoc ASC, id_tes ASC");
-   if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
-      createInvoiceFromDDT($testate, $gTables, 'E');
+   if (!isset($_GET['ag']) or ( empty($_GET['ag']))) {   // selezione agente
+      $agente = '';
    } else {
-      createInvoiceFromDDT($testate, $gTables);
+      $agente = ' AND B.id_agente = ' . intval($_GET['ag']);
+   }
+   $invioPerEmail = 0;
+   if (!isset($_GET['ts']) or ( empty($_GET['ts']))) {
+      $fattEmail = '';
+   } else {
+      $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
+      $fattEmail = " AND B.fatt_email = $invioPerEmail";
+   }
+   //recupero i documenti da stampare
+   $where = "tipdoc = 'FAD' AND seziva = "
+           . intval($_GET['si'])
+           . " AND datfat BETWEEN '"
+           . substr($_GET['di'], 0, 10)
+           . "' AND '"
+           . substr($_GET['df'], 0, 10)
+           . "' AND numfat BETWEEN "
+           . intval($_GET['ni'])
+           . " AND "
+           . intval($_GET['nf'])
+           . " AND protoc BETWEEN "
+           . intval($_GET['pi'])
+           . " AND "
+           . intval($_GET['pf'])
+           . $cliente
+           . $agente
+           . $fattEmail;
+   ;
+   //recupero i documenti da stampare
+   $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice ";
+   $orderby = "datfat ASC, protoc ASC, id_tes ASC";
+   $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
+//   $testate = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where, "datfat ASC, protoc ASC, id_tes ASC");
+   if ($testate->num_rows > 0) {
+      if ($invioPerEmail) {
+         createInvoiceFromDDT($testate, $gTables, 'E');
+      } else {
+         createInvoiceFromDDT($testate, $gTables);
+      }
+   } else {
+      alert("Nessun documento da stampare");
+      tornaPaginaPrecedente();
    }
 } else { // in tutti gli altri casi
    if (!isset($_GET['pi']) or ! isset($_GET['td'])) {
