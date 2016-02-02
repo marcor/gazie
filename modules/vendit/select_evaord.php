@@ -267,6 +267,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         }
         //inserisco la testata
         $form['tipdoc'] = 'DDT';
+        $form['ddt_type'] = 'T';
         $form['template'] = "FatturaSemplice";
         $form['id_con'] = '';
         $form['status'] = 'GENERATO';
