@@ -457,7 +457,7 @@ function createInvoiceFromDDT($result, $gTables, $dest = false) {
 
    $config = new Config;
    $configTemplate = new configTemplate;
-   require("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/fattura_semplice.php');
+   require_once("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/fattura_semplice.php');
    $pdf = new FatturaSemplice();
    $docVars = new DocContabVars();
    //$pdf->SetPageFormat($config->getValue('page_format'));

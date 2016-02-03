@@ -216,12 +216,17 @@ function gaz_dbi_record_count($table, $where) {
 }
 
 // funzione che compone una query con i parametri: tabella, where, orderby, limit e passo (riga di inizio e n. record)
-function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit = 0, $passo = 2000000) {
+function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit = 0, $passo = 2000000, $groupby = '') {
    global $link, $session;
    $query = "SELECT " . $select . " FROM " . $tabella;
    if ($where != '') {
       $query .= " WHERE $where ";
    }
+
+   if ($groupby != '') {
+      $query .= " GROUP BY $groupby ";
+   }
+   
    if ($orderby == '2') {
       $query .= " LIMIT " . $limit . ", " . $passo;
    } else {
@@ -668,11 +673,11 @@ function checkAccessRights($adminid, $module, $company_id = 0) {
 }
 
 function gaz_dbi_fetch_all($resource) {
-    $result=array();
-    while ($row = mysqli_fetch_assoc($resource)) {
-        $result[] = $row;
-    }
-    return $result;
+   $result = array();
+   while ($row = mysqli_fetch_assoc($resource)) {
+      $result[] = $row;
+   }
+   return $result;
 }
 
 ?>

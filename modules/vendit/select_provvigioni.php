@@ -94,7 +94,7 @@ if (isset($_POST['Print'])) {
     if (empty($msg)) { //non ci sono errori
        $datini = sprintf("%04d%02d%02d", $form['ai'], $form['mi'], $form['gi']);
        $datfin = sprintf("%04d%02d%02d", $form['af'], $form['mf'], $form['gf']);
-       $_SESSION['print_request'] = array('id_agente'=>$form['id_agente'],'di'=>$datini,'df'=>$datfin);
+       $_SESSION['print_request'] = array('id_agente'=>$form['id_agente'],'di'=>$datini,'df'=>$datfin, 'sc'=>isset($_POST['stampa_compatta']));
        header("Location: invsta_provvigioni.php");
        exit;
     }
@@ -237,6 +237,16 @@ for( $counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++ )
     }
 echo "\t </select>\n";
 echo "</td></tr>";
+
+echo "<tr>\n
+     <td class=\"FacetFieldCaptionTD\"></td>\n
+     <td class=\"FacetDataTD\">
+<input type=\"checkbox\" title=\"Per stampare senza dettagli seleziona questa checkbox\" name=\"stampa_compatta\" checked>
+Stampa compatta
+</td>
+
+     </tr>\n";
+
 echo "<tr>\n
      <td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"".ucfirst($script_transl['return'])."\"></td>\n
      <td align=\"right\" class=\"FacetFooterTD\"><input type=\"submit\" name=\"Print\" value=\"".ucfirst($script_transl['print'])."\"></td>\n
