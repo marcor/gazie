@@ -765,6 +765,7 @@ $strScript = array("admin_client.php" =>
         'salacc_value' => array('C' => 'Acconto', 'S' => 'Saldo'),
         'impeff' => 'Importo Effetto',
         'status' => 'Stato',
+        'cigcup' => 'CIG e CUP',
         'date_exp' => 'Data di Scadenza',
         'account_id' => 'Registrazione contabile numero',
         'pagame' => 'Modalit&agrave; di pagamento',

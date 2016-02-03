@@ -753,6 +753,7 @@ $strScript = array("admin_client.php" =>
         'salacc_value' => array('C' => 'Deposit', 'S' => 'Balance'),
         'impeff' => 'Bill amount',
         'status' => 'State',
+        'cigcup' => 'CIG e CUP',
         'date_exp' => 'Expiry date',
         'account_id' => 'Account record number',
         'pagame' => 'Payment method',

@@ -163,14 +163,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain(0,array('calendarpopup/CalendarPopup',
-                                  'custom/autocomplete'
-								  /** ENRICO FEDELE */
-                                  /*'jquery/jquery-1.7.1.min',
-                                  'jquery/ui/jquery.ui.core',
-                                  'jquery/ui/jquery.ui.widget',
-                                  'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.autocomplete',*/
-								  /** ENRICO FEDELE */),'select_effett');
+                                  'custom/autocomplete'),'select_effett');
 echo "<script type=\"text/javascript\">
 var cal = new CalendarPopup();
 var calName = '';
@@ -294,6 +287,11 @@ while ($r = gaz_dbi_fetch_array($rs_banacc)) {
 }
 echo "</select></td>\n";
 echo "</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['cigcup']." </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"cigcup\" value=\"".$form['cigcup']."\"  maxlength=\"40\"  size=\"80\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
