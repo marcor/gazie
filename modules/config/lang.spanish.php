@@ -171,7 +171,7 @@ $strScript = array("admin_aziend.php" =>
         'fatimm_value' => array('R' => 'Seccion Reporte', 'U' => 'Seccion de la ultima entrada',
             '1' => 'Siempre 1', '2' => 'Siempre 2', '3' => 'Siempre 3'),
         'artsea' => 'Buscar art&iacute;culos por',
-        'artsea_value' => array('C' => 'Codigo', 'B' => 'Codigo de Barras', 'D' => 'Descripcion'),
+        'artsea_value' => array('C' => 'Codigo', 'B' => 'Codigo de Barras', 'D' => 'Descripcion', 'T' => 'Todos'),
         'templ_set' => 'Conjunto de plantillas de los documentos',
         'colore' => 'Color de fondo de los documentos',
         'conmag' => 'Registro de Existencias (Stock)',

@@ -40,7 +40,7 @@ function getLastDoc($item_code) {
 	return $rs;
 }
 
-$search_field_Array = array('C'=>array('codice','Codice'), 'D'=>array('descri','Descrizione'),'B'=>array('barcode','Codice a barre'));
+$search_field_Array = array('C'=>array('codice','Codice'), 'D'=>array('descri','Descrizione'),'B'=>array('barcode','Codice a barre'),'T'=>array('tutti','cod.desc.barc.'));
 //
 require("../../library/include/header.php");
 
@@ -51,17 +51,29 @@ if (isset($_GET['auxil'])) {
 }
 if (isset($_GET['all'])) {
    $auxil = "&all=yes";
-   $where = $search_field_Array[$admin_aziend['artsea']][0]." LIKE '%'";
+   if ( $admin_aziend['artsea']=='T') {
+		$where = "codice LIKE '%%' or descri LIKE '%%' or barcode LIKE '%%'";
+   } else {	
+		$where = $search_field_Array[$admin_aziend['artsea']][0]." LIKE '%'";
+   }
    $passo = 100000;
 } else {
    if (isset($_GET['auxil'])) {
-      $where = $search_field_Array[$admin_aziend['artsea']][0]." LIKE '".addslashes($_GET['auxil'])."%'";
+		if ( $admin_aziend['artsea']=='T') {
+			$where = "codice LIKE '%".addslashes($_GET['auxil'])."%' or descri LIKE '%".addslashes($_GET['auxil'])."%' or barcode LIKE '".addslashes($_GET['auxil'])."'";
+		} else {
+			$where = $search_field_Array[$admin_aziend['artsea']][0]." LIKE '".addslashes($_GET['auxil'])."%'";
+		}
    }
 }
 
 if (!isset($_GET['auxil'])) {
    $auxil = "";
-   $where = $search_field_Array[$admin_aziend['artsea']][0]." LIKE '$auxil%'";
+   if ( $admin_aziend['artsea']=='T' ) {
+		$where = "codice LIKE '%".addslashes($auxil)."%' or descri LIKE '%".addslashes($auxil)."%' or barcode LIKE '".addslashes($auxil)."'";
+   } else {
+		$where = $search_field_Array[$admin_aziend['artsea']][0]." LIKE '$auxil%'";   
+   }
 }
 ?>
 <div align="center" class="FacetFormHeaderFont">Articoli</div>

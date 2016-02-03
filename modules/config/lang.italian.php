@@ -168,7 +168,7 @@ $strScript = array("admin_aziend.php" =>
         'fatimm_value' => array('R' => 'Sezione del Report', 'U' => 'Sezione ultima emissione',
             '1' => 'Propone sempre 1', '2' => 'Propone sempre 2', '3' => 'Propone sempre 3'),
         'artsea' => 'Ricerca articoli per',
-        'artsea_value' => array('C' => 'Codice', 'B' => 'Barcode', 'D' => 'Descrizione'),
+        'artsea_value' => array('C' => 'Codice', 'B' => 'Barcode', 'D' => 'Descrizione', 'T' => 'Tutti'),
         'templ_set' => 'Template set dei documenti',
         'colore' => 'Colore sfondo documenti',
         'conmag' => 'Contabilit&agrave; di magazzino',

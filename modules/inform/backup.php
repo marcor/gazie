@@ -269,7 +269,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         }
         $zip->close();
         if ( isset($_GET['internal']))
-            header("Location:" . $form['ritorno']);
+            header("Location: ../../modules/root/admin.php");  //$form['ritorno']);
     }
 }
 exit;
