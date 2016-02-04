@@ -299,7 +299,7 @@ if (isset($_POST['preview']) and $msg == '') {
                /* Incremento il totale del dare */
                $tot_dare += $mv_tmp['amount'];
                /* Allineo a destra il testo, i numeri sono così più leggibili e ordinati, li formatto con apposita funzione */
-               echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["import"]) . " &nbsp;</td>";
+               echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv_tmp["amount"]) . " &nbsp;</td>";
                echo "<td class=\"FacetDataTD\"></td>";
             } else {
                /* Incremento il totale dell'avere, e decremento quello del dare */
