@@ -96,8 +96,6 @@ if (!empty($form['id_anagra'])) {
 //   $cosaStampare = $select_id_anagra->queryClfoco($form['id_anagra'], ($form['clfr'] == 0 ? $admin_aziend['mascli'] : $admin_aziend['masfor'])); // anagrafe selezionata
    $cosaStampare = $form['id_anagra'];
 } else {// voglio tutti
-   ini_set('memory_limit', '128M'); // mi occorre tanta memoria
-   gaz_set_time_limit(0);  // e tanto tempo
    if ($form['clfr'] == 0) {
       $cosaStampare = $admin_aziend['mascli']; // clienti
    } else {
@@ -169,7 +167,10 @@ if ($rs->num_rows > 0) {
                $pdf->AddPage();
                $pdf->SetFont('helvetica', '', 12);
                $pdf->SetFillColor(255, 214, 255);
-               $pdf->Cell(195, 4, $codPartner . " - " . $partner, 'LTBR', 1, 'C', true, '', 1);
+               $pdf->Cell(195, 4, $codPartner . " - " . $partner, 'LTR', 1, 'C', true, '', 1);
+               $pdf->SetFont('helvetica', '', 9);
+               $pdf->Cell(195, 4, $mv_tmp['sedleg'] . " tel." . $mv_tmp['telefo'] . " - " . $mv_tmp['cell'], 'LR', 1, 'C', true, '', 1);
+//               $pdf->Cell(195, 4, $mv_tmp['telefo'] . " - " . $mv_tmp['cell'], 'LBR', 1, 'C', true, '', 1);
                $nuova_anagrafe = false;
             }
             $primo = false;
@@ -192,19 +193,19 @@ if ($rs->num_rows > 0) {
          if ($mv_tmp['darave'] == 'D') {
             /* Incremento il totale del dare */
             $tot_dare += $mv_tmp['amount'];
-            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false,'',1);
-            $pdf->Cell(15, 4, '', 1, 0, 'R', false,'',1);
+            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false, '', 1);
+            $pdf->Cell(15, 4, '', 1, 0, 'R', false, '', 1);
          } else {
             /* Incremento il totale dell'avere, e decremento quello del dare */
             $tot_avere += $mv_tmp['amount'];
 //               $tot_dare -= $mv_tmp['amount'];
             /* Modifico la larghezza delle celle */
-            $pdf->Cell(15, 4, '', 1, 0, 'R', false,'',1);
-            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false,'',1);
+            $pdf->Cell(15, 4, '', 1, 0, 'R', false, '', 1);
+            $pdf->Cell(15, 4, gaz_format_number($mv_tmp['amount']), 1, 0, 'R', false, '', 1);
          }
          /* ENRICO FEDELE */
          /* Modifico la larghezza della cella */
-         $pdf->Cell(18, 4, gaz_format_date($mv_tmp["expiry"]), 1, 1, 'L', false,'',1);
+         $pdf->Cell(18, 4, gaz_format_date($mv_tmp["expiry"]), 1, 1, 'L', false, '', 1);
       }
       $ctrl_id_tes = $mv["id_tes"];
       $ctrl_paymov = $mv["id_tesdoc_ref"];
@@ -217,7 +218,7 @@ if ($rs->num_rows > 0) {
       }
       $pdf->SetFont('helvetica', 'BI', 9);
       $pdf->Cell(177, 4, 'SALDO PARTITA', 1, 0, 'R', false);
-      $pdf->Cell(18, 4, gaz_format_number(-$tot_diff_tmp), 1, 1, 'R', true,'',1);
+      $pdf->Cell(18, 4, gaz_format_number(-$tot_diff_tmp), 1, 1, 'R', true, '', 1);
       /* ENRICO FEDELE */
       /* Stampo una riga vuota sottile per separare leggermente il totale e metterlo in evidenza */
       $pdf->SetFillColor(235, 235, 235);
@@ -244,9 +245,9 @@ if ($rs->num_rows > 0) {
    $pdf->SetFillColor(255, 214, 255);
    $pdf->SetFont('helvetica', 'BI', 9);
    $pdf->Cell(147, 4, 'SALDO TOTALE', 1, 0, 'R', TRUE);
-   $pdf->Cell(15, 4, gaz_format_number($tot_dare), 1, 0, 'R', true,'',1);
-   $pdf->Cell(15, 4, gaz_format_number($tot_avere), 1, 0, 'R', true,'',1);
-   $pdf->Cell(18, 4, gaz_format_number(-$tot_dare + $tot_avere), 1, 1, 'R', true,'',1);
+   $pdf->Cell(15, 4, gaz_format_number($tot_dare), 1, 0, 'R', true, '', 1);
+   $pdf->Cell(15, 4, gaz_format_number($tot_avere), 1, 0, 'R', true, '', 1);
+   $pdf->Cell(18, 4, gaz_format_number(-$tot_dare + $tot_avere), 1, 1, 'R', true, '', 1);
 }
 
 
@@ -259,8 +260,8 @@ function stampaTotaleCliente() {
       /* Stampo la riga del totale, in grassetto italico "BI" */
       $pdf->SetFillColor(255, 214, 255);
       $pdf->SetFont('helvetica', 'BI', 9);
-      $pdf->Cell(177, 4, 'SALDO ANAGRAFE', 1, 0, 'R', false,'',1);
-      $pdf->Cell(18, 4, gaz_format_number(-$tot_diff_anagrafe), 1, 1, 'R', true,'',1);
+      $pdf->Cell(177, 4, 'SALDO ANAGRAFE', 1, 0, 'R', false, '', 1);
+      $pdf->Cell(18, 4, gaz_format_number(-$tot_diff_anagrafe), 1, 1, 'R', true, '', 1);
       $pdf->SetFillColor(235, 235, 235);
 //      $pdf->SetFont('helvetica', '', 1);
       $pdf->Cell(195, 1, '', 1, 1, 'C', true);
