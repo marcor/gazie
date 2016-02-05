@@ -242,7 +242,7 @@ if ($lastBackup) {
                         echo '../../modules' . $rl["link"];
                     else
                         echo "&nbsp;";
-                    ?>" type="button" class="btn btn-default btn-lista" style="background-color: #<?php echo $r["color"];?>">
+                    ?>" type="button" class="btn btn-default btn-lista" style="background-color: #<?php echo $rl["color"];?>">
                         <span ><?php
                             echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>' . $rlref_name . '</b>';
                             ?></span></a>
