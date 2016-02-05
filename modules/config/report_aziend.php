@@ -34,7 +34,7 @@ $script_transl = HeadMain();
 $table=$gTables['aziend'].' LEFT JOIN '. $gTables['admin_module'].' ON '.$gTables['admin_module'].'.company_id = '.$gTables['aziend'].'.codice';
 $where=$gTables['admin_module'].'.adminid=\''.$admin_aziend['Login'].'\' GROUP BY company_id';
 $rs = gaz_dbi_dyn_query ('*',$table,$where, $orderby, $limit, $passo);
-echo '<div align="center" class="FacetFormHeaderFont"><a href="create_new_company.php">'.$script_transl['ins_this']."</a></div>\n";
+//echo '<div align="center" class="FacetFormHeaderFont"><a href="create_new_company.php">'.$script_transl['ins_this']."</a></div>\n";
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title']."</div>\n";
 echo '<table class="Tlarge">';
 // creo l'array (header => campi) per l'ordinamento dei record

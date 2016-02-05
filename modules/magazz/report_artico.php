@@ -40,8 +40,8 @@ function getLastDoc($item_code) {
 	return $rs;
 }
 
-$search_field_Array = array('C'=>array('codice','Codice'), 'D'=>array('descri','Descrizione'),'B'=>array('barcode','Codice a barre'),'T'=>array('tutti','cod.desc.barc.'));
-//
+$search_field_Array = array('C'=>array('codice','Codice'), 'D'=>array('descri','Descrizione'),'B'=>array('barcode','Codice a barre'),'T'=>array('tutti','Campi principali'));
+
 require("../../library/include/header.php");
 
 $script_transl=HeadMain();
@@ -88,14 +88,14 @@ $recordnav   -> output();
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <thead>
             <tr>
-                <th class="FacetFieldCaptionTD" colspan="2"><?php echo $search_field_Array[$admin_aziend['artsea']][1]; ?>:
+                <th class="FacetFieldCaptionTD" colspan="3"><?php echo $search_field_Array[$admin_aziend['artsea']][1]; ?>:
                     <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="15" size="15" tabindex="1" class="FacetInput" />
                     <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;" />
                 </th>
-                <th></th>
-                <th>
+                <th class="FacetFieldCaptionTD" colspan="3">
                     <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;" />
                 </th>
+				<th class="FacetFieldCaptionTD" colspan="6">&nbsp;</th>
             </tr>
         </thead>
         <tbody>
