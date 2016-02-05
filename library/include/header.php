@@ -127,12 +127,21 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         $value['company_id'] = $admin_aziend['company_id'];
         $value['link'] = $mod_uri;
         $value['click'] = 1;
+		$value['color'] = pastelColors(); 
         $value['last_use'] = date('Y-m-d H:i:s');
         gaz_dbi_table_insert('menu_usage', $value);
     } else {
         $usage = gaz_dbi_fetch_array($result);
         gaz_dbi_put_query($gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '"', 'click', $usage['click'] + 1);
     }
+}
+
+function pastelColors() {
+    $r = dechex(round(((float) rand() / (float) getrandmax()) * 127) + 127);
+    $g = dechex(round(((float) rand() / (float) getrandmax()) * 127) + 127);
+    $b = dechex(round(((float) rand() / (float) getrandmax()) * 127) + 127);
+
+    return $r . $g . $b;
 }
 
 function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $cssArray = '') {

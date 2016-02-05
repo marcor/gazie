@@ -233,7 +233,7 @@ if ($lastBackup) {
                         echo '../../modules' . $r["link"];
                     else
                         echo "&nbsp;";
-                    ?>" type="button" class="btn btn-default btn-success btn-lista">
+                    ?>" type="button" class="btn btn-default btn-lista" style="background-color: #<?php echo $r["color"];?>">
                         <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
                 </div>
                 <div class="col-xs-6">
@@ -242,7 +242,7 @@ if ($lastBackup) {
                         echo '../../modules' . $rl["link"];
                     else
                         echo "&nbsp;";
-                    ?>" type="button" class="btn btn-default btn-success btn-lista">
+                    ?>" type="button" class="btn btn-default btn-lista" style="background-color: #<?php echo $r["color"];?>">
                         <span ><?php
                             echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>' . $rlref_name . '</b>';
                             ?></span></a>
