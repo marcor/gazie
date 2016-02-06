@@ -2,6 +2,8 @@
 ATTENZIONE QUESTA PROCEDURA POTREBBE CANCELLARE COMPLETAMENTE OGNI DATO DAI VOSTRI DISCHI FISSI, SE NON SAPETE COSA STATE FACENDO CHIEDETE AIUTO
 ************************************************************************************************************************************************
 
+LINUX 
+
 in questa cartella verranno salvati i backup di gazie. per montare un secondo disco in questa cartella seguire i seguenti passi :
 
 1. Per prima cosa devi capire quel'è il nome che il sistema ha assegnato al disco di backup
