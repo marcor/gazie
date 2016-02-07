@@ -25,7 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 
-$admin_aziend = checkAdmin();
+$admin_aziend = checkAdmin(9);
 
 if ( count($_POST) > 0 ) {
     foreach ($_POST as $key => $value) {
