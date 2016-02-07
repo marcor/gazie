@@ -48,9 +48,6 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
             <!--<li><a data-toggle="pill" href="#email">Email</a></li>-->
         </ul>
     </div>
-
-    <input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
-    <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno" />
  
     <div class="tab-content divlarge divborder">
         <div id="generale" class="tab-pane fade in active">

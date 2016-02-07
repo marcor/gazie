@@ -273,7 +273,10 @@ if ($toDo == 'insert') {
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['ragso1']."* </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ragso1\" value=\"".$form['ragso1']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"ragso1\" value=\"".$form['ragso1']."\" align=\"right\" maxlength=\"50\" size=\"50\" />&nbsp;\n";
+	  
+echo "<a class=\"btn btn-xs btn-default btn-default\" href=\"config_aziend.php\"><i class=\"glyphicon glyphicon-lock\"></i>&nbsp;config</a></td>\n";
+	  
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['ragso2']." </td>\n";

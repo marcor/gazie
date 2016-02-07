@@ -44,8 +44,8 @@ $headers_co = array  (
             $script_transl['e_mail'] => "e_mail",
             $script_transl['telefo'] => "telefo",
             $script_transl['regime'] => "regime",
-            $script_transl['ivam_t'] => "ivam_t",
-            "Avanzate" => ""
+            $script_transl['ivam_t'] => "ivam_t"/*,
+            "Avanzate" => ""*/
             );
 $linkHeaders = new linkHeaders($headers_co);
 $linkHeaders -> output();
@@ -71,7 +71,6 @@ while ($r = gaz_dbi_fetch_array($rs)) {
     echo "<td $style align=\"center\">".$r['telefo']." &nbsp;</td>\n";
     echo "<td $style align=\"center\">".$script_transl['regime_value'][$r["regime"]]." &nbsp;</td>\n";
     echo "<td $style align=\"center\">".$script_transl['ivam_t_value'][$r["ivam_t"]]." &nbsp;</td>\n";
-    echo "<td $style align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"config_aziend.php\"><i class=\"glyphicon glyphicon-lock\"></i>&nbsp;config</a></td>\n";
     echo "</tr>\n";
 }
 ?>
