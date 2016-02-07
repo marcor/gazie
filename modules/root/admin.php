@@ -158,7 +158,10 @@ if ($lastBackup) {
 					</td>
 					<td id="admin_welcome">
 						' . ucfirst($msg) . " " . $admin_aziend['Nome'] . ' (ip=' . $admin_aziend['last_ip'] . ')&nbsp;' . $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) . '<br />
-						<div id="admin_p_logout">
+						<div >
+                            <a class="btn btn-xs btn-default btn-default" href="config.php"><i class="glyphicon glyphicon-lock"></i>&nbsp;Configurazione Avanzata</a>
+                        </div>
+                        <div id="admin_p_logout">
 							' . $script_transl['logout'] . ' &rarr; <input name="logout" type="submit" value=" Logout ">
 						</div>
 					</td>

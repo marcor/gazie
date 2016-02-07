@@ -68,6 +68,8 @@ $strScript = array("admin.php" =>
                 'title' => "Scarica FIREFOX il browser con il quale &egrave; stato testato Gazie!")
         )
     ),
+    "config.php" =>
+    array("title" => "Configurazione principale di GAzie",),
     "login_admin.php" =>
     array(/* 0 */ "La nuova password dev'essere lunga almeno ",
         /* 1 */ " caratteri,<BR> diversa dalla vecchia e uguale alla quella di conferma !<br>",

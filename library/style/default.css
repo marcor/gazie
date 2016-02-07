@@ -678,3 +678,26 @@ div.danger li.active span.rounded{
 ul.licheck li {
     padding-bottom: 4px;
 }
+
+.divlarge {
+    width: 70%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.divborder {
+    border: solid 1px;
+}
+
+.divgroup {
+    margin-top: 1%;
+    margin-bottom: 1%;
+}
+
+.form-group {
+    padding-right: 10%;
+    padding-left: 0%;
+}
+label {
+    font-weight: 200;
+}

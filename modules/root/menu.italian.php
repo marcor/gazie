@@ -24,7 +24,7 @@
 */
 $transl['root'] = array('name' => "Home",
                         'title' => "Home page di GAZIE",
-                        'm2' => array(1 => array("Home","Home page di Gazie"),2 => array("Logout","Esci da GAzie")),
+                        'm2' => array(1 => array("Home","Home page di Gazie"),2 => array("Logout","Esci da GAzie"),3 => array("Config", "Configurazione")),
                         'm3' => array()
                         );
 ?>

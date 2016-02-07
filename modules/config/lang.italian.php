@@ -422,6 +422,8 @@ $strScript = array("admin_aziend.php" =>
         'report' => 'Lista degli Utenti',
         'del_this' => 'Utente',
         'del_err' => 'Non puoi cancellarti perch&egrave; sei l\'unico ad avere i diritti di amministratore! '
-    )
+    ),
+    "config_aziend.php" =>
+    array('title' => 'Configurazione avanzata azienda')
 );
 ?>
