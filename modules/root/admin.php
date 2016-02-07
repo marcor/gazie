@@ -256,7 +256,7 @@ if ($lastBackup) {
     }
     echo '</div>';
 
-    echo "<div align='center' id='admin_footer'>";
+    echo "<div style='bottom: 0; position: absolute;' align='center' id='admin_footer'>";
     echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) " . $script_transl['business'] . " " . $script_transl['proj'] . "<a  target=\"_new\" title=\"" . $script_transl['auth'] . "\" href=\"http://http://www.devincentiis.it\"> http://www.devincentiis.it</a></div>\n";
     echo '<div><table border="0" class="Tmiddle">';
     echo "<tr align=\"center\"><td>\n";
