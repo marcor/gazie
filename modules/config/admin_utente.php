@@ -355,7 +355,8 @@ if ($user_data["Abilit"] == 9) {
              if ($exist_mod == "."
                  || $exist_mod == ".."
                  || $exist_mod == ".svn"
-                 || $exist_mod == "root" ) continue;
+                 || $exist_mod == "root"
+				|| !file_exists("../../modules/$exist_mod/menu.".$admin_aziend['lang'].".php")) continue;
                  $rs_mod = gaz_dbi_dyn_query(" am.access ,am.moduleid, module.name", $gTables['admin_module'].' AS am LEFT JOIN '.$gTables['module'].
                                ' AS module ON module.id=am.moduleid ',
                                " am.adminid = '".$login."' AND module.name = '$exist_mod' AND am.company_id = '$company_id'","am.adminid",0,1);

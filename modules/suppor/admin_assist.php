@@ -206,14 +206,16 @@ $select_cliente = new selectPartner('clfoco');
 	<td colspan="2" class="FacetDataTD">
 		<select name="cstato" onchange="updateInputStato(this.value)">
 			<?php
-			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist'],"", "stato", "0", "9999");
+			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," stato!='aperto' and stato != 'contratto'", "stato", "0", "9999");
 			while ($stati = gaz_dbi_fetch_array($result)) {				
 					if ( $form['stato'] == $stati["stato"] ) $selected = "selected"; 
 					else $selected = "";
 					echo "<option value=\"".$stati["stato"]."\" ".$selected.">".$stati["stato"]."</option>";
 			}
 			?>
+			<option value="aperto" <?php if ( $form['stato']=='aperto') echo '"selected"'; ?>>aperto</option>";
             <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo '"selected"'; ?>>chiuso</option>";
+			<option value="contratto" <?php if ( $form['stato']=='contratto') echo '"selected"'; ?>>contratto</option>";
 		</select> 
 		<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
         <button id="toggleSta" type="button">Altro</button>
