@@ -159,8 +159,14 @@ if ($lastBackup) {
 					<td id="admin_welcome">
 						' . ucfirst($msg) . " " . $admin_aziend['Nome'] . ' (ip=' . $admin_aziend['last_ip'] . ')&nbsp;' . $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) . '<br />
 						<div >
-                            <a class="btn btn-xs btn-default btn-default" href="config.php"><i class="glyphicon glyphicon-lock"></i>&nbsp;Configurazione Avanzata</a>
-                        </div>
+'.
+/*            <a class="btn btn-xs btn-default btn-default" href="config.php"><i class="glyphicon glyphicon-lock"></i>&nbsp;Configurazione Avanzata</a>
+ * tolto il link alla configurazione perché incuriosirebbe troppo i normali utenti 
+ * che potrebbero facilmente cadere nella tentazione di modificare dai valori essenziali.
+ * Esso resta ovviamente accessibile anche digitando direttamente 
+ * dall'indirizzo "http://indirizzo_server/gazie/config.php"  root dell'installazione  
+ */ 
+            '                        </div>
                         <div id="admin_p_logout">
 							' . $script_transl['logout'] . ' &rarr; <input name="logout" type="submit" value=" Logout ">
 						</div>
