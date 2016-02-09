@@ -66,7 +66,11 @@ $result = gaz_dbi_dyn_query("*", $gTables['config'], "1=1", ' id ASC', 0, 1000);
                     <div class="form-group">
                         <label for="input<?php echo $r["id"];?>" class="col-sm-4 control-label"><?php echo $r["description"]; ?></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control input-sm" id="input<?php echo $r["id"];?>" name="<?php echo $r["variable"];?>" placeholder="<?php echo $r["variable"];?>" value="<?php echo $r["cvalue"]; ?>">
+							<input type="text<?php /*if ( strpos($r["variable"],"pass")===false ) {
+									echo "text";
+								} else {
+									echo "password";
+								}*/?>" class="form-control input-sm" id="input<?php echo $r["id"];?>" name="<?php echo $r["variable"];?>" placeholder="<?php echo $r["variable"];?>" value="<?php echo $r["cvalue"]; ?>">
                         </div>
                     </div>
                     <?php

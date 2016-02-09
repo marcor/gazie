@@ -33,7 +33,6 @@ if ( count($_POST) > 0 ) {
     }
     header("Location: config_aziend.php?ok");
 }
-
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0, 1000);
@@ -41,14 +40,12 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 <div align="center" class="FacetFormHeaderFont">
     <?php echo $script_transl['title']; ?>
 </div>
-
     <div class="container divlarge">
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="pill" href="#generale">Configurazione</a></li>
             <!--<li><a data-toggle="pill" href="#email">Email</a></li>-->
         </ul>
     </div>
- 
     <div class="tab-content divlarge divborder">
         <div id="generale" class="tab-pane fade in active">
             <form class="form-horizontal" method="post"> 
@@ -67,7 +64,13 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                     <div class="form-group">
                         <label for="input<?php echo $r["id"];?>" class="col-sm-5 control-label"><?php echo $r["description"]; ?></label>
                         <div class="col-sm-7">
-                            <input type="text" class="form-control input-sm" id="input<?php echo $r["id"];?>" name="<?php echo $r["var"];?>" placeholder="<?php echo $r["var"];?>" value="<?php echo $r["val"]; ?>">
+                            <input type="<?php 
+								if ( strpos($r["var"],"pass")===false ) {
+									echo "text";
+								} else {
+									echo "password";
+								}	
+								?>" class="form-control input-sm" id="input<?php echo $r["id"];?>" name="<?php echo $r["var"];?>" placeholder="<?php echo $r["var"];?>" value="<?php echo $r["val"]; ?>">
                         </div>
                     </div>
                     <?php
