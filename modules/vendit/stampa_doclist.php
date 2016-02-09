@@ -192,7 +192,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 
    $pdf->Cell(16, 4, gaz_format_date($row["$campoData"]), 1);
    $pdf->Cell(10, 4, $row["$campoOrdinamento"], 1);
-   $pdf->Cell(70, 4, $row['ragso1'] . " " . $row['ragso2'], 1);
+   $pdf->Cell(70, 4, $row['ragso1'] . " " . $row['ragso2'], 1, 0, '', false, '', 1);
    $agente = getNewAgente($row['id_agente']);
    $pdf->Cell(25, 4, $agente['ragso1'] . ' ' . $agente['ragso2'], 1, 0, '', false, '', 1);
    $pdf->Cell(25, 4, $row['caumag'], 1, 0, '', false, '', 1);
