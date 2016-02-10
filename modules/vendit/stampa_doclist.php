@@ -144,11 +144,13 @@ $what = "tesdoc.id_agente, " .
         //        $gTables['rigdoc'] . ".sconto, " .
         "SUM(rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100)*(1-tesdoc.sconto/100)) as imponibile, " .
         "SUM(rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100)*(1-tesdoc.sconto/100)*rigdoc.pervat/100) as iva," .
+        "tesdoc.traspo, " .
         "tesdoc.speban, " .
         "tesdoc.spevar, " .
+        "tesdoc.expense_vat, " .
         "CONVERT($campoOrdinamento,UNSIGNED INTEGER) AS campoOrdinamento";
-$table = $gTables['rigdoc'] . " rigdoc "
-        . "LEFT JOIN " . $gTables['tesdoc'] . " tesdoc ON tesdoc.id_tes = rigdoc.id_tes "
+$table = $gTables['tesdoc'] . " tesdoc "
+        . "LEFT JOIN " . $gTables['rigdoc'] . " rigdoc ON tesdoc.id_tes = rigdoc.id_tes "
         . "LEFT JOIN " . $gTables['clfoco'] . " clfoco ON tesdoc.clfoco = clfoco.codice "
         . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra "
         . "LEFT JOIN " . $gTables['pagame'] . " pagame ON tesdoc.pagame = pagame.codice "
@@ -161,11 +163,12 @@ $title = array('luogo_data' => $luogo_data,
     'hile' => array(
         array('lun' => 16, 'nam' => 'Data'),
         array('lun' => 10, 'nam' => 'Num.'),
-        array('lun' => 70, 'nam' => 'Destinatario'),
+        array('lun' => 62, 'nam' => 'Destinatario'),
         array('lun' => 25, 'nam' => 'Agente'),
         array('lun' => 25, 'nam' => 'Causale'),
-        array('lun' => 16, 'nam' => 'Imponibile'),
-        array('lun' => 16, 'nam' => 'Iva'),
+        array('lun' => 16, 'nam' => 'Impon.'),
+        array('lun' => 12, 'nam' => 'Spese'),
+        array('lun' => 14, 'nam' => 'Iva'),
         array('lun' => 16, 'nam' => 'Totale')
     )
 );
@@ -175,37 +178,45 @@ $pdf->SetTopMargin(40);
 $pdf->SetFooterMargin(18);
 $config = new Config;
 $pdf->AddPage('P', $config->getValue('page_format'));
-$pdf->SetFont('helvetica', '', 7);
+$pdf->SetFont('helvetica', '', 8);
 
 $tot_imponibile = 0.00;
 $tot_iva = 0.00;
+$tot_spese = 0.00;
 $tot_importo = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
+   $spese = $row['traspo'] + $row['speban'] + $row['spevar'];
+   $alivaSpese = gaz_dbi_get_row($gTables['aliiva'], "codice", $row['expense_vat']);
+   $row['iva'] = $row['iva'] + ($spese * $alivaSpese['aliquo'] / 100);
    if ($row['tipdoc'] == 'FNC') {   // nota di credito
 //      $row['quanti'] = -$row['quanti'];
       $row['imponibile'] = -$row['imponibile'];
       $row['iva'] = -$row['iva'];
+      $spese = -$spese;
    }
 
    $tot_imponibile += $row['imponibile'];
    $tot_iva += $row['iva'];
+   $tot_spese += $spese;
 //   $tot_importo += $row_imponibile + $row_iva;
 
    $pdf->Cell(16, 4, gaz_format_date($row["$campoData"]), 1);
    $pdf->Cell(10, 4, $row["$campoOrdinamento"], 1);
-   $pdf->Cell(70, 4, $row['ragso1'] . " " . $row['ragso2'], 1, 0, '', false, '', 1);
+   $pdf->Cell(62, 4, $row['ragso1'] . " " . $row['ragso2'], 1, 0, '', false, '', 1);
    $agente = getNewAgente($row['id_agente']);
    $pdf->Cell(25, 4, $agente['ragso1'] . ' ' . $agente['ragso2'], 1, 0, '', false, '', 1);
    $pdf->Cell(25, 4, $row['caumag'], 1, 0, '', false, '', 1);
    $pdf->Cell(16, 4, gaz_format_number($row['imponibile']), 1, 0, 'R');
-   $pdf->Cell(16, 4, gaz_format_number($row['iva']), 1, 0, 'R');
-   $pdf->Cell(16, 4, gaz_format_number($row['imponibile'] + $row['iva']), 1, 1, 'R');
+   $pdf->Cell(12, 4, gaz_format_number($spese), 1, 0, 'R');
+   $pdf->Cell(14, 4, gaz_format_number($row['iva']), 1, 0, 'R');
+   $pdf->Cell(16, 4, gaz_format_number($row['imponibile'] + $row['iva'] + $spese), 1, 1, 'R');
 }
 $pdf->SetFont('helvetica', 'B', 8);
-$pdf->Cell(146, 4, 'Totali: ', 1, 0, 'R');
+$pdf->Cell(138, 4, 'Totali: ', 1, 0, 'R');
 $pdf->Cell(16, 4, gaz_format_number($tot_imponibile), 1, 0, 'R');
-$pdf->Cell(16, 4, gaz_format_number($tot_iva), 1, 0, 'R');
-$pdf->Cell(16, 4, gaz_format_number($tot_imponibile + $tot_iva), 1, 0, 'R');
+$pdf->Cell(12, 4, gaz_format_number($tot_iva), 1, 0, 'R');
+$pdf->Cell(14, 4, gaz_format_number($tot_spese), 1, 0, 'R');
+$pdf->Cell(16, 4, gaz_format_number($tot_imponibile + $tot_iva + $tot_spese), 1, 0, 'R');
 //$pdf->SetFont('helvetica', '', 8);
 //$pdf->setRiporti('');
 $pdf->Output();

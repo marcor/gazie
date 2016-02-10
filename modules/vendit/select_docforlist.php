@@ -151,7 +151,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['annini'] = substr($_GET['datini'], 0, 4);
    } else {
       $form['gioini'] = 1;
-      $form['mesini'] = substr($last['datfin'], 5, 2);
+//      $form['mesini'] = substr($last['datfin'], 5, 2);
+      $form['mesini'] = 1;
       $form['annini'] = date("Y");
    }
    // controllo se un'altro script passa dei valori tramite URL per facilitare la scelta
@@ -159,7 +160,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    if (isset($_GET['proini'])) {
       $form['proini'] = intval($_GET['proini']);
    } else {
-      $form['proini'] = 1;
+      $form['proini'] = 0;
    }
    if (isset($_GET['numini'])) {
       $form['numini'] = intval($_GET['numini']);
@@ -171,8 +172,11 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['mesfin'] = substr($_GET['datfin'], 4, 2);
       $form['annfin'] = substr($_GET['datfin'], 0, 4);
    } else {
-      $form['giofin'] = substr($last['datfin'], 8, 2);
-      $form['mesfin'] = substr($last['datfin'], 5, 2);
+//      $form['giofin'] = substr($last['datfin'], 8, 2);
+//      $form['mesfin'] = substr($last['datfin'], 5, 2);
+//      $form['annfin'] = substr($last['datfin'], 0, 4);
+      $form['giofin'] = 31;
+      $form['mesfin'] = 12;
       $form['annfin'] = substr($last['datfin'], 0, 4);
    }
    if (isset($_GET['profin'])) {
@@ -214,7 +218,7 @@ if (isset($_POST['Print'])) {
    if ($form['numfin'] < $form['numini']) {
       $msg .= "13+";
    }
-   if ($form['proini'] <= 0) {
+   if ($form['proini'] < 0) {
       $msg .= "14+";
    }
    if ($form['profin'] < $form['proini']) {
