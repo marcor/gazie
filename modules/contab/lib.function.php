@@ -263,7 +263,7 @@ class contabForm extends GAzieForm {
             $partner = gaz_dbi_get_row($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', "codice", $val);
             echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
-            echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n
+            echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"PI=".$partner['pariva'].' '.$mesg[2]."\">\n
 				<input type=\"image\" onclick=\"dialogSchedule(this);return false;\" href=\"#\" id=\"paymov" . $val . $name . "\"  src=\"../../library/images/schedule.png\" />\n";
          } elseif (preg_match("/^id_([0-9]+)$/", $val, $match)) { // e' stata selezionata la sola anagrafica
             $partner = gaz_dbi_get_row($gTables['anagra'], 'id', $match[1]);
