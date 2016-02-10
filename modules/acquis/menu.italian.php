@@ -49,6 +49,7 @@ $transl['acquis'] = array('name' => "Acquisti",
         12 => array("Report partite aperte", "Report partite aperte"),
         13 => array("Selezione e stampa stato clienti", "Stato delle scadenze"),
         14 => array("Inserimento nuovo agente di fornitori", "Nuovo agente"),
+        15 => array("Stampa lista clienti", "Lista clienti"),
     )
 );
 ?>

@@ -145,14 +145,15 @@ $what = "tesdoc.id_agente, " .
         "SUM(rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100)*(1-tesdoc.sconto/100)) as imponibile, " .
         "SUM(rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100)*(1-tesdoc.sconto/100)*rigdoc.pervat/100) as iva," .
         "tesdoc.speban, " .
-        "tesdoc.spevar ";
+        "tesdoc.spevar, " .
+        "CONVERT($campoOrdinamento,UNSIGNED INTEGER) AS campoOrdinamento";
 $table = $gTables['rigdoc'] . " rigdoc "
         . "LEFT JOIN " . $gTables['tesdoc'] . " tesdoc ON tesdoc.id_tes = rigdoc.id_tes "
         . "LEFT JOIN " . $gTables['clfoco'] . " clfoco ON tesdoc.clfoco = clfoco.codice "
         . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra "
         . "LEFT JOIN " . $gTables['pagame'] . " pagame ON tesdoc.pagame = pagame.codice "
         . "LEFT JOIN " . $gTables['caumag'] . " caumag ON tesdoc.caumag = caumag.codice ";
-$result = gaz_dbi_dyn_query($what, $table, $where, $campoOrdinamento, 0, 20000, $campoOrdinamento);
+$result = gaz_dbi_dyn_query($what, $table, $where, 'campoOrdinamento', 0, 20000, 'campoOrdinamento');
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
 
 $title = array('luogo_data' => $luogo_data,

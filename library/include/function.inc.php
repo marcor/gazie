@@ -49,6 +49,13 @@ if (isset($_SERVER["HTTP_REFERER"])) {
 $script_uri = basename($_SERVER['REQUEST_URI']);
 $mod_uri = '/' . $module . '/' . $script_uri;
 
+function gaz_today() {
+   $today = date("d/m/Y");
+   $tmp = DateTime::createFromFormat('d/m/Y', $today);
+   $today = $tmp->format('Y-m-d');
+   return $today;
+}
+
 function gaz_time_from($time) {
    $time = time() - $time; // to get the time since that moment
    $time = ($time < 1) ? 1 : $time;

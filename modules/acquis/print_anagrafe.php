@@ -30,16 +30,28 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
    ini_set('memory_limit', '128M');
    gaz_set_time_limit(0);
 }
-if (!isset($_GET['id_agente'])) {
-   header("Location: " . $_SERVER['HTTP_REFERER']);
-   exit;
-}
+//if (!isset($_GET['id_agente'])) {
+//   header("Location: " . $_SERVER['HTTP_REFERER']);
+//   exit;
+//}
 require("../../config/templates/report_template.php");
-$form['id_agente'] = $_GET['id_agente'];
+$form['id_agente'] = (isset($_GET['id_agente']) ? $_GET['id_agente'] : '');
+$form['clifor'] = (isset($_GET['clifor']) ? $_GET['clifor'] : '');
+if (empty($form['id_agente']) && empty($form['clifor'])) { // mancano i dati per la selezione
+   alert("Niente da stampare");
+   tornaPaginaPrecedente();
+} elseif (!empty($form['id_agente'])) {  // vogliamo la stampa dei clienti di un agente
+   $where = "id_agente=" . $form['id_agente'] . " and clfoco.codice like '" . $admin_aziend['mascli'] . "%'";
+   $titolo = "CLIENTI DELL'AGENTE: " . queryNomeAgente($form['id_agente'], $gTables);
+} else {   // vogliamo la stampa dell'anagrafica
+   $mastro = ($form['clifor'] == 'C' ? $admin_aziend['mascli'] : $admin_aziend['masfor']);
+   $where = "clfoco.codice like '$mastro%'";
+   $titolo = ($form['clifor'] == 'C' ? 'Elenco Clienti' : 'Elenco Fornitori');
+}
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
 
 $title = array('luogo_data' => $luogo_data,
-    'title' => "CLIENTI DELL'AGENTE: " . queryNomeAgente($form['id_agente'], $gTables),
+    'title' => $titolo,
     'hile' => array(/* array('lun' => 45, 'nam' => 'Cliente'), */
         array('lun' => 60, 'nam' => 'Ragione Sociale'),
         array('lun' => 60, 'nam' => 'Sede Legale'),
@@ -57,7 +69,7 @@ $pdf->SetLeftMargin(5);
 $pdf->SetFillColor(160, 255, 220);
 $pdf->AddPage();
 //$config = new Config;
-$rs = gaz_dbi_dyn_query("concat(ragso1,space(1),ragso2) as ragioneSociale, sedleg, telefo, cell, fax, e_mail", $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ", "id_agente=" . $form['id_agente'] . " and clfoco.codice like '" . $admin_aziend['mascli'] . "%'", "ragioneSociale");
+$rs = gaz_dbi_dyn_query("concat(ragso1,space(1),ragso2) as ragioneSociale, sedleg, telefo, cell, fax, e_mail", $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ", $where, "ragioneSociale");
 
 while ($cliente = gaz_dbi_fetch_array($rs)) {
    $pdf->SetFont('helvetica', '', 10);

@@ -234,9 +234,9 @@ if (isset($_POST['Print'])) {
    if (empty($msg)) {
       $datini = sprintf("%04d%02d%02d", $form['annini'], $form['mesini'], $form['gioini']);
       $datfin = sprintf("%04d%02d%02d", $form['annfin'], $form['mesfin'], $form['giofin']);
-      if (!checkDocumentExist($form['tipdoc'], $form['seziva'], $datini, $datfin, $form['proini'], $form['profin'], $form['numini'], $form['numfin'])) {
-         $msg .="19+";
-      }
+//      if (!checkDocumentExist($form['tipdoc'], $form['seziva'], $datini, $datfin, $form['proini'], $form['profin'], $form['numini'], $form['numfin'])) {
+//         $msg .="19+";
+//      }
    }
    if (empty($msg)) { //non ci sono errori
       unset($form['gioini'], $form['giofin'], $form['mesini'], $form['mesfin'], $form['annini'], $form['annfin']);

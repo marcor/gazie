@@ -141,7 +141,7 @@ function confirMail(link){
         <tr>
             <?php
             $linkHeaders = new linkHeaders($script_transl['header']);
-            $linkHeaders->setAlign(array('left', 'left', 'center', 'center', 'left', 'center', 'center', 'center', 'center', 'center'));
+            $linkHeaders->setAlign(array('left', 'left', 'center', 'center', 'left', 'center', 'center', 'center', 'center', 'center', 'center'));
             $linkHeaders->output();
             ?>
         </tr>
@@ -222,6 +222,8 @@ function confirMail(link){
                         }
                     }
                     echo "</td>\n";
+           echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"duplicate_docven.php?id_tes=" . $r['id_tes'] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
+           echo "</td>";
 
                     if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
                         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";

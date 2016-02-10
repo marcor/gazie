@@ -798,6 +798,7 @@ $strScript = array("admin_client.php" =>
             "Stampa" => "",
             "Mail" => "",
             "Origine" => "",
+            "Duplica" => "",
             "Cancella" => ""
         ),
         'to_invoice' => 'da fatturare',

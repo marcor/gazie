@@ -470,7 +470,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['destin'] . " </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <textarea name=\"destin\" rows=\"2\" cols=\"30\" class=\"FacetInput\">" . $form["destin"] . "</TEXTAREA></td>\n";
+      <textarea name=\"destin\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["destin"] . "</TEXTAREA></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_des'] . " </td><td class=\"FacetDataTD\" colspan=\"2\">\n";
@@ -540,8 +540,11 @@ echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td>\n";
+//echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+//      <input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" align=\"right\" maxlength=\"100\" size=\"50\" /></td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" align=\"right\" maxlength=\"100\" size=\"50\" /></td>\n";
+      <textarea name=\"annota\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["annota"] . "</TEXTAREA></td>\n";
+
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sqn'] . "</td>";
