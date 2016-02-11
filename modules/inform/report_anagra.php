@@ -95,8 +95,7 @@ $headers_ = array  (
             "Cellulare" => "cell",
             "Fax" => "fax",
             "EMail" => "e_mail",
-            //"P.IVA - C.F." => "",
-            "Cancella" => ""
+            "P.IVA - C.F." => ""
             );
 $linkHeaders = new linkHeaders($headers_);
 $linkHeaders -> output();
@@ -139,7 +138,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["cell"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["fax"])." &nbsp;</td>";
     echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["e_mail"]."</a> &nbsp;</td>";   
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_anagra.php?codice=".$a_row["id"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["pariva"]." <br/> ".$a_row["codfis"]."</a> &nbsp;</td>";   
+
     echo "</tr>\n";
 }
 ?>
