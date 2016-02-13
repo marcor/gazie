@@ -26,29 +26,85 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
 $message = "";
-if (isset($_GET['auxil'])) {
+
+if (isset($_GET['auxil']) && !isset($_GET['flt_tipdoc'])) {
     $seziva = $_GET['auxil'];
-    $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva' GROUP BY protoc, datfat";
+    $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
 } else {
     $seziva = 1;
-    $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva' GROUP BY protoc, datfat";
+    $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
 }
+//assegno a $all la stringa per la query che comporrà i filtri 
+$all = $where;
+
 if (isset($_GET['protoc'])) {
     if ($_GET['protoc'] > 0) {
         $protocollo = $_GET['protoc'];
         $auxil = $_GET['auxil'] . "&protoc=" . $protocollo;
         $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'  AND protoc = $protocollo GROUP BY protoc, datfat";
-        $passo = 1;
+        $passo = 10;
     }
 } else {
     $protocollo = '';
 }
+if (isset($_GET['flt_tipo']) && $_GET['flt_tipo']!= "All") {
+    if ($_GET['flt_tipo'] != "") {
+        $tipdoc = $_GET['flt_tipo'];
+        $auxil = $_GET['auxil'] . "&flt_tipo=" . $tipdoc;
+        $where .= " AND tipdoc like '%$tipdoc%'";
+        $passo = 9999;
+    }
+} else {
+    $tipdoc = '';
+}
+if (isset($_GET['numfat'])) {
+    if ($_GET['numfat'] != "") {
+        $numfat = $_GET['numfat'];
+        $auxil = $_GET['auxil'] . "&numfat=" . $numfat;
+        $where .= " AND numfat like '%$numfat%'";
+        $passo = 9999;
+    }
+} else {
+    $numfat = '';
+}
+if (isset($_GET['flt_year'])) {
+	if ($_GET['flt_year'] != "" && $_GET['flt_year']!= "All") {
+        $year = $_GET['flt_year'];
+		$auxil = $_GET['auxil'] . "&datfat=" . $year;
+		$where .= " and datfat >= \"".$year."/01/01\" and datfat <= \"".$year."/12/31\"";
+        $passo = 9999;
+    } else {
+		$year = 'All';
+	}
+} else {
+	$year = 'All';    
+}
+if (isset($_GET['flt_ragso1'])) {
+    if ($_GET['flt_ragso1'] != "") {
+        $ragso1 = $_GET['flt_ragso1'];
+		if ($ragso1!="All") {
+			$auxil = $_GET['auxil'] . "&ragso1=" . $ragso1;
+			$where .= " and ".$gTables["tesdoc"].".clfoco = ".$ragso1;
+		}
+        $passo = 9999;
+    }
+} else {
+    $ragso1 = '';
+}
+
 if (isset($_GET['all'])) {
+	$year="";
+	$datfat="";
+	$tipdoc="";
+	$ragso1="";
+	
+	
     $where = "tipdoc LIKE 'AF_' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'  GROUP BY protoc, datfat";
     $auxil = $_GET['auxil'] . "&all=yes";
     $passo = 100000;
     $protocollo = '';
 }
+
 
 $titolo = "Documenti d'acquisto";
 require("../../library/include/header.php");
@@ -73,17 +129,57 @@ $script_transl = HeadMain();
         $orderby = "datfat DESC, protoc DESC";
     $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
     $recordnav->output();
+	
     ?>
     <table class="Tlarge">
         <tr>
-            <td colspan="2" class="FacetFieldCaptionTD">
-                <input type="text" placeholder="Cerca Prot." class="input-xs form-control" name="protoc" value="<?php if (isset($protocollo)) print $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+            <td colspan="1" class="FacetFieldCaptionTD">
+                <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="protoc" value="<?php if (isset($protocollo)) print $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
             </td>
-            <td>
-                <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+			<td colspan="1" class="FacetFieldCaptionTD">
+				<select class="form-control input-sm" name="flt_tipo" onchange="this.form.submit()">
+				<option value="All"><?php echo $script_transl['tuttitipi']; ?></option>
+				<?php $res = gaz_dbi_dyn_query("distinct tipdoc", $gTables["tesdoc"], $all, $orderby, 0, 999);
+					while ( $val = gaz_dbi_fetch_array($res) ) {
+						if ( $tipdoc == $val["tipdoc"] ) $selected = "selected";
+						else $selected = "";
+						echo "<option value=\"".$val["tipdoc"]."\" ".$selected.">".$val["tipdoc"]."</option>";
+					} ?>
+				</select>
+			</td>
+            <td colspan="1" class="FacetFieldCaptionTD">
+				<input type="text" placeholder="Cerca Num." class="input-sm form-control" name="numfat" value="<?php if (isset($numfat)) print $numfat; ?>" size="3" tabindex="3" class="FacetInput">			
+			</td>
+			<td colspan="1" class="FacetFieldCaptionTD">
+				<select class="form-control input-sm" name="flt_year" onchange="this.form.submit()">
+				<option value="All"><?php echo $script_transl['tuttianni']; ?></option>
+				<?php $res = gaz_dbi_dyn_query("distinct YEAR(datfat) as year", $gTables["tesdoc"], $all, $orderby, 0, 999);
+					while ( $val = gaz_dbi_fetch_array($res) ) {
+						if ( $year == $val["year"] ) $selected = "selected";
+						else $selected = "";
+						echo "<option value=\"".$val["year"]."\" ".$selected.">".$val["year"]."</option>";
+					} ?>
+				</select>
+			</td>
+			<td colspan="1" class="FacetFieldCaptionTD">
+				<select class="form-control input-sm" name="flt_ragso1" onchange="this.form.submit()">
+				<option value="All"><?php echo $script_transl['tutticlienti']; ?></option>
+				<?php $res = gaz_dbi_dyn_query("distinct ".$gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $all, $orderby, 0, 999);
+					while ( $val = gaz_dbi_fetch_array($res) ) {
+						if ( $ragso1 == $val["clfoco"] ) $selected = "selected";
+						else $selected = "";
+						echo "<option value=\"".$val["clfoco"]."\" ".$selected.">".$val["ragso1"]."</option>";
+					} ?>
+				</select>
+			</td>
+			<td colspan="1" class="FacetFieldCaptionTD">
+				&nbsp;
+			</td>
+			<td colspan="1" class="FacetFieldCaptionTD">
+                <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
             </td>
-            <td>
-                <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
+            <td colspan="1" class="FacetFieldCaptionTD">
+                <input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
             </td>
         </tr>
         <tr>
@@ -110,7 +206,8 @@ $script_transl = HeadMain();
         }
 
 //recupero le testate in base alle scelte impostate
-        $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
+    	//echo $where." ".$year." ".$ragso1;    
+		$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
         $ctrlprotoc = "";
         while ($a_row = gaz_dbi_fetch_array($result)) {
             $y = substr($a_row['datfat'], 0, 4);

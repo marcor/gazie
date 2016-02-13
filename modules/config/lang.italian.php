@@ -267,6 +267,7 @@ $strScript = array("admin_aziend.php" =>
     array('title' => 'Gestione delle banche di appoggio',
         'ins_this' => 'Inserisci una nuova banca di appoggio',
         'upd_this' => 'Modifica la banca di appoggio ',
+		'del_this' => ' la banca di appoggio ',
         'errors' => array('Il codice non &egrave; valido (min=1 max=99)!',
             'Il codice scelto &egrave; gi&agrave; stato usato!',
             'Non &egrave; stata inserita la descrizione!',

@@ -147,7 +147,11 @@ $strScript = array("admin_fornit.php" =>
         " Categoria merc. ",
         " Quantit&agrave; ",
         " Valore in ",
-        " Fuori "),
+        " Fuori ",
+		'tuttitipi' => 'Tutti i tipi',
+		'tuttianni' => 'Tutti gli anni',
+		'tutticlienti' => 'Tutti i clienti'
+		),
     "admin_docacq.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',
         array("DDR" => "D.d.T. di Reso a Fornitore", "DDL" => "D.d.T. c/lavorazione", "AFA" => "Fattura d'Acquisto", "ADT" => "D.d.T. d'Acquisto", "AFC" => "Nota Credito da Fornitore", "AOR" => "Ordine a Fornitore", "APR" => "Richiesta di Preventivo a Fornitore"),
