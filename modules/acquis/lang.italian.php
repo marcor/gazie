@@ -115,7 +115,11 @@ $strScript = array("admin_fornit.php" =>
         'title' => 'Preventivi e ordini',
         'mail_alert0' => 'Invio documento con email',
         'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
-        'mail_alert2' => 'con allegato il seguente documento:'
+        'mail_alert2' => 'con allegato il seguente documento:',
+		'title2' => 'Preventivi e ordini a fornitori',
+		'tuttitipi' => 'Tutti i tipi',
+		'tuttianni' => 'Tutti gli anni',
+		'tuttiforni' => 'Tutti i fornitori'
     ),
     "report_debiti.php" =>
     array('title' => 'Lista dei debiti verso i fornitori',
@@ -150,7 +154,7 @@ $strScript = array("admin_fornit.php" =>
         " Fuori ",
 		'tuttitipi' => 'Tutti i tipi',
 		'tuttianni' => 'Tutti gli anni',
-		'tutticlienti' => 'Tutti i clienti'
+		'tutticlienti' => 'Tutti i fornitori'
 		),
     "admin_docacq.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',
@@ -370,6 +374,12 @@ $strScript = array("admin_fornit.php" =>
         "Non &egrave; stato trovato nulla!",
         "Data periodo inizio",
         "Data periodo fine"
+    ),
+	"report_ddtacq.php" =>
+    array('title' => 'Lista DDT di acquisto',
+        'tuttitipi' => 'Tutti i tipi',
+		'tuttianni' => 'Tutti gli anni',
+		'tuttiforni' => 'Tutti i fornitori'
     ),
     "admin_docven.php" =>
     array('none',
