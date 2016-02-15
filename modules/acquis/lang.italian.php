@@ -381,6 +381,13 @@ $strScript = array("admin_fornit.php" =>
 		'tuttianni' => 'Tutti gli anni',
 		'tuttiforni' => 'Tutti i fornitori'
     ),
+	"report_fornit.php" =>
+    array('title' => 'Lista fornitori',
+        'tuttitipi' => 'Tutti i tipi',
+		'tuttianni' => 'Tutti gli anni',
+		'tuttiforni' => 'Tutti i fornitori',
+		'tuttecitta' => 'Tutte le città'
+    ),
     "admin_docven.php" =>
     array('none',
         'doc_name' => array("DDT" => "D.d.T. di Vendita",

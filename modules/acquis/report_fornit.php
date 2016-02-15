@@ -32,21 +32,46 @@ $masfor = $admin_aziend['masfor']."000000";
 $fornit = $admin_aziend['masfor'];
 require("../../library/include/header.php");
 $script_transl=HeadMain();
+$where = "codice BETWEEN ".$fornit."000000 AND ".$fornit."999999 and codice > ".$masfor;
+$all=$where;
 
+if ( isset($_GET['codice'])) {
+	$codice = $_GET['codice'];
+	$where .= " and codice like '$fornit%$codice%'";
+} else $codice = "";
 if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
-} else {
-   $auxil = "";
-   $where = "codice like '$fornit%' and codice > '$masfor'";
-}
-
+   $where .= " and ragso1 like '%$auxil%'";
+} else $auxil = "";
+if (isset($_GET['flt_tipo']) && $_GET['flt_tipo']!='All') {
+   $tipo = $_GET['flt_tipo'];
+   $where .= " and sexper = '$tipo'";
+} else $tipo = "";
+if (isset($_GET['flt_citta']) && $_GET['flt_citta']!='All') {
+   $citta = $_GET['flt_citta'];
+   $where .= " and citspe = '$citta'";
+} else $citta = "All";
+if (isset($_GET['telefono'])) {
+   $telefono = $_GET['telefono'];
+   $where .= " and telefo like '%$telefono%'";
+} else $telefono = "";
+if (isset($_GET['fiscali'])) {
+   $fiscali = $_GET['fiscali'];
+   $where .= " and codfis like '%$fiscali%' and pariva like '%$fiscali%'";
+} else $fiscali = "";
 if (isset($_GET['all'])) {
+	$codice="";
+	$tipo="";
+	$citta="";
+	$telefono="";
+	$fiscali="";
+	$where=$all;
    $auxil = "&all=yes";
-   $where = "codice like '$fornit%' and codice > '$masfor'";
+   //$where = "codice like '$fornit%' and codice > '$masfor'";
    $passo = 100000;
 } else {
    if (isset($_GET['auxil'])) {
-      $where = "codice like '$fornit%' and codice > '$masfor' and ragso1 like '".addslashes($auxil)."%'";
+      //$where = "codice like '$fornit%' and codice > '$masfor' and ragso1 like '".addslashes($auxil)."%'";
    }
 }
 
@@ -58,18 +83,47 @@ if (!isset($_GET['field'])) {
 <div align="center" class="FacetFormHeaderFont">Fornitori</div>
 <form method="GET">
 <table class="Tlarge">
-<tr>
-<td></td>
-<td class="FacetFieldCaptionTD">
-<input placeholder="Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
-</td>
-<td>
-<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
-</td>
-<td colspan="3">
-<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
-</td>
-</tr>
+	<tr>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" placeholder="Cerca cod." class="input-sm form-control" name="codice" value="<?php if (isset($codice)) print $codice; ?>" tabindex="1" class="FacetInput">
+		</td>
+		<td class="FacetFieldCaptionTD">
+			<input placeholder="Ragione Sociale" class="input-sm form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" tabindex="1" class="FacetInput">
+		</td>
+		<td class="FacetFieldCaptionTD">
+			<select class="form-control input-sm" name="flt_tipo" onchange="this.form.submit()">
+				<option value="All" <?php echo ($tipo=="All") ? "selected" : "";?>><?php echo $script_transl['tuttitipi']; ?></option>
+				<option value="G" <?php echo ($tipo=="G") ? "selected" : "";?>>Giuridica</option>
+				<option value="M" <?php echo ($tipo=="M") ? "selected" : "";?>>Maschio</option>
+				<option value="F" <?php echo ($tipo=="F") ? "selected" : "";?>>Femmina</option>
+			</select>
+		</td>
+		<td class="FacetFieldCaptionTD">
+			<select class="form-control input-sm" name="flt_citta" onchange="this.form.submit()">
+				<option value="All" <?php echo ($citta=="All") ? "selected" : "";?>><?php echo $script_transl['tuttecitta']; ?></option>
+				<?php $res = gaz_dbi_dyn_query("distinct citspe", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all, $orderby);
+				while ( $val = gaz_dbi_fetch_array($res) ) {
+					if ( $citta == $val["citspe"] ) $selected = "selected";
+					else $selected = "";
+					echo "<option value=\"".$val["citspe"]."\" ".$selected.">".$val["citspe"]."</option>";
+				} ?>
+			</select>
+		</td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" placeholder="Cerca tel." class="input-sm form-control" name="telefono" value="<?php if (isset($telefono)) print $telefono; ?>" tabindex="1" class="FacetInput">
+		</td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" placeholder="Cerca fisc." class="input-sm form-control" name="fiscali" value="<?php if (isset($fiscali)) print $fiscali; ?>" tabindex="1" class="FacetInput">
+		</td>
+		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD">
+			<input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+		</td>
+		<td class="FacetFieldCaptionTD" colspan="1">
+			<input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+		</td>
+	</tr>
 <tr>
 <?php
 $result = gaz_dbi_dyn_query ('*', $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby, $limit, $passo);
