@@ -762,10 +762,14 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                 unset($new_paymov[$j]['id']);
                             }
                             if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
-                                $new_paymov[$j]['id_tesdoc_ref'] = intval($_POST['date_reg_Y']) .
-                                        intval($_POST['registroiva']) .
-                                        intval($_POST['sezioneiva']) .
-                                        str_pad(intval($_POST['protocollo']), 9, 0, STR_PAD_LEFT);
+                                if ($v['id_tesdoc_ref']>10000) {  // se ho messo manualmente il riferimento ad una partita
+                                    $new_paymov[$j]['id_tesdoc_ref'] = $v['id_tesdoc_ref'];
+                                } else {
+                                    $new_paymov[$j]['id_tesdoc_ref'] = intval($_POST['date_reg_Y']) .
+                                            intval($_POST['registroiva']) .
+                                            intval($_POST['sezioneiva']) .
+                                            str_pad(intval($_POST['protocollo']), 9, 0, STR_PAD_LEFT);
+                                }
                                 $new_paymov[$j]['id_rigmoc_doc'] = $last_id_rig;
                                 if ($v['amount'] < 0.01) {  // se non ho messo manualmente le scadenze lo faccio in automatico
                                     require_once("../../library/include/expiry_calc.php");
@@ -1135,63 +1139,63 @@ if ($toDo == 'insert') {
 
     <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
 
-    <?php
-    if (!empty($msg)) {
-        echo '<tr><td colspan="6" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
-    }
-    echo "<tr>\n";
-    echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</td><td colspan=\"5\" class=\"FacetDataTD\">\n";
-    $gForm->CalendarPopup('date_reg', $form['date_reg_D'], $form['date_reg_M'], $form['date_reg_Y'], 'FacetSelect', 1);
-    echo "</td>\n";
-    echo "</tr>\n";
-    ?>
+<?php
+if (!empty($msg)) {
+    echo '<tr><td colspan="6" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
+}
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</td><td colspan=\"5\" class=\"FacetDataTD\">\n";
+$gForm->CalendarPopup('date_reg', $form['date_reg_D'], $form['date_reg_M'], $form['date_reg_Y'], 'FacetSelect', 1);
+echo "</td>\n";
+echo "</tr>\n";
+?>
         <tr>
             <td class="FacetFieldCaptionTD"><?php echo $script_transl['caucon']; ?></td>
             <td  class="FacetDataTD" colspan="5">
-        <?php
-        echo '<select name="codcausale" class="FacetSelect" ';
-        if (empty($form["codcausale"])) {
-            echo ' tabindex="14"';
-            $tabsmt = ' tabindex="15"';
-        } else {
-            $tabsmt = '';
-        }
-        echo '><option value="">Libera</option>';
-        $result = gaz_dbi_dyn_query("*", $gTables['caucon'], 1, "regiva DESC, operat DESC, descri ASC");
-        while ($row = gaz_dbi_fetch_array($result)) {
-            $selected = "";
-            if ($form["codcausale"] == $row['codice']) {
-                $selected = " selected ";
-            }
-            echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
-        }
-        /*
-          echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['v_caucon']."!\" $tabsmt ></td></tr>\n"; */
+<?php
+echo '<select name="codcausale" class="FacetSelect" ';
+if (empty($form["codcausale"])) {
+    echo ' tabindex="14"';
+    $tabsmt = ' tabindex="15"';
+} else {
+    $tabsmt = '';
+}
+echo '><option value="">Libera</option>';
+$result = gaz_dbi_dyn_query("*", $gTables['caucon'], 1, "regiva DESC, operat DESC, descri ASC");
+while ($row = gaz_dbi_fetch_array($result)) {
+    $selected = "";
+    if ($form["codcausale"] == $row['codice']) {
+        $selected = " selected ";
+    }
+    echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
+}
+/*
+  echo "</select> &nbsp;<input type=\"image\" name=\"inscau\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['v_caucon']."!\" $tabsmt ></td></tr>\n"; */
 
 
-        /** ENRICO FEDELE */
-        /* glyph-icon */
-        echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['v_caucon'] . '!" ' . $tabsmt . '><i class="glyphicon glyphicon-ok"></i></button>
+/** ENRICO FEDELE */
+/* glyph-icon */
+echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['v_caucon'] . '!" ' . $tabsmt . '><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	   </tr>';
-        /** ENRICO FEDELE */
-        echo "<tr>\n";
-        echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['descri'] . "</td>\n";
-        echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><input type=\"text\" name=\"descrizion\" value=\"" . $form['descrizion'] . "\" maxlength=\"100\" size=\"50\" /></td>\n";
-        echo "</td>\n";
-        echo "</tr>\n";
-        echo "<tr>\n";
-        echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['insdoc'] . "</td><td class=\"FacetDataTD\" >\n";
-        $gForm->variousSelect('inserimdoc', $script_transl['insdoc_value'], $form['inserimdoc'], 'FacetSelect', false, 'inserimdoc');
-        echo "\t </td>\n";
-        echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['regiva'] . "</td><td class=\"FacetDataTD\">\n";
-        $gForm->variousSelect('registroiva', $script_transl['regiva_value'], $form['registroiva'], 'FacetSelect', false, 'registroiva');
-        echo "\t </td>\n";
-        echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['operat'] . "</td><td class=\"FacetDataTD\">\n";
-        $gForm->variousSelect('operatore', $script_transl['operat_value'], $form['operatore'], 'FacetSelect', false, 'operatore');
-        echo "\t </td>\n";
-        echo "</tr>\n";
-        ?>
+/** ENRICO FEDELE */
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['descri'] . "</td>\n";
+echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><input type=\"text\" name=\"descrizion\" value=\"" . $form['descrizion'] . "\" maxlength=\"100\" size=\"50\" /></td>\n";
+echo "</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['insdoc'] . "</td><td class=\"FacetDataTD\" >\n";
+$gForm->variousSelect('inserimdoc', $script_transl['insdoc_value'], $form['inserimdoc'], 'FacetSelect', false, 'inserimdoc');
+echo "\t </td>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['regiva'] . "</td><td class=\"FacetDataTD\">\n";
+$gForm->variousSelect('registroiva', $script_transl['regiva_value'], $form['registroiva'], 'FacetSelect', false, 'registroiva');
+echo "\t </td>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['operat'] . "</td><td class=\"FacetDataTD\">\n";
+$gForm->variousSelect('operatore', $script_transl['operat_value'], $form['operatore'], 'FacetSelect', false, 'operatore');
+echo "\t </td>\n";
+echo "</tr>\n";
+?>
     </table>
                 <?php
 //inserimento dati documenti
@@ -1370,7 +1374,7 @@ if ($toDo == 'insert') {
                     $gForm->lockSubtoMaster($form["mastro_rc"][$i], 'conto_rc' . $i);
                     $gForm->sub_Account('conto_rc' . $i, $form['conto_rc' . $i], $form['search']['conto_rc' . $i], $form['hidden_req'], $script_transl['mesg']);
                     if (!preg_match("/^id_([0-9]+)$/", $form['conto_rc' . $i], $match)) { // non è un partner da inserire sul piano dei conti
-                        echo '<a class="btn btn-xs btn-default" href="select_partit.php?id='.$form['conto_rc' . $i].'" title="'.$script_transl['visacc'].'" target="_new">
+                        echo '<a class="btn btn-xs btn-default" href="select_partit.php?id=' . $form['conto_rc' . $i] . '" title="' . $script_transl['visacc'] . '" target="_new">
 								<i class="glyphicon glyphicon-eye-open"></i>
 							  </a>';
                     }

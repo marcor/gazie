@@ -109,7 +109,7 @@ function dialogSchedule(paymov) {
     
     function updateOpenFormRiga(id_sub, id, ex, am) {
 		$( "#pm_form_container_"+ nrow + " tbody" ).append( '<tr id="pm_form_'+id_sub+'">'+
-			'<td>' + id +'</td>'+
+			'<td><button id="unlink_' + id_sub + '"><img id="image_unlink_' + id_sub + '" src="../../library/images/link_break.png" width="12" /></button> ' + id +'</td>'+
 			'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_expiry" type="text" name="paymov[' + nrow + '][' + id_sub + '][expiry]" value="' + ex + '" id="post_' + nrow + '_' + id_sub + '_expiry" /></td>' +
 			'<td class="ui-widget-right ui-widget-content " ><input id="form_' + nrow + '_' + id_sub + '_amount" style="text-align:right;" type="text" name="paymov[' + nrow + '][' + id_sub + '][amount]" value="' + am + '" id="post_' + nrow + '_' + id_sub + '_amount" /></td>' +
 			'<td class="ui-widget-right ui-widget-content " ><button id="btn_' + id_sub + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-remove"></i></button></td>' +
@@ -135,6 +135,11 @@ function dialogSchedule(paymov) {
 			$("#pm_form_"+id_sub ).remove();
 			$("#pm_post_"+id_sub ).remove();
 			updateOpenForm();
+		});
+		$( "#unlink_"+id_sub ).click(function() { 
+			$('#post_' + nrow + '_' + id_sub + '_id_tesdoc_ref').val('');
+			updateOpenForm();
+			$('#image_unlink_' + id_sub).remove();
 		});
 	}
 
@@ -209,6 +214,7 @@ function dialogSchedule(paymov) {
 							docref += value.seziva*1000000000+parseInt(value.protoc);
 							updateSchedule(docref);
 							updateCloseForm();
+							updateOpenForm();
 						});
 						
 						j++;
@@ -325,7 +331,7 @@ function dialogSchedule(paymov) {
 		  	updateOpenFormOnStart(); 
 		  	updateOpenForm();
 		  	getSamePaymov(tesdoc_ref,id_rig,false);
-		  	getOtherMov(clfoco,tesdoc_ref,false);
+		  	getOtherMov(clfoco,tesdoc_ref,true);
 		},
       buttons: {
 			"Conferma":function(){	$(this).dialog( "close" );}
