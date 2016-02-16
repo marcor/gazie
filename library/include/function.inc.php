@@ -1837,7 +1837,7 @@ class Schedule {
                  . "LEFT JOIN " . $gTables['clfoco'] . " clfoco ON clfoco.codice = rigmoc.codcon "
                  . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ";
       } else {
-         $table = $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON clfoco.codice = rigmoc.codcon "
+         $table = $gTables['clfoco'] . " clfoco INNER JOIN " . $gTables['rigmoc'] . " rigmoc ON clfoco.codice = rigmoc.codcon "
                  . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON rigmoc.id_tes = tesmov.id_tes "
                  . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra "
                  . "LEFT JOIN " . $gTables['paymov'] . " paymov ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )";
