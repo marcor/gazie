@@ -1894,18 +1894,25 @@ class Schedule {
       $this->Status = gaz_dbi_fetch_array($rs);
    }
 
-   function getDocumentData($id_tesdoc_ref) {
+   function getDocumentData($id_tesdoc_ref, $clfoco = null) {
       /*
         restituisce i dati relativi al documento che ha aperto la partita
        */
+   	  global $gTables;
+      
       if (!is_numeric($id_tesdoc_ref)) {
          $id_tesdoc_ref = "'" . $id_tesdoc_ref . "'";
       }
-      global $gTables;
+      
+      $where_clfoco = "";
+      if (isset($clfoco)) {
+      	$where_clfoco = " AND " . $gTables['tesmov'] . ".clfoco = $clfoco ";
+      }
+
       $sqlquery = "SELECT " . $gTables['tesmov'] . ".* 
             FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig
             LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
-            WHERE " . $gTables['paymov'] . ".id_rigmoc_doc > 0 AND " . $gTables['paymov'] . ".id_tesdoc_ref = $id_tesdoc_ref ORDER BY datreg ASC";
+            WHERE " . $gTables['paymov'] . ".id_rigmoc_doc > 0 AND " . $gTables['paymov'] . ".id_tesdoc_ref = " . $id_tesdoc_ref . $where_clfoco . " ORDER BY datreg ASC";
       $rs = gaz_dbi_query($sqlquery);
       return gaz_dbi_fetch_array($rs);
    }

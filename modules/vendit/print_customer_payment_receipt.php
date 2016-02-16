@@ -54,7 +54,7 @@ function getData($id_rig)
     $i=1;
     while ($r = gaz_dbi_fetch_array($rs)) {
         $a[$i] = $r;
-        $a[$i]['t'] = $paymov->getDocumentData($r['id_tesdoc_ref']);
+        $a[$i]['t'] = $paymov->getDocumentData($r['id_tesdoc_ref'], $r['clfoco']);
         $i++;
     }
     return array('d'=>$a,'partner'=>$anagrafica->getPartner($a[1]['clfoco']));
