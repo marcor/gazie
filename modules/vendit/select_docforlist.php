@@ -190,6 +190,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['numfin'] = $last['numero'];
    }
    $form['id_agente'] = 0;
+   $form['caumag'] = 0;
 } else { // le richieste successive
    $form['ritorno'] = $_POST['ritorno'];
    $form['seziva'] = intval($_POST['seziva']);
@@ -207,6 +208,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $form['profin'] = intval($_POST['profin']);
    $form['numfin'] = intval($_POST['numfin']);
    $form['id_agente'] = intval($_POST['id_agente']);
+   $form['caumag'] = $_POST['caumag'];
 }
 
 
@@ -309,7 +311,20 @@ echo "<input type='hidden' value='$serialized_tipdoc' name='serialized_tipdoc'>"
 // . "<option value=\"5\">Protocollo</option>\n"
 // . "<option value=\"6\">Agente</option>\n"
 // . "</select></td></tr>\n";
-
+echo "<tr>";
+echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">" . $script_transl['caumag'] . "</td><td class=\"FacetDataTD\">\n";
+echo "<select name=\"caumag\" class=\"FacetSelect\" width=\"20\">\n";
+$result = gaz_dbi_dyn_query("*", $gTables['caumag'], "", "codice asc, descri asc");
+   echo "<option value=\"0\">0-Tutte</option>\n";
+while ($row = gaz_dbi_fetch_array($result)) {
+   $selected = "";
+   if ($form["caumag"] == $row['codice']) {
+      $selected = " selected ";
+   }
+   echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . "-" . substr($row['descri'], 0, 20) . "</option>\n";
+}
+echo "</select></td>\n";
+echo "</tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]</td>";
 echo "<td class=\"FacetDataTD\">";
 $messaggio = '';

@@ -171,6 +171,7 @@ class DocContabVars {
       $this->taxstamp = 0;
       $this->virtual_taxstamp = 0;
       $this->tottraspo = 0;
+      $this->totspeban = 0;
    }
 
    function open_drawer() { // apre il cassetto dell'eventuale registratore di cassa
@@ -223,6 +224,7 @@ class DocContabVars {
                  ON rows.codvat=vat.codice';
       $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva', $from, "rows.id_tes = " . $this->testat, "id_tes DESC, id_rig");
       $this->tottraspo += $this->trasporto;
+      $this->totspeban += $this->tesdoc['speban'] * $this->pagame['numrat'];
       if ($this->taxstamp < 0.01 && $this->tesdoc['taxstamp'] >= 0.01) {
          $this->taxstamp = $this->tesdoc['taxstamp'];
       }
@@ -268,7 +270,10 @@ class DocContabVars {
       $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
       $this->impbol = 0.00;
       $this->totriport = $this->riporto;
-      $this->speseincasso = $this->tesdoc['speban'] * $this->pagame['numrat'];
+//      $speban=$this->tesdoc['speban'];
+//      $numrat=$this->pagame['numrat'];
+//      $this->speseincasso = $speban * $numrat;
+      $this->speseincasso = $this->totspeban;
       $this->cast = array();
       if (!isset($this->castel)) {
          $this->castel = array();
@@ -278,7 +283,7 @@ class DocContabVars {
       }
       $this->totimpmer = $this->totimp_body;
       $this->totimp_body = 0;
-      $somma_spese = $this->tottraspo + $this->speseincasso + $this->tesdoc['spevar'];
+      $somma_spese = $this->tottraspo + $this->totspeban + $this->tesdoc['spevar'];
       $calc->add_value_to_VAT_castle($this->body_castle, $somma_spese, $this->tesdoc['expense_vat']);
       if ($this->tesdoc['stamp'] > 0) {
          $calc->payment_taxstamp($calc->total_imp + $this->totriport + $calc->total_vat - $calc->total_isp - $this->tot_ritenute + $this->taxstamp, $this->tesdoc['stamp'], $this->tesdoc['round_stamp'] * $this->pagame['numrat']);

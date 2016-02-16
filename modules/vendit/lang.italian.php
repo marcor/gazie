@@ -285,6 +285,7 @@ $strScript = array("admin_client.php" =>
         'id_agente' => 'Agente',
         'tipoSelezione' => 'Seleziona usando',
         'tipoStampa' => 'Stampa',
+        'caumag' => 'Causale magazzino',
     ),
     "admin_broven.php" =>
     array(array("VPR" => "Preventivo a Cliente", "VOR" => "Ordine da Cliente", "VOW" => "Ordine dal Web"),

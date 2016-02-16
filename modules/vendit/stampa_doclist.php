@@ -65,10 +65,17 @@ if (!isset($_GET['ag']) or ( empty($_GET['ag']))) {   // selezione agente
 } else {
    $agente = ' AND tesdoc.id_agente = ' . intval($_GET['ag']);
 }
+if (!isset($_GET['cm']) or ( empty($_GET['cm']))) {   // selezione agente
+   $caumag = '';
+} else {
+   $caumag = ' AND tesdoc.caumag = ' . intval($_GET['cm']);
+}
 $titolo = $_GET['ti'];
 $tipdoc = $_GET['td'];
 $campoOrdinamento = "numfat";
 $campoData = "datfat";
+$campiCosto = "tesdoc.traspo, tesdoc.speban, tesdoc.spevar, tesdoc.expense_vat, ";
+
 //recupero i documenti da stampare
 switch ($tipdoc) {
    case 1:  //ddt
@@ -82,6 +89,11 @@ switch ($tipdoc) {
       break;
    case 2:  //fattura differita
       $where = "tipdoc = 'FAD'";
+      $campiCosto = "(select sum(tesdocTmp.traspo) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as traspo , "
+              . "(select sum(tesdocTmp.speban) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as speban , "
+              . "(select sum(tesdocTmp.spevar) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as spevar , "
+              . "(select max(tesdocTmp.expense_vat) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as expense_vat , ";
+
       break;
    case 3:  //fattura immediata accompagnatoria
       $where = "tipdoc = 'FAI' AND template = 'FatturaImmediata'";
@@ -115,7 +127,8 @@ $where = $where . " AND seziva = "
         . " AND "
         . intval($_GET['pf'])
         . $cliente
-        . $agente;
+        . $agente
+        . $caumag;
 $what = "tesdoc.id_agente, " .
         "tesdoc.id_tes, " .
         "tesdoc.datfat, " .
@@ -133,6 +146,7 @@ $what = "tesdoc.id_agente, " .
         "anagra.prospe, " .
         "rigdoc.id_tes, " .
         "pagame.descri as pagame, " .
+        "pagame.numrat, " .
         "caumag.descri as caumag, " .
         //        $gTables['rigdoc'] . ".id_rig, " .
         //        $gTables['rigdoc'] . ".tiprig, " .
@@ -144,10 +158,11 @@ $what = "tesdoc.id_agente, " .
         //        $gTables['rigdoc'] . ".sconto, " .
         "SUM(rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100)*(1-tesdoc.sconto/100)) as imponibile, " .
         "SUM(rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100)*(1-tesdoc.sconto/100)*rigdoc.pervat/100) as iva," .
-        "tesdoc.traspo, " .
-        "tesdoc.speban, " .
-        "tesdoc.spevar, " .
-        "tesdoc.expense_vat, " .
+//        "tesdoc.traspo, " .
+//        "tesdoc.speban, " .
+//        "tesdoc.spevar, " .
+//        "tesdoc.expense_vat, " .
+        $campiCosto .
         "CONVERT($campoOrdinamento,UNSIGNED INTEGER) AS campoOrdinamento";
 $table = $gTables['tesdoc'] . " tesdoc "
         . "LEFT JOIN " . $gTables['rigdoc'] . " rigdoc ON tesdoc.id_tes = rigdoc.id_tes "
@@ -185,7 +200,7 @@ $tot_iva = 0.00;
 $tot_spese = 0.00;
 $tot_importo = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
-   $spese = $row['traspo'] + $row['speban'] + $row['spevar'];
+   $spese = $row['traspo'] + $row['speban'] * $row['numrat'] + $row['spevar'];
    $alivaSpese = gaz_dbi_get_row($gTables['aliiva'], "codice", $row['expense_vat']);
    $row['iva'] = $row['iva'] + ($spese * $alivaSpese['aliquo'] / 100);
    if ($row['tipdoc'] == 'FNC') {   // nota di credito
@@ -213,10 +228,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
 }
 $pdf->SetFont('helvetica', 'B', 8);
 $pdf->Cell(138, 4, 'Totali: ', 1, 0, 'R');
-$pdf->Cell(16, 4, gaz_format_number($tot_imponibile), 1, 0, 'R');
-$pdf->Cell(12, 4, gaz_format_number($tot_iva), 1, 0, 'R');
-$pdf->Cell(14, 4, gaz_format_number($tot_spese), 1, 0, 'R');
-$pdf->Cell(16, 4, gaz_format_number($tot_imponibile + $tot_iva + $tot_spese), 1, 0, 'R');
+$pdf->Cell(16, 4, gaz_format_number($tot_imponibile), 1, 0, 'R', false, '', 1);
+$pdf->Cell(12, 4, gaz_format_number($tot_spese), 1, 0, 'R', false, '', 1);
+$pdf->Cell(14, 4, gaz_format_number($tot_iva), 1, 0, 'R', false, '', 1);
+$pdf->Cell(16, 4, gaz_format_number($tot_imponibile + $tot_iva + $tot_spese), 1, 0, 'R', false, '', 1);
 //$pdf->SetFont('helvetica', '', 8);
 //$pdf->setRiporti('');
 $pdf->Output();
