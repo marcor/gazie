@@ -765,7 +765,12 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                 if ($v['id_tesdoc_ref']>10000) {  // se ho messo manualmente il riferimento ad una partita
                                     $new_paymov[$j]['id_tesdoc_ref'] = $v['id_tesdoc_ref'];
                                 } else {
-                                    $new_paymov[$j]['id_tesdoc_ref'] = intval($_POST['date_reg_Y']) .
+                                    if ($form['registroiva'] == 0 ) {
+                                       $y_paymov = $form['date_doc_Y'];
+                                    } else {
+                                       $y_paymov = $form['date_reg_Y'];
+                                    }
+                                    $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov .
                                             intval($_POST['registroiva']) .
                                             intval($_POST['sezioneiva']) .
                                             str_pad(intval($_POST['protocollo']), 9, 0, STR_PAD_LEFT);
