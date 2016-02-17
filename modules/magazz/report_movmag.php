@@ -29,76 +29,64 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("lang.".$admin_aziend['lang'].".php");
 
-if (isset($_GET['auxil'])) {
-   $auxil = $_GET['auxil'];
-}
 if (isset($_GET['all'])) {
-   $auxil = "&all=yes";
-   $where = "caumag LIKE '%'";
-   $passo = 100000;
+	$where = "";
+	$passo = 100000;
 } else {
-   if (isset($_GET['auxil'])) {
-      $where = "caumag LIKE '".$_GET['auxil']."%'";
-   }
-}
- if (isset($_GET['mov']))
-{
-  if($_GET['mov']>0) {
-  $numero=$_GET['mov'];
-  $where = $gTables['movmag'].".id_mov =".$numero;
-  $passo=1;
-  }
-  else
-  {
-  $numero='';
-  }
- }
- 
- /** ENRICO FEDELE */ 
- /* Leggo i dati inviati con il form */
-if (isset($_GET['documento'])) {
-	$documento = $_GET['documento'];
-   if (isset($_GET['auxil'])) {
-      $where .= " AND desdoc LIKE '%".$documento."%'";
-   } else {
-   		$where = "desdoc LIKE '%".$documento."%'";
-   }
-}
-/** ENRICO FEDELE */
+	$implode = array();
+	if (isset($_GET['movimento']) && !empty($_GET['movimento'])) {
+		$movimento = $_GET['movimento'];
+		$implode[] = $gTables['movmag'].".id_mov = " . $_GET['movimento'];
+	}
+	
+	if (isset($_GET['causale']) && !empty($_GET['causale'])) {
+		$causale = $_GET['causale'];
+		$implode[] = "caumag LIKE '" . $_GET['causale'] . "%'";
+	}
 
-if (!isset($_GET['flag_order'])) {
-   $orderby = " id_mov desc";
+	if (isset($_GET['documento']) && !empty($_GET['documento'])) {
+		$documento = $_GET['documento'];
+		$implode[] = "desdoc LIKE '%".$_GET['documento']."%'";
+	}
+	
+	if (isset($_GET['articolo']) && !empty($_GET['articolo'])) {
+		$articolo = $_GET['articolo'];
+		$implode[] = "artico LIKE '%".$_GET['articolo']."%'";
+	}
+	
+	$where = implode(" AND ", $implode);
 }
 
-if (!isset($_GET['auxil'])) {
-   $auxil = "";
-   $where = "caumag LIKE '$auxil%'";
+if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
+   $orderby = "id_mov desc";
+   $field = 'id_mov';
+   $flag_order = 'DESC';
+   $flagorpost = 'ASC';
 }
+
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl[3].$script_transl[0]; ?></div>
 <form method="GET">
 <table class="Tlarge">
-<tr>
-<td class="FacetFieldCaptionTD">
-	  <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"
-	  value="<?php if (isset($numero)) print $numero; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
-</td>
-
-    <!-- ENRICO FEDELE - Inizio modifica form -->
-<td class="FacetFieldCaptionTD"></td>
-	<td class="FacetFieldCaptionTD">
-		<input type="text" name="auxil" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-xs form-control" value="<?php if ($auxil != "&all=yes"){echo $auxil;}?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
-	</td>
-	<td class="FacetFieldCaptionTD">
-		<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-xs form-control" value="<?php if (isset($documento)) print $documento; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
-	</td>
-    <!-- ENRICO FEDELE - Fine modifica form -->
-
-<td class="FacetFieldCaptionTD">
-<input type="text" name="auxil" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-xs form-control"
-value="<?php if ($auxil != "&all=yes"){echo $auxil;}?>" maxlength="6" size="3" tabindex="1" class="FacetInput"></td>
-<td><input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;"></td>
-<td><input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;"></td></tr>
+	<tr>
+		<td class="FacetFieldCaptionTD">
+		  <input type="text" name="movimento" placeholder="Movimento" class="input-xs form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
+		</td>
+		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-xs form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+		</td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-xs form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+		</td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-xs form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+		</td>
+		<td colspan="3">
+			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
+			<input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
+		</td>
+	</tr>
 
 <?php
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
