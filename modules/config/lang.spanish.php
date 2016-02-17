@@ -115,6 +115,8 @@ $strScript = array("admin_aziend.php" =>
         'cotrat' => 'Portfolio cuenta draft',
         'cocamb' => 'Portfolio cuenta bills',
         'c_ritenute' => 'Cuenta de retenci&oacute;n',
+        'payroll_tax' => 'Payroll tax percent',
+        'c_payroll_tax' => 'Payroll tax account',
         'ritenuta' => '% Retencion',
         'upgrie' => 'Ultima pagina de registro resumen de IVA ',
         'upggio' => 'Ultima pagina de diario',

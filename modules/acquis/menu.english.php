@@ -32,7 +32,8 @@ $transl['acquis'] = array('name' => "Purchases",
         5 => array("Suppliers management", "Suppliers"),
         6 => array("View and print debit report", "Debit report"),
         7 => array("Print fuel note", "Fuel note"),
-        8 => array("Scadenzario a partite aperte", "Scadenzario")
+        8 => array("Scadenzario a partite aperte", "Scadenzario"),
+        9 => array("Agenti di Fornitori", "Agenti")
     ),
     'm3' => array(1 => array("Ask for a quote to supplier", "Ask a quote"),
         2 => array("Order to supplier", "Order to supplier"),
@@ -46,7 +47,9 @@ $transl['acquis'] = array('name' => "Purchases",
         10 => array("Ricevuto DdT da fornitore", "New Delivery notes"),
         11 => array("Pagamento di un debito vantato da un fornitore", "Pagamento debito verso fornitore"),
         12 => array("Report partite aperte", "Report partite aperte"),
-        13 => array("Selezione e stampa stato clienti", "Stato delle scadenze")
+        13 => array("Selezione e stampa stato clienti", "Stato delle scadenze"),
+        14 => array("Inserimento nuovo agente di fornitori", "Nuovo agente"),
+        15 => array("Stampa lista clienti", "Lista clienti"),
     )
 );
 ?>

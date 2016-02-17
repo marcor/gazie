@@ -34,7 +34,7 @@ $transl['magazz'] = array('name' => "Warehouse",
                                          8 =>array("Stock statistics","Statistics"),
                                          9 =>array("Statistic groups manage","Statistic groups")
                                          ),
-                          'm3' => array( 1 =>array("Insert new item","New item"),
+                          'm3' => array( 1 =>array("Insert new item","New good/service"),
                                          2 =>array("Insert new item group","New item group"),
                                          3 =>array("Insert new warehouse movement","New warehouse movement"),
                                          4 =>array("Print item report","Print item report"),

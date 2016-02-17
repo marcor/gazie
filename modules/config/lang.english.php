@@ -111,6 +111,8 @@ $strScript = array("admin_aziend.php" =>
         'cotrat' => 'Portfolio draft account',
         'cocamb' => 'Portfolio bills account',
         'c_ritenute' => 'Withholding account',
+        'payroll_tax' => 'Payroll tax percent',
+        'c_payroll_tax' => 'Payroll tax account',
         'ritenuta' => '% Withholding',
         'upgrie' => 'Last page of VAT summary reg.',
         'upggio' => 'Last page of the journal',

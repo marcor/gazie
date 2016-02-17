@@ -112,6 +112,8 @@ $strScript = array("admin_aziend.php" =>
         'cotrat' => 'Conto portafoglio Tratte',
         'cocamb' => 'Conto portafoglio Cambiali',
         'c_ritenute' => 'Conto ritenute subite',
+        'payroll_tax' => 'Percentuale Cassa Previdenziale',
+        'c_payroll_tax' => 'Conto rivalsa Cassa Previdenziale',
         'ritenuta' => '% Ritenuta',
         'upgrie' => 'Ultima pagina riepilogativo IVA',
         'upggio' => 'Ultima pagina Libro Giornale',
