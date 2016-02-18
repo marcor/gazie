@@ -267,7 +267,7 @@ $strScript = array("admin_fornit.php" =>
             'Scadenza' => '',
             'Opciones' => ''
         ),
-        'status_value' => array(0 => 'Chiusa', 1 => 'Aperta'),
+        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
         'total_open' => 'Total de partidas abiertas'
     ),
     "delete_schedule.php" =>

@@ -881,7 +881,7 @@ $strScript = array("admin_client.php" =>
             'Scadenza' => '', 'Opzioni' => ''
         ),
         /** ENRICO FEDELE */
-        'status_value' => array(0 => 'Chiusa', 1 => 'Aperta'),
+        'status_value' => array(0 => 'CLOSE', 1 => 'OPEN', 2 => 'RISK', 3 => 'EXPIRED', 9 => 'ANTICIPO'),
         'total_open' => 'Todal partidas abiertas'
     ),
     "delete_schedule.php" =>

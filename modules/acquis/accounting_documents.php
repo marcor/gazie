@@ -201,7 +201,7 @@ function computeTot($data,$carry,$stamp_percent=false,$round=5)
           $vat += round($v['imponi']*$v['periva'])/ 100;
    }
    $tot=$vat+$tax;
-   if ($stamp_percent) { // è stata passata la percentuale
+   if ($stamp_percent) { // ï¿½ stata passata la percentuale
           $v_stamp = new Compute;
           $sta = $v_stamp->payment_taxstamp($tot+$carry,$stamp_percent,$round);
           $tot+=$v_stamp->pay_taxstamp;
@@ -318,7 +318,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       rigmoiInsert($vv);
                   }
                   //inserisco i righi contabili nel db
-                  if ($v['tes']['tipdoc']=='VCO') {  // se è uno scontrino cassa anzichè scontrino
+                  if ($v['tes']['tipdoc']=='VCO') {  // se ï¿½ uno scontrino cassa anzichï¿½ scontrino
                       $v['tes']['clfoco']=$admin_aziend['cassa_'];
                   }
                   rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$v['tes']['clfoco'],'import'=>($tot['tot']-$v['rit'])));
@@ -351,7 +351,18 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['cassa_'],'import'=>($tot['tot']-$v['rit'])));
                   } else { // altrimenti inserisco le partite aperte
                       foreach($rate['import'] as $k_rate=>$v_rate) {
-                          paymovInsert(array('id_tesdoc_ref'=>substr($v['tes']['datfat'],0,4).$reg.$v['tes']['seziva'].str_pad($v['tes']['protoc'],9,0,STR_PAD_LEFT),'id_rigmoc_doc'=>$paymov_id,'amount'=>$v_rate,'expiry'=>$rate['anno'][$k_rate].'-'.$rate['mese'][$k_rate].'-'.$rate['giorno'][$k_rate]));
+                        // preparo l'array da inserire sui movimenti delle partite aperte
+                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
+                            'id_rigmoc_doc' => $paymov_id,
+                            'amount' => $v_rate,
+                            'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
+                        if ($op == 2) { /* le note credito sono assimilabili ad un pagamento, 
+                          ovvero ad una chiusura di partita
+                          pertanto modifico l'array prima di passarlo */
+                            unset($paymov_value['id_rigmoc_doc']);
+                            $paymov_value['id_rigmoc_pay'] = $paymov_id;
+                        }
+                        paymovInsert($paymov_value);
                       }
                   }
                   // alla fine modifico le testate documenti introducendo il numero del movimento contabile
