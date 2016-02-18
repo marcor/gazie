@@ -245,7 +245,7 @@ $strScript = array("admin_client.php" =>
         'virtual_taxstamp_value' => array(0 => 'No', 1 => 'Materiale', 2 => 'Virtuale', 3 => 'Virtuale senza addebito'),
         'ragbol' => "Raggr.DDT",
         'ragbol_title' => 'Raggruppamento DDT',
-        'order_date' => "Data ",
+        'order_date' => "Data ordine",
         'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'weight' => 'peso',

@@ -93,6 +93,10 @@ switch ($tipdoc) {
               . "(select sum(tesdocTmp.speban) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as speban , "
               . "(select sum(tesdocTmp.spevar) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as spevar , "
               . "(select max(tesdocTmp.expense_vat) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as expense_vat , ";
+      $campiCosto = "(select sum(tesdocTmp.traspo) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as traspo , "
+              . "(select tesdocTmp.speban from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc limit 1) as speban, " //le spese sono nell'ultimo record
+              . "(select tesdocTmp.spevar from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc limit 1) as spevar, " //le spese sono nell'ultimo record
+              . "(select tesdocTmp.expense_vat from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc limit 1) as expense_vat, "; //l'iva per le spese è nell'ultimo record
 
       break;
    case 3:  //fattura immediata accompagnatoria
