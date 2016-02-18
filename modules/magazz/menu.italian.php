@@ -24,7 +24,7 @@
 */
 $transl['magazz'] = array('name' => "Magazzino",
                           'title' => "Gestione Magazzino",
-                          'm2' => array( 1 =>array("Gestione Articoli di Magazzino","Articoli/Servizi"),
+                          'm2' => array( 1 =>array("Gestione Articoli di Magazzino","Merci/Servizi"),
                                          2 =>array("Gestione Categorie Merceologiche","Cat.Merceologiche"),
                                          3 =>array("Giornale di Magazzino","Movimenti"),
                                          4 =>array("Causali di Magazzino","Causali"),
@@ -34,7 +34,7 @@ $transl['magazz'] = array('name' => "Magazzino",
                                          8 =>array("Statistiche del magazzino","Statistiche"),
                                          9 =>array("Gestione Raggruppamenti Statistici","Raggr.Statistici")
                                          ),
-                          'm3' => array( 1 =>array("Inserisci un nuovo articolo","Nuovo articolo/servizio"),
+                          'm3' => array( 1 =>array("Inserisci un nuovo articolo","Nuova merce/servizio"),
                                          2 =>array("Inserisci un nuova categoria merceologica","Nuova categoria merceologica"),
                                          3 =>array("Inserisci un nuovo movimento di magazzino","Nuovo movimento di magazzino"),
                                          4 =>array("Stampa schedari articoli di magazzino","Stampa schedari articoli di magazzino"),

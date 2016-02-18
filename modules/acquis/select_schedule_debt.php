@@ -50,15 +50,7 @@ if (isset($_POST['print']) && $msg == '') {
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup',
-    'custom/autocomplete'
-        /** ENRICO FEDELE */
-        /* 'jquery/jquery-1.7.1.min',
-          'jquery/ui/jquery.ui.core',
-          'jquery/ui/jquery.ui.widget',
-          'jquery/ui/jquery.ui.position',
-          'jquery/ui/jquery.ui.autocomplete', */
-        /** ENRICO FEDELE */        ));
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete' ));
 echo '<form method="POST" name="select">
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 		<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />';
@@ -71,14 +63,6 @@ echo '	<div align="center" class="FacetFormHeaderFont">' . $script_transl['title
 $gForm->variousSelect('orderby', $script_transl['orderby_value'], $form['orderby'], 'FacetSelect', 0, 'orderby');
 echo '			</td>
 			</tr>';
-/* 			<tr class="FacetFieldCaptionTD">
-  <td align="left">
-  <input type="submit" name="return" value="'.$script_transl['return'].'" />
-  </td>
-  <td align="right" colspan="2">';
-  <input type="submit" accesskey="i" name="preview" value="'.$script_transl['view'].'" tabindex="100" />
-  </td>
-  </tr> */
 echo '		  </table>';
 
 //if (isset($_POST['preview'])) {
@@ -129,21 +113,20 @@ if (sizeof($scdl->Entries) > 0) {
             $paymov = $mv["id_tesdoc_ref"];
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
+            $status_descr = $script_transl['status_value'][$r['sta']] ;
             if ($r['sta'] == 1) { // CHIUSA   
-                $class_paymov = 'FacetDataTDevidenziaCL';
-                $status_descr = $script_transl['status_value'][$r['sta']] .
-                        " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                $class_paymov = '';
+                $status_del = true;
             } elseif ($r['sta'] == 2) { // ESPOSTA  
                 $class_paymov = 'FacetDataTDevidenziaOK';
-                $status_descr = $script_transl['status_value'][$r['sta']];
             } elseif ($r['sta'] == 3) { // SCADUTA  
                 $class_paymov = 'FacetDataTDevidenziaKO';
-                $status_descr = $script_transl['status_value'][$r['sta']] .
-                        " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
-            } else { // PAGAMENTO ANTICIPATO 
+                $status_descr .= " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO 
                 $class_paymov = 'FacetDataTDevidenziaBL';
-                $status_descr = $script_transl['status_value'][$r['sta']];
-                $status_del = true;
+            } else { // APERTA  
+                $class_paymov = 'FacetDataTDevidenziaCL';
+                $status_descr .= " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
             }
         }
         echo '		<tr>

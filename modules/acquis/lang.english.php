@@ -245,7 +245,7 @@ $strScript = array("admin_fornit.php" =>
     ),
     "delete_docacq.php" =>
     array('title' => 'Eliminazione Documento d\'Acquisto' ),
-    "select_schedule.php" =>
+    "select_schedule_debt.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa delle partite aperte',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
@@ -273,7 +273,7 @@ $strScript = array("admin_fornit.php" =>
         'id_tesdoc_ref' => 'Identificativo partita',
         'descri' => 'Descrizione'
     ),
-    "select_partner_status.php" =>
+    "select_suppliers_status.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa dello scadenzario dei fornitori',
         'print_title' => 'SCADENZARIO FORNITORI ',
         'errors' => array('La data  non &egrave; corretta!',
@@ -308,6 +308,7 @@ $strScript = array("admin_fornit.php" =>
             "Non è stato selezionato il conto per l'incasso",
             'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
         ),
-    )
+        'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
+   )
 );
 ?>

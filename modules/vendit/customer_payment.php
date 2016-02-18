@@ -129,6 +129,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
       $tes_val = array('caucon' => '',
           'descri' => $desmov,
           'datreg' => $date,
+          'datdoc' => $date,
           'clfoco' => $form['partner']
       );
       tesmovInsert($tes_val);

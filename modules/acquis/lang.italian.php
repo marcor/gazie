@@ -275,7 +275,7 @@ $strScript = array("admin_fornit.php" =>
             'Importo' => "amount",
             'Scadenza' => "expiry"),
     ),
-    "select_schedule.php" =>
+    "select_schedule_debt.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa delle partite aperte',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
@@ -303,7 +303,7 @@ $strScript = array("admin_fornit.php" =>
         'id_tesdoc_ref' => 'Identificativo partita',
         'descri' => 'Descrizione'
     ),
-    "select_partner_status.php" =>
+    "select_suppliers_status.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa dello scadenzario dei fornitori',
         'print_title' => 'SCADENZARIO FORNITORI ',
         'errors' => array('La data  non &egrave; corretta!',

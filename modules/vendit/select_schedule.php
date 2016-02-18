@@ -49,16 +49,7 @@ if (isset($_POST['print'])) {
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup',
-    'custom/autocomplete'
-        /** ENRICO FEDELE */
-        /* 'jquery/jquery-1.7.1.min',
-          'jquery/ui/jquery.ui.core',
-          'jquery/ui/jquery.ui.widget',
-          'jquery/ui/jquery.ui.position',
-          'jquery/ui/jquery.ui.autocomplete', */
-        /** ENRICO FEDELE */        ));
-/** ENRICO FEDELE */
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete' ));
 echo '<form method="POST" name="select">
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 		<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />';
@@ -128,20 +119,18 @@ if (sizeof($scdl->Entries) > 0) {
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
             if ($r['sta'] == 1) { // CHIUSA   
-                $class_paymov = 'FacetDataTDevidenziaCL';
-                $status_descr = $script_transl['status_value'][$r['sta']] .
-                        " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                $class_paymov = '';
+                $status_del = true;
             } elseif ($r['sta'] == 2) { // ESPOSTA  
                 $class_paymov = 'FacetDataTDevidenziaOK';
-                $status_descr = $script_transl['status_value'][$r['sta']];
             } elseif ($r['sta'] == 3) { // SCADUTA  
                 $class_paymov = 'FacetDataTDevidenziaKO';
-                $status_descr = $script_transl['status_value'][$r['sta']] .
-                        " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
-            } else { // PAGAMENTO ANTICIPATO 
+                $status_descr .= " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO 
                 $class_paymov = 'FacetDataTDevidenziaBL';
-                $status_descr = $script_transl['status_value'][$r['sta']];
-                $status_del = true;
+            } else { // APERTA  
+                $class_paymov = 'FacetDataTDevidenziaCL';
+                $status_descr .= " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"customer_payment.php?partner=" . $mv["clfoco"] . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
             }
         }
         echo "<tr>";

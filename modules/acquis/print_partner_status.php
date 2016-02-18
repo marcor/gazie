@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("./lang.".$admin_aziend['lang'].".php");
-$script_transl = $strScript["select_partner_status.php"];
+$script_transl = $strScript["select_suppliers_status.php"];
 
 
 if (!ini_get('safe_mode')){ //se me lo posso permettere...
