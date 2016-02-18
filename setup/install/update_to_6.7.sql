@@ -6,8 +6,12 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 14, 'print_anagrafe.php?clifor=F
 ALTER TABLE `gaz_aziend` ADD COLUMN `payroll_tax` DECIMAL(3,1) NOT NULL AFTER `ritenuta`, ADD COLUMN `c_payroll_tax` INT(9) NOT NULL DEFAULT '0' AFTER `c_ritenute`;
 UPDATE `gaz_menu_script` SET `link` = 'select_suppliers_status.php' WHERE  ( `link`='select_partner_status.php' AND `translate_key` < 30 );
 UPDATE `gaz_menu_script` SET `link`='select_schedule_debt.php' WHERE  ( `link`='select_schedule.php' AND `translate_key` < 30 );
+UPDATE `gaz_aziend` SET `c_payroll_tax`=215000012 WHERE 1;
+UPDATE `gaz_aziend` SET `payroll_tax`=4.0 WHERE 1;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXeffett` ADD COLUMN `cigcup` VARCHAR(40) NOT NULL AFTER `id_con`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `good_or_service` INT(1) NULL DEFAULT NULL AFTER `descri`, ADD COLUMN `depli_public` TINYINT(1) NOT NULL NULL DEFAULT '0' AFTER `web_public`, ADD COLUMN `retention_tax` TINYINT NOT NULL DEFAULT '0' AFTER `aliiva`, ADD COLUMN `payroll_tax` TINYINT NOT NULL DEFAULT '0' AFTER `last_cost`;
+UPDATE `gaz_XXXartico` SET `depli_public`=1 WHERE 1;
 ALTER TABLE `gaz_XXXbody_text`	ADD INDEX `table_name_ref` (`table_name_ref`);
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Descrizione contributo cassa previdenziale', 'payroll_tax_descri', 'Contributo integrativo cassa previdenziale');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

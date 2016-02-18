@@ -827,7 +827,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
                 }
                 /* fine modifica FP */
-                $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
+                if ($artico['retention_tax'] > 0) { // se richiesto dall'articolo impongo la ritenuta
+                    $form['rows'][$next_row]['ritenuta'] = $admin_aziend['ritenuta'];
+                }
                 $provvigione = new Agenti;
                 $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'], $form['in_codart']);
                 if ($form['listin'] == 2) {
@@ -867,6 +869,35 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $artico['scorta'];
+                if ($artico['retention_tax'] > 0) {
+                    /* se l'articolo impone anche un ulteriore rigo per la cassa previdenziale
+                     * procedo con l'aggiunta di un ulteriore rigo di tipo forfait in base 
+                     * alla configurazione aziendale
+                     */
+                    $ptd = gaz_dbi_get_row($gTables['company_config'],'var','payroll_tax_descri');
+                    $nr = $next_row + 1;
+                    // calcolo l'importo del contributo
+                    $imp_contrib = round(CalcolaImportoRigo($form['rows'][$next_row]['quanti'], $form['rows'][$next_row]['prelis'], $form['rows'][$next_row]['sconto'])/100*$admin_aziend['payroll_tax'],2);
+                    $form['rows'][$nr]['tiprig'] = 1;
+                    $form['rows'][$nr]['descri'] = $ptd['val'].' ( '. $admin_aziend['payroll_tax'].'% )';
+                    $form['rows'][$nr]['id_mag'] = 0;
+                    $form['rows'][$nr]['status'] = "INSERT";
+                    $form['rows'][$nr]['scorta'] = "";
+                    $form['rows'][$nr]['codart'] = "";
+                    $form['rows'][$nr]['annota'] = "";
+                    $form['rows'][$nr]['pesosp'] = 0;
+                    $form['rows'][$nr]['gooser'] = 0;
+                    $form['rows'][$nr]['unimis'] = "";
+                    $form['rows'][$nr]['quanti'] = 0;
+                    $form['rows'][$nr]['prelis'] = $imp_contrib;
+                    $form['rows'][$nr]['codric'] = $admin_aziend['c_payroll_tax'];
+                    $form['rows'][$nr]['sconto'] = 0;
+                    $form['rows'][$nr]['codvat'] = $admin_aziend['preeminent_vat'];
+                    $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
+                    $form['rows'][$nr]['pervat'] = $iva_azi['aliquo'];
+                    $form['rows'][$nr]['tipiva'] = $iva_azi['tipiva'];
+                    $form['rows'][$nr]['ritenuta'] = 0;
+                }
             } elseif ($form['in_tiprig'] == 1) { //forfait
                 $form['rows'][$next_row]['codart'] = "";
                 $form['rows'][$next_row]['annota'] = "";
@@ -1029,7 +1060,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
     $form['in_tipiva'] = 0;
-    $form['in_ritenuta'] = $admin_aziend['ritenuta'];
+    $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0;
     /** inizio modifica FP 09/10/2015
@@ -1185,7 +1216,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_codart'] = "";
     $form['in_pervat'] = "";
     $form['in_tipiva'] = "";
-    $form['in_ritenuta'] = $admin_aziend['ritenuta'];
+    $form['in_ritenuta'] = 0;
     $form['in_unimis'] = "";
     $form['in_prelis'] = 0;
     /** inizio modifica FP 09/10/2015

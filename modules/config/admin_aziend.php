@@ -586,7 +586,7 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['c_payroll_tax'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectAccount('c_payroll_tax', $form['c_payroll_tax'], 1);
+$gForm->selectAccount('c_payroll_tax', $form['c_payroll_tax'], array('sub',2,4));
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
