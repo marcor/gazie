@@ -351,6 +351,7 @@ $strScript = array("browse_document.php" =>
         'descri' => "Description",
         'good_or_service' => "Tipologia di articolo",
         'good_or_service_value' => array(0 => 'Good', 1 => 'Service'),
+        'body_text' => "Descrizione amplia su rigo aggiuntivo",
         'lot_or_serial' => 'Lot or serial number',
         'lot_or_serial_value' => array(0 => 'No', 1 => 'Lot', 2 => 'Serial'),
         'barcode' => "Barcode EAN13",

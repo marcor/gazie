@@ -1,6 +1,6 @@
 tinymce.init({
   selector: '.mceClass',
-  height: 200,
+  height: '40',
   theme: 'modern',
   language: "it",
   plugins: [

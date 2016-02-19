@@ -58,7 +58,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** inizio modifica FP 03/12/2015
      * fornitore
      */
-    $form['id_anagra'] = $_POST['id_anagra'];
+    $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
@@ -74,6 +74,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
     }
     // fine documenti/certificati
+    $form['body_text'] = filter_input(INPUT_POST, 'body_text');
+
     /** ENRICO FEDELE */
     /* Controllo se il submit viene da una modale */
     if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
@@ -137,8 +139,20 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             // aggiorno il db
             if ($toDo == 'insert') {
                 gaz_dbi_table_insert('artico', $form);
+                bodytextInsert(array('table_name_ref' => 'artico_'.$form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
             } elseif ($toDo == 'update') {
                 gaz_dbi_table_update('artico', $form['ref_code'], $form);
+                $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
+                if (empty($form['body_text']) && $bodytext) { 
+                    // è vuoto il nuovo ma non lo era prima, allora lo cancello 
+                    gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
+                } elseif ($bodytext) {
+                    // c'era quindi faccio l'update
+                    bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_'.$form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+                } else {
+                    // non c'era lo inserisco
+                    bodytextInsert(array('table_name_ref' => 'artico_'.$form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+                }
             }
             /** ENRICO FEDELE */
             /* Niente redirect se sono in finestra modale */
@@ -188,6 +202,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $next_row++;
     }
     // fine documenti/certificati
+    $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
+    $form['body_text'] = $bodytext['body_text'];
 } else { //se e' il primo accesso per INSERT
     $form = gaz_dbi_fields('artico');
     /** ENRICO FEDELE */
@@ -213,6 +229,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['id_anagra'] = '';
     $form['search']['id_anagra'] = '';
     /** fine modifica FP */
+    // eventuale descrizione amplia
+    $form['body_text'] = '';
 }
 
 /** ENRICO FEDELE */
@@ -290,6 +308,12 @@ if ($modal_ok_insert === true) {
     $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service']);
     echo '  </td>
       </tr>
+	  <tr>
+		<td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['body_text'] . '</td>
+		<td colspan="2" class="FacetDataTD">
+                <textarea id="body_text" name="body_text" class="mceClass">'.$form['body_text'].'</textarea>
+		</td>
+	  </tr>
 	  <tr>
 	    <td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['barcode'] . '</td>
 		<td colspan="2" class="FacetDataTD">

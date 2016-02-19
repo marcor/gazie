@@ -355,6 +355,7 @@ $strScript = array("browse_document.php" =>
         'descri' => "Descrizione",
         'good_or_service' => "Tipologia di articolo",
         'good_or_service_value' => array(0 => 'Merce', 1 => 'Servizio'),
+        'body_text' => "Testo descrittivo (precede il rigo)",
         'lot_or_serial' => 'Lotti o numeri seriali',
         'lot_or_serial_value' => array(0 => 'No', 1 => 'Lotti', 2 => 'Seriale/Matricola'),
         'barcode' => "Codice a Barre EAN13",
