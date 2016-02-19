@@ -8,6 +8,8 @@ UPDATE `gaz_menu_script` SET `link` = 'select_suppliers_status.php' WHERE  ( `li
 UPDATE `gaz_menu_script` SET `link`='select_schedule_debt.php' WHERE  ( `link`='select_schedule.php' AND `translate_key` < 30 );
 UPDATE `gaz_aziend` SET `c_payroll_tax`=215000012 WHERE 1;
 UPDATE `gaz_aziend` SET `payroll_tax`=4.0 WHERE 1;
+UPDATE `gaz_aziend` SET `ritenuta`=20.0 WHERE 1;
+TRUNCATE `gaz_menu_usage`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXeffett` ADD COLUMN `cigcup` VARCHAR(40) NOT NULL AFTER `id_con`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `good_or_service` INT(1) NULL DEFAULT NULL AFTER `descri`, ADD COLUMN `depli_public` TINYINT(1) NOT NULL NULL DEFAULT '0' AFTER `web_public`, ADD COLUMN `retention_tax` TINYINT NOT NULL DEFAULT '0' AFTER `aliiva`, ADD COLUMN `payroll_tax` TINYINT NOT NULL DEFAULT '0' AFTER `last_cost`;
@@ -17,4 +19,4 @@ ALTER TABLE `gaz_XXXassist` ADD `soluzione` text COLLATE 'utf8_general_ci' NULL 
 ALTER TABLE `gaz_XXXassist` ADD `ora_inizio` varchar(5) NULL AFTER `soluzione`;
 ALTER TABLE `gaz_XXXassist` ADD `ora_fine` varchar(5) NULL AFTER `ora_inizio`;
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Descrizione contributo cassa previdenziale', 'payroll_tax_descri', 'Contributo integrativo cassa previdenziale');
--- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)>>>>>>> .r1158
+-- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
