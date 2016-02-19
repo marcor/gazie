@@ -13,5 +13,8 @@ ALTER TABLE `gaz_XXXeffett` ADD COLUMN `cigcup` VARCHAR(40) NOT NULL AFTER `id_c
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `good_or_service` INT(1) NULL DEFAULT NULL AFTER `descri`, ADD COLUMN `depli_public` TINYINT(1) NOT NULL NULL DEFAULT '0' AFTER `web_public`, ADD COLUMN `retention_tax` TINYINT NOT NULL DEFAULT '0' AFTER `aliiva`, ADD COLUMN `payroll_tax` TINYINT NOT NULL DEFAULT '0' AFTER `last_cost`;
 UPDATE `gaz_XXXartico` SET `depli_public`=1 WHERE 1;
 ALTER TABLE `gaz_XXXbody_text`	ADD INDEX `table_name_ref` (`table_name_ref`);
+ALTER TABLE `gaz_XXXassist` ADD `soluzione` text COLLATE 'utf8_general_ci' NULL AFTER `descrizione`;
+ALTER TABLE `gaz_XXXassist` ADD `ora_inizio` varchar(5) NULL AFTER `soluzione`;
+ALTER TABLE `gaz_XXXassist` ADD `ora_fine` varchar(5) NULL AFTER `ora_inizio`;
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Descrizione contributo cassa previdenziale', 'payroll_tax_descri', 'Contributo integrativo cassa previdenziale');
--- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
+-- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)>>>>>>> .r1158

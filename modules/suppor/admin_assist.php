@@ -45,10 +45,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
    }
 	$form['codice'] = trim($form['codice']);
 	$form['descrizione'] = $_POST['descrizione'];
+	$form['soluzione'] = $_POST['soluzione'];
 	$form['clfoco'] = $_POST['clfoco'];
 	$form['ritorno'] = $_POST['ritorno'];
 	$form['ref_code']= $_POST['ref_code'];
 	$form['ore']=	$_POST['ore'];
+	$form['ora_inizio'] = $_POST['ora_inizio'];
+	$form['ora_fine'] = $_POST['ora_fine'];
+	
 	$form['utente'] = $_SESSION["Login"];
     
 	$form['rows'] = array();	
@@ -186,7 +190,13 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['descrizione']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<textarea type="text" name="descrizione" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['descrizione']; ?></textarea>
+		<textarea type="text" name="descrizione" align="right" maxlength="255" cols="67" rows="3"><?php echo $form['descrizione']; ?></textarea>
+	</td>
+</tr>
+<tr>
+	<td class="FacetFieldCaptionTD"><?php echo $script_transl['soluzione']; ?> </td>
+	<td colspan="2" class="FacetDataTD">
+		<textarea type="text" name="soluzione" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['soluzione']; ?></textarea>
 	</td>
 </tr>
 <tr>
@@ -198,7 +208,34 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD">Ore</td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" size="70"/>
+		ora inizio : <select name="ora_inizio" onchange="calculateTime()">
+		<?php
+			//$form['ora_inizio']
+			$start = "08:00";
+			$end = "19:30";
+			$tStart = strtotime($start);
+			$tEnd = strtotime($end);
+			$tNow = $tStart;
+			while($tNow <= $tEnd){
+				if ( date("H:i", $tNow)==$form['ora_inizio'] ) $selected = "selected";
+				else $selected="";
+				echo "<option value=\"".date("H:i",$tNow)."\" ".$selected.">".date("H:i",$tNow)."</option>";
+				$tNow = strtotime('+30 minutes',$tNow);
+			}
+		?>
+		</select>&nbsp;
+		ora fine : <select name="ora_fine" onchange="calculateTime()">
+		<?php
+			$tNow = $tStart;
+			while($tNow <= $tEnd){
+				if ( date("H:i", $tNow)==$form['ora_fine'] ) $selected = "selected";
+				else $selected="";
+				echo "<option value=\"".date("H:i",$tNow)."\" ".$selected.">".date("H:i",$tNow)."</option>";
+				$tNow = strtotime('+30 minutes',$tNow);
+			}
+		?>
+		</select>&nbsp;
+		Totale : <input size="16" type="text" id="ore" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" size="71"/>
 	</td>
 </tr>
 <tr>
@@ -242,6 +279,27 @@ function updateInputStato(ish){
 function updateInputTecnico(ish){
     document.getElementById("tecnico").value = ish;
 }
+function calculateTime() {
+        var minend = parseInt($("select[name='ora_fine']").val().split(':')[1],10);
+		var minstart = parseInt($("select[name='ora_inizio']").val().split(':')[1],10);
+		var hstart = parseInt($("select[name='ora_inizio']").val().split(':')[0],10);
+		var hend   = parseInt($("select[name='ora_fine']").val().split(':')[0],10);
+		
+		var min = minend - minstart;
+		if ( min<=-1 ) {
+			min = "30";
+			hend -= 1;
+		}
+		
+		
+		if ( hstart <= hend ) {
+			var hour = hend - hstart;
+		} else {
+			var hour = (hend+24)-hstart;
+		}
+		if ( min == "30" ) min = "50";
+		document.getElementById('ore').value = hour+"."+min;
+    }
 </script>
 <script>
 $( document.getElementById("toggleTec") ).click(function() {

@@ -49,7 +49,8 @@ $strScript = array(
         'oggetto' => "Oggetto",
         'stato' => "Stato",
         'info_agg' => "Informazioni aggiuntive",
-        'tecnico' => "Tecnico"
+        'tecnico' => "Tecnico",
+		'soluzione' => "Soluzione"
     ),
     "delete_assist.php" =>
     array('title' => 'Eliminazione Assistenza Tecnica',
