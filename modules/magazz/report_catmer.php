@@ -87,33 +87,27 @@ $recordnav -> output();
         <tbody>
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    /*if(!isset($_GET['all']) and !empty($a_row["image"])){
-            $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$a_row['annota']}] body=[<center><img src='../root/view.php?table=catmer&value=".$a_row['codice']."'>] fade=[on] fadespeed=[0.03] \"";
-    } else {
-            $boxover = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[{$a_row['annota']}]  fade=[on] fadespeed=[0.03] \"";
-    }*/
-	//' class="gazie-tooltip" data-type="catmer-thumb" data-id="'.$a_row['codice'].'" data-title="$a_row['annota']"';
-    echo '<tr>
+?>		<tr>
 			<td class="FacetDataTD">
-				<a class="btn btn-xs btn-success btn-block" href="admin_catmer.php?Update&codice='.$a_row["codice"].'">
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;'.$a_row["codice"].'
+				<a class="btn btn-xs btn-success btn-block" href="admin_catmer.php?Update&codice=<?php echo $a_row["codice"]; ?>">
+					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["codice"];?>
 				</a>
 			</td>
 			<td class="FacetDataTD">
-				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="'.$a_row['codice'].'" data-title='.$a_row['annota'].'">'.$a_row["descri"].'</span>
+				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['codice']; ?>" data-title="<?php echo $a_row['annota']; ?>"><?php echo $a_row["descri"]; ?></span>
 			</td>
-			<td class="FacetDataTD">'.$a_row["ricarico"].'</td>
-			<td class="FacetDataTD">'.$a_row["annota"].'</td>
+			<td class="FacetDataTD"><?php echo $a_row["ricarico"];?></td>
+			<td class="FacetDataTD"><?php echo $a_row["annota"];?></td>
 			<td class="FacetDataTD">
-				<a class="btn btn-xs btn-default btn-elimina" href="delete_catmer.php?codice='.$a_row["codice"].'">
+				<a class="btn btn-xs btn-default btn-elimina" href="delete_catmer.php?codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
-		</tr>';
+		</tr>
+<?php
 }
 ?>
     		</tbody>
         </table>
     </div><!-- chiude div container role main --></body>
 </html>
-<!--<script src="../../js/boxover/boxover.js"></script>-->
