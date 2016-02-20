@@ -325,14 +325,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"indspe\" value=\"" . $form['indspe'] . "\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['latitude'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"latitude\" value=\"" . $form['latitude'] . "\" align=\"right\" maxlength=\"10\" size=\"10\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['longitude'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"longitude\" value=\"" . $form['longitude'] . "\" align=\"right\" maxlength=\"10\" size=\"10\" /></td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['latitude'] . " - " . $script_transl['longitude'] . " </td>\n";
+echo "\t<td  colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"latitude\" value=\"" . $form['latitude'] . "\" align=\"right\" maxlength=\"10\" size=\"10\" />
+       - <input type=\"text\" name=\"longitude\" value=\"" . $form['longitude'] . "\" align=\"right\" maxlength=\"10\" size=\"10\" />"
+        . " <a class=\"btn btn-xs btn-default btn-default\" href=\"http://maps.google.com/maps?q=".$form['latitude'].",".$form['longitude']."\"> maps -> <i class=\"glyphicon glyphicon-map-marker\"></i></a></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['capspe'] . " * </td>\n";
