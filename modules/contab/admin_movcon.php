@@ -238,7 +238,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 
             function getLastNumber($type, $year, $sezione, $registro = 6) {  // questa funzione trova l'ultimo numero di protocollo                                                           // controllando sia l'archivio documenti che sul
                 global $gTables;                                      // registro IVA passato come variabile (default acquisti)
-                $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $year AND tipdoc LIKE '$type' AND seziva = $sezione", "protoc DESC", 0, 1);
+                $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $year AND tipdoc LIKE '$type' AND tipdoc <> 'ADT' AND seziva = $sezione", "protoc DESC", 0, 1);
                 $ultimo_tesdoc = gaz_dbi_fetch_array($rs_ultimo_tesdoc);
                 $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = $year AND regiva = $registro AND seziva = $sezione", "protoc DESC", 0, 1);
                 $ultimo_tesmov = gaz_dbi_fetch_array($rs_ultimo_tesmov);

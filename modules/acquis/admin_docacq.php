@@ -290,17 +290,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($result and ( $form['numdoc'] > $result['numdoc'])) {
                     $msg .= "41+";
                 }
-            } elseif ($form['tipdoc'] == 'ADT') { //se è un DDT acquisto
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datemi < '$datemi' and tipdoc = 'ADT' and seziva = $sezione", "protoc desc", 0, 1);
-                $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
-                if ($result && ($form['protoc'] < $result['protoc'])) {
-                    $msg .= "42+";
-                }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datemi > '$datemi' and tipdoc = 'ADT' and seziva = $sezione", "protoc asc", 0, 1);
-                $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
-                if ($result && ($form['protoc'] > $result['protoc'])) {
-                    $msg .= "43+";
-                }
+            } elseif ($form['tipdoc'] == 'ADT') { //se è un DDT acquisto non faccio controlli
             } else { //se sono altri documenti
                 $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and datemi < '$datemi' and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "__' and seziva = $sezione", "protoc desc", 0, 1);
                 $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
@@ -327,7 +317,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datfat'], 5, 2), substr($ultimo_tipo['datfat'], 8, 2), substr($ultimo_tipo['datfat'], 0, 4));
                 if ($ultimo_tipo and ( $utsUltimoProtocollo > $utsemi)) {
                     $msg .= "45+";
-                    echo print_r($ultimo_tipo);
                 }
             }
         }
@@ -471,7 +460,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 } else {
                     $form['numdoc'] = 1;
                 }
-                if (substr($form['tipdoc'], 0, 2) == 'DD') {  //ma se e' un ddt il protocollo è 0 così come il numero e data fattura
+                if (substr($form['tipdoc'], 0, 2) == 'DD' || $form['tipdoc']=='ADT') {  //ma se e' un ddt il protocollo è 0 così come il numero e data fattura
                     $form['protoc'] = 0;
                     $form['numfat'] = 0;
                     $form['datfat'] = 0;
