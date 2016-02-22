@@ -10,6 +10,8 @@ UPDATE `gaz_aziend` SET `c_payroll_tax`=215000012 WHERE 1;
 UPDATE `gaz_aziend` SET `payroll_tax`=4.0 WHERE 1;
 UPDATE `gaz_aziend` SET `ritenuta`=20.0 WHERE 1;
 TRUNCATE `gaz_menu_usage`;
+INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Ghostscript shell exec', 'gs_shell_exec', 'C:\\"Program Files"\\gs\\gs9.18\\bin\\gswin64.exe');
+INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Ghostscript dpi resolution', 'gs_resolution', '300');
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXeffett` ADD COLUMN `cigcup` VARCHAR(40) NOT NULL AFTER `id_con`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `good_or_service` INT(1) NULL DEFAULT NULL AFTER `descri`, ADD COLUMN `depli_public` TINYINT(1) NOT NULL NULL DEFAULT '0' AFTER `web_public`, ADD COLUMN `retention_tax` TINYINT NOT NULL DEFAULT '0' AFTER `aliiva`, ADD COLUMN `payroll_tax` TINYINT NOT NULL DEFAULT '0' AFTER `last_cost`;
