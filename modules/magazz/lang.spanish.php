@@ -42,6 +42,9 @@ $strScript = array("browse_document.php" =>
         'ext' => "Extensión",
         'select' => "Sel.",
         'code' => "Codigo"),
+    "report_artico.php" =>
+    array('title' => 'Goods and service report',
+    ),
     "report_statis.php" =>
     array("estatistico ",
         "ventas",

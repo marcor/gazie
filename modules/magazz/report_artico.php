@@ -75,8 +75,9 @@ if (!isset($_GET['auxil'])) {
         $where = $search_field_Array[$admin_aziend['artsea']][0] . " LIKE '$auxil%'";
     }
 }
+
 ?>
-<div align="center" class="FacetFormHeaderFont">Merci e Servizi </div>
+<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?> </div>
 <?php
 $recordnav = new recordnav($gTables['artico'], $where, $limit, $passo);
 $recordnav->output();

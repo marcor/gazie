@@ -2044,6 +2044,55 @@ class Schedule {
 
 }
 
+class gazGhostscript {
+
+    function __construct() {
+        global $gTables;
+        // attingo dal db la configurazione di base per eseguire i vari comandi ghostscript
+        $r = gaz_dbi_get_row($gTables['config'], "variable", 'gs_shell_exec');
+        $this->gs = $r['cvalue'];
+        $r = gaz_dbi_get_row($gTables['config'], "variable", 'gs_resolution');
+        $this->res = $r['cvalue'];
+        $this->fout = '../../data/files/';
+    }
+
+    function gsextract($in_name, $out = 'out', $first = '', $last = '') {
+        // estrae pagine da un pdf 
+        if (!empty($first)) {
+            $first = '-dFirstPage=' . intval($first);
+        }
+        if (!empty($last)) {
+            $last = '-dLastPage=' . intval($last);
+        }
+        shell_exec($this->gs . ' -sDEVICE=pdfwrite -dSAFER -dPDFSETTINGS=/prepress -dBATCH -dNOPAUSE -q ' . $first . ' ' . $last . ' -sOutputFile=' . $this->fout . $out . '.pdf ' . $in_name . '.pdf');
+    }
+
+    function gsmerge($in_names, $out = 'out') {
+        // fonde più files pdf in un unico 
+        if (is_array($in_names)) {
+            $in = '';
+            foreach ($in_names as $v) {
+                $in .= ' ' . $v . '.pdf';
+            }
+        } else {
+            $in = ' ' . $in_names . '.pdf';
+        }
+        shell_exec($this->gs . ' -sDEVICE=pdfwrite -dSAFER -dPDFSETTINGS=/prepress -dBATCH -dNOPAUSE -q ' . $first . ' ' . $last . ' -sOutputFile=' . $this->fout . $out . '.pdf' . $in);
+    }
+
+    function gspdf2png($in_name, $out = 'out', $first = '', $last = '') {
+        // crea un file png a 300dpi a partire da un pdf
+        if (!empty($first)) {
+            $first = '-dFirstPage=' . intval($first);
+        }
+        if (!empty($last)) {
+            $last = '-dLastPage=' . intval($last);
+        }
+        shell_exec($this->gs . ' -sDEVICE=png16m -dSAFER -dBATCH -dNOPAUSE -r300 ' . $first . ' ' . $last . ' -sOutputFile=' . $this->fout . $out . '.png ' . $in_name . '.pdf');
+    }
+
+}
+
 /* controllo se ho delle funzioni specifiche per il modulo corrente
   residente nella directory del module stesso, con queste caratteristiche:
   modules/nome_modulo/lib.function.php
