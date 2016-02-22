@@ -33,11 +33,51 @@ $script_transl=HeadMain();
 ?>
 <div align="center" class="FacetFormHeaderFont">Bonifici e Ordini di Addebito</div>
 <?php
-$where = "tipdoc = 'AOA' or tipdoc = 'AOB'";
+$where = "tipdoc like 'AO_' ";
+$all = $where;
+
+if (!isset($_GET['flag_order'])) {
+    $orderby = "id_tes desc";
+}
+
+gaz_flt_var_assign('id_tes','i');
+gaz_flt_var_assign('tipdoc','i');
+gaz_flt_var_assign('numdoc','i');
+gaz_flt_var_assign( 'datemi', "d" );
+gaz_flt_var_assign( 'clfoco', "v" );
+
 $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
+<form method="GET" >
 <table class="Tlarge">
+<tr>
+	<td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_int ( "id_tes", "Numero Id" ); ?>
+	</td>
+	<td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_select ( "tipdoc", "tipdoc", $gTables["tesbro"], $all, $orderby); ?>
+	</td>
+	<td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_int ( "numdoc", "Numero Doc." );?>
+	</td>
+	<td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_select ( "datfat", "YEAR(datfat) as datfat", $gTables["tesbro"], $all, $orderby); ?>
+	</td>
+	
+	<td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesbro"].".clfoco", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, $orderby, "ragso1"); ?>
+	</td>
+	<td class="FacetFieldCaptionTD">
+		&nbsp;
+	</td>
+	<td colspan="1" class="FacetFieldCaptionTD">
+        <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+    </td>
+    <td colspan="1" class="FacetFieldCaptionTD">
+        <input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
+    </td>
+</tr>
 <tr>
 <?php
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -56,9 +96,7 @@ $linkHeaders -> output();
 ?>
 </tr>
 <?php
-if (!isset($_GET['flag_order'])) {
-        $orderby = "id_tes desc";
-}
+
 $result = gaz_dbi_dyn_query ('*', $gTables['tesbro'], $where, $orderby, $limit, $passo);
 $ctrlprotoc = "";
 $anagrafica = new Anagrafica();
@@ -101,5 +139,6 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 }
 ?>
 </table>
+</form>
 </div><!-- chiude div container role main --></body>
 </html>

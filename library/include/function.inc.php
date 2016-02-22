@@ -49,6 +49,55 @@ if (isset($_SERVER["HTTP_REFERER"])) {
 $script_uri = basename($_SERVER['REQUEST_URI']);
 $mod_uri = '/' . $module . '/' . $script_uri;
 
+function gaz_flt_var_assign($flt, $typ) {
+	$where="";
+	if (isset($_GET[$flt]) && $_GET[$flt]!='All') {
+		$var = $_GET[$flt];
+		if ( $typ=="i" ) {
+			$where .= " and ".$flt." = $var";
+		} else if ( $typ=="v" ) {
+			$where .= " and ".$flt." = '$var'";
+		} else if ( $typ=="d" ) {
+			$where .= " and $flt >= \"".$var."/01/01\" and $flt <= \"".$var."/12/31\"";
+		}
+	}
+	return $where;
+} 
+
+function gaz_flt_disp_select( $flt, $fltdistinct, $tbl, $where, $orderby, $optval = "" ) {
+	?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
+	<?php if ( isset($_GET[$flt]) ) $fltget=$_GET[$flt]; else $fltget="";?>
+	<option value="All" <?php echo ($flt=="All") ? "selected" : "";?>>Tutti</option> <?php //echo $script_transl['tuttitipi']; ?>
+	<?php $res = gaz_dbi_dyn_query("distinct ".$fltdistinct, $tbl, $where, $orderby);
+	while ( $val = gaz_dbi_fetch_array($res) ) {
+		if ( $fltget == $val[$flt] ) $selected = "selected";
+		else $selected = "";
+		$testo = ($optval!="") ? $val[$optval] : $val[$flt];
+		echo "<option value=\"".$val[$flt]."\" ".$selected.">".$testo."</option>";
+	} ?>
+	</select><?php
+}
+
+function gaz_flt_disp_int ( $flt, $hint ) {
+	?><input type="text" placeholder="<?php echo $hint; ?>" class="input-sm form-control" name="<?php echo $flt; ?>" value="<?php if ( isset($_GET[$flt])) print $_GET[$flt]; ?>" tabindex="1" class="FacetInput"><?php
+}
+
+function gaz_filtro ( $flt_name, $table, $where, $orderby ) {
+	//global $gTables;
+	echo $_GET[$flt_name];
+	if (isset($_GET[$flt_name]) && $_GET[$flt_name]!='All') {
+		$citta = $_GET[$flt_name];
+		$where .= " and ".$flt_name." = '$citta'";
+	} else $citta = "All";
+	
+	$res = gaz_dbi_dyn_query("distinct ".$flt_name, $table, $where, $orderby);
+	while ( $val = gaz_dbi_fetch_array($res) ) {
+		if ( $citta == $val[$flt_name] ) $selected = "selected";
+		else $selected = "";
+		echo "<option value=\"".$val[$flt_name]."\" ".$selected.">".$val[$flt_name]."</option>";
+	}
+}
+
 function gaz_today() {
     $today = date("d/m/Y");
     $tmp = DateTime::createFromFormat('d/m/Y', $today);
