@@ -50,73 +50,73 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 
                         <link rel="shortcut icon" href="../../library/images/favicon.ico">			
                             <script src="../../js/jquery/jquery.js"></script>
+                            <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+                            <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
                             <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
                             <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
                             <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-                                <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-                                <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
-                                <script src="../../js/custom/gz-library.js"></script>
-                                <script src="../../js/tinymce/tinymce.min.js"></script>
-                                <script src="../../js/custom/tinymce.js"></script>
-                                <link href="../../library/style/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
-                                <link href="../../library/style/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
-                                <link href="../../library/style/ml_dropdown.css" rel="stylesheet" type="text/css" />
-                                <?php
-                                /** ENRICO FEDELE */
-                                /* Dunque ho creato questo escamotage, basta mettere un file .css nella cartella lybrary/style con nome 
-                                  uguale al lower case della ragione sociale 1, con spazi sostituiti da underscores
+                            <script src="../../js/custom/gz-library.js"></script>
+                            <script src="../../js/tinymce/tinymce.min.js"></script>
+                            <script src="../../js/custom/tinymce.js"></script>
+                            <link href="../../library/style/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+                            <link href="../../library/style/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+                            <link href="../../library/style/ml_dropdown.css" rel="stylesheet" type="text/css" />
+                            <?php
+                            /** ENRICO FEDELE */
+                            /* Dunque ho creato questo escamotage, basta mettere un file .css nella cartella lybrary/style con nome 
+                              uguale al lower case della ragione sociale 1, con spazi sostituiti da underscores
 
-                                  ATTENZIONE: sarebbe meglio mettere tutti i temi custom in una cartella a parte, fuori da tutto, nella radice
-                                  così nel caso in cui si debba aggiornare lo script, non si fanno danni!
-                                 */
-                                if (file_exists("../../library/style/" . strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])) . '.css')) {
-                                   echo '			<link href="../../library/style/' . strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])) . '.css" rel="stylesheet" type="text/css" />';
-                                }
+                              ATTENZIONE: sarebbe meglio mettere tutti i temi custom in una cartella a parte, fuori da tutto, nella radice
+                              così nel caso in cui si debba aggiornare lo script, non si fanno danni!
+                             */
+                            if (file_exists("../../library/style/" . strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])) . '.css')) {
+                               echo '			<link href="../../library/style/' . strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])) . '.css" rel="stylesheet" type="text/css" />';
+                            }
 
-                                function get_transl_referer($rlink) {
-                                   global $gTables;
-                                   $clink = explode('/', $rlink);
-                                   $n1 = gaz_dbi_get_row($gTables['module'], 'link', end($clink));
-                                   if ($n1) {
-                                      include "../../modules/" . $clink[1] . "/menu.italian.php";
-                                      return $clink[1] . '-m1-' . $n1['id'];
-                                   } else {
-                                      $n2 = gaz_dbi_get_row($gTables['menu_module'], 'link', end($clink));
-                                      if ($n2) {
-                                         include "../../modules/" . $clink[1] . "/menu.italian.php";
-                                         return $clink[1] . '-m2-' . $n2['translate_key'];
-                                      } else {
-                                         $n3 = gaz_dbi_get_row($gTables['menu_script'], 'link', end($clink));
-                                         if ($n3) {
-                                            include "../../modules/" . $clink[1] . "/menu.italian.php";
-                                            return $clink[1] . '-m3-' . $n3['translate_key'];
-                                         } else { // non l'ho trovato neanche nel m3, provo sui file di traduzione
-                                            include "../../modules/" . $clink[1] . "/lang.italian.php";
-                                            // tento di risalire allo script giusto
-                                            $n_scr = explode('?', end($clink));
-                                            if (isset($strScript[$n_scr[0]])) { // ho trovato una traduzione per lo script
-                                               if (isset($strScript[$n_scr[0]]['title'])) { // ho trovato una traduzione per lo script con index specifico
-                                                  if (is_array($strScript[$n_scr[0]]['title'])) {
-                                                     return $clink[1] . '-sc-' . $n_scr[0] . '-title-' . array_shift(array_slice($strScript[$n_scr[0]]['title'], 0, 1));
-                                                  } else {
-                                                     return $clink[1] . '-sc-' . $n_scr[0] . '-title';
-                                                  }
-                                               } elseif (isset($strScript[$n_scr[0]][0])) { // ho trovato una traduzione per lo script nel primo elemento
-                                                  if (is_array($strScript[$n_scr[0]][0])) {
-                                                     return $clink[1] . '-sc-' . $n_scr[0] . '-0-' . array_shift(array_slice($strScript[$n_scr[0]][0], 0, 1));
-                                                  } else {
-                                                     return $clink[1] . '-sc-' . $n_scr[0] . '-0';
-                                                  }
-                                               } else { // non ho trovato nulla nemmeno sui file tipo lang.english.php
-                                                  return $clink[1] . '-none-script';
-                                               }
-                                            } else { // non c'è traduzione per questo script 
-                                               return $clink[1] . '-none-script_menu';
-                                            }
-                                         }
-                                      }
-                                   }
-                                }
+                            function get_transl_referer($rlink) {
+                               global $gTables;
+                               $clink = explode('/', $rlink);
+                               $n1 = gaz_dbi_get_row($gTables['module'], 'link', end($clink));
+                               if ($n1) {
+                                  include "../../modules/" . $clink[1] . "/menu.italian.php";
+                                  return $clink[1] . '-m1-' . $n1['id'];
+                               } else {
+                                  $n2 = gaz_dbi_get_row($gTables['menu_module'], 'link', end($clink));
+                                  if ($n2) {
+                                     include "../../modules/" . $clink[1] . "/menu.italian.php";
+                                     return $clink[1] . '-m2-' . $n2['translate_key'];
+                                  } else {
+                                     $n3 = gaz_dbi_get_row($gTables['menu_script'], 'link', end($clink));
+                                     if ($n3) {
+                                        include "../../modules/" . $clink[1] . "/menu.italian.php";
+                                        return $clink[1] . '-m3-' . $n3['translate_key'];
+                                     } else { // non l'ho trovato neanche nel m3, provo sui file di traduzione
+                                        include "../../modules/" . $clink[1] . "/lang.italian.php";
+                                        // tento di risalire allo script giusto
+                                        $n_scr = explode('?', end($clink));
+                                        if (isset($strScript[$n_scr[0]])) { // ho trovato una traduzione per lo script
+                                           if (isset($strScript[$n_scr[0]]['title'])) { // ho trovato una traduzione per lo script con index specifico
+                                              if (is_array($strScript[$n_scr[0]]['title'])) {
+                                                 return $clink[1] . '-sc-' . $n_scr[0] . '-title-' . array_shift(array_slice($strScript[$n_scr[0]]['title'], 0, 1));
+                                              } else {
+                                                 return $clink[1] . '-sc-' . $n_scr[0] . '-title';
+                                              }
+                                           } elseif (isset($strScript[$n_scr[0]][0])) { // ho trovato una traduzione per lo script nel primo elemento
+                                              if (is_array($strScript[$n_scr[0]][0])) {
+                                                 return $clink[1] . '-sc-' . $n_scr[0] . '-0-' . array_shift(array_slice($strScript[$n_scr[0]][0], 0, 1));
+                                              } else {
+                                                 return $clink[1] . '-sc-' . $n_scr[0] . '-0';
+                                              }
+                                           } else { // non ho trovato nulla nemmeno sui file tipo lang.english.php
+                                              return $clink[1] . '-none-script';
+                                           }
+                                        } else { // non c'è traduzione per questo script 
+                                           return $clink[1] . '-none-script_menu';
+                                        }
+                                     }
+                                  }
+                               }
+                            }
 
 //aggiornamento automatico della tabella gaz_menu_usage
                                 if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le statistiche solo in caso di cambio script
