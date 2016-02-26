@@ -64,8 +64,16 @@ if (isset($_GET['cliente'])) {
    }
 }
 
+gaz_flt_var_assign('id_tes','i');
+gaz_flt_var_assign('numdoc','i');
+gaz_flt_var_assign('datemi','d');
+gaz_flt_var_assign('clfoco','v');
 
 if (isset($_GET['all'])) {
+	$_GET['id_tes']="";
+	$_GET['numdoc']="";
+	$_GET['datemi']="";
+	$_GET['clfoco']="";
    $auxil = $_GET['auxil'] . "&all=yes";
    if ($_GET['auxil'] == 'VPR') {
       $what = 'VPR';
@@ -140,17 +148,25 @@ $recordnav->output();
 
     <table class="Tlarge">
         <tr>
-            <td colspan="2" class="FacetFieldCaptionTD">
-                <input type="text" placeholder="<?php echo $script_transl['number']; ?>" class="input-xs form-control" name="numdoc" value="<?php if (isset($numero)) echo $numero; ?>" maxlength="14" size="14" tabindex="1" class="FacetInput">
+            <td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_int ( "id_tes", "Numero Prot." ); ?>
+                <!--<input type="text" placeholder="<?php echo $script_transl['number']; ?>" class="input-xs form-control" name="numdoc" value="<?php if (isset($numero)) echo $numero; ?>" maxlength="14" size="14" tabindex="1" class="FacetInput">-->
             </td>
-            <td>
+            <td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_int ( "numdoc", "Numero Doc." ); ?>
+            </td>
+			<td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_select ( "datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
+            </td>
+			<td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_int ( "numdoc", "Numero Doc." ); ?>
             </td>
             <td class=FacetFieldCaptionTD>
-                <input type="text" placeholder="Cliente" class="input-xs form-control" name="cliente" value="<?php
+                <!--<input type="text" placeholder="Cliente" class="input-xs form-control" name="cliente" value="<?php
                 if (isset($cliente)) {
                    print $cliente;
                 }
-                ?>" maxlength="40" size="30" tabindex=2 class=FacetInput>
+                ?>" maxlength="40" size="30" tabindex=2 class=FacetInput>-->
             </td>
             <td>
                 <input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value = 1;">

@@ -49,6 +49,7 @@ function getLastId($date,$seziva)
 $gForm = new venditForm();
 $ecr=$gForm->getECR_userData($admin_aziend['Login']);
 $where = "tipdoc = 'VCO' AND seziva = ".$ecr['seziva'];
+$all = $where;
 if (isset($_GET['all'])) {
    gaz_set_time_limit (0);
    $passo = 100000;
@@ -64,12 +65,34 @@ echo "</div>\n";
 if (!isset($_GET['field']) || $_GET['field'] == 2 || empty($_GET['field'])) {
    $orderby = "datemi DESC, id_con ASC, numdoc DESC";
 }
+
+gaz_flt_var_assign('id_tes','i');
+gaz_flt_var_assign('datemi','d');
+gaz_flt_var_assign('numdoc','i');
+//gaz_flt_var_assign('clfoco','v' );
+
+if (isset($_GET['all'])) {
+	$_GET['id_tes']="";
+	$_GET['datemi']="";
+	$_GET['numdoc']="";
+	//$_GET['clfoco']="";
+	$where=$all;
+	$auxil="&all=yes";
+}
+
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav->output();
 ?>
 <table class="Tlarge">
 <tr>
 <td class="FacetFieldCaptionTD" colspan="1">
+<?php gaz_flt_disp_int ( "id_tes", "Numero Id" ); ?>
+</td>
+<td class="FacetFieldCaptionTD" colspan="1">
+<?php gaz_flt_disp_select ( "datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
+</td>
+<td class="FacetFieldCaptionTD" colspan="1">
+<?php gaz_flt_disp_int ( "numdoc", "Numero Doc." );?>
 </td>
 <td class="FacetFieldCaptionTD" colspan="1">
 </td>
@@ -80,11 +103,7 @@ $recordnav->output();
 <td class="FacetFieldCaptionTD" colspan="1">
 </td>
 <td class="FacetFieldCaptionTD" colspan="1">
-</td>
-<td class="FacetFieldCaptionTD" colspan="1">
-</td>
-<td class="FacetFieldCaptionTD" colspan="1">
-<input type="submit" class="btn btn-default btn-xs" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
+<input type="submit" class="btn btn-default btn-sm" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <tr>

@@ -32,7 +32,9 @@ if (isset($_GET['auxil'])) {
 }
 
 $where = " tipdoc = 'VRI' AND seziva = '$auxil'";
+$all = $where;
 $doc ='';
+
 if (isset($_GET['numdoc'])) {
    if ($_GET['numdoc'] > 0) {
       $doc = intval($_GET['numdoc']);
@@ -41,10 +43,20 @@ if (isset($_GET['numdoc'])) {
       $passo = 1;
    }
 }
+
+gaz_flt_var_assign('id_tes','i');
+gaz_flt_var_assign('datemi','d');
+gaz_flt_var_assign('numdoc','i');
+gaz_flt_var_assign('clfoco','v' );
+
 if (isset($_GET['all'])) {
-   $auxil = $_GET['auxil']."&all=yes";
-   $passo = 100000;
-   $where = " tipdoc = 'VRI' AND seziva = '$auxil'";
+	$_GET['id_tes']="";
+	$_GET['datemi']="";
+	$_GET['numdoc']="";
+	$_GET['clfoco']="";
+	$where=$all;
+	$auxil = $_GET['auxil']."&all=yes";
+	$passo = 100000;
 }
 
 require("../../library/include/header.php");
@@ -71,14 +83,24 @@ $recordnav -> output();
 ?>
 <table class="Tlarge">
 <tr>
-<td colspan="2" class="FacetFieldCaptionTD">
-<input type="text" placeholder="Cerca Numero" class="input-xs form-control" name="numdoc" value="<?php if ($doc > 0) print $doc; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+<td colspan="1" class="FacetFieldCaptionTD">
+<?php gaz_flt_disp_int ( "numdoc", "Numero Ricevuta" ); ?>
+<!--<input type="text" placeholder="Cerca Numero" class="input-xs form-control" name="numdoc" value="<?php if ($doc > 0) print $doc; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">-->
 </td>
-<td>
-<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+<td colspan="1" class="FacetFieldCaptionTD">
+<?php gaz_flt_disp_select ( "datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
 </td>
-<td>
-<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+<td class="FacetFieldCaptionTD">
+	<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, $orderby, "ragso1"); ?>
+</td>
+<td class="FacetFieldCaptionTD">
+&nbsp;
+</td>
+<td class="FacetFieldCaptionTD">
+<input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+</td>
+<td class="FacetFieldCaptionTD">
+<input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <tr>

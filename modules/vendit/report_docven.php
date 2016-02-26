@@ -38,13 +38,30 @@ function print_querytime($prev)
 
 if (isset($_GET['auxil'])) {
    $seziva = $_GET['auxil'];
-   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
+   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva'";
 } else {
    $seziva = "1";
-   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
+   $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva'";
 }
 
-if (isset($_GET['protoc'])) {
+$all = $where;
+
+gaz_flt_var_assign('id_tes','i');
+gaz_flt_var_assign('numfat','i');
+gaz_flt_var_assign('datfat','d');
+gaz_flt_var_assign('clfoco','v' );
+
+if (isset($_GET['all'])) {
+	$_GET['id_tes']="";
+	$_GET['numfat']="";
+	$_GET['datfat']="";
+	$_GET['clfoco']="";
+	$where=$all;
+}
+
+$where .= " GROUP BY protoc, datfat";
+
+/*if (isset($_GET['protoc'])) {
    if ($_GET['protoc'] > 0) {
       $protocollo = $_GET['protoc'];
       $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' AND protoc = '$protocollo' GROUP BY protoc, datfat";
@@ -72,15 +89,15 @@ if (isset($_GET['cliente'])) {
       unset($protocollo);
       unset($numerof);
    }
-}
+}*/
 
 if (isset($_GET['all'])) {
-   gaz_set_time_limit (0);
+/*   gaz_set_time_limit (0);
    $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
    $passo = 100000;
    unset($protocollo);
    unset($cliente);
-   unset($numerof);
+   unset($numerof);*/
 }
 
 $titolo="Documenti di vendita a clienti";
@@ -249,19 +266,23 @@ $recordnav -> output();
 <table class="Tlarge">
  <tr>
    <td class="FacetFieldCaptionTD">
-		<input type="text" placeholder="Cerca Prot." class="input-xs form-control" name="protoc" value="<?php if (isset($protocollo)) echo $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+		<?php gaz_flt_disp_int ( "id_tes", "Numero Prot." ); ?>
    </td>
-   <!--<td></td>-->
    <td class="FacetFieldCaptionTD">
-		<input type="text" placeholder="Cerca Num." class="input-xs form-control" name="numerof" value="<?php if (isset($numerof)) { print $numerof;} ?>" maxlength="6" size="3" tabindex="2" class="FacetInput">
+		<?php gaz_flt_disp_int ( "numfat", "Numero Fatt." ); ?>
    </td>
-   <td class="FacetFieldCaptionTD"></td>
-   <td colspan="1" class="FacetFieldCaptionTD">
-		<input type="text" placeholder="Cerca Cliente" class="input-xs form-control" name="cliente" value="<?php if (isset($cliente)) { print $cliente;} ?>" maxlength="40" size="30" tabindex="3" class="FacetInput">
+   <td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_select ( "datfat", "YEAR(datfat) as datfat", $gTables["tesdoc"], $all, $orderby); ?>
+   </td>
+   <td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, $orderby, "ragso1"); ?>
+   </td>
+   <td class="FacetFieldCaptionTD">
+		&nbsp;
    </td>
    <td class="FacetFieldCaptionTD" colspan="6">
-     <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
-     <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
+     <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+     <input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
    </td>
  </tr>
 <tr>

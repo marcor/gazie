@@ -33,26 +33,24 @@ if (isset($_GET['auxil'])) {
     $auxil = 1;
 }
 $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil'";
+$all = $where;
+
 $documento = '';
 $cliente = '';
-if (isset($_GET['numdoc'])) {
-    if ($_GET['numdoc'] > 0) {
-        $documento = filter_input(INPUT_GET, 'numdoc');
-        $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil' and numdoc = '$documento'";
-        $passo = 1;
-        $auxil = filter_input(INPUT_GET, 'auxil') . "&numdoc=" . $documento;
-    }
-}
-if (isset($_GET['cliente'])) {
-    if ($_GET['cliente'] <> '') {
-        $cliente = filter_input(INPUT_GET, 'cliente');
-        $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil' and descri like '%$cliente%'";
-        $passo = 50;
-        $auxil = filter_input(INPUT_GET, 'auxil') . "&cliente=" . $cliente;
-        unset($documento);
-    }
-}
+
+gaz_flt_var_assign('id_tes','i');
+gaz_flt_var_assign('numdoc','i');
+gaz_flt_var_assign('tipdoc','v');
+gaz_flt_var_assign('datemi','d');
+gaz_flt_var_assign('clfoco','v');
+
+
 if (isset($_GET['all'])) {
+	$_GET['id_tes']="";
+	$_GET['numdoc']="";
+	$_GET['tipdoc']="";	
+	$_GET['datemi']="";
+	$_GET['clfoco']="";
     gaz_set_time_limit(0);
     $auxil = filter_input(INPUT_GET, 'auxil') . "&all=yes";
     $passo = 100000;
@@ -123,18 +121,38 @@ function confirMail(link){
     <table class="Tlarge">
         <tr>
             <td class="FacetFieldCaptionTD">
-                <input placeholder="Cerca Numero" class="input-xs form-control" type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+				<?php gaz_flt_disp_int ( "id_tes", "Numero Prot." ); ?>
+                <!--<input placeholder="Cerca Numero" class="input-xs form-control" type="text" name="numdoc" value="<?php if (isset($documento) && $documento > 0) print $documento; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">-->
             </td>
-            <td>
+            <td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_int ( "numdoc", "Numero Doc." ); ?>
             </td>
-            <td colspan="1" class="FacetFieldCaptionTD">
-                <input placeholder="Cerca Cliente" class="input-xs form-control" type="text" name="cliente" value="<?php if ($cliente <> '') print $cliente; ?>" maxlength="40" size="30" tabindex="2" class="FacetInput">
+            <td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_select ( "tipdoc", "tipdoc", $gTables["tesdoc"], $all, $orderby); ?>
             </td>
-            <td>
-                <input class="btn btn-xs btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+			<td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_select ( "datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
+			</td>
+			<td class="FacetFieldCaptionTD">
+				<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, $orderby, "ragso1"); ?>
+			</td>
+			<td class="FacetFieldCaptionTD">
+				&nbsp;
+			</td>
+			<td class="FacetFieldCaptionTD">
+				&nbsp;
+			</td>
+			<td class="FacetFieldCaptionTD">
+				&nbsp;
+			</td>
+			<td class="FacetFieldCaptionTD">
+				&nbsp;
+			</td>
+            <td class="FacetFieldCaptionTD">
+                <input class="btn btn-sm btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
             </td>
-            <td colspan="3">
-                <input class="btn btn-xs btn-default" type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
+            <td class="FacetFieldCaptionTD">
+                <input class="btn btn-sm btn-default" type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
             </td>
         </tr>
 

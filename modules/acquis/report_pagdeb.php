@@ -43,8 +43,18 @@ if (!isset($_GET['flag_order'])) {
 gaz_flt_var_assign('id_tes','i');
 gaz_flt_var_assign('tipdoc','i');
 gaz_flt_var_assign('numdoc','i');
-gaz_flt_var_assign( 'datemi', "d" );
-gaz_flt_var_assign( 'clfoco', "v" );
+gaz_flt_var_assign('datemi','d' );
+gaz_flt_var_assign('clfoco','v' );
+
+if (isset($_GET['all'])) {
+	$_GET['id_tes']="";
+	$_GET['tipdoc']="";
+	$_GET['numdoc']="";
+	$_GET['datfat']="";
+	$_GET['clfoco']="";
+	$where=$all;
+	$auxil="&all=yes";
+}
 
 $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav -> output();
@@ -64,7 +74,6 @@ $recordnav -> output();
 	<td class="FacetFieldCaptionTD">
 		<?php gaz_flt_disp_select ( "datfat", "YEAR(datfat) as datfat", $gTables["tesbro"], $all, $orderby); ?>
 	</td>
-	
 	<td class="FacetFieldCaptionTD">
 		<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesbro"].".clfoco", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, $orderby, "ragso1"); ?>
 	</td>

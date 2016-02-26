@@ -50,8 +50,8 @@ $script_uri = basename($_SERVER['REQUEST_URI']);
 $mod_uri = '/' . $module . '/' . $script_uri;
 
 function gaz_flt_var_assign($flt, $typ) {
-	$where="";
-	if (isset($_GET[$flt]) && $_GET[$flt]!='All') {
+	global $where;
+	if (isset($_GET[$flt]) && $_GET[$flt]!='All' && $_GET[$flt]!="") {
 		$var = $_GET[$flt];
 		if ( $typ=="i" ) {
 			$where .= " and ".$flt." = $var";
@@ -79,7 +79,7 @@ function gaz_flt_disp_select( $flt, $fltdistinct, $tbl, $where, $orderby, $optva
 }
 
 function gaz_flt_disp_int ( $flt, $hint ) {
-	?><input type="text" placeholder="<?php echo $hint; ?>" class="input-sm form-control" name="<?php echo $flt; ?>" value="<?php if ( isset($_GET[$flt])) print $_GET[$flt]; ?>" tabindex="1" class="FacetInput"><?php
+	?><input type="text" placeholder="<?php echo $hint; ?>" class="input-sm form-control" name="<?php echo $flt; ?>" value="<?php if ( isset($_GET[$flt]) ) print $_GET[$flt]; ?>" size="5" class="FacetInput"><?php
 }
 
 function gaz_filtro ( $flt_name, $table, $where, $orderby ) {
