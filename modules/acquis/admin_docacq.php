@@ -1073,7 +1073,6 @@ $script_transl = HeadMain(0, array(
     'custom/modal_form'
         ));
 
-echo '<script type="text/javascript" src="./lotmag_dialog.js"></script>';
 ?>
 <script language="JavaScript">
     function pulldown_menu(selectName, destField)
@@ -1101,46 +1100,14 @@ if ($form['id_tes'] > 0 and substr($form['tipdoc'], 0, 1) == 'D') {
 } else {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
-echo '<script src="assets/js/jquery.knob.js"></script>';
-echo '<script src="./assets/js/jquery.fileupload.js"></script>';
-echo '<script src="assets/js/script.js"></script>';
-echo "<script type=\"text/javascript\">"
- . "$(function() {";
-foreach ($form['rows'] as $k => $v) {
-    if ($v['lot_or_serial'] >= 1) {
-        echo '   $( "#lm_dialog' . $k . '").dialog({
-              autoOpen: false
-                });';
-    }
-}
-echo "\n});\n</script>\n";
+
 echo "<form method=\"POST\" name=\"docacq\" enctype=\"multipart/form-data\">\n";
 $gForm = new gazieForm();
 /** inizio modifica FP 28/10/2015 */
 $strArrayDest = base64_encode(serialize($array_destinazioni));
 echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">' . "\n"; // salvo l'array delle destinazioni in un hidden input 
 /** fine modifica FP */
-// INIZIO creazione lotmag_dialog 
-foreach ($form['rows'] as $i => $v) {
-    if ($v['lot_or_serial'] >= 1) {
-        echo '<div id="lm_post_container_' . $i . '"  >
-                <input type="hidden" name="lotmag[' . $i . '][identifier]" id="lotmag_' . $i . '_identifier" value="' . $form['lotmag'][$i]['identifier'] . '" />
-                <input type="hidden" name="lotmag[' . $i . '][expiry]" id="lotmag_' . $i . '_expiry"  value="' . $form['lotmag'][$i]['expiry'] . '" />
-              </div>' . "\n";
-        echo '<div id="lm_dialog' . $i . '" title="Documenti e/o certificazioni per: ' . $v['descri'] . ' ">
-	  	<div class="validateTips"></div>
-		<div id="lm_form_container_' . $i . '"  >
-                    <ul></ul>
-			<div id="file' . $i . '">
-                            <ul>Documento (pdf,jpg,gif,png)</ul><ul><input type="file" id="' . $i . '_file"  /> </ul>
-                            <ul>Numero di serie - matricola</ul><ul> <input type="text" id="' . $i . '_identifier" value="' . $form['lotmag'][$i]['identifier'] . '" /></ul>
-                            <ul>Scadenza</ul><ul><input type="text" id="' . $i . '_expiry"  value="' . $form['lotmag'][$i]['expiry'] . '" /></ul>
-			</div>
-		</div>
-              </div>' . "\n";
-    }
-}
-// FINE creazione form lotmag_dialog
+
 
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
@@ -1404,9 +1371,15 @@ foreach ($form['rows'] as $key => $value) {
 					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
 ';
             if ($value['lot_or_serial'] > 0) {
-                echo '<button class="btn btn-default btn-sm" type="image" onclick="lotmagDialog(this);return false;" href="#" id="lotmag' . $key . '">'
+                echo '<button class="btn btn-default btn-sm" type="image" data-toggle="collapse" href="#lm_dialog' . $key . '">'
                 . '<i class="glyphicon glyphicon-tag"></i>'
                 . '</button>';
+        echo '<div id="lm_dialog' . $key . '" class="collapse" >
+                            <div>Documento di origine (pdf,jpg,gif,png)</div><div><input type="file"   name="userfile" /> </div>
+                            <div>Numero di serie - matricola</div><div> <input type="text" name="lotmag[' . $key . '][identifier]" value="' . $form['lotmag'][$key]['identifier'] . '" /></div>
+                            <div>Scadenza</div><div><input type="text" name="lotmag[' . $key . '][expiry]"  value="' . $form['lotmag'][$key]['expiry'] . '" /></div>
+			</div>
+              </div>' . "\n";
             }
             echo '				  </td>
 				  <td>			<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
