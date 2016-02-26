@@ -275,7 +275,9 @@ if ($modal_ok_insert === true) {
 
     /** ENRICO FEDELE */
     /* Se sono in finestra modale, non visualizzo questo titolo */
+    $changesubmit= '';
     if ($modal === false) {
+        $changesubmit= 'onchange="submit();"';
         if ($toDo == 'insert') {
             echo '<div align="center" class="FacetFormHeaderFont">' . $script_transl['ins_this'] . '</div>';
         } else {
@@ -379,7 +381,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['preve1'] . '</td>
 	  	<td  colspan="2" class="FacetDataTD">
-      		<input type="text" name="preve1" value="' . $form['preve1'] . '" style="text-align:right;" maxlength="15" size="15" onchange="submit();" /> ' .
+      		<input type="text" name="preve1" value="' . $form['preve1'] . '" style="text-align:right;" maxlength="15" size="15" '.$changesubmit.' /> ' .
     $script_transl['preve1_sc'] .
     '<input type="text" readonly="true" name="preve1_sc" value="' . gaz_format_number($form['preve1'] * (1 - $form['sconto'] / 100)) . '" style="text-align:right;" maxlength="15" size="15" />
 	  	</td>
@@ -387,7 +389,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['preve2'] . '</td>
 	  	<td colspan="2" class="FacetDataTD">
-      		<input type="text" name="preve2" value="' . $form['preve2'] . '" style="text-align:right;" maxlength="15" size="15" onchange="submit();" /> ' .
+      		<input type="text" name="preve2" value="' . $form['preve2'] . '" style="text-align:right;" maxlength="15" size="15" '.$changesubmit.' /> ' .
     $script_transl['preve2_sc'] .
     '<input type="text" readonly="true" name="preve1_sc" value="' . gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)) . '" style="text-align:right;" maxlength="15" size="15" />
 		</td>
@@ -395,7 +397,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 	 	 <td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['preve3'] . '</td>
 	  	<td colspan="2" class="FacetDataTD">
-      		<input type="text" name="preve3" value="' . $form['preve3'] . '" style="text-align:right;" maxlength="15" size="15" onchange="submit();" /> ' .
+      		<input type="text" name="preve3" value="' . $form['preve3'] . '" style="text-align:right;" maxlength="15" size="15" '.$changesubmit.' /> ' .
     $script_transl['preve3_sc'] .
     '<input type="text" readonly="true" name="preve1_sc" value="' . gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)) . '" style="text-align:right;" maxlength="15" size="15" />
 
@@ -404,7 +406,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 	    <td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['sconto'] . '</td>
 		<td colspan="2" class="FacetDataTD">
-			<input type="text" name="sconto" value="' . $form['sconto'] . '" style="text-align:right;" maxlength="6" size="15" onchange="submit();"/>
+			<input type="text" name="sconto" value="' . $form['sconto'] . '" style="text-align:right;" maxlength="6" size="15" '.$changesubmit.' />
 		</td>
 	  </tr>
 	  <tr>
