@@ -56,18 +56,19 @@ function gaz_flt_var_assign($flt, $typ) {
 		if ( $typ=="i" ) {
 			$where .= " and ".$flt." = $var";
 		} else if ( $typ=="v" ) {
-			$where .= " and ".$flt." = '$var'";
+			$where .= " and ".$flt." like '%$var%'";
 		} else if ( $typ=="d" ) {
 			$where .= " and $flt >= \"".$var."/01/01\" and $flt <= \"".$var."/12/31\"";
 		}
 	}
-	return $where;
+	//return $where;
 } 
 
 function gaz_flt_disp_select( $flt, $fltdistinct, $tbl, $where, $orderby, $optval = "" ) {
 	?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
 	<?php if ( isset($_GET[$flt]) ) $fltget=$_GET[$flt]; else $fltget="";?>
 	<option value="All" <?php echo ($flt=="All") ? "selected" : "";?>>Tutti</option> <?php //echo $script_transl['tuttitipi']; ?>
+	
 	<?php $res = gaz_dbi_dyn_query("distinct ".$fltdistinct, $tbl, $where, $orderby);
 	while ( $val = gaz_dbi_fetch_array($res) ) {
 		if ( $fltget == $val[$flt] ) $selected = "selected";

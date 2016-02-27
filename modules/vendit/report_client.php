@@ -33,6 +33,7 @@ $clienti = $admin_aziend['mascli'];
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 $where = "codice BETWEEN ".$clienti."000000 AND ".$clienti."999999 and codice > $mascli";
+$all = $where;
 
 if (isset($_GET['auxil'])) {
 	$auxil = $_GET['auxil'];
@@ -45,6 +46,8 @@ if (isset($_GET['auxil1'])) {
 } else {
 	$auxil1 = "";
 }
+
+gaz_flt_var_assign('ragso1','v' );
 
 if (isset($_GET['all'])) {
 	$auxil = "&all=yes";
@@ -77,18 +80,30 @@ if ( isset($_GET['ricerca_completa'])) {
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <table class="Tlarge">
 <tr>
-<td class="FacetFieldCaptionTD">
-<input placeholder="Cerca" class="input-xs form-control" type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
-</td>
-<td class="FacetFieldCaptionTD">
-<input placeholder="Cerca Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
-</td>
-<td>
-<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
-</td>
-<td colspan="3">
-<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
-</td>
+	<td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_int ( "codice", "Codice cli." ); ?>
+	</td>
+	<td class="FacetFieldCaptionTD">
+		<?php gaz_flt_disp_int ( "ragso1", "Nome cliente" ); //gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all, $orderby, "ragso1"); ?>
+	</td>
+	<td class="FacetFieldCaptionTD">
+		&nbsp;
+	</td>
+	<td class="FacetFieldCaptionTD">
+		&nbsp;
+	</td>
+	<td class="FacetFieldCaptionTD">
+		&nbsp;
+	</td>
+	<td class="FacetFieldCaptionTD">
+		&nbsp;
+	</td>
+	<td class="FacetFieldCaptionTD">
+		<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+	</td>
+	<td class="FacetFieldCaptionTD">
+		<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+	</td>
 </tr>
 <?php
 $result = gaz_dbi_dyn_query ('*', $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $where, $orderby, $limit, $passo);

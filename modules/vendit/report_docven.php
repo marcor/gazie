@@ -265,25 +265,36 @@ $recordnav -> output();
 ?>
 <table class="Tlarge">
  <tr>
-   <td class="FacetFieldCaptionTD">
+	<td class="FacetFieldCaptionTD">
 		<?php gaz_flt_disp_int ( "id_tes", "Numero Prot." ); ?>
-   </td>
-   <td class="FacetFieldCaptionTD">
+	</td>
+	<td class="FacetFieldCaptionTD">
 		<?php gaz_flt_disp_int ( "numfat", "Numero Fatt." ); ?>
-   </td>
-   <td class="FacetFieldCaptionTD">
+	</td>
+	<td class="FacetFieldCaptionTD">
 		<?php gaz_flt_disp_select ( "datfat", "YEAR(datfat) as datfat", $gTables["tesdoc"], $all, $orderby); ?>
-   </td>
-   <td class="FacetFieldCaptionTD">
+	</td>
+	<td class="FacetFieldCaptionTD">
 		<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, $orderby, "ragso1"); ?>
-   </td>
-   <td class="FacetFieldCaptionTD">
+	</td>
+	<td class="FacetFieldCaptionTD">
 		&nbsp;
-   </td>
-   <td class="FacetFieldCaptionTD" colspan="6">
+	</td>
+	<td class="FacetFieldCaptionTD">
+		&nbsp;
+	</td>
+	<td class="FacetFieldCaptionTD">
+		&nbsp;
+	</td>
+	<td class="FacetFieldCaptionTD">
+		&nbsp;
+	</td>
+	<td class="FacetFieldCaptionTD">
      <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+	</td>
+	<td class="FacetFieldCaptionTD">
      <input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="confirTutti();return false;">
-   </td>
+	</td>
  </tr>
 <tr>
 <?php

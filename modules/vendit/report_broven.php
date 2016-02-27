@@ -44,7 +44,8 @@ if (isset($_GET['auxil'])) {
    $_GET['auxil'] = 'VOR';
    $where = "tipdoc LIKE '$auxil'";
 }
-
+$all = $where;
+/*
 if (isset($_GET['numdoc'])) {
    if ($_GET['numdoc'] > 0) {
       $numero = $_GET['numdoc'];
@@ -62,7 +63,7 @@ if (isset($_GET['cliente'])) {
       $where = "tipdoc like '$auxil' and " . $gTables['anagra'] . ".ragso1 like '%" . addslashes($cliente) . "%'";
       $passo = 50;
    }
-}
+}*/
 
 gaz_flt_var_assign('id_tes','i');
 gaz_flt_var_assign('numdoc','i');
@@ -129,6 +130,8 @@ function confirMail(link){
    $("#dialog" ).dialog( "open" );
 }
 </script>';
+if (!isset($_GET['flag_order']))
+    $orderby = "datemi DESC, numdoc DESC";
 $a = substr($auxil, 0, 3);
 ?>
 
@@ -150,29 +153,30 @@ $recordnav->output();
         <tr>
             <td class="FacetFieldCaptionTD">
 				<?php gaz_flt_disp_int ( "id_tes", "Numero Prot." ); ?>
-                <!--<input type="text" placeholder="<?php echo $script_transl['number']; ?>" class="input-xs form-control" name="numdoc" value="<?php if (isset($numero)) echo $numero; ?>" maxlength="14" size="14" tabindex="1" class="FacetInput">-->
             </td>
             <td class="FacetFieldCaptionTD">
 				<?php gaz_flt_disp_int ( "numdoc", "Numero Doc." ); ?>
             </td>
 			<td class="FacetFieldCaptionTD">
-				<?php gaz_flt_disp_select ( "datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
+				<?php gaz_flt_disp_select ( "datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); ?>
             </td>
 			<td class="FacetFieldCaptionTD">
-				<?php gaz_flt_disp_int ( "numdoc", "Numero Doc." ); ?>
+				<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesbro"].".clfoco", $gTables['tesbro']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesbro'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, $orderby, "ragso1"); ?>
             </td>
             <td class=FacetFieldCaptionTD>
-                <!--<input type="text" placeholder="Cliente" class="input-xs form-control" name="cliente" value="<?php
-                if (isset($cliente)) {
-                   print $cliente;
-                }
-                ?>" maxlength="40" size="30" tabindex=2 class=FacetInput>-->
+				&nbsp;
             </td>
-            <td>
-                <input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+			<td class=FacetFieldCaptionTD>
+				&nbsp;
             </td>
-            <td>
-                <input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
+			<td class=FacetFieldCaptionTD>
+				&nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
+                <input type="submit" class="btn btn-sm btn-default" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+            </td>
+            <td class="FacetFieldCaptionTD">
+                <input type="submit" class="btn btn-sm btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
             </td>
         </tr>
         <tr>
@@ -196,8 +200,6 @@ $recordnav->output();
             ?>
         </tr>
         <?php
-        if (!isset($_GET['flag_order']))
-           $orderby = "datemi DESC, numdoc DESC";
 //recupero le testate in base alle scelte impostate
         $result = gaz_dbi_dyn_query($gTables['tesbro'] . ".*," . $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail," . $gTables["clfoco"] . ".codice", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
         if ($result == false) {
