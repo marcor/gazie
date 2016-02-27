@@ -24,9 +24,11 @@
 */
 $transl['suppor'] = array( 'name' => "Supporto",
                            'title' => "Gestione supporto clienti",
-                           'm2' => array( 1 =>array("Assistenza clienti","Assistenza Clienti")
+                           'm2' => array( 1 =>array("Assistenza clienti","Assistenza Clienti"),
+                                          2 =>array("Periodo","Periodo")
                                         ),
-                           'm3' => array( 1 =>array("Inserisci nuovo assistenza","Nuova assistenza")
+                           'm3' => array( 1 =>array("Inserisci nuovo assistenza","Nuova assistenza"),
+                                          2 =>array("Inserisci nuovo periodo","Nuovo periodo")
                                           
                                         )
                          );

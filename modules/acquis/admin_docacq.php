@@ -31,6 +31,11 @@ $msg = "";
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 
+function get_tmp_doc($i) {
+    global $admin_aziend;
+    return true;
+}
+
 if (isset($_POST['newdestin'])) {
     $_POST['id_des'] = 0;
     $_POST['destin'] = "";
@@ -184,19 +189,23 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['pesosp'] = floatval($value['pesosp']);
             $form['rows'][$i]['gooser'] = intval($value['gooser']);
             $form['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);
-            if ($form['rows'][$i]['lot_or_serial'] > 0) {
-                $form['lotmag'][$i]['identifier'] = filter_var($_POST['lotmag'][$i]['identifier'], FILTER_SANITIZE_STRING);
-                $form['lotmag'][$i]['expiry'] = filter_var($_POST['lotmag'][$i]['expiry'], FILTER_SANITIZE_STRING);
-            }
+            $form['rows'][$i]['identifier'] = filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
+            $form['rows'][$i]['expiry'] = filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
+            $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_STRING);
             if (!empty($_FILES['docfile_' . $i]['name'])) {
                 $move = false;
-                $mt = substr($_FILES['docfile_' . $i]['type'], -3);
+                $mt = substr($_FILES['docfile_' . $i]['name'], -3);
+                $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i;
                 if (($mt == "png" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' una nuova immagine nel buffer
                     // adesso il lavoro è agli inizi,  muovo subito i file su una dir temporanea, 
                     // ma dopo, se il documento verrà confermato dovranno essere tutti convertiti in pdf attraverso ghostscript 
-                    // e messi sulla nuova subdir "001" (codice azienda) con prefisso "lotmag_" e nome equivalente all'id della 
+                    // e messi sulla nuova subdir "1" (codice azienda) con prefisso "lotmag_" e nome equivalente all'id della 
                     // tabella "001lotmag"
-                    $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $radix . '/data/files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $_FILES['docfile_' . $i]['name']);
+                    foreach (glob("../../data/files/tmp/".$prefix."_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
+                        unlink($fn);
+                    }
+                    $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $radix . '/data/files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $i]['name']);
+                    $form['rows'][$i]['filename'] = $_FILES['docfile_' . $i]['name'];
                 }
                 if (!$move) {
                     $msg .= "56+";
@@ -611,6 +620,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['pesosp'] = 0;
             $form['rows'][$old_key]['gooser'] = 0;
             $form['rows'][$old_key]['lot_or_serial'] = $form['in_lot_or_serial'];
+            $form['rows'][$old_key]['identifier'] = '';
+            $form['rows'][$old_key]['expiry'] = '';
+            $form['rows'][$old_key]['filename'] = '';
             if ($form['in_tiprig'] == 0 and ! empty($form['in_codart'])) {  //rigo normale
                 $form['rows'][$old_key]['annota'] = $artico['annota'];
                 $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
@@ -618,10 +630,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['unimis'] = $artico['uniacq'];
                 $form['rows'][$old_key]['descri'] = $artico['descri'];
                 $form['rows'][$old_key]['lot_or_serial'] = $artico['lot_or_serial'];
-                if ($form['rows'][$i]['lot_or_serial'] > 0) {
-                    $form['lotmag'][$i]['identifier'] = '';
-                    $form['lotmag'][$i]['expiry'] = '';
-                }
                 $form['rows'][$old_key]['prelis'] = number_format($artico['preacq'], $admin_aziend['decimal_price'], '.', '');
             } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
                 $form['rows'][$old_key]['codart'] = "";
@@ -652,6 +660,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['descri'] = $form['in_descri'];
             $form['rows'][$i]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$i]['status'] = "INSERT";
+            $form['rows'][$i]['identifier'] = '';
+            $form['rows'][$i]['expiry'] = '';
+            $form['rows'][$i]['filename'] = '';
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['rows'][$i]['codart'] = $form['in_codart'];
                 $form['rows'][$i]['annota'] = $artico['annota'];
@@ -660,10 +671,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['descri'] = $artico['descri'];
                 $form['rows'][$i]['unimis'] = $artico['uniacq'];
                 $form['rows'][$i]['lot_or_serial'] = $artico['lot_or_serial'];
-                if ($form['rows'][$i]['lot_or_serial'] > 0) {
-                    $form['lotmag'][$i]['identifier'] = '';
-                    $form['lotmag'][$i]['expiry'] = '';
-                }
                 $form['rows'][$i]['codric'] = $form['in_codric'];
                 $form['rows'][$i]['quanti'] = $form['in_quanti'];
                 $form['rows'][$i]['sconto'] = $form['in_sconto'];
@@ -1369,7 +1376,8 @@ foreach ($form['rows'] as $key => $value) {
 			<input type="hidden" value="' . $value['annota'] . '" name="rows[' . $key . '][annota]" />
 			<input type="hidden" value="' . $value['pesosp'] . '" name="rows[' . $key . '][pesosp]" />
 			<input type="hidden" value="' . $value['gooser'] . '" name="rows[' . $key . '][gooser]" />
-			<input type="hidden" value="' . $value['lot_or_serial'] . '" name="rows[' . $key . '][lot_or_serial]" />';
+			<input type="hidden" value="' . $value['lot_or_serial'] . '" name="rows[' . $key . '][lot_or_serial]" />
+			<input type="hidden" value="' . $value['filename'] . '" name="rows[' . $key . '][filename]" />';
     switch ($value['tiprig']) {
         case "0":
             echo '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
@@ -1387,9 +1395,15 @@ foreach ($form['rows'] as $key => $value) {
                 . '</button>';
                 echo '<div id="lm_dialog' . $key . '" class="collapse" >
                         <div class="form-group">
-                            <label>Documento di origine (pdf,jpg,png)</label><div><input type="file" name="docfile_' . $key . '"> 
-                            <label>Numero di serie - matricola, se non immesso verrà attribuito automaticamente</label><input type="text" name="lotmag[' . $key . '][identifier]" value="' . $form['lotmag'][$key]['identifier'] . '" >
-                            <label>Scadenza </label><input type="text" name="lotmag[' . $key . '][expiry]"  value="' . $form['lotmag'][$key]['expiry'] . '" >
+                            <label>Documento di origine (pdf,jpg,png)</label><div>';
+                if (!empty($form['rows'][$key]['filename'])) {
+                    echo '<button class="btn btn-large btn-success" href="#">'
+                    . $form['rows'][$key]['filename'] . ' <i class="glyphicon glyphicon-certificate"></i>'
+                    . '</button>';
+                }
+                echo '<input type="file" name="docfile_' . $key . '"> 
+                            <label>Numero di serie - matricola, se non immesso verrà attribuito automaticamente</label><input type="text" name="rows[' . $key . '][identifier]" value="' . $form['rows'][$key]['identifier'] . '" >
+                            <label>Scadenza </label><input type="text" name="rows[' . $key . '][expiry]"  value="' . $form['rows'][$key]['expiry'] . '" >
 			</div>
 		     </div>
               </div>' . "\n";
