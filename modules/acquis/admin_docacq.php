@@ -184,9 +184,23 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['pesosp'] = floatval($value['pesosp']);
             $form['rows'][$i]['gooser'] = intval($value['gooser']);
             $form['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);
-            if ($form['rows'][$i]['lot_or_serial'] > 0 ){
-                    $form['lotmag'][$i]['identifier'] = filter_var($_POST['lotmag'][$i]['identifier'],FILTER_SANITIZE_STRING);
-                    $form['lotmag'][$i]['expiry'] = filter_var($_POST['lotmag'][$i]['expiry'],FILTER_SANITIZE_STRING);
+            if ($form['rows'][$i]['lot_or_serial'] > 0) {
+                $form['lotmag'][$i]['identifier'] = filter_var($_POST['lotmag'][$i]['identifier'], FILTER_SANITIZE_STRING);
+                $form['lotmag'][$i]['expiry'] = filter_var($_POST['lotmag'][$i]['expiry'], FILTER_SANITIZE_STRING);
+            }
+            if (!empty($_FILES['docfile_' . $i]['name'])) {
+                $move = false;
+                $mt = substr($_FILES['docfile_' . $i]['type'], -3);
+                if (($mt == "png" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' una nuova immagine nel buffer
+                    // adesso il lavoro è agli inizi,  muovo subito i file su una dir temporanea, 
+                    // ma dopo, se il documento verrà confermato dovranno essere tutti convertiti in pdf attraverso ghostscript 
+                    // e messi sulla nuova subdir "001" (codice azienda) con prefisso "lotmag_" e nome equivalente all'id della 
+                    // tabella "001lotmag"
+                    $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $radix . '/data/files/tmp/' . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $_FILES['docfile_' . $i]['name']);
+                }
+                if (!$move) {
+                    $msg .= "56+";
+                }
             }
             $form['rows'][$i]['status'] = substr($value['status'], 0, 10);
 
@@ -604,7 +618,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['unimis'] = $artico['uniacq'];
                 $form['rows'][$old_key]['descri'] = $artico['descri'];
                 $form['rows'][$old_key]['lot_or_serial'] = $artico['lot_or_serial'];
-                if ($form['rows'][$i]['lot_or_serial'] > 0 ){
+                if ($form['rows'][$i]['lot_or_serial'] > 0) {
                     $form['lotmag'][$i]['identifier'] = '';
                     $form['lotmag'][$i]['expiry'] = '';
                 }
@@ -646,7 +660,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['descri'] = $artico['descri'];
                 $form['rows'][$i]['unimis'] = $artico['uniacq'];
                 $form['rows'][$i]['lot_or_serial'] = $artico['lot_or_serial'];
-                if ($form['rows'][$i]['lot_or_serial'] > 0 ){
+                if ($form['rows'][$i]['lot_or_serial'] > 0) {
                     $form['lotmag'][$i]['identifier'] = '';
                     $form['lotmag'][$i]['expiry'] = '';
                 }
@@ -1072,7 +1086,6 @@ $script_transl = HeadMain(0, array(
     'custom/autocomplete',
     'custom/modal_form'
         ));
-
 ?>
 <script language="JavaScript">
     function pulldown_menu(selectName, destField)
@@ -1107,8 +1120,6 @@ $gForm = new gazieForm();
 $strArrayDest = base64_encode(serialize($array_destinazioni));
 echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">' . "\n"; // salvo l'array delle destinazioni in un hidden input 
 /** fine modifica FP */
-
-
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['id_tes']}\" name=\"id_tes\">\n";
@@ -1371,14 +1382,16 @@ foreach ($form['rows'] as $key => $value) {
 					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
 ';
             if ($value['lot_or_serial'] > 0) {
-                echo '<button class="btn btn-default btn-sm" type="image" data-toggle="collapse" href="#lm_dialog' . $key . '">'
-                . '<i class="glyphicon glyphicon-tag"></i>'
+                echo '<button class="btn btn-sm btn-warning" type="image" data-toggle="collapse" href="#lm_dialog' . $key . '">'
+                . 'Quality doc <i class="glyphicon glyphicon-tag"></i>'
                 . '</button>';
-        echo '<div id="lm_dialog' . $key . '" class="collapse" >
-                            <div>Documento di origine (pdf,jpg,gif,png)</div><div><input type="file"   name="userfile" /> </div>
-                            <div>Numero di serie - matricola</div><div> <input type="text" name="lotmag[' . $key . '][identifier]" value="' . $form['lotmag'][$key]['identifier'] . '" /></div>
-                            <div>Scadenza</div><div><input type="text" name="lotmag[' . $key . '][expiry]"  value="' . $form['lotmag'][$key]['expiry'] . '" /></div>
+                echo '<div id="lm_dialog' . $key . '" class="collapse" >
+                        <div class="form-group">
+                            <label>Documento di origine (pdf,jpg,png)</label><div><input type="file" name="docfile_' . $key . '"> 
+                            <label>Numero di serie - matricola, se non immesso verrà attribuito automaticamente</label><input type="text" name="lotmag[' . $key . '][identifier]" value="' . $form['lotmag'][$key]['identifier'] . '" >
+                            <label>Scadenza </label><input type="text" name="lotmag[' . $key . '][expiry]"  value="' . $form['lotmag'][$key]['expiry'] . '" >
 			</div>
+		     </div>
               </div>' . "\n";
             }
             echo '				  </td>

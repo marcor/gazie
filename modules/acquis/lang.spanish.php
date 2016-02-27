@@ -195,6 +195,7 @@ $strScript = array("admin_fornit.php" =>
         "La fecha de registro no puede ser antecedente a aquella del documento a registrar!",
         "La fecha del documento a registrar no es correcta!",
         "No se incluy&oacute; el n&uacute;mero del documento!",
+        "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
         /** ENRICO FEDELE */
         "add_article" => "Añadir un nuevo artículo",
         'art_code' => 'Número de artículo',
