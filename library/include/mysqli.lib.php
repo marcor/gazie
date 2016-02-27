@@ -226,13 +226,14 @@ function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit =
    if ($groupby != '') {
       $query .= " GROUP BY $groupby ";
    }
-   
+
    if ($orderby == '2') {
       $query .= " LIMIT " . $limit . ", " . $passo;
    } else {
       $query .= " ORDER BY " . $orderby . " LIMIT " . $limit . ", " . $passo;
    }
    //echo $query;
+//   msgDebug($query);
    $result = mysqli_query($link, $query);
    if (!$result)
       die(" Errore di gaz_dbi_dyn_query:<strong> " . $query . " </strong> " . mysqli_error($link));

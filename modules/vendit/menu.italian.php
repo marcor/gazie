@@ -73,7 +73,8 @@ $transl['vendit'] = array('name' => "Vendite",
         34 => array("Inserimento nuovo indirizzo di destinazione", "Nuova destinazione"),
         35 => array("Emetti Ricevuta Fiscale", "Emetti ricevuta"),
         36 => array("Stampa lista documenti", "Lista documenti"),
-        37 => array("Stampa lista fornitori", "Lista fornitori"),
+        37 => array("Stampa lista clienti", "Lista clienti"),
+        38 => array("Stampa analisi acquisti clienti", "Analisi acquisti clienti"),
     )
 );
 ?>

@@ -1048,6 +1048,17 @@ $strScript = array("admin_client.php" =>
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia anagrafica'),
-    )
+    ),
+    "select_an_acq_clienti.php" =>
+    array('title' => 'Analisi acquisti clienti',
+        'errors' => array('Inserire l\'anno da analizzare!',
+        ),
+        "Selezione Cliente ",
+        "inserire min. 2 caratteri!",
+        "Tutti i clienti!",
+        "Non &egrave; stato trovato nulla!",
+        'Anno',
+        'Cadenza',
+    ),
 );
 ?>
