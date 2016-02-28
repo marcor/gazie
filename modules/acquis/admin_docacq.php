@@ -165,8 +165,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
     $form['in_status'] = $_POST['in_status'];
 // fine rigo input
-
-
     $form['rows'] = array();
     $i = 0;
     if (isset($_POST['rows'])) {
@@ -201,7 +199,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     // ma dopo, se il documento verrà confermato dovranno essere tutti convertiti in pdf attraverso ghostscript 
                     // e messi sulla nuova subdir "1" (codice azienda) con prefisso "lotmag_" e nome equivalente all'id della 
                     // tabella "001lotmag"
-                    foreach (glob("../../data/files/tmp/".$prefix."_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
+                    foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
                         unlink($fn);
                     }
                     $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $radix . '/data/files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $i]['name']);
@@ -237,13 +235,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                      * descrizione modificabile
                      */
 // sottrazione ai totali peso,pezzi,volume
-                    $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$k_row]['codart']);
-                    $form['net_weight'] -= $form['rows'][$k_row]['quanti'] * $artico['peso_specifico'];
-                    $form['gross_weight'] -= $form['rows'][$k_row]['quanti'] * $artico['peso_specifico'];
+                    $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$key_row]['codart']);
+                    $form['net_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
+                    $form['gross_weight'] -= $form['rows'][$key_row]['quanti'] * $artico['peso_specifico'];
                     if ($artico['pack_units'] > 0) {
-                        $form['units'] -= intval(round($form['rows'][$k_row]['quanti'] / $artico['pack_units']));
+                        $form['units'] -= intval(round($form['rows'][$key_row]['quanti'] / $artico['pack_units']));
                     }
-                    $form['volume'] -= $form['rows'][$k_row]['quanti'] * $artico['volume_specifico'];
+                    $form['volume'] -= $form['rows'][$key_row]['quanti'] * $artico['volume_specifico'];
 // fine sottrazione peso,pezzi,volume
                     /** fine modifica FP */
                     /* in_artsea non viene usato ora, spero di aver commentato le righe corrette
@@ -812,6 +810,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else {
             $new_key = $i - 1;
         }
+        $tmp_path = $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_';
+        // rinomino prima il documento della linea target new key ( se esiste )
+        @rename($tmp_path . $new_key . '_' . $form['rows'][$new_key]['filename'], $tmp_path . '_tmp_' . $new_key . '_' . $form['rows'][$new_key]['filename']);
+        // rinomino il documento della linea spostata verso l'alto dandogli gli indici di quello precedente
+        @rename($tmp_path . $upp_key . '_' . $form['rows'][$upp_key]['filename'], $tmp_path . $new_key . '_' . $form['rows'][$upp_key]['filename']);
+        // rinomino nuovamente il documento della linea target dandogli gli indici di quella spostata
+        @rename($tmp_path. '_tmp_'.$new_key . '_' . $form['rows'][$new_key]['filename'], $tmp_path . $upp_key . '_' . $form['rows'][$new_key]['filename']);
         $updated_row = $form['rows'][$new_key];
         $form['rows'][$new_key] = $form['rows'][$upp_key];
         $form['rows'][$upp_key] = $updated_row;
@@ -1390,23 +1395,28 @@ foreach ($form['rows'] as $key => $value) {
 					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
 ';
             if ($value['lot_or_serial'] > 0) {
-                echo '<button class="btn btn-sm btn-warning" type="image" data-toggle="collapse" href="#lm_dialog' . $key . '">'
-                . 'Quality doc <i class="glyphicon glyphicon-tag"></i>'
-                . '</button>';
+                if (empty($form['rows'][$key]['filename'])) {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $key . '">'
+                    . $script_transl['insert'] . 'certificato  <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                } else {
+                    echo '<div>certificato:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $key . '">'
+                    . $form['rows'][$key]['filename'] . ' <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                }
                 echo '<div id="lm_dialog' . $key . '" class="collapse" >
                         <div class="form-group">
-                            <label>Documento di origine (pdf,jpg,png)</label><div>';
-                if (!empty($form['rows'][$key]['filename'])) {
-                    echo '<button class="btn btn-large btn-success" href="#">'
-                    . $form['rows'][$key]['filename'] . ' <i class="glyphicon glyphicon-certificate"></i>'
-                    . '</button>';
-                }
+                          <div>';
+
                 echo '<input type="file" name="docfile_' . $key . '"> 
                             <label>Numero di serie - matricola, se non immesso verrà attribuito automaticamente</label><input type="text" name="rows[' . $key . '][identifier]" value="' . $form['rows'][$key]['identifier'] . '" >
                             <label>Scadenza </label><input type="text" name="rows[' . $key . '][expiry]"  value="' . $form['rows'][$key]['expiry'] . '" >
 			</div>
 		     </div>
               </div>' . "\n";
+            } else {
+                echo ' <input type="hidden" value="' . $value['identifier'] . '" name="rows[' . $key . '][identifier]" />';
+                echo ' <input type="hidden" value="' . $value['expiry'] . '" name="rows[' . $key . '][expiry]" />';
             }
             echo '				  </td>
 				  <td>			<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">

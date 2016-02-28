@@ -74,6 +74,7 @@ $strCommon = array('cancel' => " Annulla ",
     'mail_alert0' => 'Invio documento con email',
     'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
     'mail_alert2' => 'con allegato il seguente documento:',
-    'duplicate' => 'Duplica'
+    'duplicate' => 'Duplica',
+    'browse_for_file' => 'Sfoglia'
 );
 ?>
