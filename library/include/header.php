@@ -53,6 +53,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                             <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
                             <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
                             <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
+                            <script src="../../js/jquery.ui/datepicker-<?php echo substr($admin_aziend['lang'],0,2); ?>.js"></script>
                             <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
                             <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
                             <script src="../../js/custom/gz-library.js"></script>

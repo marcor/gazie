@@ -1107,6 +1107,9 @@ $script_transl = HeadMain(0, array(
         var url = document.docacq[selectName].options[document.docacq[selectName].selectedIndex].value;
         document.docacq[destField].value = url;
     }
+  $(function() {
+    $( ".datepicker" ).datepicker({ dateFormat: 'dd-mm-yy' });
+  });   
 </script>
 <script language="JavaScript" ID="datapopup">
     var cal = new CalendarPopup();
@@ -1410,7 +1413,7 @@ foreach ($form['rows'] as $key => $value) {
 
                 echo '<input type="file" name="docfile_' . $key . '"> 
                             <label>Numero di serie - matricola, se non immesso verrà attribuito automaticamente</label><input type="text" name="rows[' . $key . '][identifier]" value="' . $form['rows'][$key]['identifier'] . '" >
-                            <label>Scadenza </label><input type="text" name="rows[' . $key . '][expiry]"  value="' . $form['rows'][$key]['expiry'] . '" >
+                            <label>Scadenza </label><input class="datepicker" type="text" name="rows[' . $key . '][expiry]"  value="' . $form['rows'][$key]['expiry'] . '" >
 			</div>
 		     </div>
               </div>' . "\n";
