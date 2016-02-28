@@ -1659,6 +1659,7 @@ $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 //$select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea']);
 $select_artico->output(substr($form['cosear'], 0, 20));
+echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
 /* echo $script_transl['in_artsea'];
   $gForm->selSearchItem('in_artsea', $form['in_artsea']); */
 echo "\n$script_transl[17]:";
@@ -2191,5 +2192,38 @@ if ($next_row > 0) {
 echo '</table>';
 ?>
 </form>
+<div id="edit-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header active">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel"><?php echo $script_transl['add_article']; ?></h4>
+            </div>
+            <div class="modal-body edit-content small"></div>
+            <!--<div class="modal-footer"></div>-->
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        //twitter bootstrap script
+        $("#addmodal").click(function () {
+            $.ajax({
+                type: "POST",
+                url: "../../modules/magazz/admin_artico.php",
+                data: 'mode=modal',
+                success: function (msg) {
+                    $("#edit-modal .modal-sm").css('width', '850px');
+                    $("#edit-modal .modal-sm").css('min-width', '850px');
+                    $("#edit-modal .modal-body").html(msg);
+                },
+                error: function () {
+                    alert("failure");
+                }
+            });
+        });
+    });
+</script>
+<!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
 </div><!-- chiude div container role main --></body>
 </html>

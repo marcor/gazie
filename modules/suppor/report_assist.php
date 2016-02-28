@@ -28,13 +28,15 @@ $totale_ore = 0;
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 
+
 if ( isset($_GET['auxil']) ) {
    $auxil = $_GET['auxil'];
-   $where = " ".$gTables['anagra'].".ragso1 like '%$auxil%'";	
+   $where = "tipo = 'ASS' and ".$gTables['anagra'].".ragso1 like '%$auxil%'";	
 } else {
    $auxil = "";
-   $where = " ".$gTables['anagra'].".ragso1 like '%%'";	
+   $where = "tipo = 'ASS' and ".$gTables['anagra'].".ragso1 like '%%'";	
 }
+$all	= $where;
 
 if ( isset($_GET['flt_passo']) ) {
 	$passo = $_GET['flt_passo'];

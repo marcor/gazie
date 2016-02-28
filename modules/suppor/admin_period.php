@@ -44,15 +44,15 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $form['search'][$k]=$v;
    }
 	$form['codice'] = trim($form['codice']);
-	$form['tipo'] = 'ASS';
+	$form['tipo'] = 'ASP';
 	$form['descrizione'] = $_POST['descrizione'];
-	$form['soluzione'] = $_POST['soluzione'];
+	//$form['soluzione'] = $_POST['soluzione'];
 	$form['clfoco'] = $_POST['clfoco'];
 	$form['ritorno'] = $_POST['ritorno'];
 	$form['ref_code'] = $_POST['ref_code'];
-	$form['ore'] = $_POST['ore'];
-	$form['ora_inizio'] = $_POST['ora_inizio'];
-	$form['ora_fine'] = $_POST['ora_fine'];
+	//$form['ore'] = $_POST['ore'];
+	//$form['ora_inizio'] = $_POST['ora_inizio'];
+	//$form['ora_fine'] = $_POST['ora_fine'];
 	
 	$form['utente'] = $_SESSION["Login"];
     
@@ -79,7 +79,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			}
 		}    
 		$msg .= (empty($form["codice"]) ? "5+" : '');
-		$msg .= (empty($form["descrizione"]) ? "6+" : '');
+		//$msg .= (empty($form["descrizione"]) ? "6+" : '');
 		if (empty($msg)) { 
 		   if (preg_match("/^id_([0-9]+)$/",$form['clfoco'],$match)) {
             $new_clfoco = $anagrafica->getPartnerData($match[1],1);
@@ -123,13 +123,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['tipo'] = 'ASS';	
     $form['utente'] = $_SESSION["Login"];
 	$form['data'] = date("Y-m-d");
-	$form['ore'] = "0.00";
+	//$form['ore'] = "0.00";
 	$form['stato'] = 'aperto';
 	$form['search']['clfoco']='';
 	$form['ritorno']=$_SERVER['HTTP_REFERER'];
 	$form['ref_code']='';
 }
-
 
 // disegno maschera di inserimento modifica
 require("../../library/include/header.php");
@@ -169,16 +168,16 @@ $select_cliente = new selectPartner('clfoco');
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['tecnico']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-            <select name="ctecnico" onchange="updateInputTecnico(this.value)">
-			<?php
-			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
-			while ($tecnici = gaz_dbi_fetch_array($result)) {				
-					if ( $form['tecnico'] == $tecnici["tecnico"] ) $selected = "selected"; 
-					else $selected = "";
-					echo "<option value=\"".$tecnici["tecnico"]."\" ".$selected.">".$tecnici["tecnico"]."</option>";
-			}
-			?>
-            </select> 
+        <select name="ctecnico" onchange="updateInputTecnico(this.value)">
+		<?php
+		$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
+		while ($tecnici = gaz_dbi_fetch_array($result)) {				
+			if ( $form['tecnico'] == $tecnici["tecnico"] ) $selected = "selected"; 
+			else $selected = "";
+			echo "<option value=\"".$tecnici["tecnico"]."\" ".$selected.">".$tecnici["tecnico"]."</option>";
+		}
+		?>
+        </select> 
         <input type="text" name="tecnico" id="tecnico" value="<?php echo $form['tecnico']; ?>" align="right" maxlength="255" size="40"/>       
         <button id="toggleTec" type="button">Altro</button>
 	</td>
@@ -196,54 +195,15 @@ $select_cliente = new selectPartner('clfoco');
 	</td>
 </tr>
 <tr>
-	<td class="FacetFieldCaptionTD"><?php echo $script_transl['soluzione']; ?> </td>
+	<td class="FacetFieldCaptionTD">Ripeti ogni</td>
 	<td colspan="2" class="FacetDataTD">
-		<textarea type="text" name="soluzione" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['soluzione']; ?></textarea>
-	</td>
-</tr>
-<tr>
-	<td class="FacetFieldCaptionTD"><?php echo $script_transl['info_agg']; ?> </td>
-	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="info_agg" value="<?php echo $form['info_agg']; ?>" align="right" maxlength="255" size="70"/>
-	</td>
-</tr>
-<tr>
-	<td class="FacetFieldCaptionTD">Ore</td>
-	<td colspan="2" class="FacetDataTD">
-		ora inizio : <select name="ora_inizio" onchange="calculateTime()">
-		<?php
-			//$form['ora_inizio']
-			$start = "08:00";
-			$end = "19:30";
-			$tStart = strtotime($start);
-			$tEnd = strtotime($end);
-			$tNow = $tStart;
-			while($tNow <= $tEnd){
-				if ( date("H:i", $tNow)==$form['ora_inizio'] ) $selected = "selected";
-				else $selected="";
-				echo "<option value=\"".date("H:i",$tNow)."\" ".$selected.">".date("H:i",$tNow)."</option>";
-				$tNow = strtotime('+30 minutes',$tNow);
-			}
-		?>
-		</select>&nbsp;
-		ora fine : <select name="ora_fine" onchange="calculateTime()">
-		<?php
-			$tNow = $tStart;
-			while($tNow <= $tEnd){
-				if ( date("H:i", $tNow)==$form['ora_fine'] ) $selected = "selected";
-				else $selected="";
-				echo "<option value=\"".date("H:i",$tNow)."\" ".$selected.">".date("H:i",$tNow)."</option>";
-				$tNow = strtotime('+30 minutes',$tNow);
-			}
-		?>
-		</select>&nbsp;
-		Totale : <input size="16" type="text" id="ore" name="ore" value="<?php echo $form['ore']; ?>" align="right" maxlength="255" size="71"/>
-	</td>
-</tr>
-<tr>
-	<td class="FacetFieldCaptionTD"><?php echo $script_transl['note']; ?> </td>
-	<td colspan="2" class="FacetDataTD">
-		<textarea type="text" name="note" align="right" maxlength="255" cols="67" rows="4"><?php echo $form['note']; ?></textarea>
+		<input type="text" name="ripetizione" align="right" maxlength="255"><?php //echo $form['ripetizione']; ?>
+		<select name="ogni">
+			<option value="Nessuna">Nessuna</option>
+			<option value="Giorni">Giorni</option>
+			<option value="Mese">Mesi</option>
+			<option value="Anno">Anni</option>
+		</select>
 	</td>
 </tr>
 <tr>
