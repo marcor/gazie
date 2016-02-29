@@ -13,4 +13,11 @@ function bodytextUpdate ($codice, $newValue)
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
+function lotmagInsert($newValue)
+{
+    $table = 'lotmag';
+    $columns = array('codart','id_movmag','id_rigdoc','identifier','expiry');
+    tableInsert($table, $columns, $newValue);
+}
+
 ?>

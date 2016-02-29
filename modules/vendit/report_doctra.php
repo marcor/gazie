@@ -134,7 +134,7 @@ function confirMail(link){
 				<?php gaz_flt_disp_select ( "datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
-				<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, $orderby, "ragso1"); ?>
+				<?php gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc']." LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['tesdoc'].".clfoco = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id", $all, "ragso1", "ragso1"); ?>
 			</td>
 			<td class="FacetFieldCaptionTD">
 				&nbsp;

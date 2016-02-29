@@ -516,9 +516,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']
-                        );
+                            $last_movmag_id=$upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']);
                     }
+// se l'articolo prevede la gestione dei  lotti o della matricola/numero seriale creo un rigo in lotmag 
+// ed eventualmente sposto e rinomino il relativo documento dalla dir temporanea a quella definitiva 
+                    if($form['rows'][$i]['lot_or_serial'] > 0 ){
+                        $form['rows'][$i]['id_rigdoc']=$last_rigdoc_id;
+                        $form['rows'][$i]['id_movmag']=$last_movmag_id;
+                        $form['rows'][$i]['expiry']=gaz_format_date($form['rows'][$i]['expiry'], true);
+                        if (empty($form['rows'][$i]['identifier'])){
+// creo un identificativo del lotto/matricola interno                            
+                            $form['rows'][$i]['identifier']=$form['datemi'].$form['clfoco'].$form['rows'][$i]['id_tes'];
+                        }
+                        lotmagInsert($form['rows'][$i]);
+                        $last_lotmag_id=  gaz_dbi_last_id();
+                        if (!empty($form['rows'][$i]['filename'])){ 
+                            $tmp_file = $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_'.$i.'_'.$form['rows'][$i]['filename'];
+// sposto e rinomino il relativo file temporaneo    
+                            $fd = pathinfo($form['rows'][$i]['filename']);
+                            rename($tmp_file,$_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/". $admin_aziend['company_id']."/lotmag_".$last_lotmag_id.'.'.$fd['extension']);
+                        }
+                    }
+                }
+                $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
+// prima di uscire cancello eventuali precedenti file temporanei
+                foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {
+                        unlink($fn);
                 }
                 $_SESSION['print_request'] = $ultimo_id;
                 header("Location: invsta_docacq.php");
@@ -888,6 +911,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_annota'] = "";
     $form['in_pesosp'] = 0;
     $form['in_gooser'] = 0;
+    $form['in_lot_or_serial'] = 0;
     $form['in_status'] = "INSERT";
 // fine rigo input
     $form['rows'] = array();
@@ -978,9 +1002,21 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$i]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$i]['lot_or_serial'] = $articolo['lot_or_serial'];
+        // recupero eventuale movimento di tracciabilità 
+        $lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id_rigdoc', $row['id_rig']);
+        // recupero il filename dal filesystem e lo sposto sul tmp  
+        $dh  = opendir('../../data/files/'.$admin_aziend['company_id']);
+        while (false !== ($filename = readdir($dh))) {
+            $fd = pathinfo($filename);
+            $r=explode('_',$fd['filename']);
+            if ($r[0]=='lotmag' && $r[1] == $lotmag['id']){
+                // riassegno il nome file 
+                $form['rows'][$i]['filename'] = $fd['basename'];
+            }
+        }
+        $form['rows'][$i]['identifier'] = $lotmag['identifier'];
+        $form['rows'][$i]['expiry'] = gaz_format_date($lotmag['expiry']);
         $form['rows'][$i]['status'] = "UPDATE";
-        // recupero eventuale movimento di tracciabilità
-        $form['lotmag'][$i] = gaz_dbi_get_row($gTables['lotmag'], 'id_rigdoc', $row['id_rig']);
         $i++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
@@ -1411,7 +1447,7 @@ foreach ($form['rows'] as $key => $value) {
                         <div class="form-group">
                           <div>';
 
-                echo '<input type="file" name="docfile_' . $key . '"> 
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $key . '"> 
                             <label>Numero di serie - matricola, se non immesso verrà attribuito automaticamente</label><input type="text" name="rows[' . $key . '][identifier]" value="' . $form['rows'][$key]['identifier'] . '" >
                             <label>Scadenza </label><input class="datepicker" type="text" name="rows[' . $key . '][expiry]"  value="' . $form['rows'][$key]['expiry'] . '" >
 			</div>

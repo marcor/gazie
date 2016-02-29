@@ -262,7 +262,7 @@ class magazzForm extends GAzieForm {
                             $row_val = $giacenza['v_g'] / $giacenza['q_g'];
                         }
                         if ($giacenza['q_g'] <= $r['quanti']) { // se la quantità è andata sotto zero forzo anche il valore a 0
-                            $giacenza['v_g']=0;
+                            $giacenza['v_g'] = 0;
                             $row_val = 0;
                         }
                         $giacenza['q_g']-=$r['quanti'];
@@ -272,7 +272,6 @@ class magazzForm extends GAzieForm {
                         $return_val[0] = array('q' => $r['quanti'], 'v' => $row_val,
                             'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
                     }
-
                 }
                 break;
             case "2": // LIFO
@@ -405,6 +404,7 @@ class magazzForm extends GAzieForm {
             $ultimo_id_mm = gaz_dbi_last_id(); //id del rigo movimento magazzino
             //gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $id_rigo_doc, 'id_mag', gaz_dbi_last_id());
             gaz_dbi_query("UPDATE " . $gTables['rigdoc'] . " SET id_mag = " . gaz_dbi_last_id() . " WHERE `id_rig` = $id_rigo_doc ");
+            $id_movmag = $ultimo_id_mm;
         } elseif ($id_rigo_doc === 'DEL') {                 // si deve eliminare un movimento esistente
             $old_movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', $id_movmag);
             $old_caumag = gaz_dbi_get_row($gTables['caumag'], 'codice', $old_movmag['caumag']);
@@ -422,6 +422,7 @@ class magazzForm extends GAzieForm {
             }
             movmagUpdate($id, $row_movmag);
         }
+        return $id_movmag;
     }
 
     /* sends a Javascript toast to the client */
