@@ -28,8 +28,29 @@ require("../../library/include/header.php");
 $script_transl=HeadMain();
 
 $orderby = "data asc";
-$where 	= "tipo = 'ASP'";
+$where 	= "tipo = 'ASP' ";
 $all 	= $where;
+
+if ( isset($_GET["q"]) && $_GET["q"]=="avv" ) gaz_dbi_table_update("assist", $_GET["codice"], array("stato" => "avvisato"));
+if ( isset($_GET["q"]) && $_GET["q"]=="eff" ) gaz_dbi_table_update("assist", $_GET["codice"], array("stato" => "effettuato"));
+if ( isset($_GET["q"]) && $_GET["q"]=="chi" ) {
+   $result = gaz_dbi_dyn_query( $gTables['assist'].".*", $gTables['assist'], " codice='".$_GET['codice']."'" );
+   $value = gaz_dbi_fetch_array($result);
+   $rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['assist'],"1","codice desc");
+	$ultimo_documento = gaz_dbi_fetch_array($rs_ultima_ass);
+	if ($ultimo_documento) {      
+		$value['codice'] = $ultimo_documento['codice'] + 1;
+	}
+   $value["stato"]="aperto";
+   $value["data"]=date( "Y-m-d", strtotime( "+1 years", strtotime($value["data"]) ));
+   gaz_dbi_table_insert("assist", $value);
+   gaz_dbi_table_update("assist", $_GET["codice"], array("stato" => "chiuso"));
+}
+
+if ( !isset($_GET["all"]) ) {
+   $where .= " and stato != 'chiuso'";
+   $where .= "and data>'".date("Y-m-d", strtotime("-1 month"))."' and data<'".date("Y-m-d", strtotime("+2 month"))."'";
+}
 
 ?>
 <div align="center" class="FacetFormHeaderFont">Assistenze Periodiche</div>
@@ -75,7 +96,7 @@ $all 	= $where;
 			"Telefono" 	=> "telefono",
 			"Oggetto" 	=> "oggetto",
 			"Descrizione" => "descrizione",
-            "Tecnico"       => "tecnico",
+         "Tecnico"   => "tecnico",
 			"Stato" 		=> "stato",	
 			"Stampa" 	=> "",
 			"Elimina" 	=> ""
@@ -97,7 +118,7 @@ $result = gaz_dbi_dyn_query( $gTables['assist'].".*,
 					" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
 				$where, $orderby, $limit, $passo);
 
-$month = array(1=> "Gennaio", 2 => "Febbraio", 3 => "Marzo", 4 => "Aprile", 12 => "Dicembre");
+$month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio", 6=>">Giugno", 7=>"Luglio", 8=>"Agosto", 9=>"Settembre", 10=>"Ottobre", 11=>"Novembre", 12=>"Dicembre");
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
@@ -119,12 +140,13 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<td class="FacetDataTD"><?php echo $a_row["telefo"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["oggetto"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["descrizione"]; ?></td>
-        <td class="FacetDataTD"><?php echo $a_row["tecnico"]; ?></td>
+      <td class="FacetDataTD"><?php echo $a_row["tecnico"]; ?></td>
 		<td class="FacetDataTD">
 			<?php 
-				if ( $a_row["stato"]=="aperto" ) {
-					echo '<a class="btn btn-xs btn-edit" href="admin_period.php?codice='.$a_row["codice"].'">Effettua</a>';
-				}
+				if ( $a_row["stato"]=="aperto" ) echo '<a class="btn btn-xs btn-edit" href="report_period.php?codice='.$a_row["codice"].'&q=avv">Avvisa</a>';
+				if ( $a_row["stato"]=="avvisato" ) echo '<a class="btn btn-xs btn-fatt" href="report_period.php?codice='.$a_row["codice"].'&q=eff">Effettua</a>';
+            if ( $a_row["stato"]=="effettuato" ) echo '<a class="btn btn-xs btn-riba" href="report_period.php?codice='.$a_row["codice"].'&q=chi">Chiudi</a>';
+            if ( $a_row["stato"]=="chiuso" ) echo '<btn class="btn btn-xs btn-cont">Chiuso</btn>';
 				//echo "<pre>";
 				//print_r ( get_defined_vars() );
 				//echo "</pre>";

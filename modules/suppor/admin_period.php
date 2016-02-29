@@ -48,6 +48,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['descrizione'] = $_POST['descrizione'];
 	//$form['soluzione'] = $_POST['soluzione'];
 	$form['clfoco'] = $_POST['clfoco'];
+   $form['stato'] = $_POST['stato'];
 	$form['ritorno'] = $_POST['ritorno'];
 	$form['ref_code'] = $_POST['ref_code'];
 	//$form['ore'] = $_POST['ore'];
@@ -125,6 +126,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['data'] = date("Y-m-d");
 	//$form['ore'] = "0.00";
 	$form['stato'] = 'aperto';
+   echo $form['stato'];
 	$form['search']['clfoco']='';
 	$form['ritorno']=$_SERVER['HTTP_REFERER'];
 	$form['ref_code']='';
@@ -213,14 +215,13 @@ $select_cliente = new selectPartner('clfoco');
 			<?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," stato!='aperto' and stato != 'contratto'", "stato", "0", "9999");
 			while ($stati = gaz_dbi_fetch_array($result)) {				
-					if ( $form['stato'] == $stati["stato"] ) $selected = "selected"; 
+               if ( $form['stato']==$stati["stato"] ) {exit();$selected = "selected";} 
 					else $selected = "";
 					echo "<option value=\"".$stati["stato"]."\" ".$selected.">".$stati["stato"]."</option>";
 			}
 			?>
 			<option value="aperto" <?php if ( $form['stato']=='aperto') echo '"selected"'; ?>>aperto</option>";
-            <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo '"selected"'; ?>>chiuso</option>";
-			<option value="contratto" <?php if ( $form['stato']=='contratto') echo '"selected"'; ?>>contratto</option>";
+         <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo '"selected"'; ?>>chiuso</option>";
 		</select> 
 		<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
         <button id="toggleSta" type="button">Altro</button>

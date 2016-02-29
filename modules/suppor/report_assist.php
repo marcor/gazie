@@ -118,7 +118,7 @@ if ( $flt_cliente!="tutti" ) {
 		</select></td>
 		<td class="FacetFieldCaptionTD"><select name="flt_stato" onchange="this.form.submit()">
 			<?php
-			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist'],"", "stato", "0", "9999");
+			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," tipo='ASS'", "stato", "0", "9999");
 			echo "<option value=\"tutti\" ".($flt_stato=="tutti"?"selected":"").">tutti</option>";
 			echo "<option value=\"nochiusi\" ".($flt_stato=="nochiusi"?"selected":"").">non chiuso</option>";
             echo "<option value=\"chiuso\" ".($flt_stato=="chiuso"?"selected":"").">chiuso</option>";
@@ -189,7 +189,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<td class="FacetDataTD"><?php echo $a_row["oggetto"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["descrizione"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["ore"]; ?></td>
-        <td class="FacetDataTD"><?php echo $a_row["tecnico"]; ?></td>
+      <td class="FacetDataTD"><?php echo $a_row["tecnico"]; ?></td>
 		<td class="FacetDataTD"><?php echo $a_row["stato"]; ?></td>
 		<td class="FacetDataTD">
 			<a class="btn btn-xs btn-default" href="stampa_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>

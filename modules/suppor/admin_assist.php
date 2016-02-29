@@ -121,7 +121,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		$form['codice'] = 1;
 	}  
 	$form['tipo'] = 'ASS';	
-    $form['utente'] = $_SESSION["Login"];
+   $form['utente'] = $_SESSION["Login"];
 	$form['data'] = date("Y-m-d");
 	$form['ore'] = "0.00";
 	$form['stato'] = 'aperto';

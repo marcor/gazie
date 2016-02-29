@@ -346,7 +346,6 @@ function isDDT($tipdoc) {
 
 function msgDebug($txt, $titolo = "debug message") {
    $nomeFile = dirname(__FILE__) . "/php.log";
-
    error_log("\n***************** $titolo *****************"
            . "\n" . $txt . "\n&&&&&&&&", 3, $nomeFile);
 }
