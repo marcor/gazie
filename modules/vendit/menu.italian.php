@@ -75,6 +75,7 @@ $transl['vendit'] = array('name' => "Vendite",
         36 => array("Stampa lista documenti", "Lista documenti"),
         37 => array("Stampa lista clienti", "Lista clienti"),
         38 => array("Stampa analisi acquisti clienti", "Analisi acquisti clienti"),
+        39 => array("Stampa analisi agenti", "Analisi agenti"),
     )
 );
 ?>

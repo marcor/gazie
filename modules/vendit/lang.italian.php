@@ -1061,5 +1061,13 @@ $strScript = array("admin_client.php" =>
         'Anno',
         'Cadenza',
     ),
+    "select_analisi_agenti.php" =>
+    array("Selezione per stampa analisi agenti",
+        "Data periodo inizio",
+        "Data periodo fine",
+        "Livello max",
+          'errors' => array('Inserire il livello da analizzare!',
+        ),
+  ),
 );
 ?>
