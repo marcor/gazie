@@ -218,6 +218,7 @@ $strScript = array("admin_fornit.php" =>
         "La data del documento da registrare non &egrave; corretta!",
         "Non &egrave; stato inserito il numero del documento!",
         "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
+        "L'articolo di magazzino ha una matricola/numero di serie pertanto la quantità è stata forzata ad 1",
         /** ENRICO FEDELE */
         "add_article" => "Aggiungi un nuovo articolo",
         'art_code' => 'Codice articolo',
@@ -228,12 +229,9 @@ $strScript = array("admin_fornit.php" =>
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
         'last_row' => 'Ultimo rigo inserito',
-        /** ENRICO FEDELE */
-        "Causale mag.",
-        "Peso netto",
-        "Peso lordo",
-        "N.Colli",
-        "Volume",
+        'lotmag'=>'certificato',
+        'expiry'=>'Scadenza',
+        'identifier'=>'Numero di serie - matricola, se non immesso verrà attribuito automaticamente'
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti d\'acquisto',

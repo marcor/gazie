@@ -190,7 +190,8 @@ $strScript = array("admin_fornit.php" =>
         "La data di registrazione non pu&ograve; essere antecedente a quella del documento da registrare!",
         "La data del documento da registrare non &egrave; corretta!",
         "Non &egrave; stato inserito il numero del documento!",
-        "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
+        "It was not possible to load the document for product traceability!",
+        "goods item have a serial number, therefore the quantity has been forced to 1",
         /** ENRICO FEDELE */
         "add_article" => "Add a new article",
         'art_code' => 'Article code',
@@ -200,8 +201,10 @@ $strScript = array("admin_fornit.php" =>
         'weight' => 'Weight:',
         'zero_rows' => 'The document no contains rows or products. For add  them to the body enter the "%" value for a complete list or to make a partial search',
         'discount_alert' => 'discount taken from article\'s informations',
-        'last_row' => 'Last row'
-    /** ENRICO FEDELE */
+        'last_row' => 'Last row',
+        'lotmag'=>'certificate',
+        'expiry'=>'Expiry',
+        'identifier'=>'Serial number - if you don\'t entered it will be assigned automatically'
     ),
     "accounting_documents.php" =>
     array('title' => 'Create movements accounting from taxable documents',

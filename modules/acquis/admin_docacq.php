@@ -187,6 +187,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$i]['pesosp'] = floatval($value['pesosp']);
             $form['rows'][$i]['gooser'] = intval($value['gooser']);
             $form['rows'][$i]['lot_or_serial'] = intval($value['lot_or_serial']);
+            if ($value['lot_or_serial'] == 2) {
+// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
+                if ($form['rows'][$i]['quanti'] <> 1) {
+                    $msg .= "57+";
+                }
+                $form['rows'][$i]['quanti'] = 1;
+            }
             $form['rows'][$i]['identifier'] = filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
             $form['rows'][$i]['expiry'] = filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
             $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_STRING);
@@ -695,6 +702,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['unimis'] = $artico['uniacq'];
                 $form['rows'][$old_key]['descri'] = $artico['descri'];
                 $form['rows'][$old_key]['lot_or_serial'] = $artico['lot_or_serial'];
+                if ($artico['lot_or_serial'] == 2) {
+// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
+                    if ($form['rows'][$old_key]['quanti'] <> 1) {
+                        $msg .= "57+";
+                    }
+                    $form['rows'][$old_key]['quanti'] = 1;
+                    $msg .='57+';
+                }
                 $form['rows'][$old_key]['prelis'] = number_format($artico['preacq'], $admin_aziend['decimal_price'], '.', '');
             } elseif ($form['in_tiprig'] == 2) { //rigo descrittivo
                 $form['rows'][$old_key]['codart'] = "";
@@ -738,6 +753,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['lot_or_serial'] = $artico['lot_or_serial'];
                 $form['rows'][$i]['codric'] = $form['in_codric'];
                 $form['rows'][$i]['quanti'] = $form['in_quanti'];
+                if ($artico['lot_or_serial'] == 2) {
+// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
+                    if ($form['rows'][$i]['quanti'] <> 1) {
+                        $msg .= "57+";
+                    }
+                    $form['rows'][$i]['quanti'] = 1;
+                }
                 $form['rows'][$i]['sconto'] = $form['in_sconto'];
                 /** inizio modifica FP 09/10/2015
                  * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo 
@@ -1484,7 +1506,7 @@ foreach ($form['rows'] as $key => $value) {
                     . $script_transl['insert'] . 'certificato  <i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
                 } else {
-                    echo '<div>certificato:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $key . '">'
+                    echo '<div>' . $script_transl['lotmag'] . ':<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $key . '">'
                     . $form['rows'][$key]['filename'] . ' <i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
                 }
@@ -1493,8 +1515,8 @@ foreach ($form['rows'] as $key => $value) {
                           <div>';
 
                 echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $key . '"> 
-                            <label>Numero di serie - matricola, se non immesso verrà attribuito automaticamente</label><input type="text" name="rows[' . $key . '][identifier]" value="' . $form['rows'][$key]['identifier'] . '" >
-                            <label>Scadenza </label><input class="datepicker" type="text" name="rows[' . $key . '][expiry]"  value="' . $form['rows'][$key]['expiry'] . '" >
+                            <label>' . $script_transl['identifier'] . '</label><input type="text" name="rows[' . $key . '][identifier]" value="' . $form['rows'][$key]['identifier'] . '" >
+                            <label>' . $script_transl['expiry'] . ' </label><input class="datepicker" type="text" name="rows[' . $key . '][expiry]"  value="' . $form['rows'][$key]['expiry'] . '" >
 			</div>
 		     </div>
               </div>' . "\n";

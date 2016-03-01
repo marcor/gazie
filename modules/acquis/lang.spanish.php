@@ -195,7 +195,8 @@ $strScript = array("admin_fornit.php" =>
         "La fecha de registro no puede ser antecedente a aquella del documento a registrar!",
         "La fecha del documento a registrar no es correcta!",
         "No se incluy&oacute; el n&uacute;mero del documento!",
-        "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
+        "It was not possible to load the document for product traceability!",
+        "elemento mercancías tiene un número de serie, por lo tanto, la cantidad se ha visto obligado a 1",
         /** ENRICO FEDELE */
         "add_article" => "Añadir un nuevo artículo",
         'art_code' => 'Número de artículo',
@@ -205,8 +206,10 @@ $strScript = array("admin_fornit.php" =>
         'weight' => 'Peso specifico:',
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
-        'last_row' => 'Ultimo rigo inserito'
-    /** ENRICO FEDELE */
+        'last_row' => 'Ultimo rigo inserito',
+        'lotmag' => 'certificado',
+        'expiry' => 'expiración',
+        'identifier' => 'Número de serie - si no se ha introducido se le asignará automáticamente'
     ),
     "accounting_documents.php" =>
     array('title' => 'Crear movimientos contables de los documentos tributables',
@@ -290,7 +293,7 @@ $strScript = array("admin_fornit.php" =>
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO')
     ),
     "delete_docacq.php" =>
-    array('title' => 'Eliminazione Documento d\'Acquisto' ),
+    array('title' => 'Eliminazione Documento d\'Acquisto'),
     "supplier_payment.php" =>
     array('title' => 'Pagamento debito verso fornitore (chiusura partita/e)',
         'errors' => array('La data  non &egrave; corretta!'),
@@ -314,8 +317,7 @@ $strScript = array("admin_fornit.php" =>
             "Non è stato selezionato il conto per l'incasso",
             'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
         ),
-       'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
-
+        'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
     )
 );
 ?>
