@@ -477,6 +477,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         }
                         lotmagInsert($form['rows'][$i]);
                         $last_lotmag_id = gaz_dbi_last_id();
+                        // inserisco il rifermineto anche sul relativo movimento di magazzino
+                        gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {
                             $tmp_file = $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 // sposto e rinomino il relativo file temporaneo    
@@ -581,6 +583,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         }
                         lotmagInsert($form['rows'][$i]);
                         $last_lotmag_id = gaz_dbi_last_id();
+                        // inserisco il rifermineto anche sul relativo movimento di magazzino
+                        gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {
                             $tmp_file = $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 // sposto e rinomino il relativo file temporaneo    

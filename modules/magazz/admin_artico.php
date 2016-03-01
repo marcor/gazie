@@ -136,22 +136,25 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
              */
             $form['clfoco'] = $form['id_anagra'];
             /** fine modifica FP */
+            $tbt = trim($form['body_text']);
             // aggiorno il db
             if ($toDo == 'insert') {
                 gaz_dbi_table_insert('artico', $form);
-                bodytextInsert(array('table_name_ref' => 'artico_'.$form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+                if (!empty($tbt)) {
+                    bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+                }
             } elseif ($toDo == 'update') {
                 gaz_dbi_table_update('artico', $form['ref_code'], $form);
                 $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
-                if (empty($form['body_text']) && $bodytext) { 
+                if (empty($tbt) && $bodytext) {
                     // è vuoto il nuovo ma non lo era prima, allora lo cancello 
                     gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
-                } elseif ($bodytext) {
-                    // c'era quindi faccio l'update
-                    bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_'.$form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
-                } else {
+                } elseif (!empty($tbt) && $bodytext) {
+                    // c'è e c'era quindi faccio l'update
+                    bodytextUpdate(array('id_body', $bodytext['id_body']), array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+                } elseif (!empty($tbt)) {
                     // non c'era lo inserisco
-                    bodytextInsert(array('table_name_ref' => 'artico_'.$form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
+                    bodytextInsert(array('table_name_ref' => 'artico_' . $form['codice'], 'body_text' => $form['body_text'], 'lang_id' => $admin_aziend['id_language']));
                 }
             }
             /** ENRICO FEDELE */
@@ -275,9 +278,9 @@ if ($modal_ok_insert === true) {
 
     /** ENRICO FEDELE */
     /* Se sono in finestra modale, non visualizzo questo titolo */
-    $changesubmit= '';
+    $changesubmit = '';
     if ($modal === false) {
-        $changesubmit= 'onchange="submit();"';
+        $changesubmit = 'onchange="submit();"';
         if ($toDo == 'insert') {
             echo '<div align="center" class="FacetFormHeaderFont">' . $script_transl['ins_this'] . '</div>';
         } else {
@@ -313,7 +316,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 		<td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['body_text'] . '</td>
 		<td colspan="2" class="FacetDataTD">
-                <textarea id="body_text" name="body_text" class="mceClass">'.$form['body_text'].'</textarea>
+                <textarea id="body_text" name="body_text" class="mceClass">' . $form['body_text'] . '</textarea>
 		</td>
 	  </tr>
 	  <tr>
@@ -381,7 +384,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['preve1'] . '</td>
 	  	<td  colspan="2" class="FacetDataTD">
-      		<input type="text" name="preve1" value="' . $form['preve1'] . '" style="text-align:right;" maxlength="15" size="15" '.$changesubmit.' /> ' .
+      		<input type="text" name="preve1" value="' . $form['preve1'] . '" style="text-align:right;" maxlength="15" size="15" ' . $changesubmit . ' /> ' .
     $script_transl['preve1_sc'] .
     '<input type="text" readonly="true" name="preve1_sc" value="' . gaz_format_number($form['preve1'] * (1 - $form['sconto'] / 100)) . '" style="text-align:right;" maxlength="15" size="15" />
 	  	</td>
@@ -389,7 +392,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 	  	<td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['preve2'] . '</td>
 	  	<td colspan="2" class="FacetDataTD">
-      		<input type="text" name="preve2" value="' . $form['preve2'] . '" style="text-align:right;" maxlength="15" size="15" '.$changesubmit.' /> ' .
+      		<input type="text" name="preve2" value="' . $form['preve2'] . '" style="text-align:right;" maxlength="15" size="15" ' . $changesubmit . ' /> ' .
     $script_transl['preve2_sc'] .
     '<input type="text" readonly="true" name="preve1_sc" value="' . gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)) . '" style="text-align:right;" maxlength="15" size="15" />
 		</td>
@@ -397,7 +400,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 	 	 <td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['preve3'] . '</td>
 	  	<td colspan="2" class="FacetDataTD">
-      		<input type="text" name="preve3" value="' . $form['preve3'] . '" style="text-align:right;" maxlength="15" size="15" '.$changesubmit.' /> ' .
+      		<input type="text" name="preve3" value="' . $form['preve3'] . '" style="text-align:right;" maxlength="15" size="15" ' . $changesubmit . ' /> ' .
     $script_transl['preve3_sc'] .
     '<input type="text" readonly="true" name="preve1_sc" value="' . gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)) . '" style="text-align:right;" maxlength="15" size="15" />
 
@@ -406,7 +409,7 @@ if ($modal_ok_insert === true) {
 	  <tr>
 	    <td class="FacetFieldCaptionTD" nowrap="nowrap">' . $script_transl['sconto'] . '</td>
 		<td colspan="2" class="FacetDataTD">
-			<input type="text" name="sconto" value="' . $form['sconto'] . '" style="text-align:right;" maxlength="6" size="15" '.$changesubmit.' />
+			<input type="text" name="sconto" value="' . $form['sconto'] . '" style="text-align:right;" maxlength="6" size="15" ' . $changesubmit . ' />
 		</td>
 	  </tr>
 	  <tr>
