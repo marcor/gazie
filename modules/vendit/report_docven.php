@@ -360,23 +360,23 @@ while ($r = gaz_dbi_fetch_array($result)) {
     }
     if (sprintf('%09d',$r['protoc']).$r['datfat'] <> $ctrl_doc)    {
         $n_e=0;
-        echo "<tr>";
+        echo "<tr class=\"FacetDataTD\">";
 		// Colonna protocollo
         if (! empty ($modifi)) {
-           echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\" class=\"btn btn-xs ".$classe_btn." btn-edit\" title=\"Modifica ".$tipodoc." \">".$r["protoc"]."&nbsp;".$r["tipdoc"]."&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
+           echo "<td><a href=\"".$modifi."\" class=\"btn btn-xs ".$classe_btn." btn-edit\" title=\"Modifica ".$tipodoc." \">".$r["protoc"]."&nbsp;".$r["tipdoc"]."&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
         } else {
-           echo "<td class=\"FacetDataTD\"><button class=\"btn btn-xs ".$classe_btn." btn-edit disabled\" title=\"Per poter modificare questa ".$tipodoc." devi modificare i DdT in essa contenuti!\">".$r["protoc"]."&nbsp;".$r["tipdoc"]." &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
+           echo "<td><button class=\"btn btn-xs ".$classe_btn." btn-edit disabled\" title=\"Per poter modificare questa ".$tipodoc." devi modificare i DdT in essa contenuti!\">".$r["protoc"]."&nbsp;".$r["tipdoc"]." &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
         }
 		// Colonna tipo documento
         //echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
 		// Colonna numero documento
-        echo "<td class=\"FacetDataTD\" align=\"center\">".$r["numfat"]." &nbsp;</td>";
+        echo "<td align=\"center\">".$r["numfat"]." &nbsp;</td>";
 		// Colonna data documento
-        echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($r["datfat"])." &nbsp;</td>";
+        echo "<td align=\"center\">".gaz_format_date($r["datfat"])." &nbsp;</td>";
 		// Colonna cliente
-        echo "<td class=\"FacetDataTD\"><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$r["ragso1"]."&search=Cerca\">".$r["ragso1"]."</a>&nbsp;</td>";
+        echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=".$r["ragso1"]."&search=Cerca\">".$r["ragso1"]."</a>&nbsp;</td>";
 		// Colonna movimenti contabili
-        echo "<td class=\"FacetDataTD\" align=\"center\">";
+        echo "<td align=\"center\">";
         if ($r["id_con"] > 0) {
            echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=".$r["id_con"]."&Update\">Cont.".$r["id_con"]."</a> ";
         } else {
@@ -409,17 +409,17 @@ while ($r = gaz_dbi_fetch_array($result)) {
         }
         echo "</td>";
         // Colonna "Stampa"
-        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+        echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
         echo "</td>";
         
         // Colonna "Fattura elettronica"
         if (substr($r["tipdoc"],0,1)=='F'){
             if (strlen($r["fe_cod_univoco"])!=6) { // se il cliente non è un ufficio della PA tolgo il link
                $modulo_fae='';
-			   echo "<td class=\"FacetDataTD\" align=\"center\"><button class=\"btn btn-xs btn-default btn-xml disabled\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\"><i class=\"glyphicon glyphicon-tag\"></i></button>";
+			   echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-xml disabled\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\"><i class=\"glyphicon glyphicon-tag\"></i></button>";
                echo "</td>";
             } else {
-              echo "<td class=\"FacetDataTD genera\" align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1".$r["id_tes"]."\" n_fatt=\"".$r["numfat"]."\" target=\"_blank\" href=\"".$modulo_fae."\">xml</a>";
+              echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1".$r["id_tes"]."\" n_fatt=\"".$r["numfat"]."\" target=\"_blank\" href=\"".$modulo_fae."\">xml</a>";
               //identifica le fatture inviate all'sdi           
               $where2 = " id_tes_ref = ".$r['id_tes'] . " AND (flux_status LIKE '@' OR flux_status LIKE '#' OR flux_status LIKE '@@')";
               $result2 = gaz_dbi_dyn_query ("*", $gTables['fae_flux'], $where2);
@@ -441,7 +441,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
          }
                  
         // Colonna "Mail"
-        echo "<td class=\"FacetDataTD\" align=\"center\">";
+        echo "<td align=\"center\">";
 			if (!empty($r["e_mail"])) {
 				echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="Mailto: '.$r["e_mail"].'"
             mail="'.$r["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numfat"].' del '.gaz_format_date($r["datfat"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
@@ -452,23 +452,23 @@ while ($r = gaz_dbi_fetch_array($result)) {
         // Colonna "Origine"
         if ($r["tipdoc"]=='FAD'){
            $ddt_result = gaz_dbi_dyn_query ('*',$gTables['tesdoc'],"tipdoc = '".$r["tipdoc"]."' AND numfat = ".$r["numfat"]." AND datfat = '".$r["datfat"]."'",'datemi DESC');   
-		   echo "<td class=\"FacetDataTD\" align=\"center\">";
+		   echo "<td align=\"center\">";
            while ($r_d = gaz_dbi_fetch_array ($ddt_result)){
              echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=".$r_d['id_tes']."&template=DDT\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;DdT".$r_d['numdoc']."</a>\n";
            }		   
            echo "</td>";
         } elseif($r["id_contract"]>0) {
            $con_result = gaz_dbi_dyn_query ('*',$gTables['contract'],"id_contract = ".$r["id_contract"],'conclusion_date DESC');
-           echo "<td class=\"FacetDataTD\" align=\"center\">";
+           echo "<td align=\"center\">";
            while ($r_d = gaz_dbi_fetch_array ($con_result)){
              echo " <a class=\"btn btn-xs btn-default btn-contr\" title=\"Visualizza il contratto\" href=\"print_contract.php?id_contract=".$r_d['id_contract']."\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-list-alt\"></i>&nbsp;Contr.".$r_d['doc_number']."</a>\n";
            }
            echo "</td>";
         } else {
-           echo "<td class=\"FacetDataTD\"></td>";
+           echo "<td></td>";
         }
         // Colonna "Cancella"
-        echo "<td class=\"FacetDataTD\" align=\"center\">";
+        echo "<td align=\"center\">";
         if ($ultimo_documento['id_tes'] == $r["id_tes"] || ($ultimo_documento['tipdoc'] == 'FAD' && $ultimo_documento['protoc'] == $r['protoc'])) {
            // Permette di cancellare il documento.
            if ($r["id_con"] > 0) {

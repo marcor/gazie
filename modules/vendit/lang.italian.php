@@ -855,7 +855,8 @@ $strScript = array("admin_client.php" =>
             'Movimento contabile apertura (documento)' => "id_rigmoc_doc",
             'Movimento contabile chiusura (pagamento)' => "id_rigmoc_pay",
             'Importo' => "amount",
-            'Scadenza' => "expiry"
+            'Scadenza' => "expiry",
+        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO')
         ),
     ),
     "select_schedule.php" =>

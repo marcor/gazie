@@ -90,6 +90,7 @@ if (sizeof($scdl->Entries) > 0) {
     echo '		</tr>
 				</thead>
 				<tbody>';
+    $status_descr = '';
     while (list($key, $mv) = each($scdl->Entries)) {
         $class_partner = '';
         $class_paymov = '';
@@ -98,6 +99,7 @@ if (sizeof($scdl->Entries) > 0) {
         $id_tes = '';
         $paymov = '';
         $status_del = false;
+        $status_descr = '';
         if ($mv["clfoco"] <> $ctrl_partner) {
             $class_partner = 'FacetDataTD';
             $partner = $mv["ragsoc"];
@@ -136,7 +138,7 @@ if (sizeof($scdl->Entries) > 0) {
         echo "<tr>";
         echo "<td class=\"$class_partner\">" . $partner . " &nbsp;</td>";
         echo "<td align=\"center\" class=\"$class_paymov\">" . $paymov . " &nbsp;</td>";
-        echo "<td align=\"center\" class=\"$class_paymov\">" . $status_descr . " &nbsp;</td>";
+        echo "<td align=\"center\" class=\"$class_paymov\">" .$script_transl['status_value'][$r['sta']]. $status_descr . " &nbsp;</td>";
         echo "<td align=\"center\" class=\"$class_id_tes\"><a href=\"../contab/admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $id_tes . "</a> &nbsp</td>";
         echo "<td class=\"$class_id_tes\"><a href=\"../contab/admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv['descri'] . "</a> &nbsp;</td>";
         echo "<td align=\"center\" class=\"FacetDataTD\">" . $mv["numdoc"] . " &nbsp;</td>";

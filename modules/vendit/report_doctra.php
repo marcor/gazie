@@ -179,18 +179,18 @@ function confirMail(link){
                 case "DDT":
                 case "DDV":
                 case "DDY":
-                    echo "<tr>";
+                    echo "<tr class=\"FacetDataTD\">";
                     // Colonna id
-                    echo "<td class=\"FacetDataTD\" align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
+                    echo "<td align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
                     // Colonna protocollo
-                    echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
+                    echo "<td align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
                     // Colonna type
-                    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
                     // Colonna data emissione
-                    echo "<td class=\"FacetDataTD\" align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+                    echo "<td align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                     // Colonna Cliente
                     ?>
-                    <td class="FacetDataTD">
+                    <td>
                         <a href="report_client.php?auxil=<?php echo $r["ragso1"]; ?>&search=Cerca">
                             <?php echo $r["ragso1"]; ?>
                         </a>
@@ -198,31 +198,31 @@ function confirMail(link){
                     <?php
                     // Colonna status
                     if ($r['numfat'] > 0) {
-                        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
+                        echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i> fatt. n. " . $r["numfat"] . "</a></td>";
                         if ($r["id_con"] > 0) {
                             echo "<a title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">cont. n." . $r["id_con"] . "</a>";
                         }
                     } else {
                         if ($r['tipdoc'] == 'DDV' && $r['id_doc_ritorno'] > 0) {
-                            echo "<td class=\"FacetDataTD\" align=\"center\">"
+                            echo "<td align=\"center\">"
                             . "<a class=\"btn btn-xs btn-warning\" href=\"admin_docven.php?Update&id_tes=" . $r['id_doc_ritorno'] . "\">" . $script_transl['doc_returned'] . "</a>"
                             . "<a class=\"btn btn-xs btn-default btn-elimina\"href=\"delete_docven.php?id_tes=" . $r['id_doc_ritorno'] . "\" title=\"" . $script_transl['delete_returned'] ."\"><i class=\"glyphicon glyphicon-remove\"></i></a>"
                             . "</td>";
                         } else {
-                            echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php\">" . $script_transl['to_invoice'] . "</a></td>";
+                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-success\" href=\"emissi_fatdif.php\">" . $script_transl['to_invoice'] . "</a></td>";
                         }
                     }
                     // Colonna stampa
 
                     $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                     $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
-                    echo "<td class=\"FacetDataTD\" align=\"center\">";
+                    echo "<td align=\"center\">";
                     echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
                     echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintEtichette\" target=\"_blank\"><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
                     echo "</td>\n";
 
                     // Colonna "Mail"
-                    echo "<td class=\"FacetDataTD\" align=\"center\">";
+                    echo "<td align=\"center\">";
                     if (!empty($r["e_mail"])) {
                         echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
                 mail="' . $r["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope" title=\"Invia documento per email\"></i></a>';
@@ -231,7 +231,7 @@ function confirMail(link){
                     }
                     echo "</td>\n";
 
-                    echo "<td class=\"FacetDataTD\" align=\"center\">";
+                    echo "<td align=\"center\">";
                     $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_doc = " . $r['id_tes'] . " GROUP BY id_doc", 'id_tes');
                     while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
                         $r_d = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $rigbro_r["id_tes"]);
@@ -240,18 +240,18 @@ function confirMail(link){
                         }
                     }
                     echo "</td>\n";
-           echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"duplicate_docven.php?id_tes=" . $r['id_tes'] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
+           echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"duplicate_docven.php?id_tes=" . $r['id_tes'] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
            echo "</td>";
 
                     if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
-                        echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                        echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                     else
-                        echo "<td class=\"FacetDataTD\" align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
+                        echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
                     echo "</tr>\n";
                     break;
                 case "DDR":
                 case "DDL":
-                    echo "<tr>";
+                    echo "<tr class=\"FacetDataTD\">";
                     // Colonna id
                     echo "<td class=\"alert alert-danger\" align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
                     echo "<td class=\"alert alert-danger\"  align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"../acquis/admin_docacq.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["numdoc"] . "</a> &nbsp;</td>";
@@ -290,15 +290,15 @@ function confirMail(link){
                     echo "</tr>\n";
                     break;
                 case "FAD":
-                    echo "<tr>";
+                    echo "<tr class=\"FacetDataTD\">";
                     // Colonna id
-                    echo "<td class=\"FacetDataTD\" align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
+                    echo "<td align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
                     // Colonna protocollo
-                    echo "<td class=\"FacetDataTD\" align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["numdoc"] . "</a></td>";
+                    echo "<td align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["numdoc"] . "</a></td>";
                     // Colonna type
-                    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
                     // Colonna Data emissione
-                    echo "<td class=\"FacetDataTD\" align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+                    echo "<td align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                     // Colonna Cliente
                     ?>
                     <td class="FacetDataTD">
@@ -308,7 +308,7 @@ function confirMail(link){
                     </td>
                     <?php
                     // Colonna Stato
-                    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\">Fat " . $r["numfat"] . "</a>";
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_invoice'] . " n. " . $r["numfat"] . "\" href=\"stampa_docven.php?td=2&si=" . $r["seziva"] . "&pi=" . $r['protoc'] . "&pf=" . $r['protoc'] . "&di=" . $r['datfat'] . "&df=" . $r['datfat'] . "\">Fat " . $r["numfat"] . "</a>";
                     if ($r["id_con"] > 0) {
                         echo "&nbsp;<a class=\"btn btn-xs btn-default btn-registrazione\" title=\"" . $script_transl['acc_entry'] . "\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont " . $r["id_con"] . "</a>";
                     }
@@ -316,12 +316,12 @@ function confirMail(link){
 
                     $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                     // Colonna stampa
-                    echo "<td class=\"FacetDataTD\" align=\"center\">
+                    echo "<td align=\"center\">
             <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_ddt'] . " n. " . $r["numdoc"] . "\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
                     echo "</td>";
 
                     // Colonna "Mail"
-                    echo "<td class=\"FacetDataTD\" align=\"center\">";
+                    echo "<td align=\"center\">";
                     if (!empty($r["e_mail"])) {
                         echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
                 mail="' . $r["e_mail"] . '" namedoc="DDT n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
@@ -330,7 +330,7 @@ function confirMail(link){
                     }
                     echo "</td>";
                     // Colonna
-                    echo "<td class=\"FacetDataTD\" align=\"center\">";
+                    echo "<td align=\"center\">";
                     $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_doc = " . $r['id_tes'] . " GROUP BY id_doc", 'id_tes');
                     while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
                         $r_d = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $rigbro_r["id_tes"]);
@@ -339,7 +339,7 @@ function confirMail(link){
                         }
                     }
                     echo "</td>";
-                    echo "<td class=\"FacetDataTD\"></td>";
+                    echo "<td></td>";
                     echo "</tr>\n";
                     break;
             }
