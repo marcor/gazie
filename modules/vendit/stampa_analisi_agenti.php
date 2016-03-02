@@ -41,50 +41,43 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
    ini_set('memory_limit', '128M');
    gaz_set_time_limit(0);
 }
-
-$where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and artico.ragstat is not null and artico.ragstat!=''" . $cliente;
-$what = " clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente,fornitori.codice as codice_fornitore, concat(dati_fornitori.ragso1,' ',dati_fornitori.ragso2) as nome_fornitore, artico.ragstat as codice_ragstat, artico.codice as codice_articolo, artico.descri as descrizione, ragstat.descri as nome_ragstat ";
-$table = $gTables['rigdoc'] . " rigdoc join "
-        . $gTables['tesdoc'] . " tesdoc on rigdoc.id_tes=tesdoc.id_tes join "
-        . $gTables['artico'] . " artico on artico.codice=rigdoc.codart join "
-        . $gTables['clfoco'] . " fornitori on artico.clfoco=fornitori.codice join "
-        . $gTables['anagra'] . " dati_fornitori on fornitori.id_anagra=dati_fornitori.id join "
-        . $gTables['clfoco'] . " clienti on tesdoc.clfoco=clienti.codice join "
+$ragstatArray = caricaElencoRagstat($livello, $gTables);
+$where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and tesdoc.id_agente>0"
+        . " AND tesdoc.datfat BETWEEN " . intval($datini) . " AND " . intval($datfin);
+$what = " clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente,"
+        . "fornitori.codice as codice_fornitore, concat(dati_fornitori.ragso1,' ',dati_fornitori.ragso2) as nome_fornitore, "
+//        . "artico.ragstat as codice_ragstat, artico.codice as codice_articolo, artico.descri as descrizione, "
+        . "ragstat.descri as nome_ragstat, tesdoc.id_agente as codice_agente ";
+$table = $gTables['rigdoc'] . " rigdoc left join "
+        . $gTables['tesdoc'] . " tesdoc on rigdoc.id_tes=tesdoc.id_tes left join "
+        . $gTables['artico'] . " artico on artico.codice=rigdoc.codart left join "
+        . $gTables['clfoco'] . " fornitori on artico.clfoco=fornitori.codice left join "
+        . $gTables['anagra'] . " dati_fornitori on fornitori.id_anagra=dati_fornitori.id left join "
+        . $gTables['clfoco'] . " clienti on tesdoc.clfoco=clienti.codice left join "
         . $gTables['anagra'] . " dati_clienti on clienti.id_anagra=dati_clienti.id left join "
         . $gTables['ragstat'] . " ragstat on artico.ragstat=ragstat.codice";
-$group = "clienti.codice, artico.codice";
-$order = "nome_cliente,codice_ragstat,nome_fornitore";
-$contaPeriodi = 0;
-if ($periodo == 1) {  // trimestre
-   $incMMInizio = 3;
-   $incMMFine = 2;
-   $maxPeriodi = 4;
-   $descrPeriodo = "T";
-   $dimPagina = $config->getValue('page_format');
-   $dimCol = 20;
-} else {
-   $incMMInizio = 1;
-   $incMMFine = 0;
-   $maxPeriodi = 12;
-   $descrPeriodo = "M";
-   $dimPagina = 'A3';
-   $dimCol = 14;
+$group = "tesdoc.clfoco";
+$order = "tesdoc.id_agente,nome_cliente";
+$contaRagstat = 0;
+foreach ($ragstatArray as $cat) { // costruiamo la query per ogni raggruppamento
+   $codice_ragstat = $cat['codice'];
+   $what = $what . ", sum(CASE WHEN (artico.ragstat like '$codice_ragstat%' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ft$contaRagstat,"
+           . "sum(CASE WHEN (artico.ragstat like '$codice_ragstat%' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat ";
+   $contaRagstat++;
 }
-for ($mm = 1; $mm <= 12; $mm+=$incMMInizio) { // costruiamo la query per ogni periodo (mese o trimestre)
-   $contaPeriodi++;
-   $dTmp = new DateTime("$anno-$mm-01");
-   $dataInizio = $dTmp->format('Y-m-d');
-   $meseFine = $mm + $incMMFine;
-   $dTmp = new DateTime("$anno-$meseFine-01");
-   $dataFine = $dTmp->format('Y-m-t');
-   $what = $what . ", sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti ELSE 0 END) as qt_ft$contaPeriodi, 
-sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ft$contaPeriodi,
-sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti ELSE 0 END) as qt_nc$contaPeriodi, 
-sum(CASE WHEN (tesdoc.datfat between '$dataInizio' and '$dataFine' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaPeriodi ";
-}
-/* * todo: rimettere limite a 20000 */
-$result = gaz_dbi_dyn_query($what, $table, $where, $order, 0, 20000, $group);
+// aggiungiamo la colonna NO Ragg
+$what = $what . ", sum(CASE WHEN ((artico.ragstat is null or artico.ragstat='') and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ft$contaRagstat,"
+        . "sum(CASE WHEN ((artico.ragstat is null or artico.ragstat='') and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat ";
+$ragstatArray[] = array('codice' => '', 'descri' => 'NO Ragg');
+// aggiungiamo la colonna TOTALE
+$contaRagstat++;
+$what = $what . ", sum(CASE WHEN (tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ft$contaRagstat,"
+        . "sum(CASE WHEN (tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat ";
+$ragstatArray[] = array('codice' => '', 'descri' => 'TOTALE');
 
+$result = gaz_dbi_dyn_query($what, $table, $where, $order, 0, 20000, $group);
+$dimPagina = "A3";
+$dimCol = 20;
 $aRiportare = array('top' => array(array('lun' => 168, 'nam' => 'da riporto : '),
         array('lun' => 19, 'nam' => '')
     ),
@@ -94,104 +87,93 @@ $aRiportare = array('top' => array(array('lun' => 168, 'nam' => 'da riporto : ')
 );
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
 $title = array('luogo_data' => $luogo_data,
-    'title' => "Analisi acquisti clienti",
+    'title' => "Analisi agenti dal $datini al $datfin",
     'hile' => array(
-        array('lun' => 16, 'nam' => 'Cod.Art.'),
-        array('lun' => 62, 'nam' => 'Articolo'),
-//        array('lun' => 15, 'nam' => 'Qt.1° Tr.'),
-//        array('lun' => 15, 'nam' => 'Ft.1° Tr.'),
+        array('lun' => 62, 'nam' => "Cliente\n "),
     )
 );
-for ($k = 1; $k <= $maxPeriodi; $k++) {
-   $title['hile'][] = array('lun' => $dimCol, 'nam' => "Qt. $descrPeriodo$k");
-   $title['hile'][] = array('lun' => $dimCol, 'nam' => "Imp. $descrPeriodo$k");
+foreach ($ragstatArray as $cat) { // costruiamo la query per ogni raggruppamento
+   $descri_ragstat = $cat['descri'];
+   $codice_ragstat = $cat['codice'];
+   $title['hile'][] = array('lun' => $dimCol, 'nam' => "$codice_ragstat\n$descri_ragstat");
 }
+
 $item_head['top'] = array(
-//    array('lun' => 80, 'nam' => 'Fornitore'),
-//    array('lun' => 80, 'nam' => 'Cliente'),
-//    array('lun' => 80, 'nam' => 'Categoria')
 );
 
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend, $title);
-$pdf->SetTopMargin(47);
+$pdf->SetTopMargin(52);
 $pdf->SetFooterMargin(18);
 $pdf->SetLeftMargin(3);
-//$pdf->AddPage('L', $config->getValue('page_format'));
 $pdf->SetFont('helvetica', '', 9);
 
-$tot_imponibile = 0.00;
-$tot_iva = 0.00;
-$tot_spese = 0.00;
-$tot_importo = 0.00;
-$ctrlFornitore = 0;
-$ctrlCliente = 0;
-$ctrlCategoria = 0;
-initTotali($totCategoria, $maxPeriodi);
-initTotali($totCliente, $maxPeriodi);
+$ctrlAgente = 0;
+$numCol = count($ragstatArray);
+initTotali($totAgente, $numCol);
 while ($row = gaz_dbi_fetch_array($result)) {
-//   $pdf->setRiporti($aRiportare);
-   intestaPagina($pdf, $config, $ctrlFornitore, $ctrlCliente, $ctrlCategoria, $row, $aRiportare, $item_head, $dimPagina, $maxPeriodi, $dimCol, $totCategoria, $totCliente);
-   $pdf->Cell(16, 4, $row["codice_articolo"], 1, 0, '', false, '', 1);
-   $pdf->Cell(62, 4, $row["descrizione"], 1, 0, '', false, '', 1);
-   for ($k = 1; $k <= $maxPeriodi; $k++) {
-      $qt = $row["qt_ft$k"] - $row["qt_nc$k"];
-      $pdf->Cell($dimCol, 4, gaz_format_number($qt), 1, 0, 'R', false, '', 1);
-      $totCategoria['qt'][$k] +=$qt;
-      $totCliente['qt'][$k] +=$qt;
+   intestaPagina($pdf, $config, $ctrlAgente, $row, $aRiportare, $item_head, $dimCol, $totAgente, $numCol, $datini, $datfin);
+   $pdf->Cell(62, 4, $row["nome_cliente"], 1, 0, '', false, '', 1);
+   for ($k = 0; $k < $numCol; $k++) {
       $imp = $row["imp_ft$k"] - $row["imp_nc$k"];
       $pdf->SetFillColor(235, 235, 235);
-      $pdf->Cell($dimCol, 4, gaz_format_number($imp), 1, ($k < $maxPeriodi ? 0 : 1), 'R', true, '', 1);
-      $totCategoria['imp'][$k] +=$imp;
-      $totCliente['imp'][$k] +=$imp;
+      $pdf->Cell($dimCol, 4, gaz_format_number($imp), 1, ($k == $numCol - 1 ? 1 : 0), 'R', FALSE, '', 1);
+      $totAgente['imp'][$k] +=$imp;
    }
-   $ctrlFornitore = $row["codice_fornitore"];
-   $ctrlCliente = $row["codice_cliente"];
-   $ctrlCategoria = $row["codice_ragstat"];
+//   $pdf->Cell(1, 4, "", 1, 1, 'R', true, '', 1);
+   $ctrlAgente = $row["codice_agente"];
 }
-rigaTotali($pdf, "totale categoria", $maxPeriodi, $totCategoria, $dimCol);
-rigaTotali($pdf, "totale cliente", $maxPeriodi, $totCliente, $dimCol, 'b');
+rigaTotali($pdf, "totale agente", $totAgente, $dimCol, $numCol);
 $pdf->Output();
 
-function intestaPagina($pdf, $config, $ctrlFornitore, $ctrlCliente, $ctrlCategoria, $row, $aRiportare, $item_head, $dimPagina, $maxPeriodi, $dimCol, &$totCategoria, &$totCliente) {
-   if ($ctrlCliente != $row['codice_cliente']) {
-      if ($ctrlCliente > 0) {
-         rigaTotali($pdf, "totale categoria", $maxPeriodi, $totCategoria, $dimCol);
-         rigaTotali($pdf, "totale cliente", $maxPeriodi, $totCliente, $dimCol, 'b');
+function intestaPagina($pdf, $config, $ctrlAgente, $row, $aRiportare, $item_head, $dimCol, &$totAgente, $numColonne, $datini, $datfin) {
+   if ($ctrlAgente != $row['codice_agente']) {
+      if ($ctrlAgente > 0) {
+         rigaTotali($pdf, "totale agente", $totAgente, $dimCol, $numColonne);
       }
       $item_head['bot'] = array();
-      $pdf->setPageTitle('Analisi acquisti cliente: ' . $row['codice_cliente'] . " - " . $row['nome_cliente']);
+      $agente = getNewAgente($row['codice_agente']);
+
+      $pdf->setPageTitle('Analisi agente dal ' . format_date($datini) . " al " . format_date($datfin) . ': '
+              . $row['codice_agente'] . " - " . $agente['ragso1'] . ' ' . $agente['ragso2']);
       $pdf->setItemGroup($item_head);
-      $pdf->AddPage('L', $dimPagina);
-   }
-   if ($ctrlCategoria != $row['codice_ragstat']) {
-      rigaTotali($pdf, "totale categoria", $maxPeriodi, $totCategoria, $dimCol);
-   }
-   if ($ctrlFornitore != $row['codice_fornitore'] || $ctrlCategoria != $row['codice_ragstat']) {
-      $pdf->SetFillColor(245, 249, 129);
-      $pdf->Cell(78 + $maxPeriodi * 2 * $dimCol, 4, "Fornitore: " . $row['codice_fornitore'] . " - " . $row['nome_fornitore'] . " - Categoria: " . $row['codice_ragstat'] . " - " . $row['nome_ragstat'], 1, 1, 'L', true, '', 1);
+      $pdf->AddPage('L', "A3");
    }
 }
 
-function initTotali(&$totArray, $maxPeriodi) {
-   for ($k = 1; $k <= $maxPeriodi; $k++) {
-      $totArray['qt'][$k] = 0;
+function initTotali(&$totArray, $dim) {
+   for ($k = 0; $k < $dim; $k++) {
       $totArray['imp'][$k] = 0;
    }
 }
 
-function rigaTotali($pdf, $stringa, $maxPeriodi, &$totArray, $dimCol, $fill = 'a') {
-   if ($fill == 'a') {
-      $pdf->SetFillColor(194, 249, 129);
-   } else {
-      $pdf->SetFillColor(235, 235, 235);
+function rigaTotali($pdf, $stringa, &$totArray, $dimCol, $numCol) {
+   $pdf->SetFillColor(194, 249, 129);
+   $pdf->Cell(62, 4, $stringa, 1, 0, 'L', true, '', 1);
+//   $totaleRiga = 0;
+   for ($k = 0; $k < $numCol; $k++) {
+      $imp = $totArray['imp'][$k];
+      $pdf->Cell($dimCol, 4, gaz_format_number($imp), 1, ($k == $numCol - 1 ? 1 : 0), 'R', true, '', 1);
+//      $totaleRiga +=$imp;
    }
-   $pdf->Cell(78, 4, $stringa, 1, 0, 'L', true, '', 1);
-   for ($k = 1; $k <= $maxPeriodi; $k++) {
-      $pdf->Cell($dimCol, 4, gaz_format_number($totArray['qt'][$k]), 1, 0, 'R', true, '', 1);
-      $pdf->Cell($dimCol, 4, gaz_format_number($totArray['imp'][$k]), 1, ($k < $maxPeriodi ? 0 : 1), 'R', true, '', 1);
-   }
-   initTotali($totArray, $maxPeriodi);
+//   $pdf->Cell(1, 4, "", 1, 1, 'R', true, '', 1);
+   initTotali($totArray, $numCol);
+}
+
+function caricaElencoRagstat($livello, $gTables) {   // restituisce un array con tutte le categorie statisstiche con codice <= $livello
+   $result = gaz_dbi_dyn_query("codice, descri", $gTables['ragstat'], "length(codice)<=$livello", "codice");
+   return gaz_dbi_fetch_all($result);
+}
+
+function getNewAgente($id) {
+   global $gTables;
+   $agente = gaz_dbi_get_row($gTables['agenti'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['agenti'] . ".id_fornitore = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $gTables['agenti'] . '.id_agente', $id);
+   return $agente;
+}
+
+function format_date($date) {
+   $uts = mktime(0, 0, 0, intval(substr($date, 4, 2)), intval(substr($date, 6, 2)), intval(substr($date, 0, 4)));
+   return date("d-m-Y", $uts);
 }
 
 ?>

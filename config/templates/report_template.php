@@ -88,7 +88,7 @@ class Report_template extends TCPDF
     function Header()
     {
        $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-        if (isset($this->altri_dati['cover']) and !empty($this->altri_dati['cover']) ){ // è stato passato il valore di pagina da stampare
+        if (isset($this->altri_dati['cover']) and !empty($this->altri_dati['cover']) ){ // ï¿½ stato passato il valore di pagina da stampare
             $this->descri_cover = $this->altri_dati['cover'];
             $this->printCover();
         } else {
@@ -96,7 +96,7 @@ class Report_template extends TCPDF
             $this->Image('@'.$this->logo,15,8,30,0,'',$this->link);
             $this->Cell(40,4);
             $this->Cell(118,4,$this->intesta1,0,0,'L');
-            if (isset($this->altri_dati['page'])){ // è stato passato il valore di pagina da stampare
+            if (isset($this->altri_dati['page'])){ // ï¿½ stato passato il valore di pagina da stampare
                $this->Cell(30,4,$this->altri_dati['page'].$this->GroupPageNo(),0,1,'R');
             } else {
                $this->Cell(30,4,'Pagina '.$this->getGroupPageNo().' di '.$this->getPageGroupAlias(),0,1,'R');
@@ -106,11 +106,11 @@ class Report_template extends TCPDF
             $this->Cell(130,4,$this->intesta3,0,2,'L');
             $this->Cell(118,4,$this->intesta4,0,0,'L');
             $this->Cell(30,4,$this->luogo,0,1,'R');
-            if (!empty($this->item_image)){ //C'è una immagine associata
+            if (!empty($this->item_image)){ //C'ï¿½ una immagine associata
                $this->Image('@'.$this->item_image,177,28,0,20,'',$this->item_link);
                $this->Ln(4);
             }
-            if (isset($this->intesta_item_group) and is_array($this->intesta_item_group)){ // c'è una descrizione dell'articolo
+            if (isset($this->intesta_item_group) and is_array($this->intesta_item_group)){ // c'ï¿½ una descrizione dell'articolo
                $this->SetFont('helvetica','',9);
                $this->Cell(40);
                foreach ($this->intesta_item_group['top'] as $key=>$value){
@@ -124,13 +124,14 @@ class Report_template extends TCPDF
                $this->Cell(1,4,'',0,1);
                $this->SetFont('helvetica','',8);
             }
-            if (is_array($this->altri_dati) and isset($this->altri_dati['title'])){ // è una intestazione con titolo e testata tabella
+            if (is_array($this->altri_dati) and isset($this->altri_dati['title'])){ // ï¿½ una intestazione con titolo e testata tabella
                $this->Cell(40);
                $this->SetFont('helvetica','',12);
                $this->Cell(130,12,$this->altri_dati['title'],0,1);
                $this->SetFont('helvetica','',9);
                foreach ($this->altri_dati['hile'] as $key=>$value){
-                 $this->Cell($value['lun'],4,$value['nam'],1,0,'C',1);
+//                 $this->Cell($value['lun'],4,$value['nam'],1,0,'C',1);
+                 $this->MultiCell($value['lun'],4,$value['nam'],1,'C',1, 0); // per avere intestazioni su piÃ¹ righe
                }
                $this->Cell(1,4,'',0,1);
                $this->SetFont('helvetica','',8);
@@ -140,7 +141,7 @@ class Report_template extends TCPDF
                $this->Cell(130,12,$this->altri_dati,0,1);
                $this->SetFont('helvetica','',8);
             }
-            if (isset($this->intesta_riporti) and is_array($this->intesta_riporti)){ // c'è un riporto da pagina precedente
+            if (isset($this->intesta_riporti) and is_array($this->intesta_riporti)){ // c'ï¿½ un riporto da pagina precedente
                $this->SetFont('helvetica','B',8);
                foreach ($this->intesta_riporti['top'] as $key=>$value){
                    $this->Cell($value['lun'],4,$value['nam'],1,0,'R');
@@ -159,11 +160,11 @@ class Report_template extends TCPDF
     function Footer()
     {
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
-        if (isset($this->altri_dati['cover']) and !empty($this->altri_dati['cover']) ){ // è stato passato il valore di pagina da stampare
+        if (isset($this->altri_dati['cover']) and !empty($this->altri_dati['cover']) ){ // ï¿½ stato passato il valore di pagina da stampare
             $this->altri_dati['cover']='';
         } else {
           //Page footer
-          if (isset($this->intesta_riporti) and is_array($this->intesta_riporti)){ // c'è un riporto da pagina precedente
+          if (isset($this->intesta_riporti) and is_array($this->intesta_riporti)){ // c'ï¿½ un riporto da pagina precedente
              $this->SetFont('helvetica','B',8);
              foreach ($this->intesta_riporti['bot'] as $key=>$value){
                    $this->Cell($value['lun'],4,$value['nam'],1,0,'R');
