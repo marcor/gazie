@@ -31,6 +31,7 @@ $msg = '';
 $calc = new Compute;
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
+$lm = new lotmag;
 
 function getFAIseziva($tipdoc) {
     global $admin_aziend, $gTables, $auxil;
@@ -221,6 +222,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = $_POST['in_scorta'];
     $form['in_pesosp'] = $_POST['in_pesosp'];
     $form['in_gooser'] = intval($_POST['in_gooser']);
+    $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
+    $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
     $form['in_status'] = $_POST['in_status'];
     // fine rigo input
     $form['rows'] = array();
@@ -250,6 +253,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
             $form['rows'][$next_row]['pesosp'] = floatval($v['pesosp']);
             $form['rows'][$next_row]['gooser'] = intval($v['gooser']);
+            $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
+            $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
+            if ($v['lot_or_serial'] == 2) {
+// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
+                if ($form['rows'][$i]['quanti'] <> 1) {
+                    $msg .= "57+";
+                }
+                $form['rows'][$i]['quanti'] = 1;
+            }
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 10);
             if (isset($_POST['upd_row'])) {
                 $k_row = key($_POST['upd_row']);
@@ -281,6 +293,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
                     $form['in_pesosp'] = $form['rows'][$k_row]['pesosp'];
                     $form['in_gooser'] = $form['rows'][$k_row]['gooser'];
+                    $form['in_lot_or_serial'] = $form['rows'][$k_row]['lot_or_serial'];
+                    $form['in_id_lotmag'] = $form['rows'][$k_row]['id_lotmag'];
                     $form['in_status'] = "UPDROW" . $k_row;
                     /* if ($form['in_artsea'] == 'D') {
                       $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
@@ -709,6 +723,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $old_key = intval(substr($form['in_status'], 6));
             $form['rows'][$old_key]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$old_key]['descri'] = $form['in_descri'];
+            $form['rows'][$old_key]['lot_or_serial'] = $form['in_lot_or_serial'];
+            $form['rows'][$old_key]['id_lotmag'] = $form['in_id_lotmag'];
             $form['rows'][$old_key]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$old_key]['status'] = "UPDATE";
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
@@ -744,6 +760,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['annota'] = $artico['annota'];
                 $form['rows'][$old_key]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$old_key]['gooser'] = $artico['good_or_service'];
+                $form['rows'][$old_key]['lot_or_serial'] = $artico['lot_or_serial'];
+                /* devo ricaricare un nuovo id lotmag
+                 */
+                if ($artico['lot_or_serial'] > 0) {
+                    $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
+                    $ld = $lm->divideLots($form['in_quanti']);
+                    print_r($lm->divided);
+                    $form['rows'][$old_key]['id_lotmag'] = $lm->divided[$form['in_id_mag']]['id_lotmag'];
+                }
                 $form['rows'][$old_key]['unimis'] = $artico['unimis'];
                 $form['rows'][$old_key]['descri'] = $artico['descri'];
                 if ($form['listin'] == 2) {
@@ -822,6 +847,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $next_row++;
                 }
             }
+            $form['rows'][$next_row]['lot_or_serial'] = 0;
+            $form['rows'][$next_row]['id_lotmag'] = 0;
             $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
             $form['rows'][$next_row]['descri'] = $form['in_descri'];
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
@@ -833,6 +860,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['gooser'] = $artico['good_or_service'];
+                $form['rows'][$next_row]['lot_or_serial'] = $artico['lot_or_serial'];
+                /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
+                 * e se è il caso dovrò creare più righi (al momento solo 1) 
+                 */
+                if ($artico['lot_or_serial'] > 0) {
+                    $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
+                    $ld = $lm->divideLots($form['in_quanti']);
+                    foreach ($lm->divided as $k => $v)
+                        break;
+                    $form['rows'][$next_row]['id_lotmag'] = $k;
+                }
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
@@ -1107,6 +1145,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = 0;
     $form['in_pesosp'] = 0;
     $form['in_gooser'] = 0;
+    $form['in_lot_or_serial'] = 0;
+    $form['in_id_lotmag'] = 0;
     $form['in_status'] = "INSERT";
     // fine rigo input
     $form['rows'] = array();
@@ -1214,6 +1254,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $articolo['scorta'];
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$next_row]['gooser'] = $articolo['good_or_service'];
+        $form['rows'][$next_row]['lot_or_serial'] = $articolo['lot_or_serial'];
+        $lotmag = gaz_dbi_get_row($gTables['lotmag'], "id_rigdoc", $rigo['id_rig']);
+        $form['rows'][$next_row]['id_lotmag'] = $lotmag['id'];
         $form['rows'][$next_row]['status'] = "UPDATE";
         $next_row++;
     }
@@ -1270,6 +1313,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_scorta'] = 0;
     $form['in_pesosp'] = 0;
     $form['in_gooser'] = 0;
+    $form['in_lot_or_serial'] = 0;
+    $form['in_id_lotmag'] = 0;
     $form['in_status'] = "INSERT";
     // fine rigo input
     $form['search']['clfoco'] = '';
@@ -1357,29 +1402,7 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
           'jquery/ui/jquery.ui.autocomplete', */
         /** ENRICO FEDELE */        ));
 
-echo "<script type=\"text/javascript\">";
-/* foreach ($form['rows'] as $k => $v) {
-  if ($v['tiprig'] > 5 || $v['tiprig'] < 9) {
-  echo "\n// Initialize TinyMCE with the new plugin and menu button
-  tinyMCE.init({
-  mode : \"specific_textareas\",
-  theme : \"advanced\",
-  forced_root_block : false,
-  force_br_newlines : true,
-  force_p_newlines : false,
-  elements : \"row_" . $k . "\",
-  plugins : \"table,advlink\",
-  theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
-  theme_advanced_buttons2 : \"\",
-  theme_advanced_buttons3 : \"\",
-  theme_advanced_toolbar_location : \"external\",
-  theme_advanced_toolbar_align : \"left\",
-  editor_selector  : \"mceClass" . $k . "\",
-  });\n";
-  }
-  } */
-
-echo "
+echo "<script type=\"text/javascript\">
 function pulldown_menu(selectName, destField)
 {
     // Create a variable url to contain the value of the
@@ -1650,6 +1673,8 @@ echo '<table class="Tlarge table table-striped table-bordered table-condensed ta
 		<input type="hidden" value="' . $form['in_scorta'] . '" name="in_scorta" />
 		<input type="hidden" value="' . $form['in_pesosp'] . '" name="in_pesosp" />
 		<input type="hidden" value="' . $form['in_gooser'] . '" name="in_gooser" />
+		<input type="hidden" value="' . $form['in_lot_or_serial'] . '" name="in_lot_or_serial" />
+		<input type="hidden" value="' . $form['in_id_lotmag'] . '" name="in_id_lotmag" />
 		<input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 		<tr>
@@ -1759,7 +1784,9 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
-    echo "<input type=\"hidden\" value=\"" . $v['gooser'] . "\" name=\"rows[$k][gooser]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['gooser'] . "\" name=\"rows[$k][gooser]\">" .
+    '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />' .
+    '<input type="hidden" value="' . $v['id_lotmag'] . '" name="rows[' . $k . '][id_lotmag]" />';
     //$rit_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$script_transl['ritenuta'].$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2))."]  fade=[on] fadespeed=[0.03] \"";
     //stampo i righi in modo diverso a secondo del tipo
     switch ($v['tiprig']) {
@@ -1777,6 +1804,7 @@ foreach ($form['rows'] as $k => $v) {
             if ($v['pesosp'] <> 0) {
                 $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
             }
+
             echo '	<td>
 						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
 							<i class="glyphicon glyphicon-arrow-up"></i>
@@ -1789,7 +1817,13 @@ foreach ($form['rows'] as $k => $v) {
 			 		</td>
 					<td>
 						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="60" size="50" />
-					</td>
+					';
+            if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0) {
+                echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '"> ID lotto:'
+                . $v['id_lotmag'] . '  <i class="glyphicon glyphicon-tag"></i>'
+                . '</button></div>';
+            }
+            echo '</td>
 					<td>
 						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
 					</td>

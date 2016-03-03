@@ -120,6 +120,7 @@ if (sizeof($scdl->Entries) > 0) {
             $paymov = $mv["id_tesdoc_ref"];
             $scdl->getStatus($paymov);
             $r = $scdl->Status;
+            $status_descr .= $script_transl['status_value'][$r['sta']];
             if ($r['sta'] == 1) { // CHIUSA   
                 $class_paymov = '';
                 $status_del = true;
@@ -138,7 +139,7 @@ if (sizeof($scdl->Entries) > 0) {
         echo "<tr>";
         echo "<td class=\"$class_partner\">" . $partner . " &nbsp;</td>";
         echo "<td align=\"center\" class=\"$class_paymov\">" . $paymov . " &nbsp;</td>";
-        echo "<td align=\"center\" class=\"$class_paymov\">" .$script_transl['status_value'][$r['sta']]. $status_descr . " &nbsp;</td>";
+        echo "<td align=\"center\" class=\"$class_paymov\">" . $status_descr . " &nbsp;</td>";
         echo "<td align=\"center\" class=\"$class_id_tes\"><a href=\"../contab/admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $id_tes . "</a> &nbsp</td>";
         echo "<td class=\"$class_id_tes\"><a href=\"../contab/admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv['descri'] . "</a> &nbsp;</td>";
         echo "<td align=\"center\" class=\"FacetDataTD\">" . $mv["numdoc"] . " &nbsp;</td>";

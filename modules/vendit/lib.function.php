@@ -114,26 +114,55 @@ class venditCalc extends Compute {
 
 class lotmag {
 
-    function getAvailableLots($codart, $excluded_movmag=0) {
+    function __construct() {
+        $this->available = array();
+    }
+
+    function getAvailableLots($codart, $excluded_movmag = 0) {
         // restituisce tutti i lotti non completamente venduti ordinandoli in base alla configurazione aziendale (FIFO o LIFO)
         // e propone una ripartizione, se viene passato un movimento di magazzino questo verrà escluso perché si suppone sia lo stesso
         // che si sta modificando
         global $gTables, $admin_aziend;
         $ob = ' ASC'; // FIFO-PWM-STANDARD
-        if ($admin_aziend['stock_eval_method'] == 2) { 
+        if ($admin_aziend['stock_eval_method'] == 2) {
             $ob = ' DESC'; // LIFO
         }
         $sqlquery = "SELECT *, SUM(quanti*operat) AS rest FROM " . $gTables['movmag'] . "
             LEFT JOIN " . $gTables['lotmag'] . " ON " . $gTables['movmag'] . ".id_mov =" . $gTables['lotmag'] . ".id_movmag  
-            WHERE " . $gTables['movmag'] . ".artico = '" . $codart . "' AND id_mov <> ".$excluded_movmag." GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY " . $gTables['movmag'] . ".datreg" . $ob;
+            WHERE " . $gTables['movmag'] . ".artico = '" . $codart . "' AND id_mov <> " . $excluded_movmag . " GROUP BY " . $gTables['movmag'] . ".id_lotmag ORDER BY " . $gTables['movmag'] . ".datreg" . $ob;
         $result = gaz_dbi_query($sqlquery);
         $acc = array();
+        $rs = false;
         while ($row = gaz_dbi_fetch_array($result)) {
-            if ($row['rest'] > 0.00001 || $row['rest'] < -0.00001 ) {
+            if ($row['rest'] >= 0.00001) { // l'articolo ha almeno un lotto caricato 
+                $rs = true;
                 $acc[] = $row;
             }
         }
-        $this->available=$acc;
+        $this->available = $acc;
+        return $rs;
+    }
+
+    function divideLots($quantity) {
+        // riparto la quantità tra i vari lotti presenti se questi non sono sufficienti
+        // ritorno il resto non assegnato 
+        $acc = array();
+        $rest = $quantity;
+        foreach ($this->available as $v) {
+            if ($v['rest'] >= $rest) { // c'è capienza
+                $acc[$v['id_lotmag']] = $v + array('qua' => $rest);
+            } elseif ($v['rest'] < $rest) { // non c'è capienza
+                $acc[$v['id_lotmag']] = $v + array('qua' => $v['rest']);
+            }
+            $rest -= $v['rest'];
+        }
+        $this->divided = $acc;
+        if ($rest >= 0.00001) {
+            // ritorno il resto, quindi non ho abbastanza lotti per contenere la quantità venduta 
+            return $rest;
+        } else {
+            return NULL;
+        }
     }
 
 }
