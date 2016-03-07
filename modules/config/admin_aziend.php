@@ -130,7 +130,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
             $msg .= "16+";
         }
-        if (!filter_var($form['web_url'], FILTER_VALIDATE_URL) && !empty($form['e_mail'])) {
+        if (!filter_var($form['web_url'], FILTER_VALIDATE_URL) && !empty($form['e_mail']) && $form['web_url']!="") {
             $msg .= "17+";
         }
         if ($form['cod_ateco'] < 10000) {
