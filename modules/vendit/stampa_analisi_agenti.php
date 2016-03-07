@@ -56,7 +56,7 @@ $table = $gTables['rigdoc'] . " rigdoc left join "
         . $gTables['clfoco'] . " clienti on tesdoc.clfoco=clienti.codice left join "
         . $gTables['anagra'] . " dati_clienti on clienti.id_anagra=dati_clienti.id left join "
         . $gTables['ragstat'] . " ragstat on artico.ragstat=ragstat.codice";
-$group = "tesdoc.clfoco";
+$group = "tesdoc.clfoco, tesdoc.id_agente";
 $order = "tesdoc.id_agente,nome_cliente";
 $contaRagstat = 0;
 foreach ($ragstatArray as $cat) { // costruiamo la query per ogni raggruppamento
@@ -95,7 +95,8 @@ $title = array('luogo_data' => $luogo_data,
 foreach ($ragstatArray as $cat) { // costruiamo la query per ogni raggruppamento
    $descri_ragstat = $cat['descri'];
    $codice_ragstat = $cat['codice'];
-   $title['hile'][] = array('lun' => $dimCol, 'nam' => "$codice_ragstat\n$descri_ragstat");
+   $titoloCol = substr("$codice_ragstat\n$descri_ragstat", 0, $dimCol - 3);   // evitiamo che il titolo esca dallo spazio dell'intestazione
+   $title['hile'][] = array('lun' => $dimCol, 'nam' => $titoloCol);
 }
 
 $item_head['top'] = array(
@@ -137,7 +138,8 @@ function intestaPagina($pdf, $config, $ctrlAgente, $row, $aRiportare, $item_head
       $pdf->setPageTitle('Analisi agente dal ' . format_date($datini) . " al " . format_date($datfin) . ': '
               . $row['codice_agente'] . " - " . $agente['ragso1'] . ' ' . $agente['ragso2']);
       $pdf->setItemGroup($item_head);
-      $pdf->AddPage('L', "A3");
+      $dimPagina = ($numColonne > 11 ? ($numColonne > 16 ? "A2" : "A3") : "A4");
+      $pdf->AddPage('L', $dimPagina);
    }
 }
 
