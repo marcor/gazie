@@ -569,14 +569,14 @@ function tesmovInsert($newValue) {
 
 function movmagInsert($newValue) {
    $table = 'movmag';
-   $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
+   $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
    $newValue['adminid'] = $_SESSION['Login'];
    tableInsert($table, $columns, $newValue);
 }
 
 function movmagUpdate($codice, $newValue) {
    $table = 'movmag';
-   $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
+   $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
    $newValue['adminid'] = $_SESSION['Login'];
    tableUpdate($table, $columns, $codice, $newValue);
 }

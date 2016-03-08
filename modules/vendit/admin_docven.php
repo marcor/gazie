@@ -450,8 +450,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
                         if ($form['rows'][$i]['id_mag'] > 0) { //se il rigo ha un movimento di magazzino associato
-                            $upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc']
-                            );
+                            $upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc'],$form['rows'][$i]['id_lotmag']);
                         }
                     } else { //altrimenti lo elimino
                         if (intval($val_old_row['id_mag']) > 0) {  //se c'�� stato un movimento di magazzino lo azzero
@@ -472,8 +471,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']
-                        );
+                        $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']);
+                        $last_lotmag_id = gaz_dbi_last_id();
+                        // inserisco il riferimento anche sul relativo movimento di magazzino
+                        gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag',$form['rows'][$i]['id_lotmag']);
                     }
                     $last_rigdoc_id = gaz_dbi_last_id();
                     if (isset($form["row_$i"])) { //se �� un rigo testo lo inserisco il contenuto in body_text
@@ -588,8 +589,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']
-                        );
+                        $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']);
+                        $last_lotmag_id = gaz_dbi_last_id();
+                        // inserisco il riferimento anche sul relativo movimento di magazzino
+                        gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag',$form['rows'][$i]['id_lotmag']);
                     }
                 }
                 if ($form['id_doc_ritorno'] > 0) { // �� un RDV pertanto non lo stampo e inserisco il riferimento sulla testata relativa
@@ -1109,6 +1112,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         array_splice($form['rows'], $delri, 1);
         $next_row--;
     }
+    if (isset($_POST['new_lotmag'])) {
+        // assegno il rigo ad un nuovo lotto
+        $row_lm = key($_POST['new_lotmag']);
+        $form['rows'][$row_lm]['id_lotmag'] = key($_POST['new_lotmag'][$row_lm]);
+    }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $form['id_tes'] = intval($_GET['id_tes']);
     $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
@@ -1255,8 +1263,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$next_row]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$next_row]['lot_or_serial'] = $articolo['lot_or_serial'];
-        $lotmag = gaz_dbi_get_row($gTables['lotmag'], "id_rigdoc", $rigo['id_rig']);
-        $form['rows'][$next_row]['id_lotmag'] = $lotmag['id'];
+        $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $rigo['id_mag']);
+        $form['rows'][$next_row]['id_lotmag'] = $movmag['id_lotmag'];
         $form['rows'][$next_row]['status'] = "UPDATE";
         $next_row++;
     }
@@ -1831,7 +1839,7 @@ foreach ($form['rows'] as $k => $v) {
                 if (count($lm->available) > 1) {
                     foreach ($lm->available as $v_lm) {
                         if ($v_lm['id'] <> $v['id_lotmag']) {
-                            echo '<div>change to:<button class="btn btn-xs btn-warning" type="image" onclick="this.form.submit();" name="new_id_lotmag_' . $v_lm['desdoc'] . '">'
+                            echo '<div>change to:<button class="btn btn-xs btn-warning" type="image" onclick="this.form.submit();" name="new_lotmag[' . $k . '][' . $v_lm['id_lotmag'] . ']">'
                             . 'lot:' . $v_lm['id']
                             . ' id:' . $v_lm['identifier']
                             . ' doc:' . $v_lm['desdoc']

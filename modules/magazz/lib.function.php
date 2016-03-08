@@ -347,7 +347,7 @@ class magazzForm extends GAzieForm {
         return $return_val;
     }
 
-    function uploadMag($id_rigo_doc = 0, $tipdoc, $numdoc, $seziva, $datdoc, $clfoco, $sconto_chiusura, $caumag, $codart, $quantita, $prezzo, $sconto_rigo, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '') {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
+    function uploadMag($id_rigo_doc = 0, $tipdoc, $numdoc, $seziva, $datdoc, $clfoco, $sconto_chiusura, $caumag, $codart, $quantita, $prezzo, $sconto_rigo, $id_movmag = 0, $stock_eval_method = null, $data_from_admin_mov = false, $protoc = '',$id_lotmag=0) {  // su id_rigo_doc 0 per inserire 1 o + per fare l'upload 'DEL' per eliminare il movimento
         // in $data_from_admin_mov  ci sono i dati in più provenienti da admin_movmag (desdoc,operat, id_rif)
         global $gTables, $admin_aziend;
         $docOperat = $this->getOperators();
@@ -398,7 +398,8 @@ class magazzForm extends GAzieForm {
             'artico' => $codart,
             'quanti' => $quantita,
             'prezzo' => $prezzo,
-            'scorig' => $sconto_rigo);
+            'scorig' => $sconto_rigo,
+            'id_lotmag'=>$id_lotmag);
         if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento
             movmagInsert($row_movmag);
             $ultimo_id_mm = gaz_dbi_last_id(); //id del rigo movimento magazzino

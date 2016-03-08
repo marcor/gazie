@@ -70,7 +70,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['config'], "1=1", ' id ASC', 0, 1000);
 									echo "text";
 								} else {
 									echo "password";
-								}*/?>" class="form-control input-sm" id="input<?php echo $r["id"];?>" name="<?php echo $r["variable"];?>" placeholder="<?php echo $r["variable"];?>" value="<?php echo $r["cvalue"]; ?>">
+								}*/?>" class="form-control input-sm" id="input<?php echo $r["id"];?>" name="<?php echo $r["variable"];?>" placeholder="<?php echo $r["variable"];?>" value='<?php echo $r["cvalue"]; ?>' >
                         </div>
                     </div>
                     <?php
