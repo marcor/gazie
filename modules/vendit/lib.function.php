@@ -118,6 +118,17 @@ class lotmag {
         $this->available = array();
     }
 
+    function getLot($id) {
+        // restituisce i dati relativi ad uno specifico lotto
+        global $gTables;
+        $sqlquery = "SELECT * FROM " . $gTables['lotmag'] . "
+            LEFT JOIN " . $gTables['movmag'] . " ON " . $gTables['lotmag'] . ".id_movmag =" . $gTables['movmag'] . ".id_mov  
+            WHERE " . $gTables['lotmag'] . ".id = '" . $id."'";
+        $result = gaz_dbi_query($sqlquery);
+        $this->lot=gaz_dbi_fetch_array($result);
+        return $this->lot;
+    }
+
     function getAvailableLots($codart, $excluded_movmag = 0) {
         // restituisce tutti i lotti non completamente venduti ordinandoli in base alla configurazione aziendale (FIFO o LIFO)
         // e propone una ripartizione, se viene passato un movimento di magazzino questo verrà escluso perché si suppone sia lo stesso

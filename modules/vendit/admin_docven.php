@@ -1819,9 +1819,30 @@ foreach ($form['rows'] as $k => $v) {
 						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="60" size="50" />
 					';
             if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0) {
-                echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $k . '"> ID lotto:'
-                . $v['id_lotmag'] . '  <i class="glyphicon glyphicon-tag"></i>'
-                . '</button></div>';
+                $lm->getAvailableLots($v['codart'], $v['id_mag']);
+                $selected_lot = $lm->getLot($v['id_lotmag']);
+                echo '<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto" type="image"  data-toggle="collapse" href="#lm_dialog' . $k . '">'
+                . 'lot:' . $selected_lot['id']
+                . ' id:' . $selected_lot['identifier']
+                . ' doc:' . $selected_lot['desdoc']
+                . ' - ' . gaz_format_date($selected_lot['datdoc']) . ' <i class="glyphicon glyphicon-tag"></i></button></div>';
+                echo '<div id="lm_dialog' . $k . '" class="collapse" >
+                        <div class="form-group">';
+                if (count($lm->available) > 1) {
+                    foreach ($lm->available as $v_lm) {
+                        if ($v_lm['id'] <> $v['id_lotmag']) {
+                            echo '<div>change to:<button class="btn btn-xs btn-warning" type="image" onclick="this.form.submit();" name="new_id_lotmag_' . $v_lm['desdoc'] . '">'
+                            . 'lot:' . $v_lm['id']
+                            . ' id:' . $v_lm['identifier']
+                            . ' doc:' . $v_lm['desdoc']
+                            . ' - ' . gaz_format_date($v_lm['datdoc']) . '</button></div>';
+                        }
+                    }
+                } else {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" >Non sono disponibili altri lotti</button></div>';
+                }
+                echo '</div>'
+                . "</div>\n";
             }
             echo '</td>
 					<td>
