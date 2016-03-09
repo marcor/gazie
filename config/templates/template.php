@@ -69,6 +69,7 @@ class Template extends TCPDF
         $this->day = $docVars->day;
         $this->month = $docVars->month;
         $this->year = $docVars->year;
+        $this->noPageGroup = $docVars->noPageGroup;
     }
 
     function Header()
@@ -94,7 +95,7 @@ class Template extends TCPDF
         $this->Ln($interlinea);
         $this->SetFont('helvetica','',11);
         $this->Cell(110,5,$this->tipdoc,1,1,'L',1);
-        if ($this->tesdoc['tipdoc'] == 'NOP') {
+        if ($this->tesdoc['tipdoc'] == 'NOP' || $this->noPageGroup) {
            $this->Cell(30,5);
         } else {
            $this->Cell(30,5,'Pagina '.$this->getGroupPageNo().' di '.$this->getPageGroupAlias(),0,0,'L');
