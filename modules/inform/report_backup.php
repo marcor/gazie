@@ -103,28 +103,28 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                         
                         if ($index < 30) {
                             ?>
-                            <tr><td class="FacetDataTD"><a class="btn btn-xs btn-default" href="">
+                            <tr class="FacetDataTD"><td><a class="btn btn-xs btn-default" href="">
                                         <?php echo (count($id)>0) ? $id[1] : "nd"; ?>
                                     </a></td>
-                                <td class="FacetDataTD">
+                                <td>
                                     <?php 
                                         if ( preg_match('/-v(.*?).sql/',$file, $versione)>0 )                                      
                                             echo $versione[1];
                                     ?>
                                 </td>
-                                <td class="FacetDataTD">
+                                <td>
                                     <?php echo $file; ?>
                                 </td>
-                                <td class="FacetDataTD">
+                                <td>
                                     <?php echo formatSizeUnits(filesize('../../data/files/backups/' . $file)); ?>
                                 </td>
-                                <td align="center" class="FacetDataTD">
+                                <td align="center">
                                     <a class="btn btn-xs btn-default" href=""><i class="glyphicon glyphicon-repeat"></i></a>
                                 </td>
-                                <td align="center" class="FacetDataTD">
+                                <td align="center">
                                     <a class="btn btn-xs btn-default" href="downlo_backup.php?id=<?php echo $file; ?>"><i class="glyphicon glyphicon-download"></i></a>
                                 </td>
-                                <td align="center" class="FacetDataTD">
+                                <td align="center">
                                     <a class="btn btn-xs btn-default" href="delete_backup.php?id=<?php echo $file ?>"><i class="glyphicon glyphicon-remove"></i></a>
                                 </td>
                             </tr>

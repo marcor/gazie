@@ -52,17 +52,17 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("./lang.".$admin_aziend['lang'].".php");
 $script_transl += $strScript["admin_caumag.php"];
-print "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl[1].$script_transl[0]."</div>\n";
-print "<form method=\"GET\">";
-print "<table class=\"Tlarge\">\n";
-print "<tr><td></td><td class=\"FacetFieldCaptionTD\">".$script_transl[2].":\n";
-print "<input type=\"text\" name=\"auxil\" value=\"";
+echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl[1].$script_transl[0]."</div>\n";
+echo "<form method=\"GET\">";
+echo "<table class=\"Tlarge\">\n";
+echo "<tr><td></td><td class=\"FacetFieldCaptionTD\">".$script_transl[2].":\n";
+echo "<input type=\"text\" name=\"auxil\" value=\"";
 if ($auxil != "&all=yes"){
-    print $auxil;
+    echo $auxil;
 }
-print "\" maxlength=\"6\" size=\"3\" tabindex=\"1\" class=\"FacetInput\"></td>\n";
-print "<td><input type=\"submit\" name=\"search\" value=\"".$script_transl['search']."\" tabindex=\"1\" onClick=\"javascript:document.report.all.value=1;\"></td>\n";
-print "<td><input type=\"submit\" name=\"all\" value=\"".$script_transl['vall']."\" onClick=\"javascript:document.report.all.value=1;\"></td></tr>\n";
+echo "\" maxlength=\"6\" size=\"3\" tabindex=\"1\" class=\"FacetInput\"></td>\n";
+echo "<td><input type=\"submit\" name=\"search\" value=\"".$script_transl['search']."\" tabindex=\"1\" onClick=\"javascript:document.report.all.value=1;\"></td>\n";
+echo "<td><input type=\"submit\" name=\"all\" value=\"".$script_transl['vall']."\" onClick=\"javascript:document.report.all.value=1;\"></td></tr>\n";
 $result = gaz_dbi_dyn_query ("*",$gTables['caumag'], $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
@@ -77,13 +77,13 @@ $linkHeaders -> output();
 $recordnav = new recordnav($gTables['caumag'], $where, $limit, $passo);
 $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    print "<tr>\n";
-    print "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_caumag.php?codice=".$a_row["codice"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["descri"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$script_transl[$a_row['clifor']+13]."</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$script_transl[$a_row['operat']+9]."</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_caumag.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    print "</tr>\n";
+    echo "<tr class=\"FacetDataTD\">\n";
+    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_caumag.php?codice=".$a_row["codice"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
+    echo "<td align=\"center\">".$a_row["descri"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$script_transl[$a_row['clifor']+13]."</td>";
+    echo "<td align=\"center\">".$script_transl[$a_row['operat']+9]."</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_caumag.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "</tr>\n";
 }
 ?>
 </table>

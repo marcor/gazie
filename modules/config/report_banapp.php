@@ -47,14 +47,14 @@ $linkHeaders -> output();
 <?php
 $result = gaz_dbi_dyn_query ('*', $gTables['banapp'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    print "<tr>";
-    print "<td class=\"FacetDataTD\" ><a class=\"btn btn-xs btn-default\" href=\"admin_banapp.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
-    print "<td class=\"FacetDataTD\">".$a_row["descri"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["locali"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["codabi"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["codcab"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_banapp.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    print "</tr>";
+    echo "<tr class=\"FacetDataTD\">";
+    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_banapp.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
+    echo "<td>".$a_row["descri"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["locali"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["codabi"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["codcab"]." &nbsp;</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_banapp.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "</tr>";
 }
 ?>
  </table>

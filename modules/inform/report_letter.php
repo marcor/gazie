@@ -25,21 +25,8 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $msg = "";
-
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array(/** ENRICO FEDELE */
-								/*'jquery/jquery-1.7.1.min',
-                                  'jquery/ui/jquery.ui.core',
-                                  'jquery/ui/jquery.ui.widget',
-                                  'jquery/ui/jquery.ui.mouse',
-                                  'jquery/ui/jquery.ui.button',
-                                  'jquery/ui/jquery.ui.dialog',
-                                  'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.draggable',
-                                  'jquery/ui/jquery.ui.resizable',
-                                  'jquery/ui/jquery.effects.core',
-                                  'jquery/ui/jquery.effects.scale',*/
-                                  'custom/modal_form'));
+$script_transl=HeadMain(0,array('custom/modal_form'));
 
 echo '<script>
 
@@ -139,26 +126,26 @@ $linkHeaders -> output();
 $recordnav = new recordnav($table, $where, $limit, $passo);
 $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    echo "<tr>\n";
-    echo "<td class=\"FacetDataTD\" align=\"right\"><a href=\"admin_letter.php?id_let=".$a_row["id_let"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\">".$a_row["id_let"]."</a> &nbsp</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["write_date"]." &nbsp;</td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["numero"]."</td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["tipo"]."</td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row['ragso1']." ".$a_row['ragso2']."</td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["oggetto"]." &nbsp;</td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"center\">
+    echo "<tr class=\"FacetDataTD\">\n";
+    echo "<td align=\"right\"><a href=\"admin_letter.php?id_let=".$a_row["id_let"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\">".$a_row["id_let"]."</a> &nbsp</td>";
+    echo "<td align=\"center\">".$a_row["write_date"]." &nbsp;</td>\n";
+    echo "<td align=\"center\">".$a_row["numero"]."</td>\n";
+    echo "<td align=\"center\">".$a_row["tipo"]."</td>\n";
+    echo "<td align=\"center\">".$a_row['ragso1']." ".$a_row['ragso2']."</td>\n";
+    echo "<td align=\"center\">".$a_row["oggetto"]." &nbsp;</td>\n";
+    echo "<td align=\"center\">
 			<a href=\"stampa_letter.php?id_let=".$a_row["id_let"]."\" title=\"Stampa\" class=\"btn btn-xs btn-default\" target=\"_blank\">
 				<i class=\"glyphicon glyphicon-print\"></i>
 			</a>
 		  </td>";
     // Colonna "Mail"
-    echo "<td class=\"FacetDataTD\" align=\"center\">";
+    echo "<td align=\"center\">";
     if (!empty($a_row["e_mail"])) {
         echo '<a onclick="confirMail(this);return false;" id="doc'.$a_row["id_let"].'" url="stampa_letter.php?id_let='.$a_row["id_let"].'&dest=E" href="#" title="mailto: '.$a_row["e_mail"].'"
         mail="'.$a_row["e_mail"].'" namedoc="Lettera n.'.$a_row["numero"].' del '.gaz_format_date($a_row["write_date"]).'" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-envelope\"></i></a>';
     }  
     echo "</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">
+    echo "<td align=\"center\">
 			<a href=\"delete_letter.php?id_let=".$a_row["id_let"]."\" title=\"".$script_transl['delete']."!\" class=\"btn btn-xs btn-default\">
 				<i class=\"glyphicon glyphicon-remove\"></i>
 			</a>

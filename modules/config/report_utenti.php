@@ -44,14 +44,14 @@ $linkHeaders = new linkHeaders($headers_utenti);
 $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['admin'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    print "<tr>";
-    print "<td class=\"FacetDataTD\" title=\"".$script_transl['update']."\"><a class=\"btn btn-xs btn-default\" href=\"admin_utente.php?Login=".$a_row["Login"]."&Update\">".$a_row["Login"]." </a> &nbsp</td>";
-    print "<td class=\"FacetDataTD\">".$a_row["Cognome"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\">".$a_row["Nome"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["Abilit"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["Access"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_utente.php?Login=".$a_row["Login"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    print "</tr>";
+    echo "<tr class=\"FacetDataTD\">";
+    echo "<td title=\"".$script_transl['update']."\"><a class=\"btn btn-xs btn-default\" href=\"admin_utente.php?Login=".$a_row["Login"]."&Update\">".$a_row["Login"]." </a> &nbsp</td>";
+    echo "<td>".$a_row["Cognome"]." &nbsp;</td>";
+    echo "<td>".$a_row["Nome"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["Abilit"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["Access"]." &nbsp;</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_utente.php?Login=".$a_row["Login"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "</tr>";
 }
 ?>
 </table>

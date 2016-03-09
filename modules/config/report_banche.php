@@ -46,19 +46,19 @@ $headers = array  (
 $linkHeaders = new linkHeaders($headers);
 $linkHeaders -> output();
 foreach($result as $r) {
-    echo "<tr>";
-    echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-default\" href=\"admin_bank_account.php?Update&codice=".substr($r["codice"],3)."\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> &nbsp</td>";
-    echo "<td class=\"FacetDataTD\">".$r["ragso1"]." &nbsp;</td>";
+    echo "<tr class=\"FacetDataTD\">";
+    echo "<td><a class=\"btn btn-xs btn-default btn-default\" href=\"admin_bank_account.php?Update&codice=".substr($r["codice"],3)."\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($r["codice"],3)."</a> &nbsp</td>";
+    echo "<td>".$r["ragso1"]." &nbsp;</td>";
     if (!empty($r['iban'])) {
-       echo "<td class=\"FacetDataTD\">".$r["iban"]." &nbsp;</td>";
-       echo "<td class=\"FacetDataTD\">".$r["citspe"]." &nbsp;</td>";
-       echo "<td class=\"FacetDataTD\">".$r["prospe"]." &nbsp;</td>";
-       echo "<td class=\"FacetDataTD\">".$r["telefo"]." &nbsp;</td>";
+       echo "<td>".$r["iban"]." &nbsp;</td>";
+       echo "<td>".$r["citspe"]." &nbsp;</td>";
+       echo "<td>".$r["prospe"]." &nbsp;</td>";
+       echo "<td>".$r["telefo"]." &nbsp;</td>";
     } else {
-       echo "<td class=\"FacetDataTD\" colspan=\"4\">".$script_transl['msg'][0]."</td>\n";
+       echo "<td colspan=\"4\">".$script_transl['msg'][0]."</td>\n";
     }
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"../contab/delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"../contab/delete_piacon.php?codice=".$r["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }
 ?>

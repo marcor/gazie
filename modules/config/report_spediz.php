@@ -44,12 +44,12 @@ $linkHeaders -> output();
 <?php
 $result = gaz_dbi_dyn_query ('*', $gTables['spediz'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    print "<tr>";
-    print "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_spediz.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>";
-    print "<td class=\"FacetDataTD\">".$a_row["descri"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["annota"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_spediz.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    print "</tr>";
+    echo "<tr class=\"FacetDataTD\">";
+    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_spediz.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>";
+    echo "<td>".$a_row["descri"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["annota"]." &nbsp;</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_spediz.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "</tr>";
 }
 ?>
 </table>

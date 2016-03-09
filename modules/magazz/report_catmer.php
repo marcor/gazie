@@ -87,18 +87,18 @@ $recordnav -> output();
         <tbody>
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
-?>		<tr>
-			<td class="FacetDataTD">
+?>		<tr class="FacetDataTD">
+			<td>
 				<a class="btn btn-xs btn-success btn-block" href="admin_catmer.php?Update&codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["codice"];?>
 				</a>
 			</td>
-			<td class="FacetDataTD">
+			<td>
 				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['codice']; ?>" data-title="<?php echo $a_row['annota']; ?>"><?php echo $a_row["descri"]; ?></span>
 			</td>
-			<td class="FacetDataTD"><?php echo $a_row["ricarico"];?></td>
-			<td class="FacetDataTD"><?php echo $a_row["annota"];?></td>
-			<td class="FacetDataTD">
+			<td align="center"><?php echo $a_row["ricarico"];?></td>
+			<td align="center"><?php echo $a_row["annota"];?></td>
+			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina" href="delete_catmer.php?codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>

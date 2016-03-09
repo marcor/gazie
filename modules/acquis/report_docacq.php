@@ -222,26 +222,26 @@ $script_transl = HeadMain();
             }
 
             if ($a_row["protoc"] <> $ctrlprotoc) {
-                print "<tr>";
+                print "<tr class=\"FacetDataTD\">";
                 if (!empty($modifi)) {
-                    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["protoc"] . "</td>";
+                    print "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["protoc"] . "</td>";
                 } else {
-                    print "<td class=\"FacetDataTD\"><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $a_row["protoc"] . " &nbsp;</button></td>";
+                    print "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $a_row["protoc"] . " &nbsp;</button></td>";
                 }
-                print "<td class=\"FacetDataTD\">" . $tipodoc . " &nbsp;</td>";
-                print "<td class=\"FacetDataTD\">" . $a_row["numfat"] . " &nbsp;</td>";
-                print "<td class=\"FacetDataTD\">" . $a_row["datfat"] . " &nbsp;</td>";
-                print "<td class=\"FacetDataTD\">" . $a_row["ragso1"] . "&nbsp;</td>";
+                print "<td>" . $tipodoc . " &nbsp;</td>";
+                print "<td>" . $a_row["numfat"] . " &nbsp;</td>";
+                print "<td>" . $a_row["datfat"] . " &nbsp;</td>";
+                print "<td>" . $a_row["ragso1"] . "&nbsp;</td>";
                 if ($a_row["id_con"] > 0) {
-                    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $a_row["id_con"] . "&Update\">Cont. n." . $a_row["id_con"] . "</a></td>";
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $a_row["id_con"] . "&Update\">Cont. n." . $a_row["id_con"] . "</a></td>";
                 } else {
-                    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $a_row["protoc"] . "\">Contabilizza</a></td>";
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $a_row["protoc"] . "\">Contabilizza</a></td>";
                 }
-                print "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+                print "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
                 if ($lt_doc[$y] == $a_row['protoc']) {
-                    print "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $a_row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                    print "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $a_row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                 } else {
-                    print "<td class=\"FacetDataTD\"><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
+                    print "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
                 }
                 print "</tr>\n";
             }

@@ -43,13 +43,13 @@ $linkHeaders = new linkHeaders($headers_imball);
 $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['imball'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    print "<tr>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_imball.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
-    print "<td class=\"FacetDataTD\">".$a_row["descri"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["weight"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["annota"]." &nbsp;</td>";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_imball.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-    print "</tr>";
+    echo "<tr class=\"FacetDataTD\">";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_imball.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
+    echo "<td>".$a_row["descri"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["weight"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["annota"]." &nbsp;</td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_imball.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "</tr>";
 }
 ?>
  </table>

@@ -110,36 +110,38 @@ $result = gaz_dbi_dyn_query ('*', $gTables['tesbro'], $where, $orderby, $limit, 
 $ctrlprotoc = "";
 $anagrafica = new Anagrafica();
 while ($a_row = gaz_dbi_fetch_array($result)) {
+    $tipodoc="Pagamento";
+    $modulo="stampa_ordban.php?id_tes=".$a_row['id_tes'];
+    $modifi="update_pagdeb.php?id_tes=".$a_row['id_tes'];
     if ($a_row["tipdoc"] == 'AOB') {
         $tipodoc="Bonifico";
         $modulo="stampa_ordban.php?id_tes=".$a_row['id_tes'];
         $modifi="update_pagdeb.php?id_tes=".$a_row['id_tes'];
-    }
-    if ($a_row["tipdoc"] == 'AOA') {
+    } elseif ($a_row["tipdoc"] == 'AOA') {
         $tipodoc="Ordine di Addebito";
         $modulo="stampa_ordban.php?id_tes=".$a_row['id_tes'];
         $modifi="update_pagdeb.php?id_tes=".$a_row['id_tes'];
     }
 
-    $cliente = $anagrafica->getPartner($a_row['clfoco']);
+    $fornitore = $anagrafica->getPartner($a_row['clfoco']);
 
-    echo "<tr>";
+    echo "<tr class=\"FacetDataTD\">";
     if (! empty ($modifi)) {
-       echo "<td class=\"FacetDataTD\"><a href=\"".$modifi."\">".$a_row["id_tes"]."</td>";
+       echo "<td><a href=\"".$modifi."\">".$a_row["id_tes"]."</td>";
     } else {
-       echo "<td class=\"FacetDataTD\">".$a_row["id_tes"]." &nbsp;</td>";
+       echo "<td>".$a_row["id_tes"]." &nbsp;</td>";
     }
-    echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["numdoc"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["datemi"]." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\">".$cliente["ragso1"]."&nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["portos"]." &nbsp;</td>";
-	echo "	  <td class=\"FacetDataTD\">
+    echo "<td>".$tipodoc." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["numdoc"]." &nbsp;</td>";
+    echo "<td align=\"center\">".$a_row["datemi"]." &nbsp;</td>";
+    echo "<td>".$fornitore["ragso1"]."&nbsp;</td>";
+    echo "<td align=\"right\">".$a_row["portos"]." &nbsp;</td>";
+	echo "	  <td align=\"center\">
 				<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" title=\"Stampa\" target=\"_blank\">
 					<i class=\"glyphicon glyphicon-print\"></i>
 				</a>
 			  </td>
-			  <td class=\"FacetDataTD\">
+			  <td align=\"center\">
 				<a class=\"btn btn-xs btn-default\" href=\"delete_pagdeb.php?id_tes=".$a_row['id_tes']."\" title=\"Cancella\">
 					<i class=\"glyphicon glyphicon-remove\"></i>
 				</a>

@@ -221,29 +221,29 @@ while ($r = gaz_dbi_fetch_array($result)) {
         $modifi="admin_broacq.php?id_tes=".$r['id_tes']."&Update";
     }
     $fornitore = $anagrafica->getPartner($r['clfoco']);
-    echo "<tr>";
+    echo "<tr class=\"FacetDataTD\">";
     if (! empty ($modifi)) {
-       echo "<td class=\"FacetDataTD\">
+       echo "<td>
 	   			<a class=\"btn btn-xs btn-default\" href=\"".$modifi."\">
 					<i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$r["id_tes"]."
 				</a>
 			 </td>";
     } else {
-       echo "<td class=\"FacetDataTD\">
+       echo "<td>
 	   			<button class=\"btn btn-xs btn-default disabled\">".$r["id_tes"]." &nbsp;</button>
 			</td>";
     }
-    echo "	<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>
-			<td class=\"FacetDataTD\">".$r["numdoc"]." &nbsp;</td>
-			<td class=\"FacetDataTD\">".gaz_format_date($r["datemi"])." &nbsp;</td>
-			<td class=\"FacetDataTD\">".$fornitore["ragso1"]."&nbsp;</td>
-			<td class=\"FacetDataTD\">".$r["status"]." &nbsp;</td>
-			<td class=\"FacetDataTD\" align=\"center\">
+    echo "	<td>".$tipodoc." &nbsp;</td>
+			<td>".$r["numdoc"]." &nbsp;</td>
+			<td>".gaz_format_date($r["datemi"])." &nbsp;</td>
+			<td>".$fornitore["ragso1"]."&nbsp;</td>
+			<td>".$r["status"]." &nbsp;</td>
+			<td align=\"center\">
 				<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\">
 					<i class=\"glyphicon glyphicon-print\"></i>
 				</a>
 			</td>
-			<td class=\"FacetDataTD\" align=\"center\">";
+			<td align=\"center\">";
     if (!empty($fornitore["e_mail"])) {
         echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc'.$r["id_tes"].'" url="'.$modulo.'&dest=E" href="#" title="mailto: '.$fornitore["e_mail"].'"
         mail="'.$fornitore["e_mail"].'" namedoc="'.$tipodoc.' n.'.$r["numdoc"].' del '.gaz_format_date($r["datemi"]).'"><i class="glyphicon glyphicon-envelope"></i></a>';
@@ -251,7 +251,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		echo '<a title="Non hai memorizzato l\'email per questo fornitore, inseriscila ora" target="_blank" href="admin_fornit.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	 }		  
     echo "	</td>
-			<td class=\"FacetDataTD\" align=\"center\">
+			<td align=\"center\">
 				<a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_broacq.php?id_tes=".$r['id_tes']."\">
 					<i class=\"glyphicon glyphicon-remove\"></i>
 				</a>

@@ -45,15 +45,15 @@ $linkHeaders = new linkHeaders($headers_pagame);
 $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['pagame'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    print "<tr>\n";
-    print "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_pagame.php?codice=".$a_row["codice"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>\n";
-    print "<td class=\"FacetDataTD\">".$a_row["descri"]." &nbsp;</td>\n";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["giodec"]." &nbsp;</td>\n";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["numrat"]." &nbsp;</td>\n";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["tiprat"]." &nbsp;</td>\n";
-    print "<td class=\"FacetDataTD\" align=\"center\">".$a_row["fae_mode"]." &nbsp;</td>\n";
-    print "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_pagame.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
-    print "</tr>\n";
+    echo "<tr class=\"FacetDataTD\">\n";
+    echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_pagame.php?codice=".$a_row["codice"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a></td>\n";
+    echo "<td>".$a_row["descri"]." &nbsp;</td>\n";
+    echo "<td align=\"center\">".$a_row["giodec"]." &nbsp;</td>\n";
+    echo "<td align=\"center\">".$a_row["numrat"]." &nbsp;</td>\n";
+    echo "<td align=\"center\">".$a_row["tiprat"]." &nbsp;</td>\n";
+    echo "<td align=\"center\">".$a_row["fae_mode"]." &nbsp;</td>\n";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_pagame.php?codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
+    echo "</tr>\n";
 }
 ?>
 </table>

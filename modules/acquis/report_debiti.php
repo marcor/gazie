@@ -121,22 +121,22 @@ $linkHeaders -> output();
 $tot=0;
 while ($r = gaz_dbi_fetch_array($rs_castel)) {
       if ($r['saldo'] != 0) {
-         echo "<tr>";
-         echo "<td class=\"FacetDataTD\">".$r['codcon']."&nbsp;</td>";
-         echo "<td class=\"FacetDataTD\">".$r['ragso1']." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\">".$r['telefo']." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\" align=\"center\">".$r['nummov']." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['dare'])." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\" align=\"center\" title=\"".$script_transl['pay_title'].$r['ragso1']."\">
+         echo "<tr class=\"FacetDataTD\">";
+         echo "<td>".$r['codcon']."&nbsp;</td>";
+         echo "<td>".$r['ragso1']." &nbsp;</td>";
+         echo "<td>".$r['telefo']." &nbsp;</td>";
+         echo "<td align=\"center\">".$r['nummov']." &nbsp;</td>";
+         echo "<td align=\"right\">".gaz_format_number($r['dare'])." &nbsp;</td>";
+         echo "<td align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";
+         echo "<td align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
+         echo "<td align=\"center\" title=\"".$script_transl['pay_title'].$r['ragso1']."\">
 		 		<a class=\"btn btn-xs btn-default\" href=\"salcon_debiti.php?codice=".$r["codcon"]."\">
 					<i class=\"glyphicon glyphicon-piggy-bank\"></i>
 				</a>
 			</td>";
          
 			/** ENRICO FEDELE */
-		 echo "<td class=\"FacetDataTD\" align=\"center\" title=\"".$script_transl['statement_title'].$r['ragso1']."\">
+		 echo "<td align=\"center\" title=\"".$script_transl['statement_title'].$r['ragso1']."\">
 		 		<a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$r['codcon']."&yi=".$annini."&yf=".$annfin."\"  target=\"_blank\">
 					<i class=\"glyphicon glyphicon-eye-open\"></i>
 					<i class=\"glyphicon glyphicon-print\"></i>
