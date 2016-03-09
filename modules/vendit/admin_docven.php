@@ -450,7 +450,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
                         if ($form['rows'][$i]['id_mag'] > 0) { //se il rigo ha un movimento di magazzino associato
-                            $upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc'],$form['rows'][$i]['id_lotmag']);
+                            $upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
                         }
                     } else { //altrimenti lo elimino
                         if (intval($val_old_row['id_mag']) > 0) {  //se c'�� stato un movimento di magazzino lo azzero
@@ -471,10 +471,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']);
-                        $last_lotmag_id = gaz_dbi_last_id();
-                        // inserisco il riferimento anche sul relativo movimento di magazzino
-                        gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag',$form['rows'][$i]['id_lotmag']);
+                        $upd_mm->uploadMag(gaz_dbi_last_id(), $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
                     }
                     $last_rigdoc_id = gaz_dbi_last_id();
                     if (isset($form["row_$i"])) { //se �� un rigo testo lo inserisco il contenuto in body_text
@@ -589,10 +586,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             $form['rows'][$i]['tiprig'] == 0 &&
                             $form['rows'][$i]['gooser'] == 0 &&
                             !empty($form['rows'][$i]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                        $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc']);
-                        $last_lotmag_id = gaz_dbi_last_id();
-                        // inserisco il riferimento anche sul relativo movimento di magazzino
-                        gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag',$form['rows'][$i]['id_lotmag']);
+                        $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], 0, $admin_aziend['stock_eval_method'], false, $form['protoc'], $form['rows'][$i]['id_lotmag']);
                     }
                 }
                 if ($form['id_doc_ritorno'] > 0) { // �� un RDV pertanto non lo stampo e inserisco il riferimento sulla testata relativa
@@ -600,7 +594,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     header("Location: report_doctra.php");
                     exit;
                 } else {
-//					echo $form['template'];
                     $_SESSION['print_request'] = $ultimo_id;
                     header("Location: invsta_docven.php");
                     exit;
@@ -864,16 +857,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['gooser'] = $artico['good_or_service'];
                 $form['rows'][$next_row]['lot_or_serial'] = $artico['lot_or_serial'];
-                /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
-                 * e se è il caso dovrò creare più righi (al momento solo 1) 
-                 */
-                if ($artico['lot_or_serial'] > 0) {
-                    $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
-                    $ld = $lm->divideLots($form['in_quanti']);
-                    foreach ($lm->divided as $k => $v)
-                        break;
-                    $form['rows'][$next_row]['id_lotmag'] = $k;
-                }
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
@@ -936,6 +919,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $artico['scorta'];
+                if ($artico['lot_or_serial'] > 0) {
+                    $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
+                    $ld = $lm->divideLots($form['in_quanti']);
+                    /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
+                     * e se è il caso creo più righi  
+                     */
+                    $i = $next_row;
+                    foreach ($lm->divided as $k => $v) {
+                        if ($v['qua'] >= 0.00001) {
+                            $form['rows'][$i] = $form['rows'][$next_row]; // copio il rigo di origine
+                            $form['rows'][$i]['id_lotmag'] = $k; // setto il lotto 
+                            $form['rows'][$i]['quanti'] = $v['qua']; // e la quantità in base al riparto
+                            $i++;
+                        }
+                    }
+                }
                 if ($artico['payroll_tax'] > 0) {
                     /* se l'articolo impone anche un ulteriore rigo per la cassa previdenziale
                      * procedo con l'aggiunta di un ulteriore rigo di tipo forfait in base 
@@ -1833,7 +1832,11 @@ foreach ($form['rows'] as $k => $v) {
                 . 'lot:' . $selected_lot['id']
                 . ' id:' . $selected_lot['identifier']
                 . ' doc:' . $selected_lot['desdoc']
-                . ' - ' . gaz_format_date($selected_lot['datdoc']) . ' <i class="glyphicon glyphicon-tag"></i></button></div>';
+                . ' - ' . gaz_format_date($selected_lot['datdoc']) . ' <i class="glyphicon glyphicon-tag"></i></button>';
+                if ($v['id_mag'] > 0) {
+                    echo ' <a class="btn btn-xs btn-default" href="lotmag_print_cert.php?id_movmag=' . $v['id_mag'] . '" target="_blank"><i class="glyphicon glyphicon-print"></i></a>';
+                }
+                echo "</div>\n";
                 echo '<div id="lm_dialog' . $k . '" class="collapse" >
                         <div class="form-group">';
                 if (count($lm->available) > 1) {

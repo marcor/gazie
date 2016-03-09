@@ -2137,14 +2137,14 @@ class gazGhostscript {
    }
 
    function gspdf2png($in_name, $out = 'out', $first = '', $last = '') {
-      // crea un file png a 300dpi a partire da un pdf
+      // crea un file png a con la risoluzione stabilita sulla tabella gaz_config del database  a partire da un pdf
       if (!empty($first)) {
          $first = '-dFirstPage=' . intval($first);
       }
       if (!empty($last)) {
          $last = '-dLastPage=' . intval($last);
       }
-      shell_exec($this->gs . ' -sDEVICE=png16m -dSAFER -dBATCH -dNOPAUSE -r300 ' . $first . ' ' . $last . ' -sOutputFile=' . $this->fout . $out . '.png ' . $in_name . '.pdf');
+      shell_exec($this->gs . ' -sDEVICE=png16m -dSAFER -dBATCH -dNOPAUSE -r'.$this->res.' ' . $first . ' ' . $last . ' -sOutputFile=' . $this->fout . $out . '.png ' . $in_name . '.pdf');
    }
 
 }
