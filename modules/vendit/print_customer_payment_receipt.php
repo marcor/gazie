@@ -109,14 +109,16 @@ while (list($k, $mv) = each($d['d'])) {
     $ctrl_pm=$mv["id_tesdoc_ref"];
 }
 $pdf->Ln(10);
+$pdf->SetFont('courier','',5);
+$pdf->Cell(80,6,$d['d'][1]['id_tes'],'LTB',0,'L');
 $pdf->SetFont('helvetica','B',10);
-$pdf->Cell(150,6,$script_transl['tot'].': ','LTB',0,'R');
+$pdf->Cell(70,6,$script_transl['tot'].': ','TB',0,'R');
 $pdf->Cell(36,6,'€ '.gaz_format_number($d['d'][1]['import']),'RTB',1,'R',1,'',1);
 $pdf->Ln(10);
 $pdf->SetFont('courier','',8);
 $pdf->Cell(100,6,'');
 $pdf->Cell(60,6,$admin_aziend['Nome'].' '.$admin_aziend['Cognome'],0,1,'C');
-$pdf->Cell(100,6,'');
+$pdf->Cell(100,6);
 $pdf->Cell(60,20,'____________________________',0,0,'C');
 $pdf->setRiporti('');
 $pdf->Output();

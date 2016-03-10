@@ -1,4 +1,5 @@
 <?php
+
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -26,18 +27,49 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 require("../../library/include/document.php");
 
-function createCertificate($testata, $gTables,$id_movmag=0, $dest = false) {
+class LotMagData extends DocContabVars {
+
+    function __construct() {
+        $this->id_movmag = 0;
+    }
+
+    function setMovMag($id) { // in caso di stampa di un certificato specifico scelgo l'id del movimento di magazzino
+        $this->id_movmag = $id;
+    }
+
+    function getLots() {
+        $where='';
+        if ($this->id_movmag > 0) {
+            $where .=' AND mm.id_mov = '.$this->id_movmag;
+        }
+        $from = $this->gTables[$this->tableName] . ' AS rows
+            LEFT JOIN ' . $this->gTables['movmag'] . ' AS mm ON rows.id_mag=mm.id_mov
+            LEFT JOIN ' . $this->gTables['lotmag'] . ' AS lm ON mm.id_lotmag=lm.id';
+        $rs_rig = gaz_dbi_dyn_query('*', $from, "rows.id_tes = " . $this->testat.$where, "id_tes DESC, id_rig");
+        $results = array();
+        while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
+            if ($rigo['tiprig'] == 0 && $rigo['id_mag'] > 0) {
+                $results[] = $rigo;
+            }
+        }
+        return $results;
+    }
+
+}
+
+function createCertificate($testata, $gTables, $id_movmag = 0, $dest = false) {
     $config = new Config;
     $configTemplate = new configTemplate;
     require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/certificate.php');
     $pdf = new Certificate();
-    $docVars = new DocContabVars();
-    $docVars->setData($gTables, $testata, $testata['id_tes'],'rigdoc');
-    $pdf->setVars($docVars,'Certificate');
+    $docVars = new LotMagData();
+    $docVars->setData($gTables, $testata, $testata['id_tes'], 'rigdoc');
+    $docVars->setMovMag($id_movmag);
+    $pdf->setVars($docVars, 'Certificate');
     $pdf->setTesDoc();
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
     $pdf->setAuthor($docVars->user['Cognome'] . ' ' . $docVars->user['Nome']);
-    $pdf->setTitle('Certificate');
+    $pdf->setTitle('Certificates');
     $pdf->setTopMargin(79);
     $pdf->setHeaderMargin(5);
     $pdf->Open();
@@ -72,7 +104,7 @@ if (isset($_GET['id_movmag'])) {   //se viene richiesta la stampa di un solo doc
     $movmag = gaz_dbi_get_row($gTables['movmag'], 'id_mov', intval($_GET['id_movmag']));
     $rigdoc = gaz_dbi_get_row($gTables['rigdoc'], 'id_rig', $movmag['id_rif']);
     $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $rigdoc['id_tes']);
-    createCertificate($tesdoc, $gTables);
+    createCertificate($tesdoc, $gTables, $movmag['id_mov'], false);
 } else { // in tutti gli altri casi devo passare direttamente la testata del documento 
 }
 ?>
