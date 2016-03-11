@@ -233,7 +233,7 @@ $strScript = array("admin_client.php" =>
         "Vuoi modificare un D.d.T. gi&agrave; fatturato!",
         "Questo documento &egrave; gi&agrave; stato contabilizzato!",
         "Per questo documento è obbligatorio selezionare il DdT di cessione in c/visione di riferimento",
-        "La quantità è stata forzata ad 1 perché l'articolo prevere in numero di serie",
+        "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie",
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',

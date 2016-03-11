@@ -255,12 +255,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['gooser'] = intval($v['gooser']);
             $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
             $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
-            if ($v['lot_or_serial'] == 2) {
+            if ($v['lot_or_serial'] == 2 && $v['id_lotmag']>0) {
 // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
-                if ($form['rows'][$i]['quanti'] <> 1) {
+                if ($form['rows'][$next_row]['quanti'] <> 1) {
                     $msg .= "60+";
                 }
-                $form['rows'][$i]['quanti'] = 1;
+                $form['rows'][$next_row]['quanti'] = 1;
             }
             $form['rows'][$next_row]['status'] = substr($v['status'], 0, 10);
             if (isset($_POST['upd_row'])) {
@@ -857,9 +857,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['rows'][$next_row]['gooser'] = $artico['good_or_service'];
                 $form['rows'][$next_row]['lot_or_serial'] = $artico['lot_or_serial'];
-                if ($artico['lot_or_serial'] == 2) {
-                    $form['in_quanti'] = 1;
-                }
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
