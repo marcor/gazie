@@ -110,7 +110,13 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Lista dei documenti di vendita',
         'mail_alert0' => 'Invio documento con email',
         'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
-        'mail_alert2' => 'con allegato il seguente documento di vendita:'
+        'mail_alert2' => 'con allegato il seguente documento di vendita:',
+        'fae_alert0' => 'Generazione documento FAE',
+        'fae_alert1' => 'Hai scelto di generare la fattura elettronica ',
+        'fae_alert2' => '',
+        'report_alert0' => 'Mostra tutti i documenti',
+        'report_alert1' => 'Sicuro di voler mostrare tutti i documenti?',
+        'print_lot' => 'Stampa certificati',
     ),
     "admin_agenti.php" =>
     array("Sales agents ",
@@ -224,6 +230,7 @@ $strScript = array("admin_client.php" =>
         "Vuoi modificare un D.d.T. gi&agrave; fatturato!",
         "Questo documento &egrave; gi&agrave; stato contabilizzato!",
         "Per questo documento è obbligatorio selezionare il DdT di cessione in c/visione di riferimento",
+        "La quantità è stata forzata ad 1 perché l'articolo prevere in numero di serie",
         'speban' => "Bank cost",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
@@ -246,10 +253,9 @@ $strScript = array("admin_client.php" =>
         'last_row' => 'Last row',
         'id_doc_ritorno_title' => 'Seleziona il DdT per cessione in c/visione di riferimento',
         'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento'
-
     ),
     "select_docforprint.php" =>
-    array('title'=>'Ristampa documenti',
+    array('title' => 'Ristampa documenti',
         array(1 => "D.d.T. di Vendita", 2 => "Fattura Differita", 3 => "Fattura Immediata Accompagnatoria", 4 => "Fattura Immediata Semplice", 5 => "Nota Credito a Cliente", 6 => "Nota Debito a Cliente"),
         " nella sezione ",
         "Data",
@@ -791,6 +797,7 @@ $strScript = array("admin_client.php" =>
         'to_invoice' => 'invoiceable',
         'print_invoice' => 'Printing deferred invoice',
         'print_ddt' => 'Print bill',
+        'print_lot' => 'Print certified',
         'doc_returned' => 'Reso da c/visione',
         'delete_returned' => 'Elimina il reso',
         'from_suppl' => 'Bill to supplier',
@@ -882,7 +889,6 @@ $strScript = array("admin_client.php" =>
             'Importo' => "amount",
             'Scadenza' => "expiry",
             'status_value' => array(0 => 'OPEN', 1 => 'CLOSED', 2 => 'RISK', 3 => 'EXPIRED', 9 => 'ANTICIPO')
-
         ),
     ),
     "select_schedule.php" =>

@@ -123,9 +123,9 @@ class lotmag {
         global $gTables;
         $sqlquery = "SELECT * FROM " . $gTables['lotmag'] . "
             LEFT JOIN " . $gTables['movmag'] . " ON " . $gTables['lotmag'] . ".id_movmag =" . $gTables['movmag'] . ".id_mov  
-            WHERE " . $gTables['lotmag'] . ".id = '" . $id."'";
+            WHERE " . $gTables['lotmag'] . ".id = '" . $id . "'";
         $result = gaz_dbi_query($sqlquery);
-        $this->lot=gaz_dbi_fetch_array($result);
+        $this->lot = gaz_dbi_fetch_array($result);
         return $this->lot;
     }
 
@@ -152,6 +152,21 @@ class lotmag {
         }
         $this->available = $acc;
         return $rs;
+    }
+
+    function thereisLot($id_tesdoc) {
+        // restituisce true se nel documento di vendita c'è almeno un rigo al quale è assegnato un lotto 
+        $r = false;
+        global $gTables;
+        $sqlquery = "SELECT * FROM " . $gTables['rigdoc'] . " AS rd
+            LEFT JOIN " . $gTables['movmag'] . " AS mm ON rd.id_mag = mm.id_mov  
+            WHERE rd.id_tes = " . $id_tesdoc . " AND mm.id_lotmag > 0 LIMIT 1";
+        $result = gaz_dbi_query($sqlquery);
+        $row = gaz_dbi_fetch_array($result);
+        if (count($row) > 1) { // il documento ha almeno un lotto caricato 
+            $r = true;
+        }
+        return $r;
     }
 
     function divideLots($quantity) {

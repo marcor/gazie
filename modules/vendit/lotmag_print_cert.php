@@ -118,6 +118,8 @@ if (isset($_GET['id_movmag'])) {   //se viene richiesta la stampa di un solo doc
     $rigdoc = gaz_dbi_get_row($gTables['rigdoc'], 'id_rig', $movmag['id_rif']);
     $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $rigdoc['id_tes']);
     createCertificate($tesdoc, $gTables, $movmag['id_mov'], false);
-} else { // in tutti gli altri casi devo passare direttamente la testata del documento 
+} else { // in tutti gli altri casi devo passare l'id della testata del documento
+    $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', intval($_GET['id_tesdoc']));
+    createCertificate($tesdoc, $gTables, 0, false);
 }
 ?>

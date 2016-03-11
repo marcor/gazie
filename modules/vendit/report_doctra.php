@@ -23,7 +23,6 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend = checkAdmin();
 $message = "";
 $anno = date("Y");
@@ -44,6 +43,7 @@ gaz_flt_var_assign('tipdoc','v');
 gaz_flt_var_assign('datemi','d');
 gaz_flt_var_assign('clfoco','v');
 
+$lot = new lotmag();
 
 if (isset($_GET['all'])) {
 	$_GET['id_tes']="";
@@ -238,6 +238,9 @@ function confirMail(link){
                         if ($r_d["id_tes"] > 0) {
                             echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r_d['id_tes'] . "\" style=\"font-size:10px;\">Ord." . $r_d['numdoc'] . "</a>\n";
                         }
+                    }
+                    if ($lot->thereisLot($r['id_tes'])) {
+                            echo " <a class=\"btn btn-xs btn-default\" title=\"".$script_transl['print_lot']."\" href=\"lotmag_print_cert.php?id_tesdoc=" . $r['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a>\n";
                     }
                     echo "</td>\n";
            echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"duplicate_docven.php?id_tes=" . $r['id_tes'] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
