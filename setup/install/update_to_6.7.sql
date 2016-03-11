@@ -10,8 +10,6 @@ UPDATE `gaz_aziend` SET `c_payroll_tax`=215000012 WHERE 1;
 UPDATE `gaz_aziend` SET `payroll_tax`=4.0 WHERE 1;
 UPDATE `gaz_aziend` SET `ritenuta`=20.0 WHERE 1;
 TRUNCATE `gaz_menu_usage`;
-INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Ghostscript shell exec', 'gs_shell_exec', 'C:\\"Program Files"\\gs\\gs9.18\\bin\\gswin64.exe');
-INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Ghostscript dpi resolution', 'gs_resolution', '300');
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 9, 'select_an_acq_clienti.php', '', '', 38, '', 1  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, 13, 'report_period.php', '', '', 2, '', 2  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'admin_period.php?Insert', '', '', 2, '', 1  FROM `gaz_menu_script`;

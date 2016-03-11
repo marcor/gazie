@@ -203,7 +203,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i;
                 if (($mt == "png" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' una nuova immagine nel buffer
                     // adesso il lavoro è agli inizi,  muovo subito i file su una dir temporanea, 
-                    // ma dopo, se il documento verrà confermato dovranno essere tutti convertiti in pdf attraverso ghostscript 
+                    // ma dopo, se il documento verrà confermato dovranno essere tutti convertiti in pdf attraverso tcpdf 
                     // e messi sulla nuova subdir "1" (codice azienda) con prefisso "lotmag_" e nome equivalente all'id della 
                     // tabella "001lotmag"
                     foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
