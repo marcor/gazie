@@ -38,17 +38,28 @@ class LotMagData extends DocContabVars {
     }
 
     function getLots() {
-        $where='';
+        $where = '';
         if ($this->id_movmag > 0) {
-            $where .=' AND mm.id_mov = '.$this->id_movmag;
+            $where .=' AND mm.id_mov = ' . $this->id_movmag;
         }
         $from = $this->gTables[$this->tableName] . ' AS rows
             LEFT JOIN ' . $this->gTables['movmag'] . ' AS mm ON rows.id_mag=mm.id_mov
             LEFT JOIN ' . $this->gTables['lotmag'] . ' AS lm ON mm.id_lotmag=lm.id';
-        $rs_rig = gaz_dbi_dyn_query('*', $from, "rows.id_tes = " . $this->testat.$where, "id_tes DESC, id_rig");
+        $rs_rig = gaz_dbi_dyn_query('*', $from, "rows.id_tes = " . $this->testat . $where, "id_tes DESC, id_rig");
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             if ($rigo['tiprig'] == 0 && $rigo['id_mag'] > 0) {
+                // ritrovo il file relativo al lotto e lo aggiungo alla matrice
+                $rigo['file']= $this->azienda['codice'].'/';
+                $rigo['ext'] = '';
+                $dh = opendir('../../data/files/' . $this->azienda['codice']);
+                while (false !== ($filename = readdir($dh))) {
+                    $fd = pathinfo($filename);
+                    if ($fd['filename'] == 'lotmag_' . $rigo['id']) {
+                        $rigo['file'] .= $filename;
+                        $rigo['ext'] = $fd['extension'];
+                    }
+                }
                 $results[] = $rigo;
             }
         }

@@ -162,7 +162,7 @@ class DocContabVars {
                 $this->docRelNum = $this->tesdoc["numdoc"];    // Numero del documento relativo
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
-        $this->noPageGroup = false;
+        $this->withoutPageGroup = false;
     }
 
     function initializeTotals() {
