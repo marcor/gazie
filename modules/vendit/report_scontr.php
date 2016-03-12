@@ -30,6 +30,7 @@ if (!$ecr_user) {
     header("Location: error_msg.php?ref=admin_scontr");
     exit;
 };
+$lot = new lotmag();
 
 function getLastId($date, $seziva) {
     global $gTables;
@@ -113,6 +114,7 @@ $headers_tesdoc = array(
     $script_transl['invoice'] => "clfoco",
     $script_transl['status'] => "",
     $script_transl['amount'] => "",
+    'Cert.' => "",
     $script_transl['delete'] => "",
     '' => ""
 );
@@ -211,11 +213,19 @@ $linkHeaders->output();
             echo "<td align=\"center\">" . $row["numdoc"] . " &nbsp;</td>";
             // Colonna fattura
             echo "<td align=\"center\">$invoice</td>";
+            // Colonna stato
             echo "<td align=\"center\">" . $status . " &nbsp;</td>";
-            echo '<td align="right" style="font-weight=bolt;">';
+             // Colonna importo
+           echo '<td align="right" style="font-weight=bolt;">';
             echo gaz_format_number($tot_tes);
             echo "\t </td>\n";
+            // Colonna certificato
+            echo "<td align=\"center\">";
+            if ($lot->thereisLot($row['id_tes'])) {
+                    echo "<a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $row['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a>\n";
+            }            
             // Colonna Elimina
+            echo "</td>";
             if ($row["id_con"] == 0) {
                 if (getLastId($row['datemi'], $row['seziva']) == $row["id_tes"]) {
                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $row['id_tes'] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";

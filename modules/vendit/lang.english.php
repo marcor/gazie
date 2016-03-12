@@ -613,6 +613,7 @@ $strScript = array("admin_client.php" =>
         'date' => 'Date',
         'number' => 'Number',
         'invoice' => 'Attached invoices',
+        'print_lot' => 'Stampa certificato',
         'status' => 'Status',
         'status_value' => array(0 => 'ISSUED', 1 => 'REGISTERED'),
         'send' => 'Retransmit to ECR',

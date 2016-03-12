@@ -619,6 +619,7 @@ $strScript = array("admin_client.php" =>
         'date' => 'Fecha',
         'number' => 'Numero',
         'invoice' => 'Factura adjuntas',
+        'print_lot' => 'Stampa certificato',
         'status' => 'Estado',
         'status_value' => array(0 => 'Emitida', 1 => 'Registrada'),
         'send' => 'Retransmitir a ECR',

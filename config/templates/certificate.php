@@ -34,12 +34,19 @@ class Certificate extends Template {
         $this->anno = substr($this->tesdoc['datemi'], 0, 4);
         if ($this->tesdoc['tipdoc'] == 'FAD' || substr($this->tesdoc['tipdoc'], 0, 2) == 'DD') {
             $this->descridoc = ' D.d.T. n.';
+        } elseif ($this->tesdoc['tipdoc'] == 'VCO' && $this->tesdoc['numfat'] > 0) {
+            $this->descridoc = ' Scontrino n.' . $this->tesdoc['numdoc'];
+            $this->tesdoc['numdoc'] = $this->tesdoc['numfat'];
+            $this->descridoc .= ' con allegata fattura n.';
+        } elseif ($this->tesdoc['tipdoc'] == 'VCO') {
+            $this->descridoc = ' Scontrino n.';
+            $this->cliente1 = 'Cliente anonimo';
         } else {
             $this->descridoc = ' Fattura n.';
         }
         $this->tipdoc = "Documenti, certificati d'origine, dichiarazioni di prestazione";
         $this->destinazione = array(' I prodotti sono stati venduti con: ', $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno);
-       // $this->withoutPageGroup = true;
+        // $this->withoutPageGroup = true;
     }
 
     function newPage() {
@@ -99,18 +106,26 @@ class Certificate extends Template {
                         $this->Cell(160, 5, $this->intesta1 . ' ' . $this->intesta1bis, 0, 1, 'C');
                         $this->Cell(160, 5, "COPIA CONFORME ALL'ORIGINALE", 0, 1, 'C');
                         $this->SetFont('helvetica', '', 18);
-                        $this->Cell(160, 5, 'prodotti venduti con '.$this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno, 0, 1, 'C');
-                        $this->Cell(160, 5, '( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias().' )', 0, 1, 'C');
+                        $this->Cell(160, 5, 'prodotti venduti con ' . $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno, 0, 1, 'C');
+                        $this->Cell(160, 5, 'Lotto: ' . $rigo['identifier'] . ' ( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias() . ' )', 0, 1, 'C');
                         $this->StopTransform();
                         $this->useTemplate($this->_tplIdx);
                     }
                 }
             } else {
-                $this->AddPage();
-                $this->SetFont('helvetica', '', 8);
-                $this->SetXY(5,0);
-                $this->Cell(186, 5, $this->intesta1 . ' ' . $this->intesta1bis." - COPIA CONFORME ALL'ORIGINALE - da ".$this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno.' ( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias().' )', 0, 1);
-                $this->image('../../data/files/' . $rigo['file'], 5, 0, 200);
+                $this->SetFont('helvetica', '', 6);
+                list($w, $h) = getimagesize('../../data/files/' . $rigo['file']);
+                if ($w > $h) { //landscape
+                    $this->AddPage('L');
+                    $this->SetXY(10, 0);
+                    $this->Cell(280, 3, $this->intesta1 . ' ' . $this->intesta1bis . " - COPIA CONFORME ALL'ORIGINALE - da " . $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno . ' Lotto: ' . $rigo['identifier'] . ' ( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias() . ' )', 0, 1, 'C', 1, '', 1);
+                    $this->image('../../data/files/' . $rigo['file'], 5, 3, 290);
+                } else { // portrait
+                    $this->AddPage('P');
+                    $this->SetXY(10, 0);
+                    $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis . " - COPIA CONFORME ALL'ORIGINALE - da " . $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno . ' Lotto: ' . $rigo['identifier'] . ' ( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias() . ' )', 0, 1, 'C', 1, '', 1);
+                    $this->image('../../data/files/' . $rigo['file'], 5, 3, 200);
+                }
             }
         }
     }
