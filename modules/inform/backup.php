@@ -144,7 +144,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     //
     //
     $query = "SHOW  TABLES from " . $Database;
-    //lettura delle informazioni (struttura + dati) dal database:
+    // lettura delle informazioni (struttura + dati) dal database:
     // ottiene tutti i nomi delle tabelle del database in uso
     $result = gaz_dbi_query($query); // ottengo le tabelle in un unico array associativo
     //
@@ -153,17 +153,17 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "-- originaria e di selezionarla prima di procedere con il recupero\n";
     echo "-- delle tabelle.\n";
     echo "--\n";
-    if ($form['create_database'] == 1) {
+    if ($form['create_database'] == 1 || isset($_GET['internal'])) {
         echo "CREATE DATABASE IF NOT EXISTS $Database;\n";
     } else {
         echo "-- CREATE DATABASE IF NOT EXISTS $Database;\n";
     }
-    if ($form['use_database'] == 1) {
+    if ($form['use_database'] == 1 || isset($_GET['internal'])) {
         echo "USE $Database;\n";
     } else {
         echo "-- USE $Database;\n";
     }
-    if ($form['text_encoding'] == 0) {
+    if ($form['text_encoding'] == 0 || isset($_GET['internal'])) {
         echo "SET NAMES utf8;\n";
     } else {
         echo "SET NAMES latin1;\n";
@@ -174,30 +174,10 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     //
     while ($a_row = gaz_dbi_fetch_array($result)) {// navigazione tra gli elementi dell'array associativo (navigazione tra ciascuna delle tabelle ottenute dalla query di cui sopra)
         list ($key, $nome_tabella) = each($a_row); // conversione di ciascun elemento dell'array associativo nelle variabili chiave e valore corrispondenti (nomi tabelle).
-        //
-        // Verifica che si tratti di una tabella del gruppo appartenente a questa gestione di Gazie.
-        //
         if (preg_match("/^" . $table_prefix . "_/", $nome_tabella)) {
-            //
-            // Ok.
-            //
-            ;
         } else {
-            ////
-            //// Il prefisso del nome della tabella non coincide: si salta se sono state richieste
-            //// solo le tabelle della gestione in corso.
-            ////
-            //if ($form['table_selection'] == 1) {
-            //    continue;
-            //}
-            //
-            // Si fa il backup delle sole tabelle della gestione in corso!
-            //
             continue;
         }
-        //
-        // creazione della struttura della tabella corrente.
-        //
         echo "DROP TABLE IF EXISTS `" . $nome_tabella . "`;\n";
         createTable($nome_tabella);
         // riempimento della tabella corrente
@@ -255,41 +235,34 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     }
     gaz_dbi_put_row($gTables['config'], 'variable', 'last_backup', 'cvalue', date('Y-m-d'));
     if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
-        $content = ob_get_contents();       
+        $content = ob_get_contents();
         $zip = new ZipArchive();
-        $filename = '../../data/files/backups/' . $Database ."-". date("YmdHi") . '-v' . $versSw . '.sql.gaz';
-        if ($zip->open($filename, ZipArchive::CREATE)!==TRUE) {
+        $filename = '../../data/files/backups/' . $Database . "-" . date("YmdHi") . '-v' . $versSw . '.sql.gaz';
+        if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
             exit("cannot open <$filename>\n");
         }
-        $zip->addFromString($Database . date("YmdHi") . '-v' . $versSw . '.sql', $content);       
+        $zip->addFromString($Database . date("YmdHi") . '-v' . $versSw . '.sql', $content);
         $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
-        if ( $filebackup['cvalue'] == 1 ) {
+        if ($filebackup['cvalue'] == 1) {
             chdir('../../');
             Zip('./', $zip);
         }
         $zip->close();
-        if ( isset($_GET['internal']))
-            header("Location: ../../modules/root/admin.php");  //$form['ritorno']);
+        if (isset($_GET['internal'])) header("Location: ../../modules/inform/report_backup.php");  
     }
 }
 exit;
 
-function Zip($source, $zip)
-{
-    /*if (!extension_loaded('zip') || !file_exists($source)) {
-        return false;
-    }
-    $zip = new ZipArchive();
-    if (!$zip->open($destination, ZIPARCHIVE::CREATE)) {
-        return false;
-    }*/
+function Zip($source, $zip) {
     $source = str_replace('\\', '/', realpath($source));
     if (is_dir($source) === true) {
         $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($source), RecursiveIteratorIterator::SELF_FIRST);
         foreach ($files as $file) {
             $file = str_replace('\\', '/', $file);
-            if( in_array(substr($file, strrpos($file, '/')+1), array('.', '..')) ) continue;
-            if( strpos($file, 'backups' )>0 || strrpos($file, '.svn' )>0 ) continue;
+            if (in_array(substr($file, strrpos($file, '/') + 1), array('.', '..')))
+                continue;
+            if (strpos($file, 'backups') > 0 || strrpos($file, '.svn') > 0)
+                continue;
             //$file = realpath($file);
             if (is_dir($file) === true) {
                 $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
@@ -300,7 +273,6 @@ function Zip($source, $zip)
     } else if (is_file($source) === true) {
         $zip->addFromString(basename($source), file_get_contents($source));
     }
-    //return $zip->close();
 }
 
 // Coded By Louis

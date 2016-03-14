@@ -202,10 +202,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $mt = substr($_FILES['docfile_' . $i]['name'], -3);
                 $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i;
                 if (($mt == "png" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_' . $i]['size'] > 1000) { //se c'e' una nuova immagine nel buffer
-                    // adesso il lavoro è agli inizi,  muovo subito i file su una dir temporanea, 
-                    // ma dopo, se il documento verrà confermato dovranno essere tutti convertiti in pdf attraverso tcpdf 
-                    // e messi sulla nuova subdir "1" (codice azienda) con prefisso "lotmag_" e nome equivalente all'id della 
-                    // tabella "001lotmag"
                     foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
                         unlink($fn);
                     }
@@ -249,18 +245,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['units'] -= intval(round($form['rows'][$key_row]['quanti'] / $artico['pack_units']));
                     }
                     $form['volume'] -= $form['rows'][$key_row]['quanti'] * $artico['volume_specifico'];
-// fine sottrazione peso,pezzi,volume
-                    /** fine modifica FP */
-                    /* in_artsea non viene usato ora, spero di aver commentato le righe corrette
-                      if ($form['in_artsea'] == 'D') {
-                      $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$key_row]['codart']);
-                      $form['cosear'] = $artico_u['descri'];
-                      } elseif ($form['in_artsea'] == 'B') {
-                      $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$key_row]['codart']);
-                      $form['cosear'] = $artico_u['barcode'];
-                      } else { */
                     $form['cosear'] = $form['rows'][$key_row]['codart'];
-//}
                     array_splice($form['rows'], $key_row, 1);
                     $i--;
                 }
@@ -473,7 +458,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$i]['expiry'] = gaz_format_date($form['rows'][$i]['expiry'], true);
                         if (empty($form['rows'][$i]['identifier'])) {
 // creo un identificativo del lotto/matricola interno                            
-                            $form['rows'][$i]['identifier'] = $form['datemi'] . $form['clfoco'] . $form['rows'][$i]['id_tes'];
+                            $form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
                         }
                         lotmagInsert($form['rows'][$i]);
                         $last_lotmag_id = gaz_dbi_last_id();
@@ -579,7 +564,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$i]['expiry'] = gaz_format_date($form['rows'][$i]['expiry'], true);
                         if (empty($form['rows'][$i]['identifier'])) {
 // creo un identificativo del lotto/matricola interno                            
-                            $form['rows'][$i]['identifier'] = $form['datemi'] . $form['clfoco'] . $form['rows'][$i]['id_tes'];
+                            $form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
                         }
                         lotmagInsert($form['rows'][$i]);
                         $last_lotmag_id = gaz_dbi_last_id();

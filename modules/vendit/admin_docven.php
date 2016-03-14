@@ -825,6 +825,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['tiprig'] = 6;
                     $form['rows'][$next_row]['descri'] = '';
                     $form['rows'][$next_row]['id_mag'] = 0;
+                    $form['rows'][$next_row]['id_lotmag'] = 0;
+                    $form['rows'][$next_row]['lot_or_serial'] = 0;
                     $form['rows'][$next_row]['status'] = '';
                     $form['rows'][$next_row]['scorta'] = "";
                     $form['rows'][$next_row]['codart'] = "";
@@ -947,6 +949,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$nr]['tiprig'] = 1;
                     $form['rows'][$nr]['descri'] = $ptd['val'] . ' ( ' . $admin_aziend['payroll_tax'] . '% )';
                     $form['rows'][$nr]['id_mag'] = 0;
+                    $form['rows'][$nr]['id_lotmag'] = 0;
+                    $form['rows'][$nr]['lot_or_serial'] = 0;
                     $form['rows'][$nr]['status'] = "INSERT";
                     $form['rows'][$nr]['scorta'] = "";
                     $form['rows'][$nr]['codart'] = "";

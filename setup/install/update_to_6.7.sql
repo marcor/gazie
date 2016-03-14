@@ -14,6 +14,7 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 9, 'select_an_acq_clienti.php', 
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, 13, 'report_period.php', '', '', 2, '', 2  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'admin_period.php?Insert', '', '', 2, '', 1  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 9, 'select_analisi_agenti.php', '', '', 39, '', 2  FROM `gaz_menu_script`;
+ALTER TABLE `gaz_config` CHANGE COLUMN `last_modified` `last_modified` TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP AFTER `show`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXeffett` ADD COLUMN `cigcup` VARCHAR(40) NOT NULL AFTER `id_con`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `good_or_service` INT(1) NULL DEFAULT NULL AFTER `descri`, ADD COLUMN `depli_public` TINYINT(1) NOT NULL NULL DEFAULT '0' AFTER `web_public`, ADD COLUMN `retention_tax` TINYINT NOT NULL DEFAULT '0' AFTER `aliiva`, ADD COLUMN `payroll_tax` TINYINT NOT NULL DEFAULT '0' AFTER `last_cost`;
@@ -29,4 +30,7 @@ UPDATE gaz_XXXassist set tipo='ASS' where 1=1;
 ALTER TABLE `gaz_XXXlotmag`	ALTER `id_purchase` DROP DEFAULT, ALTER `lot_or_serial` DROP DEFAULT, ALTER `id_doc` DROP DEFAULT;
 ALTER TABLE `gaz_XXXlotmag`	CHANGE COLUMN `id_purchase` `id_movmag` INT(9) NOT NULL AFTER `id`,	CHANGE COLUMN `id_doc` `id_rigdoc` INT(9) NOT NULL AFTER `id_movmag`, CHANGE COLUMN `lot_or_serial` `identifier` VARCHAR(100) NOT NULL AFTER `id_rigdoc`, CHANGE COLUMN `expiry` `expiry` TIMESTAMP NULL DEFAULT NULL AFTER `identifier`, DROP COLUMN `description`;
 ALTER TABLE `gaz_XXXlotmag`	ADD COLUMN `codart` VARCHAR(15) NOT NULL DEFAULT '' AFTER `id`;
+ALTER TABLE `gaz_XXXtesdoc`	CHANGE COLUMN `initra` `initra` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `volume`;
+ALTER TABLE `gaz_XXXtesbro`	CHANGE COLUMN `initra` `initra` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP AFTER `volume`;
+
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
