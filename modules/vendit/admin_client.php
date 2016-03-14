@@ -30,6 +30,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
    $form['ritorno'] = $_POST['ritorno'];
    $form['hidden_req'] = $_POST['hidden_req'];
    $form['e_mail'] = trim($form['e_mail']);
+   $form['last_modified'] = date("Y-m-d H:i:s");
    $form['datnas_Y'] = intval($_POST['datnas_Y']);
    $form['datnas_M'] = intval($_POST['datnas_M']);
    $form['datnas_D'] = intval($_POST['datnas_D']);
