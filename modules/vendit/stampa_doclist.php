@@ -74,7 +74,7 @@ $titolo = $_GET['ti'];
 $tipdoc = $_GET['td'];
 $campoOrdinamento = "numfat";
 $campoData = "datfat";
-$campiCosto = "tesdoc.traspo, tesdoc.speban, tesdoc.spevar, tesdoc.expense_vat, ";
+$campiCosto = "tesdoc.traspo, tesdoc.speban, tesdoc.spevar, tesdoc.expense_vat, tesdoc.stamp, tesdoc.round_stamp, ";
 
 //recupero i documenti da stampare
 switch ($tipdoc) {
@@ -89,15 +89,18 @@ switch ($tipdoc) {
       break;
    case 2:  //fattura differita
       $where = "tipdoc = 'FAD'";
-      $campiCosto = "(select sum(tesdocTmp.traspo) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as traspo , "
-              . "(select sum(tesdocTmp.speban) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as speban , "
-              . "(select sum(tesdocTmp.spevar) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as spevar , "
-              . "(select max(tesdocTmp.expense_vat) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as expense_vat , ";
-      $campiCosto = "(select sum(tesdocTmp.traspo) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as traspo , "
-              . "(select tesdocTmp.speban from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc limit 1) as speban, " //le spese sono nell'ultimo record
-              . "(select tesdocTmp.spevar from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc limit 1) as spevar, " //le spese sono nell'ultimo record
-              . "(select tesdocTmp.expense_vat from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc limit 1) as expense_vat, "; //l'iva per le spese è nell'ultimo record
-
+      $campiCosto = "(select sum(tesdocTmp.traspo) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD') as traspo , "
+              . "(select tesdocTmp.speban from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as speban, " //le spese sono nell'ultimo record
+              . "(select tesdocTmp.spevar from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as spevar, " //le spese sono nell'ultimo record
+              . "(select tesdocTmp.expense_vat from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as expense_vat, " //l'iva per le spese è nell'ultimo record
+              . "(select tesdocTmp.stamp from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as stamp, " //l'aliquota bolli è nell'ultimo record
+              . "(select tesdocTmp.round_stamp from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat and tipdoc = 'FAD' order by id_tes desc limit 1) as round_stamp, "; //l'aliquota bolli è nell'ultimo record
+//      $campiCosto = "(select sum(tesdocTmp.traspo) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat) as traspo , "
+//              . "(select max(tesdocTmp.speban) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as speban, " //le spese sono nell'ultimo record
+//              . "(select max(tesdocTmp.spevar) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as spevar, " //le spese sono nell'ultimo record
+//              . "(select max(tesdocTmp.expense_vat) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as expense_vat, " //l'iva per le spese è nell'ultimo record
+//              . "(select max(tesdocTmp.stamp) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as stamp, " //l'aliquota bolli è nell'ultimo record
+//              . "(select max(tesdocTmp.round_stamp) from " . $gTables['tesdoc'] . " tesdocTmp where tesdocTmp.numfat=tesdoc.numfat order by id_tes desc) as round_stamp, "; //l'aliquota bolli è nell'ultimo record
       break;
    case 3:  //fattura immediata accompagnatoria
       $where = "tipdoc = 'FAI' AND template = 'FatturaImmediata'";
@@ -207,6 +210,9 @@ while ($row = gaz_dbi_fetch_array($result)) {
    $spese = $row['traspo'] + $row['speban'] * $row['numrat'] + $row['spevar'];
    $alivaSpese = gaz_dbi_get_row($gTables['aliiva'], "codice", $row['expense_vat']);
    $row['iva'] = $row['iva'] + ($spese * $alivaSpese['aliquo'] / 100);
+//   $bolli = $row['stamp'] * ($spese + $row['imponibile'] + $row['iva']) / 100;   // bolli per le tratte
+   $bolli = calcolaBolli($row, $spese);   // bolli per le tratte
+   $spese+=$bolli;
    if ($row['tipdoc'] == 'FNC') {   // nota di credito
 //      $row['quanti'] = -$row['quanti'];
       $row['imponibile'] = -$row['imponibile'];
@@ -239,4 +245,14 @@ $pdf->Cell(16, 4, gaz_format_number($tot_imponibile + $tot_iva + $tot_spese), 1,
 //$pdf->SetFont('helvetica', '', 8);
 //$pdf->setRiporti('');
 $pdf->Output();
+
+function calcolaBolli($row, $spese) {
+   $calc = new Compute();
+   $calc->pay_taxstamp = 0;
+   if ($row['stamp'] > 0) {
+      $calc->payment_taxstamp($row['imponibile'] + $row['iva'] + $spese, $row['stamp'], $row['round_stamp'] * $row['numrat']);
+   }
+   return $calc->pay_taxstamp;
+}
+
 ?>

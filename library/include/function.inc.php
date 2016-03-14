@@ -1865,7 +1865,8 @@ class Schedule {
             $orderby = "id_tesdoc_ref, expiry DESC, codice, caucon, datreg, numdoc ASC ";
             break;
          case 2:
-            $orderby = "ragsoc, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
+//            $orderby = "ragsoc, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
+            $orderby = "ragsoc, id_tesdoc_ref, datreg, numdoc ASC ";
             break;
          case 3:
             $orderby = "ragso1 DESC, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
