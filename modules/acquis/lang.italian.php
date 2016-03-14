@@ -52,7 +52,7 @@ $strScript = array("admin_fornit.php" =>
             'E\' una persona fisica, inserire il codice fiscale',
             'Esiste una anagrafica con la stessa partita IVA',
             'Esiste una anagrafica con lo stesso Codice Fiscale',
-            '&Egrave; necessario scegliere la modalit&agrave; di pagamnto',
+            '&Egrave; necessario scegliere la modalit&agrave; di pagamento',
             'Il codice del fornitore &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
             'La data di nascita &egrave; sbagliata',
             'Indirizzo email formalmente sbagliato'
