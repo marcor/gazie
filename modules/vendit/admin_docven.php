@@ -662,14 +662,21 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       $form['banapp'] = $cliente['banapp'];
       $form['listin'] = $cliente['listin'];
       $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-      if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V')
+      if (($pagame['tippag'] == 'B' /* or $pagame['tippag'] == 'T' */ or $pagame['tippag'] == 'V')
               and $cliente['speban'] == 'S') {
          $form['speban'] = $admin_aziend['sperib'];
          $form['numrat'] = $pagame['numrat'];
          $form['stamp'] = 0;
-         if ($pagame['tippag'] == 'T') {
-            $form['stamp'] = $admin_aziend['perbol'];
-         }
+         /* if ($pagame['tippag'] == 'T') {
+           $form['stamp'] = $admin_aziend['perbol'];
+           } */
+         $form['round_stamp'] = $admin_aziend['round_bol'];
+      } elseif ($pagame['tippag'] == 'T' and $cliente['addbol'] == 'S') { // tratta o cambiale, addebitare i bolli al cliente
+         $form['speban'] = 0.00;
+         $form['numrat'] = 1;
+         $form['stamp'] = 0;
+         $form['round_stamp'] = 0;
+         $form['stamp'] = $admin_aziend['perbol'];
          $form['round_stamp'] = $admin_aziend['round_bol'];
       } elseif ($pagame['tippag'] == 'R') {
          $form['speban'] = 0.00;
@@ -820,7 +827,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       } else { //se �� un rigo da inserire
          if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
             $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
-            if ($bodytext && ($bodytext['body_text']!='')) { // il testo aggiuntivo c'è (e non è vuoto)
+            if ($bodytext && ($bodytext['body_text'] != '')) { // il testo aggiuntivo c'è (e non è vuoto)
                $form["row_$next_row"] = $bodytext['body_text'];
                $form['rows'][$next_row]['tiprig'] = 6;
                $form['rows'][$next_row]['descri'] = '';
