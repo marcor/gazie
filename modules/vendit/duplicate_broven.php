@@ -84,7 +84,7 @@ $anagrafica = new Anagrafica();
 $cliente = $anagrafica->getPartner($form['clfoco']);
 
 function trovaNuovoNumero($gTables) {
-   $orderBy = "numdoc desc";
+   $orderBy = "datemi desc, numdoc desc";
    $rs_ultimo_documento = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], 1, $orderBy, 0, 1);
    $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
    // se e' il primo documento dell'anno, resetto il contatore
