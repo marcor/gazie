@@ -154,14 +154,14 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "-- delle tabelle.\n";
     echo "--\n";
     if ($form['create_database'] == 1 || isset($_GET['internal'])) {
-        echo "CREATE DATABASE IF NOT EXISTS $Database;\n";
+        echo "CREATE DATABASE IF NOT EXISTS `$Database`;\n";
     } else {
-        echo "-- CREATE DATABASE IF NOT EXISTS $Database;\n";
+        echo "-- CREATE DATABASE IF NOT EXISTS `$Database`;\n";
     }
     if ($form['use_database'] == 1 || isset($_GET['internal'])) {
-        echo "USE $Database;\n";
+        echo "USE `$Database`;\n";
     } else {
-        echo "-- USE $Database;\n";
+        echo "-- USE `$Database`;\n";
     }
     if ($form['text_encoding'] == 0 || isset($_GET['internal'])) {
         echo "SET NAMES utf8;\n";
