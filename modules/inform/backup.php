@@ -143,7 +143,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     //
     //
     //
-    $query = "SHOW  TABLES from " . $Database;
+    $query = "SHOW TABLES from `" . $Database . "`";
     // lettura delle informazioni (struttura + dati) dal database:
     // ottiene tutti i nomi delle tabelle del database in uso
     $result = gaz_dbi_query($query); // ottengo le tabelle in un unico array associativo
