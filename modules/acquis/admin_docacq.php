@@ -394,6 +394,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $i = 0;
                 $count = count($form['rows']) - 1;
                 while ($val_old_row = gaz_dbi_fetch_array($old_rows)) {
+                    if (substr($form['tipdoc'], 0, 2) <> 'DD') {
+                        $form['numdoc'] = $form['numfat'];
+                    }
                     if ($i <= $count) { //se il vecchio rigo e' ancora presente nel nuovo lo modifico
                         $form['rows'][$i]['id_tes'] = $form['id_tes'];
                         $codice = array('id_rig', $val_old_row['id_rig']);
@@ -479,6 +482,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['numfat'] = 0;
                 } else {
                     $form['datfat'] = $initra;
+                    $form['numdoc'] = $form['numfat']; // coincidono se il doc è emesso dal fornitore
                 }
                 $form['geneff'] = $old_head['geneff'];
                 $form['id_contract'] = $old_head['id_contract'];
@@ -525,7 +529,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 } else {
                     $form['numdoc'] = 1;
                 }
-                if (substr($form['tipdoc'], 0, 2) == 'DD' || $form['tipdoc'] == 'ADT') {  //ma se e' un ddt il protocollo è 0 così come il numero e data fattura
+                if (substr($form['tipdoc'], 0, 2) == 'DD') {  //ma se e' un ddt a fornitore il protocollo è 0 così come il numero e data fattura
                     $form['protoc'] = 0;
                     $form['numfat'] = 0;
                     $form['datfat'] = 0;
@@ -1773,15 +1777,15 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acq
 						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
         /** fine modifica FP */
     }
-    echo "		<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[59]</td>
+    echo "		<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['units']."</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>
-					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[60]</td>
+					<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['volume']."</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['volume'] . "\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>
 				</tr>
 				<tr>
-					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[57]</td>
+					<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['net_weight']."</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\" size=\"5\" ></td>
-					<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[58]</td>
+					<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['gross_weight']."</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\" size=\"5\" ></td>";
 
     echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">" . $script_transl[51] . "</td><td class=\"FacetDataTD\">\n";

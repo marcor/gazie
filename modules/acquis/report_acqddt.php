@@ -28,14 +28,7 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
-<table border="0" cellpadding="3" cellspacing="1" align="center" width="70%">
-	<tr>
-		<td align="center" class="FacetFormHeaderFont">
-        	<a href="admin_docacq.php?tipdoc=ADT&Insert" accesskey="d">Ricevuto D.d.T. d'acquisto da Fornitore</a>
-        </td>
-    </tr>
-</table>
-<div align="center" class="FacetFormHeaderFont">Documenti di Trasporto d'Acquisto</div>
+    <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
 <?php
 if (!isset($_GET['flag_order'])) {
     $orderby = "datemi DESC";
@@ -51,7 +44,7 @@ $recordnav -> output();
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_tesdoc = array  (
             "ID" => "id_tes",
-            "Numero" => "numfat",
+            "Numero" => "numdoc",
             "Data" => "datemi",
             "Fornitore (cod.)" => "clfoco",
             "Status" => "",
@@ -76,7 +69,7 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
 								<i class="glyphicon glyphicon-edit"></i>'.$a_row["id_tes"].'
 							</a>
 						</td>
-						<td>'.$a_row["numfat"].'</td>
+						<td>'.$a_row["numdoc"].'</td>
 						<td>'.$a_row["datemi"].'</td>
 						<td>'.$cliente["ragso1"].'</td>
 						<td>'.$a_row["status"].'</td>

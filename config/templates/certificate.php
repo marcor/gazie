@@ -106,12 +106,13 @@ class Certificate extends Template {
         $this->print_header = false;
         reset($this->lines);
         while (list($key, $rigo) = each($this->lines)) {
+            $this->SetTextColor(255, 50, 50);
             if ($this->noDocs) {
-                $this->SetTextColor(255, 50, 50);
                 $this->SetFont('helvetica', '', 16);
                 $this->Ln(10);
                 $this->Cell(186, 5, "NON SONO STATI TROVATI DOCUMENTI ALLEGATI AI LOTTI", 0, 1, 'C');
             } else {
+                $this->SetFont('helvetica', '', 6);
                 if ($rigo['ext'] == 'pdf') {
                     $this->numPages = $this->setSourceFile('../../data/files/' . $rigo['file']);
                     if ($this->numPages >= 1) {
@@ -119,23 +120,13 @@ class Certificate extends Template {
                             $this->_tplIdx = $this->importPage($i);
                             $specs = $this->getTemplateSize($this->_tplIdx);
                             $this->AddPage($specs['h'] > $specs['w'] ? 'P' : 'L');
-                            $this->StartTransform();
-                            $this->Rotate(-45);
-                            $this->SetFont('helvetica', '', 25);
-                            $this->SetXY(10, 10);
-                            $this->SetTextColor(230, 230, 230);
-                            $this->Cell(160, 5, $this->intesta1 . ' ' . $this->intesta1bis, 0, 1, 'C');
-                            $this->Cell(160, 5, "COPIA CONFORME ALL'ORIGINALE", 0, 1, 'C');
-                            $this->SetFont('helvetica', '', 18);
-                            $this->Cell(160, 5, 'prodotti venduti con ' . $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno, 0, 1, 'C');
-                            $this->Cell(160, 5, 'Lotto: ' . $rigo['identifier'] . ' ( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias() . ' )', 0, 1, 'C');
-                            $this->StopTransform();
                             $this->useTemplate($this->_tplIdx);
+                            $this->SetXY(10, 0);
+                            $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis . " - COPIA CONFORME ALL'ORIGINALE - da " . $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno . ' Lotto: ' . $rigo['identifier'] . ' ( Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias() . ' )', 1, 0, 'C', 0, '', 1);
                             $this->print_footer = false;
                         }
                     }
                 } elseif (!empty($rigo['ext'])) {
-                    $this->SetFont('helvetica', '', 6);
                     list($w, $h) = getimagesize('../../data/files/' . $rigo['file']);
                     if ($w > $h) { //landscape
                         $this->AddPage('L');

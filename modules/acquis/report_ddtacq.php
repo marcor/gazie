@@ -29,14 +29,13 @@ if (isset($_GET["auxil"]))
     $sezione = $_GET["auxil"];
 else
     $sezione = 1;
-$where = "tipdoc like 'DD_' and seziva = $sezione";
+$where = "(tipdoc = 'DDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
 $all = $where;
 $anno = date("Y");
 $passo = 99999;
 
 if (!isset($_GET['auxil']))
     $_GET['auxil'] = 1;
-$titolo = "D.d.T. a Fornitori";
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
@@ -93,14 +92,12 @@ if (isset($_GET['all'])) {
     $ragso1 = "";
     $protocollo = "";
 
-    $where = "tipdoc like 'DD_' and seziva = $sezione";
+    $where = "(tipdoc = 'DDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
     $auxil = $_GET['auxil'] . "&all=yes";
 }
 ?>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>"  name="auxil">
-    <p>
-    <div align="center">
-        <font class="FacetFormHeaderFont"> <?php echo $titolo . " della sezione "; ?>
+    <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
             for ($sez = 1; $sez <= 3; $sez++) {
@@ -110,8 +107,7 @@ if (isset($_GET['all'])) {
                 echo "<option value=\"" . $sez . "\"" . $selected . ">" . $sez . "</option>";
             }
             ?>
-        </select></p>
-        </font>
+        </select>
     </div>
     <?php
     if (!isset($_GET['flag_order'])) {

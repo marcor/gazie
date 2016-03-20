@@ -116,10 +116,10 @@ $strScript = array("admin_fornit.php" =>
         'mail_alert0' => 'Invio documento con email',
         'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
         'mail_alert2' => 'con allegato il seguente documento:',
-		'title2' => 'Preventivi e ordini a fornitori',
-		'tuttitipi' => 'Tutti i tipi',
-		'tuttianni' => 'Tutti gli anni',
-		'tuttiforni' => 'Tutti i fornitori'
+        'title2' => 'Preventivi e ordini a fornitori',
+        'tuttitipi' => 'Tutti i tipi',
+        'tuttianni' => 'Tutti gli anni',
+    'tuttiforni' => 'Tutti i fornitori'
     ),
     "report_debiti.php" =>
     array('title' => 'Lista dei debiti verso i fornitori',
@@ -138,7 +138,7 @@ $strScript = array("admin_fornit.php" =>
         'statement_title' => 'Stampa l\'estratto conto di '
     ),
     "report_docacq.php" =>
-    array("statistica ",
+    array ("statistica ",
         "vendite",
         "acquisti",
         "anno",
@@ -152,16 +152,16 @@ $strScript = array("admin_fornit.php" =>
         " Quantit&agrave; ",
         " Valore in ",
         " Fuori ",
-		'tuttitipi' => 'Tutti i tipi',
-		'tuttianni' => 'Tutti gli anni',
-		'tutticlienti' => 'Tutti i fornitori'
-		),
+        'tuttitipi' => 'Tutti i tipi',
+        'tuttianni' => 'Tutti gli anni',
+    'tutticlienti' => 'Tutti i fornitori'
+    ),
     "admin_docacq.php" =>
     array('title' => 'Inserimento/modifica documenti a fornitori',
-        array("DDR" => "D.d.T. di Reso a Fornitore", "DDL" => "D.d.T. c/lavorazione", "AFA" => "Fattura d'Acquisto", "ADT" => "D.d.T. d'Acquisto", "AFC" => "Nota Credito da Fornitore", "AOR" => "Ordine a Fornitore", "APR" => "Richiesta di Preventivo a Fornitore"),
-        'mesg' => array('La ricerca non ha dato risultati!',
-            'Inserire almeno 2 caratteri!',
-            'Cambia cliente/fornitore'),
+        array ("DDR" => "D.d.T. di Reso a Fornitore", "DDL" => "D.d.T. c/lavorazione", "AFA" => "Fattura d'Acquisto", "ADT" => "D.d.T. d'Acquisto", "AFC" => "Nota Credito da Fornitore", "AOR" => "Ordine a Fornitore", "APR" => "Richiesta di Preventivo a Fornitore"),
+        'mesg' => array( 'La ricerca non ha dato risultati!',
+        'Inserire almeno 2 caratteri!',
+        'Cambia cliente/fornitore'),
         " corpo ",
         " piede ",
         " Tira su ",
@@ -229,26 +229,30 @@ $strScript = array("admin_fornit.php" =>
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'discount_alert' => 'sconto da anagrafe articoli',
         'last_row' => 'Ultimo rigo inserito',
-        'lotmag'=>'certificato',
-        'expiry'=>'Scadenza',
-        'identifier'=>'Numero di serie - matricola, se non immesso verrà attribuito automaticamente'
+        'lotmag' => 'certificato',
+        'expiry' => 'Scadenza',
+        'identifier' => 'Numero di serie - matricola, se non immesso verrà attribuito automaticamente',
+        'units' => 'N.Colli',
+        'volume' => 'Volume',
+        'net_weight' => 'Peso netto',
+        'gross_weight' => 'Peso lordo'
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti d\'acquisto',
-        'errors' => array('Data non corretta',
-            'Non ci sono documenti da contabilizzare nell\'intervallo selezionato'
+        'errors' => array ('Data non corretta',
+        'Non ci sono documenti da contabilizzare nell\'intervallo selezionato'
         ),
         'vat_section' => ' della sezione IVA n.',
         'date' => 'Fino al :',
         'type' => 'Registro IVA ',
-        'type_value' => array('A' => 'dei documenti di Acquisto'),
+        'type_value' => array ('A' => 'dei documenti di Acquisto'),
         'proini' => 'Protocollo iniziale',
         'profin' => 'Protocollo finale',
         'preview' => 'Anteprima di contablizzazione',
         'date_reg' => 'Data',
         'protoc' => 'Protocollo',
         'doc_type' => 'Tipo',
-        'doc_type_value' => array('FAD' => 'FATTURA DIFFERITA A CLIENTE',
+        'doc_type_value' => array( 'FAD' => 'FATTURA DIFFERITA A CLIENTE',
             'FAI' => 'FATTURA IMMEDIATA A CLIENTE',
             'FAP' => 'PARCELLA',
             'FNC' => 'NOTA CREDITO A CLIENTE',
@@ -257,92 +261,92 @@ $strScript = array("admin_fornit.php" =>
             'VRI' => 'RICEVUTA',
             'AFA' => 'FATTURA D\'ACQUISTO',
             'AFC' => 'NOTA CREDITO DA FORNITORE',
-            'AFD' => 'NOTA DEBITO DA FORNITORE'
+        'AFD' => 'NOTA DEBITO DA FORNITORE'
         ),
         'customer' => 'Fornitore',
         'taxable' => 'Imponibile',
         'vat' => 'I.V.A.',
-        'stamp' => 'Bolli su tratte',
-        'tot' => 'Totale'
+    'stamp' => 'Bolli su tratte',
+    'tot' => 'Totale'
     ),
     "report_schedule_acq.php" =>
-    array('title' => 'Lista dei movimenti delle partite',
-        'header' => array('ID' => 'id',
+    array( 'title' => 'Lista dei movimenti delle partite',
+        'header' => array ('ID' => 'id',
             'Identificativo partita' => "id_tesdoc_ref",
             'Movimento contabile apertura (documento)' => "id_rigmoc_doc",
             'Movimento contabile chiusura (pagamento)' => "id_rigmoc_pay",
-            'Importo' => "amount",
-            'Scadenza' => "expiry"),
+    'Importo' => "amount",
+    'Scadenza' => "expiry"),
     ),
     "select_schedule_debt.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa delle partite aperte',
-        'mesg' => array('La ricerca non ha dato risultati!',
-            'Inserire almeno 2 caratteri!',
-            'Cambia fornitore'
+        'mesg' => array ('La ricerca non ha dato risultati!',
+        'Inserire almeno 2 caratteri!',
+        'Cambia fornitore'
         ),
-        'errors' => array('La data  non &egrave; corretta!',
-            'Non sono stati trovati movimenti!'
+        'errors' => array ('La data  non &egrave; corretta!',
+        'Non sono stati trovati movimenti!'
         ),
         'account' => 'Fornitore ',
         'orderby' => 'Ordina per: ',
-        'orderby_value' => array(0 => 'Scadenza crescente', 1 => 'Scadenza decrescente',
+        'orderby_value' => array (0 => 'Scadenza crescente', 1 => 'Scadenza decrescente',
             2 => 'Fornitore crescente', 3 => 'Fornitore decrescente'
         ),
-        'header' => array('Fornitore' => '', 'ID Partita' => '', 'Status' => '', 'Mov.Cont.' => '', 'Descrizione' => '',
+        'header' => array ('Fornitore' => '', 'ID Partita' => '', 'Status' => '', 'Mov.Cont.' => '', 'Descrizione' => '',
             'N.Doc.' => '', 'Data Doc.' => '', 'Data Reg.' => '', 'Dare' => '', 'Avere' => '',
-            'Scadenza' => '',
-            'Opzioni' => ''
+        'Scadenza' => '',
+        'Opzioni' => ''
         ),
-        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
-        'total_open' => 'Totale partite aperte'
+        'status_value' => array (0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+    'total_open' => 'Totale partite aperte'
     ),
     "delete_schedule.php" =>
     array('title' => 'Cancellazione movimenti chiusi dello scadenzario',
         'ragsoc' => 'Fornitore',
         'id_tesdoc_ref' => 'Identificativo partita',
-        'descri' => 'Descrizione'
+    'descri' => 'Descrizione'
     ),
     "select_suppliers_status.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa dello scadenzario dei fornitori',
         'print_title' => 'SCADENZARIO FORNITORI ',
-        'errors' => array('La data  non &egrave; corretta!',
+        'errors' => array ('La data  non &egrave; corretta!',
             'err' => 'Ci sono degli errori che impediscono la stampa'
         ),
         'date_ini' => 'Data di riferimento ',
-        'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
+        'header' => array ('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => ''
         ),
-        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO')
+        'status_value' => array (0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO')
     ),
     "delete_docacq.php" =>
-    array('title' => 'Eliminazione Documento d\'Acquisto'),
+    array( 'title' => 'Eliminazione Documento d\'Acquisto'),
     "supplier_payment.php" =>
     array('title' => 'Pagamento debito verso fornitore (chiusura partita/e)',
-        'errors' => array('La data  non &egrave; corretta!'),
+        'errors' => array ('La data  non &egrave; corretta!' ),
         'partner' => 'Fornitore ',
         'date_ini' => 'Data di registrazione',
         'target_account' => "Conto per il pagamento: ",
         'accbal' => 'Saldo risultante dai movimenti contabili: ',
         'paymovbal' => 'Saldo risultante dalle partite aperte: ',
-        'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
+        'header' => array ('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => ''
         ),
-        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
-        'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
+        'status_value' => array (0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+        'header' => array ('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => '', 'Paga' => ''
         ),
-        'mesg' => array('La ricerca non ha dato risultati!',
+        'mesg' => array ('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia fornitore',
             'Il saldo contabile &egrave; diverso da quello dello scadenzario,<br> se vuoi registrare la riscossione di un documento presente solo in contabilità fallo da qui:',
             'Nessun importo &egrave; stato pagato!',
             "Non &egrave; stato selezionato il conto per l'incasso",
-            'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
+        'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
         ),
         'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
     ),
     "admin_agenti_forn.php" =>
-    array("Agenti di Fornitori ",
+    array ( "Agenti di Fornitori ",
         "Agente di Fornitori",
         "Numero",
         "Anagrafe",
@@ -363,49 +367,49 @@ $strScript = array("admin_fornit.php" =>
         "Stai elimimando un agente!",
         "Lista Provvigioni",
         'title' => 'Gestione degli Agenti di Fornitori',
-        'ins_this' => 'Inserisci un nuovo agente di fornitori'
+    'ins_this' => 'Inserisci un nuovo agente di fornitori'
     ),
     "select_provvigioni.php" =>
-    array("Selezione per Stampa lista Provvigioni",
+    array( "Selezione per Stampa lista Provvigioni",
         "Agente di vendita",
         "Tutti gli Agenti",
         "Inserire min. 2 caratteri!",
         "Non &egrave; stato trovato nulla!",
-        "Data periodo inizio",
-        "Data periodo fine"
+    "Data periodo inizio",
+    "Data periodo fine"
     ),
-	"report_ddtacq.php" =>
-    array('title' => 'Lista DDT di acquisto',
+    "report_ddtacq.php" =>
+    array ('title' => 'Documenti di trasporto da e verso i fornitori',
         'tuttitipi' => 'Tutti i tipi',
-		'tuttianni' => 'Tutti gli anni',
-		'tuttiforni' => 'Tutti i fornitori'
+        'tuttianni' => 'Tutti gli anni',
+    'tuttiforni' => 'Tutti i fornitori'
     ),
-	"report_fornit.php" =>
-    array('title' => 'Lista fornitori',
+    "report_fornit.php" =>
+    array( 'title' => 'Lista fornitori',
         'tuttitipi' => 'Tutti i tipi',
-		'tuttianni' => 'Tutti gli anni',
-		'tuttiforni' => 'Tutti i fornitori',
-		'tuttecitta' => 'Tutte le città'
+        'tuttianni' => 'Tutti gli anni',
+    'tuttiforni' => 'Tutti i fornitori',
+    'tuttecitta' => 'Tutte le città'
     ),
     "admin_docven.php" =>
-    array('none',
-        'doc_name' => array("DDT" => "D.d.T. di Vendita",
-            "FAD" => "D.d.T. di Vendita",
-            "FAI" => "Fattura Immediata",
-            "FAP" => "Parcella",
-            "FNC" => "Nota Credito a Cliente",
-            "FND" => "Nota Debito a Cliente",
-            "VCO" => "Vendita Corrispettivo",
-            "DDV" => "D.d.T. per Cessione in Conto Visione",
-            "DDY" => "D.d.T. da non fatturare automaticamente",
-            "RDV" => "Ricevuto DdT di Reso da C/Visione",
-            "VRI" => "Ricevuta"
+    array ('none',
+    'doc_name' => array("DDT" => "D.d.T. di Vendita",
+    "FAD" => "D.d.T. di Vendita",
+    "FAI" => "Fattura Immediata",
+    "FAP" => "Parcella",
+    "FNC" => "Nota Credito a Cliente",
+    "FND" => "Nota Debito a Cliente",
+    "VCO" => "Vendita Corrispettivo",
+    "DDV" => "D.d.T. per Cessione in Conto Visione",
+    "DDY" => "D.d.T. da non fatturare automaticamente",
+        "RDV" => "Ricevuto DdT di Reso da C/Visione",
+        "VRI" => "Ricevuta"
         ),
         'title' => 'Documenti di vendita',
         'tipdoc' => ' documento di vendita tipo: ',
-        'mesg' => array('La ricerca non ha dato risultati!',
-            'Inserire almeno 2 caratteri!',
-            'Cambia cliente/fornitore'),
+        'mesg' => array( 'La ricerca non ha dato risultati!',
+        'Inserire almeno 2 caratteri!',
+        'Cambia cliente/fornitore'),
         " corpo ",
         " piede ",
         " Tira su ",
@@ -480,7 +484,7 @@ $strScript = array("admin_fornit.php" =>
         'ragbol' => "Raggr.DDT",
         'ragbol_title' => 'Raggruppamento DDT',
         'order_date' => "Data Ordine",
-        'ragbol_value' => array(0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
+        'ragbol_value' => array (0 => 'A', 1 => 'B', 2 => 'C', 3 => 'D', 4 => 'E', 5 => 'F', 6 => 'G'),
         'zero_rows' => 'Il documento non contiene righi o prodotti, compila la ricerca articoli nella sezione corpo per aggiungerne, inserisci il valore % per avere una lista completa o per effettuare una ricerca parziale',
         'weight' => 'peso',
         'discount_alert' => 'sconto da anagrafe articoli',
@@ -488,5 +492,8 @@ $strScript = array("admin_fornit.php" =>
         'id_doc_ritorno_title' => 'Seleziona il DdT per cessione in c/visione di riferimento',
         'id_doc_ritorno_alert' => 'Non è stato selezionato il DdT per cessione in c/visione di riferimento'
     ),
+    "report_acqddt.php" =>
+    array('title' => 'Documenti di trasporto ricevuti da fornitori ',
+        )
 );
 ?>

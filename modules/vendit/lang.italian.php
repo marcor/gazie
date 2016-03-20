@@ -790,7 +790,7 @@ $strScript = array("admin_client.php" =>
         'ddt_type' => array("T" => "vendita",
             "V" => "c/visione",
             "Y" => "", //triangolazione",
-            "DDR" => "reso da fornitore",
+            "DDR" => "reso a fornitore",
             "DDL" => "c/lavorazione"
         ),
         'header' => array(
