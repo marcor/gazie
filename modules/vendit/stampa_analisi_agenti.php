@@ -62,21 +62,27 @@ $contaRagstat = 0;
 foreach ($ragstatArray as $cat) { // costruiamo la query per ogni raggruppamento
    $codice_ragstat = $cat['codice'];
    $what = $what . ", sum(CASE WHEN (artico.ragstat like '$codice_ragstat%' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ft$contaRagstat,"
-           . "sum(CASE WHEN (artico.ragstat like '$codice_ragstat%' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat ";
+           . "sum(CASE WHEN (artico.ragstat like '$codice_ragstat%' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat, "
+           . "sum(CASE WHEN (artico.ragstat like '$codice_ragstat%' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti ELSE 0 END) as qt_ft$contaRagstat,"
+           . "sum(CASE WHEN (artico.ragstat like '$codice_ragstat%' and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti ELSE 0 END) as qt_nc$contaRagstat ";
    $contaRagstat++;
 }
 // aggiungiamo la colonna NO Ragg
 $what = $what . ", sum(CASE WHEN ((artico.ragstat is null or artico.ragstat='') and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ft$contaRagstat,"
-        . "sum(CASE WHEN ((artico.ragstat is null or artico.ragstat='') and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat ";
+        . "sum(CASE WHEN ((artico.ragstat is null or artico.ragstat='') and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat, "
+        . "sum(CASE WHEN ((artico.ragstat is null or artico.ragstat='') and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti ELSE 0 END) as qt_ft$contaRagstat,"
+        . "sum(CASE WHEN ((artico.ragstat is null or artico.ragstat='') and tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti ELSE 0 END) as qt_nc$contaRagstat ";
 $ragstatArray[] = array('codice' => '', 'descri' => 'NO Ragg');
 // aggiungiamo la colonna TOTALE
 $contaRagstat++;
 $what = $what . ", sum(CASE WHEN (tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ft$contaRagstat,"
-        . "sum(CASE WHEN (tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat ";
+        . "sum(CASE WHEN (tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_nc$contaRagstat, "
+        . "sum(CASE WHEN (tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti ELSE 0 END) as qt_ft$contaRagstat,"
+        . "sum(CASE WHEN (tesdoc.tipdoc like 'FN%') THEN rigdoc.quanti ELSE 0 END) as qt_nc$contaRagstat ";
 $ragstatArray[] = array('codice' => '', 'descri' => 'TOTALE');
 
 $result = gaz_dbi_dyn_query($what, $table, $where, $order, 0, 20000, $group);
-$dimPagina = "A3";
+//$dimPagina = "A3";
 $dimCol = 20;
 $aRiportare = array('top' => array(array('lun' => 168, 'nam' => 'da riporto : '),
         array('lun' => 19, 'nam' => '')
@@ -96,7 +102,8 @@ foreach ($ragstatArray as $cat) { // costruiamo la query per ogni raggruppamento
    $descri_ragstat = $cat['descri'];
    $codice_ragstat = $cat['codice'];
    $titoloCol = substr("$codice_ragstat\n$descri_ragstat", 0, $dimCol - 3);   // evitiamo che il titolo esca dallo spazio dell'intestazione
-   $title['hile'][] = array('lun' => $dimCol, 'nam' => $titoloCol);
+   $title['hile'][] = array('lun' => $dimCol, 'nam' => "Imp. " . $titoloCol);
+   $title['hile'][] = array('lun' => $dimCol, 'nam' => "Qt. " . $titoloCol);
 }
 
 $item_head['top'] = array(
@@ -118,8 +125,11 @@ while ($row = gaz_dbi_fetch_array($result)) {
    for ($k = 0; $k < $numCol; $k++) {
       $imp = $row["imp_ft$k"] - $row["imp_nc$k"];
       $pdf->SetFillColor(235, 235, 235);
-      $pdf->Cell($dimCol, 4, gaz_format_number($imp), 1, ($k == $numCol - 1 ? 1 : 0), 'R', FALSE, '', 1);
+      $pdf->Cell($dimCol, 4, gaz_format_number($imp), 1, 0, 'R', FALSE, '', 1);
       $totAgente['imp'][$k] +=$imp;
+      $qt = $row["qt_ft$k"] - $row["qt_nc$k"];
+      $pdf->Cell($dimCol, 4, gaz_format_number($qt), 1, ($k == $numCol - 1 ? 1 : 0), 'R', true, '', 1);
+      $totAgente['qt'][$k] +=$qt;
    }
 //   $pdf->Cell(1, 4, "", 1, 1, 'R', true, '', 1);
    $ctrlAgente = $row["codice_agente"];
@@ -138,7 +148,7 @@ function intestaPagina($pdf, $config, $ctrlAgente, $row, $aRiportare, $item_head
       $pdf->setPageTitle('Analisi agente dal ' . format_date($datini) . " al " . format_date($datfin) . ': '
               . $row['codice_agente'] . " - " . $agente['ragso1'] . ' ' . $agente['ragso2']);
       $pdf->setItemGroup($item_head);
-      $dimPagina = ($numColonne > 11 ? ($numColonne > 16 ? "A2" : "A3") : "A4");
+      $dimPagina = ($numColonne > 9 ? ($numColonne > 16 ? "A1" : "A2") : "A3");
       $pdf->AddPage('L', $dimPagina);
    }
 }
@@ -146,16 +156,20 @@ function intestaPagina($pdf, $config, $ctrlAgente, $row, $aRiportare, $item_head
 function initTotali(&$totArray, $dim) {
    for ($k = 0; $k < $dim; $k++) {
       $totArray['imp'][$k] = 0;
+      $totArray['qt'][$k] = 0;
    }
 }
 
 function rigaTotali($pdf, $stringa, &$totArray, $dimCol, $numCol) {
-   $pdf->SetFillColor(194, 249, 129);
    $pdf->Cell(62, 4, $stringa, 1, 0, 'L', true, '', 1);
 //   $totaleRiga = 0;
    for ($k = 0; $k < $numCol; $k++) {
       $imp = $totArray['imp'][$k];
-      $pdf->Cell($dimCol, 4, gaz_format_number($imp), 1, ($k == $numCol - 1 ? 1 : 0), 'R', true, '', 1);
+      $pdf->SetFillColor(194, 249, 129);
+      $pdf->Cell($dimCol, 4, gaz_format_number($imp), 1, 0, 'R', true, '', 1);
+      $qt = $totArray['qt'][$k];
+      $pdf->SetFillColor(249, 249, 129);
+      $pdf->Cell($dimCol, 4, gaz_format_number($qt), 1, ($k == $numCol - 1 ? 1 : 0), 'R', true, '', 1);
 //      $totaleRiga +=$imp;
    }
 //   $pdf->Cell(1, 4, "", 1, 1, 'R', true, '', 1);
