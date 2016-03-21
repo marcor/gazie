@@ -28,7 +28,7 @@ $admin_aziend=checkAdmin();
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
-    <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
+<div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?></div>
 <?php
 if (!isset($_GET['flag_order'])) {
     $orderby = "datemi DESC";
@@ -37,8 +37,7 @@ $where = "tipdoc = 'ADT'";
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
-	<thead>
+<table class="Tlarge">
 		<tr>
 <?php
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -55,15 +54,12 @@ $linkHeaders = new linkHeaders($headers_tesdoc);
 $linkHeaders -> output();
 ?>
 		</tr>
-       </thead>
-       <tbody>
 <?php
 $result = gaz_dbi_dyn_query ('*', $gTables['tesdoc'], $where, $orderby, $limit, $passo);
 $anagrafica = new Anagrafica();
-
 while ($a_row = gaz_dbi_fetch_assoc($result)) {
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
-    echo '			<tr>
+    echo '			<tr class="FacetDataTD">
 						<td>
 							<a class="btn btn-xs btn-default btn-edit" href="admin_docacq.php?id_tes='.$a_row["id_tes"].'&Update">
 								<i class="glyphicon glyphicon-edit"></i>'.$a_row["id_tes"].'
@@ -86,7 +82,6 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
 					</tr>';
 }
 ?>
-			</tbody>
 		</table>
         </div>
 	</div><!-- chiude div container role main --></body>
