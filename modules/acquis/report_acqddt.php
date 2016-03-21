@@ -65,7 +65,7 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
 								<i class="glyphicon glyphicon-edit"></i>'.$a_row["id_tes"].'
 							</a>
 						</td>
-						<td>'.$a_row["numdoc"].'</td>
+						<td>'.$a_row["numfat"].'</td>
 						<td>'.$a_row["datemi"].'</td>
 						<td>'.$cliente["ragso1"].'</td>
 						<td>'.$a_row["status"].'</td>
