@@ -313,7 +313,7 @@ class FatturaImmediata extends Template_con_scheda
         $this->SetFont('helvetica','',9);
         if (!empty($this->banapp['descri']) and $this->pagame['tippag'] != 'D') {
            $this->Cell(62, 5, 'Banca d\'appoggio','LTR',1,'C',1);
-           $this->Cell(62, 5, $this->banapp['descri'],'LR',1);
+           $this->Cell(62, 5, $this->banapp['descri'],'LR',1,'C',0,'',1);
            $this->Cell(62, 5, ' ABI '.sprintf("%05d",$this->banapp['codabi']).' CAB '.$this->banapp['codcab'],'LRB',0,'C');
         } elseif (!empty($this->banacc['iban'])){
            $this->Cell(62, 5, 'Banca d\'accredito','LTR',1,'C',1);

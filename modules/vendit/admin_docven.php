@@ -255,7 +255,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['gooser'] = intval($v['gooser']);
             $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
             $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
-            if ($v['lot_or_serial'] == 2 && $v['id_lotmag']>0) {
+            if ($v['lot_or_serial'] == 2 && $v['id_lotmag'] > 0) {
 // se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
                 if ($form['rows'][$next_row]['quanti'] <> 1) {
                     $msg .= "60+";
@@ -662,14 +662,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['banapp'] = $cliente['banapp'];
         $form['listin'] = $cliente['listin'];
         $pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
-        if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V')
-                and $cliente['speban'] == 'S') {
+        if (($pagame['tippag'] == 'B' or $pagame['tippag'] == 'T' or $pagame['tippag'] == 'V') && $cliente['speban'] == 'S') {
             $form['speban'] = $admin_aziend['sperib'];
             $form['numrat'] = $pagame['numrat'];
             $form['stamp'] = 0;
-            if ($pagame['tippag'] == 'T') {
-                $form['stamp'] = $admin_aziend['perbol'];
-            }
             $form['round_stamp'] = $admin_aziend['round_bol'];
         } elseif ($pagame['tippag'] == 'R') {
             $form['speban'] = 0.00;
@@ -681,6 +677,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['numrat'] = 1;
             $form['stamp'] = 0;
             $form['round_stamp'] = 0;
+        }
+        if ($pagame['tippag'] == 'T' && $cliente['addbol'] == 'S') {
+            $form['stamp'] = $admin_aziend['perbol'];
         }
         $form['hidden_req'] = '';
     }
