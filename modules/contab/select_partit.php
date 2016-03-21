@@ -146,6 +146,29 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
           $form['account_fin'] = $extreme_account['max'];
        }
     }
+    if (isset($_POST['pull_sbm'])) {
+       $query = 'SELECT MIN(codice) AS min, descri '.
+                'FROM '.$gTables['clfoco'].
+                " WHERE codice NOT LIKE '%000000' AND codice LIKE '".substr($form['master_ini'],0,3)."%'";
+       $rs_extreme_accont = gaz_dbi_query($query);
+       $extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
+       if ($extreme_account) {
+
+          $form['account_ini'] = $extreme_account['min'];
+          $form['search']['account_ini'] = $extreme_account['descri'];
+       }
+    }
+    if (isset($_POST['push_sbm'])) {
+       $query = 'SELECT MAX(codice) AS max, descri '.
+                'FROM '.$gTables['clfoco'].
+                " WHERE codice NOT LIKE '%000000' AND codice LIKE '".substr($form['master_fin'],0,3)."%'";
+       $rs_extreme_accont = gaz_dbi_query($query);
+       $extreme_account = gaz_dbi_fetch_array($rs_extreme_accont);
+       if ($extreme_account) {
+          $form['account_fin'] = $extreme_account['max'];
+          $form['search']['account_fin'] = $extreme_account['descri'];
+       }
+    }
     if (isset($_POST['selfin'])) {
        $form['master_fin']=$form['master_ini'];
        $form['account_fin']=$form['account_ini'];
@@ -259,7 +282,8 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['account_ini']."</td><td class=\"FacetDataTD\">\n";
 $gForm->lockSubtoMaster($form['master_ini'],'account_ini');
 $gForm->selSubAccount('account_ini',$form['account_ini'],$form['search']['account_ini'],$form['hidden_req'],$script_transl['mesg']);
-echo "</td>\n";
+echo ' <button type="submit" class="btn btn-default btn-sm" name="pull_sbm" ><i class="glyphicon glyphicon-fast-backward"></i></button>';
+    echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['master_fin']."</td><td class=\"FacetDataTD\">\n";
@@ -275,6 +299,7 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['account_fin']."</td><td class=\"FacetDataTD\">\n";
 $gForm->lockSubtoMaster($form['master_fin'],'account_fin');
 $gForm->selSubAccount('account_fin',$form['account_fin'],$form['search']['account_fin'],$form['hidden_req'],$script_transl['mesg']);
+echo ' <button type="submit" class="btn btn-default btn-sm" name="push_sbm" ><i class="glyphicon glyphicon-fast-forward"></i></button>';
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
