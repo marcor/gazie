@@ -201,7 +201,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $form['paymov'][$i][$k] = $v;  // qui devo ancora fare il parsing
                     $paymov_tot[$i] +=$v['amount'];
                 }
-                if ($paymov_tot[$i] >= 0.01 && $paymov_tot[$i] <> $form['importorc'][$i]) {
+                if ($paymov_tot[$i] >= 0.01 && round($paymov_tot[$i],2) <> $form['importorc'][$i]) {
                     $msg .= '15+';
                 }
             } else {
