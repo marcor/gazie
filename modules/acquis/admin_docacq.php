@@ -205,7 +205,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
                         unlink($fn);
                     }
-                    $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], $_SERVER['DOCUMENT_ROOT'] . $radix . '/data/files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $i]['name']);
+                    $move = move_uploaded_file($_FILES['docfile_' . $i]['tmp_name'], '../../data/files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $i]['name']);
                     $form['rows'][$i]['filename'] = $_FILES['docfile_' . $i]['name'];
                 }
                 if (!$move) {
@@ -422,15 +422,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                                     $fd = pathinfo($filename);
                                     if ($fd['filename'] == 'lotmag_' . $old_lm['id']) {
                                         // cancello il file precedente indipendentemente dall'estensione
-                                        foreach (glob("../../data/files/lotmag_" . $old_lm['id'] . ".*") as $fdel) {// prima cancello eventuali precedenti file temporanei
+                                        $frep = glob('../../data/files/' . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . ".*");
+                                        foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
                                             unlink($fdel);
                                         }
                                     }
                                 }
-                                $tmp_file = $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
+                                $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 // sposto e rinomino il relativo file temporaneo    
                                 $fn = pathinfo($form['rows'][$i]['filename']);
-                                rename($tmp_file, $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . '.' . $fn['extension']);
+                                rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $old_lm['id'] . '.' . $fn['extension']);
                             }
                         }
                     } else { //altrimenti lo elimino
@@ -468,10 +469,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         // inserisco il rifermineto anche sul relativo movimento di magazzino
                         gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {
-                            $tmp_file = $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
+                            $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 // sposto e rinomino il relativo file temporaneo    
                             $fd = pathinfo($form['rows'][$i]['filename']);
-                            rename($tmp_file, $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $last_lotmag_id . '.' . $fd['extension']);
+                            rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $last_lotmag_id . '.' . $fd['extension']);
                         }
                     }
                 }
@@ -575,10 +576,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         // inserisco il rifermineto anche sul relativo movimento di magazzino
                         gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {
-                            $tmp_file = $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
+                            $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['rows'][$i]['filename'];
 // sposto e rinomino il relativo file temporaneo    
                             $fd = pathinfo($form['rows'][$i]['filename']);
-                            rename($tmp_file, $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $last_lotmag_id . '.' . $fd['extension']);
+                            rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $last_lotmag_id . '.' . $fd['extension']);
                         }
                     }
                 }
@@ -892,7 +893,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else {
             $new_key = $i - 1;
         }
-        $tmp_path = $_SERVER['DOCUMENT_ROOT'] . $radix . "/data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_';
+        $tmp_path = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_';
         // rinomino prima il documento della linea target new key ( se esiste )
         @rename($tmp_path . $new_key . '_' . $form['rows'][$new_key]['filename'], $tmp_path . '_tmp_' . $new_key . '_' . $form['rows'][$new_key]['filename']);
         // rinomino il documento della linea spostata verso l'alto dandogli gli indici di quello precedente
@@ -1777,15 +1778,15 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acq
 						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
         /** fine modifica FP */
     }
-    echo "		<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['units']."</td>
+    echo "		<td align=\"right\" class=\"FacetFieldCaptionTD\">" . $script_transl['units'] . "</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>
-					<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['volume']."</td>
+					<td align=\"right\" class=\"FacetFieldCaptionTD\">" . $script_transl['volume'] . "</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['volume'] . "\" name=\"volume\" maxlength=\"9\" size=\"4\" ></td>
 				</tr>
 				<tr>
-					<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['net_weight']."</td>
+					<td align=\"right\" class=\"FacetFieldCaptionTD\">" . $script_transl['net_weight'] . "</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['net_weight'] . "\" name=\"net_weight\" maxlength=\"9\" size=\"5\" ></td>
-					<td align=\"right\" class=\"FacetFieldCaptionTD\">".$script_transl['gross_weight']."</td>
+					<td align=\"right\" class=\"FacetFieldCaptionTD\">" . $script_transl['gross_weight'] . "</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['gross_weight'] . "\" name=\"gross_weight\" maxlength=\"9\" size=\"5\" ></td>";
 
     echo "<td align=\"left\" class=\"FacetFieldCaptionTD\">" . $script_transl[51] . "</td><td class=\"FacetDataTD\">\n";
