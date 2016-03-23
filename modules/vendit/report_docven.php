@@ -61,61 +61,17 @@ if (isset($_GET['all'])) {
 
 $where .= " GROUP BY protoc, datfat";
 
-/* if (isset($_GET['protoc'])) {
-  if ($_GET['protoc'] > 0) {
-  $protocollo = $_GET['protoc'];
-  $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' AND protoc = '$protocollo' GROUP BY protoc, datfat";
-  $passo = 1;
-  }
-  }  else {
-  $protocollo ='';
-  }
-
-  if (isset($_GET['numerof'])) {
-  if ($_GET['numerof'] > 0) {
-  $numerof = $_GET['numerof'];
-  $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' AND numfat = '$numerof' GROUP BY protoc, datfat";
-  $passo = 1;
-  }
-  }  else {
-  $numerof ='';
-  }
-
-  if (isset($_GET['cliente'])) {
-  if ($_GET['cliente'] <> '') {
-  $cliente = $_GET['cliente'];
-  $where = " tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' and ".$gTables['clfoco'].".descri like '%".addslashes($cliente)."%' GROUP BY protoc, datfat";
-  $passo = 50;
-  unset($protocollo);
-  unset($numerof);
-  }
-  } */
 
 if (isset($_GET['all'])) {
-    /*   gaz_set_time_limit (0);
+      gaz_set_time_limit (0);
       $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
       $passo = 100000;
-      unset($protocollo);
       unset($cliente);
-      unset($numerof); */
 }
 
 $titolo = "Documenti di vendita a clienti";
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array(/** ENRICO FEDELE */
-    /* 'jquery/jquery-1.7.1.min',
-      'jquery/ui/jquery.ui.core',
-      'jquery/ui/jquery.ui.widget',
-      'jquery/ui/jquery.ui.mouse',
-      'jquery/ui/jquery.ui.button',
-      'jquery/ui/jquery.ui.dialog',
-      'jquery/ui/jquery.ui.position',
-      'jquery/ui/jquery.ui.draggable',
-      'jquery/ui/jquery.ui.resizable',
-      'jquery/ui/jquery.effects.core',
-      'jquery/ui/jquery.effects.scale', */
-    /** ENRICO FEDELE */
-    'custom/modal_form'));
+$script_transl = HeadMain(0, array('custom/modal_form'));
 echo '<script>
 $(function() {
    $( "#dialog" ).dialog({
@@ -185,7 +141,7 @@ function confirTutti(link){
       hide: "explode",
       buttons: {
                       " ' . $script_transl['submit'] . ' ": function() {
-                          window.location.href = window.location.pathname + "?all=Mostra+tutti&auxil=1";
+                          window.location.href = window.location.pathname + "?all=Mostra+tutti&auxil='.$seziva.'";
                           $(this).dialog("close");
                       },
                       " ' . $script_transl['cancel'] . ' ": function() {

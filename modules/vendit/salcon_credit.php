@@ -408,7 +408,6 @@ foreach ($_POST['righi'] as $k => $v) {
     print "<tr><td><input type=\"text\" name=\"righi[{$k}][descri]\" value=\"{$v['descri']}\" maxlength=\"50\" size=\"50\"></td>\n";
     print "<td align=\"right\"><input align=\"right\" type=\"text\" name=\"righi[{$k}][prelis]\" value=\"".preg_replace("/\,/",'.', $importo_rigo)."\" maxlength=\"11\" size=\"11\"></td>\n";
     
-	print "<td align=\"right\"><input type=\"image\" name=\"del[{$k}]\" src=\"../../library/images/xbut.gif\" title=\"Elimina rigo!\"></td></tr>\n";
 
    /** ENRICO FEDELE */
    /* glyph icon */
