@@ -464,8 +464,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 // creo un identificativo del lotto/matricola interno                            
                             $form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
                         }
-                        lotmagInsert($form['rows'][$i]);
-                        $last_lotmag_id = gaz_dbi_last_id();
+                        $last_lotmag_id = lotmagInsert($form['rows'][$i]);
                         // inserisco il rifermineto anche sul relativo movimento di magazzino
                         gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {
@@ -571,8 +570,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 // creo un identificativo del lotto/matricola interno                            
                             $form['rows'][$i]['identifier'] = $form['datemi'] . '_' . $form['rows'][$i]['id_rigdoc'];
                         }
-                        lotmagInsert($form['rows'][$i]);
-                        $last_lotmag_id = gaz_dbi_last_id();
+                        $last_lotmag_id = lotmagInsert($form['rows'][$i]);
                         // inserisco il rifermineto anche sul relativo movimento di magazzino
                         gaz_dbi_put_row($gTables['movmag'], 'id_mov', $last_movmag_id, 'id_lotmag', $last_lotmag_id);
                         if (!empty($form['rows'][$i]['filename'])) {

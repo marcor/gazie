@@ -424,6 +424,7 @@ function tableInsert($table, $columns, $newValue) {
    $result = mysqli_query($link, $query);
    if (!$result)
       die("Error tableUpdate: " . mysqli_error($link));
+   return mysqli_insert_id($link);
 }
 
 function tableUpdate($table, $column, $codice, $newValue) {

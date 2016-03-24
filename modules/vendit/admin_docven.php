@@ -761,7 +761,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($artico['lot_or_serial'] > 0) {
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
-                    print_r($lm->divided);
                     $form['rows'][$old_key]['id_lotmag'] = $lm->divided[$form['in_id_mag']]['id_lotmag'];
                 }
                 $form['rows'][$old_key]['unimis'] = $artico['unimis'];

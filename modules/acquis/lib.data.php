@@ -17,7 +17,8 @@ function lotmagInsert($newValue)
 {
     $table = 'lotmag';
     $columns = array('codart','id_movmag','id_rigdoc','identifier','expiry');
-    tableInsert($table, $columns, $newValue);
+    $last_id=tableInsert($table, $columns, $newValue);
+    return $last_id;
 }
 
 ?>
