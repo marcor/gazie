@@ -37,7 +37,11 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
     $form['catmer'] = $cm_first['codice'];
     $utsdate = mktime(0, 0, 0, $form['date_M'], $form['date_D'], $form['date_Y']);
     $date = date("Y-m-d", $utsdate);
-    $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "catmer = " . $form["catmer"], 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
+    if (!empty($form['catmer'])) {
+        $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "catmer = " . $form["catmer"], 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
+    } else {
+        $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', "1=1", 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
+    }
     $tot_val_giac = 0;
     if ($result) {
         // Imposto totale valore giacenza by DF
