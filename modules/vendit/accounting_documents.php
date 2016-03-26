@@ -319,6 +319,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 // fine calcolo totali
                 // calcolo le rate al fine di inserire le partite aperte  
                 $rate = CalcolaScadenze($tot['tot'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
+                // rateizzo anche l'iva split payment  
+                $rateisp = CalcolaScadenze($v['isp'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
                 // inserisco la testata
                 $newValue = array('caucon' => $v['tes']['tipdoc'],
                     'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']],
@@ -407,6 +409,17 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => $v['isp']));
+                    // memorizzo l'id del rigo cliente  
+                    $paymov_id = gaz_dbi_last_id();
+                    // chiudo le partite aperte dell'iva split payment
+                    foreach ($rateisp['import'] as $k_rate => $v_rate) {
+                        // preparo l'array da inserire sui movimenti delle partite aperte
+                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
+                            'id_rigmoc_pay' => $paymov_id,
+                            'amount' => $v_rate,
+                            'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
+                        paymovInsert($paymov_value);
+                    }
                 }
             }
             header("Location: report_docven.php");
