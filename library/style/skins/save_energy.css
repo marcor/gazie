@@ -5,6 +5,7 @@ BODY {
 
 DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL, INPUT  {
     color : #FFFFFF;
+     background-color : #6d6d6d;
 }
 
 TABLE.Tlarge{
@@ -344,4 +345,8 @@ input.input-xs {
 .btn-custom:hover,
 .btn-custom:focus {
     color: #fff;
+}
+
+.table-striped > tbody > tr:nth-of-type(2n+1) {
+    background-color: #666666;
 }
