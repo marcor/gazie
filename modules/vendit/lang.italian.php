@@ -357,6 +357,8 @@ $strScript = array("admin_client.php" =>
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
         'stamp' => 'Bolli',
+        'ritenuta' => 'Ritenuta ',
+        'netpay' => 'Netto a pagare',
         'id_agente' => "Agente di vendita",
         'print_total' => "Stampa totale",
         'print_total_value' => array(0 => 'No', 1 => 'Si'),

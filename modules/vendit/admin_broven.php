@@ -971,7 +971,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
    $form['in_codart'] = "";
    $form['in_pervat'] = "";
    $form['in_tipiva'] = "";
-   $form['in_ritenuta'] = $admin_aziend['ritenuta'];
+   $form['in_ritenuta'] = 0;
    $form['in_unimis'] = "";
    $form['in_prelis'] = 0.000;
    /** inizio modifica FP 09/10/2015
@@ -1302,8 +1302,9 @@ echo $script_transl[18] . ": ";
 $select_codric = new selectconven("in_codric");
 $select_codric->addSelected($form['in_codric']);
 $select_codric->output(substr($form['in_codric'], 0, 1));
-echo '			 %'.$script_transl[24].': <input type="text" value="'.$form['in_sconto'].'" maxlength="4" size="1" name="in_sconto">
-	  			 %'.$script_transl[56].': <input type="text" value="'.$form['in_provvigione'].'" maxlength="6" size="1" name="in_provvigione">
+echo '			</br> %'.$script_transl[24].': <input type="text" value="'.$form['in_sconto'].'" maxlength="4" size="1" name="in_sconto">
+	  			 %'.$script_transl[56].': <input type="text" value="'.$form['in_provvigione'].'" maxlength="6" size="1" name="in_provvigione">'
+        . ' %' . $script_transl['ritenuta'] . ': <input type="text" value="' . $form['in_ritenuta'] . '" maxlength="6" size="1" name="in_ritenuta">
 	   			</td>
 				<td class="FacetColumnTD">'.$script_transl['vat_constrain'];
 $select_in_codvat = new selectaliiva("in_codvat");
@@ -1722,14 +1723,14 @@ if ($next_row > 0) {
 					<td class="text-right" style="font-weight:bold;">'.gaz_format_number($calc->total_imp + $calc->total_vat + $stamp + $form['taxstamp']).'</td>
 				</tr>';
 
-   if ($rit > 0) {
+   if ($rit >= 0.01) {
       echo '		<tr>
 	  					<td colspan="7" class="text-right">'.$script_transl['ritenuta'].'</td>
-						<td class="text-right">"'.gaz_format_number($rit).'</td>
+						<td class="text-right">'.gaz_format_number($rit).'</td>
 					</tr>
 					<tr>
 						<td colspan="7" class="text-right">'.$script_transl['netpay'].'</td>
-						<td class="text-right">"'.gaz_format_number($totimpfat + $totivafat + $stamp - $rit + $form['taxstamp']).'</td>
+						<td class="text-right">'.gaz_format_number($totimpfat + $totivafat + $stamp - $rit + $form['taxstamp']).'</td>
 					</tr>';
    }
    echo '		<tr>
