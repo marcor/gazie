@@ -110,7 +110,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     $clientiRS = gaz_dbi_dyn_query("distinct(A.clfoco) as clfoco", $from, $where);
     $numRecord = $clientiRS->num_rows;
     if ($numRecord > 0) {
-        if ($invioPerEmail) {
+        if ($invioPerEmail || (isset($_GET['dest']) && $_GET['dest'] == 'E') ) {
             $arrayClienti = gaz_dbi_fetch_all($clientiRS);
             foreach ($arrayClienti as $cliente) {
                 $clfoco = $cliente['clfoco'];
