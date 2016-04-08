@@ -743,6 +743,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     rigmoiInsert($vv);
                 }
                 //inserisco i righi contabili
+                $last_open_id_tesdoc_ref=0; // lo userò per inserire una eventuale chiusura 
                 for ($i = 0; $i < $_POST['rigcon']; $i++) {
                     $account = substr($_POST['conto_rc' . $i], 0, 12);
                     if (preg_match("/^id_([0-9]+)$/", $account, $match)) { // è un partner da inserire sul piano dei conti
@@ -791,7 +792,13 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     $new_paymov[$j]['expiry'] = gaz_format_date($new_paymov[$j]['expiry'], true);
                                     $calc->updatePaymov($new_paymov[$j]);
                                 }
+                                // aggiorno il riferimento all'ultima partita aperta, servirà per chiudere con lo stesso se dovessi avere id_tesdoc_ref=new 
+                                $last_open_id_tesdoc_ref=$new_paymov[$j]['id_tesdoc_ref']; 
                             } else {  // chiusura partita
+                                if ($new_paymov[$j]['id_tesdoc_ref']=='new' && $last_open_id_tesdoc_ref > 1 ) { 
+                                    // ho una chiusura partita senza riferimenti (new): se ce l'ho utilizzo quello d'apertura 
+                                    $new_paymov[$j]['id_tesdoc_ref'] =  $last_open_id_tesdoc_ref;
+                                }
                                 $new_paymov[$j]['id_rigmoc_pay'] = $last_id_rig;
                                 if (!isset($new_paymov[$j]['amount']) || $new_paymov[$j]['amount'] < 0.01) { // se no ho una partita impostata manualmente uso i dati del rigo 
                                     $new_paymov[$j]['expiry'] = $newValue['datreg'];
