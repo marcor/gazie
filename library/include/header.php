@@ -59,6 +59,8 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
         ?>
         <link href="../../library/style/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/style/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+        <style type="text/css">.navbar-header { background-color: #<?php echo $admin_aziend['colore']; ?> ; }</style>  
+
         <?php
         function get_transl_referer($rlink) {
             global $gTables;

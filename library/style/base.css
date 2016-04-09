@@ -16,7 +16,6 @@
 .dropdown-submenu:hover>.dropdown-menu {
     display: inline;
 }
-
 .dropdown-submenu>a:after {
     display: block;
     content: " ";
@@ -26,11 +25,10 @@
     border-color: transparent;
     border-style: solid;
     border-width: 5px 0 5px 5px;
-    border-left-color: #ccc;
+    border-left-color: rgba(0, 0, 0, 0.4);;
     margin-top: 5px;
-    margin-right: -10px;
+	margin-right: -12px;
 }
-
 .dropdown-submenu:hover>a:after {
     border-left-color: #fff;
 }
@@ -41,7 +39,7 @@
 
 .dropdown-submenu.pull-left>.dropdown-menu {
     left: -100%;
-    margin-left: 10px;
+    margin-left: 2px;
     -webkit-border-radius: 6px 0 6px 6px;
     -moz-border-radius: 6px 0 6px 6px;
     border-radius: 6px 0 6px 6px;
@@ -52,6 +50,7 @@ ul.nav li.dropdown:hover > ul.dropdown-menu{
 }
 
 
+
 /*********************** STRUCTURE SECTION ************************************/
 body {
 /* impostare qua la dimensione dei caratteri*/
@@ -60,9 +59,25 @@ body {
 .navbar {
 	margin-bottom: 1px;
 }
+.navbar-default {
+    background-color: transparent;
+}
+.navbar-default .navbar-nav > li > a:hover,
+.navbar-default .navbar-nav > li > a:focus,
+.navbar-nav>li>ul>li>a:hover,
+.navbar-nav>li>ul>li>ul>li>a:hover, 
+.navbar-nav>li>ul>li>ul>li>ul>li>a:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+.navbar-default .navbar-nav .open .dropdown-menu > li > a:hover {
+	background-color: rgba(0, 0, 0, 0.1);
+}
+
 .navbar-header {
-    margin-right: 0;
-    margin-left: 0;
+	padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+	background-color: rgba(0, 0, 0, 0.1);
+	font-size: 75%;
 }
 .navbar-collapse {
     margin-right: 0px;
@@ -71,28 +86,17 @@ body {
 }
 .navbar-nav {
     margin: 0px 0px;
+    padding-left: 0px;
 }
 .container-fluid {
-	padding-left: 0px;
-}
-.navbar-nav > li > a {
-	padding: 5px 0px 0px 15px;
-	line-height: 2;
-	border: 1px solid transparent;
 
 }
-.nav>li>a:hover, .nav>li>a:focus {
-	background-color: rgba(0, 0, 0, 0.1);
+.navbar-nav > li > a {
+	padding: 5px 0px 0px 5px;
+	line-height: 2;
+	border: 1px solid transparent;
 }
-.nav>li>ul>li>a:hover, .nav>li>a:focus {
-	background-color: rgba(0, 0, 0, 0.1);
-}
-.nav>li>ul>li>ul>li>a:hover, .nav>li>a:focus {
-	background-color: rgba(0, 0, 0, 0.1);
-}
-.nav>li>ul>li>ul>li>ul>li>a:hover, .nav>li>a:focus {
-	background-color: rgba(0, 0, 0, 0.1);
-}
+
 .nav-mb {
 	min-height: 0px;
 }

@@ -91,6 +91,17 @@ if ($riga["id"] != "") {
 
 <nav class="navbar navbar-default nav-boot" role="navigation">
     <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#gazNavbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+                <a  href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
+                    <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />  
+                </a>
+        </div>
         <div class="collapse navbar-collapse" id="gazNavbar">
             <ul class="nav navbar-nav">
                 <?php
@@ -135,18 +146,8 @@ if ($riga["id"] != "") {
             }
             ?>
             <li>
-                <a  href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
-                    <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
-                </a>
             </li>
             </ul>
-        </div>
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#gazNavbar">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
         </div>
     </div><!-- chiude div container-fluid -->
 </nav><!-- chiude navbar -->
@@ -163,10 +164,11 @@ if ($riga["id"] != "") {
         ?>
         <nav class="navbar navbar-default navbar-lower nav-mb" role="navigation">
             <div class="navbar-form navbar-left" role="search">
-                <div class="btn-group btn-group-xs">
+                <div class="btn-toolbar" role="toolbar">
+                
         <?php
         while ($r = gaz_dbi_fetch_array($result2)) {
-            echo '<a href="' . $r["link"] . '" class="btn btn-default">' . stripslashes($transl[$module]["m3"][$r["translate_key"]]["1"]) . '</a>';
+            echo '<div class="btn-group btn-group-xs"><button href="' . $r["link"] . '" class="btn btn-default">' . stripslashes($transl[$module]["m3"][$r["translate_key"]]["1"]) . '</button></div>';
         }
         if (file_exists("function_menu.php")) {
             include "function_menu.php";
