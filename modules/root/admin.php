@@ -138,10 +138,12 @@ if ($t > 4 && $t <= 13) {
 } else {
     $msg = $script_transl['night'];
 }
+?>
 
-echo '<form method="POST" name="myform">
-		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
-		<div id="admin_main" >';
+<form method="POST" name="myform">
+    <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
+        <div id="admin_main" >
+<?php
 if ($lastBackup) {
     ?>
     <div class="alert alert-danger text-center" role="alert">
@@ -260,22 +262,37 @@ if ($lastBackup) {
             <?php
         }
     }
-    echo '</div>';
-
-    echo "<div style='bottom: 0; position: absolute;' align='center' id='admin_footer'>";
-    echo "<div align=\"center\"><br /> GAzie Version: $versSw Software Open Source (lic. GPL) " . $script_transl['business'] . " " . $script_transl['proj'] . "<a  target=\"_new\" title=\"" . $script_transl['auth'] . "\" href=\"http://http://www.devincentiis.it\"> http://www.devincentiis.it</a></div>\n";
-    echo '<div><table border="0" class="Tmiddle">';
-    echo "<tr align=\"center\"><td>\n";
-    echo "<a href=\"http://gazie.sourceforge.net\" target=\"_new\" title=\"" . $script_transl['devel'] . " www.gazie.it\"><img src=\"../../library/images/gazie.gif\" height=\"38\" border=\"0\"></a>\n";
-    foreach ($script_transl['strBottom'] as $value) {
+    ?>
+    </div>
+    <div style='bottom: 0; position: relative;' align='center' id='admin_footer'>
+        <div align="center"><br /> GAzie Version: <?php echo $versSw; ?> Software Open Source (lic. GPL)
+            <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?> 
+            <a  target="_new" title="<?php echo $script_transl['auth'];?>" href="http://http://www.devincentiis.it"> http://www.devincentiis.it</a>
+        </div>
+        <div>
+            <table border="0" class="Tmiddle">
+                <tr align="center">
+                    <td>
+                        <a href="http://gazie.sourceforge.net" target="_new" title="<?php echo $script_transl['devel']; ?>">
+                            <img src="../../library/images/gazie.gif" height="38" border="0">
+                        </a>
+<?php    
+foreach ($script_transl['strBottom'] as $value) {
         echo "<a href=\"" . $value['href'] . "\" title=\"" . $value['title'] . "\" target=\"_NEW\" >";
-        // echo "<img src=\"http://".$_SERVER['HTTP_HOST']."/".$radix."/library/images/".$value['img']."\" border=\"0\" ></a>\n";
         echo "<img src=\"../../library/images/" . $value['img'] . "\" border=\"0\" ></a>\n";
     }
-    echo '</td></tr></table></div>';
+?>
+                    </td>
+                </tr>
+            </table>
+        </div>
+<?php
     if (file_exists("help/" . $admin_aziend['lang'] . "/admin_help.php")) {
         include("help/" . $admin_aziend['lang'] . "/admin_help.php");
     }
-    ?>
-</div><!-- chiude div container role main --></body>
+?>
+    </div>
+    </form>
+ </div><!-- chiude div container -->
+  </body>
 </html>
