@@ -30,5 +30,4 @@ UPDATE gaz_XXXassist set tipo='ASS' where 1=1;
 ALTER TABLE `gaz_XXXlotmag`	ALTER `id_purchase` DROP DEFAULT, ALTER `lot_or_serial` DROP DEFAULT, ALTER `id_doc` DROP DEFAULT;
 ALTER TABLE `gaz_XXXlotmag`	CHANGE COLUMN `id_purchase` `id_movmag` INT(9) NOT NULL AFTER `id`,	CHANGE COLUMN `id_doc` `id_rigdoc` INT(9) NOT NULL AFTER `id_movmag`, CHANGE COLUMN `lot_or_serial` `identifier` VARCHAR(100) NOT NULL AFTER `id_rigdoc`, CHANGE COLUMN `expiry` `expiry` TIMESTAMP NULL DEFAULT NULL AFTER `identifier`, DROP COLUMN `description`;
 ALTER TABLE `gaz_XXXlotmag`	ADD COLUMN `codart` VARCHAR(15) NOT NULL DEFAULT '' AFTER `id`;
-ALTER TABLE `gaz_XXXassist` ADD `prezzo` VARCHAR(10) NULL AFTER `ore`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

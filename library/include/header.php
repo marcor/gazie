@@ -237,22 +237,21 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                   la funzione createGazieJSCM serve per creare un
                   array con il menu corrente orizzontale , si potrebbero creare
                   altre forme di menu modificando questa funzione. */
-                echo '			<title>' . $menuArray[0]['title'] . '&raquo;' . $admin_aziend['ragso1'];
-
+                echo '<title>' . $admin_aziend['ragso1']. '» '. $menuArray[0]['title']  ;
                 if (!empty($idScript)) {
                     if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
                         if ($idScript[0] == 2) {
-                            echo '			&raquo;' . $transl[$module]['m2'][$idScript[1]][0];
+                            echo '» ' . $transl[$module]['m2'][$idScript[1]][0];
                         } elseif ($idScript[0] == 3) {
-                            echo '			&raquo;' . $transl[$module]['m3'][$idScript[1]][0];
+                            echo '» ' . $transl[$module]['m3'][$idScript[1]][0];
                         }
                     } elseif ($idScript > 0) {
-                        echo '			&raquo;' . $transl[$module]['m3'][$idScript][0];
+                        echo '» ' . $transl[$module]['m3'][$idScript][0];
                     }
                 } elseif (isset($title_from_menu)) {
-                    echo '			&raquo;' . $title_from_menu;
+                    echo '» ' . $title_from_menu;
                 }
-                echo '			</title>
+                echo '</title>
         </head>
         <body>';
                 // cambia il tipo di menu

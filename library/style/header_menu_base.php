@@ -168,7 +168,7 @@ if ($riga["id"] != "") {
                 
         <?php
         while ($r = gaz_dbi_fetch_array($result2)) {
-            echo '<div class="btn-group btn-group-xs"><button href="' . $r["link"] . '" class="btn btn-default">' . stripslashes($transl[$module]["m3"][$r["translate_key"]]["1"]) . '</button></div>';
+            echo '<div class="btn-group btn-group-xs"><a href="' . $r["link"] . '"  role="button" class="btn btn-default">' . stripslashes($transl[$module]["m3"][$r["translate_key"]]["1"]) . '</a></div>';
         }
         if (file_exists("function_menu.php")) {
             include "function_menu.php";
