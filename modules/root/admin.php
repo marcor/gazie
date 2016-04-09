@@ -148,7 +148,11 @@ if ($lastBackup) {
     ?>
     <div class="alert alert-danger text-center" role="alert">
         <?php
-        echo $script_transl['errors'][4].' : <a href="../inform/backup.php?'.$checkUpd->backupMode().'">BACKUP!</a>('.$checkUpd->backupMode().')</div>';
+        if ( $admin_aziend['Abilit']>8 ) {
+            echo $script_transl['errors'][4].' : <a href="../inform/backup.php?'.$checkUpd->backupMode().'">BACKUP!</a>('.$checkUpd->backupMode().')</div>';
+        } else {
+           echo $script_transl['errors'][4].' o avvisa il tuo amministratore!</div>';
+        }
     }
 
     echo '<table border="1" class="Tmiddle">

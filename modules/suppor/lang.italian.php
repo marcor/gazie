@@ -66,6 +66,7 @@ $strScript = array(
 			'info_agg' 	=> "Informazioni aggiuntive",
 			'tecnico' 	=> "Tecnico",
 			'soluzione' => "Soluzione",
+         'prezzo'    => "Prezzo",
 			'note' 		=> "Note (non verranno stampate)",
 			'ins_this'	=> "Inserimento assistenza",
 			'errors' => array('Il codice articolo &egrave; gi&agrave; esistente',

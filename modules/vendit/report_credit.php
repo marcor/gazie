@@ -31,7 +31,7 @@ if(!isset($_GET["annfin"])) {
             $annfin = $_GET["annfin"];
 }
 if(!isset($_GET["annini"])) {
-            $annini = date("Y")-1;
+            $annini = date("Y")-5;
 } else {
             $annini = $_GET["annini"];
 }

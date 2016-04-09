@@ -80,7 +80,7 @@ if ( $flt_cliente!="tutti" ) {
 ?>
 <div align="center" class="FacetFormHeaderFont">Assistenza Tecnica</div>
 	<form method="GET">
-	<table class="Tlarge">
+	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 		<tr>
 		<td class="FacetFieldCaptionTD" colspan="4">
 			<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="15" size="15" tabindex=1 class="FacetInput">
@@ -170,13 +170,13 @@ $result = gaz_dbi_dyn_query($gTables['assist'].".*,
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
-   <tr>
-		<td class="FacetDataTD">
+   <tr class="FacetDataTD">
+		<td>
 			<a class="btn btn-xs btn-edit" href="admin_assist.php?codice=<?php echo $a_row["codice"]; ?>&Update">
 			<?php echo $a_row["codice"]; ?></a>
 		</td>
-		<td class="FacetDataTD"><?php echo $a_row["data"]; ?></td>
-		<td class="FacetDataTD"><a href="../vendit/report_client.php?auxil=<?php echo $a_row["ragso1"]; ?>&search=Cerca">
+		<td><?php echo $a_row["data"]; ?></td>
+		<td><a href="../vendit/report_client.php?auxil=<?php echo $a_row["ragso1"]; ?>&search=Cerca">
 		<?php 
 			if ( strlen($a_row["ragso1"]) > 20 ) {
 				echo substr($a_row["ragso1"],0,20)."..."; 
@@ -185,16 +185,16 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			}
 		?></a>
 		</td>
-		<td class="FacetDataTD"><?php echo $a_row["telefo"]; ?></td>
-		<td class="FacetDataTD"><?php echo $a_row["oggetto"]; ?></td>
-		<td class="FacetDataTD"><?php echo $a_row["descrizione"]; ?></td>
-		<td class="FacetDataTD"><?php echo $a_row["ore"]; ?></td>
-      <td class="FacetDataTD"><?php echo $a_row["tecnico"]; ?></td>
-		<td class="FacetDataTD"><?php echo $a_row["stato"]; ?></td>
-		<td class="FacetDataTD">
+		<td><?php echo $a_row["telefo"]; ?></td>
+		<td><?php echo $a_row["oggetto"]; ?></td>
+		<td><?php echo $a_row["descrizione"]; ?></td>
+		<td><?php echo $a_row["ore"]; ?></td>
+      <td><?php echo $a_row["tecnico"]; ?></td>
+		<td><?php echo $a_row["stato"]; ?></td>
+		<td>
 			<a class="btn btn-xs btn-default" href="stampa_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>
 		</td>
-		<td class="FacetDataTD">
+		<td>
 			<a class="btn btn-xs btn-default btn-elimina" href="delete_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>">
 			<i class="glyphicon glyphicon-remove"></i></a>
 		</td>

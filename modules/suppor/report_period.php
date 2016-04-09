@@ -56,7 +56,7 @@ if ( !isset($_GET["all"]) ) {
 <div align="center" class="FacetFormHeaderFont">Assistenze Periodiche</div>
 	<form method="GET">
 	<!-- riga filtro -->
-	<table class="Tlarge">
+	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 		<tr>
 		<td class="FacetFieldCaptionTD">
 			&nbsp;
@@ -122,13 +122,13 @@ $month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio"
 
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
-   <tr>
-		<td class="FacetDataTD">
+   <tr class="FacetDataTD">
+		<td>
 			<a class="btn btn-xs btn-edit" href="admin_period.php?codice=<?php echo $a_row["codice"]; ?>&Update">
 			<?php echo $a_row["codice"]; ?></a>
 		</td>
-		<td class="FacetDataTD"><?php echo date("d",strtotime($a_row["data"]))." ".$month[date("n",strtotime($a_row["data"]))]; ?></td>
-		<td class="FacetDataTD"><a href="../vendit/report_client.php?auxil=<?php echo $a_row["ragso1"]; ?>&search=Cerca">
+		<td><?php echo date("d",strtotime($a_row["data"]))." ".$month[date("n",strtotime($a_row["data"]))]." ".date("Y",strtotime($a_row["data"])); ?></td>
+		<td><a href="../vendit/report_client.php?auxil=<?php echo $a_row["ragso1"]; ?>&search=Cerca">
 		<?php 
 			if ( strlen($a_row["ragso1"]) > 20 ) {
 				echo substr($a_row["ragso1"],0,20)."..."; 
@@ -137,11 +137,14 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			}
 		?></a>
 		</td>
-		<td class="FacetDataTD"><?php echo $a_row["telefo"]; ?></td>
-		<td class="FacetDataTD"><?php echo $a_row["oggetto"]; ?></td>
-		<td class="FacetDataTD"><?php echo $a_row["descrizione"]; ?></td>
-      <td class="FacetDataTD"><?php echo $a_row["tecnico"]; ?></td>
-		<td class="FacetDataTD">
+		<td><?php echo $a_row["telefo"]; ?></td>
+		<td><?php echo $a_row["oggetto"]; ?></td>
+		<td><?php 
+            $length = strlen($a_row["descrizione"]);
+            $descri = substr($a_row["descrizione"], 0, 80);
+            echo $descri."..."; ?></td>
+      <td><?php echo $a_row["tecnico"]; ?></td>
+		<td>
 			<?php 
 				if ( $a_row["stato"]=="aperto" ) echo '<a class="btn btn-xs btn-edit" href="report_period.php?codice='.$a_row["codice"].'&q=avv">Avvisa</a>';
 				if ( $a_row["stato"]=="avvisato" ) echo '<a class="btn btn-xs btn-fatt" href="report_period.php?codice='.$a_row["codice"].'&q=eff">Effettua</a>';
@@ -152,10 +155,10 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 				//echo "</pre>";
 			?>
 		</td>
-		<td class="FacetDataTD">
-			<a class="btn btn-xs btn-default" href="stampa_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>
+		<td>
+			<a class="btn btn-xs btn-default" href="stampa_period.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>&stato=<?php echo $a_row["stato"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>
 		</td>
-		<td class="FacetDataTD">
+		<td>
 			<a class="btn btn-xs btn-default btn-elimina" href="delete_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>">
 			<i class="glyphicon glyphicon-remove"></i></a>
 		</td>
