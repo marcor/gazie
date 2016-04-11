@@ -41,11 +41,11 @@ function submenu($menu_data) {
         if (preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/", $mnu['icon'])) {
             $submnu = '<img src="' . $mnu['icon'] . '" /> ';
         }
-        $submnu = '<a href="' . $mnu['link'] . '">' . $submnu . stripslashes($mnu['name']) . "</a>";
+        $submnu = '<a href="' . $mnu['link'] . '">' . $submnu . stripslashes($mnu['name']) . "<span class=\"caret\"></span></a>";
         if (count($mnu) > 5) { //	Esiste un sotto menu
-            echo "\t\t\t\t\t\t\t" . '<li class="dropdown-submenu">' . $submnu;
-            submenu($mnu);
-            echo "\t\t\t\t\t\t\t</li>\n";
+           echo "\t\t\t\t\t\t\t" . '<li>' . $submnu;
+           submenu($mnu);
+           echo "\t\t\t\t\t\t\t</li>\n";
         } else {
             echo "\t\t\t\t\t\t\t<li>" . $submnu . "</li>\n";
         }
@@ -87,13 +87,14 @@ if ($riga["id"] != "") {
     $classe_barra1 = " nav-mb";
 }
 ?>
+<style type="text/css">.navbar-header { background-color: #<?php echo $admin_aziend['colore']; ?> ; }</style>  
 
-
-<nav class="navbar navbar-default nav-boot" role="navigation">
-    <div class="container-fluid">
+<!-- Navbar static top -->
+<div class="navbar navbar-default navbar-static-top" role="navigation">
+    <div class="container">
         <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#gazNavbar">
-                <span class="sr-only">Toggle navigation</span>
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                         <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
@@ -102,28 +103,28 @@ if ($riga["id"] != "") {
                     <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />  
                 </a>
         </div>
-        <div class="collapse navbar-collapse" id="gazNavbar">
+        <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-                <?php
+<?php
                 // stampo la prima voce della barra del menù con il dropdown dei moduli 
                 $i = 0;
                 foreach ($menuArray as $menu_modules_val) {
                     if ($i == 0) { // sul modulo attivo non permetto i submenu in quanto verrano messi sulla barra orizzontale 
-                        echo "\t\t\t\t<li class=\"dropdown\">" . '<a class="dropdown-toggle" data-toggle="dropdown"><img src="' . $menu_modules_val["icon"] . '"/>&nbsp;' . $menu_modules_val['name'] . '<span class="caret"></span></a>';
+                        echo "\t\t\t\t<li>" . '<a class="dropdown-toggle" data-toggle="dropdown"><img src="' . $menu_modules_val["icon"] . '"/>&nbsp;' . $menu_modules_val['name'] . '<span class="caret"></span></a>';
                         echo "\n\t\t\t\t\t" . '<ul class="dropdown-menu">' . "\n";
                     } else {
                         echo "\t\t\t\t\t";
-                        echo '<li class="dropdown-submenu"><a href="' . $menu_modules_val['link'] . '"><img src="' . $menu_modules_val["icon"] . '"/>&nbsp;' . $menu_modules_val['name'] . "</a>\n";
+                        echo '<li><a href="' . $menu_modules_val['link'] . '"><img src="' . $menu_modules_val["icon"] . '"/>&nbsp;' . $menu_modules_val['name'] . "<span class=\"caret\"></span></a>\n";
                         submenu($menu_modules_val);
                         echo "\t\t\t\t\t</li>\n";
                     }
                     $i++;
                 }
                 // fine stampa prima voce menu
-                ?>
+?>
             </ul>
             </li>
-            <?php
+<?php
             $i = 0;
             foreach ($menuArray[0] as $menu) {
                 // stampo nella barra del menù il dropdown del modulo 
@@ -136,7 +137,7 @@ if ($riga["id"] != "") {
                         echo "\t\t\t" . '<li class="dropdown">'
                         . '<a href="' . $menu['link'] . '">' . $icon_lnk . ' ' . $menu['name'] . '<span class="caret"></span></a>';
                     } else {
-                        echo "\t\t\t" . '<li><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'</a>';
+                        echo "\t\t\t" . '<li><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'<span class="caret"></span></a>';
                     }
                     submenu($menu);
                     echo "\t\t\t\t\t</li>\n";
@@ -144,13 +145,13 @@ if ($riga["id"] != "") {
                 }
                 $i++;
             }
-            ?>
+?>
             <li>
             </li>
             </ul>
         </div>
-    </div><!-- chiude div container-fluid -->
-</nav><!-- chiude navbar -->
+    </div><!-- chiude div container -->
+</div><!-- chiude navbar -->
 <?php
 if ($riga["id"] != "") {
     $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'], ' id_menu=' . $riga["id"] . ' ', 'id', 0);
