@@ -41,13 +41,13 @@ function submenu($menu_data) {
         if (preg_match("/^[A-Za-z0-9!@#$%&()*;:_.'\/\\\\ ]+\.png$/", $mnu['icon'])) {
             $submnu = '<img src="' . $mnu['icon'] . '" /> ';
         }
-        $submnu = '<a href="' . $mnu['link'] . '">' . $submnu . stripslashes($mnu['name']) . "<span class=\"caret\"></span></a>";
+        $submnu = '<a href="' . $mnu['link'] . '">' . $submnu . stripslashes($mnu['name']);
         if (count($mnu) > 5) { //	Esiste un sotto menu
-           echo "\t\t\t\t\t\t\t" . '<li>' . $submnu;
+           echo "\t\t\t\t\t\t\t" . '<li>' . $submnu. "<span class=\"caret\"></span></a>";
            submenu($mnu);
            echo "\t\t\t\t\t\t\t</li>\n";
         } else {
-            echo "\t\t\t\t\t\t\t<li>" . $submnu . "</li>\n";
+            echo "\t\t\t\t\t\t\t<li>" . $submnu . "</a></li>\n";
         }
         $numsub++;
         if ($numsub == 0) {
@@ -58,38 +58,9 @@ function submenu($menu_data) {
         echo "\t\t\t\t\t\t\t</ul>\n";
     }
 }
-
-//preparo la query per la seconda barra 
-$posizione = explode('/', $_SERVER['REQUEST_URI']);
-$posizione = array_pop($posizione);
-//cambio la posizione manualmente per far apparire la seconda barra in questi moduli i report sono invertiti
-if ($posizione == "report_received.php")
-    $posizione = "report_scontr.php";
-if ($posizione == "report_aziend.php")
-    $posizione = "admin_aziend.php";
-$result = gaz_dbi_dyn_query("*", $gTables['menu_module'], ' link="' . $posizione . '" ', ' id', 0, 1);
-
-if (!gaz_dbi_num_rows($result) > 0) {
-    $posizione = explode("?", $posizione);
-    $result = gaz_dbi_dyn_query("*", $gTables['menu_module'], ' link="' . $posizione[0] . '" ', ' id', 0, 1);
-}
-
-//aggiungo classe per spaziare in caso di assenza seconda barra
-$classe_barra1 = "";
-$riga = gaz_dbi_fetch_array($result);
-
-if ($riga["id"] != "") {
-    $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'], ' id_menu=' . $riga["id"] . ' ', 'id', 0);
-    if (gaz_dbi_num_rows($result2) <= 0) {
-        $classe_barra1 = " nav-mb";
-    }
-} else {
-    $classe_barra1 = " nav-mb";
-}
 ?>
-<style type="text/css">.navbar-header { background-color: #<?php echo $admin_aziend['colore']; ?> ; }</style>  
 
-<!-- Navbar static top -->
+<!-- Navbar static top per menu multilivello responsive -->
 <div class="navbar navbar-default navbar-static-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
@@ -133,11 +104,11 @@ if ($riga["id"] != "") {
                     $icon_lnk = '<img src="' . $menu['icon'] . '" />';
                 }
                 if ($i > 4) { // perché ci sono 5 indici prima dei dati veri e propri
-                    if (count($menu) > 5) {
+                    if (count($menu) > 5) { // Esiste un sotto menu
                         echo "\t\t\t" . '<li class="dropdown">'
                         . '<a href="' . $menu['link'] . '">' . $icon_lnk . ' ' . $menu['name'] . '<span class="caret"></span></a>';
                     } else {
-                        echo "\t\t\t" . '<li><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'<span class="caret"></span></a>';
+                        echo "\t\t\t" . '<li><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'</a>';
                     }
                     submenu($menu);
                     echo "\t\t\t\t\t</li>\n";
@@ -152,33 +123,3 @@ if ($riga["id"] != "") {
         </div>
     </div><!-- chiude div container -->
 </div><!-- chiude navbar -->
-<?php
-if ($riga["id"] != "") {
-    $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'], ' id_menu=' . $riga["id"] . ' ', 'id', 0);
-    if (gaz_dbi_num_rows($result2) > 0) {
-        if (is_array($posizione))
-            $posizione = $posizione[0];
-        if (isset($_GET['auxil']))
-            $auxil = $_GET['auxil'];
-        else
-            $auxil = "";
-        ?>
-        <nav class="navbar navbar-default navbar-lower nav-mb" role="navigation">
-            <div class="navbar-form navbar-left" role="search">
-                <div class="btn-toolbar" role="toolbar">
-                
-        <?php
-        while ($r = gaz_dbi_fetch_array($result2)) {
-            echo '<div class="btn-group btn-group-xs"><a href="' . $r["link"] . '"  role="button" class="btn btn-default">' . stripslashes($transl[$module]["m3"][$r["translate_key"]]["1"]) . '</a></div>';
-        }
-        if (file_exists("function_menu.php")) {
-            include "function_menu.php";
-        }
-        ?>
-                </div>
-            </div>
-        </nav>
-        <?php
-    }
-}
-?>

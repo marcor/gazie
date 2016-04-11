@@ -5,6 +5,7 @@ body {
 }
 .navbar {
 	margin-bottom: 1px;
+	min-height:20px;
 }
 .navbar-default {
     background-color: transparent;
@@ -19,6 +20,10 @@ body {
     margin-right: 0px;
     margin-left: 0px;
 	padding-left: 0px;
+}
+
+.btn-toolbar {
+    padding-left: 65%;
 }
 .navbar-nav {
     margin: 0px 0px;
