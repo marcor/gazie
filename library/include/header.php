@@ -296,7 +296,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 			}
 		 }
 </script>
-<div class="container">';
+<div class="container-fluid">';
             return ($strCommon + $translated_script);
         }
 ?>

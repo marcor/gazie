@@ -36,7 +36,7 @@ $strScript = array("admin.php" =>
             ' Ricordati che per il buon funzionamento dell\'appicazione la direttiva magic_quotes_gpc deve essere posta a Off nel file php.ini!',
             ' Attenzione l\'ultimo backup risale a più di 10 giorni, fallo adesso '
         ),
-        'access' => ", questo &egrave; il tuo ",
+        'access' => "questo è il tuo ",
         'pass' => "&ordm; accesso!<br />La tua password &egrave; del ",
         'logout' => " Se vuoi uscire clicca sul pulsante ",
         'company' => " Stai amministrando la ditta:<br /> ",
@@ -66,7 +66,9 @@ $strScript = array("admin.php" =>
             array('href' => "http://www.mozilla.org/products/firefox/all.html",
                 'img' => "firefox.gif",
                 'title' => "Scarica FIREFOX il browser con il quale &egrave; stato testato Gazie!")
-        )
+        ),
+        'last_use'=>'Utilizzati recentemente',
+        'most_used'=>'I più utilizzati'
     ),
     "config.php" =>
     array("title" => "Configurazione principale di GAzie",),

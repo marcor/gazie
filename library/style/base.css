@@ -48,7 +48,16 @@ body {
 	min-height: 0px;
 }
 .usr-picture {
-    max-width: 150px;
+    width: 150px;
+    height: 120px;
     border: 4px solid;
-    border-radius: 50% !important;
+    border-radius: 48%;
+}
+.form-horizontal .form-group input, 
+.form-horizontal .form-group select,
+.form-horizontal .form-group label { 
+	max-height: 20px;
+	padding: 3px 6px;
+	font-size: 12px;
+    line-height: 14px;
 }

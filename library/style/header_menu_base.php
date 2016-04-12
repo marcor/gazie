@@ -62,7 +62,7 @@ function submenu($menu_data) {
 
 <!-- Navbar static top per menu multilivello responsive -->
 <div class="navbar navbar-default navbar-static-top" role="navigation">
-    <div class="container">
+    <div class="container-fluid">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                          <span class="sr-only">Toggle navigation</span>
