@@ -158,7 +158,7 @@ if ($t > 4 && $t <= 13) {
 <?php            
     }
 ?>
-    <div class="row" align="center">
+    <div class="row text-center">
         <div class="col-sm-6">
             <div class="panel panel-default" >
                 <p>

@@ -108,7 +108,7 @@ function submenu($menu_data) {
                         echo "\t\t\t" . '<li class="dropdown">'
                         . '<a href="' . $menu['link'] . '">' . $icon_lnk . ' ' . $menu['name'] . '<span class="caret"></span></a>';
                     } else {
-                        echo "\t\t\t" . '<li><a class="row-menu" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'</a>';
+                        echo "\t\t\t" . '<li><a class="dropdown" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'</a>';
                     }
                     submenu($menu);
                     echo "\t\t\t\t\t</li>\n";

@@ -1276,7 +1276,7 @@ class GAzieForm {
       if (!empty($val_hiddenReq)) {
          $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
       }
-      echo "<select name=\"$name\" class=\"$class\" $refresh >\n";
+      echo "<select  name=\"$name\" id=\"$name\" class=\"$class\" $refresh >\n";
       for ($i = $min; $i <= $max; $i++) {
          $selected = '';
          $message = $i;
@@ -1398,7 +1398,7 @@ class GAzieForm {
       } else {
          $where = "codice BETWEEN " . $type . "00000001 AND " . $type . "99999999 AND codice NOT LIKE '" . $admin_aziend['mascli'] . "%' AND codice NOT LIKE '" . $admin_aziend['masfor'] . "%' AND codice NOT LIKE '%000000'";
       }
-      echo "\t<select name=\"$name\" class=\"FacetSelect\" $refresh>\n";
+      echo "\t<select id=\"$name\" name=\"$name\" class=\"FacetSelect\" $refresh>\n";
       echo "<option value=\"0\"> ---------- </option>";
       $result = gaz_dbi_dyn_query("codice,descri", $gTables['clfoco'], $where, "codice ASC");
       while ($r = gaz_dbi_fetch_array($result)) {

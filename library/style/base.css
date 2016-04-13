@@ -1,7 +1,11 @@
-/*********************** STRUCTURE SECTION ************************************/
+/*********************** FOGLIO DI STILE DELLA STRUTTURA *************************/
+/*********************** STRUCTURE STYLESHEET ************************************/
 body {
 /* impostare qua la dimensione dei caratteri*/
 	font-size: 14px;
+}
+input, select {
+	border-radius: 4px;
 }
 .navbar {
 	margin-bottom: 1px;
@@ -14,7 +18,7 @@ body {
 .navbar-header {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
-	font-size: 80%;
+	font-size: 95%;
 }
 .navbar-collapse {
     margin-right: 0px;
@@ -28,22 +32,20 @@ body {
 .navbar-nav {
     margin: 0px 0px;
     padding-left: 0px;
-	font-size: 95%;
 }
 
 .dropdown-menu > li > a {
-	font-size: 80%;
+	font-size: 90%;
 }
 
-.container-fluid {
-
-}
 .navbar-nav > li > a {
-	padding: 5px 0px 0px 5px;
+	padding: 5px 0px 2px 5px;
 	line-height: 2;
-	border: 1px solid transparent;
+	font-size: 95%;
 }
-
+.navbar-default .navbar-nav > li > a:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
 .nav-mb {
 	min-height: 0px;
 }
@@ -53,11 +55,27 @@ body {
     border: 4px solid;
     border-radius: 48%;
 }
-.form-horizontal .form-group input, 
-.form-horizontal .form-group select,
+
+.form-horizontal .form-group .form-control, 
+.form-horizontal .form-group div select { 
+    margin: 5px 0px 0px 0px;
+	padding: 3px 3px 3px 3px;
+}
+.form-horizontal .form-group .text-left,
 .form-horizontal .form-group label { 
-	max-height: 20px;
-	padding: 3px 6px;
-	font-size: 12px;
-    line-height: 14px;
+    margin: 5px 0px 0px 0px;
+	padding: 3px 3px 3px 3px;
+	font-size: 80%;
+}
+
+.form-control {
+	height: 24px;
+}
+
+.FacetSelect {
+	max-width:200px;
+	font-size: 80%;
+}
+.ui-widget { 
+	font-size: 12px; 
 }

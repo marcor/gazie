@@ -4,8 +4,8 @@ body {
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
 	color : #000000;
 }
-table {
-}
+
+
 table.Tlarge {
 	border-color : #000000;
 }
@@ -27,6 +27,11 @@ table.selectTable td {
 	border-bottom-color: #ddd;
 	color: #333;
 }
+
+mark {
+    background-color: #ff0;
+}
+
 .selectContainer {
 	border-color: #222;
 }
