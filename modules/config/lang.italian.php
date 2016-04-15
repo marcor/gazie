@@ -23,7 +23,8 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$strScript = array("admin_aziend.php" =>
+$strScript = array(
+    "admin_aziend.php" =>
     array('title' => 'Gestione delle aziende',
         'ins_this' => 'Inserisci l\'azienda',
         'upd_this' => 'Modifica l\'azienda ',
@@ -178,7 +179,8 @@ $strScript = array("admin_aziend.php" =>
         'ivam_t' => 'Periodicit&agrave; liquidazione IVA',
         'ivam_t_value' => array('M' => 'Mensile', 'T' => 'Trimestrale'),
         'preeminent_vat' => 'Aliquota IVA spese (preminente)',
-        'interessi' => 'Interessi su IVA Trimestrale'
+        'interessi' => 'Interessi su IVA Trimestrale',
+        'amm_min' => 'Ammort.Minister.',
     ),
     "report_aziend.php" =>
     array('title' => 'Lista delle aziende installate',
@@ -269,7 +271,7 @@ $strScript = array("admin_aziend.php" =>
     array('title' => 'Gestione delle banche di appoggio',
         'ins_this' => 'Inserisci una nuova banca di appoggio',
         'upd_this' => 'Modifica la banca di appoggio ',
-		'del_this' => ' la banca di appoggio ',
+        'del_this' => ' la banca di appoggio ',
         'errors' => array('Il codice non &egrave; valido (min=1 max=99)!',
             'Il codice scelto &egrave; gi&agrave; stato usato!',
             'Non &egrave; stata inserita la descrizione!',

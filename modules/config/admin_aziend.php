@@ -52,6 +52,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_D'] = intval($_POST['datnas_D']);
     $form['intermediary_code'] = intval($_POST['intermediary_code']);
     $form['intermediary_descr'] = substr($_POST['intermediary_descr'], 0, 50);
+    $form['amm_min'] = filter_input(INPUT_POST, 'amm_min');
     if (isset($_POST['Submit'])) { // conferma tutto
         require("../../library/include/check.inc.php");
         $chk = new check_VATno_TAXcode();
@@ -130,7 +131,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
             $msg .= "16+";
         }
-        if (!filter_var($form['web_url'], FILTER_VALIDATE_URL) && !empty($form['e_mail']) && $form['web_url']!="") {
+        if (!filter_var($form['web_url'], FILTER_VALIDATE_URL) && !empty($form['e_mail']) && $form['web_url'] != "") {
             $msg .= "17+";
         }
         if ($form['cod_ateco'] < 10000) {
@@ -203,6 +204,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['intermediary_descr'] = '';
     }
+    $form['amm_min'] = '';
 }
 
 require("../../library/include/header.php");
@@ -210,6 +212,13 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup',
     'custom/autocomplete',
     'custom/jquery.simple-color'));
 //simplecolordisplay
+?>
+<script>
+    $(function () {
+        $('#amm_min').selectmenu();
+    });
+</script>
+<?php
 echo "<script type=\"text/javascript\">
 $(document).ready(function(){
 	$('.simple_color_custom').simpleColor({
@@ -247,6 +256,7 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
+
 </script>
 ";
 echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
@@ -329,7 +339,7 @@ echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['latitude'] . " - "
 echo "\t<td  colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"latitude\" value=\"" . $form['latitude'] . "\" align=\"right\" maxlength=\"10\" size=\"10\" />
        - <input type=\"text\" name=\"longitude\" value=\"" . $form['longitude'] . "\" align=\"right\" maxlength=\"10\" size=\"10\" />"
-        . " <a class=\"btn btn-xs btn-default btn-default\" href=\"http://maps.google.com/maps?q=".$form['latitude'].",".$form['longitude']."\"> maps -> <i class=\"glyphicon glyphicon-map-marker\"></i></a></td>\n";
+ . " <a class=\"btn btn-xs btn-default btn-default\" href=\"http://maps.google.com/maps?q=" . $form['latitude'] . "," . $form['longitude'] . "\"> maps -> <i class=\"glyphicon glyphicon-map-marker\"></i></a></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['capspe'] . " * </td>\n";
@@ -419,6 +429,11 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['fiscal_reg'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->variousSelect('fiscal_reg', $script_transl['fiscal_reg_value'], $form['fiscal_reg']);
+echo "\t </td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['amm_min'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->selSpecieAmmortamentoMin( 'ammortamenti_ministeriali.xml' , 'amm_min',$form["amm_min"] );
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
@@ -583,7 +598,7 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['c_payroll_tax'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
-$gForm->selectAccount('c_payroll_tax', $form['c_payroll_tax'], array('sub',2,4));
+$gForm->selectAccount('c_payroll_tax', $form['c_payroll_tax'], array('sub', 2, 4));
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

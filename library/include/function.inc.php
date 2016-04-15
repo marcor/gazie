@@ -1363,13 +1363,16 @@ class GAzieForm {
       echo "\t </select>\n";
    }
 
-   function selectAccount($name, $val, $type = 1, $val_hiddenReq = '') {
+   function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx=false) {
       global $gTables, $admin_aziend;
-      $refresh = '';
+      $opt = '';
       $data_color = Array(1 => "88D6FF", 2 => "D6FF88", 3 => "D688FF", 4 => "FFD688", 5 => "FF88D6",
           6 => "88FFD6", 7 => "FF88D6", 8 => "88FFD6", 9 => "FF88D6");
       if (!empty($val_hiddenReq)) {
-         $refresh = " onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\"";
+         $opt = " onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\"";
+      }
+      if ($tabidx) {
+         $opt .= "tabindex=".$tabidx;
       }
       if (is_array($type)) { /* per cercare tra i mastri l'array deve contenere tutti i
         i primi numeri che si vogliono ovvero: 1=attivo,2=passivo,3=ricavi,4=costi, ecc
@@ -1398,8 +1401,8 @@ class GAzieForm {
       } else {
          $where = "codice BETWEEN " . $type . "00000001 AND " . $type . "99999999 AND codice NOT LIKE '" . $admin_aziend['mascli'] . "%' AND codice NOT LIKE '" . $admin_aziend['masfor'] . "%' AND codice NOT LIKE '%000000'";
       }
-      echo "\t<select id=\"$name\" name=\"$name\" class=\"FacetSelect\" $refresh>\n";
-      echo "<option value=\"0\"> ---------- </option>";
+      echo "<select id=\"$name\" name=\"$name\" class=\"FacetSelect\" $opt>\n";
+      echo "\t<option value=\"0\"> ---------- </option>\n";
       $result = gaz_dbi_dyn_query("codice,descri", $gTables['clfoco'], $where, "codice ASC");
       while ($r = gaz_dbi_fetch_array($result)) {
          $selected = '';
@@ -1412,7 +1415,7 @@ class GAzieForm {
          if ($val == $v) {
             $selected .= " selected ";
          }
-         echo "<option value=\"" . $v . "\"" . $selected . ">" . $r["codice"] . " - " . $r['descri'] . "</option>\n";
+         echo "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["codice"] . " - " . $r['descri'] . "</option>\n";
       }
       echo "</select>\n";
    }

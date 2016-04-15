@@ -753,3 +753,6 @@ ul.licheck li {
 label {
     font-weight: 200;
 }
+.ui-widget { 
+	font-size: 12px; 
+}
