@@ -67,7 +67,7 @@ class acquisForm extends GAzieForm {
         }
     }
 
-    function selAmmortamentoMin($nameFileXML, $name, $key, $val, $empty = false, $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null) {
+    function selAmmortamentoMin($nameFileXML, $name, $gruppo_specie, $val) {
         $refresh = '';
         if (file_exists('../../library/include/' . $nameFileXML)) {
             $xml = simplexml_load_file('../../library/include/' . $nameFileXML);
@@ -77,27 +77,24 @@ class acquisForm extends GAzieForm {
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
-        echo "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh >\n";
-        if ($empty) {
-            echo "\t\t <option value=\"\"></option>\n";
-        }
+        echo "\t <select id=\"$name\" name=\"$name\" class=\"FacetSelect\">\n";
         foreach ($xml->gruppo as $vg) {
-            print_r($vg);
             foreach ($vg->specie as $v) {
-                $selected = '';
-                if ($v->ds[0] == $val) {
-                    $selected = "selected";
+                $g_s = $vg->gn[0] . $v->ns[0];
+                if ($g_s == $gruppo_specie) {
+                    $i = 0;
+                    foreach ($v->ssd as $v2) {
+                        $selected = '';
+                        if ($val == $i) {
+                            $selected = 'selected';
+                        }
+                        echo "\t\t <option value=\"" . $i . "\" $selected >" . $v->ssrate[$i] . '% ' . $v2 . "</option>\n";
+                        $i++;
+                    }
                 }
-                echo "\t\t <option value=\"" . $v->ns[0] . "\" $selected >&nbsp;" . $v->ns[0] . " - " . $v->ds[0] . "</option>\n";
             }
         }
-        if ($addOption) {
-            echo "\t\t <option value=\"" . $addOption['value'] . "\"";
-            if ($addOption['value'] == $val) {
-                echo " selected ";
-            }
-            echo ">" . $addOption['descri'] . "</option>\n";
-        }
+
         echo "\t </select>\n";
     }
 

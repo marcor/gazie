@@ -251,7 +251,7 @@ $strScript = array("admin_fornit.php" =>
         'descri'=>'Descrizione bene',
         'amount'=>'Quantità',
         'codvat'=>'I.V.A.',
-        'amm_min'=>'Ammort.Minister.',
+        'amm_min'=>'Ammort.Minister',
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti d\'acquisto',

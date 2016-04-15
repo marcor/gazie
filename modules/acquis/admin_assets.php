@@ -62,7 +62,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['acc-fondo'] = substr($_POST['acc-fondo'], 0, 3);
     $form['descri'] = filter_input(INPUT_POST, 'descri');
     $form['amount'] = floatval($_POST['amount']);
-    $form['amm_min'] = filter_input(INPUT_POST,'amm_min');
+    $form['amm_min'] = filter_input(INPUT_POST, 'amm_min');
     $form['pagame'] = intval($_POST['pagame']);
     $form['change_pag'] = $_POST['change_pag'];
     if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
@@ -277,7 +277,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     } else {
         $form['seziva'] = 1;
     }
-    $form['codvat'] = $admin_aziend['preeminent_vat'];;
+    $form['codvat'] = $admin_aziend['preeminent_vat'];
     $form['protoc'] = 0;
     $form['numfat'] = "";
     $form['clfoco'] = "";
@@ -322,7 +322,12 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
         $('#banapp').selectmenu();
         $("#acc-fondo").selectmenu();
         $('#codvat').selectmenu();
-        $('#amm_min').selectmenu();
+        $('#amm_min').selectmenu({
+            change: function (event, ui) {
+                this.form.hidden_req.value = 'amm_min';
+                this.form.submit();
+            }
+        });
     });
 </script>
 <?php
@@ -365,7 +370,7 @@ if (!empty($msg)) {
             <div class="row">
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="form-group">
-<?php echo $message; ?>                
+                        <?php echo $message; ?>                
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-3">
@@ -398,7 +403,7 @@ if (!empty($msg)) {
                     <div class="form-group">
                         <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
                         <div class="col-sm-8">
-<?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3); ?>
+                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3); ?>
                         </div>
                     </div>
                 </div>
@@ -440,9 +445,19 @@ if (!empty($msg)) {
             <div class="row">
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="form-group">
+                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['amm_min']; ?>:</label>
+                        <div class="col-sm-8">
+                            <?php
+                            $gForm->selAmmortamentoMin('ammortamenti_ministeriali.xml', 'amm_min', $admin_aziend['amm_min'], $form["amm_min"]);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <div class="form-group">
                         <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?>:</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="numfat" name="descri" maxlenght="100" tabindex=14 type="text" placeholder="<?php echo $script_transl['descri']; ?>" type="text" value="<?php echo $form['descri']; ?>">
+                            <input class="form-control" id="numfat" name="descri" maxlenght="100" tabindex=14 type="text" placeholder="<?php echo $script_transl['descri']; ?>" value="<?php echo $form['descri']; ?>">
                         </div>
                     </div>
                 </div>
@@ -450,7 +465,7 @@ if (!empty($msg)) {
                     <div class="form-group">
                         <label for="amount" class="col-sm-4 control-label"><?php echo $script_transl['amount']; ?>:</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="numfat" name="amount" maxlenght="15" tabindex=15 type="text" placeholder="<?php echo $script_transl['amount']; ?>" type="text" value="<?php echo $form['amount']; ?>">
+                            <input class="form-control" id="numfat" name="amount" maxlenght="15" tabindex=15 type="text" placeholder="<?php echo $script_transl['amount']; ?>" value="<?php echo $form['amount']; ?>">
                         </div>
                     </div>
                 </div>
@@ -462,16 +477,6 @@ if (!empty($msg)) {
                             $sel_vat = new selectaliiva("codvat");
                             $sel_vat->addSelected($form["codvat"]);
                             $sel_vat->output();
-                            ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
-                    <div class="form-group">
-                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['amm_min']; ?>:</label>
-                        <div class="col-sm-8">
-                            <?php
-                            $gForm->selAmmortamentoMin( 'ammortamenti_ministeriali.xml' , 'amm_min','',$form["amm_min"] );
                             ?>
                         </div>
                     </div>
