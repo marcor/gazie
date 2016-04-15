@@ -818,7 +818,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else { //se �� un rigo da inserire
             if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
                 $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
-                if ($bodytext) { // il testo aggiuntivo c'è
+            if ($bodytext && ($bodytext['body_text']!='')) { // il testo aggiuntivo c'è (e non è vuoto)
                     $form["row_$next_row"] = $bodytext['body_text'];
                     $form['rows'][$next_row]['tiprig'] = 6;
                     $form['rows'][$next_row]['descri'] = '';

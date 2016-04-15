@@ -201,11 +201,10 @@ if (isset($_POST['preview']) and $msg == '') {
    if (!empty($form['id_anagra'])) {
 //      $cosaStampare = $select_id_anagra->queryClfoco($form['id_anagra'], ($form['clfr'] == 0 ? $admin_aziend['mascli'] : $admin_aziend['masfor'])); // anagrafe selezionata
       $cosaStampare = $form['id_anagra']; // anagrafe selezionata
-   } else {// voglio tutti
-      ini_set('memory_limit', '128M'); // mi occorre tanta memoria
-      gaz_set_time_limit(0);  // e tanto tempo
    }
 
+   ini_set('memory_limit', '128M'); // mi occorre tanta memoria
+   gaz_set_time_limit(0);  // e tanto tempo
 //   $cosaStampare = "103000974";
    $soloAperte = ($_POST['aperte_tutte'] == 0);
    $rs = $scdl->getPartite($form['orderby'], $cosaStampare, $form['id_agente'], $soloAperte);
