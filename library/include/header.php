@@ -50,12 +50,12 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
         <script src="../../js/custom/tinymce.js"></script>
 <?php
         // carico il css strutturale grandezza font, posizione, ecc 
-        $style = 'default.css';
+        $style = 'base.css';
         if (!empty($admin_aziend['style']) && file_exists("../../library/style/" . $admin_aziend['style'])) {
             $style = $admin_aziend['style'];
         }
         // carico i fogli di stile personalizzati nella subdir skin si imposta l'aspetto (colori, font, ecc) 
-        $skin = 'default.css';
+        $skin = 'base.css';
         if (!empty($admin_aziend['skin']) && file_exists("../../library/style/skins/" . $admin_aziend['skin'])) {
             $skin = $admin_aziend['skin'];
         }
