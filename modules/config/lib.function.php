@@ -17,7 +17,7 @@ class configForm extends GAzieForm {
                 if ($vg->gn[0] . $v->ns[0] == $val) {
                     $selected = "selected";
                 }
-                echo "\t\t <option value=\"" . $vg->gn[0] . $v->ns[0] . "\" $selected >" .$vg->gn[0].'-'. $v->ns[0] . " - " . $v->ds[0] . "</option>\n";
+                echo "\t\t <option value=\"" . $vg->gn[0] . $v->ns[0] . "\" $selected >• ". $v->ns[0] . " - " . $v->ds[0] . "</option>\n";
             }
             echo "\t </optgroup>\n";
         }

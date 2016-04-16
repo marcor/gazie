@@ -180,7 +180,7 @@ $strScript = array(
         'ivam_t_value' => array('M' => 'Mensile', 'T' => 'Trimestrale'),
         'preeminent_vat' => 'Aliquota IVA spese (preminente)',
         'interessi' => 'Interessi su IVA Trimestrale',
-        'amm_min' => 'Ammort.Minister.',
+        'amm_min' => 'Tabella Ammortamenti Ministeriali',
     ),
     "report_aziend.php" =>
     array('title' => 'Lista delle aziende installate',
