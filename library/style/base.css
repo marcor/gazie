@@ -8,18 +8,18 @@
 ***************************************/
 
 body {
-/* impostare qua la dimensione dei caratteri*/
-	font-size: 14px;
-	color:#000;
+    /* impostare qua la dimensione dei caratteri*/
+    font-size: 14px;
+
 }
 
 input, select {
-	border-radius: 4px;
+    border-radius: 4px;
 }
 
 .usr-picture {
     width: 150px;
-	box-shadow: 0 0 5px 5px;
+    box-shadow: 0 0 5px 5px;
     border-radius: 48%;
 }
 
@@ -30,90 +30,89 @@ input, select {
 ***************************************/
 
 .FacetSelect {
-	max-width:200px;
-	font-size: 80%;
+    font-size: 80%;
 }
 
 table.Tlarge {
-	border : solid 1px;    
+    border : solid 1px;    
 }
 
 table.Tmiddle {
-	width : 70%;
-	border : solid 1px;
-	margin-left: auto;
-	margin-right: auto;
+    width : 70%;
+    border : solid 1px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 table.Tsmall {
-	width : 50%;
-	border : solid 1px;
-	margin-left: auto;
-	margin-right: auto;
+    width : 50%;
+    border : solid 1px;
+    margin-left: auto;
+    margin-right: auto;
 }
 .FacetFormTABLE {
-	border : solid 1px;
+    border : solid 1px;
 }
 
 .FacetFormHeaderFont {
-	font-weight : bold;
+    font-weight : bold;
 }
 
 .FacetFormHeaderRed {
-	font-weight : bold;
+    font-weight : bold;
 }
 
 .FacetFieldCaptionTD {
-	padding: 0px 3px 0px 5px;
+    padding: 0px 3px 0px 5px;
 }
 
 .FacetDataTRstart td {
-	border-top: 2px solid;
+    border-top: 2px solid;
 }
 
 .FacetDataTRend td {
-	border-bottom: 5px solid;
+    border-bottom: 5px solid;
 }
 
 .FacetDataTD {
-	margin: 2px 2px;
-	padding: 2px 5px 2px 5px;
+    margin: 2px 2px;
+    padding: 2px 5px 2px 5px;
 }
 
 .FacetDataTDsmall {
-	/*background-color : #c9edc8;*/
-	border-bottom: 1px solid;
-	border-right: 1px solid;
+    /*background-color : #c9edc8;*/
+    border-bottom: 1px solid;
+    border-right: 1px solid;
 }
 
 .FacetAltDataTD {
-	/*background-color : #D5F1D4;*/
-	font-size : 110px;
+    /*background-color : #D5F1D4;*/
+    font-size : 110px;
 }
 
 .FacetSeparatorTD {
-	font-size : 85%;
+    font-size : 85%;
 }
 
 .FacetButton {
-	border-left : 1px solid #000000;
-	border-right : 1px solid #000000;
-	border-top : 1px solid #000000;
-	border-bottom : 1px solid #000000;
+    border-left : 1px solid #000000;
+    border-right : 1px solid #000000;
+    border-top : 1px solid #000000;
+    border-bottom : 1px solid #000000;
 }
 
 .FacetInput {
-	border-bottom : 1px solid #000000;
-	border-left : 1px solid #000000;
-	border-right : 1px solid #000000;
-	border-top : 1px solid #000000;
+    border-bottom : 1px solid #000000;
+    border-left : 1px solid #000000;
+    border-right : 1px solid #000000;
+    border-top : 1px solid #000000;
 }
 
 .FacetTextarea {
-	border-bottom : 1px solid #000000;
-	border-left : 1px solid #000000;
-	border-right : 1px solid #000000;
-	border-top : 1px solid #000000;
+    border-bottom : 1px solid #000000;
+    border-left : 1px solid #000000;
+    border-right : 1px solid #000000;
+    border-top : 1px solid #000000;
 }
 
 
@@ -123,22 +122,22 @@ table.Tsmall {
 ***************************************/
 
 .navbar {
-	margin-bottom: 1px;
-	min-height:20px;
+    margin-bottom: 1px;
+    min-height:20px;
 }
 .navbar-default {
     background-color: transparent;
 }
 
 .navbar-header {
-	padding: 0px 0px 0px 0px;
+    padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
-	font-size: 95%;
+    font-size: 95%;
 }
 .navbar-collapse {
     margin-right: 0px;
     margin-left: 0px;
-	padding-left: 0px;
+    padding-left: 0px;
 }
 
 .btn-toolbar {
@@ -150,13 +149,13 @@ table.Tsmall {
 }
 
 .dropdown-menu > li > a {
-	font-size: 90%;
+    font-size: 90%;
 }
 
 .navbar-nav > li > a {
-	padding: 5px 0px 2px 5px;
-	line-height: 2;
-	font-size: 95%;
+    padding: 5px 0px 2px 5px;
+    line-height: 2;
+    font-size: 95%;
 }
 
 .navbar-default .navbar-nav > li > a:hover {
@@ -164,26 +163,29 @@ table.Tsmall {
 }
 
 .nav-mb {
-	min-height: 0px;
+    min-height: 0px;
 }
 
 .form-horizontal .form-group .form-control, 
 .form-horizontal .form-group div select { 
-    margin: 5px 0px 0px 0px;
-	padding: 3px 3px 3px 3px;
+    margin: 3px 0px 0px 0px;
+    padding: 2px 2px 2px 2px;
 }
 
 .form-horizontal .form-group .text-left,
 .form-horizontal .form-group label { 
-    margin: 5px 0px 0px 0px;
-	padding: 3px 3px 3px 3px;
-	font-size: 80%;
+    margin: 3px 0px 0px 0px;
+    padding: 2px 2px 2px 2px;
+    font-size: 80%;
 }
 
 .form-control {
-	height: 24px;
+    height: 24px;
 }
 
+.form-group {
+    margin-bottom: 7px;
+}
 
 
 /**************************************
@@ -191,5 +193,17 @@ table.Tsmall {
 ***************************************/
 
 .ui-widget { 
-	font-size: 12px; 
+    font-size: 12px; 
+}
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
+    border: 0px;
+    border-radius: 4px;
+    font-weight: normal;
+    background: none;
+}
+.ui-selectmenu-button span.ui-selectmenu-text {
+    padding: 3px 3px 3px 3px;
+    line-height: 1;
 }

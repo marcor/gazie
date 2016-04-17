@@ -190,13 +190,13 @@
         <specie>
             <ns>II</ns>
             <ds>Miniere di zolfo</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
             <ssd>Gallerie e pozzi (escluse le armature mobili)</ssd>
             <ssrate>6</ssrate>
-            <ssd>Impianti generici del soprasuolo (come nella SPECIE I)</ssd>
+            <ssd>Impianti generici del soprasuolo</ssd>
             <ssrate>8</ssrate>
             <ssd>Impianti specifici del sottosuolo</ssd>
             <ssrate>16</ssrate>
@@ -218,13 +218,13 @@
         <specie>
             <ns>III</ns>
             <ds>Miniere di combustibili fossili</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
             <ssd>Gallerie e pozzi (escluse le armature mobili)</ssd>
             <ssrate>6</ssrate>
-            <ssd>Impianti generici del soprasuolo (come nella SPECIE I)</ssd>
+            <ssd>Impianti generici del soprasuolo</ssd>
             <ssrate>8</ssrate>
             <ssd>Impianti specifici del sottosuolo</ssd>
             <ssrate>14</ssrate>
@@ -244,11 +244,11 @@
         <specie>
             <ns>IV</ns>
             <ds>Miniere di combustibili liquidi e gassosi</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella SPECIE I)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>8</ssrate>
             <ssd>Impianti specifici dell'industria per lo sfruttamento delle forze endogene</ssd>
             <ssrate>25</ssrate>
@@ -270,7 +270,7 @@
         <specie>
             <ns>V</ns>
             <ds>Cave di marmo e affini, di pietre da costruzione, di calcari, di marne, ecc.</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -294,7 +294,7 @@
         <specie>
             <ns>VI</ns>
             <ds>Cave di sabbia, ghiaia e pietrisco</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -315,8 +315,31 @@
         </specie>
         <specie>
             <ns>VII</ns>
-            <ds>Miniere di salgemma, sorgenti salate naturali e produzione di sale marino e di ebollizione</ds>
-            <ssd>(Vedi SPECIE II).</ssd>
+            <ds>Miniere di salgemma, sorgenti salate naturali e produzione di sale marino e di ebollizione.</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
+            <ssrate>5</ssrate>
+            <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
+            <ssrate>10</ssrate>
+            <ssd>Gallerie e pozzi (escluse le armature mobili)</ssd>
+            <ssrate>6</ssrate>
+            <ssd>Impianti generici del soprasuolo</ssd>
+            <ssrate>8</ssrate>
+            <ssd>Impianti specifici del sottosuolo</ssd>
+            <ssrate>16</ssrate>
+            <ssd>Forni e loro pertinenze</ssd>
+            <ssrate>10</ssrate>
+            <ssd>Attrezzatura varia e minuta e di laboratorio</ssd>
+            <ssrate>30</ssrate>
+            <ssd>Impianti destinati al trattamento ed al depuramento delle acque, fiumi nocivi, ecc. mediante impiego di reagenti chimici</ssd>
+            <ssrate>15</ssrate>
+            <ssd>Mobili e macchine ordinarie d'ufficio</ssd>
+            <ssrate>12</ssrate>
+            <ssd>Macchine d'ufficio elettromeccaniche ed elettroniche compresi i computers e i sistemi telefonici elettronici</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Autoveicoli da trasporto (autoveicoli pesanti in genere, carrelli elevatori, mezzi di trasporto interno, ecc.)</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Autovetture, motoveicoli e simili</ssd>
+            <ssrate>25</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -349,7 +372,7 @@
         <specie>
             <ns>II</ns>
             <ds>Molitura di cereali</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -369,7 +392,7 @@
         <specie>
             <ns>III</ns>
             <ds>Panificazione, produzione di biscotti e di pasticcerie</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -395,7 +418,7 @@
         <specie>
             <ns>IV</ns>
             <ds>Pastificazione</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -417,7 +440,7 @@
         <specie>
             <ns>Va</ns>
             <ds>Lavorazione del cacao, produzione di cioccolato e confetture in genere, torrefazione del caffe', produzione di surrogati</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -437,7 +460,7 @@
         <specie>
             <ns>Vb</ns>
             <ds>Produzione di gelati</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -457,11 +480,11 @@
         <specie>
             <ns>VI</ns>
             <ds>Produzione e raffinazione dello zucchero</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Macchinari e impianti generici (come nella SPECIE IV)</ssd>
+            <ssd>Macchinari e impianti generici</ssd>
             <ssrate>7.5</ssrate>
             <ssd>Macchinari e impianti specifici</ssd>
             <ssrate>12.5</ssrate>
@@ -479,11 +502,11 @@
         <specie>
             <ns>VII</ns>
             <ds>Lavorazione e conservazione delle carni</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Macchinari e impianti generici (come nella SPECIE IV)</ssd>
+            <ssd>Macchinari e impianti generici</ssd>
             <ssrate>9</ssrate>
             <ssd>Macchinari e impianti specifici (compresi i forni e gli impianti di condizionamento</ssd>
             <ssrate>15</ssrate>
@@ -501,7 +524,7 @@
         <specie>
             <ns>VIII</ns>
             <ds>Lavorazione e conservazione dei prodotti alimentari della pesca</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -521,11 +544,11 @@
         <specie>
             <ns>IX</ns>
             <ds>Conservazione e trasformazione di frutta, ortaggi, funghi e prodotti similari (marmellate, conserve di pomodoro, conserve alimentari in genere, dadi per brodo, ecc.)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Macchinari e impianti generici (come nella SPECIE IV)</ssd>
+            <ssd>Macchinari e impianti generici</ssd>
             <ssrate>7.5</ssrate>
             <ssd>Macchinari e impianti specifici compresi gli impianti di condizionamento</ssd>
             <ssrate>14</ssrate>
@@ -567,7 +590,7 @@
         <specie>
             <ns>XI</ns>
             <ds>Produzione di olio d'oliva e di semi, per spremitura, e di olii vegetali, con solventi</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -586,8 +609,8 @@
         </specie>
         <specie>
             <ns>XII</ns>
-            <ds>Raffinazione degli olii vegetali (Vedi SPECIE XI)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ds>Raffinazione degli olii vegetali</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -606,8 +629,8 @@
         </specie>
         <specie>
             <ns>XIII</ns>
-            <ds>Industria dei vini, mosti concentrati ed aceti (Vedi SPECIE XI)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ds>Industria dei vini, mosti concentrati ed aceti</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -626,8 +649,8 @@
         </specie>
         <specie>
             <ns>XIV</ns>
-            <ds>Distillerie di alcole (Vedi SPECIE XI)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ds>Distillerie di alcole</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -646,8 +669,8 @@
         </specie>
         <specie>
             <ns>XV</ns>
-            <ds>Produzione di liquori e affini (Vedi SPECIE XI)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ds>Produzione di liquori e affini</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -667,11 +690,11 @@
         <specie>
             <ns>XVI</ns>
             <ds>Produzione di malto, birra ed estratti di malto</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Macchinari impianti generici (come nella SPECIE IV)</ssd>
+            <ssd>Macchinari impianti generici</ssd>
             <ssrate>7</ssrate>
             <ssd>Macchinari e impianti specifici compresi gli impianti di condizionamento</ssd>
             <ssrate>14</ssrate>
@@ -689,7 +712,7 @@
         <specie>
             <ns>XVII</ns>
             <ds>Produzione di bevande analcoliche gassate e non</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -709,7 +732,7 @@
         <specie>
             <ns>XVIII</ns>
             <ds>Fabbricazione del ghiaccio ed esercizio di frigoriferi per conto terzi</ds>
-            <ssd>Fabbricati destinati all'industria (come nella SPECIE I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -752,7 +775,7 @@
         </specie>
         <specie>
             <ns>II</ns>
-            <ds>Laboratori di falegnameria, di carpenteria in legno. Fabbricazione di oggetti e di recipienti in legno (Vedi SPECIE I)</ds>
+            <ds>Laboratori di falegnameria, di carpenteria in legno. Fabbricazione di oggetti e di recipienti in legno</ds>
             <ssd>Fabbricati destinati all'industria (edifici, opere idrauliche fisse, strade e piazzali, acquedotti e fognature)</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
@@ -772,7 +795,7 @@
         </specie>
         <specie>
             <ns>III</ns>
-            <ds>Costruzione e riparazione di veicoli in legno (Vedi SPECIE I)</ds>
+            <ds>Costruzione e riparazione di veicoli in legno</ds>
             <ssd>Fabbricati destinati all'industria (edifici, opere idrauliche fisse, strade e piazzali, acquedotti e fognature)</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
@@ -792,7 +815,7 @@
         </specie>
         <specie>
             <ns>IV</ns>
-            <ds>Cantieri navali per construzioni, riparazioni e demolizioni di navi in legno (Vedi SPECIE I)</ds>
+            <ds>Cantieri navali per construzioni, riparazioni e demolizioni di navi in legno</ds>
             <ssd>Fabbricati destinati all'industria (edifici, opere idrauliche fisse, strade e piazzali, acquedotti e fognature)</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
@@ -812,7 +835,7 @@
         </specie>
         <specie>
             <ns>V</ns>
-            <ds>Fabbricazione di mobili e di arredamenti in legno, ebanisterie.Lucidatura, laccatura, doratura di mobili e di altri oggetti in legno (Vedi SPECIE I)</ds>
+            <ds>Fabbricazione di mobili e di arredamenti in legno, ebanisterie.Lucidatura, laccatura, doratura di mobili e di altri oggetti in legno</ds>
             <ssd>Fabbricati destinati all'industria (edifici, opere idrauliche fisse, strade e piazzali, acquedotti e fognature)</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
@@ -832,7 +855,7 @@
         </specie>
         <specie>
             <ns>VI</ns>
-            <ds>Preparazione del crine vegetale, della trebbia, del truciolo e treccie di truciolo (non per cappelli) e simili. Lavorazione di canne palustri, vimini, giunchi, pagli e trecce di paglia (non per cappelli), sparto, saggina e simili. Fabbricazione di scope e affini (Vedi SPECIE I)</ds>
+            <ds>Preparazione del crine vegetale, della trebbia, del truciolo e treccie di truciolo (non per cappelli) e simili. Lavorazione di canne palustri, vimini, giunchi, pagli e trecce di paglia (non per cappelli), sparto, saggina e simili. Fabbricazione di scope e affini</ds>
             <ssd>Fabbricati destinati all'industria (edifici, opere idrauliche fisse, strade e piazzali, acquedotti e fognature)</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
@@ -957,11 +980,11 @@
         <specie>
             <ns>Ib</ns>
             <ds>Metallurgia dei metalli non ferrosi (piombo, alluminio, zinco, rame, loro derivati, ecc.)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>17.5</ssrate>
@@ -985,11 +1008,11 @@
         <specie>
             <ns>Ic</ns>
             <ds>Fonderie di II fusione</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari specifici automatici</ssd>
             <ssrate>17.5</ssrate>
@@ -1011,11 +1034,11 @@
         <specie>
             <ns>Id</ns>
             <ds>Industria metallurgica del magnesio</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Celle elettrolitiche - Impianti con intervento di reagenti chimici - Impianti elettrotermici per la produzione del magnesio</ssd>
             <ssrate>17.5</ssrate>
@@ -1037,11 +1060,11 @@
         <specie>
             <ns>II</ns>
             <ds>Fabbriche di macchine industriali ed agricole e di utensileria per macchine utensili</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1062,12 +1085,12 @@
         </specie>
         <specie>
             <ns>III</ns>
-            <ds>Costruzione di pompe, compressori, ventilatori industriali, fucine, rubinetteria, valvole a saracinesca, apparecchi ad aria compressa ed affini (Vedi SPECIE II)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Costruzione di pompe, compressori, ventilatori industriali, fucine, rubinetteria, valvole a saracinesca, apparecchi ad aria compressa ed affini</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1088,12 +1111,12 @@
         </specie>
         <specie>
             <ns>IV</ns>
-            <ds>Costruzione di mobili, letti ed arredi metallici, casseforti, armadi e serrature di sicurezza (Vedi SPECIE II)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Costruzione di mobili, letti ed arredi metallici, casseforti, armadi e serrature di sicurezza</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1114,12 +1137,12 @@
         </specie>
         <specie>
             <ns>V</ns>
-            <ds>Costruzione di apparecchi igienico sanitari e termici per uso domestico (Vedi SPECIE II)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Costruzione di apparecchi igienico sanitari e termici per uso domestico</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1141,11 +1164,11 @@
         <specie>
             <ns>VI</ns>
             <ds>Fabbricazione di serrature comuni e di minuterie metalliche, di molle, di bulloneria grezza, di bulloneria e viteria lavorata e di derivati dalla lavorazione del filo</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1166,12 +1189,12 @@
         </specie>
         <specie>
             <ns>VII</ns>
-            <ds>Fabbricazione di scatolame, fustame metallico e prodotti affini di lamiera sottile (Vedi SPECIE II)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Fabbricazione di scatolame, fustame metallico e prodotti affini di lamiera sottile</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1192,12 +1215,12 @@
         </specie>
         <specie>
             <ns>VIII</ns>
-            <ds>Fabbricazione di stoviglie, vasellame, posateria, attrezzi da cucina e di accessori casalinghi (Vedi SPECIE II)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Fabbricazione di stoviglie, vasellame, posateria, attrezzi da cucina e di accessori casalinghi</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1218,12 +1241,12 @@
         </specie>
         <specie>
             <ns>IX</ns>
-            <ds>Fabbricazione di coltelleria, armi bianche ed attrezzi per arti e mestieri (Vedi SPECIE II)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Fabbricazione di coltelleria, armi bianche ed attrezzi per arti e mestieri</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1244,12 +1267,12 @@
         </specie>
         <specie>
             <ns>X</ns>
-            <ds>Fabbricazione di strumenti ed apparecchi per chirurgia, medicina, odontotecnica e di apparecchi ortopedici (Vedi SPECIE II)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Fabbricazione di strumenti ed apparecchi per chirurgia, medicina, odontotecnica e di apparecchi ortopedici</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1270,12 +1293,12 @@
         </specie>
         <specie>
             <ns>XI</ns>
-            <ds>Fabbricazione di armi da fuoco e di materiale bellico in genere (Vedi SPECIE II)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Fabbricazione di armi da fuoco e di materiale bellico in genere</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Grandi impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1297,11 +1320,11 @@
         <specie>
             <ns>XII</ns>
             <ds>Fabbricazione di bilance, macchine per scrivere addizionatrici calcolatrici ed affini, orologeria, apparecchi per misurazione, strumenti ed installazioni per il controllo del volo e degli impianti propulsori ed installazioni varie di o degli aerei).</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Impianti e macchine operatrici automatici</ssd>
             <ssrate>15.5</ssrate>
@@ -1323,7 +1346,7 @@
         <specie>
             <ns>XIII</ns>
             <ds>Fabbricazione di giocattoli di metallo</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1344,8 +1367,8 @@
         </specie>
         <specie>
             <ns>XIV</ns>
-            <ds>Fabbricazione di medaglie, argenterie, oreficerie, gioiellerie ed affini (Vedi SPECIE XIII)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Fabbricazione di medaglie, argenterie, oreficerie, gioiellerie ed affini</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1366,8 +1389,8 @@
         </specie>
         <specie>
             <ns>XV</ns>
-            <ds>Costruzione e montatura di biciclette e fabbricazione di parti, di ricambi e di accessori (Vedi SPECIE XIII)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Costruzione e montatura di biciclette e fabbricazione di parti, di ricambi e di accessori</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1389,13 +1412,13 @@
         <specie>
             <ns>XVIa</ns>
             <ds>Costruzione e montatura di motoveicoli e fabbricazione di parti di motoveicoli e di accessori</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Piste di prova</ssd>
             <ssrate>7</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici e macchine operatrici non automatiche</ssd>
+            <ssd>Impianti generici e specifici e macchine operatrici non automatiche</ssd>
             <ssrate>10</ssrate>
             <ssd>Impianti specifici e macchine operatrici automatiche</ssd>
             <ssrate>17.5</ssrate>
@@ -1422,14 +1445,14 @@
         </specie>
         <specie>
             <ns>XVIb</ns>
-            <ds>Costruzione e montaggio motori per aviazione (Vedi SPECIE XVI/a)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Costruzione e montaggio motori per aviazione/a)</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Piste di prova</ssd>
             <ssrate>7</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici e macchine operatrici non automatiche</ssd>
+            <ssd>Impianti generici e specifici e macchine operatrici non automatiche</ssd>
             <ssrate>10</ssrate>
             <ssd>Impianti specifici e macchine operatrici automatiche</ssd>
             <ssrate>17.5</ssrate>
@@ -1456,14 +1479,14 @@
         </specie>
         <specie>
             <ns>XVII</ns>
-            <ds>Costruzione di autoveicoli ed autotelai, e fabbricazione di parti di ricambio e di accessori (Vedi SPECIE XVI/a)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Costruzione di autoveicoli ed autotelai, e fabbricazione di parti di ricambio e di accessori/a)</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Piste di prova</ssd>
             <ssrate>7</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici e macchine operatrici non automatiche</ssd>
+            <ssd>Impianti generici e specifici e macchine operatrici non automatiche</ssd>
             <ssrate>10</ssrate>
             <ssd>Impianti specifici e macchine operatrici automatiche</ssd>
             <ssrate>17.5</ssrate>
@@ -1491,11 +1514,11 @@
         <specie>
             <ns>XVIII</ns>
             <ds>Costruzione di carrozzerie per auto, per motoveicoli e per vetture ferrotramviarie e filoviarie, costruzione di rimorchi e fabbricazione di parti ed accessori</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Forni, loro pertinenze e impianti con intervento di reagenti chimici</ssd>
             <ssrate>15</ssrate>
@@ -1518,14 +1541,14 @@
         </specie>
         <specie>
             <ns>XIX</ns>
-            <ds>Costruzione di materiale rotabile ferroviario e filoviario (Vedi SPECIE XVI/a)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Costruzione di materiale rotabile ferroviario e filoviario/a)</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Piste di prova</ssd>
             <ssrate>7</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici e macchine operatrici non automatiche</ssd>
+            <ssd>Impianti generici e specifici e macchine operatrici non automatiche</ssd>
             <ssrate>10</ssrate>
             <ssd>Impianti specifici e macchine operatrici automatiche</ssd>
             <ssrate>17.5</ssrate>
@@ -1552,14 +1575,14 @@
         </specie>
         <specie>
             <ns>XX</ns>
-            <ds>Costruzione e ripazione di aeromobili (Vedi SPECIE XVI/a)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Costruzione e ripazione di aeromobili/a)</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Piste di prova</ssd>
             <ssrate>7</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici e macchine operatrici non automatiche</ssd>
+            <ssd>Impianti generici e specifici e macchine operatrici non automatiche</ssd>
             <ssrate>10</ssrate>
             <ssd>Impianti specifici e macchine operatrici automatiche</ssd>
             <ssrate>17.5</ssrate>
@@ -1586,12 +1609,12 @@
        </specie>
         <specie>
             <ns>XXI</ns>
-            <ds>Cantieri navali per costruzioni, riparazioni e demolizioni di navi in metallo. Imprese di recupero di navi (Vedi SPECIE XVIII)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Cantieri navali per costruzioni, riparazioni e demolizioni di navi in metallo. Imprese di recupero di navi</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Forni, loro pertinenze e impianti con intervento di reagenti chimici</ssd>
             <ssrate>15</ssrate>
@@ -1615,11 +1638,11 @@
         <specie>
             <ns>XXII</ns>
             <ds>Costruzione di macchine, apparecchi e strumenti elettrici, di apparecchi di telecomunicazione in genere, di elettronica specializzata ed affini</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>10</ssrate>
             <ssd>Impianti specifici e macchine operatrici automatiche</ssd>
             <ssrate>15.5</ssrate>
@@ -1643,7 +1666,7 @@
         <specie>
             <ns>XXIII</ns>
             <ds>Officine per fucinatura, stampatura, imbutitura, saldatura (elettrica, alluminotermica ed ossiacetilenica), taglio (con fiamma ossidrica ed ossiacetilenica), tempera, cementazione e trattamenti superficiali ed elettrogalvanici dei metalli</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1664,8 +1687,8 @@
         </specie>
         <specie>
             <ns>XXIV</ns>
-            <ds>Officine da ramaio, lattoniere, stagnino, fabbro ferraio, maniscalco ed arrotino, compresi gli ambulanti (Vedi SPECIE XIII)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Officine da ramaio, lattoniere, stagnino, fabbro ferraio, maniscalco ed arrotino, compresi gli ambulanti</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1687,7 +1710,7 @@
         <specie>
             <ns>XXV</ns>
             <ds>Officine meccaniche per la riparazione di auto, motoveicoli e biciclette, e per riparazioni meccaniche generiche e specializzate</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1708,8 +1731,8 @@
         </specie>
         <specie>
             <ns>XXVI</ns>
-            <ds>Officine per l'installazione e riparazione di impianti, macchinari ed apparecchi elettrici, radiofonici ed affini (Vedi SPECIE XXV)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Officine per l'installazione e riparazione di impianti, macchinari ed apparecchi elettrici, radiofonici ed affini</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1730,8 +1753,8 @@
         </specie>
         <specie>
             <ns>XXVII</ns>
-            <ds>Imprese specializzate, non costruttrici, per l'installazione di impianti termici, di ventilazione, di condizionamento d'aria, idrico sanitari, elettrici, telefonici interni ed affini (Vedi SPECIE XXV)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Imprese specializzate, non costruttrici, per l'installazione di impianti termici, di ventilazione, di condizionamento d'aria, idrico sanitari, elettrici, telefonici interni ed affini</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1752,8 +1775,8 @@
         </specie>
         <specie>
             <ns>XXVIII</ns>
-            <ds>Lavorazione artistica dei metalli non preziosi (Vedi SPECIE XXV)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Lavorazione artistica dei metalli non preziosi</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1774,8 +1797,8 @@
         </specie>
         <specie>
             <ns>XXIX</ns>
-            <ds>Fabbricazione e riparazione di strumenti ed apparecchi musicali (Vedi SPECIE XXV)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ds>Fabbricazione e riparazione di strumenti ed apparecchi musicali</ds>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1823,7 +1846,7 @@
         <specie>
             <ns>II</ns>
             <ds>Lavorazione di pietre dure e preziose per gioiellerie e per uso industriale</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1845,7 +1868,7 @@
         <specie>
             <ns>III</ns>
             <ds>Lavorazione artistica dei marmi e delle pietre</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1867,7 +1890,7 @@
         <specie>
             <ns>IVa</ns>
             <ds>Fabbricazione di calce e gesso</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -1893,13 +1916,13 @@
         <specie>
             <ns>IVb</ns>
             <ds>Fabbricazione di cemento</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Cave</ssd>
             <ssrate>8</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie IV/a) e specifici</ssd>
+            <ssd>Impianti generici e specifici</ssd>
             <ssrate>12.5</ssrate>
             <ssd>Forni e loro pertinenze</ssd>
             <ssrate>15.5</ssrate>
@@ -1919,11 +1942,11 @@
         <specie>
             <ns>Va</ns>
             <ds>Fabbricazione di laterizi</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie IV/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>12</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>15</ssrate>
@@ -1945,11 +1968,11 @@
         <specie>
             <ns>Vb</ns>
             <ds>Fabbricazione di oggetti in gres e materiali refrattari</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie IV/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>12.5</ssrate>
@@ -1971,11 +1994,11 @@
         <specie>
             <ns>Vc</ns>
             <ds>Fabbricazione di abrasivi granulari, rigidi e flessibili</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie IV/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>12.5</ssrate>
@@ -1997,11 +2020,11 @@
         <specie>
             <ns>VI</ns>
             <ds>Industria della ceramica</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie IV/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>12.5</ssrate>
@@ -2023,11 +2046,11 @@
         <specie>
             <ns>VII</ns>
             <ds>Fabbricazione di manufatti di cemento, di conglomerati cementizi misti con fibre e altre materie; di manufatti di gesso e di stucco</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie IV/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>12</ssrate>
             <ssd>Macchinari operatori, impianti specifici e stampi</ssd>
             <ssrate>15.5</ssrate>
@@ -2047,11 +2070,11 @@
         <specie>
             <ns>VIII</ns>
             <ds>Fabbricazione e lavorazione del vetro (esclusa la lavorazione delle lenti per occhiali e per strumenti ottici)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie IV/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>15</ssrate>
@@ -2103,11 +2126,11 @@
         <specie>
             <ns>Ib</ns>
             <ds>Produzione di ammoniaca sintetica, acido nitrico, nitrato di calcio ed ammonico, solfato ammonico ed urea</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>7</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>12.5</ssrate>
             <ssd>Macchinari operatori e impianti specifici per le lavorazioni chimiche non altamente corrosive e per le lavorazioni meccaniche</ssd>
             <ssrate>15</ssrate>
@@ -2129,11 +2152,11 @@
         <specie>
             <ns>II</ns>
             <ds>Raffinerie di petrolio, produzione e distribuzione di benzina e petroli per usi vari, di olii lubrificanti e residuati, produzione e distribuzione di gas di petrolio liquefatto</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici per le lavorazioni chimiche non scarsamente corrosive e per le lavorazioni meccaniche</ssd>
             <ssrate>12.5</ssrate>
@@ -2159,11 +2182,11 @@
         <specie>
             <ns>IIIa</ns>
             <ds>Produzione di derivati della distillazione del carbon fossile, escluse le officine del gas (compresa la produzione e lavorazione dei derivati della distillazione del catrame di carbon fossile)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>9</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>10</ssrate>
@@ -2211,11 +2234,11 @@
         <specie>
             <ns>IV</ns>
             <ds>Produzione di carburanti artificiali liquidi, compresa la produzione di alcole etilico e metilico</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici per le lavorazioni chimiche scarsamente corrosive e per le lavorazioni meccaniche</ssd>
             <ssrate>12.5</ssrate>
@@ -2237,11 +2260,11 @@
         <specie>
             <ns>V</ns>
             <ds>Produzione di gas compressi</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>7.5</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>10</ssrate>
@@ -2263,11 +2286,11 @@
         <specie>
             <ns>VI</ns>
             <ds>Produzione di esplosivi</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>7</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici per le lavorazioni meccaniche</ssd>
             <ssrate>12.5</ssrate>
@@ -2289,11 +2312,11 @@
         <specie>
             <ns>VII</ns>
             <ds>Idrogenazione di olii e grassi vegetali ed animali, e lavorazione dei grassi</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>12.5</ssrate>
@@ -2313,11 +2336,11 @@
         <specie>
             <ns>VIII</ns>
             <ds>Produzione di saponi, glicerine, profumerie, essenze, aromi, derivati agrumari, candele ed affini (compresi i fiammiferi ed i detersivi sintetici)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici per le lavorazioni chimiche scarsamente corrosive e per le lavorazioni meccaniche</ssd>
             <ssrate>12.5</ssrate>
@@ -2339,11 +2362,11 @@
         <specie>
             <ns>IX</ns>
             <ds>Produzioni farmaceutiche, chimico farmaceutiche ed affini</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici per le lavorazioni chimiche scarsamente corrosive e per le lavorazioni meccaniche</ssd>
             <ssrate>12</ssrate>
@@ -2364,7 +2387,7 @@
         </specie>
         <specie>
             <ns>Xa</ns>
-            <ds>Produzione di colori organici e sintetici e relativi prodotti intermedi (vd. specie I/a)</ds>
+            <ds>Produzione di colori organici e sintetici e relativi prodotti intermedi</ds>
             <ssd>Fabbricati destinati all'industria (edifici, opere idrauliche fisse, strade e piazzali, acquedotti e fognature, serbatoi in muratura e vasche di contenimento)</ssd>
             <ssrate>7</ssrate>
             <ssd>Costruzioni leggere (tettoie baracche ecc.)</ssd>
@@ -2391,7 +2414,7 @@
         <specie>
             <ns>Xb</ns>
             <ds>Produzione di estratti concianti, di vernici, pitture, inchiostri, destrine, colle, ceralacche ed affini (comprese matite ed affini)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -2413,11 +2436,11 @@
         <specie>
             <ns>XIa</ns>
             <ds>Produzione di cellulosa (compresa quella per la carta)</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>6</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici per le lavorazioni chimiche scarsamente corrosive e per le lavorazioni meccaniche</ssd>
             <ssrate>12.5</ssrate>
@@ -2439,11 +2462,11 @@
         <specie>
             <ns>XIb</ns>
             <ds>Produzione del trasparente di cellulosa, di fibre tessili artificiali e simili</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>6</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori ed impianti specifici</ssd>
             <ssrate>14</ssrate>
@@ -2462,17 +2485,16 @@
         </specie>
         <specie>
             <ns>XII</ns>
-            <ds>Produzione di materie plastiche e resine sintetiche. Produzione dell'industria petrolchimica non compresa nelle altre specie (vd.</ds>
-            <ssd>specie XI/a)</ssd>
+            <ds>Produzione di materie plastiche e resine sintetiche. Produzione dell'industria petrolchimica non compresa nelle altre specie</ds>
         </specie>
         <specie>
             <ns>XIII</ns>
             <ds>Produzione di materiali sensibili per fotografia e cinematografia</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>9</ssrate>
             <ssd>Macchinari operatori ed impianti specifici</ssd>
             <ssrate>14</ssrate>
@@ -2492,11 +2514,11 @@
         <specie>
             <ns>XIV</ns>
             <ds>Raffinerie di zolfo</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori ed impianti specifici (compresi i forni)</ssd>
             <ssrate>17.5</ssrate>
@@ -2545,7 +2567,7 @@
         </specie>
         <specie>
             <ns>Ib</ns>
-            <ds>Fabbricazione di manufatti di carta e cartone, compresa la produzione di imballaggi (cartotecnica) (vd. specie I/a)</ds>
+            <ds>Fabbricazione di manufatti di carta e cartone, compresa la produzione di imballaggi (cartotecnica)</ds>
             <ssd>Fabbricati destinati all'industria (edifici, opere idrauliche fisse, strade e piazzali, acquedotti e fognature, serbatoi e vasche di contenimento)</ssd>
             <ssrate>5.5</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2597,7 +2619,7 @@
         </specie>
         <specie>
             <ns>II</ns>
-            <ds>Fabbricazione di articoli in cuoio, pelle e loro succedanei esclusi guanti e calzature (vd. specie I)</ds>
+            <ds>Fabbricazione di articoli in cuoio, pelle e loro succedanei esclusi guanti e calzature</ds>
             <ssd>Fabbricati destinati all'industria (edifici, strade e piazzali, acquedotti e fognature, bottali in cemento)</ssd>
             <ssrate>4</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2645,7 +2667,7 @@
         </specie>
         <specie>
             <ns>II</ns>
-            <ds>Filatura (trattura) della seta (vd. specie I)</ds>
+            <ds>Filatura (trattura) della seta</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2667,7 +2689,7 @@
         </specie>
         <specie>
             <ns>III</ns>
-            <ds>Tessitura della seta e delle fibre tessili artificiali (vd.specie I)</ds>
+            <ds>Tessitura della seta e delle fibre tessili artificiali</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2689,7 +2711,7 @@
         </specie>
         <specie>
             <ns>IV</ns>
-            <ds>Produzione di fibre rigenerate (vd. specie I)</ds>
+            <ds>Produzione di fibre rigenerate</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2737,7 +2759,7 @@
         </specie>
         <specie>
             <ns>Vb</ns>
-            <ds>Lavorazione dei cascami di seta, puri o misti ad altre fibre (vd. specie V/a)</ds>
+            <ds>Lavorazione dei cascami di seta, puri o misti ad altre fibre</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2788,7 +2810,7 @@
         </specie>
         <specie>
             <ns>VI</ns>
-            <ds>Lavorazione della lana pura o mista con altre fibre (vd. specie V/a)</ds>
+            <ds>Lavorazione della lana pura o mista con altre fibre</ds>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -2813,7 +2835,7 @@
         </specie>
         <specie>
             <ns>VII</ns>
-            <ds>Lavorazione del lino, della canapa, della juta, del ramie' e simili, puri o misti con altre fibre (vd. specie V/a)</ds>
+            <ds>Lavorazione del lino, della canapa, della juta, del ramie' e simili, puri o misti con altre fibre</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2839,7 +2861,7 @@
         </specie>
         <specie>
             <ns>VIIa</ns>
-            <ds>Fabbricazione di tessuti a maglia (vd. specie V/a)</ds>
+            <ds>Fabbricazione di tessuti a maglia</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2865,7 +2887,7 @@
         </specie>
         <specie>
             <ns>VIII</ns>
-            <ds>Fabbricazione di cordami, spaghi, reti da pesca e da caccia (vd. specie I)</ds>
+            <ds>Fabbricazione di cordami, spaghi, reti da pesca e da caccia</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2887,7 +2909,7 @@
         </specie>
         <specie>
             <ns>IX</ns>
-            <ds>Fabbricazione di passamanerie, tulli, merletti, nastri, tessuti elastici e simili (vd. specie I/a)</ds>
+            <ds>Fabbricazione di passamanerie, tulli, merletti, nastri, tessuti elastici e simili</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2909,7 +2931,7 @@
         </specie>
         <specie>
             <ns>X</ns>
-            <ds>Tintura, candeggio, stampatura, mercerizzazione, rifinitura, impermeabilizzazione ecc. di qualsiasi tessile (vd. specie V/a)</ds>
+            <ds>Tintura, candeggio, stampatura, mercerizzazione, rifinitura, impermeabilizzazione ecc. di qualsiasi tessile</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2935,7 +2957,7 @@
         </specie>
         <specie>
             <ns>XI</ns>
-            <ds>Lavorazione delle setole, del crine animale, del pelo, delle penne, delle piume, del capok e simili (vd. specie I)</ds>
+            <ds>Lavorazione delle setole, del crine animale, del pelo, delle penne, delle piume, del capok e simili</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -2957,7 +2979,7 @@
         </specie>
         <specie>
             <ns>XII</ns>
-            <ds>Fabbricazione dei tappeti da terra (esclusi quelli di cocco e simili) (vd. specie I)</ds>
+            <ds>Fabbricazione dei tappeti da terra (esclusi quelli di cocco e simili)</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3005,7 +3027,7 @@
         </specie>
         <specie>
             <ns>II</ns>
-            <ds>Laboratori di modisteria (vd. specie I)</ds>
+            <ds>Laboratori di modisteria</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3027,7 +3049,7 @@
         </specie>
         <specie>
             <ns>III</ns>
-            <ds>Laboratori per la confezione di vestiario (vd. specie I)</ds>
+            <ds>Laboratori per la confezione di vestiario</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3049,7 +3071,7 @@
         </specie>
         <specie>
             <ns>IV</ns>
-            <ds>Laboratori per la confezione di pellicce (vd. specie I)</ds>
+            <ds>Laboratori per la confezione di pellicce</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3071,7 +3093,7 @@
         </specie>
         <specie>
             <ns>V</ns>
-            <ds>Laboratori per la confezione di biancheria (vd. specie I)</ds>
+            <ds>Laboratori per la confezione di biancheria</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3093,7 +3115,7 @@
         </specie>
         <specie>
             <ns>VI</ns>
-            <ds>Laboratori per la fabbricazione di maglieria, guanti in maglia e calze (vd. specie I)</ds>
+            <ds>Laboratori per la fabbricazione di maglieria, guanti in maglia e calze</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3115,7 +3137,7 @@
         </specie>
         <specie>
             <ns>VII</ns>
-            <ds>Calzaturifici (vd. specie I)</ds>
+            <ds>Calzaturifici</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3137,7 +3159,7 @@
         </specie>
         <specie>
             <ns>VIII</ns>
-            <ds>Laboratori di confezione e riparazione di calzature (vd. specie I)</ds>
+            <ds>Laboratori di confezione e riparazione di calzature</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3159,7 +3181,7 @@
         </specie>
         <specie>
             <ns>IX</ns>
-            <ds>Laboratori per fabbricazione di guanti in pelle, in stoffa o in tessuti di maglia, esclusi quelli in maglia (vd. specie I)</ds>
+            <ds>Laboratori per fabbricazione di guanti in pelle, in stoffa o in tessuti di maglia, esclusi quelli in maglia</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3203,7 +3225,7 @@
         </specie>
         <specie>
             <ns>XI</ns>
-            <ds>Fabbricazione e lavorazione di oggetti di ornamento, compresi quelli di tartaruga, di corallo e simili (vd. specie I)</ds>
+            <ds>Fabbricazione e lavorazione di oggetti di ornamento, compresi quelli di tartaruga, di corallo e simili</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3225,7 +3247,7 @@
         </specie>
         <specie>
             <ns>XII</ns>
-            <ds>Laboratori di materassaio e tappezziere, laboratorie per confezioni di vele, bandiere e simili (vd. specie I)</ds>
+            <ds>Laboratori di materassaio e tappezziere, laboratorie per confezioni di vele, bandiere e simili</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3247,7 +3269,7 @@
         </specie>
         <specie>
             <ns>XIII</ns>
-            <ds>Fabbricazione di giocattoli in genere (esclusi quelli di metallo e di gomma) (vd. specie X)</ds>
+            <ds>Fabbricazione di giocattoli in genere (esclusi quelli di metallo e di gomma)</ds>
             <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche ecc.)</ssd>
@@ -3298,11 +3320,11 @@
         <specie>
             <ns>Ib</ns>
             <ds>Produzione di cavi elettrici.</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>2</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori e impianti specifici</ssd>
             <ssrate>11.5</ssrate>
@@ -3322,11 +3344,11 @@
         <specie>
             <ns>Ic</ns>
             <ds>lavorazione di materie plastiche</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
-            <ssd>Impianti generici (come nella specie I/a)</ssd>
+            <ssd>Impianti generici</ssd>
             <ssrate>7.5</ssrate>
             <ssd>Macchinari operatori e impianti specifici, forni e stampi compresi</ssd>
             <ssrate>12.5</ssrate>
@@ -3370,7 +3392,7 @@
         <specie>
             <ns>II</ns>
             <ds>Laboratori di vulcanizzazione degli oggetti di gomma</ds>
-            <ssd>Fabbricati destinati all'industria (come nella specie I/a)</ssd>
+            <ssd>Fabbricati destinati all'industria</ssd>
             <ssrate>3</ssrate>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
@@ -3442,7 +3464,7 @@
         </specie>
         <specie>
             <ns>III</ns>
-            <ds>Editori di libri e di giornali ed agenzie di stampa (vd. specie I)</ds>
+            <ds>Editori di libri e di giornali ed agenzie di stampa</ds>
             <ssd>Costruzioni leggere (tettoie, baracche, ecc.)</ssd>
             <ssrate>10</ssrate>
             <ssd>Macchinari operatori non automatici ed impianti generici</ssd>

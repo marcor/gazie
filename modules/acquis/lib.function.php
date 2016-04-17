@@ -74,15 +74,13 @@ class acquisForm extends GAzieForm {
         } else {
             exit('Failed to open: ../../library/include/' . $nameFileXML);
         }
-        if (!empty($val_hiddenReq)) {
-            $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
-        }
-        echo "\t <select id=\"$name\" name=\"$name\" class=\"FacetSelect\">\n";
+        echo "\t <select id=\"$name\" name=\"$name\" class=\"col-sm-12 small\" onchange=\"this.form.hidden_req.value='ss_amm_min'; this.form.submit();\">\n";
         foreach ($xml->gruppo as $vg) {
             foreach ($vg->specie as $v) {
                 $g_s = $vg->gn[0] . $v->ns[0];
                 if ($g_s == $gruppo_specie) {
                     $i = 0;
+                    echo '<option value="999"> ---------- </option>';
                     foreach ($v->ssd as $v2) {
                         $selected = '';
                         if ($val == $i) {
@@ -94,7 +92,6 @@ class acquisForm extends GAzieForm {
                 }
             }
         }
-
         echo "\t </select>\n";
     }
 

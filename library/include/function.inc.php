@@ -531,11 +531,13 @@ class SelectBox {
       $this->setSelected($selected);
    }
 
-   function _output($query, $index1, $empty = False, $bridge = '', $index2 = '', $key = 'codice', $refresh = '') {
+   function _output($query, $index1, $empty = false, $bridge = '', $index2 = '', $key = 'codice', $refresh = '',$class=false) {
       if (!empty($refresh)) {
          $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
       }
-      echo "\t <select id=\"$this->name\" name=\"$this->name\" class=\"FacetSelect\" $refresh >\n";
+      $cl='FacetSelect';
+      if ($class){ $cl=$class; }
+      echo "\t <select id=\"$this->name\" name=\"$this->name\" class=\"$cl\" $refresh >\n";
       if ($empty) {
          echo "\t\t <option value=\"\"></option>\n";
       }
@@ -923,11 +925,10 @@ class selectbanapp extends SelectBox {
 // classe per la generazione di select box dei pagamenti
 class selectpagame extends SelectBox {
 
-   function output($refresh = '') {
+   function output($refresh = '', $class=false) {
       global $gTables;
-//      $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `codice`';
       $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `descri`, `codice`';
-      SelectBox::_output($query, 'descri', True, '', '', 'codice', $refresh);
+      SelectBox::_output($query, 'descri', True, '', '', 'codice', $refresh, $class);
    }
 
 }
@@ -1363,7 +1364,7 @@ class GAzieForm {
       echo "\t </select>\n";
    }
 
-   function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx=false) {
+   function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx=false, $class='FacetSelect') {
       global $gTables, $admin_aziend;
       $opt = '';
       $data_color = Array(1 => "88D6FF", 2 => "D6FF88", 3 => "D688FF", 4 => "FFD688", 5 => "FF88D6",
@@ -1401,7 +1402,7 @@ class GAzieForm {
       } else {
          $where = "codice BETWEEN " . $type . "00000001 AND " . $type . "99999999 AND codice NOT LIKE '" . $admin_aziend['mascli'] . "%' AND codice NOT LIKE '" . $admin_aziend['masfor'] . "%' AND codice NOT LIKE '%000000'";
       }
-      echo "<select id=\"$name\" name=\"$name\" class=\"FacetSelect\" $opt>\n";
+      echo "<select id=\"$name\" name=\"$name\" class=\"$class\" $opt>\n";
       echo "\t<option value=\"0\"> ---------- </option>\n";
       $result = gaz_dbi_dyn_query("codice,descri", $gTables['clfoco'], $where, "codice ASC");
       while ($r = gaz_dbi_fetch_array($result)) {

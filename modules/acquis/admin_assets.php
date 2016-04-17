@@ -48,7 +48,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['id_tes'] = intval($_POST['id_tes']);
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner(intval($_POST['clfoco']));
-    $form['hidden_req'] = $_POST['hidden_req'];
+    $form['hidden_req'] = filter_input(INPUT_POST, 'hidden_req');
 // ...e della testata
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
@@ -62,7 +62,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['acc-fondo'] = substr($_POST['acc-fondo'], 0, 3);
     $form['descri'] = filter_input(INPUT_POST, 'descri');
     $form['amount'] = floatval($_POST['amount']);
-    $form['amm_min'] = filter_input(INPUT_POST, 'amm_min');
+    $form['ss_amm_min'] = intval($_POST['ss_amm_min']);
     $form['pagame'] = intval($_POST['pagame']);
     $form['change_pag'] = $_POST['change_pag'];
     if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
@@ -91,7 +91,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['pagame'] = $_POST['pagame'];
         $form['change_pag'] = $_POST['pagame'];
     }
-    $form['banapp'] = intval($_POST['banapp']);
+    $form['valamm'] = floatval($_POST['valamm']);
+
+    if ($form['valamm'] < 0.1 || $form['valamm'] > 100) {
+        // limito a valori reali
+        $form['valamm'] = 0.00;
+    }
 // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         $sezione = $form['seziva'];
@@ -240,7 +245,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_codvat'] = $fornitore['aliiva'];
         $form['pagame'] = $fornitore['codpag'];
         $form['change_pag'] = $fornitore['codpag'];
-        $form['banapp'] = $fornitore['banapp'];
         $form['hidden_req'] = '';
     }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
@@ -283,14 +287,34 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['clfoco'] = "";
     $form['pagame'] = "";
     $form['change_pag'] = "";
-    $form['banapp'] = "";
-    $form['acc-fondo'] = 0;
+    $form['valamm'] = "";
+    $form['acc-fondo'] = $admin_aziend['mas_amm'];
     $form['descri'] = '';
     $form['amount'] = '';
-    $form['amm_min'] = 0;
+    $form['ss_amm_min'] = 999;
     $fornitore['indspe'] = "";
     $fornitore['citspe'] = "";
 }
+
+// ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali 
+$xml = simplexml_load_file('../../library/include/ammortamenti_ministeriali.xml') or die("Error: Cannot create object");
+preg_match("/^([0-9 ]+)([a-zA-Z ]+)$/", $admin_aziend['amm_min'], $m);
+foreach ($xml->gruppo as $vg) {
+    if ($vg->gn[0] == $m[1]) {
+        foreach ($vg->specie as $v) {
+            if ($v->ns[0] == $m[2]) {
+                $amm_gr = $vg->gn[0] . '-' . $vg->gd[0];
+                $amm_sp = $v->ns[0] . '-' . $v->ds[0];
+                // Se viene scelta o cambiata la voce tabella ammortamenti carico il suo nuovo valore
+                if ($form['hidden_req'] == 'ss_amm_min') {
+                    $form['valamm'] = $v->ssrate[$form['ss_amm_min']][0];
+                    $form['hidden_req'] = '';
+                }
+            }
+        }
+    }
+}
+
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
 ?>
@@ -298,33 +322,13 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
     $(function () {
         $("#datreg").datepicker();
         $("#datfat").datepicker();
-        // tutto questo sotto per far funzionare tabindex sui selectmenu :( 
-        $.widget("ui.selectmenu", $.ui.selectmenu, {
-            _create: function () {
-                this._super();
-                this._setTabIndex();
-            },
-            _setTabIndex: function () {
-                this.button.attr("tabindex",
-                        this.options.disabled ? -1 :
-                        this.element.attr("tabindex") || 0);
-            },
-            _setOption: function (key, value) {
-                this._super(key, value);
-                if (key === "disabled") {
-                    this._setTabIndex();
-                }
-            }
-        });
-        // finalmente adesso funziona tabindex :)
-        $('#seziva').selectmenu();
         $('#pagame').selectmenu();
-        $('#banapp').selectmenu();
-        $("#acc-fondo").selectmenu();
+        $('#acc-fondo').selectmenu();
         $('#codvat').selectmenu();
-        $('#amm_min').selectmenu({
+        $('#seziva').selectmenu();
+        $('#ss_amm_min').selectmenu({
             change: function (event, ui) {
-                this.form.hidden_req.value = 'amm_min';
+                this.form.hidden_req.value = 'ss_amm_min';
                 this.form.submit();
             }
         });
@@ -401,9 +405,11 @@ if (!empty($msg)) {
             <div class="row">
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="form-group">
-                        <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
+                        <label for="acc-fondo" class="col-sm-4 control-label"><?php echo $script_transl['acc-fondo']; ?>:</label>
                         <div class="col-sm-8">
-                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3); ?>
+                            <?php
+                            $gForm->selectAccount('acc-fondo', $form['acc-fondo'] . '000000', array(1, 9), '', 13, "col-sm-12 small");
+                            ?>
                         </div>
                     </div>
                 </div>
@@ -414,29 +420,49 @@ if (!empty($msg)) {
                             <?php
                             $select_pagame = new selectpagame("pagame");
                             $select_pagame->addSelected($form["pagame"]);
-                            $select_pagame->output();
+                            $select_pagame->output(false, "col-sm-12 small");
                             ?>                
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="form-group">
-                        <label for="banapp" class="col-sm-4 control-label"><?php echo $script_transl['banapp']; ?>:</label>
+                        <label for="codvat" class="col-sm-4 control-label"><?php echo $script_transl['codvat']; ?>:</label>
                         <div class="col-sm-8">
                             <?php
-                            $select_banapp = new selectbanapp("banapp");
-                            $select_banapp->addSelected($form["banapp"]);
-                            $select_banapp->output();
+                            $sel_vat = new selectaliiva("codvat");
+                            $sel_vat->addSelected($form["codvat"]);
+                            $sel_vat->output(false, "col-sm-12 small");
                             ?>
                         </div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="form-group">
-                        <label for="acc-fondo" class="col-sm-4 control-label"><?php echo $script_transl['acc-fondo']; ?>:</label>
+                        <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
+                        <div class="col-sm-8">
+                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3); ?>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-4 col-lg-4">
+                    <p class="col-sm-12 small bg-info">
+                        <?php echo $amm_gr; ?>
+                    </p>
+                </div>
+                <div class="col-md-4 col-lg-4">
+                    <p class="col-sm-12 small bg-info">
+                        <?php echo $amm_sp; ?>                  
+                    </p>
+                </div>
+                <div class="col-md-4 col-lg-4">
+                    <div class="form-group">
+                        <label for="ss_amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ss_amm_min']; ?>:</label>
                         <div class="col-sm-8">
                             <?php
-                            $gForm->selectAccount('acc-fondo', $form['acc-fondo'] . '000000', array(1, 9), '', 13);
+                            $gForm->selAmmortamentoMin('ammortamenti_ministeriali.xml', 'ss_amm_min', $admin_aziend['amm_min'], $form["ss_amm_min"]);
                             ?>
                         </div>
                     </div>
@@ -445,11 +471,9 @@ if (!empty($msg)) {
             <div class="row">
                 <div class="col-sm-6 col-md-4 col-lg-3">
                     <div class="form-group">
-                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['amm_min']; ?>:</label>
+                        <label for="valamm" class="col-sm-4 control-label"><?php echo $script_transl['valamm']; ?>:</label>
                         <div class="col-sm-8">
-                            <?php
-                            $gForm->selAmmortamentoMin('ammortamenti_ministeriali.xml', 'amm_min', $admin_aziend['amm_min'], $form["amm_min"]);
-                            ?>
+                            <input class="form-control" id="valamm" name="valamm" maxlength="20" tabindex=11 type="text" placeholder="<?php echo $script_transl['valamm']; ?>" type="text" value="<?php echo $form['valamm']; ?>">
                         </div>
                     </div>
                 </div>
@@ -466,18 +490,6 @@ if (!empty($msg)) {
                         <label for="amount" class="col-sm-4 control-label"><?php echo $script_transl['amount']; ?>:</label>
                         <div class="col-sm-8">
                             <input class="form-control" id="numfat" name="amount" maxlenght="15" tabindex=15 type="text" placeholder="<?php echo $script_transl['amount']; ?>" value="<?php echo $form['amount']; ?>">
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
-                    <div class="form-group">
-                        <label for="codvat" class="col-sm-4 control-label"><?php echo $script_transl['codvat']; ?>:</label>
-                        <div class="col-sm-8">
-                            <?php
-                            $sel_vat = new selectaliiva("codvat");
-                            $sel_vat->addSelected($form["codvat"]);
-                            $sel_vat->output();
-                            ?>
                         </div>
                     </div>
                 </div>

@@ -43,6 +43,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['mascli'] = intval(substr($_POST['mascli'], 0, 3));
     $form['masfor'] = intval(substr($_POST['masfor'], 0, 3));
     $form['mas_staff'] = intval(substr($_POST['mas_staff'], 0, 3));
+    $form['mas_amm'] = intval(substr($_POST['mas_amm'], 0, 3));
     $form['masban'] = intval(substr($_POST['masban'], 0, 3));
     $form['virtual_stamp_auth_date_Y'] = intval($_POST['virtual_stamp_auth_date_Y']);
     $form['virtual_stamp_auth_date_M'] = intval($_POST['virtual_stamp_auth_date_M']);
@@ -204,7 +205,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['intermediary_descr'] = '';
     }
-    $form['amm_min'] = '';
 }
 
 require("../../library/include/header.php");
@@ -464,6 +464,11 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['masban'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
 $gForm->selectAccount('masban', $form['masban'] . '000000', array(1, 9));
+echo "</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['mas_amm'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+$gForm->selectAccount('mas_amm', $form['mas_amm'] . '000000', array(1, 9));
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

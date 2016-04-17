@@ -1,17 +1,58 @@
 ﻿/*********************** FOGLIO DI STILE DELL'ASPETTO *************************/
 /*********************** APPEARANCE STYLESHEET ************************************/
+
+
+
+/**************************************
+************ GENERICI *****************
+***************************************/
+
 body {
 	background-image : url("../../../library/images/gazbw.png");
+	color:#000;
 }
+
 select:focus, input:focus {
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 255, 0.6);
 }
+
 mark {
     background-color: #ff0;
 }
+
+
+
+/**************************************
+**** BOOTSTRAP & SMARTMENU ************
+***************************************/
+
 .navbar-default .navbar-nav > li > a {
     color: #000;
 }
+
 .form-control {
-color: #000;
+	color: #000;
+}
+
+
+
+/**************************************
+************** JQUERY UI **************
+***************************************/
+.ui-state-default,
+.ui-widget-content .ui-state-default,
+.ui-widget-header .ui-state-default {
+	border: 1px solid #ccc;
+	color: #000;
+}
+
+.ui-state-default:focus,
+.ui-widget-content:focus .ui-state-default:focus,
+.ui-widget-header:focus .ui-state-default:focus {
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 255, 0.6);
+}
+.ui-widget-content {
+    border: 1px solid #dddddd;
+    background: none;
+    background-color: #fff;
 }

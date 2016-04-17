@@ -8,8 +8,8 @@ class configForm extends GAzieForm {
         } else {
             exit('Failed to open: ../../library/include/' . $nameFileXML);
         }
-        echo "\t <select id=\"$name\" name=\"$name\" style=\"width: 400px; font-height:6px;\" >\n";
-        echo "\t\t <option value=\"\"></option>\n";
+        echo "\t <select id=\"$name\" name=\"$name\" style=\"width: 400px; font-height:6px;\"  >\n";
+        echo "\t\t <option value=\"\">-----------------</option>\n";
         foreach ($xml->gruppo as $vg) {
             echo "\t <optgroup label=\"" . $vg->gn[0] .'-'. $vg->gd[0] . "\" >\n";
             foreach ($vg->specie as $v) {
