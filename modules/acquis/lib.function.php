@@ -74,7 +74,7 @@ class acquisForm extends GAzieForm {
         } else {
             exit('Failed to open: ../../library/include/' . $nameFileXML);
         }
-        echo "\t <select id=\"$name\" name=\"$name\" class=\"col-sm-12 small\" onchange=\"this.form.hidden_req.value='ss_amm_min'; this.form.submit();\">\n";
+        echo "\t <select id=\"$name\" name=\"$name\" tabindex=13 class=\"col-lg-12 small\" onchange=\"this.form.hidden_req.value='ss_amm_min'; this.form.submit();\">\n";
         foreach ($xml->gruppo as $vg) {
             foreach ($vg->specie as $v) {
                 $g_s = $vg->gn[0] . $v->ns[0];

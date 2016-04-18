@@ -26,6 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = "";
 
+
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 } else {
@@ -61,7 +62,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['clfoco'] = intval($_POST['clfoco']);
     $form['acc-fondo'] = substr($_POST['acc-fondo'], 0, 3);
     $form['descri'] = filter_input(INPUT_POST, 'descri');
-    $form['amount'] = floatval($_POST['amount']);
+    $form['unimis'] = filter_input(INPUT_POST, 'unimis');
+    $form['quantity'] = floatval($_POST['quantity']);
+    $form['price'] = floatval($_POST['price']);
     $form['ss_amm_min'] = intval($_POST['ss_amm_min']);
     $form['pagame'] = intval($_POST['pagame']);
     $form['change_pag'] = $_POST['change_pag'];
@@ -287,10 +290,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['clfoco'] = "";
     $form['pagame'] = "";
     $form['change_pag'] = "";
-    $form['valamm'] = "";
+    $form['valamm'] = 0;
     $form['acc-fondo'] = $admin_aziend['mas_amm'];
     $form['descri'] = '';
-    $form['amount'] = '';
+    $form['unimis'] = '';
+    $form['quantity'] = 1;
+    $form['price'] = 0;
     $form['ss_amm_min'] = 999;
     $fornitore['indspe'] = "";
     $fornitore['citspe'] = "";
@@ -314,7 +319,10 @@ foreach ($xml->gruppo as $vg) {
         }
     }
 }
-
+/* prove di formattazione date per tutte le esigenze
+echo 'alla fine dell\'anno mancano '.365-date("z", gaz_format_date($form['datreg'],2)).' gg';
+echo '<br>'.gaz_format_date($form['datreg'],false,true);
+*/
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
 ?>
@@ -322,6 +330,25 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
     $(function () {
         $("#datreg").datepicker();
         $("#datfat").datepicker();
+        // tutto questo sotto per far funzionare tabindex sui selectmenu :( 
+        $.widget("ui.selectmenu", $.ui.selectmenu, {
+            _create: function () {
+                this._super();
+                this._setTabIndex();
+            },
+            _setTabIndex: function () {
+                this.button.attr("tabindex",
+                        this.options.disabled ? -1 :
+                        this.element.attr("tabindex") || 0);
+            },
+            _setOption: function (key, value) {
+                this._super(key, value);
+                if (key === "disabled") {
+                    this._setTabIndex();
+                }
+            }
+        });
+        // finalmente adesso funziona tabindex :)
         $('#pagame').selectmenu();
         $('#acc-fondo').selectmenu();
         $('#codvat').selectmenu();
@@ -331,6 +358,12 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
                 this.form.hidden_req.value = 'ss_amm_min';
                 this.form.submit();
             }
+        });
+        $('#price').change(function () {
+            this.form.submit();
+        });
+        $('#quantity').change(function () {
+            this.form.submit();
         });
     });
 </script>
@@ -372,12 +405,12 @@ if (!empty($msg)) {
     <div class="panel panel-default">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <?php echo $message; ?>                
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?>:</label>
                         <div class="col-sm-8">
@@ -385,15 +418,15 @@ if (!empty($msg)) {
                         </div>
                     </div>
                 </div>                    
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="numfat" class="col-sm-4 control-label"><?php echo $script_transl['numfat']; ?>:</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="numfat" name="numfat" maxlength="20" tabindex=11 type="text" placeholder="<?php echo $script_transl['numfat']; ?>" type="text" value="<?php echo $form['numfat']; ?>">
+                            <input type="text" class="form-control" id="numfat" name="numfat" maxlength="20" tabindex=11 placeholder="<?php echo $script_transl['numfat']; ?>" type="text" value="<?php echo $form['numfat']; ?>">
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="datfat" class="col-sm-4 control-label"><?php echo $script_transl['datfat']; ?>:</label>
                         <div class="col-sm-8">
@@ -403,41 +436,41 @@ if (!empty($msg)) {
                 </div>
             </div> <!-- chiude row  -->
             <div class="row">
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="acc-fondo" class="col-sm-4 control-label"><?php echo $script_transl['acc-fondo']; ?>:</label>
                         <div class="col-sm-8">
                             <?php
-                            $gForm->selectAccount('acc-fondo', $form['acc-fondo'] . '000000', array(1, 9), '', 13, "col-sm-12 small");
+                            $gForm->selectAccount('acc-fondo', $form['acc-fondo'] . '000000', array(1, 9), '', 13, "col-lg-12 small");
                             ?>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?>:</label>
                         <div class="col-sm-8">
                             <?php
                             $select_pagame = new selectpagame("pagame");
                             $select_pagame->addSelected($form["pagame"]);
-                            $select_pagame->output(false, "col-sm-12 small");
+                            $select_pagame->output(false, "col-lg-12 small");
                             ?>                
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="codvat" class="col-sm-4 control-label"><?php echo $script_transl['codvat']; ?>:</label>
                         <div class="col-sm-8">
                             <?php
                             $sel_vat = new selectaliiva("codvat");
                             $sel_vat->addSelected($form["codvat"]);
-                            $sel_vat->output(false, "col-sm-12 small");
+                            $sel_vat->output(false, "col-lg-12 small");
                             ?>
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
                         <div class="col-sm-8">
@@ -447,17 +480,19 @@ if (!empty($msg)) {
                 </div>
             </div> <!-- chiude row  -->
             <div class="row">
-                <div class="col-md-4 col-lg-4">
+                <div class="col-md-12 col-lg-6">
                     <p class="col-sm-12 small bg-info">
                         <?php echo $amm_gr; ?>
                     </p>
                 </div>
-                <div class="col-md-4 col-lg-4">
+                <div class="col-md-12 col-lg-6">
                     <p class="col-sm-12 small bg-info">
                         <?php echo $amm_sp; ?>                  
                     </p>
                 </div>
-                <div class="col-md-4 col-lg-4">
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="ss_amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ss_amm_min']; ?>:</label>
                         <div class="col-sm-8">
@@ -467,29 +502,53 @@ if (!empty($msg)) {
                         </div>
                     </div>
                 </div>
-            </div> <!-- chiude row  -->
-            <div class="row">
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="valamm" class="col-sm-4 control-label"><?php echo $script_transl['valamm']; ?>:</label>
-                        <div class="col-sm-8">
-                            <input class="form-control" id="valamm" name="valamm" maxlength="20" tabindex=11 type="text" placeholder="<?php echo $script_transl['valamm']; ?>" type="text" value="<?php echo $form['valamm']; ?>">
+                        <label for="valamm" class="col-sm-8 control-label"><?php echo $script_transl['valamm']; ?>:</label>
+                        <div class="col-sm-4">
+                            <input type="number" step="0.1" min="0.1" max="100" class="form-control" id="valamm" name="valamm" placeholder="<?php echo $script_transl['valamm']; ?>" value="<?php echo $form['valamm']; ?>">
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
+                <div class="col-sm-12 col-md-6 col-lg-6">
                     <div class="form-group">
                         <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?>:</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="numfat" name="descri" maxlenght="100" tabindex=14 type="text" placeholder="<?php echo $script_transl['descri']; ?>" value="<?php echo $form['descri']; ?>">
+                            <input type="text" class="form-control" id="numfat" name="descri" maxlenght="100" tabindex=14 placeholder="<?php echo $script_transl['descri']; ?>" value="<?php echo $form['descri']; ?>">
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-6 col-md-4 col-lg-3">
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="amount" class="col-sm-4 control-label"><?php echo $script_transl['amount']; ?>:</label>
+                        <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?>:</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="numfat" name="amount" maxlenght="15" tabindex=15 type="text" placeholder="<?php echo $script_transl['amount']; ?>" value="<?php echo $form['amount']; ?>">
+                            <input type="text" class="form-control" id="unimis" name="unimis" maxlenght="10" tabindex=15 placeholder="<?php echo $script_transl['unimis']; ?>" value="<?php echo $form['unimis']; ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="quantity" class="col-sm-4 control-label"><?php echo $script_transl['quantity']; ?>:</label>
+                        <div class="col-sm-8">
+                            <input type="number" step="0.1" min="1" class="form-control" id="quantity" name="quantity" tabindex=16 placeholder="<?php echo $script_transl['quantity']; ?>" value="<?php echo $form['quantity']; ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="price" class="col-sm-4 control-label"><?php echo $script_transl['price']; ?>:</label>
+                        <div class="col-sm-8">
+                            <input type="number" step="0.01" min="0.01" class="form-control" id="price" name="price" tabindex=17 placeholder="<?php echo $script_transl['price']; ?>" value="<?php echo $form['price']; ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?>:</label>
+                        <div class="col-sm-4 bg-success">
+                            <?php echo gaz_format_number(CalcolaImportoRigo($form['quantity'], $form['price'], 0)); ?>
                         </div>
                     </div>
                 </div>

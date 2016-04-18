@@ -28,7 +28,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 }
 ?>
 <!DOCTYPE html>
-<html lang="<?php  echo strtolower($admin_aziend['country']); ?>">
+<html lang="en">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">

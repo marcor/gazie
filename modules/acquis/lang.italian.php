@@ -249,8 +249,11 @@ $strScript = array("admin_fornit.php" =>
         'numfat'=>"Numero fatt.",
         'acc-fondo'=>'Immobilizzaz',
         'descri'=>'Descrizione bene',
-        'amount'=>'Quantità',
+        'quantity'=>'Quantità',
+        'unimis'=>'Unità Misura',
+        'price'=>'Prezzo',
         'codvat'=>'I.V.A.',
+        'amount'=>'Costo totale del bene € ',
         'ss_amm_min'=>'Ammort.Minister',
     ),
     "accounting_documents.php" =>

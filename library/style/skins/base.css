@@ -34,7 +34,16 @@ mark {
 	color: #000;
 }
 
+.btn-elimina {
+    color: #ff3939;
+}
 
+
+.btn-edit {
+    float: right;
+    background-color: #fa50f8;
+    color: #000;
+}
 
 /**************************************
 ************** JQUERY UI **************
