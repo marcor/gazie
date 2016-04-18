@@ -26,6 +26,9 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = "";
 
+function amm_compute($amount, $perc, $gg) {
+    return;
+}
 
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -319,10 +322,8 @@ foreach ($xml->gruppo as $vg) {
         }
     }
 }
-/* prove di formattazione date per tutte le esigenze
-echo 'alla fine dell\'anno mancano '.365-date("z", gaz_format_date($form['datreg'],2)).' gg';
-echo '<br>'.gaz_format_date($form['datreg'],false,true);
-*/
+$amount = CalcolaImportoRigo($form['quantity'], $form['price'], 0);
+$gg = intval(365 - date("z", gaz_format_date($form['datreg'], 2)));
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
 ?>
@@ -331,7 +332,7 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
         $("#datreg").datepicker();
         $("#datfat").datepicker();
         // tutto questo sotto per far funzionare tabindex sui selectmenu :( 
-        $.widget("ui.selectmenu", $.ui.selectmenu, {
+/*        $.widget("ui.selectmenu", $.ui.selectmenu, {
             _create: function () {
                 this._super();
                 this._setTabIndex();
@@ -347,7 +348,7 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
                     this._setTabIndex();
                 }
             }
-        });
+        });*/
         // finalmente adesso funziona tabindex :)
         $('#pagame').selectmenu();
         $('#acc-fondo').selectmenu();
@@ -495,11 +496,9 @@ if (!empty($msg)) {
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="ss_amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ss_amm_min']; ?>:</label>
-                        <div class="col-sm-8">
                             <?php
                             $gForm->selAmmortamentoMin('ammortamenti_ministeriali.xml', 'ss_amm_min', $admin_aziend['amm_min'], $form["ss_amm_min"]);
                             ?>
-                        </div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
@@ -548,8 +547,26 @@ if (!empty($msg)) {
                     <div class="form-group">
                         <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?>:</label>
                         <div class="col-sm-4 bg-success">
-                            <?php echo gaz_format_number(CalcolaImportoRigo($form['quantity'], $form['price'], 0)); ?>
+                            <?php
+                            echo gaz_format_number($amount);
+                            ?>
                         </div>
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+        </div><!-- chiude container  -->
+    </div><!-- chiude panel  -->
+    <div class="panel panel-info">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12 col-lg-6">
+                    <div class="form-group">
+                        <p class="col-sm-12 bg-info">
+                            <?php
+                            echo $gg . $script_transl['info']['gg_to_year_end_1'] . substr($form['datreg'], 6, 4) .
+                            $script_transl['info']['gg_to_year_end_2'] . round($amount * $form['valamm'] * $gg / 36500, 2);
+                            ?>
+                        </p>
                     </div>
                 </div>
             </div> <!-- chiude row  -->

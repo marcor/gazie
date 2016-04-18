@@ -82,7 +82,7 @@ $strScript = array("admin.php" =>
         /* 6 */ " Conferma nuova password ",
         'log' => "Accesso al sistema localizzato in:",
         'welcome' => "Benvenuto in GAzie",
-        'intro' => "il Gestionale multiAZIEndale che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, i magazzini e tanto altro e di molte ditte contemporaneamente.",
+        'intro' => "il Gestionale multiAZIEndale che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.",
         'usr_psw' => "Inserisci il nome utente e la password che ti sono stati assegnati per iniziare:",
         'ins_psw' => "Inserisci Password",
         'label_conf_psw' => "Conferma Password",
