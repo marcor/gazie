@@ -314,7 +314,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?>:</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="datreg" name="datreg" tabindex=10 value="<?php echo $form['datreg']; ?>">
+                            <input type="date" class="form-control" id="datreg" name="datreg" tabindex=10 value="<?php echo $form['datreg']; ?>">
                         </div>
                     </div>
                 </div>                    
@@ -330,7 +330,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="datfat" class="col-sm-4 control-label"><?php echo $script_transl['datfat']; ?>:</label>
                         <div class="col-sm-8">
-                            <input class="form-control" id="datfat" name="datfat" tabindex=12 value="<?php echo $form['datfat']; ?>">
+                            <input type="date" class="form-control" id="datfat" name="datfat" tabindex=12 value="<?php echo $form['datfat']; ?>">
                         </div>
                     </div>
                 </div>
