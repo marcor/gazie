@@ -95,6 +95,23 @@ class acquisForm extends GAzieForm {
         echo "\t </select>\n";
     }
 
+    function toast($message, $transl, $id = 'toast-message', $class = 'alert-warning') {
+        if (!empty($message)) {
+            echo '<div class="container">
+			<div class="row alert ' . $class . ' fade in" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				';
+            foreach ($message as $v) {
+                echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> ERROR!=> ' . $transl[$v] . "<br>\n";
+            }
+            echo "</div>
+		</div>\n";
+        }
+        return '';
+    }
+
 }
 
 ?>

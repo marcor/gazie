@@ -24,11 +24,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$msg = "";
+$msg = array('err' => array(), 'ale' => array());
 
-function amm_compute($amount, $perc, $gg) {
-    return;
-}
 
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -105,93 +102,25 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
-        $sezione = $form['seziva'];
-        $datfat = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
-        $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
-        $initra = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
-        $utstra = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
-        if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT vs Fattura differita
-            if ($utstra < $utsemi) {
-                $msg .= "38+";
-            }
-            if (!checkdate($form['mesreg'], $form['gioreg'], $form['annreg'])) {
-                $msg .= "37+";
-            }
-        } else {
-            if ($utstra > $utsemi) {
-                $msg .= "53+";
-            }
-            if (!checkdate($form['mesreg'], $form['gioreg'], $form['annreg'])) {
-                $msg .= "54+";
-            }
-            if (empty($form['numfat'])) {
-                $msg .= "55+";
-            }
+        $utsfat = gaz_format_date($form['datfat'], 3);
+        $utsreg = gaz_format_date($form['datreg'], 3);
+        if ($utsreg < $utsfat) {
+            $msg['err'][] = 'regdat';
         }
-        if (!isset($_POST['rows'])) {
-            $msg .= "39+";
+        if (empty($form['numfat'])) {
+            $msg['err'][] = 'numfat';
         }
 // --- inizio controllo coerenza date-numerazione
         if ($toDo == 'update') {  // controlli in caso di modifica
-            if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT vs Fattura differita
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = " . $form['annemi'] . " and datfat < '$datfat' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc desc", 0, 1);
-                $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
-                if ($result and ( $form['numdoc'] < $result['numdoc'])) {
-                    $msg .= "40+";
-                }
-                $rs_query = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = " . $form['annemi'] . " and datfat > '$datfat' and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione", "numdoc asc", 0, 1);
-                $result = gaz_dbi_fetch_array($rs_query); //giorni successivi
-                if ($result and ( $form['numdoc'] > $result['numdoc'])) {
-                    $msg .= "41+";
-                }
-            } elseif ($form['tipdoc'] == 'ADT') { //se è un DDT acquisto non faccio controlli
-            } else { //se sono altri documenti
-            }
-        } else {    //controlli in caso di inserimento
-            if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT
-                $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = " . $form['annemi'] . " and tipdoc like 'DD_' and seziva = $sezione", "numdoc desc, datfat desc", 0, 1);
-                $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
-                $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datfat'], 5, 2), substr($ultimo_ddt['datfat'], 8, 2), substr($ultimo_ddt['datfat'], 0, 4));
-                if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
-                    $msg .= "44+";
-                }
-            } else { //se sono altri documenti
-            }
+        } else {                   //controlli in caso di inserimento
         }
 // --- fine controllo coerenza date-numeri
-        if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi']))
-            $msg .= "46+";
         if (empty($form["clfoco"]))
-            $msg .= "47+";
+            $msg['err'][] = 'numfat';
         if (empty($form["pagame"]))
-            $msg .= "48+";
+            $msg['err'][] = 'numfat';
         if ($msg == "") {// nessun errore
-            if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
-                $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
-                $form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor']);
-            }
             if ($toDo == 'update') { // e' una modifica
-//modifico la testata con i nuovi dati...
-                $old_head = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $form['id_tes']);
-                if (substr($form['tipdoc'], 0, 2) == 'DD') { //se è un DDT non fatturato
-                    $form['datfat'] = '';
-                    $form['numfat'] = 0;
-                } else {
-                    $form['datfat'] = $initra;
-                    $form['numdoc'] = $form['numfat']; // coincidono se il doc è emesso dal fornitore
-                }
-                $form['geneff'] = $old_head['geneff'];
-                $form['id_contract'] = $old_head['id_contract'];
-                $form['id_con'] = $old_head['id_con'];
-                $form['status'] = $old_head['status'];
-                $form['datfat'] = $datfat;
-                $codice = array('id_tes', $form['id_tes']);
-                tesdocUpdate($codice, $form);
-                $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
-// prima di uscire cancello eventuali precedenti file temporanei
-                foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {
-                    unlink($fn);
-                }
                 header("Location: " . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
@@ -329,61 +258,29 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
 ?>
 <script>
     $(function () {
-        $("#datreg").datepicker();
-        $("#datfat").datepicker();
-        // tutto questo sotto per far funzionare tabindex sui selectmenu :( 
-/*        $.widget("ui.selectmenu", $.ui.selectmenu, {
-            _create: function () {
-                this._super();
-                this._setTabIndex();
-            },
-            _setTabIndex: function () {
-                this.button.attr("tabindex",
-                        this.options.disabled ? -1 :
-                        this.element.attr("tabindex") || 0);
-            },
-            _setOption: function (key, value) {
-                this._super(key, value);
-                if (key === "disabled") {
-                    this._setTabIndex();
-                }
-            }
-        });*/
-        // finalmente adesso funziona tabindex :)
-        $('#pagame').selectmenu();
-        $('#acc-fondo').selectmenu();
-        $('#codvat').selectmenu();
-        $('#seziva').selectmenu();
-        $('#ss_amm_min').selectmenu({
-            change: function (event, ui) {
-                this.form.hidden_req.value = 'ss_amm_min';
-                this.form.submit();
-            }
+        function sumVal() {
+            var quantity = parseFloat($('#quantity').val());
+            var valamm = parseFloat($('#valamm').val());
+            var gg = parseFloat($('#gg').val());
+            var price = parseFloat($('#price').val());
+            var amount = price * quantity;
+            var amount_rate = amount * valamm*gg/36500;
+            $("#amount").text(amount.toFixed(2).toString());;
+            $("#amount_rate").text(amount_rate.toFixed(2).toString());;
+        }
+        $("#datreg, #datfat").datepicker();
+        $("#datreg").change(function () {
+           this.form.submit();
         });
-        $('#price').change(function () {
-            this.form.submit();
-        });
-        $('#quantity').change(function () {
-            this.form.submit();
+        $('#valamm, #price, #quantity').change(function () {
+            sumVal();
         });
     });
 </script>
 <?php
 $gForm = new acquisForm();
-if (!empty($msg)) {
-    $message = '<div class="col-sm-12">';
-    $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
-    foreach ($rsmsg as $value) {
-        $message .= $script_transl['error'] . "! -> ";
-        $rsval = explode('-', chop($value));
-        foreach ($rsval as $valmsg) {
-            $message .= $script_transl[$valmsg] . " ";
-        }
-        $message .= "<br>";
-    }
-    $message .= '</div>';
-} else {
-    $message = '<label for="msg_ind" class="col-sm-4 control-label">' . $script_transl['indspe'] . ':</label><div class="col-sm-8 text-left">' . $fornitore['indspe'] . ' ' . $fornitore['citspe'] . '</div>';
+if (count($msg['err']) > 0) { // ho un errore
+    $gForm->toast($msg['err'], $script_transl['err'], 'err-entry', 'alert-danger');
 }
 ?>
 <form class="form-horizontal" role="form" method="post" name="docacq" enctype="multipart/form-data" >
@@ -392,6 +289,7 @@ if (!empty($msg)) {
     <input type="hidden" value="<?php echo $form['id_tes']; ?>" name="id_tes">
     <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
     <input type="hidden" value="<?php echo $form['change_pag']; ?>" name="change_pag">
+    <input type="hidden" value="<?php echo $gg; ?>" id="gg">
     <div class="text-center">
         <p>
             <b>
@@ -408,7 +306,8 @@ if (!empty($msg)) {
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <?php echo $message; ?>                
+                        <label for="indspe" class="col-sm-4 control-label"><?php echo $script_transl['indspe']; ?></label>
+                        <div class="col-sm-8 text-left"><?php echo $fornitore['indspe'] . ' ' . $fornitore['citspe']; ?></div>                
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
@@ -440,9 +339,9 @@ if (!empty($msg)) {
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="acc-fondo" class="col-sm-4 control-label"><?php echo $script_transl['acc-fondo']; ?>:</label>
-                        <div class="col-sm-8">
+                        <div>
                             <?php
-                            $gForm->selectAccount('acc-fondo', $form['acc-fondo'] . '000000', array(1, 9), '', 13, "col-lg-12 small");
+                            $gForm->selectAccount('acc-fondo', $form['acc-fondo'] . '000000', array(1, 9), '', 13, "col-sm-8 small");
                             ?>
                         </div>
                     </div>
@@ -450,11 +349,11 @@ if (!empty($msg)) {
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?>:</label>
-                        <div class="col-sm-8">
+                        <div>
                             <?php
                             $select_pagame = new selectpagame("pagame");
                             $select_pagame->addSelected($form["pagame"]);
-                            $select_pagame->output(false, "col-lg-12 small");
+                            $select_pagame->output(false, "col-sm-8 small");
                             ?>                
                         </div>
                     </div>
@@ -462,11 +361,11 @@ if (!empty($msg)) {
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="codvat" class="col-sm-4 control-label"><?php echo $script_transl['codvat']; ?>:</label>
-                        <div class="col-sm-8">
+                        <div>
                             <?php
                             $sel_vat = new selectaliiva("codvat");
                             $sel_vat->addSelected($form["codvat"]);
-                            $sel_vat->output(false, "col-lg-12 small");
+                            $sel_vat->output("col-sm-8 small");
                             ?>
                         </div>
                     </div>
@@ -475,7 +374,7 @@ if (!empty($msg)) {
                     <div class="form-group">
                         <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
                         <div class="col-sm-8">
-                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3); ?>
+                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3, 'col-sm-8 small'); ?>
                         </div>
                     </div>
                 </div>
@@ -496,9 +395,9 @@ if (!empty($msg)) {
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="ss_amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ss_amm_min']; ?>:</label>
-                            <?php
-                            $gForm->selAmmortamentoMin('ammortamenti_ministeriali.xml', 'ss_amm_min', $admin_aziend['amm_min'], $form["ss_amm_min"]);
-                            ?>
+                        <?php
+                        $gForm->selAmmortamentoMin('ammortamenti_ministeriali.xml', 'ss_amm_min', $admin_aziend['amm_min'], $form["ss_amm_min"]);
+                        ?>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
@@ -547,9 +446,9 @@ if (!empty($msg)) {
                     <div class="form-group">
                         <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?>:</label>
                         <div class="col-sm-4 bg-success">
-                            <?php
-                            echo gaz_format_number($amount);
-                            ?>
+                            <span id="amount" class="text-right">
+                        <?php echo round($amount,2); ?>                  
+                            </span>          
                         </div>
                     </div>
                 </div>
@@ -561,12 +460,21 @@ if (!empty($msg)) {
             <div class="row">
                 <div class="col-md-12 col-lg-6">
                     <div class="form-group">
-                        <p class="col-sm-12 bg-info">
+                        <p  class="col-sm-12 bg-info">
                             <?php
                             echo $gg . $script_transl['info']['gg_to_year_end_1'] . substr($form['datreg'], 6, 4) .
-                            $script_transl['info']['gg_to_year_end_2'] . round($amount * $form['valamm'] * $gg / 36500, 2);
-                            ?>
-                        </p>
+                            $script_transl['info']['gg_to_year_end_2'] ; ?>
+                            <span id="amount_rate">
+                                <?php echo round($amount * $form['valamm'] * $gg / 36500, 2); ?>
+                            </span>
+                            </p>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6">
+                    <div class="form-group">
+                        <div class="col-sm-12 text-right alert-success">
+                            <input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
+                        </div>
                     </div>
                 </div>
             </div> <!-- chiude row  -->

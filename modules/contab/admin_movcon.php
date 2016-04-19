@@ -1481,12 +1481,12 @@ echo "</tr>\n";
                             echo '<div id="dialog_close' . $i . '" partner="' . $partnersel['ragso1'] . '" title="Chiusura: ' . $form['descrizion'] . ' - ' . $partnersel['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
                         }
                         echo '<p class="validateTips"></p>
-        <table id="pm_form_container_' . $i . '" class="ui-widget ui-widget-content" width="800">
+        <table id="pm_form_container_' . $i . '" class="ui-widget ui-widget-content" width="100%">
         <tbody>';
                         echo '
              </tbody>
             </table>
-            <table  width="800" id="db-contain' . $i . '" class="ui-widget ui-widget-content">
+            <table  width="100%" id="db-contain' . $i . '" class="ui-widget ui-widget-content">
              <tbody>
              </tbody>
             </table>

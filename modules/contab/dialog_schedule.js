@@ -1,6 +1,8 @@
 function dialogSchedule(paymov) {
  
-    var clfoco = paymov.id.substring(6,15),
+    var wWidth = $(window).width(),
+        dWidth = wWidth * 0.7,
+		clfoco = paymov.id.substring(6,15),
 		nrow   = paymov.id.substring(23),
 		id_rig = $( "#id_rig_rc"+nrow ).val(),
 		tesdoc_ref = $("#post_"+nrow+"_0_id_tesdoc_ref").val();
@@ -325,7 +327,7 @@ function dialogSchedule(paymov) {
     $( "#dialog_open"+nrow ).dialog({
       autoOpen: false,
       show: "scale",
-      width: 820,
+      width: dWidth,
       modal: true,	  
 	  open: function(){
 		  	updateOpenFormOnStart(); 
@@ -353,7 +355,7 @@ function dialogSchedule(paymov) {
     $( "#dialog_close"+nrow ).dialog({
       autoOpen: false,
       show: "scale",
-      width: 820,
+      width: dWidth,
       modal: true,
 		
 	  open: function(){

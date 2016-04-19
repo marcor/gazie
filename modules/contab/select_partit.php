@@ -264,51 +264,51 @@ if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  colspan=\"2\">\n";
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['master_ini']."</td><td class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['master_ini']."</td><td>\n";
 $gForm->selMasterAcc('master_ini',$form['master_ini'],'master_ini');
 echo "</td>\n";
-echo "<td rowspan=\"2\" class=\"FacetDataTD\">";
+echo "<td rowspan=\"2\">";
 echo '<input type="submit" name="selall" value="';
 echo $script_transl['selall'];
 echo '">';
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['account_ini']."</td><td class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['account_ini']."</td><td>\n";
 $gForm->lockSubtoMaster($form['master_ini'],'account_ini');
 $gForm->selSubAccount('account_ini',$form['account_ini'],$form['search']['account_ini'],$form['hidden_req'],$script_transl['mesg']);
 echo ' <button type="submit" class="btn btn-default btn-sm" name="pull_sbm" ><i class="glyphicon glyphicon-fast-backward"></i></button>';
     echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['master_fin']."</td><td class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['master_fin']."</td><td>\n";
 $gForm->selMasterAcc('master_fin',$form['master_fin'],'master_fin');
 echo "</td>\n";
-echo "<td rowspan=\"2\" class=\"FacetDataTD\">";
+echo "<td rowspan=\"2\">";
 echo '<input type="button" onclick="copy(this)" value="';
 echo $script_transl['selfin'];
 echo '">';
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['account_fin']."</td><td class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['account_fin']."</td><td>\n";
 $gForm->lockSubtoMaster($form['master_fin'],'account_fin');
 $gForm->selSubAccount('account_fin',$form['account_fin'],$form['search']['account_fin'],$form['hidden_req'],$script_transl['mesg']);
 echo ' <button type="submit" class="btn btn-default btn-sm" name="push_sbm" ><i class="glyphicon glyphicon-fast-forward"></i></button>';
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_ini']."</td><td colspan=\"2\">\n";
 $gForm->CalendarPopup('date_ini',$form['date_ini_D'],$form['date_ini_M'],$form['date_ini_Y'],'FacetSelect',1);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date_fin']."</td><td colspan=\"2\">\n";
 $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['date_fin_Y'],'FacetSelect',1);
 echo "</td>\n";
 echo "</tr>\n";
@@ -336,12 +336,12 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders -> output();
         echo "</tr>";
         while (list($key, $mv) = each($m)) {
-            echo "<tr><td class=\"FacetDataTD\">".$mv["codice"]." &nbsp;</td>";
-            echo "<td  align=\"center\" class=\"FacetDataTD\">".$mv["rows"]." &nbsp</td>";
-            echo "<td class=\"FacetDataTD\">".$mv["tesdes"]." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['dare'])." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['avere'])." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['dare'] - $mv['avere'])." &nbsp;</td></tr>";
+            echo "<tr><td>".$mv["codice"]." &nbsp;</td>";
+            echo "<td  align=\"center\">".$mv["rows"]." &nbsp</td>";
+            echo "<td>".$mv["tesdes"]." &nbsp;</td>";
+            echo "<td align=\"right\">".gaz_format_number($mv['dare'])." &nbsp;</td>";
+            echo "<td align=\"right\">".gaz_format_number($mv['avere'])." &nbsp;</td>";
+            echo "<td align=\"right\">".gaz_format_number($mv['dare'] - $mv['avere'])." &nbsp;</td></tr>";
         }
      } else {
         $span=9;
@@ -352,19 +352,19 @@ if (isset($_POST['preview']) and $msg=='') {
         while (list($key, $mv) = each($m)) {
             $saldo += $mv['dare'];
             $saldo -= $mv['avere'];
-            echo "<tr><td class=\"FacetDataTD\">".gaz_format_date($mv["datreg"])." &nbsp;</td>";
-            echo "<td align=\"center\" class=\"FacetDataTD\"><a href=\"admin_movcon.php?id_tes=".$mv["id_tes"]."&Update\">".$mv["id_tes"]."</a> &nbsp</td>";
-            echo "<td class=\"FacetDataTD\">".$mv["tesdes"]." &nbsp;</td>";
+            echo "<tr class=\"FacetDataTD\"><td>".gaz_format_date($mv["datreg"])." &nbsp;</td>";
+            echo "<td align=\"center\"><a href=\"admin_movcon.php?id_tes=".$mv["id_tes"]."&Update\">".$mv["id_tes"]."</a> &nbsp</td>";
+            echo "<td>".$mv["tesdes"]." &nbsp;</td>";
             if (!empty($mv['numdoc'])){
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["protoc"]." &nbsp;</td>";
-                echo "<td align=\"center\" class=\"FacetDataTD\">".$mv["numdoc"]." &nbsp;</td>";
-                echo "<td align=\"center\" class=\"FacetDataTD\">".gaz_format_date($mv["datdoc"])." &nbsp;</td>";
+                echo "<td align=\"center\">".$mv["protoc"]." &nbsp;</td>";
+                echo "<td align=\"center\">".$mv["numdoc"]." &nbsp;</td>";
+                echo "<td align=\"center\">".gaz_format_date($mv["datdoc"])." &nbsp;</td>";
             } else {
-                echo "<td class=\"FacetDataTD\" colspan=\"3\"></td>";
+                echo "<td colspan=\"3\"></td>";
             }
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['dare'])." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mv['avere'])." &nbsp;</td>";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($saldo)." &nbsp;</td></tr>";
+            echo "<td align=\"right\">".gaz_format_number($mv['dare'])." &nbsp;</td>";
+            echo "<td align=\"right\">".gaz_format_number($mv['avere'])." &nbsp;</td>";
+            echo "<td align=\"right\">".gaz_format_number($saldo)." &nbsp;</td></tr>";
         }
      }
      echo "\t<tr class=\"FacetFieldCaptionTD\">\n";

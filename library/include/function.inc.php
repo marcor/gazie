@@ -65,12 +65,13 @@ function gaz_flt_var_assign($flt, $typ) {
 
 function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval = "") {
     ?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
-    <?php if (isset($_GET[$flt]))
+    <?php
+    if (isset($_GET[$flt]))
         $fltget = $_GET[$flt];
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];  ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];   ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -166,16 +167,16 @@ function gaz_create_date($d, $m, $yyyy) { // crea una data nel formato dd-mm-yyy
     return $giorno . "-" . $mese . "-" . $yyyy;
 }
 
-function gaz_format_date($date, $from_db = false, $to_form=false) {
-    if ($from_db) { // dal formato gg-mm-aaaa o gg/mm/aaaa (es. proveniente da form) a diversi 
+function gaz_format_date($date, $from_form = false, $to_form = false) {
+    if ($from_form) { // dal formato gg-mm-aaaa o gg/mm/aaaa (es. proveniente da form) a diversi 
         $uts = mktime(0, 0, 0, intval(substr($date, 3, 2)), intval(substr($date, 0, 2)), intval(substr($date, 6, 4)));
-        if ($from_db === true) { // adatto al db
+        if ($from_form === true) { // adatto al db
             return date("Y-m-d", $uts);
-        } elseif ($from_db === 1) { // per i campi input dei form
+        } elseif ($from_form === 1) { // per i campi input dei form
             return date("d/m/Y", $uts);
-        } elseif ($from_db === 2) { // restituisce l'mktime
+        } elseif ($from_form === 2) { // restituisce l'mktime
             return $uts;
-        } else { // numerico
+        } else { // es. 3 numerico 
             return date("Ymd", $uts);
         }
     } else { // dal formato aaaa-mm-gg oppure aaaa/mm/gg (es. proveniente da db) a diversi
@@ -960,13 +961,10 @@ class selectpagame extends SelectBox {
 // classe per la generazione di select box delle aliquote iva
 class selectaliiva extends SelectBox {
 
-    function output() {
-
+    function output($class=false) {
         global $gTables;
-
         $query = 'SELECT * FROM `' . $gTables['aliiva'] . '` ORDER BY `codice`';
-
-        SelectBox::_output($query, 'descri', True);
+        SelectBox::_output($query, 'descri', True, '', '', 'codice', '', $class);
     }
 
 }

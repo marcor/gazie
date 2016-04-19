@@ -53,6 +53,7 @@ mark {
 .ui-widget-header .ui-state-default {
 	border: 1px solid #ccc;
 	color: #000;
+	border-style: inset;
 }
 
 .ui-state-default:focus,
@@ -64,4 +65,7 @@ mark {
     border: 1px solid #dddddd;
     background: none;
     background-color: #fff;
+}
+.ui-state-default .ui-icon {
+    background-image: url("../../../js/jquery.ui/images/ui-icons_222222_256x240_gazie.png");
 }
