@@ -1,5 +1,6 @@
 body {
 	background-image : url("../../../library/images/sfondo.png");
+	color:#000;
 }
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
 	color : #000000;
@@ -472,6 +473,11 @@ input[type="text"]:focus, textarea:focus, select:focus {
 ***************************************/
 .navbar-default .navbar-nav > li > a {
     color: #000;
+}
+
+.navbar-default .navbar-nav > li > a:hover {
+    color: #000;
+	background-color: #aae2a8;
 }
 .form-control {
 	color: #000;
