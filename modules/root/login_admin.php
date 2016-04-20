@@ -154,22 +154,34 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
     </noscript>
     <script language="JavaScript" src="../../js/cookies/cookies.js"></script>
     <script language="JavaScript" src="../../js/md5/md5.js"></script>
-    <!-- ENRICO FEDELE -->
     <script language="JavaScript" src="../../js/jquery/jquery.js"></script>
-    <script language="JavaScript" src="../../js/custom/capslock.js"></script>
+    <script language="JavaScript" src="../../js/capslockstate/src/jquery.capslockstate.js"></script>
     <!-- ENRICO FEDELE -->
     <script type="text/javascript">
         $(document).ready(function () {
-            var poptions = {
-                caps_lock_on: function () {
-                    $("#pmsg").text("Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!");
-                },
-                caps_lock_off: function () {
-                    $("#pmsg").text("");
+            /* Bind to capslockstate events and update display based on state  */
+            $(window).bind("capsOn", function (event) {
+                if ($("#login-password:focus").length > 0) {
+                    $("#capsWarning").show();
                 }
-            };
-            $("#ppass").capslock(poptions);
-            $("#ppass").focus();
+            });
+            $(window).bind("capsOff capsUnknown", function (event) {
+                $("#capsWarning").hide();
+            });
+            $("#login-password").bind("focusout", function (event) {
+                $("#capsWarning").hide();
+            });
+            $("#login-password").bind("focusin", function (event) {
+                if ($(window).capslockstate("state") === true) {
+                    $("#capsWarning").show();
+                }
+            });
+            /* 
+             * Initialize the capslockstate plugin.
+             * Monitoring is happening at the window level.
+             */
+            $(window).capslockstate();
+
         });
         function showPassword() {
             var key_attr = $('#Password').attr('type');
@@ -201,8 +213,8 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
                             echo '</div>';
                         }
                         ?>
-                        <p><h4 ><?php echo $script_transl['welcome']; ?></h4>
-                        <?php echo $script_transl['intro']; ?></p>
+                        <h4 ><?php echo $script_transl['welcome']; ?></h4>
+                        <p><?php echo $script_transl['intro']; ?></p>
                         <p><?php echo $script_transl['usr_psw']; ?></p><br/>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
@@ -219,8 +231,9 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
 
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                            <input style="height: 34px;"  id="login-password" type="password" class="form-control" name="Password" placeholder="<?php echo $script_transl['ins_psw']; ?>">
+                            <input  type="password" style="height: 34px;"  id="login-password" class="form-control" name="Password" placeholder="<?php echo $script_transl['ins_psw']; ?>">
                         </div>
+                        <div id="capsWarning" class="alert alert-warning col-sm-12" style="display:none;">Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!</div>
                         <?php
                         if ($newpass == true) {
                             ?>
@@ -246,6 +259,7 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
                     </div>                     
                 </div>  
             </div>
+        </div><!-- chiude div container -->
     </form>
-</div><!-- chiude div container role main --></body>
+</body>
 </html>

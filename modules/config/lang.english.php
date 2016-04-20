@@ -405,7 +405,8 @@ $strScript = array("admin_aziend.php" =>
             "You can't increase your level of competency the operation is reserved for the administrator!",
             "The file must be in JPG format",
             "The image must not be larger than 10 kb",
-            "You can not have a level lower than 9 because you are the last administrator!"
+            "You can not have a level lower than 9 because you are the last administrator!",
+            "The password can not contain any special characters \" / < >"
         ),
         'Login' => "Nickname",
         'Cognome' => "Surname",

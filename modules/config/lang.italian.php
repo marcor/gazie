@@ -410,7 +410,8 @@ $strScript = array(
             "Non puoi aumentere il tuo Livello di Abilitazione l'operazione &egrave; riservata all'amministratore!",
             "Il file dev'essere in formato JPG",
             "L'immagine non dev'essere pi&ugrave; grande di 10 kb",
-            "Non puoi avere un livello inferiore a 9 perch&egrave; sei l'unico amministratore!"
+            "Non puoi avere un livello inferiore a 9 perch&egrave; sei l'unico amministratore!",
+            "La password non può contenere caratteri alcuni speciali \" / > <"
         ),
         'Login' => "Nickname",
         'Cognome' => "Cognome",

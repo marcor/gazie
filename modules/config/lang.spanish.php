@@ -409,7 +409,8 @@ $strScript = array("admin_aziend.php" =>
             "No puede aumentar su nivel de competencia de la operaci&oacute;n est&aacute; reservado para el administrador!",
             "El archivo debe estar en formato JPG",
             "La imagen no debe ser mayor de 10 KB",
-            "No se puede tener un nivel inferior al 9 porque es el administrador del pasado!"
+            "No se puede tener un nivel inferior al 9 porque es el administrador del pasado!",
+            "The password can not contain any special characters \" / > <"
         ),
         'Login' => "Pseud&oacute;nimo",
         'Cognome' => "Apellido",
