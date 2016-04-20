@@ -45,11 +45,12 @@ $transl['acquis'] = array('name' => "Purchases",
         8 => array("Insert new supplier", "New supplier"),
         9 => array("Lista D.d.T. d'acqisto", "Report of Delivery notes"),
         10 => array("Ricevuto DdT da fornitore", "New Delivery notes"),
-        11 => array("Pagamento di un debito vantato da un fornitore", "Pagamento debito verso fornitore"),
+        11 => array("Debt payment towards supplier", "Debt payment towards supplier"),
         12 => array("Report partite aperte", "Report partite aperte"),
         13 => array("Selezione e stampa stato clienti", "Stato delle scadenze"),
         14 => array("Inserimento nuovo agente di fornitori", "Nuovo agente"),
-        15 => array("Stampa lista clienti", "Lista clienti"),
+        15 => array("Print customers list", "Customers list"),
+        16 => array("Purchase depreciable asset", "Purchase depreciable asset")
     )
 );
 ?>

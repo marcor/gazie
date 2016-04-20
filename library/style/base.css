@@ -134,9 +134,11 @@ table.Tsmall {
     margin: 0px 0px 0px 0px;
     font-size: 95%;
 }
-.navbar-collapse {
+.navbar-collapse,
+.container-fluid > .navbar-collapse {
     margin-right: 0px;
     margin-left: 0px;
+    padding-right: 0px;
     padding-left: 0px;
 }
 
@@ -167,8 +169,9 @@ table.Tsmall {
 }
 
 .form-horizontal .form-group .form-control, 
-.form-horizontal .form-group div select { 
-    margin: 3px 0px 0px 0px;
+.form-horizontal .form-group div select,
+.form-horizontal .form-group select { 
+    margin: 2px 0px 0px 0px;
     padding: 2px 2px 2px 2px;
 }
 
@@ -185,6 +188,31 @@ table.Tsmall {
 
 .form-group {
     margin-bottom: 7px;
+}
+.container-fluid > .navbar-header {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.form-horizontal .form-group {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+.container-fluid > .navbar-header {
+    margin-right: 0px;
+    margin-left: 0px;
+}
+
+.container-fluid {
+    padding-right: 1px;
+    padding-left: 1px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.form-horizontal .form-group > div {
+    padding-right: 1px;
+    padding-left: 1px;
 }
 
 

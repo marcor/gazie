@@ -294,7 +294,7 @@ if (count($msg['err']) > 0) { // ho un errore
         <p>
             <b>
                 <?php
-                echo $script_transl[$toDo] . ' ' . $script_transl['title'];
+                echo $script_transl[$toDo] . ' ' . $script_transl['title'].':';
                 $select_fornitore = new selectPartner("clfoco");
                 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
                 ?>

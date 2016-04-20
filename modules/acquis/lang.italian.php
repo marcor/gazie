@@ -238,7 +238,7 @@ $strScript = array("admin_fornit.php" =>
         'gross_weight' => 'Peso lordo'
     ),
     "admin_assets.php" =>
-    array('title' => 'Acquisto cespite ammmortizzabile',
+    array('title' => 'Acquisto bene ammmortizzabile da fornitore',
         'mesg' => array('La ricerca non ha dato risultati!', 'Inserire almeno 2 caratteri', 'Cambia cliente/fornitore'),
         'info' => array('gg_to_year_end_1' => ' giorni mancano alla fine dell\'anno ',
                         'gg_to_year_end_2' => ' quando verranno ammortizzati € '),
