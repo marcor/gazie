@@ -33,18 +33,18 @@ if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_POST['ritorno'];
 }
 
-if ((isset($_GET['Update']) and ! isset($_GET['id_tes'])) and ! isset($_GET['tipdoc'])) {
+if ((isset($_GET['Update']) && ! isset($_GET['id_tes'])) && ! isset($_GET['tipdoc'])) {
     header("Location: " . $form['ritorno']);
     exit;
 }
 
-if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
+if ((isset($_POST['Update'])) || ( isset($_GET['Update']))) {
     $toDo = 'update';
 } else {
     $toDo = 'insert';
 }
 
-if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
+if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il primo accesso
 //qui si dovrebbe fare un parsing di quanto arriva dal browser...
     $form['id_tes'] = intval($_POST['id_tes']);
     $anagrafica = new Anagrafica();
@@ -110,61 +110,69 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if (empty($form['numfat'])) {
             $msg['err'][] = 'numfat';
         }
-// --- inizio controllo coerenza date-numerazione
+// --- inizio controlli
         if ($toDo == 'update') {  // controlli in caso di modifica
         } else {                   //controlli in caso di inserimento
         }
-// --- fine controllo coerenza date-numeri
-        if (empty($form["clfoco"]))
-            $msg['err'][] = 'numfat';
+        if ($form["clfoco"] < 100000001)
+            $msg['err'][] = 'clfoco';
+        if (!gaz_format_date($form["datreg"], 'chk'))
+            $msg['err'][] = 'datreg';
+        if (!gaz_format_date($form["datfat"], 'chk'))
+            $msg['err'][] = 'datfat';
         if (empty($form["pagame"]))
-            $msg['err'][] = 'numfat';
-        if ($msg == "") {// nessun errore
+            $msg['err'][] = 'pagame';
+        if ($form["acc-fondo"] < 100)
+            $msg['err'][] = 'acc-fondo';
+        if (empty($form["descri"]))
+            $msg['err'][] = 'descri';
+// --- fine controlli
+        if (count($msg['err']) == 0) {// nessun errore
             if ($toDo == 'update') { // e' una modifica
                 header("Location: " . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
-// ricavo i progressivi in base al tipo di documento
-                $where = "numdoc desc";
-                switch ($form['tipdoc']) {
-                    case "DDR":
-                        $sql_documento = "YEAR(datfat) = " . $form['annemi'] . " and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione";
-                        break;
-                    case "DDL":
-                        $sql_documento = "YEAR(datfat) = " . $form['annemi'] . " and ( tipdoc like 'DD_' or tipdoc = 'FAD') and seziva = $sezione";
-                        break;
-                    case "AFA":
-                        $sql_documento = "YEAR(datfat) = " . $form['annemi'] . " and tipdoc like 'AFA' and seziva = $sezione";
-                        $where = "numfat desc";
-                        break;
-                    case "ADT":
-                        $sql_documento = "YEAR(datfat) = " . $form['annemi'] . " and tipdoc like 'ADT' and seziva = $sezione";
-                        break;
-                    case "AFC":
-                        $sql_documento = "YEAR(datfat) = " . $form['annemi'] . " and tipdoc = 'AFC' and seziva = $sezione";
-                        $where = "numfat desc";
-                        break;
+                $year = substr($form['datreg'], 6, 4);
+                // ricavo il protocollo da assegnare all'acquisto
+                $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $year AND tipdoc LIKE 'AF_' AND seziva = ".$form['seziva'], "protoc DESC", 0, 1);
+                $ultimo_tesdoc = gaz_dbi_fetch_array($rs_ultimo_tesdoc);
+                $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = $year AND regiva = 6 AND seziva = ".$form['seziva'], "protoc DESC", 0, 1);
+                $ultimo_tesmov = gaz_dbi_fetch_array($rs_ultimo_tesmov);
+                $lastProtocol = 0;
+                if ($ultimo_tesdoc) {
+                    $lastProtocol = $ultimo_tesdoc['protoc'];
                 }
-                if (substr($form['tipdoc'], 0, 2) == 'DD') {  //ma se e' un ddt a fornitore il protocollo è 0 così come il numero e data fattura
-                    $form['protoc'] = 0;
-                    $form['numfat'] = 0;
-                    $form['datfat'] = 0;
-                } else { //in tutti gli altri casi si deve prendere quanto inserito nel form
-                    $form['datfat'] = $initra;
-                    $form['protoc'] = getProtocol($form['tipdoc'], $form['annemi'], $sezione);
-                    $form['numfat'] = $form['numfat'];
+                if ($ultimo_tesmov) {
+                    if ($ultimo_tesmov['protoc'] > $lastProtocol) {
+                        $lastProtocol = $ultimo_tesmov['protoc'];
+                    }
                 }
-//inserisco la testata
-                $form['status'] = '';
-                $form['initra'] = $initra;
-                $form['datfat'] = $datfat;
-                tesdocInsert($form);
-//recupero l'id assegnato dall'inserimento
-                $ultimo_id = gaz_dbi_last_id();
-                $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
-// prima di uscire cancello eventuali precedenti file temporanei
-                $_SESSION['print_request'] = $ultimo_id;
-                header("Location: invsta_docacq.php");
+                $lastProtocol++;
+                // inizio inserimenti sul DB
+                $form['caucon']='AFA';
+                $form['regiva']=6;
+                $form['operat']=1;
+                $form['protoc']=$lastProtocol;
+                $form['numdoc']=$form['numfat'];
+                $form['datreg']=  gaz_format_date($form['datreg'],true);
+                $form['datdoc']=  gaz_format_date($form['datfat'],true);
+                gaz_dbi_table_insert('tesmov', $form);
+                $id_tesmov = gaz_dbi_last_id();
+                $form['id_tes']=$id_tesmov;
+                $form['codcon']=$form['clfoco'];
+                $form['darave']='A';
+                $form['import']=round($form['quantity']*$form['price'],2);
+                gaz_dbi_table_insert('rigmoc', $form);
+                $form['darave']='D';
+                $form['codcon']=$form['acc-fondo']*1000000+$form['ss_amm_min']*1000+999;
+                gaz_dbi_table_insert('rigmoc', $form);
+                $form['codiva']=$form['codvat'];
+                $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['codvat']);
+                $form['periva']=$iva['aliquo'];
+                $form['tipiva']=$iva['tipiva'];
+                $form['imponi']=$form['import'];
+                $form['impost']=round($form['import']*$iva['aliquo']/100,2);
+                gaz_dbi_table_insert('rigmoi', $form);
                 exit;
             }
         }
@@ -205,10 +213,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     $form['id_tes'] = "";
-    $form['datreg'] = date("d/m/Y");
-//un documento d'acquisto ricevuto (non fiscale) imposto l'ultimo giorno del mese in modo da evidenziare un eventuale errore di mancata introduzione manuale del dato    
-    $utsemi = mktime(0, 0, 0, date("m") + 1, date("d"), date("Y"));
-    $form['datfat'] = date("d/m/Y", $utsemi);
+    // ricerco l'ultimo inserimento per ricavarne la data
+    $rs_last = gaz_dbi_dyn_query('datreg', $gTables['tesmov'], 1, "id_tes DESC", 0, 1);
+    $last = gaz_dbi_fetch_array($rs_last);
+    if ($last) {
+        $form['datreg'] = gaz_format_date($last['datreg'],false,true);
+    } else {
+        $form['datreg'] = date("d/m/Y");
+    }
+    $form['datfat'] = '';
     $form['search']['clfoco'] = '';
     $form['cosear'] = "";
     if (isset($_GET['seziva'])) {
@@ -264,13 +277,15 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
             var gg = parseFloat($('#gg').val());
             var price = parseFloat($('#price').val());
             var amount = price * quantity;
-            var amount_rate = amount * valamm*gg/36500;
-            $("#amount").text(amount.toFixed(2).toString());;
-            $("#amount_rate").text(amount_rate.toFixed(2).toString());;
+            var amount_rate = amount * valamm * gg / 36500;
+            $("#amount").text(amount.toFixed(2).toString());
+            ;
+            $("#amount_rate").text(amount_rate.toFixed(2).toString());
+            ;
         }
         $("#datreg, #datfat").datepicker();
         $("#datreg").change(function () {
-           this.form.submit();
+            this.form.submit();
         });
         $('#valamm, #price, #quantity').change(function () {
             sumVal();
@@ -294,7 +309,7 @@ if (count($msg['err']) > 0) { // ho un errore
         <p>
             <b>
                 <?php
-                echo $script_transl[$toDo] . ' ' . $script_transl['title'].':';
+                echo $script_transl[$toDo] . ' ' . $script_transl['title'] . ':';
                 $select_fornitore = new selectPartner("clfoco");
                 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
                 ?>
@@ -322,7 +337,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="numfat" class="col-sm-4 control-label"><?php echo $script_transl['numfat']; ?>:</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="numfat" name="numfat" maxlength="20" tabindex=11 placeholder="<?php echo $script_transl['numfat']; ?>" type="text" value="<?php echo $form['numfat']; ?>">
+                            <input type="text" class="form-control" id="numfat" name="numfat" maxlength="20" tabindex=11 placeholder="<?php echo $script_transl['numfat']; ?>" value="<?php echo $form['numfat']; ?>">
                         </div>
                     </div>
                 </div>
@@ -330,7 +345,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="datfat" class="col-sm-4 control-label"><?php echo $script_transl['datfat']; ?>:</label>
                         <div class="col-sm-8">
-                            <input type="date" class="form-control" id="datfat" name="datfat" tabindex=12 value="<?php echo $form['datfat']; ?>">
+                            <input type="date" class="form-control" id="datfat" name="datfat" placeholder="GG/MM/AAAA" tabindex=12 value="<?php echo $form['datfat']; ?>">
                         </div>
                     </div>
                 </div>
@@ -422,7 +437,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?>:</label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="unimis" name="unimis" maxlenght="10" tabindex=15 placeholder="<?php echo $script_transl['unimis']; ?>" value="<?php echo $form['unimis']; ?>">
+                            <input type="text" class="form-control" id="unimis" name="unimis" maxlenght="3" tabindex=15 placeholder="<?php echo $script_transl['unimis']; ?>" value="<?php echo $form['unimis']; ?>">
                         </div>
                     </div>
                 </div>
@@ -447,7 +462,7 @@ if (count($msg['err']) > 0) { // ho un errore
                         <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?>:</label>
                         <div class="col-sm-4 bg-success">
                             <span id="amount" class="text-right">
-                        <?php echo round($amount,2); ?>                  
+                                <?php echo round($amount, 2); ?>                  
                             </span>          
                         </div>
                     </div>
@@ -463,11 +478,12 @@ if (count($msg['err']) > 0) { // ho un errore
                         <p  class="col-sm-12 bg-info">
                             <?php
                             echo $gg . $script_transl['info']['gg_to_year_end_1'] . substr($form['datreg'], 6, 4) .
-                            $script_transl['info']['gg_to_year_end_2'] ; ?>
+                            $script_transl['info']['gg_to_year_end_2'];
+                            ?>
                             <span id="amount_rate">
                                 <?php echo round($amount * $form['valamm'] * $gg / 36500, 2); ?>
                             </span>
-                            </p>
+                        </p>
                     </div>
                 </div>
                 <div class="col-md-12 col-lg-6">

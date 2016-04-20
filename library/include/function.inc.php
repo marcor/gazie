@@ -169,14 +169,21 @@ function gaz_create_date($d, $m, $yyyy) { // crea una data nel formato dd-mm-yyy
 
 function gaz_format_date($date, $from_form = false, $to_form = false) {
     if ($from_form) { // dal formato gg-mm-aaaa o gg/mm/aaaa (es. proveniente da form) a diversi 
-        $uts = mktime(0, 0, 0, intval(substr($date, 3, 2)), intval(substr($date, 0, 2)), intval(substr($date, 6, 4)));
+        $m=intval(substr($date, 3, 2));
+        $d=intval(substr($date, 0, 2));
+        $Y=intval(substr($date, 6, 4));
+        $uts = mktime(0, 0, 0,$m,$d,$Y);
         if ($from_form === true) { // adatto al db
             return date("Y-m-d", $uts);
         } elseif ($from_form === 1) { // per i campi input dei form
             return date("d/m/Y", $uts);
         } elseif ($from_form === 2) { // restituisce l'mktime
             return $uts;
-        } else { // es. 3 numerico 
+        } elseif ($from_form === 3) { // il valore numerico (confrontabile)
+            return date("Ymd", $uts);
+        } elseif ($from_form === 'chk') { // restituisce true o false se la data non è stata formattata bene
+            return checkdate($m,$d,$Y);
+        } else { // altri restituisco il timestamp 
             return date("Ymd", $uts);
         }
     } else { // dal formato aaaa-mm-gg oppure aaaa/mm/gg (es. proveniente da db) a diversi
