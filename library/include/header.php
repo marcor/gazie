@@ -48,7 +48,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
         <script src="../../js/custom/gz-library.js"></script>
         <script src="../../js/tinymce/tinymce.min.js"></script>
         <script src="../../js/custom/tinymce.js"></script>
-<?php
+        <?php
         // carico il css strutturale grandezza font, posizione, ecc 
         $style = 'base.css';
         if (!empty($admin_aziend['style']) && file_exists("../../library/style/" . $admin_aziend['style'])) {
@@ -59,11 +59,22 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
         if (!empty($admin_aziend['skin']) && file_exists("../../library/style/skins/" . $admin_aziend['skin'])) {
             $skin = $admin_aziend['skin'];
         }
-?>
+        ?>
         <link href="../../library/style/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/style/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
-        <style type="text/css">.navbar-header { background-color: #<?php echo $admin_aziend['colore']; ?> ; }</style>  
-<?php
+        <style type="text/css">
+            .company-color { 
+                background-color: #<?php echo $admin_aziend['colore']; ?> ; 
+            }
+            .dropdown-menu > li > a:hover {
+                background-color: #<?php echo $admin_aziend['colore']; ?> ;
+            }
+            .navbar-default .navbar-nav > li > a:hover {
+                background-color: #<?php echo $admin_aziend['colore']; ?>;
+            }
+        </style>  
+        <?php
+
         function get_transl_referer($rlink) {
             global $gTables;
             $clink = explode('/', $rlink);
@@ -144,12 +155,12 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
              */
             if (is_array($jsArray)) {
                 foreach ($jsArray as $v) {
-                    echo "          <!-- js caricato dallo script in esecuzione -->\n".'        <script type="text/javascript" src="../../js/' . $v . '.js"></script>'."\n";
+                    echo "          <!-- js caricato dallo script in esecuzione -->\n" . '        <script type="text/javascript" src="../../js/' . $v . '.js"></script>' . "\n";
                 }
             }
             if (is_array($cssArray)) {
                 foreach ($cssArray as $v) {
-                    echo "          <!-- sytle caricato dallo script in esecuzione -->\n".'        <link rel="stylesheet" type="text/css" href="../../modules/' . $v . '">'."\n";
+                    echo "          <!-- sytle caricato dallo script in esecuzione -->\n" . '        <link rel="stylesheet" type="text/css" href="../../modules/' . $v . '">' . "\n";
                 }
             }
             $result = getAccessRights($_SESSION['Login'], $_SESSION['company_id']);
@@ -239,7 +250,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                   la funzione createGazieJSCM serve per creare un
                   array con il menu corrente orizzontale , si potrebbero creare
                   altre forme di menu modificando questa funzione. */
-                echo "\n        <title>" . $admin_aziend['ragso1']. '» '. $menuArray[0]['title']  ;
+                echo "\n        <title>" . $admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
                 if (!empty($idScript)) {
                     if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
                         if ($idScript[0] == 2) {
@@ -299,4 +310,4 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 <div class="container-fluid">';
             return ($strCommon + $translated_script);
         }
-?>
+        ?>

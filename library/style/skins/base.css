@@ -1,6 +1,6 @@
-﻿/*********************** FOGLIO DI STILE DELL'ASPETTO *************************/
-/*********************** APPEARANCE STYLESHEET ************************************/
-
+﻿/** Questo è un foglio di stile senza riferimenti ai colori del vecchio default. 
+/** nei limiti del possibile sarebbe opportuno usare solo quelli standard di bootstrap
+/** eventualmente cercando di modificare i soli colori di jquery-ui 
 
 
 /**************************************
@@ -60,6 +60,12 @@ mark {
 .ui-widget-content:focus .ui-state-default:focus,
 .ui-widget-header:focus .ui-state-default:focus {
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 255, 0.6);
+}
+
+.ui-state-default:hover,
+.ui-widget-content:hover .ui-state-default:hover,
+.ui-widget-header:hover .ui-state-default:hover {
+    background-color: #f6a828;
 }
 .ui-widget-content {
     border: 1px solid #dddddd;

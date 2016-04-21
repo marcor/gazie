@@ -378,7 +378,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?>:</label>
                         <div class="col-sm-8">
-                            <input type="date" class="form-control" id="datreg" name="datreg" tabindex=10 value="<?php echo $form['datreg']; ?>">
+                            <input type="text" class="form-control" id="datreg" name="datreg" tabindex=10 value="<?php echo $form['datreg']; ?>">
                         </div>
                     </div>
                 </div>                    
@@ -394,7 +394,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="datfat" class="col-sm-4 control-label"><?php echo $script_transl['datfat']; ?>:</label>
                         <div class="col-sm-8">
-                            <input type="date" class="form-control" id="datfat" name="datfat" placeholder="GG/MM/AAAA" tabindex=12 value="<?php echo $form['datfat']; ?>">
+                            <input type="text" class="form-control" id="datfat" name="datfat" placeholder="GG/MM/AAAA" tabindex=12 value="<?php echo $form['datfat']; ?>">
                         </div>
                     </div>
                 </div>
@@ -541,8 +541,10 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <p class="col-sm-12 small">
-                            <?php
-                            echo $gg . $script_transl['info']['gg_to_year_end_1'] . substr($form['datreg'], 6, 4).$script_transl['info']['gg_to_year_end_2'];
+                            <?php echo $gg . $script_transl['info']['gg_to_year_end_1']; ?>
+                            <span id="yreg" class="text-right"><?php
+                            echo  substr($form['datreg'], 6, 4)?></span> 
+                                <?php echo $script_transl['info']['gg_to_year_end_2'];
                             ?>
                             <span id="amount_rate">
                                 <?php

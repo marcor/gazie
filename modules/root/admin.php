@@ -141,7 +141,7 @@ if ($t > 4 && $t <= 13) {
 ?>
 <form method="POST" name="gaz_form">
     <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
-    <div class="container custom-tab">
+    <div class="container">
          
 <?php
     if ($lastBackup) {
@@ -160,6 +160,24 @@ if ($t > 4 && $t <= 13) {
 ?>
     <div class="row text-center">
         <div class="col-sm-6">
+            <div class="panel panel-default company-color" >
+                <p>
+<?php   echo $script_transl['company']?>
+                <a href="../config/admin_aziend.php">
+                        <img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
+                </a>
+                </p>
+                <p>
+<?php echo $script_transl['mesg_co'][2] . ' ⇒ ';
+                        selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
+?>
+                </p>
+                <p>
+<?php   echo $script_transl['logout']; ?> ⇒ <input name="logout" type="submit" value=" Logout ">
+                </p>
+            </div>
+        </div>
+        <div class="col-sm-6">
             <div class="panel panel-default" >
                 <p>
 <?php   echo ucfirst($msg) . " " . $admin_aziend['Nome'] . ' (ip=' . $admin_aziend['last_ip'] . ')';?>
@@ -172,24 +190,6 @@ if ($t > 4 && $t <= 13) {
                 <p>
 <?php   echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas'])?> 
                 </p>    
-                <p>
-<?php   echo $script_transl['logout']; ?> ⇒ <input name="logout" type="submit" value=" Logout ">
-                </p>
-            </div>
-        </div>
-        <div class="col-sm-6">
-            <div class="panel panel-default navbar-header" >
-                <p>
-<?php   echo $script_transl['company']?>
-                <a href="../config/admin_aziend.php">
-                        <img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" width="200" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
-                </a>
-                </p>
-                <p>
-<?php echo $script_transl['mesg_co'][2] . ' ⇒ ';
-                        selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
-?>
-                </p>
             </div>
         </div>
     </div>

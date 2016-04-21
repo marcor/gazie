@@ -241,7 +241,7 @@ $strScript = array("admin_fornit.php" =>
     array('title' => 'Acquisto bene ammmortizzabile da fornitore',
         'mesg' => array('La ricerca non ha dato risultati!', 'Inserire almeno 2 caratteri', 'Cambia cliente/fornitore'),
         'info' => array('gg_to_year_end_1' => ' giorni mancano alla fine dell\'anno ',
-                        'gg_to_year_end_2' => ' quando verranno ammortizzati € '),
+                        'gg_to_year_end_2' => ' quando potranno essere ammortizzati € '),
         'err' => array('regdat' => 'La data di registrazione precede quella della fattura',
                        'numfat' => 'Non è stato introdotto il numero della fattura',
                        'clfoco' => 'Non è stato scelto il fornitore',

@@ -490,22 +490,6 @@ input[type="text"]:focus, textarea:focus, select:focus {
 }
 .navbar-right{margin-right: 0;}
 
-/* andrea biasi */
-.custom-tab {
-    border: 0px solid;
-	margin-top: 20px;
-	width: 70%;
-	margin-left: auto;
-	margin-right: auto;
-}
-
-/*.tab-content {
-    margin: 18px 25px;
-}*/
-
-.custom-tab .dash-tabs {
-    position: relative;
-}
 
 .dash-tabs > li.active > a, 
 .dash-tabs > li.active > a:hover, 

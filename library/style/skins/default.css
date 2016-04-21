@@ -183,17 +183,10 @@ table.selectTable td {
 	filter: alpha(opacity=100);
 }
 
-.nav > li > a:hover {
-	background-color: #99d197;
-}
-
 .nav-boot {
 	background-color : #aae2a8;
 	color : #000000;
 	font-size : 100%;
-}
-.dropdown-menu > li > a:hover {
-    background-color: #dafed9;
 }
 
 .navbar-lower {
@@ -309,11 +302,6 @@ table.selectTable td {
 }
 
 
-/* andrea biasi */
-.custom-tab {
-    border-color: #dddddd;
-}
-
 .conto_attivo {
     background-color: #88D6FF;
 }
@@ -339,7 +327,6 @@ table.selectTable td {
 
 .navbar-default .navbar-nav > li > a:hover {
     color: #000;
-	background-color: #aae2a8;
 }
 .form-control {
 	color: #000;
