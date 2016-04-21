@@ -215,6 +215,15 @@ table.Tsmall {
     padding-left: 1px;
 }
 
+.btn {
+    padding: 3px 2px 3px 2px;
+    white-space: normal;
+}
+
+.row {
+    padding: 2px 3px 2px 3px;
+    margin-right: 0px;
+}
 
 /**************************************
 ************** JQUERY UI **************

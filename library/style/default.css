@@ -3,10 +3,10 @@
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 body {
-	font-family : Arial, Tahoma, Verdana, Helvetica;
-	background-attachment : fixed;
-	/* impostare qua la dimensione dei caratteri*/
-	font-size: 14px;
+    font-family : Arial, Tahoma, Verdana, Helvetica;
+    background-attachment : fixed;
+    /* impostare qua la dimensione dei caratteri*/
+    font-size: 14px;
 }
 
 input, select {
@@ -20,33 +20,33 @@ input, select {
 }
 
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
-	font-size : 100%;
+    font-size : 100%;
 }
 
 table {
-	border-collapse: separate;
-	border-spacing: 2px;
+    border-collapse: separate;
+    border-spacing: 2px;
 }
 
 table.Tlarge {
-	border : solid 1px;    
+    border : solid 1px;    
 }
 .table {
     margin-bottom: 5px;
 }
 
 table.Tmiddle {
-	width : 70%;
-	border : solid 1px;
-	margin-left: auto;
-	margin-right: auto;
+    width : 70%;
+    border : solid 1px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 table.Tsmall {
-	width : 50%;
-	border : solid 1px;
-	margin-left: auto;
-	margin-right: auto;
+    width : 50%;
+    border : solid 1px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 table.selectTable tr.even {
@@ -56,437 +56,437 @@ table.selectTable tr.odd {
 }
 
 table.selectTable td {
-	height: 10px;
-	border-bottom: 1px solid;
-	font-size: 90%;
+    height: 10px;
+    border-bottom: 1px solid;
+    font-size: 90%;
 }
 
 .selectContainer {
-	width: 300px;
-	position: absolute;
-	border: 1px solid;
+    width: 300px;
+    position: absolute;
+    border: 1px solid;
 }
 
 .selectHeader {
-	background-repeat: repeat-x;
-	background-position: top center;
-	font-weight: bold;
-	font-size: 90%;
-	margin: 0;
-	padding: 1px 1px 1px 1px;
+    background-repeat: repeat-x;
+    background-position: top center;
+    font-weight: bold;
+    font-size: 90%;
+    margin: 0;
+    padding: 1px 1px 1px 1px;
 }
 .topmenu {
-	position : relative;
-	top : -4px;
-	font-weight: bold;
+    position : relative;
+    top : -4px;
+    font-weight: bold;
 }
 
 .bottomMenu {
-	position : relative;
-	top : -4px;
+    position : relative;
+    top : -4px;
 }
 
 .FacetFormTABLE {
-	border : solid 1px;
+    border : solid 1px;
 }
 
 .FacetFormHeaderFont {
-	font-weight : bold;
+    font-weight : bold;
 }
 
 .FacetFormHeaderRed {
-	font-weight : bold;
+    font-weight : bold;
 }
 .FacetFieldCaptionTD {
-	padding: 0px 3px 0px 5px;
+    padding: 0px 3px 0px 5px;
 }
 .FacetDataTRstart td {
-	border-top: 2px solid;
+    border-top: 2px solid;
 }
 .FacetDataTRend td {
-	border-bottom: 5px solid;
+    border-bottom: 5px solid;
 }
 .FacetDataTD {
-	margin: 2px 2px;
-	padding: 2px 5px 2px 5px;
+    margin: 2px 2px;
+    padding: 2px 5px 2px 5px;
 }
 .dispari {
-	/*background-color : #b8dcb7;*/
+    /*background-color : #b8dcb7;*/
 }
 .FacetDataTDevidenziaOK {
-	/*background-color : #FFE13C;*/
+    /*background-color : #FFE13C;*/
 }
 .FacetDataTDevidenziaCL {
-	/*background-color : #00FF3C;*/
+    /*background-color : #00FF3C;*/
 }
 .FacetDataTDevidenziaBL {
-	/*background-color : #AAAAFF;*/
+    /*background-color : #AAAAFF;*/
 }
 .FacetDataTDevidenziaKO {
-	/*background-color : #FF8888;*/
+    /*background-color : #FF8888;*/
 }
 .FacetDataTDsmall {
-	/*background-color : #c9edc8;*/
-	border-bottom: 1px solid;
-	border-right: 1px solid;
+    /*background-color : #c9edc8;*/
+    border-bottom: 1px solid;
+    border-right: 1px solid;
 }
 .FacetDataTDsmall a {
 }
 .FacetDataTDsmallRed {
-	/*background-color : #c9edc8;*/
+    /*background-color : #c9edc8;*/
 }
 .FacetDataTDred {
-	/*background-color : #C9EDC8;*/
+    /*background-color : #C9EDC8;*/
 }
 .FacetColumnTD {
-	/*background-color : #DAEADA;*/
+    /*background-color : #DAEADA;*/
 }
 .FacetAltDataTD {
-	/*background-color : #D5F1D4;*/
-	font-size : 110px;
+    /*background-color : #D5F1D4;*/
+    font-size : 110px;
 }
 .FacetSeparatorTD {
-	font-size : 85%;
+    font-size : 85%;
 }
 .FacetFooterTD {
-	/*background-color : #D5F1D4;*/
+    /*background-color : #D5F1D4;*/
 }
 .FacetDisabledTD {
-	/*background-color : #D5F1D4;*/
+    /*background-color : #D5F1D4;*/
 }
 .FacetMainMenu {
-	color : yellow;
-	background-color: blue;
+    color : yellow;
+    background-color: blue;
 }
 .FacetButton {
-	border-left : 1px solid #000000;
-	border-right : 1px solid #000000;
-	border-top : 1px solid #000000;
-	border-bottom : 1px solid #000000;
-	/*background-color : #EFEFEF;*/
+    border-left : 1px solid #000000;
+    border-right : 1px solid #000000;
+    border-top : 1px solid #000000;
+    border-bottom : 1px solid #000000;
+    /*background-color : #EFEFEF;*/
 }
 .FacetInput {
-	border-bottom : 1px solid #000000;
-	border-left : 1px solid #000000;
-	border-right : 1px solid #000000;
-	border-top : 1px solid #000000;
+    border-bottom : 1px solid #000000;
+    border-left : 1px solid #000000;
+    border-right : 1px solid #000000;
+    border-top : 1px solid #000000;
 }
 .FacetTextarea {
-	border-bottom : 1px solid #000000;
-	border-left : 1px solid #000000;
-	border-right : 1px solid #000000;
-	border-top : 1px solid #000000;
+    border-bottom : 1px solid #000000;
+    border-left : 1px solid #000000;
+    border-right : 1px solid #000000;
+    border-top : 1px solid #000000;
 }
 .FacetSelect {
-	/*background-color : #C9EDC8;*/
+    /*background-color : #C9EDC8;*/
 }
 .FacetSmall {
 }
 .FacetText {
 }
 .FacetSelectBil {
-	/*background-color : #AAE2A8;*/
+    /*background-color : #AAE2A8;*/
 }
 .error {
-	color : red;
-	font-weight: bold;
-	font-size : larger;
+    color : red;
+    font-weight: bold;
+    font-size : larger;
 }
 .error_box {
-	margin: 40px;
-	padding: 20px;
-	border: 1px solid #000000;
-	text-align: center;
+    margin: 40px;
+    padding: 20px;
+    border: 1px solid #000000;
+    text-align: center;
 }
 #admin_main {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 #admin_welcome {
-	padding: 30px 40px;
-	position: relative;
-	font-size: 90%;
+    padding: 30px 40px;
+    position: relative;
+    font-size: 90%;
 }
 #admin_p_logout {
-	margin-top: 20px;
+    margin-top: 20px;
 }
 #admin_footer {
-	margin-top: 1%;
-	position: relative;
-	bottom: 0px;
-	z-index: -1;
+    margin-top: 1%;
+    position: relative;
+    bottom: 0px;
+    z-index: -1;
 }
 #admin_footer:hover {
 }
 .navbar {
-	border-top: 0px;
-	border-bottom: 1px solid #000000;
-	border-left: 1px solid #000000;
-	border-right: 1px solid #000000;
-	border-radius: 0px;
-	font-size : 100%;
-	min-height: 40px;
-	margin-bottom: 20px;
+    border-top: 0px;
+    border-bottom: 1px solid #000000;
+    border-left: 1px solid #000000;
+    border-right: 1px solid #000000;
+    border-radius: 0px;
+    font-size : 100%;
+    min-height: 40px;
+    margin-bottom: 20px;
 }
 
 div.help {
-	margin: 15px 20px;
-	text-align: justify;
+    margin: 15px 20px;
+    text-align: justify;
 }
 .nav-boot {
-	/*background-color : #aae2a8;*/
+    /*background-color : #aae2a8;*/
 }
 .nav-first {
-	margin-bottom: 0px;
-	padding-top: auto;
-	padding-bottom: auto;
+    margin-bottom: 0px;
+    padding-top: auto;
+    padding-bottom: auto;
 }
 
 .nav-mb {
-	margin-bottom: 5px;
+    margin-bottom: 5px;
 }
 .nav-tabs {
-	border-bottom: 0px;
+    border-bottom: 0px;
 }
 
 div.FacetFormHeaderFont {
-	font-size: 90%;
-	margin-top: 10px;
-	margin-bottom: 1px;
+    font-size: 90%;
+    margin-top: 10px;
+    margin-bottom: 1px;
 }
 
 .vcenter {
-	padding-top:7px;
-	padding-right:8px;
+    padding-top:7px;
+    padding-right:8px;
 }
 input.input-xs {
-	height: 24px;
-	padding: 2px 2px;
-	font-size: 100%;
-	line-height: 1.5;
-	border-radius: 3px;
+    height: 24px;
+    padding: 2px 2px;
+    font-size: 100%;
+    line-height: 1.5;
+    border-radius: 3px;
 }
 
 .container-fluid {
-	padding-left: 0px;
-	padding-right: 0px;
+    padding-left: 0px;
+    padding-right: 0px;
 }
 
 .opzione {
-	margin-top: 10px;
-	margin-left: -8px;
+    margin-top: 10px;
+    margin-left: -8px;
 }
 .progress {
-	margin: 5px 5px 7px 5px;
+    margin: 5px 5px 7px 5px;
 }
 
 .contenuto-help {
-	background: #fff;
-	border: 1px solid #ddd;
-	padding: 20px;
+    background: #fff;
+    border: 1px solid #ddd;
+    padding: 20px;
 }
 .nav-tabs {
-	margin-bottom: 0px;
+    margin-bottom: 0px;
 }
 .help-text {
-	font-size: 100%;
+    font-size: 100%;
 }
 .help-text a {
-	text-transform: uppercase;
+    text-transform: uppercase;
 }
 /*    --------------------------------------------------
-	:: Login Section
-	-------------------------------------------------- */
+        :: Login Section
+        -------------------------------------------------- */
 
 .panel-title {
-	vertical-align: middle;
+    vertical-align: middle;
 }
 .panel-info {
-	border-color: #88c086;
+    border-color: #88c086;
 }
 .panel-info > .panel-gazie {
-	border-color: #88c086;
+    border-color: #88c086;
 }
 #formlogin {
-	padding-top: 50px
+    padding-top: 50px
 }
 #formlogin .form-wrap {
-	margin: 0 auto;
-	float: right;
+    margin: 0 auto;
+    float: right;
 }
 .form-logo {
-	float: left;
+    float: left;
 }
 .form-main {
-	margin: 10px 30%;
-	background-color: #77b075;
-	border: 1px solid #000;
+    margin: 10px 30%;
+    background-color: #77b075;
+    border: 1px solid #000;
 }
 #formlogin h1 {
-	color: #1fa67b;
-	font-size: 18px;
-	text-align: center;
-	font-weight: bold;
-	padding-bottom: 20px;
+    color: #1fa67b;
+    font-size: 18px;
+    text-align: center;
+    font-weight: bold;
+    padding-bottom: 20px;
 }
 #formlogin .form-group {
-	margin-bottom: 25px;
+    margin-bottom: 25px;
 }
 #formlogin .checkbox {
-	margin-bottom: 20px;
-	position: relative;
-	-webkit-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	-o-user-select: none;
-	user-select: none;
+    margin-bottom: 20px;
+    position: relative;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 #formlogin .checkbox.show:before {
-	content: '\e013';
-	color: #1fa67b;
-	font-size: 17px;
-	margin: 1px 0 0 3px;
-	position: absolute;
-	pointer-events: none;
-	font-family: 'Glyphicons Halflings';
+    content: '\e013';
+    color: #1fa67b;
+    font-size: 17px;
+    margin: 1px 0 0 3px;
+    position: absolute;
+    pointer-events: none;
+    font-family: 'Glyphicons Halflings';
 }
 #formlogin .checkbox .character-checkbox {
-	width: 25px;
-	height: 25px;
-	cursor: pointer;
-	border: 1px solid #ccc;
-	vertical-align: middle;
-	display: inline-block;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    border: 1px solid #ccc;
+    vertical-align: middle;
+    display: inline-block;
 }
 #formlogin .checkbox .label {
-	color: #6d6d6d;
-	font-size: 100%;
-	font-weight: normal;
+    color: #6d6d6d;
+    font-size: 100%;
+    font-weight: normal;
 }
 #formlogin .btn.btn-custom {
-	font-size: 100%;
-	margin-bottom: 20px;
+    font-size: 100%;
+    margin-bottom: 20px;
 }
 #formlogin .forget {
-	font-size: 100%;
-	text-align: center;
-	display: block;
+    font-size: 100%;
+    text-align: center;
+    display: block;
 }
 /*    --------------------------------------------------
-	:: Inputs & Buttons
-	-------------------------------------------------- */
+        :: Inputs & Buttons
+        -------------------------------------------------- */
 .form-control {
-	color: #212121;
+    color: #212121;
 }
 .btn-custom {
-	color: #fff;
-	background-color: #99d197;
+    color: #fff;
+    background-color: #99d197;
 }
 .btn-custom:hover, .btn-custom:focus {
-	color: #fff;
+    color: #fff;
 }
 .btn-cont {
-	background-color: #aae2a8;
+    background-color: #aae2a8;
 }
 .btn-elimina {
-	color: #ff3939;
+    color: #ff3939;
 }
 .btn-xml {
-	color: #0000ff;
+    color: #0000ff;
 }
 .btn.disabled {
-	pointer-events: auto;
+    pointer-events: auto;
 }
 .btn-effetti {
-	background-color: #D4CB6A;
+    background-color: #D4CB6A;
 }
 .btn-riba {
-	background-color: #FFF7AA;
+    background-color: #FFF7AA;
 }
 .btn-fatt {
-	background-color: #d4cb6a;
+    background-color: #d4cb6a;
 }
 .btn-pagamento {
-	color: #66aa66;
+    color: #66aa66;
 }
 .btn-articolo {
-	padding: 3px 2px 5px 2px;
+    padding: 3px 2px 5px 2px;
 }
 .form-inline {
-	width: 220px;
-	padding-top: 7px;
-	padding-right: 10px;
+    width: 220px;
+    padding-top: 7px;
+    padding-right: 10px;
 }
 
 /* loading - the AJAX indicator */
 .ui-autocomplete-loading {
-	background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat;
+    background: white url('../images/ui-anim_basic_16x16.gif') right center no-repeat;
 }
 /* scroll results */
 .ui-autocomplete {
-	overflow-y: hidden;
-	overflow-x: hidden;
+    overflow-y: hidden;
+    overflow-x: hidden;
 }
 
 /* IE 6 doesn't support max-height
 * we use height instead, but this forces the menu to always be this tall
 */
 * html .ui-autocomplete {
-	height: 250px;
+    height: 250px;
 }
 /* Fine */
 /** ENRICO FEDELE */
 
 /** ENRICO FEDELE */
 .container {
-	width: 100%;
+    width: 100%;
 }
 /* stile per il pulsante di tipo file */
 .btn-file {
-	position: relative;
-	overflow: hidden;
+    position: relative;
+    overflow: hidden;
 }
 .btn-file input[type=file] {
-	position: absolute;
-	top: 0;
-	right: 0;
-	min-width: 100%;
-	min-height: 100%;
-	font-size: 100px;
-	text-align: right;
-	filter: alpha(opacity=0);
-	opacity: 0;
-	outline: none;
-	background: white;
-	cursor: inherit;
-	display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
 }
 /* fine stile per il pulsante di tipo file */
 .navbar-brand > img {
-	display: inline;
+    display: inline;
 }
 
 .navbar-brand {
-	font-size: 100%;
-	height: 40px;
+    font-size: 100%;
+    height: 40px;
 }
 
 input[type="text"]:focus, textarea:focus, select:focus {
-	border-color: #66afe9;
-	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(26, 77, 25, 0.6);
-	outline: 0 none;
+    border-color: #66afe9;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(26, 77, 25, 0.6);
+    outline: 0 none;
 }
 /* highlight results */
 .ui-autocomplete span.hl_results {
-	background-color: #ffff66;
+    background-color: #ffff66;
 }
 .ui-autocomplete-input {
-	width: 25%;
+    width: 25%;
 }
 /** ENRICO FEDELE */
 
 .navbar-toggle {
-	position: relative;
-	padding-right: 9px;
+    position: relative;
+    padding-right: 9px;
 }
 .navbar-right{margin-right: 0;}
 
@@ -519,29 +519,20 @@ div.danger li.active span.rounded{
 }
 
 .dash-tabs > li.active > a span.rounded{
- 
+
 }
 .dash-tabs > li {
     width: 50%;
-	border: 1px solid;
+    border: 1px solid;
 }
 .dash-tabs > li a{
-   width: 50px;
-   height: 50px;
-   margin: 20px auto;
-   border-radius: 50%;
-   padding: 0;
+    width: 50px;
+    height: 50px;
+    margin: 20px auto;
+    border-radius: 50%;
+    padding: 0;
 }
 
-.row {
-	padding: 2px 10px 2px 10px;
-}
-
-.btn-lista {
-	width: 100%;
-	text-align: left;
-	font-size: 90%;
-}
 .noborder {
     border: 0px solid #fff;
 }
@@ -571,10 +562,11 @@ div.danger li.active span.rounded{
     padding: 10px 10px 10px 10px;
 }
 .row {
-	padding: 2px 10px 2px 10px;
+    padding: 2px 3px 2px 3px;
+    margin-right: 0px;
 }
 .licheck {
-	list-style-type: none;
+    list-style-type: none;
 }
 ul.licheck li {
     padding-bottom: 4px;
@@ -691,6 +683,10 @@ label {
     padding-left: 1px;
 }
 
+.btn {
+    padding: 3px 2px 3px 2px;
+    white-space: normal;
+}
 
 /**************************************
 ************** JQUERY UI **************
