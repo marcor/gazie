@@ -51,6 +51,15 @@ function databaseIsOk() {
    global $link, $Database;
    $result = True;
    mysqli_select_db($link, $Database) or ( $result = False); // In $result l'esito della selezione
+   // Verifico che il database non sia vuoto (condizione che può invece verificarsi nel caso in cui un amministratore di sistema fornisca db e user senza grant CREATE)
+   if ($tablesResult = mysqli_query($link, "SELECT COUNT(*) AS numTables FROM information_schema.tables WHERE table_schema = '$Database';")) {
+      $numTables = mysqli_fetch_row($tablesResult);
+	  if ($numTables[0] == 0) {
+         $result = False;
+      }
+   } else {
+      $result = False;
+   }
    return $result;
 }
 

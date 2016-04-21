@@ -780,7 +780,7 @@ CREATE TABLE `gaz_001tesbro` (
   `gross_weight` decimal(12,2) NOT NULL,
   `units` int(6) NOT NULL,
   `volume` decimal(8,2) NOT NULL,
-  `initra` timestamp NOT NULL,
+  `initra` datetime DEFAULT NULL,
   `geneff` char(1) NOT NULL DEFAULT '',
   `id_contract` int(9) NOT NULL DEFAULT '0',
   `id_con` int(9) NOT NULL DEFAULT '0',
@@ -833,7 +833,7 @@ CREATE TABLE `gaz_001tesdoc` (
   `gross_weight` decimal(12,2) NOT NULL,
   `units` int(6) NOT NULL,
   `volume` decimal(8,2) NOT NULL,
-  `initra` timestamp NOT NULL,
+  `initra` datetime DEFAULT NULL,
   `geneff` char(1) NOT NULL DEFAULT '',
   `id_contract` int(9) NOT NULL DEFAULT '0',
   `id_con` int(9) NOT NULL DEFAULT '0',
@@ -901,7 +901,7 @@ CREATE TABLE `gaz_admin` (
   `Password` varchar(20) NOT NULL DEFAULT '',
   `company_id` int(3) NOT NULL,
   `datacc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `datpas` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `datpas` datetime DEFAULT NULL,
   PRIMARY KEY (`Login`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
