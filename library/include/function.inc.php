@@ -1445,7 +1445,7 @@ class GAzieForm {
             if ($val == $v) {
                 $selected .= " selected ";
             }
-            echo "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["codice"] . " - " . $r['descri'] . "</option>\n";
+            echo "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["codice"] . "-" . $r['descri'] . "</option>\n";
         }
         echo "</select>\n";
     }

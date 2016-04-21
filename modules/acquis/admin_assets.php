@@ -26,6 +26,22 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'ale' => array());
 
+function lastAccount($mas, $ss) {
+    /* funzione per trovare i numeri dei nuovi sottoconto da creare sui mastri 
+     * scelti per le immobilizzazioni, i fondi e i costi d'ammortamento dove i 
+     * due numeri successivi indicano la sottospecie della tabella ministeriale 
+     * degli ammortamenti e i restanti 4 (9999) sono attribuiti automaticamente 
+     * al singolo bene da questa funzione                                     */
+    global $gTables;
+    $subacc = $mas * 1000000 + $ss * 10000;
+    $rs_last_subacc = gaz_dbi_dyn_query("*", $gTables['clfoco'], "codice BETWEEN " . $subacc . " AND " . intval($subacc + 9999), "codice DESC", 0, 1);
+    $last_subacc = gaz_dbi_fetch_array($rs_last_subacc);
+    if ($last_subacc) {
+        return $last_subacc['codice'] + 1;
+    } else {
+        return $subacc + 1;
+    }
+}
 
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -33,7 +49,7 @@ if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_POST['ritorno'];
 }
 
-if ((isset($_GET['Update']) && ! isset($_GET['id_tes'])) && ! isset($_GET['tipdoc'])) {
+if ((isset($_GET['Update']) && !isset($_GET['id_tes'])) && !isset($_GET['tipdoc'])) {
     header("Location: " . $form['ritorno']);
     exit;
 }
@@ -60,7 +76,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['datreg'] = substr($_POST['datreg'], 0, 10);
     $form['numfat'] = substr($_POST['numfat'], 0, 40);
     $form['clfoco'] = intval($_POST['clfoco']);
-    $form['acc-fondo'] = substr($_POST['acc-fondo'], 0, 3);
+    $form['mas_fixed_assets'] = substr($_POST['mas_fixed_assets'], 0, 3);
+    $form['mas_found_assets'] = substr($_POST['mas_found_assets'], 0, 3);
+    $form['mas_cost_assets'] = substr($_POST['mas_cost_assets'], 0, 3);
     $form['descri'] = filter_input(INPUT_POST, 'descri');
     $form['unimis'] = filter_input(INPUT_POST, 'unimis');
     $form['quantity'] = floatval($_POST['quantity']);
@@ -122,8 +140,12 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $msg['err'][] = 'datfat';
         if (empty($form["pagame"]))
             $msg['err'][] = 'pagame';
-        if ($form["acc-fondo"] < 100)
-            $msg['err'][] = 'acc-fondo';
+        if ($form["mas_fixed_assets"] < 100)
+            $msg['err'][] = 'mas_fixed_assets';
+        if ($form["mas_found_assets"] < 100)
+            $msg['err'][] = 'mas_found_assets';
+        if ($form["mas_cost_assets"] < 100)
+            $msg['err'][] = 'mas_cost_assets';
         if (empty($form["descri"]))
             $msg['err'][] = 'descri';
 // --- fine controlli
@@ -134,9 +156,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             } else { // e' un'inserimento
                 $year = substr($form['datreg'], 6, 4);
                 // ricavo il protocollo da assegnare all'acquisto
-                $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $year AND tipdoc LIKE 'AF_' AND seziva = ".$form['seziva'], "protoc DESC", 0, 1);
+                $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $year AND tipdoc LIKE 'AF_' AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
                 $ultimo_tesdoc = gaz_dbi_fetch_array($rs_ultimo_tesdoc);
-                $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = $year AND regiva = 6 AND seziva = ".$form['seziva'], "protoc DESC", 0, 1);
+                $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = $year AND regiva = 6 AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
                 $ultimo_tesmov = gaz_dbi_fetch_array($rs_ultimo_tesmov);
                 $lastProtocol = 0;
                 if ($ultimo_tesdoc) {
@@ -148,31 +170,56 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     }
                 }
                 $lastProtocol++;
-                // inizio inserimenti sul DB
-                $form['caucon']='AFA';
-                $form['regiva']=6;
-                $form['operat']=1;
-                $form['protoc']=$lastProtocol;
-                $form['numdoc']=$form['numfat'];
-                $form['datreg']=  gaz_format_date($form['datreg'],true);
-                $form['datdoc']=  gaz_format_date($form['datfat'],true);
+                // testata movimento contabile
+                $form['caucon'] = 'AFA';
+                $form['regiva'] = 6;
+                $form['operat'] = 1;
+                $form['protoc'] = $lastProtocol;
+                $form['numdoc'] = $form['numfat'];
+                $form['datreg'] = gaz_format_date($form['datreg'], true);
+                $form['datdoc'] = gaz_format_date($form['datfat'], true);
                 gaz_dbi_table_insert('tesmov', $form);
                 $id_tesmov = gaz_dbi_last_id();
-                $form['id_tes']=$id_tesmov;
-                $form['codcon']=$form['clfoco'];
-                $form['darave']='A';
-                $form['import']=round($form['quantity']*$form['price'],2);
-                gaz_dbi_table_insert('rigmoc', $form);
-                $form['darave']='D';
-                $form['codcon']=$form['acc-fondo']*1000000+$form['ss_amm_min']*1000+999;
-                gaz_dbi_table_insert('rigmoc', $form);
-                $form['codiva']=$form['codvat'];
+                $form['id_tes'] = $id_tesmov;
+                // trovo il conto immobilizzazione 
+                $form['acc_fixed_assets'] = lastAccount($form['mas_fixed_assets'], $form['ss_amm_min']);
+                // trovo il conto fondo ammortamento 
+                $form['acc_found_assets'] = lastAccount($form['mas_found_assets'], $form['ss_amm_min']);
+                // trovo il conto costo ammortamento 
+                $form['acc_cost_assets'] = lastAccount($form['mas_cost_assets'], $form['ss_amm_min']);
+                // inserisco i dati sulla tabella assets
+                gaz_dbi_table_insert('assets', $form);
+                $form['id_assets'] = gaz_dbi_last_id();
+                // creo i tre conti relativi ai mastri scelti
+                $form['codice'] = $form['acc_fixed_assets'];
+                gaz_dbi_table_insert('clfoco', $form);
+                $form['codice'] = $form['acc_found_assets'];
+                gaz_dbi_table_insert('clfoco', $form);
+                $form['codice'] = $form['acc_cost_assets'];
+                gaz_dbi_table_insert('clfoco', $form);
+                // rigo conto fornitore
+                $form['codcon'] = $form['clfoco'];
+                $form['darave'] = 'A';
                 $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['codvat']);
-                $form['periva']=$iva['aliquo'];
-                $form['tipiva']=$iva['tipiva'];
-                $form['imponi']=$form['import'];
-                $form['impost']=round($form['import']*$iva['aliquo']/100,2);
+                $form['imponi'] = round($form['quantity'] * $form['price'], 2);
+                $form['impost'] = round($form['imponi'] * $iva['aliquo'] / 100, 2);
+                $form['import'] = $form['imponi'] + $form['impost'];
+                $import = $form['import'];
+                gaz_dbi_table_insert('rigmoc', $form);
+                // rigo conto immobilizzazione
+                $form['codcon'] = $form['acc_fixed_assets'];
+                $form['darave'] = 'D';
+                $form['import'] = $form['imponi'];
+                gaz_dbi_table_insert('rigmoc', $form);
+                // rigo iva 
+                $form['codiva'] = $form['codvat'];
+                $form['periva'] = $iva['aliquo'];
+                $form['tipiva'] = $iva['tipiva'];
                 gaz_dbi_table_insert('rigmoi', $form);
+                //e rigo conto imposta
+                $form['codcon'] = $admin_aziend['ivaacq'];
+                $form['import'] = $form['impost'];
+                gaz_dbi_table_insert('rigmoc', $form);
                 exit;
             }
         }
@@ -217,7 +264,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $rs_last = gaz_dbi_dyn_query('datreg', $gTables['tesmov'], 1, "id_tes DESC", 0, 1);
     $last = gaz_dbi_fetch_array($rs_last);
     if ($last) {
-        $form['datreg'] = gaz_format_date($last['datreg'],false,true);
+        $form['datreg'] = gaz_format_date($last['datreg'], false, true);
     } else {
         $form['datreg'] = date("d/m/Y");
     }
@@ -236,7 +283,9 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['pagame'] = "";
     $form['change_pag'] = "";
     $form['valamm'] = 0;
-    $form['acc-fondo'] = $admin_aziend['mas_amm'];
+    $form['mas_fixed_assets'] = $admin_aziend['mas_fixed_assets'];
+    $form['mas_found_assets'] = $admin_aziend['mas_found_assets'];
+    $form['mas_cost_assets'] = $admin_aziend['mas_cost_assets'];
     $form['descri'] = '';
     $form['unimis'] = '';
     $form['quantity'] = 1;
@@ -353,16 +402,6 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="acc-fondo" class="col-sm-4 control-label"><?php echo $script_transl['acc-fondo']; ?>:</label>
-                        <div>
-                            <?php
-                            $gForm->selectAccount('acc-fondo', $form['acc-fondo'] . '000000', array(1, 9), '', 13, "col-sm-8 small");
-                            ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3 col-lg-3">
-                    <div class="form-group">
                         <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?>:</label>
                         <div>
                             <?php
@@ -381,6 +420,16 @@ if (count($msg['err']) > 0) { // ho un errore
                             $sel_vat = new selectaliiva("codvat");
                             $sel_vat->addSelected($form["codvat"]);
                             $sel_vat->output("col-sm-8 small");
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="mas_fixed_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_fixed_assets']; ?>:</label>
+                        <div>
+                            <?php
+                            $gForm->selectAccount('mas_fixed_assets', $form['mas_fixed_assets'] . '000000', array(1, 9), '', 13, "col-sm-8 small");
                             ?>
                         </div>
                     </div>
@@ -423,7 +472,29 @@ if (count($msg['err']) > 0) { // ho un errore
                         </div>
                     </div>
                 </div>
-                <div class="col-sm-12 col-md-6 col-lg-6">
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="mas_found_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_found_assets']; ?>:</label>
+                        <div>
+                            <?php
+                            $gForm->selectAccount('mas_found_assets', $form['mas_found_assets'] . '000000', array(2, 9), '', 13, "col-sm-8 small");
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="mas_cost_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_cost_assets']; ?>:</label>
+                        <div>
+                            <?php
+                            $gForm->selectAccount('mas_cost_assets', $form['mas_cost_assets'] . '000000', array(3, 9), '', 13, "col-sm-8 small");
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?>:</label>
                         <div class="col-sm-8">
@@ -431,8 +502,6 @@ if (count($msg['err']) > 0) { // ho un errore
                         </div>
                     </div>
                 </div>
-            </div> <!-- chiude row  -->
-            <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?>:</label>
@@ -457,6 +526,8 @@ if (count($msg['err']) > 0) { // ho un errore
                         </div>
                     </div>
                 </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?>:</label>
@@ -467,6 +538,23 @@ if (count($msg['err']) > 0) { // ho un errore
                         </div>
                     </div>
                 </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <p class="col-sm-12 small">
+                            <?php
+                            echo $gg . $script_transl['info']['gg_to_year_end_1'] . substr($form['datreg'], 6, 4).$script_transl['info']['gg_to_year_end_2'];
+                            ?>
+                            <span id="amount_rate">
+                                <?php
+                                echo gaz_format_number(round($amount*$form['valamm']*$gg/36500, 2));
+                            ?></span>
+                        </p>                
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                    </div>
+                </div>
             </div> <!-- chiude row  -->
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
@@ -475,15 +563,6 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12 col-lg-6">
                     <div class="form-group">
-                        <p  class="col-sm-12 bg-info">
-                            <?php
-                            echo $gg . $script_transl['info']['gg_to_year_end_1'] . substr($form['datreg'], 6, 4) .
-                            $script_transl['info']['gg_to_year_end_2'];
-                            ?>
-                            <span id="amount_rate">
-                                <?php echo round($amount * $form['valamm'] * $gg / 36500, 2); ?>
-                            </span>
-                        </p>
                     </div>
                 </div>
                 <div class="col-md-12 col-lg-6">
