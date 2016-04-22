@@ -163,9 +163,7 @@ if ($t > 4 && $t <= 13) {
                 <div class="panel panel-default company-color" >
                     <p>
                         <?php echo $script_transl['company'] ?>
-                        <a href="../config/admin_aziend.php">
-                            <img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
-                        </a>
+                        <a href="../config/admin_aziend.php"><img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
                     </p>
                     <p>
                         <?php
@@ -278,16 +276,13 @@ if ($t > 4 && $t <= 13) {
         <div id='admin_footer' align="center">
             <div > GAzie Version: <?php echo $versSw; ?> Software Open Source (lic. GPL)
                 <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?> 
-                <a  target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://www.devincentiis.it"> http://www.devincentiis.it</a>
+                <a target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://www.devincentiis.it"> http://www.devincentiis.it</a>
             </div>
             <div>
-                <a href="http://gazie.sourceforge.net" target="_new" title="<?php echo $script_transl['devel']; ?>">
-                    <img src="../../library/images/gazie.gif" height="38" border="0">
-                </a>
+                <a href="http://gazie.sourceforge.net" target="_new" title="<?php echo $script_transl['devel']; ?>"><img src="../../library/images/gazie.gif" height="38" border="0"></a>
                 <?php
                 foreach ($script_transl['strBottom'] as $value) {
-                    echo "<a href=\"" . $value['href'] . "\" title=\"" . $value['title'] . "\" target=\"_NEW\" >";
-                    echo "<img src=\"../../library/images/" . $value['img'] . "\" border=\"0\" ></a>\n";
+                    echo "<a href=\"" . $value['href'] . "\" title=\"" . $value['title'] . "\" target=\"_NEW\" ><img src=\"../../library/images/" . $value['img'] . "\" border=\"0\" ></a>\n";
                 }
                 ?>
 
