@@ -278,7 +278,7 @@ if ($t > 4 && $t <= 13) {
         <div id='admin_footer' align="center">
             <div > GAzie Version: <?php echo $versSw; ?> Software Open Source (lic. GPL)
                 <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?> 
-                <a  target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://http://www.devincentiis.it"> http://www.devincentiis.it</a>
+                <a  target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://www.devincentiis.it"> http://www.devincentiis.it</a>
             </div>
             <div>
                 <a href="http://gazie.sourceforge.net" target="_new" title="<?php echo $script_transl['devel']; ?>">

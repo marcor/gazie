@@ -32,7 +32,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
+        <meta name="author" content="Antonio de Vincentiis http://www.devincentiis.it">
         <link rel="shortcut icon" href="../../library/images/favicon.ico">			
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">

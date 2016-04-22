@@ -200,6 +200,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 // trovo il conto costo ammortamento 
                 $form['acc_cost_assets'] = lastAccount($form['mas_cost_assets'], $form['ss_amm_min']);
                 // inserisco i dati sulla tabella assets
+                $form['descri'] = $descri;
                 gaz_dbi_table_insert('assets', $form);
                 $form['id_assets'] = gaz_dbi_last_id();
                 // ripreno i file di traduzione
@@ -568,7 +569,7 @@ if (count($msg['err']) > 0) { // ho un errore
                         <label for="acc_no_detuct_cost" class="col-sm-6 control-label"><?php echo $script_transl['acc_no_detuct_cost']; ?></label>
                         <div>
                             <?php
-                            $gForm->selectAccount('acc_no_detuct_cost', $form['acc_no_detuct_cost'], array(3), '', 13, "col-sm-6 small");
+                            $gForm->selectAccount('acc_no_detuct_cost', $form['acc_no_detuct_cost'], 3, '', 13, "col-sm-6 small");
                             ?>
                         </div>
                     </div>
