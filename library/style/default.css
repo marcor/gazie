@@ -19,6 +19,11 @@ input, select {
     border-radius: 48%;
 }
 
+mark {
+    background-color: #ff0;
+    padding: 0em;
+}
+
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
     font-size : 100%;
 }
@@ -662,7 +667,7 @@ label {
     margin-bottom: 7px;
 }
 .container-fluid > .navbar-header {
-    margin-right: 0px;
+    margin-right: -10px;
     margin-left: 0px;
 }
 

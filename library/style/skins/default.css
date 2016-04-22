@@ -10,6 +10,7 @@ select:focus, input:focus {
 }
 mark {
     background-color: #ff0;
+    padding: 0em;
 }
 table.Tlarge {
 	border-color : #000000;

@@ -71,7 +71,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];   ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];      ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -169,10 +169,10 @@ function gaz_create_date($d, $m, $yyyy) { // crea una data nel formato dd-mm-yyy
 
 function gaz_format_date($date, $from_form = false, $to_form = false) {
     if ($from_form) { // dal formato gg-mm-aaaa o gg/mm/aaaa (es. proveniente da form) a diversi 
-        $m=intval(substr($date, 3, 2));
-        $d=intval(substr($date, 0, 2));
-        $Y=intval(substr($date, 6, 4));
-        $uts = mktime(0, 0, 0,$m,$d,$Y);
+        $m = intval(substr($date, 3, 2));
+        $d = intval(substr($date, 0, 2));
+        $Y = intval(substr($date, 6, 4));
+        $uts = mktime(0, 0, 0, $m, $d, $Y);
         if ($from_form === true) { // adatto al db
             return date("Y-m-d", $uts);
         } elseif ($from_form === 1) { // per i campi input dei form
@@ -182,7 +182,7 @@ function gaz_format_date($date, $from_form = false, $to_form = false) {
         } elseif ($from_form === 3) { // il valore numerico (confrontabile)
             return date("Ymd", $uts);
         } elseif ($from_form === 'chk') { // restituisce true o false se la data non è stata formattata bene
-            return checkdate($m,$d,$Y);
+            return checkdate($m, $d, $Y);
         } else { // altri restituisco il timestamp 
             return date("Ymd", $uts);
         }
@@ -968,9 +968,13 @@ class selectpagame extends SelectBox {
 // classe per la generazione di select box delle aliquote iva
 class selectaliiva extends SelectBox {
 
-    function output($class=false) {
+    function output($class = false, $tipiva = false) {
         global $gTables;
-        $query = 'SELECT * FROM `' . $gTables['aliiva'] . '` ORDER BY `codice`';
+        $where = '';
+        if ($tipiva) {
+            $where = " WHERE tipiva='" . $tipiva . "'";
+        }
+        $query = 'SELECT * FROM `' . $gTables['aliiva'] . '`' . $where . ' ORDER BY `codice`';
         SelectBox::_output($query, 'descri', True, '', '', 'codice', '', $class);
     }
 

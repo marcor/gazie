@@ -79,6 +79,10 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['mas_fixed_assets'] = substr($_POST['mas_fixed_assets'], 0, 3);
     $form['mas_found_assets'] = substr($_POST['mas_found_assets'], 0, 3);
     $form['mas_cost_assets'] = substr($_POST['mas_cost_assets'], 0, 3);
+    $form['id_no_deduct_vat'] = intval($_POST['id_no_deduct_vat']);
+    $form['no_deduct_vat_rate'] = floatval($_POST['no_deduct_vat_rate']);
+    $form['acc_no_detuct_cost'] = intval($_POST['acc_no_detuct_cost']);
+    $form['no_deduct_cost_rate'] = floatval($_POST['no_deduct_cost_rate']);
     $form['descri'] = filter_input(INPUT_POST, 'descri');
     $form['unimis'] = filter_input(INPUT_POST, 'unimis');
     $form['quantity'] = floatval($_POST['quantity']);
@@ -148,6 +152,12 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $msg['err'][] = 'mas_cost_assets';
         if (empty($form["descri"]))
             $msg['err'][] = 'descri';
+        if ($form["no_deduct_cost_rate"] >= 0.01 && $form["acc_no_detuct_cost"] < 100000000)
+            $msg['err'][] = 'detuct_cost';
+        if ($form["no_deduct_vat_rate"] >= 0.01 && $form["id_no_deduct_vat"] < 1)
+            $msg['err'][] = 'deduct_vat';
+        if ($form["ss_amm_min"] >= 100)
+            $msg['err'][] = 'ss_amm_min';
 // --- fine controlli
         if (count($msg['err']) == 0) {// nessun errore
             if ($toDo == 'update') { // e' una modifica
@@ -155,6 +165,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 exit;
             } else { // e' un'inserimento
                 $year = substr($form['datreg'], 6, 4);
+                $descri = $form['descri'];
                 // ricavo il protocollo da assegnare all'acquisto
                 $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $year AND tipdoc LIKE 'AF_' AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
                 $ultimo_tesdoc = gaz_dbi_fetch_array($rs_ultimo_tesdoc);
@@ -172,6 +183,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $lastProtocol++;
                 // testata movimento contabile
                 $form['caucon'] = 'AFA';
+                $form['descri'] = 'FATTURA DI ACQUISTO';
                 $form['regiva'] = 6;
                 $form['operat'] = 1;
                 $form['protoc'] = $lastProtocol;
@@ -190,26 +202,60 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 // inserisco i dati sulla tabella assets
                 gaz_dbi_table_insert('assets', $form);
                 $form['id_assets'] = gaz_dbi_last_id();
+                // ripreno i file di traduzione
+                require("./lang." . $admin_aziend['lang'] . ".php");
+                $transl = $strScript['admin_assets.php'];
                 // creo i tre conti relativi ai mastri scelti
+                $form['descri'] = $transl['des_fixed_assets'] . strtolower($descri);
                 $form['codice'] = $form['acc_fixed_assets'];
                 gaz_dbi_table_insert('clfoco', $form);
+                $form['descri'] = $transl['des_found_assets'] . strtolower($descri);
                 $form['codice'] = $form['acc_found_assets'];
                 gaz_dbi_table_insert('clfoco', $form);
+                $form['descri'] = $transl['des_cost_assets'] . strtolower($descri);
                 $form['codice'] = $form['acc_cost_assets'];
                 gaz_dbi_table_insert('clfoco', $form);
-                // rigo conto fornitore
+                // recupero i dati iva ed eseguo i calcoli
+                $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['codvat']);
+                $form['no_imponi'] = 0;
+                $form['no_impost'] = 0;
+                if ($form['id_no_deduct_vat'] > 0) { // ho una parte di iva indetraibile che si andrà a sommare ai costi
+                    // per i righi iva
+                    $no_iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['id_no_deduct_vat']);
+                    $form['no_imponi'] = round($form['quantity'] * $form['price'] * $form['no_deduct_vat_rate'] / 100, 2);
+                    $form['no_impost'] = round($form['no_imponi'] * $no_iva['aliquo'] / 100, 2);
+                    $form['imponi'] = round($form['quantity'] * $form['price'] - $form['no_imponi'], 2);
+                    $form['impost'] = round($form['imponi'] * $iva['aliquo'] / 100, 2);
+                    // per i righi contabili
+                    $form['import'] = $form['imponi'] + $form['impost'] + $form['no_imponi'] + $form['no_impost'];
+                } else {
+                    $form['imponi'] = round($form['quantity'] * $form['price'], 2);
+                    $form['impost'] = round($form['imponi'] * $iva['aliquo'] / 100, 2);
+                    $form['import'] = $form['imponi'] + $form['impost'];
+                }
+                $import = $form['import'];
+                // rigo conto fornitore con importo totale
                 $form['codcon'] = $form['clfoco'];
                 $form['darave'] = 'A';
-                $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['codvat']);
-                $form['imponi'] = round($form['quantity'] * $form['price'], 2);
-                $form['impost'] = round($form['imponi'] * $iva['aliquo'] / 100, 2);
-                $form['import'] = $form['imponi'] + $form['impost'];
-                $import = $form['import'];
                 gaz_dbi_table_insert('rigmoc', $form);
+                $last_id_rig = gaz_dbi_last_id();
+                // inserisco lo scadenzario
+                $pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $form['pagame']);
+                require("../../library/include/expiry_calc.php");
+                $ex = new Expiry;
+                $rs_ex = $ex->CalcExpiry($import, gaz_format_date($form['datfat'], true), $pagame['tipdec'], $pagame['giodec'], $pagame['numrat'], $pagame['tiprat'], $pagame['mesesc'], $pagame['giosuc']);
+                foreach ($rs_ex as $k => $v) {
+                    $paymov_value = array('id_tesdoc_ref' => $year . '6' . $form['seziva'] . str_pad($form['protoc'], 9, 0, STR_PAD_LEFT),
+                        'id_rigmoc_doc' => $last_id_rig,
+                        'amount' => $v['amount'],
+                        'expiry' => $v['date']);
+                    paymovInsert($paymov_value);
+                }
                 // rigo conto immobilizzazione
                 $form['codcon'] = $form['acc_fixed_assets'];
                 $form['darave'] = 'D';
-                $form['import'] = $form['imponi'];
+                // agli imponibili si dovrà sommare anche l'eventuale iva indetraibile (che diventa costo storico)
+                $form['import'] = $form['imponi'] + $form['no_imponi'] + $form['no_impost'];
                 gaz_dbi_table_insert('rigmoc', $form);
                 // rigo iva 
                 $form['codiva'] = $form['codvat'];
@@ -220,6 +266,15 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['codcon'] = $admin_aziend['ivaacq'];
                 $form['import'] = $form['impost'];
                 gaz_dbi_table_insert('rigmoc', $form);
+                if ($form['id_no_deduct_vat'] > 0) { // ho iva indetraibile che genererà un apposito rigo iva
+                    // rigo iva indetraibile
+                    $form['imponi'] = $form['no_imponi'];
+                    $form['impost'] = $form['no_impost'];
+                    $form['codiva'] = $form['id_no_deduct_vat'];
+                    $form['periva'] = $no_iva['aliquo'];
+                    $form['tipiva'] = $no_iva['tipiva'];
+                    gaz_dbi_table_insert('rigmoi', $form);
+                }
                 exit;
             }
         }
@@ -286,8 +341,12 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['mas_fixed_assets'] = $admin_aziend['mas_fixed_assets'];
     $form['mas_found_assets'] = $admin_aziend['mas_found_assets'];
     $form['mas_cost_assets'] = $admin_aziend['mas_cost_assets'];
+    $form['id_no_deduct_vat'] = 0;
+    $form['no_deduct_vat_rate'] = 0;
+    $form['acc_no_detuct_cost'] = 0;
+    $form['no_deduct_cost_rate'] = 0;
     $form['descri'] = '';
-    $form['unimis'] = '';
+    $form['unimis'] = 'n';
     $form['quantity'] = 1;
     $form['price'] = 0;
     $form['ss_amm_min'] = 999;
@@ -376,7 +435,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?>:</label>
+                        <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="datreg" name="datreg" tabindex=10 value="<?php echo $form['datreg']; ?>">
                         </div>
@@ -384,7 +443,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>                    
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="numfat" class="col-sm-4 control-label"><?php echo $script_transl['numfat']; ?>:</label>
+                        <label for="numfat" class="col-sm-4 control-label"><?php echo $script_transl['numfat']; ?></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="numfat" name="numfat" maxlength="20" tabindex=11 placeholder="<?php echo $script_transl['numfat']; ?>" value="<?php echo $form['numfat']; ?>">
                         </div>
@@ -392,7 +451,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="datfat" class="col-sm-4 control-label"><?php echo $script_transl['datfat']; ?>:</label>
+                        <label for="datfat" class="col-sm-4 control-label"><?php echo $script_transl['datfat']; ?></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="datfat" name="datfat" placeholder="GG/MM/AAAA" tabindex=12 value="<?php echo $form['datfat']; ?>">
                         </div>
@@ -402,7 +461,7 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?>:</label>
+                        <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?></label>
                         <div>
                             <?php
                             $select_pagame = new selectpagame("pagame");
@@ -414,7 +473,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="codvat" class="col-sm-4 control-label"><?php echo $script_transl['codvat']; ?>:</label>
+                        <label for="codvat" class="col-sm-4 control-label"><?php echo $script_transl['codvat']; ?></label>
                         <div>
                             <?php
                             $sel_vat = new selectaliiva("codvat");
@@ -426,7 +485,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="mas_fixed_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_fixed_assets']; ?>:</label>
+                        <label for="mas_fixed_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_fixed_assets']; ?></label>
                         <div>
                             <?php
                             $gForm->selectAccount('mas_fixed_assets', $form['mas_fixed_assets'] . '000000', array(1, 9), '', 13, "col-sm-8 small");
@@ -458,15 +517,17 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="ss_amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ss_amm_min']; ?>:</label>
-                        <?php
-                        $gForm->selAmmortamentoMin('ammortamenti_ministeriali.xml', 'ss_amm_min', $admin_aziend['amm_min'], $form["ss_amm_min"]);
-                        ?>
+                        <label for="ss_amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ss_amm_min']; ?></label>
+                        <div>
+                            <?php
+                            $gForm->selAmmortamentoMin('ammortamenti_ministeriali.xml', 'ss_amm_min', $admin_aziend['amm_min'], $form["ss_amm_min"]);
+                            ?>
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="valamm" class="col-sm-8 control-label"><?php echo $script_transl['valamm']; ?>:</label>
+                        <label for="valamm" class="col-sm-8 control-label"><?php echo $script_transl['valamm']; ?></label>
                         <div class="col-sm-4">
                             <input type="number" step="0.1" min="0.1" max="100" class="form-control" id="valamm" name="valamm" placeholder="<?php echo $script_transl['valamm']; ?>" value="<?php echo $form['valamm']; ?>">
                         </div>
@@ -474,7 +535,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="mas_found_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_found_assets']; ?>:</label>
+                        <label for="mas_found_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_found_assets']; ?></label>
                         <div>
                             <?php
                             $gForm->selectAccount('mas_found_assets', $form['mas_found_assets'] . '000000', array(2, 9), '', 13, "col-sm-8 small");
@@ -484,7 +545,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="mas_cost_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_cost_assets']; ?>:</label>
+                        <label for="mas_cost_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_cost_assets']; ?></label>
                         <div>
                             <?php
                             $gForm->selectAccount('mas_cost_assets', $form['mas_cost_assets'] . '000000', array(3, 9), '', 13, "col-sm-8 small");
@@ -496,7 +557,47 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?>:</label>
+                        <label for="no_deduct_cost_rate" class="col-sm-6 control-label"><?php echo $script_transl['no_deduct_cost_rate']; ?></label>
+                        <div class="col-sm-6">
+                            <input type="number" step="0.1" max="100" class="form-control" id="valamm" name="no_deduct_cost_rate" placeholder="<?php echo $script_transl['no_deduct_cost_rate']; ?>" value="<?php echo $form['no_deduct_cost_rate']; ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="acc_no_detuct_cost" class="col-sm-6 control-label"><?php echo $script_transl['acc_no_detuct_cost']; ?></label>
+                        <div>
+                            <?php
+                            $gForm->selectAccount('acc_no_detuct_cost', $form['acc_no_detuct_cost'], array(3), '', 13, "col-sm-6 small");
+                            ?>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="no_deduct_vat_rate" class="col-sm-8 control-label"><?php echo $script_transl['no_deduct_vat_rate']; ?></label>
+                        <div class="col-sm-4">
+                            <input type="number" step="0.1" max="100" class="form-control" id="valamm" name="no_deduct_vat_rate" placeholder="<?php echo $script_transl['no_deduct_vat_rate']; ?>" value="<?php echo $form['no_deduct_vat_rate']; ?>">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="id_no_deduct_vat" class="col-sm-4 control-label"><?php echo $script_transl['id_no_deduct_vat']; ?></label>
+                        <div>
+                            <?php
+                            $sel_vat = new selectaliiva("id_no_deduct_vat");
+                            $sel_vat->addSelected($form["id_no_deduct_vat"]);
+                            $sel_vat->output("col-sm-8 small", 'D');
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="numfat" name="descri" maxlenght="100" tabindex=14 placeholder="<?php echo $script_transl['descri']; ?>" value="<?php echo $form['descri']; ?>">
                         </div>
@@ -504,7 +605,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?>:</label>
+                        <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?></label>
                         <div class="col-sm-8">
                             <input type="text" class="form-control" id="unimis" name="unimis" maxlenght="3" tabindex=15 placeholder="<?php echo $script_transl['unimis']; ?>" value="<?php echo $form['unimis']; ?>">
                         </div>
@@ -512,7 +613,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="quantity" class="col-sm-4 control-label"><?php echo $script_transl['quantity']; ?>:</label>
+                        <label for="quantity" class="col-sm-4 control-label"><?php echo $script_transl['quantity']; ?></label>
                         <div class="col-sm-8">
                             <input type="number" step="0.1" min="1" class="form-control" id="quantity" name="quantity" tabindex=16 placeholder="<?php echo $script_transl['quantity']; ?>" value="<?php echo $form['quantity']; ?>">
                         </div>
@@ -520,7 +621,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="price" class="col-sm-4 control-label"><?php echo $script_transl['price']; ?>:</label>
+                        <label for="price" class="col-sm-4 control-label"><?php echo $script_transl['price']; ?></label>
                         <div class="col-sm-8">
                             <input type="number" step="0.01" min="0.01" class="form-control" id="price" name="price" tabindex=17 placeholder="<?php echo $script_transl['price']; ?>" value="<?php echo $form['price']; ?>">
                         </div>
@@ -530,7 +631,7 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?>:</label>
+                        <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?></label>
                         <div class="col-sm-4 bg-success">
                             <span id="amount" class="text-right">
                                 <?php echo round($amount, 2); ?>                  
@@ -542,14 +643,13 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <p class="col-sm-12 small">
                             <?php echo $gg . $script_transl['info']['gg_to_year_end_1']; ?>
-                            <span id="yreg" class="text-right"><?php
-                            echo  substr($form['datreg'], 6, 4)?></span> 
-                                <?php echo $script_transl['info']['gg_to_year_end_2'];
+                            <span id="yreg" class="text-right"><?php echo substr($form['datreg'], 6, 4) ?></span> 
+                            <?php echo $script_transl['info']['gg_to_year_end_2'];
                             ?>
                             <span id="amount_rate">
                                 <?php
-                                echo gaz_format_number(round($amount*$form['valamm']*$gg/36500, 2));
-                            ?></span>
+                                echo gaz_format_number(round($amount * $form['valamm'] * $gg / 36500, 2));
+                                ?></span>
                         </p>                
                     </div>
                 </div>

@@ -23,7 +23,10 @@ input, select {
     border-radius: 48%;
 }
 
-
+mark {
+    background-color: #ff0;
+    padding: 0em;
+}
 
 /**************************************
 ********** GAzie OLD STYLE ************
@@ -195,7 +198,7 @@ table.Tsmall {
 }
 
 .form-horizontal .form-group {
-    margin-right: 0px;
+    margin-right: -10px;
     margin-left: 0px;
 }
 .container-fluid > .navbar-header {
