@@ -24,6 +24,13 @@ mark {
     padding: 0em;
 }
 
+#loader-icon {
+    position:fixed;
+    left: 50%;
+    bottom: 10%;
+    display: none;
+}
+
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
     font-size : 100%;
 }

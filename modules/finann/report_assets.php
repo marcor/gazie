@@ -27,27 +27,33 @@ require("../../library/include/header.php");
 <script type="text/javascript">
     $(window).scroll(function ()
     {
-        if ($(document).height() <= $(window).scrollTop() + $(window).height())
-        {
+        if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
             loadmore();
         }
     });
-
+    $(window).load(function () {
+        loadmore();
+    });
     function loadmore()
     {
         var val = document.getElementById("row_no").value;
         $.ajax({
             type: 'post',
-            url: 'get_results.php',
+            url: '../root/get_scroll_data.php',
             data: {
-                getresult: val
+                getresult: val,
+                table: 'artico'
+            },
+            beforeSend: function () {
+                $('#loader-icon').show();
+            },
+            complete: function () {
+                $('#loader-icon').hide();
             },
             success: function (response) {
                 var content = document.getElementById("all_rows");
                 content.innerHTML = content.innerHTML + response;
-
-                // We increase the value by 10 because we limit the results by 10
-                document.getElementById("row_no").value = Number(val) + 10;
+                document.getElementById("row_no").value = Number(val) + <?php echo PER_PAGE; ?>;
             }
         });
     }
@@ -56,23 +62,19 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
-     <?php
-    $headers = array(
-        'ID' => 'id',
-        $script_transl['descri'] => 'descri',
-    );
-    $linkHeaders = new linkHeaders($headers);
-    $linkHeaders->output();
-    ?>
-    <div id="all_rows">
-        <?php
-        $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $orderby, 0, 20);
-        while ($row = gaz_dbi_fetch_array($result)) {
-            echo '<p class="rows">' . $row["descri"] . " </p>\n";
-        }
-        ?>
-        <input type="hidden" id="row_no" value="20">
-    </div>   
+<?php
+$headers = array(
+    'ID' => 'codice',
+    $script_transl['descri'] => 'descri',
+);
+$linkHeaders = new linkHeaders($headers);
+$linkHeaders->output();
+?>
+<div id="all_rows">
+</div>     
+<input type="hidden" id="row_no" value="0">
+<div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
+</div>  
 </div><!-- chiude div container role main -->
 </body>
 </html>

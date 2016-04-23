@@ -105,6 +105,10 @@ $disable_set_time_limit = FALSE;
 //
 $gazie_locale = "";
 //
+// Numero di righe per pagina sui report, determina anche quante ne saranno caricate dallo scroll-onload
+//
+define('PER_PAGE', 30);
+//
 // Le seguenti definizioni assegnano il percorso delle directory che devono essere scrivibili
 // dal web server.
 //

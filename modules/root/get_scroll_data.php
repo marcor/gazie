@@ -22,23 +22,31 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
- // prevent direct access
+// prevent direct access
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
-strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-if(!$isAjax) {
-  $user_error = 'Access denied - not an AJAX request...';
-  trigger_error($user_error, E_USER_ERROR);
+        strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+if (!$isAjax) {
+    $user_error = 'Access denied - not an AJAX request...';
+    trigger_error($user_error, E_USER_ERROR);
 }
-
-if(isset($_POST['getresult']))//	Evitiamo errori se lo script viene chiamato direttamente
-  {
-	require("../../library/include/datlib.inc.php");
-	$admin_aziend = checkAdmin();
+if (isset($_POST['getresult'])) {//	Evitiamo errori se lo script viene chiamato direttamente
+    require("../../library/include/datlib.inc.php");
+    $admin_aziend = checkAdmin();
     $no = $_POST['getresult'];
-    $result = gaz_dbi_dyn_query('*', $gTables['artico'], 1, 1, $no, 20);
+    $table = $_POST['table'];
+    $result = gaz_dbi_dyn_query('*', $gTables[$table], 1, 1, $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
-      echo "<p class='rows'>".$row['descri']."</p>";
+        ?>
+        <div class="col-sm-12">              
+            <div class="col-sm-1">
+                <p class="rows"><?php echo $row["codice"]; ?></p>
+            </div>
+            <div class="col-sm-6">
+                <p class="rows"><?php echo $row["descri"]; ?></p>
+            </div>
+        </div>  
+        <?php
     }
     exit();
-  }
+}
 ?>
