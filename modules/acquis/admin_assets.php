@@ -43,18 +43,12 @@ function lastAccount($mas, $ss) {
     }
 }
 
-if (!isset($_POST['ritorno'])) {
-    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-} else {
-    $form['ritorno'] = $_POST['ritorno'];
-}
-
-if ((isset($_GET['Update']) && !isset($_GET['id_tes'])) && !isset($_GET['tipdoc'])) {
+if (isset($_GET['Update']) && !isset($_GET['id'])) {
     header("Location: " . $form['ritorno']);
     exit;
 }
 
-if ((isset($_POST['Update'])) || ( isset($_GET['Update']))) {
+if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'update';
 } else {
     $toDo = 'insert';
@@ -161,6 +155,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 // --- fine controlli
         if (count($msg['err']) == 0) {// nessun errore
             if ($toDo == 'update') { // e' una modifica
+                gaz_dbi_table_update('assets',array('id',intval($_GET['id'])), $form);
                 header("Location: " . $form['ritorno']);
                 exit;
             } else { // e' un'inserimento
@@ -276,6 +271,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                     $form['tipiva'] = $no_iva['tipiva'];
                     gaz_dbi_table_insert('rigmoi', $form);
                 }
+                // vado alla pagina del report sul modulo Fine Anno (finann)
+                header("Location: ../finann/report_assets.php");
                 exit;
             }
         }
@@ -294,25 +291,29 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         $form['hidden_req'] = '';
     }
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-    $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", intval($_GET['id_tes']));
+    $form = gaz_dbi_get_row($gTables['assets'], "id", intval($_GET['id']));
+    // recupero i dati iva ed eseguo i calcoli
+    $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $form['id_tes']);
+    $rigmoi = gaz_dbi_get_row($gTables['rigmoi'], "tipiva ='I' AND id_tes", $form['id_tes']);
+    $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $rigmoi['codiva']);
+    $rigmoi_no = gaz_dbi_get_row($gTables['rigmoi'], "tipiva ='D' AND id_tes", $form['id_tes']);
+    $iva_no = gaz_dbi_get_row($gTables['aliiva'], "codice", $rigmoi_no['codiva']);
     $anagrafica = new Anagrafica();
-    $fornitore = $anagrafica->getPartner($tesdoc['clfoco']);
-    $form['id_tes'] = $tesdoc['id_tes'];
+    $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
     $form['hidden_req'] = '';
+    $form['clfoco'] = $tesmov['clfoco'];
     $form['search']['clfoco'] = substr($fornitore['ragso1'], 0, 10);
-    $form['seziva'] = $tesdoc['seziva'];
-    $form['tipdoc'] = $tesdoc['tipdoc'];
-    if ($tesdoc['id_con'] > 0) {
-        $msg .= "Questo documento &egrave; gi&agrave; stato contabilizzato!<br />";
-    }
-    $form['datfat'] = substr($tesdoc['datfat'], 8, 2);
-    $form['datreg'] = substr($tesdoc['initra'], 8, 2);
-    $form['protoc'] = $tesdoc['protoc'];
-    $form['numfat'] = $tesdoc['numfat'];
-    $form['datfat'] = $tesdoc['datfat'];
-    $form['clfoco'] = $tesdoc['clfoco'];
-    $form['pagame'] = $tesdoc['pagame'];
-    $form['change_pag'] = $tesdoc['pagame'];
+    $form['seziva'] = $tesmov['seziva'];
+    $form['codvat'] = $rigmoi['codiva'];
+    $form['mas_fixed_assets'] = substr($form['acc_fixed_assets'], 0, 3);
+    $form['mas_found_assets'] = substr($form['acc_found_assets'], 0, 3);
+    $form['mas_cost_assets'] = substr($form['acc_cost_assets'], 0, 3);
+    $form['id_no_deduct_vat'] = $rigmoi_no['codiva'];
+    $form['datreg'] = gaz_format_date($tesmov['datreg'],false,false);
+    $form['protoc'] = $tesmov['protoc'];
+    $form['numfat'] = $tesmov['numdoc'];
+    $form['datfat'] = gaz_format_date($tesmov['datdoc'],false,false);
+    $form['change_pag'] = $form['pagame'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     $form['id_tes'] = "";
@@ -353,6 +354,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['ss_amm_min'] = 999;
     $fornitore['indspe'] = "";
     $fornitore['citspe'] = "";
+}
+if (isset($_POST['ritorno'])) {
+    $form['ritorno'] = $_POST['ritorno'];
+} else {
+    $form['ritorno'] = $_SERVER['HTTP_REFERER'] . ' ';
 }
 
 // ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali 
@@ -399,12 +405,22 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
         $('#valamm, #price, #quantity').change(function () {
             sumVal();
         });
+<?php if ($toDo == 'update') {
+    ?>
+            $("#datreg,#numfat,#datfat,#mas_fixed_assets,#codvat,#seziva,#clfoco").prop("disabled", true);
+    <?php
+}
+?>
     });
 </script>
 <?php
 $gForm = new acquisForm();
 if (count($msg['err']) > 0) { // ho un errore
-    $gForm->toast($msg['err'], $script_transl['err'], 'err-entry', 'alert-danger');
+    $gForm->headMsg($msg['err'], $script_transl['err'], 'err');
+}
+if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche sul movimento contabile
+    $script_transl['war']['update'] .= ' n.<a href="../contab/admin_movcon.php?Update&id_tes='.$form['id_tes'].'" >'.$form['id_tes'].'</a>';
+    $gForm->headMsg(array('update'), $script_transl['war'], 'war');
 }
 ?>
 <form class="form-horizontal" role="form" method="post" name="docacq" enctype="multipart/form-data" >
@@ -419,8 +435,25 @@ if (count($msg['err']) > 0) { // ho un errore
             <b>
                 <?php
                 echo $script_transl[$toDo] . ' ' . $script_transl['title'] . ':';
-                $select_fornitore = new selectPartner("clfoco");
-                $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
+                if ($toDo == 'update') {
+                    $anagrafica = new Anagrafica();
+                    $fornitore= $anagrafica->getPartner($form['clfoco']);
+                    echo $fornitore['ragso1'];
+                ?>
+    <input type="hidden" value="<?php echo $form['clfoco']; ?>" name="clfoco">
+    <input type="hidden" value="<?php echo $form['seziva']; ?>" name="seziva">
+    <input type="hidden" value="<?php echo $form['codvat']; ?>" name="codvat">
+    <input type="hidden" value="<?php echo $form['datreg']; ?>" name="datreg">
+    <input type="hidden" value="<?php echo $form['numfat']; ?>" name="numfat">
+    <input type="hidden" value="<?php echo $form['datfat']; ?>" name="datfat">
+    <input type="hidden" value="<?php echo $form['mas_fixed_assets']; ?>" name="mas_fixed_assets">
+    <input type="hidden" value="<?php echo $form['search']['clfoco']; ?>" name="search[clfoco]">
+    
+                <?php
+                } else {
+                    $select_fornitore = new selectPartner("clfoco");
+                    $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
+                }
                 ?>
             </b>
         </p>
@@ -600,7 +633,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="numfat" name="descri" maxlenght="100" tabindex=14 placeholder="<?php echo $script_transl['descri']; ?>" value="<?php echo $form['descri']; ?>">
+                            <input type="text" class="form-control" id="descri" name="descri" maxlenght="100" tabindex=14 placeholder="<?php echo $script_transl['descri']; ?>" value="<?php echo $form['descri']; ?>">
                         </div>
                     </div>
                 </div>

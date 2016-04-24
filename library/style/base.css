@@ -17,6 +17,11 @@ input, select {
     border-radius: 4px;
 }
 
+.gaz-tr {
+    padding-right: 0px;
+    padding-left: 0px;
+}
+
 .usr-picture {
     width: 150px;
     box-shadow: 0 0 5px 5px;
@@ -31,7 +36,7 @@ mark {
 #loader-icon {
     position:fixed;
     left: 50%;
-    bottom: 10%;
+    bottom: 1%;
     display: none;
 }
 
@@ -135,6 +140,7 @@ table.Tsmall {
     margin-bottom: 1px;
     min-height:20px;
 }
+
 .navbar-default {
     background-color: transparent;
 }
@@ -144,6 +150,7 @@ table.Tsmall {
     margin: 0px 0px 0px 0px;
     font-size: 95%;
 }
+
 .navbar-collapse,
 .container-fluid > .navbar-collapse {
     margin-right: 0px;
@@ -168,6 +175,7 @@ table.Tsmall {
     padding: 5px 0px 2px 5px;
     line-height: 2;
     font-size: 95%;
+    height: 35px;
 }
 
 .navbar-default .navbar-nav > li > a:hover {
@@ -199,6 +207,7 @@ table.Tsmall {
 .form-group {
     margin-bottom: 7px;
 }
+
 .container-fluid > .navbar-header {
     margin-right: 0px;
     margin-left: 0px;
@@ -208,6 +217,7 @@ table.Tsmall {
     margin-right: -10px;
     margin-left: 0px;
 }
+
 .container-fluid > .navbar-header {
     margin-right: 0px;
     margin-left: 0px;

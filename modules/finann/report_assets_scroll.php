@@ -29,22 +29,37 @@ if (!$isAjax) {
     $user_error = 'Access denied - not an AJAX request...';
     trigger_error($user_error, E_USER_ERROR);
 }
-if (isset($_POST['getresult'])) {//	Evitiamo errori se lo script viene chiamato direttamente
+if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato direttamente
     require("../../library/include/datlib.inc.php");
     $admin_aziend = checkAdmin();
-    $no = $_POST['getresult'];
-    $table = $_POST['table'];
-    $result = gaz_dbi_dyn_query('*', $gTables[$table], 1, 1, $no, PER_PAGE);
+    $no = intval($_POST['getresult']);
+    $result = gaz_dbi_dyn_query('*', $gTables['assets'], 1, 1, $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
+        $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $row['id_tes']);
+        $anagrafica = new Anagrafica();
+        $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
         ?>
-        <div class="col-sm-12">              
-            <div class="col-sm-1">
-                <p class="rows"><?php echo $row["codice"]; ?></p>
-            </div>
-            <div class="col-sm-6">
-                <p class="rows"><?php echo $row["descri"]; ?></p>
-            </div>
-        </div>  
+        <tr class="gaz-tr">              
+            <td>
+                <a class="btn btn-xs btn-default" href="../acquis/admin_assets.php?Update&id=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
+            </td>
+            <td>
+                <?php echo $row["descri"]; ?>
+            </td>
+            <td>
+                <?php echo $fornitore["descri"]; ?>
+            </td>
+            <td class="text-right">
+                <div class="collapse navbar-collapse">
+                <?php echo gaz_format_number($row["price"] * $row["quantity"]); ?>
+                </div>
+            </td>
+            <td class="text-right">
+                <div class="collapse navbar-collapse">
+                    <?php echo round($row["valamm"],1); ?>%
+                </div>
+            </td>
+        </tr>  
         <?php
     }
     exit();

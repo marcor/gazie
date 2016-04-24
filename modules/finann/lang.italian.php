@@ -231,7 +231,10 @@ $strScript = array("select_comiva.php" =>
     ),
     "report_assets.php" =>
     array('title' => 'Lista dei beni ammortizzabili',
-        'descri' => 'Descizione del bene'
+        'descri' => 'Descizione del bene',
+        'clfoco'=>'Fornitore',
+        'amount'=>'Valore',
+        'valamm'=>'Ammort.'
     )
 );
 ?>

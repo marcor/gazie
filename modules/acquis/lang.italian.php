@@ -255,6 +255,12 @@ $strScript = array("admin_fornit.php" =>
             'detuct_cost' => 'Non è stato scelto il costo per la quota ammortamenti indeducibile',
             'descri' => 'Non è stata inserita una descrizione del bene acquistato',
             'ss_amm_min' => 'Non è stata inserita la sottospecie della tabella Ammortamenti Ministeriali'),
+        'war' => array('update' => 'Sono consentite le modifiche solo ad alcuni campi perché'
+            . ' l\'inserimento di questo cespite ha creato sul piano dei conti un sottoconto su ognuno dei'
+            . ' tre mastri scelti per l\'immobilizzazione, il fondo ammortamento e per le quote di costi'
+            . ' annuali per ammortamenti. Inoltre è stata fatta una registrazione contabile ed IVA '
+            . ' pertanto se volete modificare gli altri dati dovrete agire in prima nota sul seguente'
+            . ' movimento contabile'),
         'seziva' => "Sez. IVA",
         'indspe' => "Indirizzo",
         'datfat' => "Data fattura",

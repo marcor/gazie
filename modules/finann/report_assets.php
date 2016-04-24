@@ -39,10 +39,9 @@ require("../../library/include/header.php");
         var val = document.getElementById("row_no").value;
         $.ajax({
             type: 'post',
-            url: '../root/get_scroll_data.php',
+            url: 'report_assets_scroll.php',
             data: {
-                getresult: val,
-                table: 'artico'
+                getresult: val
             },
             beforeSend: function () {
                 $('#loader-icon').show();
@@ -62,16 +61,35 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
-<?php
-$headers = array(
-    'ID' => 'codice',
-    $script_transl['descri'] => 'descri',
-);
-$linkHeaders = new linkHeaders($headers);
-$linkHeaders->output();
-?>
-<div id="all_rows">
-</div>     
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr class="gaz-tr bg-info">              
+                    <th>
+                        ID
+                    </th>
+                    <th>
+                        <?php echo $script_transl["descri"]; ?>
+                    </th>
+                    <th>
+                        <?php echo $script_transl["clfoco"]; ?>
+                    </th>
+                    <th class="text-right">
+                        <div class="collapse navbar-collapse">
+                        <?php echo $script_transl["amount"]; ?>
+                        </div>
+                    </th>
+                    <th class="text-right">
+                        <div class="collapse navbar-collapse">
+                        <?php echo $script_transl["valamm"]; ?>
+                        </div>
+                    </th>
+                </tr>      
+            </thead>    
+            <tbody id="all_rows">
+            </tbody>     
+        </table>
+    </div>  
 <input type="hidden" id="row_no" value="0">
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
 </div>  
