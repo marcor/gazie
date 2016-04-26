@@ -61,17 +61,16 @@ function submenu($menu_data) {
 ?>
 
 <!-- Navbar static top per menu multilivello responsive -->
-<div class="navbar navbar-default navbar-static-top" role="navigation">
-    <div class="container-fluid">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid gaz-nav">
         <div class="navbar-header company-color">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                         <span class="sr-only">Toggle navigation</span>
+                <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
                 <a  href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
-                    <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />  
                 </a>
         </div>
         <div class="collapse navbar-collapse">
@@ -118,6 +117,9 @@ function submenu($menu_data) {
             }
 ?>
             <li>
+                <a href="../root/logout.php">
+                    <img src="../root/view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" height="30" title="Logout - <?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" >Exit
+                </a>
             </li>
             </ul>
         </div>

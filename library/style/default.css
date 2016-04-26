@@ -27,8 +27,21 @@ mark {
 #loader-icon {
     position:fixed;
     left: 50%;
-    bottom: 10%;
+    bottom: 1%;
     display: none;
+}
+
+.gaz-nav {
+    min-width: 2000px;
+}
+
+.gaz-body {
+    padding-top: 38px;
+}
+
+.gaz-tr {
+    padding-right: 0px;
+    padding-left: 0px;
 }
 
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
@@ -676,6 +689,7 @@ label {
 .container-fluid > .navbar-header {
     margin-right: -10px;
     margin-left: 0px;
+    height: 36px;
 }
 
 .form-horizontal .form-group {
@@ -698,6 +712,39 @@ label {
 .btn {
     padding: 3px 2px 3px 2px;
     white-space: normal;
+}
+
+.row {
+    padding: 2px 3px 2px 3px;
+    margin-right: 0px;
+}
+
+.navbar-toggle {
+    float: left;
+    margin-top: 0px;
+    margin-right: 3px;
+    margin-bottom: 0px;
+    background-color: #eee;
+}
+
+.navbar-toggle > img {
+    margin-top: 0px;
+
+}
+
+.navbar-nav.sm-collapsible .caret, .navbar-nav.sm-collapsible ul .caret {
+    position: relative;
+    float: right;
+    margin: 2px 2px 0 0;
+}
+
+.navbar-nav.sm-collapsible{
+    background-color: #fff;
+    max-width: 300px
+}
+
+.navbar-fixed-top .navbar-collapse {
+    max-height: 400px;
 }
 
 /**************************************

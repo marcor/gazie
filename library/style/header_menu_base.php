@@ -43,9 +43,9 @@ function submenu($menu_data) {
         }
         $submnu = '<a href="' . $mnu['link'] . '">' . $submnu . stripslashes($mnu['name']);
         if (count($mnu) > 5) { //	Esiste un sotto menu
-           echo "\t\t\t\t\t\t\t" . '<li>' . $submnu. "<span class=\"caret\"></span></a>";
-           submenu($mnu);
-           echo "\t\t\t\t\t\t\t</li>\n";
+            echo "\t\t\t\t\t\t\t" . '<li>' . $submnu . "<span class=\"caret\"></span></a>";
+            submenu($mnu);
+            echo "\t\t\t\t\t\t\t</li>\n";
         } else {
             echo "\t\t\t\t\t\t\t<li>" . $submnu . "</a></li>\n";
         }
@@ -61,22 +61,21 @@ function submenu($menu_data) {
 ?>
 
 <!-- Navbar static top per menu multilivello responsive -->
-<div class="navbar navbar-default navbar-static-top" role="navigation">
-    <div class="container-fluid">
+<div class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid gaz-nav">
         <div class="navbar-header company-color">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                         <span class="sr-only">Toggle navigation</span>
+                <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-                <a  href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
-                    <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="35" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />  
-                </a>
+            <a href="../../modules/root/admin.php"> <?php echo strtoupper($admin_aziend["ragso1"]); ?>
+            </a>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
-<?php
+                <?php
                 // stampo la prima voce della barra del menù con il dropdown dei moduli 
                 $i = 0;
                 foreach ($menuArray as $menu_modules_val) {
@@ -92,10 +91,10 @@ function submenu($menu_data) {
                     $i++;
                 }
                 // fine stampa prima voce menu
-?>
+                ?>
             </ul>
             </li>
-<?php
+            <?php
             $i = 0;
             foreach ($menuArray[0] as $menu) {
                 // stampo nella barra del menù il dropdown del modulo 
@@ -108,7 +107,7 @@ function submenu($menu_data) {
                         echo "\t\t\t" . '<li class="dropdown">'
                         . '<a href="' . $menu['link'] . '">' . $icon_lnk . ' ' . $menu['name'] . '<span class="caret"></span></a>';
                     } else {
-                        echo "\t\t\t" . '<li><a class="dropdown" href="'.$menu['link'].'">'.$icon_lnk.''.$menu['name'].'</a>';
+                        echo "\t\t\t" . '<li><a class="dropdown" href="' . $menu['link'] . '">' . $icon_lnk . '' . $menu['name'] . '</a>';
                     }
                     submenu($menu);
                     echo "\t\t\t\t\t</li>\n";
@@ -116,8 +115,11 @@ function submenu($menu_data) {
                 }
                 $i++;
             }
-?>
+            ?>
             <li>
+                <a href="../root/logout.php">
+                    <img src="../root/view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" height="30" title="Logout - <?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" >Exit
+                </a>
             </li>
             </ul>
         </div>
