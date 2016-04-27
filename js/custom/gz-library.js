@@ -22,10 +22,6 @@
 
 
 /* Abilita/disabilita un textbox sulla base dello stato di un checkbox collegato */
-$(window).resize(function () {
-    resizeNavbarText(0).delay(800).resizeNavbarText(40);
-});
-
 $(document).ready(function () {
 
     gzTooltip();
@@ -41,12 +37,18 @@ $(document).ready(function () {
             .animate({backgroundColor: '#d6e9c6'}, 2000)
             .animate({backgroundColor: '#faebcc'}, 2000)
             .animate({backgroundColor: '#d6e9c6'}, 2000);
-    
-    resizeNavbarText(0).delay(800).resizeNavbarText(40)
 
-    $('#products-list > tbody > tr:first').before($('#products-list-last'));
+			$('#products-list > tbody > tr:first').before($('#products-list-last'));
     $('.products-list-last').effect("highlight", {times: 1}, 5000);
     $('#products-list-last').toggleClass('products-list-last products-list-last-moved');
+});
+
+$(window).resize(function () {
+    resizeNavbarText(0).delay(800).resizeNavbarText(40);
+});
+
+$(window).load(function () {
+    resizeNavbarText(0).delay(800).resizeNavbarText(40);
 });
 
 /* Restringe automaticamente il testo del menu sui dispay piccoli e toglie l'header */
