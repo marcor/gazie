@@ -281,7 +281,7 @@ $strScript = array("admin_fornit.php" =>
         'descri' => 'Descrizione bene',
         'quantity' => 'Quantità',
         'unimis' => 'Unità Misura',
-        'price' => 'Prezzo',
+        'a_value' => 'Prezzo',
         'codvat' => 'I.V.A.',
         'amount' => 'Costo totale del bene € ',
         'ss_amm_min' => 'Ammort.Minister.',

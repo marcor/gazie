@@ -63,7 +63,7 @@ function submenu($menu_data) {
 <!-- Navbar static top per menu multilivello responsive -->
 <div class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container-fluid gaz-nav">
-        <div class="navbar-header company-color">
+        <div id="l-wrapper" class="navbar-header company-color">
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
                 <span class="sr-only">Toggle navigation</span>
                 <span class="icon-bar"></span>
@@ -116,7 +116,7 @@ function submenu($menu_data) {
                 $i++;
             }
             ?>
-            <li>
+            <li id="user-position">
                 <a href="../root/logout.php">
                     <img src="../root/view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" height="30" title="Logout - <?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" >Exit
                 </a>
@@ -125,3 +125,4 @@ function submenu($menu_data) {
         </div>
     </div><!-- chiude div container -->
 </div><!-- chiude navbar -->
+

@@ -42,6 +42,7 @@ $transl['finann'] = array('name' => "Fin de A&ntilde;o",
                                          3 =>array("Ver e imprimir Balance","Balance"),
                                          4 =>array("Ver e imprimir Balance IV directiva CEE","Balance CEE"),
                                          5 =>array("Data for the revaluation of balance sheet","Balance sheet revaluation data"),
+                                         6 =>array("Ver e imprimir Libro de los bienes amortizables","Libro bienes amortizables"),
                                        )
                          );
 ?>

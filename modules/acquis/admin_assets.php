@@ -77,10 +77,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['no_deduct_vat_rate'] = floatval($_POST['no_deduct_vat_rate']);
     $form['acc_no_detuct_cost'] = intval($_POST['acc_no_detuct_cost']);
     $form['no_deduct_cost_rate'] = floatval($_POST['no_deduct_cost_rate']);
+    $form['type_mov'] = intval($_POST['type_mov']);
     $form['descri'] = filter_input(INPUT_POST, 'descri');
     $form['unimis'] = filter_input(INPUT_POST, 'unimis');
     $form['quantity'] = floatval($_POST['quantity']);
-    $form['price'] = floatval($_POST['price']);
+    $form['a_value'] = floatval($_POST['a_value']);
     $form['ss_amm_min'] = intval($_POST['ss_amm_min']);
     $form['pagame'] = intval($_POST['pagame']);
     $form['change_pag'] = $_POST['change_pag'];
@@ -196,6 +197,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['acc_cost_assets'] = lastAccount($form['mas_cost_assets'], $form['ss_amm_min']);
                 // inserisco i dati sulla tabella assets
                 $form['descri'] = $descri;
+                $form['type_mov'] = 1; // è un acquisto , 9 per ammortamento, 6 per alienazione
                 gaz_dbi_table_insert('assets', $form);
                 $form['id_assets'] = gaz_dbi_last_id();
                 // ripreno i file di traduzione
@@ -218,14 +220,14 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 if ($form['id_no_deduct_vat'] > 0) { // ho una parte di iva indetraibile che si andrà a sommare ai costi
                     // per i righi iva
                     $no_iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['id_no_deduct_vat']);
-                    $form['no_imponi'] = round($form['quantity'] * $form['price'] * $form['no_deduct_vat_rate'] / 100, 2);
+                    $form['no_imponi'] = round($form['quantity'] * $form['a_value'] * $form['no_deduct_vat_rate'] / 100, 2);
                     $form['no_impost'] = round($form['no_imponi'] * $no_iva['aliquo'] / 100, 2);
-                    $form['imponi'] = round($form['quantity'] * $form['price'] - $form['no_imponi'], 2);
+                    $form['imponi'] = round($form['quantity'] * $form['a_value'] - $form['no_imponi'], 2);
                     $form['impost'] = round($form['imponi'] * $iva['aliquo'] / 100, 2);
                     // per i righi contabili
                     $form['import'] = $form['imponi'] + $form['impost'] + $form['no_imponi'] + $form['no_impost'];
                 } else {
-                    $form['imponi'] = round($form['quantity'] * $form['price'], 2);
+                    $form['imponi'] = round($form['quantity'] * $form['a_value'], 2);
                     $form['impost'] = round($form['imponi'] * $iva['aliquo'] / 100, 2);
                     $form['import'] = $form['imponi'] + $form['impost'];
                 }
@@ -327,7 +329,6 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['datfat'] = '';
     $form['search']['clfoco'] = '';
-    $form['cosear'] = "";
     if (isset($_GET['seziva'])) {
         $form['seziva'] = intval($_GET['seziva']);
     } else {
@@ -347,10 +348,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['no_deduct_vat_rate'] = 0;
     $form['acc_no_detuct_cost'] = 0;
     $form['no_deduct_cost_rate'] = 0;
+    $form['type_mov'] = '';
     $form['descri'] = '';
     $form['unimis'] = 'n';
     $form['quantity'] = 1;
-    $form['price'] = 0;
+    $form['a_value'] = 0;
     $form['ss_amm_min'] = 999;
     $fornitore['indspe'] = "";
     $fornitore['citspe'] = "";
@@ -379,7 +381,7 @@ foreach ($xml->gruppo as $vg) {
         }
     }
 }
-$amount = CalcolaImportoRigo($form['quantity'], $form['price'], 0);
+$amount = CalcolaImportoRigo($form['quantity'], $form['a_value'], 0);
 $gg = intval(365 - date("z", gaz_format_date($form['datreg'], 2)));
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
@@ -390,8 +392,8 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
             var quantity = parseFloat($('#quantity').val());
             var valamm = parseFloat($('#valamm').val());
             var gg = parseFloat($('#gg').val());
-            var price = parseFloat($('#price').val());
-            var amount = price * quantity;
+            var a_value = parseFloat($('#a_value').val());
+            var amount = a_value * quantity;
             var amount_rate = amount * valamm * gg / 36500;
             $("#amount").text(amount.toFixed(2).toString());
             ;
@@ -402,12 +404,12 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
         $("#datreg").change(function () {
             this.form.submit();
         });
-        $('#valamm, #price, #quantity').change(function () {
+        $('#valamm, #a_value, #quantity').change(function () {
             sumVal();
         });
 <?php if ($toDo == 'update') {
     ?>
-            $("#datreg,#numfat,#datfat,#mas_fixed_assets,#codvat,#seziva,#clfoco").prop("disabled", true);
+            $("#datreg,#numfat,#datfat,#mas_fixed_assets,#mas_found_assets,#mas_cost_assets,#codvat,#seziva,#clfoco").prop("disabled", true);
     <?php
 }
 ?>
@@ -419,7 +421,7 @@ if (count($msg['err']) > 0) { // ho un errore
     $gForm->headMsg($msg['err'], $script_transl['err'], 'err');
 }
 if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche sul movimento contabile
-    $script_transl['war']['update'] .= ' n.<a href="../contab/admin_movcon.php?Update&id_tes='.$form['id_tes'].'" >'.$form['id_tes'].'</a>';
+    $script_transl['war']['update'] .= ' n.<a class="btn btn-xs btn-default" href="../contab/admin_movcon.php?Update&id_tes='.$form['id_tes'].'" >'.$form['id_tes'].' <i class="glyphicon glyphicon-edit"></i></a>';
     $gForm->headMsg(array('update'), $script_transl['war'], 'war');
 }
 ?>
@@ -427,6 +429,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
     <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
     <input type="hidden" value="<?php echo $form['hidden_req'] ?>" name="hidden_req" />
     <input type="hidden" value="<?php echo $form['id_tes']; ?>" name="id_tes">
+    <input type="hidden" value="<?php echo $form['type_mov']; ?>" name="type_mov">
     <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
     <input type="hidden" value="<?php echo $form['change_pag']; ?>" name="change_pag">
     <input type="hidden" value="<?php echo $gg; ?>" id="gg">
@@ -447,6 +450,8 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
     <input type="hidden" value="<?php echo $form['numfat']; ?>" name="numfat">
     <input type="hidden" value="<?php echo $form['datfat']; ?>" name="datfat">
     <input type="hidden" value="<?php echo $form['mas_fixed_assets']; ?>" name="mas_fixed_assets">
+    <input type="hidden" value="<?php echo $form['mas_found_assets']; ?>" name="mas_found_assets">
+    <input type="hidden" value="<?php echo $form['mas_cost_assets']; ?>" name="mas_cost_assets">
     <input type="hidden" value="<?php echo $form['search']['clfoco']; ?>" name="search[clfoco]">
     
                 <?php
@@ -471,7 +476,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     <div class="form-group">
                         <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="datreg" name="datreg" tabindex=10 value="<?php echo $form['datreg']; ?>">
+                            <input type="text" class="form-control" id="datreg" name="datreg" tabindex=7 value="<?php echo $form['datreg']; ?>">
                         </div>
                     </div>
                 </div>                    
@@ -479,7 +484,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     <div class="form-group">
                         <label for="numfat" class="col-sm-4 control-label"><?php echo $script_transl['numfat']; ?></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="numfat" name="numfat" maxlength="20" tabindex=11 placeholder="<?php echo $script_transl['numfat']; ?>" value="<?php echo $form['numfat']; ?>">
+                            <input type="text" class="form-control" id="numfat" name="numfat" maxlength="20" tabindex=8 placeholder="<?php echo $script_transl['numfat']; ?>" value="<?php echo $form['numfat']; ?>">
                         </div>
                     </div>
                 </div>
@@ -487,7 +492,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     <div class="form-group">
                         <label for="datfat" class="col-sm-4 control-label"><?php echo $script_transl['datfat']; ?></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="datfat" name="datfat" placeholder="GG/MM/AAAA" tabindex=12 value="<?php echo $form['datfat']; ?>">
+                            <input type="text" class="form-control" id="datfat" name="datfat" placeholder="GG/MM/AAAA" tabindex=9 value="<?php echo $form['datfat']; ?>">
                         </div>
                     </div>
                 </div>
@@ -522,7 +527,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                         <label for="mas_fixed_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_fixed_assets']; ?></label>
                         <div>
                             <?php
-                            $gForm->selectAccount('mas_fixed_assets', $form['mas_fixed_assets'] . '000000', array(1, 9), '', 13, "col-sm-8 small");
+                            $gForm->selectAccount('mas_fixed_assets', $form['mas_fixed_assets'] . '000000', array(1, 9), '', 10, "col-sm-8 small");
                             ?>
                         </div>
                     </div>
@@ -572,7 +577,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                         <label for="mas_found_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_found_assets']; ?></label>
                         <div>
                             <?php
-                            $gForm->selectAccount('mas_found_assets', $form['mas_found_assets'] . '000000', array(2, 9), '', 13, "col-sm-8 small");
+                            $gForm->selectAccount('mas_found_assets', $form['mas_found_assets'] . '000000', array(2, 9), '', 11, "col-sm-8 small");
                             ?>
                         </div>
                     </div>
@@ -582,7 +587,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                         <label for="mas_cost_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_cost_assets']; ?></label>
                         <div>
                             <?php
-                            $gForm->selectAccount('mas_cost_assets', $form['mas_cost_assets'] . '000000', array(3, 9), '', 13, "col-sm-8 small");
+                            $gForm->selectAccount('mas_cost_assets', $form['mas_cost_assets'] . '000000', array(3, 9), '', 12, "col-sm-8 small");
                             ?>
                         </div>
                     </div>
@@ -602,7 +607,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                         <label for="acc_no_detuct_cost" class="col-sm-6 control-label"><?php echo $script_transl['acc_no_detuct_cost']; ?></label>
                         <div>
                             <?php
-                            $gForm->selectAccount('acc_no_detuct_cost', $form['acc_no_detuct_cost'], 3, '', 13, "col-sm-6 small");
+                            $gForm->selectAccount('acc_no_detuct_cost', $form['acc_no_detuct_cost'], 3, '',false, "col-sm-6 small");
                             ?>
                         </div>
                     </div>
@@ -655,9 +660,9 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="price" class="col-sm-4 control-label"><?php echo $script_transl['price']; ?></label>
+                        <label for="a_value" class="col-sm-4 control-label"><?php echo $script_transl['a_value']; ?></label>
                         <div class="col-sm-8">
-                            <input type="number" step="0.01" min="0.01" class="form-control" id="price" name="price" tabindex=17 placeholder="<?php echo $script_transl['price']; ?>" value="<?php echo $form['price']; ?>">
+                            <input type="number" step="0.01" min="0.01" class="form-control" id="a_value" name="a_value" tabindex=17 placeholder="<?php echo $script_transl['a_value']; ?>" value="<?php echo $form['a_value']; ?>">
                         </div>
                     </div>
                 </div>
@@ -697,13 +702,8 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
     <div class="panel panel-info">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12 col-lg-6">
                     <div class="form-group">
-                    </div>
-                </div>
-                <div class="col-md-12 col-lg-6">
-                    <div class="form-group">
-                        <div class="col-sm-12 text-right alert-success">
+                        <div class="col-sm-12 text-center alert-success">
                             <input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
                         </div>
                     </div>

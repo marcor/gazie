@@ -32,7 +32,7 @@ mark {
 }
 
 .gaz-nav {
-    min-width: 2000px;
+    min-width: 3000px;
 }
 
 .gaz-body {
@@ -654,7 +654,6 @@ label {
 .navbar-nav > li > a {
     padding: 5px 0px 2px 5px;
     line-height: 2;
-    font-size: 95%;
 }
 
 .navbar-default .navbar-nav > li > a:hover {

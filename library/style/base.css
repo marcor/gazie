@@ -36,7 +36,7 @@ mark {
 }
 
 .gaz-nav {
-    min-width: 2000px;
+    min-width: 3000px;
 }
 
 .gaz-body {
@@ -188,7 +188,6 @@ table.Tsmall {
 .navbar-nav > li > a {
     padding: 3px 0px 2px 5px;
     line-height: 2;
-    font-size: 95%;
     height: 36px;
 }
 
@@ -302,6 +301,3 @@ table.Tsmall {
     padding: 3px 3px 3px 3px;
     line-height: 1;
 }
-
-
-

@@ -29,14 +29,15 @@ $transl['finann'] = array('name' => "Fine Anno",
                                          3 =>array("Elenchi clienti e fornitori","Elenchi clienti e fornitori"),
                                          4 =>array("Procedura Automatica di chiusura e apertura conti","Chiusura-Apertura Conti"),
                                          5 =>array("Gestione Bilanci","Bilanci"),
-                                         6 =>array("Gestione libro cespiti ammortizzabili","Cespiti ammortizzabili"),
-                                         7 =>array("Comunicazione operazioni IVA (Spesometro)","Spesometro (ART21)")
+                                         6 =>array("Gestione libro cespiti ammortizzabili","Beni ammortizzabili"),
+                                         7 =>array("Comunicazione operazioni IVA (Spesometro)","Spesometro")
                                        ),
                           'm3' => array( 1 =>array("Controllo sbilancio dare-avere dei movimenti contabili","Controllo sbilancio movimenti contabili"),
                                          2 =>array("Controllo numerazione protocolli IVA","Controllo numerazione protocolli IVA"),
                                          3 =>array("Visualizzazione e stampa Bilancio","Bilancio"),
                                          4 =>array("Visualizzazione e stampa Bilancio civilistico","Bilancio civilistico"),
                                          5 =>array("Informazioni per la riclassificazione di bilancio","Dati riclassificazione bilancio"),
+                                         6 =>array("Visualizzazione e stampa libro beni ammortizzabili","Libro Beni Ammortizzabili")
                                        )
                          );
 ?>
