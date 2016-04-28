@@ -71,7 +71,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];      ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];        ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -389,7 +389,7 @@ class selectAgente extends SelectBox {
         $this->tipo = $tipo;
     }
 
-    function output() {
+    function output($class = '') {
         if ($this->tipo == "C") {
             $nomeTabella = 'agenti';
         } else {
@@ -399,8 +399,7 @@ class selectAgente extends SelectBox {
         $query = "SELECT " . $gTables[$nomeTabella] . ".id_agente," . $gTables[$nomeTabella] . ".id_fornitore," . $gTables['anagra'] . ".ragso1," . $gTables['clfoco'] . ".codice
                   FROM " . $gTables[$nomeTabella] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables[$nomeTabella] . ".id_fornitore = " . $gTables['clfoco'] . ".codice
                   LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id";
-//        SelectBox::_output($query, 'ragso1', True,'','',"id_agente",'AGENTE');
-        SelectBox::_output($query, 'ragso1', True, '', '', "id_agente", '');
+        SelectBox::_output($query, 'ragso1', True, '', '', "id_agente", '', $class);
     }
 
 }
@@ -1462,6 +1461,29 @@ class GAzieForm {
     function selSearchItem($name, $val, $class = 'FacetDataTDsmall') {
         global $script_transl;
         $this->variousSelect($name, $script_transl['search_item'], $val, $class, true);
+    }
+
+    function headMsg($message, $transl, $type = 'err') {
+        if (!empty($message)) {
+            $m = 'ERROR';
+            $c = 'alert-danger';
+            if ($type == 'war') {
+                $m = 'ATTENTION';
+                $c = 'alert-warning';
+            }
+            echo '<div class="container">
+			<div class="row alert ' . $c . ' fade in" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				';
+            foreach ($message as $v) {
+                echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> ' . $m . '!=> ' . $transl[$v] . "<br>\n";
+            }
+            echo "</div>
+		</div>\n";
+        }
+        return '';
     }
 
 }

@@ -24,7 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$msg = array('err' => array(), 'ale' => array());
+$msg = array('err' => array(), 'war' => array());
 
 function lastAccount($mas, $ss) {
     /* funzione per trovare i numeri dei nuovi sottoconto da creare sui mastri 

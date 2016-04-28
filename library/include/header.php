@@ -59,10 +59,29 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
         if (!empty($admin_aziend['skin']) && file_exists("../../library/style/skins/" . $admin_aziend['skin'])) {
             $skin = $admin_aziend['skin'];
         }
+
+        function hex_color_mod($hex, $diff) {
+            $rgb = str_split($hex, 2);
+            foreach ($rgb as &$hex) {
+                $dec = hexdec($hex);
+                if ($diff >= 0) {
+                    $dec += $diff;
+                } else {
+                    $dec -= abs($diff);
+                }
+                $dec = max(0, min(255, $dec));
+                $hex = str_pad(dechex($dec), 2, '0', STR_PAD_LEFT);
+            }
+            return '#' . implode($rgb);
+        } 
         ?>
         <link href="../../library/style/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/style/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+
         <style type="text/css">
+            .navbar-default .navbar-collapse { 
+                background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ; 
+            }
             .company-color { 
                 background-color: #<?php echo $admin_aziend['colore']; ?> ; 
             }
