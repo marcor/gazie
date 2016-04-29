@@ -71,7 +71,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];        ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];         ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -406,7 +406,7 @@ class selectAgente extends SelectBox {
 
 class Config {
 
-    function Config() {
+    function __construct() {
         global $gTables;
         $results = gaz_dbi_query("SELECT variable, cvalue FROM " . $gTables['config']);
         while ($row = gaz_dbi_fetch_object($results)) {
@@ -431,7 +431,7 @@ class Config {
 
 class configTemplate {
 
-    function configTemplate() {
+    function __construct() {
         global $gTables;
         $row = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->template = $row['template'];
@@ -441,7 +441,7 @@ class configTemplate {
 
 class Anagrafica {
 
-    function Anagrafica() {
+    function __construct() {
         global $gTables;
         $this->gTables = $gTables;
         $this->partnerTables = $gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id';
@@ -548,7 +548,7 @@ class SelectBox {
     var $name;
 
     // assegno subito il nome della select box
-    function SelectBox($name) {
+    function __construct($name) {
         $this->name = $name;
     }
 
@@ -593,7 +593,7 @@ class SelectBox {
 // classe per la generazione di select box dei clienti e fornitori (partner commerciali)
 class selectPartner extends SelectBox {
 
-    function selectPartner($name) {
+    function __construct($name) {
         global $gTables;
         $this->gTables = $gTables;
         $this->name = $name;
@@ -865,28 +865,17 @@ class selectPartner extends SelectBox {
 // classe per la generazione di select box degli articoli
 class selectartico extends SelectBox {
 
-    function output($cerca, $field = 'C') {
+    function output($cerca, $field = 'C', $class = 'FacetSelect') {
         global $gTables, $script_transl, $script_transl;
         $msg = "";
         $tabula = ' tabindex="4" ';
         $opera = "%'";
         if (strlen($cerca) >= 1) {
-            /* if ($field == 'B') {        //ricerca per codice a barre
-              $field_sql = 'barcode';
-              } elseif ($field == 'D') { //ricerca per descrizione
-              $field_sql = 'descri';
-              } else {                   //ricerca per codice (default)
-              $field_sql = 'codice';
-              if (substr($cerca, 0, 1) == "@") {
-              $cerca = substr($cerca, 1);
-              $opera = "'";
-              }
-              } */
             $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], "codice LIKE '" . addslashes($cerca) . $opera, "descri DESC");
             $numclfoco = gaz_dbi_num_rows($result);
             if ($numclfoco > 0) {
                 $tabula = "";
-                echo ' <select tabindex="4" name="' . $this->name . '" class="FacetSelect">';
+                echo ' <select tabindex="4" name="' . $this->name . '" class="' . $class . '">';
                 while ($a_row = gaz_dbi_fetch_array($result)) {
                     $selected = "";
                     if ($a_row["codice"] == $this->selected) {
@@ -905,17 +894,11 @@ class selectartico extends SelectBox {
             echo '<input type="hidden" name="' . $this->name . '" value="" />';
         }
         //echo "\t<input type=\"text\" name=\"cosear\" id=\"search_cosear\" value=\"".$cerca."\" ".$tabula." maxlength=\"16\" size=\"9\" class=\"FacetInput\">\n";
-        echo '&nbsp;<input type="text" name="cosear" id="search_cosear" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
+        echo '&nbsp;<input type="text" class="' . $class . '" name="cosear" id="search_cosear" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
         //echo "<font style=\"color:#ff0000;\">$msg </font>";
         if ($msg != "") {
             echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';
         }
-        //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"artico\" ".$tabula." src=\"../../library/images/cerbut.gif\" title=\"{$script_transl['search']}\">\n";
-        /** ENRICO FEDELE */
-        /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-        /* Non serve più, la ricerca è automatica alla selezione di un elemento dalla tendina
-          echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" accesskey="c" name="artico" '.$tabula.' title="'.$script_transl['search'].'"><i class="glyphicon glyphicon-search"></i></button>&nbsp;'; */
-        /** ENRICO FEDELE */
     }
 
 }
@@ -956,10 +939,10 @@ class selectbanapp extends SelectBox {
 // classe per la generazione di select box dei pagamenti
 class selectpagame extends SelectBox {
 
-    function output($refresh = '', $class = false) {
+    function output($refresh = '', $class = false,$empty=true) {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `descri`, `codice`';
-        SelectBox::_output($query, 'descri', True, '', '', 'codice', $refresh, $class);
+        SelectBox::_output($query, 'descri', $empty, '', '', 'codice', $refresh, $class);
     }
 
 }
@@ -1561,7 +1544,7 @@ class recordnav {
     var $passo;
     var $last;
 
-    function recordnav($table, $where, $limit, $passo) {
+    function __construct($table, $where, $limit, $passo) {
         global $limit, $passo;
         $this->table = $table;
         $this->where = $where;
@@ -1609,7 +1592,7 @@ class linkHeaders {
 
     var $headers = array(); // label e campi degli headers
 
-    function linkHeaders($headers) {
+    function __construct($headers) {
         $this->headers = $headers;
         $this->align = false;
         $this->style = false;
@@ -1826,7 +1809,7 @@ class Compute {
 
 class Schedule {
 
-    function Schedule() {
+    function __construct() {
         $this->target = 0;
     }
 

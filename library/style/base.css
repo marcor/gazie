@@ -213,6 +213,7 @@ table.Tsmall {
     font-size: 80%;
 }
 
+
 .form-control {
     height: 24px;
 }
@@ -247,6 +248,7 @@ table.Tsmall {
 .btn {
     padding: 3px 2px 3px 2px;
     white-space: normal;
+    float: right;
 }
 
 .row {
@@ -281,6 +283,9 @@ table.Tsmall {
     max-height: 400px;
 }
 
+.nav > li > a {
+    padding: 2px 6px;
+}
 
 /**************************************
 ************** JQUERY UI **************

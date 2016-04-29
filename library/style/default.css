@@ -505,7 +505,7 @@ input[type="text"]:focus, textarea:focus, select:focus {
     background-color: #ffff66;
 }
 .ui-autocomplete-input {
-    width: 25%;
+    max-width: 250px;
 }
 /** ENRICO FEDELE */
 
@@ -654,6 +654,7 @@ label {
 .navbar-nav > li > a {
     padding: 5px 0px 2px 5px;
     line-height: 2;
+    height: 36px;
 }
 
 .navbar-default .navbar-nav > li > a:hover {
@@ -711,6 +712,7 @@ label {
 .btn {
     padding: 3px 2px 3px 2px;
     white-space: normal;
+    float: right;
 }
 
 .row {
@@ -745,6 +747,11 @@ label {
 .navbar-fixed-top .navbar-collapse {
     max-height: 400px;
 }
+
+.nav > li > a {
+    padding: 2px 6px;
+}
+
 
 /**************************************
 ************** JQUERY UI **************

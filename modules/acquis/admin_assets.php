@@ -707,7 +707,6 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                             <input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
                         </div>
                     </div>
-                </div>
             </div> <!-- chiude row  -->
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->

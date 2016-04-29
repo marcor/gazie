@@ -573,7 +573,7 @@ $strScript = array("admin_client.php" =>
         'tax' => 'I.V.A.',
         'confirm' => 'Confermi invio dati al registratore di cassa?',
         /** ENRICO FEDELE */
-        'add_article' => 'Aggiungi un nuovo articolo',
+        'add_article' => 'Aggiungi in magazzino',
         'weight' => 'peso'
     ),
     "genera_effett.php" =>

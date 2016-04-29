@@ -724,27 +724,34 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
 ?>
 <script type="text/javascript">
-$(function () {
-    function sumVal() {
-        var quantity = parseFloat($('#quantity').val());
-        var valamm = parseFloat($('#valamm').val());
-        var gg = parseFloat($('#gg').val());
-        var a_value = parseFloat($('#a_value').val());
-        var amount = a_value * quantity;
-        var amount_rate = amount * valamm * gg / 36500;
-        $("#amount").text(amount.toFixed(2).toString());
-        ;
-        $("#amount_rate").text(amount_rate.toFixed(2).toString());
-        ;
-    }
-    $("#datemi").datepicker();
-    $("#datemi").change(function () {
-        this.form.submit();
+    $(function () {
+        function sumVal() {
+            var quantity = parseFloat($('#quantity').val());
+            var valamm = parseFloat($('#valamm').val());
+            var gg = parseFloat($('#gg').val());
+            var a_value = parseFloat($('#a_value').val());
+            var amount = a_value * quantity;
+            var amount_rate = amount * valamm * gg / 36500;
+            $("#amount").text(amount.toFixed(2).toString());
+            ;
+            $("#amount_rate").text(amount_rate.toFixed(2).toString());
+            ;
+        }
+        $("#datemi").datepicker();
+        $("#datemi").change(function () {
+            this.form.submit();
+        });
+        $('#sconto').change(function () {
+            sumVal();
+        });
+<?php
+if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non scrollo
+    ?>
+            $("html, body").delay(500).animate({scrollTop: $('#search_cosear').offset().top}, 1000);
+    <?php
+}
+?>
     });
-    $('#sconto').change(function () {
-        sumVal();
-    });
-});
 </script>
 <form class="form-horizontal" role="form" method="post" name="tesdoc" enctype="multipart/form-data" >
     <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
@@ -791,14 +798,14 @@ $(function () {
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="address" class="col-sm-4 control-label"><?php echo $script_transl['address']; ?></label>
-                        <div class="col-sm-8 text-left"><?php echo $form['address']; ?></div>                
+                        <div class="col-sm-8"><?php echo $form['address']; ?></div>                
                     </div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="datemi" class="col-sm-4 control-label"><?php echo $script_transl['datemi']; ?></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="datemi" name="datemi" tabindex=7 value="<?php echo $form['datemi']; ?>">
+                            <input type="text" class="form-control" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
                         </div>
                     </div>
                 </div>                    
@@ -809,7 +816,7 @@ $(function () {
                             <?php
                             $select_agente = new selectAgente("id_agente");
                             $select_agente->addSelected($form["id_agente"]);
-                            $select_agente->output("col-sm-8 small");
+                            $select_agente->output("col-sm-8");
                             ?>                
                         </div>
                     </div>
@@ -818,11 +825,7 @@ $(function () {
                     <div class="form-group">
                         <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?></label>
                         <div>
-                            <?php
-                            $select_pagame = new selectpagame("pagame");
-                            $select_pagame->addSelected($form["pagame"]);
-                            $select_pagame->output(false, "col-sm-8 small");
-                            ?>                
+                            <?php $gForm->ticketPayments('pagame', $form['pagame'], "col-sm-8"); ?>                
                         </div>
                     </div>
                 </div>
@@ -833,7 +836,7 @@ $(function () {
                         <label for="caumag" class="col-sm-4 control-label" ><?php echo $script_transl['caumag']; ?></label>
                         <div>
                             <?php
-                            $magazz->selectCaumag($form['caumag'], $operat[$form['tipdoc']], false, '', "col-sm-8 small");
+                            $magazz->selectCaumag($form['caumag'], $operat[$form['tipdoc']], false, '', "col-sm-8");
                             ?>                
                         </div>
                     </div>
@@ -843,7 +846,7 @@ $(function () {
                         <label for="listin" class="col-sm-4 control-label" ><?php echo $script_transl['listin']; ?></label>
                         <div>
                             <?php
-                            $gForm->selectNumber('listin', $form['listin'], 0, 1, 3, 'col-sm-8 small');
+                            $gForm->selectNumber('listin', $form['listin'], 0, 1, 3, 'col-sm-8');
                             ?>                
                         </div>
                     </div>
@@ -860,7 +863,7 @@ $(function () {
                     <div class="form-group">
                         <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
                         <div class="col-sm-8">
-                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3, 'col-sm-8 small'); ?>
+                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3, 'col-sm-8'); ?>
                         </div>
                     </div>
                 </div>
@@ -868,9 +871,7 @@ $(function () {
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
     <?php
-    echo '<div class="FacetSeparatorTD" align="center">' . $script_transl['in_rows_title'] . "</div>\n";
-    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
-                 <input type=\"hidden\" value=\"" . $form['in_descri'] . "\" name=\"in_descri\" />
+    echo "                 <input type=\"hidden\" value=\"" . $form['in_descri'] . "\" name=\"in_descri\" />
         <input type=\"hidden\" value=\"" . $form['in_pervat'] . "\" name=\"in_pervat\" />
         <input type=\"hidden\" value=\"" . $form['in_unimis'] . "\" name=\"in_unimis\" />
         <input type=\"hidden\" value=\"" . $form['in_prezzo'] . "\" name=\"in_prezzo\" />
@@ -881,43 +882,7 @@ $(function () {
         <input type=\"hidden\" value=\"" . $form['in_lot_or_serial'] . "\" name=\"in_lot_or_serial\" />
         <input type=\"hidden\" value=\"" . $form['in_id_lotmag'] . "\" name=\"in_id_lotmag\" />
         <input type=\"hidden\" value=\"" . $form['in_status'] . "\" name=\"in_status\" />
-        <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />
-        <tr class=\"FacetColumnTD\">
-            <td>" . $script_transl['item'] . ": \n";
-    $select_artico = new selectartico("in_codart");
-    $select_artico->addSelected($form['in_codart']);
-    $select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea']);
-    echo $script_transl['search'] . "\n";
-    $gForm->variousSelect('in_artsea', $script_transl['in_artsea_value'], $form['in_artsea'], 'FacetDataTDsmall', false);
-    /* Aggiunto link per finestra modale aggiunta articolo */
-    echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
-    /** ENRICO FEDELE */
-    echo '		</td>
-            <td>
-                ' . $script_transl['quanti'] . ':&nbsp;<input type="text" value="' . $form['in_quanti'] . '" maxlength="11" size="7" name="in_quanti" tabindex="25" />
-            </td>
-            <td>
-                <button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="26">
-                    <i class="glyphicon glyphicon-ok"></i>
-                </button>
-            </td>
-        </tr>';
-    echo "\t<tr class=\"FacetColumnTD\">\n";
-    echo "\t<td colspan=\"3\">" . $script_transl['tiprig'] . ": \n";
-    $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig']);
-    echo $script_transl['codric'] . ": \n";
-    $select_codric = new selectconven("in_codric");
-    $select_codric->addSelected($form['in_codric']);
-    $select_codric->output(substr($form['in_codric'], 0, 1));
-    echo "% " . $script_transl['sconto'] . ": \n";
-    echo "<input type=\"text\" value=\"" . $form['in_sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"in_sconto\">\n";
-    echo $script_transl['provvigione'] . "\n";
-    echo "<input type=\"text\" value=\"" . $form['in_provvigione'] . "\" maxlength=\"6\" size=\"1\" name=\"in_provvigione\">\n";
-    echo $script_transl['vat_constrain'] . "\n";
-    $gForm->selectFromDB('aliiva', 'in_codvat', 'codice', $form['in_codvat'], 'codice', true, '-', 'descri');
-    echo "\t </td>\n";
-    echo "\t </tr>\n";
-    echo "</table>\n";
+        <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />";
     if ($next_row > 0) {
         echo '<div class="FacetSeparatorTD" align="center">' . $script_transl['body_title'] . "</div>\n";
         echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
@@ -1097,6 +1062,110 @@ $(function () {
             echo "\t </tr>\n";
         }
         echo "</tbody></table>\n";
+    }
+    ?>
+    <div class="panel panel-info">
+        <div class="container-fluid">
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="pill" href="#insrow1">Inserisci rigo </a></li>
+                <li><a data-toggle="pill" href="#insrow2">altri dati</a></li>
+                <li><a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i><?php echo $script_transl['add_article']; ?></a></li>
+            </ul>
+        </div><!-- chiude container  -->
+        <div class="tab-content form-horizontal">
+            <div id="insrow1" class="tab-pane fade in active bg-info">
+                <div class="row">
+                    <div class="col-sm-6 col-md-1 col-lg-1">
+                        <div class="form-group">
+                            <label for="tiprig" class="col-sm-4 control-label"><?php echo $script_transl['tiprig']; ?></label>
+                            <div class="col-sm-8">
+                                <?php $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig']); ?>
+                            </div>                
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-5 col-lg-5">
+                        <div class="form-group">
+                            <label for="item" class="col-sm-2 control-label"><?php echo $script_transl['item']; ?></label>
+                            <div class="col-sm-10">
+                                <?php
+                                $select_artico = new selectartico("in_codart");
+                                $select_artico->addSelected($form['in_codart']);
+                                $select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea'], "col-sm-8");
+                                ?>
+                            </div>                
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-2 col-lg-2">
+                        <div class="form-group">
+                            <label for="sconto" class="col-sm-6 control-label"><?php echo $script_transl['sconto']; ?></label>
+                            <div class="col-sm-6">
+                                <input type="number" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
+                            </div>                
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
+                            <div class="col-sm-6">
+                                <input type="number" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
+                            </div>                
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-1 col-lg-1">
+                        <div class="form-group">
+                            <button type="submit"  tabindex=7 class="btn btn-default btn-sm col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
+                                <?php echo $script_transl['submit']; ?><i class="glyphicon glyphicon-ok"></i>
+                            </button>
+                        </div> 
+                    </div>
+                </div>
+            </div><!-- chiude tab-pane  -->
+            <div id="insrow2" class="tab-pane fade bg-info">
+                <div class="row">
+                    <div class="col-sm-6 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="vat_constrain" class="col-sm-4 control-label"><?php echo $script_transl['vat_constrain']; ?></label>
+                            <div class="col-sm-4">
+                                <?php $gForm->selectFromDB('aliiva', 'in_codvat', 'codice', $form['in_codvat'], 'codice', true, '-', 'descri'); ?>
+                            </div>                
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="codric" class="col-sm-4 control-label"><?php echo $script_transl['codric']; ?></label>
+                            <div class="col-sm-8">
+                                <?php
+                                $select_codric = new selectconven("in_codric");
+                                $select_codric->addSelected($form['in_codric']);
+                                $select_codric->output(substr($form['in_codric'], 0, 1));
+                                ?>
+                            </div>                
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="provvigione" class="col-sm-4 control-label"><?php echo $script_transl['provvigione']; ?></label>
+                            <div class="col-sm-4">
+                                <input type="number" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
+                            </div>                
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="search" class="col-sm-3 control-label"><?php echo $script_transl['search']; ?></label>
+                            <div class="col-sm-9">
+                                <?php
+                                $gForm->variousSelect('in_artsea', $script_transl['in_artsea_value'], $form['in_artsea'], "col-sm-8", false);
+                                ?>
+                            </div>                
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude tab-pane  -->
+        </div><!-- chiude tab-content  -->
+    </div><!-- chiude panel  -->
+    <?php
+    if ($next_row > 0) {
         echo '<div class="FacetSeparatorTD" align="center">' . $script_transl['foot_title'] . "</div>\n";
         echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
         echo "\t<thead><tr class=\"FacetColumnTD\" align=\"center\">\n";
@@ -1123,7 +1192,7 @@ $(function () {
             <td>" . $form['units'] . "</td>
             <td>" . gaz_format_number($form['volume']) . "</td>
             <td style=\"font-weight:bold;\">" . gaz_format_number($tot) . "</td>
-            <td align=\"right\"><input onClick=\"chkSubmit();\" id=\"preventDuplicate\" onClick=\"chkSubmit();\" type=\"submit\" name=\"ins\" value=\"" . $script_transl['submit'] . "\" /></td></tr>\n";
+            <td align=\"right\"><input onClick=\"chkSubmit();\" id=\"preventDuplicate\" tabindex=10 onClick=\"chkSubmit();\" type=\"submit\" name=\"ins\" value=\"" . $script_transl['submit'] . "\" /></td></tr>\n";
             } else {
                 echo "<tr align=\"right\"><td>" . gaz_format_number($impcast) . "</td>
             <td align=\"center\">" . $r['descri'] . "</td>
