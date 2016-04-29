@@ -566,11 +566,13 @@ $strScript = array("admin_client.php" =>
         'provvigione' => '%Prov',
         'amount' => 'Importo',
         'sconto' => 'Sconto',
+        'conf_row'=>'Conferma rigo',
         'net' => 'Peso netto',
         'units' => 'N.Colli',
         'volume' => 'Volume',
         'taxable' => 'Imponibile',
         'tax' => 'I.V.A.',
+        'send_ecr'=>'INVIA alla cassa',
         'confirm' => 'Confermi invio dati al registratore di cassa?',
         /** ENRICO FEDELE */
         'add_article' => 'Aggiungi in magazzino',
