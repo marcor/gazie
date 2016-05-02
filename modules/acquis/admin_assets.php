@@ -418,11 +418,11 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
 <?php
 $gForm = new acquisForm();
 if (count($msg['err']) > 0) { // ho un errore
-    $gForm->headMsg($msg['err'], $script_transl['err'], 'err');
+    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 }
 if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche sul movimento contabile
     $script_transl['war']['update'] .= ' n.<a class="btn btn-xs btn-default" href="../contab/admin_movcon.php?Update&id_tes='.$form['id_tes'].'" >'.$form['id_tes'].' <i class="glyphicon glyphicon-edit"></i></a>';
-    $gForm->headMsg(array('update'), $script_transl['war'], 'war');
+    $gForm->gazHeadMessage(array('update'), $script_transl['war'], 'war');
 }
 ?>
 <form class="form-horizontal" role="form" method="post" name="docacq" enctype="multipart/form-data" >

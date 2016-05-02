@@ -61,10 +61,11 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
+<div class="panel panel-success">
     <div class="table-responsive">
-        <table class="table">
+        <table class="table table-striped"">
             <thead>
-                <tr class="gaz-tr bg-info">              
+                <tr class="bg-info">              
                     <th>
                         ID
                     </th>
@@ -75,14 +76,10 @@ $script_transl = HeadMain();
                         <?php echo $script_transl["clfoco"]; ?>
                     </th>
                     <th class="text-right">
-                        <div class="collapse navbar-collapse">
                         <?php echo $script_transl["amount"]; ?>
-                        </div>
                     </th>
                     <th class="text-right">
-                        <div class="collapse navbar-collapse">
                         <?php echo $script_transl["valamm"]; ?>
-                        </div>
                     </th>
                 </tr>      
             </thead>    
@@ -90,6 +87,7 @@ $script_transl = HeadMain();
             </tbody>     
         </table>
     </div>  
+</div>
 <input type="hidden" id="row_no" value="0">
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
 </div>  

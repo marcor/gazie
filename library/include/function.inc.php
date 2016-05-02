@@ -71,7 +71,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];         ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];               ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -906,10 +906,10 @@ class selectartico extends SelectBox {
 // classe per la generazione di select box dei conti ricavi di vendita-costi d'acquisto
 class selectconven extends SelectBox {
 
-    function output($mastri,$class=false) {
+    function output($mastri, $class = false) {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['clfoco'] . "` WHERE codice LIKE '" . $mastri . "%' AND codice NOT LIKE '%000000' ORDER BY `codice` ASC";
-        SelectBox::_output($query, 'codice', False, '-', 'descri','codice', '', $class);
+        SelectBox::_output($query, 'codice', False, '-', 'descri', 'codice', '', $class);
     }
 
 }
@@ -939,7 +939,7 @@ class selectbanapp extends SelectBox {
 // classe per la generazione di select box dei pagamenti
 class selectpagame extends SelectBox {
 
-    function output($refresh = '', $class = false,$empty=true) {
+    function output($refresh = '', $class = false, $empty = true) {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['pagame'] . '` ORDER BY `descri`, `codice`';
         SelectBox::_output($query, 'descri', $empty, '', '', 'codice', $refresh, $class);
@@ -1446,7 +1446,7 @@ class GAzieForm {
         $this->variousSelect($name, $script_transl['search_item'], $val, $class, true);
     }
 
-    function headMsg($message, $transl, $type = 'err') {
+    function gazHeadMessage($message, $transl, $type = 'err') {
         if (!empty($message)) {
             $m = 'ERROR';
             $c = 'alert-danger';
@@ -1467,6 +1467,42 @@ class GAzieForm {
 		</div>\n";
         }
         return '';
+    }
+
+    function gazResponsiveTable($rows) {
+        /* in $row ci devono essere i righi con un array così formattato:
+         * $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'es_#gaz_resposive_table')
+         * */
+        ?>
+        <div id="<?php echo $rows[0]['table_id']; ?>" >
+            <table class="col-md-12 table-bordered table-striped table-condensed cf">
+                <thead class="cf">
+                    <tr>
+                        <?php
+                        // attraverso per la prima volta l'array del primo rigo allo scopo di scrivere il thead 
+                        foreach ($rows[0] as $v) {
+                            echo '<th class="' . $v['class'] . '">' . $v['value'] . "</th>\n";
+                        }
+                        ?>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    foreach ($rows as $col) {
+                        echo "<tr>";
+                        foreach ($col as $v) {
+                           echo '<td data-title="'.$v['title'].'" class="'.$v['class'].'">'.$v['value'].'</td>';
+                           if ($v['type']==''){
+                              // qui per poter mettere gli input
+                           }
+                        }
+                        echo "</tr>\n";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+        <?php
     }
 
 }

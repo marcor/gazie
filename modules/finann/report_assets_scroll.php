@@ -33,13 +33,13 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
     require("../../library/include/datlib.inc.php");
     $admin_aziend = checkAdmin();
     $no = intval($_POST['getresult']);
-    $result = gaz_dbi_dyn_query('*', $gTables['assets'], 'id = 1', 'id DESC', $no, PER_PAGE);
+    $result = gaz_dbi_dyn_query('*', $gTables['assets'], '1', 'id DESC', $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
         $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $row['id_tes']);
         $anagrafica = new Anagrafica();
         $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
         ?>
-        <tr class="gaz-tr">              
+        <tr>              
             <td>
                 <a class="btn btn-xs btn-default" href="../acquis/admin_assets.php?Update&id=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
             </td>
@@ -50,14 +50,10 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
                 <?php echo $fornitore["descri"]; ?>
             </td>
             <td class="text-right">
-                <div class="collapse navbar-collapse">
                 <?php echo gaz_format_number($row["a_value"] * $row["quantity"]); ?>
-                </div>
             </td>
             <td class="text-right">
-                <div class="collapse navbar-collapse">
                     <?php echo round($row["valamm"],1); ?>%
-                </div>
             </td>
         </tr>  
         <?php
