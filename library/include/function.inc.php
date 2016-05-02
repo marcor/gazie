@@ -71,7 +71,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];               ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];                 ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -1471,36 +1471,39 @@ class GAzieForm {
 
     function gazResponsiveTable($rows) {
         /* in $row ci devono essere i righi con un array così formattato:
-         * $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'es_#gaz_resposive_table')
+         * $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'gaz-resposive_table')
          * */
         ?>
-        <div id="<?php echo $rows[0]['table_id']; ?>" >
-            <table class="col-md-12 table-bordered table-striped table-condensed cf">
-                <thead class="cf">
-                    <tr>
+        <div class="panel panel-default" >
+            <div id="<?php echo $rows[0][0]['table_id']; ?>"  class="container-fluid">
+                <table class="col-xs-12 table-responsive table-striped table-condensed cf">
+                    <thead class="cf">
+                        <tr class="bg-success">
+                            <?php
+                            // attraverso per la prima volta l'array del primo rigo allo scopo di scrivere il thead 
+                            foreach ($rows[0] as $v) {
+                                echo '<th class="' . $v['class'] . '">' . $v['head'] . "</th>";
+                            }
+                            ?>
+                        </tr>
+                    </thead>
+                    <tbody>
                         <?php
-                        // attraverso per la prima volta l'array del primo rigo allo scopo di scrivere il thead 
-                        foreach ($rows[0] as $v) {
-                            echo '<th class="' . $v['class'] . '">' . $v['value'] . "</th>\n";
+                        foreach ($rows as $col) {
+                            echo '<tr>';
+                            foreach ($col as $v) {
+                                echo '<td data-title="' . $v['head'] . '" class="' . $v['class'] . '"';
+                                if (isset($v['td_content'])) { // se ho un tipo diverso dal semplice 
+                                    echo $v['td_content'];
+                                }
+                                echo '>'.$v['value'].'</td>';
+                            }
+                            echo "</tr>\n";
                         }
                         ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    foreach ($rows as $col) {
-                        echo "<tr>";
-                        foreach ($col as $v) {
-                           echo '<td data-title="'.$v['title'].'" class="'.$v['class'].'">'.$v['value'].'</td>';
-                           if ($v['type']==''){
-                              // qui per poter mettere gli input
-                           }
-                        }
-                        echo "</tr>\n";
-                    }
-                    ?>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            </div>
         </div>
         <?php
     }
