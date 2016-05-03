@@ -1469,13 +1469,13 @@ class GAzieForm {
         return '';
     }
 
-    function gazResponsiveTable($rows) {
+    function gazResponsiveTable($rows, $id='gaz-responsive-table') {
         /* in $row ci devono essere i righi con un array così formattato:
          * $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'gaz-resposive_table')
          * */
         ?>
         <div class="panel panel-default" >
-            <div id="<?php echo $rows[0][0]['table_id']; ?>"  class="container-fluid">
+            <div id="<?php echo $id; ?>"  class="container-fluid">
                 <table class="col-xs-12 table-responsive table-striped table-condensed cf">
                     <thead class="cf">
                         <tr class="bg-success">
@@ -1496,7 +1496,7 @@ class GAzieForm {
                                 if (isset($v['td_content'])) { // se ho un tipo diverso dal semplice 
                                     echo $v['td_content'];
                                 }
-                                echo '>'.$v['value'].'</td>';
+                                echo '>'.$v['value'].'&nbsp;</td>';
                             }
                             echo "</tr>\n";
                         }

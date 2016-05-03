@@ -88,7 +88,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = $_POST['in_descri'];
     $form['in_tiprig'] = $_POST['in_tiprig'];
-    $form['in_artsea'] = $_POST['in_artsea'];
     $form['in_codart'] = $_POST['in_codart'];
     $form['in_pervat'] = $_POST['in_pervat'];
     $form['in_unimis'] = $_POST['in_unimis'];
@@ -162,18 +161,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
                     $form['in_id_lotmag'] = $form['rows'][$key_row]['id_lotmag'];
                     $form['in_status'] = "UPDROW" . $key_row;
-                    if ($form['in_artsea'] == 'D') {
-                        $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$key_row]['codart']);
-                        $form['cosear'] = $artico_u['descri'];
-                    } elseif ($form['in_artsea'] == 'B') {
-                        $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$key_row]['codart']);
-                        $form['cosear'] = $artico_u['barcode'];
-                    } else {
-                        $form['cosear'] = $form['rows'][$key_row]['codart'];
-                    }
+                    $form['cosear'] = $form['rows'][$key_row]['codart'];
                     array_splice($form['rows'], $key_row, 1);
                     $next_row--;
-                }
+                    }
             }
             $next_row++;
         }
@@ -614,7 +605,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    $form['in_artsea'] = $admin_aziend['artsea'];
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
     $form['in_unimis'] = "";
@@ -692,7 +682,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
-    $form['in_artsea'] = $admin_aziend['artsea'];
     $form['in_codart'] = "";
     $form['in_pervat'] = 0;
     $form['in_unimis'] = "";
@@ -869,79 +858,6 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['in_status'] . "\" name=\"in_status\" />
         <input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />";
     if ($next_row > 0) {
-        /*        <div class="panel panel-success">
-          <div class="col-lg-12 zero-padding">
-          <div class="table-responsive col-lg-6 zero-padding">
-          <table class="table small">
-          <thead>
-          <tr class="success">
-          <th>
-          </th>
-          <th>
-          <?php echo $script_transl["codart"]; ?>
-          </th>
-          <th>
-          <?php echo $script_transl["descri"]; ?>
-          </th>
-          <th>
-          <?php echo $script_transl["unimis"]; ?>
-          </th>
-          <th class="text-center">
-          <div class="push-right">
-          <?php echo $script_transl["quanti"]; ?>
-          </div>
-          </th>
-          <th class="text-center">
-          <div class="push-right">
-          <?php echo $script_transl["prezzo"]; ?>
-          </div>
-          </th>
-          </tr>
-          </thead>
-          </table>
-          </div>
-          <div class="table-responsive col-lg-6 zero-padding">
-          <table class="table small">
-          <thead>
-          <tr class="success">
-          <th>
-          <div class="push-right">
-          <?php echo $script_transl["sconto"]; ?>
-          </div>
-          </th>
-          <th>
-          <div class="push-right">
-          <?php echo $script_transl["amount"]; ?>
-          </div>
-          </th>
-          <th>
-          <div class="push-right">
-          <?php echo $script_transl["codvat"]; ?>
-          </div>
-          </th>
-          <th>
-          <div class="push-right">
-          <?php echo $script_transl["total"]; ?>
-          </div>
-          </th>
-          <th>
-          <div>
-          <?php echo $script_transl["codric"]; ?>
-          </div>
-          </th>
-          <th>
-          <div class="push-right">
-          <?php echo $script_transl["provvigione"]; ?>
-          </div>
-          </th>
-          <th>
-          </th>
-          </tr>
-          </thead>
-          </table>
-          </div>
-          </div>
-          <?php */
         $tot = 0;
         $form['net_weight'] = 0;
         $form['units'] = 0;
@@ -1008,8 +924,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             $resprow[$k] = array(
                 array('head' => '', 'class' => '',
                     'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['upper_row'] . '!">
-                                <i class="glyphicon glyphicon-arrow-up"></i></button>',
-                    'table_id' => 'gaz-responsive-table'),
+                                <i class="glyphicon glyphicon-arrow-up"></i></button>'),
                 array('head' => $script_transl["codart"], 'class' => '',
                     'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' " type="submit">
                                 <i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
@@ -1084,45 +999,22 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     // ... e poi non la visualizzo più
                     $resprow[$k][5]['value'] = ''; //prelis
                     $resprow[$k][6]['value'] = ''; //sconto
-                    /*
-                      echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"* forfait *\" /></td>\n";
-                      echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"".$v['descri']."\" maxlength=\"100\" /></td>\n";
-                      echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
-                      echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
-                      echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
-                      echo '</tr></tbody></table></div>
-                      <div class="table-responsive col-lg-6 zero-padding">
-                      <table class="table"><tbody><tr>';
-                      echo "<td></td>\n";
-                      echo "<td><input type=\"text\" name=\"rows[$k][prelis]\" value=\"" . gaz_format_number($v['prelis']) . "\" maxlength=\"11\" size=\"4\" onchange=\"this.form.submit()\" /></td>\n";
-                      echo "<td>" . $v['pervat'] . "%</td>\n";
-                      echo '<td class="text-right warning">' . gaz_format_number($tot_row) . "</td>\n";
-                      echo '<td class="text-center">' . $v['codric'] . "</td>\n";
-                      echo "<td>" . $v['provvigione'] . "</td>\n"; */
                     break;
                 case "2":
                     $resprow[$k][3]['value'] = ''; //unimis
                     $resprow[$k][4]['value'] = ''; //quanti
                     $resprow[$k][5]['value'] = ''; //prelis
                     $resprow[$k][6]['value'] = ''; //sconto
-                    /*                    echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"* descrittivo *\" /></td>\n";
-                      echo "<td><input type=\"text\"   name=\"rows[$k][descri]\" value=\"" . $v['descri'] . "\" maxlength=\"50\" /></td>\n";
-                      echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
-                      echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
-                      echo "<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>\n";
-                      echo '</tr></tbody></table></div>
-                      <div class="table-responsive col-lg-6 zero-padding">
-                      <table class="table small"><tbody><tr>';
-                      echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
-                      echo "<td></td>\n";
-                      echo "<td></td>\n";
-                      echo "<td></td>\n";
-                      echo "<td></td>\n";
-                      echo "<td></td>\n"; */
+                    $resprow[$k][7]['value'] = ''; //quanti
+                    $resprow[$k][8]['value'] = ''; //prelis
+                    $resprow[$k][9]['value'] = '';  
+                    $resprow[$k][10]['value'] = ''; 
+                    $resprow[$k][11]['value'] = ''; 
+                    $resprow[$k][12]['value'] = ''; 
                     break;
             }
         }
-        $gForm->gazResponsiveTable($resprow);
+        $gForm->gazResponsiveTable($resprow,'gaz-responsive-table');
     }
     ?>
     <div class="panel panel-info">
@@ -1140,42 +1032,30 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         <div class="form-group">
                             <label for="tiprig" class="col-sm-4 control-label"><?php echo $script_transl['tiprig']; ?></label>
                             <div class="col-sm-8">
-                                <?php $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig'], false, ""); ?>
+                                <?php $gForm->variousSelect('in_tiprig', $script_transl['tiprig_value'], $form['in_tiprig'], false, true); ?>
                             </div>                
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-5 col-lg-5">
                         <div class="form-group">
-                            <label for="item" class="col-sm-2 control-label"><?php echo $script_transl['item']; ?></label>
-                            <div class="col-sm-10">
+                            <label for="item" class="col-sm-4 control-label"><?php echo $script_transl['item']; ?></label>
                                 <?php
                                 $select_artico = new selectartico("in_codart");
                                 $select_artico->addSelected($form['in_codart']);
-                                $select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea'], "col-sm-8");
+                                $select_artico->output(substr($form['cosear'], 0, 20),'C', "col-sm-8");
                                 ?>
-                            </div>                
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-4 col-lg-4">
+                        <div class="form-group">
+                            <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
+                            <input class="col-sm-6" type="number" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-2 col-lg-2">
                         <div class="form-group">
-                            <label for="sconto" class="col-sm-6 control-label"><?php echo $script_transl['sconto']; ?></label>
-                            <div class="col-sm-6">
-                                <input type="number" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
-                            </div>                
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
-                            <div class="col-sm-6">
-                                <input type="number" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
-                            </div>                
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-1 col-lg-1">
-                        <div class="form-group">
-                            <button type="submit"  tabindex=7 class="btn btn-default btn-sm col-sm-12 pull-right" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
-                                <?php echo $script_transl['conf_row']; ?><i class="glyphicon glyphicon-ok"></i>
+                            <button type="submit"  tabindex=7 class="btn btn-default btn-sm col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
+                                <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
                         </div> 
                     </div>
@@ -1185,40 +1065,30 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 <div class="row">
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
-                            <label for="vat_constrain" class="col-sm-4 control-label"><?php echo $script_transl['vat_constrain']; ?></label>
-                            <div class="col-sm-4">
-                                <?php $gForm->selectFromDB('aliiva', 'in_codvat', 'codice', $form['in_codvat'], 'codice', true, '-', 'descri', '', ''); ?>
-                            </div>                
+                            <label for="sconto" class="col-sm-6 control-label"><?php echo $script_transl['sconto']; ?></label>
+                                <input class="col-sm-6" type="number" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
+                        </div>
+                    </div>
+                    <div class="col-sm-6 col-md-3 col-lg-3">
+                        <div class="form-group">
+                            <label for="vat_constrain" class="col-sm-6 control-label"><?php echo $script_transl['vat_constrain']; ?></label>
+                                <?php $gForm->selectFromDB('aliiva', 'in_codvat', 'codice', $form['in_codvat'], 'codice', true, '-', 'descri', '', 'col-sm-6'); ?>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label for="codric" class="col-sm-4 control-label"><?php echo $script_transl['codric']; ?></label>
-                            <div class="col-sm-8">
                                 <?php
                                 $select_codric = new selectconven("in_codric");
                                 $select_codric->addSelected($form['in_codric']);
-                                $select_codric->output(substr($form['in_codric'], 0, 1), 'col-sm-12');
+                                $select_codric->output(substr($form['in_codric'], 0, 1), 'col-sm-8');
                                 ?>
-                            </div>                
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
-                            <label for="provvigione" class="col-sm-4 control-label"><?php echo $script_transl['provvigione']; ?></label>
-                            <div class="col-sm-4">
-                                <input type="number" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
-                            </div>                
-                        </div>
-                    </div>
-                    <div class="col-sm-6 col-md-3 col-lg-3">
-                        <div class="form-group">
-                            <label for="search" class="col-sm-3 control-label"><?php echo $script_transl['search']; ?></label>
-                            <div class="col-sm-9">
-                                <?php
-                                $gForm->variousSelect('in_artsea', $script_transl['in_artsea_value'], $form['in_artsea'], "col-sm-8", false);
-                                ?>
-                            </div>                
+                            <label for="provvigione" class="col-sm-6 control-label"><?php echo $script_transl['provvigione']; ?></label>
+                                <input class="col-sm-6" type="number" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
                         </div>
                     </div>
                 </div>
