@@ -63,9 +63,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     $_FILES['userfile']['type'] == "image/jpg" ||
                     $_FILES['userfile']['type'] == "image/gif" ||
                     $_FILES['userfile']['type'] == "image/x-gif"))
-                $msg['err'][] = 'sexper';
+                $msg['err'][] = 'image';
             if ($_FILES['userfile']['size'] > 63999)
-                $msg['err'][] = 'sexper';
+                $msg['err'][] = 'imasize';
         }
         if ($toDo == 'insert' && $_FILES['userfile']['size'] < 1) {
             $msg['err'][] = 'sexper';
@@ -73,23 +73,23 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (strlen($cf) == 11) {
             $rs_cf = $chk->check_VAT_reg_no($cf, $form['country']);
             if ($form['sexper'] != 'G') {
-                $msg['err'][] = 'sexper';
+                $msg['err'][] = 'cf_sex';
             }
         } elseif (empty($cf)) {
-            $msg['err'][] = 'sexper';
+            $msg['err'][] = 'cf_emp';
         } else {
             $rs_cf = $chk->check_TAXcode($cf, $form['country']);
             if ($form['sexper'] == 'G') {
-                $msg['err'][] = 'sexper';
+                $msg['err'][] = 'cf_pg';
             }
         }
         if (!empty($rs_cf)) {
-            $msg['err'][] = 'sexper';
+            $msg['err'][] = 'codfis';
         }
         if (!empty($form['pariva'])) {
             $rs_pi = $chk->check_VAT_reg_no($form['pariva'], $form['country']);
             if (!empty($rs_pi)) {
-                $msg['err'][] = 'sexper';
+                $msg['err'][] = 'pariva';
             }
         }
         /** ENRICO FEDELE */
@@ -208,6 +208,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
     });
     $(document).ready(function () {
         $('.simple_color_custom').simpleColor({
+            boxWidth: '115px',
             columns: 37,
             border: '1px solid #333333',
             buttonClass: 'button',
@@ -225,27 +226,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 
     });
     $('#check').button();
-
-    var cal = new CalendarPopup();
-    var calName = '';
-    function setMultipleValues(y, m, d) {
-        document.getElementById(calName + '_Y').value = y;
-        document.getElementById(calName + '_M').selectedIndex = m * 1 - 1;
-        document.getElementById(calName + '_D').selectedIndex = d * 1 - 1;
-    }
-    function setDate(name) {
-        calName = name.toString();
-        var year = document.getElementById(calName + '_Y').value.toString();
-        var month = document.getElementById(calName + '_M').value.toString();
-        var day = document.getElementById(calName + '_D').value.toString();
-        var mdy = month + '/' + day + '/' + year;
-        cal.setReturnFunction('setMultipleValues');
-        cal.showCalendar('anchor', mdy);
-    }
-
 </script>
 <?php
-print_r($_POST);
 $gForm = new configForm();
 if (count($msg['err']) > 0) { // ho un errore
     $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
@@ -254,7 +236,6 @@ if (count($msg['err']) > 0) { // ho un errore
 <form method="POST" name="form" enctype="multipart/form-data">
     <input type="hidden" name="ritorno" value="<?php echo $form['ritorno'] ?>">
     <input type="hidden" name="<?php echo ucfirst($toDo) ?>" value="">
-
     <?php
     if ($toDo == 'insert') {
         echo '<div class="text-center"><b>' . $script_transl['ins_this'] . "</b></div>\n";
@@ -263,7 +244,6 @@ if (count($msg['err']) > 0) { // ho un errore
         echo '<input type="hidden" value="' . $form['codice'] . '" name="codice" />';
     }
     ?>
-
     <div class="panel panel-default gaz-table-form">
         <div class="container-fluid">
             <div class="row">
