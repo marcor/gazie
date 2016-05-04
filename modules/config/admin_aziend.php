@@ -25,7 +25,7 @@
 
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
-$msg = '';
+$msg = array('err' => array(), 'war' => array());
 $rs_azienda = gaz_dbi_dyn_query('*', $gTables['aziend'], intval($_SESSION['company_id']), 'codice DESC', 0, 1);
 $exist_true = gaz_dbi_fetch_array($rs_azienda);
 
@@ -47,12 +47,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['mas_fixed_assets'] = intval(substr($_POST['mas_fixed_assets'], 0, 3));
     $form['mas_found_assets'] = intval(substr($_POST['mas_found_assets'], 0, 3));
     $form['mas_cost_assets'] = intval(substr($_POST['mas_cost_assets'], 0, 3));
-    $form['virtual_stamp_auth_date_Y'] = intval($_POST['virtual_stamp_auth_date_Y']);
-    $form['virtual_stamp_auth_date_M'] = intval($_POST['virtual_stamp_auth_date_M']);
-    $form['virtual_stamp_auth_date_D'] = intval($_POST['virtual_stamp_auth_date_D']);
-    $form['datnas_Y'] = intval($_POST['datnas_Y']);
-    $form['datnas_M'] = intval($_POST['datnas_M']);
-    $form['datnas_D'] = intval($_POST['datnas_D']);
+    $form['datnas'] = substr($_POST['datnas'], 0, 10);
+    $form['virtual_stamp_auth_date'] = substr($_POST['virtual_stamp_auth_date'], 0, 10);
     $form['intermediary_code'] = intval($_POST['intermediary_code']);
     $form['intermediary_descr'] = substr($_POST['intermediary_descr'], 0, 50);
     $form['amm_min'] = filter_input(INPUT_POST, 'amm_min');
@@ -67,80 +63,79 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     $_FILES['userfile']['type'] == "image/jpg" ||
                     $_FILES['userfile']['type'] == "image/gif" ||
                     $_FILES['userfile']['type'] == "image/x-gif"))
-                $msg .= "11+";
+                $msg['err'][] = 'sexper';
             if ($_FILES['userfile']['size'] > 63999)
-                $msg .= "12+";
+                $msg['err'][] = 'sexper';
         }
         if ($toDo == 'insert' && $_FILES['userfile']['size'] < 1) {
-            $msg .= "14+";
+            $msg['err'][] = 'sexper';
         }
         if (strlen($cf) == 11) {
             $rs_cf = $chk->check_VAT_reg_no($cf, $form['country']);
             if ($form['sexper'] != 'G') {
-                $msg .= "7+";
+                $msg['err'][] = 'sexper';
             }
         } elseif (empty($cf)) {
-            $msg .= "10+";
+            $msg['err'][] = 'sexper';
         } else {
             $rs_cf = $chk->check_TAXcode($cf, $form['country']);
             if ($form['sexper'] == 'G') {
-                $msg .= "9+";
+                $msg['err'][] = 'sexper';
             }
         }
         if (!empty($rs_cf)) {
-            $msg .= "6+";
+            $msg['err'][] = 'sexper';
         }
         if (!empty($form['pariva'])) {
             $rs_pi = $chk->check_VAT_reg_no($form['pariva'], $form['country']);
             if (!empty($rs_pi)) {
-                $msg .= "8+";
+                $msg['err'][] = 'sexper';
             }
         }
-
         /** ENRICO FEDELE */
         /* Compatibilità con il nuovo simple pick color */
         $form["colore"] = substr($form["colore"], 1);
         /** ENRICO FEDELE */
         $lumix = hexdec(substr($form["colore"], 0, 2)) + hexdec(substr($form["colore"], 0, 2)) + hexdec(substr($form["colore"], 0, 2));
         if ($lumix < 408) {
-            $msg .= "13+";
+            $msg['err'][] = 'sexper';
         }
-
-        //eseguo i controlli formali
-        $uts_datnas = mktime(0, 0, 0, $form['datnas_M'], $form['datnas_D'], $form['datnas_Y']);
-        $form['datnas'] = date("Y-m-d", $uts_datnas);
         if (empty($form['ragso1'])) {
-            $msg .= "0+";
+            $msg['err'][] = 'ragso1';
         }
         if (empty($form['sexper'])) {
-            $msg .= "1+";
+            $msg['err'][] = 'sexper';
         }
-        if (!checkdate($form['datnas_M'], $form['datnas_D'], $form['datnas_Y'])) {
-            $msg .= "2+";
-        }
+        if (!gaz_format_date($form["datnas"], 'chk'))
+            $msg['err'][] = 'datnas';
+        if (!gaz_format_date($form["virtual_stamp_auth_date"], 'chk'))
+            $msg['err'][] = 'virtual_stamp_auth_date';
+
         if (empty($form['indspe'])) {
-            $msg .= "3+";
+            $msg['err'][] = 'indspe';
         }
         if (empty($form['citspe'])) {
-            $msg .= "4+";
+            $msg['err'][] = 'citspe';
         }
         if (empty($form['prospe'])) {
-            $msg .= "5+";
+            $msg['err'][] = 'prospe';
         }
         $cap = new postal_code;
         if ($cap->check_postal_code($form["capspe"], $form["country"])) {
-            $msg.='15+';
+            $msg['err'][] = 'capspe';
         }
         if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
-            $msg .= "16+";
+            $msg['err'][] = 'e_mail';
         }
         if (!filter_var($form['web_url'], FILTER_VALIDATE_URL) && !empty($form['e_mail']) && $form['web_url'] != "") {
-            $msg .= "17+";
+            $msg['err'][] = 'web_url';
         }
         if ($form['cod_ateco'] < 10000) {
-            $msg .= "18+";
+            $msg['err'][] = 'cod_ateco';
         }
-        if (empty($msg)) { // nessun errore
+        if (count($msg['err']) == 0) { // nessun errore
+            $form['datnas'] = gaz_format_date($form['datnas'], true);
+            $form['virtual_stamp_auth_date'] = gaz_format_date($form['virtual_stamp_auth_date'], true);
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
                 $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
             }
@@ -168,12 +163,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 } elseif ($exist_true) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['aziend'], 'codice', intval($_SESSION['company_id']));
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $form['datnas_Y'] = substr($form['datnas'], 0, 4);
-    $form['datnas_M'] = substr($form['datnas'], 5, 2);
-    $form['datnas_D'] = substr($form['datnas'], 8, 2);
-    $form['virtual_stamp_auth_date_Y'] = substr($form['virtual_stamp_auth_date'], 0, 4);
-    $form['virtual_stamp_auth_date_M'] = substr($form['virtual_stamp_auth_date'], 5, 2);
-    $form['virtual_stamp_auth_date_D'] = substr($form['virtual_stamp_auth_date'], 8, 2);
+    $form['datnas'] = gaz_format_date($form['datnas'], false, false);
+    $form['virtual_stamp_auth_date'] = gaz_format_date($form['virtual_stamp_auth_date'], false, false);
     // rilevo l'eventuale intermediario
     $intermediary = gaz_dbi_get_row($gTables['config'], 'variable', 'intermediary');
     $form['intermediary_code'] = $intermediary['cvalue'];
@@ -186,12 +177,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form = gaz_dbi_fields('aziend');
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $form['datnas_Y'] = date("Y");
-    $form['datnas_M'] = date("m");
-    $form['datnas_D'] = date("d");
-    $form['virtual_stamp_auth_date_Y'] = 1970;
-    $form['virtual_stamp_auth_date_M'] = 1;
-    $form['virtual_stamp_auth_date_D'] = 1;
+    $form['datnas'] = date("d/m/Y");
+    $form['virtual_stamp_auth_date'] = '1/1/2000';
     $form['country'] = 'IT';
     $form['id_language'] = 1;
     $form['id_currency'] = 1;
@@ -210,16 +197,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup',
-    'custom/autocomplete',
-    'custom/jquery.simple-color'));
-//simplecolordisplay
+$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete', 'custom/jquery.simple-color'));
 ?>
 <script>
     $(function () {
         $('#amm_min').selectmenu();
         $('#causale_pagam_770').selectmenu();
         $('#fiscal_reg').selectmenu();
+        $("#datnas, #virtual_stamp_auth_date").datepicker();
     });
     $(document).ready(function () {
         $('.simple_color_custom').simpleColor({
@@ -260,900 +245,901 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup',
 
 </script>
 <?php
-echo "<form method=\"POST\" name=\"form\" enctype=\"multipart/form-data\">\n";
-echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
-echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">";
+print_r($_POST);
 $gForm = new configForm();
-if ($toDo == 'insert') {
-    echo '<div class="text-center"><b>' . $script_transl['ins_this'] . "</b></div>\n";
-} else {
-    echo '<div class="text-center"><b>' . $script_transl['upd_this'] . " '" . $form['codice'] . "'</b></div>\n";
-    echo "<input type=\"hidden\" value=\"" . $form['codice'] . "\" name=\"codice\" />\n";
+if (count($msg['err']) > 0) { // ho un errore
+    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 }
 ?>
+<form method="POST" name="form" enctype="multipart/form-data">
+    <input type="hidden" name="ritorno" value="<?php echo $form['ritorno'] ?>">
+    <input type="hidden" name="<?php echo ucfirst($toDo) ?>" value="">
 
-<div class="panel panel-default gaz-table-form">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="ragso1" class="col-sm-4 control-label"><?php echo $script_transl['ragso1']; ?></label>
-                    <input class="col-sm-7" type="text" value="<?php echo $form['ragso1']; ?>" name="ragso1" /><a class="btn btn-xs btn-default col-sm-1" href="config_aziend.php"><i class="glyphicon glyphicon-lock"></i>&nbsp;config</a>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="ragso2" class="col-sm-4 control-label"><?php echo $script_transl['ragso2']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['ragso2']; ?>" name="ragso2" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=aziend&value=<?php echo $form['codice']; ?>" width="100" >*</label>
-                    <div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="legrap" class="col-sm-4 control-label"><?php echo $script_transl['legrap']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['legrap']; ?>" name="legrap" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="sexper" class="col-sm-4 control-label"><?php echo $script_transl['sexper']; ?>*</label>
-                    <?php
-                    $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="datnas" class="col-sm-4 control-label"><?php echo $script_transl['datnas']; ?>*</label>
-                    <div class="col-sm-8">
-                        <?php
-                        $gForm->CalendarPopup('datnas', $form['datnas_D'], $form['datnas_M'], $form['datnas_Y']);
-                        ?>
-                    </div>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="luonas" class="col-sm-4 control-label"><?php echo $script_transl['luonas']; ?>*</label>
-                    <div class="col-sm-8">
-                        <input type="text" id="search_luonas" name="luonas" value="<?php echo $form['luonas']; ?>" maxlength="50" />
-                        <input type="text" id="search_pronas" name="pronas" value="<?php echo $form['pronas']; ?>" maxlength="2" size="1" />
-                    </div>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="country" class="col-sm-4 control-label"><?php echo $script_transl['country']; ?>*</label>
-                    <?php
-                    $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' - ', 'name', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="citspe" class="col-sm-4 control-label"><?php echo $script_transl['citspe']; ?>*</label>
-                    <div class="col-sm-8">
-                        <input type="text" id="search_location" name="citspe" value="<?php echo $form['citspe']; ?>" maxlength="50" />
-                        <input type="text" id="search_location-prospe" name="prospe" value="<?php echo $form['prospe']; ?>" maxlength="2" size="1" />
-                    </div>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="indspe" class="col-sm-4 control-label"><?php echo $script_transl['indspe']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['indspe']; ?>" name="indspe" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="capspe" class="col-sm-4 control-label"><?php echo $script_transl['capspe']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['capspe']; ?>" name="capspe" maxlength="5"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="latitude" class="col-sm-4 control-label"><?php echo $script_transl['latitude'] . " - " . $script_transl['longitude']; ?></label>
-                    <div class="col-sm-8">        
-                        <input class="col-sm-3" type="text" name="latitude" value="<?php echo $form['latitude'] ?>" maxlength="10" /><input class="col-sm-3" type="text" name="longitude" value="<?php echo $form['longitude']; ?>" maxlength="10" /><a class="btn btn-xs btn-default btn-default col-sm-2" href="http://maps.google.com/maps?q=<?php echo $form['latitude'] . "," . $form['longitude']; ?>"> maps -> <i class="glyphicon glyphicon-map-marker"></i></a>
-                    </div>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="id_language" class="col-sm-4 control-label"><?php echo $script_transl['id_language']; ?></label>
-                    <?php
-                    $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language'], 'lang_id', 1, ' - ', 'title_native', '', 'col-sm-8', null, 'style="max-width: 200px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="id_currency" class="col-sm-4 control-label"><?php echo $script_transl['id_currency']; ?></label>
-                    <?php
-                    $gForm->selectFromDB('currencies', 'id_currency', 'id', $form['id_currency'], 'id', 1, ' - ', 'curr_name', '', 'col-sm-8', null, 'style="max-width: 200px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="sedleg" class="col-sm-4 control-label"><?php echo $script_transl['sedleg']; ?></label>
-                    <div class="col-sm-8">
-                        <textarea name="sedleg" rows="2" cols="40" maxlength="100" size="30"><?php echo $form['sedleg']; ?></textarea>
-                    </div>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="telefo" class="col-sm-4 control-label"><?php echo $script_transl['telefo']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['telefo']; ?>" name="telefo" maxlength="50" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="fax" class="col-sm-4 control-label"><?php echo $script_transl['fax']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['fax']; ?>" name="fax" maxlength="50" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="pariva" class="col-sm-4 control-label"><?php echo $script_transl['pariva']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['pariva']; ?>" name="pariva" maxlength="11" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="codfis" class="col-sm-4 control-label"><?php echo $script_transl['codfis']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['codfis']; ?>" name="codfis" maxlength="16" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="rea" class="col-sm-4 control-label"><?php echo $script_transl['rea']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['rea']; ?>" name="rea" maxlength="32" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="e_mail" class="col-sm-4 control-label"><?php echo $script_transl['e_mail']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['e_mail']; ?>" name="e_mail" maxlength="50" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="50" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['intermediary']; ?></label>
-                    <input type="hidden" name="intermediary_code" value="<?php echo $form['intermediary_code']; ?>" />
-                    <input type="hidden" name="intermediary_descr" value="<?php echo $form['intermediary_descr']; ?>" />
-                    <div class="col-sm-8">
-                        <?php
-                        if ($form['intermediary_code'] == $form['codice']) {
-                            ?>
-                            <input type="radio" value="y" name="intermediary_check" checked >Si - No<input type="radio" value="n" name="intermediary_check">";
-                            <?php
-                        } elseif ($form['intermediary_code'] == 0) {
-                            echo '<input type="radio" value="y" name="intermediary_check">' . $script_transl['yes'] . ' - ' . $script_transl['no'] . '<input type="radio" checked value="n" name="intermediary_check">';
-                        } else {
-                            echo $form['intermediary_descr'];
-                        }
-                        ?>
-                    </div>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="cod_ateco" class="col-sm-4 control-label"><?php echo $script_transl['cod_ateco']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['cod_ateco']; ?>" name="cod_ateco" maxlength="6" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="regime" class="col-sm-4 control-label"><?php echo $script_transl['regime']; ?></label>
-                    <?php
-                    $gForm->variousSelect('regime', $script_transl['regime_value'], $form['regime'], "col-sm-8", false, '', 50, 'style="max-width: 200px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="preeminent_vat" class="col-sm-4 control-label"><?php echo $script_transl['preeminent_vat']; ?></label>
-                    <?php
-                    $gForm->selectFromDB('aliiva', 'preeminent_vat', 'codice', $form['preeminent_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="fiscal_reg" class="col-sm-4 control-label"><?php echo $script_transl['fiscal_reg']; ?></label>
-                    <?php
-                    $gForm->variousSelect('fiscal_reg', $script_transl['fiscal_reg_value'], $form['fiscal_reg'], "col-sm-8", true, '', false, 'style="max-width: 350px; font-height:0.4em;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['amm_min']; ?></label>
-                    <?php
-                    $gForm->selSpecieAmmortamentoMin('ammortamenti_ministeriali.xml', 'amm_min', $form["amm_min"]);
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="decimal_quantity" class="col-sm-4 control-label"><?php echo $script_transl['decimal_quantity']; ?></label>
-                    <?php
-                    $gForm->variousSelect('decimal_quantity', $script_transl['decimal_quantity_value'], $form['decimal_quantity'], "col-sm-8", false, '', 20, 'style="max-width: 100px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="decimal_price" class="col-sm-4 control-label"><?php echo $script_transl['decimal_price']; ?></label>
-                    <?php
-                    $gForm->selectNumber('decimal_price', $form['decimal_price'], 0, 0, 5, "col-sm-8", '', 'style="max-width: 100px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="stock_eval_method" class="col-sm-4 control-label"><?php echo $script_transl['stock_eval_method']; ?></label>
-                    <?php
-                    $gForm->variousSelect('stock_eval_method', $script_transl['stock_eval_method_value'], $form['stock_eval_method'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="mascli" class="col-sm-4 control-label"><?php echo $script_transl['mascli']; ?></label>
-                    <?php
-                    $gForm->selectAccount('mascli', $form['mascli'], array(1), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="masfor" class="col-sm-4 control-label"><?php echo $script_transl['masfor']; ?></label>
-                    <?php
-                    $gForm->selectAccount('masfor', $form['masfor'], array(2), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="masban" class="col-sm-4 control-label"><?php echo $script_transl['masban']; ?></label>
-                    <?php
-                    $gForm->selectAccount('masban', $form['masban'] . '000000', array(1, 9), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="mas_fixed_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_fixed_assets']; ?></label>
-                    <?php
-                    $gForm->selectAccount('mas_fixed_assets', $form['mas_fixed_assets'] . '000000', array(1, 9), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="mas_found_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_found_assets']; ?></label>
-                    <?php
-                    $gForm->selectAccount('mas_found_assets', $form['mas_found_assets'] . '000000', array(2, 9), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="mas_cost_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_cost_assets']; ?></label>
-                    <?php
-                    $gForm->selectAccount('mas_cost_assets', $form['mas_cost_assets'] . '000000', array(3, 9), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="mas_staff" class="col-sm-4 control-label"><?php echo $script_transl['mas_staff']; ?></label>
-                    <?php
-                    $gForm->selectAccount('mas_staff', $form['mas_staff'] . '000000', array(2, 9), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="cassa_" class="col-sm-4 control-label"><?php echo $script_transl['cassa_']; ?></label>
-                    <?php
-                    $gForm->selectAccount('cassa_', $form['cassa_'], 1, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="ivaacq" class="col-sm-4 control-label"><?php echo $script_transl['ivaacq']; ?></label>
-                    <?php
-                    $gForm->selectAccount('ivaacq', $form['ivaacq'], 1, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="ivaven" class="col-sm-4 control-label"><?php echo $script_transl['ivaven']; ?></label>
-                    <?php
-                    $gForm->selectAccount('ivaven', $form['ivaven'], 2, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="ivacor" class="col-sm-4 control-label"><?php echo $script_transl['ivacor']; ?></label>
-                    <?php
-                    $gForm->selectAccount('ivacor', $form['ivacor'], 2, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="ivaera" class="col-sm-4 control-label"><?php echo $script_transl['ivaera']; ?></label>
-                    <?php
-                    $gForm->selectAccount('ivaera', $form['ivaera'], substr($form['ivaera'], 0, 1), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="split_payment" class="col-sm-4 control-label"><?php echo $script_transl['split_payment']; ?></label>
-                    <?php
-                    $gForm->selectAccount('split_payment', $form['split_payment'], substr($form['split_payment'], 0, 1), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="impven" class="col-sm-4 control-label"><?php echo $script_transl['impven']; ?></label>
-                    <?php
-                    $gForm->selectAccount('impven', $form['impven'], 4, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="imptra" class="col-sm-4 control-label"><?php echo $script_transl['imptra']; ?></label>
-                    <?php
-                    $gForm->selectAccount('imptra', $form['imptra'], 4, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="impimb" class="col-sm-4 control-label"><?php echo $script_transl['impimb']; ?></label>
-                    <?php
-                    $gForm->selectAccount('impimb', $form['impimb'], 4, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="impspe" class="col-sm-4 control-label"><?php echo $script_transl['impspe']; ?></label>
-                    <?php
-                    $gForm->selectAccount('impspe', $form['impspe'], 4, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="impvar" class="col-sm-4 control-label"><?php echo $script_transl['impvar']; ?></label>
-                    <?php
-                    $gForm->selectAccount('impvar', $form['impvar'], 4, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="boleff" class="col-sm-4 control-label"><?php echo $script_transl['boleff']; ?></label>
-                    <?php
-                    $gForm->selectAccount('boleff', $form['boleff'], 4, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="omaggi" class="col-sm-4 control-label"><?php echo $script_transl['omaggi']; ?></label>
-                    <?php
-                    $gForm->selectAccount('omaggi', $form['omaggi'], 3, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="sales_return" class="col-sm-4 control-label"><?php echo $script_transl['sales_return']; ?></label>
-                    <?php
-                    $gForm->selectAccount('sales_return', $form['sales_return'], array('sub', 3, 4), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="impacq" class="col-sm-4 control-label"><?php echo $script_transl['impacq']; ?></label>
-                    <?php
-                    $gForm->selectAccount('impacq', $form['impacq'], 3, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="cost_tra" class="col-sm-4 control-label"><?php echo $script_transl['cost_tra']; ?></label>
-                    <?php
-                    $gForm->selectAccount('cost_tra', $form['cost_tra'], 3, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="cost_imb" class="col-sm-4 control-label"><?php echo $script_transl['cost_imb']; ?></label>
-                    <?php
-                    $gForm->selectAccount('cost_imb', $form['cost_imb'], 3, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="cost_var" class="col-sm-4 control-label"><?php echo $script_transl['cost_var']; ?></label>
-                    <?php
-                    $gForm->selectAccount('cost_var', $form['cost_var'], 3, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="purchases_return" class="col-sm-4 control-label"><?php echo $script_transl['purchases_return']; ?></label>
-                    <?php
-                    $gForm->selectAccount('purchases_return', $form['purchases_return'], array('sub', 3, 4), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="coriba" class="col-sm-4 control-label"><?php echo $script_transl['coriba']; ?></label>
-                    <?php
-                    $gForm->selectAccount('coriba', $form['coriba'], array('sub', 1, 2, 5), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="cotrat" class="col-sm-4 control-label"><?php echo $script_transl['cotrat']; ?></label>
-                    <?php
-                    $gForm->selectAccount('cotrat', $form['cotrat'], array('sub', 1, 2, 5), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="cocamb" class="col-sm-4 control-label"><?php echo $script_transl['cocamb']; ?></label>
-                    <?php
-                    $gForm->selectAccount('cocamb', $form['cocamb'], array('sub', 1, 2, 5), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="c_ritenute" class="col-sm-4 control-label"><?php echo $script_transl['c_ritenute']; ?></label>
-                    <?php
-                    $gForm->selectAccount('c_ritenute', $form['c_ritenute'], 1, '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="ritenuta" class="col-sm-4 control-label"><?php echo $script_transl['ritenuta']; ?></label>
-                    <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['ritenuta']; ?>" name="ritenuta"  size="4" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="c_payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['c_payroll_tax']; ?></label>
-                    <?php
-                    $gForm->selectAccount('c_payroll_tax', $form['c_payroll_tax'], array('sub', 2, 4), '', false, "col-sm-8");
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?></label>
-                    <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['payroll_tax']; ?>" name="payroll_tax" size="4"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="causale_pagam_770" class="col-sm-4 control-label"><?php echo $script_transl['causale_pagam_770']; ?></label>
-                    <?php
-                    $gForm->variousSelect('causale_pagam_770', $script_transl['causale_pagam_770_value'], $form['causale_pagam_770'], "col-sm-8", true, '', false, 'style="max-width: 350px; font-height:0.4em;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="upgrie" class="col-sm-4 control-label"><?php echo $script_transl['upgrie']; ?></label>
-                    <input class="col-sm-2" type="number" value="<?php echo $form['upgrie']; ?>" name="upgrie" size="4"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="upggio" class="col-sm-4 control-label"><?php echo $script_transl['upggio']; ?></label>
-                    <input class="col-sm-2" type="number" value="<?php echo $form['upggio']; ?>" name="upggio" size="4"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="upginv" class="col-sm-4 control-label"><?php echo $script_transl['upginv']; ?></label>
-                    <input class="col-sm-2" type="number" value="<?php echo $form['upginv']; ?>" name="upginv" size="4"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="upgve" class="col-sm-4 control-label"><?php echo $script_transl['upgve'] . ' ' . $script_transl['sezione'] . ' '; ?></label>
-                    <?php
-                    for ($i = 1; $i <= 3; $i++) {
-                        echo '<div class="col-sm-4">' . $i
-                        . ': <input type="number" name="upgve' . $i . '" value="' . $form["upgve$i"] . '" maxlength="4" size="4" />'
-                        . '</div>';
-                    }
-                    ?>
+    <?php
+    if ($toDo == 'insert') {
+        echo '<div class="text-center"><b>' . $script_transl['ins_this'] . "</b></div>\n";
+    } else {
+        echo '<div class="text-center"><b>' . $script_transl['upd_this'] . " '" . $form['codice'] . "'</b></div>\n";
+        echo '<input type="hidden" value="' . $form['codice'] . '" name="codice" />';
+    }
+    ?>
 
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="upgac" class="col-sm-4 control-label"><?php echo $script_transl['upgac'] . ' ' . $script_transl['sezione'] . ' '; ?></label>
-                    <?php
-                    for ($i = 1; $i <= 3; $i++) {
-                        echo '<div class="col-sm-4">' . $i
-                        . ': <input type="number" name="upgac' . $i . '" value="' . $form["upgac$i"] . '" maxlength="4" size="4" />'
-                        . '</div>';
-                    }
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="upgco" class="col-sm-4 control-label"><?php echo $script_transl['upgco'] . ' ' . $script_transl['sezione'] . ' '; ?></label>
-                    <?php
-                    for ($i = 1; $i <= 3; $i++) {
-                        echo '<div class="col-sm-4">' . $i
-                        . ': <input type="number" name="upgco' . $i . '" value="' . $form["upgco$i"] . '" maxlength="4" size="4" />'
-                        . '</div>';
-                    }
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="acciva" class="col-sm-4 control-label"><?php echo $script_transl['acciva']; ?></label>
-                    <input class="col-sm-2" type="number" value="<?php echo $form['acciva']; ?>" name="acciva" size="4"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="taxstamp_limit" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp_limit']; ?></label>
-                    <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['taxstamp_limit']; ?>" name="taxstamp_limit" size="4"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="taxstamp" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp']; ?></label>
-                    <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['taxstamp']; ?>" name="taxstamp" size="4"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="taxstamp_vat" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp_vat']; ?></label>
-                    <?php
-                    $gForm->selectFromDB('aliiva', 'taxstamp_vat', 'codice', $form['taxstamp_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="perbol" class="col-sm-4 control-label"><?php echo $script_transl['perbol']; ?></label>
-                    <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['perbol']; ?>" name="perbol" size="4"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="round_bol" class="col-sm-4 control-label"><?php echo $script_transl['round_bol']; ?></label>
-                    <?php
-                    $gForm->variousSelect('round_bol', $script_transl['round_bol_value'], $form['round_bol'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="virtual_taxstamp" class="col-sm-4 control-label"><?php echo $script_transl['virtual_taxstamp']; ?></label>
-                    <?php
-                    $gForm->variousSelect('virtual_taxstamp', $script_transl['virtual_taxstamp_value'], $form['virtual_taxstamp'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="virtual_stamp_auth_prot" class="col-sm-4 control-label"><?php echo $script_transl['virtual_stamp_auth_prot']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['virtual_stamp_auth_prot']; ?>" name="virtual_stamp_auth_prot" size="10" maxlength="14"  />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="virtual_stamp_auth_date" class="col-sm-4 control-label"><?php echo $script_transl['virtual_stamp_auth_date']; ?></label>
-                    <div class="col-sm-8">
-                        <?php $gForm->CalendarPopup('virtual_stamp_auth_date', $form['virtual_stamp_auth_date_D'], $form['virtual_stamp_auth_date_M'], $form['virtual_stamp_auth_date_Y']); ?>
-                    </div>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="sperib" class="col-sm-4 control-label"><?php echo $script_transl['sperib']; ?></label>
-                    <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['sperib']; ?>" name="sperib" size="4" />
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <?php for ($i = 1; $i <= 3; $i++) { ?>
+    <div class="panel panel-default gaz-table-form">
+        <div class="container-fluid">
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="desez" class="col-sm-4 control-label"><?php echo $script_transl['desez'] . $script_transl['sezione'] . $i; ?></label>
-                        <input class="col-sm-8" type="text" value="<?php echo $form['desez' . $i]; ?>" name="desez<?php echo $i; ?>"  />
+                        <label for="ragso1" class="col-sm-4 control-label"><?php echo $script_transl['ragso1']; ?></label>
+                        <input class="col-sm-7" type="text" value="<?php echo $form['ragso1']; ?>" name="ragso1" /><a class="btn btn-xs btn-default col-sm-1" href="config_aziend.php"><i class="glyphicon glyphicon-lock"></i>&nbsp;config</a>
                     </div>
                 </div>
             </div><!-- chiude row  -->
-        <?php } ?>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="fatimm" class="col-sm-4 control-label"><?php echo $script_transl['fatimm']; ?></label>
-                    <?php
-                    $gForm->variousSelect('fatimm', $script_transl['fatimm_value'], $form['fatimm'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="fatimm" class="col-sm-4 control-label"><?php echo $script_transl['templ_set']; ?></label>
-                    <?php
-                    echo '<select name="template">';
-                    $relativePath = '../../config';
-                    if ($handle = opendir($relativePath)) {
-                        while ($file = readdir($handle)) {
-                            if (substr($file, 0, 9) != "templates")
-                                continue;
-                            $selected = "";
-                            if ($form["template"] == substr($file, 10)) {
-                                $selected = " selected ";
-                            }
-                            echo "<option value=\"" . substr($file, 10) . "\"" . $selected . ">" . ucfirst($file) . "</option>";
-                        }
-                        closedir($handle);
-                    }
-                    echo "</select>\n";
-                    ?>
-                </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="colore" class="col-sm-4 control-label"><?php echo $script_transl['colore']; ?></label>
-                    <div class="col-md-8 company-color">
-                        <input class="simple_color_custom" type="text" value="#<?php echo $form['colore']; ?>" name="colore"  />
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ragso2" class="col-sm-4 control-label"><?php echo $script_transl['ragso2']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['ragso2']; ?>" name="ragso2" />
                     </div>
                 </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="conmag" class="col-sm-4 control-label"><?php echo $script_transl['conmag']; ?></label>
-                    <?php
-                    $gForm->variousSelect('conmag', $script_transl['conmag_value'], $form['conmag'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
-                    ?>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=aziend&value=<?php echo $form['codice']; ?>" width="100" >*</label>
+                        <div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
+                    </div>
                 </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="ivam_t" class="col-sm-4 control-label"><?php echo $script_transl['ivam_t']; ?></label>
-                    <?php
-                    $gForm->variousSelect('ivam_t', $script_transl['ivam_t_value'], $form['ivam_t'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
-                    ?>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="legrap" class="col-sm-4 control-label"><?php echo $script_transl['legrap']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['legrap']; ?>" name="legrap" />
+                    </div>
                 </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group">
-                    <label for="interessi" class="col-sm-4 control-label"><?php echo $script_transl['interessi']; ?></label>
-                    <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['interessi']; ?>" name="interessi"  />
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="sexper" class="col-sm-4 control-label"><?php echo $script_transl['sexper']; ?>*</label>
+                        <?php
+                        $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                        ?>
+                    </div>
                 </div>
-            </div>
-        </div><!-- chiude row  -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="form-group text-center">
-                    <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="datnas" class="col-sm-4 control-label"><?php echo $script_transl['datnas']; ?>*</label>
+                        <input type="text" class="col-sm-2" id="datnas" name="datnas" tabindex=7 value="<?php echo $form['datnas']; ?>">
+                    </div>
                 </div>
-            </div>
-        </div><!-- chiude row  -->
-    </div><!-- chiude container  -->
-</div><!-- chiude panel  -->
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="luonas" class="col-sm-4 control-label"><?php echo $script_transl['luonas']; ?>*</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="search_luonas" name="luonas" value="<?php echo $form['luonas']; ?>" maxlength="50" />
+                            <input type="text" id="search_pronas" name="pronas" value="<?php echo $form['pronas']; ?>" maxlength="2" size="1" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="country" class="col-sm-4 control-label"><?php echo $script_transl['country']; ?>*</label>
+                        <?php
+                        $gForm->selectFromDB('country', 'country', 'iso', $form['country'], 'iso', 0, ' - ', 'name', '', 'col-sm-8', null, 'style="max-width: 250px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="citspe" class="col-sm-4 control-label"><?php echo $script_transl['citspe']; ?>*</label>
+                        <div class="col-sm-8">
+                            <input type="text" id="search_location" name="citspe" value="<?php echo $form['citspe']; ?>" maxlength="50" />
+                            <input type="text" id="search_location-prospe" name="prospe" value="<?php echo $form['prospe']; ?>" maxlength="2" size="1" />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="indspe" class="col-sm-4 control-label"><?php echo $script_transl['indspe']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['indspe']; ?>" name="indspe" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="capspe" class="col-sm-4 control-label"><?php echo $script_transl['capspe']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['capspe']; ?>" name="capspe" maxlength="5"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="latitude" class="col-sm-4 control-label"><?php echo $script_transl['latitude'] . " - " . $script_transl['longitude']; ?></label>
+                        <div class="col-sm-8">        
+                            <input class="col-sm-3" type="text" name="latitude" value="<?php echo $form['latitude'] ?>" maxlength="10" /><input class="col-sm-3" type="text" name="longitude" value="<?php echo $form['longitude']; ?>" maxlength="10" /><a class="btn btn-xs btn-default btn-default col-sm-2" href="http://maps.google.com/maps?q=<?php echo $form['latitude'] . "," . $form['longitude']; ?>"> maps -> <i class="glyphicon glyphicon-map-marker"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="id_language" class="col-sm-4 control-label"><?php echo $script_transl['id_language']; ?></label>
+                        <?php
+                        $gForm->selectFromDB('languages', 'id_language', 'lang_id', $form['id_language'], 'lang_id', 1, ' - ', 'title_native', '', 'col-sm-8', null, 'style="max-width: 200px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="id_currency" class="col-sm-4 control-label"><?php echo $script_transl['id_currency']; ?></label>
+                        <?php
+                        $gForm->selectFromDB('currencies', 'id_currency', 'id', $form['id_currency'], 'id', 1, ' - ', 'curr_name', '', 'col-sm-8', null, 'style="max-width: 200px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="sedleg" class="col-sm-4 control-label"><?php echo $script_transl['sedleg']; ?></label>
+                        <div class="col-sm-8">
+                            <textarea name="sedleg" rows="2" cols="40" maxlength="100" size="30"><?php echo $form['sedleg']; ?></textarea>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="telefo" class="col-sm-4 control-label"><?php echo $script_transl['telefo']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['telefo']; ?>" name="telefo" maxlength="50" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="fax" class="col-sm-4 control-label"><?php echo $script_transl['fax']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['fax']; ?>" name="fax" maxlength="50" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="pariva" class="col-sm-4 control-label"><?php echo $script_transl['pariva']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['pariva']; ?>" name="pariva" maxlength="11" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="codfis" class="col-sm-4 control-label"><?php echo $script_transl['codfis']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['codfis']; ?>" name="codfis" maxlength="16" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="rea" class="col-sm-4 control-label"><?php echo $script_transl['rea']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['rea']; ?>" name="rea" maxlength="32" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="e_mail" class="col-sm-4 control-label"><?php echo $script_transl['e_mail']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['e_mail']; ?>" name="e_mail" maxlength="50" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="50" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['intermediary']; ?></label>
+                        <input type="hidden" name="intermediary_code" value="<?php echo $form['intermediary_code']; ?>" />
+                        <input type="hidden" name="intermediary_descr" value="<?php echo $form['intermediary_descr']; ?>" />
+                        <div class="col-sm-8">
+                            <?php
+                            if ($form['intermediary_code'] == $form['codice']) {
+                                ?>
+                                <input type="radio" value="y" name="intermediary_check" checked >Si - No<input type="radio" value="n" name="intermediary_check">";
+                                <?php
+                            } elseif ($form['intermediary_code'] == 0) {
+                                echo '<input type="radio" value="y" name="intermediary_check">' . $script_transl['yes'] . ' - ' . $script_transl['no'] . '<input type="radio" checked value="n" name="intermediary_check">';
+                            } else {
+                                echo $form['intermediary_descr'];
+                            }
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="cod_ateco" class="col-sm-4 control-label"><?php echo $script_transl['cod_ateco']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['cod_ateco']; ?>" name="cod_ateco" maxlength="6" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="regime" class="col-sm-4 control-label"><?php echo $script_transl['regime']; ?></label>
+                        <?php
+                        $gForm->variousSelect('regime', $script_transl['regime_value'], $form['regime'], "col-sm-8", false, '', 50, 'style="max-width: 200px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="preeminent_vat" class="col-sm-4 control-label"><?php echo $script_transl['preeminent_vat']; ?></label>
+                        <?php
+                        $gForm->selectFromDB('aliiva', 'preeminent_vat', 'codice', $form['preeminent_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="fiscal_reg" class="col-sm-4 control-label"><?php echo $script_transl['fiscal_reg']; ?></label>
+                        <?php
+                        $gForm->variousSelect('fiscal_reg', $script_transl['fiscal_reg_value'], $form['fiscal_reg'], "col-sm-8", true, '', false, 'style="max-width: 350px; font-height:0.4em;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['amm_min']; ?></label>
+                        <?php
+                        $gForm->selSpecieAmmortamentoMin('ammortamenti_ministeriali.xml', 'amm_min', $form["amm_min"]);
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="decimal_quantity" class="col-sm-4 control-label"><?php echo $script_transl['decimal_quantity']; ?></label>
+                        <?php
+                        $gForm->variousSelect('decimal_quantity', $script_transl['decimal_quantity_value'], $form['decimal_quantity'], "col-sm-8", false, '', 20, 'style="max-width: 100px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="decimal_price" class="col-sm-4 control-label"><?php echo $script_transl['decimal_price']; ?></label>
+                        <?php
+                        $gForm->selectNumber('decimal_price', $form['decimal_price'], 0, 0, 5, "col-sm-8", '', 'style="max-width: 100px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="stock_eval_method" class="col-sm-4 control-label"><?php echo $script_transl['stock_eval_method']; ?></label>
+                        <?php
+                        $gForm->variousSelect('stock_eval_method', $script_transl['stock_eval_method_value'], $form['stock_eval_method'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="mascli" class="col-sm-4 control-label"><?php echo $script_transl['mascli']; ?></label>
+                        <?php
+                        $gForm->selectAccount('mascli', $form['mascli'], array(1), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="masfor" class="col-sm-4 control-label"><?php echo $script_transl['masfor']; ?></label>
+                        <?php
+                        $gForm->selectAccount('masfor', $form['masfor'], array(2), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="masban" class="col-sm-4 control-label"><?php echo $script_transl['masban']; ?></label>
+                        <?php
+                        $gForm->selectAccount('masban', $form['masban'] . '000000', array(1, 9), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="mas_fixed_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_fixed_assets']; ?></label>
+                        <?php
+                        $gForm->selectAccount('mas_fixed_assets', $form['mas_fixed_assets'] . '000000', array(1, 9), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="mas_found_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_found_assets']; ?></label>
+                        <?php
+                        $gForm->selectAccount('mas_found_assets', $form['mas_found_assets'] . '000000', array(2, 9), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="mas_cost_assets" class="col-sm-4 control-label"><?php echo $script_transl['mas_cost_assets']; ?></label>
+                        <?php
+                        $gForm->selectAccount('mas_cost_assets', $form['mas_cost_assets'] . '000000', array(3, 9), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="mas_staff" class="col-sm-4 control-label"><?php echo $script_transl['mas_staff']; ?></label>
+                        <?php
+                        $gForm->selectAccount('mas_staff', $form['mas_staff'] . '000000', array(2, 9), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="cassa_" class="col-sm-4 control-label"><?php echo $script_transl['cassa_']; ?></label>
+                        <?php
+                        $gForm->selectAccount('cassa_', $form['cassa_'], 1, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ivaacq" class="col-sm-4 control-label"><?php echo $script_transl['ivaacq']; ?></label>
+                        <?php
+                        $gForm->selectAccount('ivaacq', $form['ivaacq'], 1, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ivaven" class="col-sm-4 control-label"><?php echo $script_transl['ivaven']; ?></label>
+                        <?php
+                        $gForm->selectAccount('ivaven', $form['ivaven'], 2, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ivacor" class="col-sm-4 control-label"><?php echo $script_transl['ivacor']; ?></label>
+                        <?php
+                        $gForm->selectAccount('ivacor', $form['ivacor'], 2, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ivaera" class="col-sm-4 control-label"><?php echo $script_transl['ivaera']; ?></label>
+                        <?php
+                        $gForm->selectAccount('ivaera', $form['ivaera'], substr($form['ivaera'], 0, 1), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="split_payment" class="col-sm-4 control-label"><?php echo $script_transl['split_payment']; ?></label>
+                        <?php
+                        $gForm->selectAccount('split_payment', $form['split_payment'], substr($form['split_payment'], 0, 1), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="impven" class="col-sm-4 control-label"><?php echo $script_transl['impven']; ?></label>
+                        <?php
+                        $gForm->selectAccount('impven', $form['impven'], 4, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="imptra" class="col-sm-4 control-label"><?php echo $script_transl['imptra']; ?></label>
+                        <?php
+                        $gForm->selectAccount('imptra', $form['imptra'], 4, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="impimb" class="col-sm-4 control-label"><?php echo $script_transl['impimb']; ?></label>
+                        <?php
+                        $gForm->selectAccount('impimb', $form['impimb'], 4, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="impspe" class="col-sm-4 control-label"><?php echo $script_transl['impspe']; ?></label>
+                        <?php
+                        $gForm->selectAccount('impspe', $form['impspe'], 4, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="impvar" class="col-sm-4 control-label"><?php echo $script_transl['impvar']; ?></label>
+                        <?php
+                        $gForm->selectAccount('impvar', $form['impvar'], 4, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="boleff" class="col-sm-4 control-label"><?php echo $script_transl['boleff']; ?></label>
+                        <?php
+                        $gForm->selectAccount('boleff', $form['boleff'], 4, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="omaggi" class="col-sm-4 control-label"><?php echo $script_transl['omaggi']; ?></label>
+                        <?php
+                        $gForm->selectAccount('omaggi', $form['omaggi'], 3, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="sales_return" class="col-sm-4 control-label"><?php echo $script_transl['sales_return']; ?></label>
+                        <?php
+                        $gForm->selectAccount('sales_return', $form['sales_return'], array('sub', 3, 4), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="impacq" class="col-sm-4 control-label"><?php echo $script_transl['impacq']; ?></label>
+                        <?php
+                        $gForm->selectAccount('impacq', $form['impacq'], 3, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="cost_tra" class="col-sm-4 control-label"><?php echo $script_transl['cost_tra']; ?></label>
+                        <?php
+                        $gForm->selectAccount('cost_tra', $form['cost_tra'], 3, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="cost_imb" class="col-sm-4 control-label"><?php echo $script_transl['cost_imb']; ?></label>
+                        <?php
+                        $gForm->selectAccount('cost_imb', $form['cost_imb'], 3, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="cost_var" class="col-sm-4 control-label"><?php echo $script_transl['cost_var']; ?></label>
+                        <?php
+                        $gForm->selectAccount('cost_var', $form['cost_var'], 3, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="purchases_return" class="col-sm-4 control-label"><?php echo $script_transl['purchases_return']; ?></label>
+                        <?php
+                        $gForm->selectAccount('purchases_return', $form['purchases_return'], array('sub', 3, 4), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="coriba" class="col-sm-4 control-label"><?php echo $script_transl['coriba']; ?></label>
+                        <?php
+                        $gForm->selectAccount('coriba', $form['coriba'], array('sub', 1, 2, 5), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="cotrat" class="col-sm-4 control-label"><?php echo $script_transl['cotrat']; ?></label>
+                        <?php
+                        $gForm->selectAccount('cotrat', $form['cotrat'], array('sub', 1, 2, 5), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="cocamb" class="col-sm-4 control-label"><?php echo $script_transl['cocamb']; ?></label>
+                        <?php
+                        $gForm->selectAccount('cocamb', $form['cocamb'], array('sub', 1, 2, 5), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="c_ritenute" class="col-sm-4 control-label"><?php echo $script_transl['c_ritenute']; ?></label>
+                        <?php
+                        $gForm->selectAccount('c_ritenute', $form['c_ritenute'], 1, '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ritenuta" class="col-sm-4 control-label"><?php echo $script_transl['ritenuta']; ?></label>
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['ritenuta']; ?>" name="ritenuta"  size="4" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="c_payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['c_payroll_tax']; ?></label>
+                        <?php
+                        $gForm->selectAccount('c_payroll_tax', $form['c_payroll_tax'], array('sub', 2, 4), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?></label>
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['payroll_tax']; ?>" name="payroll_tax" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="causale_pagam_770" class="col-sm-4 control-label"><?php echo $script_transl['causale_pagam_770']; ?></label>
+                        <?php
+                        $gForm->variousSelect('causale_pagam_770', $script_transl['causale_pagam_770_value'], $form['causale_pagam_770'], "col-sm-8", true, '', false, 'style="max-width: 350px; font-height:0.4em;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="upgrie" class="col-sm-4 control-label"><?php echo $script_transl['upgrie']; ?></label>
+                        <input class="col-sm-2" type="number" value="<?php echo $form['upgrie']; ?>" name="upgrie" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="upggio" class="col-sm-4 control-label"><?php echo $script_transl['upggio']; ?></label>
+                        <input class="col-sm-2" type="number" value="<?php echo $form['upggio']; ?>" name="upggio" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="upginv" class="col-sm-4 control-label"><?php echo $script_transl['upginv']; ?></label>
+                        <input class="col-sm-2" type="number" value="<?php echo $form['upginv']; ?>" name="upginv" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="upgve" class="col-sm-4 control-label"><?php echo $script_transl['upgve'] . ' ' . $script_transl['sezione'] . ' '; ?></label>
+                        <?php
+                        for ($i = 1; $i <= 3; $i++) {
+                            echo '<div class="col-sm-4">' . $i
+                            . ': <input type="number" name="upgve' . $i . '" value="' . $form["upgve$i"] . '" maxlength="4" size="4" />'
+                            . '</div>';
+                        }
+                        ?>
+
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="upgac" class="col-sm-4 control-label"><?php echo $script_transl['upgac'] . ' ' . $script_transl['sezione'] . ' '; ?></label>
+                        <?php
+                        for ($i = 1; $i <= 3; $i++) {
+                            echo '<div class="col-sm-4">' . $i
+                            . ': <input type="number" name="upgac' . $i . '" value="' . $form["upgac$i"] . '" maxlength="4" size="4" />'
+                            . '</div>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="upgco" class="col-sm-4 control-label"><?php echo $script_transl['upgco'] . ' ' . $script_transl['sezione'] . ' '; ?></label>
+                        <?php
+                        for ($i = 1; $i <= 3; $i++) {
+                            echo '<div class="col-sm-4">' . $i
+                            . ': <input type="number" name="upgco' . $i . '" value="' . $form["upgco$i"] . '" maxlength="4" size="4" />'
+                            . '</div>';
+                        }
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="acciva" class="col-sm-4 control-label"><?php echo $script_transl['acciva']; ?></label>
+                        <input class="col-sm-2" type="number" value="<?php echo $form['acciva']; ?>" name="acciva" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="taxstamp_limit" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp_limit']; ?></label>
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['taxstamp_limit']; ?>" name="taxstamp_limit" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="taxstamp" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp']; ?></label>
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['taxstamp']; ?>" name="taxstamp" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="taxstamp_vat" class="col-sm-4 control-label"><?php echo $script_transl['taxstamp_vat']; ?></label>
+                        <?php
+                        $gForm->selectFromDB('aliiva', 'taxstamp_vat', 'codice', $form['taxstamp_vat'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="perbol" class="col-sm-4 control-label"><?php echo $script_transl['perbol']; ?></label>
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['perbol']; ?>" name="perbol" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="round_bol" class="col-sm-4 control-label"><?php echo $script_transl['round_bol']; ?></label>
+                        <?php
+                        $gForm->variousSelect('round_bol', $script_transl['round_bol_value'], $form['round_bol'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="virtual_taxstamp" class="col-sm-4 control-label"><?php echo $script_transl['virtual_taxstamp']; ?></label>
+                        <?php
+                        $gForm->variousSelect('virtual_taxstamp', $script_transl['virtual_taxstamp_value'], $form['virtual_taxstamp'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="virtual_stamp_auth_prot" class="col-sm-4 control-label"><?php echo $script_transl['virtual_stamp_auth_prot']; ?></label>
+                        <input class="col-sm-8" type="text" value="<?php echo $form['virtual_stamp_auth_prot']; ?>" name="virtual_stamp_auth_prot" size="10" maxlength="14"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="virtual_stamp_auth_date" class="col-sm-4 control-label"><?php echo $script_transl['virtual_stamp_auth_date']; ?></label>
+                        <input type="text" class="col-sm-2" id="virtual_stamp_auth_date" name="virtual_stamp_auth_date" value="<?php echo $form['virtual_stamp_auth_date']; ?>">
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="sperib" class="col-sm-4 control-label"><?php echo $script_transl['sperib']; ?></label>
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['sperib']; ?>" name="sperib" size="4" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <?php for ($i = 1; $i <= 3; $i++) { ?>
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="desez" class="col-sm-4 control-label"><?php echo $script_transl['desez'] . $script_transl['sezione'] . $i; ?></label>
+                            <input class="col-sm-8" type="text" value="<?php echo $form['desez' . $i]; ?>" name="desez<?php echo $i; ?>"  />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+            <?php } ?>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="fatimm" class="col-sm-4 control-label"><?php echo $script_transl['fatimm']; ?></label>
+                        <?php
+                        $gForm->variousSelect('fatimm', $script_transl['fatimm_value'], $form['fatimm'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="fatimm" class="col-sm-4 control-label"><?php echo $script_transl['templ_set']; ?></label>
+                        <?php
+                        echo '<select name="template">';
+                        $relativePath = '../../config';
+                        if ($handle = opendir($relativePath)) {
+                            while ($file = readdir($handle)) {
+                                if (substr($file, 0, 9) != "templates")
+                                    continue;
+                                $selected = "";
+                                if ($form["template"] == substr($file, 10)) {
+                                    $selected = " selected ";
+                                }
+                                echo "<option value=\"" . substr($file, 10) . "\"" . $selected . ">" . ucfirst($file) . "</option>";
+                            }
+                            closedir($handle);
+                        }
+                        echo "</select>\n";
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="colore" class="col-sm-4 control-label"><?php echo $script_transl['colore']; ?></label>
+                        <div class="col-md-8 company-color">
+                            <input class="simple_color_custom" type="text" value="#<?php echo $form['colore']; ?>" name="colore"  />
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="conmag" class="col-sm-4 control-label"><?php echo $script_transl['conmag']; ?></label>
+                        <?php
+                        $gForm->variousSelect('conmag', $script_transl['conmag_value'], $form['conmag'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="ivam_t" class="col-sm-4 control-label"><?php echo $script_transl['ivam_t']; ?></label>
+                        <?php
+                        $gForm->variousSelect('ivam_t', $script_transl['ivam_t_value'], $form['ivam_t'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="interessi" class="col-sm-4 control-label"><?php echo $script_transl['interessi']; ?></label>
+                        <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['interessi']; ?>" name="interessi"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group text-center">
+                        <input class="btn btn-warning" name="Submit" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+        </div><!-- chiude container  -->
+    </div><!-- chiude panel  -->
 
 </form>
 </div><!-- chiude div container role main --></body>
