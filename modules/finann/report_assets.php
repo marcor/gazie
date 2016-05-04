@@ -61,11 +61,11 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
-<div class="panel panel-success">
-    <div class="table-responsive">
-        <table class="table table-striped"">
+<div class="panel panel-default">
+    <div id="gaz-responsive-table"  class="container-fluid">
+        <table class="table table-responsive table-striped table-condensed cf">
             <thead>
-                <tr class="bg-info">              
+                <tr class="bg-success">              
                     <th>
                         ID
                     </th>

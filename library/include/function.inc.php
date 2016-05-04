@@ -71,7 +71,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];                 ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];                  ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -1252,11 +1252,11 @@ class GAzieForm {
 			</a>';
     }
 
-    function variousSelect($name, $transl, $sel, $class = 'FacetSelect', $bridge = true, $refresh = '', $maxlenght = false) {
+    function variousSelect($name, $transl, $sel, $class = 'FacetSelect', $bridge = true, $refresh = '', $maxlenght = false, $style = '') {
         if (!empty($refresh)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$refresh'; this.form.submit();\"";
         }
-        echo "<select name=\"$name\" id=\"$name\" class=\"$class\" $refresh>\n";
+        echo "<select name=\"$name\" id=\"$name\" class=\"$class\" $refresh $style>\n";
         foreach ($transl as $i => $val) {
             if ($maxlenght) {
                 $val = substr($val, 0, $maxlenght);
@@ -1286,13 +1286,13 @@ class GAzieForm {
         echo "<input type=\"checkbox\" name=\"$name\" title=\"$title\" value=\"$name\" $selected $refresh>\n";
     }
 
-    function selectNumber($name, $val, $msg = false, $min = 0, $max = 1, $class = 'FacetSelect', $val_hiddenReq = '') {
+    function selectNumber($name, $val, $msg = false, $min = 0, $max = 1, $class = 'FacetSelect', $val_hiddenReq = '', $style = '') {
         global $script_transl;
         $refresh = '';
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
-        echo "<select  name=\"$name\" id=\"$name\" class=\"$class\" $refresh >\n";
+        echo "<select  name=\"$name\" id=\"$name\" class=\"$class\" $refresh $style>\n";
         for ($i = $min; $i <= $max; $i++) {
             $selected = '';
             $message = $i;
@@ -1310,7 +1310,7 @@ class GAzieForm {
         echo "</select>\n";
     }
 
-    function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null) {
+    function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '') {
         global $gTables;
         $refresh = '';
         if (!$order) {
@@ -1320,7 +1320,7 @@ class GAzieForm {
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
-        echo "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh >\n";
+        echo "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style>\n";
         if ($empty) {
             echo "\t\t <option value=\"\"></option>\n";
         }
@@ -1379,16 +1379,15 @@ class GAzieForm {
         echo "\t </select>\n";
     }
 
-    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect') {
+    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect',$opt = 'style="max-width: 350px;"') {
         global $gTables, $admin_aziend;
-        $opt = '';
         $data_color = Array(1 => "88D6FF", 2 => "D6FF88", 3 => "D688FF", 4 => "FFD688", 5 => "FF88D6",
             6 => "88FFD6", 7 => "FF88D6", 8 => "88FFD6", 9 => "FF88D6");
         if (!empty($val_hiddenReq)) {
             $opt = " onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\"";
         }
         if ($tabidx) {
-            $opt .= "tabindex=" . $tabidx;
+            $opt .= " tabindex=" . $tabidx;
         }
         if (is_array($type)) { /* per cercare tra i mastri l'array deve contenere tutti i
           i primi numeri che si vogliono ovvero: 1=attivo,2=passivo,3=ricavi,4=costi, ecc
@@ -1469,7 +1468,7 @@ class GAzieForm {
         return '';
     }
 
-    function gazResponsiveTable($rows, $id='gaz-responsive-table') {
+    function gazResponsiveTable($rows, $id = 'gaz-responsive-table') {
         /* in $row ci devono essere i righi con un array così formattato:
          * $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'gaz-resposive_table')
          * */
@@ -1496,7 +1495,7 @@ class GAzieForm {
                                 if (isset($v['td_content'])) { // se ho un tipo diverso dal semplice 
                                     echo $v['td_content'];
                                 }
-                                echo '>'.$v['value'].'&nbsp;</td>';
+                                echo '>' . $v['value'] . '&nbsp;</td>';
                             }
                             echo "</tr>\n";
                         }

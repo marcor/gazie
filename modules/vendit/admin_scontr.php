@@ -1166,7 +1166,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     ?>
 </form>
 <!-- ENRICO FEDELE - INIZIO FINESTRA MODALE -->
-<div id="edit-modal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="edit-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header active">
@@ -1188,7 +1188,6 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                 data: 'mode=modal',
                 success: function (msg) {
                     $("#edit-modal .modal-sm").css('width', '100%');
-                    $("#edit-modal .modal-sm").css('min-width', '100%');
                     $("#edit-modal .modal-body").html(msg);
                 },
                 error: function () {

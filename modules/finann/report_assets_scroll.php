@@ -32,6 +32,8 @@ if (!$isAjax) {
 if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato direttamente
     require("../../library/include/datlib.inc.php");
     $admin_aziend = checkAdmin();
+    require("./lang.".$admin_aziend['lang'].".php");    
+    $script_transl = $strScript['report_assets.php'];
     $no = intval($_POST['getresult']);
     $result = gaz_dbi_dyn_query('*', $gTables['assets'], '1', 'id DESC', $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
@@ -40,20 +42,20 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
         $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
         ?>
         <tr>              
-            <td>
+            <td data-title="ID">
                 <a class="btn btn-xs btn-default" href="../acquis/admin_assets.php?Update&id=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
             </td>
-            <td>
+            <td data-title="<?php echo $script_transl["descri"]; ?>">
                 <?php echo $row["descri"]; ?>
             </td>
-            <td>
+            <td data-title="<?php echo $script_transl["clfoco"]; ?>">
                 <?php echo $fornitore["descri"]; ?>
             </td>
-            <td class="text-right">
+            <td data-title="<?php echo $script_transl["amount"]; ?>" class="text-right">
                 <?php echo gaz_format_number($row["a_value"] * $row["quantity"]); ?>
             </td>
-            <td class="text-right">
-                    <?php echo round($row["valamm"],1); ?>%
+            <td data-title="<?php echo $script_transl["valamm"]; ?>"  class="text-right">
+                <?php echo round($row["valamm"],1); ?>%
             </td>
         </tr>  
         <?php

@@ -9,7 +9,7 @@ class configForm extends GAzieForm {
         } else {
             exit('Failed to open: ../../library/include/' . $nameFileXML);
         }
-        echo "\t <select id=\"$name\" name=\"$name\" style=\"width: 400px; font-height:0.4em;\"  >\n";
+        echo "\t <select id=\"$name\" name=\"$name\" style=\"width: 350px; font-height:0.4em;\"  >\n";
         echo "\t\t <option value=\"\">-----------------</option>\n";
         foreach ($xml->gruppo as $vg) {
             echo "\t <optgroup label=\"" . $vg->gn[0] . '-' . $vg->gd[0] . "\" >\n";

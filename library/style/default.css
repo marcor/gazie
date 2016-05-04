@@ -807,11 +807,28 @@ label {
         font-weight: bold;
     }
 
-    /*
-    Label the data
-    */
     #gaz-responsive-table td:before { content: attr(data-title); }
+
+    .gaz-table-form .form-group {
+        background-color: rgba(0, 0, 0, 0.04);
+    }
 }
+
+.gaz-table-form {
+    max-width: 990px;
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gaz-table-form .form-group {
+    border-top:1px solid #ddd;
+}
+
+.gaz-table-form .form-group > label {
+    background-color: rgba(0, 0, 0, 0.04);
+}
+
 
 /**************************************
 ************** JQUERY UI **************
