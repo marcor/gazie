@@ -515,7 +515,8 @@ $strScript = array("admin_client.php" =>
     array('title' => 'Gestione degli scontrini',
         'ins_this' => 'Emetti un nuovo scontrino fiscale a ',
         'upd_this' => 'Modifica lo scontrino fiscale n.',
-        'err' => array('datemi'=>'Data di emissione non corretta',
+        'err' => array(
+            'datemi'=>'Data di emissione non corretta',
             'clfoco'=>'Non &egrave; stato selezionato un cliente',
             'pagame'=>'Non &egrave; stato selezionato un metodo di pagamento',
             'rowdes'=>'Un rigo manca della descrizione',
@@ -524,7 +525,7 @@ $strScript = array("admin_client.php" =>
             'incaut'=>'Il pagamento non pevede l\'incasso automatico pur essendo un cliente anonimo',
             'codfis'=>'Il codice fiscale &egrave; formalmente errato',
             'ecrclo'=>'NON HAI ESEGUITO LA CHIUSURA GIORNALIERA DEL REGISTRATORE DI CASSA<BR /> FALLO PRIMA DI EMETTERNE UNO!!!',
-            'cashlimit'=>'L\'importo non consente di emettere un documento di vendita anonimo'
+         'cashlimit'=>'L\'importo non consente di emettere un documento di vendita anonimo'
         ),
         'war'=>array('serial'=>"La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie"),
         'customer' => 'Cliente',
@@ -557,6 +558,7 @@ $strScript = array("admin_client.php" =>
         'tiprig_value' => array(0 => 'Normale', 1 => 'Forfait', 2 => 'Descrittivo'),
         'body_title' => 'corpo',
         'foot_title' => 'totali',
+        'nrow'=>'Rigo',
         'upper_row' => 'Tira su!',
         'codart' => 'Codice',
         'descri' => 'Descrizione',

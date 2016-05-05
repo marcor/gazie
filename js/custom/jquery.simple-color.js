@@ -147,7 +147,7 @@
       'width':            options.totalWidth,
       'height':           options.totalHeight,
       'top':              0,
-      'left':             '-120px',
+      'left':             '-20px',
       'float':            'left',
       'position':         'relative',
       'background-color': '#fff'
