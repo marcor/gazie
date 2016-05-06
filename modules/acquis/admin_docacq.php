@@ -987,11 +987,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['gioemi'] = substr($tesdoc['datemi'], 8, 2);
     $form['mesemi'] = substr($tesdoc['datemi'], 5, 2);
     $form['annemi'] = substr($tesdoc['datemi'], 0, 4);
+	/* CREDO CHE CI SIA UNA SVISTA CHE INIZIA QUI... */
     $form['giotra'] = substr($tesdoc['initra'], 8, 2);
     $form['mestra'] = substr($tesdoc['initra'], 5, 2);
     $form['anntra'] = substr($tesdoc['initra'], 0, 4);
     $form['oratra'] = substr($tesdoc['initra'], 11, 2);
     $form['mintra'] = substr($tesdoc['initra'], 14, 2);
+	/* ...E FINISCE QUI */
+    $form['giotra'] = substr($tesdoc['datfat'], 8, 2);
+    $form['mestra'] = substr($tesdoc['datfat'], 5, 2);
+    $form['anntra'] = substr($tesdoc['datfat'], 0, 4);
     $form['protoc'] = $tesdoc['protoc'];
     $form['numdoc'] = $tesdoc['numdoc'];
     $form['numfat'] = $tesdoc['numfat'];
