@@ -24,7 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$msg = '';
+$msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
 /** ENRICO FEDELE */
 /* Inizializzo la variabile per aprire in finestra modale */
@@ -52,7 +52,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
     $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
     $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
-//    $form["sconto"] = number_format($form['sconto'],$admin_aziend['decimal_price'],'.','');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
     $form['rows'] = array();
     /** inizio modifica FP 03/12/2015
@@ -86,13 +85,13 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '" . $form['codice'] . "'", "codice DESC", 0, 1);
                 $rs = gaz_dbi_fetch_array($rs_articolo);
                 if ($rs) {
-                    $msg .= "0+";
+                    $msg['err'][] = 'codice';
                 }
                 // controllo che il precedente non abbia movimenti di magazzino associati
                 $rs_articolo = gaz_dbi_dyn_query('artico', $gTables['movmag'], "artico = '" . $form['ref_code'] . "'", "artico DESC", 0, 1);
                 $rs = gaz_dbi_fetch_array($rs_articolo);
                 if ($rs) {
-                    $msg .= "1+";
+                    $msg['err'][] = 'movmag';
                 }
             }
         } else {
@@ -100,7 +99,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '" . $form['codice'] . "'", "codice DESC", 0, 1);
             $rs = gaz_dbi_fetch_array($rs_articolo);
             if ($rs) {
-                $msg .= "2+";
+                $msg['err'][] = 'codice';
             }
         }
         if (!empty($_FILES['userfile']['name'])) {
@@ -110,19 +109,28 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     $_FILES['userfile']['type'] == "image/jpg" ||
                     $_FILES['userfile']['type'] == "image/gif" ||
                     $_FILES['userfile']['type'] == "image/x-gif"))
-                $msg .= "3+";
+                $msg['err'][] = 'filmim';
             // controllo che il file non sia piu' grande di circa 10kb
             if ($_FILES['userfile']['size'] > 10999)
-                $msg .= "4+";
+                $msg['err'][] = 'filsiz';
         }
-        $msg .= (empty($form["codice"]) ? "5+" : '');
-        $msg .= (empty($form["descri"]) ? "6+" : '');
-        $msg .= (empty($form["unimis"]) ? "7+" : '');
-        $msg .= (empty($form["aliiva"]) ? "8+" : '');
+        if (empty($form["codice"])) {
+            $msg['err'][] = 'valcod';
+        }
+        if (empty($form["descri"])) {
+            $msg['err'][] = 'descri';
+        }
+        if (empty($form["unimis"])) {
+            $msg['err'][] = 'unimis';
+        }
+        if (empty($form["aliiva"])) {
+            $msg['err'][] = 'aliiva';
+        }
         // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
-        $msg .= (($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1 ) ? "9+" : '');
-
-        if (empty($msg)) { // nessun errore
+        if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1 ) {
+            $msg['err'][] = 'lotmag';
+        }
+        if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
                 $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
             } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
@@ -285,8 +293,8 @@ if ($modal === false) {
             }
         }
         echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
-        if (!empty($msg)) {
-            echo '<div class="danger">' . $gForm->outputErrors($msg, $script_transl['errors']) . '</div>';
+        if (count($msg['err']) > 0) { // ho un errore
+            $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
         }
         ?>
         <div class="panel panel-default gaz-table-form">
@@ -332,6 +340,16 @@ if ($modal === false) {
                         <div class="form-group">
                             <label for="barcode" class="col-sm-4 control-label"><?php echo $script_transl['barcode']; ?></label>
                             <input class="col-sm-4" type="text" value="<?php echo $form['barcode']; ?>" name="barcode" maxlength="13" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="lot_or_serial" class="col-sm-4 control-label"><?php echo $script_transl['lot_or_serial'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
+                            <?php
+                            $gForm->variousSelect('lot_or_serial', $script_transl['lot_or_serial_value'], $form['lot_or_serial'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+                            ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -552,22 +570,22 @@ if ($modal === false) {
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
-                                <?php if ($ndoc > 0) { // se ho dei documenti?> 
+                                <?php if ($ndoc > 0) { // se ho dei documenti ?> 
                                     <div>
                                         <?php foreach ($form['rows'] as $k => $val) { ?>
                                             <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="rows[<?php echo $k; ?>][id_doc]">
                                             <input type="hidden" value="<?php echo $val['extension']; ?>" name="rows[<?php echo $k; ?>][extension]">
                                             <input type="hidden" value="<?php echo $val['title']; ?>" name="rows[<?php echo $k; ?>][title]">
                                             <?php echo DATA_DIR . 'files/' . $val['id_doc'] . '.' . $val['extension']; ?>
-                                                    <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
-                                                        <i class="glyphicon glyphicon-file"></i>
-                                                    </a><?php echo $val['title']; ?>
-                                                    <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
-                                            
+                                            <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
+                                                <i class="glyphicon glyphicon-file"></i>
+                                            </a><?php echo $val['title']; ?>
+                                            <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
+
                                         <?php } ?>
-                                                <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
+                                        <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
                                     </div>
-                                <?php } else { // non ho documenti ?>
+                                <?php } else { // non ho documenti  ?>
                                     <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
                                 <?php } ?>
                             </div>
@@ -638,7 +656,7 @@ if ($modal === false) {
                     </div>
                 </div><!-- chiude row  -->
                 <div class="col-sm-12">
-                <?php
+                    <?php
                     /** ENRICO FEDELE */
                     /* SOlo se non sono in finestra modale */
                     if ($modal === false) {
@@ -648,9 +666,9 @@ if ($modal === false) {
                     echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . strtoupper($script_transl[$toDo]) . '!" /></div>';
                 }
                 ?>
-                </div>
-            </div> <!-- chiude container --> 
-        </div><!-- chiude panel -->
+            </div>
+        </div> <!-- chiude container --> 
+    </div><!-- chiude panel -->
 </form>
 <script type="text/javascript">
     // Basato su: http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
