@@ -1053,7 +1053,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-2 col-lg-2">
-                        <div class="form-group">
+                        <div class="form-group text-center">
                             <button type="submit"  tabindex=7 class="btn btn-default btn-sm col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>">
                                 <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
