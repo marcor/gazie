@@ -110,6 +110,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'] = array();
     $next_row = 0;
     if (isset($_POST['rows'])) {
+
         foreach ($_POST['rows'] as $next_row => $v) {
             $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
             $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
@@ -164,9 +165,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['cosear'] = $form['rows'][$key_row]['codart'];
                     array_splice($form['rows'], $key_row, 1);
                     $next_row--;
-                    }
+                }
             }
             $next_row++;
+        }
+        $comp = new venditCalc();
+        if (isset($_POST['roundup'])) { // richiesta di arrotondamento verso l'alto
+            $form['rows'] = $comp->computeRounTo($form['rows'], $form['sconto'], false, $admin_aziend['decimal_price']);
+        }
+        if (isset($_POST['rounddown'])) { // richiesta di arrotondamento verso il basso
+            $form['rows'] = $comp->computeRounTo($form['rows'], $form['sconto'], true, $admin_aziend['decimal_price']);
         }
     }
 
@@ -924,7 +932,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
                     'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['upper_row'] . '!">
-                                '.($k+1).' <i class="glyphicon glyphicon-arrow-up"></i></button>'),
+                                ' . ($k + 1) . ' <i class="glyphicon glyphicon-arrow-up"></i></button>'),
                 array('head' => $script_transl["codart"], 'class' => '',
                     'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' " type="submit">
                                 <i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
@@ -962,10 +970,10 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         $lm->getAvailableLots($v['codart'], $v['id_mag']);
                         $selected_lot = $lm->getLot($v['id_lotmag']);
                         $lm_acc .= '<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto" type="image"  data-toggle="collapse" href="#lm_dialog' . $k . '">'
-                        . 'lot:' . $selected_lot['id']
-                        . ' id:' . $selected_lot['identifier']
-                        . ' doc:' . $selected_lot['desdoc']
-                        . ' - ' . gaz_format_date($selected_lot['datdoc']) . ' <i class="glyphicon glyphicon-tag"></i></button>';
+                                . 'lot:' . $selected_lot['id']
+                                . ' id:' . $selected_lot['identifier']
+                                . ' doc:' . $selected_lot['desdoc']
+                                . ' - ' . gaz_format_date($selected_lot['datdoc']) . ' <i class="glyphicon glyphicon-tag"></i></button>';
                         if ($v['id_mag'] > 0) {
                             $lm_acc .= ' <a class="btn btn-xs btn-default" href="lotmag_print_cert.php?id_movmag=' . $v['id_mag'] . '" target="_blank"><i class="glyphicon glyphicon-print"></i></a>';
                         }
@@ -976,17 +984,17 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                             foreach ($lm->available as $v_lm) {
                                 if ($v_lm['id'] <> $v['id_lotmag']) {
                                     $lm_acc .= '<div>change to:<button class="btn btn-xs btn-warning" type="image" onclick="this.form.submit();" name="new_lotmag[' . $k . '][' . $v_lm['id_lotmag'] . ']">'
-                                    . 'lot:' . $v_lm['id']
-                                    . ' id:' . $v_lm['identifier']
-                                    . ' doc:' . $v_lm['desdoc']
-                                    . ' - ' . gaz_format_date($v_lm['datdoc']) . '</button></div>';
+                                            . 'lot:' . $v_lm['id']
+                                            . ' id:' . $v_lm['identifier']
+                                            . ' doc:' . $v_lm['desdoc']
+                                            . ' - ' . gaz_format_date($v_lm['datdoc']) . '</button></div>';
                                 }
                             }
                         } else {
                             $lm_acc .= '<div><button class="btn btn-xs btn-danger" type="image" >Non sono disponibili altri lotti</button></div>';
                         }
                         $lm_acc .= '</div>'
-                        . '</div>';
+                                . '</div>';
                     }
                     $resprow[$k][2]['value'] .= $lm_acc;
                     break;
@@ -1007,14 +1015,13 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     $resprow[$k][6]['value'] = ''; //sconto
                     $resprow[$k][7]['value'] = ''; //quanti
                     $resprow[$k][8]['value'] = ''; //prelis
-                    $resprow[$k][9]['value'] = '';  
-                    $resprow[$k][10]['value'] = ''; 
-                    $resprow[$k][11]['value'] = ''; 
-                    $resprow[$k][12]['value'] = ''; 
+                    $resprow[$k][9]['value'] = '';
+                    $resprow[$k][10]['value'] = '';
+                    $resprow[$k][11]['value'] = '';
                     break;
             }
         }
-        $gForm->gazResponsiveTable($resprow,'gaz-responsive-table');
+        $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
     }
     ?>
     <div class="panel panel-info">
@@ -1039,11 +1046,11 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="col-sm-6 col-md-5 col-lg-5">
                         <div class="form-group">
                             <label for="item" class="col-sm-4 control-label"><?php echo $script_transl['item']; ?></label>
-                                <?php
-                                $select_artico = new selectartico("in_codart");
-                                $select_artico->addSelected($form['in_codart']);
-                                $select_artico->output(substr($form['cosear'], 0, 20),'C', "col-sm-8");
-                                ?>
+                            <?php
+                            $select_artico = new selectartico("in_codart");
+                            $select_artico->addSelected($form['in_codart']);
+                            $select_artico->output(substr($form['cosear'], 0, 20), 'C', "col-sm-8");
+                            ?>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-4 col-lg-4">
@@ -1066,29 +1073,29 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label for="sconto" class="col-sm-6 control-label"><?php echo $script_transl['sconto']; ?></label>
-                                <input class="col-sm-6" type="number" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
+                            <input class="col-sm-6" type="number" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label for="vat_constrain" class="col-sm-6 control-label"><?php echo $script_transl['vat_constrain']; ?></label>
-                                <?php $gForm->selectFromDB('aliiva', 'in_codvat', 'codice', $form['in_codvat'], 'codice', true, '-', 'descri', '', 'col-sm-6'); ?>
+                            <?php $gForm->selectFromDB('aliiva', 'in_codvat', 'codice', $form['in_codvat'], 'codice', true, '-', 'descri', '', 'col-sm-6'); ?>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label for="codric" class="col-sm-4 control-label"><?php echo $script_transl['codric']; ?></label>
-                                <?php
-                                $select_codric = new selectconven("in_codric");
-                                $select_codric->addSelected($form['in_codric']);
-                                $select_codric->output(substr($form['in_codric'], 0, 1), 'col-sm-8');
-                                ?>
+                            <?php
+                            $select_codric = new selectconven("in_codric");
+                            $select_codric->addSelected($form['in_codric']);
+                            $select_codric->output(substr($form['in_codric'], 0, 1), 'col-sm-8');
+                            ?>
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label for="provvigione" class="col-sm-6 control-label"><?php echo $script_transl['provvigione']; ?></label>
-                                <input class="col-sm-6" type="number" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
+                            <input class="col-sm-6" type="number" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
                         </div>
                     </div>
                 </div>
@@ -1140,7 +1147,11 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                                 echo '<tr><td>' . gaz_format_number($impcast) . '</td>'
                                 . '<td>' . $r['descri'] . '</td>'
                                 . '<td>' . gaz_format_number($ivacast) . '</td>'
-                                . '<td class="bg-warning text-center"><b>'.$admin_aziend['symbol'].' ' . gaz_format_number($tot) . '</b></td>'
+                                . '<td class="bg-warning text-center">'
+                                . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="roundup" ><i class="glyphicon glyphicon-arrow-up"></i></button></div>'
+                                . '<div class="col-sm-8"><b>' . $admin_aziend['symbol'] . ' ' . gaz_format_number($tot) . '</b></div>'
+                                . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="rounddown" ><i class="glyphicon glyphicon-arrow-down"></i></button></div>'
+                                . '</td>'
                                 . '<td class="text-center">' . gaz_format_number($form['net_weight']) . '</td>'
                                 . '<td>' . $form['units'] . '</td>'
                                 . '<td>' . gaz_format_number($form['volume']) . '</td>';

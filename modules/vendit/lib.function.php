@@ -110,6 +110,73 @@ class venditCalc extends Compute {
         $this->add_value_to_VAT_castle($this->contract_castel, 444, $admin_aziend['taxstamp_vat']);
     }
 
+    function computeRounTo($rows, $body_discount, $down = false, $decimal = 5) {
+        // questa funzione mi servrà per arrotondare ad 1 euro (sia per difetto che per eccesso) i documenti di vendita
+        $tot = 0;
+        $tqu = 0;
+        foreach ($rows as $k => $v) {
+            $rows[$k]['sortkey'] = $k; // mi serve per ricordare l'ordine originale
+            $rows[$k]['sortquanti'] = 9999999; // mi serve per evitare di ordinare quantità a zero
+            if ($v['tiprig'] == 1 || ($v['quanti'] >= 0.001 && $v['tiprig'] == 0)) {
+                if ($v['tiprig'] == 0) { // tipo normale
+                    $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $body_discount, -$v['pervat']));
+                } else {                 // tipo forfait
+                    $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
+                    $v['quanti'] = 1;
+                }
+                $rows[$k]['totrow'] = $tot_row;
+                $rows[$k]['sortquanti'] = $v['quanti'];
+            }
+            $tot+=$tot_row;
+            $tqu+=$v['quanti'];
+            $tot_row = 0;
+        }
+        $vt = ceil($tot);
+        if ($down) {
+            $vt = floor($tot);
+        }
+        // cifra totale da arrontondare  e non superare!!!
+        $diff = round(($vt - $tot), 2);
+        // cifra da arrotondare per ogni rigo (IVA compresa)
+        $rest = $diff / $tqu;
+        // riordino l'array per quantità in modo da tentare di imputare le variazioni di prezzo per prima alle quantità maggiori dove è più difficile raggiungere questo obbiettivo
+        usort($rows, function($a, $b) {
+            return $b['sortquanti'] - $a['sortquanti'];
+        });
+        // riattraverso l'array e scrivo di quanto dovrebbe essere aumentato il prezzo per ogni rigo
+        $acc_diff = 0;
+        $acc = $rows;
+        foreach ($rows as $k => $v) { // riattraverso l'array e scrivo di quanto dovrebbe essere aumentato il prezzo per ogni rigo
+            if ($v['tiprig'] == 1 || ($v['quanti'] >= 0.001 && $v['tiprig'] == 0)) {
+                // tolgo l'iva che verrà sommata ma ci aggiungo gli eventuali sconti
+                $rest_part = $rest / (1 + $v['pervat'] / 100) / (1 - $body_discount / 100) / (1 - $v['sconto'] / 100);
+                $acc[$k]['prelis'] = round(($v['prelis'] + $rest_part), $decimal);
+                if ($v['tiprig'] == 0) { // tipo normale
+                    $new_tot_row = CalcolaImportoRigo($v['quanti'], $acc[$k]['prelis'], array($v['sconto'], $body_discount, -$v['pervat']));
+                } else {                 // tipo forfait
+                    $new_tot_row = CalcolaImportoRigo(1, $acc[$k]['prelis'], -$v['pervat']);
+                }
+                // accumulo la differenza
+                $acc_diff -= ($rows[$k]['totrow'] - $new_tot_row);
+            }
+        }
+        // controllo se ho arrotondato tutta la diffarenza iniziale
+        $ctrl_diff = round(($diff - $acc_diff), 2);
+        // sull'ultimo rigo che è pure quello con la quantità più bassa provo ad arrotondare perchè più facile farlo modificando il solo prezzo 
+        end($acc);
+        $lastkey = key($acc);
+        $decpow = pow(10, $decimal);
+        if (($ctrl_diff <= -0.01 || $ctrl_diff >= 0.01) && $acc[$lastkey]['quanti'] > 0.001) { // se sto arrotondando per eccesso no posso diminuire di troppo allora il valore non dovrà eccedere
+            $diff_prelis = ceil($ctrl_diff / (1 + $acc[$lastkey]['pervat'] / 100) / (1 - $body_discount / 100) / (1 - $acc[$lastkey]['sconto'] / 100) / $acc[$lastkey]['quanti'] * $decpow) / $decpow;
+            $acc[$lastkey]['prelis'] += $diff_prelis;
+        }
+        // riordino l'array secondo le key originarie
+        usort($acc, function($a, $b) {
+            return $a['sortkey'] - $b['sortkey'];
+        });
+        return $acc;
+    }
+
 }
 
 class lotmag {
