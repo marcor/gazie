@@ -795,7 +795,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="form-group">
                         <label for="datemi" class="col-sm-4 control-label"><?php echo $script_transl['datemi']; ?></label>
                         <div class="col-sm-8">
-                            <input type="text" class="form-control" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
+                            <input type="date" class="form-control" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
                         </div>
                     </div>
                 </div>                    
@@ -954,13 +954,13 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     'value' => '<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="2" />'
                 ),
                 array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
-                    'value' => '<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
+                    'value' => '<input type="number" step="any" class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
                 ),
                 array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => '<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" size="4" onchange="this.form.submit()" />'
+                    'value' => '<input type="number" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" size="4" onchange="this.form.submit()" />'
                 ),
                 array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
-                    'value' => '<input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="2" onchange="this.form.submit()" />'),
+                    'value' => '<input type="number" step="0.01" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="2" onchange="this.form.submit()" />'),
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 'value' => gaz_format_number($imprig), 'type' => ''),
                 array('head' => $script_transl["codvat"], 'class' => 'text-center numeric', 'value' => $v['pervat'], 'type' => ''),
                 array('head' => $script_transl["total"], 'class' => 'text-right numeric bg-warning', 'value' => gaz_format_number($tot_row), 'type' => ''),
@@ -1064,7 +1064,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="col-sm-6 col-md-4 col-lg-4">
                         <div class="form-group">
                             <label for="quanti" class="col-sm-6 control-label"><?php echo $script_transl['quanti']; ?></label>
-                            <input class="col-sm-6" type="number" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
+                            <input class="col-sm-6" type="number" step="any" tabindex=6 value="<?php echo $form['in_quanti']; ?>" name="in_quanti" />
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-2 col-lg-2">
@@ -1081,7 +1081,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label for="sconto" class="col-sm-6 control-label"><?php echo $script_transl['sconto']; ?></label>
-                            <input class="col-sm-6" type="number" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
+                            <input class="col-sm-6" type="number" step="0.01" value="<?php echo $form['in_sconto']; ?>" name="in_sconto" />
                         </div>
                     </div>
                     <div class="col-sm-6 col-md-3 col-lg-3">
@@ -1103,7 +1103,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="col-sm-6 col-md-3 col-lg-3">
                         <div class="form-group">
                             <label for="provvigione" class="col-sm-6 control-label"><?php echo $script_transl['provvigione']; ?></label>
-                            <input class="col-sm-6" type="number" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
+                            <input class="col-sm-6" type="number" step="any" value="<?php echo $form['in_provvigione']; ?>" name="in_provvigione" />
                         </div>
                     </div>
                 </div>
