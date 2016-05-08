@@ -156,6 +156,7 @@ class venditCalc extends Compute {
                 } else {                 // tipo forfait
                     $new_tot_row = CalcolaImportoRigo(1, $acc[$k]['prelis'], -$v['pervat']);
                 }
+                $acc[$k]['totrow'] = $new_tot_row;
                 // accumulo la differenza
                 $acc_diff -= ($rows[$k]['totrow'] - $new_tot_row);
             }
@@ -169,8 +170,19 @@ class venditCalc extends Compute {
         if (($ctrl_diff <= -0.01 || $ctrl_diff >= 0.01) && $acc[$lastkey]['quanti'] > 0.001) { // se sto arrotondando per eccesso no posso diminuire di troppo allora il valore non dovrà eccedere
             $diff_prelis = ceil($ctrl_diff / (1 + $acc[$lastkey]['pervat'] / 100) / (1 - $body_discount / 100) / (1 - $acc[$lastkey]['sconto'] / 100) / $acc[$lastkey]['quanti'] * $decpow) / $decpow;
             $acc[$lastkey]['prelis'] += $diff_prelis;
+            if ($v['tiprig'] == 0) { // tipo normale
+                $new_tot_row = CalcolaImportoRigo($acc[$lastkey]['quanti'], $acc[$lastkey]['prelis'], array($acc[$lastkey]['sconto'], $body_discount, -$acc[$lastkey]['pervat']));
+            } else {                 // tipo forfait
+                $new_tot_row = CalcolaImportoRigo(1, $acc[$lastkey]['prelis'], -$acc[$lastkey]['pervat']);
+            }
+            //vedo se sono riuscito a compensare la differenza iniziale
+            $new_diff = round(($acc[$lastkey]['totrow'] - $new_tot_row - $diff + $acc_diff), 2);
+            if ($new_diff >= 0.01) {
+                // non ci sono riuscito: provo con lo sconto che vado ad indicare in array sul rigo id=0
+                $acc[0]['new_body_discount'] = (floor($new_diff / $tot * 10000))/100;
+            }
         }
-        // riordino l'array secondo le key originarie
+        // INFINE riordino l'array secondo le key originarie
         usort($acc, function($a, $b) {
             return $a['sortkey'] - $b['sortkey'];
         });

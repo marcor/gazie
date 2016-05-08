@@ -575,7 +575,7 @@ $strScript = array("admin_client.php" =>
         'volume' => 'Volume',
         'taxable' => 'Imponibile',
         'tax' => 'I.V.A.',
-        'send_ecr'=>'INVIA al registratore di cassa ',
+        'send_ecr'=>'INVIA alla cassa ',
         'confirm' => 'Confermi invio dati al registratore di cassa?',
         /** ENRICO FEDELE */
         'add_article' => 'Aggiungi in magazzino',

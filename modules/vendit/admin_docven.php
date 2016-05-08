@@ -105,6 +105,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $anagrafica = new Anagrafica();
     $cliente = $anagrafica->getPartner($_POST['clfoco']);
     $form['hidden_req'] = $_POST['hidden_req'];
+    $form['roundup_y'] = $_POST['roundup_y'];
     // ...e della testata
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
@@ -325,6 +326,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['volume'] += $form['rows'][$next_row]['quanti'] * $artico['volume_specifico'];
             }
             $next_row++;
+        }
+        $comp = new venditCalc();
+        if (isset($_POST['roundup'])) { // richiesta di arrotondamento verso l'alto
+            $form['rows'] = $comp->computeRounTo($form['rows'], $form['sconto'], false, $admin_aziend['decimal_price']);
+            $form['roundup_y'] = 'disable';
+        }
+        if (isset($_POST['rounddown'])) { // richiesta di arrotondamento verso il basso
+            $form['rows'] = $comp->computeRounTo($form['rows'], $form['sconto'], true, $admin_aziend['decimal_price']);
+        }
+        // se è stato settato uno sconto chiusura dalla procedura di arrotondamento lo passo
+        if (isset($form['rows'][0]['new_body_discount'])) {
+            $form['sconto'] = $form['rows'][0]['new_body_discount'];
         }
     }
     // Se viene inviata la richiesta di conferma totale ...
@@ -818,7 +831,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } else { //se �� un rigo da inserire
             if ($form['in_tiprig'] == 0) {   // è un rigo normale controllo se l'articolo prevede un rigo testuale che lo precede
                 $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['in_codart']);
-            if ($bodytext && ($bodytext['body_text']!='')) { // il testo aggiuntivo c'è (e non è vuoto)
+                if ($bodytext && ($bodytext['body_text'] != '')) { // il testo aggiuntivo c'è (e non è vuoto)
                     $form["row_$next_row"] = $bodytext['body_text'];
                     $form['rows'][$next_row]['tiprig'] = 6;
                     $form['rows'][$next_row]['descri'] = '';
@@ -1126,6 +1139,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $id_des = $anagrafica->getPartner($tesdoc['id_des']);
     $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $form['id_tes'], "id_rig asc");
     $form['hidden_req'] = '';
+    $form['roundup_y'] = '';
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
@@ -1287,6 +1301,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'] = array();
     $next_row = 0;
     $form['hidden_req'] = '';
+    $form['roundup_y'] = '';
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
@@ -1441,6 +1456,7 @@ echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
 	<input type="hidden" value="' . $form['seziva'] . '" name="seziva" />
 	<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />
+        <input type="hidden" value="' . $form['roundup_y'] . '" name="roundup_y">
 	<input type="hidden" value="' . $form['change_pag'] . '" name="change_pag" />
 	<input type="hidden" value="' . $form['protoc'] . '" name="protoc" />
 	<input type="hidden" value="' . $form['numdoc'] . '" name="numdoc" />
@@ -2238,7 +2254,15 @@ if ($next_row > 0) {
 				<td class="text-right">' . gaz_format_number($calc->total_imp) . '</td>
 				<td class="text-right">' . gaz_format_number($calc->total_vat) . '</td>
 				<td class="text-right">' . gaz_format_number($stamp) . '</td>
-				<td class="text-right"><strong>' . gaz_format_number($calc->total_imp + $calc->total_vat + $stamp + $form['taxstamp']) . '</strong></td>
+				<td class="text-center"><div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="roundup"';
+                                if (!empty($form['roundup_y'])|| $rit>=0.01) {
+                                    echo ' disabled  title="Arrotondamento disabilitato!" ';
+                                }
+                                echo '><i class="glyphicon glyphicon-arrow-up"></i></button></div><div class="col-sm-8"><b>' . gaz_format_number($calc->total_imp + $calc->total_vat + $stamp + $form['taxstamp']) . '</b></div><div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="rounddown"';
+                                if ($rit>=0.01) {
+                                    echo ' disabled  title="Arrotondamento disabilitato!" ';
+                                }
+                                echo '><i class="glyphicon glyphicon-arrow-down"></i></button></div></td>
 			</tr>';
     if ($rit > 0) {
         echo '	<tr>

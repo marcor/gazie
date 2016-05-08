@@ -54,6 +54,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     //qui si deve fare un parsing di quanto arriva dal browser...
     $form['id_tes'] = intval($_POST['id_tes']);
     $form['hidden_req'] = $_POST['hidden_req'];
+    $form['roundup_y'] = $_POST['roundup_y'];
     $form['clfoco'] = substr($_POST['clfoco'], 0, 13);
     $form['fiscal_code'] = strtoupper(substr(trim($_POST['fiscal_code']), 0, 16));
     foreach ($_POST['search'] as $k => $v) {
@@ -172,9 +173,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $comp = new venditCalc();
         if (isset($_POST['roundup'])) { // richiesta di arrotondamento verso l'alto
             $form['rows'] = $comp->computeRounTo($form['rows'], $form['sconto'], false, $admin_aziend['decimal_price']);
+            $form['roundup_y'] = 'disable';
         }
         if (isset($_POST['rounddown'])) { // richiesta di arrotondamento verso il basso
             $form['rows'] = $comp->computeRounTo($form['rows'], $form['sconto'], true, $admin_aziend['decimal_price']);
+        }
+        // se è stato settato uno sconto chiusura dalla procedura di arrotondamento lo passo
+        if (isset($form['rows'][0]['new_body_discount'])) {
+            $form['sconto'] = $form['rows'][0]['new_body_discount'];
         }
     }
 
@@ -589,6 +595,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", intval($_GET['id_tes']));
     $cliente = $anagrafica->getPartner($tesdoc['clfoco']);
     $form['hidden_req'] = '';
+    $form['roundup_y'] = '';
     $form['id_tes'] = $tesdoc['id_tes'];
     $form['tipdoc'] = $tesdoc['tipdoc'];
     $form['numdoc'] = $tesdoc['numdoc'];
@@ -686,7 +693,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['rows'] = array();
     $next_row = 0;
     $form['hidden_req'] = '';
-
+    $form['roundup_y'] = '';
     // inizio rigo di input
     $form['in_descri'] = "";
     $form['in_tiprig'] = 0;
@@ -746,6 +753,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     <input type="hidden" value="<?php echo $form['fiscal_code']; ?>" name="fiscal_code">
     <input type="hidden" value="<?php echo $form['address']; ?>" name="address">
     <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
+    <input type="hidden" value="<?php echo $form['roundup_y']; ?>" name="roundup_y">
     <div class="text-center">
         <p>
             <b>
@@ -1148,7 +1156,11 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                                 . '<td>' . $r['descri'] . '</td>'
                                 . '<td>' . gaz_format_number($ivacast) . '</td>'
                                 . '<td class="bg-warning text-center">'
-                                . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="roundup" ><i class="glyphicon glyphicon-arrow-up"></i></button></div>'
+                                . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="roundup"';
+                                if (!empty($form['roundup_y'])) {
+                                    echo ' disabled  title="Hai già arrotondato una volta!" ';
+                                }
+                                echo '><i class="glyphicon glyphicon-arrow-up"></i></button></div>'
                                 . '<div class="col-sm-8"><b>' . $admin_aziend['symbol'] . ' ' . gaz_format_number($tot) . '</b></div>'
                                 . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="rounddown" ><i class="glyphicon glyphicon-arrow-down"></i></button></div>'
                                 . '</td>'
