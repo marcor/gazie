@@ -44,7 +44,6 @@ select:focus, input:focus {
 
 
 .btn-edit {
-    float: right;
     background-color: #fa50f8;
     color: #000;
 }

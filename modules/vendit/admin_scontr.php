@@ -795,7 +795,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="form-group">
                         <label for="datemi" class="col-sm-4 control-label"><?php echo $script_transl['datemi']; ?></label>
                         <div class="col-sm-8">
-                            <input type="date" class="form-control" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
+                            <input type="text" class="form-control" id="datemi" name="datemi" value="<?php echo $form['datemi']; ?>">
                         </div>
                     </div>
                 </div>                    
@@ -1177,7 +1177,12 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         ?>
                         <tr> 
                             <td colspan="7">
-                                <input class="bg-danger" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php echo $script_transl['send_ecr'] . ' ' . $ecr['descri']; ?>" />
+                                <input class="bg-danger" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
+                                if ($toDo == 'insert'){
+                                    echo $script_transl['send_ecr'] . ' ' . $ecr['descri'];
+                                } else {
+                                    echo $script_transl['update'];
+                                } ?>" />
                             </td>
                         </tr>
                     </tbody>
