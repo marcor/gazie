@@ -51,7 +51,7 @@ $mod_uri = '/' . $module . '/' . $script_uri;
 function gaz_flt_var_assign($flt, $typ) {
     global $where;
     if (isset($_GET[$flt]) && $_GET[$flt] != 'All' && $_GET[$flt] != "") {
-        $var = $_GET[$flt];
+        $var = addslashes($_GET[$flt]);
         if ($typ == "i") {
             $where .= " and " . $flt . " = $var";
         } else if ($typ == "v") {
