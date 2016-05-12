@@ -127,7 +127,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $msg['err'][] = 'aliiva';
         }
         // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
-        if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1 ) {
+        if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1) {
             $msg['err'][] = 'lotmag';
         }
         if (count($msg['err']) == 0) { // nessun errore
@@ -264,39 +264,56 @@ if ($modal === false) {
  * in caso di finestra modale, aggiungo un campo nascosto che mi serve per salvare nel database
  */
 ?>
-<form method="POST" name="form" enctype="multipart/form-data" id="add-product">
-    <?php
-    if ($modal === true) {
-        echo '<input type="hidden" name="mode" value="modal" />
-          <input type="hidden" name="mode-act" value="submit" />';
+<script type="text/javascript">
+    function calcDiscount() {
+        var p1 = ($("#preve1").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
+        $("#preve1_sc").val(p1);
+        var p2 = ($("#preve2").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
+        $("#preve2_sc").val(p2);
+        var p3 = ($("#preve3").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
+        $("#preve3_sc").val(p3);
     }
-    echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
-    echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
 
-    if ($modal_ok_insert === true) {
-        echo '<div class="alert alert-success" role="alert">' . $script_transl['modal_ok_insert'] . '</div>';
-        echo '<div class=" text-center"><button class="btn btn-lg btn-default" type="submit" name="none">' . $script_transl['iterate_invitation'] . '</button></div>';
-    } else {
-        $gForm = new magazzForm();
-        $mv = $gForm->getStockValue(false, $form['codice']);
-        $magval = array_pop($mv);
+    $(function () {
+        $("#preve1,#preve2,#preve3,#sconto").change(function () {
+            var v = $(this).val().replace(/,/, '.');
+            $(this).val(v);
+            calcDiscount();
+        });
+    });
+</script>
+<form method="POST" name="form" enctype="multipart/form-data" id="add-product">
+<?php
+if ($modal === true) {
+    echo '<input type="hidden" name="mode" value="modal" />
+          <input type="hidden" name="mode-act" value="submit" />';
+}
+echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
+echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
 
-        /** ENRICO FEDELE */
-        /* Se sono in finestra modale, non visualizzo questo titolo */
-        $changesubmit = '';
-        if ($modal === false) {
-            $changesubmit = 'onchange="submit();"';
-            if ($toDo == 'insert') {
-                echo '<div class="text-center"><b>' . $script_transl['ins_this'] . '</b></div>';
-            } else {
-                echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
-            }
+if ($modal_ok_insert === true) {
+    echo '<div class="alert alert-success" role="alert">' . $script_transl['modal_ok_insert'] . '</div>';
+    echo '<div class=" text-center"><button class="btn btn-lg btn-default" type="submit" name="none">' . $script_transl['iterate_invitation'] . '</button></div>';
+} else {
+    $gForm = new magazzForm();
+    $mv = $gForm->getStockValue(false, $form['codice']);
+    $magval = array_pop($mv);
+
+    /** ENRICO FEDELE */
+    /* Se sono in finestra modale, non visualizzo questo titolo */
+    $changesubmit = '';
+    if ($modal === false) {
+        if ($toDo == 'insert') {
+            echo '<div class="text-center"><b>' . $script_transl['ins_this'] . '</b></div>';
+        } else {
+            echo '<div class="text-center"><b>' . $script_transl['upd_this'] . ' ' . $form['codice'] . '</b></div>';
         }
-        echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
-        if (count($msg['err']) > 0) { // ho un errore
-            $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
-        }
-        ?>
+    }
+    echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
+    if (count($msg['err']) > 0) { // ho un errore
+        $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+    }
+    ?>
         <div class="panel panel-default gaz-table-form">
             <div class="container-fluid">
                 <div class="row">
@@ -319,9 +336,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="good_or_service" class="col-sm-4 control-label"><?php echo $script_transl['good_or_service']; ?>*</label>
-                            <?php
-                            $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                            ?>
+    <?php
+    $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -347,9 +364,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="lot_or_serial" class="col-sm-4 control-label"><?php echo $script_transl['lot_or_serial'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
-                            <?php
-                            $gForm->variousSelect('lot_or_serial', $script_transl['lot_or_serial_value'], $form['lot_or_serial'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                            ?>
+    <?php
+    $gForm->variousSelect('lot_or_serial', $script_transl['lot_or_serial_value'], $form['lot_or_serial'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -373,9 +390,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="catmer" class="col-sm-4 control-label"><?php echo $script_transl['catmer']; ?></label>
-                            <?php
-                            $gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-                            ?>
+    <?php
+    $gForm->selectFromDB('catmer', 'catmer', 'codice', $form['catmer'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -383,9 +400,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="ragstat" class="col-sm-4 control-label"><?php echo $script_transl['ragstat']; ?></label>
-                            <?php
-                            $gForm->selectFromDB('ragstat', 'ragstat', 'codice', $form['ragstat'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-                            ?>
+    <?php
+    $gForm->selectFromDB('ragstat', 'ragstat', 'codice', $form['ragstat'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -393,7 +410,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['preacq']; ?>" name="preacq" maxlength="15" />
+                            <input class="col-sm-4" type="number" step="any" min="0" value="<?php echo $form['preacq']; ?>" name="preacq" maxlength="15" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -401,7 +418,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="sconto" class="col-sm-4 control-label"><?php echo $script_transl['sconto']; ?></label>
-                            <input class="col-sm-2" type="number" value="<?php echo $form['sconto']; ?>" name="sconto" maxlength="6" />
+                            <input class="col-sm-2" name="sconto" id="sconto" type="number" step="0.01" min="0" max="100" value="<?php echo $form['sconto']; ?>" maxlength="6" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -409,9 +426,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve1" class="col-sm-4 control-label"><?php echo $script_transl['preve1']; ?></label>
-                            <input type="number" name="preve1" value="<?php echo $form['preve1']; ?>"  maxlength="15" <?php echo $changesubmit; ?> />
-                            <?php echo $script_transl['preve1_sc']; ?>
-                            <input type="text" readonly="true" name="preve1_sc" value="<?php echo gaz_format_number($form['preve1'] * (1 - $form['sconto'] / 100)); ?>" />
+                            <input type="number" step="any" min="0" id="preve1" name="preve1" value="<?php echo $form['preve1']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve1_sc']; ?>
+                            <input type="text" readonly="true" id="preve1_sc" name="preve1_sc" value="<?php echo gaz_format_number($form['preve1'] * (1 - $form['sconto'] / 100)); ?>" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -419,9 +436,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve2" class="col-sm-4 control-label"><?php echo $script_transl['preve2']; ?></label>
-                            <input type="number" name="preve2" value="<?php echo $form['preve2']; ?>"  maxlength="15" <?php echo $changesubmit; ?> />
-                            <?php echo $script_transl['preve2_sc']; ?>
-                            <input type="text" readonly="true" name="preve2_sc" value="<?php echo gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)); ?>" />
+                            <input type="number" step="any" min="0" id="preve2" name="preve2" value="<?php echo $form['preve2']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve2_sc']; ?>
+                            <input type="text" readonly="true" id="preve2_sc" name="preve2_sc" value="<?php echo gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)); ?>" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -429,9 +446,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve3" class="col-sm-4 control-label"><?php echo $script_transl['preve3']; ?></label>
-                            <input type="number" name="preve3" value="<?php echo $form['preve3']; ?>"  maxlength="15" <?php echo $changesubmit; ?> />
-                            <?php echo $script_transl['preve3_sc']; ?>
-                            <input type="text" readonly="true" name="preve3_sc" value="<?php echo gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)); ?>" />
+                            <input type="number" step="any" min="0" id="preve3" name="preve3" value="<?php echo $form['preve3']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve3_sc']; ?>
+                            <input type="text" readonly="true" id="preve3_sc" name="preve3_sc" value="<?php echo gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)); ?>" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -439,9 +456,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?></label>
-                            <?php
-                            $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
-                            ?>
+    <?php
+    $gForm->selectFromDB('aliiva', 'aliiva', 'codice', $form['aliiva'], 'codice', 0, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 350px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -449,9 +466,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
-                            <?php
-                            $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                            ?>
+    <?php
+    $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -459,9 +476,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
-                            <?php
-                            $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                            ?>
+    <?php
+    $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -485,7 +502,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="last_cost" class="col-sm-4 control-label"><?php echo $script_transl['last_cost']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['last_cost']; ?>" name="last_cost" maxlength="15" />
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['last_cost']; ?>" name="last_cost" maxlength="15" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -493,7 +510,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="scorta" class="col-sm-4 control-label"><?php echo $script_transl['scorta']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['scorta']; ?>" name="scorta" maxlength="13" />
+                            <input class="col-sm-4" type="number" min="0" value="<?php echo $form['scorta']; ?>" name="scorta" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -501,7 +518,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="riordino" class="col-sm-4 control-label"><?php echo $script_transl['riordino']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
+                            <input type="number" min="0" class="col-sm-4" type="text"  value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -517,7 +534,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
+                            <input class="col-sm-4" type="number" min="0" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -525,7 +542,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['volume_specifico']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['volume_specifico']; ?>" name="volume_specifico" maxlength="13" />
+                            <input class="col-sm-4" type="number" min="0" value="<?php echo $form['volume_specifico']; ?>" name="volume_specifico" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -533,7 +550,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
+                            <input class="col-sm-4" type="number" min="0" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -541,9 +558,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
-                            <?php
-                            $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
-                            ?>
+    <?php
+    $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -551,9 +568,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
-                            <?php
-                            $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
-                            ?>
+    <?php
+    $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -565,41 +582,41 @@ if ($modal === false) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <?php if ($toDo == 'update') { ?>
+    <?php if ($toDo == 'update') { ?>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
-                                <?php if ($ndoc > 0) { // se ho dei documenti ?> 
+        <?php if ($ndoc > 0) { // se ho dei documenti  ?> 
                                     <div>
-                                        <?php foreach ($form['rows'] as $k => $val) { ?>
+                                    <?php foreach ($form['rows'] as $k => $val) { ?>
                                             <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="rows[<?php echo $k; ?>][id_doc]">
                                             <input type="hidden" value="<?php echo $val['extension']; ?>" name="rows[<?php echo $k; ?>][extension]">
                                             <input type="hidden" value="<?php echo $val['title']; ?>" name="rows[<?php echo $k; ?>][title]">
-                                            <?php echo DATA_DIR . 'files/' . $val['id_doc'] . '.' . $val['extension']; ?>
+                <?php echo DATA_DIR . 'files/' . $val['id_doc'] . '.' . $val['extension']; ?>
                                             <a href="../root/retrieve.php?id_doc=<?php echo $val["id_doc"]; ?>" title="<?php echo $script_transl['view']; ?>!" class="btn btn-default btn-sm">
                                                 <i class="glyphicon glyphicon-file"></i>
                                             </a><?php echo $val['title']; ?>
                                             <input type="button" value="<?php echo ucfirst($script_transl['update']); ?>" onclick="location.href = 'admin_document.php?id_doc=<?php echo $val['id_doc']; ?>&Update'" />
 
-                                        <?php } ?>
+            <?php } ?>
                                         <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'" />
                                     </div>
-                                <?php } else { // non ho documenti  ?>
+                                    <?php } else { // non ho documenti  ?>
                                     <input type="button" value="<?php echo ucfirst($script_transl['insert']); ?>" onclick="location.href = 'admin_document.php?item_ref=<?php echo $form['codice']; ?>&Insert'">
                                 <?php } ?>
                             </div>
                         </div>
                     </div>
-                <?php } ?>
+    <?php } ?>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>
-                            <?php
-                            $select_id_anagra = new selectPartner("id_anagra");
-                            $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
-                            ?>
+    <?php
+    $select_id_anagra = new selectPartner("id_anagra");
+    $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -615,7 +632,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
+                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -623,7 +640,7 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_multiplier" class="col-sm-4 control-label"><?php echo $script_transl['web_multiplier']; ?></label>
-                            <input class="col-sm-4" type="number" value="<?php echo $form['web_multiplier']; ?>" name="web_multiplier" maxlength="15" />
+                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_multiplier']; ?>" name="web_multiplier" maxlength="15" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -639,9 +656,9 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
-                            <?php
-                            $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                            ?>
+    <?php
+    $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -649,23 +666,23 @@ if ($modal === false) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
-                            <?php
-                            $gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-                            ?>
+    <?php
+    $gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
                 <div class="col-sm-12">
-                    <?php
-                    /** ENRICO FEDELE */
-                    /* SOlo se non sono in finestra modale */
-                    if ($modal === false) {
-                        echo '<div class="col-sm-4 text-left"><input name="none" type="submit" value="" disabled></div>';
-                    }
-                    /** ENRICO FEDELE */
-                    echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . strtoupper($script_transl[$toDo]) . '!" /></div>';
-                }
-                ?>
+    <?php
+    /** ENRICO FEDELE */
+    /* SOlo se non sono in finestra modale */
+    if ($modal === false) {
+        echo '<div class="col-sm-4 text-left"><input name="none" type="submit" value="" disabled></div>';
+    }
+    /** ENRICO FEDELE */
+    echo '<div class="col-sm-8 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="' . strtoupper($script_transl[$toDo]) . '!" /></div>';
+}
+?>
             </div>
         </div> <!-- chiude container --> 
     </div><!-- chiude panel -->
