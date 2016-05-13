@@ -42,14 +42,23 @@ function getLastDoc($item_code) {
     return $rs;
 }
 
-if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato direttamente
+if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato direttamente
     require("../../library/include/datlib.inc.php");
     $admin_aziend = checkAdmin();
     require("./lang." . $admin_aziend['lang'] . ".php");
     $script_transl = $strScript['report_artico.php'];
-    $no = intval($_POST['getresult']);
+    $no = intval($_POST['rowno']);
+    $ob = filter_input(INPUT_POST, 'orderby');
+    $so = filter_input(INPUT_POST, 'sort');
+    $ca = filter_input(INPUT_POST, 'codart');
+    if (empty($ca)) {
+        $where = '1';
+    } else {
+        $where = "codice = '" . $ca . "'";
+        $no = '0';
+    }
     $gForm = new magazzForm();
-    $result = gaz_dbi_dyn_query('*', $gTables['artico'], '1', 'codice DESC', $no, PER_PAGE);
+    $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $ob . ' ' . $so, $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
         $lastdoc = getLastDoc($row["codice"]);
         $mv = $gForm->getStockValue(false, $row['codice']);
@@ -80,6 +89,12 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
 		<i class="glyphicon glyphicon-barcode"></i>
 		</a>';
         }
+        $com = '';
+        if ($admin_aziend['conmag'] > 0 && $row["good_or_service"] <= 0) {
+            $com = '<a class="btn btn-xs btn-default" href="../magazz/select_schart.php?di=0101' . date('Y') . '&df=' . date('dmY') . '&id=' . $row['codice'] . '" target="_blank">
+		  <i class="glyphicon glyphicon-check"></i><i class="glyphicon glyphicon-print"></i>
+		  </a>&nbsp;';
+        }
         ?>
         <tr>              
             <td data-title="<?php echo $script_transl["codice"]; ?>">
@@ -104,7 +119,7 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
                 <?php echo number_format($row["preacq"], $admin_aziend['decimal_price'], ',', '.'); ?>
             </td>
             <td data-title="<?php echo $script_transl["stock"]; ?>" title="<?php echo $admin_aziend['symbol'] . ' ' . $magval['v_g']; ?>" class="text-center">
-                <?php echo floatval($magval['q_g']); ?>
+               <?php echo $com.floatval($magval['q_g']); ?>
             </td>
             <td data-title="<?php echo $script_transl["aliiva"]; ?>">
                 <?php echo floatval($iva['aliquo']) . '%'; ?>
@@ -118,12 +133,12 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
             <td data-title="<?php echo $script_transl["barcode"]; ?>" class="text-center">
                 <?php echo $brc; ?>&nbsp;
             </td>
-            <td  data-title="<?php echo $script_transl["clone"] . ' in ' . $row["codice"]; ?>_2">
+            <td data-title="<?php echo $script_transl["clone"] . ' in ' . $row["codice"]; ?>_2" class="text-center">
                 <a class="btn btn-xs btn-default" href="clone_artico.php?codice=<?php echo $row["codice"]; ?>">
                     <i class="glyphicon glyphicon-export"></i>
                 </a>
             </td>
-            <td align="center">
+            <td class="text-center">
                 <a class="btn btn-xs btn-default btn-elimina" href="delete_artico.php?codice=<?php echo $row["codice"]; ?>">
                     <i class="glyphicon glyphicon-remove"></i>
                 </a>
