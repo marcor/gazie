@@ -303,19 +303,19 @@ table.selectTable td {
 }
 
 
-.conto_attivo {
+.gaz-attivo {
     background-color: #88D6FF;
 }
-.conto_passivo {
+.gaz-passivo {
     background-color: #D6FF88;
 }
-.conto_costi {
+.gaz-costi {
     background-color: #D688FF;
 }
-.costo_ricavi {
+.gaz-ricavi {
     background-color: #FFD688;
 }
-.conto_transitori {
+.gaz-transitori {
     background-color: #FF88D6;
 }
 

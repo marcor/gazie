@@ -1381,8 +1381,8 @@ class GAzieForm {
 
     function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect',$opt = 'style="max-width: 350px;"') {
         global $gTables, $admin_aziend;
-        $data_color = Array(1 => "88D6FF", 2 => "D6FF88", 3 => "D688FF", 4 => "FFD688", 5 => "FF88D6",
-            6 => "88FFD6", 7 => "FF88D6", 8 => "88FFD6", 9 => "FF88D6");
+        $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
+            6 => "gaz-transitori", 7 => "gaz-transitori", 8 => "gaz-transitori", 9 => "gaz-transitori");
         if (!empty($val_hiddenReq)) {
             $opt = " onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\"";
         }
@@ -1423,7 +1423,7 @@ class GAzieForm {
             $selected = '';
             $v = $r["codice"];
             $c = intval($v / 100000000);
-            $selected .= " style=\"background:#" . $data_color[$c] . "; color:#000000;\" ";
+            $selected .= ' class="'. $bg_class[$c] . '" ';
             if (intval($type) > 99 || (is_array($type) && count($type) == 1)) {
                 $v = intval(substr($r["codice"], 0, 3));
             }

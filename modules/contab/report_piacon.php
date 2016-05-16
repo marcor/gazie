@@ -93,7 +93,7 @@ $strTransl = HeadMain();
 
             $collapse = 0;
             
-            $css_class = array ("conto_attivo","conto_passivo","conto_costi","costo_ricavi","conto_transitori");
+            $css_class = array ("gaz-attivo","gaz-passivo","gaz-costi","gaz-ricavi","gaz-transitori");
             
             while ($r = gaz_dbi_fetch_array($rs)) {
                 $r2 = array('dare' => 0, 'avere' => 0);

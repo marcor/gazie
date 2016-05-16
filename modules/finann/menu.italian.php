@@ -37,7 +37,8 @@ $transl['finann'] = array('name' => "Fine Anno",
                                          3 =>array("Visualizzazione e stampa Bilancio","Bilancio"),
                                          4 =>array("Visualizzazione e stampa Bilancio civilistico","Bilancio civilistico"),
                                          5 =>array("Informazioni per la riclassificazione di bilancio","Dati riclassificazione bilancio"),
-                                         6 =>array("Visualizzazione e stampa libro beni ammortizzabili","Libro Beni Ammortizzabili")
+                                         6 =>array("Visualizzazione e stampa libro beni ammortizzabili","Libro Beni Ammortizzabili"),
+                                         7 =>array("Registrazione delle quote d'ammortamento","Registrazione delle quote d'ammortamento")
                                        )
                          );
 ?>

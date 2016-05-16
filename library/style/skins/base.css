@@ -4,7 +4,7 @@
 
 
 /**************************************
-************ GENERICI *****************
+ GENERICI E SPECIFICI DI GAZIE (gaz-)
 ***************************************/
 
 body {
@@ -15,6 +15,24 @@ body {
 select:focus, input:focus {
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 255, 0.6);
 }
+
+/* colori sfondo dropdown contabilità*/
+.gaz-attivo {
+    background-color: #88D6FF;
+}
+.gaz-passivo {
+    background-color: #D6FF88;
+}
+.gaz-costi {
+    background-color: #D688FF;
+}
+.gaz-ricavi {
+    background-color: #FFD688;
+}
+.gaz-transitori {
+    background-color: #FF88D6;
+}
+
 
 
 /**************************************

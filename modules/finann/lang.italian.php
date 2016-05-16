@@ -235,6 +235,19 @@ $strScript = array("select_comiva.php" =>
         'clfoco'=>'Fornitore',
         'amount'=>'Valore',
         'valamm'=>'Ammort.'
+    ),
+    "depreciation_assets.php" =>
+    array('title' => 'Registrazione quote di ammortamento cespiti',
+        'datreg' => ' al: ',
+        'descri' => 'Descizione del bene',
+        'movdes' => 'con',
+        'unimis'=>'U.M',
+        'clfoco'=>'Fornitore',
+        'fixval'=>'Immobilizzazione',
+        'accdep'=>'Fondo',
+        'carry'=>'Residuo',
+        'rate'=>'Quota annua',
+        'lostrate'=>'Quota persa'
     )
 );
 ?>

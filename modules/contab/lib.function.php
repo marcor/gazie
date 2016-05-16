@@ -4,8 +4,8 @@ class contabForm extends GAzieForm {
 
     function selMasterAcc($name, $val, $val_hiddenReq = '', $class = 'FacetSelect') {
         global $gTables, $admin_aziend;
-        $data_color = Array(1 => "88D6FF", 2 => "D6FF88", 3 => "D688FF", 4 => "FFD688", 5 => "FF88D6",
-            6 => "88FFD6", 7 => "FF88D6", 8 => "88FFD6", 9 => "FF88D6");
+        $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
+            6 => "gaz-transitori", 7 => "gaz-transitori", 8 => "gaz-transitori", 9 => "gaz-transitori");
         $refresh = '';
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\"";
@@ -21,7 +21,7 @@ class contabForm extends GAzieForm {
             if ($r['codice'] == $val) {
                 $selected = "selected ";
             }
-            $selected .= " style=\"background:#" . $data_color[$c] . "; color:#000000;";
+            $selected .= ' class="'. $bg_class[$c] . '" ';
             if ($v == $admin_aziend['mascli'] || $v == $admin_aziend['masfor']) {
                 $selected .= " color: red; font-weight: bold;\" ";
                 $view = $v . '-' . strtoupper($r['descri']);
@@ -123,8 +123,8 @@ class contabForm extends GAzieForm {
         global $gTables, $admin_aziend;
         $where = "(codice < " . intval($admin_aziend['mascli'] . '000001') . " OR codice > " . intval($admin_aziend['mascli'] . '999999') . ") AND
                 (codice < " . intval($admin_aziend['masfor'] . '000001') . " OR codice > " . intval($admin_aziend['mascli'] . '999999') . ")";
-        $data_color = Array(1 => "88D6FF", 2 => "D6FF88", 3 => "D688FF", 4 => "FFD688", 5 => "FF88D6",
-            6 => "88FFD6", 7 => "FF88D6", 8 => "88FFD6", 9 => "FF88D6");
+        $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
+            6 => "gaz-transitori", 7 => "gaz-transitori", 8 => "gaz-transitori", 9 => "gaz-transitori");
         echo "\t<select name=\"$name\" class=\"FacetSelect\">\n";
         echo "<option value=\"0\"> ---------- </option>";
         $result = gaz_dbi_dyn_query("*", $gTables['clfoco'], $where, "codice ASC");
@@ -135,7 +135,7 @@ class contabForm extends GAzieForm {
             if ($val == $r['codice']) {
                 $selected = " selected ";
             }
-            $selected .= " style=\"background:#" . $data_color[$c] . "; color:#000000;";
+            $selected .= ' class="'. $bg_class[$c] . '" ';
             if (substr($r['codice'], -6) == '000000') {
                 $selected .= " color: red; font-weight: bold;\" ";
                 $view = $v . '-' . strtoupper($r['descri']);
