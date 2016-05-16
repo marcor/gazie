@@ -98,6 +98,12 @@ if (isset($_GET['ricerca_completa'])) {
                 &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
+                &nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
+                &nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
             </td>
             <td class="FacetFieldCaptionTD">

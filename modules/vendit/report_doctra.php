@@ -288,6 +288,7 @@ function confirMail(link){
                     echo "</td>\n";
 
                     echo "<td class=\"alert alert-danger\"  align=\"center\"></td>";
+                    echo "<td class=\"alert alert-danger\"  align=\"center\"></td>";
                     if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
                     // Colonna Elimina
                         echo "<td class=\"alert alert-danger\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
@@ -345,6 +346,7 @@ function confirMail(link){
                         }
                     }
                     echo "</td>";
+                    echo "<td></td>";
                     echo "<td></td>";
                     echo "</tr>\n";
                     break;
