@@ -179,7 +179,7 @@ class venditCalc extends Compute {
             $new_diff = round(($acc[$lastkey]['totrow'] - $new_tot_row - $diff + $acc_diff), 2);
             if ($new_diff >= 0.01) {
                 // non ci sono riuscito: provo con lo sconto che vado ad indicare in array sul rigo id=0
-                $acc[0]['new_body_discount'] = (floor($new_diff / $tot * 10000))/100;
+                $acc[0]['new_body_discount'] = $body_discount+(floor($new_diff / $tot * 10000))/100;
             }
         }
         // INFINE riordino l'array secondo le key originarie
