@@ -93,6 +93,10 @@ $strScript = array("admin_aziend.php" =>
         'masfor' => 'Cuenta Maestra de Proveedores',
         'masban' => 'Cuenta Maestra de Bancos',
         'mas_staff' => 'Cuenta Maestra de Empleados',
+        'mas_fixed_assets' => 'Mastro immobilizzazioni',
+        'mas_found_assets' => 'Mastro fondo ammortamenti',
+        'mas_cost_assets' => 'Mastro costi ammortamento',
+        'lost_cost_assets' => 'Conto quote perse ammortamento',
         'cassa_' => 'Cuenta de Efectivo',
         'ivaacq' => 'Cuenta de IVA Compras',
         'ivaven' => 'Cuenta de IVA Ventas',
@@ -182,7 +186,8 @@ $strScript = array("admin_aziend.php" =>
         'ivam_t' => 'Frecuencia de pago del IVA',
         'ivam_t_value' => array('M' => 'Mensualmente', 'T' => 'Trimestralmente'),
         'preeminent_vat' => 'Generalmente porcentaje IVA',
-        'interessi' => 'Interes sobre IVA Trimestral'
+        'interessi' => 'Interes sobre IVA Trimestral',
+        'amm_min' => 'Tabella Ammortamenti Ministeriali'
     ),
     "report_aziend.php" =>
     array('title' => 'Lista de las empresa(s) instalada(s)',

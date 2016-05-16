@@ -94,6 +94,7 @@ $strScript = array(
         'mas_fixed_assets' => 'Mastro immobilizzazioni',
         'mas_found_assets' => 'Mastro fondo ammortamenti',
         'mas_cost_assets' => 'Mastro costi ammortamento',
+        'lost_cost_assets' => 'Conto quote perse ammortamento',
         'cassa_' => 'Conto cassa',
         'ivaacq' => 'Conto I.V.A. acquisti',
         'ivaven' => 'Conto I.V.A. vendite',

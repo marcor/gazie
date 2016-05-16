@@ -89,6 +89,10 @@ $strScript = array("admin_aziend.php" =>
         'masfor' => 'Master suppliers account',
         'masban' => 'Master banks account',
         'mas_staff' => 'Master employees account',
+        'mas_fixed_assets' => 'Mastro immobilizzazioni',
+        'mas_found_assets' => 'Mastro fondo ammortamenti',
+        'mas_cost_assets' => 'Mastro costi ammortamento',
+        'lost_cost_assets' => 'Conto quote perse ammortamento',
         'cassa_' => 'Cash account',
         'ivaacq' => 'Purchases VAT account',
         'ivaven' => 'Sales VAT account',
@@ -178,7 +182,8 @@ $strScript = array("admin_aziend.php" =>
         'ivam_t' => 'Frequency VAT payment',
         'ivam_t_value' => array('M' => 'Monthly', 'T' => 'Quarterly'),
         'preeminent_vat' => 'Usually VAT rate',
-        'interessi' => 'Interest on Quarterly VAT'
+        'interessi' => 'Interest on Quarterly VAT',
+        'amm_min' => 'Tabella Ammortamenti Ministeriali',
     ),
     "report_aziend.php" =>
     array('title' => 'List of installed enterprise',
