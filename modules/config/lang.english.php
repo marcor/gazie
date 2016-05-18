@@ -93,6 +93,7 @@ $strScript = array("admin_aziend.php" =>
         'mas_found_assets' => 'Mastro fondo ammortamenti',
         'mas_cost_assets' => 'Mastro costi ammortamento',
         'lost_cost_assets' => 'Conto quote perse ammortamento',
+        'min_rate_deprec' => 'Minimum rate depreciation (%)',
         'cassa_' => 'Cash account',
         'ivaacq' => 'Purchases VAT account',
         'ivaven' => 'Sales VAT account',

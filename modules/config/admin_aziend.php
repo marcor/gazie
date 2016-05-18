@@ -613,6 +613,14 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
+                        <label for="min_rate_deprec" class="col-sm-4 control-label"><?php echo $script_transl['min_rate_deprec']; ?></label>
+                        <input class="col-sm-2" step="0.1" type="number" min="0" max="100" value="<?php echo $form['min_rate_deprec']; ?>" name="min_rate_deprec" size="4"  />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
                         <label for="mas_staff" class="col-sm-4 control-label"><?php echo $script_transl['mas_staff']; ?></label>
                         <?php
                         $gForm->selectAccount('mas_staff', $form['mas_staff'] . '000000', array(2, 9), '', false, "col-sm-8");

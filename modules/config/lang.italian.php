@@ -95,6 +95,7 @@ $strScript = array(
         'mas_found_assets' => 'Mastro fondo ammortamenti',
         'mas_cost_assets' => 'Mastro costi ammortamento',
         'lost_cost_assets' => 'Conto quote perse ammortamento',
+        'min_rate_deprec' => 'Ammortamento minimo (%)',
         'cassa_' => 'Conto cassa',
         'ivaacq' => 'Conto I.V.A. acquisti',
         'ivaven' => 'Conto I.V.A. vendite',

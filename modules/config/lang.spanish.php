@@ -97,6 +97,7 @@ $strScript = array("admin_aziend.php" =>
         'mas_found_assets' => 'Mastro fondo ammortamenti',
         'mas_cost_assets' => 'Mastro costi ammortamento',
         'lost_cost_assets' => 'Conto quote perse ammortamento',
+        'min_rate_deprec' => 'Amortización mínima tasa (%)',
         'cassa_' => 'Cuenta de Efectivo',
         'ivaacq' => 'Cuenta de IVA Compras',
         'ivaven' => 'Cuenta de IVA Ventas',
