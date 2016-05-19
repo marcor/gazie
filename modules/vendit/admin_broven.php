@@ -835,7 +835,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
    $form['in_codart'] = "";
    $form['in_pervat'] = 0;
    $form['in_tipiva'] = 0;
-   $form['in_ritenuta'] = $admin_aziend['ritenuta'];
+   $form['in_ritenuta'] = 0;
    $form['in_unimis'] = "";
    $form['in_prelis'] = 0;
    /** inizio modifica FP 09/10/2015
