@@ -76,6 +76,13 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
+
+    $carry = 0;
+    $ivasplitpay = 0;
+    $somma_spese = 0;
+    $totimpdoc = 0;
+    $rit = 0;
+
     while ($tes = gaz_dbi_fetch_array($result)) {
         if ($tes['protoc'] <> $ctrlp) { // la prima testata della fattura
             if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $doc[$ctrlp]['tes']['taxstamp'] >= 0.01 )) { // non è il primo ciclo faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
