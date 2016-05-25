@@ -104,9 +104,10 @@ if (count($msg['err']) > 0) { // ho un errore
         <input type="text" class="col-sm-4" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
     </div>
     <?php
+    $r = array(0 => array());
     foreach ($form['assets'] as $k => $v) {
         $r[$k] = [array('head' => $script_transl["descri"], 'class' => '',
-        'value' => '<span class="gaz-tooltip" title="' . $script_transl["clfoco"] . ': ' . $v['clfoco'] . '<br>' . $script_transl["movdes"] . ': ' . $v['movdes'] . '" >' . $v['descri'] . ' ' . $v['unimis'] . ' ' . floatval($v['quantity']) . ' x ' . $admin_aziend["symbol"] . $v['a_value'] . '</span>'),
+        'value' => '<span class="gaz-tooltip" title="' . $v['unimis'] . ' ' . floatval($v['quantity']) . ' x ' . $admin_aziend["symbol"] . $v['a_value'] . '" >' . $v['descri'] . $script_transl["clfoco"] . $v["clfoco"] . $script_transl["movdes"] . $v['movdes'] . ' </span>'),
             array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
             array('head' => $script_transl["fixval"], 'class' => 'text-right',
                 'value' => gaz_format_number($v['fixval'])),
