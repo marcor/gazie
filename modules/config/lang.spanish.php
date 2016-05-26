@@ -98,6 +98,8 @@ $strScript = array("admin_aziend.php" =>
         'mas_cost_assets' => 'Mastro costi ammortamento',
         'lost_cost_assets' => 'Conto quote perse ammortamento',
         'min_rate_deprec' => 'Amortización mínima tasa (%)',
+        'super_amm_account'=>'Conto costo super ammortamento',
+        'super_amm_rate'=>'Percentuale eccedente il 100%',
         'cassa_' => 'Cuenta de Efectivo',
         'ivaacq' => 'Cuenta de IVA Compras',
         'ivaven' => 'Cuenta de IVA Ventas',

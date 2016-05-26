@@ -2,9 +2,6 @@ body {
 	background-image : url("../../../library/images/sfondo.png");
 	color:#000;
 }
-div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
-	color : #000000;
-}
 select:focus, input:focus {
 	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 255, 0.6);
 }

@@ -1465,10 +1465,10 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td></td>
 					<td class="text-right">
-						<input style="text-align:right" type="text" name="rows[$k][prelis]" value="'.number_format($v['prelis'], 2, '.', '').'" align="right" maxlength="11" size="7" onchange="this.form.submit()" />
+						<input style="text-align:right" type="text" name="rows['.$k.'][prelis]" value="'.number_format($v['prelis'], 2, '.', '').'" align="right" maxlength="11" size="7" onchange="this.form.submit()" />
 					</td>
 					<td class="text-right">'.$v['pervat'].'%</td>
-					<td class="text-right">"'.$v['codric'].'</td>';
+					<td class="text-right">'.$v['codric'].'</td>';
             $last_row[] = array_unshift($last_row,$script_transl['typerow'][$v['tiprig']]);
          break;
       case "2":
