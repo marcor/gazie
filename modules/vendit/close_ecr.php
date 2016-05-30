@@ -280,11 +280,24 @@ if (isset($_POST['submit'])) {
                            );
                   tesmovInsert($newValue);
                   $tes_id = gaz_dbi_last_id();
+                  /*
+                  COSA SUCCEDE QUI SOTTO SE HO UN DOCUMENTO CON id_contract=id_cash E DATA DI EMISSIONE CORRISPONDENTE CON QUELLA DI CHIUSURA CASSA?
+				  CHE QUANDO FACCIO LA CHIUSURA CASSA, LA PROCEDURA MI SOVRASCRIVE IL RIFERIMENTO AL MOVIMENTO CONTABILE DI QUEL DOCUMENTO CON QUELLO DELLA CHIUSURA
+                  */
                   tableUpdate('tesdoc',
                               array('id_con'),
                               array('id_contract', $ecr['id_cash'].'\' AND datemi = \''.substr($k,0,4).substr($k,5,2).substr($k,8,2)),
                               array('id_con'=>$tes_id)
                               );
+                  /*
+                  SUGGERIMENTO A CHI HA FATTO QUESTA PROCEDURA: IO RISOLVEREI COSI'
+                  tableUpdate('tesdoc',
+                              array('id_con'),
+                              array('id_contract', $ecr['id_cash'].'\' AND tipdoc = \'VCO\' AND datemi = \''.substr($k,0,4).substr($k,5,2).substr($k,8,2)),
+                              array('id_con'=>$tes_id)
+                              );
+                  E' CORRETTO?
+                  */
                   //inserisco i righi iva nel db
                   foreach($cast_vat[$k] as $key=>$vv) {
                       $vat = gaz_dbi_get_row($gTables['aliiva'],'codice',$key);
