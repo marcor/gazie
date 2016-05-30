@@ -285,6 +285,7 @@ $strScript = array("admin_fornit.php" =>
         'codvat' => 'I.V.A.',
         'amount' => 'Costo totale del bene € ',
         'ss_amm_min' => 'Ammort.Minister.',
+        'super_ammort'=>'% Super ammortamento'
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti d\'acquisto',

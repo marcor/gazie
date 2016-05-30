@@ -77,6 +77,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['no_deduct_vat_rate'] = floatval($_POST['no_deduct_vat_rate']);
     $form['acc_no_detuct_cost'] = intval($_POST['acc_no_detuct_cost']);
     $form['no_deduct_cost_rate'] = floatval($_POST['no_deduct_cost_rate']);
+    $form['super_ammort'] = floatval($_POST['super_ammort']);
     $form['type_mov'] = intval($_POST['type_mov']);
     $form['descri'] = filter_input(INPUT_POST, 'descri');
     $form['unimis'] = filter_input(INPUT_POST, 'unimis');
@@ -344,6 +345,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['mas_fixed_assets'] = $admin_aziend['mas_fixed_assets'];
     $form['mas_found_assets'] = $admin_aziend['mas_found_assets'];
     $form['mas_cost_assets'] = $admin_aziend['mas_cost_assets'];
+    $form['super_ammort'] = $admin_aziend['super_amm_rate'];
     $form['id_no_deduct_vat'] = 0;
     $form['no_deduct_vat_rate'] = 0;
     $form['acc_no_detuct_cost'] = 0;
@@ -668,6 +670,14 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                 </div>
             </div> <!-- chiude row  -->
             <div class="row">
+                <div class="col-sm-6 col-md-3 col-lg-3">
+                    <div class="form-group">
+                        <label for="super_ammort" class="col-sm-8 control-label"><?php echo $script_transl['super_ammort']; ?></label>
+                        <div class="col-sm-4">
+                            <input type="number" step="0.1" min="0.1" max="100" class="form-control" id="super_ammort" name="super_ammort" placeholder="<?php echo $script_transl['super_ammort']; ?>" value="<?php echo $form['super_ammort']; ?>">
+                        </div>
+                    </div>
+                </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
                         <label for="amount" class="col-sm-8 control-label"><?php echo $script_transl['amount']; ?></label>
