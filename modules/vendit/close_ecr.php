@@ -1,30 +1,30 @@
 <?php
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation,  Inc.,   59
-    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-// se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non può emettere scontrini
+// se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non puï¿½ emettere scontrini
 $ecr_user = gaz_dbi_get_row($gTables['cash_register'],'adminid',$admin_aziend['Login']);
 if (!$ecr_user){
     header("Location: error_msg.php?ref=admin_scontr");
@@ -124,7 +124,7 @@ function getAccountedTickets($id_cash)
                     }
                     $cast_acc[$v['codric']]['A']+=$imprig;
                     // inizio DARE
-                    if ($tes['clfoco']>100000000) { // c'è un cliente selezionato
+                    if ($tes['clfoco']>100000000) { // c'ï¿½ un cliente selezionato
                         if (!isset($cast_acc[$tes['clfoco']]['D'])) {
                             $cast_acc[$tes['clfoco']]['D']=0;
                         }
@@ -151,7 +151,7 @@ function getAccountedTickets($id_cash)
                            $cast_acc[$admin_aziend['cassa_']]['D']+=$tot_row;
                         }
                        }
-                    } else {  // il cliente è anonimo 
+                    } else {  // il cliente ï¿½ anonimo 
                         if ($tes['tippag']=='K'){ // paga con carta incasso direttamente sul CC/bancario
                         if (!isset($cast_acc[$tes['id_bank']]['D'])) {
                                $cast_acc[$tes['id_bank']]['D']=0;
@@ -282,22 +282,22 @@ if (isset($_POST['submit'])) {
                   $tes_id = gaz_dbi_last_id();
                   /*
                   COSA SUCCEDE QUI SOTTO SE HO UN DOCUMENTO CON id_contract=id_cash E DATA DI EMISSIONE CORRISPONDENTE CON QUELLA DI CHIUSURA CASSA?
-				  CHE QUANDO FACCIO LA CHIUSURA CASSA, LA PROCEDURA MI SOVRASCRIVE IL RIFERIMENTO AL MOVIMENTO CONTABILE DI QUEL DOCUMENTO CON QUELLO DELLA CHIUSURA
-                  */
+		  CHE QUANDO FACCIO LA CHIUSURA CASSA, LA PROCEDURA MI SOVRASCRIVE IL RIFERIMENTO AL MOVIMENTO CONTABILE DI QUEL DOCUMENTO CON QUELLO DELLA CHIUSURA
                   tableUpdate('tesdoc',
                               array('id_con'),
                               array('id_contract', $ecr['id_cash'].'\' AND datemi = \''.substr($k,0,4).substr($k,5,2).substr($k,8,2)),
                               array('id_con'=>$tes_id)
                               );
-                  /*
                   SUGGERIMENTO A CHI HA FATTO QUESTA PROCEDURA: IO RISOLVEREI COSI'
+                   */
                   tableUpdate('tesdoc',
                               array('id_con'),
                               array('id_contract', $ecr['id_cash'].'\' AND tipdoc = \'VCO\' AND datemi = \''.substr($k,0,4).substr($k,5,2).substr($k,8,2)),
                               array('id_con'=>$tes_id)
                               );
-                  E' CORRETTO?
-                  */
+                  /* DOMANDA: E' CORRETTO?
+                     RISPOSTA: FORMALMENTE SEMBRA DI SI, L'HO ANCHE PROVATA E SEMBRA FUNZIONARE BENE ALLORA L'HO ATTIVATA
+                   */
                   //inserisco i righi iva nel db
                   foreach($cast_vat[$k] as $key=>$vv) {
                       $vat = gaz_dbi_get_row($gTables['aliiva'],'codice',$key);
