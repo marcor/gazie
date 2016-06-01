@@ -29,14 +29,14 @@ require('../../config/templates/report_template.php');
 
 
 if(!isset($_GET["annini"])){
-            $year_start = intval($_GET["annfin"]);
-} else {
             $year_start = date("Y")-1;
+} else {
+            $year_start = intval($_GET["annini"]);
 }
 if(!isset($_GET["annfin"])){
-            $year_end = intval($_GET["annfin"]);
-} else {
             $year_end = date("Y");
+} else {
+            $year_end = intval($_GET["annfin"]);
 }
 
 //procedura per la creazione dell'array dei conti con saldo diverso da 0 e ordinati per nome...
