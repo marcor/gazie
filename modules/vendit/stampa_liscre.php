@@ -71,7 +71,7 @@ if ($ctrlsaldo != 0) {
 }
 //fine creazione array conti diversi da zero
 
-$emissione = 'Crediti verso i Clienti  periodo '.intval($_GET['annini']).'-'.intval($_GET['annfin']);
+$emissione = 'Crediti verso i Clienti  periodo '.$year_start.'-'.$year_end;
 
 $title = array('title'=>$emissione,
                'hile'=>array(array('lun' => 20,'nam'=>'Data'),
@@ -106,10 +106,10 @@ foreach ($conti as $value) {
                                ON '.$gTables['rigmoc'].'.codcon='.$gTables['clfoco'].'.codice
                                LEFT JOIN '.$gTables['anagra'].'
                                ON '.$gTables['anagra'].'.id='.$gTables['clfoco'].'.id_anagra',
-                               "datreg BETWEEN '".intval($_GET["annini"])."0101' AND '".
-                               intval($_GET["annfin"])."1231' AND codcon=".$value.
+                               "datreg BETWEEN '".$year_start."0101' AND '".
+                               $year_end."1231' AND codcon=".$value.
                                " AND caucon <> 'CHI' AND caucon <> 'APE'  OR
-                               (caucon = 'APE' AND codcon=".$value." AND YEAR(datreg)=".intval($_GET["annini"]).")",
+                               (caucon = 'APE' AND codcon=".$value." AND YEAR(datreg)=".$year_start.")",
                                "datreg");
     while ($movimenti = gaz_dbi_fetch_array($result)) {
         if($ctrlcli != $movimenti["codcon"]){
