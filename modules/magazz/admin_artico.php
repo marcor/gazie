@@ -510,7 +510,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="scorta" class="col-sm-4 control-label"><?php echo $script_transl['scorta']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" value="<?php echo $form['scorta']; ?>" name="scorta" maxlength="13" />
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['scorta']; ?>" name="scorta" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -518,7 +518,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="riordino" class="col-sm-4 control-label"><?php echo $script_transl['riordino']; ?></label>
-                            <input type="number" min="0" class="col-sm-4" type="text"  value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
+                            <input type="number" min="0" step="any" class="col-sm-4" type="text"  value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -534,7 +534,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -542,7 +542,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['volume_specifico']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" value="<?php echo $form['volume_specifico']; ?>" name="volume_specifico" maxlength="13" />
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['volume_specifico']; ?>" name="volume_specifico" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -550,7 +550,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
