@@ -1097,7 +1097,7 @@ echo "
         mywindow.document.write('</head><body >');
         //alert($('[name=\"change\"]').val());
         mywindow.document.write('<h1>CLIENTE: '+$('[name=\"change\"]').val()+'</h1>');
-        mywindow.document.write('<table name=lista> ');
+        mywindow.document.write('<table name=lista border=1> ');
         mywindow.document.write($('[name=\"elenco\"]').html());
         mywindow.document.write('</table> ');
         mywindow.document.write('<h2>TOTALE: &#8364; '+$('[name=\"totale\"]').html()+'</h2>');
