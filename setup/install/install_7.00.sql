@@ -1,5 +1,5 @@
-CREATE DATABASE IF NOT EXISTS `gazie`;
-USE `gazie`;
+CREATE DATABASE IF NOT EXISTS gazie;
+USE gazie;
 SET NAMES utf8;
 
 DROP TABLE IF EXISTS `gaz_001agenti`;
