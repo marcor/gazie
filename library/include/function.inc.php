@@ -1947,7 +1947,7 @@ class Schedule {
             case 2:
 //            $orderby = "ragsoc, id_tesdoc_ref, caucon, datreg, numdoc ASC ";
 //            $orderby = "ragsoc, id_tesdoc_ref, datreg, numdoc, paymov.id ";
-                $orderby = "ragsoc, id_tesdoc_ref, datreg, paymov.id ";
+                $orderby = "ragsoc, id_tesdoc_ref, datreg, movimenti.id ";
                 break;
             case 3:
                 $orderby = "ragso1 DESC, id_tesdoc_ref,caucon, datreg, numdoc ASC ";
@@ -1957,8 +1957,8 @@ class Schedule {
         }
 //      $select = "*, " . $gTables['tesmov'] . ".*, " . $gTables['clfoco'] . ".descri AS ragsoc";
 //      $select = "*, tesmov.*, clfoco.descri AS ragsoc";
-        $select = "tesmov.clfoco, paymov.id_tesdoc_ref, rigmoc.darave, rigmoc.import, rigmoc.id_tes, "
-                . "tesmov.datdoc, tesmov.numdoc, tesmov.datreg, paymov.expiry, clfoco.descri AS ragsoc, "
+        $select = "tesmov.clfoco, movimenti.id_tesdoc_ref, movimenti.darave, movimenti.import, movimenti.id_tes, "
+                . "tesmov.datdoc, tesmov.numdoc, tesmov.datreg, movimenti.expiry, clfoco.descri AS ragsoc, "
                 . "tesmov.descri, tesmov.caucon, amount,"
                 . "anagra.sedleg, anagra.telefo, anagra.cell ";
         if ($this->target == 0) {
@@ -1970,15 +1970,18 @@ class Schedule {
             $where.=" and clfoco.id_agente =$id_agente";
         }
         if ($soloAperte) {
-            $table = $gTables['paymov'] . " paymov LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )"
-                    . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON rigmoc.id_tes = tesmov.id_tes "
-                    . "LEFT JOIN " . $gTables['clfoco'] . " clfoco ON clfoco.codice = rigmoc.codcon "
+//            $table = $gTables['paymov'] . " paymov LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )"
+            $table = $gTables['movimenti']. " movimenti "
+                    . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON movimenti.id_tes = tesmov.id_tes "
+                    . "LEFT JOIN " . $gTables['clfoco'] . " clfoco ON clfoco.codice = movimenti.codcon "
                     . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ";
         } else {
-            $table = $gTables['clfoco'] . " clfoco INNER JOIN " . $gTables['rigmoc'] . " rigmoc ON clfoco.codice = rigmoc.codcon "
-                    . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON rigmoc.id_tes = tesmov.id_tes "
-                    . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra "
-                    . "LEFT JOIN " . $gTables['paymov'] . " paymov ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )";
+            $table = $gTables['clfoco'] . " clfoco "
+//                    . "INNER JOIN " . $gTables['rigmoc'] . " rigmoc ON clfoco.codice = rigmoc.codcon "
+//                    . "LEFT JOIN " . $gTables['paymov'] . " paymov ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig ) "
+                    . "INNER JOIN " . $gTables['movimenti'] . " movimenti ON clfoco.codice = movimenti.codcon "
+                    . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON movimenti.id_tes = tesmov.id_tes "
+                    . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ";
         }
 
 //      $this->Entries = array();

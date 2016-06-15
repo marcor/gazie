@@ -114,9 +114,9 @@ function doConfirm() {
    val_id_agente=(id_agente?id_agente.value:0);
 //   alert(val_id_anagra+' - '+val_id_agente);
    
-   if(val_id_anagra==0 && val_id_agente==0){
-      retVal=confirm('Se non si seleziona un\'anagrafica o un agente, l\'operazione potrebbe impiegare molto tempo. Vuoi continuare?');
-   }
+//   if(val_id_anagra==0 && val_id_agente==0){
+//      retVal=confirm('Se non si seleziona un\'anagrafica o un agente, l\'operazione potrebbe impiegare molto tempo. Vuoi continuare?');
+//   }
    return retVal;
 }
 function clickAndDisable(link) {
