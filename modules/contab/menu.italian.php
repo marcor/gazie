@@ -38,7 +38,8 @@ $transl['contab'] = array('name' => "Contabilit&agrave;",
         3 => array("Visulalizza e/o stampa dei partitari", "Visualizza/stampa partitari"),
         4 => array("Inserisci un nuova causale contabile", "Nuova causale contabile"),
         5 => array("Stampa il piano dei conti", "Stampa Piano dei Conti"),
-        6 => array("Visualizzazione e stampa di estratti conto o partite aperte", "Estratti Conto/Partite Aperte")
+        6 => array("Visualizzazione e stampa di estratti conto o partite aperte", "Estratti Conto/Partite Aperte"),
+        7 => array("Visualizzazione e stampa di dare e avere per clienti o fornitori", "Analisi Debiti/Crediti"),
     )
 );
 ?>
