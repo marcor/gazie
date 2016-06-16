@@ -56,6 +56,8 @@ function getRiepilogo($mastro, $anagrafe, $id_agente) {
    $rigmoc = $gTables['rigmoc'];
    $tesmov = $gTables['tesmov'];
    $clfoco = $gTables['clfoco'];
+   $anagra = $gTables['anagra'];
+   $movimenti = $gTables['movimenti'];
 //   $query = "create OR REPLACE view movimenti as select * from $paymov paymov
 //JOIN $rigmoc rigmoc ON (paymov.id_rigmoc_pay = rigmoc.id_rig)
 //union all
@@ -65,10 +67,10 @@ function getRiepilogo($mastro, $anagrafe, $id_agente) {
    $query = "SELECT tesmov.clfoco,clfoco.descri AS ragsoc,anagra.sedleg, anagra.telefo, anagra.cell,
 sum(CASE WHEN (darave='D') THEN amount ELSE 0 END) as amountDare,   
 sum(CASE WHEN (darave='A') THEN amount ELSE 0 END) as amountAvere  
-FROM movimenti
+FROM $movimenti movimenti
 JOIN $tesmov tesmov ON movimenti.id_tes = tesmov.id_tes
 JOIN $clfoco clfoco ON clfoco.codice = movimenti.codcon
-JOIN gaz_anagra anagra ON anagra.id = clfoco.id_anagra
+JOIN $anagra anagra ON anagra.id = clfoco.id_anagra
 $where 
 group by tesmov.clfoco
 having amountDare!=amountAvere
