@@ -241,7 +241,7 @@ $rs = gaz_dbi_query($query);
 
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['titleLista'];
 echo "</div>\n";
-echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">";
+echo "<table class=\"Tlarge\">";
 echo "<tr>";
 $linkHeaders = new linkHeaders($script_transl['header']);
 $linkHeaders->output();
@@ -252,9 +252,9 @@ while ($mv = gaz_dbi_fetch_array($rs)) {
    $partner = $mv['ragsoc'] . " - " . $mv['sedleg'] . " - " . $mv['telefo'];
    $codice = $mv['codice'];
    $checked = ($mv['sel4esp_art'] ? "checked" : "");
-   echo "<td class=\"FacetDataTD\">" . $codice . " &nbsp;</td>";
-   echo "<td class=\"$class_partner\">" . $partner . " &nbsp;</td>";
-   echo "<td class=\"FacetDataTD\" align=\"center\"><input type=\"checkbox\" name=\"checkCodice[]\" value=$codice $checked> &nbsp;</td>";
+   echo "<td>" . $codice . " &nbsp;</td>";
+   echo "<td>" . $partner . " &nbsp;</td>";
+   echo "<td align=\"center\"><input type=\"checkbox\" name=\"checkCodice[]\" value=$codice $checked> &nbsp;</td>";
    echo "</tr>\n";
 }
 ?>
