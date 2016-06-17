@@ -43,10 +43,10 @@ function salvaClientiSelezionati() {
 
 function esportaFattureVendita() {
    global $gTables;
-   $tesdoc = $gTables[tesdoc];
-   $rigdoc = $gTables[rigdoc];
-   $artico = $gTables[artico];
-   $clfoco = $gTables[clfoco];
+   $tesdoc = $gTables['tesdoc'];
+   $rigdoc = $gTables['rigdoc'];
+   $artico = $gTables['artico'];
+   $clfoco = $gTables['clfoco'];
    $fornitore = intval($_POST['codfor']);
    $anno = $_POST['anno'];
    $query = "select tesdoc.clfoco, tesdoc.datemi, rigdoc.codart, rigdoc.unimis, rigdoc.quanti "
@@ -67,10 +67,10 @@ function esportaFattureVendita() {
 
 function esportaAnagrafeArticoli() {
    global $gTables;
-   $tesdoc = $gTables[tesdoc];
-   $rigdoc = $gTables[rigdoc];
-   $artico = $gTables[artico];
-   $clfoco = $gTables[clfoco];
+   $tesdoc = $gTables['tesdoc'];
+   $rigdoc = $gTables['rigdoc'];
+   $artico = $gTables['artico'];
+   $clfoco = $gTables['clfoco'];
    $fornitore = intval($_POST['codfor']);
    $anno = $_POST['anno'];
    $query = "select artico.codice, artico.descri "
@@ -86,11 +86,11 @@ function esportaAnagrafeArticoli() {
 
 function esportaAnagrafeClienti() {
    global $gTables;
-   $tesdoc = $gTables[tesdoc];
-   $rigdoc = $gTables[rigdoc];
-   $artico = $gTables[artico];
-   $clfoco = $gTables[clfoco];
-   $anagra = $gTables[anagra];
+   $tesdoc = $gTables['tesdoc'];
+   $rigdoc = $gTables['rigdoc'];
+   $artico = $gTables['artico'];
+   $clfoco = $gTables['clfoco'];
+   $anagra = $gTables['anagra'];
    $fornitore = intval($_POST['codfor']);
    $anno = $_POST['anno'];
    $query = "SELECT clfoco.codice,clfoco.descri AS ragsoc, anagra.sedleg, "
@@ -249,8 +249,8 @@ echo "</tr>";
 $arrayCodici = array();
 while ($mv = gaz_dbi_fetch_array($rs)) {
    echo "<tr>";
-   $partner = $mv[ragsoc] . " - " . $mv[sedleg] . " - " . $mv[telefo];
-   $codice = $mv[codice];
+   $partner = $mv['ragsoc'] . " - " . $mv['sedleg'] . " - " . $mv['telefo'];
+   $codice = $mv['codice'];
    $checked = ($mv['sel4esp_art'] ? "checked" : "");
    echo "<td class=\"FacetDataTD\">" . $codice . " &nbsp;</td>";
    echo "<td class=\"$class_partner\">" . $partner . " &nbsp;</td>";
