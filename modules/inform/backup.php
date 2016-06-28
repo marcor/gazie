@@ -154,14 +154,14 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "-- delle tabelle.\n";
     echo "--\n";
     if ($form['create_database'] == 1 || isset($_GET['internal'])) {
-        echo "CREATE DATABASE IF NOT EXISTS `$Database`;\n";
+        echo "CREATE DATABASE IF NOT EXISTS $Database;\n";
     } else {
-        echo "-- CREATE DATABASE IF NOT EXISTS `$Database`;\n";
+        echo "-- CREATE DATABASE IF NOT EXISTS $Database;\n";
     }
     if ($form['use_database'] == 1 || isset($_GET['internal'])) {
-        echo "USE `$Database`;\n";
+        echo "USE $Database;\n";
     } else {
-        echo "-- USE `$Database`;\n";
+        echo "-- USE $Database;\n";
     }
     if ($form['text_encoding'] == 0 || isset($_GET['internal'])) {
         echo "SET NAMES utf8;\n";
@@ -171,15 +171,19 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "\n";
     echo "\n";
     echo "\n";
-    //
+    $acc_view = array();
     while ($a_row = gaz_dbi_fetch_array($result)) {// navigazione tra gli elementi dell'array associativo (navigazione tra ciascuna delle tabelle ottenute dalla query di cui sopra)
         list ($key, $nome_tabella) = each($a_row); // conversione di ciascun elemento dell'array associativo nelle variabili chiave e valore corrispondenti (nomi tabelle).
         if (preg_match("/^" . $table_prefix . "_/", $nome_tabella)) {
+            
         } else {
             continue;
         }
         echo "DROP TABLE IF EXISTS `" . $nome_tabella . "`;\n";
-        createTable($nome_tabella);
+        $av = createTable($nome_tabella);
+        if ($av) {
+            $acc_view[] = $nome_tabella;
+        }
         // riempimento della tabella corrente
         $field_results = gaz_dbi_query("select * from " . $nome_tabella);
         $field_meta = gaz_dbi_get_fields_meta($field_results);
@@ -233,6 +237,13 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
             echo "UNLOCK TABLES;\n\n";
         }
     }
+    // aggiungo le viste che ho incontrato (view) alla fine del file di backup
+    foreach ($acc_view as $nv) {
+        $r_nv = gaz_dbi_query("SHOW CREATE TABLE " . $nv);
+        $r = gaz_dbi_fetch_array($r_nv);
+        echo $r['Create View'] . ";\n\n";
+    }
+
     gaz_dbi_put_row($gTables['config'], 'variable', 'last_backup', 'cvalue', date('Y-m-d'));
     if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
         $content = ob_get_contents();
@@ -248,7 +259,8 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
             Zip('./', $zip);
         }
         $zip->close();
-        if (isset($_GET['internal'])) header("Location: ../../modules/inform/report_backup.php");  
+        if (isset($_GET['internal']))
+            header("Location: ../../modules/inform/report_backup.php");
     }
 }
 exit;
@@ -278,10 +290,17 @@ function Zip($source, $zip) {
 // Coded By Louis
 // ############### FUNZIONI DI SUPPORTO ###############
 function createTable($table) {
+    $acc_view = false;
     $results = gaz_dbi_query("SHOW CREATE TABLE " . $table);
     $row = gaz_dbi_fetch_array($results);
-    echo $row['Create Table'];
+    if (isset($row['Create View'])) {
+        // aggiungo il nome della tabella di tipo vista all'accumulatore
+        $acc_view = true;
+    } else {
+        echo $row['Create Table'];
+    }
     echo ";\n\n";
+    return $acc_view; // ritorno l'array con le view
 }
 ?>
 </table>
