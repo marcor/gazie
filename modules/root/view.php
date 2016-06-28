@@ -1,7 +1,7 @@
 <?php
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-// $img1px è una stringa equivalente ad una immagine jpg di 1 pixel
+// $img1px Ã¨ una stringa equivalente ad una immagine jpg di 1 pixel
 // e serve per evitare la visualizzazione dell'immagine di dafault del browser
 // quando non la trova
 $img1px= pack("c*",0xFF,0xD8,0xFF,0xE0,0x00,0x10,0x4A,0x46,0x49,0x46,0x00,0x01,0x02,

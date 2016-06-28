@@ -186,6 +186,7 @@ function apply_highlight($a_json, $parts) {
 		for($i = 0; $i < $p; $i++) {
 			$part_len      = mb_strlen($parts[$i]);
 			$a_match_start = mb_stripos_all($label, $parts[$i]);
+			if (!is_array($a_match_start)) continue;
 	
 			foreach($a_match_start as $part_pos) {	
 				$overlap = false;

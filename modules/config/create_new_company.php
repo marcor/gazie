@@ -28,9 +28,15 @@ $msg = '';
 
 function createNewTable($table, $new_id) {
     global $table_prefix;
+
     $results = gaz_dbi_query("SHOW CREATE TABLE " . $table);
     $row = gaz_dbi_fetch_array($results);
-    return(preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $new_id), $row['Create Table']) . ";\n\n");
+
+    $key = 'Create Table';
+    if (array_key_exists('Create View', $row)) $key = 'Create View';
+    $retval = preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $new_id), $row[$key]) . ";\n\n";
+
+    return $retval;
 }
 
 if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
@@ -61,8 +67,18 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             // prendo i dati dell'azienda di riferimento
             $ref_company = gaz_dbi_get_row($gTables['aziend'], 'codice', $form['ref_co']);
             // richiamo le tabelle dall'azienda di riferimento richiesta
-            $tables = gaz_dbi_query("SHOW TABLES FROM $Database LIKE '" . $table_prefix . "\_" . sprintf('%03d', $form['ref_co']) . "%'");
+            $tables = gaz_dbi_query("SHOW FULL TABLES FROM $Database LIKE '" . $table_prefix . "\_" . sprintf('%03d', $form['ref_co']) . "%'");
+            $dbViews = array();
             while ($r = gaz_dbi_fetch_array($tables)) {
+                /*
+                  if is not a base table then queue to process it later
+                  because tables that the view depends on may not exist at this time
+                  !! hopefully no one will create views that depends on other views !!
+                */
+                if ($r[1] == 'VIEW') {
+                    $dbViews[] = $r[0];
+                    continue;
+                }
                 // CREO LA STRUTTURA DELLA TABELLA
                 $sql = createNewTable($r[0], $form['codice']);
                 gaz_dbi_query($sql);
@@ -129,6 +145,11 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                             break;
                     }
                 }
+            }
+            // process any pending view queued to be created
+            foreach($dbViews as $viewName){
+                $view = createNewTable($viewName, $form['codice']);
+                gaz_dbi_query($view);
             }
             // inserisco la nuova azienda nel suo archivio con una descrizione da modificare manualmente
             $upd = 'Modificare i dati di questa azienda';
