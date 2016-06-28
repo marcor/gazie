@@ -1,0 +1,23 @@
+Titolo:
+Bis dat qui cito dat.
+
+Presentazione:
+Il rilascio di questa nuova versione è destinata prevalentemente alla correzione di piccoli errori evidenziati dall'utilizzo quotidiano. Avrei voluto attendere, ma come da titolo ho anticipato i tempi motivato dal fastidio dato dai problemi introdotti con la genitrice major release e legati all'interpretazione differente che fanno i vari browser dei tag INPUT numerici di HTML5.
+Seppure lentamente, alcuni di noi hanno continuato ad apportare codice, per documentare e per sottolineare le differenze con la precedente 7.0 elenco le migliorie e, tra parentesi, i nickname dei relativi autori:
+
+- i backup salvano correttamente anche le tabelle del database di tipo "view" (devincen)
+- la creazione di una nuova azienda prende in considerazione anche le tabelle di tipo "view" (giovanniv) 
+- corretto piede liquidazione IVA periodica in caso di credito (devincen)
+- risolto problema di creazione database con nome diverso da "gazie" (pepinfor)
+- corretto errore mancata apertura partita in caso di pagamento con 0 giorni di decorrenza (pepinfor)
+- aggiunto bottone per prestampa senza salvataggio dati al preventivo ai clienti (pepinfor)
+- corretto mancato utilizzo variabili di inizializzazione anni per intervallo date sulla lista dei crediti (angelo983)
+- risolto errore di sovrascrittura del riferimento al movimento contabile con quello della chiusura giornaliera del registratore di cassa (angelo983) 
+- resa responsiva la lista dei servizi/merci di magazzino ex.articoli  (devincen)
+- piccolo avanzamento nello sviluppo della gestione del libro cespiti/beni ammortizzabili (devincen)
+- ripristinata icona invio mail scomparsa nella lista delle lettere (devincen)
+- corretti i problemi con decimali su prezzi, quantità, pesi, ecc. dei servizi/merci di magazzino, inoltre adesso il calcolo del prezzo scontato avviene lato client per cui funziona anche in finestra modale (devincen)
+- corretto problema apice sulla lista dei clienti (andreabia)
+- risolti diversi problemi di inserimento dei campi numerici in HTML5 (devincen) 
+
+Antonio de Vincentiis, Montesilvano, 28 Giugno 2016
