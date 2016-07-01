@@ -33,7 +33,7 @@ $strScript = array("admin.php" =>
         'errors' => array(' &Egrave; necessario allineare la Base Dati dalla versione ',
             ' alla versione ',
             '  cliccando QUI ',
-            ' Ricordati che per il buon funzionamento dell\'appicazione la direttiva magic_quotes_gpc deve essere posta a Off nel file php.ini!',
+            ' Ricordati che, per il buon funzionamento dell\'applicazione, la direttiva magic_quotes_gpc deve essere posta a Off nel file php.ini!',
             ' Attenzione l\'ultimo backup risale a più di 10 giorni, fallo adesso '
         ),
         'access' => "questo è il tuo ",
