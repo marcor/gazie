@@ -39,7 +39,7 @@ if (isset($_GET['id_tes'])) { //sto duplicando un singolo documento
       header("Location: " . $_POST['ritorno']);
       exit;
    } elseif (substr($row['tipdoc'], 0, 2) == 'DD') {
-      $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = '" . substr($row['datemi'], 0, 4) . "' AND tipdoc LIKE '" . substr($row['tipdoc'], 0, 2) . "_' AND seziva = " . $row['seziva'] . " ", "numdoc DESC", 0, 1);
+      $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = '" . substr($row['datemi'], 0, 4) . "' AND tipdoc LIKE '" . substr($row['tipdoc'], 0, 2) . "_' or tipdoc='FAD' AND seziva = " . $row['seziva'] . " ", "numdoc DESC", 0, 1);
    } elseif ($row['tipdoc'] == 'RDV') {
       $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = " . intval($_GET['id_tes']));
    } elseif ($row['tipdoc'] == 'VCO') {
