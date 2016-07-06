@@ -839,6 +839,7 @@ $strScript = array("admin_client.php" =>
             'La data di emissione non pu&ograve; essere antecedente alla data dell\'ultimo DdT !',
             'La data di inizio dei DdT da emettere non pu&ograve; essere successivo alla data dell\'ultimo!',
             'L\'ultimo documento emesso ha una data successiva a quella di emissione!',
+            'La data di emmissione precede quella dell\'ultima fattura emessa',
             'aut_pay' => 'Pagamento che prevede l\'incasso automatico',
             'no_bank' => 'ATTENZIONE! MANCA LA BANCA D\'APPOGGIO',
             'cust_pay' => 'Cliente con diversi pagamenti',
