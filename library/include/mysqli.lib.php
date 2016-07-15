@@ -54,7 +54,7 @@ function databaseIsOk() {
    // Verifico che il database non sia vuoto (condizione che può invece verificarsi nel caso in cui un amministratore di sistema fornisca db e user senza grant CREATE)
    if ($tablesResult = mysqli_query($link, "SELECT COUNT(*) AS numTables FROM information_schema.tables WHERE table_schema = '$Database';")) {
       $numTables = mysqli_fetch_row($tablesResult);
-	  if ($numTables[0] == 0) {
+      if ($numTables[0] == 0) {
          $result = False;
       }
    } else {
@@ -69,7 +69,7 @@ function gaz_dbi_query($query, $ar = false) {
    if (!$result)
       die("Error in gaz_dbi_query:" . $query . mysqli_error($link));
    if ($ar) {
-      return mysqli_affected_rows();
+      return mysqli_affected_rows($link);
    } else {
       return $result;
    }
