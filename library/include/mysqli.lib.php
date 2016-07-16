@@ -157,6 +157,19 @@ function gaz_dbi_get_row($table, $fnm, $fval) {
    return mysqli_fetch_array($result);
 }
 
+function gaz_dbi_get_single_value($table, $campo, $where) {
+   global $link;
+   $result = mysqli_query($link, "SELECT $campo FROM $table WHERE $where");
+   if (!$result)
+      die(" Error gaz_dbi_get_single_value: " . mysqli_error($link));
+   $ris = mysqli_fetch_array($result, MYSQLI_NUM);
+   if (count($ris) == 1) {
+      return $ris[0];
+   } else {
+      return null;
+   }
+}
+
 function gaz_dbi_put_row($table, $CampoCond, $ValoreCond, $Campo, $Valore) {
    global $link;
    $field_results = gaz_dbi_query("SELECT * FROM " . $table);

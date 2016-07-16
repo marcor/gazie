@@ -41,7 +41,9 @@ function elenca($form) {
       $codart = $form['cod_art'];
       $where = $where . " and sconti.codart = '$codart'";
    }
-   $query = "select sconti.clfoco as codclfoco, clfoco.descri as cliente, sconti.codart as codart, articoli.descri as articolo, sconti.sconto "
+   $query = "select sconti.clfoco as codclfoco, clfoco.descri as cliente, "
+           . "sconti.codart as codart, articoli.descri as articolo, "
+           . "sconti.sconto, sconti.prezzo_netto "
            . "from $tabellaSconti sconti "
            . "join $tabellaArticoli articoli on articoli.codice=sconti.codart "
            . "join $tabellaClfoco clfoco on clfoco.codice=sconti.clfoco "
@@ -55,14 +57,16 @@ function inserisci($form) {
    $codcli = $form['partner'];
    $codart = $form['cod_art'];
    $sconto = $form['sconto'];
+   $prezzo_netto = $form['prezzo_netto'];
    $tabella = $gTables['sconti_articoli'];
    $messaggi = $script_transl['mesg'];
-   $valori = array('clfoco' => $codcli, 'codart' => $codart, 'sconto' => $sconto);
+   $valori = array('clfoco' => $codcli, 'codart' => $codart, 'sconto' => $sconto, 'prezzo_netto' => $prezzo_netto);
    if (gaz_dbi_record_count($tabella, "clfoco='$codcli' and codart='$codart'") == 0) { // sconto non presente, inserirlo
       gaz_dbi_table_insert('sconti_articoli', $valori);
       $msg = $messaggi[3];
    } else { //sconto presente, aggiornarlo
-      gaz_dbi_put_query($tabella, "clfoco = $codcli and codart = $codart", "sconto", $sconto);
+      gaz_dbi_put_query($tabella, "clfoco = '$codcli' and codart = '$codart'", "sconto", $sconto);
+      gaz_dbi_put_query($tabella, "clfoco = '$codcli' and codart = '$codart'", "prezzo_netto", $prezzo_netto);
       $msg = $messaggi[4];
    }
    alert($msg);
@@ -77,11 +81,9 @@ $msg = '';
 if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $msg = '';
    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-//   $form['codcli'] = '';
-//   $form['ragso1'] = '';
    $form['cod_art'] = "";
-//   $form['cosear'] = "";
    $form['sconto'] = 0;
+   $form['prezzo_netto'] = 0;
    $form['search']['cod_art'] = '';
    $form['search']['partner'] = '';
    $form['partner'] = 0;
@@ -89,11 +91,9 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 } else { // le richieste successive
    $form['hidden_req'] = $_POST['hidden_req'];
    $form['ritorno'] = $_POST['ritorno'];
-//   $form['codcli'] = intval($_POST['codcli']);
-//   $form['ragso1'] = substr($_POST['ragso1'], 0, 15);
    $form['cod_art'] = $_POST['cod_art'];
-//   $form['cosear'] = $_POST['cosear'];
    $form['sconto'] = $_POST['sconto'];
+   $form['prezzo_netto'] = $_POST['prezzo_netto'];
    $form['search']['partner'] = substr($_POST['search']['partner'], 0, 20);
    $form['partner'] = intval($_POST['partner']);
 
@@ -139,6 +139,9 @@ if (isset($_POST['Inserisci'])) {
    } elseif (($form['sconto'] <= 0) or ( $form['sconto'] > 100)) {
       $msg .= "3+";
    }
+   if ($form['prezzo_netto'] < 0) {
+      $msg .= "4+";
+   }
    if (empty($msg)) { //non ci sono errori
       inserisci($form);
    }
@@ -178,7 +181,9 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cod_art'] . "</td><t
 $magForm->selItem('cod_art', $form['cod_art'], $form['search']['cod_art'], $script_transl['mesg']);
 echo "</tr>\n";
 
-echo "<td class=\"FacetFieldCaptionTD\"> %$script_transl[5] </td><td  class=\"FacetDataTD\"> <input type=\"text\" value=\"" . $form['sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"sconto\" ></td>";
+echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[6] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" value=\"" . $form['prezzo_netto'] . "\" maxlength=\"14\" size=\"14\" name=\"prezzo_netto\" ></td>";
+
+echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[5] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" max=\"100\" value=\"" . $form['sconto'] . "\" maxlength=\"6\" size=\"6\" name=\"sconto\" ></td>";
 
 echo "</td>\n
      </tr>\n";
@@ -192,7 +197,7 @@ echo "<tr>\n
 if (!empty($elencoSconti)) {
    echo "</table><table class=\"Tlarge\">";
    $linkHeaders = new linkHeaders($script_transl['header']);
-   $linkHeaders->setAlign(array('center', 'center', 'center', 'center', 'center', 'center'));
+   $linkHeaders->setAlign(array('left', 'left', 'left', 'left', 'right', 'right', 'center'));
    $linkHeaders->output();
    foreach ($elencoSconti as $riga) {
       echo "<tr class=\"FacetDataTD\">";
@@ -204,11 +209,10 @@ if (!empty($elencoSconti)) {
       echo "<td class=\"FacetDataTD\">$campo</td>";
       $campo = $riga['articolo'];
       echo "<td class=\"FacetDataTD\">$campo</td>";
+      $campo = gaz_format_number($riga['prezzo_netto']);
+      echo "<td class=\"FacetDataTD\" align=\"right\">$campo</td>";
       $campo = gaz_format_number($riga['sconto']);
       echo "<td class=\"FacetDataTD\" align=\"right\">$campo</td>";
-//        foreach ($riga as $campo) {
-//         echo "<td class=\"FacetFieldCaptionTD\">$campo</td>";
-//      }
       echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" "
       . "title=\"Cancella sconto\" "
       . "href=\"delete_sconto_articolo.php?"
@@ -217,6 +221,7 @@ if (!empty($elencoSconti)) {
       . "&codart=" . $riga['codart']
       . "&descrart=" . $riga['articolo']
       . "&sconto=" . gaz_format_number($riga['sconto'])
+      . "&prezzo_netto=" . gaz_format_number($riga['prezzo_netto'])
       . "\" "
       . "onclick=\"clickAndDisable(this);\" "
       . "target=\"_blank\" >"

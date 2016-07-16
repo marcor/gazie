@@ -54,7 +54,7 @@ function inserisci($form) {
    global $gTables, $script_transl;
    $codcli = $form['partner'];
    $ragstat = $form['ragstat'];
-   $sconto = $form['sconto'];
+   $sconto = floatval($form['sconto']);
    $tabella = $gTables['sconti_raggruppamenti'];
    $messaggi = $script_transl['mesg'];
    $valori = array('clfoco' => $codcli, 'ragstat' => $ragstat, 'sconto' => $sconto);
@@ -62,7 +62,7 @@ function inserisci($form) {
       gaz_dbi_table_insert('sconti_raggruppamenti', $valori);
       $msg = $messaggi[3];
    } else { //sconto presente, aggiornarlo
-      gaz_dbi_put_query($tabella, "clfoco = $codcli and ragstat = $ragstat", "sconto", $sconto);
+      gaz_dbi_put_query($tabella, "clfoco = '$codcli' and ragstat = '$ragstat'", "sconto", $sconto);
       $msg = $messaggi[4];
    }
    alert($msg);
@@ -179,7 +179,7 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cod_ragstat'] . "</t
 $magForm->selectFromDB('ragstat', 'ragstat', 'codice', $form['ragstat'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
 echo "</tr>\n";
 
-echo "<td class=\"FacetFieldCaptionTD\"> %$script_transl[5] </td><td  class=\"FacetDataTD\"> <input type=\"text\" value=\"" . $form['sconto'] . "\" maxlength=\"4\" size=\"1\" name=\"sconto\" ></td>";
+echo "<tr><td class=\"FacetFieldCaptionTD\"> $script_transl[5] </td><td  class=\"FacetDataTD\"> <input type=\"number\" step=\"any\" min=\"0\" max=\"100\" value=\"" . $form['sconto'] . "\" maxlength=\"6\" size=\"6\" name=\"sconto\" ></td>";
 
 echo "</td>\n
      </tr>\n";
@@ -193,7 +193,7 @@ echo "<tr>\n
 if (!empty($elencoSconti)) {
    echo "</table><table class=\"Tlarge\">";
    $linkHeaders = new linkHeaders($script_transl['header']);
-   $linkHeaders->setAlign(array('center', 'center', 'center', 'center', 'center', 'center'));
+   $linkHeaders->setAlign(array('left', 'left', 'left', 'left', 'right', 'center'));
    $linkHeaders->output();
    foreach ($elencoSconti as $riga) {
       echo "<tr class=\"FacetDataTD\">";

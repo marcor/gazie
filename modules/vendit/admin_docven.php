@@ -76,7 +76,7 @@ function getFAIseziva($tipdoc) {
    return $si;
 }
 
-if (!isset($_POST['ritorno']) and !isset($_GET['ritorno'])) {
+if (!isset($_POST['ritorno']) and ! isset($_GET['ritorno'])) {
    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 } else {
    $form['ritorno'] = $_POST['ritorno'];
@@ -884,10 +884,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if ($in_sconto != "#") {
                $form['rows'][$next_row]['sconto'] = $in_sconto;
             } else {
-               $form['rows'][$next_row]['sconto'] = $artico['sconto'];
-               if ($artico['sconto'] != 0) {
-                  $msgtoast = $form['rows'][$next_row]['codart'] . ": sconto da anagrafe articoli";
+               $comp = new venditCalc();
+               $tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
+               if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
+                  $form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
+                  $form['rows'][$next_row]['sconto'] = 0;
+               } else {
+                  $form['rows'][$next_row]['sconto'] = $tmpPrezzoNetto_Sconto;
                }
+               /*                * ** TODO da modificare */
+//               $form['rows'][$next_row]['sconto'] = $artico['sconto'];
+//               if ($artico['sconto'] != 0) {
+//                  $msgtoast = $form['rows'][$next_row]['codart'] . ": sconto da anagrafe articoli";
+//               }
             }
             /* fine modifica FP */
             if ($artico['retention_tax'] > 0) { // se richiesto dall'articolo impongo la ritenuta
@@ -895,12 +904,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             $provvigione = new Agenti;
             $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'], $form['in_codart']);
-            if ($form['listin'] == 2) {
-               $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
-            } elseif ($form['listin'] == 3) {
-               $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
-            } else {
-               $form['rows'][$next_row]['prelis'] = number_format($artico['preve1'], $admin_aziend['decimal_price'], '.', '');
+            if ($tmpPrezzoNetto_Sconto >= 0) { // non ho trovato un prezzo netto per il cliente/articolo
+               if ($form['listin'] == 2) {
+                  $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
+               } elseif ($form['listin'] == 3) {
+                  $form['rows'][$next_row]['prelis'] = number_format($artico['preve3'], $admin_aziend['decimal_price'], '.', '');
+               } else {
+                  $form['rows'][$next_row]['prelis'] = number_format($artico['preve1'], $admin_aziend['decimal_price'], '.', '');
+               }
             }
             $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
             $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);

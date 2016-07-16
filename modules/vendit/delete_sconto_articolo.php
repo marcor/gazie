@@ -33,6 +33,7 @@ if (isset($_GET['clfoco'])) { // attivazione
    $form["codart"] = $_GET['codart'];
    $form["descrart"] = $_GET['descrart'];
    $form["sconto"] = $_GET['sconto'];
+   $form["prezzo_netto"] = $_GET['prezzo_netto'];
 }
 if (isset($_POST['Delete'])) {
    $codcli = $_POST['codclfoco'];
@@ -66,6 +67,10 @@ if (isset($_POST['Return'])) {
         <tr>
             <td class="FacetFieldCaptionTD"><?= $script_transl['header'][1]; ?> &nbsp;</td>
             <td class="FacetDataTD"> <input type="text" size="100"  disabled value="<?= $form['descrart']; ?>">&nbsp;</td>
+        </tr>
+        <tr>
+            <td class="FacetFieldCaptionTD"><?= $script_transl['header'][3]; ?>  &nbsp;</td>
+            <td class="FacetDataTD"> <input type="text"  disabled value="<?= $form['prezzo_netto']; ?>">&nbsp;</td>
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD"><?= $script_transl['header'][2]; ?>  &nbsp;</td>
