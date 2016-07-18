@@ -904,7 +904,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             $provvigione = new Agenti;
             $form['rows'][$next_row]['provvigione'] = $provvigione->getPercent($form['id_agente'], $form['in_codart']);
-            if ($tmpPrezzoNetto_Sconto >= 0) { // non ho trovato un prezzo netto per il cliente/articolo
+            if (!isset($tmpPrezzoNetto_Sconto) or ($tmpPrezzoNetto_Sconto >= 0)) { // non ho trovato un prezzo netto per il cliente/articolo
                if ($form['listin'] == 2) {
                   $form['rows'][$next_row]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
                } elseif ($form['listin'] == 3) {

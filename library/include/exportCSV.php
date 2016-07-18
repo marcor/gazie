@@ -7,7 +7,7 @@ fputcsv($output, $intestazioni);
 
 // loop over the rows, outputting them
 foreach ($rows as $row)
-   fputcsv($output, $row);
+   fputcsv($output, $row, ";");
 // reset the file pointer to the start of the file
 fseek($output, 0);
 // tell the browser it's going to be a csv file
