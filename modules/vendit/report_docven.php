@@ -46,13 +46,13 @@ if (isset($_GET['auxil'])) {
 
 $all = $where;
 
-gaz_flt_var_assign('id_tes', 'i');
+gaz_flt_var_assign('protoc', 'i');
 gaz_flt_var_assign('numfat', 'i');
 gaz_flt_var_assign('datfat', 'd');
 gaz_flt_var_assign('clfoco', 'v');
 
 if (isset($_GET['all'])) {
-    $_GET['id_tes'] = "";
+    $_GET['protoc'] = "";
     $_GET['numfat'] = "";
     $_GET['datfat'] = "";
     $_GET['clfoco'] = "";
@@ -221,7 +221,7 @@ switch ($admin_aziend['fatimm']) {
     <table class="Tlarge">
         <tr>
             <td class="FacetFieldCaptionTD">
-<?php gaz_flt_disp_int("id_tes", "Numero Prot."); ?>
+<?php gaz_flt_disp_int("protoc", "Numero Prot."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
 <?php gaz_flt_disp_int("numfat", "Numero Fatt."); ?>
