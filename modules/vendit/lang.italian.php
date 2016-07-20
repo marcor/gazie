@@ -1097,7 +1097,7 @@ $strScript = array("admin_client.php" =>
     ),
     "select_sconti_articoli.php" =>
     array('title' => 'Sconti clienti/articoli',
-        'errors' => array("Manca il cliente", "Manca l'articolo", "Manca lo sconto", "Sconto fuori limiti", "Prezzo netto fuori limiti"),
+        'errors' => array("Manca il cliente", "Manca l'articolo", "Inserire il prezzo netto e/o lo sconto", "Sconto fuori limiti", "Prezzo netto fuori limiti"),
         "Cliente",
         "inserire min. 2 caratteri!",
         "Tutti i clienti!",

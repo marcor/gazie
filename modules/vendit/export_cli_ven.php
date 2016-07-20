@@ -2,7 +2,7 @@
 
 //session_start();
 require_once("../../library/include/datlib.inc.php");
-$filename = "art_ven.csv";
+$filename = "cli_ven.csv";
 $intestazioni=array("Codice",
     "RagSoc",
     "Sede legale",

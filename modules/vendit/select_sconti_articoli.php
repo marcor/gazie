@@ -134,7 +134,7 @@ if (isset($_POST['Inserisci'])) {
    if (empty($form['cod_art'])) {
       $msg .= "1+";
    }
-   if (empty($form['sconto'])) {
+   if (empty($form['sconto']) and empty($form['prezzo_netto'])) {
       $msg .= "2+";
    } elseif (($form['sconto'] <= 0) or ( $form['sconto'] > 100)) {
       $msg .= "3+";

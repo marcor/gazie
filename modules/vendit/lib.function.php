@@ -219,14 +219,17 @@ class venditCalc extends Compute {
          return $scontoTrovato;
       }
 //cerco sconto cliente/raggruppamento
-      $raggruppamento = gaz_dbi_get_single_value($tabellaArticoli, "ragstat", "codice='$codart'");
-      while (!empty($raggruppamento)) {
-         $scontoTrovato = gaz_dbi_get_single_value($tabellaScontiRaggruppamenti, "sconto", "clfoco='$codcli' and ragstat = '$raggruppamento'");
-         if ($scontoTrovato > 0) { // sconto presente
-            $msgtoast = $codart . ": sconto raggruppamento statistico riservato al cliente";
-            return $scontoTrovato;
+      $scontoGenericoArticolo = gaz_dbi_get_single_value($tabellaArticoli, "sconto", "codice='$codart'");
+      if ($scontoGenericoArticolo > 0) { //se lo sconto nella scheda dell'articolo è zero, l'articolo non è soggetto ad ulteriori sconti
+         $raggruppamento = gaz_dbi_get_single_value($tabellaArticoli, "ragstat", "codice='$codart'");
+         while (!empty($raggruppamento)) {
+            $scontoTrovato = gaz_dbi_get_single_value($tabellaScontiRaggruppamenti, "sconto", "clfoco='$codcli' and ragstat = '$raggruppamento'");
+            if ($scontoTrovato > 0) { // sconto presente
+               $msgtoast = $codart . ": sconto raggruppamento statistico riservato al cliente";
+               return $scontoTrovato;
+            }
+            $raggruppamento = substr($raggruppamento, 0, -1); // levo il carattere più a destra così passo al raggruppamento superiore
          }
-         $raggruppamento = substr($raggruppamento, 0, -1); // levo il carattere più a destra così passo al raggruppamento superiore
       }
 //cerco sconto cliente
       $scontoTrovato = gaz_dbi_get_single_value($tabellaClienti, "sconto", "codice='$codcli'");
@@ -235,10 +238,10 @@ class venditCalc extends Compute {
          return $scontoTrovato;
       }
 //cerco sconto articolo
-      $scontoTrovato = gaz_dbi_get_single_value($tabellaArticoli, "sconto", "codice='$codart'");
-      if ($scontoTrovato > 0) { // sconto cliente/articolo
+//      $scontoTrovato = gaz_dbi_get_single_value($tabellaArticoli, "sconto", "codice='$codart'");
+      if ($scontoGenericoArticolo > 0) { // sconto articolo
          $msgtoast = $codart . ": sconto da anagrafe articoli";
-         return $scontoTrovato;
+         return $scontoGenericoArticolo;
       }
       return 0;
    }

@@ -55,7 +55,7 @@ function esportaFattureVendita() {
            . "join $artico artico on rigdoc.codart=artico.codice "
            . "where artico.clfoco='$fornitore' and "
            . "year(tesdoc.datemi)=$anno and "
-           . "tipdoc like 'DD_' or tipdoc = 'FAD' and "
+           . "(tipdoc like 'DD_' or tipdoc = 'FAD') and "
            . "tesdoc.clfoco in (select codice from $clfoco clfoco where sel4esp_art)";
    $rs = gaz_dbi_query($query);
    while ($row = mysqli_fetch_array($rs, MYSQLI_NUM))
@@ -73,9 +73,17 @@ function esportaAnagrafeArticoli() {
    $clfoco = $gTables['clfoco'];
    $fornitore = intval($_POST['codfor']);
    $anno = $_POST['anno'];
-   $query = "select artico.codice, artico.descri "
-           . "from $artico artico "
-           . "where artico.clfoco='$fornitore'";
+//   $query = "select artico.codice, artico.descri "
+//           . "from $artico artico "
+//           . "where artico.clfoco='$fornitore'";
+   $query = "select distinct artico.codice, artico.descri "
+           . "from $tesdoc tesdoc "
+           . "join $rigdoc rigdoc on tesdoc.id_tes=rigdoc.id_tes "
+           . "join $artico artico on rigdoc.codart=artico.codice "
+           . "where artico.clfoco='$fornitore' and "
+           . "year(tesdoc.datemi)=$anno and "
+           . "(tipdoc like 'DD_' or tipdoc = 'FAD') and "
+           . "tesdoc.clfoco in (select codice from $clfoco clfoco where sel4esp_art)";
    $rs = gaz_dbi_query($query);
    while ($row = mysqli_fetch_array($rs, MYSQLI_NUM))
       $rows[] = $row;
@@ -85,7 +93,7 @@ function esportaAnagrafeArticoli() {
 }
 
 function esportaAnagrafeClienti() {
-   global $gTables;
+   global $gTables,$mascli;
    $tesdoc = $gTables['tesdoc'];
    $rigdoc = $gTables['rigdoc'];
    $artico = $gTables['artico'];
