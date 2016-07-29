@@ -1543,7 +1543,7 @@ foreach ($form['rows'] as $key => $value) {
 						<input type="text" name="rows[' . $key . '][prelis]" value="' . number_format($value['prelis'], 2, '.', '') . '" align="right" maxlength="11" size="7" onchange="this.form.submit();" />
 					</td>
 					<td>
-						<input type="text" name="rows[' . $key . '][sconto]" value="' . number_format($value['sconto'], 2, '.', '') . '" maxlength="4" size="1" onchange="this.form.submit();" />
+						<input type="text" name="rows[' . $key . '][sconto]" value="' . number_format((!empty($value['sconto'])) ? $value['sconto'] : 0, 2, '.', '') . '" maxlength="4" size="1" onchange="this.form.submit();" />
 					</td>
 				  	<td align="right">' . gaz_format_number($imprig) . '</td>
 					<td>' . $value['pervat'] . '%</td>
