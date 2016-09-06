@@ -181,14 +181,15 @@ if (isset($_GET['anteprima']) and $msg == "") {
     if ($numrow > 0) {
        echo "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"6\" >$numrow ".$script_transl[5]."</td></tr>";
        require("../../modules/vendit/lang.".$admin_aziend['lang'].".php");
-       $desdoc = $strScript["admin_docven.php"][0];
+       //$desdoc = $strScript["admin_docven.php"][0];
        require("../../modules/acquis/lang.".$admin_aziend['lang'].".php");
-       $desdoc += $strScript["admin_docacq.php"][0];
+       //$desdoc += $strScript["admin_docacq.php"][0];
+       $desdoc = array_merge($strScript["admin_docven.php"]['doc_name'], $strScript["admin_docacq.php"][0]);
        while ($row = gaz_dbi_fetch_array($result)) {
              echo "<tr>\n";
              $valore = CalcolaImportoRigo($row['quanti'], $row['prelis'], $row['sconto']) ;
              $valore = CalcolaImportoRigo(1, $valore, $row['scochi']) ;
-             $descri = $desdoc[$row['tipdoc']]." n.".$row['numdoc'];
+             $descri = ((empty($desdoc[$row['tipdoc']])) ? $row['tipdoc'] : $desdoc[$row['tipdoc']])." n.".$row['numdoc'];
              echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($row["datemi"])." &nbsp;</td>\n";
              echo "<td class=\"FacetDataTD\" align=\"center\">".$row["caumag"]." - ".$row["descri"]."</td>\n";
              echo "<td class=\"FacetDataTD\" align=\"center\">$descri</td>\n";
