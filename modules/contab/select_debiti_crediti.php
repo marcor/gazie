@@ -279,7 +279,7 @@ if (isset($_POST['preview'])) {
          while ($mv = gaz_dbi_fetch_array($rs)) {
             echo "<tr>";
             $partner = $mv['ragsoc'] . " - " . $mv['sedleg'] . " - " . $mv['telefo'];
-            echo "<td class=\"$class_partner\">" . $partner . " &nbsp;</td>";
+            echo "<td class=\"FacetFieldCaptionTD\">" . $partner . " &nbsp;</td>";
             echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv['amountDare']) . " &nbsp;</td>";
             echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv['amountAvere']) . " &nbsp;</td>";
             echo "<td class=\"FacetDataTD\" align=\"right\">" . gaz_format_number($mv['amountDare'] - $mv['amountAvere']) . " &nbsp;</td>";

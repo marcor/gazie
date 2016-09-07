@@ -1074,7 +1074,7 @@ $strScript = array("admin_client.php" =>
         'Cadenza',
     ),
     "select_analisi_agenti.php" =>
-    array("Selezione per stampa analisi agenti",
+    array('title' => 'Analisi agenti',
         "Data periodo inizio",
         "Data periodo fine",
         "Livello max",
@@ -1179,6 +1179,20 @@ $strScript = array("admin_client.php" =>
             "Indietro",
             "ELIMINA !",
             "Num. righe eliminate: "
+        ),
+    ),
+    "select_analisi_fatturato_clienti.php" =>
+    array('title' => 'Analisi fatturato clienti',
+        "Data periodo inizio",
+        "Data periodo fine",
+        'id_agente' => "Agente",
+        'preview' => 'Anteprima',
+        'print' => 'Stampa',
+        'totale' => 'TOTALE',
+        'errors' => array('Inserire il livello da analizzare!',
+        ),
+        'header' => array('Cod. cliente' => '', 'Cliente' => '', 'Fatturato' => '', 'Costo' => '',
+            'Margine %' => ''
         ),
     ),
 );
