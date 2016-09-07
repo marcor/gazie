@@ -1195,7 +1195,7 @@ $strScript = array("admin_client.php" =>
             'Margine %' => ''
         ),
     ),
-    "select_analisi_fatturato_clienti_fornitori.php" =>
+    "select_analisi_fatturato_cliente_fornitore.php" =>
     array('title' => 'Analisi fatturato cliente x fornitore',
         "Data periodo inizio",
         "Data periodo fine",
