@@ -1189,9 +1189,30 @@ $strScript = array("admin_client.php" =>
         'preview' => 'Anteprima',
         'print' => 'Stampa',
         'totale' => 'TOTALE',
-        'errors' => array('Inserire il livello da analizzare!',
+        'errors' => array(
         ),
-        'header' => array('Cod. cliente' => '', 'Cliente' => '', 'Fatturato' => '', 'Costo' => '',
+        'header' => array('Cod. cliente' => '', 'Cliente' => '', 'Fatturato' => '', 'Costi' => '',
+            'Margine %' => ''
+        ),
+    ),
+    "select_analisi_fatturato_clienti_fornitori.php" =>
+    array('title' => 'Analisi fatturato cliente x fornitore',
+        "Data periodo inizio",
+        "Data periodo fine",
+        "inserire min. 2 caratteri!",
+        "Tutti i clienti!",
+        "Non &egrave; stato trovato nulla!",
+        'preview' => 'Anteprima',
+        'print' => 'Stampa',
+        'totale' => 'TOTALE',
+        'partner' => 'Cliente ',
+        'errors' => array('Inserire il cliente'
+        ),
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia cliente',
+        ),
+        'header' => array('Cod. fornitore' => '', 'Fornitore' => '', 'Fatturato' => '', 'Costi' => '',
             'Margine %' => ''
         ),
     ),

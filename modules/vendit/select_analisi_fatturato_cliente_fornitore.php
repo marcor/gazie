@@ -58,8 +58,10 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['mf'] = date("m");
       $form['af'] = date("Y");
    }
-   $form['id_agente'] = 0;
+   $form['search']['partner'] = '';
+   $form['partner'] = 0;
    unset($resultFatturato);
+   $form['hidden_req'] = '';
 } else { // le richieste successive
    $form['ritorno'] = $_POST['ritorno'];
    $form['gi'] = intval($_POST['gi']);
@@ -68,20 +70,22 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $form['gf'] = intval($_POST['gf']);
    $form['mf'] = intval($_POST['mf']);
    $form['af'] = intval($_POST['af']);
-   $form['id_agente'] = intval($_POST['id_agente']);
+   $form['search']['partner'] = substr($_POST['search']['partner'], 0, 20);
+   $form['partner'] = intval($_POST['partner']);
+   $form['hidden_req'] = $_POST['hidden_req'];
 }
 
 
 if (isset($_POST['preview'])) {
-//   if (empty($form['livello'])) {
-//      $msg .= "0+";
-//   }
+   if (empty($form['partner'])) {
+      $msg .= "0+";
+   }
    if (empty($msg)) { //non ci sono errori
       $datini = sprintf("%04d%02d%02d", $form['ai'], $form['mi'], $form['gi']);
       $datfin = sprintf("%04d%02d%02d", $form['af'], $form['mf'], $form['gf']);
 //       $_SESSION['print_request'] = array('livello'=>$form['livello'],'di'=>$datini,'df'=>$datfin);
 //       header("Location: invsta_analisi_agenti.php");
-      $what = "clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente, 
+      $what = "fornitori.codice as codice_fornitore, concat(dati_fornitori.ragso1,' ',dati_fornitori.ragso2) as nome_fornitore, 
 sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ven,
 sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*artico.preacq ELSE 0 END) as imp_acq";
       $tab_rigdoc = $gTables['rigdoc'];
@@ -96,26 +100,12 @@ join $tab_clfoco fornitori on artico.clfoco=fornitori.codice
 join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
 join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice 
 join $tab_anagra dati_clienti on clienti.id_anagra=dati_clienti.id ";
-      $id_agente = $form['id_agente'];
+      $codcli = $form['partner'];
       $where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and artico.ragstat is not null and artico.ragstat!=''" .
-              ($id_agente > 0 ? "and tesdoc.id_agente=$id_agente" : "");
-      $order = "nome_cliente";
-      $group = "clienti.codice";
-//       $query="select clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente, 
-//sum(CASE WHEN (tesdoc.datfat between '2016-01-01' and '2016-01-31' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ven,
-//sum(CASE WHEN (tesdoc.datfat between '2016-01-01' and '2016-01-31' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*artico.preacq ELSE 0 END) as imp_acq
-//FROM gaz_002rigdoc rigdoc 
-//join gaz_002tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes 
-//join gaz_002artico artico on artico.codice=rigdoc.codart 
-//join gaz_002clfoco fornitori on artico.clfoco=fornitori.codice 
-//join gaz_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
-//join gaz_002clfoco clienti on tesdoc.clfoco=clienti.codice 
-//join gaz_anagra dati_clienti on clienti.id_anagra=dati_clienti.id 
-//WHERE tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and artico.ragstat is not null and artico.ragstat!=''
-//GROUP BY clienti.codice
-//order by nome_cliente";
+              " and clienti.codice = '$codcli'";
+      $order = "nome_fornitore";
+      $group = "fornitori.codice";
       $resultFatturato = gaz_dbi_dyn_query($what, $table, $where, $order, 0, 20000, $group);
-//       exit;
    }
 }
 
@@ -125,7 +115,10 @@ if (isset($_POST['Return'])) {
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
+$vendForm = new venditForm();
+
 echo "<form method=\"POST\">";
+echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . "</div>";
 echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">";
@@ -142,6 +135,12 @@ if (!empty($msg)) {
    }
    echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . '</td></tr>';
 }
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['partner'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
+$vendForm->selectCustomer('partner', $form['partner'], $form['search']['partner'], $form['hidden_req'], $script_transl['mesg']);
+echo "</td>\n";
+echo "</tr>\n";
+
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[0]</td>";
 echo "<td class=\"FacetDataTD\">";
 // select del giorno
@@ -211,14 +210,13 @@ echo "</td></tr>";
 //echo "<input title=\"anno da analizzare\" type=\"text\" name=\"livello\" value=\"" .
 // $form["livello"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
 //echo "</td></tr>";
-
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td>";
-echo "<td  class=\"FacetDataTD\">\n";
-$select_agente = new selectAgente("id_agente");
-$select_agente->addSelected($form["id_agente"]);
-$select_agente->output();
-echo "</td></tr>\n";
+//echo "<tr>\n";
+//echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td>";
+//echo "<td  class=\"FacetDataTD\">\n";
+//$select_agente = new selectAgente("id_agente");
+//$select_agente->addSelected($form["id_agente"]);
+//$select_agente->output();
+//echo "</td></tr>\n";
 
 echo "<tr>\n
      <td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"" . ucfirst($script_transl['return']) . "\"></td>\n
