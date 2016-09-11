@@ -90,12 +90,12 @@ sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc l
       $tab_anagra = $gTables['anagra'];
       $tab_clfoco = $gTables['clfoco'];
       $table = "$tab_rigdoc rigdoc 
-join $tab_tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes 
-join $tab_artico artico on artico.codice=rigdoc.codart 
-join $tab_clfoco fornitori on artico.clfoco=fornitori.codice 
-join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
-join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice 
-join $tab_anagra dati_clienti on clienti.id_anagra=dati_clienti.id ";
+left join $tab_tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes 
+left join $tab_artico artico on artico.codice=rigdoc.codart 
+left join $tab_clfoco fornitori on artico.clfoco=fornitori.codice 
+left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
+left join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice 
+left join $tab_anagra dati_clienti on clienti.id_anagra=dati_clienti.id ";
       $id_agente = $form['id_agente'];
       $where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and artico.ragstat is not null and artico.ragstat!=''" .
               ($id_agente > 0 ? "and tesdoc.id_agente=$id_agente" : "");
