@@ -97,7 +97,7 @@ left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id
 left join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice 
 left join $tab_anagra dati_clienti on clienti.id_anagra=dati_clienti.id ";
       $id_agente = $form['id_agente'];
-      $where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and artico.ragstat is not null and artico.ragstat!=''" .
+      $where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 " .
               ($id_agente > 0 ? "and tesdoc.id_agente=$id_agente" : "");
       $order = "nome_cliente";
       $group = "clienti.codice";
