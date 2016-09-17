@@ -104,7 +104,7 @@ $strScript = array("admin_client.php" =>
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
-        'fe_cod_univoco' => 'Cod.Univoco Destinatario (fatt.elettronica)',
+        'fe_cod_univoco' => 'Cod.Univoco Ufficio (fatt.elettronica)',
         'fatt_email' => 'Inviare fattura via email',
         'fatt_email_value' => array(0 => 'No', 1 => 'Si')
     ),
