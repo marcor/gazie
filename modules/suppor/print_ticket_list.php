@@ -121,7 +121,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	$pdf->Cell(20,5,gaz_format_date($row['data']),1,0,'C',1,'',1);
    $pdf->Cell(62,5,$row['oggetto'],1,0,'L',1);
 
-   $pdf->Cell(64,5,substr($row['descrizione'],0,50),1,0,'L',1);
+   $pdf->Cell(64,5,substr(strip_tags($row['descrizione']),0,50),1,0,'L',1);
 	$pdf->Cell(12,5,gaz_format_number($row['ore']),1,0,'R',1);
 	$totale_ore += $row['ore'];	
    $pdf->Cell(18,5,$row['stato'],1,1,'R',1);

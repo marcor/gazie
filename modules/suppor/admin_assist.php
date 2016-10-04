@@ -45,6 +45,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
    }
 	$form['codice'] = trim($form['codice']);
 	$form['tipo'] = 'ASS';
+   $form['id'] = $_POST['id'];
 	$form['descrizione'] = $_POST['descrizione'];
 	$form['soluzione'] = $_POST['soluzione'];
 	$form['clfoco'] = $_POST['clfoco'];
@@ -53,7 +54,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['ore'] = $_POST['ore'];
 	$form['ora_inizio'] = $_POST['ora_inizio'];
 	$form['ora_fine'] = $_POST['ora_fine'];
-	
+	$form['note'] = $_POST['note'];
 	$form['utente'] = $_SESSION["Login"];
     
 	$form['rows'] = array();	
@@ -93,7 +94,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
 				gaz_dbi_table_update('assist',$form['ref_code'],$form);
 			}          
-			header("Location: ".$form['ritorno']);
+			//header("Location: ".$form['ritorno']);
+         header("Location: associa_install.php?id=".$form['id']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
 			exit;
 		}    
 	} elseif (isset($_POST['Return'])) { // torno indietro          
@@ -120,6 +122,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	} else {      
 		$form['codice'] = 1;
 	}  
+   $rs_ultimo_tec = gaz_dbi_dyn_query("codice,tecnico", $gTables['assist'],"tecnico<>''","codice desc");
+	$ultimo_tecnico = gaz_dbi_fetch_array($rs_ultimo_tec);
+   $form['tecnico'] = $ultimo_tecnico['tecnico']; 
 	$form['tipo'] = 'ASS';	
    $form['utente'] = $_SESSION["Login"];
 	$form['data'] = date("Y-m-d");
@@ -143,6 +148,7 @@ $select_cliente = new selectPartner('clfoco');
 <form method="POST" name="form" enctype="multipart/form-data">
 <input type="hidden" name="ritorno" value="<?php echo $form['ritorno']; ?>">
 <input type="hidden" name="ref_code" value="<?php echo $form['ref_code']; ?>">
+<input type="hidden" name="id" value="<?php echo $form['id']; ?>">
 <input type="hidden" name="codice" value="<?php echo $form['codice']; ?>">
 <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
 <table class="Tmiddle">
@@ -250,17 +256,17 @@ $select_cliente = new selectPartner('clfoco');
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['stato']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
 		<select name="cstato" onchange="updateInputStato(this.value)">
-			<?php
-			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," stato!='aperto' and stato != 'contratto'", "stato", "0", "9999");
+			<option value="aperto" <?php if ( $form['stato']=='aperto') echo '"selected"'; ?>>aperto</option>";
+         <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo '"selected"'; ?>>chiuso</option>";
+			<option value="contratto" <?php if ( $form['stato']=='contratto') echo '"selected"'; ?>>contratto</option>";
+         <?php
+			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato,".$gTables['assist'].".tipo", $gTables['assist']," stato!='aperto' and stato!='chiuso' and stato != 'contratto' and tipo='ASS'", "stato", "0", "9999");
 			while ($stati = gaz_dbi_fetch_array($result)) {				
 					if ( $form['stato'] == $stati["stato"] ) $selected = "selected"; 
 					else $selected = "";
 					echo "<option value=\"".$stati["stato"]."\" ".$selected.">".$stati["stato"]."</option>";
 			}
 			?>
-			<option value="aperto" <?php if ( $form['stato']=='aperto') echo '"selected"'; ?>>aperto</option>";
-            <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo '"selected"'; ?>>chiuso</option>";
-			<option value="contratto" <?php if ( $form['stato']=='contratto') echo '"selected"'; ?>>contratto</option>";
 		</select> 
 		<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
         <button id="toggleSta" type="button">Altro</button>
@@ -276,7 +282,9 @@ $select_cliente = new selectPartner('clfoco');
 	</td>
 </tr>
 </table>
-
+<?php
+//$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato,".$gTables['assist'].".tipo", $gTables['assist']," stato!='chiuso' and stato!='aperto' and stato != 'contratto' and tipo='ASS'", "stato", "0", "9999");
+?>
 </form>
 </div><!-- chiude div container role main --></body>
 </html>

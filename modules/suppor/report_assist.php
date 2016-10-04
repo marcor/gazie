@@ -20,14 +20,35 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
  */
-require("../../library/include/datlib.inc.php");
+require_once("../../library/include/datlib.inc.php");
+
 $admin_aziend=checkAdmin();
 $titolo = 'Assistenza Clienti';
 $totale_ore = 0;
+$stati = array();
 
-require("../../library/include/header.php");
-$script_transl=HeadMain();
+if ( !isset($_GET['include']) ) {
+   require_once("../../library/include/header.php");
+   $script_transl=HeadMain();  
+}
 
+if ( isset($_GET['chstato'] ) ) {
+   //$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," tipo='ASS'", "stato asc", "0", "9999");   
+   //$rows = gaz_dbi_fetch_all($result);
+   $rows = array ("aperto","effettuato","chiuso");
+   $found = false;
+   for ($t=0; $t<count($rows); $t++ ) {
+      if ( $found == true ) {
+         $stato = $rows[$t];
+         $found = false;
+      }
+      if ( $rows[$t]==$_GET['prev'] && $t<count($rows)-1 ) $found=true;
+      elseif  ( $rows[$t]==$_GET['prev'] && $t==count($rows)-1 ) {
+         $stato = $rows[0];
+      }
+   }
+   gaz_dbi_table_update("assist", array ("id", $_GET['chstato']), array("stato" => $stato));
+}
 
 if ( isset($_GET['auxil']) ) {
    $auxil = $_GET['auxil'];
@@ -37,6 +58,10 @@ if ( isset($_GET['auxil']) ) {
    $where = "tipo = 'ASS' and ".$gTables['anagra'].".ragso1 like '%%'";	
 }
 $all	= $where;
+
+if ( isset( $_GET['idinstallazione']) ) {
+   $where .= " and idinstallazione=".$_GET['idinstallazione'];
+}
 
 if ( isset($_GET['flt_passo']) ) {
 	$passo = $_GET['flt_passo'];
@@ -51,7 +76,6 @@ if ( isset($_GET['flt_tecnico']) ) {
 	}
 } else {
 	$flt_tecnico = "tutti";
-	//$where .= " and tecnico = 'chiuso'";
 }
 if ( isset($_GET['flt_stato']) ) {
 	$flt_stato = $_GET['flt_stato'];
@@ -118,10 +142,10 @@ if ( $flt_cliente!="tutti" ) {
 		</select></td>
 		<td class="FacetFieldCaptionTD"><select name="flt_stato" onchange="this.form.submit()">
 			<?php
-			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," tipo='ASS'", "stato", "0", "9999");
+			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," tipo='ASS' and stato!='chiuso'", "stato", "0", "9999");
 			echo "<option value=\"tutti\" ".($flt_stato=="tutti"?"selected":"").">tutti</option>";
 			echo "<option value=\"nochiusi\" ".($flt_stato=="nochiusi"?"selected":"").">non chiuso</option>";
-            echo "<option value=\"chiuso\" ".($flt_stato=="chiuso"?"selected":"").">chiuso</option>";
+         echo "<option value=\"chiuso\" ".($flt_stato=="chiuso"?"selected":"").">chiuso</option>";
 			while ($stati = gaz_dbi_fetch_array($result)) {
 					
 					if ( $flt_stato == $stati["stato"] ) $selected = "selected"; 
@@ -137,6 +161,21 @@ if ( $flt_cliente!="tutti" ) {
 		</tr>
 
 		<?php 
+      if ( isset($_GET['include']) ) {
+      $headers_assist = array  (
+			"ID" 	=> "codice",
+			"Data" 		=> "data",
+			"Cliente" 	=> "cliente",
+			"Oggetto" 	=> "oggetto",
+			"Soluzione" => "soluzione",             
+			""          => "",
+         "Ore"			=> "ore",
+         "Tecnico"       => "tecnico",
+			"Stato" 		=> "stato",	
+			"Stampa" 	=> ""
+			//"Elimina" 	=> ""
+		);   
+      } else {
 		$headers_assist = array  (
 			"ID" 	=> "codice",
 			"Data" 		=> "data",
@@ -145,11 +184,12 @@ if ( $flt_cliente!="tutti" ) {
 			"Oggetto" 	=> "oggetto",
 			"Descrizione" => "descrizione",             
 			"Ore"			=> "ore",
-            "Tecnico"       => "tecnico",
+         "Tecnico"       => "tecnico",
 			"Stato" 		=> "stato",	
 			"Stampa" 	=> "",
 			"Elimina" 	=> ""
 		);
+      }
 		
 $linkHeaders = new linkHeaders($headers_assist);
 $linkHeaders -> output();
@@ -185,19 +225,38 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			}
 		?></a>
 		</td>
-		<td><?php echo $a_row["telefo"]; ?></td>
+		<?php
+         if ( !$_GET['include'] ) {
+            echo "<td>".$a_row["telefo"]."</td>";
+         }
+      ?>
+      
 		<td><?php echo $a_row["oggetto"]; ?></td>
-		<td><?php echo $a_row["descrizione"]; ?></td>
+		<?php
+         if ( !$_GET['include'] ) {
+            echo "<td>". $a_row["descrizione"]. "</td>";
+         } else {
+            echo "<td colspan='2'>". $a_row["soluzione"]. "</td>";
+         }     
+      ?>
 		<td><?php echo $a_row["ore"]; ?></td>
       <td><?php echo $a_row["tecnico"]; ?></td>
-		<td><?php echo $a_row["stato"]; ?></td>
+		<td>
+         <a href="report_assist.php?chstato=<?php echo $a_row["id"]."&prev=".$a_row["stato"];?>" class="btn btn-xs btn-default">
+            <?php echo $a_row["stato"]; ?>
+         </a>
+      </td>
 		<td>
 			<a class="btn btn-xs btn-default" href="stampa_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>
 		</td>
-		<td>
-			<a class="btn btn-xs btn-default btn-elimina" href="delete_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>">
-			<i class="glyphicon glyphicon-remove"></i></a>
-		</td>
+		<?php
+      if ( !$_GET['include'] ) {
+      echo "<td>
+			<a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_assist.php?id=".$a_row["id"]."&cod=".$a_row["codice"]."\">
+			<i class=\"glyphicon glyphicon-remove\"></i></a>
+         </td>";
+      }
+      ?>
    </tr>
 <?php 
 	$totale_ore += $a_row["ore"];

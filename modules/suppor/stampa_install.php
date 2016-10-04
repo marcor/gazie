@@ -24,61 +24,32 @@
 */
 
 require("../../library/include/datlib.inc.php");
+//require("../../library/include/ptemplate.inc.php");
 $admin_aziend=checkAdmin();
 $title = "";
 require("lang.".$admin_aziend['lang'].".php");
 if ( !isset($_GET['id'])) {
-    header("Location: report_period.php");
+    header("Location: report_install.php");
     exit;
 }
 require("../../config/templates/report_template.php");
 
 if ( isset($_GET['id']) ){
-   $sql = $gTables['assist'].'.id = '.intval($_GET['id']).' ';
+   $sql = $gTables['instal'].'.id = '.intval($_GET['id']).' ';
 } else {
-   $sql = $gTables['assist'].'.id > 0 ';
+   $sql = $gTables['instal'].'.id > 0 ';
 }
 $where = $sql;
 
-/**
- *
- * @get text between tags
- * @param string $tag The tag name
- * @param string $html The XML or XHTML string
- * @param int $strict Whether to use strict mode
- * @return array
- *
- */
-/*function getTextBetweenTags($tag, $html, $strict=0)
-{
-   $dom = new domDocument;
-    if($strict==1) {
-        $dom->loadXML($html);
-    } else {
-       libxml_use_internal_errors(true);
-      $dom->loadHTML($html);
-      foreach (libxml_get_errors() as $error) {
-        //echo $error->code." - Line: ".$error->line;
-      }
-    }
-    $dom->preserveWhiteSpace = false;
-    $content = $dom->getElementsByTagname($tag);
-    $out = array();
-    foreach ($content as $item) {
-        $out[] = $item->nodeValue;
-    }
-    libxml_use_internal_errors(false);
-    return $out;
-}*/
+$file = "../../config/templates/report_install.php";
 
-$file = "../../config/templates/report_period_".$_GET["stato"].".php";
 if ( file_exists($file) ) {
-   $result = gaz_dbi_dyn_query($gTables['assist'].".*,
+   $result = gaz_dbi_dyn_query($gTables['instal'].".*,
 		".$gTables['anagra'].".ragso1, ".$gTables['anagra'].".ragso2, ".$gTables['anagra'].".indspe, 
       ".$gTables['anagra'].".capspe, ".$gTables['anagra'].".telefo, ".$gTables['anagra'].".cell, 
       ".$gTables['anagra'].".citspe, ".$gTables['anagra'].".prospe, ".$gTables['anagra'].".fax,
-      ".$gTables['clfoco'].".codice ",  $gTables['assist'].
-		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice". 
+      ".$gTables['clfoco'].".codice ",  $gTables['instal'].
+		" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['instal'].".clfoco = ".$gTables['clfoco'].".codice". 
 		" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
 		$where, "id", $limit, $passo);
 		

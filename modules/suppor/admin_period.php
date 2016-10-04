@@ -43,6 +43,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
    foreach($_POST['search'] as $k=>$v){
       $form['search'][$k]=$v;
    }
+   $form['id'] = $_POST['id'];
+   $form['cosear'] = $_POST['cosear'];
+   $form['codart'] = $_POST['codart'];
 	$form['codice'] = trim($form['codice']);
 	$form['tipo'] = 'ASP';
 	$form['descrizione'] = $_POST['descrizione'];
@@ -54,9 +57,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	//$form['ore'] = $_POST['ore'];
 	//$form['ora_inizio'] = $_POST['ora_inizio'];
 	//$form['ora_fine'] = $_POST['ora_fine'];
-	
+   $form['ripetizione'] = $_POST['ripetizione'];
+   $form['ogni'] = $_POST['ogni'];
 	$form['utente'] = $_SESSION["Login"];
-    
+  
 	$form['rows'] = array();	
    if (isset($_POST['Submit'])) {
 		// conferma tutto       
@@ -94,23 +98,27 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
 				gaz_dbi_table_update('assist',$form['ref_code'],$form);
 			}          
-			header("Location: ".$form['ritorno']);
+			header("Location: associa_install.php?id=".$form['id']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
 			exit;
 		}    
 	} elseif (isset($_POST['Return'])) { // torno indietro          
-		header("Location: ".$form['ritorno']);
+		header("Location: report_period.php");
         exit;
 	}
-} elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { 
+} 
+elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { 
 	$assist = gaz_dbi_get_row($gTables['assist'],"codice",$_GET['codice']);
 	//se e' il primo accesso per UPDATE    
 	$anagrafica = new Anagrafica();
-    $cliente = $anagrafica->getPartner($assist['clfoco']);
+   $cliente = $anagrafica->getPartner($assist['clfoco']);
 	$form = gaz_dbi_get_row($gTables['assist'], 'codice', $_GET['codice']);
 	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
+   $form['codart'] = $assist['codart'];
+   $form['cosear'] = $assist['codart'];
     $form['ritorno']="../../modules/suppor/report_period.php";
     $form['ref_code']=$form['codice'];
-} else { 
+} 
+else { 
 	//se e' il primo accesso per INSERT   
 	$form=gaz_dbi_fields('assist');
 	$rs_ultima_ass = gaz_dbi_dyn_query("codice", $gTables['assist'],$where,"codice desc");
@@ -124,8 +132,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['tipo'] = 'ASS';	
     $form['utente'] = $_SESSION["Login"];
 	$form['data'] = date("Y-m-d");
+   $form['cosear'] = '';
+   $form['codart'] = '';
+   
+   $rs_ultimo_tec = gaz_dbi_dyn_query("codice,tecnico", $gTables['assist'],"tecnico<>''","codice desc");
+	$ultimo_tecnico = gaz_dbi_fetch_array($rs_ultimo_tec);
+   $form['tecnico'] = $ultimo_tecnico['tecnico'];
 	//$form['ore'] = "0.00";
-	$form['stato'] = 'aperto';
+	$form['stato'] = '0';
+   $form['ripetizione'] = 1;
+   $form['ogni'] = "Anni";
    //echo $form['stato'];
 	$form['search']['clfoco']='';
 	$form['ritorno']=$_SERVER['HTTP_REFERER'];
@@ -145,6 +161,7 @@ $select_cliente = new selectPartner('clfoco');
 <input type="hidden" name="ritorno" value="<?php echo $form['ritorno']; ?>">
 <input type="hidden" name="ref_code" value="<?php echo $form['ref_code']; ?>">
 <input type="hidden" name="codice" value="<?php echo $form['codice']; ?>">
+<input type="hidden" name="id" value="<?php echo $form['id']; ?>">
 <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
 <table class="Tmiddle">
 <tr>
@@ -197,20 +214,37 @@ $select_cliente = new selectPartner('clfoco');
 	</td>
 </tr>
 <tr>
+   <td class="FacetFieldCaptionTD">Articolo</td>
+   <td class="FacetDataTD">
+      <?php 
+      $select_artico = new selectartico("codart");
+      $select_artico->addSelected($form['codart']);
+      $select_artico->output($form['cosear']);
+      ?>
+   </td>
+</tr>
+<tr>
    <td class="FacetFieldCaptionTD"><?php echo $script_transl['prezzo']; ?> </td>
    <td colspan="2" class="FacetDataTD">
       <input type="text" name="prezzo" value="<?php echo $form['prezzo']; ?>" align="right" maxlength="255" size="70"/>
    </td>
 </tr>
+<?php
+   /*$part = explode( "-", $form['ripetizione'] );
+   if ( $part[1] == "G" ) $durata = "Giorni";
+   if ( $part[1] == "M" ) $durata = "Mesi";
+   if- ( $part[1] == "A" ) $durata = "Anni";/*/
+   $durata = $form['ogni'];
+   ?>
 <tr>
 	<td class="FacetFieldCaptionTD">Ripeti ogni</td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="ripetizione" align="right" maxlength="255"><?php //echo $form['ripetizione']; ?>
+		<input type="text" name="ripetizione" align="right" maxlength="255" value="<?php echo $form['ripetizione']; ?>">
 		<select name="ogni">
-			<option value="Nessuna">Nessuna</option>
-			<option value="Giorni">Giorni</option>
-			<option value="Mese">Mesi</option>
-			<option value="Anno">Anni</option>
+			<option value="Nessuna" <?php if ($durata == "Nessuna") echo "selected"; ?>>Nessuna</option>
+			<option value="Giorni" <?php  if ($durata == "Giorni") echo "selected"; ?>>Giorni</option>
+			<option value="Mesi" <?php if ($durata == "Mesi") echo "selected"; ?>>Mesi</option>
+			<option value="Anni" <?php if ($durata == "Anni") echo "selected"; ?>>Anni</option>
 		</select>
 	</td>
 </tr>
@@ -226,13 +260,14 @@ $select_cliente = new selectPartner('clfoco');
 					echo "<option value=\"".$stati["stato"]."\" ".$selected.">".$stati["stato"]."</option>";
 			}*/
 			?>
-			<option value="aperto" <?php if ( $form['stato']=='aperto') echo 'selected'; ?>>aperto</option>
-         <option value="avvisato" <?php if ( $form['stato']=='avvisato') echo 'selected'; ?>>avvisato</option>
-         <option value="effettuato" <?php if ( $form['stato']=='effettuato') echo 'selected'; ?>>effettuato</option>
-         <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo 'selected'; ?>>chiuso</option>
+			<option value="0" <?php if ( $form['stato']=='0') echo 'selected'; ?>><?php echo $per_stato[0]; ?></option>
+         <option value="1" <?php if ( $form['stato']=='1') echo 'selected'; ?>><?php echo $per_stato[1]; ?></option>
+         <option value="2" <?php if ( $form['stato']=='2') echo 'selected'; ?>><?php echo $per_stato[2]; ?></option>
+         <option value="3" <?php if ( $form['stato']=='3') echo 'selected'; ?>><?php echo $per_stato[3]; ?></option>
+         <option value="4" <?php if ( $form['stato']=='4') echo 'selected'; ?>><?php echo $per_stato[4]; ?></option>
 		</select> 
-		<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>
-        <button id="toggleSta" type="button">Altro</button>
+		<!--<input type="text" name="stato" id="stato" value="<?php echo $form['stato']; ?>" align="right" maxlength="255" size="40"/>-->
+        <!--<button id="toggleSta" type="button">Altro</button>-->
 	</td>
 </tr>
 <tr>
@@ -249,10 +284,11 @@ $select_cliente = new selectPartner('clfoco');
 </form>
 </div><!-- chiude div container role main --></body>
 </html>
+<script src="../../js/custom/autocomplete.js"></script>
 <script type="text/javascript">
-function updateInputStato(ish){
+/*function updateInputStato(ish){
     document.getElementById("stato").value = ish;
-}
+}*/
 function updateInputTecnico(ish){
     document.getElementById("tecnico").value = ish;
 }
@@ -282,11 +318,11 @@ function calculateTime() {
 $( document.getElementById("toggleTec") ).click(function() {
   $( "#tecnico" ).fadeIn('fast');//toggle( "fold" );
 });
-$( document.getElementById("toggleSta") ).click(function() {
+/*$( document.getElementById("toggleSta") ).click(function() {
   $( "#stato" ).fadeIn('fast');
-});
+});*/
 $(function() {
  $("#tecnico").fadeOut('fast');//toggle('fold');
- $("#stato").toggle('fold');
+ //$("#stato").toggle('fold');
 })
 </script>
