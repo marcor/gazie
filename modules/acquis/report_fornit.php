@@ -103,7 +103,7 @@ if (!isset($_GET['field'])) {
 				<option value="All" <?php echo ($citta=="All") ? "selected" : "";?>><?php echo $script_transl['tuttecitta']; ?></option>			
 				<?php //$tabella = $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id'; 
 				//gaz_filtro ( "citspe", $tabella, $all, $orderby);
-				$res = gaz_dbi_dyn_query("distinct citspe", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all, $orderby);
+				$res = gaz_dbi_dyn_query("distinct citspe", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all);
 				while ( $val = gaz_dbi_fetch_array($res) ) {
 					if ( $citta == $val["citspe"] ) $selected = "selected";
 					else $selected = "";
