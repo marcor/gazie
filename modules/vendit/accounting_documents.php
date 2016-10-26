@@ -361,7 +361,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 // memorizzo l'id del rigo cliente  
                 $paymov_id = gaz_dbi_last_id();
                 foreach ($v['acc'] as $acc_k => $acc_v) {
-                    if ($acc_v['import'] > 0) {
+                    if ($acc_v['import'] != 0) {
                         rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $acc_k, 'import' => $acc_v['import']));
                     }
                 }

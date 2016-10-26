@@ -444,7 +444,7 @@ $strScript = array("admin_client.php" =>
         'vat_section' => ' della sezione IVA n.',
         'on' => 'alla data del',
         'period' => 'Periodo : ',
-        'period_value' => array(1 => 'mese di ', 2 => 'bimestre ', 3 => 'trimeste ', 4 => 'quadrimestre ', 6 => 'semestre ', 12 => 'annualità  '),
+        'period_value' => array(1 => 'mese di ', 2 => 'bimestre ', 3 => 'trimestre ', 4 => 'quadrimestre ', 6 => 'semestre ', 12 => 'annualità  '),
         'n_creation' => 'N. doc. da generare',
         'norows' => 'Non ci sono contratti da fatturare',
         'expired' => 'Contratto scaduto',

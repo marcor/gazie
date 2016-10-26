@@ -433,7 +433,7 @@ $strScript = array("admin_client.php" =>
         'vat_section' => ' of the VAT section n.',
         'on' => ' on ',
         'period' => 'Period',
-        'period_value' => array(1 => 'mese di ', 2 => 'bimestre ', 3 => 'trimeste ', 4 => 'quadrimestre ', 6 => 'semestre ', 12 => 'annualità '),
+        'period_value' => array(1 => 'mese di ', 2 => 'bimestre ', 3 => 'trimestre ', 4 => 'quadrimestre ', 6 => 'semestre ', 12 => 'annualità '),
         'n_creation' => 'Number of doc',
         'norows' => 'There are no contracts to be invoiced',
         'expired' => 'Contract expired',
