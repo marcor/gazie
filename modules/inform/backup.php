@@ -179,15 +179,23 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         } else {
             continue;
         }
-        echo "DROP TABLE IF EXISTS `" . $nome_tabella . "`;\n";
-        $av = createTable($nome_tabella);
-        if ($av) {
-            $acc_view[] = $nome_tabella;
+        $rs_table = gaz_dbi_query("SHOW CREATE TABLE " . $nome_tabella);
+        $trow = gaz_dbi_fetch_array($rs_table);
+        if (isset($trow['Create View'])) {
+            // aggiungo il nome della tabella di tipo vista 
+            echo "DROP VIEW IF EXISTS `" . $nome_tabella . "`;\n";
+            $acc_view[] = $trow['Create View'];
+        } else {
+            // ... oppure una tabella normale
+            echo "DROP TABLE IF EXISTS `" . $nome_tabella . "`;\n";
+            echo $trow['Create Table'].";\n";
         }
+        echo "\n";
+
         // riempimento della tabella corrente
         $field_results = gaz_dbi_query("select * from " . $nome_tabella);
         $field_meta = gaz_dbi_get_fields_meta($field_results);
-        if (gaz_dbi_num_rows($field_results) > 0) {
+        if (gaz_dbi_num_rows($field_results) > 0 && !isset($trow['Create View'])) {
             echo "LOCK TABLES `" . $nome_tabella . "` WRITE;\n";
             $head_query_insert = "INSERT INTO `" . $nome_tabella . "` ( ";
             for ($j = 0; $j < $field_meta['num']; $j++) {
@@ -238,10 +246,8 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         }
     }
     // aggiungo le viste che ho incontrato (view) alla fine del file di backup
-    foreach ($acc_view as $nv) {
-        $r_nv = gaz_dbi_query("SHOW CREATE TABLE " . $nv);
-        $r = gaz_dbi_fetch_array($r_nv);
-        echo $r['Create View'] . ";\n\n";
+    foreach ($acc_view as $vw){
+        echo $vw.";\n\n";
     }
 
     gaz_dbi_put_row($gTables['config'], 'variable', 'last_backup', 'cvalue', date('Y-m-d'));
