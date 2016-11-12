@@ -196,5 +196,5 @@ if (isset($_GET['ricerca_completa'])) {
         ?>
 </form>
 </table>
-</div><!-- chiude div container role main --></body>
+<?php page_footer(); ?>
 </html>

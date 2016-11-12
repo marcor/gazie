@@ -1,0 +1,389 @@
+BODY {
+}
+DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL  {
+   color : #000000;
+}
+TABLE {
+}
+TABLE.Tlarge{
+}
+TABLE.Tmiddle{
+    border-color : #000000;
+}
+TABLE.Tsmall{
+    border-color : #000000;
+}
+TABLE.selectTable TR.even {
+    background-color:#E3AC76;
+    color : #000000;
+}
+TABLE.selectTable TR.odd {
+   background-color:#FFFFFF;
+   color : #000000;
+}
+TABLE.selectTable TD {
+	border-bottom-color : #ddd;
+	color:#333;
+}
+.selectContainer {
+	border-color : #222;
+}
+.selectHeader {
+	color:#eee;
+	background-color:#000;
+}
+.topmenu {
+   color : #000000;
+   background-color: #FFD9B3;
+}
+.bottomMenu {
+   color : #000000;
+}
+.FacetFormTABLE  {
+   border-color : #000000;
+}
+.FacetFormHeaderFont  {
+   color : #000000;
+}
+.FacetFormHeaderRed  {
+   color : #FF0000;
+}
+.FacetFieldCaptionTD  {
+   background-color : #E3AC76;
+   color : #000000;
+	border-color : #b07943;
+}
+.FacetDataTRstart td  {
+   border-top-color : white;
+}
+.FacetDataTRend td  {
+     border-bottom-color: #FFFFFF;
+}
+
+.FacetDataTD  {
+   background-color : #eee;
+   color : #000000;
+	border-bottom-color : #ddd;
+}
+.dispari {
+	background-color : #D68738;
+}
+.FacetDataTDevidenziaOK  {
+    background-color : #FFE13C;
+    color : #000000;
+ }
+
+.FacetDataTDevidenziaCL  {
+    background-color : #00FF3C;
+    color : #000000;
+ }
+
+.FacetDataTDevidenziaBL  {
+    background-color : #AAAAFF;
+    color : #000000;
+ }
+
+.FacetDataTDevidenziaKO  {
+    background-color : #FF8888;
+    color : #000000;
+ }
+
+.FacetDataTDsmall  {
+   background-color : #FFFFFF;
+   color : #000000;
+ 	border-bottom-color: #fff;
+	border-right-color: #fff;
+}
+
+.FacetDataTDsmall a {
+}
+
+.FacetDataTDsmallRed  {
+    background-color : #FFFFFF;
+    color : #FF0000;
+}
+
+.FacetDataTDred  {
+    background-color : #FFFFFF;
+    color : #FF0000;
+}
+
+.FacetColumnTD  {
+    color : #000000;
+    background-color : #FFD9B3;
+    border-color: #cca691;
+}
+
+.FacetAltDataTD  {
+    background-color : #FFD9B3;
+    color : #000000;
+}
+
+.FacetSeparatorTD  {
+}
+
+.FacetFooterTD  {
+    background-color : #FFD9B3;
+    color : #000000;
+}
+
+.FacetDisabledTD  {
+    background-color : #FFD9B3;
+    color : #C77405;
+}
+
+.FacetMainMenu {
+    color : yellow;
+    background-color: blue;
+}
+
+.FacetButton  {
+    border-color : #000000;
+    background-color : #EFEFEF;
+}
+
+.FacetInput  {
+   border-color : #000000;
+   background-color : #FFFFFF;
+}
+
+.FacetTextarea  {
+    border-color : #000000;
+    background-color : #FFFFFF;
+}
+
+.FacetSelect  {
+    background-color : #FFFFFF;
+}
+
+.FacetSmall  {
+    color : #FF00FF;
+}
+.FacetText  {
+    color : #000000;
+}
+.FacetSelectBil  {
+    background-color : #E3AC76;
+    color : #000000;
+}
+.error {
+    color : red;
+}
+.error_box {
+    border-color : #000000;
+}
+
+.ThemeGazieMainItemHover,.ThemeGazieMainItemActive
+{
+	background:		url(../../js/jscookmenu/mainmenubg.png);
+}
+
+.ThemeGazieMainItem
+{
+	background-color:	#FFFFFF;
+}
+.ThemeGazieMenuItemHover,.ThemeGazieMenuItemActive
+{
+	background-color:	#FFEEC2;
+}
+
+#admin_main{
+}
+
+#admin_welcome{
+}
+
+#admin_p_logout{
+}
+
+#admin_footer{
+  opacity:0.5;
+  filter:alpha(opacity=50);
+}
+
+#admin_footer:hover{
+  opacity:1;
+  filter:alpha(opacity=100);
+}
+
+.nav>li>a:hover,.nav>li>a:focus {
+  background-color: #E3AC76;
+  color: #123311;
+}
+.nav>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #E3AC76;
+  color: #123311;
+}
+.nav>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #E3AC76;
+  color: #123311;
+}
+.nav>li>ul>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #E3AC76;
+  color: #123311;
+}
+.navbar {
+  border-bottom-color : #000000;
+  border-left-color: #000000;
+  border-right-color : #000000;
+}
+.nav > li > a {
+}
+.nav > li > a:hover {
+  background-color: #D68738;
+}
+.nav > li > a.row-menu {
+}
+.nav > li > a.icon-menu {
+}
+div.help {
+}
+.nav-boot {
+  background-color : #E3AC76;
+  color : #000000;
+}
+.nav-first {
+}
+.navbar-brand {
+}
+.nav-mb {
+
+}
+.nav-tabs {
+}
+table.submenu {
+}
+.navbar-left {
+	border-color : #fff;
+}
+.navbar-lower {
+  background-color: #FFD9B3;
+}
+div.FacetFormHeaderFont {
+}
+.vcenter {
+}
+input.input-xs {
+}
+.caret {
+	text-color: #fff;
+	border-top-color: white !important;
+}
+.container-fluid {
+}
+.navbar-collapse {
+}
+.opzione {
+}
+.progress {
+}
+.navbar-toggle {
+}
+.contenuto-help {
+	background: #fff;
+    border-color: #ddd;
+}
+.nav-tabs {
+}
+.help-text {
+}
+
+.help-text a {
+	color: #916A4A;
+}
+/*    --------------------------------------------------
+	:: Login Section
+	-------------------------------------------------- */
+
+.panel-title {
+}
+.panel-info {
+	border-color: #D68738;
+}
+.panel-info > .panel-gazie {
+	background-color: #E3AC76;
+    border-color: #D68738;
+	color: #123311;
+}
+#formlogin {
+}
+#formlogin .form-wrap {
+}
+.form-logo {
+}
+.form-main {
+	background-color: #C77405;
+	border-color: #000;
+}
+#formlogin h1 {
+    color: #C77405;
+}
+#formlogin .form-group {
+}
+#formlogin .checkbox {
+}
+#formlogin .checkbox.show:before {
+    color: #C77405;
+}
+#formlogin .checkbox .character-checkbox {
+    border-color: #ccc;
+}
+#formlogin .checkbox .label {
+    color: #6d6d6d;
+}
+#formlogin .btn.btn-custom {
+}
+#formlogin .forget {
+}
+.panel-help {
+  background-color: #FFD9B3;
+}
+
+/*    --------------------------------------------------
+	:: Inputs & Buttons
+	-------------------------------------------------- */
+.form-control {
+    color: #212121;
+}
+.btn-custom {
+    color: #fff;
+	background-color: #D68738;
+}
+.btn-custom:hover,
+.btn-custom:focus {
+    color: #fff;
+}
+.btn-edit {
+	background-color: #aa00a8;
+}
+.btn-cont {
+	background-color: #E3AC76;
+}
+.btn-elimina {
+	color: #ff3939;
+}
+.btn-xml {
+	color: #0000ff;
+}
+.btn.disabled {
+}
+.btn-effetti {
+	background-color: #D4CB6A;
+}
+.btn-riba {
+	background-color: #FFF7AA;
+}
+.btn-fatt {
+	background-color: #d4cb6a;
+}
+.btn-pagamento {
+	color: #D77F00;
+}
+.btn-articolo {
+}
+.btn-lista {
+
+}
+.form-inline {
+	background-color: #FFD9B3;
+}

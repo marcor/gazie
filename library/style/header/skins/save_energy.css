@@ -1,0 +1,347 @@
+BODY {
+     background-color : #000000;
+     color : #FFFFFF;
+}
+
+DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL, INPUT  {
+    color : #FFFFFF;
+}
+
+TABLE.Tlarge{
+    border-color : #898989;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+TABLE.Tmiddle{
+    border-color : #898989;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+TABLE.Tsmall{
+    border-color : #898989;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+TABLE.selectTable TR.even {
+	background-color:#000000;
+    color : #FFFFFF;
+}
+TABLE.selectTable TR.odd {
+    background-color:#000000;
+    color : #FFFFFF;
+}
+
+TABLE.selectTable TD {
+	background-color:#000000;
+	border-bottom-color: #ddd;
+	color:#FFFFFF;
+}
+
+.selectContainer {
+	border-color: #898989;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+.selectHeader {
+	color:#FFFFFF;
+	background-color:#000000;
+}
+		
+.topmenu {
+    color : #FFFFFF;
+    background-color: #000000;
+}
+
+.bottomMenu {
+    color : #FFFFFF;
+}
+
+.FacetFormTABLE  {
+    border-color : #898989;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetFormHeaderFont  {
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetFormHeaderRed  {
+    color : #FF0000;
+}
+
+.FacetFieldCaptionTD  {
+    background-color : #444444;
+    color : #FFFFFF;
+}
+
+.FacetDataTD  {
+    background-color : #222222;
+    color : #FFFFFF;
+    border-bottom-color : #aaa;
+}
+
+.FacetDataTDsmall  {
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetDataTDsmallRed  {
+    background-color : #000000;
+    color : #FF0000;
+}
+
+.FacetDataTDred  {
+    background-color : #000000;
+    color : #FF0000;
+}
+
+.FacetColumnTD  {
+    color : #FFFFFF;
+    background-color : #000000;
+}
+
+.FacetAltDataTD  {
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetSeparatorTD  {
+}
+
+.FacetFooterTD  {
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetDisabledTD  {
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetMainMenu {
+    color : yellow;
+    background-color: blue;
+}
+
+.FacetButton  {
+    border-color : #FFFFFF;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetInput  {
+    border-color: #FFFFFF;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetTextarea  {
+    border-color : #FFFFFF;
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetSelect  {
+    background-color : #000000;
+    color : #FFFFFF;
+}
+
+.FacetSmall  {
+    color : #FFFFFF;
+}
+.FacetText  {
+    background-color : #000000;
+    color : #FFFFFF;
+}
+.FacetSelectBil  {
+    background-color : #000000;
+    color : #FFFFFF;
+}
+.error {
+    color : red;
+}
+.error_box {
+    border-color: #8C8C8C;
+}
+.ThemeGazieMainItemHover,.ThemeGazieMainItemActive
+{
+	background:  #777799;
+}
+.ThemeGazieMainItem
+{
+	background-color:	#555555;
+}
+.ThemeGazieMenuItemHover,.ThemeGazieMenuItemActive
+{
+	background-color:	#999999;
+}
+#admin_main{
+}
+
+#admin_welcome{
+}
+
+#admin_p_logout{
+}
+
+#admin_footer{
+  opacity:0.5;
+  filter:alpha(opacity=50);
+}
+
+#admin_footer:hover{
+  opacity:1;
+  filter:alpha(opacity=100);
+}
+.nav>li>a:hover,.nav>li>a:focus {
+  background-color: #BABABA;
+  color: #123311;
+}
+.nav>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #BABABA;
+  color: #123311;
+}
+.nav>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #BABABA;
+  color: #123311;
+}
+.nav>li>ul>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+  background-color: #BABABA;
+  color: #123311;
+}
+.navbar {
+  border-bottom-color: #8C8C8C;
+  border-left-color: #8C8C8C;
+  border-right-color: #8C8C8C;
+}
+.navbar-default .navbar-brand {
+    color: #fff;
+}
+.nav > li > a {
+}
+.nav > li > a:hover {
+  background-color: #999999;
+}
+.nav > li > a.row-menu {
+}
+.nav > li > a.icon-menu {
+}
+div.help {
+}
+.nav-boot {
+  background-color : #565656;
+  color : #000000;
+}
+.nav-first {
+}
+.navbar-brand {
+}
+.nav-tabs {
+}
+table.submenu {
+}
+.navbar-left {
+	border-color: #fff;
+}
+.navbar-lower {
+  background-color: #848A84;
+}
+div.FacetFormHeaderFont {
+}
+.vcenter {
+}
+input.input-xs {
+}
+.caret {
+	text-color: #fff;
+	border-top-color: white !important;
+}
+
+.container-fluid {
+}
+.navbar-collapse {
+}
+.opzione {
+}
+.progress {
+}
+.navbar-toggle {
+}
+.contenuto-help {
+	background: #fff;
+    border-color: #ddd;
+}
+.nav-tabs {
+}
+.help-text {
+}
+
+.help-text a {
+	color: #121212;
+}
+/*    --------------------------------------------------
+	:: Login Section
+	-------------------------------------------------- */
+
+.panel-title {
+}
+.panel-info {
+	border-color: #898989;
+}
+.panel-info > .panel-gazie {
+	background-color: #BABABA;
+    border-color: #898989;
+	color: #123311;
+}
+#formlogin {
+}
+#formlogin .form-wrap {
+}
+.form-logo {
+}
+.form-main {
+	background-color: #999999;
+	border-color: #898989;
+}
+#formlogin h1 {
+    color: #1fa67b;
+}
+#formlogin .form-group {
+}
+#formlogin .checkbox {
+}
+#formlogin .checkbox.show:before {
+    color: #1fa67b;
+}
+#formlogin .checkbox .character-checkbox {
+    border-color: #898989;
+}
+#formlogin .checkbox .label {
+    color: #6d6d6d;
+}
+#formlogin .btn.btn-custom {
+}
+#formlogin .forget {
+}
+.panel-help {
+  background-color: #999999;
+}
+/*    --------------------------------------------------
+	:: Inputs & Buttons
+	-------------------------------------------------- */
+.form-control {
+    color: #212121;
+}
+.btn-custom {
+    color: #fff;
+	background-color: #999999;
+}
+.btn-custom:hover,
+.btn-custom:focus {
+    color: #fff;
+}

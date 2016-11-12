@@ -60,23 +60,44 @@ $result = gaz_dbi_dyn_query("*", $gTables['config'], "1=1", ' id ASC', 0, 1000);
                     </div>
                 <?php
                 if (gaz_dbi_num_rows($result) > 0) {
-                    while ($r = gaz_dbi_fetch_array($result)) {
+                    while ($r = gaz_dbi_fetch_array($result)) {                    
                     ?>
-                    
                     <div class="form-group">
                         <label for="input<?php echo $r["id"];?>" class="col-sm-4 control-label"><?php echo $r["description"]; ?></label>
                         <div class="col-sm-8">
-							<input type="text<?php /*if ( strpos($r["variable"],"pass")===false ) {
+							   <?php
+                        if ( $r['variable']=="header" ) {
+                           echo '<select name="'.$r["variable"].'" class="form-control input-sm">';
+                           $relativePath = '../../library/include';
+                           if ($handle = opendir($relativePath)) {
+                              while ($file = readdir($handle)) {
+                                 if(($file == ".") or ($file == "..") or ($file == ".svn")) continue;
+                                 if(( substr($file,0,6) == "header") ) {
+                                    $selected="";
+                                    if ($r["cvalue"] == $file) {
+                                       $selected = " selected ";
+                                    }
+                                    echo "<option value=\"".$file."\"".$selected.">".ucfirst($file)."</option>";
+                                 }
+                              }
+                           closedir($handle);
+                           echo "</select>";
+                           }                     
+                        }
+                        else { ?>
+                     <input type="text<?php /*if ( strpos($r["variable"],"pass")===false ) {
 									echo "text";
 								} else {
 									echo "password";
 								}*/?>" class="form-control input-sm" id="input<?php echo $r["id"];?>" name="<?php echo $r["variable"];?>" placeholder="<?php echo $r["variable"];?>" value='<?php echo $r["cvalue"]; ?>' >
-                        </div>
-                    </div>
+                        
                     <?php
+                        }
+                        echo "</div>
+                    </div>";
                     }
                 }
-                ?>                    
+?>              <hr>
                 <div class="form-group">
                     <div class="col-sm-offset-11 col-sm-1">
                         <button type="submit" class="btn btn-default">Salva</button>

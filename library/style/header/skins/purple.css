@@ -1,0 +1,387 @@
+BODY {
+    background-image : url("../../library/images/sfondo.png");
+    background-attachment : fixed;
+}
+DIV,TABLE, TH, TR, TD, UL, OL, LI, P, FONT, A, BLOCKQUOTE, LABEL  {
+    color : #000000;
+}
+TABLE {
+}
+TABLE.Tlarge{
+    border-color: #000000;
+}
+TABLE.Tmiddle{
+    border-color : #000000;
+}
+TABLE.Tsmall{
+    border-color : #000000;
+}
+TABLE.selectTable TR.even {
+    background-color:#AAE2A8;
+    color : #000000;
+}
+TABLE.selectTable TR.odd {
+    background-color:#C9EDC8;
+    color : #000000;
+}
+TABLE.selectTable TD {
+    border-bottom-color: #dddddd;
+    color:#333;
+}
+.selectContainer {
+    border-color: #212121;
+}
+.selectHeader {
+    color:#eee;
+    background-color:#000;
+}
+.topmenu {
+    color : #000000;
+    background-color: #fcd8f9;
+}
+.bottomMenu {
+    color : #000000;
+}
+.FacetFormTABLE  {
+    border-color : #000000;
+}
+.FacetFormHeaderFont  {
+    color : #000000;
+}
+.FacetFormHeaderRed  {
+    color : #00eafe;
+}
+.FacetFieldCaptionTD  {
+    background-color : #e2a8dd;
+    color : #000000;
+}
+.FacetDataTRstart td  {
+    border-top-color: white;
+}
+.FacetDataTRend td  {
+    border-bottom-color: #fefefe;
+}
+
+.FacetDataTD  {
+    background-color : #edc9ea;
+    color : #000000;
+}
+.dispari {
+    background-color : #dbb7db;
+}
+
+.FacetDataTDevidenziaOK  {
+    background-color : #3d49fe;
+    color : #000000;
+}
+
+.FacetDataTDevidenziaCL  {
+    background-color : #fe00ad;
+    color : #000000;
+}
+
+.FacetDataTDevidenziaBL  {
+    background-color : #f7fea8;
+    color : #000000;
+}
+
+.FacetDataTDevidenziaKO  {
+    background-color : #89f4fe;
+    color : #000000;
+}
+
+.FacetDataTDsmall  {
+    background-color : #edc9ea;
+    color : #000000;
+    border-bottom-color: #fefefe;
+    border-right-color: #fefefe;
+}
+
+.FacetDataTDsmall a {
+}
+
+.FacetDataTDsmallRed  {
+    background-color : #edc9ea;
+    color : #00eafe;
+}
+
+.FacetDataTDred  {
+    background-color : #edc9ea;
+    color : #00eafe;
+}
+
+.FacetColumnTD  {
+    color : #000000;
+    background-color : #eadbea;
+}
+
+.FacetAltDataTD  {
+    background-color : #f2d3ef;
+    color : #000000;
+}
+
+.FacetSeparatorTD  {
+}
+
+.FacetFooterTD  {
+    background-color : #f2d3ef;
+    color : #000000;
+}
+
+.FacetDisabledTD  {
+    background-color : #f2d3ef;
+    color : #997caa;
+}
+
+.FacetMainMenu {
+    color : yellow;
+    background-color: blue;
+}
+
+.FacetButton  {
+    border-color : #000000;
+    background-color : #efefef;
+}
+
+.FacetInput  {
+    border-color : #000000;
+    background-color : #fefefe;
+}
+
+.FacetTextarea  {
+    border-color : #000000;
+    background-color : #fefefe;
+}
+
+.FacetSelect  {
+    background-color : #edc9ea;
+}
+
+.FacetSmall  {
+    color : #00fe14;
+}
+.FacetText  {
+    color : #000000;
+}
+.FacetSelectBil  {
+    background-color : #e2a8dd;
+    color : #000000;
+}
+.error {
+    color : red;
+}
+.error_box {
+    border-color: #000000;
+}
+
+.ThemeGazieMainItemHover,.ThemeGazieMainItemActive
+{
+    background:url(../../js/jscookmenu/mainmenubg.png);
+}
+
+.ThemeGazieMainItem
+{
+    background-color:#c9edc8;
+}
+.ThemeGazieMenuItemHover,.ThemeGazieMenuItemActive
+{
+    background-color:#FFEEC2;
+}
+#admin_main{
+    background-image: url("../../library/images/sfondo.png");
+    background-attachment: fixed;
+}
+
+#admin_welcome{
+}
+
+#admin_p_logout{
+}
+
+#admin_footer{
+    opacity:0.5;
+    filter:alpha(opacity=50);
+}
+
+#admin_footer:hover{
+    opacity:1;
+    filter:alpha(opacity=100);
+}
+.nav>li>a:hover,.nav>li>a:focus {
+    background-color: #e2a8dd;
+    color: #331130;
+}
+.nav>li>ul>li>a:hover,.nav>li>a:focus {
+    background-color: #e2a8dd;
+    color: #331130;
+}
+.nav>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+    background-color: #e2a8dd;
+    color: #331130;
+}
+.nav>li>ul>li>ul>li>ul>li>a:hover,.nav>li>a:focus {
+    background-color: #e2a8dd;
+    color: #331130;
+}
+.navbar {
+    border-bottom-color: #000000;
+    border-left-color: #000000;
+    border-right-color: #000000;
+}
+
+.nav > li > a {
+}
+.nav > li > a:hover {
+    background-color: #d199ce;
+}
+.nav > li > a.row-menu {
+}
+.nav > li > a.icon-menu {
+}
+div.help {
+}
+.nav-boot {
+    background-color : #e2a8dd;
+    color : #000000;
+}
+.nav-first {
+}
+.navbar-brand {
+}
+.nav-mb {
+}
+.nav-tabs {
+}
+table.submenu {
+}
+.navbar-left {
+    border-color: #fff;
+}
+.navbar-lower {
+    background-color: #fed6fc;
+}
+div.FacetFormHeaderFont {
+}
+.vcenter {
+}
+input.input-xs {
+}
+.caret {
+    text-color: #fefefe;
+    border-top-color: white !important;
+}
+
+.container-fluid {
+}
+.navbar-collapse {
+}
+.opzione {
+}
+.progress {
+}
+.navbar-toggle {
+}
+.contenuto-help {
+    background: #fefefe;
+    border-color: #dddddd;
+}
+.nav-tabs {
+}
+.help-text {
+}
+.help-text a {
+    color: #632b5e;
+}
+/*    --------------------------------------------------
+:: Login Section
+-------------------------------------------------- */
+
+.panel-title {
+}
+.panel-info {
+    border-color: #c184bc;
+}
+.panel-info > .panel-gazie {
+    background-color: #e2a8dd;
+    border-color: #c184bc;
+    color: #331130;
+}
+#formlogin {
+}
+#formlogin .form-wrap {
+}
+.form-logo {
+}
+.form-main {
+    background-color: #af72aa;
+    border-color: #000000;
+}
+#formlogin h1 {
+    color: #a81e3f;
+}
+#formlogin .form-group {
+}
+#formlogin .checkbox {
+}
+#formlogin .checkbox.show:before {
+    color: #a81e3f;
+}
+#formlogin .checkbox .character-checkbox {
+    border-color: #cccccc;
+}
+#formlogin .checkbox .label {
+    color: #6d6d6d;
+}
+#formlogin .btn.btn-custom {
+}
+#formlogin .forget {
+}
+.panel-help {
+    background-color: #fed6fc;
+}
+
+/*-------------------------------------------------
+:: Inputs & Buttons
+-------------------------------------------------- */
+.form-control {
+    color: #212121;
+}
+.btn-custom {
+    color: #fefefe;
+    background-color: #d199ce;
+}
+.btn-custom:hover,
+.btn-custom:focus {
+    color: #fefefe;
+}
+.btn-edit {
+    background-color: #aa00a8;
+}
+.btn-cont {
+    background-color: #e2a8dd;
+}
+.btn-elimina {
+    color: #38effe;
+}
+.btn-xml {
+    color: #eafe00;
+}
+.btn.disabled {
+}
+.btn-effetti {
+    background-color: #6868d3;
+}
+.btn-riba {
+    background-color: #a8aafe;
+}
+.btn-fatt {
+    background-color: #6868d3;
+}
+.btn-pagamento {
+    color: #aa63a3;
+}
+.btn-articolo {
+}
+.form-inline {
+    background-color: #fed6fc;
+}

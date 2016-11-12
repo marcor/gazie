@@ -26,6 +26,11 @@
 if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
     $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
 }
+$config = new Config;
+
+if ( $config->getValue('header')!="header.php" && file_exists( "../../library/include/".$config->getValue('header'))) {
+   include $config->getValue('header');
+} else {
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -330,4 +335,9 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 <div class="container-fluid gaz-body">';
             return ($strCommon + $translated_script);
         }
+        
+        function page_footer() {
+         echo "</div><!-- chiude div container role main --></body>";
+        }
+}
         ?>
