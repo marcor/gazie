@@ -98,7 +98,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
 				gaz_dbi_table_update('assist',$form['ref_code'],$form);
 			}          
-			header("Location: associa_install.php?id=".$form['id']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
+			header("Location: associa_install.php?id=".$form['codice']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
 			exit;
 		}    
 	} elseif (isset($_POST['Return'])) { // torno indietro          

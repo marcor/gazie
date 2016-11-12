@@ -44,7 +44,7 @@ if ( isset($_POST['ritorno']) ) {
 
 if ( isset($_GET["ass"])  ) {
    gaz_dbi_table_update("assist", array ("id", $_GET['id']), array("idinstallazione" => $_GET['ass']));
-   header("Location: ".$form['ritorno']);
+   header("Location: ".$_SERVER['HTTP_REFERER']);
 }
 if ( isset($_POST["ass"]) ) {
    gaz_dbi_table_update("assist", array ("id", $_POST['id']), array("idinstallazione" => $_POST['ass']));

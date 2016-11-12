@@ -87,7 +87,7 @@ elseif (!isset($_POST['Update']) && isset($_GET['Update'])) {
 	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
    
    //$form['codart'] = $assist['codart'];
-   $form['cosear'] = $assist['codart'];
+   //$form['cosear'] = $assist['codart'];
    $form['ritorno']="../../modules/suppor/report_install.php";
    $form['ref_code']=$form['codice'];
     
@@ -243,6 +243,7 @@ if ( !isset($_GET["Insert"]) ) {
    include "report_period.php";
 } 
 ?>
+<script src="../../js/custom/autocomplete.js"></script>
 <script type="text/javascript">
     tinyMCE.init({
         menubar: false,

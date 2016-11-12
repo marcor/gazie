@@ -95,7 +95,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 				gaz_dbi_table_update('assist',$form['ref_code'],$form);
 			}          
 			//header("Location: ".$form['ritorno']);
-         header("Location: associa_install.php?id=".$form['id']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
+         header("Location: associa_install.php?id=".$form['codice']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
 			exit;
 		}    
 	} elseif (isset($_POST['Return'])) { // torno indietro          
@@ -288,6 +288,7 @@ $select_cliente = new selectPartner('clfoco');
 </form>
 </div><!-- chiude div container role main --></body>
 </html>
+<script src="../../js/custom/autocomplete.js"></script>
 <script type="text/javascript">
 function updateInputStato(ish){
     document.getElementById("stato").value = ish;
