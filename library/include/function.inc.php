@@ -55,6 +55,29 @@ $per_stato[2] = "Effettuare";
 $per_stato[3] = "Fatturare";
 $per_stato[4] = "Chiuso";
 
+//funzione che estrae i valori tra i tag html di una stringa
+function getTextBetweenTags($tag, $html, $strict=0)
+{
+   $dom = new domDocument;
+    if($strict==1) {
+        $dom->loadXML($html);
+    } else {
+       libxml_use_internal_errors(true);
+      $dom->loadHTML($html);
+      foreach (libxml_get_errors() as $error) {
+        //echo $error->code." - Line: ".$error->line;
+      }
+    }
+    $dom->preserveWhiteSpace = false;
+    $content = $dom->getElementsByTagname($tag);
+    $out = array();
+    foreach ($content as $item) {
+        $out[] = $item->nodeValue;
+    }
+    libxml_use_internal_errors(false);
+    return $out;
+}
+
 function gaz_flt_var_assign($flt, $typ) {
     global $where;
     if (isset($_GET[$flt]) && $_GET[$flt] != 'All' && $_GET[$flt] != "") {
