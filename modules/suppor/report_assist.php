@@ -226,14 +226,14 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		?></a>
 		</td>
 		<?php
-         if ( !$_GET['include'] ) {
+         if ( !isset($_GET['include']) ) {
             echo "<td>".$a_row["telefo"]."</td>";
          }
       ?>
       
 		<td><?php echo $a_row["oggetto"]; ?></td>
 		<?php
-         if ( !$_GET['include'] ) {
+         if ( !isset($_GET['include']) ) {
             echo "<td>". $a_row["descrizione"]. "</td>";
          } else {
             echo "<td colspan='2'>". $a_row["soluzione"]. "</td>";
@@ -250,7 +250,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<a class="btn btn-xs btn-default" href="stampa_assist.php?id=<?php echo $a_row["id"]; ?>&cod=<?php echo $a_row["codice"]; ?>" target="_blank"><i class="glyphicon glyphicon-print"></i></a>
 		</td>
 		<?php
-      if ( !$_GET['include'] ) {
+      if ( !isset($_GET['include']) ) {
       echo "<td>
 			<a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_assist.php?id=".$a_row["id"]."&cod=".$a_row["codice"]."\">
 			<i class=\"glyphicon glyphicon-remove\"></i></a>

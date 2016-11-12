@@ -48,6 +48,13 @@ if (isset($_SERVER["HTTP_REFERER"])) {
 $script_uri = basename($_SERVER['REQUEST_URI']);
 $mod_uri = '/' . $module . '/' . $script_uri;
 
+//stati per le assistenze periodiche
+$per_stato[0] = "Aperto";
+$per_stato[1] = "Avvisare";
+$per_stato[2] = "Effettuare";
+$per_stato[3] = "Fatturare";
+$per_stato[4] = "Chiuso";
+
 function gaz_flt_var_assign($flt, $typ) {
     global $where;
     if (isset($_GET[$flt]) && $_GET[$flt] != 'All' && $_GET[$flt] != "") {

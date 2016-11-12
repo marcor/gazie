@@ -75,7 +75,7 @@ $tn = array('aliiva', 'agenti', 'artico', 'assets', 'banapp', 'body_text', 'cash
     'effett', 'extcon', 'files', 'imball', 'letter', 'lotmag', 'movmag', 'pagame', 'paymov',
     'portos', 'provvigioni', 'rigbro', 'rigdoc', 'rigmoc', 'rigmoi', 'spediz', 'staff',
     'staff_skills', 'tesbro', 'tesdoc', 'tesmov', 'vettor', 'fae_flux', 'assist', 'ragstat',
-    'agenti_forn', 'movimenti','sconti_articoli','sconti_raggruppamenti');
+    'agenti_forn', 'movimenti','sconti_articoli','sconti_raggruppamenti', 'instal');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $id . $v;
 }

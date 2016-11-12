@@ -112,8 +112,14 @@ if ( !isset($_GET["all"]) ) {
    $where .= "and data>'".date("Y-m-d", strtotime("-1 month"))."' and data<'".date("Y-m-d", strtotime("+2 month"))."'";
 }
 
+if ( isset( $_GET['idinstallazione']) ) {
+   $title = "Assistenze Periodiche";
+} else {
+   $title = $script_transl['title'];
+}
+
 ?>
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?></div>
+<div align="center" class="FacetFormHeaderFont"><?php echo $title; ?></div>
 	<form method="GET">
 	<!-- riga filtro -->
 	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">

@@ -9,7 +9,6 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_m
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE `gaz_XXXsconti_articoli` (`clfoco` int(9),`codart` varchar(15),`sconto` decimal(6,3),`prezzo_netto` decimal(14,5), primary key(`clfoco`,`codart`));
 CREATE TABLE `gaz_XXXsconti_raggruppamenti` (`clfoco` int(9),`ragstat` char(15),`sconto` decimal(6,3), primary key(`clfoco`,`ragstat`));
-ALTER TABLE `gaz_XXXassist` ADD `prezzo` varchar(10) COLLATE 'utf8_general_ci' NOT NULL AFTER `ore`;
 ALTER TABLE `gaz_XXXassist` ADD `ripetizione` varchar(10) COLLATE 'utf8_general_ci' NOT NULL AFTER `prezzo`;
 ALTER TABLE `gaz_XXXassist` ADD `codart` varchar(15) NOT NULL AFTER `ore`;
 ALTER TABLE `gaz_XXXassist` change `ripetizione` `ripetizione` int NULL DEFAULT '1' AFTER `prezzo`, ADD `ogni` int NULL DEFAULT '365' AFTER `ripetizione`;
