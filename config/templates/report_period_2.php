@@ -12,8 +12,7 @@
 <br>
 <span style="text-align: justify; font-family: arial,helvetica,sans-serif; font-size:28px;"><br />
 <row>descrizione</row><br>
-Il prezzo a te riservato è <row>prezzo</row>€ iva inclusa<br><br>
 L'occasione è gradita per porgerLe i migliori saluti.<br>
 <br><br><br>
-<p style="text-align: right;"><admin_aziend>ragso1</admin_aziend> : ______________________________________</p>
+<p style="text-align: right;">ABC Service : ______________________________________</p>
 </span>
