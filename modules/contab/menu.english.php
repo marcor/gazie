@@ -38,7 +38,9 @@ $transl['contab'] = array('name' => "Accounting",
         3 => array("View and/or print account reports", "Account report"),
         4 => array("Insert new accounting causal", "New accounting causal"),
         5 => array("Print the chart of accounts", "Print the chart of accounts"),
-        6 => array("Visualizzazione e stampa di estratti conto o partite aperte", "Estratti Conto/Partite Aperte")
+        6 => array("Visualizzazione e stampa di estratti conto o partite aperte", "Estratti Conto/Partite Aperte"),
+        7 => array("View and print credit/debit customers/suppliers", "Debit/Credit review"),
+        8 => array("Spesometro analitico", "Spesometro analitico"),
     )
 );
 ?>
