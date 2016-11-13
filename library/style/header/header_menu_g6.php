@@ -65,6 +65,7 @@ $posizione = array_pop( $posizione );
 if ( strpos($posizione, "report_received.php" )  !==false ) $posizione = "report_scontr.php";
 if ( strpos($posizione, "report_aziend.php" )    !==false ) $posizione = "admin_aziend.php";
 if ( strpos($posizione, "report_broven_gio.php" )!==false ) $posizione = "report_broven.php?auxil=VOR";
+if ( strpos($posizione, "report_destinazioni.php" )!==false ) $posizione = "report_client.php";
 
 $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
 

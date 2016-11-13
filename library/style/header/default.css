@@ -5,8 +5,7 @@
 body {
 	font-family : Arial, Tahoma, Verdana, Helvetica;
 	background-attachment : fixed;
-	padding-top : 51px;
-	
+	padding-top : 46px;
 	/* impostare qua la dimensione dei caratteri*/
 	font-size: 14px;
 }
@@ -676,5 +675,5 @@ div.danger li.active span.rounded{
 }
 
 .navbar-brand {
-   height: 50px;
+   height: 45px;
 }

@@ -103,7 +103,7 @@
                             } else { // non ho trovato nulla nemmeno sui file tipo lang.english.php
                                 return $clink[1] . '-none-script';
                             }
-                        } else { // non c'è traduzione per questo script 
+                        } else { // non c'Ã¨ traduzione per questo script 
                             return $clink[1] . '-none-script_menu';
                         }
                     }
@@ -176,7 +176,7 @@
 
                             if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) {
                                 require("../../modules/" . $row['name'] . "/lang." . $admin_aziend['lang'] . ".php");
-                                if (isset($strScript[$scriptname])) { // se è stato tradotto lo script lo ritorno al chiamante
+                                if (isset($strScript[$scriptname])) { // se Ã¨ stato tradotto lo script lo ritorno al chiamante
                                     $translated_script = $strScript[$scriptname];
                                     if (isset($translated_script['title'])) {
                                         $title_from_menu = $translated_script['title'];
@@ -184,8 +184,8 @@
                                 }
                             }
                         }
-                        if (isset($row['m3_id']) and $row['m3_id'] > 0) { // è un menu3
-                            if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) { // è pure il primo di menu2 e menu1
+                        if (isset($row['m3_id']) and $row['m3_id'] > 0) { // Ã¨ un menu3
+                            if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) { // Ã¨ pure il primo di menu2 e menu1
                                 $menuArray[$row['weight']] = array('link' => '../' . $row['name'] . '/' . $row['link'],
                                     'icon' => '../' . $row['name'] . '/' . $row['icon'],
                                     'name' => $transl[$row['name']]['name'],
@@ -196,7 +196,7 @@
                                     'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
                                     'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
                                     'class' => $row['m2_class']);
-                            } elseif ($ctrl_m2 != $row['m2_id']) { // è solo il primo di menu2
+                            } elseif ($ctrl_m2 != $row['m2_id']) { // Ã¨ solo il primo di menu2
                                 $menuArray[$row['weight']][$row['m2_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m2_link'],
                                     'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
                                     'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
@@ -208,7 +208,7 @@
                                 'name' => $transl[$row['name']]['m3'][$row['m3_trkey']][1],
                                 'title' => $transl[$row['name']]['m3'][$row['m3_trkey']][0],
                                 'class' => $row['m3_class']);
-                        } elseif ($ctrl_m1 != $row['m1_id']) { // è il primo di menu2
+                        } elseif ($ctrl_m1 != $row['m1_id']) { // Ã¨ il primo di menu2
                             $menuArray[$row['weight']] = array('link' => '../' . $row['name'] . '/' . $row['link'],
                                 'icon' => '../' . $row['name'] . '/' . $row['icon'],
                                 'name' => $transl[$row['name']]['name'],
@@ -219,7 +219,7 @@
                                 'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
                                 'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
                                 'class' => $row['m2_class']);
-                        } else { // non è il primo di menu2
+                        } else { // non Ã¨ il primo di menu2
                             $menuArray[$row['weight']][$row['m2_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m2_link'],
                                 'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
                                 'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
@@ -235,25 +235,25 @@
                 /*   Fine creazione array per JSCookMenu.
                   In $menuArray c'e' la lista del menu
                   con index '0' il modulo corrente,
-                  è una matrice a 3 dimensioni ,
+                  Ã¨ una matrice a 3 dimensioni ,
                   questo serve per poter creare un array in JS
                   compatibile con le specifiche di JSCookMenu,
                   la funzione createGazieJSCM serve per creare un
                   array con il menu corrente orizzontale , si potrebbero creare
                   altre forme di menu modificando questa funzione. */
-                echo "\n        <title>" . $admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
+                echo "\n        <title>" . $admin_aziend['ragso1'] . 'Â» ' . $menuArray[0]['title'];
                 if (!empty($idScript)) {
                     if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
                         if ($idScript[0] == 2) {
-                            echo '» ' . $transl[$module]['m2'][$idScript[1]][0];
+                            echo 'Â» ' . $transl[$module]['m2'][$idScript[1]][0];
                         } elseif ($idScript[0] == 3) {
-                            echo '» ' . $transl[$module]['m3'][$idScript[1]][0];
+                            echo 'Â» ' . $transl[$module]['m3'][$idScript[1]][0];
                         }
                     } elseif ($idScript > 0) {
-                        echo '» ' . $transl[$module]['m3'][$idScript][0];
+                        echo 'Â» ' . $transl[$module]['m3'][$idScript][0];
                     }
                 } elseif (isset($title_from_menu)) {
-                    echo '» ' . $title_from_menu;
+                    echo 'Â» ' . $title_from_menu;
                 }
                 echo '</title>
     

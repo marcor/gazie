@@ -266,7 +266,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                                       }
                                       echo '			</title>
         </head>
-        <body role="document">';
+        <body>';
                                       // cambia il tipo di menu
                                       $tipomenu = substr($admin_aziend['style'], 0, -4);
                                       /*if (file_exists("../../library/style/header_menu_" . $tipomenu . ".php")) {
