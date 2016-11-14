@@ -49,11 +49,7 @@ $script_uri = basename($_SERVER['REQUEST_URI']);
 $mod_uri = '/' . $module . '/' . $script_uri;
 
 //stati per le assistenze periodiche
-$per_stato[0] = "Aperto";
-$per_stato[1] = "Avvisare";
-$per_stato[2] = "Effettuare";
-$per_stato[3] = "Fatturare";
-$per_stato[4] = "Chiuso";
+$per_stato = array("Aperto", "Avvisare", "Effettuare", "Fatturare", "Chiuso");
 
 //funzione che estrae i valori tra i tag html di una stringa
 function getTextBetweenTags($tag, $html, $strict=0)
@@ -93,28 +89,29 @@ function gaz_flt_var_assign($flt, $typ) {
     //return $where;
 }
 
-function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval = "") {
-    ?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
-    <?php
-    if (isset($_GET[$flt]))
-        $fltget = $_GET[$flt];
-    else
-        $fltget = "";
-    ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];                  ?>
-
-        <?php
-        $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
-        while ($val = gaz_dbi_fetch_array($res)) {
-            if ($fltget == $val[$flt])
-                $selected = "selected";
-            else
-                $selected = "";
-            $testo = ($optval != "") ? $val[$optval] : $val[$flt];
-            echo "<option value=\"" . $val[$flt] . "\" " . $selected . ">" . $testo . "</option>";
-        }
-        ?>
-    </select><?php
+// crea una select che permette di filtrare la colonna di una tabella
+// $flt - colonna sulla quale eseguire il filtro
+// 
+// $optval - valore opzionale se diverso dal valore del campo, può essere array (es: stato=0 diventa stato=aperto preso da var)
+function gaz_flt_disp_select( $flt, $fltdistinct, $tbl, $where, $orderby, $optval = "" ) {
+	?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
+	<?php if ( isset($_GET[$flt]) ) $fltget=$_GET[$flt]; else $fltget="";?>
+	<option value="All" <?php echo ($flt=="All") ? "selected" : "";?>>Tutti</option> <?php //echo $script_transl['tuttitipi']; ?>
+	
+	<?php $res = gaz_dbi_dyn_query("distinct ".$fltdistinct, $tbl, $where, $orderby);
+	while ( $val = gaz_dbi_fetch_array($res) ) {
+		if ( $fltget == $val[$flt] ) $selected = "selected";
+		else $selected = "";
+		
+      if ( is_array($optval) ) {
+         $testo = $optval[$val[$flt]];
+      } else {
+         $testo = ($optval!="") ? $val[$optval] : $val[$flt];   
+      }
+      
+		echo "<option value=\"".$val[$flt]."\" ".$selected.">".$testo."</option>";
+	} ?>
+	</select><?php
 }
 
 function gaz_flt_disp_int($flt, $hint) {

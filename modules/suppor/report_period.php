@@ -116,6 +116,7 @@ if ( isset( $_GET['idinstallazione']) ) {
    $title = "Assistenze Periodiche";
 } else {
    $title = $script_transl['title'];
+   if (!isset($_GET["all"])) $title .= " dal ".date("Y-m-d", strtotime("-1 month"))." al ".date("Y-m-d", strtotime("+2 month"));
 }
 
 ?>
@@ -231,9 +232,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<?php 
 				if ( $a_row["stato"]=="0" ) echo '<a class="btn btn-xs btn-edit" href="report_period.php?codice='.$a_row["codice"].'&q=0">'.$per_stato[0].'</a>';
 				if ( $a_row["stato"]=="1" ) echo '<a class="btn btn-xs btn-fatt" href="report_period.php?codice='.$a_row["codice"].'&q=1">'.$per_stato[1].'</a>';
-            if ( $a_row["stato"]=="2" ) echo '<a class="btn btn-xs btn-riba" href="report_period.php?codice='.$a_row["codice"].'&q=2">'.$per_stato[2].'</a>';
-            if ( $a_row["stato"]=="3" ) echo '<a class="btn btn-xs btn-riba" href="report_period.php?codice='.$a_row["codice"].'&q=3">'.$per_stato[3].'</a>';
-            if ( $a_row["stato"]=="4" ) echo '<btn class="btn btn-xs btn-cont">'.$per_stato[4].'</btn>';
+                if ( $a_row["stato"]=="2" ) echo '<a class="btn btn-xs btn-riba" href="report_period.php?codice='.$a_row["codice"].'&q=2">'.$per_stato[2].'</a>';
+                if ( $a_row["stato"]=="3" ) echo '<a class="btn btn-xs btn-riba" href="report_period.php?codice='.$a_row["codice"].'&q=3">'.$per_stato[3].'</a>';
+                if ( $a_row["stato"]=="4" ) echo '<btn class="btn btn-xs btn-cont">'.$per_stato[4].'</btn>';
 			?>
 		</td>
 		<td>
