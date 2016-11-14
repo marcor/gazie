@@ -1,10 +1,10 @@
 UPDATE `gaz_config` SET `cvalue` = '96' WHERE `id` =2;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 7, 'select_sconti_articoli.php', '', '', 41, '', 7 FROM `gaz_menu_script`;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 7, 'select_sconti_raggruppamenti.php', '', '', 42, '', 8 FROM `gaz_menu_script`;
-UPDATE `gaz_menu_script` SET `weight`=5 WHERE `weight`=3 and `id_menu`=9;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 9, 'select_analisi_fatturato_clienti.php', '', '', 43, '', 3  FROM `gaz_menu_script`;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 9, 'select_analisi_fatturato_cliente_fornitore.php', '', '', 44, '', 4  FROM `gaz_menu_script`;
-INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, 13, 'report_install.php', '', '', 3, '', 3  FROM `gaz_menu_module`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='report_client.php'), 'select_sconti_articoli.php', '', '', 41, '', 7 FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='report_client.php'), 'select_sconti_raggruppamenti.php', '', '', 42, '', 8 FROM `gaz_menu_script`;
+UPDATE `gaz_menu_script` SET `weight`=5 WHERE `link`='select_esportazione_articoli_venduti.php';
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='../magazz/report_statis.php'), 'select_analisi_fatturato_clienti.php', '', '', 43, '', 3  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='../magazz/report_statis.php'), 'select_analisi_fatturato_cliente_fornitore.php', '', '', 44, '', 4  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, (SELECT id FROM `gaz_module` WHERE `name`='suppor'), 'report_install.php', '', '', 3, '', 3  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'admin_install.php?Insert', '', '', 3, '', 1  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='select_liqiva.php'), 'select_spesometro_analitico.php', '', '', 8, '', 2  FROM `gaz_menu_script`;
 INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `show`, `last_modified`) VALUES (NULL, 'Header personalizzabile', 'header', 'header_default.php', '0', '0', '2016-11-12 19:00:00');
