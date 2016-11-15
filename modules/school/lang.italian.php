@@ -25,91 +25,11 @@
  */
 
 $strScript = array(
-    "admin_assist.php" =>
-    array('title' => 'Gestione Assistenze Tecniche',
-        'ins_this' => 'Inserimento assistenza tecnica',
-        'upd_this' => 'Modifica l\'assistenza ',
-        'mesg' => array('La ricerca non ha dato risultati!',
-            'Inserire almeno 2 caratteri!',
-            'Cambia anagrafica'),
-        'errors' => array('Il codice articolo &egrave; gi&agrave; esistente',
-            'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
-            'Codice di un articolo gi&agrave; esistente',
-            'Il file dev\'essere nel formato PNG',
-            'L\'immagine non dev\'essere pi&ugrave; grande di 10 kb',
-            'Inserire un codice valido',
-            'Inserire una descrizione',
-            'Inserire l\'unit&agrave; di misura delle vendite',
-            'Inserire l\'aliquota I.V.A.'
-        ),
-        'codice' => "Numero",
-        'descrizione' => "Descrizione",
-        'cliente' => "Cliente",
-        'telefono' => "Telefono",
-        'oggetto' => "Oggetto",
-        'stato' => "Stato",
-        'info_agg' => "Informazioni aggiuntive",
-        'tecnico' => "Tecnico",
-		'soluzione' => "Soluzione",
-		'note' => "Note (non verranno stampate)"
-    ),
-	"admin_period.php" =>
-	array (	'upd_this' 	=> 'Aggiorna l\'assistenza periodica',
-			'codice'	=> 'Codice assistenza',
-			'cliente'	=> 'Cliente',
-			'mesg' 		=> array(	'La ricerca non ha dato risultati!',
-									'Inserire almeno 2 caratteri!',
-									'Cambia anagrafica'),
-			'descrizione' => "Descrizione",
-			'oggetto' 	=> "Oggetto",
-			'stato' 	=> "Stato",
-			'info_agg' 	=> "Informazioni aggiuntive",
-			'tecnico' 	=> "Tecnico",
-			'soluzione' => "Soluzione",
-         'prezzo'    => "Prezzo",
-			'note' 		=> "Note (non verranno stampate)",
-			'ins_this'	=> "Inserimento intervento periodico",
-			'errors' => array('Il codice articolo &egrave; gi&agrave; esistente',
-            'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
-            'Codice di un articolo gi&agrave; esistente',
-            'Il file dev\'essere nel formato PNG',
-            'L\'immagine non dev\'essere pi&ugrave; grande di 10 kb',
-            'Inserire un codice valido',
-            'Inserire una descrizione',
-            'Inserire l\'unit&agrave; di misura delle vendite',
-            'Inserire l\'aliquota I.V.A.'
-        ),
-	),
-   "report_period.php" =>
-   array ( 'title' => 'Scadenza periodica'
+   "report_teachers.php" =>
+   array ( 'title' => 'Insegnanti',
+        'Login' => "Login",
+        'Cognome' => "Cognome",
+        'Nome' => "Nome"
    ),
-   "admin_install.php" =>
-	array (	'upd_this' 	=> 'Aggiorna l\'installazione',
-			'codice'	=> 'Codice installazione',
-			'cliente'	=> 'Cliente',
-			'mesg' 		=> array(	'La ricerca non ha dato risultati!',
-									'Inserire almeno 2 caratteri!',
-									'Cambia anagrafica'),
-			'descrizione' => "Descrizione",
-			'note' 		=> "Note (non verranno stampate)",
-			'ins_this'	=> "Inserimento intervento periodico",
-			'errors' => array('Il codice articolo &egrave; gi&agrave; esistente',
-            'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
-            'Codice di un articolo gi&agrave; esistente',
-            'Il file dev\'essere nel formato PNG',
-            'L\'immagine non dev\'essere pi&ugrave; grande di 10 kb',
-            'Inserire un codice valido',
-            'Inserire una descrizione',
-            'Inserire l\'unit&agrave; di misura delle vendite',
-            'Inserire l\'aliquota I.V.A.'
-        ),
-	),
-    "delete_assist.php" =>
-    array('title' => 'Eliminazione Assistenza Tecnica',
-        'alert'=>'Sei sicuro di volerlo eliminare?',
-        'descrizione' => "Descrizione",
-        'cliente' => "Cliente",
-        'oggetto' => "Oggetto",
-    )
 );
 ?>
