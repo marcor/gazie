@@ -28,9 +28,14 @@ $menu_data = array('m1' => array('link' => "docume_suppor.php"),
                                         2 => array('link' => "report_period.php", 'weight' => 2),
                                         3 => array('link' => "report_install.php", 'weight' => 3)
                          ),
-                        'm3' => array('m2' => array(1 => array('translate_key' => 1, 'link' => "admin_assist.php", 'weight' => 1),
-                                                    2 => array('translate_key' => 2, 'link' => "admin_period.php", 'weight' => 2),
-                                                    3 => array('translate_key' => 3, 'link' => "admin_install.php", 'weight' => 3)
+                        'm3' => array('m2' => array(1 => array(
+                                                                array('translate_key' => 1, 'link' => "admin_assist.php", 'weight' => 1)
+                                                              ),
+                                                    2 => array(
+                                                                array('translate_key' => 2, 'link' => "admin_period.php", 'weight' => 2)
+                                                              ),
+                                                    3 => array( array('translate_key' => 3, 'link' => "admin_install.php", 'weight' => 3)
+                                                              )
                                                     )
                                      )
                 );

@@ -168,7 +168,7 @@ if (isset($_POST['Submit'])) {
                     foreach ($menu_data['m2'] as $k_m2 => $v_2) {
                         gaz_dbi_table_insert('menu_module', array('id' => $m2_id, 'id_module' => $mod_id, 'link' => $v_2['link'], 'translate_key' => $k_m2, 'weight' => $v_2['weight']));
                         if (isset($menu_data['m3']['m2'][$k_m2])) {
-                            foreach ($menu_data['m3']['m2'] as $v_3) {
+                            foreach ($menu_data['m3']['m2'][$k_m2] as $v_3) {
                                 // trovo l'ultimo id del sub menu
                                 $rs_last = gaz_dbi_dyn_query("MAX(id)+1 AS max_id", $gTables['menu_script'], 1);
                                 $r = gaz_dbi_fetch_array($rs_last);
