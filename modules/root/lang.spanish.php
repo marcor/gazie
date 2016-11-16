@@ -94,6 +94,7 @@ $strScript = array("admin.php" =>
         'conf_psw' => "Escriba la contraseña otra vez",
         'label_new_psw' => "Nueva contrase&ntilde;a",
         'new_psw' => "Introduzca nueva contraseña",
+        'student'=>'Si usted es un estudiante puede iniciar sesión desde aquí'
         ));
 $errors = array(
     'access' => 'Usted no tiene derecho de acceso al módulo'

@@ -26,6 +26,7 @@ require("../../library/include/datlib.inc.php");
 $message = "";
 $newpass = false;
 $config = new Config;
+
 //
 // table prefix
 //
@@ -256,10 +257,35 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
                                 <input style="float:right;" class="btn btn-success" name="actionflag" type="submit" value="Login" >
                             </div>
                         </div>
-                    </div>                     
+                    </div>  
+                    <?php if (checkSchool()) { ?>
+                        <div style="padding-top:10px" class="panel-body" >
+                            <div style="padding-top:10px" class="form-group">
+                                <div class="col-sm-12 controls">
+                                    <a href="../school/student_login.php" > 
+                                        <?php echo $script_transl['student']; ?>
+                                        <img src="../school/school.png">
+                                    </a>
+                                </div>
+                            </div>
+
+                        </div> 
+                    <?php } ?>
                 </div>  
             </div>
         </div><!-- chiude div container -->
     </form>
 </body>
 </html>
+<?php
+
+function checkSchool() {
+    global $gTables;
+    $ns = gaz_dbi_record_count($gTables['classroom'], 1);
+    if ($ns >= 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+?>

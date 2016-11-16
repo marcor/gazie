@@ -90,6 +90,7 @@ $strScript = array("admin.php" =>
         'conf_psw' => "Re-enter Password",
         'label_new_psw' => "New Password",
         'new_psw' => "Enter New Password",
+        'student'=>'If you are a student you can log from here'
         ));
 $errors = array(
     'access' => 'You have no right of access to the module'

@@ -38,8 +38,10 @@ if (isset($_SESSION['table_prefix'])) {
 
 
 // tabelle comuni alle aziende della stessa gestione
-$tn = array('admin', 'admin_module', 'anagra', 'aziend', 'config', 'country', 'currencies', 'currency_history',
-    'languages', 'regions', 'provinces', 'municipalities', 'menu_module', 'module', 'menu_script', 'destina', 'menu_usage');
+$tn = array('admin', 'admin_module', 'anagra', 'aziend', 'classroom', 'config', 
+            'country', 'currencies', 'currency_history', 'destina', 'languages', 
+            'menu_module', 'menu_script', 'menu_usage', 'module', 'municipalities', 
+            'provinces', 'regions', 'student');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $v;
 }

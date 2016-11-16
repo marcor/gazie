@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2014 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-$gForm = new GAzieForm();
+$gForm = new schoolForm();
 ?>
 <form method="POST" id="form">
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
@@ -54,12 +54,12 @@ $gForm = new GAzieForm();
                 </thead>    
                 <tbody id="all_rows">
                     <?php
-                    $result = gaz_dbi_dyn_query('*', $gTables['admin'],'Abilit > 8');
-                    while ($a_row = gaz_dbi_fetch_array($result)) {
+                    $rs = gaz_dbi_dyn_query('*', $gTables['admin'],'Abilit > 8');
+                    while ($r = gaz_dbi_fetch_array($rs)) {
                         echo "<tr class=\"FacetDataTD\">";
-                        echo "<td title=\"" . $script_transl['update'] . "\"><a class=\"btn btn-xs btn-default\" href=\"../config/admin_utente.php?Login=" . $a_row["Login"] . "&Update\">" . $a_row["Login"] . " </a> &nbsp</td>";
-                        echo "<td>" . $a_row["Cognome"] . " &nbsp;</td>";
-                        echo "<td>" . $a_row["Nome"] . " &nbsp;</td>";
+                        echo "<td title=\"" . $script_transl['update'] . "\"><a class=\"btn btn-xs btn-default\" href=\"../config/admin_utente.php?Login=" . $r["Login"] . "&Update\">" . $r["Login"] . " </a> &nbsp</td>";
+                        echo "<td>" . $r["Cognome"] . " &nbsp;</td>";
+                        echo "<td>" . $r["Nome"] . " &nbsp;</td>";
                         echo "</tr>";
                     }
                     ?>

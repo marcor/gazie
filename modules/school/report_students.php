@@ -1,26 +1,92 @@
 <?php
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2014 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation, 51 Franklin Street,
-    Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 require("../../library/include/datlib.inc.php");
-$admin_aziend=checkAdmin(9);
+$admin_aziend = checkAdmin(9);
+require("../../library/include/header.php");
+$script_transl = HeadMain();
+$gForm = new schoolForm();
+?>
+<form method="POST" id="form">
+    <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
+    <div class="panel panel-default">
+        <div id="gaz-responsive-table"  class="container-fluid">
+            <table class="table table-responsive table-striped table-condensed cf">
+                <thead>
+                    <tr class="bg-success">              
+                        <th>
+                            <a href="#" class="orby" data-order="id">
+                                ID
+                            </a>
+                        </th>
+                        <th>
+                            <a href="#" class="orby" data-order="classe">
+                                <?php echo $script_transl["classe"]; ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="#" class="orby" data-order="Cognome">
+                                <?php echo $script_transl["Cognome"]; ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="#" class="orby" data-order="Nome">
+                                <?php echo $script_transl["Nome"]; ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="#" class="orby" data-order="email">
+                                <?php echo $script_transl["email"]; ?>
+                            </a>
+                        </th>
+                        <th>
+                            <a href="#" class="orby" data-order="telephone">
+                                <?php echo $script_transl["telephone"]; ?>
+                            </a>
+                        </th>
+                    </tr>      
+                </thead>    
+                <tbody id="all_rows">
+                    <?php
+                    $result = gaz_dbi_dyn_query('*', $gTables['student']);
+                    while ($r = gaz_dbi_fetch_array($result)) {
+                        $cr = gaz_dbi_get_row($gTables['classroom'], "id", $r["id_classroom"]);
+                        echo '<tr class="FacetDataTD" title="'.$r["title_note"] .'">';
+                        echo "<td title=\"" . $script_transl['update'] . "\"><a class=\"btn btn-xs btn-default\" href=\"admin_student.php?id=" . $r["id"] . "&Update\">" . $r["id"] . " </a> &nbsp</td>";
+                        echo "<td>" . $cr["classe"] . " " . $cr["sezione"] . " " . $cr["anno_scolastico"] . "/" . substr($cr["anno_scolastico"] + 1, 2, 2) . " &nbsp;</td>";
+                        echo "<td>" . $r["Cognome"] . " &nbsp;</td>";
+                        echo "<td>" . $r["Nome"] . " &nbsp;</td>";
+                        echo "<td>" . $r["email"] . " </td>";
+                        echo "<td>" . $r["telephone"] . " </td>";
+                        echo "</tr>";
+                    }
+                    ?>
+                </tbody>     
+            </table>
+        </div>  
+    </div>
+</form>
+</div><!-- chiude div container role main -->
+</body>
+</html>

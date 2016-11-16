@@ -1,9 +1,8 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2014 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -25,11 +24,43 @@
  */
 
 $strScript = array(
-   "report_teachers.php" =>
-   array ( 'title' => 'Insegnanti',
+    "report_teachers.php" =>
+    array('title' => 'Elenco degli insegnanti',
         'Login' => "Login",
         'Cognome' => "Cognome",
         'Nome' => "Nome"
-   ),
+    ),
+    "report_classrooms.php" =>
+    array('title' => 'Elenco delle classi',
+        'teacher' => "Insegnante",
+        'anno_scolastico' => 'Anno scolastico',
+        'classe' => "Classe",
+        'sezione' => "Sezione"
+    ),
+    "admin_classroom.php" =>
+    array('title' => 'Gestione della classe',
+        'ins_this' => 'Inserimento classe',
+        'upd_this' => 'Modifica la classe ',
+        'err' => array(
+            'classe' => 'La classe non &egrave; stata descritta',
+            'sezione' => 'Manca la descrizione della sezione',
+            'anno_scolastico' => 'Manca l\'anno scolastico di riferimento',
+            'teacher' => 'Manca l\'insegnante di riferimento',
+        ),
+        'classe' => "Classe",
+        'sezione' => "Sezione",
+        'anno_scolastico' => 'Anno scolastico',
+        'teacher' => "Insegnante",
+        'location' => "Ubicazione",
+        'title_note'=>"Annotazioni"
+    ),
+    "report_students.php" =>
+    array('title' => 'Elenco degli alunni',
+        'classe'=>'Classe',
+        'Cognome' => "Insegnante",
+        'Nome' => 'Anno scolastico',
+        'email' => "E-Mail",
+        'telephone' => "Telefono"
+    ),
 );
 ?>
