@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Configuration for: Database Connection
  * This is the place where your database login constants are saved
@@ -12,6 +11,10 @@
  * DB_USER: user for your database. the user needs to have rights for SELECT, UPDATE, DELETE and INSERT.
  *          by the way, it's bad style to use "root", but for development it will work.
  * DB_PASS: the password of the above user
+*
+ * 
+ * 
+ * MODIFICHE PER GAZIE: ATTINGO I VALORI DAL DATABASE /
  */
 define("DB_HOST", "127.0.0.1");
 define("DB_NAME", "login");
@@ -64,8 +67,8 @@ define("COOKIE_SECRET_KEY", "1gp@TMPS{+$78sfpMJFe-92s");
 define("EMAIL_USE_SMTP", true);
 define("EMAIL_SMTP_HOST", "ssl://smtp.libero.it");
 define("EMAIL_SMTP_AUTH", true);
-define("EMAIL_SMTP_USERNAME", "d.disciascio@libero.it");
-define("EMAIL_SMTP_PASSWORD", "040368");
+define("EMAIL_SMTP_USERNAME", "");
+define("EMAIL_SMTP_PASSWORD", "");
 define("EMAIL_SMTP_PORT", 465);
 define("EMAIL_SMTP_ENCRYPTION", "ssl");
 
@@ -84,7 +87,7 @@ define("EMAIL_PASSWORDRESET_CONTENT", "Please click on this link to reset your p
  * Set the absolute URL to register.php, necessary for email verification links
  */
 define("EMAIL_VERIFICATION_URL", "http://localhost/gazie/trunk/modules/school/student_register.php");
-define("EMAIL_VERIFICATION_FROM", "d.disciascio@libero.it");
+define("EMAIL_VERIFICATION_FROM", "");
 define("EMAIL_VERIFICATION_FROM_NAME", "GAzie a scuola");
 define("EMAIL_VERIFICATION_SUBJECT", "Attivazione GAzie a scuola");
 define("EMAIL_VERIFICATION_CONTENT", "Clicca su questo link per registrarti su GAzie a scuola:");

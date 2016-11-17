@@ -20,19 +20,19 @@
                     <div style="padding-top:10px" class="panel-body" >
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                            <input id="user_name" type="text"  pattern="[a-zA-Z0-9]{2,64}" name="user_name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_USERNAME; ?>" />
+                            <input id="name" type="text"  pattern="[a-zA-Z0-9]{2,64}" name="name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_USERNAME; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                            <input id="user_email" type="email" name="user_email" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_EMAIL; ?>" />
+                            <input id="email" type="email" name="email" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_EMAIL; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                            <input id="user_password_new" type="password"  pattern=".{8,}" name="user_password_new" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_PASSWORD; ?>" />
+                            <input id="password_new" type="password"  pattern=".{8,}" name="password_new" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_PASSWORD; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                            <input id="user_password_repeat" type="password"  pattern=".{8,}" name="user_password_repeat" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_PASSWORD_REPEAT; ?>" />
+                            <input id="password_repeat" type="password"  pattern=".{8,}" name="password_repeat" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_PASSWORD_REPEAT; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <img src="tools/showCaptcha.php" alt="captcha" />

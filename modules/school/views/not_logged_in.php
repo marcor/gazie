@@ -18,18 +18,18 @@
                     <p><?php echo MESSAGE_PSW; ?></p><br/>
                     <div style="padding-bottom: 25px;" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                        <input id="user_name" type="text" name="user_name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_USERNAME; ?>" />
+                        <input id="name" type="text" name="name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_USERNAME; ?>" />
                     </div>
 
                     <div style="padding-bottom: 25px;" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                        <input  type="password"  autocomplete="off" required style="height: 34px;"  id="login-password" class="form-control" name="user_password" placeholder="<?php echo WORDING_PASSWORD; ?>">
+                        <input  type="password"  autocomplete="off" required style="height: 34px;"  id="login-password" class="form-control" name="password" placeholder="<?php echo WORDING_PASSWORD; ?>">
                     </div>
                     <div id="capsWarning" class="alert alert-warning col-sm-12" style="display:none;">Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!</div>
                     <div style="padding-top:10px" class="form-group">
                         <div class="col-sm-6">
-                            <input  style="float:left;"  type="checkbox" id="user_rememberme" name="user_rememberme" value="1" />
-                            <label for="user_rememberme"><?php echo WORDING_REMEMBER_ME; ?></label>
+                            <input  style="float:left;"  type="checkbox" id="rememberme" name="rememberme" value="1" />
+                            <label for="rememberme"><?php echo WORDING_REMEMBER_ME; ?></label>
                         </div>
                         <div class="col-sm-6">
                             <input style="float:right;" class="btn btn-success"  name="login" type="submit" value="<?php echo WORDING_LOGIN; ?>" >
