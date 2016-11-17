@@ -9,7 +9,25 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_m
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='select_liqiva.php'), 'select_spesometro_analitico.php', '', '', 8, '', 2  FROM `gaz_menu_script`;
 INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `show`, `last_modified`) VALUES (NULL, 'Header personalizzabile', 'header', 'header_default.php', '0', '0', '2016-11-12 19:00:00');
 CREATE TABLE IF NOT EXISTS `gaz_classroom` (  `id` int(6) NOT NULL AUTO_INCREMENT, `classe` varchar(16) NOT NULL, `sezione` varchar(16) NOT NULL, `anno_scolastico` int(4) NOT NULL, `teacher` varchar(50) NOT NULL, `location` varchar(100) NOT NULL, `title_note` varchar(200) NOT NULL, PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-CREATE TABLE IF NOT EXISTS `gaz_student` ( `id` int(6) NOT NULL AUTO_INCREMENT, `username` varchar(50) NOT NULL DEFAULT '0', `password` varchar(64) NOT NULL DEFAULT '0', `Cognome` varchar(50) NOT NULL DEFAULT '0', `Nome` varchar(50) NOT NULL DEFAULT '0', `email` varchar(128) NOT NULL DEFAULT '0', `telephone` varchar(50) NOT NULL DEFAULT '0', `id_classroom` int(6) NOT NULL DEFAULT '0', PRIMARY KEY (`id`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `gaz_students` (
+ `student_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'auto incrementing student_id of each student, unique index',
+ `student_classroom_id` int(6) NOT NULL COMMENT 'classroom_id of student',
+ `student_name` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s name, unique',
+ `student_password_hash` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s password in salted and hashed format',
+ `student_email` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s email, unique',
+ `student_active` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'student''s activation status',
+ `student_activation_hash` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'student''s email verification hash string',
+ `student_password_reset_hash` char(40) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'student''s password reset code',
+ `student_password_reset_timestamp` bigint(20) DEFAULT NULL COMMENT 'timestamp of the password reset request',
+ `student_rememberme_token` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'student''s remember-me cookie token',
+ `student_failed_logins` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'student''s failed login attemps',
+ `student_last_failed_login` int(10) DEFAULT NULL COMMENT 'unix timestamp of last failed login attempt',
+ `student_registration_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+ `student_registration_ip` varchar(39) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0.0.0.0',
+ PRIMARY KEY (`student_id`),
+ UNIQUE KEY `student_name` (`student_name`),
+ UNIQUE KEY `student_email` (`student_email`)
+) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='student data';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE `gaz_XXXsconti_articoli` (`clfoco` int(9),`codart` varchar(15),`sconto` decimal(6,3),`prezzo_netto` decimal(14,5), primary key(`clfoco`,`codart`));
 CREATE TABLE `gaz_XXXsconti_raggruppamenti` (`clfoco` int(9),`ragstat` char(15),`sconto` decimal(6,3), primary key(`clfoco`,`ragstat`));

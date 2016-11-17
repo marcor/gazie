@@ -11,8 +11,11 @@
                             <img width="7%" src="../../library/images/gazie.gif" />
                             <img width="5%" src="./school.png" />
                             <h4 ><?php echo MESSAGE_WELCOME_REGISTRATION ?></h4>
+                        </div>
+                        <div class="small">
                             <p><?php echo MESSAGE_INTRO_REGISTRATION; ?></p>
-                            <p><?php echo MESSAGE_PSW_REGISTRATION; ?></p></div>
+                            <p><?php echo MESSAGE_PSW_REGISTRATION; ?></p>
+                        </div>
                     </div>
                     <div style="padding-top:10px" class="panel-body" >
                         <div style="padding-bottom: 25px;" class="input-group">
