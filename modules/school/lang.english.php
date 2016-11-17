@@ -66,13 +66,10 @@ $strScript = array(
 
 );
 // GAzie
-define("MESSAGE_WELCOME", "Benvenuto su: <b>GAzie a scuola</b>");
+define("MESSAGE_WELCOME", "Benvenuto sul modulo GAzie a scuola");
 define("MESSAGE_LOG","Accesso al sistema localizzato in:");
-define("MESSAGE_INTRO", "con esso ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
+define("MESSAGE_INTRO", "con esso ti potrai esercitare nell'utilizzo di un Gestionale multiAZIEndale per tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
 define("MESSAGE_PSW", "Inserisci il nome utente e la password che hai scelto in fase di iscrizione al servizio");
-define("MESSAGE_WELCOME_REGISTRATION", "Registrati su: <b>GAzie a scuola</b>");
-define("MESSAGE_INTRO_REGISTRATION", "con esso ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
-define("MESSAGE_PSW_REGISTRATION", "Dopo aver scelto l'insegnante compila il form sottostante in tutti i suoi campi, successivamante riceverai una mail con un link da cliccare per confermare l'accesso al servizio");
 
 // login & registration classes
 define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Your account is not activated yet. Please click on the confirm link in the mail.");
@@ -117,16 +114,16 @@ define("MESSAGE_USERNAME_INVALID", "Username does not fit the name scheme: only 
 define("MESSAGE_USERNAME_SAME_LIKE_OLD_ONE", "Sorry, that username is the same as your current one. Please choose another one.");
 
 // views
-define("WORDING_BACK_TO_LOGIN", "Torna alla pagina di accesso");
+define("WORDING_BACK_TO_LOGIN", "Back to Login Page");
 define("WORDING_CHANGE_EMAIL", "Change email");
 define("WORDING_CHANGE_PASSWORD", "Change password");
 define("WORDING_CHANGE_USERNAME", "Change username");
 define("WORDING_CURRENTLY", "currently");
 define("WORDING_EDIT_USER_DATA", "Edit user data");
 define("WORDING_EDIT_YOUR_CREDENTIALS", "You are logged in and can edit your credentials here");
-define("WORDING_FORGOT_MY_PASSWORD", "Ho dimenticato le credenziali per l'accesso");
-define("WORDING_LOGIN", "Accedi");
-define("WORDING_LOGOUT", "Esci");
+define("WORDING_FORGOT_MY_PASSWORD", "I forgot my password");
+define("WORDING_LOGIN", "Log in");
+define("WORDING_LOGOUT", "Log out");
 define("WORDING_NEW_EMAIL", "New email");
 define("WORDING_NEW_PASSWORD", "New password");
 define("WORDING_NEW_PASSWORD_REPEAT", "Repeat new password");
@@ -134,17 +131,17 @@ define("WORDING_NEW_USERNAME", "New username (username cannot be empty and must 
 define("WORDING_OLD_PASSWORD", "Your OLD Password");
 define("WORDING_PASSWORD", "Password");
 define("WORDING_PROFILE_PICTURE", "Your profile picture (from gravatar):");
-define("WORDING_REGISTER", "Registrami");
-define("WORDING_REGISTER_NEW_ACCOUNT", "Sono un nuovo alunno");
-define("WORDING_REGISTRATION_CAPTCHA", "Inserisci i caratteri che vedi nell'immagine di sopra");
-define("WORDING_REGISTRATION_EMAIL", "Email (Attenzione! Inserisci un indirizzo valido per poter ricevere la mail con il link per la verifica)");
-define("WORDING_REGISTRATION_PASSWORD", "Password (minimo 8 caratteri!)");
-define("WORDING_REGISTRATION_PASSWORD_REPEAT", "Ripeti la password");
-define("WORDING_REGISTRATION_USERNAME", "Nome utente (solo lettere e numeri, da 8 a 64 caratteri)");
-define("WORDING_REMEMBER_ME", "Ricordamelo per 2 settimane");
+define("WORDING_REGISTER", "Register");
+define("WORDING_REGISTER_NEW_ACCOUNT", "Register new account");
+define("WORDING_REGISTRATION_CAPTCHA", "Please enter these characters");
+define("WORDING_REGISTRATION_EMAIL", "User's email (please provide a real email address, you'll get a verification mail with an activation link)");
+define("WORDING_REGISTRATION_PASSWORD", "Password (min. 6 characters!)");
+define("WORDING_REGISTRATION_PASSWORD_REPEAT", "Password repeat");
+define("WORDING_REGISTRATION_USERNAME", "Username (only letters and numbers, 2 to 64 characters)");
+define("WORDING_REMEMBER_ME", "Keep me logged in (for 2 weeks)");
 define("WORDING_REQUEST_PASSWORD_RESET", "Request a password reset. Enter your username and you'll get a mail with instructions:");
 define("WORDING_RESET_PASSWORD", "Reset my password");
 define("WORDING_SUBMIT_NEW_PASSWORD", "Submit new password");
-define("WORDING_USERNAME", "Nome utente");
+define("WORDING_USERNAME", "Username");
 define("WORDING_YOU_ARE_LOGGED_IN_AS", "You are logged in as ");
 ?>
