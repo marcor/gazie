@@ -40,7 +40,7 @@ class Registration
 
         // if we have such a POST request, call the registerNewUser() method
         if (isset($_POST["register"])) {
-            $this->registerNewUser($_POST['name'], $_POST['email'], $_POST['password_new'], $_POST['password_repeat'], $_POST["captcha"]);
+            $this->registerNewUser($_POST['student_name'], $_POST['student_email'], $_POST['student_password_new'], $_POST['student_password_repeat'], $_POST["captcha"]);
         // if we have such a GET request, call the verifyNewUser() method
         } else if (isset($_GET["id"]) && isset($_GET["verification_code"])) {
             $this->verifyNewUser($_GET["id"], $_GET["verification_code"]);
@@ -78,49 +78,49 @@ class Registration
      * handles the entire registration process. checks all error possibilities, and creates a new user in the database if
      * everything is fine
      */
-    private function registerNewUser($name, $email, $password, $password_repeat, $captcha)
+    private function registerNewUser($student_name, $student_email, $student_password, $student_password_repeat, $captcha)
     {
         // we just remove extra space on username and email
-        $name  = trim($name);
-        $email = trim($email);
+        $student_name  = trim($student_name);
+        $student_email = trim($student_email);
 
         // check provided data validity
         // TODO: check for "return true" case early, so put this first
         if (strtolower($captcha) != strtolower($_SESSION['captcha'])) {
             $this->errors[] = MESSAGE_CAPTCHA_WRONG;
-        } elseif (empty($name)) {
+        } elseif (empty($student_name)) {
             $this->errors[] = MESSAGE_USERNAME_EMPTY;
-        } elseif (empty($password) || empty($password_repeat)) {
+        } elseif (empty($student_password) || empty($student_password_repeat)) {
             $this->errors[] = MESSAGE_PASSWORD_EMPTY;
-        } elseif ($password !== $password_repeat) {
+        } elseif ($student_password !== $student_password_repeat) {
             $this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
-        } elseif (strlen($password) < 6) {
+        } elseif (strlen($student_password) < 6) {
             $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
-        } elseif (strlen($name) > 64 || strlen($name) < 2) {
+        } elseif (strlen($student_name) > 64 || strlen($student_name) < 2) {
             $this->errors[] = MESSAGE_USERNAME_BAD_LENGTH;
-        } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $name)) {
+        } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $student_name)) {
             $this->errors[] = MESSAGE_USERNAME_INVALID;
-        } elseif (empty($email)) {
+        } elseif (empty($student_email)) {
             $this->errors[] = MESSAGE_EMAIL_EMPTY;
-        } elseif (strlen($email) > 64) {
+        } elseif (strlen($student_email) > 64) {
             $this->errors[] = MESSAGE_EMAIL_TOO_LONG;
-        } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        } elseif (!filter_var($student_email, FILTER_VALIDATE_EMAIL)) {
             $this->errors[] = MESSAGE_EMAIL_INVALID;
 
         // finally if all the above checks are ok
         } else if ($this->databaseConnection()) {
             // check if username or email already exists
-            $query_check_name = $this->db_connection->prepare('SELECT name, email FROM users WHERE name=:name OR email=:email');
-            $query_check_name->bindValue(':name', $name, PDO::PARAM_STR);
-            $query_check_name->bindValue(':email', $email, PDO::PARAM_STR);
-            $query_check_name->execute();
-            $result = $query_check_name->fetchAll();
+            $query_check_student_name = $this->db_connection->prepare('SELECT student_name, student_email FROM users WHERE student_name=:student_name OR student_email=:student_email');
+            $query_check_student_name->bindValue(':student_name', $student_name, PDO::PARAM_STR);
+            $query_check_student_name->bindValue(':student_email', $student_email, PDO::PARAM_STR);
+            $query_check_student_name->execute();
+            $result = $query_check_student_name->fetchAll();
 
             // if username or/and email find in the database
             // TODO: this is really awful!
             if (count($result) > 0) {
                 for ($i = 0; $i < count($result); $i++) {
-                    $this->errors[] = ($result[$i]['name'] == $name) ? MESSAGE_USERNAME_EXISTS : MESSAGE_EMAIL_ALREADY_EXISTS;
+                    $this->errors[] = ($result[$i]['student_name'] == $student_name) ? MESSAGE_USERNAME_EXISTS : MESSAGE_EMAIL_ALREADY_EXISTS;
                 }
             } else {
                 // check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
@@ -131,32 +131,32 @@ class Registration
                 // the PASSWORD_DEFAULT constant is defined by the PHP 5.5, or if you are using PHP 5.3/5.4, by the password hashing
                 // compatibility library. the third parameter looks a little bit shitty, but that's how those PHP 5.5 functions
                 // want the parameter: as an array with, currently only used with 'cost' => XX.
-                $password_hash = password_hash($password, PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
+                $student_password_hash = password_hash($student_password, PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
                 // generate random hash for email verification (40 char string)
-                $activation_hash = sha1(uniqid(mt_rand(), true));
+                $student_activation_hash = sha1(uniqid(mt_rand(), true));
 
                 // write new users data into database
-                $query_new_insert = $this->db_connection->prepare('INSERT INTO users (name, password_hash, email, activation_hash, registration_ip, registration_datetime) VALUES(:name, :password_hash, :email, :activation_hash, :registration_ip, now())');
-                $query_new_insert->bindValue(':name', $name, PDO::PARAM_STR);
-                $query_new_insert->bindValue(':password_hash', $password_hash, PDO::PARAM_STR);
-                $query_new_insert->bindValue(':email', $email, PDO::PARAM_STR);
-                $query_new_insert->bindValue(':activation_hash', $activation_hash, PDO::PARAM_STR);
-                $query_new_insert->bindValue(':registration_ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
-                $query_new_insert->execute();
+                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO users (student_name, student_password_hash, student_email, student_activation_hash, student_registration_ip, student_registration_datetime) VALUES(:student_name, :student_password_hash, :student_email, :student_activation_hash, :student_registration_ip, now())');
+                $query_new_student_insert->bindValue(':student_name', $student_name, PDO::PARAM_STR);
+                $query_new_student_insert->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
+                $query_new_student_insert->bindValue(':student_email', $student_email, PDO::PARAM_STR);
+                $query_new_student_insert->bindValue(':student_activation_hash', $student_activation_hash, PDO::PARAM_STR);
+                $query_new_student_insert->bindValue(':student_registration_ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
+                $query_new_student_insert->execute();
 
                 // id of new user
-                $id = $this->db_connection->lastInsertId();
+                $student_id = $this->db_connection->lastInsertId();
 
-                if ($query_new_insert) {
+                if ($query_new_student_insert) {
                     // send a verification email
-                    if ($this->sendVerificationEmail($id, $email, $activation_hash)) {
+                    if ($this->sendVerificationEmail($student_id, $student_email, $student_activation_hash)) {
                         // when mail has been send successfully
                         $this->messages[] = MESSAGE_VERIFICATION_MAIL_SENT;
                         $this->registration_successful = true;
                     } else {
                         // delete this users account immediately, as we could not send a verification email
-                        $query_delete_user = $this->db_connection->prepare('DELETE FROM users WHERE id=:id');
-                        $query_delete_user->bindValue(':id', $id, PDO::PARAM_INT);
+                        $query_delete_user = $this->db_connection->prepare('DELETE FROM users WHERE student_id=:student_id');
+                        $query_delete_user->bindValue(':student_id', $student_id, PDO::PARAM_INT);
                         $query_delete_user->execute();
 
                         $this->errors[] = MESSAGE_VERIFICATION_MAIL_ERROR;
@@ -172,7 +172,7 @@ class Registration
      * sends an email to the provided email address
      * @return boolean gives back true if mail has been sent, gives back false if no mail could been sent
      */
-    public function sendVerificationEmail($id, $email, $activation_hash)
+    public function sendVerificationEmail($student_id, $student_email, $student_activation_hash)
     {
         $mail = new PHPMailer;
 
@@ -200,10 +200,10 @@ class Registration
 
         $mail->From = EMAIL_VERIFICATION_FROM;
         $mail->FromName = EMAIL_VERIFICATION_FROM_NAME;
-        $mail->AddAddress($email);
+        $mail->AddAddress($student_email);
         $mail->Subject = EMAIL_VERIFICATION_SUBJECT;
 
-        $link = EMAIL_VERIFICATION_URL.'?id='.urlencode($id).'&verification_code='.urlencode($activation_hash);
+        $link = EMAIL_VERIFICATION_URL.'?id='.urlencode($student_id).'&verification_code='.urlencode($student_activation_hash);
 
         // the link to your register.php, please set this value in config/email_verification.php
         $mail->Body = EMAIL_VERIFICATION_CONTENT.' '.$link;
@@ -219,14 +219,14 @@ class Registration
     /**
      * checks the id/verification code combination and set the user's activation status to true (=1) in the database
      */
-    public function verifyNewUser($id, $activation_hash)
+    public function verifyNewUser($student_id, $student_activation_hash)
     {
         // if database connection opened
         if ($this->databaseConnection()) {
             // try to update user with specified information
-            $query_update_user = $this->db_connection->prepare('UPDATE users SET active = 1, activation_hash = NULL WHERE id = :id AND activation_hash = :activation_hash');
-            $query_update_user->bindValue(':id', intval(trim($id)), PDO::PARAM_INT);
-            $query_update_user->bindValue(':activation_hash', $activation_hash, PDO::PARAM_STR);
+            $query_update_user = $this->db_connection->prepare('UPDATE users SET student_active = 1, student_activation_hash = NULL WHERE student_id = :student_id AND student_activation_hash = :student_activation_hash');
+            $query_update_user->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
+            $query_update_user->bindValue(':student_activation_hash', $student_activation_hash, PDO::PARAM_STR);
             $query_update_user->execute();
 
             if ($query_update_user->rowCount() > 0) {
