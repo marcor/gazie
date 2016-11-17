@@ -162,7 +162,7 @@ class Login
         // if database connection opened
         if ($this->databaseConnection()) {
             // database query, getting all the info of the selected user
-            $query_user = $this->db_connection->prepare('SELECT * FROM users WHERE student_name = :student_name');
+            $query_user = $this->db_connection->prepare('SELECT * FROM gaz_students WHERE student_name = :student_name');
             $query_user->bindValue(':student_name', $student_name, PDO::PARAM_STR);
             $query_user->execute();
             // get result row (as an object)
@@ -201,7 +201,7 @@ class Login
                 // cookie looks good, try to select corresponding user
                 if ($this->databaseConnection()) {
                     // get real token from database (and all other data)
-                    $sth = $this->db_connection->prepare("SELECT student_id, student_name, student_email FROM users WHERE student_id = :student_id
+                    $sth = $this->db_connection->prepare("SELECT student_id, student_name, student_email FROM gaz_students WHERE student_id = :student_id
                                                       AND student_rememberme_token = :student_rememberme_token AND student_rememberme_token IS NOT NULL");
                     $sth->bindValue(':student_id', $student_id, PDO::PARAM_INT);
                     $sth->bindValue(':student_rememberme_token', $token, PDO::PARAM_STR);
@@ -259,7 +259,7 @@ class Login
             // if user has typed a valid email address, we try to identify him with his student_email
             } else if ($this->databaseConnection()) {
                 // database query, getting all the info of the selected user
-                $query_user = $this->db_connection->prepare('SELECT * FROM users WHERE student_email = :student_email');
+                $query_user = $this->db_connection->prepare('SELECT * FROM gaz_students WHERE student_email = :student_email');
                 $query_user->bindValue(':student_email', trim($student_name), PDO::PARAM_STR);
                 $query_user->execute();
                 // get result row (as an object)
@@ -276,7 +276,7 @@ class Login
             // using PHP 5.5's password_verify() function to check if the provided passwords fits to the hash of that user's password
             } else if (! password_verify($student_password, $result_row->student_password_hash)) {
                 // increment the failed login counter for that user
-                $sth = $this->db_connection->prepare('UPDATE users '
+                $sth = $this->db_connection->prepare('UPDATE gaz_students '
                         . 'SET student_failed_logins = student_failed_logins+1, student_last_failed_login = :student_last_failed_login '
                         . 'WHERE student_name = :student_name OR student_email = :student_name');
                 $sth->execute(array(':student_name' => $student_name, ':student_last_failed_login' => time()));
@@ -299,7 +299,7 @@ class Login
                 $this->student_is_logged_in = true;
 
                 // reset the failed login counter for that user
-                $sth = $this->db_connection->prepare('UPDATE users '
+                $sth = $this->db_connection->prepare('UPDATE gaz_students '
                         . 'SET student_failed_logins = 0, student_last_failed_login = NULL '
                         . 'WHERE student_id = :student_id AND student_failed_logins != 0');
                 $sth->execute(array(':student_id' => $result_row->student_id));
@@ -313,7 +313,7 @@ class Login
                 }
 
                 // OPTIONAL: recalculate the user's password hash
-                // DELETE this if-block if you like, it only exists to recalculate users's hashes when you provide a cost factor,
+                // DELETE this if-block if you like, it only exists to recalculate gaz_students's hashes when you provide a cost factor,
                 // by default the script will use a cost factor of 10 and never change it.
                 // check if the have defined a cost factor in config/hashing.php
                 if (defined('HASH_COST_FACTOR')) {
@@ -324,7 +324,7 @@ class Login
                         $student_password_hash = password_hash($student_password, PASSWORD_DEFAULT, array('cost' => HASH_COST_FACTOR));
 
                         // TODO: this should be put into another method !?
-                        $query_update = $this->db_connection->prepare('UPDATE users SET student_password_hash = :student_password_hash WHERE student_id = :student_id');
+                        $query_update = $this->db_connection->prepare('UPDATE gaz_students SET student_password_hash = :student_password_hash WHERE student_id = :student_id');
                         $query_update->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
                         $query_update->bindValue(':student_id', $result_row->student_id, PDO::PARAM_INT);
                         $query_update->execute();
@@ -349,7 +349,7 @@ class Login
         if ($this->databaseConnection()) {
             // generate 64 char random string and store it in current user data
             $random_token_string = hash('sha256', mt_rand());
-            $sth = $this->db_connection->prepare("UPDATE users SET student_rememberme_token = :student_rememberme_token WHERE student_id = :student_id");
+            $sth = $this->db_connection->prepare("UPDATE gaz_students SET student_rememberme_token = :student_rememberme_token WHERE student_id = :student_id");
             $sth->execute(array(':student_rememberme_token' => $random_token_string, ':student_id' => $_SESSION['student_id']));
 
             // generate cookie string that consists of userid, randomstring and combined hash of both
@@ -370,7 +370,7 @@ class Login
         // if database connection opened
         if ($this->databaseConnection()) {
             // Reset rememberme token
-            $sth = $this->db_connection->prepare("UPDATE users SET student_rememberme_token = NULL WHERE student_id = :student_id");
+            $sth = $this->db_connection->prepare("UPDATE gaz_students SET student_rememberme_token = NULL WHERE student_id = :student_id");
             $sth->execute(array(':student_id' => $_SESSION['student_id']));
         }
 
@@ -427,7 +427,7 @@ class Login
                 $this->errors[] = MESSAGE_USERNAME_EXISTS;
             } else {
                 // write user's new data into database
-                $query_edit_student_name = $this->db_connection->prepare('UPDATE users SET student_name = :student_name WHERE student_id = :student_id');
+                $query_edit_student_name = $this->db_connection->prepare('UPDATE gaz_students SET student_name = :student_name WHERE student_id = :student_id');
                 $query_edit_student_name->bindValue(':student_name', $student_name, PDO::PARAM_STR);
                 $query_edit_student_name->bindValue(':student_id', $_SESSION['student_id'], PDO::PARAM_INT);
                 $query_edit_student_name->execute();
@@ -458,7 +458,7 @@ class Login
 
         } else if ($this->databaseConnection()) {
             // check if new email already exists
-            $query_user = $this->db_connection->prepare('SELECT * FROM users WHERE student_email = :student_email');
+            $query_user = $this->db_connection->prepare('SELECT * FROM gaz_students WHERE student_email = :student_email');
             $query_user->bindValue(':student_email', $student_email, PDO::PARAM_STR);
             $query_user->execute();
             // get result row (as an object)
@@ -468,8 +468,8 @@ class Login
             if (isset($result_row->student_id)) {
                 $this->errors[] = MESSAGE_EMAIL_ALREADY_EXISTS;
             } else {
-                // write users new data into database
-                $query_edit_student_email = $this->db_connection->prepare('UPDATE users SET student_email = :student_email WHERE student_id = :student_id');
+                // write gaz_students new data into database
+                $query_edit_student_email = $this->db_connection->prepare('UPDATE gaz_students SET student_email = :student_email WHERE student_id = :student_id');
                 $query_edit_student_email->bindValue(':student_email', $student_email, PDO::PARAM_STR);
                 $query_edit_student_email->bindValue(':student_id', $_SESSION['student_id'], PDO::PARAM_INT);
                 $query_edit_student_email->execute();
@@ -519,8 +519,8 @@ class Login
                     // want the parameter: as an array with, currently only used with 'cost' => XX.
                     $student_password_hash = password_hash($student_password_new, PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
 
-                    // write users new hash into database
-                    $query_update = $this->db_connection->prepare('UPDATE users SET student_password_hash = :student_password_hash WHERE student_id = :student_id');
+                    // write gaz_students new hash into database
+                    $query_update = $this->db_connection->prepare('UPDATE gaz_students SET student_password_hash = :student_password_hash WHERE student_id = :student_id');
                     $query_update->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
                     $query_update->bindValue(':student_id', $_SESSION['student_id'], PDO::PARAM_INT);
                     $query_update->execute();
@@ -564,7 +564,7 @@ class Login
             if (isset($result_row->student_id)) {
 
                 // database query:
-                $query_update = $this->db_connection->prepare('UPDATE users SET student_password_reset_hash = :student_password_reset_hash,
+                $query_update = $this->db_connection->prepare('UPDATE gaz_students SET student_password_reset_hash = :student_password_reset_hash,
                                                                student_password_reset_timestamp = :student_password_reset_timestamp
                                                                WHERE student_name = :student_name');
                 $query_update->bindValue(':student_password_reset_hash', $student_password_reset_hash, PDO::PARAM_STR);
@@ -692,8 +692,8 @@ class Login
             // want the parameter: as an array with, currently only used with 'cost' => XX.
             $student_password_hash = password_hash($student_password_new, PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
 
-            // write users new hash into database
-            $query_update = $this->db_connection->prepare('UPDATE users SET student_password_hash = :student_password_hash,
+            // write gaz_students new hash into database
+            $query_update = $this->db_connection->prepare('UPDATE gaz_students SET student_password_hash = :student_password_hash,
                                                            student_password_reset_hash = NULL, student_password_reset_timestamp = NULL
                                                            WHERE student_name = :student_name AND student_password_reset_hash = :student_password_reset_hash');
             $query_update->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);

@@ -110,7 +110,7 @@ class Registration
         // finally if all the above checks are ok
         } else if ($this->databaseConnection()) {
             // check if username or email already exists
-            $query_check_student_name = $this->db_connection->prepare('SELECT student_name, student_email FROM users WHERE student_name=:student_name OR student_email=:student_email');
+            $query_check_student_name = $this->db_connection->prepare('SELECT student_name, student_email FROM gaz_students WHERE student_name=:student_name OR student_email=:student_email');
             $query_check_student_name->bindValue(':student_name', $student_name, PDO::PARAM_STR);
             $query_check_student_name->bindValue(':student_email', $student_email, PDO::PARAM_STR);
             $query_check_student_name->execute();
@@ -135,8 +135,8 @@ class Registration
                 // generate random hash for email verification (40 char string)
                 $student_activation_hash = sha1(uniqid(mt_rand(), true));
 
-                // write new users data into database
-                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO users (student_name, student_password_hash, student_email, student_activation_hash, student_registration_ip, student_registration_datetime) VALUES(:student_name, :student_password_hash, :student_email, :student_activation_hash, :student_registration_ip, now())');
+                // write new gaz_students data into database
+                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO gaz_students (student_name, student_password_hash, student_email, student_activation_hash, student_registration_ip, student_registration_datetime) VALUES(:student_name, :student_password_hash, :student_email, :student_activation_hash, :student_registration_ip, now())');
                 $query_new_student_insert->bindValue(':student_name', $student_name, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_email', $student_email, PDO::PARAM_STR);
@@ -154,8 +154,8 @@ class Registration
                         $this->messages[] = MESSAGE_VERIFICATION_MAIL_SENT;
                         $this->registration_successful = true;
                     } else {
-                        // delete this users account immediately, as we could not send a verification email
-                        $query_delete_user = $this->db_connection->prepare('DELETE FROM users WHERE student_id=:student_id');
+                        // delete this gaz_students account immediately, as we could not send a verification email
+                        $query_delete_user = $this->db_connection->prepare('DELETE FROM gaz_students WHERE student_id=:student_id');
                         $query_delete_user->bindValue(':student_id', $student_id, PDO::PARAM_INT);
                         $query_delete_user->execute();
 
@@ -224,7 +224,7 @@ class Registration
         // if database connection opened
         if ($this->databaseConnection()) {
             // try to update user with specified information
-            $query_update_user = $this->db_connection->prepare('UPDATE users SET student_active = 1, student_activation_hash = NULL WHERE student_id = :student_id AND student_activation_hash = :student_activation_hash');
+            $query_update_user = $this->db_connection->prepare('UPDATE gaz_students SET student_active = 1, student_activation_hash = NULL WHERE student_id = :student_id AND student_activation_hash = :student_activation_hash');
             $query_update_user->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
             $query_update_user->bindValue(':student_activation_hash', $student_activation_hash, PDO::PARAM_STR);
             $query_update_user->execute();
