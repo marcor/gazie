@@ -1,4 +1,5 @@
 <?php
+require("../../config/config/gconfig.php");
 // include the config
 require_once('./config.php');
 

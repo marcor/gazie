@@ -40,7 +40,7 @@ switch ($server_lang) {
         $lang = 'italian';
         break;
 }
-
+require("../../library/include/datlib.inc.php");
 // include the config
 require_once('./config.php');
 

@@ -10,14 +10,25 @@
                         <div class="panel-title">
                             <img width="7%" src="../../library/images/gazie.gif" />
                             <img width="5%" src="./school.png" />
-                            <h4 ><?php echo MESSAGE_WELCOME_REGISTRATION ?></h4>
+                            <?php echo MESSAGE_WELCOME_REGISTRATION ?>
                         </div>
-                        <div class="small">
-                            <p><?php echo MESSAGE_INTRO_REGISTRATION; ?></p>
-                            <p><?php echo MESSAGE_PSW_REGISTRATION; ?></p>
-                        </div>
+                        <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
                     </div>
                     <div style="padding-top:10px" class="panel-body" >
+                        <p><?php echo MESSAGE_INTRO_REGISTRATION; ?></p>
+                        <p><?php echo MESSAGE_PSW_REGISTRATION; ?></p>
+                        <div style="padding-bottom: 25px;" class="input-group">
+                            <span class="input-group-addon"><?php echo MESSAGE_CLASSROOM_REGISTRATION; ?></span>
+                            <select class="form-control" style="padding: 2px 2px; height: 30px;" name="student_classroom_id" id="student_classroom_id">                            
+                                 <option value="0">------------------</option>
+                                <?php 
+                                $registration->select_classroom();
+                                foreach ($registration->classroom_data as $row): ?>
+                                 <option value="<?=$row["id"]?>"><?php echo $row["classe"].' '.MESSAGE_CLASSROOM_TEACHER.' '.$row["Nome"].' '.$row["Cognome"]; ?></option>
+                                <?php endforeach ?>
+                            </select>
+
+                        </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                             <input id="student_name" type="text"  pattern="[a-zA-Z0-9]{2,64}" name="student_name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_USERNAME; ?>" />
@@ -52,6 +63,7 @@
             </div>
         </div><!-- chiude div container -->
     </form>
-<?php } ?>
-
-<?php include('_footer.php'); ?>
+    <?php
+}
+include('_footer.php');
+?>

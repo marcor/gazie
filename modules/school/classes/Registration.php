@@ -7,41 +7,44 @@
  * @link https://github.com/panique/php-login-advanced/
  * @license http://opensource.org/licenses/MIT MIT License
  */
-class Registration
-{
+class Registration {
+
     /**
      * @var object $db_connection The database connection
      */
-    private $db_connection            = null;
+    private $db_connection = null;
+
     /**
      * @var bool success state of registration
      */
-    public  $registration_successful  = false;
+    public $registration_successful = false;
+
     /**
      * @var bool success state of verification
      */
-    public  $verification_successful  = false;
+    public $verification_successful = false;
+
     /**
      * @var array collection of error messages
      */
-    public  $errors                   = array();
+    public $errors = array();
+
     /**
      * @var array collection of success / neutral messages
      */
-    public  $messages                 = array();
+    public $messages = array();
 
     /**
      * the function "__construct()" automatically starts whenever an object of this class is created,
      * you know, when you do "$login = new Login();"
      */
-    public function __construct()
-    {
-        session_start();
 
+    public function __construct() {
+        session_start();
         // if we have such a POST request, call the registerNewUser() method
         if (isset($_POST["register"])) {
-            $this->registerNewUser($_POST['student_name'], $_POST['student_email'], $_POST['student_password_new'], $_POST['student_password_repeat'], $_POST["captcha"]);
-        // if we have such a GET request, call the verifyNewUser() method
+            $this->registerNewUser($_POST['student_classroom_id'], $_POST['student_name'], $_POST['student_email'], $_POST['student_password_new'], $_POST['student_password_repeat'], $_POST["captcha"]);
+            // if we have such a GET request, call the verifyNewUser() method
         } else if (isset($_GET["id"]) && isset($_GET["verification_code"])) {
             $this->verifyNewUser($_GET["id"], $_GET["verification_code"]);
         }
@@ -50,8 +53,7 @@ class Registration
     /**
      * Checks if database connection is opened and open it if not
      */
-    private function databaseConnection()
-    {
+    private function databaseConnection() {
         // connection already opened
         if ($this->db_connection != null) {
             return true;
@@ -64,9 +66,9 @@ class Registration
                 // @see http://wiki.hashphp.org/PDO_Tutorial_for_MySQL_Developers#Connecting_to_MySQL says:
                 // "Adding the charset to the DSN is very important for security reasons,
                 // most examples you'll see around leave it out. MAKE SURE TO INCLUDE THE CHARSET!"
-                $this->db_connection = new PDO('mysql:host='. DB_HOST .';dbname='. DB_NAME . ';charset=utf8', DB_USER, DB_PASS);
+                $this->db_connection = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8', DB_USER, DB_PASS);
                 return true;
-            // If an error is catched, database connection failed
+                // If an error is catched, database connection failed
             } catch (PDOException $e) {
                 $this->errors[] = MESSAGE_DATABASE_ERROR;
                 return false;
@@ -74,14 +76,21 @@ class Registration
         }
     }
 
+    public function select_classroom() {
+        $this->databaseConnection();
+        $query_select_classroom = $this->db_connection->prepare('SELECT * FROM '.DB_TABLE_PREFIX.'_classroom LEFT JOIN '.DB_TABLE_PREFIX.'_admin ON '.DB_TABLE_PREFIX.'_classroom.teacher = '.DB_TABLE_PREFIX.'_admin.Login');
+        $query_select_classroom->execute();
+        $this->classroom_data=$query_select_classroom->fetchAll();
+    }
+
     /**
      * handles the entire registration process. checks all error possibilities, and creates a new user in the database if
      * everything is fine
      */
-    private function registerNewUser($student_name, $student_email, $student_password, $student_password_repeat, $captcha)
-    {
+    private function registerNewUser($student_classroom_id, $student_name, $student_email, $student_password, $student_password_repeat, $captcha) {
         // we just remove extra space on username and email
-        $student_name  = trim($student_name);
+        $student_classroom_id = trim($student_classroom_id);
+        $student_name = trim($student_name);
         $student_email = trim($student_email);
 
         // check provided data validity
@@ -102,12 +111,14 @@ class Registration
             $this->errors[] = MESSAGE_USERNAME_INVALID;
         } elseif (empty($student_email)) {
             $this->errors[] = MESSAGE_EMAIL_EMPTY;
+        } elseif ($student_classroom_id <1 ) {
+            $this->errors[] = MESSAGE_CLASSROOM_EMPTY;
         } elseif (strlen($student_email) > 64) {
             $this->errors[] = MESSAGE_EMAIL_TOO_LONG;
         } elseif (!filter_var($student_email, FILTER_VALIDATE_EMAIL)) {
             $this->errors[] = MESSAGE_EMAIL_INVALID;
 
-        // finally if all the above checks are ok
+            // finally if all the above checks are ok
         } else if ($this->databaseConnection()) {
             // check if username or email already exists
             $query_check_student_name = $this->db_connection->prepare('SELECT student_name, student_email FROM gaz_students WHERE student_name=:student_name OR student_email=:student_email');
@@ -136,9 +147,13 @@ class Registration
                 $student_activation_hash = sha1(uniqid(mt_rand(), true));
 
                 // write new gaz_students data into database
-                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO gaz_students (student_name, student_password_hash, student_email, student_activation_hash, student_registration_ip, student_registration_datetime) VALUES(:student_name, :student_password_hash, :student_email, :student_activation_hash, :student_registration_ip, now())');
+                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO gaz_students (student_classroom_id, student_name, student_password_hash, student_rememberme_token, student_email, student_activation_hash, student_registration_ip, student_registration_datetime) VALUES(:student_classroom_id, :student_name, :student_password_hash, :student_rememberme_token, :student_email, :student_activation_hash, :student_registration_ip, now())');
+                $query_new_student_insert->bindValue(':student_classroom_id', $student_classroom_id, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_name', $student_name, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
+                // GAZIE inizio uso impropriamente e temporaneamente, mi servirà per mettere la password in chiaro sulla tabella gaz_admin
+                $query_new_student_insert->bindValue(':student_rememberme_token', $student_password, PDO::PARAM_STR);
+                // GAZIE fine
                 $query_new_student_insert->bindValue(':student_email', $student_email, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_activation_hash', $student_activation_hash, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_registration_ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
@@ -172,8 +187,8 @@ class Registration
      * sends an email to the provided email address
      * @return boolean gives back true if mail has been sent, gives back false if no mail could been sent
      */
-    public function sendVerificationEmail($student_id, $student_email, $student_activation_hash)
-    {
+
+    public function sendVerificationEmail($student_id, $student_email, $student_activation_hash) {
         $mail = new PHPMailer;
 
         // please look into the config/config.php for much more info on how to use this!
@@ -203,12 +218,12 @@ class Registration
         $mail->AddAddress($student_email);
         $mail->Subject = EMAIL_VERIFICATION_SUBJECT;
 
-        $link = EMAIL_VERIFICATION_URL.'?id='.urlencode($student_id).'&verification_code='.urlencode($student_activation_hash);
+        $link = EMAIL_VERIFICATION_URL . '?id=' . urlencode($student_id) . '&verification_code=' . urlencode($student_activation_hash);
 
         // the link to your register.php, please set this value in config/email_verification.php
-        $mail->Body = EMAIL_VERIFICATION_CONTENT.' '.$link;
+        $mail->Body = EMAIL_VERIFICATION_CONTENT . ' ' . $link;
 
-        if(!$mail->Send()) {
+        if (!$mail->Send()) {
             $this->errors[] = MESSAGE_VERIFICATION_MAIL_NOT_SENT . $mail->ErrorInfo;
             return false;
         } else {
@@ -219,8 +234,7 @@ class Registration
     /**
      * checks the id/verification code combination and set the user's activation status to true (=1) in the database
      */
-    public function verifyNewUser($student_id, $student_activation_hash)
-    {
+    public function verifyNewUser($student_id, $student_activation_hash) {
         // if database connection opened
         if ($this->databaseConnection()) {
             // try to update user with specified information
@@ -228,8 +242,16 @@ class Registration
             $query_update_user->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
             $query_update_user->bindValue(':student_activation_hash', $student_activation_hash, PDO::PARAM_STR);
             $query_update_user->execute();
-
             if ($query_update_user->rowCount() > 0) {
+                /* GAZIE qui faccio tutto quanto occorre per creare una nuova serie di tabelle con prefisso
+                 * per avere una nuova gestione separata dello studente che si è registrato */
+                $query_get_student_password = $this->db_connection->prepare('SELECT student_rememberme_token, student_name  FROM gaz_students WHERE student_id = :student_id');
+                $query_get_student_password->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
+                $query_get_student_password->execute();
+                $r = $query_get_student_password->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_LAST);
+                $student_password = $r[0]; //questa la userò per popolare gaz_admin assieme al nome
+                $student_name = $r[1];
+                /* GAZIE FINE                 */
                 $this->verification_successful = true;
                 $this->messages[] = MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL;
             } else {
@@ -237,4 +259,5 @@ class Registration
             }
         }
     }
+
 }

@@ -67,12 +67,16 @@ $strScript = array(
 );
 // GAzie
 define("MESSAGE_WELCOME", "Benvenuto su: <b>GAzie a scuola</b>");
-define("MESSAGE_LOG","Accesso al sistema localizzato in:");
+define("MESSAGE_LOG","Accesso al gestionale didattico su server localizzato in ");
 define("MESSAGE_INTRO", "con esso ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
 define("MESSAGE_PSW", "Inserisci il nome utente e la password che hai scelto in fase di iscrizione al servizio");
 define("MESSAGE_WELCOME_REGISTRATION", "Registrati su: <b>GAzie a scuola</b>");
-define("MESSAGE_INTRO_REGISTRATION", "con esso ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
-define("MESSAGE_PSW_REGISTRATION", "Dopo aver scelto l'insegnante compila il form sottostante in tutti i suoi campi, successivamante riceverai una mail con un link da cliccare per confermare l'accesso al servizio");
+define("MESSAGE_INTRO_REGISTRATION", "così ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
+define("MESSAGE_PSW_REGISTRATION", "Dopo aver scelto la classe compila tutti gli altri campi del form sottostante, successivamante riceverai una mail con un link da cliccare per confermare l'accesso al servizio");
+define("MESSAGE_CLASSROOM_REGISTRATION", "Scegli la classe di appartenenza");
+define("MESSAGE_CLASSROOM_TEACHER", "prof.");
+define("MESSAGE_CLASSROOM_EMPTY", "Non hai selezionato la classe");
+
 
 // login & registration classes
 define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Your account is not activated yet. Please click on the confirm link in the mail.");
@@ -91,7 +95,7 @@ define("MESSAGE_LOGGED_OUT", "You have been logged out.");
 // The "login failed"-message is a security improved feedback that doesn't show a potential attacker if the user exists or not
 define("MESSAGE_LOGIN_FAILED", "Login failed.");
 define("MESSAGE_OLD_PASSWORD_WRONG", "Your OLD password was wrong.");
-define("MESSAGE_PASSWORD_BAD_CONFIRM", "Password and password repeat are not the same");
+define("MESSAGE_PASSWORD_BAD_CONFIRM", "Le due password non coincidono");
 define("MESSAGE_PASSWORD_CHANGE_FAILED", "Sorry, your password changing failed.");
 define("MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY", "Password successfully changed!");
 define("MESSAGE_PASSWORD_EMPTY", "Password field was empty");

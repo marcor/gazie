@@ -61,7 +61,7 @@ class Login
     public function __construct()
     {
         // create/read session
-        session_start();
+       // session_start();
 
         // TODO: organize this stuff better and make the constructor very small
         // TODO: unite Login and Registration classes ?
@@ -756,7 +756,7 @@ class Login
      */
     public function getGravatarImageUrl($email, $s = 50, $d = 'mm', $r = 'g', $atts = array() )
     {
-        $url = 'http://www.gravatar.com/avatar/';
+        $url = 'https://www.gravatar.com/avatar/';
         $url .= md5(strtolower(trim($email)));
         $url .= "?s=$s&d=$d&r=$r&f=y";
 

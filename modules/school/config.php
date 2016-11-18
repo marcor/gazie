@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Configuration for: Database Connection
  * This is the place where your database login constants are saved
@@ -13,10 +12,15 @@
  *          by the way, it's bad style to use "root", but for development it will work.
  * DB_PASS: the password of the above user
  */
-define("DB_HOST", "127.0.0.1");
-define("DB_NAME", "gazie");
-define("DB_USER", "root");
-define("DB_PASS", "");
+
+/* GAZIE MOD BEGIN */
+define("DB_HOST", $Host);
+define("DB_NAME", $Database);
+define("DB_TABLE_PREFIX", $table_prefix);
+define("DB_USER", $User);
+define("DB_PASS", $Password);
+
+/* GAZIE MOD END */
 
 /**
  * Configuration for: Cookies
@@ -34,7 +38,7 @@ define("DB_PASS", "");
  * COOKIE_SECRET_KEY: Put a random value here to make your app more secure. When changed, all cookies are reset.
  */
 define("COOKIE_RUNTIME", 1209600);
-define("COOKIE_DOMAIN", ".127.0.0.1");
+define("COOKIE_DOMAIN", $Host);
 define("COOKIE_SECRET_KEY", "1gp@TMPS{+$78sfpMJFe-92s");
 
 /**
@@ -86,8 +90,8 @@ define("EMAIL_PASSWORDRESET_CONTENT", "Please click on this link to reset your p
 define("EMAIL_VERIFICATION_URL", "http://localhost/gazie/trunk/modules/school/student_register.php");
 define("EMAIL_VERIFICATION_FROM", "d.disciascio@libero.it");
 define("EMAIL_VERIFICATION_FROM_NAME", "GAzie a scuola");
-define("EMAIL_VERIFICATION_SUBJECT", "Attivazione GAzie a scuola");
-define("EMAIL_VERIFICATION_CONTENT", "Clicca su questo link per registrarti su GAzie a scuola:");
+define("EMAIL_VERIFICATION_SUBJECT", "Registrazione su GAzie a scuola");
+define("EMAIL_VERIFICATION_CONTENT", "Clicca su questo link per completare la registrazione e accedere al servizio GAzie a scuola:");
 
 /**
  * Configuration for: Hashing strength
