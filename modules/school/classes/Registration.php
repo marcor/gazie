@@ -124,7 +124,7 @@ class Registration {
             // finally if all the above checks are ok
         } else if ($this->databaseConnection()) {
             // check if username or email already exists
-            $query_check_student_name = $this->db_connection->prepare('SELECT student_name, student_email FROM gaz_students WHERE student_name=:student_name OR student_email=:student_email');
+            $query_check_student_name = $this->db_connection->prepare('SELECT student_name, student_email FROM ' . DB_TABLE_PREFIX . '_students WHERE student_name=:student_name OR student_email=:student_email');
             $query_check_student_name->bindValue(':student_name', $student_name, PDO::PARAM_STR);
             $query_check_student_name->bindValue(':student_email', $student_email, PDO::PARAM_STR);
             $query_check_student_name->execute();
@@ -150,7 +150,7 @@ class Registration {
                 $student_activation_hash = sha1(uniqid(mt_rand(), true));
 
                 // write new gaz_students data into database
-                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO gaz_students (student_classroom_id,  student_firstname,  student_lastname,  student_name,  student_password_hash,  student_rememberme_token,  student_email,  student_telephone,  student_activation_hash,  student_registration_ip, student_registration_datetime) VALUES(:student_classroom_id, :student_firstname, :student_lastname, :student_name, :student_password_hash, :student_rememberme_token, :student_email, :student_telephone, :student_activation_hash, :student_registration_ip, now())');
+                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_students (student_classroom_id,  student_firstname,  student_lastname,  student_name,  student_password_hash,  student_rememberme_token,  student_email,  student_telephone,  student_activation_hash,  student_registration_ip, student_registration_datetime) VALUES(:student_classroom_id, :student_firstname, :student_lastname, :student_name, :student_password_hash, :student_rememberme_token, :student_email, :student_telephone, :student_activation_hash, :student_registration_ip, now())');
                 $query_new_student_insert->bindValue(':student_classroom_id', $student_classroom_id, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_firstname', $student_firstname, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_lastname', $student_lastname, PDO::PARAM_STR);
@@ -176,7 +176,7 @@ class Registration {
                         $this->registration_successful = true;
                     } else {
                         // delete this gaz_students account immediately, as we could not send a verification email
-                        $query_delete_user = $this->db_connection->prepare('DELETE FROM gaz_students WHERE student_id=:student_id');
+                        $query_delete_user = $this->db_connection->prepare('DELETE FROM ' . DB_TABLE_PREFIX . '_students WHERE student_id=:student_id');
                         $query_delete_user->bindValue(':student_id', $student_id, PDO::PARAM_INT);
                         $query_delete_user->execute();
 
@@ -237,6 +237,48 @@ class Registration {
         }
     }
 
+    private function getInstallSqlFile() {
+        //serve per trovare il primo file .sql di installazione piu' recente e possibilmente nella lingua scelta
+        $lastInstallSqlFile = "";
+        $ctrlLastVersion = 0;
+        $relativePath = '../../setup/install';
+        if ($handle = opendir($relativePath)) {
+            while ($file = readdir($handle)) {
+                if (($file == ".") || ($file == ".."))
+                    continue;
+                if (preg_match("/^install_([0-9]{1,2})\.([0-9]{1,2})\.sql$/", $file, $regs)) {
+                    //faccio il push solo se e' una versione di valore maggiore della precedente
+                    $versionFile = $regs[1] * 100 + $regs[2];
+                    if ($versionFile > $ctrlLastVersion) {
+                        $lastInstallSqlFile = $file;
+                        $ctrlLastVersion = $versionFile;
+                    }
+                } else {
+                    continue;
+                }
+            }
+            closedir($handle);
+        }
+        return $lastInstallSqlFile;
+    }
+
+    private function executeQueryFileInstall($student_id, $last_file) {
+        // Inizializzo l'accumulatore e sostituisco il prefisso
+        $tmpSql = file_get_contents("../../setup/install/" . $last_file);
+        $tmpSql = preg_replace("/gaz_/", DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_', $tmpSql);  //sostituisco gaz_ con il prefisso personalizzato
+        $tmpSql = preg_replace("/CREATE DATABASE IF NOT EXISTS gazie/", "CREATE DATABASE IF NOT EXISTS " . DB_NAME, $tmpSql);
+        $tmpSql = preg_replace("/USE gazie/", "USE " . DB_NAME, $tmpSql);
+        // Iterazione per ciascuna linea del file.
+        $lineArray = explode(";\n", $tmpSql);
+        foreach ($lineArray as $l) {
+            $l = ltrim($l);
+            if (!empty($l)) {
+                $this->db_connection->query($l);
+            }
+        }
+        return true;
+    }
+
     /**
      * checks the id/verification code combination and set the user's activation status to true (=1) in the database
      */
@@ -244,22 +286,45 @@ class Registration {
         // if database connection opened
         if ($this->databaseConnection()) {
             // try to update user with specified information
-            $query_update_user = $this->db_connection->prepare('UPDATE gaz_students SET student_active = 1, student_activation_hash = NULL WHERE student_id = :student_id AND student_activation_hash = :student_activation_hash');
+            $query_update_user = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students SET student_active = 1, student_activation_hash = NULL WHERE student_id = :student_id AND student_activation_hash = :student_activation_hash');
             $query_update_user->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
             $query_update_user->bindValue(':student_activation_hash', $student_activation_hash, PDO::PARAM_STR);
             $query_update_user->execute();
             if ($query_update_user->rowCount() > 0) {
-                /* GAZIE qui faccio tutto quanto occorre per creare una nuova serie di tabelle con prefisso
+
+                /* GAZIE 
+                 * qui faccio tutto quanto occorre per creare una nuova serie di tabelle con prefisso
                  * per avere una nuova gestione separata dello studente che si è registrato */
-                $query_get_student_password = $this->db_connection->prepare('SELECT student_rememberme_token, student_name  FROM gaz_students WHERE student_id = :student_id');
+                $query_get_student_password = $this->db_connection->prepare('SELECT student_rememberme_token, student_name, student_firstname, student_lastname  FROM ' . DB_TABLE_PREFIX . '_students WHERE student_id = :student_id');
                 $query_get_student_password->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
                 $query_get_student_password->execute();
                 $r = $query_get_student_password->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_LAST);
-                $student_password = $r[0]; //questa la userò per popolare gaz_admin assieme al nome
-                $student_name = $r[1];
+                $student_password = $r[0]; //questa la userò per popolare gaz_admin della Password
+                $student_name = $r[1]; // Login
+                $student_firstname = $r[2]; // Nome
+                $student_lastname = $r[3]; // Cognome
+                $last_file = $this->getInstallSqlFile();
+                $this->executeQueryFileInstall($student_id, $last_file);
+                $this->db_connection->query('DELETE FROM `' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin` WHERE  `Login`='amministratore';");
+                // add student into new gazNNNN_admin
+                $query_add_student_to_admin = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_admin (Cognome, Nome,  Login,  Password, Abilit, company_id) VALUES(:Cognome, :Nome,  :Login,  :Password, 5 , 1)');
+                $query_add_student_to_admin->bindValue(':Login', $student_name, PDO::PARAM_STR);
+                $query_add_student_to_admin->bindValue(':Nome', $student_firstname, PDO::PARAM_STR);
+                $query_add_student_to_admin->bindValue(':Cognome', $student_lastname, PDO::PARAM_STR);
+                $query_add_student_to_admin->bindValue(':Password', $student_password, PDO::PARAM_STR);
+                $query_add_student_to_admin->execute();
+                // delete password from inappropriate field
+                $query_update_user = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . "_students SET student_rememberme_token = '' WHERE student_id = :student_id");
+                $query_update_user->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
+                $query_update_user->execute();
+
+
                 /* GAZIE FINE                 */
+
+
+
                 $this->verification_successful = true;
-                $this->messages[] = MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL;
+                $this->messages[] = MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL . ' file ' . $last_file;
             } else {
                 $this->errors[] = MESSAGE_REGISTRATION_ACTIVATION_NOT_SUCCESSFUL;
             }
