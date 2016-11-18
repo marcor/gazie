@@ -38,12 +38,11 @@ class Registration {
      * the function "__construct()" automatically starts whenever an object of this class is created,
      * you know, when you do "$login = new Login();"
      */
-
     public function __construct() {
         session_start();
         // if we have such a POST request, call the registerNewUser() method
         if (isset($_POST["register"])) {
-            $this->registerNewUser($_POST['student_classroom_id'], $_POST['student_name'], $_POST['student_email'], $_POST['student_password_new'], $_POST['student_password_repeat'], $_POST["captcha"]);
+            $this->registerNewUser($_POST['student_classroom_id'], $_POST['student_firstname'], $_POST['student_lastname'], $_POST['student_name'], $_POST['student_email'], $_POST['student_telephone'], $_POST['student_password_new'], $_POST['student_password_repeat'], $_POST["captcha"]);
             // if we have such a GET request, call the verifyNewUser() method
         } else if (isset($_GET["id"]) && isset($_GET["verification_code"])) {
             $this->verifyNewUser($_GET["id"], $_GET["verification_code"]);
@@ -78,16 +77,16 @@ class Registration {
 
     public function select_classroom() {
         $this->databaseConnection();
-        $query_select_classroom = $this->db_connection->prepare('SELECT * FROM '.DB_TABLE_PREFIX.'_classroom LEFT JOIN '.DB_TABLE_PREFIX.'_admin ON '.DB_TABLE_PREFIX.'_classroom.teacher = '.DB_TABLE_PREFIX.'_admin.Login');
+        $query_select_classroom = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_classroom LEFT JOIN ' . DB_TABLE_PREFIX . '_admin ON ' . DB_TABLE_PREFIX . '_classroom.teacher = ' . DB_TABLE_PREFIX . '_admin.Login');
         $query_select_classroom->execute();
-        $this->classroom_data=$query_select_classroom->fetchAll();
+        $this->classroom_data = $query_select_classroom->fetchAll();
     }
 
     /**
      * handles the entire registration process. checks all error possibilities, and creates a new user in the database if
      * everything is fine
      */
-    private function registerNewUser($student_classroom_id, $student_name, $student_email, $student_password, $student_password_repeat, $captcha) {
+    private function registerNewUser($student_classroom_id, $student_firstname, $student_lastname, $student_name, $student_email, $student_telephone, $student_password, $student_password_repeat, $captcha) {
         // we just remove extra space on username and email
         $student_classroom_id = trim($student_classroom_id);
         $student_name = trim($student_name);
@@ -105,13 +104,17 @@ class Registration {
             $this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
         } elseif (strlen($student_password) < 6) {
             $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
+        } elseif (strlen($student_firstname) > 30 || strlen($student_firstname) < 2) {
+            $this->errors[] = MESSAGE_FIRSTNAME_BAD_LENGTH;
+        } elseif (strlen($student_lastname) > 30 || strlen($student_lastname) < 2) {
+            $this->errors[] = MESSAGE_LASTNAME_BAD_LENGTH;
         } elseif (strlen($student_name) > 64 || strlen($student_name) < 2) {
             $this->errors[] = MESSAGE_USERNAME_BAD_LENGTH;
         } elseif (!preg_match('/^[a-z\d]{2,64}$/i', $student_name)) {
             $this->errors[] = MESSAGE_USERNAME_INVALID;
         } elseif (empty($student_email)) {
             $this->errors[] = MESSAGE_EMAIL_EMPTY;
-        } elseif ($student_classroom_id <1 ) {
+        } elseif ($student_classroom_id < 1) {
             $this->errors[] = MESSAGE_CLASSROOM_EMPTY;
         } elseif (strlen($student_email) > 64) {
             $this->errors[] = MESSAGE_EMAIL_TOO_LONG;
@@ -147,14 +150,17 @@ class Registration {
                 $student_activation_hash = sha1(uniqid(mt_rand(), true));
 
                 // write new gaz_students data into database
-                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO gaz_students (student_classroom_id, student_name, student_password_hash, student_rememberme_token, student_email, student_activation_hash, student_registration_ip, student_registration_datetime) VALUES(:student_classroom_id, :student_name, :student_password_hash, :student_rememberme_token, :student_email, :student_activation_hash, :student_registration_ip, now())');
+                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO gaz_students (student_classroom_id,  student_firstname,  student_lastname,  student_name,  student_password_hash,  student_rememberme_token,  student_email,  student_telephone,  student_activation_hash,  student_registration_ip, student_registration_datetime) VALUES(:student_classroom_id, :student_firstname, :student_lastname, :student_name, :student_password_hash, :student_rememberme_token, :student_email, :student_telephone, :student_activation_hash, :student_registration_ip, now())');
                 $query_new_student_insert->bindValue(':student_classroom_id', $student_classroom_id, PDO::PARAM_STR);
+                $query_new_student_insert->bindValue(':student_firstname', $student_firstname, PDO::PARAM_STR);
+                $query_new_student_insert->bindValue(':student_lastname', $student_lastname, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_name', $student_name, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
                 // GAZIE inizio uso impropriamente e temporaneamente, mi servirà per mettere la password in chiaro sulla tabella gaz_admin
                 $query_new_student_insert->bindValue(':student_rememberme_token', $student_password, PDO::PARAM_STR);
                 // GAZIE fine
                 $query_new_student_insert->bindValue(':student_email', $student_email, PDO::PARAM_STR);
+                $query_new_student_insert->bindValue(':student_telephone', $student_telephone, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_activation_hash', $student_activation_hash, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_registration_ip', $_SERVER['REMOTE_ADDR'], PDO::PARAM_STR);
                 $query_new_student_insert->execute();

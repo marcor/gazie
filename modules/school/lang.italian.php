@@ -75,8 +75,9 @@ define("MESSAGE_INTRO_REGISTRATION", "così ti potrai esercitare nell'utilizzo d
 define("MESSAGE_PSW_REGISTRATION", "Dopo aver scelto la classe compila tutti gli altri campi del form sottostante, successivamante riceverai una mail con un link da cliccare per confermare l'accesso al servizio");
 define("MESSAGE_CLASSROOM_REGISTRATION", "Scegli la classe di appartenenza");
 define("MESSAGE_CLASSROOM_TEACHER", "prof.");
-define("MESSAGE_CLASSROOM_EMPTY", "Non hai selezionato la classe");
-
+define("WORDING_REGISTRATION_FIRSTNAME","Nome anagrafico (lettere o spazi, min.2 max.30)");
+define("WORDING_REGISTRATION_LASTNAME","Cognome anagrafico (lettere o spazi, min.2 max.30)");
+define("WORDING_REGISTRATION_TELEPHONE","Numero di telefono (facoltativo)");
 
 // login & registration classes
 define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Your account is not activated yet. Please click on the confirm link in the mail.");
@@ -144,7 +145,7 @@ define("WORDING_REGISTRATION_CAPTCHA", "Inserisci i caratteri che vedi nell'imma
 define("WORDING_REGISTRATION_EMAIL", "Email (Attenzione! Inserisci un indirizzo valido per poter ricevere la mail con il link per la verifica)");
 define("WORDING_REGISTRATION_PASSWORD", "Password (minimo 8 caratteri!)");
 define("WORDING_REGISTRATION_PASSWORD_REPEAT", "Ripeti la password");
-define("WORDING_REGISTRATION_USERNAME", "Nome utente (solo lettere e numeri, da 8 a 64 caratteri)");
+define("WORDING_REGISTRATION_USERNAME", "Username per il login (nickname fatto di lettere e numeri, min.8 max.64)");
 define("WORDING_REMEMBER_ME", "Ricordamelo per 2 settimane");
 define("WORDING_REQUEST_PASSWORD_RESET", "Request a password reset. Enter your username and you'll get a mail with instructions:");
 define("WORDING_RESET_PASSWORD", "Reset my password");

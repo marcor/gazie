@@ -19,8 +19,8 @@
                         <p><?php echo MESSAGE_PSW_REGISTRATION; ?></p>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><?php echo MESSAGE_CLASSROOM_REGISTRATION; ?></span>
-                            <select class="form-control" style="padding: 2px 2px; height: 30px;" name="student_classroom_id" id="student_classroom_id">                            
-                                 <option value="0">------------------</option>
+                            <select required class="form-control" style="padding: 2px 2px; height: 30px;" name="student_classroom_id" id="student_classroom_id">                            
+                                 <option value="">------------------</option>
                                 <?php 
                                 $registration->select_classroom();
                                 foreach ($registration->classroom_data as $row): ?>
@@ -31,11 +31,15 @@
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                            <input id="student_name" type="text"  pattern="[a-zA-Z0-9]{2,64}" name="student_name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_USERNAME; ?>" />
+                            <input id="student_firstname" type="text"  pattern="[a-zA-Z\ ]{2,30}" name="student_firstname" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_FIRSTNAME; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                            <input id="student_email" type="email" name="student_email" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_EMAIL; ?>" />
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input id="student_lastname" type="text"  pattern="[a-zA-Z\ ]{2,30}" name="student_lastname" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_LASTNAME; ?>" />
+                        </div>
+                        <div style="padding-bottom: 25px;" class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                            <input id="student_name" type="text"  pattern="[a-zA-Z0-9]{2,64}" name="student_name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_USERNAME; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
@@ -44,6 +48,14 @@
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
                             <input id="student_password_repeat" type="password"  pattern=".{8,}" name="student_password_repeat" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_PASSWORD_REPEAT; ?>" />
+                        </div>
+                        <div style="padding-bottom: 25px;" class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+                            <input id="student_email" type="email" name="student_email" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_EMAIL; ?>" />
+                        </div>
+                        <div style="padding-bottom: 25px;" class="input-group">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-phone"></i></span>
+                            <input id="student_telephone" type="tel" name="student_telephone" class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_REGISTRATION_TELEPHONE; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <img src="tools/showCaptcha.php" alt="captcha" />

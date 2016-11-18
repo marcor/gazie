@@ -12,9 +12,12 @@ CREATE TABLE IF NOT EXISTS `gaz_classroom` (  `id` int(6) NOT NULL AUTO_INCREMEN
 CREATE TABLE IF NOT EXISTS `gaz_students` (
  `student_id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'auto incrementing student_id of each student, unique index',
  `student_classroom_id` int(6) NOT NULL COMMENT 'classroom_id of student',
+ `student_firstname` varchar(30) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s first name',
+ `student_lastname` varchar(30) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s last name',
  `student_name` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s name, unique',
  `student_password_hash` varchar(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s password in salted and hashed format',
  `student_email` varchar(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s email, unique',
+ `student_telephone` varchar(30) COLLATE utf8_unicode_ci NOT NULL COMMENT 'student''s telephone number',
  `student_active` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'student''s activation status',
  `student_activation_hash` varchar(40) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'student''s email verification hash string',
  `student_password_reset_hash` char(40) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'student''s password reset code',
