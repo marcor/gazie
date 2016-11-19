@@ -9,29 +9,12 @@
  * @link https://github.com/panique/php-login-advanced/
  * @license http://opensource.org/licenses/MIT MIT License
  */
-
-$server_lang = 'IT';
-switch ($server_lang) {
-    case 'IT':
-        $lang = 'italian';
-        break;
-    case 'EN':
-        $lang = 'english';
-        break;
-    case 'ES':
-        $lang = 'spanish';
-        break;
-    default:
-        $lang = 'italian';
-        break;
-}
-
 require("../../library/include/datlib.inc.php");
 // include the config
 require_once('./config.php');
 
 // include the to-be-used language, english by default. feel free to translate your project and include something else
-require("./lang." . $lang . ".php");
+require_once("./lang." . TRANSL_LANG . ".php");
 
 // include the PHPMailer library
 require_once('libraries/PHPMailer.php');

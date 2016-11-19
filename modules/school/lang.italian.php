@@ -57,6 +57,8 @@ $strScript = array(
     ),
     "report_students.php" =>
     array('title' => 'Elenco degli alunni',
+        'active_head'=>'Indirizzo mail',
+        'active'=>array(0=>'NON VERIFICATO',1=>'verificato'),
         'classe' => 'Classe',
         'Cognome' => "Cognome",
         'Nome' => 'Nome',
@@ -78,6 +80,7 @@ define("MESSAGE_CLASSROOM_TEACHER", "prof.");
 define("WORDING_REGISTRATION_FIRSTNAME","Nome anagrafico (lettere o spazi, min.2 max.30)");
 define("WORDING_REGISTRATION_LASTNAME","Cognome anagrafico (lettere o spazi, min.2 max.30)");
 define("WORDING_REGISTRATION_TELEPHONE","Numero di telefono (facoltativo)");
+define("WORDING_GO_TO_LOGIN", "Vai alla pagina per l'accesso");
 
 // login & registration classes
 define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Your account is not activated yet. Please click on the confirm link in the mail.");
@@ -111,7 +114,7 @@ define("MESSAGE_REGISTRATION_FAILED", "Sorry, your registration failed. Please g
 define("MESSAGE_RESET_LINK_HAS_EXPIRED", "Your reset link has expired. Please use the reset link within one hour.");
 define("MESSAGE_VERIFICATION_MAIL_ERROR", "Sorry, we could not send you an verification mail. Your account has NOT been created.");
 define("MESSAGE_VERIFICATION_MAIL_NOT_SENT", "Verification Mail NOT successfully sent! Error: ");
-define("MESSAGE_VERIFICATION_MAIL_SENT", "Your account has been created successfully and we have sent you an email. Please click the VERIFICATION LINK within that mail.");
+define("MESSAGE_VERIFICATION_MAIL_SENT", "Le tue credenziali sono state registrate con successo. Ti abbiamo inviato una mail per verificare la correttezza del tuo indirizzo. Solo quando cliccherai sul link in essa contenuto il gestionale GAzie a scuola sarà operativo e potrai accederci.");
 define("MESSAGE_USER_DOES_NOT_EXIST", "This user does not exist");
 define("MESSAGE_USERNAME_BAD_LENGTH", "Username cannot be shorter than 2 or longer than 64 characters");
 define("MESSAGE_USERNAME_CHANGE_FAILED", "Sorry, your chosen username renaming failed");

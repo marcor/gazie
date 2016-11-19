@@ -325,7 +325,7 @@ class Registration {
                 // add student into new gazNNNN_admin
                 $gravatar_url = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($student_email)));
                 $gravatar_img = @file_get_contents($gravatar_url);
-                $query_add_student_to_admin = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_admin (Cognome, Nome,image, lang, Login,  Password, Abilit, company_id, datpas) VALUES(:Cognome, :Nome,:image, :lang, :Login, :Password, 5 , 1, NOW())');
+                $query_add_student_to_admin = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_admin (Cognome, Nome,image, lang, Login,  Password, Abilit, company_id, datpas) VALUES(:Cognome, :Nome,:image, :lang, :Login, :Password, 7 , 1, NOW())');
                 $query_add_student_to_admin->bindValue(':Login', $student_name, PDO::PARAM_STR);
                 $query_add_student_to_admin->bindValue(':Nome', $student_firstname, PDO::PARAM_STR);
                 $query_add_student_to_admin->bindValue(':Cognome', $student_lastname, PDO::PARAM_STR);

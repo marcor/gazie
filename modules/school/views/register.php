@@ -20,11 +20,12 @@
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><?php echo MESSAGE_CLASSROOM_REGISTRATION; ?></span>
                             <select required class="form-control" style="padding: 2px 2px; height: 30px;" name="student_classroom_id" id="student_classroom_id">                            
-                                 <option value="">------------------</option>
-                                <?php 
+                                <option value="">------------------</option>
+                                <?php
                                 $registration->select_classroom();
-                                foreach ($registration->classroom_data as $row): ?>
-                                 <option value="<?=$row["id"]?>"><?php echo $row["classe"].' '.$row["sezione"].' '.MESSAGE_CLASSROOM_TEACHER.' '.$row["Nome"].' '.$row["Cognome"]; ?></option>
+                                foreach ($registration->classroom_data as $row):
+                                    ?>
+                                    <option value="<?= $row["id"] ?>"><?php echo $row["classe"] . ' ' . $row["sezione"] . ' ' . MESSAGE_CLASSROOM_TEACHER . ' ' . $row["Nome"] . ' ' . $row["Cognome"]; ?></option>
                                 <?php endforeach ?>
                             </select>
 
@@ -75,6 +76,62 @@
             </div>
         </div><!-- chiude div container -->
     </form>
+    <?php
+} else if ($registration->verification_successful) {
+    ?>
+    <div class="container">    
+        <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
+            <div class="panel panel-success" >
+                <div class="panel-heading panel-gazie">
+                    <div class="panel-title">
+                        <img width="7%" src="../../library/images/gazie.gif" />
+                        <img width="5%" src="./school.png" />
+                        <h4 ><?php echo MESSAGE_WELCOME ?></h4>
+                        <?php
+                        // show potential errors / feedback (from registration object)
+                        if ($registration->messages) {
+                            foreach ($registration->messages as $message) {
+                                echo $message;
+                            }
+                        }
+                        ?>
+                    </div>
+                    <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
+                </div>
+                <div style="padding-top:10px" class="panel-body" >
+                    <div style="padding-bottom: 25px;" class="input-group col-sm-12">
+                        <input style="float:right;" class="btn btn-info"  onclick="location.href='student_login.php';"  type="submit" name="register" value="<?php echo WORDING_GO_TO_LOGIN; ?>" />
+                    </div>
+                </div>  <!-- chiude div panel-body -->
+            </div>  <!-- chiude div panel -->
+        </div>
+    </div><!-- chiude div container -->
+
+    <?php
+} else if ($registration->registration_successful) {
+    ?>
+    <div class="container">    
+        <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
+            <div class="panel panel-warning" >
+                <div class="panel-heading panel-gazie">
+                    <div class="panel-title">
+                        <img width="7%" src="../../library/images/gazie.gif" />
+                        <img width="5%" src="./school.png" />                    
+                        <h4 ><?php echo MESSAGE_WELCOME ?></h4>
+                        <?php
+                        // show potential errors / feedback (from registration object)
+                        if ($registration->messages) {
+                            foreach ($registration->messages as $message) {
+                                echo $message;
+                            }
+                        }
+                        ?>
+                    </div>
+                    <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
+                </div>
+            </div>  <!-- chiude div panel -->
+        </div>
+    </div><!-- chiude div container -->
     <?php
 }
 include('_footer.php');

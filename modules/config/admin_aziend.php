@@ -24,7 +24,7 @@
  */
 
 require("../../library/include/datlib.inc.php");
-$admin_aziend = checkAdmin(9);
+$admin_aziend = checkAdmin(7);
 $msg = array('err' => array(), 'war' => array());
 $rs_azienda = gaz_dbi_dyn_query('*', $gTables['aziend'], intval($_SESSION['company_id']), 'codice DESC', 0, 1);
 $exist_true = gaz_dbi_fetch_array($rs_azienda);

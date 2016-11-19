@@ -258,7 +258,7 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
                             </div>
                         </div>
                     </div>  
-                    <?php if (checkSchool()) { ?>
+                    <?php if (@checkSchool()) { ?>
                         <div style="padding-top:10px" class="panel-body" >
                             <div style="padding-top:10px" class="form-group">
                                 <div class="col-sm-12 controls">
@@ -270,7 +270,7 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
                             </div>
 
                         </div> 
-                    <?php } ?>
+                    <?php }  ?>
                 </div>  
             </div>
         </div><!-- chiude div container -->
@@ -278,7 +278,6 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
 </body>
 </html>
 <?php
-
 function checkSchool() {
     global $gTables;
     $ns = gaz_dbi_record_count($gTables['classroom'], 1);

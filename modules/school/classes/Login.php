@@ -7,48 +7,58 @@
  * @link https://github.com/panique/php-login-advanced/
  * @license http://opensource.org/licenses/MIT MIT License
  */
-class Login
-{
+class Login {
+
     /**
      * @var object $db_connection The database connection
      */
     private $db_connection = null;
+
     /**
      * @var int $student_id The user's id
      */
     private $student_id = null;
+
     /**
      * @var string $student_name The user's name
      */
     private $student_name = "";
+
     /**
      * @var string $student_email The user's mail
      */
     private $student_email = "";
+
     /**
      * @var boolean $student_is_logged_in The user's login status
      */
     private $student_is_logged_in = false;
+
     /**
      * @var string $student_gravatar_image_url The user's gravatar profile pic url (or a default one)
      */
     public $student_gravatar_image_url = "";
+
     /**
      * @var string $student_gravatar_image_tag The user's gravatar profile pic url with <img ... /> around
      */
     public $student_gravatar_image_tag = "";
+
     /**
      * @var boolean $password_reset_link_is_valid Marker for view handling
      */
-    private $password_reset_link_is_valid  = false;
+    private $password_reset_link_is_valid = false;
+
     /**
      * @var boolean $password_reset_was_successful Marker for view handling
      */
     private $password_reset_was_successful = false;
+
     /**
      * @var array $errors Collection of error messages
      */
     public $errors = array();
+
     /**
      * @var array $messages Collection of success / neutral messages
      */
@@ -58,26 +68,22 @@ class Login
      * the function "__construct()" automatically starts whenever an object of this class is created,
      * you know, when you do "$login = new Login();"
      */
-    public function __construct()
-    {
+    public function __construct() {
         // create/read session
-       // session_start();
-
+        // session_start();
         // TODO: organize this stuff better and make the constructor very small
         // TODO: unite Login and Registration classes ?
-
         // check the possible login actions:
         // 1. logout (happen when user clicks logout button)
         // 2. login via session data (happens each time user opens a page on your php project AFTER he has successfully logged in via the login form)
         // 3. login via cookie
         // 4. login via post data, which means simply logging in via the login form. after the user has submit his login/password successfully, his
         //    logged-in-status is written into his session data on the server. this is the typical behaviour of common login scripts.
-
         // if user tried to log out
         if (isset($_GET["logout"])) {
             $this->doLogout();
 
-        // if user has an active session on the server
+            // if user has an active session on the server
         } elseif (!empty($_SESSION['student_name']) && ($_SESSION['student_logged_in'] == 1)) {
             $this->loginWithSessionData();
 
@@ -86,21 +92,21 @@ class Login
             if (isset($_POST["student_edit_submit_name"])) {
                 // function below uses use $_SESSION['student_id'] et $_SESSION['student_email']
                 $this->editUserName($_POST['student_name']);
-            // user try to change his email
+                // user try to change his email
             } elseif (isset($_POST["student_edit_submit_email"])) {
                 // function below uses use $_SESSION['student_id'] et $_SESSION['student_email']
                 $this->editUserEmail($_POST['student_email']);
-            // user try to change his password
+                // user try to change his password
             } elseif (isset($_POST["student_edit_submit_password"])) {
                 // function below uses $_SESSION['student_name'] and $_SESSION['student_id']
                 $this->editUserPassword($_POST['student_password_old'], $_POST['student_password_new'], $_POST['student_password_repeat']);
             }
 
-        // login with cookie
+            // login with cookie
         } elseif (isset($_COOKIE['rememberme'])) {
             $this->loginWithCookieData();
 
-        // if user just submitted a login form
+            // if user just submitted a login form
         } elseif (isset($_POST["login"])) {
             if (!isset($_POST['student_rememberme'])) {
                 $_POST['student_rememberme'] = null;
@@ -127,8 +133,7 @@ class Login
      * Checks if database connection is opened. If not, then this method tries to open it.
      * @return bool Success status of the database connecting process
      */
-    private function databaseConnection()
-    {
+    private function databaseConnection() {
         // if connection already exists
         if ($this->db_connection != null) {
             return true;
@@ -140,7 +145,7 @@ class Login
                 // @see http://wiki.hashphp.org/PDO_Tutorial_for_MySQL_Developers#Connecting_to_MySQL says:
                 // "Adding the charset to the DSN is very important for security reasons,
                 // most examples you'll see around leave it out. MAKE SURE TO INCLUDE THE CHARSET!"
-                $this->db_connection = new PDO('mysql:host='. DB_HOST .';dbname='. DB_NAME . ';charset=utf8', DB_USER, DB_PASS);
+                $this->db_connection = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8', DB_USER, DB_PASS);
                 return true;
             } catch (PDOException $e) {
                 $this->errors[] = MESSAGE_DATABASE_ERROR . $e->getMessage();
@@ -157,12 +162,11 @@ class Login
      * TODO: @devplanete This returns two different types. Maybe this is valid, but it feels bad. We should rework this.
      * TODO: @devplanete After some resarch I'm VERY sure that this is not good coding style! Please fix this.
      */
-    private function getUserData($student_name)
-    {
+    private function getUserData($student_name) {
         // if database connection opened
         if ($this->databaseConnection()) {
             // database query, getting all the info of the selected user
-            $query_user = $this->db_connection->prepare('SELECT * FROM gaz_students WHERE student_name = :student_name');
+            $query_user = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_students WHERE student_name = :student_name');
             $query_user->bindValue(':student_name', $student_name, PDO::PARAM_STR);
             $query_user->execute();
             // get result row (as an object)
@@ -176,8 +180,7 @@ class Login
      * Logs in with S_SESSION data.
      * Technically we are already logged in at that point of time, as the $_SESSION values already exist.
      */
-    private function loginWithSessionData()
-    {
+    private function loginWithSessionData() {
         $this->student_name = $_SESSION['student_name'];
         $this->student_email = $_SESSION['student_email'];
 
@@ -191,8 +194,7 @@ class Login
      * Logs in via the Cookie
      * @return bool success state of cookie login
      */
-    private function loginWithCookieData()
-    {
+    private function loginWithCookieData() {
         if (isset($_COOKIE['rememberme'])) {
             // extract data from the cookie
             list ($student_id, $token, $hash) = explode(':', $_COOKIE['rememberme']);
@@ -201,20 +203,32 @@ class Login
                 // cookie looks good, try to select corresponding user
                 if ($this->databaseConnection()) {
                     // get real token from database (and all other data)
-                    $sth = $this->db_connection->prepare("SELECT student_id, student_name, student_email FROM gaz_students WHERE student_id = :student_id
-                                                      AND student_rememberme_token = :student_rememberme_token AND student_rememberme_token IS NOT NULL");
+                    $sth = $this->db_connection->prepare('SELECT student_id, student_name, student_email FROM ' . DB_TABLE_PREFIX . '_students WHERE student_id = :student_id
+                                                      AND student_rememberme_token = :student_rememberme_token AND student_rememberme_token IS NOT NULL');
                     $sth->bindValue(':student_id', $student_id, PDO::PARAM_INT);
                     $sth->bindValue(':student_rememberme_token', $token, PDO::PARAM_STR);
                     $sth->execute();
                     // get result row (as an object)
                     $result_row = $sth->fetchObject();
 
+                    // GAZIE : get admin_password
+                    $psw = $this->db_connection->prepare('SELECT Password FROM ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin WHERE Login = :student_name');
+                    $psw->bindValue(':student_name', $result_row->student_name, PDO::PARAM_STR);
+                    $psw->execute();
+                    // get result row (as an object)
+                    $rs_psw = $psw->fetchObject();
                     if (isset($result_row->student_id)) {
                         // write user data into PHP SESSION [a file on your server]
+                        $_SESSION['table_prefix'] = DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT);
                         $_SESSION['student_id'] = $result_row->student_id;
                         $_SESSION['student_name'] = $result_row->student_name;
                         $_SESSION['student_email'] = $result_row->student_email;
                         $_SESSION['student_logged_in'] = 1;
+                        $_SESSION['Login'] = $result_row->student_name;
+                        $_SESSION['logged_in'] = 1;
+                        $_SESSION['Abilit'] = 1;
+                        $_SESSION['company_id'] = 1;
+                        $_SESSION['Password'] = $rs_psw->Password;
 
                         // declare user id, set the login status to true
                         $this->student_id = $result_row->student_id;
@@ -241,14 +255,13 @@ class Login
      * @param $student_password
      * @param $student_rememberme
      */
-    private function loginWithPostData($student_name, $student_password, $student_rememberme)
-    {
+    private function loginWithPostData($student_name, $student_password, $student_rememberme) {
         if (empty($student_name)) {
             $this->errors[] = MESSAGE_USERNAME_EMPTY;
         } else if (empty($student_password)) {
             $this->errors[] = MESSAGE_PASSWORD_EMPTY;
 
-        // if POST data (from login form) contains non-empty student_name and non-empty student_password
+            // if POST data (from login form) contains non-empty student_name and non-empty student_password
         } else {
             // user can login with his username or his email address.
             // if user has not typed a valid email address, we try to identify him with his student_name
@@ -256,10 +269,10 @@ class Login
                 // database query, getting all the info of the selected user
                 $result_row = $this->getUserData(trim($student_name));
 
-            // if user has typed a valid email address, we try to identify him with his student_email
+                // if user has typed a valid email address, we try to identify him with his student_email
             } else if ($this->databaseConnection()) {
                 // database query, getting all the info of the selected user
-                $query_user = $this->db_connection->prepare('SELECT * FROM gaz_students WHERE student_email = :student_email');
+                $query_user = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_students WHERE student_email = :student_email');
                 $query_user->bindValue(':student_email', trim($student_name), PDO::PARAM_STR);
                 $query_user->execute();
                 // get result row (as an object)
@@ -267,31 +280,42 @@ class Login
             }
 
             // if this user not exists
-            if (! isset($result_row->student_id)) {
+            if (!isset($result_row->student_id)) {
                 // was MESSAGE_USER_DOES_NOT_EXIST before, but has changed to MESSAGE_LOGIN_FAILED
                 // to prevent potential attackers showing if the user exists
                 $this->errors[] = MESSAGE_LOGIN_FAILED;
             } else if (($result_row->student_failed_logins >= 3) && ($result_row->student_last_failed_login > (time() - 30))) {
                 $this->errors[] = MESSAGE_PASSWORD_WRONG_3_TIMES;
-            // using PHP 5.5's password_verify() function to check if the provided passwords fits to the hash of that user's password
-            } else if (! password_verify($student_password, $result_row->student_password_hash)) {
+                // using PHP 5.5's password_verify() function to check if the provided passwords fits to the hash of that user's password
+            } else if (!password_verify($student_password, $result_row->student_password_hash)) {
                 // increment the failed login counter for that user
-                $sth = $this->db_connection->prepare('UPDATE gaz_students '
+                $sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students '
                         . 'SET student_failed_logins = student_failed_logins+1, student_last_failed_login = :student_last_failed_login '
                         . 'WHERE student_name = :student_name OR student_email = :student_name');
                 $sth->execute(array(':student_name' => $student_name, ':student_last_failed_login' => time()));
 
                 $this->errors[] = MESSAGE_PASSWORD_WRONG;
-            // has the user activated their account with the verification email
+                // has the user activated their account with the verification email
             } else if ($result_row->student_active != 1) {
                 $this->errors[] = MESSAGE_ACCOUNT_NOT_ACTIVATED;
             } else {
+                // GAZIE : get admin_password
+                $psw = $this->db_connection->prepare('SELECT Password FROM ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin WHERE Login = :student_name');
+                $psw->bindValue(':student_name', $result_row->student_name, PDO::PARAM_STR);
+                $psw->execute();
+                // get result row (as an object)
+                $rs_psw = $psw->fetchObject();
                 // write user data into PHP SESSION [a file on your server]
+                $_SESSION['table_prefix'] = DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT);
                 $_SESSION['student_id'] = $result_row->student_id;
                 $_SESSION['student_name'] = $result_row->student_name;
                 $_SESSION['student_email'] = $result_row->student_email;
                 $_SESSION['student_logged_in'] = 1;
-
+                $_SESSION['Login'] = $result_row->student_name;
+                $_SESSION['logged_in'] = 1;
+                $_SESSION['Abilit'] = 1;
+                $_SESSION['company_id'] = 1;
+                $_SESSION['Password'] = $rs_psw->Password;
                 // declare user id, set the login status to true
                 $this->student_id = $result_row->student_id;
                 $this->student_name = $result_row->student_name;
@@ -299,7 +323,7 @@ class Login
                 $this->student_is_logged_in = true;
 
                 // reset the failed login counter for that user
-                $sth = $this->db_connection->prepare('UPDATE gaz_students '
+                $sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students '
                         . 'SET student_failed_logins = 0, student_last_failed_login = NULL '
                         . 'WHERE student_id = :student_id AND student_failed_logins != 0');
                 $sth->execute(array(':student_id' => $result_row->student_id));
@@ -324,7 +348,7 @@ class Login
                         $student_password_hash = password_hash($student_password, PASSWORD_DEFAULT, array('cost' => HASH_COST_FACTOR));
 
                         // TODO: this should be put into another method !?
-                        $query_update = $this->db_connection->prepare('UPDATE gaz_students SET student_password_hash = :student_password_hash WHERE student_id = :student_id');
+                        $query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students SET student_password_hash = :student_password_hash WHERE student_id = :student_id');
                         $query_update->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
                         $query_update->bindValue(':student_id', $result_row->student_id, PDO::PARAM_INT);
                         $query_update->execute();
@@ -343,13 +367,12 @@ class Login
     /**
      * Create all data needed for remember me cookie connection on client and server side
      */
-    private function newRememberMeCookie()
-    {
+    private function newRememberMeCookie() {
         // if database connection opened
         if ($this->databaseConnection()) {
             // generate 64 char random string and store it in current user data
             $random_token_string = hash('sha256', mt_rand());
-            $sth = $this->db_connection->prepare("UPDATE gaz_students SET student_rememberme_token = :student_rememberme_token WHERE student_id = :student_id");
+            $sth = $this->db_connection->prepare("UPDATE " . DB_TABLE_PREFIX . "_students SET student_rememberme_token = :student_rememberme_token WHERE student_id = :student_id");
             $sth->execute(array(':student_rememberme_token' => $random_token_string, ':student_id' => $_SESSION['student_id']));
 
             // generate cookie string that consists of userid, randomstring and combined hash of both
@@ -365,12 +388,11 @@ class Login
     /**
      * Delete all data needed for remember me cookie connection on client and server side
      */
-    private function deleteRememberMeCookie()
-    {
+    private function deleteRememberMeCookie() {
         // if database connection opened
         if ($this->databaseConnection()) {
             // Reset rememberme token
-            $sth = $this->db_connection->prepare("UPDATE gaz_students SET student_rememberme_token = NULL WHERE student_id = :student_id");
+            $sth = $this->db_connection->prepare("UPDATE " . DB_TABLE_PREFIX . "_students SET student_rememberme_token = NULL WHERE student_id = :student_id");
             $sth->execute(array(':student_id' => $_SESSION['student_id']));
         }
 
@@ -383,8 +405,7 @@ class Login
     /**
      * Perform the logout, resetting the session
      */
-    public function doLogout()
-    {
+    public function doLogout() {
         $this->deleteRememberMeCookie();
 
         $_SESSION = array();
@@ -398,27 +419,24 @@ class Login
      * Simply return the current state of the user's login
      * @return bool user's login status
      */
-    public function isUserLoggedIn()
-    {
+    public function isUserLoggedIn() {
         return $this->student_is_logged_in;
     }
 
     /**
      * Edit the user's name, provided in the editing form
      */
-    public function editUserName($student_name)
-    {
+    public function editUserName($student_name) {
         // prevent database flooding
         $student_name = substr(trim($student_name), 0, 64);
 
         if (!empty($student_name) && $student_name == $_SESSION['student_name']) {
             $this->errors[] = MESSAGE_USERNAME_SAME_LIKE_OLD_ONE;
 
-        // username cannot be empty and must be azAZ09 and 2-64 characters
-        // TODO: maybe this pattern should also be implemented in Registration.php (or other way round)
+            // username cannot be empty and must be azAZ09 and 2-64 characters
+            // TODO: maybe this pattern should also be implemented in Registration.php (or other way round)
         } elseif (empty($student_name) || !preg_match("/^(?=.{2,64}$)[a-zA-Z][a-zA-Z0-9]*(?: [a-zA-Z0-9]+)*$/", $student_name)) {
             $this->errors[] = MESSAGE_USERNAME_INVALID;
-
         } else {
             // check if new username already exists
             $result_row = $this->getUserData($student_name);
@@ -427,7 +445,7 @@ class Login
                 $this->errors[] = MESSAGE_USERNAME_EXISTS;
             } else {
                 // write user's new data into database
-                $query_edit_student_name = $this->db_connection->prepare('UPDATE gaz_students SET student_name = :student_name WHERE student_id = :student_id');
+                $query_edit_student_name = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students SET student_name = :student_name WHERE student_id = :student_id');
                 $query_edit_student_name->bindValue(':student_name', $student_name, PDO::PARAM_STR);
                 $query_edit_student_name->bindValue(':student_id', $_SESSION['student_id'], PDO::PARAM_INT);
                 $query_edit_student_name->execute();
@@ -445,20 +463,18 @@ class Login
     /**
      * Edit the user's email, provided in the editing form
      */
-    public function editUserEmail($student_email)
-    {
+    public function editUserEmail($student_email) {
         // prevent database flooding
         $student_email = substr(trim($student_email), 0, 64);
 
         if (!empty($student_email) && $student_email == $_SESSION["student_email"]) {
             $this->errors[] = MESSAGE_EMAIL_SAME_LIKE_OLD_ONE;
-        // user mail cannot be empty and must be in email format
+            // user mail cannot be empty and must be in email format
         } elseif (empty($student_email) || !filter_var($student_email, FILTER_VALIDATE_EMAIL)) {
             $this->errors[] = MESSAGE_EMAIL_INVALID;
-
         } else if ($this->databaseConnection()) {
             // check if new email already exists
-            $query_user = $this->db_connection->prepare('SELECT * FROM gaz_students WHERE student_email = :student_email');
+            $query_user = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_students WHERE student_email = :student_email');
             $query_user->bindValue(':student_email', $student_email, PDO::PARAM_STR);
             $query_user->execute();
             // get result row (as an object)
@@ -468,8 +484,8 @@ class Login
             if (isset($result_row->student_id)) {
                 $this->errors[] = MESSAGE_EMAIL_ALREADY_EXISTS;
             } else {
-                // write gaz_students new data into database
-                $query_edit_student_email = $this->db_connection->prepare('UPDATE gaz_students SET student_email = :student_email WHERE student_id = :student_id');
+                // write ' . DB_TABLE_PREFIX .'_students new data into database
+                $query_edit_student_email = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students SET student_email = :student_email WHERE student_id = :student_id');
                 $query_edit_student_email->bindValue(':student_email', $student_email, PDO::PARAM_STR);
                 $query_edit_student_email->bindValue(':student_id', $_SESSION['student_id'], PDO::PARAM_INT);
                 $query_edit_student_email->execute();
@@ -487,18 +503,17 @@ class Login
     /**
      * Edit the user's password, provided in the editing form
      */
-    public function editUserPassword($student_password_old, $student_password_new, $student_password_repeat)
-    {
+    public function editUserPassword($student_password_old, $student_password_new, $student_password_repeat) {
         if (empty($student_password_new) || empty($student_password_repeat) || empty($student_password_old)) {
             $this->errors[] = MESSAGE_PASSWORD_EMPTY;
-        // is the repeat password identical to password
+            // is the repeat password identical to password
         } elseif ($student_password_new !== $student_password_repeat) {
             $this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
-        // password need to have a minimum length of 6 characters
+            // password need to have a minimum length of 6 characters
         } elseif (strlen($student_password_new) < 6) {
             $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
 
-        // all the above tests are ok
+            // all the above tests are ok
         } else {
             // database query, getting hash of currently logged in user (to check with just provided password)
             $result_row = $this->getUserData($_SESSION['student_name']);
@@ -519,8 +534,8 @@ class Login
                     // want the parameter: as an array with, currently only used with 'cost' => XX.
                     $student_password_hash = password_hash($student_password_new, PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
 
-                    // write gaz_students new hash into database
-                    $query_update = $this->db_connection->prepare('UPDATE gaz_students SET student_password_hash = :student_password_hash WHERE student_id = :student_id');
+                    // write ' . DB_TABLE_PREFIX .'_students new hash into database
+                    $query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students SET student_password_hash = :student_password_hash WHERE student_id = :student_id');
                     $query_update->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
                     $query_update->bindValue(':student_id', $_SESSION['student_id'], PDO::PARAM_INT);
                     $query_update->execute();
@@ -544,13 +559,11 @@ class Login
      * Sets a random token into the database (that will verify the user when he/she comes back via the link
      * in the email) and sends the according email.
      */
-    public function setPasswordResetDatabaseTokenAndSendMail($student_name)
-    {
+    public function setPasswordResetDatabaseTokenAndSendMail($student_name) {
         $student_name = trim($student_name);
 
         if (empty($student_name)) {
             $this->errors[] = MESSAGE_USERNAME_EMPTY;
-
         } else {
             // generate timestamp (to see when exactly the user (or an attacker) requested the password reset mail)
             // btw this is an integer ;)
@@ -564,7 +577,7 @@ class Login
             if (isset($result_row->student_id)) {
 
                 // database query:
-                $query_update = $this->db_connection->prepare('UPDATE gaz_students SET student_password_reset_hash = :student_password_reset_hash,
+                $query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students SET student_password_reset_hash = :student_password_reset_hash,
                                                                student_password_reset_timestamp = :student_password_reset_timestamp
                                                                WHERE student_name = :student_name');
                 $query_update->bindValue(':student_password_reset_hash', $student_password_reset_hash, PDO::PARAM_STR);
@@ -591,8 +604,7 @@ class Login
     /**
      * Sends the password-reset-email.
      */
-    public function sendPasswordResetMail($student_name, $student_email, $student_password_reset_hash)
-    {
+    public function sendPasswordResetMail($student_name, $student_email, $student_password_reset_hash) {
         $mail = new PHPMailer;
 
         // please look into the config/config.php for much more info on how to use this!
@@ -622,10 +634,10 @@ class Login
         $mail->AddAddress($student_email);
         $mail->Subject = EMAIL_PASSWORDRESET_SUBJECT;
 
-        $link    = EMAIL_PASSWORDRESET_URL.'?student_name='.urlencode($student_name).'&verification_code='.urlencode($student_password_reset_hash);
+        $link = EMAIL_PASSWORDRESET_URL . '?student_name=' . urlencode($student_name) . '&verification_code=' . urlencode($student_password_reset_hash);
         $mail->Body = EMAIL_PASSWORDRESET_CONTENT . ' ' . $link;
 
-        if(!$mail->Send()) {
+        if (!$mail->Send()) {
             $this->errors[] = MESSAGE_PASSWORD_RESET_MAIL_FAILED . $mail->ErrorInfo;
             return false;
         } else {
@@ -637,8 +649,7 @@ class Login
     /**
      * Checks if the verification string in the account verification mail is valid and matches to the user.
      */
-    public function checkIfEmailVerificationCodeIsValid($student_name, $verification_code)
-    {
+    public function checkIfEmailVerificationCodeIsValid($student_name, $verification_code) {
         $student_name = trim($student_name);
 
         if (empty($student_name) || empty($verification_code)) {
@@ -667,20 +678,19 @@ class Login
     /**
      * Checks and writes the new password.
      */
-    public function editNewPassword($student_name, $student_password_reset_hash, $student_password_new, $student_password_repeat)
-    {
+    public function editNewPassword($student_name, $student_password_reset_hash, $student_password_new, $student_password_repeat) {
         // TODO: timestamp!
         $student_name = trim($student_name);
 
         if (empty($student_name) || empty($student_password_reset_hash) || empty($student_password_new) || empty($student_password_repeat)) {
             $this->errors[] = MESSAGE_PASSWORD_EMPTY;
-        // is the repeat password identical to password
+            // is the repeat password identical to password
         } else if ($student_password_new !== $student_password_repeat) {
             $this->errors[] = MESSAGE_PASSWORD_BAD_CONFIRM;
-        // password need to have a minimum length of 6 characters
+            // password need to have a minimum length of 6 characters
         } else if (strlen($student_password_new) < 6) {
             $this->errors[] = MESSAGE_PASSWORD_TOO_SHORT;
-        // if database connection opened
+            // if database connection opened
         } else if ($this->databaseConnection()) {
             // now it gets a little bit crazy: check if we have a constant HASH_COST_FACTOR defined (in config/hashing.php),
             // if so: put the value into $hash_cost_factor, if not, make $hash_cost_factor = null
@@ -692,8 +702,8 @@ class Login
             // want the parameter: as an array with, currently only used with 'cost' => XX.
             $student_password_hash = password_hash($student_password_new, PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
 
-            // write gaz_students new hash into database
-            $query_update = $this->db_connection->prepare('UPDATE gaz_students SET student_password_hash = :student_password_hash,
+            // write ' . DB_TABLE_PREFIX .'_students new hash into database
+            $query_update = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students SET student_password_hash = :student_password_hash,
                                                            student_password_reset_hash = NULL, student_password_reset_timestamp = NULL
                                                            WHERE student_name = :student_name AND student_password_reset_hash = :student_password_reset_hash');
             $query_update->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
@@ -716,8 +726,7 @@ class Login
      * TODO: should be more like getPasswordResetLinkValidationStatus
      * @return boolean
      */
-    public function passwordResetLinkIsValid()
-    {
+    public function passwordResetLinkIsValid() {
         return $this->password_reset_link_is_valid;
     }
 
@@ -726,8 +735,7 @@ class Login
      * TODO: should be more like getPasswordResetSuccessStatus
      * @return boolean
      */
-    public function passwordResetWasSuccessful()
-    {
+    public function passwordResetWasSuccessful() {
         return $this->password_reset_was_successful;
     }
 
@@ -735,8 +743,7 @@ class Login
      * Gets the username
      * @return string username
      */
-    public function getUsername()
-    {
+    public function getUsername() {
         return $this->student_name;
     }
 
@@ -754,12 +761,10 @@ class Login
      * @param array $atts Optional, additional key/value attributes to include in the IMG tag
      * @source http://gravatar.com/site/implement/images/php/
      */
-    public function getGravatarImageUrl($email, $s = 50, $d = 'mm', $r = 'g', $atts = array() )
-    {
+    public function getGravatarImageUrl($email, $s = 50, $d = 'mm', $r = 'g', $atts = array()) {
         $url = 'https://www.gravatar.com/avatar/';
         $url .= md5(strtolower(trim($email)));
         //$url .= "?s=$s&d=$d&r=$r&f=y";
-
         // the image url (on gravatarr servers), will return in something like
         // http://www.gravatar.com/avatar/205e460b479e2e5b48aec07710c08d50?s=80&d=mm&r=g
         // note: the url does NOT have something like .jpg
@@ -774,4 +779,5 @@ class Login
         // the image url like above but with an additional <img src .. /> around
         $this->student_gravatar_image_tag = $url;
     }
+
 }
