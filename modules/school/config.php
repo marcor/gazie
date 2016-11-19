@@ -14,6 +14,24 @@
  */
 
 /* GAZIE MOD BEGIN */
+
+//  non essendo loggato devo prendere le impostazioni della lingua dal server
+$server_lang = substr(strtoupper($_SERVER['HTTP_ACCEPT_LANGUAGE']), 0, 2);
+switch ($server_lang) {
+    case 'IT':
+        define("TRANSL_LANG", 'italian');
+        break;
+    case 'EN':
+        define("TRANSL_LANG", 'english');
+        break;
+    case 'ES':
+        define("TRANSL_LANG", 'spanish');
+        break;
+    default:
+        define("TRANSL_LANG", 'italian');
+        break;
+}
+
 define("DB_HOST", $Host);
 define("DB_NAME", $Database);
 define("DB_TABLE_PREFIX", $table_prefix);
@@ -64,14 +82,20 @@ define("COOKIE_SECRET_KEY", "1gp@TMPS{+$78sfpMJFe-92s");
  *
  * It's really recommended to use SMTP!
  *
+ *
+ *
  */
 define("EMAIL_USE_SMTP", true);
-define("EMAIL_SMTP_HOST", "ssl://smtp.libero.it");
 define("EMAIL_SMTP_AUTH", true);
-define("EMAIL_SMTP_USERNAME", "d.disciascio@libero.it");
+
+/* GAZIE definisce questi parametri nella tabella gaz_001company_config 
+define("EMAIL_SMTP_HOST", "smtp.libero.it");
+define("EMAIL_SMTP_USERNAME", "gazie@libero.it");
 define("EMAIL_SMTP_PASSWORD", "");
 define("EMAIL_SMTP_PORT", 465);
 define("EMAIL_SMTP_ENCRYPTION", "ssl");
+ */
+
 
 /**
  * Configuration for: password reset email data
@@ -117,3 +141,4 @@ define("EMAIL_VERIFICATION_CONTENT", "Clicca su questo link per completare la re
  * This constant will be used in the login and the registration class.
  */
 define("HASH_COST_FACTOR", "10");
+

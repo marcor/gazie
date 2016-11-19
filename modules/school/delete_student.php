@@ -25,19 +25,23 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
-$table_prefix = "gaz\_";
+$tp = $table_prefix . str_pad(intval($_GET['id']), 4, '0', STR_PAD_LEFT) . "\_";
 $ve = gaz_dbi_query("SELECT CONCAT(  'DROP VIEW `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn
 FROM INFORMATION_SCHEMA.VIEWS
-WHERE TABLE_NAME LIKE  '" . $table_prefix . "%'");
+WHERE TABLE_NAME LIKE  '" . $tp . "%'");
 while ($r = gaz_dbi_fetch_array($ve)) {
     print 'cancellata vista:' . $r['tn'] . "<br>\n";
     gaz_dbi_query($r['query']);
 }
 $te = gaz_dbi_query("SELECT CONCAT(  'DROP TABLE `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn
 FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_NAME LIKE  '" . $table_prefix . "%'");
+WHERE TABLE_NAME LIKE  '" . $tp . "%'");
 while ($r = gaz_dbi_fetch_array($te)) {
     print 'cancellata tabella:' . $r['tn'] . "<br>\n";
     gaz_dbi_query($r['query']);
 }
+// cancello il rigo dalla tabella students dell'installazione principale
+gaz_dbi_del_row($gTables['students'], 'student_id', intval($_GET['id']));
+    print '<b>CANCELLATO LO STUDENTE</B>';
+
 ?>

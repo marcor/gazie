@@ -65,20 +65,24 @@ $gForm = new schoolForm();
                                 <?php echo $script_transl["telephone"]; ?>
                             </a>
                         </th>
+                        <th class="orby">
+                            <?php echo $script_transl["delete"]; ?>
+                        </th>
                     </tr>      
                 </thead>    
                 <tbody id="all_rows">
                     <?php
-                    $result = gaz_dbi_dyn_query('*', $gTables['student']);
+                    $result = gaz_dbi_dyn_query('*', $gTables['students']);
                     while ($r = gaz_dbi_fetch_array($result)) {
-                        $cr = gaz_dbi_get_row($gTables['classroom'], "id", $r["id_classroom"]);
-                        echo '<tr class="FacetDataTD" title="'.$r["title_note"] .'">';
-                        echo "<td title=\"" . $script_transl['update'] . "\"><a class=\"btn btn-xs btn-default\" href=\"admin_student.php?id=" . $r["id"] . "&Update\">" . $r["id"] . " </a> &nbsp</td>";
+                        $cr = gaz_dbi_get_row($gTables['classroom'], "id", $r["student_classroom_id"]);
+                        echo '<tr class="FacetDataTD" title="' . $r["student_name"] . '">';
+                        echo "<td title=\"" . $script_transl['update'] . "\"><a class=\"btn btn-xs btn-default\" href=\"admin_student.php?id=" . $r["student_id"] . "&Update\">" . $r["student_id"] . " </a> &nbsp</td>";
                         echo "<td>" . $cr["classe"] . " " . $cr["sezione"] . " " . $cr["anno_scolastico"] . "/" . substr($cr["anno_scolastico"] + 1, 2, 2) . " &nbsp;</td>";
-                        echo "<td>" . $r["Cognome"] . " &nbsp;</td>";
-                        echo "<td>" . $r["Nome"] . " &nbsp;</td>";
-                        echo "<td>" . $r["email"] . " </td>";
-                        echo "<td>" . $r["telephone"] . " </td>";
+                        echo "<td>" . $r["student_lastname"] . " &nbsp;</td>";
+                        echo "<td>" . $r["student_firstname"] . " &nbsp;</td>";
+                        echo "<td>" . $r["student_email"] . " </td>";
+                        echo "<td>" . $r["student_telephone"] . " </td>";
+                        echo '<td><a class="btn btn-xs btn-default btn-elimina" href="delete_student.php?id='.$r["student_id"].'"><i class="glyphicon glyphicon-remove"></i></a></td>';
                         echo "</tr>";
                     }
                     ?>

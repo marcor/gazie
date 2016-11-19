@@ -41,7 +41,7 @@ if (isset($_SESSION['table_prefix'])) {
 $tn = array('admin', 'admin_module', 'anagra', 'aziend', 'classroom', 'config', 
             'country', 'currencies', 'currency_history', 'destina', 'languages', 
             'menu_module', 'menu_script', 'menu_usage', 'module', 'municipalities', 
-            'provinces', 'regions', 'student');
+            'provinces', 'regions', 'students');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $v;
 }

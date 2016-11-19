@@ -1,10 +1,11 @@
 <?php
+
 require("../../config/config/gconfig.php");
 // include the config
 require_once('./config.php');
 
 // include the to-be-used language, english by default. feel free to translate your project and include something else
-require("./lang.italian.php");
+require_once("./lang." . TRANSL_LANG . ".php");
 
 // include the PHPMailer library
 //require_once('../../library/phpmailer/class.phpmailer.php');

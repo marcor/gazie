@@ -8,7 +8,7 @@
                     <div class="panel-title">
                         <img width="5%" src="../../library/images/gazie.gif" />
                         <img width="5%" src="./school.png" />
-                        <?php echo MESSAGE_LOG; ?> <?php echo $server_lang; ?> <img width="5%" src="../../language/<?php echo $lang; ?>/flag.png" />
+                        <?php echo MESSAGE_LOG; ?> <?php echo $server_lang; ?> <img width="5%" src="../../language/<?php echo TRANSL_LANG; ?>/flag.png" />
                     </div>
                     <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
                 </div>

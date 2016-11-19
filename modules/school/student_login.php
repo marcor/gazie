@@ -22,30 +22,12 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-//require("../../library/include/datlib.inc.php");
-//$config = new Config;
-
-$server_lang = 'IT';
-switch ($server_lang) {
-    case 'IT':
-        $lang = 'italian';
-        break;
-    case 'EN':
-        $lang = 'english';
-        break;
-    case 'ES':
-        $lang = 'spanish';
-        break;
-    default:
-        $lang = 'italian';
-        break;
-}
 require("../../library/include/datlib.inc.php");
 // include the config
 require_once('./config.php');
 
 // include the to-be-used language, english by default. feel free to translate your project and include something else
-require("./lang." . $lang . ".php");
+require("./lang." . TRANSL_LANG . ".php");
 
 // include the PHPMailer library
 require_once('../../library/phpmailer/class.phpmailer.php');

@@ -24,7 +24,7 @@
                                 <?php 
                                 $registration->select_classroom();
                                 foreach ($registration->classroom_data as $row): ?>
-                                 <option value="<?=$row["id"]?>"><?php echo $row["classe"].' '.MESSAGE_CLASSROOM_TEACHER.' '.$row["Nome"].' '.$row["Cognome"]; ?></option>
+                                 <option value="<?=$row["id"]?>"><?php echo $row["classe"].' '.$row["sezione"].' '.MESSAGE_CLASSROOM_TEACHER.' '.$row["Nome"].' '.$row["Cognome"]; ?></option>
                                 <?php endforeach ?>
                             </select>
 

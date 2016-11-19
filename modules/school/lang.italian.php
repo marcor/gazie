@@ -58,8 +58,8 @@ $strScript = array(
     "report_students.php" =>
     array('title' => 'Elenco degli alunni',
         'classe' => 'Classe',
-        'Cognome' => "Insegnante",
-        'Nome' => 'Anno scolastico',
+        'Cognome' => "Cognome",
+        'Nome' => 'Nome',
         'email' => "E-Mail",
         'telephone' => "Telefono"
     ),
@@ -106,7 +106,7 @@ define("MESSAGE_PASSWORD_TOO_SHORT", "Password has a minimum length of 6 charact
 define("MESSAGE_PASSWORD_WRONG", "Wrong password. Try again.");
 define("MESSAGE_PASSWORD_WRONG_3_TIMES", "You have entered an incorrect password 3 or more times already. Please wait 30 seconds to try again.");
 define("MESSAGE_REGISTRATION_ACTIVATION_NOT_SUCCESSFUL", "Sorry, no such id/verification code combination here...");
-define("MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL", "Activation was successful! You can now log in!");
+define("MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL", "L'attivazione ha avuto successo, ho popolato il tuo database con il file: ");
 define("MESSAGE_REGISTRATION_FAILED", "Sorry, your registration failed. Please go back and try again.");
 define("MESSAGE_RESET_LINK_HAS_EXPIRED", "Your reset link has expired. Please use the reset link within one hour.");
 define("MESSAGE_VERIFICATION_MAIL_ERROR", "Sorry, we could not send you an verification mail. Your account has NOT been created.");
