@@ -606,6 +606,15 @@ class Login {
      */
     public function sendPasswordResetMail($student_name, $student_email, $student_password_reset_hash) {
         $mail = new PHPMailer;
+        // get email send config from GAzie db
+        $var = array('order_mail', 'smtp_server', 'return_notification', 'mailer', 'smtp_port', 'smtp_secure', 'smtp_user', 'smtp_password');
+        foreach ($var as $v) {
+            $query_email_smtp_conf = $this->db_connection->prepare('SELECT val FROM ' . DB_TABLE_PREFIX . '_001company_config WHERE var=:var');
+            $query_email_smtp_conf->bindValue(':var', $v, PDO::PARAM_STR);
+            $query_email_smtp_conf->execute();
+            $r = $query_email_smtp_conf->fetchAll();
+            $this->email_conf[$v] = $r[0]['val'];
+        }
 
         // please look into the config/config.php for much more info on how to use this!
         // use SMTP or use mail()
@@ -617,14 +626,19 @@ class Login {
             // Enable SMTP authentication
             $mail->SMTPAuth = EMAIL_SMTP_AUTH;
             // Enable encryption, usually SSL/TLS
-            if (defined(EMAIL_SMTP_ENCRYPTION)) {
-                $mail->SMTPSecure = EMAIL_SMTP_ENCRYPTION;
+            /*              if (defined(EMAIL_SMTP_ENCRYPTION)) {
+              $mail->SMTPSecure = EMAIL_SMTP_ENCRYPTION;
+              } */
+            $email_smtp_encr = trim($this->email_conf['smtp_secure']);
+            if (strlen($email_smtp_encr) > 2) {
+                $mail->SMTPSecure = $email_smtp_encr;
             }
+
             // Specify host server
-            $mail->Host = EMAIL_SMTP_HOST;
-            $mail->Username = EMAIL_SMTP_USERNAME;
-            $mail->Password = EMAIL_SMTP_PASSWORD;
-            $mail->Port = EMAIL_SMTP_PORT;
+            $mail->Host = $this->email_conf['smtp_server']; // EMAIL_SMTP_HOST;
+            $mail->Username = $this->email_conf['smtp_user']; //EMAIL_SMTP_USERNAME;
+            $mail->Password = $this->email_conf['smtp_password']; //EMAIL_SMTP_PASSWORD;
+            $mail->Port = $this->email_conf['smtp_port']; //EMAIL_SMTP_PORT;
         } else {
             $mail->IsMail();
         }

@@ -16,6 +16,24 @@
                     <h4 ><?php echo MESSAGE_WELCOME ?></h4>
                     <p><?php echo MESSAGE_INTRO; ?></p>
                     <p><?php echo MESSAGE_PSW; ?></p><br/>
+                    <?php
+                    if (isset($login)) {
+                        if ($login->errors) {
+                            foreach ($login->errors as $error) {
+                                echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
+                                echo $error;
+                                echo '</div>';
+                            }
+                        }
+                        if ($login->messages) {
+                            foreach ($login->messages as $message) {
+                                echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
+                                echo $message;
+                                echo '</div>';
+                            }
+                        }
+                    }
+                    ?>
                     <div style="padding-bottom: 25px;" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
                         <input id="student_name" type="text" name="student_name" required class="form-control" style="height: 34px;"  placeholder="<?php echo WORDING_USERNAME; ?>" />

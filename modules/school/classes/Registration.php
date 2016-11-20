@@ -232,6 +232,7 @@ class Registration {
         } else {
             $mail->IsMail();
         }
+        $mail->IsHTML(true);          
         // Impropriamente uso order_mail in quanto nelle installazioni didattiche non si ricevono ordini
         $mail->From = EMAIL_VERIFICATION_FROM;
 
@@ -242,7 +243,7 @@ class Registration {
         $link = EMAIL_VERIFICATION_URL . '?id=' . urlencode($student_id) . '&verification_code=' . urlencode($student_activation_hash);
 
         // the link to your register.php, please set this value in config/email_verification.php
-        $mail->Body = EMAIL_VERIFICATION_CONTENT . ' ' . $link;
+        $mail->Body = EMAIL_VERIFICATION_CONTENT . '<br><a href="' . $link.'">'.MESSAGE_EMAIL_LINK_FOR_VERIFYNG.'</a>';
 
         if (!$mail->Send()) {
             $this->errors[] = MESSAGE_VERIFICATION_MAIL_NOT_SENT . $mail->ErrorInfo;

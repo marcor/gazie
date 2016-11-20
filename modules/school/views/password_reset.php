@@ -1,7 +1,22 @@
 <?php include('_header.php'); ?>
+<?php
+// show potential errors / feedback (from login object)
+if (isset($login)) {
+    if ($login->errors) {
+        foreach ($login->errors as $error) {
+            echo $error;
+        }
+    }
+    if ($login->messages) {
+        foreach ($login->messages as $message) {
+            echo $message;
+        }
+    }
+}
+?>
 
 <?php if ($login->passwordResetLinkIsValid() == true) { ?>
-<form method="post" action="password_reset.php" name="new_password_form">
+<form method="post" action="student_password_reset.php" name="new_password_form">
     <input type='hidden' name='student_name' value='<?php echo htmlspecialchars($_GET['student_name']); ?>' />
     <input type='hidden' name='student_password_reset_hash' value='<?php echo htmlspecialchars($_GET['verification_code']); ?>' />
 
@@ -14,7 +29,7 @@
 </form>
 <!-- no data from a password-reset-mail has been provided, so we simply show the request-a-password-reset form -->
 <?php } else { ?>
-<form method="post" action="password_reset.php" name="password_reset_form">
+<form method="post" action="student_password_reset.php" name="password_reset_form">
     <label for="student_name"><?php echo WORDING_REQUEST_PASSWORD_RESET; ?></label>
     <input id="student_name" type="text" name="student_name" required />
     <input type="submit" name="request_password_reset" value="<?php echo WORDING_RESET_PASSWORD; ?>" />

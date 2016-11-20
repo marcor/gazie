@@ -34,7 +34,7 @@ $menu_data = array('m1' => array('link' => "docume_school.php"),
                                                     2 => array(
                                                                 array('translate_key' => 2, 'link' => "admin_classroom.php", 'weight' => 2)
                                                               ),
-                                                    3 => array( array('translate_key' => 3, 'link' => "admin_student.php", 'weight' => 3)
+                                                    3 => array( array('translate_key' => 3, 'link' => "student_register.php", 'weight' => 3)
                                                               )
                                                     )
                                      )

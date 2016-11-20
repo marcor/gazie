@@ -1,4 +1,19 @@
 <?php include('_header.php'); ?>
+<?php
+// show potential errors / feedback (from login object)
+if (isset($login)) {
+    if ($login->errors) {
+        foreach ($login->errors as $error) {
+            echo $error;
+        }
+    }
+    if ($login->messages) {
+        foreach ($login->messages as $message) {
+            echo $message;
+        }
+    }
+}
+?>
 
 <!-- clean separation of HTML and PHP -->
 <h2><?php echo htmlspecialchars($_SESSION['student_name']); ?> <?php echo WORDING_EDIT_YOUR_CREDENTIALS; ?></h2>

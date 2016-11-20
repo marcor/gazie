@@ -17,6 +17,24 @@
                     <div style="padding-top:10px" class="panel-body" >
                         <p><?php echo MESSAGE_INTRO_REGISTRATION; ?></p>
                         <p><?php echo MESSAGE_PSW_REGISTRATION; ?></p>
+                        <?php
+                        if (isset($registration)) {
+                            if ($registration->errors) {
+                                foreach ($registration->errors as $error) {
+                                    echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
+                                    echo $error;
+                                    echo '</div>';
+                                }
+                            }
+                            if ($registration->messages) {
+                                foreach ($registration->messages as $message) {
+                                    echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
+                                    echo $message;
+                                    echo '</div>';
+                                }
+                            }
+                        }
+                        ?>
                         <div style="padding-bottom: 25px;" class="input-group">
                             <span class="input-group-addon"><?php echo MESSAGE_CLASSROOM_REGISTRATION; ?></span>
                             <select required class="form-control" style="padding: 2px 2px; height: 30px;" name="student_classroom_id" id="student_classroom_id">                            
@@ -100,7 +118,7 @@
                 </div>
                 <div style="padding-top:10px" class="panel-body" >
                     <div style="padding-bottom: 25px;" class="input-group col-sm-12">
-                        <input style="float:right;" class="btn btn-info"  onclick="location.href='student_login.php';"  type="submit" name="register" value="<?php echo WORDING_GO_TO_LOGIN; ?>" />
+                        <input style="float:right;" class="btn btn-info"  onclick="location.href = 'student_login.php';"  type="submit" name="register" value="<?php echo WORDING_GO_TO_LOGIN; ?>" />
                     </div>
                 </div>  <!-- chiude div panel-body -->
             </div>  <!-- chiude div panel -->

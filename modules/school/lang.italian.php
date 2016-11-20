@@ -81,13 +81,14 @@ define("WORDING_REGISTRATION_FIRSTNAME","Nome anagrafico (lettere o spazi, min.2
 define("WORDING_REGISTRATION_LASTNAME","Cognome anagrafico (lettere o spazi, min.2 max.30)");
 define("WORDING_REGISTRATION_TELEPHONE","Numero di telefono (facoltativo)");
 define("WORDING_GO_TO_LOGIN", "Vai alla pagina per l'accesso");
+define("MESSAGE_EMAIL_LINK_FOR_VERIFYNG", "CLICCA QUI PER ATTIVARE");
 
 // login & registration classes
 define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Your account is not activated yet. Please click on the confirm link in the mail.");
-define("MESSAGE_CAPTCHA_WRONG", "Captcha was wrong!");
+define("MESSAGE_CAPTCHA_WRONG", "I caratteri di controllo che hai inserito non coincidono con quelli dell'immagine!");
 define("MESSAGE_COOKIE_INVALID", "Invalid cookie");
 define("MESSAGE_DATABASE_ERROR", "Database connection problem.");
-define("MESSAGE_EMAIL_ALREADY_EXISTS", "This email address is already registered. Please use the \"I forgot my password\" page if you don't remember it.");
+define("MESSAGE_EMAIL_ALREADY_EXISTS", "Questo indirizzo email è già registrato. Usa <b>\"Ho dimenticato le credenziali per l'accesso\"</b> dalla pagina per l'accesso per ripristinarla");
 define("MESSAGE_EMAIL_CHANGE_FAILED", "Sorry, your email changing failed.");
 define("MESSAGE_EMAIL_CHANGED_SUCCESSFULLY", "Your email address has been changed successfully. New email address is ");
 define("MESSAGE_EMAIL_EMPTY", "Email cannot be empty");
@@ -97,11 +98,11 @@ define("MESSAGE_EMAIL_TOO_LONG", "Email cannot be longer than 64 characters");
 define("MESSAGE_LINK_PARAMETER_EMPTY", "Empty link parameter data.");
 define("MESSAGE_LOGGED_OUT", "You have been logged out.");
 // The "login failed"-message is a security improved feedback that doesn't show a potential attacker if the user exists or not
-define("MESSAGE_LOGIN_FAILED", "Login failed.");
+define("MESSAGE_LOGIN_FAILED", "Le credenziali di accesso sbagliate. Riprova.");
 define("MESSAGE_OLD_PASSWORD_WRONG", "Your OLD password was wrong.");
 define("MESSAGE_PASSWORD_BAD_CONFIRM", "Le due password non coincidono");
 define("MESSAGE_PASSWORD_CHANGE_FAILED", "Sorry, your password changing failed.");
-define("MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY", "Password successfully changed!");
+define("MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY", "La password è stata cambiata con successo!");
 define("MESSAGE_PASSWORD_EMPTY", "Password field was empty");
 define("MESSAGE_PASSWORD_RESET_MAIL_FAILED", "Password reset mail NOT successfully sent! Error: ");
 define("MESSAGE_PASSWORD_RESET_MAIL_SUCCESSFULLY_SENT", "Password reset mail successfully sent!");
@@ -122,7 +123,7 @@ define("MESSAGE_USERNAME_CHANGED_SUCCESSFULLY", "Your username has been changed 
 define("MESSAGE_USERNAME_EMPTY", "Username field was empty");
 define("MESSAGE_USERNAME_EXISTS", "Sorry, that username is already taken. Please choose another one.");
 define("MESSAGE_USERNAME_INVALID", "Username does not fit the name scheme: only a-Z and numbers are allowed, 2 to 64 characters");
-define("MESSAGE_USERNAME_SAME_LIKE_OLD_ONE", "Sorry, that username is the same as your current one. Please choose another one.");
+define("MESSAGE_USERNAME_SAME_LIKE_OLD_ONE", "Spiacenti ma questo nome utente è già utilizzato da un altro allievo.");
 
 // views
 define("WORDING_BACK_TO_LOGIN", "Torna alla pagina di accesso");
@@ -150,7 +151,7 @@ define("WORDING_REGISTRATION_PASSWORD", "Password (minimo 8 caratteri!)");
 define("WORDING_REGISTRATION_PASSWORD_REPEAT", "Ripeti la password");
 define("WORDING_REGISTRATION_USERNAME", "Username per il login (nickname fatto di lettere e numeri, min.8 max.64)");
 define("WORDING_REMEMBER_ME", "Ricordamelo per 2 settimane");
-define("WORDING_REQUEST_PASSWORD_RESET", "Request a password reset. Enter your username and you'll get a mail with instructions:");
+define("WORDING_REQUEST_PASSWORD_RESET", "Richiedi il reset della password. Inserisci il tuo nome utente  e riceverai una  mail con le istruzioni:");
 define("WORDING_RESET_PASSWORD", "Reset my password");
 define("WORDING_SUBMIT_NEW_PASSWORD", "Submit new password");
 define("WORDING_USERNAME", "Nome utente");
