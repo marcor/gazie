@@ -126,16 +126,18 @@ if (isset($_POST['Submit'])) {
             $msg['err'][] = 'filsiz';
     }
     if ($form["Abilit"] < 9) {
-        $ricerca = $form["Login"];
+        $ricerca = trim($form["Login"]);
         $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "Login <> '$ricerca' AND Abilit ='9'", "Login", 0, 1);
         $risultato = gaz_dbi_fetch_array($rs_utente);
         $student = false;
         if (preg_match("/^([a-z]{3})[0-9]{4}/", $table_prefix, $tp)) {
-            $rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name <> '$ricerca'", "student_name", 0, 1);
+            $rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '".$ricerca."'");
             $student = gaz_dbi_fetch_array($rs_student);
         }
         if (!$risultato && !$student) {
             $msg['err'][] = 'Abilit';
+        } elseif ($form["Abilit"] < 7 && $student ) {
+            $msg['err'][] = 'Abilit_stud';
         }
     }
     if (count($msg['err']) == 0) { // nessun errore

@@ -416,6 +416,7 @@ $strScript = array("admin_aziend.php" =>
             'filmim' => "The file must be in JPG format",
             'filsiz' => "The image must not be larger than 10 kb",
             'Abilit' => "You can not have a level lower than 9 because you are the last administrator!",
+            'Abilit_stud' => "You can not have a level lower than 7 because you are the last administrator!",
             'charpass' => "The password can not contain any special characters \" / < >"
         ),
         'Login' => "Nickname",

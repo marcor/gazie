@@ -419,6 +419,7 @@ $strScript = array(
             'filmim'=>"Il file dev'essere in formato JPG",
             'filsiz'=>"L'immagine non dev'essere pi&ugrave; grande di 10 kb",
             'Abilit'=>"Non puoi avere un livello inferiore a 9 perch&egrave; sei l'unico amministratore!",
+            'Abilit_stud'=>"Non puoi avere un livello inferiore a 7 perch&egrave; sei l'unico utente!",
           'charpass'=>"La password non può contenere caratteri alcuni speciali \" / > <"
         ),
         'Login' => "Nickname",

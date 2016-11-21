@@ -8,8 +8,7 @@ require_once('./config.php');
 require_once("./lang." . TRANSL_LANG . ".php");
 
 // include the PHPMailer library
-//require_once('../../library/phpmailer/class.phpmailer.php');
-require_once('libraries/PHPMailer.php');
+require_once('../../library/phpmailer/class.phpmailer.php');
 
 // load the registration class
 require_once('classes/Registration.php');

@@ -30,7 +30,7 @@ require_once('./config.php');
 require_once("./lang." . TRANSL_LANG . ".php");
 
 // include the PHPMailer library
-require_once('libraries/PHPMailer.php');
+require_once('../../library/phpmailer/class.phpmailer.php');
 
 // load the login class
 require_once('classes/Login.php');

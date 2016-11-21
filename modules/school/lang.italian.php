@@ -103,7 +103,7 @@ define("MESSAGE_LOGIN_FAILED", "Le credenziali di accesso sbagliate. Riprova.");
 define("MESSAGE_OLD_PASSWORD_WRONG", "Your OLD password was wrong.");
 define("MESSAGE_PASSWORD_BAD_CONFIRM", "Le due password non coincidono");
 define("MESSAGE_PASSWORD_CHANGE_FAILED", "Sorry, your password changing failed.");
-define("MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY", "La password è stata cambiata con successo!");
+define("MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY", "La password è stata cambiata con successo! Adesso puoi entrare usando la nuova");
 define("MESSAGE_PASSWORD_EMPTY", "Password field was empty");
 define("MESSAGE_PASSWORD_RESET_MAIL_FAILED", "Password reset mail NOT successfully sent! Error: ");
 define("MESSAGE_PASSWORD_RESET_MAIL_SUCCESSFULLY_SENT", "La mail per la reimpostazione della password è stata inviata con successo!");

@@ -243,8 +243,9 @@ class Registration {
         $link = EMAIL_VERIFICATION_URL . '?id=' . urlencode($student_id) . '&verification_code=' . urlencode($student_activation_hash);
 
         // the link to your register.php, please set this value in config/email_verification.php
-        $mail->Body = EMAIL_VERIFICATION_CONTENT . '<br><a href="' . $link.'">'.MESSAGE_EMAIL_LINK_FOR_VERIFYNG.'</a>';
-
+        $mail->AddEmbeddedImage('./school.png', 'gschool');
+        $mail->AddEmbeddedImage('../../library/images/gazie.gif', 'glogo');
+        $mail->Body = EMAIL_VERIFICATION_CONTENT . '<br> <img height="64" src="cid:glogo" /> <a href="' . $link.'"> <img src="cid:gschool" /> '.MESSAGE_EMAIL_LINK_FOR_VERIFYNG.'</a>';
         if (!$mail->Send()) {
             $this->errors[] = MESSAGE_VERIFICATION_MAIL_NOT_SENT . $mail->ErrorInfo;
             return false;
