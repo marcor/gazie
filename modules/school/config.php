@@ -103,9 +103,9 @@ define("EMAIL_SMTP_ENCRYPTION", "ssl");
  */
 define("EMAIL_PASSWORDRESET_URL", "http://localhost/gazie/trunk/modules/school/student_password_reset.php");
 define("EMAIL_PASSWORDRESET_FROM", "d.disciascio@libero.it");
-define("EMAIL_PASSWORDRESET_FROM_NAME", "My Project");
-define("EMAIL_PASSWORDRESET_SUBJECT", "Password reset for PROJECT XY");
-define("EMAIL_PASSWORDRESET_CONTENT", "Please click on this link to reset your password:");
+define("EMAIL_PASSWORDRESET_FROM_NAME", "GAzie a scuola");
+define("EMAIL_PASSWORDRESET_SUBJECT", "Reimpostazione password di GAzie a scuola");
+define("EMAIL_PASSWORDRESET_CONTENT", "Clicca sul link seguente per reimpostare la tua password:");
 
 /**
  * Configuration for: verification email data

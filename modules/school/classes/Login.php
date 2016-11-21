@@ -642,6 +642,7 @@ class Login {
         } else {
             $mail->IsMail();
         }
+        $mail->IsHTML(true);          
 
         $mail->From = EMAIL_PASSWORDRESET_FROM;
         $mail->FromName = EMAIL_PASSWORDRESET_FROM_NAME;
@@ -649,7 +650,7 @@ class Login {
         $mail->Subject = EMAIL_PASSWORDRESET_SUBJECT;
 
         $link = EMAIL_PASSWORDRESET_URL . '?student_name=' . urlencode($student_name) . '&verification_code=' . urlencode($student_password_reset_hash);
-        $mail->Body = EMAIL_PASSWORDRESET_CONTENT . ' ' . $link;
+        $mail->Body = EMAIL_PASSWORDRESET_CONTENT . '<br><a href="' . $link.'">'.MESSAGE_EMAIL_LINK_FOR_RESET.'</a>';;
 
         if (!$mail->Send()) {
             $this->errors[] = MESSAGE_PASSWORD_RESET_MAIL_FAILED . $mail->ErrorInfo;

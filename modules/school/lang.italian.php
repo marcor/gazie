@@ -82,6 +82,7 @@ define("WORDING_REGISTRATION_LASTNAME","Cognome anagrafico (lettere o spazi, min
 define("WORDING_REGISTRATION_TELEPHONE","Numero di telefono (facoltativo)");
 define("WORDING_GO_TO_LOGIN", "Vai alla pagina per l'accesso");
 define("MESSAGE_EMAIL_LINK_FOR_VERIFYNG", "CLICCA QUI PER ATTIVARE");
+define("MESSAGE_EMAIL_LINK_FOR_RESET", "CLICCA QUI PER REIMPOSTARE LA TUA PASSWORD");
 
 // login & registration classes
 define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Your account is not activated yet. Please click on the confirm link in the mail.");
@@ -105,7 +106,7 @@ define("MESSAGE_PASSWORD_CHANGE_FAILED", "Sorry, your password changing failed."
 define("MESSAGE_PASSWORD_CHANGED_SUCCESSFULLY", "La password è stata cambiata con successo!");
 define("MESSAGE_PASSWORD_EMPTY", "Password field was empty");
 define("MESSAGE_PASSWORD_RESET_MAIL_FAILED", "Password reset mail NOT successfully sent! Error: ");
-define("MESSAGE_PASSWORD_RESET_MAIL_SUCCESSFULLY_SENT", "Password reset mail successfully sent!");
+define("MESSAGE_PASSWORD_RESET_MAIL_SUCCESSFULLY_SENT", "La mail per la reimpostazione della password è stata inviata con successo!");
 define("MESSAGE_PASSWORD_TOO_SHORT", "Password has a minimum length of 6 characters");
 define("MESSAGE_PASSWORD_WRONG", "Wrong password. Try again.");
 define("MESSAGE_PASSWORD_WRONG_3_TIMES", "You have entered an incorrect password 3 or more times already. Please wait 30 seconds to try again.");
@@ -116,7 +117,7 @@ define("MESSAGE_RESET_LINK_HAS_EXPIRED", "Your reset link has expired. Please us
 define("MESSAGE_VERIFICATION_MAIL_ERROR", "Sorry, we could not send you an verification mail. Your account has NOT been created.");
 define("MESSAGE_VERIFICATION_MAIL_NOT_SENT", "Verification Mail NOT successfully sent! Error: ");
 define("MESSAGE_VERIFICATION_MAIL_SENT", "Le tue credenziali sono state registrate con successo. Ti abbiamo inviato una mail per verificare la correttezza del tuo indirizzo. Solo quando cliccherai sul link in essa contenuto il gestionale GAzie a scuola sarà operativo e potrai accederci.");
-define("MESSAGE_USER_DOES_NOT_EXIST", "This user does not exist");
+define("MESSAGE_USER_DOES_NOT_EXIST", "Questo nome utente non esiste!");
 define("MESSAGE_USERNAME_BAD_LENGTH", "Username cannot be shorter than 2 or longer than 64 characters");
 define("MESSAGE_USERNAME_CHANGE_FAILED", "Sorry, your chosen username renaming failed");
 define("MESSAGE_USERNAME_CHANGED_SUCCESSFULLY", "Your username has been changed successfully. New username is ");
@@ -128,7 +129,7 @@ define("MESSAGE_USERNAME_SAME_LIKE_OLD_ONE", "Spiacenti ma questo nome utente è
 // views
 define("WORDING_BACK_TO_LOGIN", "Torna alla pagina di accesso");
 define("WORDING_CHANGE_EMAIL", "Change email");
-define("WORDING_CHANGE_PASSWORD", "Change password");
+define("WORDING_CHANGE_PASSWORD", "Cambia la password");
 define("WORDING_CHANGE_USERNAME", "Change username");
 define("WORDING_CURRENTLY", "currently");
 define("WORDING_EDIT_USER_DATA", "Edit user data");
@@ -137,8 +138,8 @@ define("WORDING_FORGOT_MY_PASSWORD", "Ho dimenticato le credenziali per l'access
 define("WORDING_LOGIN", "Accedi");
 define("WORDING_LOGOUT", "Esci");
 define("WORDING_NEW_EMAIL", "New email");
-define("WORDING_NEW_PASSWORD", "New password");
-define("WORDING_NEW_PASSWORD_REPEAT", "Repeat new password");
+define("WORDING_NEW_PASSWORD", "Inserisci la nuova password");
+define("WORDING_NEW_PASSWORD_REPEAT", "Ripeti la nuova password");
 define("WORDING_NEW_USERNAME", "New username (username cannot be empty and must be azAZ09 and 2-64 characters)");
 define("WORDING_OLD_PASSWORD", "Your OLD Password");
 define("WORDING_PASSWORD", "Password");
@@ -152,8 +153,8 @@ define("WORDING_REGISTRATION_PASSWORD_REPEAT", "Ripeti la password");
 define("WORDING_REGISTRATION_USERNAME", "Username per il login (nickname fatto di lettere e numeri, min.8 max.64)");
 define("WORDING_REMEMBER_ME", "Ricordamelo per 2 settimane");
 define("WORDING_REQUEST_PASSWORD_RESET", "Richiedi il reset della password. Inserisci il tuo nome utente  e riceverai una  mail con le istruzioni:");
-define("WORDING_RESET_PASSWORD", "Reset my password");
-define("WORDING_SUBMIT_NEW_PASSWORD", "Submit new password");
+define("WORDING_RESET_PASSWORD", "Richiedi una nuova password");
+define("WORDING_SUBMIT_NEW_PASSWORD", "Registra la nuova password");
 define("WORDING_USERNAME", "Nome utente");
 define("WORDING_YOU_ARE_LOGGED_IN_AS", "You are logged in as ");
 ?>

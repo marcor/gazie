@@ -129,7 +129,12 @@ if (isset($_POST['Submit'])) {
         $ricerca = $form["Login"];
         $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "Login <> '$ricerca' AND Abilit ='9'", "Login", 0, 1);
         $risultato = gaz_dbi_fetch_array($rs_utente);
-        if (!$risultato) {
+        $student = false;
+        if (preg_match("/^([a-z]{3})[0-9]{4}/", $table_prefix, $tp)) {
+            $rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name <> '$ricerca'", "student_name", 0, 1);
+            $student = gaz_dbi_fetch_array($rs_student);
+        }
+        if (!$risultato && !$student) {
             $msg['err'][] = 'Abilit';
         }
     }
@@ -194,6 +199,11 @@ if (isset($_POST['Submit'])) {
                 $form["datpas"] = date("YmdHis");
             }
             gaz_dbi_table_update('admin', array('Login', $form['Login']), $form);
+            // vado ad aggiornare anche la tabella studenti dell'installazione di base qualora ce ne fosse uno 
+            if ($student) {
+                gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form['Login'], 'student_firstname', $form['Nome']);
+                gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form['Login'], 'student_lastname', $form['Cognome']);
+            }
         }
         header("Location: " . $_POST['ritorno']);
         exit;
@@ -229,24 +239,24 @@ echo '<script type="text/javascript">
 
 <form method="POST" enctype="multipart/form-data"  autocomplete="off">
     <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
-<?php
-if ($toDo == 'insert') {
-    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
-} else {
-    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form['Login'] . "'</div>\n";
-    echo "<input type=\"hidden\" value=\"" . $form['Login'] . "\" name=\"Login\" />\n";
-}
-$gForm = new GAzieForm();
-if (count($msg['err']) > 0) { // ho un errore
-    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
-}
-?>
+    <?php
+    if ($toDo == 'insert') {
+        echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
+    } else {
+        echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form['Login'] . "'</div>\n";
+        echo "<input type=\"hidden\" value=\"" . $form['Login'] . "\" name=\"Login\" />\n";
+    }
+    $gForm = new GAzieForm();
+    if (count($msg['err']) > 0) { // ho un errore
+        $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+    }
+    ?>
     <div class="panel panel-default  table-responsive gaz-table-form">
         <div class="container-fluid">
             <table class="table table-striped">
-<?php
-echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
-?>
+                <?php
+                echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
+                ?>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['Cognome']; ?>* </td>
                     <td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="Cognome" value="<?php print $form["Cognome"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
@@ -256,75 +266,75 @@ echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
                     <td colspan="2" class="FacetDataTD"><input title="Nome" type="text" name="Nome" value="<?php print $form["Nome"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
                 </tr>
                 <tr>
-<?php
-print "<td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=admin&value=" . $form['Login'] . "&field=Login\" width=\"100\"></td>";
-print "<td colspan=\"2\" class=\"FacetDataTD\" align=\"center\">" . $script_transl['image'] . ":<br /><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
-?>
+                    <?php
+                    print "<td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=admin&value=" . $form['Login'] . "&field=Login\" width=\"100\"></td>";
+                    print "<td colspan=\"2\" class=\"FacetDataTD\" align=\"center\">" . $script_transl['image'] . ":<br /><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
+                    ?>
                 </tr>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['lang']; ?></td>
-<?php
-echo '<td colspan=\"2\" class="FacetDataTD">';
-echo '<select name="lang" class="FacetSelect">';
-$relativePath = '../../language';
-if ($handle = opendir($relativePath)) {
-    while ($file = readdir($handle)) {
-        if (($file == ".") or ( $file == "..") or ( $file == ".svn"))
-            continue;
-        $selected = "";
-        if ($form["lang"] == $file) {
-            $selected = " selected ";
-        }
-        echo "<option value=\"" . $file . "\"" . $selected . ">" . ucfirst($file) . "</option>";
-    }
-    closedir($handle);
-}
-echo "</td></tr>\n";
-?>
+                    <?php
+                    echo '<td colspan=\"2\" class="FacetDataTD">';
+                    echo '<select name="lang" class="FacetSelect">';
+                    $relativePath = '../../language';
+                    if ($handle = opendir($relativePath)) {
+                        while ($file = readdir($handle)) {
+                            if (($file == ".") or ( $file == "..") or ( $file == ".svn"))
+                                continue;
+                            $selected = "";
+                            if ($form["lang"] == $file) {
+                                $selected = " selected ";
+                            }
+                            echo "<option value=\"" . $file . "\"" . $selected . ">" . ucfirst($file) . "</option>";
+                        }
+                        closedir($handle);
+                    }
+                    echo "</td></tr>\n";
+                    ?>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['style']; ?></td>
-<?php
-echo '<td colspan=\"2\" class="FacetDataTD">';
-echo '<select name="style" class="FacetSelect">';
-$relativePath = '../../library/style';
-if ($handle = opendir($relativePath)) {
-    while ($file = readdir($handle)) {
-        // accetto solo i file css
-        if (!preg_match("/^[a-z0-9\s\_]+\.css$/", $file)) {
-            continue;
-        }
-        $selected = "";
-        if ($form["style"] == $file) {
-            $selected = " selected ";
-        }
-        echo "<option value=\"" . $file . "\"" . $selected . ">" . $file . "</option>";
-    }
-    closedir($handle);
-}
-echo "</td></tr>\n";
-?>
+                    <?php
+                    echo '<td colspan=\"2\" class="FacetDataTD">';
+                    echo '<select name="style" class="FacetSelect">';
+                    $relativePath = '../../library/style';
+                    if ($handle = opendir($relativePath)) {
+                        while ($file = readdir($handle)) {
+                            // accetto solo i file css
+                            if (!preg_match("/^[a-z0-9\s\_]+\.css$/", $file)) {
+                                continue;
+                            }
+                            $selected = "";
+                            if ($form["style"] == $file) {
+                                $selected = " selected ";
+                            }
+                            echo "<option value=\"" . $file . "\"" . $selected . ">" . $file . "</option>";
+                        }
+                        closedir($handle);
+                    }
+                    echo "</td></tr>\n";
+                    ?>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['skin']; ?></td>
-<?php
-echo '<td colspan=\"2\" class="FacetDataTD">';
-echo '<select name="skin" class="FacetSelect">';
-$relativePath = '../../library/style/skins';
-if ($handle = opendir($relativePath)) {
-    while ($file = readdir($handle)) {
-        // accetto solo i file css
-        if (!preg_match("/^[a-z0-9\s\_]+\.css$/", $file)) {
-            continue;
-        }
-        $selected = "";
-        if ($form["skin"] == $file) {
-            $selected = " selected ";
-        }
-        echo "<option value=\"" . $file . "\"" . $selected . ">" . $file . "</option>";
-    }
-    closedir($handle);
-}
-echo "</td></tr>\n";
-?>
+                    <?php
+                    echo '<td colspan=\"2\" class="FacetDataTD">';
+                    echo '<select name="skin" class="FacetSelect">';
+                    $relativePath = '../../library/style/skins';
+                    if ($handle = opendir($relativePath)) {
+                        while ($file = readdir($handle)) {
+                            // accetto solo i file css
+                            if (!preg_match("/^[a-z0-9\s\_]+\.css$/", $file)) {
+                                continue;
+                            }
+                            $selected = "";
+                            if ($form["skin"] == $file) {
+                                $selected = " selected ";
+                            }
+                            echo "<option value=\"" . $file . "\"" . $selected . ">" . $file . "</option>";
+                        }
+                        closedir($handle);
+                    }
+                    echo "</td></tr>\n";
+                    ?>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['Abilit']; ?></td>
                     <td colspan="2" class="FacetDataTD"><input title="Livello " type="text" name="Abilit" value="<?php print $form["Abilit"] ?>" maxlength="1" size="1" class="FacetInput">&nbsp;</td>
@@ -333,13 +343,13 @@ echo "</td></tr>\n";
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['Access']; ?></td>
                     <td colspan="2" class="FacetDataTD"><input title="Accessi" type="text" name="Access" value="<?php print $form["Access"] ?>" maxlength="7" size="7" class="FacetInput">&nbsp;</td>
                 </tr>
-<?php
-if ($toDo == 'insert') {
-    echo '<tr><td class="FacetFieldCaptionTD">' . $script_transl['Login'] . ' *</td>
+                <?php
+                if ($toDo == 'insert') {
+                    echo '<tr><td class="FacetFieldCaptionTD">' . $script_transl['Login'] . ' *</td>
        <td class="FacetDataTD" colspan="2"><input title="Login" type="text" name="Login" value="' . $form["Login"] . '" maxlength="20" size="20" class="FacetInput">&nbsp;</td>
        </tr>';
-}
-?>
+                }
+                ?>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['pre_pass'] . ' ' . $config->getValue('psw_min_length') . ' ' . $script_transl['post_pass']; ?> *</td>
                     <td colspan="2" class="FacetDataTD"><input title="Password" type="password" name="Password" value="<?php print $form["Password"]; ?>" maxlength="20" size="20" class="FacetInput" id="ppass" /><div class="FacetDataTDred" id="pmsg"></div>&nbsp;</td>
@@ -348,72 +358,72 @@ if ($toDo == 'insert') {
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['rep_pass']; ?> *</td>
                     <td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" name="confpass" value="<?php print $form["confpass"]; ?>" maxlength="20" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
                 </tr>
-<?php
-if ($user_data["Abilit"] == 9) {
+                <?php
+                if ($user_data["Abilit"] == 9) {
 
-    function getModule($login, $company_id) {
-        global $gTables, $admin_aziend;
-        //trovo i moduli installati
-        $mod_found = array();
-        $relativePath = '../../modules';
-        if ($handle = opendir($relativePath)) {
-            while ($exist_mod = readdir($handle)) {
-                if ($exist_mod == "." || $exist_mod == ".." || $exist_mod == ".svn" || $exist_mod == "root" || !file_exists("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php"))
-                    continue;
-                $rs_mod = gaz_dbi_dyn_query(" am.access ,am.moduleid, module.name", $gTables['admin_module'] . ' AS am LEFT JOIN ' . $gTables['module'] .
-                        ' AS module ON module.id=am.moduleid ', " am.adminid = '" . $login . "' AND module.name = '$exist_mod' AND am.company_id = '$company_id'", "am.adminid", 0, 1);
-                require("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php");
-                $row = gaz_dbi_fetch_array($rs_mod);
-                if (!isset($row['moduleid'])) {
-                    $row['name'] = $exist_mod;
-                    $row['moduleid'] = 0;
-                    $row['access'] = 0;
-                }
-                $row['transl_name'] = $transl[$exist_mod]['name'];
-                $mod_found[$exist_mod] = $row;
-            }
-            closedir($handle);
-        }
-        return $mod_found;
-    }
+                    function getModule($login, $company_id) {
+                        global $gTables, $admin_aziend;
+                        //trovo i moduli installati
+                        $mod_found = array();
+                        $relativePath = '../../modules';
+                        if ($handle = opendir($relativePath)) {
+                            while ($exist_mod = readdir($handle)) {
+                                if ($exist_mod == "." || $exist_mod == ".." || $exist_mod == ".svn" || $exist_mod == "root" || !file_exists("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php"))
+                                    continue;
+                                $rs_mod = gaz_dbi_dyn_query(" am.access ,am.moduleid, module.name", $gTables['admin_module'] . ' AS am LEFT JOIN ' . $gTables['module'] .
+                                        ' AS module ON module.id=am.moduleid ', " am.adminid = '" . $login . "' AND module.name = '$exist_mod' AND am.company_id = '$company_id'", "am.adminid", 0, 1);
+                                require("../../modules/$exist_mod/menu." . $admin_aziend['lang'] . ".php");
+                                $row = gaz_dbi_fetch_array($rs_mod);
+                                if (!isset($row['moduleid'])) {
+                                    $row['name'] = $exist_mod;
+                                    $row['moduleid'] = 0;
+                                    $row['access'] = 0;
+                                }
+                                $row['transl_name'] = $transl[$exist_mod]['name'];
+                                $mod_found[$exist_mod] = $row;
+                            }
+                            closedir($handle);
+                        }
+                        return $mod_found;
+                    }
 
-    //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
-    $table = $gTables['aziend'] . ' AS a';
-    $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form['Login'] . "') AS set_co ";
-    $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
-    while ($co = gaz_dbi_fetch_array($co_rs)) {
-        echo "<tr><td align=\"center\" colspan=\"3\">" . $co['ragsoc'] . '  - ' . $co['set_co'] . "</tr>\n";
-        echo "<tr><td class=\"FacetDataTD\">" . $script_transl['mod_perm'] . ":</td>\n";
-        echo "<td>" . $script_transl['all'] . "</td>\n";
-        echo "<td>" . $script_transl['none'] . "</td></tr>\n";
-        $mod_found = getModule($form['Login'], $co['id']);
-        $co_id = sprintf('%03d', $co['id']);
-        foreach ($mod_found as $mod) {
-            echo "<tr>\n";
-            echo "<td class=\"FacetFieldCaptionTD\">" . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
-            if ($mod['moduleid'] == 0) {
-                if ($toDo == 'insert') {
-                    echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-                    echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-                } elseif ($co['set_co'] == 0) {
-                    echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
-                    echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
-                } else {
-                    echo "  <td class=\"FacetDataTDred\"><input type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Trovato nuovo modulo!</td>";
-                    echo "  <td class=\"FacetDataTDred\"><input type=radio checked name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"0\"></td>";
+                    //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
+                    $table = $gTables['aziend'] . ' AS a';
+                    $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form['Login'] . "') AS set_co ";
+                    $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
+                    while ($co = gaz_dbi_fetch_array($co_rs)) {
+                        echo "<tr><td align=\"center\" colspan=\"3\">" . $co['ragsoc'] . '  - ' . $co['set_co'] . "</tr>\n";
+                        echo "<tr><td class=\"FacetDataTD\">" . $script_transl['mod_perm'] . ":</td>\n";
+                        echo "<td>" . $script_transl['all'] . "</td>\n";
+                        echo "<td>" . $script_transl['none'] . "</td></tr>\n";
+                        $mod_found = getModule($form['Login'], $co['id']);
+                        $co_id = sprintf('%03d', $co['id']);
+                        foreach ($mod_found as $mod) {
+                            echo "<tr>\n";
+                            echo "<td class=\"FacetFieldCaptionTD\">" . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
+                            if ($mod['moduleid'] == 0) {
+                                if ($toDo == 'insert') {
+                                    echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+                                    echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+                                } elseif ($co['set_co'] == 0) {
+                                    echo "  <td><input type=radio name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
+                                    echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"0\"></td>";
+                                } else {
+                                    echo "  <td class=\"FacetDataTDred\"><input type=radio name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"3\">Trovato nuovo modulo!</td>";
+                                    echo "  <td class=\"FacetDataTDred\"><input type=radio checked name=\"" . $co_id . "new_" . $mod['name'] . "\" value=\"0\"></td>";
+                                }
+                            } elseif ($mod['access'] == 0) {
+                                echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
+                                echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
+                            } else {
+                                echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
+                                echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
+                            }
+                            echo "</tr>\n";
+                        }
+                    }
                 }
-            } elseif ($mod['access'] == 0) {
-                echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
-                echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
-            } else {
-                echo "  <td><input type=radio checked name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"3\"></td>";
-                echo "  <td><input type=radio name=\"" . $co_id . "acc_" . $mod['moduleid'] . "\" value=\"0\"></td>";
-            }
-            echo "</tr>\n";
-        }
-    }
-}
-?>
+                ?>
                 <tr>
                     <td colspan="2" class="FacetDataTD text-center">
                         <input name="Submit" class="btn btn-warning" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
