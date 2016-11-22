@@ -626,9 +626,6 @@ class Login {
             // Enable SMTP authentication
             $mail->SMTPAuth = EMAIL_SMTP_AUTH;
             // Enable encryption, usually SSL/TLS
-            /*              if (defined(EMAIL_SMTP_ENCRYPTION)) {
-              $mail->SMTPSecure = EMAIL_SMTP_ENCRYPTION;
-              } */
             $email_smtp_encr = trim($this->email_conf['smtp_secure']);
             if (strlen($email_smtp_encr) > 2) {
                 $mail->SMTPSecure = $email_smtp_encr;
@@ -644,7 +641,7 @@ class Login {
         }
         $mail->IsHTML(true);          
 
-        $mail->From = EMAIL_PASSWORDRESET_FROM;
+        $mail->From =  $this->email_conf['order_mail'];
         $mail->FromName = EMAIL_PASSWORDRESET_FROM_NAME;
         $mail->AddAddress($student_email);
         $mail->Subject = EMAIL_PASSWORDRESET_SUBJECT;
@@ -652,7 +649,7 @@ class Login {
         $mail->AddEmbeddedImage('../../library/images/gazie.gif', 'glogo');
 
         $link = EMAIL_PASSWORDRESET_URL . '?student_name=' . urlencode($student_name) . '&verification_code=' . urlencode($student_password_reset_hash);
-        $mail->Body = EMAIL_PASSWORDRESET_CONTENT . '<br> <img height="64" src="cid:glogo" /> <a href="' . $link.'">'.MESSAGE_EMAIL_LINK_FOR_RESET.'</a>';;
+        $mail->Body = EMAIL_PASSWORDRESET_CONTENT . '<br> <img height="64" src="cid:glogo" /> <a href="' . $link.'"> <img src="cid:gschool" /> '.MESSAGE_EMAIL_LINK_FOR_RESET.'</a>';;
 
         if (!$mail->Send()) {
             $this->errors[] = MESSAGE_PASSWORD_RESET_MAIL_FAILED . $mail->ErrorInfo;

@@ -27,6 +27,13 @@ $admin_aziend = checkAdmin(9);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $gForm = new schoolForm();
+
+function getGravatar($email,$d = 'mm') {
+    $url = 'https://www.gravatar.com/avatar/';
+    $url .= md5(strtolower(trim($email))).'?d='.$d;
+    return $url;
+}
+
 ?>
 <form method="POST" id="form">
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
@@ -91,7 +98,7 @@ $gForm = new schoolForm();
                         echo "<td>" . $cr["classe"] . " " . $cr["sezione"] . " " . $cr["anno_scolastico"] . "/" . substr($cr["anno_scolastico"] + 1, 2, 2) . " &nbsp;</td>";
                         echo "<td>" . $r["student_lastname"] . " &nbsp;</td>";
                         echo "<td>" . $r["student_firstname"] . " &nbsp;</td>";
-                        echo "<td>" . $r["student_email"] . " </td>";
+                        echo '<td><img src="'.  getGravatar($r["student_email"]).'" height="32"> ' . $r["student_email"] . " </td>";
                         echo "<td>" . $r["student_telephone"] . " </td>";
                         echo '<td class="';
                         if ($r["student_active"] == 1) {

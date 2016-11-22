@@ -57,7 +57,7 @@ define("DB_PASS", $Password);
  */
 define("COOKIE_RUNTIME", 1209600);
 define("COOKIE_DOMAIN", $Host);
-define("COOKIE_SECRET_KEY", "1gp@TMPS{+$78sfpMJFe-92s");
+define("COOKIE_SECRET_KEY", "1gp@GAZS{+$78sfpMJFe-92s");
 
 /**
  * Configuration for: Email server credentials
@@ -72,14 +72,6 @@ define("COOKIE_SECRET_KEY", "1gp@TMPS{+$78sfpMJFe-92s");
  * Please note that there are several issues with gmail, like gmail will block your server
  * for "spam" reasons or you'll have a daily sending limit. See the readme.md for more info.
  *
- * define("EMAIL_USE_SMTP", true);
- * define("EMAIL_SMTP_HOST", "ssl://smtp.gmail.com");
- * define("EMAIL_SMTP_AUTH", true);
- * define("EMAIL_SMTP_USERNAME", "xxxxxxxxxx@gmail.com");
- * define("EMAIL_SMTP_PASSWORD", "xxxxxxxxxxxxxxxxxxxx");
- * define("EMAIL_SMTP_PORT", 465);
- * define("EMAIL_SMTP_ENCRYPTION", "ssl");
- *
  * It's really recommended to use SMTP!
  *
  *
@@ -88,13 +80,6 @@ define("COOKIE_SECRET_KEY", "1gp@TMPS{+$78sfpMJFe-92s");
 define("EMAIL_USE_SMTP", true);
 define("EMAIL_SMTP_AUTH", true);
 
-/* GAZIE definisce questi parametri nella tabella gaz_001company_config 
-define("EMAIL_SMTP_HOST", "smtp.libero.it");
-define("EMAIL_SMTP_USERNAME", "gazie@libero.it");
-define("EMAIL_SMTP_PASSWORD", "");
-define("EMAIL_SMTP_PORT", 465);
-define("EMAIL_SMTP_ENCRYPTION", "ssl");
- */
 
 
 /**
@@ -102,20 +87,12 @@ define("EMAIL_SMTP_ENCRYPTION", "ssl");
  * Set the absolute URL to password_reset.php, necessary for email password reset links
  */
 define("EMAIL_PASSWORDRESET_URL", "http://localhost/gazie/trunk/modules/school/student_password_reset.php");
-define("EMAIL_PASSWORDRESET_FROM", "d.disciascio@libero.it");
-define("EMAIL_PASSWORDRESET_FROM_NAME", "GAzie a scuola");
-define("EMAIL_PASSWORDRESET_SUBJECT", "Reimpostazione password di GAzie a scuola");
-define("EMAIL_PASSWORDRESET_CONTENT", "Clicca sul link seguente per reimpostare la tua password:");
 
 /**
  * Configuration for: verification email data
  * Set the absolute URL to register.php, necessary for email verification links
  */
 define("EMAIL_VERIFICATION_URL", "http://localhost/gazie/trunk/modules/school/student_register.php");
-define("EMAIL_VERIFICATION_FROM", "d.disciascio@libero.it");
-define("EMAIL_VERIFICATION_FROM_NAME", "GAzie a scuola");
-define("EMAIL_VERIFICATION_SUBJECT", "Registrazione su GAzie a scuola");
-define("EMAIL_VERIFICATION_CONTENT", "Clicca su questo link per completare la registrazione e accedere al servizio GAzie a scuola:");
 
 /**
  * Configuration for: Hashing strength

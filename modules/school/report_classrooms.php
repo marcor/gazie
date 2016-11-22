@@ -60,6 +60,9 @@ $gForm = new schoolForm();
                                 <?php echo $script_transl["teacher"]; ?>
                             </a>
                         </th>
+                        <th class="orby">
+                            <?php echo $script_transl["delete"]; ?>
+                        </th>
                     </tr>      
                 </thead>    
                 <tbody id="all_rows">
@@ -73,6 +76,7 @@ $gForm = new schoolForm();
                         echo "<td>" . $r["sezione"] . " &nbsp;</td>";
                         echo "<td>" . $r["anno_scolastico"] . "/" . substr($r["anno_scolastico"] + 1, 2, 2) . " </td>";
                         echo "<td>" . $te["Nome"] . " " . $te["Cognome"] . " &nbsp;</td>";
+                        echo '<td><a class="btn btn-xs btn-default btn-elimina" href="delete_classroom.php?id=' . $r["id"] . '"><i class="glyphicon glyphicon-remove"></i></a></td>';
                         echo "</tr>";
                     }
                     ?>

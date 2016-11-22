@@ -214,11 +214,7 @@ class Registration {
             //$mail->SMTPDebug = 1; // debugging: 1 = errors and messages, 2 = messages only
             // Enable SMTP authentication
             $mail->SMTPAuth = EMAIL_SMTP_AUTH;
-
             // Enable encryption, usually SSL/TLS
-            /*              if (defined(EMAIL_SMTP_ENCRYPTION)) {
-              $mail->SMTPSecure = EMAIL_SMTP_ENCRYPTION;
-              } */
             $email_smtp_encr = trim($this->email_conf['smtp_secure']);
             if (strlen($email_smtp_encr) > 2) {
                 $mail->SMTPSecure = $email_smtp_encr;
@@ -234,7 +230,7 @@ class Registration {
         }
         $mail->IsHTML(true);          
         // Impropriamente uso order_mail in quanto nelle installazioni didattiche non si ricevono ordini
-        $mail->From = EMAIL_VERIFICATION_FROM;
+        $mail->From = $this->email_conf['order_mail'];
 
         $mail->FromName = EMAIL_VERIFICATION_FROM_NAME;
         $mail->AddAddress($student_email);
@@ -325,7 +321,7 @@ class Registration {
                 $this->executeQueryFileInstall($student_id, $last_file);
                 $this->db_connection->query('DELETE FROM `' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin` WHERE  `Login`='amministratore';");
                 // add student into new gazNNNN_admin
-                $gravatar_url = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($student_email)));
+                $gravatar_url = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($student_email))).'?d=mm';
                 $gravatar_img = @file_get_contents($gravatar_url);
                 $query_add_student_to_admin = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_admin (Cognome, Nome,image, lang, Login,  Password, Abilit, company_id, datpas) VALUES(:Cognome, :Nome,:image, :lang, :Login, :Password, 7 , 1, NOW())');
                 $query_add_student_to_admin->bindValue(':Login', $student_name, PDO::PARAM_STR);

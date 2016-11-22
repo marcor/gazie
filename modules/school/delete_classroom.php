@@ -24,32 +24,19 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin(9);
-$tp = $table_prefix . str_pad(intval($_GET['id']), 4, '0', STR_PAD_LEFT) . "\_";
-$t_erased = array();
-$msg = array();
-if (isset($_POST['delete'])) {
-    $form = gaz_dbi_get_row($gTables['students'], "student_id", intval($_GET['id']));
-    $tp = $table_prefix . str_pad(intval($_GET['id']), 4, '0', STR_PAD_LEFT) . "\_";
-    $ve = gaz_dbi_query("SELECT CONCAT(  'DROP VIEW `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn
-FROM INFORMATION_SCHEMA.VIEWS
-WHERE TABLE_NAME LIKE  '" . $tp . "%'");
-    while ($r = gaz_dbi_fetch_array($ve)) {
-        $t_erased[] = $r['tn'];
-        gaz_dbi_query($r['query']);
+$error = '';
+
+if (isset($_POST['Delete'])) {
+    $student = gaz_dbi_get_row($gTables['students'], "student_classroom_id", intval($_GET['id']));
+    if ($student) {
+        $error = 'not_empty';
+    } else {
+        $deleted = gaz_dbi_del_row($gTables['classroom'], "id", intval($_GET['id']));
+        header("Location: report_classrooms.php");
+        exit;
     }
-    $te = gaz_dbi_query("SELECT CONCAT(  'DROP TABLE `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn
-FROM INFORMATION_SCHEMA.TABLES
-WHERE TABLE_NAME LIKE  '" . $tp . "%'");
-    while ($r = gaz_dbi_fetch_array($te)) {
-        $t_erased[] = $r['tn'];
-        gaz_dbi_query($r['query']);
-    }
-// cancello il rigo dalla tabella students dell'installazione principale
-    gaz_dbi_del_row($gTables['students'], 'student_id', intval($_GET['id']));
-    $t_erased[] = '<b>' . $form['student_firstname'] . ' ' . $form['student_lastname'] ."</b>\n";
 } elseif (isset($_GET['id'])) {
-    $form = gaz_dbi_get_row($gTables['students'], "student_id", intval($_GET['id']));
-    $msg[] = 'alert';
+    
 } else {
     header("Location: report_classrooms.php");
 }
@@ -58,6 +45,7 @@ if (isset($_POST['Return'])) {
     header("Location: report_classrooms.php");
     exit;
 }
+$form = gaz_dbi_get_row($gTables['classroom'], "id", intval($_GET['id']));
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -65,49 +53,56 @@ $script_transl = HeadMain();
 <form method="post" action="<?php print $_SERVER['PHP_SELF'] . "?id=" . intval($_GET['id']); ?>" name="deleteform" class="form-horizontal" >
     <div class="container">    
         <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
-            <div class="panel panel-danger" >
+            <div class="panel panel-info" >
                 <div class="panel-heading panel-gazie">
                     <div class="panel-title">
                         <img width="7%" src="../../library/images/gazie.gif" />
                         <img width="5%" src="./school.png" />
-                        <?php echo $script_transl['title'].' '.$form['student_lastname'].' '.$form['student_firstname']; ?>
+                        <?php echo $script_transl['title']; ?>
                     </div>
                     <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
                     <?php
-                    foreach ($t_erased as $v) {
+                    if (!empty($error)) {
                         echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
-                        echo $script_transl['tabella'] . $v;
+                        echo $script_transl['errors'][$error];
                         echo '</div>';
                     }
                     ?>
                 </div>
-                <?php
-                foreach ($msg as $v) {
-                    echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
-                    echo $script_transl['msg'][$v];
-                    echo '</div>';
-                }
-                ?>
                 <table class="table table-responsive table-striped" >
                     <tr class="control">
-                        <td class="col-sm-3"><?php echo $script_transl['Nome']; ?></td>
-                        <td class="col-sm-9"><?php echo $form["student_firstname"]; ?></td>
+                        <td class="col-sm-3">ID</td>
+                        <td class="col-sm-9"><?php echo $form["id"]; ?></td>
                     </tr>
                     <tr class="control">
-                        <td class="col-sm-3"><?php echo $script_transl['Cognome']; ?></td>
-                        <td class="col-sm-9"><?php echo $form["student_lastname"]; ?></td>
+                        <td class="col-sm-3"><?php echo $script_transl['classe']; ?></td>
+                        <td class="col-sm-9"><?php echo $form["classe"]; ?></td>
                     </tr>
                     <tr class="control">
-                        <td class="col-sm-3"><?php echo $script_transl['email']; ?></td>
-                        <td class="col-sm-9"><?php echo $form["student_email"]; ?></td>
+                        <td class="col-sm-3"><?php echo $script_transl['sezione']; ?></td>
+                        <td class="col-sm-9"><?php echo $form["sezione"]; ?></td>
+                    </tr>
+                    <tr class="control">
+                        <td class="col-sm-3"><?php echo $script_transl['anno_scolastico']; ?></td>
+                        <td class="col-sm-9"><?php echo $form["anno_scolastico"]; ?></td>
+                    </tr>
+                    <tr class="control">
+                        <td class="col-sm-3"><?php echo $script_transl['teacher']; ?></td>
+                        <td class="col-sm-9"><?php echo $form["teacher"]; ?></td>
+                    </tr>
+                    <tr class="control">
+                        <td class="col-sm-3"><?php echo $script_transl['location']; ?></td>
+                        <td class="col-sm-9"><?php echo $form["location"]; ?></td>
+                    </tr>
+                    <tr class="control">
+                        <td class="col-sm-3"><?php echo $script_transl['title_note']; ?></td>
+                        <td class="col-sm-9"><?php echo $form["title_note"]; ?></td>
                     </tr>
                 </table>
                 <div style="padding-top:10px" class="panel-body" >
-                    <?php if (!isset($_POST['delete'])) { ?>
-                        <div style="padding-bottom: 25px;" class="input-group col-sm-6">
-                            <input style="float:right;" class="btn btn-danger" type="submit" name="delete" value="<?php echo $script_transl['delete']; ?>" />
-                        </div>
-                    <?php } ?>
+                    <div style="padding-bottom: 25px;" class="input-group col-sm-6">
+                        <input style="float:right;" class="btn btn-danger" type="submit" name="Delete" value="<?php echo $script_transl['delete']; ?>" />
+                    </div>
                 </div>  <!-- chiude div panel-body -->
             </div>  <!-- chiude div panel -->
         </div>

@@ -47,6 +47,6 @@ if (isset($login)) {
 </form><hr/>
 
 <!-- backlink -->
-<a href="index.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
+                            <a style="float:left;" href="student_login.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
 
 <?php include('_footer.php'); ?>

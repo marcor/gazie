@@ -48,7 +48,7 @@ if ($login->passwordResetLinkIsValid() == true) {
                             <input style="float:right;" class="btn btn-success" type="submit" name="submit_new_password" value="<?php echo WORDING_SUBMIT_NEW_PASSWORD; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
-                            <a style="float:left;" href="index.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
+                            <a style="float:left;" href="student_login.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
                         </div>
 
                     </div>  
@@ -102,7 +102,7 @@ if ($login->passwordResetLinkIsValid() == true) {
                             <input  style="float:right;" class="btn btn-success" type="submit" name="request_password_reset" value="<?php echo WORDING_RESET_PASSWORD; ?>" />
                         </div>
                         <div style="padding-bottom: 25px;" class="input-group">
-                            <a style="float:left;" href="index.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
+                            <a style="float:left;" href="student_login.php"><?php echo WORDING_BACK_TO_LOGIN; ?></a>
                         </div>
                     </div>  
                 </div>  

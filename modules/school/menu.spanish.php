@@ -22,15 +22,15 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-$transl['suppor'] = array( 'name' => "Supporto",
-                           'title' => "Gestione supporto clienti",
-                           'm2' => array( 1 => array("Assistenza clienti","Assistenza Clienti"),
-                                          2 => array("Interventi a scadenza", "Periodiche"),
-                                          3 => array("Installazioni", "Installazioni")
+$transl['school'] = array( 'name' => "A scuola",
+                           'title' => "A scuola con GAzie",
+                           'm2' => array( 1 => array("Insegnanti","Insegnanti"),
+                                          2 => array("Classi", "Classi"),
+                                          3 => array("Studenti", "Studenti")
                                         ),
-                           'm3' => array( 1 => array("Inserisci nuovo assistenza","Nuova assistenza"),
-                                          2 => array("Inserisci scadenza periodica","Nuova scadenza"),
-                                          3 => array("Inserisci installazione", "Nuova installazione")
+                           'm3' => array( 1 => array("Inserisci un nuovo insegnante","Nuovo insegnante"),
+                                          2 => array("Inserisci una nuova classe","Nuova classe"),
+                                          3 => array("Inserisci un nuovo alunno", "Nuovo alunno")
                                         )
                          );
 ?>
