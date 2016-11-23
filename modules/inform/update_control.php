@@ -71,7 +71,7 @@ function tutor_list($tutor,$configurazione,$script_transl)
             echo "<tr><td>".$value['zone']."</td>\n";
             echo "<td>".$value['city']."</td>\n";
             echo "<td>".$value['sms']."</td>\n";
-            echo "<td align=\"center\"><a href=\"http://".$value['web']."\" target=\"_NEW\">".$value['web']."</a></td>\n";
+            echo "<td align=\"center\"><a href=\"".$value['web']."\" target=\"_NEW\">".$value['web']."</a></td>\n";
             if (!empty($value['check']) and $configurazione['cvalue'] == $value['check']) {
                echo "<td class=\"FacetDataTD\" align=\"right\"><input disabled style=\"color:red;\" type=\"submit\" value=\"".$script_transl['check_value'][1]."\" name=\"check[$key]\" title=\"".$script_transl['check_title_value'][1]."\" /></td></tr>\n";
             } else {
