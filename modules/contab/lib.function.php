@@ -229,7 +229,7 @@ class contabForm extends GAzieForm {
     }
 
     function queryAnagra($where = 1) {
-        $rs = gaz_dbi_dyn_query($this->what, $this->gTables['anagra'] . ' AS a', $where, "ragsoc ASC");
+        $rs = gaz_dbi_dyn_query($this->what, $this->gTables['anagra'] . ' AS a', $where, "a.ragso1 ASC");
         $anagrafiche = array();
         while ($r = gaz_dbi_fetch_array($rs)) {
             $anagrafiche[] = $r;
