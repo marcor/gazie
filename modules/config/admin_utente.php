@@ -362,7 +362,6 @@ echo '<script type="text/javascript">
                 </tr>
                 <?php
                 if ($user_data["Abilit"] == 9) {
-
                     function getModule($login, $company_id) {
                         global $gTables, $admin_aziend;
                         //trovo i moduli installati
@@ -402,7 +401,8 @@ echo '<script type="text/javascript">
                         $co_id = sprintf('%03d', $co['id']);
                         foreach ($mod_found as $mod) {
                             echo "<tr>\n";
-                            echo "<td class=\"FacetFieldCaptionTD\">" . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
+                            echo '<td class="FacetFieldCaptionTD">
+                                <img height="16" src="../'.$mod['name'].'/'.$mod['name'].'.png" /> '. $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
                             if ($mod['moduleid'] == 0) {
                                 if ($toDo == 'insert') {
                                     echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
