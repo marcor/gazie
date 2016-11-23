@@ -50,7 +50,7 @@ $transl['acquis'] = array('name' => "Acquisti",
         13 => array("Selezione e stampa stato clienti", "Stato delle scadenze"),
         14 => array("Inserimento nuovo agente di fornitori", "Nuovo agente"),
         15 => array("Stampa lista fornitori", "Lista fornitori"),
-        16 => array("Acquistato bene ammortizzabile", "Acquisto bene ammortizzzabile")
+        16 => array("Acquistato bene ammortizzabile", "Acquisto bene ammortizzabile")
     )
 );
 ?>
