@@ -37,7 +37,7 @@ function print_querytime($prev) {
 }
 
 if (isset($_GET['auxil'])) {
-    $seziva = $_GET['auxil'];
+    $seziva = intval($_GET['auxil']);
     $where = "tipdoc LIKE 'F%' AND " . $gTables['tesdoc'] . ".seziva = '$seziva'";
 } else {
     $seziva = "1";

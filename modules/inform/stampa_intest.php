@@ -34,7 +34,8 @@ $testata= array('id_tes'=> 0,'seziva'=>0,'protoc'=>0,'numdoc'=>0,'numfat'=>0,
           'listin'=>0,'spediz'=>'','portos'=>'','imball'=>'','traspo'=>0,'speban'=>0,
           'net_weight'=>'','gross_weight'=>'','units'=>'','volume'=>'',
           'id_agente'=>0,'spevar'=>0,'ivaspe'=>0,'sconto'=>0,'initra'=>0,'geneff'=>0,'id_contract'=>0,
-          'id_con'=>0,'status'=>'','template'=>$dati_intestazione['template']);
+          'id_con'=>0,'status'=>'','template'=>$dati_intestazione['template'],'caumag'=>0,'stamp'=>0,
+          'virtual_taxstamp'=>0,'taxstamp'=>0,'expense_vat'=>0,'ddt_type'=>'');
 
 $descrizione_data = ucwords(strftime("%B", mktime (0,0,0,substr($testata['datfat'],5,2),1,0)));
 
