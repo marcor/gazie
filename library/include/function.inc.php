@@ -77,16 +77,14 @@ function getTextBetweenTags($tag, $html, $strict=0)
 function gaz_flt_var_assign($flt, $typ) {
     global $where;
     if (isset($_GET[$flt]) && $_GET[$flt] != 'All' && $_GET[$flt] != "") {
-        $var = addslashes($_GET[$flt]);
         if ($typ == "i") {
-            $where .= " and " . $flt . " = $var";
+            $where .= " AND " . $flt . " = ".intval($_GET[$flt])." ";
         } else if ($typ == "v") {
-            $where .= " and " . $flt . " like '%$var%'";
+            $where .= " AND " . $flt . " LIKE '%".addslashes(substr($_GET[$flt],0,30))."%'";
         } else if ($typ == "d") {
-            $where .= " and $flt >= \"" . $var . "/01/01\" and $flt <= \"" . $var . "/12/31\"";
+            $where .= " AND $flt >= \"" . intval($_GET[$flt]) . "/01/01\" and $flt <= \"" . intval($_GET[$flt]) . "/12/31\"";
         }
     }
-    //return $where;
 }
 
 // crea una select che permette di filtrare la colonna di una tabella
