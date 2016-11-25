@@ -298,7 +298,7 @@ echo '<script type="text/javascript">
                     <?php
                     echo '<td colspan=\"2\" class="FacetDataTD">';
                     echo '<select name="style" class="FacetSelect">';
-                    $relativePath = '../../library/style';
+                    $relativePath = '../../library/style/header';
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css
