@@ -28,9 +28,9 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 }
 $config = new Config;
 
-if ( $config->getValue('header')!="header_default.php" && file_exists( "../../library/include/".$config->getValue('header'))) {
-   include $config->getValue('header');
+if (file_exists( "../../library/menu/".$config->getValue('menu')."/header.php")) {
+   include "../../library/menu/".$config->getValue('menu')."/header.php";
 } else {
-   include "header_default.php";
+   include "../../library/menu/g7/header.php";
 }
 ?>
