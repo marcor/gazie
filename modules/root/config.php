@@ -66,20 +66,20 @@ $result = gaz_dbi_dyn_query("*", $gTables['config'], "1=1", ' id ASC', 0, 1000);
                         <label for="input<?php echo $r["id"];?>" class="col-sm-4 control-label"><?php echo $r["description"]; ?></label>
                         <div class="col-sm-8">
 							   <?php
-                        if ( $r['variable']=="header" ) {
+                        if ( $r['variable']=="menu" ) {
                            echo '<select name="'.$r["variable"].'" class="form-control input-sm">';
-                           $relativePath = '../../library/include';
+                           $relativePath = '../../library/menu/';
                            if ($handle = opendir($relativePath)) {
                               while ($file = readdir($handle)) {
                                  if(($file == ".") or ($file == "..") or ($file == ".svn")) continue;
-                                 if(( substr($file,0,7) == "header_") ) {
                                     $selected="";
                                     if ($r["cvalue"] == $file) {
                                        $selected = " selected ";
                                     }
                                     echo "<option value=\"".$file."\"".$selected.">".ucfirst($file)."</option>";
                                  }
-                              }
+                                 
+                              
                            closedir($handle);
                            echo "</select>";
                            }                     
