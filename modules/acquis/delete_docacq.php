@@ -129,5 +129,6 @@ echo '<div class="alert alert-danger text-center" role="alert">' . $script_trans
   </tr>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

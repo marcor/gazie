@@ -39,5 +39,6 @@ if (file_exists("help/".$admin_aziend['lang']."/docume_vendit_help.php")) {
 ?>
 </div>
 
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

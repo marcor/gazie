@@ -105,5 +105,6 @@ per eliminare anche i movimenti contabili<br>seleziona questa checkbox.
 </tr>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

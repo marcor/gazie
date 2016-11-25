@@ -1158,5 +1158,6 @@ if (count($msg['err']) > 0) { // ho un errore
     </div><!-- chiude panel  -->
 
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

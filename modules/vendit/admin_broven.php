@@ -1784,5 +1784,6 @@ if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
 echo "	</table>";
 ?>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

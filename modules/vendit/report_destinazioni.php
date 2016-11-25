@@ -163,5 +163,6 @@ if (isset($_GET['ricerca_completa'])) {
         ?>
 </form>
 </table>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

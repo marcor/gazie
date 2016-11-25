@@ -435,7 +435,8 @@ echo '<script type="text/javascript">
         </div>
     </div>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>
 
 

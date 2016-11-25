@@ -282,8 +282,9 @@ $select_cliente = new selectPartner('clfoco');
 </table>
 
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>
 <script src="../../js/custom/autocomplete.js"></script>
 <script type="text/javascript">
 /*function updateInputStato(ish){

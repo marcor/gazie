@@ -179,5 +179,6 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
     </div>
 
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

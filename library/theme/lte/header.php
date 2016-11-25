@@ -21,21 +21,21 @@
    <link rel="shortcut icon" href="../../library/images/favicon.ico">			
    <!-- Tell the browser to be responsive to screen width -->
 	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/bootstrap/css/bootstrap.min.css">
-    <link rel="stylesheet" href="../../library/menu/lte/font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="../../library/menu/lte/ionicons/css/ionicons.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
     <!-- Theme style -->
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/dist/css/skins/skin-green.min.css">
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/plugins/iCheck/flat/blue.css">
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/plugins/morris/morris.css">
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/plugins/datepicker/datepicker3.css">
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/plugins/daterangepicker/daterangepicker-bs3.css">
-    <link rel="stylesheet" href="../../library/menu/lte/adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
-    <script src="../../library/menu/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-green.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/iCheck/flat/blue.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/morris/morris.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/datepicker/datepicker3.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/daterangepicker/daterangepicker-bs3.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
+    <script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
     
 <?php
 	if (!empty($admin_aziend['style']) && file_exists("../../library/style/header/" . $admin_aziend['style'])) {

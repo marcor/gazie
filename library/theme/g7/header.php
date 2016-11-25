@@ -8,12 +8,12 @@
         <link rel="shortcut icon" href="../../library/images/favicon.ico">			
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-        <link href="../../library/menu/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet">
+        <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet">
 
         <script src="../../js/jquery/jquery.js"></script>
         <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
-        <script src="../../library/menu/g7/smartmenus-master/jquery.smartmenus.js" type="text/javascript"></script>
-        <script src="../../library/menu/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.js" type="text/javascript"></script>
+        <script src="../../library/theme/g7/smartmenus-master/jquery.smartmenus.js" type="text/javascript"></script>
+        <script src="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.js" type="text/javascript"></script>
         <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
         <script src="../../js/jquery.ui/datepicker-<?php echo substr($admin_aziend['lang'], 0, 2); ?>.js"></script>
         <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
@@ -262,9 +262,9 @@
                 // cambia il tipo di menu
                 $tipomenu = substr($admin_aziend['style'], 0, -4);
                 if (file_exists("../../library/style/header_menu_" . $tipomenu . ".php")) {
-                    require("../../library/menu/g7/header_menu_" . $tipomenu . ".php");
+                    require("../../library/theme/g7/header_menu_" . $tipomenu . ".php");
                 } else {
-                    require("../../library/menu/g7/header_menu_default.php");
+                    require("../../library/theme/g7/header_menu_default.php");
                 }
             }
             if (!isset($translated_script)) {

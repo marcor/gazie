@@ -33,5 +33,6 @@ foreach ($script_transl[$str] as $v){
     echo "<div class=\"FacetFormHeaderFont\" style=\"color:red\">".$v."</div>";
 }
 ?>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

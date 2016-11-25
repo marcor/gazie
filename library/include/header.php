@@ -28,9 +28,9 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 }
 $config = new Config;
 
-if (file_exists( "../../library/menu/".$config->getValue('menu')."/header.php")) {
-   include "../../library/menu/".$config->getValue('menu')."/header.php";
+if (file_exists( "../../library/theme/".$config->getValue('theme')."/header.php")) {
+   include "../../library/theme/".$config->getValue('theme')."/header.php";
 } else {
-   include "../../library/menu/g7/header.php";
+   include "../../library/theme/g7/header.php";
 }
 ?>

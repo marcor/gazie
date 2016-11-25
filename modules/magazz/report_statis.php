@@ -194,5 +194,6 @@ foreach ($castelletto_articoli as $key=>$value) {
 }
 echo "</table>";
 ?>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

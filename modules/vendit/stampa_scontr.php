@@ -44,5 +44,6 @@ Non esiteremo a recepire ed evidenziare rapidamente il contributo sul sito del p
 </td></tr></table>\n";
 ?>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

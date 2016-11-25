@@ -74,5 +74,6 @@ $result = gaz_dbi_dyn_query('*',$gTables['company_config'], "var=\"ruburl\"", $o
 	}
 	?>	
 	</table>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

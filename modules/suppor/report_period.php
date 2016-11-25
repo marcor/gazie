@@ -278,5 +278,6 @@ $passi = array(20, 50, 100, 10000 );
 </tr>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

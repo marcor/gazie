@@ -368,8 +368,9 @@ echo "</tr>\n";
 ?>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>
 
 <SCRIPT type="text javascript">
 echo "function toggleContent(currentContent) {

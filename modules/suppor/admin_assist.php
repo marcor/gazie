@@ -286,8 +286,9 @@ $select_cliente = new selectPartner('clfoco');
 //$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato,".$gTables['assist'].".tipo", $gTables['assist']," stato!='chiuso' and stato!='aperto' and stato != 'contratto' and tipo='ASS'", "stato", "0", "9999");
 ?>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>
 <script src="../../js/custom/autocomplete.js"></script>
 <script type="text/javascript">
 function updateInputStato(ish){

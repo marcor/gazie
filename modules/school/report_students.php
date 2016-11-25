@@ -116,6 +116,6 @@ function getGravatar($email,$d = 'mm') {
         </div>  
     </div>
 </form>
-</div><!-- chiude div container role main -->
-</body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

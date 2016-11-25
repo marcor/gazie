@@ -306,5 +306,6 @@ if (isset($_POST['preview'])) {
 }
 echo "</table>";
 ?>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

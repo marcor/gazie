@@ -224,5 +224,6 @@ echo "<input type=\"submit\" name=\"stampa\" value=\"STAMPA !\" >\n";
 </tr>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

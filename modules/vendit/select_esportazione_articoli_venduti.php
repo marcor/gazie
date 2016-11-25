@@ -268,5 +268,6 @@ while ($mv = gaz_dbi_fetch_array($rs)) {
 ?>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

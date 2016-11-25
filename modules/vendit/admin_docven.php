@@ -2339,5 +2339,6 @@ echo '</table>';
    });
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

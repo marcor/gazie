@@ -183,5 +183,6 @@ $recordnav->output();
         }
         ?>
     </table>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

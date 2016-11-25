@@ -721,6 +721,6 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
 </form>
-</div><!-- chiude div container role main -->
-</body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

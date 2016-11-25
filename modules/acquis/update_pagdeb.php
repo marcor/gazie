@@ -333,4 +333,6 @@ if ($nummov > 0)
     print "<tr><td colspan=\"6\" class=\"FacetDataTDred\">Non ci sono movimenti contabili relativi al fornitore ".$conto['ragso1']." ".$conto['ragso2']." !<td></tr>\n";
 print "</table></form>\n";
 ?>
-</div><!-- chiude div container role main --></body></html>
+<?php
+require("../../library/include/footer.php");
+?>

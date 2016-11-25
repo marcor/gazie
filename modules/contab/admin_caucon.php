@@ -212,5 +212,6 @@ for ($i=1; $i<=6; $i++) {
 ?>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

@@ -192,6 +192,6 @@ $gForm = new magazzForm();
 </form>
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
 </div>  
-</div><!-- chiude div container role main -->
-</body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

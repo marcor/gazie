@@ -383,5 +383,6 @@ if ($form['partner'] > 100000000) { // partner selezionato
     echo "</table></form>";
 }
 ?>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

@@ -59,9 +59,9 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                             <script src="../../js/custom/gz-library.js"></script>
                             <script src="../../js/tinymce/tinymce.min.js"></script>
                             <script src="../../js/custom/tinymce.js"></script>
-                            <link href="../../library/menu/g6/default-ori.css" rel="stylesheet" type="text/css" />
+                            <link href="../../library/theme/g6/default-ori.css" rel="stylesheet" type="text/css" />
                             <link href="../../library/style/header/skins/default.css" rel="stylesheet" type="text/css" />
-                            <link href="../../library/menu/g6/ml_dropdown.css" rel="stylesheet" type="text/css" />
+                            <link href="../../library/theme/g6/ml_dropdown.css" rel="stylesheet" type="text/css" />
                             <?php
                             /** ENRICO FEDELE */
                             /* Dunque ho creato questo escamotage, basta mettere un file .css nella cartella lybrary/style con nome 
@@ -272,7 +272,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                                       /*if (file_exists("../../library/style/header_menu_" . $tipomenu . ".php")) {
                                          require("../../library/style/header_menu_" . $tipomenu . ".php");
                                       } else {*/
-                                         require("../../library/menu/g6/header_menu_g6.php");
+                                         require("../../library/theme/g6/header_menu_g6.php");
                                       //}
                                    }
                                    if (!isset($translated_script)) {

@@ -505,5 +505,6 @@ if (isset($_POST['Submit'])) { // conferma
 echo "</table>\n";
 ?>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

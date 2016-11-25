@@ -151,5 +151,6 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

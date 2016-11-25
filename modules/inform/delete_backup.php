@@ -46,5 +46,6 @@ print "<td align=\"right\"><input type=\"submit\" name=\"Return\" value=\"".$scr
 ?>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

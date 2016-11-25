@@ -114,5 +114,6 @@ $script_transl = HeadMain();
     </div><!-- chiude div container -->
 </form>
 
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

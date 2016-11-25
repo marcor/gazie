@@ -64,5 +64,6 @@ echo ' <input type="submit" accesskey="d" name="Delete" value="'.$script_transl[
 </tr>
 </table>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

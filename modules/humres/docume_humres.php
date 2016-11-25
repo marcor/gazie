@@ -31,5 +31,6 @@ require("../../library/include/header.php");
 $script_transl=HeadMain();
 ?>
 </table>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

@@ -1226,6 +1226,6 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
     });
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
-</div><!-- chiude div container role main -->
-</body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

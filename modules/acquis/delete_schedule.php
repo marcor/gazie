@@ -92,5 +92,6 @@ $script_transl = HeadMain('delete_schedule');
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

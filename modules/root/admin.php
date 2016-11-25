@@ -299,6 +299,6 @@ if ($t > 4 && $t <= 13) {
         </div>
     </div>
 </form>
-</div><!-- chiude div container -->
-</body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>
