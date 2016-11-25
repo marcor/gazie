@@ -242,7 +242,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<td><?php echo $a_row["ore"]; ?></td>
       <td><?php echo $a_row["tecnico"]; ?></td>
 		<td>
-         <a href="report_assist.php?chstato=<?php echo $a_row["id"]."&prev=".$a_row["stato"];?>" class="btn btn-xs btn-default">
+         <a href="report_assist.php?chstato=<?php echo $a_row["id"]."&prev=".$a_row["stato"];?>" class="btn btn-xs btn-edit">
             <?php echo $a_row["stato"]; ?>
          </a>
       </td>

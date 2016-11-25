@@ -80,7 +80,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			}
 		}    
 		$msg .= (empty($form["codice"]) ? "5+" : '');
-		$msg .= (empty($form["descrizione"]) ? "6+" : '');
+		$msg .= (empty($form["oggetto"]) ? "6+" : '');
 		if (empty($msg)) { 
 		   if (preg_match("/^id_([0-9]+)$/",$form['clfoco'],$match)) {
             $new_clfoco = $anagrafica->getPartnerData($match[1],1);
