@@ -11,6 +11,7 @@
       header("Location: logout.php");
       exit;
    }
+   //echo getcwd();
 ?>
 <!DOCTYPE html>
 <html>
@@ -28,7 +29,7 @@
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-green.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/_all-skins.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/iCheck/flat/blue.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/morris/morris.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
@@ -38,10 +39,10 @@
     <script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
     
 <?php
-	if (!empty($admin_aziend['style']) && file_exists("../../library/style/header/" . $admin_aziend['style'])) {
+	if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/skeletons/" . $admin_aziend['style'])) {
 		$style = $admin_aziend['style'];
 	}
-	if (!empty($admin_aziend['skin']) && file_exists("../../library/style/header/skins/" . $admin_aziend['skin'])) {
+	if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
 		$skin = $admin_aziend['skin'];
 	}
 ?>
@@ -559,7 +560,7 @@ function page_footer()
     </div><!-- ./wrapper -->
 
     <!-- jQuery 2.1.4 -->
-    <script src="../../library/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
     <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
@@ -568,15 +569,15 @@ function page_footer()
     </script>  
     
     <!-- Bootstrap 3.3.5 -->
-    <script src="../../library/adminlte/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/bootstrap/js/bootstrap.min.js"></script>
     <!-- Slimscroll -->
-    <script src="../../library/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
-    <script src="../../library/adminlte/plugins/fastclick/fastclick.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
     <!-- AdminLTE App -->
-    <script src="../../library/adminlte/dist/js/app.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/dist/js/app.min.js"></script>
     <!-- AdminLTE for demo purposes -->
-    <script src="../../library/adminlte/dist/js/demo.js"></script>
+    <script src="../../library/theme/lte/adminlte/dist/js/demo.js"></script>
     
   </body>
 <?php
