@@ -1,13 +1,10 @@
 body {
-	background-image : url("../../../library/images/sfondo.png");
-	color:#000;
+	background-image : url("../../../../../library/images/sfondo.png");
 }
-select:focus, input:focus {
-	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 255, 0.6);
+div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
+	color : #000000;
 }
-mark {
-    background-color: #ff0;
-    padding: 0em;
+table {
 }
 table.Tlarge {
 	border-color : #000000;
@@ -37,7 +34,16 @@ table.selectTable td {
 	color: #eee;
 	background-color: #000;
 }
-
+.topmenu {
+	font-size : 90%;
+	font-weight: bold;
+	color : #000000;
+	background-color: #d9fdd8;
+}
+.bottomMenu {
+	font-size : 90%;
+	color : #000000;
+}
 .FacetFormTABLE {
 	border-color : #000000;
 }
@@ -54,6 +60,27 @@ table.selectTable td {
 	color : #000000;
 	font-size : 90%;
 }
+.FacetFieldCaptionTD-red {
+	background-color : #ff5c33;
+	color : #000000;
+	font-size : 100%;
+}
+.FacetFieldCaptionTD-blue {
+	background-color : #33ccff;
+	color : #000000;
+	font-size : 100%;
+}
+.FacetFieldCaptionTD-redlight {
+	background-color : #ff9999;
+	color : #000000;
+	font-size : 90%;
+}
+.FacetFieldCaptionTD-bluelight {
+	background-color : #ccffff;
+	color : #000000;
+	font-size : 90%;
+}
+
 .FacetDataTRstart td {
 	border-top-color: white;
 }
@@ -142,7 +169,7 @@ table.selectTable td {
 	font-size : 100%;
 }
 .FacetSelect {
-	font-size : 90%;
+	font-size : 100%;
 	background-color : #C9EDC8;
 }
 .FacetSmall {
@@ -165,7 +192,15 @@ table.selectTable td {
 .error_box {
 	border-color: #000000;
 }
-
+.ThemeGazieMainItemHover, .ThemeGazieMainItemActive {
+	background: url(../../../js/jscookmenu/mainmenubg.png);
+}
+.ThemeGazieMainItem {
+	background-color: #c9edc8;
+}
+.ThemeGazieMenuItemHover, .ThemeGazieMenuItemActive {
+	background-color: #FFEEC2;
+}
 #admin_main {
 }
 #admin_welcome {
@@ -180,23 +215,77 @@ table.selectTable td {
 	opacity: 1;
 	filter: alpha(opacity=100);
 }
-
+.nav>li>a:hover, .nav>li>a:focus {
+	background-color: #aae2a8;
+	color: #123311;
+}
+.nav>li>ul>li>a:hover, .nav>li>a:focus {
+	background-color: #aae2a8;
+	color: #123311;
+}
+.nav>li>ul>li>ul>li>a:hover, .nav>li>a:focus {
+	background-color: #aae2a8;
+	color: #123311;
+}
+.nav>li>ul>li>ul>li>ul>li>a:hover, .nav>li>a:focus {
+	background-color: #aae2a8;
+	color: #123311;
+}
+.navbar {
+	border-color:  #000000;
+	font-size : 100%;
+}
+.nav > li > a {
+}
+.nav > li > a:hover {
+	background-color: #99d197;
+}
+.nav > li > a.row-menu {
+}
+.nav > li > a.icon-menu {
+}
+div.help {
+}
 .nav-boot {
 	background-color : #aae2a8;
 	color : #000000;
 	font-size : 100%;
 }
+.nav-first {
+}
+.nav-mb {
+}
+.nav-tabs {
 
+}
+table.submenu {
+}
+.navbar-left {
+	border-color: #fff;
+}
 .navbar-lower {
 	background-color: #dafed9;
+}
+div.FacetFormHeaderFont {
 }
 .vcenter {
 	font-size: 100%;
 }
-
-
+input.input-xs {
+}
+.caret {
+	text-color: #fff;
+	border-top-color: white !important;
+}
 /* ******************************************************************************************************** */
-
+.container-fluid {
+}
+.navbar-collapse {
+}
+.opzione {
+}
+.progress {
+}
 .contenuto-help {
 	background: #fff;
 	border-color: #ddd;
@@ -220,14 +309,42 @@ table.selectTable td {
 	border-color: #88c086;
 	color: #123311;
 }
-
+#formlogin {
+}
+#formlogin .form-wrap {
+}
 .form-logo {
 }
 .form-main {
 	background-color: #77b075;
 	border-color: #000;
 }
-
+#formlogin h1 {
+	color: #1fa67b;
+	font-size: 120%;
+	font-weight: bold;
+}
+#formlogin .form-group {
+}
+#formlogin .checkbox {
+}
+#formlogin .checkbox.show:before {
+	color: #1fa67b;
+	font-size: 120%;
+	font-family: 'Glyphicons Halflings';
+}
+#formlogin .checkbox .character-checkbox {
+	border-color: #ccc;
+}
+#formlogin .checkbox .label {
+	color: #6d6d6d;
+	font-weight: normal;
+}
+#formlogin .btn.btn-custom {
+}
+#formlogin .forget {
+	font-size: 100%;
+}
 .panel-help {
 	background-color: #dafed9;
 }
@@ -245,6 +362,7 @@ table.selectTable td {
 	color: #fff;
 }
 .btn-edit {
+	/*float: right;*/
 	background-color: #fa50f8;
 }
 .btn-cont {
@@ -277,7 +395,10 @@ table.selectTable td {
 .form-inline {
 	background-color: #dafed9;
 }
-
+.btn-lista {
+	/*background-color: #AAE2A8;
+	color: #000;*/
+}
 
 /** ENRICO FEDELE */
 /* Inizio stili custom pper jquery-ui */
@@ -287,90 +408,78 @@ table.selectTable td {
 }
 /* loading - the AJAX indicator */
 .ui-autocomplete-loading {
-	background: white url('../../images/ui-anim_basic_16x16.gif') right center no-repeat;
+	background: white url('../../../images/ui-anim_basic_16x16.gif') right center no-repeat;
 }
+/* scroll results */
+.ui-autocomplete {
 
+}
+.ui-autocomplete li {
+/*font-size: 16px;*/
+}
+/* IE 6 doesn't support max-height
+* we use height instead, but this forces the menu to always be this tall
+*/
+* html .ui-autocomplete {
+}
+/* Fine */
+/** ENRICO FEDELE */
+
+/** ENRICO FEDELE */
+.container {
+
+}
+/* stile per il pulsante di tipo file */
+.btn-file {
+
+}
 .btn-file input[type=file] {
 	filter: alpha(opacity=0);
 	opacity: 0;
 	background: white;
 }
+/* fine stile per il pulsante di tipo file */
+.navbar-brand > img {
+}/*
+input[type="text"]:focus, textarea:focus, select:focus {
+	border-color: #66afe9;
+	box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(26, 77, 25, 0.6);
+	outline: 0 none;
+}*/
+/* highlight results */
 .ui-autocomplete span.hl_results {
 	background-color: #ffff66;
 }
+.ui-autocomplete-input {
+}
+/** ENRICO FEDELE */
+.nav {
+}
+.navbar-toggle {
+}
+.navbar-right{
+}
+.usr-picture{
+	border-color: #aae2a8;
+}
 
+/* andrea biasi */
+.custom-tab {
+    border-color: #dddddd;
+}
 
-.gaz-attivo {
+.conto_attivo {
     background-color: #88D6FF;
 }
-.gaz-passivo {
+.conto_passivo {
     background-color: #D6FF88;
 }
-.gaz-costi {
+.conto_costi {
     background-color: #D688FF;
 }
-.gaz-ricavi {
+.costo_ricavi {
     background-color: #FFD688;
 }
-.gaz-transitori {
+.conto_transitori {
     background-color: #FF88D6;
-}
-
-/**************************************
-**** BOOTSTRAP & SMARTMENU ************
-***************************************/
-.navbar-default .navbar-nav > li > a {
-    color: #000;
-}
-.dropdown-menu {
-    color: #000;
-    background-color: #fff;
-}
-
-.dropdown-menu >li >a {
-    color: #000;
-    background-color: #fff;
-}
-
-.form-control {
-	color: #000;
-}
-
-.btn-elimina {
-    color: #ff3939;
-}
-
-.btn-edit {
-    float: right;
-    background-color: #fa50f8;
-    color: #000;
-}
-
-.panel-default {
-    border-color: #ddd;
-    background-color: honeydew;
-}
-
-/**************************************
-************** JQUERY UI **************
-***************************************/
-.ui-state-default,
-.ui-widget-content .ui-state-default,
-.ui-widget-header .ui-state-default {
-	border: 1px solid #888;
-	color: #000;
-	border-style: inset;
-}
-.ui-state-default:focus,
-.ui-widget-content:focus .ui-state-default:focus,
-.ui-widget-header:focus .ui-state-default:focus {
-	box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075), 0 0 6px rgba(0, 0, 255, 0.6);
-}
-.ui-widget-content {
-    border: 1px solid #dddddd;
-    background: none;
-    background-color: #fff;
-}
-.ui-state-default .ui-icon {
-    background-image: url("../../../js/jquery.ui/images/ui-icons_222222_256x240_gazie.png");
 }

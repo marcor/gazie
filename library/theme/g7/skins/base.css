@@ -8,7 +8,7 @@
 ***************************************/
 
 body {
-	background-image : url("../../../library/images/gazbw.png");
+	background-image : url("../../../../library/images/gazbw.png");
 	color:#000;
 }
 
@@ -94,5 +94,5 @@ select:focus, input:focus {
     background-color: #fff;
 }
 .ui-state-default .ui-icon {
-    background-image: url("../../../js/jquery.ui/images/ui-icons_222222_256x240_gazie.png");
+    background-image: url("../../../../js/jquery.ui/images/ui-icons_222222_256x240_gazie.png");
 }

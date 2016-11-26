@@ -8,8 +8,11 @@
 ***************************************/
 
 body {
-    /* impostare qua la dimensione dei caratteri*/
-    font-size: 14px;
+	font-family : Arial, Tahoma, Verdana, Helvetica;
+	background-attachment : fixed;
+	padding-top : 46px;
+	/* impostare qua la dimensione dei caratteri*/
+	font-size: 14px;
 
 }
 

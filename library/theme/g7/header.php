@@ -28,7 +28,7 @@
         }
         // carico i fogli di stile personalizzati nella subdir skin si imposta l'aspetto (colori, font, ecc) 
         $skin = 'base.css';
-        if (!empty($admin_aziend['skin']) && file_exists("../../library/style/skins/" . $admin_aziend['skin'])) {
+        if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/g7/skins/" . $admin_aziend['skin'])) {
             $skin = $admin_aziend['skin'];
         }
 
@@ -49,7 +49,6 @@
         ?>
         <link href="../../library/theme/g7/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
         <link href="../../library/theme/g7/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
-
         <style type="text/css">
             .navbar-default .navbar-collapse { 
                 background-color: <?php echo hex_color_mod($admin_aziend['colore'],20); ?> ; 
@@ -241,7 +240,10 @@
                   la funzione createGazieJSCM serve per creare un
                   array con il menu corrente orizzontale , si potrebbero creare
                   altre forme di menu modificando questa funzione. */
-                echo "\n        <title>" . $admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
+                echo "\n
+    
+    </head>\n
+<body> \n       <title>" . $admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
                 if (!empty($idScript)) {
                     if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
                         if ($idScript[0] == 2) {
@@ -255,10 +257,7 @@
                 } elseif (isset($title_from_menu)) {
                     echo '» ' . $title_from_menu;
                 }
-                echo '</title>
-    
-    </head>
-<body>';
+                echo '</title>';
                 // cambia il tipo di menu
                 $tipomenu = substr($admin_aziend['style'], 0, -4);
                 if (file_exists("../../library/style/header_menu_" . $tipomenu . ".php")) {

@@ -1,5 +1,5 @@
 body {
-	background-image : url("../../../../library/images/sfondo.png");
+	background-image : url("../../../../../library/images/sfondo.png");
 }
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
 	color : #000000;
@@ -408,7 +408,7 @@ input.input-xs {
 }
 /* loading - the AJAX indicator */
 .ui-autocomplete-loading {
-	background: white url('../../images/ui-anim_basic_16x16.gif') right center no-repeat;
+	background: white url('../../../images/ui-anim_basic_16x16.gif') right center no-repeat;
 }
 /* scroll results */
 .ui-autocomplete {
