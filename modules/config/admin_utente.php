@@ -298,7 +298,7 @@ echo '<script type="text/javascript">
                     <?php
                     echo '<td colspan=\"2\" class="FacetDataTD">';
                     echo '<select name="style" class="FacetSelect">';
-                    $relativePath = '../../library/style/header';
+                    $relativePath = '../../library/theme/'.$config->getValue('theme').'/scheletons/';
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css
@@ -320,7 +320,7 @@ echo '<script type="text/javascript">
                     <?php
                     echo '<td colspan=\"2\" class="FacetDataTD">';
                     echo '<select name="skin" class="FacetSelect">';
-                    $relativePath = '../../library/style/skins';
+                    $relativePath = '../../library/theme/'.$config->getValue('theme').'/skins/';
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css

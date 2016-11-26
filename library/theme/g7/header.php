@@ -23,7 +23,7 @@
         <?php
         // carico il css strutturale grandezza font, posizione, ecc 
         $style = 'base.css';
-        if (!empty($admin_aziend['style']) && file_exists("../../library/style/header/" . $admin_aziend['style'])) {
+        if (!empty($admin_aziend['style']) && file_exists("../../library/theme/g7/scheletons/" . $admin_aziend['style'])) {
             $style = $admin_aziend['style'];
         }
         // carico i fogli di stile personalizzati nella subdir skin si imposta l'aspetto (colori, font, ecc) 
@@ -47,8 +47,8 @@
             return '#' . implode($rgb);
         } 
         ?>
-        <link href="../../library/style/header/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
-        <link href="../../library/style/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+        <link href="../../library/theme/g7/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+        <link href="../../library/theme/g7/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
 
         <style type="text/css">
             .navbar-default .navbar-collapse { 

@@ -40,10 +40,10 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                         $skin = 'default.css';
                         /** ENRICO FEDELE */
                         /* Sembrerebbe esserci la possibilità di caricare un css personalizzato, ma non trovo dove impostare il parametro */
-                        if (!empty($admin_aziend['style']) && file_exists("../../library/style/" . $admin_aziend['style'])) {
+                        if (!empty($admin_aziend['style']) && file_exists("../../library/theme/g6/scheletons/" . $admin_aziend['style'])) {
                            $style = $admin_aziend['style'];
                         }
-                        if (!empty($admin_aziend['skin']) && file_exists("../../library/style/skins/" . $admin_aziend['skin'])) {
+                        if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/g6/skins/" . $admin_aziend['skin'])) {
                            $skin = $admin_aziend['skin'];
                         }
                         ?>
@@ -59,20 +59,10 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                             <script src="../../js/custom/gz-library.js"></script>
                             <script src="../../js/tinymce/tinymce.min.js"></script>
                             <script src="../../js/custom/tinymce.js"></script>
-                            <link href="../../library/theme/g6/default-ori.css" rel="stylesheet" type="text/css" />
-                            <link href="../../library/style/header/skins/default.css" rel="stylesheet" type="text/css" />
+							<link href="../../library/theme/g6/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+							<link href="../../library/theme/g6/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
                             <link href="../../library/theme/g6/ml_dropdown.css" rel="stylesheet" type="text/css" />
                             <?php
-                            /** ENRICO FEDELE */
-                            /* Dunque ho creato questo escamotage, basta mettere un file .css nella cartella lybrary/style con nome 
-                              uguale al lower case della ragione sociale 1, con spazi sostituiti da underscores
-
-                              ATTENZIONE: sarebbe meglio mettere tutti i temi custom in una cartella a parte, fuori da tutto, nella radice
-                              così nel caso in cui si debba aggiornare lo script, non si fanno danni!
-                             */
-                            if (file_exists("../../library/style/" . strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])) . '.css')) {
-                               echo '			<link href="../../library/style/' . strtolower(str_replace(" ", "_", $admin_aziend['ragso1'])) . '.css" rel="stylesheet" type="text/css" />';
-                            }
 
                             function get_transl_referer($rlink) {
                                global $gTables;
