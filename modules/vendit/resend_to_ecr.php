@@ -2,7 +2,7 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
            <http://gazie.sourceforge.net>
  --------------------------------------------------------------------------
@@ -98,7 +98,7 @@ if (isset($_POST['ins'])) {
                        }
                    }
             }
-            if (!empty($tesdoc['spediz'])) { // è stata impostata la stampa del codice fiscale
+            if (!empty($tesdoc['spediz'])) { // ï¿½ stata impostata la stampa del codice fiscale
                $ticket_printer->descri_ticket('CF= '.$tesdoc['spediz']);
             }
             $ticket_printer->pay_ticket();
@@ -118,6 +118,7 @@ echo "<tr><td colspan=\"2\" align=\"center\">".$script_transl['total'].' '.$admi
 echo "<tr><td align=\"left\"> <input type=\"submit\" name=\"return\" value=\"".$script_transl['return']."\" /></td><td align=\"right\"><input  style=\"color:red;\" type=\"submit\" name=\"ins\" value=\"".$script_transl['submit']."\" /></td></tr>\n";
 echo "</table>\n";
 ?>
-</div><!-- chiude div container role main --></body>
 </form>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

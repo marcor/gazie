@@ -2,7 +2,7 @@
 /*
  --------------------------------------------------------------------------
                             GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
+    Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
          (http://www.devincentiis.it)
            <http://gazie.devincentiis.it>
  --------------------------------------------------------------------------
@@ -42,17 +42,17 @@ function getItems($cm_ini,$cm_fin,$art_ini,$art_fin) {
 function compute_new_price($base_price,$obj_price=0,$value=0,$mode='C',$round=3,$weight_valadd=0,$specific_weight=0) {
 /* calcolo del nuovo prezzo in base ai valori passati come referenza:
 
-$base_price è il prezzo del listino preso a base di calcolo, ovvero il prezzo vecchio
-$obj_price è il prezzo del listino da modificare, ovvero il prezzo vecchio (default=0)
-$value è il valore di incremento/decremento o percentuale (default=0)
-$mode è il tipo di modifica da effettuare e può assumere i seguenti valori:
+$base_price ï¿½ il prezzo del listino preso a base di calcolo, ovvero il prezzo vecchio
+$obj_price ï¿½ il prezzo del listino da modificare, ovvero il prezzo vecchio (default=0)
+$value ï¿½ il valore di incremento/decremento o percentuale (default=0)
+$mode ï¿½ il tipo di modifica da effettuare e puï¿½ assumere i seguenti valori:
       A = sostituzione;
       B = somma in percentuale
       C = somma valore  (default)
       D = moltiplicazione per valore
       E = divisione per valore
       F = azzeramento e somma in percentuale
-$round è il numero di decimali per l'arrotondamento (default valore scelto in anagrafica azienda)
+$round ï¿½ il numero di decimali per l'arrotondamento (default valore scelto in anagrafica azienda)
 $weight_valadd e $specific_weight vengono utilizzati ad esempio per aggiungere un ulteriore valore
       proporzionato a quello indicato nel campo "Peso specifico/moltiplicatore" degli articoli 
 */
@@ -301,5 +301,6 @@ if (isset($_POST['preview']) and $msg=='') {
 }
 ?>
 </form>
-</div><!-- chiude div container role main --></body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>
