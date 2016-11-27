@@ -9,17 +9,8 @@
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
         <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet">
-
         <script src="../../js/jquery/jquery.js"></script>
-        <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
-        <script src="../../library/theme/g7/smartmenus-master/jquery.smartmenus.js" type="text/javascript"></script>
-        <script src="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.js" type="text/javascript"></script>
-        <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
-        <script src="../../js/jquery.ui/datepicker-<?php echo substr($admin_aziend['lang'], 0, 2); ?>.js"></script>
-        <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
-        <script src="../../js/custom/gz-library.js"></script>
-        <script src="../../js/tinymce/tinymce.min.js"></script>
-        <script src="../../js/custom/tinymce.js"></script>
+
         <?php
         // carico il css strutturale grandezza font, posizione, ecc 
         $style = 'base.css';
