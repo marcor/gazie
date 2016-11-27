@@ -52,17 +52,16 @@ $mod_uri = '/' . $module . '/' . $script_uri;
 $per_stato = array("Aperto", "Avvisare", "Effettuare", "Fatturare", "Chiuso");
 
 //funzione che estrae i valori tra i tag html di una stringa
-function getTextBetweenTags($tag, $html, $strict=0)
-{
-   $dom = new domDocument;
-    if($strict==1) {
+function getTextBetweenTags($tag, $html, $strict = 0) {
+    $dom = new domDocument;
+    if ($strict == 1) {
         $dom->loadXML($html);
     } else {
-       libxml_use_internal_errors(true);
-      $dom->loadHTML($html);
-      foreach (libxml_get_errors() as $error) {
-        //echo $error->code." - Line: ".$error->line;
-      }
+        libxml_use_internal_errors(true);
+        $dom->loadHTML($html);
+        foreach (libxml_get_errors() as $error) {
+            //echo $error->code." - Line: ".$error->line;
+        }
     }
     $dom->preserveWhiteSpace = false;
     $content = $dom->getElementsByTagname($tag);
@@ -78,9 +77,9 @@ function gaz_flt_var_assign($flt, $typ) {
     global $where;
     if (isset($_GET[$flt]) && $_GET[$flt] != 'All' && $_GET[$flt] != "") {
         if ($typ == "i") {
-            $where .= " AND " . $flt . " = ".intval($_GET[$flt])." ";
+            $where .= " AND " . $flt . " = " . intval($_GET[$flt]) . " ";
         } else if ($typ == "v") {
-            $where .= " AND " . $flt . " LIKE '%".addslashes(substr($_GET[$flt],0,30))."%'";
+            $where .= " AND " . $flt . " LIKE '%" . addslashes(substr($_GET[$flt], 0, 30)) . "%'";
         } else if ($typ == "d") {
             $where .= " AND $flt >= \"" . intval($_GET[$flt]) . "/01/01\" and $flt <= \"" . intval($_GET[$flt]) . "/12/31\"";
         }
@@ -91,25 +90,30 @@ function gaz_flt_var_assign($flt, $typ) {
 // $flt - colonna sulla quale eseguire il filtro
 // 
 // $optval - valore opzionale se diverso dal valore del campo, può essere array (es: stato=0 diventa stato=aperto preso da var)
-function gaz_flt_disp_select( $flt, $fltdistinct, $tbl, $where, $orderby, $optval = "" ) {
-	?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
-	<?php if ( isset($_GET[$flt]) ) $fltget=$_GET[$flt]; else $fltget="";?>
-	<option value="All" <?php echo ($flt=="All") ? "selected" : "";?>>Tutti</option> <?php //echo $script_transl['tuttitipi']; ?>
-	
-	<?php $res = gaz_dbi_dyn_query("distinct ".$fltdistinct, $tbl, $where, $orderby);
-	while ( $val = gaz_dbi_fetch_array($res) ) {
-		if ( $fltget == $val[$flt] ) $selected = "selected";
-		else $selected = "";
-		
-      if ( is_array($optval) ) {
-         $testo = $optval[$val[$flt]];
-      } else {
-         $testo = ($optval!="") ? $val[$optval] : $val[$flt];   
-      }
-      
-		echo "<option value=\"".$val[$flt]."\" ".$selected.">".$testo."</option>";
-	} ?>
-	</select><?php
+function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval = "") {
+    ?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
+    <?php if (isset($_GET[$flt])) $fltget = $_GET[$flt];
+    else $fltget = ""; ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];  ?>
+
+        <?php
+        $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
+        while ($val = gaz_dbi_fetch_array($res)) {
+            if ($fltget == $val[$flt])
+                $selected = "selected";
+            else
+                $selected = "";
+
+            if (is_array($optval)) {
+                $testo = $optval[$val[$flt]];
+            } else {
+                $testo = ($optval != "") ? $val[$optval] : $val[$flt];
+            }
+
+            echo "<option value=\"" . $val[$flt] . "\" " . $selected . ">" . $testo . "</option>";
+        }
+        ?>
+    </select><?php
 }
 
 function gaz_flt_disp_int($flt, $hint) {
@@ -1404,7 +1408,7 @@ class GAzieForm {
         echo "\t </select>\n";
     }
 
-    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect',$opt = 'style="max-width: 350px;"') {
+    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 350px;"') {
         global $gTables, $admin_aziend;
         $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
             6 => "gaz-transitori", 7 => "gaz-transitori", 8 => "gaz-transitori", 9 => "gaz-transitori");
@@ -1448,7 +1452,7 @@ class GAzieForm {
             $selected = '';
             $v = $r["codice"];
             $c = intval($v / 100000000);
-            $selected .= ' class="'. $bg_class[$c] . '" ';
+            $selected .= ' class="' . $bg_class[$c] . '" ';
             if (intval($type) > 99 || (is_array($type) && count($type) == 1)) {
                 $v = intval(substr($r["codice"], 0, 3));
             }
@@ -1700,6 +1704,10 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
     $_SESSION["logged_in"] = true;
     $_SESSION["company_id"] = $company_id;
     $_SESSION["table_prefix"] = $table_prefix;
+    // appoggio il valore del thema scelto sulla sessione così da non fare la query sul db ad ogni richiesta di esecuzione di qualsiasi script  
+    $config = new Config;
+    $_SESSION["theme"] = $config->getValue('theme') ;
+    
     $count++;
     //incremento il contatore d'accessi
     gaz_dbi_put_row($gTables['admin'], "Login", $login, "Access", $count);
@@ -1996,7 +2004,7 @@ class Schedule {
         }
         if ($soloAperte) {
 //            $table = $gTables['paymov'] . " paymov LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )"
-            $table = $gTables['movimenti']. " movimenti "
+            $table = $gTables['movimenti'] . " movimenti "
                     . "LEFT JOIN " . $gTables['tesmov'] . " tesmov ON movimenti.id_tes = tesmov.id_tes "
                     . "LEFT JOIN " . $gTables['clfoco'] . " clfoco ON clfoco.codice = movimenti.codcon "
                     . "LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ";

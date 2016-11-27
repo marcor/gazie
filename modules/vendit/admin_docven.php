@@ -2098,7 +2098,7 @@ if (count($form['rows']) > 0) {
    }
 } else {
    echo '<tr id="alert-zerorows">
-			<td colspan="12"class="alert alert-danger">' . $script_transl['zero_rows'] . '</td>
+			<td colspan="12" class="alert alert-danger">' . $script_transl['zero_rows'] . '</td>
 		  </tr>';
 }
 echo '		</tbody>
