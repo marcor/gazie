@@ -1,31 +1,28 @@
 <?php
-	if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
-		$_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
-	}
-	
-   $menuclass = ' class="FacetMainMenu" ';
-	$style = 'default.css';
-	$skin = 'default.css';
+    if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
+        $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
+    }
+
+    $menuclass = ' class="FacetMainMenu" ';
+    $style = 'default.css';
+    $skin = 'default.css';
    
-   if (isset($_POST['logout'])) {
-      header("Location: logout.php");
-      exit;
-   }
-   //echo getcwd();
+    if (isset($_POST['logout'])) {
+        header("Location: logout.php");
+        exit;
+    }
 ?>
 <!DOCTYPE html>
 <html>
   <head>
-   <meta charset="utf-8">
-   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-   <title><?php echo $admin_aziend['ragso1'];?></title>
-   <link rel="shortcut icon" href="../../library/images/favicon.ico">			
-   <!-- Tell the browser to be responsive to screen width -->
-	<meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title><?php echo $admin_aziend['ragso1'];?></title>
+    <link rel="shortcut icon" href="../../library/images/favicon.ico">			
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
-    <!-- Theme style -->
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.min.css">
     <!-- AdminLTE Skins. Choose a skin from the css/skins
          folder instead of downloading all of them to reduce the load. -->
@@ -55,7 +52,7 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body class="hold-transition skin-blue sidebar-mini">
+  <body class="sidebar-collapse hold-transition skin-blue sidebar-mini">
     <form method="POST" name="head_form">
     <div class="wrapper">
 
@@ -97,7 +94,7 @@
                   <li class="user-body">
                     <div class="col-xs-4 text-center">
                       <a href="../config/admin_aziend.php">
-                        <img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" width="70" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
+                        <img class="img-circle usr-picture" src="../root/view.php?table=aziend&value=<?php echo $form['company_id']; ?>" width="70" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
                      </a>
                     </div>
                     <div class="col-xs-8 text-center" align="center">
@@ -243,7 +240,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $ctrl_m2 = $row['m2_id'];
             $ctrl_m3 = $row['m3_id'];
         }
-        ksort($menuArray);
+        //ksort($menuArray);
 
         if (!empty($idScript)) {
             if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
@@ -260,25 +257,24 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         }
         //$tipomenu = substr($admin_aziend['style'], 0, -4);
     $i = 0;
+    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400" );
+    
     foreach ($menuArray as $link) {
         if ( $i==0 ) {
-                    ?>
-            <li class="treeview active">
-                <a href="<?php echo $link['link']; ?>"><!--'.$link['link'].'-->
-                <i class="<?php echo $link['icon']; ?>"></i>
-                    <span><?php echo $link['name']; ?></span>
-                <i class="fa fa-angle-left pull-right"></i>
-                </a>
-            <?php
+            echo "<li class=\"treeview active\">";
+            echo "  <a href=\"".$link['link']."\">";
+            //echo "    <i class=\"".$link['icon']."\"></i>";
+            echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>";
+            echo "      <span>".$link['name']."</span>";
+            echo "        <i class=\"fa fa-angle-left pull-right\"></i>";
+            echo "  </a>";
         } else {
-            ?>
-            <li class="treeview">
-                <a href="<?php echo $link['link'];?>">
-                <i class="<?php echo $link['icon']; ?>"></i>
-                    <span><?php echo $link['name']; ?></span>
-                <i class="fa fa-angle-left pull-right"></i>
-                </a>
-            <?php
+            echo "<li class=\"treeview\">\n";
+            echo "  <a href=\"". $link['link'] ."\">\n";
+            echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>\n";
+            echo "      <span>". $link['name'] ."</span>\n";
+            echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
+            echo "  </a>\n";
         }
         submenu($link, $i);
         echo "          </li>\n";
@@ -295,11 +291,24 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
          <!--TITOLO<?php echo $script_transl['title']; ?>-->
          </h1>
          <ol class="breadcrumb">
-         <!--<li><a href="#"><i class="fa fa-dashboard"></i> Home</a></li>
-         <li><a href="#">Examples</a></li>
-         <li class="active">User profile</li>
-         -->
-         <li>&nbsp;</li>
+         <?php
+            global $gTables;
+            $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
+            $posizione = array_pop( $posizione );
+            if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
+            $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
+            if ( !gaz_dbi_num_rows($result)>0 ) {
+                $posizione = explode ("?",$posizione );
+                $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione[0].'" ',' id',0,1);	
+            }
+            $riga = gaz_dbi_fetch_array($result);
+            if ( $riga["id"]!="" ) {
+                $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
+                while ($r = gaz_dbi_fetch_array($result2)) {
+                    echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
+                }
+            }
+         ?>
          </ol>
       </section>
 
@@ -340,43 +349,37 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 }
 
 function submenu($array, $index, $sub="") {
-	if(!is_array($array)) { return ;}
-	$numsub = 0;
-	$submenu = '';    
+    if(!is_array($array)) { return ;}
+    $numsub = 0;
+    $submenu = '';    
    
-	foreach($array as $i => $mnu) {
-		if(!is_array($mnu)) {continue;}      
-		$submnu = '';
-		if ($numsub === 0) {
-        	?>
-    <ul class="treeview-menu">
-            <?php
-		}       
-		if (count($mnu)>5) {	//	Esiste un sotto menu
-            ?>
-               <li>
-                    <?php 
-                    $sub = '<a href="'.$mnu["link"].'">Lista '.$submnu.stripslashes($mnu["name"]);
-                    ?>
-                    <a href="#"><?php echo $submnu.stripslashes($mnu["name"]); ?>
-                    <i class="fa fa-angle-left pull-right"></i>
-                    </a>                    
-                <?php submenu($mnu, 1, $sub);	?>
-                </li>
-        <?php } else { 
-        if ( $sub!="" ) {
-            echo "<li>$sub</a></li>";
-            $sub="";
+    foreach($array as $i => $mnu) {
+        if(!is_array($mnu)) {continue;}      
+	$submnu = '';
+	if ($numsub === 0) {
+            echo "<ul class=\"treeview-menu\">";
+        }       
+	if (count($mnu)>5) {
+            echo "<li>";
+            $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
+            echo "  <a href=\"#\">". $submnu.stripslashes($mnu["name"]);
+            echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
+            echo "  </a>";                    
+            submenu($mnu, 1, $sub);
+            echo "</li>";
+        } else { 
+            if ( $sub!="" ) {
+                echo "<li>$sub</a></li>";
+                $sub="";
+            }
+            echo "<li >";
+            echo "  <a href=\"". $mnu['link'] ."\">". $submnu.stripslashes($mnu['name']) ."</a>";
+            echo "</li>";
         }
-        ?>
-            <li >
-                    <a href="<?php echo $mnu['link']; ?>"><?php echo $submnu.stripslashes($mnu['name']); ?></a>
-                    </li>
-        <?php }
-		$numsub++;
-	}
-	if ($numsub > 0) {?>
-            </ul>        
-    <?php }
+	$numsub++;
+    }
+    if ($numsub > 0) {
+        echo "    </ul>";
+    }
 }
 ?>
