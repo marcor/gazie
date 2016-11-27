@@ -2,15 +2,13 @@
     if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
         $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
     }
-
     $menuclass = ' class="FacetMainMenu" ';
     $style = 'default.css';
-    $skin = 'default.css';
-   
+    $skin = 'default.css'; 
     if (isset($_POST['logout'])) {
         header("Location: logout.php");
         exit;
-    }
+    }   
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,25 +22,17 @@
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.min.css">
-    <!-- AdminLTE Skins. Choose a skin from the css/skins
-         folder instead of downloading all of them to reduce the load. -->
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/_all-skins.min.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/iCheck/flat/blue.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/morris/morris.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/jvectormap/jquery-jvectormap-1.2.2.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/datepicker/datepicker3.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/daterangepicker/daterangepicker-bs3.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css">
     <script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
     
-<?php
-	if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/skeletons/" . $admin_aziend['style'])) {
+    <?php
+        if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/skeletons/" . $admin_aziend['style'])) {
 		$style = $admin_aziend['style'];
 	}
 	if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
 		$skin = $admin_aziend['skin'];
 	}
-?>
+    ?>
     <!--<link href="../../library/style/<?php echo $style; ?>" rel="stylesheet" type="text/css" />-->
     <!--<link href="../../library/style/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />-->
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -53,7 +43,7 @@
     <![endif]-->
   </head>
   <body class="sidebar-collapse hold-transition skin-blue sidebar-mini">
-    <form method="POST" name="head_form">
+    <form method="POST" name="head_form" action="../../modules/root/admin.php">
     <div class="wrapper">
 
       <header class="main-header">
@@ -94,11 +84,11 @@
                   <li class="user-body">
                     <div class="col-xs-4 text-center">
                       <a href="../config/admin_aziend.php">
-                        <img class="img-circle usr-picture" src="../root/view.php?table=aziend&value=<?php echo $form['company_id']; ?>" width="70" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
+                        <img class="img-circle usr-picture" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" width="70" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
                      </a>
                     </div>
                     <div class="col-xs-8 text-center" align="center">
-                      <a href="cambia_azien.php"><?php echo $admin_aziend['ragso1']."<br>".$admin_aziend['ragso2']; ?></a> 
+                      <a href="../../modules/root/cambia_azien.php"><?php echo $admin_aziend['ragso1']."<br>".$admin_aziend['ragso2']; ?></a> 
                       <?php //selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']); ?>
                     </div>
                     <!--<div class="col-xs-4 text-center">
@@ -255,13 +245,13 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         } elseif (isset($title_from_menu)) {
             //echo '			&raquo;' . $title_from_menu;
         }
-        //$tipomenu = substr($admin_aziend['style'], 0, -4);
-    $i = 0;
-    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400" );
+
     
+    $i = 0;
+    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400" );   
     foreach ($menuArray as $link) {
         if ( $i==0 ) {
-            echo "<li class=\"treeview active\">";
+            echo "<li class=\"treeview\">";
             echo "  <a href=\"".$link['link']."\">";
             //echo "    <i class=\"".$link['icon']."\"></i>";
             echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>";
@@ -288,7 +278,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
     <div class="content-wrapper">
       <section class="content-header">
          <h1>
-         <!--TITOLO<?php echo $script_transl['title']; ?>-->
+         <!--TITOLO<?php echo $script_transl['title']; ?>-->Pippo
          </h1>
          <ol class="breadcrumb">
          <?php
@@ -351,8 +341,6 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 function submenu($array, $index, $sub="") {
     if(!is_array($array)) { return ;}
     $numsub = 0;
-    $submenu = '';    
-   
     foreach($array as $i => $mnu) {
         if(!is_array($mnu)) {continue;}      
 	$submnu = '';
@@ -362,10 +350,11 @@ function submenu($array, $index, $sub="") {
 	if (count($mnu)>5) {
             echo "<li>";
             $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
-            echo "  <a href=\"#\">". $submnu.stripslashes($mnu["name"]);
+            echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". substr($submnu.stripslashes($mnu["name"]),0,20);
             echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
             echo "  </a>";                    
             submenu($mnu, 1, $sub);
+            $sub="";
             echo "</li>";
         } else { 
             if ( $sub!="" ) {
@@ -373,7 +362,7 @@ function submenu($array, $index, $sub="") {
                 $sub="";
             }
             echo "<li >";
-            echo "  <a href=\"". $mnu['link'] ."\">". $submnu.stripslashes($mnu['name']) ."</a>";
+            echo "  <a href=\"". $mnu['link'] ."\">". substr($submnu.stripslashes($mnu['name']),0,20) ."</a>";
             echo "</li>";
         }
 	$numsub++;

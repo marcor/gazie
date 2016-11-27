@@ -23,17 +23,16 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+global $admin_aziend;
 ?>
-<!-- questo è contenuto in library/theme/g7/footer.php -->
 </div>
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
-          <b>Version</b><?php echo $versSw; ?>
+          <b>Version</b> <?php echo $versSw; ?>
         </div>
         <!--<strong>-->
-        GAzie Version: 6.5 Software Open Source (lic. GPL) <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?>
+        <b>GA</b>zie Version: <?php echo $versSw; ?> Software Open Source (lic. GPL) <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?>
         <a  target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://http://www.devincentiis.it">http://www.devincentiis.it</a>
-        <!--<a href="http://almsaeedstudio.com">Almsaeed Studio</a>.</strong> All rights reserved.-->
     </footer>
       
     <!-- Control Sidebar -->
@@ -198,20 +197,18 @@
           </div><!-- /.tab-pane -->
         </div>
       </aside>
-    <!-- Add the sidebar's background. This div must be placed
-           immediately after the control sidebar -->
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
 
     <!-- jQuery 2.1.4 -->
     <script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
     <!-- jQuery UI 1.11.4 -->
-    <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/plugins/jQueryUI/jquery-ui.min.js"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
       $.widget.bridge('uibutton', $.ui.button);
     </script>  
-    
+
     <!-- Bootstrap 3.3.5 -->
     <script src="../../library/theme/lte/adminlte/bootstrap/js/bootstrap.min.js"></script>
     <!-- Slimscroll -->
@@ -222,5 +219,4 @@
     <script src="../../library/theme/lte/adminlte/dist/js/app.min.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="../../library/theme/lte/adminlte/dist/js/demo.js"></script>
-    
   </body>
