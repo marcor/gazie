@@ -45,4 +45,6 @@ ALTER TABLE `gaz_XXXinstal` ADD `oggetto` varchar(100) NOT NULL AFTER `clfoco`;
 ALTER TABLE `gaz_XXXassist` ADD `idinstallazione` int(11) NOT NULL AFTER `id`;
 ALTER TABLE `gaz_XXXinstal` CHANGE `id` `id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;
 UPDATE `gaz_XXXcompany_config` SET `description`='GAzie school or order mail address' WHERE  `var`='order_mail';
+ALTER TABLE `gaz_XXXassets`	CHANGE COLUMN `id_tes` `id_movcon` INT(9) NOT NULL DEFAULT '0' COMMENT 'può essere riferito a gaz_001tesmov in caso di acquisto bene o a gaz_001rigmoc in altri casi, ad esempio negli ammortamenti di fine anno' AFTER `id`;
+ALTER TABLE `gaz_XXXassets` CHANGE COLUMN `type_mov` `type_mov` INT(2) NOT NULL DEFAULT '0' COMMENT 'tipologia di movimento sul libro cespiti es.1=acquisto, 10 rivalutazione, 50 ammortamento, 90 alienazione' AFTER `id_movcon`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

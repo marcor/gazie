@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
-
+print_r($_SESSION);
 function getAssets() {
     /*  funzione per riprendere dal database tutti i beni ammortizzabili 
       e proporre una */
@@ -76,8 +76,8 @@ if (isset($_POST['ritorno'])) {
     $dt = new DateTime();
     $dt->modify('previous year');
     $form['datreg'] = $dt->format('31/12/Y');
-    $form['assets'] = getAssets();
 }
+$form['assets'] = getAssets();
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -114,7 +114,7 @@ if (count($msg['err']) > 0) { // ho un errore
             array('head' => $script_transl["accdep"], 'class' => 'text-right', 'value' => gaz_format_number($v['fouval'])),
             array('head' => $script_transl["carry"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixval'] - $v['fouval'])),
             array('head' => $script_transl["rate"], 'class' => 'text-center numeric',
-                'value' => '<input type="number" step="any" name="assets[' . $k . '][rate]" value="' . $v['rate'] . '" maxlength="15" size="4" />'),
+                'value' => '<input type="number" step="0.01" min="0.00" name="assets[' . $k . '][rate]" value="' . number_format($v['rate'],2,'.','') . '" maxlength="15" size="4" />'),
             array('head' => $script_transl["lostrate"], 'class' => 'text-center', 'value' => ''),
         ];
     }
@@ -125,7 +125,7 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="form-group">
                     <div class="col-sm-12 text-center alert-success">
-                        <input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo strtoupper($script_transl['view']); ?>!">
+                        <input name="insert" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo strtoupper($script_transl['view']); ?>!">
                     </div>
                 </div>
             </div> <!-- chiude row  -->

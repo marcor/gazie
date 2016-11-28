@@ -37,7 +37,7 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
     $no = intval($_POST['getresult']);
     $result = gaz_dbi_dyn_query('*', $gTables['assets'], '1', 'id DESC', $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
-        $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $row['id_tes']);
+        $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $row['id_movcon']);
         $anagrafica = new Anagrafica();
         $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
         ?>

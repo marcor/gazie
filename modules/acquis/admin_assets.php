@@ -56,7 +56,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 
 if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il primo accesso
 //qui si dovrebbe fare un parsing di quanto arriva dal browser...
-    $form['id_tes'] = intval($_POST['id_tes']);
+    $form['id_movcon'] = intval($_POST['id_movcon']);
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner(intval($_POST['clfoco']));
     $form['hidden_req'] = filter_input(INPUT_POST, 'hidden_req');
@@ -189,7 +189,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['datdoc'] = gaz_format_date($form['datfat'], true);
                 gaz_dbi_table_insert('tesmov', $form);
                 $id_tesmov = gaz_dbi_last_id();
-                $form['id_tes'] = $id_tesmov;
+                $form['id_movcon'] = $id_tesmov;
                 // trovo il conto immobilizzazione 
                 $form['acc_fixed_assets'] = lastAccount($form['mas_fixed_assets'], $form['ss_amm_min']);
                 // trovo il conto fondo ammortamento 
@@ -198,7 +198,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['acc_cost_assets'] = lastAccount($form['mas_cost_assets'], $form['ss_amm_min']);
                 // inserisco i dati sulla tabella assets
                 $form['descri'] = $descri;
-                $form['type_mov'] = 1; // è un acquisto , 9 per ammortamento, 6 per alienazione
+                $form['type_mov'] = 1; // è un acquisto ,10 rivalutazione, 50 ammortamento, 90 alienazione
                 gaz_dbi_table_insert('assets', $form);
                 $form['id_assets'] = gaz_dbi_last_id();
                 // ripreno i file di traduzione
@@ -296,10 +296,11 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['assets'], "id", intval($_GET['id']));
     // recupero i dati iva ed eseguo i calcoli
-    $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $form['id_tes']);
-    $rigmoi = gaz_dbi_get_row($gTables['rigmoi'], "tipiva ='I' AND id_tes", $form['id_tes']);
+    $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $form['id_movcon']);
+    // è un acquisto (type_mov=1) quindi id_movcon contiene la testata del movimento contabile, in altri casi contiene il'id_rig
+    $rigmoi = gaz_dbi_get_row($gTables['rigmoi'], "tipiva ='I' AND id_tes", $form['id_movcon']);
     $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $rigmoi['codiva']);
-    $rigmoi_no = gaz_dbi_get_row($gTables['rigmoi'], "tipiva ='D' AND id_tes", $form['id_tes']);
+    $rigmoi_no = gaz_dbi_get_row($gTables['rigmoi'], "tipiva ='D' AND id_tes", $form['id_movcon']);
     $iva_no = gaz_dbi_get_row($gTables['aliiva'], "codice", $rigmoi_no['codiva']);
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
@@ -319,7 +320,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = $form['pagame'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
-    $form['id_tes'] = "";
+    $form['id_movcon'] = "";
     // ricerco l'ultimo inserimento per ricavarne la data
     $rs_last = gaz_dbi_dyn_query('datreg', $gTables['tesmov'], 1, "id_tes DESC", 0, 1);
     $last = gaz_dbi_fetch_array($rs_last);
@@ -423,14 +424,14 @@ if (count($msg['err']) > 0) { // ho un errore
     $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 }
 if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche sul movimento contabile
-    $script_transl['war']['update'] .= ' n.<a class="btn btn-xs btn-default" href="../contab/admin_movcon.php?Update&id_tes='.$form['id_tes'].'" >'.$form['id_tes'].' <i class="glyphicon glyphicon-edit"></i></a>';
+    $script_transl['war']['update'] .= ' n.<a class="btn btn-xs btn-default" href="../contab/admin_movcon.php?Update&id_tes='.$form['id_movcon'].'" >'.$form['id_movcon'].' <i class="glyphicon glyphicon-edit"></i></a>';
     $gForm->gazHeadMessage(array('update'), $script_transl['war'], 'war');
 }
 ?>
 <form class="form-horizontal" role="form" method="post" name="docacq" enctype="multipart/form-data" >
     <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
     <input type="hidden" value="<?php echo $form['hidden_req'] ?>" name="hidden_req" />
-    <input type="hidden" value="<?php echo $form['id_tes']; ?>" name="id_tes">
+    <input type="hidden" value="<?php echo $form['id_movcon']; ?>" name="id_movcon">
     <input type="hidden" value="<?php echo $form['type_mov']; ?>" name="type_mov">
     <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
     <input type="hidden" value="<?php echo $form['change_pag']; ?>" name="change_pag">
