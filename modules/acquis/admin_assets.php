@@ -93,7 +93,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 and ( $old_pag['tippag'] == 'C' or $old_pag['tippag'] == 'D')) { // se adesso devo mettere le spese e prima no
             $form['numrat'] = $new_pag['numrat'];
             if ($toDo == 'update') {  //se è una modifica mi baso sulle vecchie spese
-                $old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
+                $old_header = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $form['id_movcon']);
                 if ($old_header['speban'] > 0 and $fornitore['speban'] == "S") {
                     $form['speban'] = 0;
                 } elseif ($old_header['speban'] == 0 and $fornitore['speban'] == "S") {
@@ -185,10 +185,12 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['operat'] = 1;
                 $form['protoc'] = $lastProtocol;
                 $form['numdoc'] = $form['numfat'];
+
                 $form['datreg'] = gaz_format_date($form['datreg'], true);
                 $form['datdoc'] = gaz_format_date($form['datfat'], true);
                 gaz_dbi_table_insert('tesmov', $form);
                 $id_tesmov = gaz_dbi_last_id();
+                $form['id_tes'] = $id_tesmov;
                 $form['id_movcon'] = $id_tesmov;
                 // trovo il conto immobilizzazione 
                 $form['acc_fixed_assets'] = lastAccount($form['mas_fixed_assets'], $form['ss_amm_min']);
