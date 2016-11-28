@@ -25,15 +25,22 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
-print_r($_SESSION);
-function getAssets() {
+
+function getAssets($date) {
     /*  funzione per riprendere dal database tutti i beni ammortizzabili 
-      e proporre una */
+      e proporre una anteprima di ammortamenti */
     global $gTables;
+    $from = $gTables['assets'] . ' AS assets ' .
+            'LEFT JOIN ' . $gTables['tesmov'] . ' AS tesmov ON assets.id_movcon=tesmov.id_tes ' .
+            'LEFT JOIN ' . $gTables['clfoco'] . ' AS fornit ON tesmov.clfoco=fornit.codice ';
+    $field = ' assets.*, tesmov.numdoc AS nudtes, tesmov.datdoc AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
+    $where = " type_mov = 1 AND datreg <= '" . $date . "'";
+    $orderby = "datreg ASC";
+    //recupero i dati dal DB 
+    $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
+
     $acc = array();
-    $result = gaz_dbi_dyn_query('*', $gTables['assets'], ' type_mov = 1 ', 'id ASC');
     while ($row = gaz_dbi_fetch_array($result)) {
-        $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $row['id_tes']);
         $fixval = gaz_dbi_dyn_query('*', $gTables['rigmoc'], 'codcon = ' . $row['acc_fixed_assets']);
         $fi = 0.00;
         while ($f = gaz_dbi_fetch_array($fixval)) {
@@ -44,10 +51,7 @@ function getAssets() {
         while ($f = gaz_dbi_fetch_array($found)) {
             $fo +=$f['import'];
         }
-        $anagrafica = new Anagrafica();
-        $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
-        $row['clfoco'] = $fornitore['descri'];
-        $row['movdes'] = $tesmov['descri'] . ' n.' . $tesmov['numdoc'] . ' ' . gaz_format_date($tesmov['datdoc']);
+        $row['movdes'] = $row['destes'] . ' n.' . $row['nudtes'] . ' ' . gaz_format_date($row['dtdtes']);
         $row['fixval'] = $fi;
         $row['fouval'] = $fo;
         $carry = $fi - $fo;
@@ -67,17 +71,23 @@ if (isset($_POST['ritorno'])) {
     if (!gaz_format_date($form["datreg"], 'chk')) {
         $msg['err'][] = "datreg";
     }
-    $form['assets'] = array();
     if (isset($_POST['assets'])) {
         $form['assets'] = filter_input(INPUT_POST, 'assets');
     }
+    $form['assets'] = getAssets(gaz_format_date($form['datreg'], true));
+    // eventualmente sostituisco le quote con quelle postate
+    if (isset($_POST['assets']) && count($form['assets']) > 0) {
+        foreach ($_POST['assets'] as $k => $v) {
+            $form['assets'][$k]['rate'] = floatval($v['rate']);
+        }
+    }
 } else { // al primo accesso
-    $form['ritorno'] = filter_input(\INPUT_SERVER, 'HTTP_REFERER');
+    $form['ritorno'] = filter_input(INPUT_SERVER, 'HTTP_REFERER');
     $dt = new DateTime();
     $dt->modify('previous year');
     $form['datreg'] = $dt->format('31/12/Y');
+    $form['assets'] = getAssets(gaz_format_date($form['datreg'], true));
 }
-$form['assets'] = getAssets();
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -107,14 +117,14 @@ if (count($msg['err']) > 0) { // ho un errore
     $r = array(0 => array());
     foreach ($form['assets'] as $k => $v) {
         $r[$k] = [array('head' => $script_transl["descri"], 'class' => '',
-        'value' => '<span class="gaz-tooltip" title="' . $v['unimis'] . ' ' . floatval($v['quantity']) . ' x ' . $admin_aziend["symbol"] . $v['a_value'] . '" >' . $v['descri'] . $script_transl["clfoco"] . $v["clfoco"] . $script_transl["movdes"] . $v['movdes'] . ' </span>'),
+        'value' => '<span class="gaz-tooltip" title="' . $v['unimis'] . ' ' . floatval($v['quantity']) . ' x ' . $admin_aziend["symbol"] . $v['a_value'] . '" >' . $v['descri'] . $script_transl["clfoco"] . $v["desfor"] . $script_transl["movdes"] . $v['movdes'] . ' </span>'),
             array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
             array('head' => $script_transl["fixval"], 'class' => 'text-right',
                 'value' => gaz_format_number($v['fixval'])),
             array('head' => $script_transl["accdep"], 'class' => 'text-right', 'value' => gaz_format_number($v['fouval'])),
             array('head' => $script_transl["carry"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixval'] - $v['fouval'])),
             array('head' => $script_transl["rate"], 'class' => 'text-center numeric',
-                'value' => '<input type="number" step="0.01" min="0.00" name="assets[' . $k . '][rate]" value="' . number_format($v['rate'],2,'.','') . '" maxlength="15" size="4" />'),
+                'value' => '<input type="number" step="0.01" min="0.00" name="assets[' . $k . '][rate]" value="' . number_format($v['rate'], 2, '.', '') . '" maxlength="15" size="4" />'),
             array('head' => $script_transl["lostrate"], 'class' => 'text-center', 'value' => ''),
         ];
     }

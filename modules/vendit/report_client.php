@@ -196,5 +196,6 @@ if (isset($_GET['ricerca_completa'])) {
         ?>
 </form>
 </table>
-<?php page_footer(); ?>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

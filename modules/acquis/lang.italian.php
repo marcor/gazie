@@ -273,7 +273,7 @@ $strScript = array("admin_fornit.php" =>
         'mas_cost_assets' => 'Costo ammort.',
         'des_fixed_assets' => 'Immobilizzazione ',
         'des_found_assets' => 'Fondo ammortamento ',
-        'des_cost_assets' => 'Quota ammortamento ',
+        'des_cost_assets' => 'Ammortamento ',
         'id_no_deduct_vat' => 'IVA indetraibile',
         'no_deduct_vat_rate' => '% IVA indetraibile',
         'acc_no_detuct_cost' => 'Costo indeducibile',
