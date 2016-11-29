@@ -33,8 +33,8 @@
 		$skin = $admin_aziend['skin'];
 	}
     ?>
-    <!--<link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
-    <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />-->
+    <link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -62,28 +62,25 @@
           </a>
       
           <div class="navbar-custom-menu">
-            <ul class="nav navbar-nav">
-            
+            <ul class="nav navbar-nav">   
+                
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-star"></i>
+              <i class="fa fa-star" style="color: yellow"></i>
               <!--<span class="label label-success">4</span>-->
             </a>
             <ul class="dropdown-menu">
-              <!--<li class="header">You have 4 messages</li>-->
+              <li class="header">Funzioni più utilizzate</li>
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
 <?php
-    $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
-    $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
-
+    $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);   
     if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {
                     $rref = explode('-', $r['transl_ref']);
-                    $rl = gaz_dbi_fetch_array($res_last);
-                    $rlref = explode('-', $rl['transl_ref']);
+
                     switch ($rref[1]) {
                         case 'm1':
                             require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
@@ -105,7 +102,51 @@
                             $rref_name = 'Nome script non trovato';
                             break;
                     }
-                    switch ($rlref[1]) {
+                    ?>
+                  <li><!-- start message -->
+                    <a href="<?php
+                            if ($r["link"] != "")
+                                echo '../../modules' . $r["link"];
+                            else
+                                echo "&nbsp;";
+                            ?>">
+                      <div class="pull-left">
+                          <i class="fa fa-archive" style="color:#<?php echo $r["color"]; ?>"></i>
+                      </div>
+                      <h4>
+                        <?php echo substr( $rref_name, 0, 28); ?>
+                        <small><i class="fa fa-thumbs-o-up"></i> <?php echo $r["click"] . ' click'; ?></small>
+                      </h4>
+                      <p><?php echo substr($r["link"],0,38); ?></p>
+                    </a>
+                  </li>  
+                  <?php
+                }
+    }
+?>
+                </ul>
+              </li>
+              <li class="footer"><a href="../../modules/root/admin.php">Vedi tutte</a></li>
+            </ul>
+          </li>
+          
+          <!-- Sezione link più usati -->
+          <li class="dropdown messages-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-clock-o" style="color: white"></i>
+              <!--<span class="label label-success">4</span>-->
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">Ultime funzioni utilizzate</li>
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+<?php
+        $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
+        if (gaz_dbi_num_rows($res_last) > 0) {
+            while ($rl = gaz_dbi_fetch_array($res_last)) {
+                $rlref = explode('-', $rl['transl_ref']);
+                switch ($rlref[1]) {
                         case 'm1':
                             require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
                             $rlref_name = $transl[$rlref[0]]['title'];
@@ -125,109 +166,32 @@
                         default:
                             $rlref_name = 'Nome script non trovato';
                             break;
-                    }?>
-                  <li><!-- start message -->
+                    }
+                ?>
+                  <li>
                     <a href="<?php
-                            if ($r["link"] != "")
-                                echo '../../modules' . $r["link"];
+                            if ($rl["link"] != "")
+                                echo '../../modules' . $rl["link"];
                             else
                                 echo "&nbsp;";
                             ?>">
                       <div class="pull-left">
-                          <i class="fa fa-archive" style="color:#<?php echo $r["color"]; ?>"></i>
+                        <i class="fa fa-archive" style="color:#<?php echo $rl["color"]; ?>"></i>
                       </div>
                       <h4>
-                        <?php echo substr( $rref_name, 0, 25); ?>
-                        <small><i class="fa fa-thumbs-o-up"></i> <?php echo $r["click"] . ' click'; ?></small>
+                        <?php echo substr( $rlref_name, 0, 28); ?>
+                        <small><i class="fa fa-clock-o"></i> <?php echo gaz_time_from(strtotime($rl["last_use"])); ?></small>
                       </h4>
-                      <p><?php echo $r["link"]; ?></p>
+                      <p><?php echo substr($rl["link"],0,38); ?></p>
                     </a>
-                  </li>  
-                  <?php
-                }
-    }
-?>
+                  </li>
+            <?php
+            }
+        }
+        ?>
                 </ul>
               </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
-            </ul>
-          </li>
-          
-          <!-- Sezione link più usati -->
-          <li class="dropdown messages-menu">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-clock-o"></i>
-              <!--<span class="label label-success">4</span>-->
-            </a>
-            <ul class="dropdown-menu">
-              <!--<li class="header">You have 4 messages</li>-->
-              <li>
-                <!-- inner menu: contains the actual data -->
-                <ul class="menu">
-                  <li><!-- start message -->
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Support Team
-                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <!-- end message -->
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="../../dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        AdminLTE Design Team
-                        <small><i class="fa fa-clock-o"></i> 2 hours</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="../../dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Developers
-                        <small><i class="fa fa-clock-o"></i> Today</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="../../dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Sales Department
-                        <small><i class="fa fa-clock-o"></i> Yesterday</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                  <li>
-                    <a href="#">
-                      <div class="pull-left">
-                        <img src="../../dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
-                      </div>
-                      <h4>
-                        Reviewers
-                        <small><i class="fa fa-clock-o"></i> 2 days</small>
-                      </h4>
-                      <p>Why not buy a new awesome theme?</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <li class="footer"><a href="#">See All Messages</a></li>
+              <li class="footer"><a href="../../modules/root/admin.php">Vedi tutte</a></li>
             </ul>
           </li>
                 
@@ -244,7 +208,7 @@
                     <p>
                       <?php echo $admin_aziend['Nome'].' '.$admin_aziend['Cognome']; ?>
                       <small>
-                      Questo Ã¨ il tuo <b><?php echo $admin_aziend['Access']; ?>Â°</b> accesso<br/>
+                      Questo è il tuo <b><?php echo $admin_aziend['Access']; ?>°</b> accesso<br/>
                       La tua password risale al <b><?php echo gaz_format_date($admin_aziend['datpas']);?></b><br>
                       </small>
                     </p>
@@ -297,15 +261,8 @@
               <a href="#"><i class="fa fa-circle text-success"></i> Online</a>
             </div>
           </div>
-          <!-- search form 
-          <form action="#" method="get" class="sidebar-form">
-            <div class="input-group">
-              <input type="text" name="q" class="form-control" placeholder="Search...">
-              <span class="input-group-btn">
-                <button type="submit" name="search" id="search-btn" class="btn btn-flat"><i class="fa fa-search"></i></button>
-              </span>
-            </div>
-          </form>-->
+          <!-- search form--> 
+          
           <ul class="sidebar-menu">
             <!--<li class="header">MENU' PRINCIPALE</li>-->
 <?php

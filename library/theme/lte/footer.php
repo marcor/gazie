@@ -216,7 +216,7 @@ global $admin_aziend;
     <!-- FastClick -->
     <script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
     <!-- AdminLTE App -->
-    <script src="../../library/theme/lte/adminlte/dist/js/app.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/dist/js/app.js"></script>
     <!-- AdminLTE for demo purposes -->
     <script src="../../library/theme/lte/adminlte/dist/js/demo.js"></script>
   </body>

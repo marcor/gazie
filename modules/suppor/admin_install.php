@@ -188,8 +188,6 @@ $select_cliente = new selectPartner('clfoco');
 	</td>
 </tr>
 </table>
-</form>
-</div><!-- chiude div container role main --></body>
 
 <?php
 if ( !isset($_GET["Insert"]) ) {
