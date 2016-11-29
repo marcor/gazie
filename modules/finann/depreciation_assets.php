@@ -79,8 +79,38 @@ if (isset($_POST['ritorno'])) {
     if (isset($_POST['assets']) && count($form['assets']) > 0) {
         foreach ($_POST['assets'] as $k => $v) {
             $form['assets'][$k]['rate'] = floatval($v['rate']);
+            if (isset($_POST['insert'])) {
+                // inserisco la testata del movimento contabile
+                $form['caucon'] = 'AMM';
+                $form['datreg'] = gaz_format_date($form['datreg'], true);
+                $form['descri'] = 'AMMORTAMENTO (QUOTA ANNO ' . substr($form['datreg'], 0, 4) . ')';
+                gaz_dbi_table_insert('tesmov', $form);
+                $id_tesmov = gaz_dbi_last_id();
+                $form['id_tes'] = $id_tesmov;
+                // inserisco i due righi del movimento contabile
+                $form['codcon'] = $form['assets'][$k]['acc_found_assets'];
+                $form['darave'] = 'A';
+                $form['import'] = $form['assets'][$k]['rate'];
+                gaz_dbi_table_insert('rigmoc', $form);
+                $form['codcon'] = $form['assets'][$k]['acc_cost_assets'];
+                $form['darave'] = 'D';
+                $form['import'] = $form['assets'][$k]['rate'];
+                gaz_dbi_table_insert('rigmoc', $form);
+                // inserisco il movimento sul libro cespiti 
+                $form['id_movcon'] = $id_tesmov;
+                $form['type_mov'] = 50;
+                $form['descri'] = 'AMMORTAMENTO (QUOTA ANNO ' . substr($form['datreg'], 0, 4) . ')';
+                $form['a_value'] = $form['import'];
+                $form['acc_fixed_assets'] = $form['assets'][$k]['acc_fixed_assets'];
+                $form['acc_found_assets'] = $form['assets'][$k]['acc_found_assets'];
+                $form['acc_cost_assets'] = $form['assets'][$k]['acc_cost_assets'];
+                gaz_dbi_table_insert('assets', $form);
+            }
         }
     }
+    // riporto datreg al valore postato
+    $form['datreg'] = filter_input(INPUT_POST, 'datreg');
+
 } else { // al primo accesso
     $form['ritorno'] = filter_input(INPUT_SERVER, 'HTTP_REFERER');
     $dt = new DateTime();

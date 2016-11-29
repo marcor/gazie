@@ -32,25 +32,10 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
     gaz_set_time_limit(0);
 }
 
-function getMovements($date_ini, $date_fin) {
-    global $gTables, $admin_aziend;
-    $m = array();
-    $where = "datreg BETWEEN $date_ini AND $date_fin";
-    $what = $gTables['movmag'] . ".*, " .
-            $gTables['caumag'] . ".codice, " . $gTables['caumag'] . ".descri, " .
-            $gTables['artico'] . ".codice, " . $gTables['artico'] . ".descri AS desart, " . $gTables['artico'] . ".unimis, " . $gTables['artico'] . ".scorta, " . $gTables['artico'] . ".catmer ";
-    $table = $gTables['movmag'] . " LEFT JOIN " . $gTables['caumag'] . " ON (" . $gTables['movmag'] . ".caumag = " . $gTables['caumag'] . ".codice)
-               LEFT JOIN " . $gTables['artico'] . " ON (" . $gTables['movmag'] . ".artico = " . $gTables['artico'] . ".codice)";
-    $rs = gaz_dbi_dyn_query($what, $table, $where, 'datreg ASC, clfoco ASC');
-    while ($r = gaz_dbi_fetch_array($rs)) {
-        $m[] = $r;
-    }
-    return $m;
-}
+
 
 $luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
 
-//$result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
 
 require("../../config/templates/report_template.php");
 $title = array('luogo_data' => $luogo_data,
@@ -72,14 +57,14 @@ $pdf->SetFont('helvetica', '', 7);
 $result = gaz_dbi_dyn_query('*', $gTables['assets'], '1', 'id DESC');
 
 while ($row = gaz_dbi_fetch_array($result)) {
-        $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $row['id_tes']);
-        $anagrafica = new Anagrafica();
-        $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
+    $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $row['id_movcon']);
+    $anagrafica = new Anagrafica();
+    $fornitore = $anagrafica->getPartner($tesmov['clfoco']);
     $pdf->Cell(40, 3, $row['id'], 1);
     $pdf->Cell(70, 3, $row['descri'], 1);
     $pdf->Cell(70, 3, $fornitore["descri"], 1);
     $pdf->Cell(40, 3, gaz_format_number($row["a_value"] * $row["quantity"]), 1, 0, 'R');
-    $pdf->Cell(40, 3, round($row["valamm"],1), 1, 1, 'R');
+    $pdf->Cell(40, 3, round($row["valamm"], 1), 1, 1, 'R');
 }
 
 $pdf->Output();
