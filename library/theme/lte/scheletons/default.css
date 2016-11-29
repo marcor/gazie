@@ -2,12 +2,12 @@
             STRUTTURA E FONTS
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
-body {
-	font-family : Arial, Tahoma, Verdana, Helvetica;
-	background-attachment : fixed;
-	padding-top : 46px;
-	/* impostare qua la dimensione dei caratteri*/
-	font-size: 14px;
+.navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a > h4 {
+  padding: 0;
+  margin: 0 0 0 25px;
+  color: #444444;
+  font-size: 15px;
+  position: relative;
 }
 
 div, table, th, tr, td, ul, ol, li, p, font, a, blockquote, label {
@@ -547,7 +547,7 @@ input[type="text"]:focus, textarea:focus, select:focus {
 }
 /** ENRICO FEDELE */
 .nav {
-	padding-right: 75px;
+
 }
 .navbar-toggle {
 	position: absolute;

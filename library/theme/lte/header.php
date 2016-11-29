@@ -21,7 +21,7 @@
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/_all-skins.min.css">
     <script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
     
@@ -33,8 +33,8 @@
 		$skin = $admin_aziend['skin'];
 	}
     ?>
-    <!--<link href="../../library/style/<?php echo $style; ?>" rel="stylesheet" type="text/css" />-->
-    <!--<link href="../../library/style/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />-->
+    <!--<link href="../../library/theme/lte/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+    <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />-->
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -60,8 +60,177 @@
           <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
           </a>
+      
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">
+            
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-star"></i>
+              <!--<span class="label label-success">4</span>-->
+            </a>
+            <ul class="dropdown-menu">
+              <!--<li class="header">You have 4 messages</li>-->
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+<?php
+    $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
+    $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
+
+    if (gaz_dbi_num_rows($result) > 0) {
+                while ($r = gaz_dbi_fetch_array($result)) {
+                    $rref = explode('-', $r['transl_ref']);
+                    $rl = gaz_dbi_fetch_array($res_last);
+                    $rlref = explode('-', $rl['transl_ref']);
+                    switch ($rref[1]) {
+                        case 'm1':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['title'];
+                            break;
+                        case 'm2':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
+                            break;
+                        case 'm3':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
+                            break;
+                        case 'sc':
+                            require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $strScript[$rref[2]][$rref[3]];
+                            break;
+                        default:
+                            $rref_name = 'Nome script non trovato';
+                            break;
+                    }
+                    switch ($rlref[1]) {
+                        case 'm1':
+                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rlref_name = $transl[$rlref[0]]['title'];
+                            break;
+                        case 'm2':
+                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rlref_name = $transl[$rlref[0]]['m2'][$rlref[2]][0];
+                            break;
+                        case 'm3':
+                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rlref_name = $transl[$rlref[0]]['m3'][$rlref[2]][0];
+                            break;
+                        case 'sc':
+                            require '../' . $rlref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                            $rlref_name = $strScript[$rlref[2]][$rlref[3]];
+                            break;
+                        default:
+                            $rlref_name = 'Nome script non trovato';
+                            break;
+                    }?>
+                  <li><!-- start message -->
+                    <a href="<?php
+                            if ($r["link"] != "")
+                                echo '../../modules' . $r["link"];
+                            else
+                                echo "&nbsp;";
+                            ?>">
+                      <div class="pull-left">
+                          <i class="fa fa-archive" style="color:#<?php echo $r["color"]; ?>"></i>
+                      </div>
+                      <h4>
+                        <?php echo substr( $rref_name, 0, 25); ?>
+                        <small><i class="fa fa-thumbs-o-up"></i> <?php echo $r["click"] . ' click'; ?></small>
+                      </h4>
+                      <p><?php echo $r["link"]; ?></p>
+                    </a>
+                  </li>  
+                  <?php
+                }
+    }
+?>
+                </ul>
+              </li>
+              <li class="footer"><a href="#">See All Messages</a></li>
+            </ul>
+          </li>
+          
+          <!-- Sezione link più usati -->
+          <li class="dropdown messages-menu">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-clock-o"></i>
+              <!--<span class="label label-success">4</span>-->
+            </a>
+            <ul class="dropdown-menu">
+              <!--<li class="header">You have 4 messages</li>-->
+              <li>
+                <!-- inner menu: contains the actual data -->
+                <ul class="menu">
+                  <li><!-- start message -->
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="../../dist/img/user2-160x160.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Support Team
+                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <!-- end message -->
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="../../dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        AdminLTE Design Team
+                        <small><i class="fa fa-clock-o"></i> 2 hours</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="../../dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Developers
+                        <small><i class="fa fa-clock-o"></i> Today</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="../../dist/img/user3-128x128.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Sales Department
+                        <small><i class="fa fa-clock-o"></i> Yesterday</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#">
+                      <div class="pull-left">
+                        <img src="../../dist/img/user4-128x128.jpg" class="img-circle" alt="User Image">
+                      </div>
+                      <h4>
+                        Reviewers
+                        <small><i class="fa fa-clock-o"></i> 2 days</small>
+                      </h4>
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                </ul>
+              </li>
+              <li class="footer"><a href="#">See All Messages</a></li>
+            </ul>
+          </li>
+                
               <!-- User Account: style can be found in dropdown.less -->
               <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -75,7 +244,7 @@
                     <p>
                       <?php echo $admin_aziend['Nome'].' '.$admin_aziend['Cognome']; ?>
                       <small>
-                      Questo è il tuo <b><?php echo $admin_aziend['Access']; ?>°</b> accesso<br/>
+                      Questo Ã¨ il tuo <b><?php echo $admin_aziend['Access']; ?>Â°</b> accesso<br/>
                       La tua password risale al <b><?php echo gaz_format_date($admin_aziend['datpas']);?></b><br>
                       </small>
                     </p>
@@ -175,7 +344,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 
                     if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) {
                         require("../../modules/" . $row['name'] . "/lang.".$admin_aziend['lang'].".php");
-                        if (isset($strScript[$scriptname])) { // se è stato tradotto lo script lo ritorno al chiamante
+                        if (isset($strScript[$scriptname])) { // se Ã¨ stato tradotto lo script lo ritorno al chiamante
                             $translated_script = $strScript[$scriptname];
                             if (isset($translated_script['title'])) {
                                 $title_from_menu = $translated_script['title'];
@@ -183,8 +352,8 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                         }
                     }
                 }
-                if (isset($row['m3_id']) and $row['m3_id'] > 0) { // è un menu3
-                    if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) { // è pure il primo di menu2 e menu1
+                if (isset($row['m3_id']) and $row['m3_id'] > 0) { // Ã¨ un menu3
+                    if ($ctrl_m2 != $row['m2_id'] and $ctrl_m1 != $row['m1_id']) { // Ã¨ pure il primo di menu2 e menu1
                         $menuArray[$row['weight']] = array('link' => '../' . $row['name'] . '/' . $row['link'],
                             'icon' => $row['icon'],
                             'name' => $transl[$row['name']]['name'],
@@ -195,7 +364,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                             'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
                             'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
                             'class' => $row['m2_class']);
-                    } elseif ($ctrl_m2 != $row['m2_id']) { // è solo il primo di menu2
+                    } elseif ($ctrl_m2 != $row['m2_id']) { // Ã¨ solo il primo di menu2
                         $menuArray[$row['weight']][$row['m2_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m2_link'],
                             'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
                             'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
@@ -207,7 +376,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                         'name' => $transl[$row['name']]['m3'][$row['m3_trkey']][1],
                         'title' => $transl[$row['name']]['m3'][$row['m3_trkey']][0],
                         'class' => $row['m3_class']);
-                } elseif ($ctrl_m1 != $row['m1_id']) { // è il primo di menu2
+                } elseif ($ctrl_m1 != $row['m1_id']) { // Ã¨ il primo di menu2
                     $menuArray[$row['weight']] = array('link' => '../' . $row['name'] . '/' . $row['link'],
                         'icon' => $row['icon'],
                         'name' => $transl[$row['name']]['name'],
@@ -218,7 +387,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                         'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
                         'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
                         'class' => $row['m2_class']);
-                } else { // non è il primo di menu2
+                } else { // non Ã¨ il primo di menu2
                     $menuArray[$row['weight']][$row['m2_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m2_link'],
                         'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
                         'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
@@ -278,7 +447,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
     <div class="content-wrapper">
       <section class="content-header">
          <h1>
-         <!--TITOLO<?php echo $script_transl['title']; ?>-->Pippo
+         <!--TITOLO<?php echo $script_transl['title']; ?>-->
          </h1>
          <ol class="breadcrumb">
          <?php
