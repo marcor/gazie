@@ -239,15 +239,16 @@ $strScript = array("select_comiva.php" =>
     "depreciation_assets.php" =>
     array('title' => 'Registrazione quote di ammortamento cespiti',
         'datreg' => ' al: ',
-        'descri' => 'Descizione del bene',
-        'movdes' => ' con ',
-        'unimis'=>'U.M',
+        'ammmin_ssd' => 'Sottospecie',
+        'asset_des' => 'Descrizione bene',
+        'movdes' => ' con Fat.',
         'clfoco'=>' da ',
-        'fixval'=>'Immobilizzazione',
-        'accdep'=>'Fondo',
-        'carry'=>'Residuo',
-        'rate'=>'Quota annua',
-        'lostrate'=>'Quota persa'
+        'fixed_val'=>'Immobilizzazione',
+        'found_val'=>'Fondo',
+        'cost_val'=>'Quota annua',
+        'noded_val'=>'Non deduc.',
+        'rest_val'=>'Residuo',
+        'lost_cost'=>'Amm.<50%'
     )
 );
 ?>

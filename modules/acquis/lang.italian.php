@@ -252,7 +252,7 @@ $strScript = array("admin_fornit.php" =>
             'mas_found_assets' => 'Non è stato scelto il mastro fondo ammortamenti',
             'mas_cost_assets' => 'Non è stato scelto il mastro costo ammortamenti',
             'deduct_vat' => 'Non è stato scelta l\'aliquota IVA indetraibile',
-            'detuct_cost' => 'Non è stato scelto il costo per la quota ammortamenti indeducibile',
+            'deduct_cost' => 'Non è stato scelto il costo per la quota ammortamenti indeducibile',
             'descri' => 'Non è stata inserita una descrizione del bene acquistato',
             'ss_amm_min' => 'Non è stata inserita la sottospecie della tabella Ammortamenti Ministeriali'),
         'war' => array('update' => 'Sono consentite le modifiche solo ad alcuni campi perché'
@@ -276,7 +276,7 @@ $strScript = array("admin_fornit.php" =>
         'des_cost_assets' => 'Ammortamento ',
         'id_no_deduct_vat' => 'IVA indetraibile',
         'no_deduct_vat_rate' => '% IVA indetraibile',
-        'acc_no_detuct_cost' => 'Costo indeducibile',
+        'acc_no_deduct_cost' => 'Costo indeducibile',
         'no_deduct_cost_rate' => '% quota indeducibile',
         'descri' => 'Descrizione bene',
         'quantity' => 'Quantità',

@@ -75,7 +75,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['mas_cost_assets'] = substr($_POST['mas_cost_assets'], 0, 3);
     $form['id_no_deduct_vat'] = intval($_POST['id_no_deduct_vat']);
     $form['no_deduct_vat_rate'] = floatval($_POST['no_deduct_vat_rate']);
-    $form['acc_no_detuct_cost'] = intval($_POST['acc_no_detuct_cost']);
+    $form['acc_no_deduct_cost'] = intval($_POST['acc_no_deduct_cost']);
     $form['no_deduct_cost_rate'] = floatval($_POST['no_deduct_cost_rate']);
     $form['super_ammort'] = floatval($_POST['super_ammort']);
     $form['type_mov'] = intval($_POST['type_mov']);
@@ -148,8 +148,8 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
             $msg['err'][] = 'mas_cost_assets';
         if (empty($form["descri"]))
             $msg['err'][] = 'descri';
-        if ($form["no_deduct_cost_rate"] >= 0.01 && $form["acc_no_detuct_cost"] < 100000000)
-            $msg['err'][] = 'detuct_cost';
+        if ($form["no_deduct_cost_rate"] >= 0.01 && $form["acc_no_deduct_cost"] < 100000000)
+            $msg['err'][] = 'deduct_cost';
         if ($form["no_deduct_vat_rate"] >= 0.01 && $form["id_no_deduct_vat"] < 1)
             $msg['err'][] = 'deduct_vat';
         if ($form["ss_amm_min"] >= 100)
@@ -158,7 +158,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
         if (count($msg['err']) == 0) {// nessun errore
             if ($toDo == 'update') { // e' una modifica
                 gaz_dbi_table_update('assets',array('id',intval($_GET['id'])), $form);
-                header("Location: " . $form['ritorno']);
+                header("Location: ../finann/report_assets.php");
                 exit;
             } else { // e' un'inserimento
                 $year = substr($form['datreg'], 6, 4);
@@ -351,7 +351,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
     $form['super_ammort'] = $admin_aziend['super_amm_rate'];
     $form['id_no_deduct_vat'] = 0;
     $form['no_deduct_vat_rate'] = 0;
-    $form['acc_no_detuct_cost'] = 0;
+    $form['acc_no_deduct_cost'] = 0;
     $form['no_deduct_cost_rate'] = 0;
     $form['type_mov'] = '';
     $form['descri'] = '';
@@ -369,7 +369,7 @@ if (isset($_POST['ritorno'])) {
 }
 
 // ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali 
-$xml = simplexml_load_file('../../library/include/ammortamenti_ministeriali.xml') or die("Error: Cannot create object");
+$xml = simplexml_load_file('../../library/include/ammortamenti_ministeriali.xml') or die("Error: Cannot create object for file ammortamenti ministeriali.xml");
 preg_match("/^([0-9 ]+)([a-zA-Z ]+)$/", $admin_aziend['amm_min'], $m);
 foreach ($xml->gruppo as $vg) {
     if ($vg->gn[0] == $m[1]) {
@@ -609,10 +609,10 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="acc_no_detuct_cost" class="col-sm-6 control-label"><?php echo $script_transl['acc_no_detuct_cost']; ?></label>
+                        <label for="acc_no_deduct_cost" class="col-sm-6 control-label"><?php echo $script_transl['acc_no_deduct_cost']; ?></label>
                         <div>
                             <?php
-                            $gForm->selectAccount('acc_no_detuct_cost', $form['acc_no_detuct_cost'], 3, '',false, "col-sm-6 small");
+                            $gForm->selectAccount('acc_no_deduct_cost', $form['acc_no_deduct_cost'], 3, '',false, "col-sm-6 small");
                             ?>
                         </div>
                     </div>

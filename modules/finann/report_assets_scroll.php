@@ -35,7 +35,7 @@ if (isset($_POST['getresult'])) { //	Evitiamo errori se lo script viene chiamato
     require("./lang.".$admin_aziend['lang'].".php");    
     $script_transl = $strScript['report_assets.php'];
     $no = intval($_POST['getresult']);
-    $result = gaz_dbi_dyn_query('*', $gTables['assets'], '1', 'id DESC', $no, PER_PAGE);
+    $result = gaz_dbi_dyn_query('*', $gTables['assets'], 'type_mov = 1', 'id DESC', $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
         $tesmov = gaz_dbi_get_row($gTables['tesmov'], "id_tes", $row['id_movcon']);
         $anagrafica = new Anagrafica();
