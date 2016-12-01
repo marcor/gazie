@@ -18,6 +18,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -38,6 +42,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -56,6 +64,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>V</ns>
@@ -84,6 +96,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -112,6 +128,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -132,6 +152,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -154,6 +178,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -186,6 +214,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -214,6 +246,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -240,6 +276,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -266,6 +306,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>V</ns>
@@ -290,6 +334,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -312,6 +360,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VII</ns>
@@ -340,6 +392,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -368,6 +424,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -388,6 +448,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -414,6 +478,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -436,6 +504,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Va</ns>
@@ -456,6 +528,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Vb</ns>
@@ -476,6 +552,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -498,6 +578,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VII</ns>
@@ -520,6 +604,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VIII</ns>
@@ -540,6 +628,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IX</ns>
@@ -562,6 +654,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>X</ns>
@@ -586,6 +682,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XI</ns>
@@ -606,6 +706,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XII</ns>
@@ -626,6 +730,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIII</ns>
@@ -646,6 +754,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIV</ns>
@@ -666,6 +778,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XV</ns>
@@ -686,6 +802,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XVI</ns>
@@ -708,6 +828,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XVII</ns>
@@ -728,6 +852,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XVIII</ns>
@@ -748,6 +876,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -772,6 +904,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -792,6 +928,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -812,6 +952,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -832,6 +976,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>V</ns>
@@ -852,6 +1000,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -872,6 +1024,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VII</ns>
@@ -894,6 +1050,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VIII</ns>
@@ -918,6 +1078,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IX</ns>
@@ -942,6 +1106,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -976,6 +1144,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ib</ns>
@@ -1004,6 +1176,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ic</ns>
@@ -1030,6 +1206,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Id</ns>
@@ -1056,6 +1236,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -1082,6 +1266,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -1108,6 +1296,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -1134,6 +1326,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>V</ns>
@@ -1160,6 +1356,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -1186,6 +1386,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VII</ns>
@@ -1212,6 +1416,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VIII</ns>
@@ -1238,6 +1446,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IX</ns>
@@ -1264,6 +1476,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>X</ns>
@@ -1290,6 +1506,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XI</ns>
@@ -1316,6 +1536,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XII</ns>
@@ -1342,6 +1566,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIII</ns>
@@ -1364,6 +1592,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIV</ns>
@@ -1386,6 +1618,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XV</ns>
@@ -1408,6 +1644,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XVIa</ns>
@@ -1442,6 +1682,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XVIb</ns>
@@ -1476,6 +1720,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XVII</ns>
@@ -1510,6 +1758,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XVIII</ns>
@@ -1538,6 +1790,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIX</ns>
@@ -1572,6 +1828,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XX</ns>
@@ -1606,7 +1866,11 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
-       </specie>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
+        </specie>
         <specie>
             <ns>XXI</ns>
             <ds>Cantieri navali per costruzioni, riparazioni e demolizioni di navi in metallo. Imprese di recupero di navi</ds>
@@ -1634,6 +1898,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XXII</ns>
@@ -1662,6 +1930,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XXIII</ns>
@@ -1684,6 +1956,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XXIV</ns>
@@ -1706,6 +1982,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XXV</ns>
@@ -1728,6 +2008,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XXVI</ns>
@@ -1750,6 +2034,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XXVII</ns>
@@ -1772,6 +2060,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XXVIII</ns>
@@ -1794,6 +2086,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XXIX</ns>
@@ -1816,6 +2112,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -1842,6 +2142,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -1864,6 +2168,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -1886,6 +2194,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IVa</ns>
@@ -1912,6 +2224,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IVb</ns>
@@ -1938,6 +2254,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Va</ns>
@@ -1964,6 +2284,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Vb</ns>
@@ -1990,6 +2314,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Vc</ns>
@@ -2016,6 +2344,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -2042,6 +2374,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VII</ns>
@@ -2066,6 +2402,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VIII</ns>
@@ -2092,6 +2432,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -2122,6 +2466,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ib</ns>
@@ -2148,6 +2496,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -2178,6 +2530,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IIIa</ns>
@@ -2204,6 +2560,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IIIb</ns>
@@ -2230,6 +2590,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -2256,6 +2620,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>V</ns>
@@ -2282,6 +2650,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -2308,6 +2680,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VII</ns>
@@ -2332,6 +2708,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VIII</ns>
@@ -2358,6 +2738,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IX</ns>
@@ -2384,6 +2768,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Xa</ns>
@@ -2410,6 +2798,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Xb</ns>
@@ -2432,6 +2824,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIa</ns>
@@ -2458,6 +2854,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIb</ns>
@@ -2482,6 +2882,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XII</ns>
@@ -2510,6 +2914,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIV</ns>
@@ -2534,6 +2942,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -2564,6 +2976,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ib</ns>
@@ -2590,6 +3006,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -2616,6 +3036,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -2638,6 +3062,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -2664,6 +3092,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -2686,6 +3118,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -2708,6 +3144,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -2730,6 +3170,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Va</ns>
@@ -2756,6 +3200,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Vb</ns>
@@ -2782,6 +3230,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Vc</ns>
@@ -2807,6 +3259,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -2832,6 +3288,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VII</ns>
@@ -2858,6 +3318,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VIIa</ns>
@@ -2884,6 +3348,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VIII</ns>
@@ -2906,6 +3374,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IX</ns>
@@ -2928,6 +3400,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>X</ns>
@@ -2954,6 +3430,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XI</ns>
@@ -2976,6 +3456,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XII</ns>
@@ -2998,6 +3482,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -3024,6 +3512,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -3046,6 +3538,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -3068,6 +3564,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -3090,6 +3590,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>V</ns>
@@ -3112,6 +3616,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -3134,6 +3642,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VII</ns>
@@ -3156,6 +3668,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VIII</ns>
@@ -3178,6 +3694,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IX</ns>
@@ -3200,6 +3720,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>X</ns>
@@ -3222,6 +3746,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XI</ns>
@@ -3244,6 +3772,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XII</ns>
@@ -3266,6 +3798,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XIII</ns>
@@ -3288,6 +3824,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -3316,6 +3856,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ib</ns>
@@ -3340,6 +3884,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ic</ns>
@@ -3364,6 +3912,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Id</ns>
@@ -3388,6 +3940,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -3410,6 +3966,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -3441,6 +4001,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -3461,6 +4025,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -3487,6 +4055,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -3517,6 +4089,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ib</ns>
@@ -3535,6 +4111,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ic</ns>
@@ -3557,6 +4137,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -3593,6 +4177,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Ib</ns>
@@ -3621,6 +4209,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IIa</ns>
@@ -3649,6 +4241,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IIb</ns>
@@ -3681,6 +4277,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -3709,6 +4309,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IVa</ns>
@@ -3729,6 +4333,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IVb</ns>
@@ -3759,6 +4367,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -3805,6 +4417,10 @@
             <ssrate>13</ssrate>
             <ssd>Navi già in esercizio per almeno 8 anni, acquistate per  l'impiego nell'ulteriore durata residua</ssd>
             <ssrate>15</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -3841,6 +4457,10 @@
             <ssrate>25</ssrate>
             <ssd>Contenitori di grandi dimensioni in metallo o materiale  plastico</ssd>
             <ssrate>15</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>VI</ns>
@@ -3875,6 +4495,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Xa</ns>
@@ -3909,6 +4533,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>Xb</ns>
@@ -3937,6 +4565,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XI</ns>
@@ -3957,6 +4589,10 @@
             <ssrate>20</ssrate>
             <ssd>Stazioni terrene mobili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>XII</ns>
@@ -3983,6 +4619,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -4011,6 +4651,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -4037,6 +4681,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -4059,6 +4707,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -4091,6 +4743,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
     <gruppo>
@@ -4119,6 +4775,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>II</ns>
@@ -4139,6 +4799,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>III</ns>
@@ -4159,6 +4823,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
         <specie>
             <ns>IV</ns>
@@ -4193,6 +4861,10 @@
             <ssrate>20</ssrate>
             <ssd>Autovetture, motoveicoli e simili</ssd>
             <ssrate>25</ssrate>
+            <ssd>Immobilizzazioni immateriali</ssd>
+            <ssrate>20</ssrate>
+            <ssd>Immobilizzazioni immateriali (avviamento)</ssd>
+            <ssrate>5.55</ssrate>
         </specie>
     </gruppo>
 </data>
