@@ -99,7 +99,7 @@ $recordnav -> output();
 
 <br>
 
-<table id ="tableId" name="tableId" class="Tlarge">
+<table id ="tableId" name="tableId" class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <tr style="margin-bottom: 20px !important;">
 <td></td>

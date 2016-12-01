@@ -177,7 +177,7 @@ echo "</table>\n";
 if (isset($_GET['anteprima']) and $msg == "") {
     $result = gaz_dbi_dyn_query($gTables['rigdoc'].".*,".$gTables['tesdoc'].".id_tes,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".numdoc,".$gTables['tesdoc'].".datemi,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".imball,".$gTables['tesdoc'].".clfoco,".$gTables['tesdoc'].".caumag,".$gTables['tesdoc'].".sconto as scochi", $gTables['rigdoc']." LEFT JOIN ".$gTables['tesdoc']." ON ".$gTables['rigdoc'].".id_tes = ".$gTables['tesdoc'].".id_tes LEFT JOIN ".$gTables['caumag']." ON ".$gTables['tesdoc'].".caumag = ".$gTables['caumag'].".codice", "tiprig = 0 AND id_mag = 0 AND caumag > 0 AND datemi BETWEEN $datainizio AND $datafine ", " datemi ASC, ".$gTables['tesdoc'].".id_tes ASC, id_rig ASC");
     $numrow = gaz_dbi_num_rows($result);
-    echo "<table class=\"Tlarge\">";
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if ($numrow > 0) {
        echo "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"6\" >$numrow ".$script_transl[5]."</td></tr>";
        require("../../modules/vendit/lang.".$admin_aziend['lang'].".php");

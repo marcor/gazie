@@ -532,7 +532,7 @@ if (isset($_GET['view'])) {
     $Testa = getHeaderData();
     if (!isset($error_partners[0])) {
         echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['view'] . "</div>";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         echo "<tr>";
         echo "<td colspan=\"2\"></td>";
         echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">$script_transl[24]</td>";

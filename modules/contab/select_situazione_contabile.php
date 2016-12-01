@@ -208,7 +208,7 @@ if (isset($_POST['preview']) and $msg == '') {
 //   $cosaStampare = "103000974";
    $soloAperte = ($_POST['aperte_tutte'] == 0);
    $rs = $scdl->getPartite($form['orderby'], $cosaStampare, $form['id_agente'], $soloAperte);
-   echo "<table class=\"Tlarge\">";
+   echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
 //   if (sizeof($scdl->Entries) > 0) {
    if ($rs->num_rows > 0) {
       $ctrl_partner = 0;

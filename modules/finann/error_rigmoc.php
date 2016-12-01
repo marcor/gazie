@@ -31,7 +31,7 @@ require("../../library/include/header.php");
 $script_transl=HeadMain();
 echo '<div align="center" class="FacetFormHeaderFont">Controllo sbilancio movimenti contabili</div>';
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <form method="POST">
 <?php
 $where = "codcon not like '%000000' group by ".$gTables['rigmoc'].".id_tes";

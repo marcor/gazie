@@ -39,7 +39,7 @@ $where = "tipdoc = 'VPA'";
 $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
 <?php
 // creo l'array (header => campi) per l'ordinamento dei record

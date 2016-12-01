@@ -258,7 +258,7 @@ echo "</table>\n";
 if (isset($_POST['preview'])) {
     $rs = getDocumentsBill();
     echo "<BR /><div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
-    echo "<table class=\"Tlarge\">";
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>

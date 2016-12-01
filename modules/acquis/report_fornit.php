@@ -82,7 +82,7 @@ if (!isset($_GET['field'])) {
 ?>
 <div align="center" class="FacetFormHeaderFont">Fornitori</div>
 <form method="GET">
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 	<tr>
 		<td class="FacetFieldCaptionTD">
 			<input type="text" placeholder="Cerca cod." class="input-sm form-control" name="codice" value="<?php if (isset($codice)) print $codice; ?>" tabindex="1" class="FacetInput">

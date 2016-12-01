@@ -229,7 +229,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
     $kd_paymov = 0;
     $date_ctrl = new DateTime($date);
     $saldo = 0.00;
-//   echo "<table class=\"Tlarge\">\n"; rimosso perchè falsa i colori con lo stripe
+//   echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n"; rimosso perchè falsa i colori con lo stripe
     echo "<table border=\"1\" width=\"100%\">\n";
     echo "<tr>";
     echo "<td colspan='8'>" . $script_transl['accbal'] . gaz_format_number($acc_bal) . "</td>";

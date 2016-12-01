@@ -97,7 +97,7 @@ $recordnav -> output();
       <p class="ui-state-highlight" id="mail_adrs"></p>
       <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
       <p class="ui-state-highlight" id="mail_attc"></p>
-</div><table class="Tlarge">
+</div><table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <script>
 $(function() {
    $( "#dialog" ).dialog({

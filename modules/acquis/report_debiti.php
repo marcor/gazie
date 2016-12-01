@@ -103,7 +103,7 @@ echo "<input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']."
 </tr>
 </table>
 </form>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_tesmov = array  (
           $script_transl['codice'] => "",

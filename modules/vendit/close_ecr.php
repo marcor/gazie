@@ -325,7 +325,7 @@ echo "<form method=\"POST\" name=\"accounting\">\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title1'].$ecr['descri'].$script_transl['title2']."</div>\n";
 $rs=getAccountedTickets($ecr['id_cash']);
-echo "<table class=\"Tlarge\">";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
 echo "<th class=\"FacetFieldCaptionTD\">".$script_transl['date']."</th>
       <th class=\"FacetFieldCaptionTD\">".$script_transl['num']."</th>
       <th class=\"FacetFieldCaptionTD\">".$script_transl['sez']."</th>

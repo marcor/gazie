@@ -77,7 +77,7 @@ if (isset($_GET['ricerca_completa'])) {
 ?>
 <div align="center" class="FacetFormHeaderFont">Indirizzi di Destinazione</div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-    <table class="Tlarge">
+    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <tr>
             <td class="FacetFieldCaptionTD">
                 <input placeholder="Cerca" class="input-xs form-control" type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">

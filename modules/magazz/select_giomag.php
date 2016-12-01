@@ -170,7 +170,7 @@ $date_fin =  sprintf("%04d%02d%02d",$form['date_fin_Y'],$form['date_fin_M'],$for
 
 if (isset($_POST['preview']) and $msg=='') {
   $m=getMovements($date_ini,$date_fin);
-  echo "<table class=\"Tlarge\">";
+  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
   if (sizeof($m) > 0) {
         $ctr_mv='';
         echo "<tr>";

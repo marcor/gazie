@@ -30,7 +30,7 @@ $script_transl=HeadMain('','','admin_vettore');
 $recordnav = new recordnav($gTables['vettor'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_vettor = array  (
               $script_transl['codice'] => "codice",

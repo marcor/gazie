@@ -1520,7 +1520,7 @@ $tabula = " tabindex=\"3\" ";
 if ($form['clfoco'] > 0)
    $tabula = "";
 echo "</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"seziva\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 3; $counter++) {

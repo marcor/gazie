@@ -49,20 +49,27 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                         ?>
 
                         <link rel="shortcut icon" href="../../library/images/favicon.ico">			
-                            <script src="../../js/jquery/jquery.js"></script>
+
                             <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-                            <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
-                            <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
-                            <script src="../../js/jquery.ui/datepicker-<?php echo substr($admin_aziend['lang'],0,2); ?>.js"></script>
-                            <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
+                            
+                            
+                            
+                            
                             <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-                            <script src="../../js/custom/gz-library.js"></script>
+                            
                             <script src="../../js/tinymce/tinymce.min.js"></script>
                             <script src="../../js/custom/tinymce.js"></script>
-							<link href="../../library/theme/g6/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
-							<link href="../../library/theme/g6/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
+                            <link href="../../library/theme/g6/scheletons/<?php echo $style; ?>" rel="stylesheet" type="text/css" />
+                            <link href="../../library/theme/g6/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
                             <link href="../../library/theme/g6/ml_dropdown.css" rel="stylesheet" type="text/css" />
-                            <?php
+                            <script src="../../js/jquery/jquery.js"></script>
+                            <!--<script src="../../js/custom/gz-library.js"></script>-->
+                            <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
+                            <script language="javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+                            <script src="../../js/jquery.ui/datepicker-<?php echo substr($admin_aziend['lang'],0,2); ?>.js"></script>
+                            <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
+                            
+                                <?php
 
                             function get_transl_referer($rlink) {
                                global $gTables;
@@ -299,8 +306,4 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 		 <div class="container" role="main">';
                                    return ($strCommon + $translated_script);
                                    }
-                                   
-function page_footer() {
-   echo "</div></body>";
-}
-?>
+?>                                   

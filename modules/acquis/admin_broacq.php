@@ -688,7 +688,7 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 $select_fornitore = new selectPartner("clfoco");
 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
 echo "</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"seziva\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 3; $counter++) {
@@ -833,7 +833,7 @@ $totivafat = 0.00;
 $totimpfat = 0.00;
 /*
   echo "</table>\n";
-  echo "<table class=\"Tlarge\">\n";
+  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
   echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[20]</td><td colspan=\"2\" class=\"FacetFieldCaptionTD\">$script_transl[21]</td><td class=\"FacetFieldCaptionTD\">$script_transl[22]</td><td class=\"FacetFieldCaptionTD\">$script_transl[16]</td><td class=\"FacetFieldCaptionTD\">$script_transl[23]</td><td class=\"FacetFieldCaptionTD\">%".substr($script_transl[24],0,2)."</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[25]</td><td class=\"FacetFieldCaptionTD\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\">$script_transl[18]</td><td class=\"FacetFieldCaptionTD\"></td></tr>\n";
  */
 
@@ -1032,7 +1032,7 @@ if (count($form['righi']) > 0) {
 echo '	</tbody>
 	  </table>';
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[2]</div>
-		<table class=\"Tlarge\">
+		<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">
 			<input type=\"hidden\" value=\"{$form['speban']}\" name=\"speban\" />
 			<input type=\"hidden\" value=\"{$form['numrat']}\" name=\"numrat\" />
 			<input type=\"hidden\" value=\"{$form['spevar']}\" name=\"spevar\" />

@@ -162,7 +162,7 @@ echo "<input type=\"submit\" name=\"stampa\" value=\"STAMPA !\">&nbsp;";
 </table>
 </form>
 <br />
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 echo '<tr><td colspan=4>La query ha impiegato '.number_format($querytime,4,'.','').' sec.</td></tr><tr>';
 // creo l'array (header => campi) per l'ordinamento dei record

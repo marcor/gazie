@@ -292,7 +292,7 @@ if (isset($_POST['preview']) and $msg == '') {
     $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
     $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
     $r = getData($date_ini, $date_fin, $form['num_ini'], $form['num_fin'], $form['reprint'], $form['bank']);
-    echo "<table class=\"Tlarge\">";
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     if (sizeof($r['data']) > 0) {
         echo "<tr>";
         echo '<TD colspan="7" align="center" class="FacetDataTD">' . $script_transl['preview'] . "</td>\n";

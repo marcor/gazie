@@ -253,7 +253,7 @@ echo "</table>\n";
 
 if (isset($_POST['preview']) and $msg=='') {
   $m=getItems($form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
-  echo "<table class=\"Tlarge\">";
+  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
   if (sizeof($m) > 0) {
         if ($form['lis_bas']=='0') {
            $name_bas='preacq';

@@ -266,7 +266,7 @@ if (isset($_POST['preview'])) {
       ini_set('memory_limit', '128M'); // mi occorre tanta memoria
       gaz_set_time_limit(0);  // e tanto tempo
       $rs = getRiepilogo($mastro, $anagrafe, $form['id_agente']);
-      echo "<table class=\"Tlarge\">";
+      echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
 //   if (sizeof($scdl->Entries) > 0) {
       if ($rs->num_rows > 0) {
          /* Inizializzo le variabili per il totale */

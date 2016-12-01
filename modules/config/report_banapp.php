@@ -30,7 +30,7 @@ $script_transl = HeadMain('','','admin_banapp');
 $recordnav = new recordnav($gTables['banapp'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_banapp = array  (
               $script_transl['codice'] => "codice",

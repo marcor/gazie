@@ -120,7 +120,7 @@ $script_transl=HeadMain('','','admin_movcon');
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <form method="GET">
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
 <td class="FacetFieldCaptionTD">
 	  <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"

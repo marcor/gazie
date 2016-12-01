@@ -172,7 +172,7 @@ echo "</table>\n";
 if (isset($_POST['preview']) and $msg=='') {
   $m=getItems($form['rate_obj'],$form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
   $new = gaz_dbi_get_row($gTables['aliiva'],'codice',$form['rate_new']);
-  echo "<table class=\"Tlarge\">";
+  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
   if (sizeof($m) > 0) {
         if ($form['rate_new']=='0') {
            $name_bas='preacq';

@@ -27,7 +27,7 @@ $script_transl=HeadMain();
 echo '<div align="center" class="FacetFormHeaderFont">'.$script_transl['title'].'</div>';
 $recordnav = new recordnav($gTables['aliiva'], $where, $limit, $passo);
 $recordnav -> output();
-echo '<table class="Tlarge">';
+echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">';
 $headers = array  (
             $script_transl['codice']=>'codice',
             $script_transl['descri']=>'descri',

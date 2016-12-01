@@ -733,7 +733,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 $date_ini = sprintf("%04d%02d%02d", $form['date_ini_Y'], $form['date_ini_M'], $form['date_ini_D']);
                 $date_fin = sprintf("%04d%02d%02d", $form['date_fin_Y'], $form['date_fin_M'], $form['date_fin_D']);
                 $m = getMovements($date_ini, $date_fin);
-                echo "<table class=\"Tlarge\">";
+                echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
                 if (sizeof($m['data']) > 0) {
                     $err = 0;
                     echo "<tr>";

@@ -305,7 +305,7 @@ if (isset($_POST['preview']) and $msg=='') {
         $ctrl_bal = round($loss + $profit + $assets + $liabilities,2);
         $income = round($loss + $profit,2);
         $eco = $anagrafica->getPartner($form['economic_result']);
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         if ($ctrl_bal != 0 ) {
           echo "<tr><td colspan=\"4\" ><a href=\"./error_rigmoc.php\" class=\"FacetDataTDred\">".$script_transl['errors'][3]."! -> ".$admin_aziend['symbol']." $ctrl_bal </a></TD></TR>";
         }

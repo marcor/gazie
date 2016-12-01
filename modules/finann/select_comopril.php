@@ -566,7 +566,7 @@ if (isset($_GET['view'])) {
     $Testa = getHeaderData();
     if (!isset($queryData[1][0])) { // nessun errore sulle impostazioni aziendali
         echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['view'] . "</div>";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         echo "<tr>";
         echo "<td colspan=\"1\"></td>";
         echo "<td colspan=\"1\" class=\"FacetFieldCaptionTD\">" . $script_transl['codfis'] . "</td>";

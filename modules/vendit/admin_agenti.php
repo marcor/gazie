@@ -329,7 +329,7 @@ echo "</td></tr>\n";
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[10] $script_transl[7] / $script_transl[8]</div>\n";
 // inizio rigo inserimento
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<input type=\"hidden\" value=\"".$form['in_status']."\" name=\"in_status\" />\n";
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[7] :\n";
 $select_catmer = new selectcatmer('in_cod_catmer');

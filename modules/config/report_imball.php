@@ -30,7 +30,7 @@ $script_transl = HeadMain('','','admin_imball');
 $recordnav = new recordnav($gTables['imball'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_imball = array  (
               $script_transl['codice'] => "codice",

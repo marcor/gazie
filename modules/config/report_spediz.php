@@ -30,7 +30,7 @@ $script_transl = HeadMain('','','admin_spediz');
 $recordnav = new recordnav($gTables['spediz'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_spediz = array  (
               $script_transl['codice'] => "codice",

@@ -55,7 +55,7 @@ $recordnav = new recordnav($gTables['agenti']." LEFT JOIN ".$gTables['clfoco']."
             . "left join gaz_anagra on gaz_anagra.id=" . $gTables['clfoco'] . ".id_anagra", $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
 <td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl[3].' :'; ?>
 <input type="text" name="ragso1" value="<?php if (isset($ragso1)) echo $ragso1; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">

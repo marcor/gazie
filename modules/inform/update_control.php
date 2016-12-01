@@ -61,7 +61,7 @@ if (isset($_POST['check'])){// se viene richiesta una modifica della fonte di ch
 
 function tutor_list($tutor,$configurazione,$script_transl)
 {
-    echo "<form method=\"POST\"><table class=\"Tlarge\">\n";
+    echo "<form method=\"POST\"><table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
     echo "<tr><th class=\"FacetFieldCaptionTD\">".$script_transl['zone']."</th>
               <th class=\"FacetFieldCaptionTD\">".$script_transl['city']."</th>
               <th class=\"FacetFieldCaptionTD\">".$script_transl['sms']."</th>

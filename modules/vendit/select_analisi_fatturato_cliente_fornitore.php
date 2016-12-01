@@ -222,7 +222,7 @@ echo "<tr>\n
      <td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"" . ucfirst($script_transl['return']) . "\"></td>\n
      <td align=\"right\" class=\"FacetFooterTD\"><input type=\"submit\" accesskey=\"i\" name=\"preview\" value=\"" . ucfirst($script_transl['preview']) . "\"></td>\n
      </tr>\n</table>";
-echo "<table class=\"Tlarge\">";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
 if (isset($resultFatturato)) {
    $linkHeaders = new linkHeaders($script_transl['header']);
    $linkHeaders->output();

@@ -544,7 +544,7 @@ echo "\t<td colspan=\"6\">\n";
 echo "<textarea id=\"body_text\" name=\"body_text\" class=\"mceClass\" style=\"width:100%;height:400px;\" >".$form['body_text']."</textarea>\n";
 echo "</td></tr>\n";
 echo "</table>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr>\n";
 echo "\t<td colspan=\"8\" align=\"center\">".$script_transl['rows_title']."</td>\n";
 echo "</tr>\n";

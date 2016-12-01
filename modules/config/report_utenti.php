@@ -30,7 +30,7 @@ $script_transl = HeadMain('','','admin_utente');
 $recordnav = new recordnav($gTables['admin'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_utenti = array  (
               $script_transl['Login'] => "Login",

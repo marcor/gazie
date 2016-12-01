@@ -131,7 +131,7 @@ $script_transl = HeadMain();
     $recordnav->output();
 	
     ?>
-    <table class="Tlarge">
+    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <tr>
             <td colspan="1" class="FacetFieldCaptionTD">
                 <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="protoc" value="<?php if (isset($protocollo)) print $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">

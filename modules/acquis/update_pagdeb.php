@@ -270,7 +270,7 @@ while ($a_row = gaz_dbi_fetch_array($result))
             }
 print "\t </select>\n";
 print "</td></tr></table>\n";
-print "<table class=\"Tlarge\">\n";
+print "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 //apro l'array contenente i righi eliminati per fare il POST
 foreach ($_POST['delrig'] as $key => $value)
     {
@@ -317,7 +317,7 @@ $result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","cod
 $nummov = gaz_dbi_num_rows($result);
 if ($nummov > 0)
     {
-    print "</table><br><table class=\"Tlarge\"><tr><td colspan=\"6\">Questi sono i movimenti contabili, epurati degli eventuali movimenti di apertura e chiusura, relativi al fornitore ".$conto['ragso1']." ".$conto['ragso2'].":<td></tr>\n";
+    print "</table><br><table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\"><tr><td colspan=\"6\">Questi sono i movimenti contabili, epurati degli eventuali movimenti di apertura e chiusura, relativi al fornitore ".$conto['ragso1']." ".$conto['ragso2'].":<td></tr>\n";
     print "<tr><th class=\"FacetFieldCaptionTD\">Mov.</th><th class=\"FacetFieldCaptionTD\">Descrizione</th><th class=\"FacetFieldCaptionTD\">N.Doc.</th><th class=\"FacetFieldCaptionTD\">Data Doc.</th><th class=\"FacetFieldCaptionTD\">Importo</th><th class=\"FacetFieldCaptionTD\">D/A</th></tr>\n";
     while ($movimenti = gaz_dbi_fetch_array($result))
         {

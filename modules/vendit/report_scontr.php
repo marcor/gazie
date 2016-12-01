@@ -81,7 +81,7 @@ if (isset($_GET['all'])) {
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav->output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     <tr>
         <td class="FacetFieldCaptionTD" colspan="1">
 <?php gaz_flt_disp_int("id_tes", "Numero Id"); ?>

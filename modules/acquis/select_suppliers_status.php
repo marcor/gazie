@@ -118,7 +118,7 @@ echo "\t </tr>\n";
 echo "</table>\n";
 
 if (isset($_POST['preview'])) {
-  echo "<table class=\"Tlarge\">";
+  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
   if (sizeof($paymov->Partners) > 0) {
         $anagrafica = new Anagrafica();
         echo "<tr>";

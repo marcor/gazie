@@ -88,7 +88,7 @@ echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\"
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'] . $script_transl['year'];
 $gForm->selectNumber('year', $form['year'], 1, $form['year'] - 10, $form['year'] + 10, 'FacetSelect', 'year');
 echo "\t </div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 $ctrl = 0;
 $ctrl_reg = "";
 $m = getErrors($form['year']);

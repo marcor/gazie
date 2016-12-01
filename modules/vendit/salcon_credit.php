@@ -383,7 +383,7 @@ foreach ($_POST['delrig'] as $k => $v)
     {
     print "<input type=\"hidden\" value=\"{$v}\" name=\"delrig[{$k}]\">\n";
     }
-print "<table class=\"Tlarge\">\n";
+print "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 /*print "<tr><td colspan=\"3\" align=\"right\">Aggiungi un rigo --&raquo; <input type=\"image\" name=\"add\" src=\"../../library/images/vbut.gif\" title=\"Aggiunta rigo! \"></td></tr>";*/
 
 /** ENRICO FEDELE */
@@ -432,7 +432,7 @@ if($_POST['num_rigo'] > 0) {
 $result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = ".$conto['codice']." ORDER BY datreg asc");
 $nummov = gaz_dbi_num_rows($result);
 if ($nummov > 0) {
-    print "</table><br \><table class=\"Tlarge\"><tr><td colspan=\"6\">Questi sono i movimenti contabili relativi al cliente ".$conto['ragso1']." ".$conto['ragso2'].":<td></tr>\n";
+    print "</table><br \><table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\"><tr><td colspan=\"6\">Questi sono i movimenti contabili relativi al cliente ".$conto['ragso1']." ".$conto['ragso2'].":<td></tr>\n";
     print "<tr><th class=\"FacetFieldCaptionTD\">Mov.</th><th class=\"FacetFieldCaptionTD\">Descrizione</th><th class=\"FacetFieldCaptionTD\">N.Doc.</th><th class=\"FacetFieldCaptionTD\">Data Doc.</th><th class=\"FacetFieldCaptionTD\">Importo</th><th class=\"FacetFieldCaptionTD\">D/A</th></tr>\n";
     while ($movimenti = gaz_dbi_fetch_array($result)) {
         $cl="FacetDataTD";

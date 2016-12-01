@@ -19,3 +19,22 @@
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu, .navbar-nav > .messages-menu > .dropdown-menu > li .menu, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu {
     max-height: 500px;
 }
+
+.content-wrapper {
+    min-width: 500px;
+}
+
+.Tlarge {
+    margin-left: 20px;
+    width: 99%;
+    padding-right: 20px;
+}
+
+table {
+    border-collapse: separate;
+    border-spacing: 2px;
+}
+
+.btn {
+    width: 100%;
+}

@@ -67,7 +67,7 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl[3].$script_transl[0]; ?></div>
 <form method="GET">
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 	<tr>
 		<td class="FacetFieldCaptionTD">
 		  <input type="text" name="movimento" placeholder="Movimento" class="input-xs form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">

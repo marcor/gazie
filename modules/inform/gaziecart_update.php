@@ -107,7 +107,7 @@ echo "<form method=\"POST\" autocomplete=\"off\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"".$form['ritorno']."\">\n";
 $gForm = new GAzieForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title']."</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['server']." * </td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\"><input type=\"text\" name=\"server\" value=\"".$form['server']."\" align=\"right\" maxlength=\"100\" size=\"70\" /></td>\n";

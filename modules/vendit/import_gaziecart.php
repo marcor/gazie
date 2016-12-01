@@ -247,7 +247,7 @@ echo '" tabindex="100" >';
 echo "\t </td>\n";
 echo "\t </tr>\n";
 echo "</table>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 
 // Se viene inviata la richiesta di leggere la casella di posta...
 if (isset($form['order'])) {

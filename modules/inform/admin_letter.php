@@ -180,7 +180,7 @@ echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" name=\"id_let\" value=\"" . $form['id_let'] . "\">\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 if (!empty($msg)) {
     echo "<tr><td colspan=\"6\" class=\"FacetDataTDred\">";
     $message = "";

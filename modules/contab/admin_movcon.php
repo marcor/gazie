@@ -1213,7 +1213,7 @@ echo "</tr>\n";
 //inserimento dati documenti
                 if ($form["inserimdoc"] == 1) {
                     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['insdoc'] . "</div>";
-                    echo "<table class=\"Tlarge\">";
+                    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
                     echo "<tr><td class=\"FacetDataTD\" >" . $script_transl['seziva'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['numdoc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['protoc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['date_doc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['partner'] . "</td></tr>";
                     echo "<tr><td class=\"FacetDataTD\" >";
                     echo "<select name=\"sezioneiva\" class=\"FacetSelect\" onchange=\"this.form.submit()\">";
@@ -1250,7 +1250,7 @@ echo "</tr>\n";
 //inserimento movimento iva
                 if ($form["registroiva"] > 0) {
                     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['insiva'] . "</div>\n";
-                    echo "<table class=\"Tlarge\">\n";
+                    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
                     echo "<tr><td class=\"FacetColumnTD\">" . $script_transl['taxable'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['vat'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['tax'] . "</td><td class=\"FacetColumnTD\" align=\"right\">" . $script_transl['addrow'] . "!</td></tr>\n";
                     if ($_POST['rigiva'] == 0) { //se non ci sono righi tabulo
                         $tabimp = ' tabindex="20" ';
@@ -1306,7 +1306,7 @@ echo "</tr>\n";
                 }
 //inserimento movimento contabile
                 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['del_this'] . "</div>\n";
-                echo "<table class=\"Tlarge\">\n";
+                echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
                 echo "<tr><td class=\"FacetColumnTD\">" . $script_transl['mas'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['sub'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['amount'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['daav'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['addrow'] . "!</td></tr>\n";
                 echo "<tr>\n";
                 echo "<td class=\"FacetColumnTD\">\n#";

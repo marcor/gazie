@@ -54,7 +54,7 @@ require("./lang.".$admin_aziend['lang'].".php");
 $script_transl += $strScript["admin_caumag.php"];
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl[1].$script_transl[0]."</div>\n";
 echo "<form method=\"GET\">";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr><td></td><td class=\"FacetFieldCaptionTD\">".$script_transl[2].":\n";
 echo "<input type=\"text\" name=\"auxil\" value=\"";
 if ($auxil != "&all=yes"){

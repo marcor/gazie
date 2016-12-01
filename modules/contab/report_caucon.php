@@ -32,7 +32,7 @@ $script_transl=HeadMain('','','admin_caucon');
 $recordnav = new recordnav($gTables['caucon'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_caucon = array  (
             $script_transl['codice']=> "codice",

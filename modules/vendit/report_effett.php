@@ -57,7 +57,7 @@ $recordnav = new recordnav($gTables['effett'], $where, $limit, $passo);
 $recordnav->output();
 ?>
 <form method="GET">
-    <table class="Tlarge">
+    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <input type="hidden" name="auxil" value="<?php print substr($auxil, 0, 1); ?>">
         <tr>
             <td></td>

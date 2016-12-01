@@ -307,7 +307,7 @@ $script_transl = HeadMain();
         //recupero i documenti da contabilizzare
         $result = gaz_dbi_dyn_query("*", $gTables['effett'], "datemi like '" . intval($_POST['annexe']) . "%' and id_con = 0  and banacc > 0 and progre between " . $_POST['proini'] . ' and ' . $_POST['profin'] . ' ' . $querytip, 'tipeff asc, scaden asc');
         echo "<div><center><b>ANTEPRIMA CONTABILIZZAZIONE </b></div>";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         echo "<th class=\"FacetFieldCaptionTD\">Scadenza</th><th class=\"FacetFieldCaptionTD\">Emissione</th><th class=\"FacetFieldCaptionTD\">Tipo</th><th class=\"FacetFieldCaptionTD\">Progr.</th><th class=\"FacetFieldCaptionTD\">Cliente</th><th class=\"FacetFieldCaptionTD\">Importo</th><th class=\"FacetFieldCaptionTD\">Saldo<br />Conto</th><th class=\"FacetFieldCaptionTD\">N.Fatt.</th><th class=\"FacetFieldCaptionTD\">Data Fattura</th>";
         $anagrafica = new Anagrafica();
         $totEffetti = 0;

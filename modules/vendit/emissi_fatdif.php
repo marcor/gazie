@@ -369,7 +369,7 @@ $date_fin = new DateTime($form['date_fin_Y'] . '-' . $form['date_fin_M'] . '-' .
 $date = array('exe' => $date_exe->format('Y-m-d'), 'ini' => $date_ini->format('Y-m-d'), 'fin' => $date_fin->format('Y-m-d'));
 $invoices = getInvoiceableBills($date, $form['seziva'], $form['clfoco'], $form['changeStatus']);
 echo '<div align="center"><b>' . $script_transl['preview_inv'] . '</b></div>';
-echo "<table class=\"Tlarge\">";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
 // qui faccio il push all'array dei fatturabili se richiesti esplicitamente  
 if (isset($invoices['excluded'])) {
     foreach ($invoices['excluded'] as $k => $v) {

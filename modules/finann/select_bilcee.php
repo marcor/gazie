@@ -429,7 +429,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $totlet =0.00;
         $totale =0.00;
         echo "<div><center><b>ANTEPRIMA BILANCIO IV direttiva CEE AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         echo "<tr><td colspan=\"4\">Questo bilancio, riclassificato secondo la IV direttiva CEE, &egrave; stato generato leggendo i movimenti compresi nel periodo selezionato escludendo tutti quelli di apertura e chiusura, unica eccezione &egrave; l'apertura effettuata entro l'anno successivo alla data impostata come inizio periodo.</td></tr>\n";
 
         if ($errore != "" )
@@ -869,7 +869,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0)
       {
         echo "<div><center><b>RICLASSIFICAZIONE AL VALORE AGGIUNTO AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         $bil["Rv"] = $bil["eA001"];
         echo "<tr><td align=\"center\">c.e. A1</td><td align=\"center\"> </td>";
@@ -997,7 +997,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0 && $anno !=0)
       {
         echo "<div><center><b>INFORMAZIONI EXTRACONTABILI DELL'ANNO $anno</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         echo "<tr>";
         echo "<th align=\"center\"></th>";
@@ -1145,7 +1145,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0 && $anno !=0)
       {
         echo "<div><center><b>COSTO DEL VENDUTO DELL'ANNO $anno</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         echo "<tr><td align=\"center\">c.e. B6</td><td align=\"center\">+</td>";
         echo "<td align=\"left\">acquisti di materie prime, sussidiarie, di consumo e merci</td>";
@@ -1210,7 +1210,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0 && $anno !=0)
       {
         echo "<div><center><b>RICLASSIFICAZIONE A RICAVI E COSTO DEL VENDUTO</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         echo "<tr><td align=\"center\">c.e. A1</td><td align=\"center\">+</td>";
         echo "<th align=\"left\">Ricavi netti di vendita</th>";
@@ -1249,7 +1249,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0)
       {
         echo "<div><center><b>DATI PER GLI INDICI AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         $bil["Rm"] = $bil["aC01"];
         echo "<tr><td align=\"center\">attivo CI</td>";
@@ -1343,7 +1343,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0)
       {
         echo "<div><center><b>ANALISI PER REDDITIVITÀ AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         $bil["ROE"] = ($bil["Cp"] == 0 ? 0 : $bil["Re"]/$bil["Cp"]);
         $bil["ROE"] = round ($bil["ROE"], 4);
@@ -1437,7 +1437,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0)
       {
         echo "<div><center><b>ANALISI PER PRODUTTIVITÀ AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         $bil["Va/Ti"] = ($bil["Ti"] == 0 ? 0 : $bil["Va"]/$bil["Ti"]);
         $bil["Va/Ti"] = round ($bil["Va/Ti"], 4);
@@ -1504,7 +1504,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0)
       {
         echo "<div><center><b>ANALISI PATRIMONIALE AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         $bil["Im/Ti"] = ($bil["Ti"] == 0 ? 0 : $bil["Im"]/$bil["Ti"]);
         $bil["Im/Ti"] = round ($bil["Im/Ti"], 4);
@@ -1574,7 +1574,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0)
       {
         echo "<div><center><b>ANALISI FINANZIARIA AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         $bil["Cp/Im"] = ($bil["Im"] == 0 ? 0 : $bil["Cp"]/$bil["Im"]);
         $bil["Cp/Im"] = round ($bil["Cp/Im"], 4);
@@ -1635,7 +1635,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0 && $anno !=0)
       {
         echo "<div><center><b>STATO PATRIMONIALE RIELABORATO SECONDO CRITERI FINANZIARI DELL'ANNO $anno</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         echo "<tr><td align=\"center\" colspan=\"5\"><big>impieghi</impieghi></td></tr>\n";
         //
@@ -1737,7 +1737,7 @@ if (isset($_GET['visualizza']) and $message == "")
     if ($errore == "" && $ctrlnum > 0 && $anno !=0)
       {
         echo "<div><center><b>ANALISI FINANZIARIA</b></CENTER></div>\n";
-        echo "<table class=\"Tlarge\">";
+        echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         //
         if ($bil["Im"] != 0)
           {

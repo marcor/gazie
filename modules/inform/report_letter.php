@@ -89,7 +89,7 @@ if (!isset($_GET['flag_order'])) {
 <?php
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$script_transl[0]</div>\n";
 echo "<form method=\"GET\">";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr><td colspan=\"2\"></td><td class=\"FacetFieldCaptionTD\" colspan=\"2\">$script_transl[4] :\n";
 echo "<input type=\"text\" name=\"auxil\" value=\"";
 if ($auxil != "&all=yes"){

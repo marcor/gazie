@@ -296,7 +296,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
         $liabilities = round(array_sum($conti['pas']),2);
         $ctrl_bal = round($loss + $profit + $assets + $liabilities,2);
         $income = round($loss + $profit,2);
-        echo "<br /><table class=\"Tlarge\">";
+        echo "<br /><table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         if ($ctrl_bal != 0 ) {
           echo "<tr><td colspan=\"4\" class=\"FacetDataTDred\">".$script_transl['error']."! -> ".$admin_aziend['symbol']." ".$ctrl_bal." ".$strScript['select_chiape.php'][14]." <a href=\"".$strMenu2[0][0]."\">".$strMenu2[0][1]."</a></td></tr>\n";
         }

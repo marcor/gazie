@@ -303,7 +303,7 @@ $gForm->selectNumber('vat_section',$form['vat_section'],0,1,3,'FacetSelect','vat
 echo ' '.$script_transl['on'].' ';
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
 echo "</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr class=\"FacetColumnTD\">\n";
 echo "<td align=\"right\">".$strScript['admin_contract.php']['doc_number']."</td>\n";
 echo "<td align=\"center\">".$strScript['admin_contract.php']['start_date']."</td>\n";

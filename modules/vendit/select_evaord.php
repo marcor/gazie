@@ -720,7 +720,7 @@ $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['search_customer'], $admin_aziend['mascli'], $admin_aziend['mascli']);
 ?>
     </div>
-    <table class="Tlarge">
+    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['seziva'] . "</td><td class=\"FacetDataTD\" >\n";
@@ -806,7 +806,7 @@ echo "</td>\n";
 echo "</tr></table>\n";
 if (!empty($form['righi'])) {
     echo '<div align="center"><b>' . $script_transl['preview_title'] . '</b></div>';
-    echo "<table class=\"Tlarge\">";
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
     echo "<tr class=\"FacetFieldCaptionTD\"><td> " . $script_transl['codart'] . "</td>
    <td> " . $script_transl['descri'] . "</td>
    <td align=\"center\"> " . $script_transl['unimis'] . "</td>

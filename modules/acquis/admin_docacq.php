@@ -1250,7 +1250,7 @@ echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 $select_fornitore = new selectPartner("clfoco");
 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
 echo "</div>\n";
-echo "<table class=\"Tlarge\">\n";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"seziva\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 3; $counter++) {

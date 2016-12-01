@@ -328,7 +328,7 @@ if (isset($_POST['preview']) and $msg=='') {
   $span=6;
   $saldo=0.00;
   $m = getMovements($form['account_ini'], $form['account_fin'], $date_ini, $date_fin);
-  echo "<table class=\"Tlarge\">";
+  echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
   if (sizeof($m) > 0) {
      if ($form['account_ini'] < $form['account_fin']) {
         echo "<tr>";

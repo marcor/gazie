@@ -53,7 +53,7 @@ if (!isset($_GET['field']) or ($_GET['field'] == 2) or(empty($_GET['field'])))
 $recordnav = new recordnav($gTables['contract'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
 <td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl['number']; ?> :
 <input type="text" name="doc_number" value="<?php if (isset($doc_number)) print $doc_number; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">

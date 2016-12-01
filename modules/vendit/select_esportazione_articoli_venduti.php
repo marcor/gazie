@@ -249,7 +249,7 @@ $rs = gaz_dbi_query($query);
 
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['titleLista'];
 echo "</div>\n";
-echo "<table class=\"Tlarge\">";
+echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
 echo "<tr>";
 $linkHeaders = new linkHeaders($script_transl['header']);
 $linkHeaders->output();

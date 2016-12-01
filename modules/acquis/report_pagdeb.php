@@ -60,7 +60,7 @@ $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
 <form method="GET" >
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
 	<td class="FacetFieldCaptionTD">
 		<?php gaz_flt_disp_int ( "id_tes", "Numero Id" ); ?>

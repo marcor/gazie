@@ -195,7 +195,7 @@ echo "<tr>\n
     <input type=\"submit\" name=\"Inserisci\" value=\"" . ucfirst($script_transl['inserisci']) . "\">
        </td></tr>";
 if (!empty($elencoSconti)) {
-   echo "</table><table class=\"Tlarge\">";
+   echo "</table><table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
    $linkHeaders = new linkHeaders($script_transl['header']);
    $linkHeaders->setAlign(array('left', 'left', 'left', 'left', 'right', 'right', 'center'));
    $linkHeaders->output();

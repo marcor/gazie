@@ -30,7 +30,7 @@ $script_transl = HeadMain('','','admin_pagame');
 $recordnav = new recordnav($gTables['pagame'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge">
+<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_pagame = array  (
               $script_transl[1] => "codice",
