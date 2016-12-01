@@ -25,7 +25,8 @@
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/_all-skins.min.css">
     <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-    <script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <!--<script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>-->
+    <script src="../../js/jquery/jquery.js"></script>
     
     <?php
         if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/skeletons/" . $admin_aziend['style'])) {
