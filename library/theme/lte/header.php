@@ -18,7 +18,8 @@
     <title><?php echo $admin_aziend['ragso1'];?></title>
     <link rel="shortcut icon" href="../../library/images/favicon.ico">			
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/bootstrap/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" href="../../library/theme/lte/adminlte/bootstrap/css/bootstrap.min.css">-->
+    <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
