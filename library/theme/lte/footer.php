@@ -201,16 +201,16 @@ global $admin_aziend;
     </div><!-- ./wrapper -->
 
     <!-- jQuery 2.1.4 -->
-    <script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>
+    <script src="../../js/jquery/jquery.js"></script>
     <!-- jQuery UI 1.11.4 -->
-    <script src="../../library/theme/lte/adminlte/plugins/jQueryUI/jquery-ui.min.js"></script>
+    <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
     <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
     <script>
       $.widget.bridge('uibutton', $.ui.button);
     </script>  
 
     <!-- Bootstrap 3.3.5 -->
-    <script src="../../library/theme/lte/adminlte/bootstrap/js/bootstrap.min.js"></script>
+    <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
     <!-- Slimscroll -->
     <script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
