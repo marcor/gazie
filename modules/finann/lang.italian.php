@@ -245,8 +245,8 @@ $strScript = array("select_comiva.php" =>
         'clfoco'=>' da ',
         'fixed_val'=>'Immobilizzazione',
         'found_val'=>'Fondo',
-        'cost_val'=>'Quota annua',
-        'noded_val'=>'Non deduc.',
+        'cost_val'=>'Quota deducibile',
+        'noded_val'=>'Quota non deduc.',
         'rest_val'=>'Residuo',
         'lost_cost'=>'Amm.<50%',
         'suggest_amm'=>'Proposta di ammortamento'

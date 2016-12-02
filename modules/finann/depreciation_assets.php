@@ -52,7 +52,7 @@ function getAssets($date) {
             'LEFT JOIN ' . $gTables['clfoco'] . ' AS fornit ON tesmov.clfoco=fornit.codice ';
     $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.numdoc AS nudtes, tesmov.datdoc AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
     $where = " datreg <= '" . $date . "'";
-    $orderby = "acc_fixed_assets ASC, datreg ASC, type_mov ASC";
+    $orderby = "acc_fixed_assets ASC, datreg ASC, type_mov ASC, id ASC";
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
     $acc = array();
     while ($row = gaz_dbi_fetch_array($result)) {
@@ -144,7 +144,8 @@ if (isset($_POST['ritorno'])) {
     if (isset($_POST['assets'])) {
         $form['assets'] = filter_input(INPUT_POST, 'assets');
     }
-    $form['assets'] = getAssets(gaz_format_date($form['datreg'], true));
+    $form['datreg'] = gaz_format_date($form['datreg'], true);
+    $form['assets'] = getAssets($form['datreg']);
     // eventualmente sostituisco le quote con quelle postate
     if (isset($_POST['assets']) && count($form['assets']) > 0) {
         foreach ($_POST['assets'] as $k => $v) {
@@ -154,7 +155,6 @@ if (isset($_POST['ritorno'])) {
             if (isset($_POST['insert'])) {
                 // inserisco la testata del movimento contabile
                 $form['caucon'] = 'AMM';
-                $form['datreg'] = gaz_format_date($form['datreg'], true);
                 $form['descri'] = 'AMMORTAMENTO (QUOTA ANNO ' . substr($form['datreg'], 0, 4) . ')';
                 gaz_dbi_table_insert('tesmov', $form);
                 $id_tesmov = gaz_dbi_last_id();
@@ -162,7 +162,7 @@ if (isset($_POST['ritorno'])) {
                 // inserisco i righi del movimento contabile
                 $form['codcon'] = $form['assets'][$k][1]['acc_found_assets'];
                 $form['darave'] = 'A';
-                $form['import'] = $form['assets'][$k]['cost_suggest'];
+                $form['import'] = round($form['assets'][$k]['cost_suggest']+$form['assets'][$k]['noded_suggest'],2);
                 gaz_dbi_table_insert('rigmoc', $form);
                 $form['codcon'] = $form['assets'][$k][1]['acc_cost_assets'];
                 $form['darave'] = 'D';
@@ -183,11 +183,14 @@ if (isset($_POST['ritorno'])) {
                 $form['acc_fixed_assets'] = $form['assets'][$k][1]['acc_fixed_assets'];
                 $form['acc_found_assets'] = $form['assets'][$k][1]['acc_found_assets'];
                 $form['acc_cost_assets'] = $form['assets'][$k][1]['acc_cost_assets'];
+                $form['acc_no_deduct_cost'] = $form['assets'][$k][1]['acc_no_deduct_cost'];
+                $form['no_deduct_cost_rate'] = $form['assets'][$k][1]['no_deduct_cost_rate'];
                 gaz_dbi_table_insert('assets', $form);
             }
         }
     }
     if (isset($_POST['insert'])) {
+        header("Location: ./report_assets.php");
         exit;
     }
     // riporto datreg al valore postato
@@ -200,10 +203,9 @@ if (isset($_POST['ritorno'])) {
     $form['assets'] = getAssets(gaz_format_date($form['datreg'], true));
 }
 
-//print_r($form['assets']);
-
 require("../../library/include/header.php");
 $script_transl = HeadMain();
+
 ?>
 <script>
     $(function () {
@@ -270,7 +272,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
                     array('head' => $script_transl["fixed_val"], 'class' => 'text-right',
                         'value' => gaz_format_number($v['fixed_subtot'])),
-                    array('head' => $script_transl["found_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['found_val'])),
+                    array('head' => $script_transl["found_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['found_subtot'])),
                     array('head' => $script_transl["cost_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['cost_val'])),
                     array('head' => $script_transl["noded_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['noded_val'])),
                     array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixed_subtot'] - $v['found_subtot'])),
@@ -280,7 +282,7 @@ if (count($msg['err']) > 0) { // ho un errore
         }
         // questo è il rigo di input alla fine della tabella di ogni cespite
         // calcolo una proposta d'ammortamento
-        $suggest = suggestAmm($v['fixed_subtot'], $v['found_subtot'], $va[1]['valamm'], $v['no_deduct_cost_rate']);
+        $suggest = suggestAmm($v['fixed_subtot'], $v['found_subtot'], $va[1]['valamm'], $va[1]['no_deduct_cost_rate']);
         if ($suggest[2]) {
             // se è stata troncata la percentuale...
             $v['valamm'] = $suggest[2];
