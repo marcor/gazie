@@ -573,7 +573,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     <div class="form-group">
                         <label for="valamm" class="col-sm-8 control-label"><?php echo $script_transl['valamm']; ?></label>
                         <div class="col-sm-4">
-                            <input type="number" step="0.1" min="0.1" max="100" class="form-control" id="valamm" name="valamm" placeholder="<?php echo $script_transl['valamm']; ?>" value="<?php echo $form['valamm']; ?>">
+                            <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="valamm" name="valamm" placeholder="<?php echo $script_transl['valamm']; ?>" value="<?php echo $form['valamm']; ?>">
                         </div>
                     </div>
                 </div>
@@ -603,7 +603,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     <div class="form-group">
                         <label for="no_deduct_cost_rate" class="col-sm-6 control-label"><?php echo $script_transl['no_deduct_cost_rate']; ?></label>
                         <div class="col-sm-6">
-                            <input type="number" step="0.1" max="100" class="form-control" id="valamm" name="no_deduct_cost_rate" placeholder="<?php echo $script_transl['no_deduct_cost_rate']; ?>" value="<?php echo $form['no_deduct_cost_rate']; ?>">
+                            <input type="number" step="0.1" max="100" class="form-control" id="no_deduct_cost_rate" name="no_deduct_cost_rate" placeholder="<?php echo $script_transl['no_deduct_cost_rate']; ?>" value="<?php echo $form['no_deduct_cost_rate']; ?>">
                         </div>
                     </div>
                 </div>

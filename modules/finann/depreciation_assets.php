@@ -26,6 +26,21 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
+function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days = 365) {
+    $trunk = false;
+    $vy = $fixed / 365 * $days;
+    $vy = $vy * $valamm / 100;
+    if ($vy >= ($fixed - $found)) {
+        // se l'ammortamento supera il resido lo tronco
+        $vy = $fixed - $found;
+        $trunk = round($vy / $fixed * 100, 2);
+    }
+    $vn = $vy; //$vn contiene la quota annua 
+    $vy = round($vy - ($vy * $no_deduct_cost_rate / 100), 2);
+    $vn = round($vn - $vy, 2);
+    return array($vy, $vn, $trunk);
+}
+
 function getAssets($date) {
     /*  funzione per riprendere dal database tutti i beni ammortizzabili 
       e proporre una anteprima di ammortamenti */
@@ -35,15 +50,15 @@ function getAssets($date) {
     $from = $gTables['assets'] . ' AS assets ' .
             'LEFT JOIN ' . $gTables['tesmov'] . ' AS tesmov ON assets.id_movcon=tesmov.id_tes ' .
             'LEFT JOIN ' . $gTables['clfoco'] . ' AS fornit ON tesmov.clfoco=fornit.codice ';
-    $field = ' assets.*, tesmov.numdoc AS nudtes, tesmov.datdoc AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
+    $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.numdoc AS nudtes, tesmov.datdoc AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
     $where = " datreg <= '" . $date . "'";
     $orderby = "acc_fixed_assets ASC, datreg ASC, type_mov ASC";
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
-
     $acc = array();
     while ($row = gaz_dbi_fetch_array($result)) {
         // ad ogni cambio di bene creo un array e sulla radice metto tutti i dati che mi servono sulla intestazione del bene stesso
         if ($ctrl_fix <> $row['acc_fixed_assets']) {
+            // azzero i totali delle colonne
             // in ordine di data necessariamente il primo rigo dev'essere l'acquisto
             $acc[$row['acc_fixed_assets']][1] = $row;
             // prendo il valore della immobilizzazione dal rigo contabile
@@ -52,8 +67,18 @@ function getAssets($date) {
             $acc[$row['acc_fixed_assets']][1]['found_val'] = 0;
             $acc[$row['acc_fixed_assets']][1]['cost_val'] = 0;
             $acc[$row['acc_fixed_assets']][1]['noded_val'] = 0;
-            // non è più fiscalmente unaquota persa ma da segnalare sul libro
-            $acc[$row['acc_fixed_assets']][1]['lost_cost'] = 0;
+            $acc[$row['acc_fixed_assets']][1]['lost_cost'] = 0; // non è più fiscalmente una quota persa ma da segnalare sul libro
+            // questi sono i totali
+            $acc[$row['acc_fixed_assets']][1]['fixed_tot'] = $f['import'];
+            $acc[$row['acc_fixed_assets']][1]['found_tot'] = 0;
+            $acc[$row['acc_fixed_assets']][1]['cost_tot'] = 0;
+            $acc[$row['acc_fixed_assets']][1]['noded_tot'] = 0;
+            // e i subtotali
+            $acc[$row['acc_fixed_assets']][1]['fixed_subtot'] = $f['import'];
+            $acc[$row['acc_fixed_assets']][1]['found_subtot'] = 0;
+            $acc[$row['acc_fixed_assets']][1]['cost_subtot'] = 0;
+            $acc[$row['acc_fixed_assets']][1]['noded_subtot'] = 0;
+
             // ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali 
             $xml = simplexml_load_file('../../library/include/ammortamenti_ministeriali.xml') or die("Error: Cannot create object");
             preg_match("/^([0-9 ]+)([a-zA-Z ]+)$/", $admin_aziend['amm_min'], $m);
@@ -78,15 +103,25 @@ function getAssets($date) {
                     // prendo il valore del fondo ammortamento dal rigo contabile
                     $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'] . ' AND id_tes = ' . $row['id_movcon']);
                     $row['fixed_val'] = 0;
+                    $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
                     $row['found_val'] = $f['import'];
+                    $acc[$row['acc_fixed_assets']][1]['found_tot'] += $f['import'];
+                    $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
                     // prendo il valore dell'ammortamento dal rigo contabile
                     $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_cost_assets'] . ' AND id_tes = ' . $row['id_movcon']);
                     $row['cost_val'] = $f['import'];
+                    $acc[$row['acc_fixed_assets']][1]['cost_tot'] += $f['import'];
+                    $row['cost_subtot'] = $acc[$row['acc_fixed_assets']][1]['cost_tot'];
                     // prendo il valore della quota indeducibile dal rigo contabile
                     $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_no_deduct_cost'] . ' AND id_tes = ' . $row['id_movcon']);
                     $row['noded_val'] = $f['import'];
-                    // non è più fiscalmente una quota persa ma da segnalare sul libro
+                    $acc[$row['acc_fixed_assets']][1]['noded_tot'] += $f['import'];
+                    $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
+                    /* non è più fiscalmente una quota persa ma da segnalare sul libro
+                     * quindi qui la dovrò calcolare 
+                     */
                     $row['lost_cost'] = 0;
+                    // aggiungo all'array del bene
                     $acc[$row['acc_fixed_assets']][] = $row;
                     break;
                 case '80' : // alienazione parziale
@@ -113,7 +148,9 @@ if (isset($_POST['ritorno'])) {
     // eventualmente sostituisco le quote con quelle postate
     if (isset($_POST['assets']) && count($form['assets']) > 0) {
         foreach ($_POST['assets'] as $k => $v) {
-            $form['assets'][$k]['rate'] = floatval($v['rate']);
+            $form['assets'][$k]['cost_suggest'] = floatval($v['cost_suggest']);
+            $form['assets'][$k]['noded_suggest'] = floatval($v['noded_suggest']);
+            $form['assets'][$k]['valamm_suggest'] = floatval($v['valamm_suggest']);
             if (isset($_POST['insert'])) {
                 // inserisco la testata del movimento contabile
                 $form['caucon'] = 'AMM';
@@ -122,26 +159,36 @@ if (isset($_POST['ritorno'])) {
                 gaz_dbi_table_insert('tesmov', $form);
                 $id_tesmov = gaz_dbi_last_id();
                 $form['id_tes'] = $id_tesmov;
-                // inserisco i due righi del movimento contabile
-                $form['codcon'] = $form['assets'][$k]['acc_found_assets'];
+                // inserisco i righi del movimento contabile
+                $form['codcon'] = $form['assets'][$k][1]['acc_found_assets'];
                 $form['darave'] = 'A';
-                $form['import'] = $form['assets'][$k]['rate'];
+                $form['import'] = $form['assets'][$k]['cost_suggest'];
                 gaz_dbi_table_insert('rigmoc', $form);
-                $form['codcon'] = $form['assets'][$k]['acc_cost_assets'];
+                $form['codcon'] = $form['assets'][$k][1]['acc_cost_assets'];
                 $form['darave'] = 'D';
-                $form['import'] = $form['assets'][$k]['rate'];
+                $form['import'] = $form['assets'][$k]['cost_suggest'];
                 gaz_dbi_table_insert('rigmoc', $form);
+                if ($form['assets'][$k]['noded_suggest'] >= 0.01) { // se ho valorizzato un costo indeducibile 
+                    $form['codcon'] = $form['assets'][$k][1]['acc_no_deduct_cost'];
+                    $form['darave'] = 'D';
+                    $form['import'] = $form['assets'][$k]['noded_suggest'];
+                    gaz_dbi_table_insert('rigmoc', $form);
+                }
                 // inserisco il movimento sul libro cespiti 
                 $form['id_movcon'] = $id_tesmov;
                 $form['type_mov'] = 50;
                 $form['descri'] = 'AMMORTAMENTO (QUOTA ANNO ' . substr($form['datreg'], 0, 4) . ')';
                 $form['a_value'] = $form['import'];
-                $form['acc_fixed_assets'] = $form['assets'][$k]['acc_fixed_assets'];
-                $form['acc_found_assets'] = $form['assets'][$k]['acc_found_assets'];
-                $form['acc_cost_assets'] = $form['assets'][$k]['acc_cost_assets'];
+                $form['valamm'] = $form['assets'][$k]['valamm_suggest'];
+                $form['acc_fixed_assets'] = $form['assets'][$k][1]['acc_fixed_assets'];
+                $form['acc_found_assets'] = $form['assets'][$k][1]['acc_found_assets'];
+                $form['acc_cost_assets'] = $form['assets'][$k][1]['acc_cost_assets'];
                 gaz_dbi_table_insert('assets', $form);
             }
         }
+    }
+    if (isset($_POST['insert'])) {
+        exit;
     }
     // riporto datreg al valore postato
     $form['datreg'] = filter_input(INPUT_POST, 'datreg');
@@ -152,6 +199,8 @@ if (isset($_POST['ritorno'])) {
     $form['datreg'] = $dt->format('31/12/Y');
     $form['assets'] = getAssets(gaz_format_date($form['datreg'], true));
 }
+
+//print_r($form['assets']);
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -184,9 +233,9 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div>
             </div><!-- chiude row  -->
             <?php
-            $r = array(0 => array());
             $head = true;
             foreach ($form['assets'] as $ka => $va) {
+                $r = array();
                 // ogni assets ha più righi-movimenti
                 foreach ($va as $k => $v) {
                     if ($head) {
@@ -205,30 +254,53 @@ if (count($msg['err']) > 0) { // ho un errore
                 $head = false;
             }
             if ($v['type_mov'] == 1) {
-                $r[0] = [array('head' => $script_transl["asset_des"], 'class' => '', 'value' => '<b>' . $v['descri'] . $script_transl["clfoco"] . $v["desfor"] . $script_transl["movdes"] . $v["nudtes"] . ' - ' . gaz_format_date($v['dtdtes'], false, true) . '</b><br>' . $script_transl['ammmin_ssd'] . ': ' . $v['ammmin_ssd'] . ' - Ammortamento normale = ' . $v['ammmin_ssrate'] . '%'),
+                $r[0] = [array('head' => $script_transl["asset_des"], 'class' => '', 'value' => '<b>' . $v['descri'] . $script_transl["clfoco"] . $v["desfor"] . $script_transl["movdes"] . $v["nudtes"] . ' - ' . gaz_format_date($v['dtdtes'], false, true) . '</b><br>' . $script_transl['ammmin_ssd'] . ': ' . $v['ammmin_ssd'] . '<br /> Ammortamento normale = ' . $v['ammmin_ssrate'] . '%'),
                     array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
                     array('head' => $script_transl["fixed_val"], 'class' => 'text-right',
                         'value' => gaz_format_number($v['fixed_val'])),
-                    array('head' => $script_transl["found_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['found_val'])),
-                    array('head' => $script_transl["cost_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['cost_val'])),
-                    array('head' => $script_transl["noded_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['noded_val'])),
-                    array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['found_val'] - $v['cost_val'])),
-                    array('head' => $script_transl["lost_cost"], 'class' => 'text-center', 'value' => gaz_format_number($v['lost_cost'])),
+                    array('head' => $script_transl["found_val"], 'class' => 'text-right', 'value' => ''),
+                    array('head' => $script_transl["cost_val"], 'class' => 'text-right', 'value' => ''),
+                    array('head' => $script_transl["noded_val"], 'class' => 'text-right', 'value' => ''),
+                    array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixed_val'])),
+                    array('head' => $script_transl["lost_cost"], 'class' => 'text-center', 'value' => ''),
                 ];
             } else {
                 $r[] = [array('head' => $script_transl["asset_des"], 'class' => '',
                 'value' => $v['descri'] . $script_transl["clfoco"] . $v["desfor"]),
                     array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
                     array('head' => $script_transl["fixed_val"], 'class' => 'text-right',
-                        'value' => gaz_format_number($v['fixed_val'])),
+                        'value' => gaz_format_number($v['fixed_subtot'])),
                     array('head' => $script_transl["found_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['found_val'])),
                     array('head' => $script_transl["cost_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['cost_val'])),
                     array('head' => $script_transl["noded_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['noded_val'])),
-                    array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['found_val'] - $v['cost_val'])),
+                    array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixed_subtot'] - $v['found_subtot'])),
                     array('head' => $script_transl["lost_cost"], 'class' => 'text-center', 'value' => gaz_format_number($v['lost_cost'])),
                 ];
             }
         }
+        // questo è il rigo di input alla fine della tabella di ogni cespite
+        // calcolo una proposta d'ammortamento
+        $suggest = suggestAmm($v['fixed_subtot'], $v['found_subtot'], $va[1]['valamm'], $v['no_deduct_cost_rate']);
+        if ($suggest[2]) {
+            // se è stata troncata la percentuale...
+            $v['valamm'] = $suggest[2];
+        }
+        $r[] = [array('head' => $script_transl["suggest_amm"] . ' %', 'class' => 'text-right bg-warning',
+        'value' => $script_transl["suggest_amm"] . ' %'),
+            array('head' => '%', 'class' => 'text-right numeric bg-warning',
+                'value' => '<input type="number" step="0.01" name="assets[' . $ka . '][valamm_suggest]" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
+            array('head' => $script_transl["fixed_val"], 'class' => 'text-right bg-warning',
+                'value' => ''),
+            array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
+            array('head' => $script_transl["cost_val"], 'class' => 'text-right numeric bg-warning',
+                'value' => '<input type="number" step="any" name="assets[' . $ka . '][cost_suggest]" value="' . $suggest[0] . '" maxlength="15" size="4" />'),
+            array('head' => $script_transl["noded_val"], 'class' => 'text-right numeric bg-warning',
+                'value' => '<input type="number" step="any" name="assets[' . $ka . '][noded_suggest]" value="' . $suggest[1] . '" maxlength="15" size="4" />'),
+            array('head' => '', 'class' => 'text-right bg-warning', 'value' => ''),
+            array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
+        ];
+        // fine rigo proposta ammortamento
+
         $gForm->gazResponsiveTable($r, 'gaz-responsive-table');
     }
     if ($head) {
@@ -242,7 +314,7 @@ if (count($msg['err']) > 0) { // ho un errore
         <div class="col-sm-12 text-right alert-success">
             <div class="form-group">
                 <div>
-                    <input name="insert" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="<?php echo strtoupper($script_transl['insert']); ?>!">
+                    <input class="btn-danger" name="insert" type="submit" value="<?php echo strtoupper($script_transl['submit']); ?>!">
                 </div>
             </div>
         </div> <!-- chiude row  -->

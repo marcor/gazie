@@ -1524,7 +1524,7 @@ class GAzieForm {
                                 if (isset($v['td_content'])) { // se ho un tipo diverso dal semplice 
                                     echo $v['td_content'];
                                 }
-                                echo '>' . $v['value'] . '&nbsp;</td>';
+                                echo '>' . $v['value'] . "&nbsp;</td>\n";
                             }
                             echo "</tr>\n";
                         }

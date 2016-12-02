@@ -248,7 +248,9 @@ $strScript = array("select_comiva.php" =>
         'cost_val'=>'Quota annua',
         'noded_val'=>'Non deduc.',
         'rest_val'=>'Residuo',
-        'lost_cost'=>'Amm.<50%'
+        'lost_cost'=>'Amm.<50%',
+        'suggest_amm'=>'Proposta di ammortamento'
+        
     )
 );
 ?>
