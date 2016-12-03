@@ -41,6 +41,9 @@ function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days = 365) 
     $vn = $vy; //$vn contiene la quota annua 
     $vy = round($vy - ($vy * $no_deduct_cost_rate / 100), 2);
     $vn = round($vn - $vy, 2);
+    if ($days < 364) { // dovrò proporzionare anche il valore percentuale dell'amortamento proposto
+        $trunk = round($valamm / 365 * $days, 2);
+    }
     return array($vy, $vn, $trunk);
 }
 
@@ -84,7 +87,7 @@ function getAssets($date) {
 
             // trovo i giorni dall'ultimo ammortamento o acquisto
             $dateamm = new DateTime($date);
-            $rs_gglast = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'AMM'", 'datreg DESC', 1);
+            $rs_gglast = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'AMM'", 'datreg DESC', 0, 1);
             $r_gglast = gaz_dbi_fetch_array($rs_gglast);
             if ($r_gglast) {
                 // dall'ultimo ammortamento
@@ -330,18 +333,20 @@ if (count($msg['war']) > 0) { // ho un warning
         } elseif ($suggest[0] < 0.01) {
             $v['valamm'] = 0.00;
             $disabl = ' disabled ';
+        } else {
+            $v['valamm'] = $va[1]['valamm'];
         }
         $r[] = [array('head' => $script_transl["suggest_amm"] . ' %', 'class' => 'text-right bg-warning',
         'value' => $script_transl["suggest_amm"] . ' %'),
             array('head' => '%', 'class' => 'text-right numeric bg-warning',
-                'value' => '<input ' . $disabl . ' type="number" step="0.01" name="assets[' . $ka . '][valamm_suggest]" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
+                'value' => '<input ' . $disabl . ' type="number" step="0.01" max="'.$va[1]['valamm'].'" min="0" name="assets[' . $ka . '][valamm_suggest]" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
             array('head' => $script_transl["fixed_val"], 'class' => 'text-right bg-warning',
                 'value' => ''),
             array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
             array('head' => $script_transl["cost_val"], 'class' => 'text-right numeric bg-warning',
-                'value' => '<input ' . $disabl . ' type="number" step="any" name="assets[' . $ka . '][cost_suggest]" value="' . $suggest[0] . '" maxlength="15" size="4" />'),
+                'value' => '<input ' . $disabl . ' type="number" step="0.01" min="0" name="assets[' . $ka . '][cost_suggest]" value="' . $suggest[0] . '" maxlength="15" size="4" />'),
             array('head' => $script_transl["noded_val"], 'class' => 'text-right numeric bg-warning',
-                'value' => '<input ' . $disabl . ' type="number" step="any" name="assets[' . $ka . '][noded_suggest]" value="' . $suggest[1] . '" maxlength="15" size="4" />'),
+                'value' => '<input ' . $disabl . ' type="number" step="0.01" min="0" name="assets[' . $ka . '][noded_suggest]" value="' . $suggest[1] . '" maxlength="15" size="4" />'),
             array('head' => '', 'class' => 'text-right bg-warning', 'value' => ''),
             array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
         ];
