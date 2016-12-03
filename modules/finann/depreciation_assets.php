@@ -101,21 +101,21 @@ function getAssets($date) {
                     break;
                 case '50' : // decremento valore del bene per ammortamento
                     // prendo il valore del fondo ammortamento dal rigo contabile
-                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'] . ' AND id_tes = ' . $row['id_movcon']);
+                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'] . "' AND id_tes = '" . $row['id_movcon']);
                     $row['fixed_val'] = 0;
                     $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
                     $row['found_val'] = $f['import'];
                     $acc[$row['acc_fixed_assets']][1]['found_tot'] += $f['import'];
                     $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
                     // prendo il valore dell'ammortamento dal rigo contabile
-                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_cost_assets'] . ' AND id_tes = ' . $row['id_movcon']);
-                    $row['cost_val'] = $f['import'];
-                    $acc[$row['acc_fixed_assets']][1]['cost_tot'] += $f['import'];
+                    $c = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_cost_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $row['cost_val'] = $c['import'];
+                    $acc[$row['acc_fixed_assets']][1]['cost_tot'] += $c['import'];
                     $row['cost_subtot'] = $acc[$row['acc_fixed_assets']][1]['cost_tot'];
                     // prendo il valore della quota indeducibile dal rigo contabile
-                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_no_deduct_cost'] . ' AND id_tes = ' . $row['id_movcon']);
-                    $row['noded_val'] = $f['import'];
-                    $acc[$row['acc_fixed_assets']][1]['noded_tot'] += $f['import'];
+                    $n = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_no_deduct_cost'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $row['noded_val'] = $n['import'];
+                    $acc[$row['acc_fixed_assets']][1]['noded_tot'] += $n['import'];
                     $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
                     /* non è più fiscalmente una quota persa ma da segnalare sul libro
                      * quindi qui la dovrò calcolare 
@@ -148,21 +148,25 @@ if (isset($_POST['ritorno'])) {
     $form['assets'] = getAssets($form['datreg']);
     // eventualmente sostituisco le quote con quelle postate
     if (isset($_POST['assets']) && count($form['assets']) > 0) {
+        $ctrl_first = true;
         foreach ($_POST['assets'] as $k => $v) {
             $form['assets'][$k]['cost_suggest'] = floatval($v['cost_suggest']);
             $form['assets'][$k]['noded_suggest'] = floatval($v['noded_suggest']);
             $form['assets'][$k]['valamm_suggest'] = floatval($v['valamm_suggest']);
             if (isset($_POST['insert'])) {
-                // inserisco la testata del movimento contabile
-                $form['caucon'] = 'AMM';
-                $form['descri'] = 'AMMORTAMENTO (QUOTA ANNO ' . substr($form['datreg'], 0, 4) . ')';
-                gaz_dbi_table_insert('tesmov', $form);
-                $id_tesmov = gaz_dbi_last_id();
-                $form['id_tes'] = $id_tesmov;
+                if ($ctrl_first) {
+                    // inserisco la testata del movimento contabile unica per tutti i righi
+                    $form['caucon'] = 'AMM';
+                    $form['descri'] = 'RILEVATE QUOTE AMMORTAMENTO ANNO ' . substr($form['datreg'], 0, 4) . ')';
+                    gaz_dbi_table_insert('tesmov', $form);
+                    $id_tesmov = gaz_dbi_last_id();
+                    $form['id_tes'] = $id_tesmov;
+                    $ctrl_first = false;
+                }
                 // inserisco i righi del movimento contabile
                 $form['codcon'] = $form['assets'][$k][1]['acc_found_assets'];
                 $form['darave'] = 'A';
-                $form['import'] = round($form['assets'][$k]['cost_suggest']+$form['assets'][$k]['noded_suggest'],2);
+                $form['import'] = round($form['assets'][$k]['cost_suggest'] + $form['assets'][$k]['noded_suggest'], 2);
                 gaz_dbi_table_insert('rigmoc', $form);
                 $form['codcon'] = $form['assets'][$k][1]['acc_cost_assets'];
                 $form['darave'] = 'D';
@@ -205,7 +209,6 @@ if (isset($_POST['ritorno'])) {
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-
 ?>
 <script>
     $(function () {
@@ -283,21 +286,25 @@ if (count($msg['err']) > 0) { // ho un errore
         // questo è il rigo di input alla fine della tabella di ogni cespite
         // calcolo una proposta d'ammortamento
         $suggest = suggestAmm($v['fixed_subtot'], $v['found_subtot'], $va[1]['valamm'], $va[1]['no_deduct_cost_rate']);
+        $disabl = '';
         if ($suggest[2]) {
             // se è stata troncata la percentuale...
             $v['valamm'] = $suggest[2];
+        } elseif ($suggest[0] < 0.01) {
+            $v['valamm'] = 0.00;
+            $disabl = ' disabled ';
         }
         $r[] = [array('head' => $script_transl["suggest_amm"] . ' %', 'class' => 'text-right bg-warning',
         'value' => $script_transl["suggest_amm"] . ' %'),
             array('head' => '%', 'class' => 'text-right numeric bg-warning',
-                'value' => '<input type="number" step="0.01" name="assets[' . $ka . '][valamm_suggest]" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
+                'value' => '<input ' . $disabl . ' type="number" step="0.01" name="assets[' . $ka . '][valamm_suggest]" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
             array('head' => $script_transl["fixed_val"], 'class' => 'text-right bg-warning',
                 'value' => ''),
             array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
             array('head' => $script_transl["cost_val"], 'class' => 'text-right numeric bg-warning',
-                'value' => '<input type="number" step="any" name="assets[' . $ka . '][cost_suggest]" value="' . $suggest[0] . '" maxlength="15" size="4" />'),
+                'value' => '<input ' . $disabl . ' type="number" step="any" name="assets[' . $ka . '][cost_suggest]" value="' . $suggest[0] . '" maxlength="15" size="4" />'),
             array('head' => $script_transl["noded_val"], 'class' => 'text-right numeric bg-warning',
-                'value' => '<input type="number" step="any" name="assets[' . $ka . '][noded_suggest]" value="' . $suggest[1] . '" maxlength="15" size="4" />'),
+                'value' => '<input ' . $disabl . ' type="number" step="any" name="assets[' . $ka . '][noded_suggest]" value="' . $suggest[1] . '" maxlength="15" size="4" />'),
             array('head' => '', 'class' => 'text-right bg-warning', 'value' => ''),
             array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
         ];
