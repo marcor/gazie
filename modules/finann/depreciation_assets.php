@@ -27,8 +27,8 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
 function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days = 365) {
-    if ($days>=360){ // ignoro i valori se maggiori o vicino ad un anno
-        $days=365;
+    if ($days >= 360) { // ignoro i valori se maggiori o vicino ad un anno
+        $days = 365;
     }
     $trunk = false;
     $vy = $fixed / 365 * $days;
@@ -84,7 +84,7 @@ function getAssets($date) {
 
             // trovo i giorni dall'ultimo ammortamento o acquisto
             $dateamm = new DateTime($date);
-            $rs_gglast = gaz_dbi_dyn_query("*", $gTables['tesmov'],"caucon = 'AMM'", 'datreg DESC',1);
+            $rs_gglast = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'AMM'", 'datreg DESC', 1);
             $r_gglast = gaz_dbi_fetch_array($rs_gglast);
             if ($r_gglast) {
                 // dall'ultimo ammortamento
@@ -151,7 +151,7 @@ function getAssets($date) {
     return $acc;
 }
 
-if (isset($_POST['ritorno'])) {
+if (isset($_POST['ritorno'])) { // accessi successivi
     $form['ritorno'] = filter_input(INPUT_POST, 'ritorno');
     $form['datreg'] = filter_input(INPUT_POST, 'datreg');
     if (!gaz_format_date($form["datreg"], 'chk')) {
@@ -217,9 +217,27 @@ if (isset($_POST['ritorno'])) {
     $form['datreg'] = filter_input(INPUT_POST, 'datreg');
 } else { // al primo accesso
     $form['ritorno'] = filter_input(INPUT_SERVER, 'HTTP_REFERER');
-    $dt = new DateTime();
-    $dt->modify('previous year');
-    $form['datreg'] = $dt->format('31/12/Y');
+    // consiglio una data
+    $rs_datlast = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'AMM'", 'datreg DESC', 1);
+    $r_datlast = gaz_dbi_fetch_array($rs_datlast);
+    $adesso = new DateTime();
+    if ($r_datlast) {
+        // data ultimo ammortamento
+        $datelast = new DateTime($r_datlast['datreg']);
+    } else {
+        // mai fatto ammortamenti
+        $msg['war'][] = 'noamm';
+        $datelast = new DateTime();
+        $datelast->modify('previous year');
+        $datelast->format('31/12/Y');
+    }
+    $interv = $adesso->diff($datelast);
+    if ($interv->days <= 365) {
+        $msg['err'][] = 'datreg';
+    }
+    $adesso->modify('previous year');
+    $adesso->modify('last day of december');
+    $form['datreg'] = $adesso->format('d-m-Y');
     $form['assets'] = getAssets(gaz_format_date($form['datreg'], true));
 }
 
@@ -239,6 +257,9 @@ $script_transl = HeadMain();
 $gForm = new GAzieForm();
 if (count($msg['err']) > 0) { // ho un errore
     $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+}
+if (count($msg['war']) > 0) { // ho un warning
+    $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
 }
 ?>
 <form class="form-horizontal" role="form" method="post" id="gaz-form" name="form">

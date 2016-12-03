@@ -232,9 +232,9 @@ $strScript = array("select_comiva.php" =>
     "report_assets.php" =>
     array('title' => 'Lista dei beni ammortizzabili',
         'descri' => 'Descizione del bene',
-        'clfoco'=>'Fornitore',
-        'amount'=>'Valore',
-        'valamm'=>'Ammort.'
+        'clfoco' => 'Fornitore',
+        'amount' => 'Valore',
+        'valamm' => 'Ammort.'
     ),
     "depreciation_assets.php" =>
     array('title' => 'Registrazione quote di ammortamento cespiti',
@@ -242,15 +242,16 @@ $strScript = array("select_comiva.php" =>
         'ammmin_ssd' => 'Sottospecie',
         'asset_des' => 'Descrizione bene',
         'movdes' => ' con Fat.',
-        'clfoco'=>' da ',
-        'fixed_val'=>'Immobilizzazione',
-        'found_val'=>'Fondo',
-        'cost_val'=>'Quota deducibile',
-        'noded_val'=>'Quota non deduc.',
-        'rest_val'=>'Residuo',
-        'lost_cost'=>'Amm.<50%',
-        'suggest_amm'=>'Proposta di ammortamento'
-        
+        'clfoco' => ' da ',
+        'fixed_val' => 'Immobilizzazione',
+        'found_val' => 'Fondo',
+        'cost_val' => 'Quota deducibile',
+        'noded_val' => 'Quota non deduc.',
+        'rest_val' => 'Residuo',
+        'lost_cost' => 'Amm.<50%',
+        'suggest_amm' => 'Proposta di ammortamento',
+        'err' => array('datreg' => 'A questa data non risultano ammortamenti da rilevare!'),
+        'war' => array('noamm' => 'Non risulta che siano mai stati eseguiti ammortamenti!')
     )
 );
 ?>
