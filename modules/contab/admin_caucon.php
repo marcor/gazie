@@ -93,6 +93,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
                        case "APE":
                          $msg .= "5+";
                        break;
+                       case "AMM":
+                         $msg .= "6+";
+                       break;
                 }
          } else {
            $msg .= "0+";

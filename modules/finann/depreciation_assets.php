@@ -27,6 +27,9 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
 function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days = 365) {
+    if ($days>=360){ // ignoro i valori se maggiori o vicino ad un anno
+        $days=365;
+    }
     $trunk = false;
     $vy = $fixed / 365 * $days;
     $vy = $vy * $valamm / 100;
@@ -73,12 +76,25 @@ function getAssets($date) {
             $acc[$row['acc_fixed_assets']][1]['found_tot'] = 0;
             $acc[$row['acc_fixed_assets']][1]['cost_tot'] = 0;
             $acc[$row['acc_fixed_assets']][1]['noded_tot'] = 0;
-            // e i subtotali
+            // i subtotali
             $acc[$row['acc_fixed_assets']][1]['fixed_subtot'] = $f['import'];
             $acc[$row['acc_fixed_assets']][1]['found_subtot'] = 0;
             $acc[$row['acc_fixed_assets']][1]['cost_subtot'] = 0;
             $acc[$row['acc_fixed_assets']][1]['noded_subtot'] = 0;
 
+            // trovo i giorni dall'ultimo ammortamento o acquisto
+            $dateamm = new DateTime($date);
+            $rs_gglast = gaz_dbi_dyn_query("*", $gTables['tesmov'],"caucon = 'AMM'", 'datreg DESC',1);
+            $r_gglast = gaz_dbi_fetch_array($rs_gglast);
+            if ($r_gglast) {
+                // dall'ultimo ammortamento
+                $datelast = new DateTime($r_gglast['datreg']);
+            } else {
+                // dall'acquisto
+                $datelast = new DateTime($row['dtrtes']);
+            }
+            $ddays = $dateamm->diff($datelast);
+            $acc[$row['acc_fixed_assets']][1]['gglast'] = $ddays->days;
             // ricavo il gruppo e la specie dalla tabella ammortamenti ministeriali 
             $xml = simplexml_load_file('../../library/include/ammortamenti_ministeriali.xml') or die("Error: Cannot create object");
             preg_match("/^([0-9 ]+)([a-zA-Z ]+)$/", $admin_aziend['amm_min'], $m);
@@ -157,7 +173,7 @@ if (isset($_POST['ritorno'])) {
                 if ($ctrl_first) {
                     // inserisco la testata del movimento contabile unica per tutti i righi
                     $form['caucon'] = 'AMM';
-                    $form['descri'] = 'RILEVATE QUOTE AMMORTAMENTO ANNO ' . substr($form['datreg'], 0, 4) . ')';
+                    $form['descri'] = 'RILEVATE QUOTE AMMORTAMENTO ANNO ' . substr($form['datreg'], 0, 4);
                     gaz_dbi_table_insert('tesmov', $form);
                     $id_tesmov = gaz_dbi_last_id();
                     $form['id_tes'] = $id_tesmov;
@@ -271,7 +287,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 ];
             } else {
                 $r[] = [array('head' => $script_transl["asset_des"], 'class' => '',
-                'value' => $v['descri'] . $script_transl["clfoco"] . $v["desfor"]),
+                'value' => $v['descri']),
                     array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
                     array('head' => $script_transl["fixed_val"], 'class' => 'text-right',
                         'value' => gaz_format_number($v['fixed_subtot'])),
@@ -285,7 +301,7 @@ if (count($msg['err']) > 0) { // ho un errore
         }
         // questo è il rigo di input alla fine della tabella di ogni cespite
         // calcolo una proposta d'ammortamento
-        $suggest = suggestAmm($v['fixed_subtot'], $v['found_subtot'], $va[1]['valamm'], $va[1]['no_deduct_cost_rate']);
+        $suggest = suggestAmm($v['fixed_subtot'], $v['found_subtot'], $va[1]['valamm'], $va[1]['no_deduct_cost_rate'], $va[1]['gglast']);
         $disabl = '';
         if ($suggest[2]) {
             // se è stata troncata la percentuale...

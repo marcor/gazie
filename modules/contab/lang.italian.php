@@ -117,7 +117,8 @@ $strScript = array("select_liqiva.php" =>
             'Codice esistente usare l\'apposita procedura se lo si vuole modificare!',
             'Si deve definire almeno un conto!',
             'Codice riservato alla CHIUSURA AUTOMATICA CONTI!',
-            'Codice riservato alla APERTURA AUTOMATICA CONTI!'
+            'Codice riservato alla APERTURA AUTOMATICA CONTI!',
+            'Codice riservato al RILEVAMENTO AMMORTAMENTI DI FINE ANNO!'
         ),
         'head' => 'Conti da movimentare ',
         'codice' => 'Codice causale *',
