@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
-function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days = 365) {
+function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days) {
     if ($days >= 360) { // ignoro i valori se maggiori o vicino ad un anno
         $days = 365;
     }
@@ -56,8 +56,8 @@ function getAssets($date) {
     $from = $gTables['assets'] . ' AS assets ' .
             'LEFT JOIN ' . $gTables['tesmov'] . ' AS tesmov ON assets.id_movcon=tesmov.id_tes ' .
             'LEFT JOIN ' . $gTables['clfoco'] . ' AS fornit ON tesmov.clfoco=fornit.codice ';
-    $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.numdoc AS nudtes, tesmov.datdoc AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
-    $where = " datreg <= '" . $date . "'";
+    $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.numdoc AS nudtes, tesmov.datreg AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
+    $where = " datreg < '" . $date . "'";
     $orderby = "acc_fixed_assets ASC, datreg ASC, type_mov ASC, id ASC";
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
     $acc = array();
@@ -169,10 +169,10 @@ if (isset($_POST['ritorno'])) { // accessi successivi
     if (isset($_POST['assets']) && count($form['assets']) > 0) {
         $ctrl_first = true;
         foreach ($_POST['assets'] as $k => $v) {
-            $form['assets'][$k]['cost_suggest'] = floatval($v['cost_suggest']);
-            $form['assets'][$k]['noded_suggest'] = floatval($v['noded_suggest']);
-            $form['assets'][$k]['valamm_suggest'] = floatval($v['valamm_suggest']);
             if (isset($_POST['insert'])) {
+                $form['assets'][$k]['cost_suggest'] = floatval($v['cost_suggest']);
+                $form['assets'][$k]['noded_suggest'] = floatval($v['noded_suggest']);
+                $form['assets'][$k]['valamm_suggest'] = floatval($v['valamm_suggest']);
                 if ($ctrl_first) {
                     // inserisco la testata del movimento contabile unica per tutti i righi
                     $form['caucon'] = 'AMM';
@@ -221,7 +221,7 @@ if (isset($_POST['ritorno'])) { // accessi successivi
 } else { // al primo accesso
     $form['ritorno'] = filter_input(INPUT_SERVER, 'HTTP_REFERER');
     // consiglio una data
-    $rs_datlast = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'AMM'", 'datreg DESC', 1);
+    $rs_datlast = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'AMM'", 'datreg DESC', 0, 1);
     $r_datlast = gaz_dbi_fetch_array($rs_datlast);
     $adesso = new DateTime();
     if ($r_datlast) {
@@ -311,7 +311,7 @@ if (count($msg['war']) > 0) { // ho un warning
                 ];
             } else {
                 $r[] = [array('head' => $script_transl["asset_des"], 'class' => '',
-                'value' => $v['descri']),
+                'value' => gaz_format_date($v['dtdtes']) . ' ' . $v['descri']),
                     array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
                     array('head' => $script_transl["fixed_val"], 'class' => 'text-right',
                         'value' => gaz_format_number($v['fixed_subtot'])),
@@ -330,28 +330,51 @@ if (count($msg['war']) > 0) { // ho un warning
         if ($suggest[2]) {
             // se è stata troncata la percentuale...
             $v['valamm'] = $suggest[2];
-        } elseif ($suggest[0] < 0.01) {
+        } elseif ($suggest[0] < 0.01 ) {
             $v['valamm'] = 0.00;
             $disabl = ' disabled ';
+            $script_transl["suggest_amm"] = $script_transl["no_suggest_amm"];
         } else {
             $v['valamm'] = $va[1]['valamm'];
         }
-        $r[] = [array('head' => $script_transl["suggest_amm"] . ' %', 'class' => 'text-right bg-warning',
-        'value' => $script_transl["suggest_amm"] . ' %'),
-            array('head' => '%', 'class' => 'text-right numeric bg-warning',
-                'value' => '<input ' . $disabl . ' type="number" step="0.01" max="'.$va[1]['valamm'].'" min="0" name="assets[' . $ka . '][valamm_suggest]" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
-            array('head' => $script_transl["fixed_val"], 'class' => 'text-right bg-warning',
-                'value' => ''),
-            array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
-            array('head' => $script_transl["cost_val"], 'class' => 'text-right numeric bg-warning',
-                'value' => '<input ' . $disabl . ' type="number" step="0.01" min="0" name="assets[' . $ka . '][cost_suggest]" value="' . $suggest[0] . '" maxlength="15" size="4" />'),
-            array('head' => $script_transl["noded_val"], 'class' => 'text-right numeric bg-warning',
-                'value' => '<input ' . $disabl . ' type="number" step="0.01" min="0" name="assets[' . $ka . '][noded_suggest]" value="' . $suggest[1] . '" maxlength="15" size="4" />'),
-            array('head' => '', 'class' => 'text-right bg-warning', 'value' => ''),
-            array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
-        ];
-        // fine rigo proposta ammortamento
-
+        // ma prima controllo se ho fatto ammortamenti successivi a questa data
+        // consiglio una data
+        $rs_amm = gaz_dbi_dyn_query("*", $gTables['rigmoc'] . ' AS rig LEFT JOIN ' .
+                $gTables['tesmov'] . ' AS tes ON rig.id_tes=tes.id_tes ', "tes.caucon = 'AMM' AND tes.datreg >='" . gaz_format_date($form['datreg'], true) . "' AND rig.codcon=" . $va[1]['acc_found_assets'], 'datreg DESC', 0);
+        $r_amm = gaz_dbi_fetch_array($rs_amm);
+        if ($r_amm) {
+            // ho degli ammortamenti successivi, non posso farne altri
+            $r[] = [array('head' => $script_transl["err"]['ammsuc'], 'class' => 'bg-danger',
+            'value' => $script_transl["err"]['ammsuc']),
+                array('head' => '', 'class' => 'text-right numeric bg-warning',
+                    'value' => ''),
+                array('head' => '', 'class' => 'text-right bg-warning',
+                    'value' => ''),
+                array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
+                array('head' => '', 'class' => 'text-right numeric bg-warning',
+                    'value' => ''),
+                array('head' => '', 'class' => 'text-right numeric bg-warning',
+                    'value' => ''),
+                array('head' => '', 'class' => 'text-right bg-warning', 'value' => ''),
+                array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
+            ];
+        } else {
+            // rigo proposta ammortamento
+            $r[] = [array('head' => $script_transl["suggest_amm"] . ' %', 'class' => 'text-right bg-warning',
+            'value' => $script_transl["suggest_amm"] . ' %'),
+                array('head' => '%', 'class' => 'text-right numeric bg-warning',
+                    'value' => '<input ' . $disabl . ' type="number" step="0.01" max="' . $va[1]['valamm'] . '" min="0" name="assets[' . $ka . '][valamm_suggest]" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
+                array('head' => $script_transl["fixed_val"], 'class' => 'text-right bg-warning',
+                    'value' => ''),
+                array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
+                array('head' => $script_transl["cost_val"], 'class' => 'text-right numeric bg-warning',
+                    'value' => '<input ' . $disabl . ' type="number" step="0.01" min="0" name="assets[' . $ka . '][cost_suggest]" value="' . $suggest[0] . '" maxlength="15" size="4" />'),
+                array('head' => $script_transl["noded_val"], 'class' => 'text-right numeric bg-warning',
+                    'value' => '<input ' . $disabl . ' type="number" step="0.01" min="0" name="assets[' . $ka . '][noded_suggest]" value="' . $suggest[1] . '" maxlength="15" size="4" />'),
+                array('head' => '', 'class' => 'text-right bg-warning', 'value' => ''),
+                array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
+            ];
+        }
         $gForm->gazResponsiveTable($r, 'gaz-responsive-table');
     }
     if ($head) {

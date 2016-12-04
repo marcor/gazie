@@ -231,6 +231,7 @@ $strScript = array("select_comiva.php" =>
     ),
     "report_assets.php" =>
     array('title' => 'Lista dei beni ammortizzabili',
+        'datreg' => 'Data di acquisto',
         'descri' => 'Descizione del bene',
         'clfoco' => 'Fornitore',
         'amount' => 'Valore',
@@ -250,8 +251,10 @@ $strScript = array("select_comiva.php" =>
         'rest_val' => 'Residuo',
         'lost_cost' => 'Amm.<50%',
         'suggest_amm' => 'Proposta di ammortamento',
-        'err' => array('datreg' => 'A questa data non risultano ammortamenti da rilevare!'),
-        'war' => array('noamm' => 'Non risulta che siano mai stati eseguiti ammortamenti!')
+        'no_suggest_amm' => 'Ammortamento completato',
+        'err' => array('datreg' => 'A questa data non risultano ammortamenti da rilevare!',
+            'ammsuc' => 'Per questo bene sono già stati eseguiti ammortamenti pari o successivi a questa data!'),
+        'war' => array('noamm' => 'Non risulta che siano mai stati eseguiti ammortamenti a questa data!')
     )
 );
 ?>

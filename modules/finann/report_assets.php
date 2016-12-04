@@ -70,6 +70,9 @@ $script_transl = HeadMain();
                         ID
                     </th>
                     <th>
+                        <?php echo $script_transl["datreg"]; ?>
+                    </th>
+                    <th>
                         <?php echo $script_transl["descri"]; ?>
                     </th>
                     <th>
