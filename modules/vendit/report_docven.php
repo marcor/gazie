@@ -197,7 +197,11 @@ switch ($admin_aziend['fatimm']) {
         <p class="ui-state-highlight" id="report1"></p>
     </div>
 
-    <div align="center"><font class="FacetFormHeaderFont">Documenti di vendita della sezione
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title">Documenti di vendita della sezione
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
             for ($sez = 1; $sez <= 3; $sez++) {
@@ -208,23 +212,20 @@ switch ($admin_aziend['fatimm']) {
                 echo "<option value=\"" . $sez . "\"" . $selected . ">" . $sez . "</option>";
             }
             ?>
-        </select></font></div>
-    <?php
-    if (!isset($_GET['field']) or ( $_GET['field'] == 2) or ( empty($_GET['field'])))
-        $orderby = "datfat desc, protoc desc";
-    list($usec, $sec) = explode(' ', microtime());
-    $querytime = ((float) $usec + (float) $sec);
-    $querytime_before = $querytime;
-    $recordnav = new recordnav($gTables['tesdoc'] . ' LEFT JOIN ' . $gTables['clfoco'] . ' on ' . $gTables['tesdoc'] . '.clfoco = ' . $gTables['clfoco'] . '.codice', $where, $limit, $passo);
-    $recordnav->output();
-    ?>
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                <div class="box-header">
-                    <h3 class="box-title"><?php echo $script_transl['title']; ?></h3>
+        </select></h3>
+                    <div class="box-tools">
+                        <?php
+                            if (!isset($_GET['field']) or ( $_GET['field'] == 2) or ( empty($_GET['field'])))
+                                $orderby = "datfat desc, protoc desc";
+                            list ($usec, $sec) = explode(' ', microtime());
+                            $querytime = ((float) $usec + (float) $sec);
+                            $querytime_before = $querytime;
+                            $recordnav = new recordnav($gTables['tesdoc'] . ' LEFT JOIN ' . $gTables['clfoco'] . ' on ' . $gTables['tesdoc'] . '.clfoco = ' . $gTables['clfoco'] . '.codice', $where, $limit, $passo);
+                            $recordnav->output();
+                        ?>
+                    </div>
                 </div>
-                <div class="box-body">
+                <div class="box-body table-responsive">
 
     <table class="table table-bordered table-hover">
         <tr>

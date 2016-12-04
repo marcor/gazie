@@ -81,7 +81,8 @@ if (isset($_GET['all'])) {
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav->output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="box-primary table-responsive">
+<table class="Tlarge table table-striped table-bordered table-hover">
     <tr>
         <td class="FacetFieldCaptionTD" colspan="1">
 <?php gaz_flt_disp_int("id_tes", "Numero Id"); ?>
@@ -99,6 +100,9 @@ $recordnav->output();
         <td class="FacetFieldCaptionTD" colspan="1">
         </td>
         <td class="FacetFieldCaptionTD" colspan="1">
+        </td>
+        <td class="FacetFieldCaptionTD" colspan="1">
+            <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
         </td>
         <td class="FacetFieldCaptionTD" colspan="1">
             <input type="submit" class="btn btn-default btn-sm" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
@@ -242,6 +246,7 @@ $linkHeaders->output();
         ?>
 </form>
 </table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

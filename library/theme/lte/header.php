@@ -450,16 +450,16 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         if ( $i==0 ) {
             echo "<li class=\"treeview\">";
             echo "  <a href=\"".$link['link']."\">";
-            echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\" />";
-            //echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>";
+            //echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\" />";
+            echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>";
             echo "      <span>".$link['name']."</span>";
             echo "        <i class=\"fa fa-angle-left pull-right\"></i>";
             echo "  </a>";
         } else {
             echo "<li class=\"treeview\">\n";
             echo "  <a href=\"". $link['link'] ."\">\n";
-            echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
-            //echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>\n";
+            //echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
+            echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>\n";
             echo "      <span>". $link['name'] ."</span>\n";
             echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
             echo "  </a>\n";
@@ -477,8 +477,14 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
       <section class="content-header">
          <h1>
             <?php 
+                // cerco di individuare il titolo della pagina dalla tabella menu_usage
                 if ( $scriptname != 'admin.php') {
-                $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND link="'.$mod_uri.'" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);   
+                    if( strpos ($mod_uri, "?") > 0 )
+                        $part_mod_uri = substr($mod_uri, 0, strpos( $mod_uri, "&" ));
+                    else 
+                        $part_mod_uri = $mod_uri;
+                    //echo $part_mod_uri."<br>".$mod_uri."<br>";
+                $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND link="'.$part_mod_uri.'" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);   
                 if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {
                     $rref = explode('-', $r['transl_ref']);
