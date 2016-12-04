@@ -218,7 +218,15 @@ switch ($admin_aziend['fatimm']) {
     $recordnav = new recordnav($gTables['tesdoc'] . ' LEFT JOIN ' . $gTables['clfoco'] . ' on ' . $gTables['tesdoc'] . '.clfoco = ' . $gTables['clfoco'] . '.codice', $where, $limit, $passo);
     $recordnav->output();
     ?>
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box box-primary">
+                <div class="box-header">
+                    <h3 class="box-title"><?php echo $script_transl['title']; ?></h3>
+                </div>
+                <div class="box-body">
+
+    <table class="table table-bordered table-hover">
         <tr>
             <td class="FacetFieldCaptionTD">
 <?php gaz_flt_disp_int("protoc", "Numero Prot."); ?>
@@ -452,6 +460,11 @@ switch ($admin_aziend['fatimm']) {
         ?>
     </table>
 </form>
+</div>
+</div>
+    </div>
+</div>
+    
 <?php
 require("../../library/include/footer.php");
 ?>

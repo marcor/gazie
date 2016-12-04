@@ -23,9 +23,10 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-global $admin_aziend;
+global $admin_aziend, $script_transl;
 ?>
 </div>
+</section>
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
           <b>Version</b> <?php echo $versSw; ?>
@@ -212,9 +213,9 @@ global $admin_aziend;
     <!-- Bootstrap 3.3.5 -->
     <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
     <!-- Slimscroll -->
-    <script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <!--<script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
-    <script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
+    <!--<script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
     <!-- AdminLTE App -->
     <script src="../../library/theme/lte/adminlte/dist/js/app.js"></script>
     <!-- AdminLTE for demo purposes -->

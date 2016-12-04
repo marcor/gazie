@@ -29,7 +29,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 $config = new Config;
 
 if (file_exists( "../../library/theme/".$config->getValue('theme')."/footer.php")) {
-   include "../../library/theme/".$config->getValue('theme')."/footer.php";
+    include "../../library/theme/".$config->getValue('theme')."/footer.php";
 } else {
    include "../../library/theme/g7/footer.php";
 }

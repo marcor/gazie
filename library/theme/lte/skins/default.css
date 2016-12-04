@@ -1,3 +1,8 @@
 body {
     background-image : url("../../../../library/images/sfondo.png");
 }
+
+.FacetFieldCaptionTD {
+    background-color: #3c8dbc;
+    color: #000;
+}

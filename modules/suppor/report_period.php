@@ -120,13 +120,22 @@ if ( isset( $_GET['idinstallazione']) ) {
 }
 
 ?>
-<div align="center" class="FacetFormHeaderFont"><?php echo $title; ?></div>
+<div class="row">
+<div class="FacetFormHeaderFont col-xs-12">
 	<form method="GET">
 	<!-- riga filtro -->
-	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+
+        <!--<div class="box">
+            <div class="box-header">
+                <h3 class="box-title"><?php echo $title; ?></h3>
+            </div>
+            <div class="box-body">-->
+        
+        
+	<table class="table table-bordered table-striped table-responsive">
 		<tr>
 		<td class="FacetFieldCaptionTD">
-         <?php gaz_flt_disp_int("id", "Numero"); ?>
+                        <?php gaz_flt_disp_int("id", "Numero"); ?>
 		</td>
 		<td class="FacetFieldCaptionTD">
 			<?php gaz_flt_disp_select("data", "YEAR(data) as data", $gTables["assist"], "9999", $orderby); ?>
@@ -276,7 +285,12 @@ $passi = array(20, 50, 100, 10000 );
 		</select>
 	</td>
 </tr>
-</table>
+            </table>
+                </div>
+        </div>
+<!--</div>
+</div>-->
+
 </form>
 <?php
 require("../../library/include/footer.php");

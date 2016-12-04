@@ -1,4 +1,4 @@
-<?php
+<?php  
     if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
         $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
     }
@@ -8,7 +8,77 @@
     if (isset($_POST['logout'])) {
         header("Location: logout.php");
         exit;
-    }   
+    }
+    
+    function get_transl_referer($rlink) {
+            global $gTables;
+            $clink = explode('/', $rlink);
+            $n1 = gaz_dbi_get_row($gTables['module'], 'link', end($clink));
+            if ($n1) {
+                include "../../modules/" . $clink[1] . "/menu.italian.php";
+                return $clink[1] . '-m1-' . $n1['id'];
+            } else {
+                $n2 = gaz_dbi_get_row($gTables['menu_module'], 'link', end($clink));
+                if ($n2) {
+                    include "../../modules/" . $clink[1] . "/menu.italian.php";
+                    return $clink[1] . '-m2-' . $n2['translate_key'];
+                } else {
+                    $n3 = gaz_dbi_get_row($gTables['menu_script'], 'link', end($clink));
+                    if ($n3) {
+                        include "../../modules/" . $clink[1] . "/menu.italian.php";
+                        return $clink[1] . '-m3-' . $n3['translate_key'];
+                    } else { // non l'ho trovato neanche nel m3, provo sui file di traduzione
+                        include "../../modules/" . $clink[1] . "/lang.italian.php";
+                        // tento di risalire allo script giusto
+                        $n_scr = explode('?', end($clink));
+                        if (isset($strScript[$n_scr[0]])) { // ho trovato una traduzione per lo script
+                            if (isset($strScript[$n_scr[0]]['title'])) { // ho trovato una traduzione per lo script con index specifico
+                                if (is_array($strScript[$n_scr[0]]['title'])) {
+                                    return $clink[1] . '-sc-' . $n_scr[0] . '-title-' . array_shift(array_slice($strScript[$n_scr[0]]['title'], 0, 1));
+                                } else {
+                                    return $clink[1] . '-sc-' . $n_scr[0] . '-title';
+                                }
+                            } elseif (isset($strScript[$n_scr[0]][0])) { // ho trovato una traduzione per lo script nel primo elemento
+                                if (is_array($strScript[$n_scr[0]][0])) {
+                                    return $clink[1] . '-sc-' . $n_scr[0] . '-0-' . array_shift(array_slice($strScript[$n_scr[0]][0], 0, 1));
+                                } else {
+                                    return $clink[1] . '-sc-' . $n_scr[0] . '-0';
+                                }
+                            } else { // non ho trovato nulla nemmeno sui file tipo lang.english.php
+                                return $clink[1] . '-none-script';
+                            }
+                        } else { // non c'è traduzione per questo script 
+                            return $clink[1] . '-none-script_menu';
+                        }
+                    }
+                }
+            }
+    }
+      
+    function pastelColors() {
+        $r = dechex(round(((float) rand() / (float) getrandmax()) * 127) + 127);
+        $g = dechex(round(((float) rand() / (float) getrandmax()) * 127) + 127);
+        $b = dechex(round(((float) rand() / (float) getrandmax()) * 127) + 127);
+        return $r . $g . $b;
+    }
+
+    if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le statistiche solo in caso di cambio script
+        $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
+        $value = array();
+        if (gaz_dbi_num_rows($result) == 0) {
+            $value['transl_ref'] = get_transl_referer($mod_uri);
+            $value['adminid'] = $admin_aziend['Login'];
+            $value['company_id'] = $admin_aziend['company_id'];
+            $value['link'] = $mod_uri;
+            $value['click'] = 1;
+            $value['color'] = pastelColors();
+            $value['last_use'] = date('Y-m-d H:i:s');
+            gaz_dbi_table_insert('menu_usage', $value);
+        } else {
+            $usage = gaz_dbi_fetch_array($result);
+            gaz_dbi_put_query($gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '"', 'click', $usage['click'] + 1);
+        }
+    }
 ?>
 <!DOCTYPE html>
 <html>
@@ -83,7 +153,7 @@
     if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {
                     $rref = explode('-', $r['transl_ref']);
-
+                    
                     switch ($rref[1]) {
                         case 'm1':
                             require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
@@ -191,6 +261,7 @@
             <?php
             }
         }
+        
         ?>
                 </ul>
               </li>
@@ -271,7 +342,7 @@
 <?php
 
 function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $cssArray = '') {
-    global $module, $admin_aziend, $radix, $scriptname;
+    global $module, $admin_aziend, $radix, $scriptname, $gTables, $mod_uri;
     if (is_array($jsArray)) {
         foreach ($jsArray as $v) {
             echo '			<script type="text/javascript" src="../../js/' . $v . '.js"></script>';
@@ -407,9 +478,39 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
     <div class="content-wrapper">
       <section class="content-header">
          <h1>
-         <!--TITOLO<?php echo $script_transl['title']; ?>-->
+            <?php 
+                $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND link="'.$mod_uri.'" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);   
+                if (gaz_dbi_num_rows($result) > 0) {
+                while ($r = gaz_dbi_fetch_array($result)) {
+                    $rref = explode('-', $r['transl_ref']);
+                    
+                    switch ($rref[1]) {
+                        case 'm1':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['title'];
+                            break;
+                        case 'm2':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
+                            break;
+                        case 'm3':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
+                            break;
+                        case 'sc':
+                            require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $strScript[$rref[2]][$rref[3]];
+                            break;
+                        default:
+                            $rref_name = 'Nome script non trovato';
+                            break;
+                    }
+                }
+                }
+                echo $rref_name; 
+            ?>
          </h1>
-         <ol class="breadcrumb">
+         
          <?php
             global $gTables;
             $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
@@ -423,13 +524,17 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $riga = gaz_dbi_fetch_array($result);
             if ( $riga["id"]!="" ) {
                 $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
+                echo "<ol class=\"breadcrumb\">";
+                echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
                 while ($r = gaz_dbi_fetch_array($result2)) {
                     echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
                 }
+                echo "</ol>";
             }
          ?>
-         </ol>
+         
       </section>
+        <section class="content">
 
 <?php
     }
@@ -500,4 +605,5 @@ function submenu($array, $index, $sub="") {
         echo "    </ul>";
     }
 }
+
 ?>

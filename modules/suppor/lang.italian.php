@@ -54,7 +54,8 @@ $strScript = array(
 		'note' => "Note (non verranno stampate)"
     ),
 	"admin_period.php" =>
-	array (	'upd_this' 	=> 'Aggiorna l\'assistenza periodica',
+	array (	'title' => '', 'Gestione Ricorrenze',
+      'upd_this' 	=> 'Aggiorna l\'assistenza periodica',
 			'codice'	=> 'Codice assistenza',
 			'cliente'	=> 'Cliente',
 			'mesg' 		=> array(	'La ricerca non ha dato risultati!',
@@ -81,8 +82,7 @@ $strScript = array(
         ),
 	),
    "report_period.php" =>
-   array ( 'title' => 'Scadenza periodica'
-   ),
+   array ( 'title' => 'Scadenza periodica' ),
    "admin_install.php" =>
 	array (	'upd_this' 	=> 'Aggiorna l\'installazione',
 			'codice'	=> 'Codice installazione',
