@@ -118,7 +118,6 @@
   <body class="sidebar-collapse hold-transition skin-blue sidebar-mini">
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
     <div class="wrapper">
-
       <header class="main-header">
         <!-- Logo -->
         <a href="../../modules/root/admin.php" class="logo">
@@ -132,11 +131,9 @@
           <!-- Sidebar toggle button-->
           <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
             <span class="sr-only">Toggle navigation</span>
-          </a>
-      
+          </a>    
           <div class="navbar-custom-menu">
-            <ul class="nav navbar-nav">   
-                
+            <ul class="nav navbar-nav">     
           <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
@@ -479,6 +476,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
       <section class="content-header">
          <h1>
             <?php 
+                if ( $scriptname != 'admin.php') {
                 $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND link="'.$mod_uri.'" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);   
                 if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {
@@ -507,7 +505,8 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                     }
                 }
                 }
-                echo $rref_name; 
+                if ( isset($rref_name) ) echo $rref_name; 
+                }
             ?>
          </h1>
          

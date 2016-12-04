@@ -23,7 +23,14 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-global $admin_aziend, $script_transl;
+global $admin_aziend;
+
+require("../../modules/root/lang.".$admin_aziend['lang'].".php");
+/*echo "<pre>";
+print_r( $strScript );
+echo "<br>";
+print_r ( $strScript['admin.php'] );
+echo "</pre>";*/
 ?>
 </div>
 </section>
@@ -32,8 +39,8 @@ global $admin_aziend, $script_transl;
           <b>Version</b> <?php echo $versSw; ?>
         </div>
         <!--<strong>-->
-        <b>GA</b>zie Version: <?php echo $versSw; ?> Software Open Source (lic. GPL) <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?>
-        <a  target="_new" title="<?php echo $script_transl['auth']; ?>" href="http://http://www.devincentiis.it">http://www.devincentiis.it</a>
+        <b>GA</b>zie Version: <?php echo $versSw; ?> Software Open Source (lic. GPL) <?php echo $strScript['admin.php']['business'] . " " . $strScript['admin.php']['proj']; ?>
+        <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="http://http://www.devincentiis.it">http://www.devincentiis.it</a>
     </footer>
       
     <!-- Control Sidebar -->

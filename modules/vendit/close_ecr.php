@@ -321,6 +321,7 @@ if (isset($_POST['submit'])) {
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0);
+echo "<div>";
 echo "<form method=\"POST\" name=\"accounting\">\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title1'].$ecr['descri'].$script_transl['title2']."</div>\n";
@@ -364,6 +365,8 @@ if (count($rs['all']) > 0) {
    echo "\t </tr>\n";
 }
 ?>
+</table>
+</div>
 </form>
 <?php
 require("../../library/include/footer.php");
