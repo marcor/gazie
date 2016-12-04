@@ -126,14 +126,18 @@ $script_transl=HeadMain('','','admin_movcon');
 	  <input type="text" placeholder="Movimento" class="input-xs form-control" name="mov"
 	  value="<?php if (isset($numero)) echo $numero; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
 </td>
-<td></td>
+<td class="FacetFieldCaptionTD"></td>
 <td align="right" class="FacetFieldCaptionTD">
 <input type="text" placeholder="<?php echo $script_transl['caucon']; ?>" class="input-xs form-control" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 </td>
-<td>
+<td class="FacetFieldCaptionTD"></td>
+<td class="FacetFieldCaptionTD"></td>
+<td class="FacetFieldCaptionTD"></td>
+<td class="FacetFieldCaptionTD"></td>
+<td class="FacetFieldCaptionTD">
 <input type="submit" name="search" class="btn btn-xs btn-default" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
-<td>
+<td class="FacetFieldCaptionTD">
 <input type="submit" name="all" class="btn btn-xs btn-default" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>

@@ -292,7 +292,7 @@
                      </a>
                     </div>
                     <div class="col-xs-8 text-center" align="center">
-                      <a href="../../modules/root/cambia_azien.php"><?php echo $admin_aziend['ragso1']."<br>".$admin_aziend['ragso2']; ?></a> 
+                      <a href="../../modules/root/admin.php"><?php echo $admin_aziend['ragso1']."<br>".$admin_aziend['ragso2']; ?></a> 
                       <?php //selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']); ?>
                     </div>
                     <!--<div class="col-xs-4 text-center">
@@ -450,15 +450,16 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         if ( $i==0 ) {
             echo "<li class=\"treeview\">";
             echo "  <a href=\"".$link['link']."\">";
-            //echo "    <i class=\"".$link['icon']."\"></i>";
-            echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>";
+            echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\" />";
+            //echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>";
             echo "      <span>".$link['name']."</span>";
             echo "        <i class=\"fa fa-angle-left pull-right\"></i>";
             echo "  </a>";
         } else {
             echo "<li class=\"treeview\">\n";
             echo "  <a href=\"". $link['link'] ."\">\n";
-            echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>\n";
+            echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
+            //echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>\n";
             echo "      <span>". $link['name'] ."</span>\n";
             echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
             echo "  </a>\n";
@@ -506,6 +507,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 }
                 }
                 if ( isset($rref_name) ) echo $rref_name; 
+                else echo "&nbsp;";
                 }
             ?>
          </h1>

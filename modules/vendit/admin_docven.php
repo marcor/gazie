@@ -1644,7 +1644,7 @@ if ($form['tipdoc'] == "DDT") {
 // raggruppamento bolle
    echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['ragbol_title'] . "\">" . $script_transl['ragbol'] . "</td>\n";
 //echo "<td class=\"FacetDataTD\" title=\"" . $script_transl['ragbol_title'] . "\"><input type=\"text\" value=\"" . $form['ragbol'] . "\" name=\"ragbol\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
-   echo "<td class=\"FacetFieldCaptionTD\">";
+   echo "<td class=\"FacetDataTD\">";
    $gForm->variousSelect('ragbol', $script_transl['ragbol_value'], $form['ragbol']);
    echo "</td>";
 // data ordine
