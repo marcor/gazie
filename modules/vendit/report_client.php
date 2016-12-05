@@ -77,7 +77,8 @@ if (isset($_GET['ricerca_completa'])) {
 ?>
 <div align="center" class="FacetFormHeaderFont">Clienti</div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    <div class="box-primary table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("codice", "Codice cli."); ?>
@@ -196,6 +197,7 @@ if (isset($_GET['ricerca_completa'])) {
         ?>
 </form>
 </table>
+    </div>
 <?php
 require("../../library/include/footer.php");
 ?>

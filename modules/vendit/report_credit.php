@@ -162,7 +162,8 @@ echo "<input type=\"submit\" name=\"stampa\" value=\"STAMPA !\">&nbsp;";
 </table>
 </form>
 <br />
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="box-primary table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 <?php
 echo '<tr><td colspan=4>La query ha impiegato '.number_format($querytime,4,'.','').' sec.</td></tr><tr>';
 // creo l'array (header => campi) per l'ordinamento dei record
@@ -212,6 +213,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
 echo "<tr><td colspan=\"6\"></td><td class='FacetDataTD' style='border: 2px solid #666; text-align: center;'>".gaz_format_number($tot)."</td><td></td><td></td></tr>\n";
 ?>
 </table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

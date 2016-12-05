@@ -311,9 +311,13 @@
                 </ul>
               </li>
               <!-- Control Sidebar Toggle Button -->
-              <li>
-                <a href="#" data-toggle="control-sidebar"><i class="fa fa-gears"></i></a>
-              </li>
+              <?php if ( $admin_aziend['Abilit']==9) {
+                  echo "<li><a href=\"#\" data-toggle=\"control-sidebar\"><i class=\"fa fa-gears\"></i></a></li>";
+              } else {
+                  echo "<li></li>";
+              }
+              ?>
+              
             </ul>
           </div>
         </nav>
@@ -446,12 +450,13 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
     
     $i = 0;
     $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400" );   
+    $icons = array ("fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle");
     foreach ($menuArray as $link) {
         if ( $i==0 ) {
             echo "<li class=\"treeview\">";
             echo "  <a href=\"".$link['link']."\">";
             //echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\" />";
-            echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>";
+            echo "    <i style=\"color:".$colors[$i]."\" class=\"".$icons[$i]."\"></i>";
             echo "      <span>".$link['name']."</span>";
             echo "        <i class=\"fa fa-angle-left pull-right\"></i>";
             echo "  </a>";
@@ -459,7 +464,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "<li class=\"treeview\">\n";
             echo "  <a href=\"". $link['link'] ."\">\n";
             //echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
-            echo "    <i style=\"color:".$colors[$i]."\" class=\"fa fa-circle-o\"></i>\n";
+            echo "    <i style=\"color:".$colors[$i]."\" class=\"".$icons[$i]."\"></i>\n";
             echo "      <span>". $link['name'] ."</span>\n";
             echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
             echo "  </a>\n";

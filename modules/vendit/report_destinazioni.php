@@ -77,20 +77,23 @@ if (isset($_GET['ricerca_completa'])) {
 ?>
 <div align="center" class="FacetFormHeaderFont">Indirizzi di Destinazione</div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    <div class="box-primary table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
-            <td class="FacetFieldCaptionTD">
+            <th class="FacetFieldCaptionTD">
                 <input placeholder="Cerca" class="input-xs form-control" type="text" name="auxil1" value="<?php echo $auxil1 ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
-            </td>
-            <td class="FacetFieldCaptionTD">
+            </th>
+            <th class="FacetFieldCaptionTD">
                 <input placeholder="Cerca Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
-            </td>
-            <td>
+            </th>
+            <th colspan="2" class="FacetFieldCaptionTD">
+            </th>
+            <th class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
-            </td>
-            <td colspan="3">
+            </th>
+            <th class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
-            </td>
+            </th>
         </tr>
         <?php
         $result = gaz_dbi_dyn_query("$dbDestinazioni.codice as codice, "
@@ -163,6 +166,7 @@ if (isset($_GET['ricerca_completa'])) {
         ?>
 </form>
 </table>
+    </div>
 <?php
 require("../../library/include/footer.php");
 ?>

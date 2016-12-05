@@ -57,17 +57,19 @@ $recordnav = new recordnav($gTables['effett'], $where, $limit, $passo);
 $recordnav->output();
 ?>
 <form method="GET">
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    <div class="box-primary table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
         <input type="hidden" name="auxil" value="<?php print substr($auxil, 0, 1); ?>">
         <tr>
-            <td></td>
+            <td class="FacetFieldCaptionTD"></td>
             <td class="FacetFieldCaptionTD">Num.:
                 <input type="text" name="progre" value="<?php if (isset($progressivo)) print $progressivo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
             </td>
-            <td>
+            <td class="FacetFieldCaptionTD" colspan="9"></td>
+            <td class="FacetFieldCaptionTD">
                 <input type="submit" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value = 1;">
             </td>
-            <td>
+            <td class="FacetFieldCaptionTD">
                 <input type="submit" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
             </td>
         </tr>
@@ -183,6 +185,7 @@ $recordnav->output();
         }
         ?>
     </table>
+    </div>
 <?php
 require("../../library/include/footer.php");
 ?>

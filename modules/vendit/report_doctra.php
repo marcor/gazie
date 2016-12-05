@@ -118,7 +118,8 @@ function confirMail(link){
     $recordnav = new recordnav($gTables['tesdoc'] . ' LEFT JOIN ' . $gTables['clfoco'] . ' on ' . $gTables['tesdoc'] . '.clfoco = ' . $gTables['clfoco'] . '.codice', $where, $limit, $passo);
     $recordnav->output();
     ?>
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    <div class="box-primary table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("id_tes", "Numero Prot."); ?>
@@ -355,6 +356,7 @@ function confirMail(link){
         }
         ?>
     </table>
+    </div>
 </form>
 <?php
 require("../../library/include/footer.php");

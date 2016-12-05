@@ -55,15 +55,18 @@ $recordnav = new recordnav($gTables['agenti']." LEFT JOIN ".$gTables['clfoco']."
             . "left join gaz_anagra on gaz_anagra.id=" . $gTables['clfoco'] . ".id_anagra", $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="box-primary table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 <tr>
 <td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl[3].' :'; ?>
 <input type="text" name="ragso1" value="<?php if (isset($ragso1)) echo $ragso1; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 </td>
-<td>
+<td colspan="4" class="FacetFieldCaptionTD">
+</td>
+<td class="FacetFieldCaptionTD">
 <input type="submit" name="search" value="<?php echo $script_transl['search']; ?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
-<td>
+<td class="FacetFieldCaptionTD">
 <input type="submit" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
@@ -100,6 +103,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
 </form>
 </table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

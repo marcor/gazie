@@ -504,7 +504,8 @@ echo "</table>\n";
 if (isset($_POST['preview'])) {
     $rs = getDocumentsAccounts($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
     echo "<div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
-    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+    echo "<div class=\"box-primary table-responsive\">";
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
     echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>
@@ -543,6 +544,8 @@ if (isset($_POST['preview'])) {
     }
 }
 ?>
+</table>
+</div>
 </form>
 <?php
 require("../../library/include/footer.php");

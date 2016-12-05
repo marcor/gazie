@@ -82,7 +82,7 @@ $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav->output();
 ?>
 <div class="box-primary table-responsive">
-<table class="Tlarge table table-striped table-bordered table-hover">
+<table class="Tlarge table table-striped table-bordered">
     <tr>
         <td class="FacetFieldCaptionTD" colspan="1">
 <?php gaz_flt_disp_int("id_tes", "Numero Id"); ?>

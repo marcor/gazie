@@ -254,10 +254,10 @@ switch ($admin_aziend['fatimm']) {
                 &nbsp;
             </td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+                <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
             </td>
             <td class="FacetFieldCaptionTD">
-                <input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="confirTutti();
+                <input type="submit" class="btn btn-sm btn-default btn-50" name="all" value="Tutti" onClick="confirTutti();
                         return false;">
             </td>
         </tr>
@@ -328,9 +328,9 @@ switch ($admin_aziend['fatimm']) {
                 echo "<tr class=\"FacetDataTD\">";
                 // Colonna protocollo
                 if (!empty($modifi)) {
-                    echo "<td><a href=\"" . $modifi . "\" class=\"btn btn-xs " . $classe_btn . " btn-edit\" title=\"Modifica " . $tipodoc . " \">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . "&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
+                    echo "<td><a href=\"" . $modifi . "\" class=\"btn btn-100 btn-xs " . $classe_btn . " btn-edit\" title=\"Modifica " . $tipodoc . " \">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . "&nbsp;<i class=\"glyphicon glyphicon-edit\"></i></a></td>";
                 } else {
-                    echo "<td><button class=\"btn btn-xs " . $classe_btn . " btn-edit disabled\" title=\"Per poter modificare questa " . $tipodoc . " devi modificare i DdT in essa contenuti!\">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . " &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
+                    echo "<td><button class=\"btn btn-100 btn-xs " . $classe_btn . " btn-edit disabled\" title=\"Per poter modificare questa " . $tipodoc . " devi modificare i DdT in essa contenuti!\">" . $r["protoc"] . "&nbsp;" . $r["tipdoc"] . " &nbsp;<i class=\"glyphicon glyphicon-edit\"></i></button></td>";
                 }
                 // Colonna tipo documento
                 //echo "<td class=\"FacetDataTD\">".$tipodoc." &nbsp;</td>";
@@ -341,7 +341,7 @@ switch ($admin_aziend['fatimm']) {
                 // Colonna cliente
                 echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a>&nbsp;</td>";
                 // Colonna movimenti contabili
-                echo "<td align=\"center\">";
+                echo "<td align=\"left\">";
                 if ($r["id_con"] > 0) {
                     echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont." . $r["id_con"] . "</a> ";
                 } else {
@@ -374,7 +374,7 @@ switch ($admin_aziend['fatimm']) {
                 }
                 echo "</td>";
                 // Colonna "Stampa"
-                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
+                echo "<td align=\"center\"><a accesskey=\"p\" class=\"btn btn-xs btn-50 btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
                 echo "</td>";
 
                 // Colonna "Fattura elettronica"

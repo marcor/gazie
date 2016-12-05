@@ -129,7 +129,8 @@ $recordnav->output();
         <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
         <p class="ui-state-highlight" id="mail_attc"></p>
     </div>
-    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    <div class="box-primary table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
         <tr>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("id_tes", "Numero Prot."); ?>
@@ -353,6 +354,7 @@ $recordnav->output();
         }
         ?>
     </table>
+    </div>
 </form>
 <?php
 require("../../library/include/footer.php");

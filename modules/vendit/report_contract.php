@@ -53,15 +53,18 @@ if (!isset($_GET['field']) or ($_GET['field'] == 2) or(empty($_GET['field'])))
 $recordnav = new recordnav($gTables['contract'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="box-primary table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 <tr>
 <td colspan="2" class="FacetFieldCaptionTD"><?php echo $script_transl['number']; ?> :
 <input type="text" name="doc_number" value="<?php if (isset($doc_number)) print $doc_number; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 </td>
-<td>
+<td colspan="3" class="FacetFieldCaptionTD">
+</td>
+<td class="FacetFieldCaptionTD">
 <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
-<td>
+<td class="FacetFieldCaptionTD">
 <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
@@ -99,6 +102,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 ?>
 </form>
 </table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

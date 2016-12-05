@@ -81,7 +81,8 @@ if (!isset($_GET['field']) or ($_GET['field'] == 2) or(empty($_GET['field'])))
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav -> output();
 ?>
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="box-primary table-responsive">
+<table class="Tlarge table table-striped table-bordered">
 <tr>
 <td colspan="1" class="FacetFieldCaptionTD">
 <?php gaz_flt_disp_int ( "numdoc", "Numero Ricevuta" ); ?>
@@ -154,6 +155,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 ?>
 </form>
 </table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

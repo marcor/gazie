@@ -98,11 +98,11 @@ $recordnav -> output();
 ?>
 
 <br>
-
-<table id ="tableId" name="tableId" class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="box-primary table-responsive">
+<table id ="tableId" name="tableId" class="Tlarge table table-striped table-bordered table-condensed">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <tr style="margin-bottom: 20px !important;">
-<td></td>
+<td class="FacetFieldCaptionTD"></td>
 <td class="FacetFieldCaptionTD">
 <input type="text" name="nome_file" id="nome_file" value="<?php echo $nome_file ?>" maxlength="30" size="30" tabindex="1" class="FacetInput">
 </td>
@@ -122,10 +122,10 @@ $recordnav -> output();
   <option value="NO" <?php if($status =="NO") echo "selected";?> >NO - Senza esiti oltre RC</option>
 </select> 
 </td>
-<td>
+<td class="FacetFieldCaptionTD">
 <input type="submit" name="search" colspan="11" value="Cerca" tabindex="1" >
 </td>
-<td colspan="1">
+<td colspan="1" class="FacetFieldCaptionTD">
 <input type="submit" name="all" value="Mostra tutti" >
 </td>
 </tr>
@@ -272,6 +272,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
    }    
 
 echo "</table>\n";
+echo "</div>";
 echo "</form>\n";
 
 ?>
