@@ -80,7 +80,7 @@ $strScript = array("admin_client.php" =>
         'e_mail' => 'e mail',
         'id_agente' => 'Agente',
         'codpag' => 'Modalit&agrave; di pagamento *',
-        'sconto' => '% Sconto da apllicare',
+        'sconto' => '% Sconto da applicare',
         'banapp' => 'Banca d\'appoggio',
         'portos' => 'Porto - Resa',
         'spediz' => 'Spedizione',
