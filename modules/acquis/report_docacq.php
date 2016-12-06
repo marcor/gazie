@@ -137,6 +137,9 @@ $script_transl = HeadMain();
                 <input type="text" placeholder="Cerca Prot." class="input-sm form-control" name="protoc" value="<?php if (isset($protocollo)) print $protocollo; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
             </td>
 			<td colspan="1" class="FacetFieldCaptionTD">
+				&nbsp;
+			</td>
+			<td colspan="1" class="FacetFieldCaptionTD">
 				<select class="form-control input-sm" name="flt_tipo" onchange="this.form.submit()">
 				<option value="All"><?php echo $script_transl['tuttitipi']; ?></option>
 				<?php $res = gaz_dbi_dyn_query("distinct tipdoc", $gTables["tesdoc"], $all, $orderby, 0, 999);
@@ -164,7 +167,7 @@ $script_transl = HeadMain();
 			<td colspan="1" class="FacetFieldCaptionTD">
 				<select class="form-control input-sm" name="flt_ragso1" onchange="this.form.submit()">
 				<option value="All"><?php echo $script_transl['tutticlienti']; ?></option>
-				<?php $res = gaz_dbi_dyn_query("distinct ".$gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $all, $orderby, 0, 999);
+				<?php $res = gaz_dbi_dyn_query("distinct ".$gTables['anagra'].".ragso1,".$gTables["tesdoc"].".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $all, $gTables['anagra'].".ragso1", 0, 999);
 					while ( $val = gaz_dbi_fetch_array($res) ) {
 						if ( $ragso1 == $val["clfoco"] ) $selected = "selected";
 						else $selected = "";
@@ -187,6 +190,7 @@ $script_transl = HeadMain();
 // creo l'array (header => campi) per l'ordinamento dei record
             $headers_tesdoc = array(
                 "Prot." => "protoc",
+                "Dat.Reg." => "datemi",
                 "Tipo" => "tipdoc",
                 "Numero" => "numfat",
                 "Data" => "datfat",
@@ -228,6 +232,7 @@ $script_transl = HeadMain();
                 } else {
                     print "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $a_row["protoc"] . " &nbsp;</button></td>";
                 }
+                print "<td>" . $a_row["datemi"] . " &nbsp;</td>";
                 print "<td>" . $tipodoc . " &nbsp;</td>";
                 print "<td>" . $a_row["numfat"] . " &nbsp;</td>";
                 print "<td>" . $a_row["datfat"] . " &nbsp;</td>";
