@@ -1,9 +1,9 @@
 body {
-    background-image : url("../../../../library/images/sfondo.png");
+    //background-image : url("../../../../library/images/sfondo.png");
 }
 
 .FacetFieldCaptionTD {
-    background-color: #3c8dbc;
+    background-color: #aae2a8;
     color: #000;
 }
 
@@ -13,4 +13,21 @@ th a {
 
 th a:hover {
     color: #eee;
+}
+
+.FacetColumnTD {
+    background-color: #daeada;
+    color: #000;
+}
+
+.box-primary {
+/*    background-color: #fff;*/
+}
+
+.FacetDataTD {
+    background-color: #fff;
+}
+
+.content-wrapper {
+    background-image: url("../../../../library/images/sfondo.png");
 }

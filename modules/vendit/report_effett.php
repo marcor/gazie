@@ -184,6 +184,7 @@ $recordnav->output();
             echo "</tr>";
         }
         ?>
+        <tr><th class="FacetFieldCaptionTD" colspan="13"></th></tr>
     </table>
     </div>
 <?php

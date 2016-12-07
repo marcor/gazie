@@ -93,7 +93,7 @@
     <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
-    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/_all-skins.min.css">
+    <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css"> <!-- _all-skins.min.css">-->
     <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
     <!--<script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>-->
     <script src="../../js/jquery/jquery.js"></script>
@@ -203,7 +203,7 @@
           <!-- Sezione link più usati -->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              <i class="fa fa-clock-o" style="color: white"></i>
+              <i class="fa fa-clock-o"></i>
               <!--<span class="label label-success">4</span>-->
             </a>
             <ul class="dropdown-menu">
@@ -311,7 +311,8 @@
                 </ul>
               </li>
               <!-- Control Sidebar Toggle Button -->
-              <?php if ( $admin_aziend['Abilit']==9) {
+              <?php 
+              if ( $admin_aziend['Login']=="amministratore") {
                   echo "<li><a href=\"#\" data-toggle=\"control-sidebar\"><i class=\"fa fa-gears\"></i></a></li>";
               } else {
                   echo "<li></li>";

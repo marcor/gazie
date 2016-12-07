@@ -131,6 +131,7 @@ $script_transl = HeadMain();
     $recordnav->output();
 	
     ?>
+    <div class="box-primary table-responsive">
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <tr>
             <td colspan="1" class="FacetFieldCaptionTD">
@@ -254,7 +255,9 @@ $script_transl = HeadMain();
         }
         ?>
 </form>
+<tr><td colspan="9" class="FacetFieldCaptionTD"></td></tr>
 </table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

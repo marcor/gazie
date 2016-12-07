@@ -197,11 +197,7 @@ switch ($admin_aziend['fatimm']) {
         <p class="ui-state-highlight" id="report1"></p>
     </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <div class="box box-primary">
-                <div class="box-header">
-                    <h3 class="box-title">Documenti di vendita della sezione
+    <div align="center"><font class="FacetFormHeaderFont">Documenti di vendita della sezione
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
             for ($sez = 1; $sez <= 3; $sez++) {
@@ -212,8 +208,9 @@ switch ($admin_aziend['fatimm']) {
                 echo "<option value=\"" . $sez . "\"" . $selected . ">" . $sez . "</option>";
             }
             ?>
-        </select></h3>
-                    <div class="box-tools">
+        </select></div>
+    
+                    <div align="center">
                         <?php
                             if (!isset($_GET['field']) or ( $_GET['field'] == 2) or ( empty($_GET['field'])))
                                 $orderby = "datfat desc, protoc desc";
@@ -224,8 +221,8 @@ switch ($admin_aziend['fatimm']) {
                             $recordnav->output();
                         ?>
                     </div>
-                </div>
-                <div class="box-body table-responsive">
+        
+<div class="box-body table-responsive">
 
     <table class="table table-bordered table-hover">
         <tr>

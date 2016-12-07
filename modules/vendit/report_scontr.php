@@ -244,6 +244,7 @@ $linkHeaders->output();
             echo "</tr>\n";
         }
         ?>
+    <th colspan="9" class="FacetFieldCaptionTD"></th>
 </form>
 </table>
 </div>

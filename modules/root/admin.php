@@ -163,7 +163,7 @@ if ($t > 4 && $t <= 13) {
                 <div class="panel panel-default company-color" >
                     <p>
                         <?php echo $script_transl['company'] ?>
-                        <a href="../config/admin_aziend.php"><img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
+                        <a href="../config/admin_aziend.php"><img height="200px" class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
                     </p>
                     <p>
                         <?php
@@ -183,7 +183,7 @@ if ($t > 4 && $t <= 13) {
                     </p>
                     <p>
                         <a href="../config/admin_utente.php?Login=<?php echo $admin_aziend['Login']; ?>&Update">
-                            <img class="img-circle usr-picture" src="view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" alt="<?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" title="<?php echo $script_transl['change_usr']; ?>" >
+                            <img height="200px" class="img-circle usr-picture" src="view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" alt="<?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" title="<?php echo $script_transl['change_usr']; ?>" >
                         </a>
                     </p>
                     <p>
@@ -253,7 +253,7 @@ if ($t > 4 && $t <= 13) {
                                 echo '../../modules' . $r["link"];
                             else
                                 echo "&nbsp;";
-                            ?>" type="button" class="btn btn-default" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
+                            ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
                                 <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
                         </div>
                         <div class="col-sm-6">
@@ -262,7 +262,7 @@ if ($t > 4 && $t <= 13) {
                                 echo '../../modules' . $rl["link"];
                             else
                                 echo "&nbsp;";
-                            ?>" type="button" class="btn btn-default" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
+                            ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
                                 <span ><?php
                                     echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>' . $rlref_name . '</b>';
                                     ?></span></a>

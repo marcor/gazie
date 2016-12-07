@@ -195,6 +195,7 @@ if (isset($_GET['ricerca_completa'])) {
             echo "</tr>\n";
         }
         ?>
+        <tr><th class="FacetFieldCaptionTD" colspan="10"></th></tr>
 </form>
 </table>
     </div>

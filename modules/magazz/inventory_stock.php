@@ -378,10 +378,10 @@ if (isset($form['a'])) {
    					<td colspan="2" class="FacetFieldCaptionTD">
 						<input type="submit" name="Return" value="' . $script_transl['return'] . '" />
 					</td>
-					<td align="center" colspan="6" class="FacetFooterTD">
+					<td align="center" colspan="6" class="FacetFieldCaptionTD">
 						<input type="submit" name="preview" value="' . $script_transl['view'] . '!" />
 					</td>
-					<td align="center" class="FacetFormHeaderFont">Tot. ' . gaz_format_number($tot_val_giac) . '</td>
+					<td align="center" class="FacetFieldCaptionTD">Tot. ' . gaz_format_number($tot_val_giac) . '</td>
 				</tr>';
     if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
         echo '	</table>

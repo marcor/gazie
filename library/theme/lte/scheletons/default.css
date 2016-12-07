@@ -23,6 +23,9 @@
 .content-wrapper {
     min-width: 500px;
 }
+#admin_footer {
+    margin-top: 30px;
+}
 
 th {
     background-color : #E8EBF7;
@@ -35,9 +38,30 @@ th {
 .btn-50 {
     width: 50px;
 }
+
 .btn-100 {
     width: 100px;
 }
+
 .btn-200 {
     width: 200px;
+}
+
+.btn-full {
+    width: 100%;
+}
+
+.col-md-12 {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    border: 1px solid #f4f4f4;
+}
+
+.col-sm-8 {
+    padding-left: 0px;
+}
+
+.container-fluid {
+    padding-left: 0px;
+    padding-right: 0px;
 }

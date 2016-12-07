@@ -153,6 +153,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "</tr>\n";
 }
 ?>
+<th colspan="11" class="FacetFieldCaptionTD">
 </form>
 </table>
 </div>

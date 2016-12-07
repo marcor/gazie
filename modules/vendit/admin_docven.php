@@ -1520,7 +1520,8 @@ $tabula = " tabindex=\"3\" ";
 if ($form['clfoco'] > 0)
    $tabula = "";
 echo "</div>\n";
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "<div class=\"box-primary table-responsive\">";
+echo "<table class=\"Tlarge table table-bordered table-condensed\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"seziva\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 3; $counter++) {
@@ -1709,7 +1710,7 @@ if ($form['tipdoc'] == "DDT") {
 /** fine modifica FP */
 echo '<div class="FacetSeparatorTD" align="center">' . $script_transl[1] . '</div>';
 
-echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+echo '<table class="Tlarge table table-bordered table-condensed">
 		<input type="hidden" value="' . $form['in_descri'] . '" name="in_descri" />
 		<input type="hidden" value="' . $form['in_pervat'] . '" name="in_pervat" />
 		<input type="hidden" value="' . $form['in_tipiva'] . '" name="in_tipiva" />
@@ -1769,7 +1770,7 @@ echo '			</td>
 			</tr>
 		</table>';
 
-echo '<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+echo '<table class="Tlarge table table-bordered table-condensed">
 		  <thead>
 			<tr>
 				<th class="FacetFieldCaptionTD"></th>
@@ -2104,7 +2105,7 @@ if (count($form['rows']) > 0) {
 echo '		</tbody>
 		</table>
 		<div class="FacetSeparatorTD text-center">' . $script_transl[2] . '</div>
-		<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+		<table class="Tlarge table table-bordered table-condensed">
 			<input type="hidden" value="' . $form['numrat'] . '" name="numrat">
 			<input type="hidden" value="' . $form['stamp'] . '" name="stamp">
 			<input type="hidden" value="' . $form['round_stamp'] . '" name="round_stamp">
@@ -2299,13 +2300,14 @@ if ($next_row > 0) {
    }
 
    echo '		<tr>
-					<td colspan="8" class="text-right alert alert-success">
+					<td colspan="8" class="text-right FacetFieldCaptionTD">
 						<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" value="' . strtoupper($script_transl[$toDo]) . '!">
 					</td>
 				</tr>';
 }
 echo '</table>';
 ?>
+</div>
 </form>
 <div id="edit-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-sm">

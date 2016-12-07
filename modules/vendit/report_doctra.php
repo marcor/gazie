@@ -355,6 +355,7 @@ function confirMail(link){
            }
         }
         ?>
+                 <tr><th class="FacetFieldCaptionTD" colspan="11"></th></tr>
     </table>
     </div>
 </form>
