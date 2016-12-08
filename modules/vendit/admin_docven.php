@@ -1770,7 +1770,7 @@ echo '			</td>
 			</tr>
 		</table>';
 
-echo '<table class="Tlarge table table-bordered table-condensed">
+echo '<table id="products-list" class="Tlarge table table-bordered table-condensed">
 		  <thead>
 			<tr>
 				<th class="FacetFieldCaptionTD"></th>

@@ -1,33 +1,50 @@
 body {
     //background-image : url("../../../../library/images/sfondo.png");
 }
-
 .FacetFieldCaptionTD {
     background-color: #aae2a8;
     color: #000;
 }
-
+th {
+    background-color : #aae2a8;
+}
 th a {
     color: #000;
 }
-
 th a:hover {
     color: #eee;
 }
-
 .FacetColumnTD {
     background-color: #daeada;
     color: #000;
 }
-
 .box-primary {
 /*    background-color: #fff;*/
 }
-
 .FacetDataTD {
     background-color: #fff;
 }
-
 .content-wrapper {
     background-image: url("../../../../library/images/sfondo.png");
+}
+.Tlarge {
+    border: 1px solid #000000;
+}
+.Tmiddle {
+    border: 1px solid #000000;
+}
+.table {
+    
+}
+#products-list
+{
+}
+.main-header {
+    border: 1px solid #000000;
+}
+.logo {
+    border-right: 1px solid #000000;
+}
+.FacetFormTABLE {
+    border: 1px solid #000000;
 }

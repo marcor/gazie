@@ -9,59 +9,63 @@
   font-size: 15px;
   position: relative;
 }
-
 .navbar-nav > .messages-menu > .dropdown-menu > li .menu > li > a > p {
     color: #999999;
     font-size: 12px;
     margin: 0 0 0 25px;
 }
-
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu, .navbar-nav > .messages-menu > .dropdown-menu > li .menu, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu {
     max-height: 500px;
 }
-
 .content-wrapper {
     min-width: 500px;
 }
 #admin_footer {
     margin-top: 30px;
 }
-
-th {
-    background-color : #E8EBF7;
-}
-
 .form-control {
 
 }
-
 .btn-50 {
     width: 50px;
 }
-
 .btn-100 {
     width: 100px;
 }
-
 .btn-200 {
     width: 200px;
 }
-
 .btn-full {
     width: 100%;
 }
-
 .col-md-12 {
     padding-top: 5px;
     padding-bottom: 5px;
     border: 1px solid #f4f4f4;
 }
-
 .col-sm-8 {
     padding-left: 0px;
 }
-
 .container-fluid {
     padding-left: 0px;
     padding-right: 0px;
+}
+.FacetFieldCaptionTD
+{
+    padding: 5px 5px 5px 5px;
+}
+.table {
+    border-collapse: initial;
+    margin-bottom: 0px;
+}
+#products-list
+{
+    border-top: 0px solid;
+}
+.main-header {
+    border-collapse: separate;
+    border: 1px solid;
+}
+.logo {
+
 }

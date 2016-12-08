@@ -224,7 +224,7 @@ switch ($admin_aziend['fatimm']) {
         
 <div class="box-body table-responsive">
 
-    <table class="table table-bordered table-hover">
+    <table class="Tlarge table table-bordered table-hover">
         <tr>
             <td class="FacetFieldCaptionTD">
 <?php gaz_flt_disp_int("protoc", "Numero Prot."); ?>
