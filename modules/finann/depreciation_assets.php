@@ -57,7 +57,7 @@ function getAssets($date) {
             'LEFT JOIN ' . $gTables['tesmov'] . ' AS tesmov ON assets.id_movcon=tesmov.id_tes ' .
             'LEFT JOIN ' . $gTables['clfoco'] . ' AS fornit ON tesmov.clfoco=fornit.codice ';
     $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.numdoc AS nudtes, tesmov.datreg AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
-    $where = " datreg < '" . $date . "'";
+    $where = " datreg <= '" . $date . "'";
     $orderby = "acc_fixed_assets ASC, datreg ASC, type_mov ASC, id ASC";
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
     $acc = array();
