@@ -108,7 +108,7 @@ function getAssets($date) {
                             $acc[$row['acc_fixed_assets']][1]['ammmin_gruppo'] = $vg->gn[0] . '-' . $vg->gd[0];
                             $acc[$row['acc_fixed_assets']][1]['ammmin_specie'] = $v->ns[0] . '-' . $v->ds[0];
                             $acc[$row['acc_fixed_assets']][1]['ammmin_ssd'] = $v->ssd[intval($row['ss_amm_min'])] . ' ';
-                            $acc[$row['acc_fixed_assets']][1]['ammmin_ssrate'] = $v->ssrate[intval($row['ss_amm_min'])] * 1;
+                            $acc[$row['acc_fixed_assets']][1]['ammmin_ssrate'] = $v->ssrate[intval($row['ss_amm_min'])] . ' ';
                         }
                     }
                 }
@@ -255,6 +255,36 @@ $script_transl = HeadMain();
         });
         $('.gaz-tooltip').tooltip({html: true, placement: 'auto bottom', delay: {show: 50}});
     });
+    // ricalcolo i valori in caso di cambiamenti sugli importi 
+    $(document).ready(function () {
+        $('table tbody tr td [orivalamm]').change(function () {
+            var fix = $(this).attr('name').match(/assets\[([0-9]+)\]\[[a-zA-Z_ ]+\]/i)[1];
+            // e quelli modificabili dall'utente
+            var ovala = $(this).val() * 1;
+            var perc = $('.container-fluid input[name="' + fix + '_ammperc"]').val() * 1;
+            var found = $('.container-fluid input[name="' + fix + '_ammfound"]').val() * 1;
+            var fixed = $('.container-fluid input[name="' + fix + '_ammfixed"]').val() * 1;
+            var noded = $('.container-fluid input[name="' + fix + '_nodedrate"]').val() * 1;
+            var residuo = fixed - found;
+            // calcolo i nuovi valori 
+            var nv = Math.round(ovala * fixed) / 100;
+            if (residuo < nv) {
+                
+                // se non ho abbastanza residuo forzo ai valori possibili
+                nv = residuo;
+                var newperc = residuo/fixed*100;
+                alert('Ammortamento ridotto al valore residuo');
+                $(this).val(newperc.toFixed(2));
+            }
+            var ndv = Math.round(nv * noded) / 100;
+            var dv = Math.round((nv - ndv) * 100) / 100;
+            $('table tbody tr td input[name="assets[' + fix + '][cost_suggest]"]').val(dv.toString());
+            $('table tbody tr td input[name="assets[' + fix + '][noded_suggest]"]').val(ndv.toString());
+            if (ovala < perc / 2) {
+                alert('Ammortamento inferiore al 50% di quello ministeriale');
+            }
+        });
+    });
 </script>
 <?php
 $gForm = new GAzieForm();
@@ -285,6 +315,11 @@ if (count($msg['war']) > 0) { // ho un warning
                 foreach ($va as $k => $v) {
                     if ($head) {
                         ?>
+
+                        <input type="hidden" name="<?php echo $ka . '_ammperc'; ?>" value="<?php echo $v['valamm']; ?>" />
+                        <input type="hidden" name="<?php echo $ka . '_ammfound'; ?>" value="<?php echo $v['found_tot']; ?>" />
+                        <input type="hidden" name="<?php echo $ka . '_ammfixed'; ?>" value="<?php echo $v['fixed_tot']; ?>" />
+                        <input type="hidden" name="<?php echo $ka . '_nodedrate'; ?>" value="<?php echo $v['no_deduct_cost_rate']; ?>" />
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -330,7 +365,7 @@ if (count($msg['war']) > 0) { // ho un warning
         if ($suggest[2]) {
             // se è stata troncata la percentuale...
             $v['valamm'] = $suggest[2];
-        } elseif ($suggest[0] < 0.01 ) {
+        } elseif ($suggest[0] < 0.01) {
             $v['valamm'] = 0.00;
             $disabl = ' disabled ';
             $script_transl["suggest_amm"] = $script_transl["no_suggest_amm"];
@@ -363,7 +398,7 @@ if (count($msg['war']) > 0) { // ho un warning
             $r[] = [array('head' => $script_transl["suggest_amm"] . ' %', 'class' => 'text-right bg-warning',
             'value' => $script_transl["suggest_amm"] . ' %'),
                 array('head' => '%', 'class' => 'text-right numeric bg-warning',
-                    'value' => '<input ' . $disabl . ' type="number" step="0.01" max="' . $va[1]['valamm'] . '" min="0" name="assets[' . $ka . '][valamm_suggest]" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
+                    'value' => '<input ' . $disabl . ' type="number" step="0.01" max="' . $va[1]['valamm'] . '" min="0" name="assets[' . $ka . '][valamm_suggest]" orivalamm="' . $v['valamm'] . '" value="' . $v['valamm'] . '" maxlength="5" size="4" />'),
                 array('head' => $script_transl["fixed_val"], 'class' => 'text-right bg-warning',
                     'value' => ''),
                 array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
