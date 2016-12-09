@@ -136,10 +136,12 @@ function getAssets($date) {
                     $row['noded_val'] = $n['import'];
                     $acc[$row['acc_fixed_assets']][1]['noded_tot'] += $n['import'];
                     $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
-                    /* non è più fiscalmente una quota persa ma da segnalare sul libro
-                     * quindi qui la dovrò calcolare 
+                    /* anche se da qualche anno non è più fiscalmente una quota persa si deve segnalare sul libro
                      */
-                    $row['lost_cost'] = 0;
+                    $row['lost_cost'] = ($acc[$row['acc_fixed_assets']][1]['valamm'] * $row['fixed_subtot'] / 200) - ($c['import'] + $n['import']);
+                    if ($row['lost_cost'] < 0) {
+                        $row['lost_cost'] = 0;
+                    }
                     // aggiungo all'array del bene
                     $acc[$row['acc_fixed_assets']][] = $row;
                     break;
@@ -258,6 +260,7 @@ $script_transl = HeadMain();
     // ricalcolo i valori in caso di cambiamenti sugli importi 
     $(document).ready(function () {
         $('table tbody tr td [orivalamm]').change(function () {
+            var lc = 0;
             var fix = $(this).attr('name').match(/assets\[([0-9]+)\]\[[a-zA-Z_ ]+\]/i)[1];
             // e quelli modificabili dall'utente
             var ovala = $(this).val() * 1;
@@ -269,20 +272,21 @@ $script_transl = HeadMain();
             // calcolo i nuovi valori 
             var nv = Math.round(ovala * fixed) / 100;
             if (residuo < nv) {
-                
                 // se non ho abbastanza residuo forzo ai valori possibili
                 nv = residuo;
-                var newperc = residuo/fixed*100;
+                var newperc = residuo / fixed * 100;
                 alert('Ammortamento ridotto al valore residuo');
                 $(this).val(newperc.toFixed(2));
+            } else if (ovala < perc / 2) { // ho un costo <50% da segnalare
+                lc = Math.round((perc / 2 - ovala) * fixed) / 100;
+                alert('Ammortamento inferiore al 50% di quello ministeriale');
+
             }
             var ndv = Math.round(nv * noded) / 100;
             var dv = Math.round((nv - ndv) * 100) / 100;
-            $('table tbody tr td input[name="assets[' + fix + '][cost_suggest]"]').val(dv.toString());
-            $('table tbody tr td input[name="assets[' + fix + '][noded_suggest]"]').val(ndv.toString());
-            if (ovala < perc / 2) {
-                alert('Ammortamento inferiore al 50% di quello ministeriale');
-            }
+            $('table tbody tr td input[name="assets[' + fix + '][cost_suggest]"]').val(dv.toFixed(2));
+            $('table tbody tr td input[name="assets[' + fix + '][noded_suggest]"]').val(ndv.toFixed(2));
+            $('table tbody tr td span[name="' + fix + '_lostcost"]').html(lc.toFixed(2));
         });
     });
 </script>
@@ -315,11 +319,6 @@ if (count($msg['war']) > 0) { // ho un warning
                 foreach ($va as $k => $v) {
                     if ($head) {
                         ?>
-
-                        <input type="hidden" name="<?php echo $ka . '_ammperc'; ?>" value="<?php echo $v['valamm']; ?>" />
-                        <input type="hidden" name="<?php echo $ka . '_ammfound'; ?>" value="<?php echo $v['found_tot']; ?>" />
-                        <input type="hidden" name="<?php echo $ka . '_ammfixed'; ?>" value="<?php echo $v['fixed_tot']; ?>" />
-                        <input type="hidden" name="<?php echo $ka . '_nodedrate'; ?>" value="<?php echo $v['no_deduct_cost_rate']; ?>" />
                         <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
@@ -334,6 +333,14 @@ if (count($msg['war']) > 0) { // ho un warning
                 $head = false;
             }
             if ($v['type_mov'] == 1) {
+                ?>
+
+                <input type="hidden" name="<?php echo $ka . '_ammperc'; ?>" value="<?php echo $v['valamm']; ?>" />
+                <input type="hidden" name="<?php echo $ka . '_ammfound'; ?>" value="<?php echo $v['found_tot']; ?>" />
+                <input type="hidden" name="<?php echo $ka . '_ammfixed'; ?>" value="<?php echo $v['fixed_tot']; ?>" />
+                <input type="hidden" name="<?php echo $ka . '_nodedrate'; ?>" value="<?php echo $v['no_deduct_cost_rate']; ?>" />
+
+                <?php
                 $r[0] = [array('head' => $script_transl["asset_des"], 'class' => '', 'value' => '<b>' . $v['descri'] . $script_transl["clfoco"] . $v["desfor"] . $script_transl["movdes"] . $v["nudtes"] . ' - ' . gaz_format_date($v['dtdtes'], false, true) . '</b><br>' . $script_transl['ammmin_ssd'] . ': ' . $v['ammmin_ssd'] . '<br /> Ammortamento normale = ' . $v['ammmin_ssrate'] . '%'),
                     array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
                     array('head' => $script_transl["fixed_val"], 'class' => 'text-right',
@@ -407,7 +414,7 @@ if (count($msg['war']) > 0) { // ho un warning
                 array('head' => $script_transl["noded_val"], 'class' => 'text-right numeric bg-warning',
                     'value' => '<input ' . $disabl . ' type="number" step="0.01" min="0" name="assets[' . $ka . '][noded_suggest]" value="' . $suggest[1] . '" maxlength="15" size="4" />'),
                 array('head' => '', 'class' => 'text-right bg-warning', 'value' => ''),
-                array('head' => '', 'class' => 'text-center bg-warning', 'value' => ''),
+                array('head' => '', 'class' => 'text-center bg-warning', 'value' => '<span name="' . $ka . '_lostcost"></span>'),
             ];
         }
         $gForm->gazResponsiveTable($r, 'gaz-responsive-table');
