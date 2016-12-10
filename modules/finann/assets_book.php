@@ -31,6 +31,11 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
     ini_set('memory_limit', '128M');
     gaz_set_time_limit(0);
 }
+if (isset($_GET['date'])) { //se non mi viene passata la data
+    $dt = substr($_GET['date'], 0, 10);
+} else {
+    $dt = date("Y-m-d");
+}
 
 function getAssets($date) {
     /*  funzione per riprendere dal database tutti i beni ammortizzabili 
@@ -141,13 +146,13 @@ function getAssets($date) {
     return $acc;
 }
 
-$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+$luogo_data = $admin_aziend['citspe'] . ", lì " . ucwords(strftime("%d %B %Y", mktime(0, 0, 0, substr($dt, 5, 2), substr($dt, 8, 2), substr($dt, 0, 4))));
 
 
 require("../../config/templates/report_template.php");
 
 
-$form['assets'] = getAssets("2018-12-31");
+$form['assets'] = getAssets($dt);
 
 $head = true;
 foreach ($form['assets'] as $ka => $va) {
@@ -156,7 +161,7 @@ foreach ($form['assets'] as $ka => $va) {
     foreach ($va as $k => $v) {
         if ($head) {
             $title = array('luogo_data' => $luogo_data,
-                'title' => "Gruppo:" . $v['ammmin_gruppo'] . " Specie:" . $v['ammmin_specie'],
+                'title' => 'LIBRO DEI CESPITI - BENI AMMORTIZABILI',
                 'hile' => array(array('lun' => 70, 'nam' => 'Descrizione bene'),
                     array('lun' => 20, 'nam' => '%'),
                     array('lun' => 30, 'nam' => 'Immobilizzazione'),
@@ -173,6 +178,9 @@ foreach ($form['assets'] as $ka => $va) {
             $pdf->SetTopMargin(39);
             $pdf->SetFooterMargin(20);
             $pdf->AddPage('L');
+            $pdf->Ln(4);
+            $pdf->Cell(270, 4, "Gruppo: " . $v['ammmin_gruppo'] . " - Specie: " . $v['ammmin_specie'], 1, 1, 'L', 0, '', 2);
+            $pdf->Ln(4);
             $pdf->SetFont('helvetica', '', 8);
             $head = false;
         }
