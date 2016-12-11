@@ -240,6 +240,7 @@ $strScript = array("select_comiva.php" =>
     "depreciation_assets.php" =>
     array('title' => 'Registrazione quote di ammortamento cespiti',
         'datreg' => ' al: ',
+        'book' => ' Stampa il Libro cespiti a questa data ',
         'ammmin_ssd' => 'Sottospecie',
         'asset_des' => 'Descrizione bene',
         'movdes' => ' con Fat.',

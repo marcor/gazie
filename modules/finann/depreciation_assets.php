@@ -308,6 +308,7 @@ if (count($msg['war']) > 0) { // ho un warning
                     <div class="form-group">
                         <label for="datreg" class="col-sm-6 control-label"><?php echo $script_transl['title'] . $script_transl['datreg']; ?></label>
                         <input type="text" class="col-sm-2" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
+                        <a class="btn btn-large btn-custom col-sm-4" href="assets_book.php?date=<?php echo gaz_format_date($form['datreg'],true); ?>"><?php echo $script_transl['book']; ?></a>
                     </div>
                 </div>
             </div><!-- chiude row  -->

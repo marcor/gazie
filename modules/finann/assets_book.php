@@ -153,31 +153,27 @@ require("../../config/templates/report_template.php");
 
 
 $form['assets'] = getAssets($dt);
-
+$title = array('luogo_data' => $luogo_data,
+    'title' => 'LIBRO DEI CESPITI - BENI AMMORTIZABILI',
+    'hile' => array(array('lun' => 70, 'nam' => 'Descrizione bene'),
+        array('lun' => 20, 'nam' => '%'),
+        array('lun' => 30, 'nam' => 'Immobilizzazione'),
+        array('lun' => 30, 'nam' => 'Fondo'),
+        array('lun' => 30, 'nam' => 'Quota deducibile'),
+        array('lun' => 30, 'nam' => 'Quota non deduc.'),
+        array('lun' => 30, 'nam' => 'Residuo'),
+        array('lun' => 30, 'nam' => 'Amm.<50%')
+        ));
+$pdf = new Report_template();
+$pdf->setVars($admin_aziend, $title);
+$pdf->SetTopMargin(39);
+$pdf->SetFooterMargin(20);
+$pdf->AddPage('L');
 $head = true;
 foreach ($form['assets'] as $ka => $va) {
-    $r = array();
     // ogni assets ha più righi-movimenti
     foreach ($va as $k => $v) {
         if ($head) {
-            $title = array('luogo_data' => $luogo_data,
-                'title' => 'LIBRO DEI CESPITI - BENI AMMORTIZABILI',
-                'hile' => array(array('lun' => 70, 'nam' => 'Descrizione bene'),
-                    array('lun' => 20, 'nam' => '%'),
-                    array('lun' => 30, 'nam' => 'Immobilizzazione'),
-                    array('lun' => 30, 'nam' => 'Fondo'),
-                    array('lun' => 30, 'nam' => 'Quota deducibile'),
-                    array('lun' => 30, 'nam' => 'Quota non deduc.'),
-                    array('lun' => 30, 'nam' => 'Residuo'),
-                    array('lun' => 30, 'nam' => 'Amm.<50%')
-                )
-            );
-
-            $pdf = new Report_template();
-            $pdf->setVars($admin_aziend, $title);
-            $pdf->SetTopMargin(39);
-            $pdf->SetFooterMargin(20);
-            $pdf->AddPage('L');
             $pdf->Ln(4);
             $pdf->Cell(270, 4, "Gruppo: " . $v['ammmin_gruppo'] . " - Specie: " . $v['ammmin_specie'], 1, 1, 'L', 0, '', 2);
             $pdf->Ln(4);
