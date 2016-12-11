@@ -107,6 +107,19 @@ function getAssets($date) {
             //nei movimenti successivi a seconda del tipo di rigo agisco in maniera differente
             switch ($row['type_mov']) {
                 case '10' : // incremento valore del bene (accessorio/ampliamento/ammodernamento/manutenzione)
+                    // prendo il valore dell'incremento del costo storico dal rigo contabile
+                    $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $acc[$row['acc_fixed_assets']][1]['fixed_tot'] += $fx['import'];
+                    $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
+                    $row['fixed_val'] = $fx['import'];
+                    $row['found_val'] = 0;
+                    $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
+                    $row['cost_val'] = 0;
+                    $row['cost_subtot'] = $acc[$row['acc_fixed_assets']][1]['cost_tot'];
+                    $row['noded_val'] = 0;
+                    $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
+                    $row['lost_cost'] = 0;
+                    $acc[$row['acc_fixed_assets']][] = $row;
                     break;
                 case '50' : // decremento valore del bene per ammortamento
                     // prendo il valore del fondo ammortamento dal rigo contabile
@@ -155,14 +168,14 @@ require("../../config/templates/report_template.php");
 $form['assets'] = getAssets($dt);
 $title = array('luogo_data' => $luogo_data,
     'title' => 'LIBRO DEI CESPITI - BENI AMMORTIZABILI',
-    'hile' => array(array('lun' => 70, 'nam' => 'Descrizione bene'),
-        array('lun' => 20, 'nam' => '%'),
-        array('lun' => 30, 'nam' => 'Immobilizzazione'),
-        array('lun' => 30, 'nam' => 'Fondo'),
-        array('lun' => 30, 'nam' => 'Quota deducibile'),
-        array('lun' => 30, 'nam' => 'Quota non deduc.'),
-        array('lun' => 30, 'nam' => 'Residuo'),
-        array('lun' => 30, 'nam' => 'Amm.<50%')
+    'hile' => array(array('lun' => 84, 'nam' => 'Descrizione bene'),
+        array('lun' => 18, 'nam' => '%'),
+        array('lun' => 28, 'nam' => 'Immobilizzazione'),
+        array('lun' => 28, 'nam' => 'Fondo'),
+        array('lun' => 28, 'nam' => 'Quota deducibile'),
+        array('lun' => 28, 'nam' => 'Quota non deduc.'),
+        array('lun' => 28, 'nam' => 'Residuo'),
+        array('lun' => 28, 'nam' => 'Amm.<50%')
         ));
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend, $title);
@@ -181,25 +194,42 @@ foreach ($form['assets'] as $ka => $va) {
             $head = false;
         }
         if ($v['type_mov'] == 1) {
-            $pdf->MultiCell(70, 4, $v['descri'] . "\n" . $v["desfor"] . ' Fatt.' . $v["nudtes"] . ' del ' . gaz_format_date($v['dtdtes'], false, true) . "\n" . $v['ammmin_ssd'] . "\n Ammortamento normale = " . $v['ammmin_ssrate'] . '%', 1, 'L', FALSE, 2);
+            $pdf->MultiCell(84, 4, $v['descri'] . "\n" . $v["desfor"] . ' Fatt.' . $v["nudtes"] . ' del ' . gaz_format_date($v['dtdtes'], false, true) . "\n" . $v['ammmin_ssd'] . "\n Ammortamento normale = " . $v['ammmin_ssrate'] . '%', 1, 'L', FALSE, 2);
             $pdf->Ln(-4);
-            $pdf->Cell(70, 4);
-            $pdf->Cell(20, 4, gaz_format_number($v['valamm']), 1, 0, 'C');
-            $pdf->Cell(30, 4, gaz_format_number($v['fixed_val']), 1, 0, 'R');
-            $pdf->Cell(30, 4, '', 1);
-            $pdf->Cell(30, 4, '', 1);
-            $pdf->Cell(30, 4, '', 1);
-            $pdf->Cell(30, 4, gaz_format_number($v['fixed_val']), 1, 0, 'R');
-            $pdf->Cell(30, 4, '', 1, 1);
+            $pdf->Cell(84, 4);
+            $pdf->Cell(18, 4, '', 1, 0, 'C');
+            $pdf->Cell(28, 4, gaz_format_number($v['fixed_val']), 1, 0, 'R');
+            $pdf->Cell(28, 4, '', 1);
+            $pdf->Cell(28, 4, '', 1);
+            $pdf->Cell(28, 4, '', 1);
+            $pdf->Cell(28, 4, gaz_format_number($v['fixed_val']), 1, 0, 'R');
+            $pdf->Cell(28, 4, '', 1, 1);
+        } elseif ($v['type_mov'] == 10) {
+            $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) .' INCREMENTATO IL VALORE DEL BENE CON:', 'LTR', 0, 'L', 0, '', 1);
+            $pdf->Cell(18, 4, '', 'LTR', 0, 'C');
+            $pdf->Cell(28, 4, '+' . gaz_format_number($v['fixed_val']), 'LTR', 0, 'L');
+            $pdf->Cell(28, 4, '', 'LTR');
+            $pdf->Cell(28, 4, '', 'LTR');
+            $pdf->Cell(28, 4, '', 'LTR');
+            $pdf->Cell(28, 4, '', 'LTR', 0, 'R');
+            $pdf->Cell(28, 4, '', 'LTR', 1);
+            $pdf->Cell(84, 4, $v['descri'], 'LBR', 0, 'L', 0, '', 1);
+            $pdf->Cell(18, 4, '', 'LBR', 0, 'C');
+            $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot']), 'LBR', 0, 'R');
+            $pdf->Cell(28, 4, '', 'LBR');
+            $pdf->Cell(28, 4, '', 'LBR');
+            $pdf->Cell(28, 4, '', 'LBR');
+            $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot'] - $v['found_subtot']), 'LBR', 0, 'R');
+            $pdf->Cell(28, 4, '', 'LBR', 1);
         } else {
-            $pdf->Cell(70, 4, gaz_format_date($v['dtdtes']) . ' ' . $v['descri'], 1, 0, 'L', 0, '', 2);
-            $pdf->Cell(20, 4, gaz_format_number($v['valamm']), 1, 0, 'C');
-            $pdf->Cell(30, 4, gaz_format_number($v['fixed_subtot']), 1, 0, 'R');
-            $pdf->Cell(30, 4, gaz_format_number($v['found_subtot']), 1, 0, 'R');
-            $pdf->Cell(30, 4, gaz_format_number($v['cost_val']), 1, 0, 'R');
-            $pdf->Cell(30, 4, gaz_format_number($v['noded_val']), 1, 0, 'R');
-            $pdf->Cell(30, 4, gaz_format_number($v['fixed_subtot'] - $v['found_subtot']), 1, 0, 'R');
-            $pdf->Cell(30, 4, gaz_format_number($v['lost_cost']), 1, 1, 'R');
+            $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) . ' ' . $v['descri'], 1, 0, 'L', 0, '', 1);
+            $pdf->Cell(18, 4, gaz_format_number($v['valamm']), 1, 0, 'C');
+            $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot']), 1, 0, 'R');
+            $pdf->Cell(28, 4, gaz_format_number($v['found_subtot']), 1, 0, 'R');
+            $pdf->Cell(28, 4, gaz_format_number($v['cost_val']), 1, 0, 'R');
+            $pdf->Cell(28, 4, gaz_format_number($v['noded_val']), 1, 0, 'R');
+            $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot'] - $v['found_subtot']), 1, 0, 'R');
+            $pdf->Cell(28, 4, gaz_format_number($v['lost_cost']), 1, 1, 'R');
         }
     }
     $pdf->Ln(4);

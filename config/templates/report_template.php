@@ -120,7 +120,7 @@ class Report_template extends TCPDF {
             if (is_array($this->altri_dati) and isset($this->altri_dati['title'])) { // � una intestazione con titolo e testata tabella
                 $this->Cell(40);
                 $this->SetFont('helvetica', '', 12);
-                $this->Cell(150, 12, $this->altri_dati['title'], 0, 1, 'L', 0, '', 2);
+                $this->Cell(150, 12, $this->altri_dati['title'], 0, 1, 'L', 0, '', 1);
                 $this->SetFont('helvetica', '', 9);
                 foreach ($this->altri_dati['hile'] as $key => $value) {
 //                 $this->Cell($value['lun'],4,$value['nam'],1,0,'C',1);

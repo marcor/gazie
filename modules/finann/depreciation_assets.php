@@ -117,6 +117,19 @@ function getAssets($date) {
             //nei movimenti successivi a seconda del tipo di rigo agisco in maniera differente
             switch ($row['type_mov']) {
                 case '10' : // incremento valore del bene (accessorio/ampliamento/ammodernamento/manutenzione)
+                    // prendo il valore dell'incremento del costo storico dal rigo contabile
+                    $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $acc[$row['acc_fixed_assets']][1]['fixed_tot'] += $fx['import'];
+                    $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
+                    $row['fixed_val'] = $fx['import'];
+                    $row['found_val'] = 0;
+                    $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
+                    $row['cost_val'] = 0;
+                    $row['cost_subtot'] = $acc[$row['acc_fixed_assets']][1]['cost_tot'];
+                    $row['noded_val'] = 0;
+                    $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
+                    $row['lost_cost'] = 0;
+                    $acc[$row['acc_fixed_assets']][] = $row;
                     break;
                 case '50' : // decremento valore del bene per ammortamento
                     // prendo il valore del fondo ammortamento dal rigo contabile
@@ -308,7 +321,7 @@ if (count($msg['war']) > 0) { // ho un warning
                     <div class="form-group">
                         <label for="datreg" class="col-sm-6 control-label"><?php echo $script_transl['title'] . $script_transl['datreg']; ?></label>
                         <input type="text" class="col-sm-2" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
-                        <a class="btn btn-large btn-custom col-sm-4" href="assets_book.php?date=<?php echo gaz_format_date($form['datreg'],true); ?>"><?php echo $script_transl['book']; ?></a>
+                        <a class="btn btn-large btn-custom col-sm-4" href="assets_book.php?date=<?php echo gaz_format_date($form['datreg'], true); ?>"><?php echo $script_transl['book']; ?></a>
                     </div>
                 </div>
             </div><!-- chiude row  -->
@@ -353,6 +366,9 @@ if (count($msg['war']) > 0) { // ho un warning
                     array('head' => $script_transl["lost_cost"], 'class' => 'text-center', 'value' => ''),
                 ];
             } else {
+                if ($v['type_mov'] == 10) { // se è un incremento di valore del bene visualizzo il valore del rigo  anzichè il subtotale
+                    $v['fixed_subtot'] = $v['fixed_val'];
+                }
                 $r[] = [array('head' => $script_transl["asset_des"], 'class' => '',
                 'value' => gaz_format_date($v['dtdtes']) . ' ' . $v['descri']),
                     array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
