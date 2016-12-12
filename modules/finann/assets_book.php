@@ -58,7 +58,7 @@ function getAssets($date) {
             // in ordine di data necessariamente il primo rigo dev'essere l'acquisto
             $acc[$row['acc_fixed_assets']][1] = $row;
             // prendo il valore della immobilizzazione dal rigo contabile
-            $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . ' AND id_tes = ' . $row['id_movcon']);
+            $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
             $acc[$row['acc_fixed_assets']][1]['fixed_val'] = $f['import'];
             $acc[$row['acc_fixed_assets']][1]['found_val'] = 0;
             $acc[$row['acc_fixed_assets']][1]['cost_val'] = 0;

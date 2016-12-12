@@ -68,7 +68,7 @@ function getAssets($date) {
             // in ordine di data necessariamente il primo rigo dev'essere l'acquisto
             $acc[$row['acc_fixed_assets']][1] = $row;
             // prendo il valore della immobilizzazione dal rigo contabile
-            $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . ' AND id_tes = ' . $row['id_movcon']);
+            $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
             $acc[$row['acc_fixed_assets']][1]['fixed_val'] = $f['import'];
             $acc[$row['acc_fixed_assets']][1]['found_val'] = 0;
             $acc[$row['acc_fixed_assets']][1]['cost_val'] = 0;
@@ -346,6 +346,7 @@ if (count($msg['war']) > 0) { // ho un warning
                 <?php
                 $head = false;
             }
+
             if ($v['type_mov'] == 1) {
                 ?>
 
@@ -365,10 +366,19 @@ if (count($msg['war']) > 0) { // ho un warning
                     array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixed_val'])),
                     array('head' => $script_transl["lost_cost"], 'class' => 'text-center', 'value' => ''),
                 ];
+            } elseif ($v['type_mov'] == 10) { // se è un incremento di valore del bene visualizzo il valore del rigo  anzichè il subtotale
+                $r[] = [array('head' => $script_transl["asset_des"], 'class' => '',
+                'value' => gaz_format_date($v['dtdtes']) . ' ' . $v['descri']),
+                    array('head' => '', 'class' => 'text-center', 'value' =>''),
+                    array('head' => $script_transl["fixed_val"], 'class' => 'text-left bg-info',
+                        'value' =>'+'. gaz_format_number($v['fixed_val']).'='.gaz_format_number($v['fixed_subtot'])),
+                    array('head' => $script_transl["found_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['found_subtot'])),
+                    array('head' => $script_transl["cost_val"], 'class' => 'text-right', 'value' =>''),
+                    array('head' => $script_transl["noded_val"], 'class' => 'text-right', 'value' =>''),
+                    array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixed_subtot'] - $v['found_subtot'])),
+                    array('head' => $script_transl["lost_cost"], 'class' => 'text-center', 'value' => ''),
+                ];
             } else {
-                if ($v['type_mov'] == 10) { // se è un incremento di valore del bene visualizzo il valore del rigo  anzichè il subtotale
-                    $v['fixed_subtot'] = $v['fixed_val'];
-                }
                 $r[] = [array('head' => $script_transl["asset_des"], 'class' => '',
                 'value' => gaz_format_date($v['dtdtes']) . ' ' . $v['descri']),
                     array('head' => '%', 'class' => 'text-center', 'value' => gaz_format_number($v['valamm'])),
