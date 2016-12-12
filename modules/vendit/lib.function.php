@@ -67,7 +67,21 @@ class venditForm extends GAzieForm {
          /** ENRICO FEDELE */
       }
    }
-
+   function selectAsset($name, $val, $class = 'FacetSelect') {
+        global $gTables, $admin_aziend;
+        echo "<select id=\"$name\" name=\"$name\" class=\"$class\">\n";
+        echo "\t<option value=\"0\"> ---------- </option>\n";
+        $result = gaz_dbi_dyn_query("id, descri", $gTables['assets'], "type_mov = 1");
+        while ($r = gaz_dbi_fetch_array($result)) {
+            $selected = '';
+            $v = $r["id"];
+            if ($val == $v) {
+                $selected .= " selected ";
+            }
+            echo "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["id"] . "-" . $r['descri'] . "</option>\n";
+        }
+        echo "</select>\n";
+   }
 }
 
 class Agenti {

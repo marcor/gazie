@@ -7,6 +7,7 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module
 INSERT INTO `gaz_menu_module` SELECT MAX(id)+1, (SELECT id FROM `gaz_module` WHERE `name`='suppor'), 'report_install.php', '', '', 3, '', 3  FROM `gaz_menu_module`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MAX(id) FROM `gaz_menu_module`), 'admin_install.php?Insert', '', '', 3, '', 1  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='select_liqiva.php'), 'select_spesometro_analitico.php', '', '', 8, '', 2  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='report_docven.php'), 'asset_sales.php', '', '', 45, '', 12  FROM `gaz_menu_script`;
 INSERT INTO `gaz_config` (`id`, `description`, `variable`, `cvalue`, `weight`, `show`, `last_modified`) VALUES (NULL, 'Menu/header/footer personalizzabile', 'theme', 'g7', '0', '0', '2016-11-12 19:00:00');
 CREATE TABLE IF NOT EXISTS `gaz_classroom` (  `id` int(6) NOT NULL AUTO_INCREMENT, `classe` varchar(16) NOT NULL, `sezione` varchar(16) NOT NULL, `anno_scolastico` int(4) NOT NULL, `teacher` varchar(50) NOT NULL, `location` varchar(100) NOT NULL, `title_note` varchar(200) NOT NULL, PRIMARY KEY (`id`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 CREATE TABLE IF NOT EXISTS `gaz_students` (

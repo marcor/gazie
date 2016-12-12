@@ -1216,5 +1216,49 @@ $strScript = array("admin_client.php" =>
             'Margine %' => ''
         ),
     ),
+    "asset_sales.php" =>
+    array('title' => 'Fattura di vendita cespite-bene ammmortizzabile a',
+        'mesg' => array('La ricerca non ha dato risultati!', 'Inserire almeno 2 caratteri', 'Cambia cliente'),
+        'info' => array('gg_to_year_end_1' => ' giorni mancano alla fine dell\'anno ',
+            'gg_to_year_end_2' => ' quando potranno essere ammortizzati € '),
+        'err' => array('regdat' => 'La data di registrazione precede quella della fattura',
+            'numfat' => 'Non è stato introdotto il numero della fattura',
+            'clfoco' => 'Non è stato scelto il fornitore',
+            'pagame' => 'Non è stata scelta la modalità di pagamento',
+            'datfat' => 'La data fattura è sbagliata',
+            'descri' => 'Non è stata inserita una descrizione del bene acquistato',
+            'ss_amm_min' => 'Non è stata inserita la sottospecie della tabella Ammortamenti Ministeriali'),
+        'war' => array('update' => 'Sono consentite le modifiche solo ad alcuni campi perché'
+            . ' l\'inserimento di questo cespite ha creato sul piano dei conti un sottoconto su ognuno dei'
+            . ' tre mastri scelti per l\'immobilizzazione, il fondo ammortamento e per le quote di costi'
+            . ' annuali per ammortamenti. Inoltre è stata fatta una registrazione contabile ed IVA '
+            . ' pertanto se volete modificare gli altri dati dovrete agire in prima nota sul seguente'
+            . ' movimento contabile'),
+        'seziva' => "Sez. IVA",
+        'indspe' => "Indirizzo",
+        'datfat' => "Data fattura",
+        'datreg' => "Data registr.",
+        'pagame' => "Pagamento",
+        'valamm' => "% ammortamento",
+        'numfat' => "Numero fatt.",
+        'id' => 'Bene da alienare',
+        'mas_found_assets' => 'Fondo ammort.',
+        'mas_cost_assets' => 'Costo ammort.',
+        'des_fixed_assets' => 'Immobilizzazione ',
+        'des_found_assets' => 'Fondo ammortamento ',
+        'des_cost_assets' => 'Ammortamento ',
+        'id_no_deduct_vat' => 'IVA indetraibile',
+        'no_deduct_vat_rate' => '% IVA indetraibile',
+        'acc_no_deduct_cost' => 'Costo indeducibile',
+        'no_deduct_cost_rate' => '% quota indeducibile',
+        'descri' => 'Descrizione bene',
+        'quantity' => 'Quantità',
+        'unimis' => 'Unità Misura',
+        'a_value' => 'Prezzo',
+        'codvat' => 'I.V.A.',
+        'amount' => 'Costo totale del bene € ',
+        'ss_amm_min' => 'Ammort.Minister.',
+        'super_ammort' => '% Super ammortamento'
+    ),
 );
 ?>
