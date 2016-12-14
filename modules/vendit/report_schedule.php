@@ -35,7 +35,7 @@ $linkHeaders = new linkHeaders($script_transl['header']);
 $linkHeaders->setAlign(array('left','center','center','center','right','center'));
 $linkHeaders->output();
 
-$result = gaz_dbi_dyn_query ('*', $gTables['paymov'], $where, $orderby, $limit, $passo);
+$result = gaz_dbi_dyn_query ('*', $gTables['paymov'], 1, 'id DESC');
 while ($a_row = gaz_dbi_fetch_array($result))
     {
     // faccio una subquery che è più veloce di JOIN per ricavare l'id_tes
