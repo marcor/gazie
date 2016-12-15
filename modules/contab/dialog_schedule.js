@@ -179,9 +179,11 @@ function dialogSchedule(paymov) {
                 {clfoco: term_val, id_tesdoc_ref: excl_val},
                 function (data) {
                     var j = 0;
-                    var link_ref = "";
                     $.each(data, function (i, value) {
+                    	var link_ref = "";
+                    	var doc_des = "";
                         var ri = parseInt(value.regiva) || 0;
+                        var pr = parseInt(value.protoc) || 0;
                         if (j == 0) {
                             $("#db-contain" + nrow + " tbody").append("<tr>" +
                                     "<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti di: ' + value.ragso1 + ' ' + value.ragso2 + '</td></tr>');
@@ -189,10 +191,12 @@ function dialogSchedule(paymov) {
                         if (ri >= 1) {
                             link_ref = '<button id="linking_' + j + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button>';
                         }
+                        if (pr >= 1) {
+                            doc_des = " n." + value.numdoc + "/" + value.seziva + " del " + value.datdoc;
+                        }
                         $("#db-contain" + nrow + " tbody").append("<tr>" +
                                 '<td class="ui-widget-right ui-widget-content ">' + link_ref + '</td>' +
-                                "<td" + ' class="ui-widget ui-widget-content " > ' + value.descri + " n." +
-                                value.numdoc + "/" + value.seziva + " del " + value.datdoc + "</td>" +
+                                "<td" + ' class="ui-widget ui-widget-content " > ' + value.descri + doc_des + "</td>" +
                                 "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                                 "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
                                 '<td class="ui-widget-right ui-widget-content " >' + value.darave + '</td>' +
