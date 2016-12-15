@@ -27,7 +27,7 @@
 if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
     $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
 }
-if (file_exists("../../library/theme/" . $_SESSION['theme'] . "/header.php")) {
+if (!empty($_SESSION['theme']) && file_exists("../../library/theme/" . $_SESSION['theme'] . "/header.php")) {
     include "../../library/theme/" . $_SESSION['theme'] . "/header.php";
 } else {
     include "../../library/theme/g7/header.php";
