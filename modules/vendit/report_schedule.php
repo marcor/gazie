@@ -54,7 +54,7 @@ while ($a_row = gaz_dbi_fetch_array($result))
         echo "<td></td>";
     }
     echo "<td align=\"right\">".$a_row["amount"]." &nbsp;</td>";
-    echo "<td align=\"center\">".$a_row["expiry"]." &nbsp;</td>";
+    echo "<td align=\"center\">".gaz_format_date($a_row["expiry"])." &nbsp;</td>";
     echo "</tr>";
     }
 ?>
