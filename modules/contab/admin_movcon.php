@@ -613,10 +613,10 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                         if ($v['id'] == 'new') { // nuovo rigo
                                             unset($new_paymov[$j]['id']);
                                             if ($form['registroiva'] == 0) {
-                                                $y_paymov = $form['date_doc_Y'];
+                                                $y_paymov = $form['date_reg_Y'];
                                                 $num_paymov = $row_con['id_rig']; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
                                             } else {
-                                                $y_paymov = $form['date_reg_Y'];
+                                                $y_paymov = $form['date_doc_Y'];
                                                 $num_paymov = intval($_POST['protocollo']);
                                             }
                                             $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov . $form['registroiva'] . $form['sezioneiva'] . str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
@@ -663,10 +663,10 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                             if ($v['id'] == 'new') { // nuovo rigo
                                 unset($new_paymov[$j]['id']);
                                 if ($form['registroiva'] == 0) {
-                                    $y_paymov = $form['date_doc_Y'];
+                                    $y_paymov = $form['date_reg_Y'];
                                     $num_paymov = $last_id_rig; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
                                 } else {
-                                    $y_paymov = $form['date_reg_Y'];
+                                    $y_paymov = $form['date_doc_Y'];
                                     $num_paymov = intval($_POST['protocollo']);
                                 }
                                 $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov . $form['registroiva'] . $form['sezioneiva'] . str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
@@ -786,10 +786,10 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     $new_paymov[$j]['id_tesdoc_ref'] = $v['id_tesdoc_ref'];
                                 } else {
                                     if ($form['registroiva'] == 0) {
-                                        $y_paymov = $form['date_doc_Y'];
+                                        $y_paymov = $form['date_reg_Y'];
                                         $num_paymov = $last_id_rig; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
                                     } else {
-                                        $y_paymov = $form['date_reg_Y'];
+                                        $y_paymov = $form['date_doc_Y'];
                                         $num_paymov = intval($_POST['protocollo']);
                                     }
                                     $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov .
