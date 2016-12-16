@@ -49,4 +49,5 @@ UPDATE `gaz_XXXcompany_config` SET `description`='GAzie school or order mail add
 ALTER TABLE `gaz_XXXassets`	CHANGE COLUMN `id_tes` `id_movcon` INT(9) NOT NULL DEFAULT '0' COMMENT 'può essere riferito a gaz_001tesmov in caso di acquisto bene o a gaz_001rigmoc in altri casi, ad esempio negli ammortamenti di fine anno' AFTER `id`;
 ALTER TABLE `gaz_XXXassets` CHANGE COLUMN `type_mov` `type_mov` INT(2) NOT NULL DEFAULT '0' COMMENT 'tipologia di movimento sul libro cespiti es.1=acquisto, 10 rivalutazione, 50 ammortamento, 90 alienazione' AFTER `id_movcon`;
 ALTER TABLE `gaz_XXXassets` CHANGE COLUMN `acc_no_detuct_cost` `acc_no_deduct_cost` INT(11) NOT NULL DEFAULT '0' AFTER `no_deduct_vat_rate`;
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Modo di selezione dei clienti/fornitori sui report delle fatture. Dropbox=0, Ricerca testuale=1', 'partner_select_mode', '1');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
