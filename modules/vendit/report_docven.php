@@ -28,6 +28,9 @@ $anno = date("Y");
 $cliente = '';
 $message = "";
 $lot = new lotmag();
+$partner_select_mode = gaz_dbi_get_row($gTables['company_config'],'var','partner_select_mode')['val'];
+
+var_dump($partner_select_mode);
 
 function print_querytime($prev) {
     list($usec, $sec) = explode(" ", microtime());
@@ -51,6 +54,7 @@ gaz_flt_var_assign('numfat', 'i');
 gaz_flt_var_assign('datfat', 'd');
 gaz_flt_var_assign('clfoco', 'v');
 
+
 if (isset($_GET['all'])) {
     $_GET['protoc'] = "";
     $_GET['numfat'] = "";
@@ -62,12 +66,23 @@ if (isset($_GET['all'])) {
 $where .= " GROUP BY protoc, datfat";
 
 
+if (isset($_GET['cliente'])) {
+   if ($_GET['cliente'] <> '') {
+      $cliente = $_GET['cliente'];
+      $where = " tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' and ".$gTables['clfoco'].".descri like '%".addslashes($cliente)."%' GROUP BY protoc, datfat";
+      $passo = 50;
+      unset($protocollo);
+      unset($numerof);
+   }
+}
+
 if (isset($_GET['all'])) {
       gaz_set_time_limit (0);
       $where = "tipdoc LIKE 'F%' AND ".$gTables['tesdoc'].".seziva = '$seziva' GROUP BY protoc, datfat";
       $passo = 100000;
       unset($cliente);
 }
+
 
 $titolo = "Documenti di vendita a clienti";
 require("../../library/include/header.php");
@@ -200,7 +215,7 @@ switch ($admin_aziend['fatimm']) {
     <div align="center"><font class="FacetFormHeaderFont">Documenti di vendita della sezione
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
-            for ($sez = 1; $sez <= 3; $sez++) {
+            for ($sez = 1; $sez <= 9; $sez++) {
                 $selected = "";
                 if ($seziva == $sez) {
                     $selected = " selected ";
@@ -236,7 +251,16 @@ switch ($admin_aziend['fatimm']) {
 <?php gaz_flt_disp_select("datfat", "YEAR(datfat) as datfat", $gTables["tesdoc"], $all, $orderby); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-<?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1"); ?>
+			
+<?php
+  
+if ($partner_select_mode == null or $partner_select_mode == "0") {
+  gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1"); 
+} else {
+  gaz_flt_disp_int("cliente", "Cliente");
+}
+
+ ?>
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
