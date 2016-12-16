@@ -30,8 +30,6 @@ $message = "";
 $lot = new lotmag();
 $partner_select_mode = gaz_dbi_get_row($gTables['company_config'],'var','partner_select_mode')['val'];
 
-var_dump($partner_select_mode);
-
 function print_querytime($prev) {
     list($usec, $sec) = explode(" ", microtime());
     $this_time = ((float) $usec + (float) $sec);
