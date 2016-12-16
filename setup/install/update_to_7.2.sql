@@ -26,7 +26,7 @@ CREATE TABLE IF NOT EXISTS `gaz_students` (
  `student_rememberme_token` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL COMMENT 'student''s remember-me cookie token',
  `student_failed_logins` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'student''s failed login attemps',
  `student_last_failed_login` int(10) DEFAULT NULL COMMENT 'unix timestamp of last failed login attempt',
- `student_registration_datetime` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+ `student_registration_datetime` datetime NOT NULL,
  `student_registration_ip` varchar(39) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0.0.0.0',
  PRIMARY KEY (`student_id`),
  UNIQUE KEY `student_name` (`student_name`),

@@ -592,32 +592,43 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                 }
                                 // se i nuovi righi paymov eccedono i vecchi li inserisco
                                 for ($j = $j; $j < $count_newpaymov; $j++) { // attraverso l'eccedenza dei nuovi righi
-                                    if ($new_paymov[$j]['id'] == 'new') { // nuovo rigo
-                                        unset($new_paymov[$j]['id']);
+                                    if ($v['amount'] >= 0.01) { // ma solo se è stato valorizzato
+                                        if ($new_paymov[$j]['id'] == 'new') { // nuovo rigo
+                                            unset($new_paymov[$j]['id']);
+                                        }
+                                        if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
+                                            $new_paymov[$j]['id_rigmoc_doc'] = $row_con['id_rig'];
+                                        } else {  // chiusura partita
+                                            $new_paymov[$j]['id_rigmoc_pay'] = $row_con['id_rig'];
+                                        }
+                                        $new_paymov[$j]['expiry'] = gaz_format_date($new_paymov[$j]['expiry'], true);
+                                        $calc->updatePaymov($new_paymov[$j]);
                                     }
-                                    if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
-                                        $new_paymov[$j]['id_rigmoc_doc'] = $row_con['id_rig'];
-                                    } else {  // chiusura partita
-                                        $new_paymov[$j]['id_rigmoc_pay'] = $row_con['id_rig'];
-                                    }
-                                    $new_paymov[$j]['expiry'] = gaz_format_date($new_paymov[$j]['expiry'], true);
-                                    $calc->updatePaymov($new_paymov[$j]);
                                     $j++;
                                 }
                             } else { // prima non li avevo quindi adesso devo introdurre TUTTI I NUOVI 
                                 foreach ($new_paymov as $k => $v) { // attraverso il nuovo array
                                     $j = $k;
-                                    if ($v['id'] == 'new') { // nuovo rigo
-                                        unset($new_paymov[$j]['id']);
-                                        $new_paymov[$j]['id_tesdoc_ref'] = $form['date_reg_Y'] . $form['registroiva'] . $form['sezioneiva'] . str_pad($form['protocollo'], 9, 0, STR_PAD_LEFT);
+                                    if ($v['amount'] >= 0.01) { // nuovo rigo solo se è stato valorizzato
+                                        if ($v['id'] == 'new') { // nuovo rigo
+                                            unset($new_paymov[$j]['id']);
+                                            if ($form['registroiva'] == 0) {
+                                                $y_paymov = $form['date_doc_Y'];
+                                                $num_paymov = $row_con['id_rig']; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
+                                            } else {
+                                                $y_paymov = $form['date_reg_Y'];
+                                                $num_paymov = intval($_POST['protocollo']);
+                                            }
+                                            $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov . $form['registroiva'] . $form['sezioneiva'] . str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
+                                        }
+                                        if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
+                                            $new_paymov[$j]['id_rigmoc_doc'] = $row_con['id_rig'];
+                                        } else {  // chiusura partita
+                                            $new_paymov[$j]['id_rigmoc_pay'] = $row_con['id_rig'];
+                                        }
+                                        $new_paymov[$j]['expiry'] = gaz_format_date($new_paymov[$j]['expiry'], true);
+                                        $calc->updatePaymov($new_paymov[$j]);
                                     }
-                                    if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
-                                        $new_paymov[$j]['id_rigmoc_doc'] = $row_con['id_rig'];
-                                    } else {  // chiusura partita
-                                        $new_paymov[$j]['id_rigmoc_pay'] = $row_con['id_rig'];
-                                    }
-                                    $new_paymov[$j]['expiry'] = gaz_format_date($new_paymov[$j]['expiry'], true);
-                                    $calc->updatePaymov($new_paymov[$j]);
                                 }
                             }
                         } else {
@@ -651,7 +662,14 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                             $j = $k;
                             if ($v['id'] == 'new') { // nuovo rigo
                                 unset($new_paymov[$j]['id']);
-                                $new_paymov[$j]['id_tesdoc_ref'] = $form['date_reg_Y'] . $form['registroiva'] . $form['sezioneiva'] . str_pad($form['protocollo'], 9, 0, STR_PAD_LEFT);
+                                if ($form['registroiva'] == 0) {
+                                    $y_paymov = $form['date_doc_Y'];
+                                    $num_paymov = $last_id_rig; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
+                                } else {
+                                    $y_paymov = $form['date_reg_Y'];
+                                    $num_paymov = intval($_POST['protocollo']);
+                                }
+                                $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov . $form['registroiva'] . $form['sezioneiva'] . str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
                             }
                             if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
                                 $new_paymov[$j]['id_rigmoc_doc'] = $last_id_rig;
@@ -769,13 +787,15 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                 } else {
                                     if ($form['registroiva'] == 0) {
                                         $y_paymov = $form['date_doc_Y'];
+                                        $num_paymov = $last_id_rig; // in caso di mancanza di riferimento al documento metto quello del rigo contabile
                                     } else {
                                         $y_paymov = $form['date_reg_Y'];
+                                        $num_paymov = intval($_POST['protocollo']);
                                     }
                                     $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov .
                                             intval($_POST['registroiva']) .
                                             intval($_POST['sezioneiva']) .
-                                            str_pad(intval($_POST['protocollo']), 9, 0, STR_PAD_LEFT);
+                                            str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
                                 }
                                 $new_paymov[$j]['id_rigmoc_doc'] = $last_id_rig;
                                 if ($v['amount'] < 0.01) {  // se non ho messo manualmente le scadenze lo faccio in automatico
@@ -783,6 +803,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     $ex = new Expiry;
                                     $partner = $anagrafica->getPartner(intval($_POST['conto_rc' . $i]));
                                     $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $partner['codpag']);
+                                    if ($datadoc == 0) {
+                                        $datadoc = $datareg;
+                                    }
                                     $rs_ex = $ex->CalcExpiry(floatval($_POST['importorc'][$i]), $datadoc, $pag['tipdec'], $pag['giodec'], $pag['numrat'], $pag['tiprat'], $pag['mesesc'], $pag['giosuc']);
                                     foreach ($rs_ex as $ve) { // attraverso le rate
                                         $new_paymov[$j]['amount'] = $ve['amount'];
