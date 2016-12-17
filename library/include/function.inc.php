@@ -900,7 +900,10 @@ class selectartico extends SelectBox {
         $tabula = ' tabindex="4" ';
         $opera = "%'";
         if (strlen($cerca) >= 1) {
-            $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], "codice LIKE '" . addslashes($cerca) . $opera, "descri DESC");
+            $opera = "'"; ////
+			$field_sql = 'codice';		
+			$result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'],$field_sql." LIKE '".addslashes($cerca).$opera,"descri DESC");		
+            // $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], "codice LIKE '" . addslashes($cerca) . $opera, "descri DESC");
             $numclfoco = gaz_dbi_num_rows($result);
             if ($numclfoco > 0) {
                 $tabula = "";
