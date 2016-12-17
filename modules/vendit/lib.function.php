@@ -71,14 +71,14 @@ class venditForm extends GAzieForm {
         global $gTables, $admin_aziend;
         echo "<select id=\"$name\" name=\"$name\" class=\"$class\">\n";
         echo "\t<option value=\"0\"> ---------- </option>\n";
-        $result = gaz_dbi_dyn_query("id, descri", $gTables['assets'], "type_mov = 1");
+        $result = gaz_dbi_dyn_query("acc_fixed_assets, descri", $gTables['assets'], "type_mov = 1");
         while ($r = gaz_dbi_fetch_array($result)) {
             $selected = '';
-            $v = $r["id"];
+            $v = $r["acc_fixed_assets"];
             if ($val == $v) {
                 $selected .= " selected ";
             }
-            echo "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["id"] . "-" . $r['descri'] . "</option>\n";
+            echo "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["acc_fixed_assets"] . "-" . $r['descri'] . "</option>\n";
         }
         echo "</select>\n";
    }

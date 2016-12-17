@@ -437,6 +437,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msgrigo = $i + 1;
                 $msg .= "50+";
             }
+            if ($v['tiprig'] == 90) {
+                if (empty($v['descri'])) {
+                    $msgrigo = $i + 1;
+                    $msg .= "49+";
+                }
+                if ($v['codric']<100000000) {
+                    $msgrigo = $i + 1;
+                    $msg .= "61+";
+                }
+            }
         }
         if ($msg == "") {// nessun errore
             $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
@@ -1753,7 +1763,11 @@ echo '<table class="Tlarge table table-bordered table-condensed">
 		<input type="hidden" value="' . $form['in_status'] . '" name="in_status" />
 		<input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 		<tr>
-			<td class="FacetColumnTD">' . $script_transl[15] . ':';
+			<td class="FacetColumnTD">';
+echo "\n$script_transl[17]:";
+$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+
+echo $script_transl[15] . ':';
 
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
@@ -1762,8 +1776,6 @@ $select_artico->output(substr($form['cosear'], 0, 20));
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
 /* echo $script_transl['in_artsea'];
   $gForm->selSearchItem('in_artsea', $form['in_artsea']); */
-echo "\n$script_transl[17]:";
-$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
 
 echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 /*
@@ -1840,8 +1852,8 @@ foreach ($form['rows'] as $k => $v) {
     } elseif ($v['tiprig'] == 3) {
         $carry+=$v['prelis'];
     } elseif ($v['tiprig'] == 90) { // rigo vendita cespite ammortizzabile
-            $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
-            $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
+        $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
+        $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
         if (!isset($castle[$v['codvat']])) {
             $castle[$v['codvat']]['impcast'] = 0.00;
         }
@@ -2119,25 +2131,22 @@ foreach ($form['rows'] as $k => $v) {
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!\">
 						<input class="btn btn-xs btn-success btn-block" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 					</td>
-					  <td>
-						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="60" size="50" />
+					  <td  colspan="6" >';
+            $gForm->selectAsset('rows[' . $k . '][codric]', $v['codric']);
+
+            echo '<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="100" />
 					</td>
-					<td><input type="hidden" name="rows[' . $k . '][unimis]" value="" /></td>
-					<td><input type="hidden" name="rows[' . $k . '][quanti]" value="" /></td>
-					<td><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
-					<td><input type="hidden" name="rows[' . $k . '][provvigione]" value="" /></td>
-					<td></td>
-					<td class="text-right">
-						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7" onchange="this.form.submit()" />
-					</td>
-					<td class="text-right">
-						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">' . $v['pervat'] . '%
-						</span>
+					<td class="text-right">';
+
+            echo '<input type="hidden" name="rows[' . $k . '][unimis]" value="" />
+					<input type="hidden" name="rows[' . $k . '][quanti]" value="" />
+					<input type="hidden" name="rows[' . $k . '][sconto]" value="" />
+					<input type="hidden" name="rows[' . $k . '][provvigione]" value="" />
+                                        <input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7" onchange="this.form.submit()" />
 					</td>
 					<td class="text-right">
-						<span class="gazie-tooltip" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
-							' . $v['codric'] . '
-						</span>
+					</td>
+					<td class="text-right">
 					</td>';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;

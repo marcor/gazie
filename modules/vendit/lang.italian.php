@@ -234,6 +234,7 @@ $strScript = array("admin_client.php" =>
         "Questo documento &egrave; gi&agrave; stato contabilizzato!",
         "Per questo documento è obbligatorio selezionare il DdT di cessione in c/visione di riferimento",
         "La quantità è stata forzata ad 1 perché l'articolo prevede il numero di serie",
+        'Non è stato selezionato il cespite da alienare sul relativo rigo',
         'speban' => "Spese incasso",
         'speban_title' => 'Spese incasso non documentate/rate',
         'traspo_title' => 'Spese trasporto non documentate',
