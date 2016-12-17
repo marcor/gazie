@@ -115,8 +115,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>
    <tr class="FacetDataTD">
 		<td>
-			<a class="btn btn-xs btn-edit" href="admin_install.php?codice=<?php echo $a_row["codice"]; ?>&Update">
-			<?php echo $a_row["codice"]; ?></a>
+			<a class="btn btn-xs btn-default btn-100" href="admin_install.php?codice=<?php echo $a_row["codice"]; ?>&Update">
+			<i class="glyphicon glyphicon-edit"></i><?php echo $a_row["codice"]; ?></a>
 		</td>
 		<td><?php echo date("d",strtotime($a_row["datainst"]))." ".$month[date("n",strtotime($a_row["datainst"]))]." ".date("Y",strtotime($a_row["datainst"])); ?></td>
 		<td><a href="../vendit/report_client.php?auxil=<?php echo $a_row["ragso1"]; ?>&search=Cerca">

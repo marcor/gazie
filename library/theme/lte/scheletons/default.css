@@ -30,7 +30,12 @@
     width: 50px;
 }
 .btn-100 {
+    text-align: right;
+    padding-right: 15px;
     width: 100px;
+}
+.glyphicon-edit {
+    padding-right: 5px;
 }
 .btn-200 {
     width: 200px;

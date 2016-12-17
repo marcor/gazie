@@ -270,7 +270,7 @@ echo '<script type="text/javascript">
                 <tr>
                     <?php
                     print "<td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=admin&value=" . $form['Login'] . "&field=Login\" width=\"100\"></td>";
-                    print "<td colspan=\"2\" class=\"FacetDataTD\" align=\"center\">" . $script_transl['image'] . ":<br /><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
+                    print "<td colspan=\"2\" class=\"FacetDataTD\">" . $script_transl['image'] . ":<br /><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
                     ?>
                 </tr>
                 <tr>

@@ -133,7 +133,8 @@ $select_cliente = new selectPartner('clfoco');
 <input type="hidden" name="ref_code" value="<?php echo $form['ref_code']; ?>">
 <input type="hidden" name="codice" value="<?php echo $form['codice']; ?>">
 <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+<div class="table-responsive">
+<table class="Tlarge table table-striped table-bordered table-condensed">
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['codice']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
@@ -188,6 +189,7 @@ $select_cliente = new selectPartner('clfoco');
 	</td>
 </tr>
 </table>
+</div>
 
 <?php
 if ( !isset($_GET["Insert"]) ) {
@@ -247,7 +249,12 @@ if ( !isset($_GET["Insert"]) ) {
         menubar: false,
         statusbar: false
     });
-</script></html>
+</script>
+</div>
+</form>
+<?php
+require("../../library/include/footer.php");
+?>
 
 
 <!--<script src="../../js/custom/autocomplete.js"></script>
