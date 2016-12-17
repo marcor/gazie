@@ -481,10 +481,10 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 </form>
     <div class="content-wrapper">
       <section class="content-header">
-         <h1>
+         <!--<h1>
             <?php 
                 // cerco di individuare il titolo della pagina dalla tabella menu_usage
-                if ( $scriptname != 'admin.php') {
+                /*if ( $scriptname != 'admin.php') {
                     if( strpos ($mod_uri, "?") > 0 )
                         $part_mod_uri = substr($mod_uri, 0, strpos( $mod_uri, "&" ));
                     else 
@@ -520,26 +520,49 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 }
                 if ( isset($rref_name) ) echo $rref_name; 
                 else echo "&nbsp;";
-                }
+                }*/
             ?>
-         </h1>
+         </h1>-->
          
          <?php
             global $gTables;
             $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
             $posizione = array_pop( $posizione );
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
+            //echo $posizione."<br>";
             $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
             if ( !gaz_dbi_num_rows($result)>0 ) {
-                $posizione = explode ("?",$posizione );
-                $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione[0].'" ',' id',0,1);	
+                $posizionex = explode ("?",$posizione );
+                $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizionex[0].'" ',' id',0,1);	
             }
             $riga = gaz_dbi_fetch_array($result);
+            
             if ( $riga["id"]!="" ) {
+                echo "<h1>";
+                echo stripslashes($transl[$module]["m2"][$riga["translate_key"]][0]);
+                echo "</h1>";
+            
                 $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
                 echo "<ol class=\"breadcrumb\">";
                 echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
                 while ($r = gaz_dbi_fetch_array($result2)) {
+                    echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
+                }
+                echo "</ol>";
+            } else {
+                /* @var $result3 type */
+                $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'" ',' id',0,1);
+                $r = gaz_dbi_fetch_array($result3);
+                //print_r ($r);
+                echo "<h1>";
+                echo $transl[$module]["m3"][$r["translate_key"]][0];
+                echo "</h1>";
+                
+                $posizionex = explode ("?",$posizione );
+                $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link like "%'.$posizionex[0].'%" ',' id',0,99);
+                echo "<ol class=\"breadcrumb\">";
+                echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
+                while ($r = gaz_dbi_fetch_array($result4)) {
                     echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
                 }
                 echo "</ol>";
@@ -597,7 +620,7 @@ function submenu($array, $index, $sub="") {
 	if (count($mnu)>5) {
             echo "<li>";
             $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
-            echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". substr($submnu.stripslashes($mnu["name"]),0,20);
+            echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". substr($submnu.stripslashes($mnu["name"]),0,23);
             echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
             echo "  </a>";                    
             submenu($mnu, 1, $sub);
@@ -609,7 +632,7 @@ function submenu($array, $index, $sub="") {
                 $sub="";
             }
             echo "<li >";
-            echo "  <a href=\"". $mnu['link'] ."\">". substr($submnu.stripslashes($mnu['name']),0,20) ."</a>";
+            echo "  <a href=\"". $mnu['link'] ."\">". substr($submnu.stripslashes($mnu['name']),0,23) ."</a>";
             echo "</li>";
         }
 	$numsub++;

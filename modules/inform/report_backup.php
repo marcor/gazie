@@ -73,8 +73,9 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
 
     <div class="tab-content">
         <div id="lista" class="tab-pane fade in active">
+            <div class="table-responsive">
 
-            <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+            <table class="Tlarge table table-striped table-bordered table-condensed">
                 <tr>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['id']; ?></th>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['ver']; ?></th>
@@ -137,6 +138,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                 }
                 ?>
             </table>
+            </div>
         </div>
         <div id="config" class="tab-pane fade">
             <div class="Tlarge FacetDataTD div-config div-table">

@@ -144,8 +144,8 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
         <meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
         <link rel="stylesheet" href="../../library/bootstrap/css/bootstrap.min.css" >
         <link rel="shortcut icon" href="../../library/images/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="../../library/style/base.css">
-        <link rel="stylesheet" type="text/css" href="../../library/style/skins/base.css">
+        <link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/default.css">
+        <link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/skins/default.css">
         <title>Gazie - Login</title>
         <noscript>
     <h1>

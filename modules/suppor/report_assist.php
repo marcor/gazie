@@ -103,7 +103,8 @@ if ( $flt_cliente!="tutti" ) {
 
 ?>
 <div align="center" class="FacetFormHeaderFont">Assistenza Tecnica</div>
-	<form method="GET">
+    <form method="GET">
+      <div class="box-body table-responsive">
 	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 		<tr>
 		<td class="FacetFieldCaptionTD" colspan="4">
@@ -286,6 +287,7 @@ $passi = array(20, 50, 100, 10000 );
 	</td>
 </tr>
 </table>
+</div>
 </form>
 <?php
 require("../../library/include/footer.php");

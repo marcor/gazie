@@ -160,7 +160,7 @@ if ($t > 4 && $t <= 13) {
         ?>
         <div class="row text-center">
             <div class="col-sm-6">
-                <div class="panel panel-default company-color" >
+                <div class="panel panel-default company-color panel-company" >
                     <p>
                         <?php echo $script_transl['company'] ?>
                         <a href="../config/admin_aziend.php"><img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
@@ -177,7 +177,7 @@ if ($t > 4 && $t <= 13) {
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="panel panel-default" >
+                <div class="panel panel-default panel-user" >
                     <p>
                         <?php echo ucfirst($msg) . " " . $admin_aziend['Nome'] . ' (ip=' . $admin_aziend['last_ip'] . ')'; ?>
                     </p>

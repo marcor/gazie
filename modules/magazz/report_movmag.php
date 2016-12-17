@@ -70,19 +70,19 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 	<tr>
 		<td class="FacetFieldCaptionTD">
-		  <input type="text" name="movimento" placeholder="Movimento" class="input-xs form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
+		  <input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
 		</td>
 		<td class="FacetFieldCaptionTD"></td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-xs form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 		</td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-xs form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-sm form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
 		</td>
 		<td class="FacetFieldCaptionTD">
-			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-xs form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
 		</td>
-		<td colspan="3">
+		<td class="FacetFieldCaptionTD" colspan="3">
 			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 			<input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
 		</td>
@@ -150,9 +150,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	//if($tot_movimenti!=0) {	//	Inizialmente avevo pensato di stampare il totale solo se diverso da zero, ma la cosa risulta fuorviante in alcuni casi
 								//	meglio stamparlo sempre
 		echo "<tr>
-				<td colspan=\"6\" class=\"FacetFormHeaderFont\" align=\"right\"><strong>TOTALE</strong></td>
-				<td class=\"FacetFormHeaderFont\" align=\"right\"><strong>".gaz_format_number($tot_movimenti)."</strong></td>
-				<td class=\"FacetFormHeaderFont\">&nbsp;</td>
+				<td colspan=\"6\" class=\"FacetFieldCaptionTD\" align=\"right\"><strong>TOTALE</strong></td>
+				<td class=\"FacetFieldCaptionTD\" align=\"right\"><strong>".gaz_format_number($tot_movimenti)."</strong></td>
+				<td class=\"FacetFieldCaptionTD\">&nbsp;</td>
 			  </tr>";
 	//}
 	/** ENRICO FEDELE */

@@ -131,8 +131,8 @@ if ( isset( $_GET['idinstallazione']) ) {
             </div>
             <div class="box-body">-->
         
-        
-	<table class="table table-bordered table-striped table-responsive">
+        <div class="box-body table-responsive">
+	<table class="Tlarge table table-bordered table-striped">
 		<tr>
 		<td class="FacetFieldCaptionTD">
                         <?php gaz_flt_disp_int("id", "Numero"); ?>
@@ -284,10 +284,11 @@ $passi = array(20, 50, 100, 10000 );
 		?>
 		</select>
 	</td>
-</tr>
-            </table>
-                </div>
+        </tr>
+        </table>
         </div>
+      </div>
+</div>
 <!--</div>
 </div>-->
 
