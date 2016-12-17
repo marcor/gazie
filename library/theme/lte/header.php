@@ -134,7 +134,10 @@
           </a>    
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">     
-          <!-- Messages: style can be found in dropdown.less-->
+          <?php
+                echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
+                ?>
+                <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-star" style="color: yellow"></i>
@@ -480,56 +483,13 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
     </aside>
 </form>
     <div class="content-wrapper">
-      <section class="content-header">
-         <!--<h1>
-            <?php 
-                // cerco di individuare il titolo della pagina dalla tabella menu_usage
-                /*if ( $scriptname != 'admin.php') {
-                    if( strpos ($mod_uri, "?") > 0 )
-                        $part_mod_uri = substr($mod_uri, 0, strpos( $mod_uri, "&" ));
-                    else 
-                        $part_mod_uri = $mod_uri;
-                    //echo $part_mod_uri."<br>".$mod_uri."<br>";
-                $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND link="'.$part_mod_uri.'" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);   
-                if (gaz_dbi_num_rows($result) > 0) {
-                while ($r = gaz_dbi_fetch_array($result)) {
-                    $rref = explode('-', $r['transl_ref']);
-                    
-                    switch ($rref[1]) {
-                        case 'm1':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['title'];
-                            break;
-                        case 'm2':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
-                            break;
-                        case 'm3':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
-                            break;
-                        case 'sc':
-                            require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $strScript[$rref[2]][$rref[3]];
-                            break;
-                        default:
-                            $rref_name = 'Nome script non trovato';
-                            break;
-                    }
-                }
-                }
-                if ( isset($rref_name) ) echo $rref_name; 
-                else echo "&nbsp;";
-                }*/
-            ?>
-         </h1>-->
-         
+      <section class="content-header">       
          <?php
-            global $gTables;
+            global $gTables, $module;
             $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
             $posizione = array_pop( $posizione );
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
-            //echo $posizione."<br>";
+            
             $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
             if ( !gaz_dbi_num_rows($result)>0 ) {
                 $posizionex = explode ("?",$posizione );
@@ -538,34 +498,36 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $riga = gaz_dbi_fetch_array($result);
             
             if ( $riga["id"]!="" ) {
+                // mostra il titolo se siamo su una pagina di secondo livello
                 echo "<h1>";
                 echo stripslashes($transl[$module]["m2"][$riga["translate_key"]][0]);
-                echo "</h1>";
-            
+                echo "</h1>";          
                 $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
                 echo "<ol class=\"breadcrumb\">";
                 echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
+                //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
                 while ($r = gaz_dbi_fetch_array($result2)) {
                     echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
                 }
                 echo "</ol>";
             } else {
-                /* @var $result3 type */
+                // @titolo se siamo sul terzo livello
                 $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'" ',' id',0,1);
-                $r = gaz_dbi_fetch_array($result3);
-                //print_r ($r);
-                echo "<h1>";
-                echo $transl[$module]["m3"][$r["translate_key"]][0];
-                echo "</h1>";
-                
-                $posizionex = explode ("?",$posizione );
-                $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link like "%'.$posizionex[0].'%" ',' id',0,99);
-                echo "<ol class=\"breadcrumb\">";
-                echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
-                while ($r = gaz_dbi_fetch_array($result4)) {
-                    echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
+                if ( $r = gaz_dbi_fetch_array($result3) ) {
+                    echo "<h1>";
+                    echo $transl[$module]["m3"][$r["translate_key"]][0];
+                    echo "</h1>";                
+                    // disegno i bottoni di accesso alle funzioni di questa pagina
+                    $posizionex = explode ("?",$posizione );
+                    $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link like "%'.$posizionex[0].'%" ',' id',0,99);
+                    echo "<ol class=\"breadcrumb\">";
+                    echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
+                    //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-help\"></i></a></li>";
+                    while ($r = gaz_dbi_fetch_array($result4)) {
+                        echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
+                    }
+                    echo "</ol>";
                 }
-                echo "</ol>";
             }
          ?>
          
@@ -641,5 +603,4 @@ function submenu($array, $index, $sub="") {
         echo "    </ul>";
     }
 }
-
 ?>
