@@ -1257,7 +1257,7 @@ echo "</script>\n";
         echo "<tr><td class=\"FacetDataTD\" >" . $script_transl['seziva'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['numdoc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['protoc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['date_doc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['partner'] . "</td></tr>";
         echo "<tr><td class=\"FacetDataTD\" >";
         echo "<select name=\"sezioneiva\" class=\"FacetSelect\" onchange=\"this.form.submit()\">";
-        for ($sez = 1; $sez <= 3; $sez++) {
+        for ($sez = 1; $sez <= 9; $sez++) {
             $selected = "";
             if ($form["sezioneiva"] == $sez) {
                 $selected = " selected ";

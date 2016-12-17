@@ -260,7 +260,7 @@ echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">Ristampa documenti gi&agrave; emessi " . $script_transl[1];
 echo "<select name=\"seziva\" class=\"FacetFormHeaderFont\">\n";
-for ($counter = 1; $counter <= 3; $counter++) {
+for ($counter = 1; $counter <= 9; $counter++) {
    $selected = "";
    if ($counter == $form['seziva']) {
       $selected = " selected ";

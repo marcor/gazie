@@ -103,7 +103,7 @@ function confirMail(link){
     <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
-            for ($sez = 1; $sez <= 3; $sez++) {
+            for ($sez = 1; $sez <= 9; $sez++) {
                $selected = "";
                if (substr($auxil, 0, 1) == $sez)
                   $selected = " selected ";

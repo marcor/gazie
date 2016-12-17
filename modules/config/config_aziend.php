@@ -87,6 +87,6 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
             </form>
         </div>
     </div>
-</div>
-</body>
-</html>
+<?php
+require("../../library/include/footer.php");
+?>

@@ -1253,7 +1253,7 @@ echo "</div>\n";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"seziva\" class=\"FacetSelect\">\n";
-for ($counter = 1; $counter <= 3; $counter++) {
+for ($counter = 1; $counter <= 9; $counter++) {
     $selected = "";
     if ($form["seziva"] == $counter) {
         $selected = " selected ";

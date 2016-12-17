@@ -114,7 +114,7 @@ $script_transl = HeadMain();
     <div align="center" class="FacetFormHeaderFont"><?php echo $titolo; ?>
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
-            for ($sez = 1; $sez <= 3; $sez++) {
+            for ($sez = 1; $sez <= 9; $sez++) {
                 $selected = "";
                 if ($seziva == $sez) {
                     $selected = " selected ";

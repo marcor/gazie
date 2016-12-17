@@ -541,7 +541,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     <div class="form-group">
                         <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
                         <div class="col-sm-8">
-                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3, 'col-sm-8 small'); ?>
+                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, 'col-sm-8 small'); ?>
                         </div>
                     </div>
                 </div>

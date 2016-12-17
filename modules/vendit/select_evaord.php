@@ -724,7 +724,7 @@ $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['cl
 <?php
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['seziva'] . "</td><td class=\"FacetDataTD\" >\n";
-$gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3, 'FacetDataTD', true);
+$gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, 'FacetDataTD', true);
 echo "\t </td>\n";
 echo '<input type="hidden" name="indspe" value="' . $form['indspe'] . '">';
 if (!empty($msg)) {

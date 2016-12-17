@@ -245,7 +245,7 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['vat_reg'] . "</td><t
 $gForm->variousSelect('vat_reg', $script_transl['vat_reg_value'], $form['vat_reg'], 'FacetSelect', false, 'vat_reg');
 echo "</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['vat_section'] . "</td><td class=\"FacetDataTD\">\n";
-$gForm->selectNumber('vat_section', $form['vat_section'], false, 1, 3, 'FacetSelect', 'vat_section');
+$gForm->selectNumber('vat_section', $form['vat_section'], false, 1, 9, 'FacetSelect', 'vat_section');
 echo "\t</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

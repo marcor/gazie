@@ -465,7 +465,7 @@ echo ' n.'.$form['doc_number']."</div>\n";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['vat_section']."</td><td class=\"FacetDataTD\">\n";
-$gForm->selectNumber('vat_section',$form['vat_section'],0,1,3);
+$gForm->selectNumber('vat_section',$form['vat_section'],0,1,9);
 echo "\t </td>\n";
 if (!empty($msg)) {
     echo '<td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td>\n";

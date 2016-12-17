@@ -299,7 +299,7 @@ echo "<form method=\"POST\" name=\"contract\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 $gForm = new GAzieForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['vat_section'];
-$gForm->selectNumber('vat_section',$form['vat_section'],0,1,3,'FacetSelect','vat_section');
+$gForm->selectNumber('vat_section',$form['vat_section'],0,1,9,'FacetSelect','vat_section');
 echo ' '.$script_transl['on'].' ';
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
 echo "</div>\n";

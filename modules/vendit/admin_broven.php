@@ -1155,7 +1155,7 @@ echo '	</div>
 				<td class="FacetFieldCaptionTD">' . $script_transl[4] . '</td>
 				<td class="FacetDataTD">
 					<select name="seziva" class="FacetSelect">';
-for ($counter = 1; $counter <= 3; $counter++) {
+for ($counter = 1; $counter <= 9; $counter++) {
    $selected = "";
    if ($form['seziva'] == $counter) {
       $selected = ' selected=""';

@@ -240,7 +240,7 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['vat_section']."</td><td class=\"FacetDataTD\">\n";
-$gForm->selectNumber('seziva',$form['seziva'],0,1,3);
+$gForm->selectNumber('seziva',$form['seziva'],0,1,9);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

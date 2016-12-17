@@ -333,7 +333,7 @@ $gForm = new venditForm();
 $select_customer = new selectPartner('clfoco');
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'];
 echo "<select name=\"seziva\" class=\"FacetFormHeaderFont\" onchange=\"this.form.submit()\">\n";
-for ($counter = 1; $counter <= 3; $counter++) {
+for ($counter = 1; $counter <= 9; $counter++) {
     $selected = "";
     if ($form['seziva'] == $counter) {
         $selected = " selected ";

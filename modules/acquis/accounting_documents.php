@@ -407,7 +407,7 @@ echo "<input type=\"hidden\" value=\"".$form['year_ini']."\" name=\"year_ini\" /
 echo "<input type=\"hidden\" value=\"".$form['year_fin']."\" name=\"year_fin\" />\n";
 $gForm = new GAzieForm();
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'].$script_transl['vat_section'];
-$gForm->selectNumber('vat_section',$form['vat_section'],0,1,3,'FacetSelect','vat_section');
+$gForm->selectNumber('vat_section',$form['vat_section'],0,1,9,'FacetSelect','vat_section');
 echo "</div>\n";
 echo "<table class=\"Tsmall\">\n";
 if (!empty($msg)) {

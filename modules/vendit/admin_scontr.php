@@ -853,7 +853,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     <div class="form-group">
                         <label for="seziva" class="col-sm-4 control-label"><?php echo $script_transl['seziva']; ?></label>
                         <div class="col-sm-8">
-                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 3, 'col-sm-8'); ?>
+                            <?php $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, 'col-sm-8'); ?>
                         </div>
                     </div>
                 </div>
