@@ -715,9 +715,6 @@ if ($modal_ok_insert === true) {
 /** ENRICO FEDELE */
 /* SOlo se non sono in finestra modale */
 if ($modal === false) {
-    echo '	<?php
-require("../../library/include/footer.php");
-?>';
 } else {
     ?>
     <script type="text/javascript">
@@ -736,4 +733,5 @@ require("../../library/include/footer.php");
     </script>
     <?php
 }
+require("../../library/include/footer.php");
 ?>
