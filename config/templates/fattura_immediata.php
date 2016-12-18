@@ -128,6 +128,15 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(80,5,"IdDocumento: " . $rigo['descri'],'LR',0,'L');
                     $this->Cell(81,5,'','R',1);
                     break;                                                           
+                case "90":
+                    $this->Cell(154, 6, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');
+                    $this->Cell(20, 6, '', 1);
+                    $this->Cell(12, 6, '', 1, 1);
+                    $this->Cell(105, 6, $rigo['descri'],1,0,'L',0,'',1);
+                    $this->Cell(49, 6, '',1);
+                    $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
+                    $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
+                    break;
                 }
                 if ($rigo['ritenuta']>0) {
                     $this->Cell(154, 5,'Ritenuta d\'acconto al '.gaz_format_number($rigo['ritenuta']).'%','LB',0,'R');

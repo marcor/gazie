@@ -34,11 +34,10 @@ class DocContabVars {
         $this->user = gaz_dbi_get_row($gTables['admin'], 'Login', $_SESSION['Login']);
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
 
-        if (isset($tesdoc['caumag']) && (!is_null($tesdoc['caumag'])))
-        {
-        /** inizio modifica FP 22/10/15 */
-          $this->caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $tesdoc['caumag']);
-        /** fine modifica FP */
+        if (isset($tesdoc['caumag']) && (!is_null($tesdoc['caumag']))) {
+            /** inizio modifica FP 22/10/15 */
+            $this->caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $tesdoc['caumag']);
+            /** fine modifica FP */
         }
         $this->banapp = gaz_dbi_get_row($gTables['banapp'], "codice", $tesdoc['banapp']);
         $anagrafica = new Anagrafica();
@@ -235,12 +234,18 @@ class DocContabVars {
         $this->ritenuta = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
-            if ($rigo['tiprig'] <= 1) {
+            if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 90) {
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
                 if ($rigo['tiprig'] == 1) {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
                     $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
+                }
+                if ($rigo['tiprig'] == 90) {
+                    $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
+                    $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
+                    $asset = gaz_dbi_get_row($this->gTables['assets'], 'acc_fixed_assets', $rigo['codric'] . "' AND type_mov = '1");
+                    $rigo['codart']= $asset['id'].' - '.$asset['descri'].' ('.$rigo['codric'].')';
                 }
                 if (!isset($this->castel[$rigo['codvat']])) {
                     $this->castel[$rigo['codvat']] = 0;
@@ -252,7 +257,7 @@ class DocContabVars {
                 $this->castel[$rigo['codvat']] += $v_for_castle;
                 $this->totimp_body += $rigo['importo'];
                 $this->ritenuta += round($rigo['importo'] * $rigo['ritenuta'] / 100, 2);
-            } elseif ($rigo['tiprig'] > 5 && $rigo['tiprig'] < 9) {
+            } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 7 || $rigo['tiprig'] == 8) {
                 $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
                 $rigo['descri'] = $body_text['body_text'];
             } elseif ($rigo['tiprig'] == 3) {

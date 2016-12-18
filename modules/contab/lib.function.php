@@ -23,11 +23,10 @@ class contabForm extends GAzieForm {
             }
             $selected .= ' class="'. $bg_class[$c] . '" ';
             if ($v == $admin_aziend['mascli'] || $v == $admin_aziend['masfor']) {
-                $selected .= " color: red; font-weight: bold;\" ";
+                $selected .= ' style=" color: red; font-weight: bold;" ';
                 $view = $v . '-' . strtoupper($r['descri']);
             } else {
                 $view = $v . '-' . $r['descri'];
-                $selected .= "\" ";
             }
 
             echo "\t\t <option value=\"" . $r['codice'] . "\" $selected >$view</option>\n";

@@ -31,6 +31,8 @@ CREATE TABLE IF NOT EXISTS `gaz_students` (
  UNIQUE KEY `student_name` (`student_name`),
  UNIQUE KEY `student_email` (`student_email`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='student data';
+ALTER TABLE `gaz_aziend` ADD COLUMN `capital_gains_account` INT(9) NOT NULL DEFAULT '0' AFTER `min_rate_deprec`;
+ALTER TABLE `gaz_aziend` ADD COLUMN `capital_loss_account` INT(9) NOT NULL DEFAULT '0' AFTER `capital_gains_account`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE `gaz_XXXsconti_articoli` (`clfoco` int(9),`codart` varchar(15),`sconto` decimal(6,3),`prezzo_netto` decimal(14,5), primary key(`clfoco`,`codart`));
 CREATE TABLE `gaz_XXXsconti_raggruppamenti` (`clfoco` int(9),`ragstat` char(15),`sconto` decimal(6,3), primary key(`clfoco`,`ragstat`));

@@ -96,6 +96,8 @@ $strScript = array("admin_aziend.php" =>
         'min_rate_deprec' => 'Minimum rate depreciation (%)',
         'super_amm_account'=>'Conto costo super ammortamento',
         'super_amm_rate'=>'Percentuale eccedente il 100%',
+        'capital_loss_account'=>'Conto minusvalenze',
+        'capital_gains_account'=>'Conto plusvalenze',
         'cassa_' => 'Cash account',
         'ivaacq' => 'Purchases VAT account',
         'ivaven' => 'Sales VAT account',

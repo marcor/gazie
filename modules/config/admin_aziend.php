@@ -639,6 +639,26 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
+                        <label for="capital_gains_account" class="col-sm-4 control-label"><?php echo $script_transl['capital_gains_account']; ?></label>
+                        <?php
+                        $gForm->selectAccount('capital_gains_account', $form['capital_gains_account'],array('sub', 4), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="capital_loss_account" class="col-sm-4 control-label"><?php echo $script_transl['capital_loss_account']; ?></label>
+                        <?php
+                        $gForm->selectAccount('capital_loss_account', $form['capital_loss_account'],array('sub', 3), '', false, "col-sm-8");
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
                         <label for="mas_staff" class="col-sm-4 control-label"><?php echo $script_transl['mas_staff']; ?></label>
                         <?php
                         $gForm->selectAccount('mas_staff', $form['mas_staff'] . '000000', array(2, 9), '', false, "col-sm-8");
