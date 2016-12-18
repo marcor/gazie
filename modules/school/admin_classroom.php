@@ -135,7 +135,7 @@ $gForm = new schoolForm();
                     <div class="form-group">
                         <label for="teacher" class="col-sm-4 control-label"><?php echo $script_transl['teacher']; ?></label>
                         <?php
-                        $gForm->selectTeacher($form['teacher'], 'style="max-width: 250px;"');
+                        $gForm->selectTeacher($form['teacher'], "style='max-width: 250px;'");
                         ?>
                     </div>
                 </div>
@@ -165,3 +165,7 @@ $gForm = new schoolForm();
         </div> <!-- chiude container --> 
     </div><!-- chiude panel -->
 </form>
+    
+<?php
+require("../../library/include/footer.php");
+?>
