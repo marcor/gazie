@@ -53,7 +53,7 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
 
     // SECURITY HOLE ***************************************************************
     // allow space, any unicode letter and digit, underscore, dash, slash, percent, dot,
-    if (preg_match("/[^\040\pL\pN\&\%\/\.,_-]/u", $term)) {
+    if (preg_match("/[^\040\pL\pN\&\%\@\#\/\.,_-]/u", $term)) {
         print $json_invalid;
         exit;
     }
