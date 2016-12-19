@@ -71,6 +71,9 @@ class DDT extends Template_con_scheda
     {
         $lines = $this->docVars->getRigo();
         while (list($key, $rigo) = each($lines)) {
+            if ($rigo['sconto'] < 0.001) {
+                $rigo['sconto']='';
+            }
             if ($this->GetY() >= 215) {
                 $this->Cell(155,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
@@ -110,7 +113,19 @@ class DDT extends Template_con_scheda
                     $this->Cell(30,6,'','L');
                     $this->Cell(122,6,"IdDocumento: " . $rigo['descri'],'LR',0,'L');
                     $this->Cell(35,6,'','R',1);
-                }                
+                }  elseif ($rigo['tiprig'] == 90) {
+                    $this->Cell(152, 6, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');
+                    $this->Cell(25, 6, '', 1);
+                    $this->Cell(10, 6, '', 1, 1);
+                    $this->Cell(152, 6, $rigo['descri'],1,0,'L',0,'',1);
+                    if ($this->docVars->client['stapre'] == 'S') {
+                        $this->Cell(25,6,number_format($rigo['importo'],$this->decimal_price,',',''),'TB',0,'R');
+                        $this->Cell(10,6,$rigo['sconto'],1,1,'R');
+                    } else {
+                        $this->Cell(25,6);
+                        $this->Cell(10,6,'','R',1);
+                    }
+                }               
        }
     }
 
