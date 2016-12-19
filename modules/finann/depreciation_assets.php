@@ -56,7 +56,7 @@ function getAssets($date) {
     $from = $gTables['assets'] . ' AS assets ' .
             'LEFT JOIN ' . $gTables['tesmov'] . ' AS tesmov ON assets.id_movcon=tesmov.id_tes ' .
             'LEFT JOIN ' . $gTables['clfoco'] . ' AS fornit ON tesmov.clfoco=fornit.codice ';
-    $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.numdoc AS nudtes, tesmov.datreg AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
+    $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.seziva, tesmov.numdoc AS nudtes, tesmov.datreg AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
     $where = " datreg <= '" . $date . "'";
     $orderby = "acc_fixed_assets ASC, datreg ASC, type_mov ASC, id ASC";
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
@@ -161,6 +161,25 @@ function getAssets($date) {
                 case '80' : // alienazione parziale
                     break;
                 case '90' : // alienazione del bene 
+                    // prendo il valore del decremento del costo storico dal rigo contabile
+                    $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $acc[$row['acc_fixed_assets']][1]['fixed_tot'] -= $fx['import'];
+                    $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
+                    $row['fixed_val'] = $fx['import'];
+                    $row['found_val'] = 0;
+                    $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
+                    $row['cost_val'] = 0;
+                    $row['cost_subtot'] = $acc[$row['acc_fixed_assets']][1]['cost_tot'];
+                    $row['noded_val'] = 0;
+                    $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
+                    $row['lost_cost'] = 0;
+                    // prendo il valore del fondo ammortamento dal rigo contabile
+                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $acc[$row['acc_fixed_assets']][1]['found_tot'] -= $f['import'];
+                    $row['found_val'] = $f['import'];
+                    $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
+                    // aggiungo all'array del bene
+                    $acc[$row['acc_fixed_assets']][] = $row;
                     break;
             }
         }
@@ -377,6 +396,18 @@ if (count($msg['war']) > 0) { // ho un warning
                     array('head' => $script_transl["noded_val"], 'class' => 'text-right', 'value' =>''),
                     array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixed_subtot'] - $v['found_subtot'])),
                     array('head' => $script_transl["lost_cost"], 'class' => 'text-center', 'value' => ''),
+                ];
+            } elseif ($v['type_mov'] == 90) { // se è un decremento di valore del bene per alienazione
+                $r[] = [array('head' => $script_transl["asset_des"], 'class' => 'bg-danger',
+                'value' => gaz_format_date($v['dtdtes']) . ' ' . $v['descri']),
+                    array('head' => '', 'class' => 'text-center bg-danger', 'value' =>''),
+                    array('head' => $script_transl["fixed_val"], 'class' => 'text-left bg-danger',
+                        'value' =>'-'. gaz_format_number($v['fixed_val']).' = '.gaz_format_number($v['fixed_subtot'])),
+                    array('head' => $script_transl["found_val"], 'class' => 'text-right bg-danger', 'value' => '-'. gaz_format_number($v['found_val']).' = '.gaz_format_number($v['found_subtot'])),
+                    array('head' => $script_transl["cost_val"], 'class' => 'text-right bg-danger', 'value' =>''),
+                    array('head' => $script_transl["noded_val"], 'class' => 'text-right bg-danger', 'value' =>''),
+                    array('head' => $script_transl["rest_val"], 'class' => 'text-right bg-danger', 'value' => gaz_format_number($v['fixed_subtot'] - $v['found_subtot'])),
+                    array('head' => $script_transl["lost_cost"], 'class' => 'text-center bg-danger', 'value' => ''),
                 ];
             } else {
                 $r[] = [array('head' => $script_transl["asset_des"], 'class' => '',

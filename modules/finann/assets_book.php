@@ -46,7 +46,7 @@ function getAssets($date) {
     $from = $gTables['assets'] . ' AS assets ' .
             'LEFT JOIN ' . $gTables['tesmov'] . ' AS tesmov ON assets.id_movcon=tesmov.id_tes ' .
             'LEFT JOIN ' . $gTables['clfoco'] . ' AS fornit ON tesmov.clfoco=fornit.codice ';
-    $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.numdoc AS nudtes, tesmov.datreg AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
+    $field = ' assets.*, tesmov.datreg AS dtrtes, tesmov.seziva, tesmov.numdoc AS nudtes, tesmov.datreg AS dtdtes, tesmov.descri AS destes, fornit.descri as desfor';
     $where = " datreg <= '" . $date . "'";
     $orderby = "acc_fixed_assets ASC, datreg ASC, type_mov ASC, id ASC";
     $result = gaz_dbi_dyn_query($field, $from, $where, $orderby);
@@ -151,6 +151,25 @@ function getAssets($date) {
                 case '80' : // alienazione parziale
                     break;
                 case '90' : // alienazione del bene 
+                    // prendo il valore del decremento del costo storico dal rigo contabile
+                    $fx = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_fixed_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $acc[$row['acc_fixed_assets']][1]['fixed_tot'] -= $fx['import'];
+                    $row['fixed_subtot'] = $acc[$row['acc_fixed_assets']][1]['fixed_tot'];
+                    $row['fixed_val'] = $fx['import'];
+                    $row['found_val'] = 0;
+                    $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
+                    $row['cost_val'] = 0;
+                    $row['cost_subtot'] = $acc[$row['acc_fixed_assets']][1]['cost_tot'];
+                    $row['noded_val'] = 0;
+                    $row['noded_subtot'] = $acc[$row['acc_fixed_assets']][1]['noded_tot'];
+                    $row['lost_cost'] = 0;
+                    // prendo il valore del fondo ammortamento dal rigo contabile
+                    $f = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $row['acc_found_assets'] . "' AND id_tes = '" . $row['id_movcon']);
+                    $acc[$row['acc_fixed_assets']][1]['found_tot'] -= $f['import'];
+                    $row['found_val'] = $f['import'];
+                    $row['found_subtot'] = $acc[$row['acc_fixed_assets']][1]['found_tot'];
+                    // aggiungo all'array del bene
+                    $acc[$row['acc_fixed_assets']][] = $row;
                     break;
             }
         }
@@ -182,6 +201,8 @@ $pdf->setVars($admin_aziend, $title);
 $pdf->SetTopMargin(39);
 $pdf->SetFooterMargin(20);
 $pdf->AddPage('L');
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
+
 $head = true;
 foreach ($form['assets'] as $ka => $va) {
     // ogni assets ha più righi-movimenti
@@ -194,7 +215,7 @@ foreach ($form['assets'] as $ka => $va) {
             $head = false;
         }
         if ($v['type_mov'] == 1) {
-            $pdf->MultiCell(84, 4, $v['descri'] . "\n" . $v["desfor"] . ' Fatt.' . $v["nudtes"] . ' del ' . gaz_format_date($v['dtdtes'], false, true) . "\n" . $v['ammmin_ssd'] . "\n Ammortamento normale = " . $v['ammmin_ssrate'] . '%', 1, 'L', FALSE, 2);
+            $pdf->MultiCell(84, 4, $v['descri'] . "\n" . $v["desfor"] . ' Fatt.' . $v["nudtes"] . ' del ' . gaz_format_date($v['dtdtes'], false, true) . "\n" . $v['ammmin_ssd'] . "\n Ammortamento normale = " . $v['ammmin_ssrate'] . '%', 1, 'L', true, 2);
             $pdf->Ln(-4);
             $pdf->Cell(84, 4);
             $pdf->Cell(18, 4, '', 1, 0, 'C');
@@ -221,6 +242,24 @@ foreach ($form['assets'] as $ka => $va) {
             $pdf->Cell(28, 4, '', 'LBR');
             $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot'] - $v['found_subtot']), 'LBR', 0, 'R');
             $pdf->Cell(28, 4, '', 'LBR', 1);
+        } elseif ($v['type_mov'] == 90) {
+            $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) .' VENDITA DEL BENE CON:', 'LTR', 0, 'L', 0, '', 1);
+            $pdf->Cell(18, 4, '', 'LTR', 0, 'C');
+            $pdf->Cell(28, 4, '-' . gaz_format_number($v['fixed_val']), 'LTR', 0, 'L');
+            $pdf->Cell(28, 4, '-' . gaz_format_number($v['found_val']), 'LTR', 0, 'L');
+            $pdf->Cell(28, 4, '', 'LTR');
+            $pdf->Cell(28, 4, '', 'LTR');
+            $pdf->Cell(28, 4, '', 'LTR', 0, 'R');
+            $pdf->Cell(28, 4, '', 'LTR', 1);
+            $pdf->Cell(84, 4, 'FATTURA ' . $v["nudtes"] . '/' . $v["seziva"] . ' del ' . gaz_format_date($v['dtdtes']), 'LBR', 0, 'L', 0, '', 1);
+            $pdf->Cell(18, 4, '', 'LBR', 0, 'C');
+            $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot']), 'LBR', 0, 'R');
+            $pdf->Cell(28, 4, gaz_format_number($v['found_subtot']), 'LBR', 0, 'R');
+            $pdf->Cell(28, 4, '', 'LBR');
+            $pdf->Cell(28, 4, '', 'LBR');
+            $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot'] - $v['found_subtot']), 'LBR', 0, 'R');
+            $pdf->Cell(28, 4, '', 'LBR', 1);
+            $pdf->Cell(84, 4, '####    B E N E      A L I E N A T O    ##### ', 'LBR', 1, 'L',1);
         } else {
             $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) . ' ' . $v['descri'], 1, 0, 'L', 0, '', 1);
             $pdf->Cell(18, 4, gaz_format_number($v['valamm']), 1, 0, 'C');
