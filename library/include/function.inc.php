@@ -752,7 +752,7 @@ class selectPartner extends SelectBox {
                     $codicecer = $last['id_anagra'];
                     $partner = $this->queryAnagra(" a.id = " . intval($codicecer));
                     //echo "---".$m."-".$codicetemp."-".$codicecer; //debug
-                } elseif (substr($strSearch, 0, 1) == '#') { //ricerca conoscendo il codice cliente
+                } elseif (substr($strSearch, 0, 1) == '#') { //ricerca conoscendo il codice univoco ufficio
                     $partner = $this->queryAnagra(" a.fe_cod_univoco LIKE '%" . addslashes(substr($strSearch, 1)) . "%'");
                 } elseif (is_numeric(substr($strSearch, 6, 2))) {   //ricerca per codice fiscale
                     $partner = $this->queryAnagra(" a.codfis LIKE '%" . addslashes($strSearch) . "%'");
