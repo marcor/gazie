@@ -233,15 +233,23 @@ $strScript = array("select_comiva.php" =>
     "depreciation_assets.php" =>
     array('title' => 'Registrazione quote di ammortamento cespiti',
         'datreg' => ' al: ',
-        'descri' => 'Descizione del bene',
-        'movdes' => ' con ',
-        'unimis'=>'U.M',
-        'clfoco'=>' da ',
-        'fixval'=>'Immobilizzazione',
-        'accdep'=>'Fondo',
-        'carry'=>'Residuo',
-        'rate'=>'Quota annua',
-        'lostrate'=>'Quota persa'
+        'book' => ' Stampa il Libro cespiti a questa data ',
+        'ammmin_ssd' => 'Sottospecie',
+        'asset_des' => 'Descrizione bene',
+        'movdes' => ' con Fat.',
+        'clfoco' => ' da ',
+        'fixed_val' => 'Immobilizzazione',
+        'found_val' => 'Fondo',
+        'cost_val' => 'Quota deducibile',
+        'noded_val' => 'Quota non deduc.',
+        'rest_val' => 'Residuo',
+        'lost_cost' => 'Amm.<50%',
+        'suggest_amm' => 'Proposta di ammortamento',
+        'no_suggest_amm' => 'Ammortamento completato',
+        'sold_suggest_amm' => 'Bene alienato',
+        'err' => array('datreg' => 'A questa data non risultano ammortamenti da rilevare!',
+                'ammsuc' => 'Per questo bene sono già stati eseguiti ammortamenti pari o successivi a questa data!'),
+        'war' => array('noamm' => 'Non risulta che siano mai stati eseguiti ammortamenti a questa data!')
     )
 );
 ?>

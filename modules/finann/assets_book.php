@@ -201,7 +201,7 @@ $pdf->setVars($admin_aziend, $title);
 $pdf->SetTopMargin(39);
 $pdf->SetFooterMargin(20);
 $pdf->AddPage('L');
-$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
 
 $head = true;
 foreach ($form['assets'] as $ka => $va) {
@@ -226,7 +226,7 @@ foreach ($form['assets'] as $ka => $va) {
             $pdf->Cell(28, 4, gaz_format_number($v['fixed_val']), 1, 0, 'R');
             $pdf->Cell(28, 4, '', 1, 1);
         } elseif ($v['type_mov'] == 10) {
-            $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) .' INCREMENTATO IL VALORE DEL BENE CON:', 'LTR', 0, 'L', 0, '', 1);
+            $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) . ' INCREMENTATO IL VALORE DEL BENE CON:', 'LTR', 0, 'L', 0, '', 1);
             $pdf->Cell(18, 4, '', 'LTR', 0, 'C');
             $pdf->Cell(28, 4, '+' . gaz_format_number($v['fixed_val']), 'LTR', 0, 'L');
             $pdf->Cell(28, 4, '', 'LTR');
@@ -243,7 +243,7 @@ foreach ($form['assets'] as $ka => $va) {
             $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot'] - $v['found_subtot']), 'LBR', 0, 'R');
             $pdf->Cell(28, 4, '', 'LBR', 1);
         } elseif ($v['type_mov'] == 90) {
-            $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) .' VENDITA DEL BENE CON:', 'LTR', 0, 'L', 0, '', 1);
+            $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) . ' VENDITA DEL BENE CON:', 'LTR', 0, 'L', 0, '', 1);
             $pdf->Cell(18, 4, '', 'LTR', 0, 'C');
             $pdf->Cell(28, 4, '-' . gaz_format_number($v['fixed_val']), 'LTR', 0, 'L');
             $pdf->Cell(28, 4, '-' . gaz_format_number($v['found_val']), 'LTR', 0, 'L');
@@ -259,7 +259,15 @@ foreach ($form['assets'] as $ka => $va) {
             $pdf->Cell(28, 4, '', 'LBR');
             $pdf->Cell(28, 4, gaz_format_number($v['fixed_subtot'] - $v['found_subtot']), 'LBR', 0, 'R');
             $pdf->Cell(28, 4, '', 'LBR', 1);
-            $pdf->Cell(84, 4, '####    B E N E      A L I E N A T O    ##### ', 'LBR', 1, 'L',1);
+            // trovo la eventuale plus/minusvalenza
+            $loss_gains = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $admin_aziend['capital_gains_account'] . "' AND id_tes = '" . $v['id_movcon']);
+            $loss_gains_descri = gaz_format_number($v['fixed_val'] - $v['found_val'] + $loss_gains['import']) . '  REALIZZANDO UNA PLUSVALENZA DI € ';
+            if (!$loss_gains) {
+                $loss_gains = gaz_dbi_get_row($gTables['rigmoc'], 'codcon', $admin_aziend['capital_loss_account'] . "' AND id_tes = '" . $v['id_movcon']);
+                $loss_gains_descri = gaz_format_number($v['fixed_val'] - $v['found_val'] - $loss_gains['import']) . ' ACCUSANDO UNA MINUSVALENZA DI € ';
+            }
+            $pdf->Cell(84, 4, '    ##########    B E N E    A L I E N A T O    #########', 1, 0, 'L', 1);
+            $pdf->Cell(186, 4, ' VENDUTO AL PREZZO DI € ' . $loss_gains_descri . gaz_format_number($loss_gains['import']), 'LBR', 1, 'L', 0);
         } else {
             $pdf->Cell(84, 4, gaz_format_date($v['dtdtes']) . ' ' . $v['descri'], 1, 0, 'L', 0, '', 1);
             $pdf->Cell(18, 4, gaz_format_number($v['valamm']), 1, 0, 'C');

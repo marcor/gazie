@@ -27,6 +27,9 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
 function suggestAmm($fixed, $found, $valamm, $no_deduct_cost_rate, $days) {
+    if ($fixed < 0.01) {
+        return false;
+    }
     if ($days >= 360) { // ignoro i valori se maggiori o vicino ad un anno
         $days = 365;
     }
@@ -388,24 +391,24 @@ if (count($msg['war']) > 0) { // ho un warning
             } elseif ($v['type_mov'] == 10) { // se è un incremento di valore del bene visualizzo il valore del rigo  anzichè il subtotale
                 $r[] = [array('head' => $script_transl["asset_des"], 'class' => '',
                 'value' => gaz_format_date($v['dtdtes']) . ' ' . $v['descri']),
-                    array('head' => '', 'class' => 'text-center', 'value' =>''),
+                    array('head' => '', 'class' => 'text-center', 'value' => ''),
                     array('head' => $script_transl["fixed_val"], 'class' => 'text-left bg-info',
-                        'value' =>'+'. gaz_format_number($v['fixed_val']).'='.gaz_format_number($v['fixed_subtot'])),
+                        'value' => '+' . gaz_format_number($v['fixed_val']) . '=' . gaz_format_number($v['fixed_subtot'])),
                     array('head' => $script_transl["found_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['found_subtot'])),
-                    array('head' => $script_transl["cost_val"], 'class' => 'text-right', 'value' =>''),
-                    array('head' => $script_transl["noded_val"], 'class' => 'text-right', 'value' =>''),
+                    array('head' => $script_transl["cost_val"], 'class' => 'text-right', 'value' => ''),
+                    array('head' => $script_transl["noded_val"], 'class' => 'text-right', 'value' => ''),
                     array('head' => $script_transl["rest_val"], 'class' => 'text-right', 'value' => gaz_format_number($v['fixed_subtot'] - $v['found_subtot'])),
                     array('head' => $script_transl["lost_cost"], 'class' => 'text-center', 'value' => ''),
                 ];
             } elseif ($v['type_mov'] == 90) { // se è un decremento di valore del bene per alienazione
                 $r[] = [array('head' => $script_transl["asset_des"], 'class' => 'bg-danger',
                 'value' => gaz_format_date($v['dtdtes']) . ' ' . $v['descri']),
-                    array('head' => '', 'class' => 'text-center bg-danger', 'value' =>''),
+                    array('head' => '', 'class' => 'text-center bg-danger', 'value' => ''),
                     array('head' => $script_transl["fixed_val"], 'class' => 'text-left bg-danger',
-                        'value' =>'-'. gaz_format_number($v['fixed_val']).' = '.gaz_format_number($v['fixed_subtot'])),
-                    array('head' => $script_transl["found_val"], 'class' => 'text-right bg-danger', 'value' => '-'. gaz_format_number($v['found_val']).' = '.gaz_format_number($v['found_subtot'])),
-                    array('head' => $script_transl["cost_val"], 'class' => 'text-right bg-danger', 'value' =>''),
-                    array('head' => $script_transl["noded_val"], 'class' => 'text-right bg-danger', 'value' =>''),
+                        'value' => '-' . gaz_format_number($v['fixed_val']) . ' = ' . gaz_format_number($v['fixed_subtot'])),
+                    array('head' => $script_transl["found_val"], 'class' => 'text-right bg-danger', 'value' => '-' . gaz_format_number($v['found_val']) . ' = ' . gaz_format_number($v['found_subtot'])),
+                    array('head' => $script_transl["cost_val"], 'class' => 'text-right bg-danger', 'value' => ''),
+                    array('head' => $script_transl["noded_val"], 'class' => 'text-right bg-danger', 'value' => ''),
                     array('head' => $script_transl["rest_val"], 'class' => 'text-right bg-danger', 'value' => gaz_format_number($v['fixed_subtot'] - $v['found_subtot'])),
                     array('head' => $script_transl["lost_cost"], 'class' => 'text-center bg-danger', 'value' => ''),
                 ];
@@ -427,7 +430,12 @@ if (count($msg['war']) > 0) { // ho un warning
         // calcolo una proposta d'ammortamento
         $suggest = suggestAmm($v['fixed_subtot'], $v['found_subtot'], $va[1]['valamm'], $va[1]['no_deduct_cost_rate'], $va[1]['gglast']);
         $disabl = '';
-        if ($suggest[2]) {
+        if (!$suggest) {
+            // se è stato alienato
+            $script_transl["suggest_amm"] = $script_transl["sold_suggest_amm"];
+            $disabl = ' disabled ';
+            $v['valamm'] = 0.00;
+        } elseif ($suggest[2]) {
             // se è stata troncata la percentuale...
             $v['valamm'] = $suggest[2];
         } elseif ($suggest[0] < 0.01) {
