@@ -228,8 +228,8 @@ function createRowsAndErrors($partner) {
                 $value_imponi = $row['imponibile'];
                 $value_impost = $row['imposta'];
             } elseif ($row['operat'] == 2) {
-                $value_imponi = -$row['imponibile'];
-                $value_impost = -$row['imposta'];
+                $value_imponi = $row['imponibile'];
+                $value_impost = $row['imposta'];
             } else {
                 $value_imponi = 0;
                 $value_impost = 0;
