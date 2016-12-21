@@ -46,6 +46,16 @@ gaz_flt_var_assign('clfoco', 'v');
 
 $lot = new lotmag();
 
+if (isset($_GET['cliente'])) {
+   if ($_GET['cliente'] <> '') {
+      $cliente = $_GET['cliente'];
+      $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil' and descri like '%$cliente%'";
+      $passo = 50;
+      $auxil = $_GET['auxil']."&cliente=".$cliente;
+	  unset($documento);
+   }
+}
+
 if (isset($_GET['all'])) {
    $_GET['id_tes'] = "";
    $_GET['numdoc'] = "";
