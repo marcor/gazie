@@ -192,7 +192,7 @@ function confirMail(link){
                  // Colonna Cliente
                  ?>
                  <td>
-                     <a href="report_client.php?auxil=<?php echo $r["ragso1"]; ?>&search=Cerca">
+                     <a href="report_client.php?auxil=<?php echo htmlspecialchars($r["ragso1"]); ?>&search=Cerca">
                          <?php echo $r["ragso1"]; ?>
                      </a>
                  </td>
@@ -265,7 +265,7 @@ function confirMail(link){
                  echo "<td class=\"alert alert-danger\"  align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                  ?>
                  <td  class="alert alert-danger" >
-                     <a href="report_client.php?auxil=<?php echo $r["ragso1"]; ?>&search=Cerca">
+                     <a href="report_client.php?auxil=<?php echo htmlspecialchars($r["ragso1"]); ?>&search=Cerca">
                          <?php echo $r["ragso1"]; ?>
                      </a>
                  </td>
@@ -311,7 +311,7 @@ function confirMail(link){
                  // Colonna Cliente
                  ?>
                  <td class="FacetDataTD">
-                     <a href="report_client.php?auxil=<?php echo $r["ragso1"]; ?>&search=Cerca">
+                     <a href="report_client.php?auxil=<?php echo htmlspecialchars($r["ragso1"]); ?>&search=Cerca">
                          <?php echo $r["ragso1"]; ?>
                      </a>
                  </td>
