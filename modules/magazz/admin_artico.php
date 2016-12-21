@@ -27,7 +27,7 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
 /** ENRICO FEDELE */
-/* Inizializzo la variabile per aprire in finestra modale */
+/* Inizializzo per aprire in finestra modale */
 $modal = false;
 if (isset($_POST['mode']) || isset($_GET['mode'])) {
     $modal = true;
