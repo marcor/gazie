@@ -358,7 +358,7 @@ if ($partner_select_mode == null or $partner_select_mode == "0") {
                 // Colonna data documento
                 echo "<td align=\"center\">" . gaz_format_date($r["datfat"]) . " &nbsp;</td>";
                 // Colonna cliente
-                echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a>&nbsp;</td>";
+                echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . htmlspecialchars($r["ragso1"]) . "&search=Cerca\">" . $r["ragso1"] . "</a>&nbsp;</td>";
                 // Colonna movimenti contabili
                 echo "<td align=\"left\">";
                 if ($r["id_con"] > 0) {
