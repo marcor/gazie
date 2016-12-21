@@ -140,10 +140,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         );
         tesmovInsert($tes_val);
         $tes_id = gaz_dbi_last_id();
-		if ( $form['transfer_fees']>=0.01 && $form['transfer_fees_acc'] > 100000000 ){ 
-			$acc_tot += $form['transfer_fees'];
-		}
-        rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => $acc_tot));
+	$tot_avere=$acc_tot;
+	if ( $form['transfer_fees']>=0.01 && $form['transfer_fees_acc'] > 100000000 ){ 
+		$tot_avere += $form['transfer_fees'];
+	}
+        rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => $tot_avere));
         rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['partner'], 'import' => $acc_tot));
 		if ( $form['transfer_fees']>=0.01 && $form['transfer_fees_acc'] > 100000000 ){ 
 			rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['transfer_fees_acc'], 'import' => $form['transfer_fees']));
