@@ -377,7 +377,9 @@ $strScript = array(
         "Codice esistente!",
         "Codice minore di 1!",
         "Descrizione vuota!",
-        "La nazione &egrave; incompatibile con l'IBAN!"
+        "La nazione &egrave; incompatibile con l'IBAN!",
+		'transfer_fees_acc'=>'Conto spese bonifici',
+		'transfer_fees'=>'Addebito per bonifici',
     ),
     "admin_vettore.php" =>
     array('title' => 'Gestione dei vettori',

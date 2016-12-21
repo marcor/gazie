@@ -122,6 +122,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['iban'] = '';
     $form['sia_code'] = '';
     $form['addbol'] = 'N';
+    $form['maxrat'] = 0.00;
+    $form['cosric'] = 0;
     $form['sedleg'] = '';
     $form['telefo'] = '';
     $form['fax'] = '';
@@ -191,13 +193,19 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[8]* </td><td class=\
 print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['sia_code']."* </td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"sia_code\" value=\"".$form['sia_code']."\" maxlength=\"5\" size=\"5\" />
        </td></tr>\n";
-
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['eof']."</td><td  class=\"FacetDataTD\">\n";
 $gForm->variousSelect('addbol',$script_transl['eof_value'],$form['addbol'],'FacetSelect',0,'eof');
 echo "\t </td>\n";
+// qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito 
 echo "</tr>\n";
-
+print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['transfer_fees']."</td><td class=\"FacetDataTD\">
+       <input type=\"text\" name=\"maxrat\" value=\"".$form['maxrat']."\" maxlength=\"5\" size=\"5\" />
+       </td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['transfer_fees_acc']."</td><td class=\"FacetDataTD\">";
+$gForm->selectAccount('cosric', $form['cosric'],array('sub',3), '', false, "col-sm-8");
+echo "</td></tr>\n";
+// fine campi per proposta dei costi di bonifico bancario
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[9] </td><td class=\"FacetDataTD\">
        <textarea type =\"text\" name=\"sedleg\" row=\"2\" cols=\"30\">".$form['sedleg']."</textarea>
        </td></tr>\n";

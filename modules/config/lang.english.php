@@ -375,7 +375,9 @@ $strScript = array("admin_aziend.php" =>
         "Existing code!",
         "Code less than 1!",
         "Description empty!",
-        "The nation is incompatible with the IBAN!"),
+        "The nation is incompatible with the IBAN!",
+		'transfer_fees_acc'=>'Conto spese bonifici',
+		'transfer_fees'=>'Addebito per bonifici'),
     "admin_vettore.php" =>
     array('title' => 'Shipper admin',
         'ins_this' => 'Insert new shipper',

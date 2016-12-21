@@ -379,7 +379,9 @@ $strScript = array("admin_aziend.php" =>
         "Codigo existente!",
         "Codigo menor que 1!",
         "Descripcion vacia!",
-        "La naci&oacute;n es incompatible con el IBAN!"),
+        "La naci&oacute;n es incompatible con el IBAN!",
+		'transfer_fees_acc'=>'Conto spese bonifici',
+		'transfer_fees'=>'Addebito per bonifici'),
     "admin_vettore.php" =>
     array('title' => ' Administracion de transportistas',
         'ins_this' => 'Introduzca un nuevo transportista',

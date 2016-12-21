@@ -51,6 +51,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         $form['numdoc'] = 0;
         $form['datdoc'] = 0;
     }
+    $form['transfer_fees_acc'] = 0;
+    $form['transfer_fees'] = 0.00;
     /* aggiunta descrizione modificabile */
     $form['descr_mov'] = '';
     /** fine modifica FP */
@@ -99,6 +101,17 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['search']['partner'] = substr($_POST['search']['partner'], 0, 20);
     $form['partner'] = intval($_POST['partner']);
     $form['target_account'] = intval($_POST['target_account']);
+    $bank_data = gaz_dbi_get_row($gTables['clfoco'], 'codice', $form['target_account']);
+	if ($bank_data['maxrat']>=0.01 && $_POST['transfer_fees'] < 0.01 ){ // se il conto corrente bancccario prevede un addebito per bonifici allora lo propongo
+		$form['transfer_fees_acc'] = $bank_data['cosric'];
+		$form['transfer_fees'] = $bank_data['maxrat'];
+	} elseif (substr($form['target_account'],0,3) == substr($admin_aziend['cassa_'],0,3))  {
+		$form['transfer_fees_acc'] = 0;
+		$form['transfer_fees'] =  0.00;
+	} else {
+		$form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
+		$form['transfer_fees'] =  floatval($_POST['transfer_fees']);
+	}
     if (isset($_POST['return'])) {
         header("Location: " . $form['ritorno']);
         exit;
@@ -127,8 +140,14 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         );
         tesmovInsert($tes_val);
         $tes_id = gaz_dbi_last_id();
+		if ( $form['transfer_fees']>=0.01 && $form['transfer_fees_acc'] > 100000000 ){ 
+			$acc_tot += $form['transfer_fees'];
+		}
         rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => $acc_tot));
         rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['partner'], 'import' => $acc_tot));
+		if ( $form['transfer_fees']>=0.01 && $form['transfer_fees_acc'] > 100000000 ){ 
+			rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['transfer_fees_acc'], 'import' => $form['transfer_fees']));
+		}
         $rig_id = gaz_dbi_last_id();
         foreach ($form['paymov'] as $k => $v) { //attraverso l'array delle partite
             $acc = 0.00;
@@ -145,32 +164,59 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup',  /** ENRICO FEDELE */ ));
-echo '<SCRIPT type="text/javascript">
-      $(function() {
-           $( "#search_partner" ).autocomplete({
-           html:true,
-           source: "../../modules/root/search.php",
-           minLength: 2,
-           });})';
-echo "           
-var cal = new CalendarPopup();
-var calName = '';
-function setMultipleValues(y,m,d) {
-     document.getElementById(calName+'_Y').value=y;
-     document.getElementById(calName+'_M').selectedIndex=m*1-1;
-     document.getElementById(calName+'_D').selectedIndex=d*1-1;
-}
-function setDate(name) {
-  calName = name.toString();
-  var year = document.getElementById(calName+'_Y').value.toString();
-  var month = document.getElementById(calName+'_M').value.toString();
-  var day = document.getElementById(calName+'_D').value.toString();
-  var mdy = month+'/'+day+'/'+year;
-  cal.setReturnFunction('setMultipleValues');
-  cal.showCalendar('anchor', mdy);
-}
+?>
+<SCRIPT type="text/javascript">
+    $(function () {
+        $("#search_partner").autocomplete({
+            html: true,
+            source: "../../modules/root/search.php",
+            minLength: 2,
+        });
+    });
+    var cal = new CalendarPopup();
+    var calName = '';
+    function setMultipleValues(y, m, d) {
+        document.getElementById(calName + '_Y').value = y;
+        document.getElementById(calName + '_M').selectedIndex = m * 1 - 1;
+        document.getElementById(calName + '_D').selectedIndex = d * 1 - 1;
+    }
+    function setDate(name) {
+        calName = name.toString();
+        var year = document.getElementById(calName + '_Y').value.toString();
+        var month = document.getElementById(calName + '_M').value.toString();
+        var day = document.getElementById(calName + '_D').value.toString();
+        var mdy = month + '/' + day + '/' + year;
+        cal.setReturnFunction('setMultipleValues');
+        cal.showCalendar('anchor', mdy);
+    }
+    // ricalcolo i valori in caso di cambiamenti sugli importi 
+    $(document).ready(function () {
+        $('#tablebody tr td [opcl]').change(function () {
+            var sum = 0;
+            $('#tablebody tr td [opcl]').each(function () {
+                sum += +$(this).val();
+            });
+            $('#total').val(sum.toFixed(2));
+        });
+        $('#total').change(function () {
+            var acc = $(this).val() * 1;
+            $('#tablebody tr td [opcl]').each(function () {
+                if ($(this).attr('opcl') === 'op') {
+                    if (acc < $(this).attr('orival')) {
+                        $(this).val(acc);
+                        acc = 0;
+                    } else if (acc >= $(this).attr('orival')) {
+                        // modifico il valore e lo tolgo dall'accumulatore
+                        $(this).val($(this).attr('orival')*1);
+                        acc -= parseFloat($(this).attr('orival'));
+                    }
+                }
+            });
+        });
+    });
+
 </script>
-";
+<?php
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
@@ -221,6 +267,16 @@ echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['descr_
 echo "<td class=\"FacetDataTD\"> <input type=\"text\" name=\"descr_mov\" value=\"" . $form['descr_mov'] . "\" maxlength=\"85\" size=\"85\"></td>";
 echo "</tr>";
 /** fine modifica FP */
+// qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito 
+echo "</tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"2\">".$script_transl['transfer_fees']."</td><td class=\"FacetDataTD\">
+       <input type=\"text\" name=\"transfer_fees\" value=\"".$form['transfer_fees']."\" maxlength=\"5\" size=\"5\" />
+       </td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"2\">".$script_transl['transfer_fees_acc']."</td><td class=\"FacetDataTD\">";
+$gForm->selectAccount('transfer_fees_acc', $form['transfer_fees_acc'],array('sub',3), '', false, "col-sm-8");
+echo "</td></tr>\n";
+// fine campi per proposta dei costi di bonifico bancario
+
 echo "</table>\n";
 if ($form['partner'] > 100000000) { // partner selezionato
     // ottengo il valore del saldo contabile per confrontarlo con quello dello scedenziario
@@ -229,8 +285,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
     $kd_paymov = 0;
     $date_ctrl = new DateTime($date);
     $saldo = 0.00;
-//   echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n"; rimosso perchè falsa i colori con lo stripe
-    echo "<table border=\"1\" width=\"100%\">\n";
+    echo '<table id="tablebody" border="1" width="100%">'."\n";
     echo "<tr>";
     echo "<td colspan='8'>" . $script_transl['accbal'] . gaz_format_number($acc_bal) . "</td>";
     echo "<tr>";
@@ -253,9 +308,8 @@ if ($form['partner'] > 100000000) { // partner selezionato
         echo "<tr>";
         echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
         $paymov->docData[$k]['descri'] . ' n.' .
-        $paymov->docData[$k]['numdoc'] . '/' .
-        $paymov->docData[$k]['seziva'] . ' ' .
-        $paymov->docData[$k]['datdoc'] . "</a> REF: $k</td>";
+        $paymov->docData[$k]['numdoc'] . ' del ' .
+        gaz_format_date($paymov->docData[$k]['datdoc']). "</a> REF: $k</td>";
         echo "</tr>\n";
         foreach ($v as $ki => $vi) {
             $class_paymov = 'FacetDataTDevidenziaCL';
@@ -311,11 +365,16 @@ if ($form['partner'] > 100000000) { // partner selezionato
             $form['paymov'][$k][$ki]['amount'] = $amount;
             $form['paymov'][$k][$ki]['id_tesdoc_ref'] = $k;
         }
+        $open = 'cl';
+        if ($amount >= 0.01) {
+            // attributo opcl per js come aperto
+            $open = 'op';
+        }
         echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
-        echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" value=\"" . $form['paymov'][$k][$ki]['amount'] . "\"></td></tr>\n";
+        echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" orival=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\" opcl=\"" . $open . "\" value=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\"></td></tr>\n";
     }
     echo "<tr>";
-    echo "<td colspan='3'>" . $script_transl['paymovbal'] . gaz_format_number($paymov_bal) . "</td>";
+    echo "<td colspan='3'>" . $script_transl['paymovbal'] .'<input type="text" value="' . number_format($paymov_bal, 2, '.', '') . '" id="total" /></td>';
     /** inizio modifica FP 06/01/2016
      * aggiunti campi per selezione documento da proporre per il pagamento
      */

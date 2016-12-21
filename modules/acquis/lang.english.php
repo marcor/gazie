@@ -363,6 +363,8 @@ $strScript = array("admin_fornit.php" =>
             'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
         ),
         'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
+		'transfer_fees_acc'=>'Conto spese bonifico',
+		'transfer_fees'=>'Addebito per bonifico'
    )
 );
 ?>
