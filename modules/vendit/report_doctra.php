@@ -24,6 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$partner_select_mode = gaz_dbi_get_row($gTables['company_config'],'var','partner_select_mode')['val'];
 $message = "";
 $anno = date("Y");
 if (isset($_GET['auxil'])) {
@@ -135,7 +136,14 @@ function confirMail(link){
                 <?php gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesdoc"], $all, $orderby); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1"); ?>
+			
+                <?php
+			if ($partner_select_mode == null or $partner_select_mode == "0") {	
+				gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1"); 
+			} else {
+                gaz_flt_disp_int("cliente", "Cliente");
+                }	
+				?>
             </td>
             <td class="FacetFieldCaptionTD">
                 &nbsp;
