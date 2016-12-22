@@ -565,7 +565,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="masban" class="col-sm-4 control-label"><?php echo $script_transl['masban']; ?></label>
                         <?php
-                        $gForm->selectAccount('masban', $form['masban'] . '000000', array(1, 9), '', false, "col-sm-8");
+                        $gForm->selectAccount('masban', $form['masban'] . '000000', array(1, 5, 9), '', false, "col-sm-8");
                         ?>
                     </div>
                 </div>
@@ -605,7 +605,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="lost_cost_assets" class="col-sm-4 control-label"><?php echo $script_transl['lost_cost_assets']; ?></label>
                         <?php
-                        $gForm->selectAccount('lost_cost_assets', $form['lost_cost_assets'],array('sub', 3, 5), '', false, "col-sm-8");
+                        $gForm->selectAccount('lost_cost_assets', $form['lost_cost_assets'], array('sub', 3, 5), '', false, "col-sm-8");
                         ?>
                     </div>
                 </div>
@@ -623,7 +623,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="super_amm_account" class="col-sm-4 control-label"><?php echo $script_transl['super_amm_account']; ?></label>
                         <?php
-                        $gForm->selectAccount('super_amm_account', $form['super_amm_account'],array('sub', 3, 5), '', false, "col-sm-8");
+                        $gForm->selectAccount('super_amm_account', $form['super_amm_account'], array('sub', 3, 5), '', false, "col-sm-8");
                         ?>
                     </div>
                 </div>
@@ -641,7 +641,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="capital_gains_account" class="col-sm-4 control-label"><?php echo $script_transl['capital_gains_account']; ?></label>
                         <?php
-                        $gForm->selectAccount('capital_gains_account', $form['capital_gains_account'],array('sub', 4), '', false, "col-sm-8");
+                        $gForm->selectAccount('capital_gains_account', $form['capital_gains_account'], array('sub', 4), '', false, "col-sm-8");
                         ?>
                     </div>
                 </div>
@@ -651,7 +651,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="capital_loss_account" class="col-sm-4 control-label"><?php echo $script_transl['capital_loss_account']; ?></label>
                         <?php
-                        $gForm->selectAccount('capital_loss_account', $form['capital_loss_account'],array('sub', 3), '', false, "col-sm-8");
+                        $gForm->selectAccount('capital_loss_account', $form['capital_loss_account'], array('sub', 3), '', false, "col-sm-8");
                         ?>
                     </div>
                 </div>
