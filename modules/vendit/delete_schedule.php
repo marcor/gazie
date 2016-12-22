@@ -33,6 +33,8 @@ if (isset($_GET['partner'])) {
 } elseif (isset($_GET['id_tesdoc_ref'])) {
     $paymov->setIdTesdocRef(substr($_GET['id_tesdoc_ref'], 0, 15));
     $paymov->getPartnerStatus(0);
+} elseif (isset($_GET['all'])) {
+    $paymov->getPartnerStatus($admin_aziend['mascli']);
 } else {
     header("Location: " . $_SERVER['HTTP_REFERER']);
 }
