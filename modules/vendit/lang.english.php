@@ -861,7 +861,8 @@ $strScript = array("admin_client.php" =>
         'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
             , 'Data chiusura' => '', 'Giorni di esposizione' => '', 'Stato' => ''
         ),
-        'status_value' => array(0 => 'OPEN', 1 => 'CLOSE', 2 => 'EXPOSED', 3 => 'EXPIRED', 9 => 'ADVANCED')
+        'status_value' => array(0 => 'OPEN', 1 => 'CLOSE', 2 => 'EXPOSED', 3 => 'EXPIRED', 9 => 'ADVANCED'),
+        'remove' => 'Elimina tutte le partite chiuse di '
     ),
     "customer_payment.php" =>
     array('title' => 'Riscossione credito da cliente (chiusura partita/e)',
@@ -927,10 +928,11 @@ $strScript = array("admin_client.php" =>
         'total_open' => 'Total amount for open items'
     ),
     "delete_schedule.php" =>
-    array('title' => 'Cancellazione movimenti chiusi dello scadenziario',
+    array('title' => 'Cancellazione movimenti chiusi dello scadenzario',
         'ragsoc' => 'Cliente',
         'id_tesdoc_ref' => 'Identificativo partita',
-        'descri' => 'Descrizione'
+        'descri' => 'Descrizione',
+        'amount' => 'Importo'
     ),
     "select_evaord.php" =>
     array('title' => 'Order picking of customer',

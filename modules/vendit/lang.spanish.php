@@ -905,10 +905,11 @@ $strScript = array("admin_client.php" =>
         'total_open' => 'Todal partidas abiertas'
     ),
     "delete_schedule.php" =>
-    array('title' => 'Cancellazione movimenti chiusi dello scadenziario',
+    array('title' => 'Cancellazione movimenti chiusi dello scadenzario',
         'ragsoc' => 'Cliente',
         'id_tesdoc_ref' => 'Identificativo partita',
-        'descri' => 'Descrizione'
+        'descri' => 'Descrizione',
+        'amount' => 'Importo'
     ),
     "select_evaord.php" =>
     array('title' => 'Order picking of customer',
@@ -973,7 +974,8 @@ $strScript = array("admin_client.php" =>
         'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => ''
         ),
-        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO')
+        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+        'remove' => 'Elimina tutte le partite chiuse di '
     ),
     "customer_payment.php" =>
     array('title' => 'Riscossione credito da cliente (chiusura partita/e)',

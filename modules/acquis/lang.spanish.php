@@ -328,7 +328,8 @@ $strScript = array("admin_fornit.php" =>
     array('title' => 'Cancellazione movimenti chiusi dello scadenzario',
         'ragsoc' => 'Fornitore',
         'id_tesdoc_ref' => 'Identificativo partita',
-        'descri' => 'Descrizione'
+        'descri' => 'Descrizione',
+        'amount' => 'Importo'
     ),
     "select_suppliers_status.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa dello scadenzario dei fornitori',
@@ -340,7 +341,8 @@ $strScript = array("admin_fornit.php" =>
         'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => ''
         ),
-        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO')
+        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+        'remove' => 'Elimina tutte le partite chiuse di '
     ),
     "delete_docacq.php" =>
     array('title' => 'Eliminazione Documento d\'Acquisto'),

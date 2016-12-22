@@ -92,8 +92,11 @@ function gaz_flt_var_assign($flt, $typ) {
 // $optval - valore opzionale se diverso dal valore del campo, può essere array (es: stato=0 diventa stato=aperto preso da var)
 function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval = "") {
     ?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
-    <?php if (isset($_GET[$flt])) $fltget = $_GET[$flt];
-    else $fltget = ""; ?>
+    <?php if (isset($_GET[$flt]))
+        $fltget = $_GET[$flt];
+    else
+        $fltget = "";
+    ?>
         <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];  ?>
 
         <?php
@@ -901,11 +904,11 @@ class selectartico extends SelectBox {
         $opera = "%'";
         if (strlen($cerca) >= 1) {
             $opera = "'"; ////
-			$field_sql = 'codice';	
-            if (substr($cerca, 0,1) == "@") {
-                  $cerca = substr($cerca,1);
-            }			
-			$result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'],$field_sql." LIKE '".addslashes($cerca).$opera,"descri DESC");		
+            $field_sql = 'codice';
+            if (substr($cerca, 0, 1) == "@") {
+                $cerca = substr($cerca, 1);
+            }
+            $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], $field_sql . " LIKE '" . addslashes($cerca) . $opera, "descri DESC");
             // $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], "codice LIKE '" . addslashes($cerca) . $opera, "descri DESC");
             $numclfoco = gaz_dbi_num_rows($result);
             if ($numclfoco > 0) {
@@ -1440,9 +1443,9 @@ class GAzieForm {
                 $where .= ($first ? "" : " OR ");
                 $first = false;
                 if ($sub) {
-                    $where.="codice BETWEEN " . intval(substr($v, 0, 1)) . "00000001 AND " . intval(substr($v, 0, 1)) . "99999999 AND codice NOT LIKE '" . $admin_aziend['mascli'] . "%' AND codice NOT LIKE '" . $admin_aziend['masfor'] . "%' AND codice NOT LIKE '%000000'";
+                    $where .= "codice BETWEEN " . intval(substr($v, 0, 1)) . "00000001 AND " . intval(substr($v, 0, 1)) . "99999999 AND codice NOT LIKE '" . $admin_aziend['mascli'] . "%' AND codice NOT LIKE '" . $admin_aziend['masfor'] . "%' AND codice NOT LIKE '%000000'";
                 } else {
-                    $where.="codice LIKE '" . intval(substr($v, 0, 1)) . "__000000'";
+                    $where .= "codice LIKE '" . intval(substr($v, 0, 1)) . "__000000'";
                 }
             }
         } elseif ($type > 99) { // se passo il mastro
@@ -1712,8 +1715,8 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
     $_SESSION["table_prefix"] = $table_prefix;
     // appoggio il valore del thema scelto sulla sessione così da non fare la query sul db ad ogni richiesta di esecuzione di qualsiasi script  
     $config = new Config;
-    $_SESSION["theme"] = $config->getValue('theme') ;
-    
+    $_SESSION["theme"] = $config->getValue('theme');
+
     $count++;
     //incremento il contatore d'accessi
     gaz_dbi_put_row($gTables['admin'], "Login", $login, "Access", $count);
@@ -1817,19 +1820,19 @@ class Compute {
                         $new_imp = round($total_imp - $decalc_imp + ($value * ($total_imp - $decalc_imp) / $total_imp), 2);
                     } else {
                         $new_imp = round($v['impcast'] + ($value * $v['impcast'] / $total_imp), 2);
-                        $decalc_imp+=$v['impcast'];
+                        $decalc_imp += $v['impcast'];
                     }
                     $new_castle[$k]['impcast'] = $new_imp;
                     $new_castle[$k]['imponi'] = $new_imp;
-                    $this->total_imp+=$new_imp; // aggiungo all'accumulatore del totale
+                    $this->total_imp += $new_imp; // aggiungo all'accumulatore del totale
                     if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // è senza aliquota ed è soggetto a bolli
-                        $this->total_exc_with_duty+=$new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                        $this->total_exc_with_duty += $new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                     }
                     $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
                     if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment PA
-                        $this->total_isp+=$new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
+                        $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
                     }
-                    $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
+                    $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
                 }
             }
         } else {  // METODO DELL'AGGIUNTA DIRETTA (nuovo)
@@ -1852,13 +1855,13 @@ class Compute {
                     $new_castle[$k]['ivacast'] = round(($v['impcast'] * $vat['aliquo']) / 100, 2);
                 }
                 if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // è senza IVA ed è soggetto a bolli
-                    $this->total_exc_with_duty+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                    $this->total_exc_with_duty += $new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
                 if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment PA
-                    $this->total_isp+=$new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
+                    $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
                 }
-                $this->total_imp+=$new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
-                $this->total_vat+=$new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
+                $this->total_imp += $new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
+                $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
             }
             if (!$match && $value >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0 
                 $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $vat_rate);
@@ -1870,13 +1873,13 @@ class Compute {
                 $new_castle[$vat_rate]['descriz'] = $vat['descri'];
                 $new_castle[$vat_rate]['fae_natura'] = $vat['fae_natura'];
                 if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // è senza IVA ed è soggetto a bolli
-                    $this->total_exc_with_duty+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
+                    $this->total_exc_with_duty += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
                 if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment PA
-                    $this->total_isp+=$new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore 
+                    $this->total_isp += $new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore 
                 }
-                $this->total_imp+=$new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale
-                $this->total_vat+=$new_castle[$vat_rate]['ivacast']; // aggiungo anche l'IVA al totale
+                $this->total_imp += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale
+                $this->total_vat += $new_castle[$vat_rate]['ivacast']; // aggiungo anche l'IVA al totale
             }
         }
         $this->castle = $new_castle;
@@ -1888,6 +1891,7 @@ class Schedule {
 
     function __construct() {
         $this->target = 0;
+        $this->id_target = 0;
     }
 
     function setPartnerTarget($account) {
@@ -1895,6 +1899,17 @@ class Schedule {
          * setta il valore del conto (piano dei conti) del partner (cliente o fornitore) 
          */
         $this->target = $account;
+    }
+
+    function setIdTesdocRef($id_tesdoc_ref) {
+        /*
+         * setta sia l'identificativo di partita che il valore del conto (piano dei conti) del partner (cliente o fornitore) 
+         */
+        global $gTables;
+        $rs = gaz_dbi_dyn_query($gTables['paymov'] . ".id_tesdoc_ref," . $gTables['tesmov'] . ".clfoco ", $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['tesmov'] . ".id_tes = " . $gTables['rigmoc'] . ".id_tes", $gTables['paymov'] . ".id_tesdoc_ref = '" . $id_tesdoc_ref . "'");
+        $r = gaz_dbi_fetch_array($rs);
+        $this->target = $r['clfoco'];
+        $this->id_target = $id_tesdoc_ref;
     }
 
     function setScheduledPartner($partner_type = false) { // false=TUTTI altrimenti passare le prime tre cifre del mastro clienti o fornitori
@@ -2006,7 +2021,7 @@ class Schedule {
             $where = "clfoco.codice = " . $this->target;
         }
         if (!empty($id_agente)) {
-            $where.=" and clfoco.id_agente =$id_agente";
+            $where .= " and clfoco.id_agente =$id_agente";
         }
         if ($soloAperte) {
 //            $table = $gTables['paymov'] . " paymov LEFT JOIN " . $gTables['rigmoc'] . " rigmoc ON (paymov.id_rigmoc_pay = rigmoc.id_rig OR paymov.id_rigmoc_doc = rigmoc.id_rig )"
@@ -2053,9 +2068,9 @@ class Schedule {
             $dr = new DateTime($r['datreg']);
             if ($dr <= $date_ctrl) {
                 if ($r['darave'] == 'D') {
-                    $acc+=$r['import'];
+                    $acc += $r['import'];
                 } else {
-                    $acc-=$r['import'];
+                    $acc -= $r['import'];
                 }
             }
         }
@@ -2126,7 +2141,9 @@ class Schedule {
      * */ {
         global $gTables;
         $this->PartnerStatus = array();
-        if ($this->target > 0 && $clfoco == 0) {
+        if($this->target > 0 && $this->id_target>0) {
+            $clfoco = $this->target." AND id_tesdoc_ref = '".$this->id_target."'";
+        } elseif ($this->target > 0 && $clfoco == 0) {
             $clfoco = $this->target;
         }
         if (!$date) {
@@ -2146,7 +2163,7 @@ class Schedule {
             $k = $r['id_tesdoc_ref'];
             if ($k <> $ctrl_id) { // PARTITA DIVERSA DALLA PRECEDENTE
                 $acc[$k] = array();
-                $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc']);
+                $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc'],'amount'=>$r['amount']);
             }
             $ex = new DateTime($r['expiry']);
             $interval = $date_ctrl->diff($ex);

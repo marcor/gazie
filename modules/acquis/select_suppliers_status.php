@@ -121,6 +121,7 @@ if (isset($_POST['preview'])) {
         $linkHeaders->output();
         echo "</tr>";
         foreach ($paymov->Partners as $p) {
+            $ctrl_close = false;
             $anagrafica = new Anagrafica();
             $prt = $anagrafica->getPartner($p);
             echo "<tr></tr>";
@@ -161,6 +162,7 @@ if (isset($_POST['preview'])) {
                         }
                     } else {
                         if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta
+                            $ctrl_close = true; // questo cliente ha almeno una partita chiusa
                             $cl_exp = '';
                             $class_paymov = 'FacetDataTD';
                             $lnk = " &nbsp;<a title=\"Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?id_tesdoc_ref=" . $k . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
@@ -184,6 +186,12 @@ if (isset($_POST['preview'])) {
                     echo "<td align=\"center\">" . $script_transl['status_value'][$vi['status']] . " &nbsp; $lnk</td>";
                     echo "</tr>\n";
                 }
+            }
+            if ($ctrl_close == true) {
+                echo "<tr>";
+                echo "<td class=\"text-right\" colspan='7'> &nbsp;<a title=\"Elimina tutte le partite chiuse di questo fornitore\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?partner=" . $p . "\">" . $script_transl['remove'] . $prt['ragso1'] . " " . $prt['ragso2'] . "<i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                echo "</tr>\n";
+                echo '<tr><td colspan="7"></td></tr>';
             }
         }
         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";

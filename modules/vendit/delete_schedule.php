@@ -24,15 +24,33 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$rs = gaz_dbi_dyn_query($gTables['paymov'] . ".id_tesdoc_ref," . $gTables['tesmov'] . ".descri, " . $gTables['clfoco'] . ".descri AS ragsoc", $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig
-                        LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['tesmov'] . ".id_tes = " . $gTables['rigmoc'] . ".id_tes
-                        LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['tesmov'] . ".clfoco", $gTables['paymov'] . ".id_tesdoc_ref = '" . substr($_GET['id_tesdoc_ref'], 0, 15) . "'");
-$form = gaz_dbi_fetch_array($rs);
+$paymov = new Schedule;
+$anagrafica = new Anagrafica();
+
+if (isset($_GET['partner'])) {
+    $paymov->setPartnerTarget(intval($_GET['partner']));
+    $paymov->getPartnerStatus(0);
+} elseif (isset($_GET['id_tesdoc_ref'])) {
+    $paymov->setIdTesdocRef(substr($_GET['id_tesdoc_ref'], 0, 15));
+    $paymov->getPartnerStatus(0);
+} else {
+    header("Location: " . $_SERVER['HTTP_REFERER']);
+}
+
+$paymov->PartnerStatus;
+$partner = $anagrafica->getPartner($paymov->target);
+
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 if (isset($_POST['Delete'])) {
-    gaz_dbi_del_row($gTables['paymov'], 'id_tesdoc_ref', substr($_POST['id_tesdoc_ref'], 0, 15));
+    foreach ($paymov->PartnerStatus as $k => $v) {
+        foreach ($v as $ki => $vi) {
+            if ($vi['status'] == 1 && $vi['expo_day'] <= 0) { // ma solo le chiuse non esposte
+                gaz_dbi_del_row($gTables['paymov'], 'id_tesdoc_ref', $k);
+            }
+        }
+    }
     header("Location: " . $_POST['ritorno']);
     exit;
 }
@@ -47,7 +65,6 @@ $script_transl = HeadMain('delete_schedule');
 ?>
 <form method="POST">
     <input type="hidden" name="ritorno" value="<?php print $form['ritorno']; ?>">
-    <input type="hidden" name="id_tesdoc_ref" value="<?php print $form['id_tesdoc_ref']; ?>">
     <div class="text-center bg-danger">
         <p>
             <b>
@@ -55,37 +72,59 @@ $script_transl = HeadMain('delete_schedule');
             </b> 
         </p>
     </div>
-    <div class="panel panel-default gaz-table-form">
+    <div class="panel panel-warning">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12">
+                <div class="col-md-12 bg-info">
                     <div class="form-group">
-                        <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['id_tesdoc_ref']; ?></label>
-                        <div class="col-sm-8"><?php echo $form['id_tesdoc_ref']; ?></div>                
+                        <label class="col-sm-6 text-default"><?php echo $script_transl['ragsoc']; ?></label>
+                        <div class="col-sm-6"><?php echo $partner['descri']; ?></div>                
                     </div>
                 </div>
             </div><!-- chiude row  -->
+            <?php
+            foreach ($paymov->PartnerStatus as $k => $v) {
+                foreach ($v as $ki => $vi) {
+                    if ($vi['status'] == 1 && $vi['expo_day'] <= 0) { // ma solo le chiuse non esposte
+                        ?>
+
+                        <div class="row">
+                            <div class="col-sm-6 col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['id_tesdoc_ref']; ?></label>
+                                    <div class="col-sm-8"><?php echo $k; ?></div>                
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
+                                    <div class="col-sm-8"><?php echo $paymov->docData[$k]['descri'] . ' ' . $paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva']; ?></div>                
+                                </div>
+                            </div>                    
+                            <div class="col-sm-6 col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label for="ragsoc" class="col-sm-4 control-label">del</label>
+                                    <div class="col-sm-8"><?php echo ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']); ?></div>                
+                                </div>
+                            </div>
+                            <div class="col-sm-6 col-md-3 col-lg-3">
+                                <div class="form-group">
+                                    <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['amount']; ?></label>
+                                    <div class="col-sm-8"><?php echo $paymov->docData[$k]['amount']; ?></div>                
+                                </div>
+                            </div>
+                        </div> <!-- chiude row  -->
+                        <?php
+                    }
+                }
+            }
+            ?>
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
-                        <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
-                        <div class="col-sm-8"><?php echo $form['descri']; ?></div>                
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="ragsoc" class="col-sm-4 control-label"><?php echo $script_transl['ragsoc']; ?></label>
-                        <div class="col-sm-8"><?php echo $form['ragsoc']; ?></div>                
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label class="col-sm-4 text-danger text-right"><?php echo ucfirst($script_transl['safe']); ?></label>
-                        <input type="submit" accesskey="d" name="Delete" class="col-sm-8 bg-danger" value="<?php echo $script_transl['delete']; ?>" >                
+                        <label class="col-sm-3 text-danger text-right"></label>
+                        <input type="submit" accesskey="d" name="Delete" class="col-sm-6 bg-danger" value="<?php echo $script_transl['delete']; ?>" >                
                     </div>
                 </div>
             </div><!-- chiude row  -->
