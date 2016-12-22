@@ -163,6 +163,7 @@ if (isset($_POST['preview'])) {
                         if ($vi['cl_val'] == $vi['op_val']) { // chiusa e non esposta
                             $cl_exp = '';
                             $class_paymov = 'FacetDataTD';
+                            $lnk = " &nbsp;<a title=\"Cancella tutti i movimenti relativi a questa partita oramai chiusa (rimarranno comunque i movimenti contabili)\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?id_tesdoc_ref=" . $k . "\"><i class=\"glyphicon glyphicon-remove\"></i></a>";
                         } elseif ($vi['status'] == 3) { // SCADUTA
                             $cl_exp = '';
                             $class_paymov = 'FacetDataTDevidenziaKO';
@@ -170,7 +171,7 @@ if (isset($_POST['preview'])) {
                             $class_paymov = 'FacetDataTDevidenziaBL';
                             $vi['expiry'] = $vi['cl_exp'];
                         } elseif ($vi['status'] == 0) { // APERTA
-                            $lnk = " &nbsp;<a title=\"Riscuoti\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
+                            $lnk = " &nbsp;<a title=\"Paga il fornitore\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                         }
                     }
                     echo "<tr class='" . $class_paymov . "'>";
