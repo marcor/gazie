@@ -61,6 +61,10 @@ if (isset($_GET['all'])) {
     $where = $all;
 }
 
+if (isset($_GET['datfat'])) {
+  $datfat =  $_GET['datfat'];
+}
+
 $where .= " GROUP BY protoc, datfat";
 
 

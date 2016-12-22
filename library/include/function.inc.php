@@ -1636,6 +1636,7 @@ class recordnav {
         global $flagorpost;
         global $field;
         global $auxil, $script_transl;
+		global $datfat;
         $first = 0;
         $next = $this->limit + $this->passo;
         $prev = $this->limit - $this->passo;
@@ -1652,10 +1653,10 @@ class recordnav {
         } else {
             echo "<div align=\"center\"><font class=\"FacetFormDataFont\">Num. record = $this->count</font></div>";
             echo "<div align=\"center\">";
-            echo "| << <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=0\" >" . ucfirst($script_transl['first']) . "</a> ";
-            echo "| < <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$prev\">" . ucfirst($script_transl['prev']) . "</a> ";
-            echo "| <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$next\">" . ucfirst($script_transl['next']) . "</a> > ";
-            echo "| <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$this->last\">" . ucfirst($script_transl['last']) . "</a> >> |";
+            echo "| << <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=0" . "&datfat=" . $datfat . "\" >" . ucfirst($script_transl['first']) . "</a> ";
+            echo "| < <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$prev". "&datfat=" . $datfat . "\">" . ucfirst($script_transl['prev']) . "</a> ";
+            echo "| <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$next". "&datfat=" . $datfat . "\">" . ucfirst($script_transl['next']) . "</a> > ";
+            echo "| <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$this->last" . "&datfat=" . $datfat . "\">" . ucfirst($script_transl['last']) . "</a> >> |";
             echo "</div>";
         }
     }
