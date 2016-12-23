@@ -1329,10 +1329,6 @@ CREATE TABLE `gaz_menu_usage` (
   `last_use` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
-LOCK TABLES `gaz_menu_usage` WRITE;
-INSERT INTO `gaz_menu_usage` ( `adminid`,`company_id`,`transl_ref`,`link`,`click`,`color`,`last_use`) VALUES ('amministratore', 1, 'config-m2-1', '/config/admin_aziend.php', 4, 'c1b9c5', '2016-12-23 14:41:01'),('amministratore', 1, 'contab-m2-2', '/contab/report_piacon.php', 2, '9e828f', '2016-12-23 14:31:01'),('amministratore', 1, 'contab-m3-2', '/contab/admin_piacon.php', 1, 'abb3f8', '2016-12-23 13:30:31'),('amministratore', 1, 'config-m1-7', '/config/docume_config.php', 3, 'e0e09d', '2016-12-23 14:41:45'),('amministratore', 1, 'config-sc-config_aziend.php-title', '/config/config_aziend.php', 1, '7f818b', '2016-12-23 13:32:49'),('amministratore', 1, 'config-sc-admin_utente.php-title', '/config/admin_utente.php?Login=amministratore&Update', 1, 'a889f2', '2016-12-23 13:33:17'),('amministratore', 1, 'inform-m3-8', '/inform/backup.php?external', 2, 'a38bdd', '2016-12-23 14:42:12'),('amministratore', 1, 'inform-m2-1', '/inform/report_letter.php', 1, 'cafa93', '2016-12-23 13:40:51');
-UNLOCK TABLES;
-
 DROP TABLE IF EXISTS `gaz_module`;
 CREATE TABLE `gaz_module` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
