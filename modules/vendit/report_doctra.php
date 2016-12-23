@@ -46,8 +46,8 @@ gaz_flt_var_assign('clfoco', 'v');
 
 $lot = new lotmag();
 
-if (isset($_GET['datfat'])) {
-  $datfat =  $_GET['datfat'];
+if (isset($_GET['datemi'])) {
+  $datemi =  $_GET['datemi'];
 }
 
 if (isset($_GET['cliente'])) {
