@@ -632,7 +632,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="super_amm_rate" class="col-sm-4 control-label"><?php echo $script_transl['super_amm_rate']; ?></label>
-                        <input class="col-sm-2" step="0.1" type="number" min="0" max="100" value="<?php echo $form['super_amm_rate']; ?>" name="super_amm_rate" size="4"  />
+                        <input class="col-sm-2" step="0.1" type="number" min="0" max="500" value="<?php echo $form['super_amm_rate']; ?>" name="super_amm_rate" size="4"  />
                     </div>
                 </div>
             </div><!-- chiude row  -->

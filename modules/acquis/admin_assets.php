@@ -677,7 +677,7 @@ if ($toDo == 'update') { // allerto che le modifiche devono essere fatte anche s
                     <div class="form-group">
                         <label for="super_ammort" class="col-sm-8 control-label"><?php echo $script_transl['super_ammort']; ?></label>
                         <div class="col-sm-4">
-                            <input type="number" step="0.1" min="0.1" max="100" class="form-control" id="super_ammort" name="super_ammort" placeholder="<?php echo $script_transl['super_ammort']; ?>" value="<?php echo $form['super_ammort']; ?>">
+                            <input type="number" step="0.1" min="0.1" max="500" class="form-control" id="super_ammort" name="super_ammort" placeholder="<?php echo $script_transl['super_ammort']; ?>" value="<?php echo $form['super_ammort']; ?>">
                         </div>
                     </div>
                 </div>

@@ -279,6 +279,10 @@ foreach ($form['assets'] as $ka => $va) {
             $pdf->Cell(28, 4, gaz_format_number($v['lost_cost']), 1, 1, 'R');
         }
     }
+	$residuo = $v['fixed_subtot'] - $v['found_subtot'];
+	if($va[1]['super_ammort']>=0.1 && $residuo >= 0.01) { // ho un super_ammortamento da utilizzare in sede di dichiarazione dei redditi 
+		$pdf->Cell(270, 4, 'SUPERAMMORTAMENTO AL '.gaz_format_number(100+$va[1]['super_ammort']).'% - In sede di dichiarazione potranno essere portate in diminuzione della base imponibile € '.gaz_format_number($v['cost_val']*$va[1]['super_ammort']/100), 'LBR', 1, 'C');
+	}
     $pdf->Ln(4);
 }
 $pdf->Output();
