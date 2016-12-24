@@ -485,10 +485,6 @@ if ($partner_select_mode == null or $partner_select_mode == "0") {
     </table>
 </form>
 </div>
-</div>
-    </div>
-</div>
-    
 <?php
 require("../../library/include/footer.php");
 ?>

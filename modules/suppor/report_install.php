@@ -51,7 +51,7 @@ if ( isset($_GET['all']) ) {
 }
 
 ?>
-<div align="center" class="FacetFormHeaderFont">Installazioni</div>
+<div align="center" class="FacetFormHeaderFont table-responsive">
 	<form method="GET">
 	<!-- riga filtro -->
 	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
@@ -173,6 +173,7 @@ $passi = array(20, 50, 100, 10000 );
 </tr>
 </table>
 </form>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

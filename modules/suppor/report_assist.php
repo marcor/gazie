@@ -102,10 +102,10 @@ if ( $flt_cliente!="tutti" ) {
 }
 
 ?>
-<div align="center" class="FacetFormHeaderFont">Assistenza Tecnica</div>
+<div align="center" class="FacetFormHeaderFont"></div>
     <form method="GET">
       <div class="box-body table-responsive">
-	<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+	<table class="Tlarge table table-striped table-bordered table-condensed">
 		<tr>
 		<td class="FacetFieldCaptionTD" colspan="4">
 			<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="15" size="15" tabindex=1 class="FacetInput">
@@ -287,10 +287,10 @@ $passi = array(20, 50, 100, 10000 );
 	</td>
 </tr>
 </table>
-          </div>
+</div>
 <?php
 if ( !isset($_GET['include']) ) {
-    echo "</div>";
+    //echo "</div>";
     echo "</form>";
     require("../../library/include/footer.php");
 }

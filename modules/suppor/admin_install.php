@@ -241,6 +241,7 @@ if ( !isset($_GET["Insert"]) ) {
    //$num = gaz_dbi_record_count ( $gTables['assist'], "idinstallazione=".$form["id"]." and tipo='ASP' and clfoco=".$form["clfoco"] );
    //if ( $num > 0  ) {
    include "report_period.php";
+   echo "</div>";
 } 
 ?>
 <script src="../../js/custom/autocomplete.js"></script>
@@ -250,8 +251,9 @@ if ( !isset($_GET["Insert"]) ) {
         statusbar: false
     });
 </script>
-</div>
+<!--</div>-->
 </form>
+
 <?php
 require("../../library/include/footer.php");
 ?>

@@ -523,7 +523,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 echo "</ol>";
             } else {
                 // @titolo se siamo sul terzo livello
-                $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'" a',' id',0,1);
+                $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'"',' id',0,1);
                 if ( $r = gaz_dbi_fetch_array($result3) ) {
                     echo "<h1>";
                     echo $transl[$module]["m3"][$r["translate_key"]][0];
