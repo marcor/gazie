@@ -99,7 +99,7 @@
     <script src="../../js/jquery/jquery.js"></script>
     
     <?php
-        if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/skeletons/" . $admin_aziend['style'])) {
+        if (!empty($admin_aziend['style']) && file_exists("../../library/theme/lte/scheletons/" . $admin_aziend['style'])) {
 		$style = $admin_aziend['style'];
 	}
 	if (!empty($admin_aziend['skin']) && file_exists("../../library/theme/lte/skins/" . $admin_aziend['skin'])) {
@@ -503,6 +503,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 echo stripslashes($transl[$module]["m2"][$riga["translate_key"]][0]);
                 echo "</h1>";          
                 $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
+                
                 echo "<ol class=\"breadcrumb\">";
                 echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
                 //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";

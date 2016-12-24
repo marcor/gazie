@@ -228,3 +228,4 @@ echo "</pre>";*/
     <!-- AdminLTE for demo purposes -->
     <script src="../../library/theme/lte/adminlte/dist/js/demo.js"></script>
   </body>
+</html>

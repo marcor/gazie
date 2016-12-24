@@ -348,7 +348,7 @@ a:focus {
 .content-header > .breadcrumb > li + li:before {
   content: '>\00a0';
 }
-@media (max-width: 991px) {
+@media (max-width: 1550px) {
   .content-header > .breadcrumb {
     position: relative;
     margin-top: 5px;

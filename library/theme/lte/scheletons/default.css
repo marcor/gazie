@@ -83,6 +83,7 @@
 .sidebar-menu .treeview-menu > li > a {
     padding: 5px 5px 5px 5px;
 }
+
 @media only screen and (max-width: 991px) {
     /* Force table to not be like tables anymore */
     #gaz-responsive-table table,
