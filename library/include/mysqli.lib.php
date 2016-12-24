@@ -645,6 +645,7 @@ function getAccessRights($userid = '', $company_id = 1) {
 					   m1.name,
 					   m1.link, 
 					   m1.icon, 
+                                           m1.access as m1_ackey,
 					   m1.class, 
 					   m1.weight,
 					   m2.id AS m2_id,

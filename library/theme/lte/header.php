@@ -394,6 +394,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                             'icon' => $row['icon'],
                             'name' => $transl[$row['name']]['name'],
                             'title' => $transl[$row['name']]['title'],
+                            'm1_ackey' => $row['m1_ackey'],
                             'class' => $row['class']);
                         $menuArray[$row['weight']][$row['m2_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m2_link'],
                             'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
@@ -417,6 +418,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                         'icon' => $row['icon'],
                         'name' => $transl[$row['name']]['name'],
                         'title' => $transl[$row['name']]['title'],
+                        'm1_ackey' => $row['m1_ackey'],
                         'class' => $row['class']);
                     $menuArray[$row['weight']][$row['m2_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m2_link'],
                         'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
@@ -456,7 +458,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
     $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400" );   
     $icons = array ("fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle");
     foreach ($menuArray as $link) {
-        if ( $i==0 ) {
+/*        if ( $i==0 ) {
             echo "<li class=\"treeview\">";
             echo "  <a href=\"".$link['link']."\">";
             //echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\" />";
@@ -464,7 +466,8 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "      <span>".$link['name']."</span>";
             echo "        <i class=\"fa fa-angle-left pull-right\"></i>";
             echo "  </a>";
-        } else {
+        } else {*/
+        if ( $admin_aziend["Abilit"]>=$link["m1_ackey"] ) {
             echo "<li class=\"treeview\">\n";
             echo "  <a href=\"". $link['link'] ."\">\n";
             //echo "    <img width=\"18\" src=\"../".substr($link['icon'],0,-4)."/".$link['icon']."\">\n";
@@ -472,9 +475,11 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "      <span>". $link['name'] ."</span>\n";
             echo "    <i class=\"fa fa-angle-left pull-right\"></i>\n";
             echo "  </a>\n";
-        }
+            
+        //}
         submenu($link, $i);
         echo "          </li>\n";
+        }
         $i++;
     }
 ?>
@@ -513,7 +518,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 echo "</ol>";
             } else {
                 // @titolo se siamo sul terzo livello
-                $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'" ',' id',0,1);
+                $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'" a',' id',0,1);
                 if ( $r = gaz_dbi_fetch_array($result3) ) {
                     echo "<h1>";
                     echo $transl[$module]["m3"][$r["translate_key"]][0];

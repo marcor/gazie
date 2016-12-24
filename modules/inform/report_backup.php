@@ -56,14 +56,18 @@ $keep = gaz_dbi_get_row($gTables['config'], 'variable', 'keep_backup');
 $freespace = gaz_dbi_get_row($gTables['config'], 'variable', 'freespace_backup');
 $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
 ?>
-<div align="center" class="FacetFormHeaderFont">
-    <?php echo $script_transl['title']; ?>
-</div>
+<!--<div align="center" class="FacetFormHeaderFont">
+    <?php //echo $script_transl['title']; ?>
+</div>-->
 <form method="POST">
     <div class="container">
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="pill" href="#lista"><?php echo $script_transl['title']; ?></a></li>
-            <li><a data-toggle="pill" href="#config"><?php echo $script_transl['config']; ?></a></li>
+            <?php
+            if ( $admin_aziend["Login"]="amministratore" ) {
+                echo "<li><a data-toggle=\"pill\" href=\"#config\">".$script_transl['config']."</a></li>";
+            }
+            ?>
         </ul>
     </div>
 
@@ -81,9 +85,13 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['ver']; ?></th>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['name']; ?></th>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['size']; ?></th>            
-                    <th class="FacetFieldCaptionTD"><?php echo $script_transl['rec']; ?></th>
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['dow']; ?></th>
-                    <th class="FacetFieldCaptionTD" align="center"><?php echo $script_transl['delete']; ?></th>
+                    <?php
+                        if ( $admin_aziend["Login"]=="amministratore") {
+                            echo "<th class=\"FacetFieldCaptionTD\">".$script_transl['rec']."</th>";
+                            echo "<th class=\"FacetFieldCaptionTD\" align=\"center\">".$script_transl['delete']."</th>";
+                        }
+                    ?>
                 </tr>
                 <?php
                 $interval = 0;
@@ -120,14 +128,17 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                                     <?php echo formatSizeUnits(filesize('../../data/files/backups/' . $file)); ?>
                                 </td>
                                 <td align="center">
-                                    <a class="btn btn-xs btn-default" href=""><i class="glyphicon glyphicon-repeat"></i></a>
-                                </td>
-                                <td align="center">
                                     <a class="btn btn-xs btn-default" href="downlo_backup.php?id=<?php echo $file; ?>"><i class="glyphicon glyphicon-download"></i></a>
+                                </td>
+                                <?php
+                                if ( $admin_aziend["Login"]=="amministratore") { ?>
+                                <td align="center">
+                                    <a class="btn btn-xs btn-default" href=""><i class="glyphicon glyphicon-repeat"></i></a>
                                 </td>
                                 <td align="center">
                                     <a class="btn btn-xs btn-default" href="delete_backup.php?id=<?php echo $file ?>"><i class="glyphicon glyphicon-remove"></i></a>
                                 </td>
+                                <?php } ?>
                             </tr>
                             <?php
                             $index++;
