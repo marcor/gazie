@@ -233,8 +233,7 @@
                   altre forme di menu modificando questa funzione. */
                 echo "\n
     
-    </head>\n
-<body> \n       <title>" . $admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
+      <title>" . $admin_aziend['ragso1'] . '» ' . $menuArray[0]['title'];
                 if (!empty($idScript)) {
                     if (is_array($idScript)) { // $idScript dev'essere un array con index [0] per il numero di menu e index[1] per l'id dello script
                         if ($idScript[0] == 2) {
@@ -249,9 +248,10 @@
                     echo '» ' . $title_from_menu;
                 }
                 echo '</title>';
+				echo "\n</head>\n<body> \n ";
                 // cambia il tipo di menu
                 $tipomenu = substr($admin_aziend['style'], 0, -4);
-                if (file_exists("../../library/style/header_menu_" . $tipomenu . ".php")) {
+                if (file_exists("../../library/theme/g7/header_menu_" . $tipomenu . ".php")) {
                     require("../../library/theme/g7/header_menu_" . $tipomenu . ".php");
                 } else {
                     require("../../library/theme/g7/header_menu_default.php");
@@ -290,8 +290,4 @@
 </script>
 <div class="container-fluid gaz-body">';
             return ($strCommon + $translated_script);
-        }
-      
-      function page_footer() {
-         echo "</div><!-- chiude div container role main --></body>";
-      }  
+        } 

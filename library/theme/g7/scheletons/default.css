@@ -40,7 +40,7 @@ mark {
 }
 
 .gaz-body {
-    padding-top: 38px;
+    padding-top: 5px;
 }
 
 table {
@@ -739,7 +739,7 @@ label {
 }
 
 .navbar-fixed-top .navbar-collapse {
-    max-height: 400px;
+    max-height: 100%;
 }
 
 .nav > li > a {

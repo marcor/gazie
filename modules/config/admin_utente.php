@@ -131,12 +131,12 @@ if (isset($_POST['Submit'])) {
         $risultato = gaz_dbi_fetch_array($rs_utente);
         $student = false;
         if (preg_match("/^([a-z]{3})[0-9]{4}/", $table_prefix, $tp)) {
-            $rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '".$ricerca."'");
+            $rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . $ricerca . "'");
             $student = gaz_dbi_fetch_array($rs_student);
         }
         if (!$risultato && !$student) {
             $msg['err'][] = 'Abilit';
-        } elseif ($form["Abilit"] < 7 && $student ) {
+        } elseif ($form["Abilit"] < 7 && $student) {
             $msg['err'][] = 'Abilit_stud';
         }
     }
@@ -212,31 +212,7 @@ if (isset($_POST['Submit'])) {
     }
 }
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array(/** ENRICO FEDELE */
-    /* 'jquery/jquery-1.3.2.min', */
-    /** ENRICO FEDELE */
-    'custom/capslock'));
-echo '<script type="text/javascript">
-      $(document).ready(function() {
-
-        var coptions = {
-          caps_lock_on: function() { $("#cmsg").text("' . $script_transl['caps'] . '");},
-          caps_lock_off: function() { $("#cmsg").text(""); }
-        };
-
-        var poptions = {
-          caps_lock_on: function() { $("#pmsg").text("' . $script_transl['caps'] . '");},
-          caps_lock_off: function() { $("#pmsg").text(""); }
-        };
-
-        $("#cpass").capslock(coptions);
-        $("#ppass").capslock(poptions);
-
-        $("#cpass").focus();
-        $("#ppass").focus();
-
-      });
-      </script>';
+$script_transl = HeadMain();
 ?>
 
 <form method="POST" enctype="multipart/form-data"  autocomplete="off">
@@ -252,13 +228,12 @@ echo '<script type="text/javascript">
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
+    echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
     ?>
+
     <div class="panel panel-default  table-responsive gaz-table-form">
         <div class="container-fluid">
             <table class="table table-striped">
-                <?php
-                echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="">';
-                ?>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['Cognome']; ?>* </td>
                     <td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="Cognome" value="<?php print $form["Cognome"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
@@ -276,7 +251,7 @@ echo '<script type="text/javascript">
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['lang']; ?></td>
                     <?php
-                    echo '<td colspan=\"2\" class="FacetDataTD">';
+                    echo '<td colspan="2" class="FacetDataTD">';
                     echo '<select name="lang" class="FacetSelect">';
                     $relativePath = '../../language';
                     if ($handle = opendir($relativePath)) {
@@ -296,9 +271,9 @@ echo '<script type="text/javascript">
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['style']; ?></td>
                     <?php
-                    echo '<td colspan=\"2\" class="FacetDataTD">';
+                    echo '<td colspan="2" class="FacetDataTD">';
                     echo '<select name="style" class="FacetSelect">';
-                    $relativePath = '../../library/theme/'.$config->getValue('theme').'/scheletons/';
+                    $relativePath = '../../library/theme/' . $config->getValue('theme') . '/scheletons/';
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css
@@ -318,9 +293,9 @@ echo '<script type="text/javascript">
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['skin']; ?></td>
                     <?php
-                    echo '<td colspan=\"2\" class="FacetDataTD">';
+                    echo '<td colspan="2" class="FacetDataTD">';
                     echo '<select name="skin" class="FacetSelect">';
-                    $relativePath = '../../library/theme/'.$config->getValue('theme').'/skins/';
+                    $relativePath = '../../library/theme/' . $config->getValue('theme') . '/skins/';
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css
@@ -362,6 +337,7 @@ echo '<script type="text/javascript">
                 </tr>
                 <?php
                 if ($user_data["Abilit"] == 9) {
+
                     function getModule($login, $company_id) {
                         global $gTables, $admin_aziend;
                         //trovo i moduli installati
@@ -402,7 +378,7 @@ echo '<script type="text/javascript">
                         foreach ($mod_found as $mod) {
                             echo "<tr>\n";
                             echo '<td class="FacetFieldCaptionTD">
-                                <img height="16" src="../'.$mod['name'].'/'.$mod['name'].'.png" /> '. $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
+                                <img height="16" src="../' . $mod['name'] . '/' . $mod['name'] . '.png" /> ' . $mod['transl_name'] . ' (' . $mod['name'] . ")</td>\n";
                             if ($mod['moduleid'] == 0) {
                                 if ($toDo == 'insert') {
                                     echo "  <td><input type=radio checked name=\"" . $co_id . "nusr_" . $mod['name'] . "\" value=\"3\"></td>";
