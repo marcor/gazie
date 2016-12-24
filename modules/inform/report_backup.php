@@ -64,7 +64,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="pill" href="#lista"><?php echo $script_transl['title']; ?></a></li>
             <?php
-            if ( $admin_aziend["Login"]="amministratore" ) {
+            if ( $admin_aziend["Login"]=="amministratore" ) {
                 echo "<li><a data-toggle=\"pill\" href=\"#config\">".$script_transl['config']."</a></li>";
             }
             ?>

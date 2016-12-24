@@ -400,18 +400,21 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                             'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
                             'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
                             'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
+                            'm2_ackey' => $row["m2_ackey"],
                             'class' => $row['m2_class']);
                     } elseif ($ctrl_m2 != $row['m2_id']) { // Ã¨ solo il primo di menu2
                         $menuArray[$row['weight']][$row['m2_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m2_link'],
                             'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
                             'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
                             'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
+                            'm2_ackey' => $row["m2_ackey"],
                             'class' => $row['m2_class']);
                     }
                     $menuArray[$row['weight']][$row['m2_weight']][$row['m3_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m3_link'],
                         'icon' => '../' . $row['name'] . '/' . $row['m3_icon'],
                         'name' => $transl[$row['name']]['m3'][$row['m3_trkey']][1],
                         'title' => $transl[$row['name']]['m3'][$row['m3_trkey']][0],
+                        'm3_ackey' => $row["m3_ackey"],
                         'class' => $row['m3_class']);
                 } elseif ($ctrl_m1 != $row['m1_id']) { // Ã¨ il primo di menu2
                     $menuArray[$row['weight']] = array('link' => '../' . $row['name'] . '/' . $row['link'],
@@ -424,12 +427,14 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                         'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
                         'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
                         'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
+                        'm2_ackey' => $row["m2_ackey"],
                         'class' => $row['m2_class']);
                 } else { // non Ã¨ il primo di menu2
                     $menuArray[$row['weight']][$row['m2_weight']] = array('link' => '../' . $row['name'] . '/' . $row['m2_link'],
                         'icon' => '../' . $row['name'] . '/' . $row['m2_icon'],
                         'name' => $transl[$row['name']]['m2'][$row['m2_trkey']][1],
                         'title' => $transl[$row['name']]['m2'][$row['m2_trkey']][0],
+                        'm2_ackey' => $row["m2_ackey"],
                         'class' => $row['m2_class']);
                 }
             }
@@ -577,6 +582,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 }
 
 function submenu($array, $index, $sub="") {
+    global $admin_aziend;
     if(!is_array($array)) { return ;}
     $numsub = 0;
     foreach($array as $i => $mnu) {
@@ -585,7 +591,8 @@ function submenu($array, $index, $sub="") {
 	if ($numsub === 0) {
             echo "<ul class=\"treeview-menu\">";
         }       
-	if (count($mnu)>5) {
+	if (count($mnu)>6) {            
+            if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
             echo "<li>";
             $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
             echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". substr($submnu.stripslashes($mnu["name"]),0,23);
@@ -594,14 +601,30 @@ function submenu($array, $index, $sub="") {
             submenu($mnu, 1, $sub);
             $sub="";
             echo "</li>";
-        } else { 
-            if ( $sub!="" ) {
-                echo "<li>$sub</a></li>";
-                $sub="";
             }
-            echo "<li >";
-            echo "  <a href=\"". $mnu['link'] ."\">". substr($submnu.stripslashes($mnu['name']),0,23) ."</a>";
-            echo "</li>";
+        } else { 
+            if ( isset($mnu["m2_ackey"])  ) {
+                if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
+                    if ( $sub!="" ) {
+                        echo "<li>$sub</a></li>";
+                        $sub="";
+                    }
+                    echo "<li >";
+                    echo "  <a href=\"". $mnu['link'] ."\">". substr($submnu.stripslashes($mnu['name']),0,23) ."</a>";
+                    echo "</li>";
+                }
+            }
+            if ( isset($mnu["m3_ackey"]) ) {
+                if ( $admin_aziend["Abilit"]>=$mnu["m3_ackey"] ) {
+                    if ( $sub!="" ) {
+                        echo "<li>$sub</a></li>";
+                        $sub="";
+                    }
+                    echo "<li >";
+                    echo "  <a href=\"". $mnu['link'] ."\">". substr($submnu.stripslashes($mnu['name']),0,23) ."</a>";
+                    echo "</li>";
+                }
+            }
         }
 	$numsub++;
     }
