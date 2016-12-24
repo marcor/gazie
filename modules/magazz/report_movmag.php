@@ -65,9 +65,10 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 }
 
 ?>
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl[3].$script_transl[0]; ?></div>
+<div align="center" class="FacetFormHeaderFont "><?php echo $script_transl[3].$script_transl[0]; ?></div>
 <form method="GET">
-<table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+  <div class="table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
 	<tr>
 		<td class="FacetFieldCaptionTD">
 		  <input type="text" name="movimento" placeholder="Movimento" class="input-sm form-control"  value="<?php echo (isset($movimento))? $movimento : ""; ?>" maxlength ="6" size="3" tabindex="1" class="FacetInput">
@@ -157,7 +158,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	//}
 	/** ENRICO FEDELE */
 ?>
-</table>
+        </form>
+    </table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>

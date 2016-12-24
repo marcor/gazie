@@ -135,7 +135,7 @@
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">     
           <?php
-                echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
+                echo "<li><a target=\"_new\" href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
                 ?>
                 <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
@@ -291,7 +291,7 @@
                   <li class="user-body">
                     <div class="col-xs-4 text-center">
                       <a href="../config/admin_aziend.php">
-                        <img class="img-circle usr-picture" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" width="70" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" >
+                        <img class="img-circle usr-picture" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" width="70" alt="Logo" border="0" >
                      </a>
                     </div>
                     <div class="col-xs-8 text-center" align="center">

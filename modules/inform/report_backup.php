@@ -60,7 +60,8 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
     <?php //echo $script_transl['title']; ?>
 </div>-->
 <form method="POST">
-    <div class="container">
+    <!--<div class="container">
+        <div class="Tlarge">-->
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="pill" href="#lista"><?php echo $script_transl['title']; ?></a></li>
             <?php
@@ -69,7 +70,8 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
             }
             ?>
         </ul>
-    </div>
+        <!--</div>
+    </div>-->
 
     <input type="hidden" name="do_backup" value="1">
     <input type="hidden" value="<?php echo $form['hidden_req']; ?>" name="hidden_req" />
