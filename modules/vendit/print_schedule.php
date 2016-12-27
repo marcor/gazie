@@ -98,18 +98,23 @@ if (sizeof($scdl->Entries) > 0) {
 
     while (list($key, $mv) = each($scdl->Entries)) {
         $pdf->SetFont('helvetica', '', 6);
-        $class_partner = '';
-        $class_paymov = '';
-        $class_id_tes = '';
+        $border_partner = 0;
         $partner = '';
         $id_tes = '';
         $paymov = '';
+        $border_paymov = 'LR';
         if ($mv["clfoco"] <> $ctrl_partner) {
-            $class_partner = 'FacetDataTDred';
+            if ($ctrl_partner > 0) {
+                $pdf->Cell(45, 1);
+                $pdf->Cell(20, 1, '', 'T', 1);
+            } else {
+                $pdf->Ln(1);
+            }
+            $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
+            $border_partner = 1;
             $partner = $mv["ragsoc"];
         }
         if ($mv["id_tes"] <> $ctrl_id_tes) {
-            $class_id_tes = 'FacetFieldCaptionTD';
             $id_tes = $mv["id_tes"];
             $mv["datdoc"] = gaz_format_date($mv["datdoc"]);
         } else {
@@ -117,56 +122,69 @@ if (sizeof($scdl->Entries) > 0) {
             $mv['numdoc'] = '';
             $mv['seziva'] = '';
             $mv['datdoc'] = '';
-            $class_partner = '';
             $partner = '';
         }
         if ($mv["id_tesdoc_ref"] <> $ctrl_paymov) {
             $paymov = $mv["id_tesdoc_ref"];
+            $border_paymov = 1;
             $scdl->getStatus($paymov);
-            if ($scdl->Status['diff_paydoc'] <> 0) {
-                $status_cl = false;
-            } else {
-                $status_cl = true;
+            $r = $scdl->Status;
+            if ($r['sta'] == 1) { // CHIUSA   
+                $pdf->SetFillColor(230, 255, 230);
+            } elseif ($r['sta'] == 2) { // ESPOSTA  
+                $pdf->SetFillColor(255, 245, 185);
+            } elseif ($r['sta'] == 3) { // SCADUTA  
+                $pdf->SetFillColor(255, 160, 160);
+            } elseif ($r['sta'] == 9) { // PAGAMENTO ANTICIPATO 
+                $pdf->SetFillColor(190, 190, 255);
+            } else { // APERTA  
+                $pdf->SetFillColor(230, 255, 230);
             }
         }
+        $descri_doc = $mv["numdoc"] . '/' . $mv['seziva'];
         if (empty($mv["numdoc"])) {
-            $mv["datdoc"] = '';
-            $mv['seziva'] = '';
+            $descri_doc = '';
         }
-        $pdf->Cell(45, 4, $partner, 'LTB', 0, '', $status_cl, '', 1);
-        $pdf->Cell(20, 4, $paymov, 1, 0, 'R', $status_cl, '', 2);
-        $pdf->Cell(41, 4, $mv['descri'], 1, 0, 'C', $status_cl, '', 1);
-        $pdf->Cell(11, 4, $mv["numdoc"] . '/' . $mv['seziva'], 1, 0, 'R', $status_cl);
+        if ($mv["id_rigmoc_doc"] == 0) {
+            $expiry = '';
+        } else {
+            $expiry = gaz_format_date($mv["expiry"]);
+        }
+        $pdf->Cell(45, 4, $partner, $border_partner, 0, '', 0, '', 1);
+        $pdf->Cell(20, 4, $paymov, $border_paymov, 0, 'R', 1, '', 2);
+        $pdf->Cell(41, 4, $mv['descri'], 1, 0, 'C', 0, '', 1);
+        $pdf->Cell(11, 4, $descri_doc, 1, 0, 'R', 0);
 
         /* ENRICO FEDELE */
         /* Modifico la larghezza delle celle */
-        $pdf->Cell(13, 4, $mv["datdoc"], 1, 0, 'C', $status_cl);
-        $pdf->Cell(13, 4, gaz_format_date($mv["datreg"]), 1, 0, 'C', $status_cl);
+        $pdf->Cell(13, 4, $mv["datdoc"], 1, 0, 'C');
+        $pdf->Cell(13, 4, gaz_format_date($mv["datreg"]), 1, 0, 'C');
         if ($mv['id_rigmoc_pay'] == 0) {
             /* Incremento il totale del dare */
             $tot_dare += $mv['amount'];
             /* Modifico la larghezza delle celle */
-            $pdf->Cell(15, 4, gaz_format_number($mv['amount']), 1, 0, 'R', $status_cl);
-            $pdf->Cell(15, 4, '', 1, 0, 'R', $status_cl);
+            $pdf->Cell(15, 4, gaz_format_number($mv['amount']), 1, 0, 'R');
+            $pdf->Cell(15, 4, '', 1, 0, 'R');
         } else {
             /* Incremento il totale dell'avere, e decremento quello del dare */
             $tot_avere += $mv['amount'];
             $tot_dare -= $mv['amount'];
             /* Modifico la larghezza delle celle */
-            $pdf->Cell(15, 4, '', 1, 0, 'R', $status_cl);
-            $pdf->Cell(15, 4, gaz_format_number($mv['amount']), 1, 0, 'R', $status_cl);
+            $pdf->Cell(15, 4, '', 1, 0, 'R');
+            $pdf->Cell(15, 4, gaz_format_number($mv['amount']), 1, 0, 'R');
         }
         /* Modifico la larghezza della cella */
-        $pdf->Cell(13, 4, gaz_format_date($mv["expiry"]), 1, 1, 'C', $status_cl);
+        $pdf->Cell(13, 4, $expiry, 1, 1, 'C');
         /* ENRICO FEDELE */
         $ctrl_partner = $mv["clfoco"];
         $ctrl_id_tes = $mv["id_tes"];
         $ctrl_paymov = $mv["id_tesdoc_ref"];
     }
+    $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
     /* ENRICO FEDELE */
     /* Stampo una riga vuota sottile per separare leggermente il totale e metterlo in evidenza */
     $pdf->SetFont('helvetica', '', 1);
-    $pdf->Cell(186, 1, '', 1, 1, 'C', true);
+    $pdf->Cell(186, 1, '', 1, 1, 'C');
 
     /* Stampo la riga del totale, in grassetto italico "BI" */
     $pdf->SetFont('helvetica', 'BI', 6);
