@@ -78,7 +78,7 @@ if (sizeof($paymov->Partners) > 0) {
           $anagrafica = new Anagrafica();
           $prt = $anagrafica->getPartner($p);
           $pdf->SetFont('helvetica','B',10);
-          $pdf->SetFillColor(200,255,200);
+		  $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'], 0, 2)), hexdec(substr($admin_aziend['colore'], 2, 2)), hexdec(substr($admin_aziend['colore'], 4, 2)));
           $pdf->Ln(2);
           $pdf->Cell(186,5,$prt['ragso1']." ".$prt['ragso2']." tel:".$prt['telefo']." fax:".$prt['fax']." mob:".$prt['cell']." ",1,1,'',1,'',1);
           $pdf->SetFont('helvetica','',9);
@@ -91,8 +91,8 @@ if (sizeof($paymov->Partners) > 0) {
              $pdf->Cell(130,5,
                         $paymov->docData[$k]['descri'].' n.'.
                         $paymov->docData[$k]['numdoc'].'/'.
-                        $paymov->docData[$k]['seziva'].' '.
-                        $paymov->docData[$k]['datdoc']
+                        $paymov->docData[$k]['seziva'].' del '.
+                        gaz_format_date($paymov->docData[$k]['datdoc'])
                         ,1,1);
              foreach ($v as $ki=>$vi){
                 $pdf->SetFillColor(170,255,170);
@@ -126,12 +126,12 @@ if (sizeof($paymov->Partners) > 0) {
                       $vi['expiry']=$vi['cl_exp'];
                    }
                 }
-                $pdf->Cell(28,4,$vi['id'],'LTB',0,'C',1,'',1);
-                $pdf->Cell(28,4,$v_op,1,0,'R',1);
-                $pdf->Cell(28,4,gaz_format_date($vi['expiry']),1,0,'C',1,'',1);
-                $pdf->Cell(28,4,$v_cl,1,0,'R',1);
-                $pdf->Cell(28,4,$cl_exp,1,0,'C',1);
-                $pdf->Cell(28,4,$expo,1,0,'C',1);
+                $pdf->Cell(28,4,$vi['id'],'LTB',0,'C',0,'',1);
+                $pdf->Cell(28,4,$v_op,1,0,'R');
+                $pdf->Cell(28,4,gaz_format_date($vi['expiry']),1,0,'C',0,'',1);
+                $pdf->Cell(28,4,$v_cl,1,0,'R');
+                $pdf->Cell(28,4,$cl_exp,1,0,'C');
+                $pdf->Cell(28,4,$expo,1,0,'C');
                 $pdf->Cell(18,4,$script_transl['status_value'][$vi['status']],1,1,'C',1);
              }
           }

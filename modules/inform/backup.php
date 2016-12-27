@@ -78,9 +78,8 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "<tr><td></td><td align=\"right\"><strong>" . $script_transl['sql_submit'] . ":</strong></td></tr>";
     echo "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"" . $script_transl['return'] . "\"></td>
               <td class=\"FacetDataTD\" align=\"right\"><input type=\"submit\" id=\"preventDuplicate\" onClick=\"chkSubmit();\" name=\"submit\" value=\"" . $script_transl['submit'] . "\"></td></tr>";
-    echo "</form>";
-    echo "</div><!-- chiude div container role main --></body>";
-    echo "</html>";
+    echo "</table>\n</form>\n";
+	require("../../library/include/footer.php");
 } else {
     if (isset($_POST['return'])) {
         header("Location: " . $form['ritorno']);

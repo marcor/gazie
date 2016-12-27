@@ -124,9 +124,8 @@ if (isset($_POST['preview'])) {
             $ctrl_close = false;
             $anagrafica = new Anagrafica();
             $prt = $anagrafica->getPartner($p);
-            echo "<tr></tr>";
-            echo "<tr class=\"FacetFieldCaptionTD\">";
-            echo "<td colspan='5'>" . $prt['ragso1'] . " " . $prt['ragso2'] .
+            echo "<tr>";
+            echo "<td class=\"FacetFieldCaptionTD text-center\" colspan='7'>" . $prt['ragso1'] . " " . $prt['ragso2'] .
             " tel:" . gaz_html_call_tel($prt['telefo']) .
             " fax:" . $prt['fax'] .
             " mob:" . gaz_html_call_tel($prt['cell']) . "</td>";
@@ -135,11 +134,11 @@ if (isset($_POST['preview'])) {
             foreach ($paymov->PartnerStatus as $k => $v) {
                 echo "<tr>";
                 echo "<td class=\"FacetDataTDred\" colspan='2'>REF: $k</td>";
-                echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
+                echo "<td colspan='3'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
                 $paymov->docData[$k]['descri'] . ' n.' .
                 $paymov->docData[$k]['numdoc'] . ' del ' .
-                $paymov->docData[$k]['datdoc'] . "</a></td>\n";
-                echo "</tr>\n";
+                gaz_format_date($paymov->docData[$k]['datdoc']);
+                echo "</a></td>\n<td colspan='2'></td>\n</tr>\n";
                 foreach ($v as $ki => $vi) {
                     $lnk = '';
                     $class_paymov = 'FacetDataTDevidenziaCL';
@@ -176,14 +175,14 @@ if (isset($_POST['preview'])) {
                             $lnk = " &nbsp;<a title=\"Paga il fornitore\" class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=" . $p . "\"><i class=\"glyphicon glyphicon-euro\"></i></a>";
                         }
                     }
-                    echo "<tr class='" . $class_paymov . "'>";
-                    echo "<td align=\"right\">" . $vi['id'] . "</td>";
-                    echo "<td align=\"right\">" . $v_op . "</td>";
-                    echo "<td align=\"center\">" . gaz_format_date($vi['expiry']) . "</td>";
-                    echo "<td align=\"right\">" . $v_cl . "</td>";
-                    echo "<td align=\"center\">" . $cl_exp . "</td>";
-                    echo "<td align=\"center\">" . $expo . "</td>";
-                    echo "<td align=\"center\">" . $script_transl['status_value'][$vi['status']] . " &nbsp; $lnk</td>";
+                    echo "<tr>";
+                    echo "<td class='text-right'>" . $vi['id'] . "</td>";
+                    echo "<td class='text-right'>" . $v_op . "</td>";
+                    echo "<td class='text-center'>" . gaz_format_date($vi['expiry']) . "</td>";
+                    echo "<td class='text-right'>" . $v_cl . "</td>";
+                    echo "<td class='text-center'>" . $cl_exp . "</td>";
+                    echo "<td class='text-center'>" . $expo . "</td>";
+                    echo "<td class='" . $class_paymov . "' align=\"center\">" . $script_transl['status_value'][$vi['status']] . " &nbsp; $lnk</td>";
                     echo "</tr>\n";
                 }
             }
@@ -194,12 +193,12 @@ if (isset($_POST['preview'])) {
                 echo '<tr><td colspan="7"></td></tr>';
             }
         }
-        echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
-        echo '<td class="FacetFieldCaptionTD" colspan="3" align="right"><input type="submit" name="print" value="';
+        echo "\t<tr>\n";
+        echo '<td class="FacetFieldCaptionTD" colspan="5" align="right"><input type="submit" name="print" value="';
         echo $script_transl['print'];
         echo '">';
         echo "\t </td>\n";
-        echo "<td class=\"text-right\" colspan='4'><a title=\"Elimina tutte le partite chiuse di tutti i clienti\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?all\"><i class=\"glyphicon glyphicon-remove\"></i> &nbsp;" . $script_transl['remove'] .  " TUTTI!!!</a></td>";
+        echo "<td class=\"text-right\" colspan='2'><a title=\"Elimina tutte le partite chiuse di tutti i clienti\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?all\"><i class=\"glyphicon glyphicon-remove\"></i> &nbsp;" . $script_transl['remove'] . " TUTTI!!!</a></td>";
         echo "\t </tr>\n";
     } else {
         echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][1] . "</TD></TR>\n";
