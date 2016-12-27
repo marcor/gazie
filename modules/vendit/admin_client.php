@@ -64,7 +64,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       if (empty($form["indspe"])) {
          $msg.='1+';
       }
-      // faccio i controlli sul codice postale 
+      // faccio i controlli sul codice postale
       $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
       $cap = new postal_code;
       if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length'])) {
@@ -453,7 +453,8 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['imball'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->selectFromDB('imball', 'imball', 'codice', $form['imball'], 'codice', false, ' ', 'descri');
+if (!isset($form['imball'])) $form['imball'] = null;
+$gForm->selectFromDB('imball', 'imball', 'codice', $form['imball'], 'codice', true, ' ', 'descri');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

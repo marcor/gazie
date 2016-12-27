@@ -348,7 +348,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="latitude" class="col-sm-4 control-label"><?php echo $script_transl['latitude'] . " - " . $script_transl['longitude']; ?></label>
-                        <div class="col-sm-8">        
+                        <div class="col-sm-8">
                             <input class="col-sm-3" type="text" name="latitude" value="<?php echo $form['latitude'] ?>" maxlength="10" /><input class="col-sm-3" type="text" name="longitude" value="<?php echo $form['longitude']; ?>" maxlength="10" /><a class="btn btn-xs btn-default btn-default col-sm-2" href="http://maps.google.com/maps?q=<?php echo $form['latitude'] . "," . $form['longitude']; ?>"> maps -> <i class="glyphicon glyphicon-map-marker"></i></a>
                         </div>
                     </div>
@@ -641,6 +641,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="capital_gains_account" class="col-sm-4 control-label"><?php echo $script_transl['capital_gains_account']; ?></label>
                         <?php
+                        if (!isset($form['capital_gains_account'])) $form['capital_gains_account'] = null;
                         $gForm->selectAccount('capital_gains_account', $form['capital_gains_account'], array('sub', 4), '', false, "col-sm-8");
                         ?>
                     </div>
@@ -651,6 +652,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="capital_loss_account" class="col-sm-4 control-label"><?php echo $script_transl['capital_loss_account']; ?></label>
                         <?php
+                        if (!isset($form['capital_loss_account'])) $form['capital_loss_account'] = null;
                         $gForm->selectAccount('capital_loss_account', $form['capital_loss_account'], array('sub', 3), '', false, "col-sm-8");
                         ?>
                     </div>
