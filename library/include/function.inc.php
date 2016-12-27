@@ -2143,7 +2143,7 @@ class Schedule {
      * */ {
         global $gTables;
         $this->PartnerStatus = array();
-        if($clfoco <= 999) { // ho un mastro clienti o foritori
+        if($clfoco <= 999 && $clfoco >=100 ) { // ho un mastro clienti o foritori
             $clfoco = "999999999 OR " . $gTables['clfoco'] . ".codice LIKE '".$clfoco."%'";
         } elseif($this->target > 0 && $this->id_target>0) {
             $clfoco = $this->target." AND id_tesdoc_ref = '".$this->id_target."'";
