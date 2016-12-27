@@ -212,9 +212,35 @@ if (isset($_POST['Submit'])) {
     }
 }
 require("../../library/include/header.php");
-$script_transl = HeadMain();
+$script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
 ?>
+<script type="text/javascript">
+    $(document).ready(function () {
+        /* Bind to capslockstate events and update display based on state  */
+        $(window).bind("capsOn", function (event) {
+            if ($("#login-password:focus").length > 0) {
+                $("tr td #capsWarning").show();
+            }
+        });
+        $(window).bind("capsOff capsUnknown", function (event) {
+            $("tr td #capsWarning").hide();
+        });
+        $("#login-password").bind("focusout", function (event) {
+            $("tr td #capsWarning").hide();
+        });
+        $("#login-password").bind("focusin", function (event) {
+            if ($(window).capslockstate("state") === true) {
+                $("tr td #capsWarning").show();
+            }
+        });
+        /* 
+         * Initialize the capslockstate plugin.
+         * Monitoring is happening at the window level.
+         */
+        $(window).capslockstate();
 
+    });
+</script>
 <form method="POST" enctype="multipart/form-data"  autocomplete="off">
     <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
     <?php
@@ -329,11 +355,16 @@ $script_transl = HeadMain();
                 ?>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['pre_pass'] . ' ' . $config->getValue('psw_min_length') . ' ' . $script_transl['post_pass']; ?> *</td>
-                    <td colspan="2" class="FacetDataTD"><input title="Password" type="password" name="Password" value="<?php print $form["Password"]; ?>" maxlength="20" size="20" class="FacetInput" id="ppass" /><div class="FacetDataTDred" id="pmsg"></div>&nbsp;</td>
+                    <td colspan="2" class="FacetDataTD"><input title="Password" type="password" id="login-password" name="Password" value="<?php print $form["Password"]; ?>" maxlength="20" size="20" class="FacetInput" id="ppass" /><div class="FacetDataTDred" id="pmsg"></div>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td class="FacetFieldCaptionTD" colspan="3">
+                        <div id="capsWarning" class="alert alert-warning col-sm-12" style="display:none;">Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!</div>
+                    </td>
                 </tr>
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['rep_pass']; ?> *</td>
-                    <td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" name="confpass" value="<?php print $form["confpass"]; ?>" maxlength="20" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
+                    <td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="login-password" name="confpass" value="<?php print $form["confpass"]; ?>" maxlength="20" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
                 </tr>
                 <?php
                 if ($user_data["Abilit"] == 9) {
