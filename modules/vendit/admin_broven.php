@@ -172,7 +172,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
          if (isset($_POST["row_$next_row"])) { //se ho un rigo testo
             $form["row_$next_row"] = $_POST["row_$next_row"];
          }
-         $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 50);
+         $form['rows'][$next_row]['descri'] = substr($v['descri'], 0, 100);
          $form['rows'][$next_row]['tiprig'] = intval($v['tiprig']);
          $form['rows'][$next_row]['id_doc'] = intval($v['id_doc']);
          $form['rows'][$next_row]['codart'] = substr($v['codart'], 0, 15);
@@ -645,7 +645,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
             $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
             /** inizio modifica FP 09/10/2015
-             * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo 
+             * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo
              */
             //rimossa            $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
             $in_sconto = $form['in_sconto'];
@@ -1103,7 +1103,7 @@ echo "
     {
         var mywindow = window.open('', 'my div', 'height=400,width=600');
         mywindow.document.write('<html><head><title>Stampa</title>');
-        
+
         mywindow.document.write('</head><body >');
         //alert($('[name=\"change\"]').val());
         mywindow.document.write('<h1>CLIENTE: '+$('[name=\"change\"]').val()+'</h1>');
@@ -1322,7 +1322,7 @@ echo '			</td>
 			<td class="FacetColumnTD">
 				' . $script_transl[16] . ':&nbsp;<input type="text" value="' . $form['in_quanti'] . '" maxlength="11" size="7" name="in_quanti" tabindex="5" accesskey="q" />
 			</td>
-			<td class="FacetColumnTD" align="right"> 
+			<td class="FacetColumnTD" align="right">
 				<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6">
 					<i class="glyphicon glyphicon-ok"></i>
 				</button>
@@ -1451,7 +1451,7 @@ foreach ($form['rows'] as $k => $v) {
 					</button>
 			 	</td>
 				<td>
-		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
+		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 			   	</td>
 				<td>
 					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
