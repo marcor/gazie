@@ -62,8 +62,8 @@ $title = array('luogo_data' => $luogo_data,
         array('lun' => 11, 'nam' => 'N.Doc.'),
         array('lun' => 13, 'nam' => 'D. Doc.'),
         array('lun' => 13, 'nam' => 'D. Reg.'),
-        array('lun' => 15, 'nam' => 'Dare'),
         array('lun' => 15, 'nam' => 'Avere'),
+        array('lun' => 15, 'nam' => 'Dare'),
         array('lun' => 13, 'nam' => 'Scad.')
     )
 );
