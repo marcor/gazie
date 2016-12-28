@@ -1173,6 +1173,7 @@ class GAzieMail {
         if ($config_notif['val'] == 'yes') {
             $mail->AddCustomHeader($mail->HeaderLine("Disposition-notification-to", $mittente));
         }
+	$mail->setLanguage(strtolower($admin_data['country']));
         // Imposto email del mittente
         $mail->SetFrom($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
         // Imposto email del destinatario
@@ -1186,6 +1187,7 @@ class GAzieMail {
         $mail->MsgHTML($body_text['body_text']);
         // Aggiungo la fattura in allegato
         $mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
+	$mail->SMTPDebug = false;
         // Invio...
         if ($mail->Send()) {
             echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
