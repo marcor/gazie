@@ -24,4 +24,8 @@
         <field name="code">N6</field>
         <field name="name">Inversione contabile (reverse charge)</field>
     </record>
+    <record id="natura_N7" model="">
+        <field name="code">N7</field>
+        <field name="name">IVA assolta in altro stato UE</field>
+    </record>
 </data>

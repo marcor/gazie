@@ -84,4 +84,8 @@
         <field name="code">MP21</field>
         <field name="name">SEPA Direct Debit B2B</field>
     </record>
+    <record id="payment_MP22" model="">
+        <field name="code">MP22</field>
+        <field name="name">Trattenuta su somme già riscosse</field>
+    </record>
 </data>
