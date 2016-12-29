@@ -1326,7 +1326,10 @@ echo '		</td>
 	  <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 	  	<tr>
-			<td class="FacetColumnTD">' . $script_transl[15] . ':&nbsp;';
+			<td class="FacetColumnTD">' . $script_transl[17] . ':';
+/** ENRICO FEDELE */
+$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+echo $script_transl[15] . ':&nbsp;';
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 //$select_artico->output($form['cosear'], $form['in_artsea']);
@@ -1357,14 +1360,12 @@ echo '			</td>
 			</td>
 		</tr>
 		<tr>
-			<td class="FacetColumnTD">' . $script_transl[17] . ':';
-/** ENRICO FEDELE */
-$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+			<td class="FacetColumnTD">';
 echo $script_transl[18] . ": ";
 $select_codric = new selectconven("in_codric");
 $select_codric->addSelected($form['in_codric']);
 $select_codric->output(substr($form['in_codric'], 0, 1));
-echo '			</br> %' . $script_transl[24] . ': <input type="text" value="' . $form['in_sconto'] . '" maxlength="4" size="1" name="in_sconto">
+echo '			%' . $script_transl[24] . ': <input type="text" value="' . $form['in_sconto'] . '" maxlength="4" size="1" name="in_sconto">
 	  			 %' . $script_transl[56] . ': <input type="text" value="' . $form['in_provvigione'] . '" maxlength="6" size="1" name="in_provvigione">'
  . ' %' . $script_transl['ritenuta'] . ': <input type="text" value="' . $form['in_ritenuta'] . '" maxlength="6" size="1" name="in_ritenuta">
 	   			</td>
