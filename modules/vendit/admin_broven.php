@@ -625,7 +625,21 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['quanti'] = "";
             $form['rows'][$old_key]['unimis'] = "";
             $form['rows'][$old_key]['sconto'] = 0;
-         }
+         } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //rigo fattura elettronica
+                $form['rows'][$old_key]['codart'] = "";
+                $form['rows'][$old_key]['annota'] = "";
+                $form['rows'][$old_key]['pesosp'] = "";
+                $form['rows'][$old_key]['gooser'] = 0;
+                $form['rows'][$old_key]['unimis'] = "";
+                $form['rows'][$old_key]['quanti'] = 0;
+                $form['rows'][$old_key]['prelis'] = 0;
+                $form['rows'][$old_key]['codric'] = 0;
+                $form['rows'][$old_key]['sconto'] = 0;
+                $form['rows'][$old_key]['pervat'] = 0;
+                $form['rows'][$old_key]['tipiva'] = 0;
+                $form['rows'][$old_key]['ritenuta'] = 0;
+                $form['rows'][$old_key]['codvat'] = 0;
+            }
          ksort($form['rows']);
       } else { //se � un rigo da inserire
          $form['rows'][$next_row]['tiprig'] = $form['in_tiprig'];
@@ -762,7 +776,21 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['tipiva'] = 0;
             $form['rows'][$next_row]['codvat'] = 0;
             $form['rows'][$next_row]['ritenuta'] = 0;
-         }
+         } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //dati fattura elettronica
+                $form['rows'][$next_row]['codart'] = "";
+                $form['rows'][$next_row]['annota'] = "";
+                $form['rows'][$next_row]['pesosp'] = "";
+                $form['rows'][$next_row]['gooser'] = 0;
+                $form['rows'][$next_row]['unimis'] = "";
+                $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['prelis'] = 0;
+                $form['rows'][$next_row]['codric'] = 0;
+                $form['rows'][$next_row]['sconto'] = 0;
+                $form['rows'][$next_row]['pervat'] = 0;
+                $form['rows'][$next_row]['tipiva'] = 0;
+                $form['rows'][$next_row]['ritenuta'] = 0;
+                $form['rows'][$next_row]['codvat'] = 0;
+            }
       }
       // reinizializzo rigo di input tranne che per il tipo rigo e aliquota iva
       $form['in_descri'] = "";
@@ -1445,7 +1473,12 @@ foreach ($form['rows'] as $k => $v) {
            ';
           */
 
-         echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
+         echo '	<td>
+					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+						<i class="glyphicon glyphicon-arrow-up"></i>
+					</button>
+			  	</td>
+                                <td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
 					<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
 						<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
 					</button>
@@ -1453,11 +1486,7 @@ foreach ($form['rows'] as $k => $v) {
 				<td>
 		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 			   	</td>
-				<td>
-					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
-						<i class="glyphicon glyphicon-arrow-up"></i>
-					</button>
-			  	</td>
+				
 				<td>
 					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
 				</td>
@@ -1474,17 +1503,18 @@ foreach ($form['rows'] as $k => $v) {
          $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
          break;
       case "1":
-         echo '		<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
+         echo '		<td>
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</button>
+					</td>'
+          . '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
               			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 					</td>
 			  		<td>
 		 				<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
 					</td>
-					<td>
-						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
-							<i class="glyphicon glyphicon-arrow-up"></i>
-						</button>
-					</td>
+					
 					<td>
 						<input type="hidden" name="rows[' . $k . '][unimis]" value="" />
 					</td>
@@ -1569,6 +1599,52 @@ foreach ($form['rows'] as $k => $v) {
 				<input type="hidden" value="" name="rows[' . $k . '][provvigione]" />';
          $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
          break;
+     case "11": // CIG fattura PA
+        case "12": // CUP fattura PA
+            echo "	<td>
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>
+					<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+					</td>
+					<td>
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"50\" />
+					</td>
+					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
+					<td></td>
+					<td></td>
+					<td></td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
+
+        case "13": // ID documento fattura PA
+            echo "	<td>
+						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+							<i class=\"glyphicon glyphicon-arrow-up\"></i>
+						</button>
+					</td>
+                                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+              			<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+					</td>
+					<td>
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
+					</td>
+					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
+					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
+					<td></td>
+					<td></td>
+					<td></td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
    }
    //echo "<TD align=\"right\"><input type=\"image\" name=\"del[$k]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'] . $script_transl['thisrow'] . "!\" /></td></tr>\n";
 
