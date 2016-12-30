@@ -746,7 +746,7 @@ CREATE TABLE `gaz_001sconti_articoli` (
   `sconto` decimal(6,3) DEFAULT NULL,
   `prezzo_netto` decimal(14,5) DEFAULT NULL,
   PRIMARY KEY (`clfoco`,`codart`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `gaz_001sconti_raggruppamenti`;
 CREATE TABLE `gaz_001sconti_raggruppamenti` (
@@ -754,7 +754,7 @@ CREATE TABLE `gaz_001sconti_raggruppamenti` (
   `ragstat` char(15) NOT NULL,
   `sconto` decimal(6,3) DEFAULT NULL,
   PRIMARY KEY (`clfoco`,`ragstat`)
-) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 DROP TABLE IF EXISTS `gaz_001spediz`;
 CREATE TABLE `gaz_001spediz` (

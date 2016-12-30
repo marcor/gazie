@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS `gaz_students` (
 ALTER TABLE `gaz_aziend` ADD COLUMN `capital_gains_account` INT(9) NOT NULL DEFAULT '0' AFTER `min_rate_deprec`;
 ALTER TABLE `gaz_aziend` ADD COLUMN `capital_loss_account` INT(9) NOT NULL DEFAULT '0' AFTER `capital_gains_account`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
-CREATE TABLE `gaz_XXXsconti_articoli` (`clfoco` int(9),`codart` varchar(15),`sconto` decimal(6,3),`prezzo_netto` decimal(14,5), primary key(`clfoco`,`codart`));
-CREATE TABLE `gaz_XXXsconti_raggruppamenti` (`clfoco` int(9),`ragstat` char(15),`sconto` decimal(6,3), primary key(`clfoco`,`ragstat`));
+CREATE TABLE `gaz_XXXsconti_articoli` (`clfoco` int(9),`codart` varchar(15),`sconto` decimal(6,3),`prezzo_netto` decimal(14,5), primary key(`clfoco`,`codart`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `gaz_XXXsconti_raggruppamenti` (`clfoco` int(9),`ragstat` char(15),`sconto` decimal(6,3), primary key(`clfoco`,`ragstat`)) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `gaz_XXXassist` ADD `ripetizione` varchar(10) COLLATE 'utf8_general_ci' NOT NULL AFTER `prezzo`;
 ALTER TABLE `gaz_XXXassist` ADD `codart` varchar(15) NOT NULL AFTER `ore`;
 ALTER TABLE `gaz_XXXassist` change `ripetizione` `ripetizione` int NULL DEFAULT '1' AFTER `prezzo`, ADD `ogni` int NULL DEFAULT '365' AFTER `ripetizione`;
