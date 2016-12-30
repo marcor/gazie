@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Configuration for: Database Connection
  * This is the place where your database login constants are saved
@@ -12,7 +13,6 @@
  *          by the way, it's bad style to use "root", but for development it will work.
  * DB_PASS: the password of the above user
  */
-
 /* GAZIE MOD BEGIN */
 
 //  non essendo loggato devo prendere le impostazioni della lingua dal server
@@ -37,6 +37,8 @@ define("DB_NAME", $Database);
 define("DB_TABLE_PREFIX", $table_prefix);
 define("DB_USER", $User);
 define("DB_PASS", $Password);
+
+
 
 /* GAZIE MOD END */
 
@@ -80,19 +82,30 @@ define("COOKIE_SECRET_KEY", "1gp@GAZS{+$78sfpMJFe-92s");
 define("EMAIL_USE_SMTP", true);
 define("EMAIL_SMTP_AUTH", true);
 
-
+function getBaseUrl() { // ricavo l'URL del modulo
+    // output: /myproject/index.php
+    $currentPath = $_SERVER['PHP_SELF'];
+    // output: Array ( [dirname] => /myproject [basename] => index.php [extension] => php [filename] => index ) 
+    $pathInfo = pathinfo($currentPath);
+    // output: localhost
+    $hostName = $_SERVER['HTTP_HOST'];
+    // output: http://
+    $protocol = strtolower(substr($_SERVER["SERVER_PROTOCOL"], 0, 5)) == 'https://' ? 'https://' : 'http://';
+    // return: http://localhost/myproject/
+    return $protocol . $hostName . $pathInfo['dirname'] . "/";
+}
 
 /**
  * Configuration for: password reset email data
- * Set the absolute URL to password_reset.php, necessary for email password reset links
+ * Set the absolute URL to password_reset.php if necessary for email password reset links
  */
-define("EMAIL_PASSWORDRESET_URL", "http://localhost/gazie/trunk/modules/school/student_password_reset.php");
+define("EMAIL_PASSWORDRESET_URL", getBaseUrl()."student_password_reset.php");
 
 /**
  * Configuration for: verification email data
- * Set the absolute URL to register.php, necessary for email verification links
+ * Set the absolute URL to register.php if necessary for email verification links
  */
-define("EMAIL_VERIFICATION_URL", "http://localhost/gazie/trunk/modules/school/student_register.php");
+define("EMAIL_VERIFICATION_URL", getBaseUrl()."student_register.php");
 
 /**
  * Configuration for: Hashing strength
