@@ -41,7 +41,7 @@ ALTER TABLE `gaz_XXXassist` ADD `codart` varchar(15) NOT NULL AFTER `ore`;
 ALTER TABLE `gaz_XXXassist` change `ripetizione` `ripetizione` int NULL DEFAULT '1' AFTER `prezzo`, ADD `ogni` int NULL DEFAULT '365' AFTER `ripetizione`;
 ALTER TABLE `gaz_XXXassist` ADD `codeart` varchar(10) COLLATE 'utf8_general_ci' NULL AFTER `prezzo`;
 ALTER TABLE `gaz_XXXassist` CHANGE `ogni` `ogni` varchar(10) NULL DEFAULT 'Anni' AFTER `ripetizione`;
-CREATE TABLE `gaz_XXXinstal` ( `id` int NOT NULL, `clfoco` int NOT NULL, `descrizione` varchar(255) NOT NULL, `seriale` varchar(255) NOT NULL, `datainst` date NOT NULL, `note` text NOT NULL ) COLLATE 'utf8_general_ci';
+CREATE TABLE `gaz_XXXinstal` ( `id` int NOT NULL, `clfoco` int NOT NULL, `descrizione` varchar(255) NOT NULL, `seriale` varchar(255) NOT NULL, `datainst` date NOT NULL, `note` text NOT NULL ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `gaz_XXXinstal` ADD `codice` int(11) NOT NULL AFTER `id`;
 ALTER TABLE `gaz_XXXinstal` ADD `oggetto` varchar(100) NOT NULL AFTER `clfoco`;
 ALTER TABLE `gaz_XXXassist` ADD `idinstallazione` int(11) NOT NULL AFTER `id`;
