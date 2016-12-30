@@ -23,7 +23,7 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-$admin_aziend = checkAdmin(9);
+$admin_aziend = checkAdmin(7);
 $msg = '';
 
 function createNewTable($table, $new_id) {

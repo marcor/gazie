@@ -28,7 +28,7 @@ if (isset($_GET['change_co'])){
     header("Location: ../root/admin.php");
     exit;
 }
-$admin_aziend=checkAdmin(9);
+$admin_aziend=checkAdmin(7);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $table=$gTables['aziend'].' LEFT JOIN '. $gTables['admin_module'].' ON '.$gTables['admin_module'].'.company_id = '.$gTables['aziend'].'.codice';

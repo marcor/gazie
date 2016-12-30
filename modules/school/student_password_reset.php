@@ -31,6 +31,7 @@ require_once("./lang." . TRANSL_LANG . ".php");
 
 // include the PHPMailer library
 require_once('../../library/phpmailer/class.phpmailer.php');
+require_once('../../library/phpmailer/class.smtp.php');
 
 // load the login class
 require_once('classes/Login.php');
