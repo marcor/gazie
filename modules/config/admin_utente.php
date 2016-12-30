@@ -50,7 +50,6 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 }
 
 $admin_aziend = checkAdmin($aut);
-
 if (isset($_POST['Return'])) {
     header("Location: " . $_POST['ritorno']);
     exit;
@@ -130,7 +129,7 @@ if (isset($_POST['Submit'])) {
         $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "Login <> '$ricerca' AND Abilit ='9'", "Login", 0, 1);
         $risultato = gaz_dbi_fetch_array($rs_utente);
         $student = false;
-        if (preg_match("/^([a-z]{3})[0-9]{4}/", $table_prefix, $tp)) {
+        if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
             $rs_student = gaz_dbi_dyn_query("*", $tp[1] . '_students', "student_name = '" . $ricerca . "'");
             $student = gaz_dbi_fetch_array($rs_student);
         }
