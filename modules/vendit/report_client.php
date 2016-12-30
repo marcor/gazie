@@ -47,6 +47,7 @@ if (isset($_GET['auxil1'])) {
     $auxil1 = "";
 }
 
+gaz_flt_var_assign('codice', 'v');
 gaz_flt_var_assign('ragso1', 'v');
 
 if (isset($_GET['all'])) {

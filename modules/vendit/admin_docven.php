@@ -2099,25 +2099,25 @@ foreach ($form['rows'] as $k => $v) {
             break;
 
         case "13": // ID documento fattura PA
-            echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
-              			<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
-					</td>
-			  		<td>
-						<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-							<i class=\"glyphicon glyphicon-arrow-up\"></i>
-						</button>
-					</td>
-					<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
-					</td>
-					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
-					<td></td>
-					<td></td>
-					<td></td>\n";
+            echo "	<td>
+                            <button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
+                                <i class=\"glyphicon glyphicon-arrow-up\"></i>
+                            </button>
+			</td>
+                        <td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
+                            <input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
+                        </td>
+			<td>
+                            <input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
+			</td>
+			<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
+			<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+			<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
+			<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
+			<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
+			<td></td>
+			<td></td>
+			<td></td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "90": //ventita cespite - alienazione bene ammortizzabile

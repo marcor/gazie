@@ -314,6 +314,12 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                     gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
                 }
             }
+            if ( $v['tiprig']>=11 && $v['tiprig']<=13 ) {
+                $row = $v;
+                unset($row['id_rig']);
+                $row['id_tes'] = $last_id;
+                rigdocInsert($row);
+            }
             $ctrl_tes = $v['id_tes'];
         }
         //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
@@ -603,6 +609,12 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                     gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
                 }
             }
+            if ( $v['tiprig']>=11 && $v['tiprig']<=13 ) {
+                $row = $v;
+                unset($row['id_rig']);
+                $row['id_tes'] = $last_id;
+                rigdocInsert($row);
+            }
             $ctrl_tes = $v['id_tes'];
         }
         //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
@@ -819,6 +831,7 @@ if (!empty($form['righi'])) {
     $ctrl_tes = 0;
     $total_order = 0;
     foreach ($form['righi'] as $k => $v) {
+        //echo $form['righi'][$k]['tiprig']."<br>";
         $checkin = ' disabled ';
         $imprig = 0;
         //calcolo importo rigo
@@ -848,6 +861,11 @@ if (!empty($form['righi'])) {
                 $v['descri'] = substr($body_text['body_text'], 0, 80);
                 $checkin = '';
                 break;
+            case "11":
+            case "12":
+            case "13":
+                $checkin = '';
+                break;
         }
         if ($ctrl_tes != $v['id_tes']) {
             echo "<tr><td class=\"FacetDataTD\" colspan=\"7\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td></tr>";
@@ -866,14 +884,17 @@ if (!empty($form['righi'])) {
         echo "<input type=\"hidden\" name=\"righi[$k][ritenuta]\" value=\"" . $v['ritenuta'] . "\">\n";
         echo "<input type=\"hidden\" name=\"righi[$k][codric]\" value=\"" . $v['codric'] . "\">\n";
         echo "<td><input type=\"hidden\" name=\"righi[$k][codart]\" value=\"" . $v['codart'] . "\">" . $v['codart'] . "</td>\n";
+        
         echo "<td><input type=\"hidden\" name=\"righi[$k][descri]\" value=\"" . $v['descri'] . "\">" . $v['descri'] . "</td>\n";
-        echo "<td align=\"center\"><input type=\"hidden\" name=\"righi[$k][unimis]\" value=\"" . $v['unimis'] . "\">" . $v['unimis'] . "</td>\n";
-        echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][quanti]\" value=\"" . $v['quanti'] . "\">" . $v['quanti'] . "</td>\n";
-        echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][prelis]\" value=\"" . $v['prelis'] . "\">" . $v['prelis'] . "</td>\n";
-        echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][provvigione]\" value=\"" . $v['provvigione'] . "\">" . $v['provvigione'] . "</td>\n";
-        echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][sconto]\" value=\"" . $v['sconto'] . "\">" . $v['sconto'] . "</td>\n";
-        echo "<td class=\"FacetDataTD\" align=\"right\">$imprig</td>\n";
-        echo "<td class=\"FacetFieldCaptionTD\" align=\"center\"><input type=\"checkbox\" name=\"righi[$k][checkval]\"  title=\"" . $script_transl['checkbox'] . "\" $checkin value=\"$imprig\" onclick=\"this.form.total.value=calcheck(this);\"></td>\n";
+        if ( $v['tiprig']<=10 || $v['tiprig']>=14 ) {
+            echo "<td align=\"center\"><input type=\"hidden\" name=\"righi[$k][unimis]\" value=\"" . $v['unimis'] . "\">" . $v['unimis'] . "</td>\n";
+            echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][quanti]\" value=\"" . $v['quanti'] . "\">" . $v['quanti'] . "</td>\n";
+            echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][prelis]\" value=\"" . $v['prelis'] . "\">" . $v['prelis'] . "</td>\n";
+            echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][provvigione]\" value=\"" . $v['provvigione'] . "\">" . $v['provvigione'] . "</td>\n";
+            echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][sconto]\" value=\"" . $v['sconto'] . "\">" . $v['sconto'] . "</td>\n";
+            echo "<td class=\"FacetDataTD\" align=\"right\">$imprig</td>\n";
+            echo "<td class=\"FacetFieldCaptionTD\" align=\"center\"><input type=\"checkbox\" name=\"righi[$k][checkval]\"  title=\"" . $script_transl['checkbox'] . "\" $checkin value=\"$imprig\" onclick=\"this.form.total.value=calcheck(this);\"></td>\n";
+        }
         echo "</tr>";
         $ctrl_tes = $v['id_tes'];
     }

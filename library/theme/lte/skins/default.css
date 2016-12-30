@@ -10,6 +10,12 @@ body {
     border-top: 0px;
     padding: 15px 15px 15px 15px;
 }
+.contenuto-help {
+   background-color: #fff;
+}
+.control-label {
+   background-color: #aae2a8;
+}
 .dropdown-menu {
     border-color: #000;
 }
@@ -61,4 +67,7 @@ th a:hover {
     border: 1px solid #000000;
 }
 .FacetFormHeaderFont {
+}
+#preventDuplicate {
+    color: #000;
 }
