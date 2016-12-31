@@ -33,32 +33,31 @@ if (!isset($_GET['id'])) {
 }
 
 if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
-    $form = array_merge(gaz_dbi_parse_post('anagra'), gaz_dbi_parse_post('anagra'));
+    $form = gaz_dbi_parse_post('anagra');
     $form['ritorno'] = $_POST['ritorno'];
-    $form['hidden_req'] = $_POST['hidden_req'];
     $form['e_mail'] = trim($form['e_mail']);
     if (isset($_POST['Submit'])) { // conferma tutto
         require("../../library/include/check.inc.php");
         if (strlen($form["ragso1"]) < 4) {
-            $msg .= '0+';
+            $msg['err'][] = 'ragso1';
         }
         if (empty($form["indspe"])) {
-            $msg .= '1+';
+            $msg['err'][] = 'indspe';
         }
         // faccio i controlli sul codice postale 
         $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
         $cap = new postal_code;
         if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length'])) {
-            $msg .= '2+';
+            $msg['err'][] = 'capspe';
         }
         if (empty($form["citspe"])) {
-            $msg .= '3+';
+            $msg['err'][] = 'citspe';
         }
         if (empty($form["prospe"])) {
-            $msg .= '4+';
+            $msg['err'][] = 'prospe';
         }
         if (empty($form["sexper"])) {
-            $msg .= '5+';
+            $msg['err'][] = 'sexper';
         }
         $cf_pi = new check_VATno_TAXcode();
         $r_pi = $cf_pi->check_VAT_reg_no($form['pariva'], $form['country']);
@@ -66,79 +65,50 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             $r_cf = $cf_pi->check_VAT_reg_no($form['codfis'], $form['country']);
             if ($form['sexper'] != 'G') {
                 $r_cf = 'Codice fiscale sbagliato per una persona fisica';
-                $msg .= '8+';
+                $msg['err'][] = 'pf_no_codfis';
             }
         } else {
             $r_cf = $cf_pi->check_TAXcode($form['codfis'], $form['country']);
         }
         if (!empty($r_pi)) {
-            $msg .= "9+";
+            $msg['err'][] = 'pariva';
         }
-        if ($form['codpag'] < 1) {
-            $msg .= "17+";
-        }
+
         if (!($form['pariva'] == "") && !($form['pariva'] == "00000000000")) {
-            $partner_with_same_pi = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND pariva = '" . $form['pariva'] . "'", "pariva DESC", 0, 1);
+            $partner_with_same_pi = gaz_dbi_get_row($gTables['anagra'], 'pariva', $form['pariva'] . "' AND id <> '" . $form['id']);
             if ($partner_with_same_pi) {
-                if ($partner_with_same_pi[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
-                    $msg .= "10+";
-                }
-            } elseif ($form['id_anagra'] == 0) { // � un nuovo cliente senza anagrafica
-                $rs_anagra_with_same_pi = gaz_dbi_dyn_query('*', $gTables['anagra'], " pariva = '" . $form['pariva'] . "'", "pariva DESC", 0, 1);
-                $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
-                if ($anagra_with_same_pi) { // c'� gi� un'anagrafica con la stessa PI non serve reinserirlo ma avverto
-                    // devo attivare tutte le interfacce per la scelta!
-                    $anagra = $anagra_with_same_pi;
-                    $msg .= '15+';
-                }
+                $msg['err'][] = 'same_pariva';
             }
         }
         if (!empty($r_cf)) {
-            $msg .= "11+";
+            $msg['err'][] = 'codfis';
         }
         if (!($form['codfis'] == "") && !($form['codfis'] == "00000000000")) {
-            $partner_with_same_cf = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
-            if ($partner_with_same_cf) { // c'� gi� un cliente sul piano dei conti
-                if ($partner_with_same_cf[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
-                    $msg .= "12+";
-                }
-            } elseif ($form['id_anagra'] == 0) { // � un nuovo cliente senza anagrafica
-                $rs_anagra_with_same_cf = gaz_dbi_dyn_query('*', $gTables['anagra'], " codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
-                $anagra_with_same_cf = gaz_dbi_fetch_array($rs_anagra_with_same_cf);
-                if ($anagra_with_same_cf) { // c'� gi� un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
-                    // devo attivare tutte le interfacce per la scelta!
-                    $anagra = $anagra_with_same_cf;
-                    $msg .= '16+';
-                }
+            $partner_with_same_cf = gaz_dbi_get_row($gTables['anagra'], 'codfis', $form['codfis'] . "' AND id <> '" . $form['id']);
+            if ($partner_with_same_cf) { // c'� gi� una anagrafica con lo stesso CF
+                $msg['err'][] = 'same_codfis';
             }
         }
 
         if (empty($form['codfis'])) {
             if ($form['sexper'] == 'G') {
-                $msg .= "13+";
+                $msg['err'][] = 'cf_pi_set';
                 $form['codfis'] = $form['pariva'];
             } else {
-                $msg .= "14+";
+                $msg['err'][] = 'pf_ins_codfis';
             }
         }
 
-        $uts_datnas = mktime(0, 0, 0, $form['datnas_M'], $form['datnas_D'], $form['datnas_Y']);
-        if (!checkdate($form['datnas_M'], $form['datnas_D'], $form['datnas_Y']) && ($admin_aziend['country'] != $form['country'] )) {
-            $msg .= "19+";
-        }
         if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
-            $msg .= "20+";
+            $msg['err'][] = 'e_mail';
         }
 
-        if (empty($msg)) { // nessun errore
-            $form['datnas'] = date("Ymd", $uts_datnas);
-            $anagrafica->updatePartners($form['codice'], $form);
+        if (count($msg['err']) <= 0) { // nessun errore
+            $form['datnas'] = gaz_format_date($form['datnas']);
+            gaz_dbi_table_update('anagra', array('id', $form['id']), $form);
             header("Location: " . $form['ritorno']);
             exit;
         }
-    } elseif (isset($_POST['Return'])) { // torno indietro
-        header("Location: " . $form['ritorno']);
-        exit;
     }
 } else { //se e' il primo accesso per UPDATE
     $form = gaz_dbi_get_row($gTables['anagra'], 'id', intval($_GET['id']));

@@ -153,7 +153,7 @@ $strScript = array(
     ),
     "admin_anagra.php" =>
     array('title' => 'Modifica anagrafica comune',
-        'err' => array('ragsoc' => '&Egrave; necessario indicare la Ragione Sociale',
+        'err' => array('ragso1' => '&Egrave; necessario indicare la Ragione Sociale',
             'indspe' => '&Egrave; necessario indicare l\'indirizzo',
             'capspe' => 'Il codice di avviamento postale (CAP) &egrave; sbagliato',
             'citspe' => '&Egrave; necessario indicare la citt&agrave;',
@@ -167,6 +167,7 @@ $strScript = array(
             'pf_ins_codfis' => 'E\' una persona fisica, inserire il codice fiscale',
             'datnas' => 'La data di nascita &egrave; sbagliata',
             'e_mail' => 'Indirizzo email formalmente sbagliato',
+            'cf_pi_set' => 'E\' stata impostato un codice fiscale uguale alla partita IVA, se giusto, conferma nuovamente la modifica',
         ),
         'id' => "Codice ",
         'ragso1' => "Ragione sociale 1",
