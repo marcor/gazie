@@ -276,12 +276,12 @@
                         <i class="fa fa-archive" style="color:#<?php echo $rl["color"]; ?>"></i>
                       </div>
                       <h4>
-                        <?php /*if ( is_string($rlref_name) ) { 
+                        <?php if ( is_string($rlref_name) ) { 
                                 echo substr( $rlref_name, 0, 28);
                               } else { 
                                 //print_r( $rlref_name);
                                   echo 'Nome script non trovato';
-                              }*/ ?>
+                              } ?>
                         <small><i class="fa fa-clock-o"></i> <?php echo gaz_time_from(strtotime($rl["last_use"])); ?></small>
                       </h4>
                       <p><?php echo substr($rl["link"],0,38); ?></p>

@@ -266,7 +266,13 @@ if ($t > 4 && $t <= 13) {
                                 echo "&nbsp;";
                             ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
                                 <span ><?php
-                                    echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>' . $rlref_name . '</b>';
+                                    echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>';
+                                    if ( is_string($rlref_name) ) {
+                                        echo $rlref_name;
+                                    } else {
+                                        echo "Errore nello script (array)";
+                                    }
+                                    echo '</b>';
                                     ?></span></a>
                         </div>
                     </div>
