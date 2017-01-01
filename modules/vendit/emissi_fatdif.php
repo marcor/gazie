@@ -438,14 +438,26 @@ if (isset($invoices['data'])) {
                     $tot += $row_amount;
 
                     echo "<tr>";
-                    echo "<td class=\"$c\">" . $row['codart'] . " </td>";
+                    if ( $row['tiprig']>=11 && $row['tiprig']<=13 ) {
+                        echo "<td class=\"$c\"> FAE </td>";
+                    } else {
+                        echo "<td class=\"$c\">" . $row['codart'] . " </td>";
+                    }
                     echo "<td class=\"$c\">" . $row['descri'] . " </td>";
                     echo "<td class=\"$c\"> " . $row['unimis'] . " </td>";
-                    echo "<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['quanti'], true) . " </td>";
-                    echo "<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['prelis'], true, $admin_aziend['decimal_price']) . " </td>";
-                    echo "<td class=\"$c\" align=\"right\"> " . floatval($row['sconto']) . " </td>";
-                    echo "<td class=\"$c\" align=\"right\"> " . gaz_format_number($row['pervat']) . " </td>";
-                    echo "<td class=\"$c\" align=\"right\"> " . gaz_format_number($row_amount) . " </td>";
+                    if ( $row['tiprig']>=11 && $row['tiprig']<=13 || $row['tiprig']==2 ) {
+                        echo "<td class=\"$c\" align=\"right\"></td>";
+                        echo "<td class=\"$c\" align=\"right\"></td>";
+                        echo "<td class=\"$c\" align=\"right\"></td>";
+                        echo "<td class=\"$c\" align=\"right\"></td>";
+                        echo "<td class=\"$c\" align=\"right\"></td>";
+                    } else {
+                        echo "<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['quanti'], true) . " </td>";
+                        echo "<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['prelis'], true, $admin_aziend['decimal_price']) . " </td>";
+                        echo "<td class=\"$c\" align=\"right\"> " . floatval($row['sconto']) . " </td>";
+                        echo "<td class=\"$c\" align=\"right\"> " . gaz_format_number($row['pervat']) . " </td>";
+                        echo "<td class=\"$c\" align=\"right\"> " . gaz_format_number($row_amount) . " </td>";
+                    }
                     echo "</tr>\n";
                 }
                 if ($tes['traspo'] > 0) {

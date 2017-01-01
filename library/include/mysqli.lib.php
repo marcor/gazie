@@ -353,7 +353,7 @@ function gaz_dbi_table_insert($table, $value) {
    $field_meta = gaz_dbi_get_fields_meta($field_results);
    for ($j = 0; $j < $field_meta['num']; $j++) {
       if ($field_meta['data'][$j]->name != $auto_increment) {  // il campo auto increment non dev'essere passato
-         $colName .= ($first ? $field_meta['data'][$j]->name : ', ' . $field_meta['data'][$j]->name);
+         $colName .= ($first ? '`'.$field_meta['data'][$j]->name.'`' : ', `' . $field_meta['data'][$j]->name.'`');
          $colValue .= ($first ? " " : ", ");
          $first = false;
          if (isset($value[$field_meta['data'][$j]->name])) {
@@ -368,6 +368,8 @@ function gaz_dbi_table_insert($table, $value) {
             }
          } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
             $colValue .= "'" . $_SESSION['Login'] . "'";
+         } elseif ($field_meta['data'][$j]->name == 'last_modified') {
+             $colValue .= "NULL";
          } else {
             if ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
                $colValue .='0';
@@ -397,7 +399,7 @@ function gaz_dbi_table_update($table, $id, $newValue) {
    $quote_id = "'";
    for ($j = 0; $j < $field_meta['num']; $j++) {
       if (isset($newValue[$field_meta['data'][$j]->name])) {
-         $query .= ($first ? $field_meta['data'][$j]->name . " = " : ", " . $field_meta['data'][$j]->name . " = ");
+         $query .= ($first ? '`'.$field_meta['data'][$j]->name.'`' . " = " : ", " . '`'.$field_meta['data'][$j]->name.'`' . " = ");
          $first = false;
          if ($field_meta['data'][$j]->blob && !empty($newValue[$field_meta['data'][$j]->name])) {
             $query .= '0x' . bin2hex($newValue[$field_meta['data'][$j]->name]);

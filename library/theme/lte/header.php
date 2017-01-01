@@ -22,6 +22,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   -------------------------------------------------------------------
  */
+    $config = new Config;
 
     if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
         $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
@@ -139,7 +140,16 @@
         <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
   </head>
-  <body class="sidebar-collapse hold-transition skin-blue sidebar-mini">
+  <?php 
+  $val="";
+  if ( $config->getValue('LTE_Fixed')=="true" ) $val = " fixed";
+  if ( $config->getValue('LTE_Boxed')=="true" ) $val = " layout-boxed";
+  if ( $config->getValue('LTE_Collapsed')=="true" ) $val .= " sidebar-collapse";
+  if ( $config->getValue('LTE_Onhover')=="true" ) $val .= " wysihtml5-supported sidebar-collapse";    
+  if ( $config->getValue('LTE_SidebarOpen')=="true" ) $val .= " control-sidebar-open";    
+  
+  echo "<body class=\"hold-transition skin-blue sidebar-mini ".$val."\">";
+  ?>
     <form method="POST" name="head_form" action="../../modules/root/admin.php">
     <div class="wrapper">
       <header class="main-header">
@@ -159,9 +169,11 @@
           <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">     
           <?php
-                echo "<li><a target=\"_new\" href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
-                ?>
-                <!-- Messages: style can be found in dropdown.less-->
+            if ( $module == "finann" ) $fileDocs = "finean";
+            else $fileDocs = $module;
+            echo "<li><a target=\"_new\" href=\"../../modules/".$module."/docume_".$fileDocs.".php\"><i class=\"fa fa-question\"></i></a></li>";
+          ?>
+          <!-- Messages: style can be found in dropdown.less-->
           <li class="dropdown messages-menu">
             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
               <i class="fa fa-star" style="color: yellow"></i>

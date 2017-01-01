@@ -819,14 +819,15 @@ echo "</tr></table>\n";
 if (!empty($form['righi'])) {
     echo '<div align="center"><b>' . $script_transl['preview_title'] . '</b></div>';
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-    echo "<tr class=\"FacetFieldCaptionTD\"><td> " . $script_transl['codart'] . "</td>
-   <td> " . $script_transl['descri'] . "</td>
-   <td align=\"center\"> " . $script_transl['unimis'] . "</td>
-   <td align=\"right\"> " . $script_transl['quanti'] . "</td>
-   <td align=\"right\"> " . $script_transl['prezzo'] . "</td>
-   <td align=\"right\"> " . $script_transl['sconto'] . "</td>
-   <td align=\"right\"> " . $script_transl['provvigione'] . "</td>
-   <td align=\"right\"> " . $script_transl['amount'] . "</td>
+    echo "<tr class=\"FacetFieldCaptionTD\"><th> " . $script_transl['codart'] . "</th>
+   <th> " . $script_transl['descri'] . "</th>
+   <th align=\"center\"> " . $script_transl['unimis'] . "</th>
+   <th align=\"right\"> " . $script_transl['quanti'] . "</th>
+   <th align=\"right\"> " . $script_transl['prezzo'] . "</th>
+   <th align=\"right\"> " . $script_transl['sconto'] . "</th>
+   <th align=\"right\"> " . $script_transl['provvigione'] . "</th>
+   <th align=\"right\"> " . $script_transl['amount'] . "</th>
+   <th></th>
    </tr>";
     $ctrl_tes = 0;
     $total_order = 0;
@@ -868,7 +869,7 @@ if (!empty($form['righi'])) {
                 break;
         }
         if ($ctrl_tes != $v['id_tes']) {
-            echo "<tr><td class=\"FacetDataTD\" colspan=\"7\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td></tr>";
+            echo "<tr><td class=\"FacetDataTD\" colspan=\"9\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td></tr>";
         }
         echo "<tr>";
         echo "<input type=\"hidden\" name=\"righi[$k][id_tes]\" value=\"" . $v['id_tes'] . "\">\n";
@@ -892,15 +893,24 @@ if (!empty($form['righi'])) {
             echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][prelis]\" value=\"" . $v['prelis'] . "\">" . $v['prelis'] . "</td>\n";
             echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][provvigione]\" value=\"" . $v['provvigione'] . "\">" . $v['provvigione'] . "</td>\n";
             echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][sconto]\" value=\"" . $v['sconto'] . "\">" . $v['sconto'] . "</td>\n";
-            echo "<td class=\"FacetDataTD\" align=\"right\">$imprig</td>\n";
-            echo "<td class=\"FacetFieldCaptionTD\" align=\"center\"><input type=\"checkbox\" name=\"righi[$k][checkval]\"  title=\"" . $script_transl['checkbox'] . "\" $checkin value=\"$imprig\" onclick=\"this.form.total.value=calcheck(this);\"></td>\n";
+            echo "<td align=\"right\">$imprig</td>\n";
+            echo "<td align=\"center\"><input type=\"checkbox\" name=\"righi[$k][checkval]\"  title=\"" . $script_transl['checkbox'] . "\" $checkin value=\"$imprig\" onclick=\"this.form.total.value=calcheck(this);\"></td>\n";
+        } else {
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        echo "<td></td>";
+                        
         }
         echo "</tr>";
         $ctrl_tes = $v['id_tes'];
     }
-    echo "<tr><td class=\"FacetDataTD\">\n";
+    echo "<tr><td class=\"FacetFieldCaptionTD\">\n";
     echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">&nbsp;</td>\n";
-    echo "<td align=\"right\" colspan=\"5\" class=\"FacetFieldCaptionTD\">\n";
+    echo "<td align=\"right\" colspan=\"6\" class=\"FacetFieldCaptionTD\">\n";
     echo "<input type=\"submit\" name=\"ddt\" value=\"" . $script_transl['issue_ddt'] . "\" accesskey=\"d\" />\n";
     echo "<input type=\"submit\" name=\"fai\" value=\"" . $script_transl['issue_fat'] . "\" accesskey=\"f\" />\n";
     if (!empty($alert_sezione))

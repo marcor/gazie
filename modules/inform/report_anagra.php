@@ -143,8 +143,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "</tr>\n";
 }
 ?>
-</form>
 </table>
-</div>
-</body>
-</html>
+</form>
+<?php
+require("../../library/include/footer.php");
+?>
