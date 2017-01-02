@@ -108,7 +108,7 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
             var checkbox = $(el);
             $.ajax( {
                 type: 'POST',
-                url: '../../modules/root/post_lte.php',
+                url: './post_config.php',
                 data: { 'name': checkbox.attr('name'),
                    'val': checkbox.is(':checked')
                 },
