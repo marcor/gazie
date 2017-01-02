@@ -24,15 +24,8 @@
   --------------------------------------------------------------------------
  */
 global $admin_aziend;
-//$config = new Config;
-
 
 require("../../modules/root/lang.".$admin_aziend['lang'].".php");
-/*echo "<pre>";
-print_r( $strScript );
-echo "<br>";
-print_r ( $strScript['admin.php'] );
-echo "</pre>";*/
 
 function printCheckbox( $Caption, $varName, $Descrizione ) {
     global $config;
@@ -41,7 +34,7 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
     echo $Caption;
     if ( $config->getValue($varName)!="false" ) $val = "checked='".$config->getValue($varName)."'";
     else $val="";
-    echo "<input type='checkbox' class='pull-right' name='".$varName."' ".$val." onclick='processForm(this)' />"; 
+    echo "<input type='checkbox' hint='".$Descrizione."' class='pull-right' name='".$varName."' ".$val." onclick='processForm(this)' />"; 
     echo "</label><p>".$Descrizione."</p></div>";
 }
 
@@ -108,11 +101,11 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
             var checkbox = $(el);
             $.ajax( {
                 type: 'POST',
-                url: './post_config.php',
+                url: './post.php',
                 data: { 'name': checkbox.attr('name'),
-                   'val': checkbox.is(':checked')
+                   'val': checkbox.is(':checked'),
+                    'desc': checkbox.attr('hint')
                 },
-                
                 success: function(data) {
                     $('#message').html(data);
                 }
@@ -130,14 +123,9 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
     <!-- AdminLTE App -->
     <script>
         var AdminLTEOptions = {
-    //Enable sidebar expand on hover effect for sidebar mini
-    //This option is forced to true if both the fixed layout and sidebar mini
-    //are used together
-        sidebarExpandOnHover: <?php echo $config->getValue('LTE_Onhover'); ?>,
-    //BoxRefresh Plugin
-    enableBoxRefresh: true,
-    //Bootstrap.js tooltip
-    enableBSToppltip: true
+            sidebarExpandOnHover: <?php echo $config->getValue('LTE_Onhover'); ?>,
+            enableBoxRefresh: true,
+            enableBSToppltip: true
         };
     </script>
     <script src="../../library/theme/lte/adminlte/dist/js/app.js"></script>
