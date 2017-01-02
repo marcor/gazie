@@ -356,7 +356,7 @@
               </li>
               <!-- Control Sidebar Toggle Button -->
               <?php 
-              if ( $admin_aziend['Login']=="amministratore") {
+              if ( $admin_aziend['Abilit']==9) {
                   echo "<li><a href=\"#\" data-toggle=\"control-sidebar\"><i class=\"fa fa-gears\"></i></a></li>";
               } else {
                   echo "<li></li>";
