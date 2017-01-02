@@ -141,7 +141,18 @@
     <![endif]-->
   </head>
   <?php 
-  $val="";
+  $val=$config->getValue('LTE_Fixed');
+  if ( !isset($val) ) {
+      $config->setValue('LTE_Fixed', array("variable"=>"LTE_Fixed","description"=>"Attiva lo stile fisso. Non puoi usare fisso e boxed insieme","cvalue"=>"false","show"=>0));
+      $config->setValue('LTE_Boxed', array("variable"=>"LTE_Boxed","description"=>"Attiva lo stile boxed", "cvalue"=>"false", "show"=>0));
+      $config->setValue('LTE_Collapsed', array("variable"=>"LTE_Collapsed","description"=>"Collassa il menu principale", "cvalue"=>"true", "show"=>0));
+      $config->setValue('LTE_Onhover', array("variable"=>"LTE_Onhover","description"=>"Espandi automaticamente il menu", "cvalue"=>"false", "show"=>0));
+      $config->setValue('LTE_SidebarOpen', array("variable"=>"LTE_SidebarOpen","description"=>"Mantieni la barra aperta", "cvalue"=>"false", "show"=>0));
+      header("Location: ../../modules/root/admin.php");
+  } else {
+      $val="";
+  }
+  
   if ( $config->getValue('LTE_Fixed')=="true" ) $val = " fixed";
   if ( $config->getValue('LTE_Boxed')=="true" ) $val = " layout-boxed";
   if ( $config->getValue('LTE_Collapsed')=="true" ) $val .= " sidebar-collapse";

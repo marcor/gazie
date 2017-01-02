@@ -17,4 +17,3 @@ while($row = gaz_dbi_fetch_array($result)) {
 }
 echo json_encode($return_arr);
 ?>
-
