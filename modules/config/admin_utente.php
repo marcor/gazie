@@ -433,7 +433,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                 }
                 ?>
                 <tr>
-                    <td colspan="2" class="FacetDataTD text-center">
+                    <td colspan="3" class="FacetDataTD text-center">
                         <input name="Submit" class="btn btn-warning" type="submit" value="<?php echo strtoupper($script_transl[$toDo]); ?>!">
                     </td>
                 </tr>

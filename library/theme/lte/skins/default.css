@@ -14,7 +14,7 @@ body {
    background-color: #fff;
 }
 .control-label {
-   background-color: #aae2a8;
+   /*background-color: #aae2a8;*/
 }
 .dropdown-menu {
     border-color: #000;
@@ -70,4 +70,7 @@ th a:hover {
 }
 #preventDuplicate {
     color: #000;
+}
+.gaz-table-form {
+    background: #aae2a8;
 }

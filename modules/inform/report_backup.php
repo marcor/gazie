@@ -65,7 +65,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
         <ul class="nav nav-tabs">
             <li class="active"><a data-toggle="pill" href="#lista"><?php echo $script_transl['title']; ?></a></li>
             <?php
-            if ( $admin_aziend["Login"]=="amministratore" ) {
+            if ( $admin_aziend["Abilit"]=="9" ) {
                 echo "<li><a data-toggle=\"pill\" href=\"#config\">".$script_transl['config']."</a></li>";
             }
             ?>
@@ -89,7 +89,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['size']; ?></th>            
                     <th class="FacetFieldCaptionTD"><?php echo $script_transl['dow']; ?></th>
                     <?php
-                        if ( $admin_aziend["Login"]=="amministratore") {
+                        if ( $admin_aziend["Abilit"]=="9") {
                             echo "<th class=\"FacetFieldCaptionTD\">".$script_transl['rec']."</th>";
                             echo "<th class=\"FacetFieldCaptionTD\" align=\"center\">".$script_transl['delete']."</th>";
                         }
@@ -133,7 +133,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                                     <a class="btn btn-xs btn-default" href="downlo_backup.php?id=<?php echo $file; ?>"><i class="glyphicon glyphicon-download"></i></a>
                                 </td>
                                 <?php
-                                if ( $admin_aziend["Login"]=="amministratore") { ?>
+                                if ( $admin_aziend["Abilit"]=="9") { ?>
                                 <td align="center">
                                     <a class="btn btn-xs btn-default" href=""><i class="glyphicon glyphicon-repeat"></i></a>
                                 </td>
