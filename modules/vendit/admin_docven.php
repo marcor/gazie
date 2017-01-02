@@ -257,7 +257,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['lot_or_serial'] = intval($v['lot_or_serial']);
             $form['rows'][$next_row]['id_lotmag'] = intval($v['id_lotmag']);
             if ($v['lot_or_serial'] == 2 && $v['id_lotmag'] > 0) {
-// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1 
+// se è prevista la gestione per numero seriale/matricola la quantità non può essere diversa da 1
                 if ($form['rows'][$next_row]['quanti'] <> 1) {
                     $msg .= "60+";
                 }
@@ -676,7 +676,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($cliente['ritenuta'] > 0 && $admin_aziend['ritenuta'] == 0) { // carico la ritenuta se previsto
             $form['in_ritenuta'] = $cliente['ritenuta'];
         }
-        if ($cliente['addbol'] != 'S' && $form['virtual_taxstamp'] > 1) { // in caso di cliente senza addebito di bollo virtuale 
+        if ($cliente['addbol'] != 'S' && $form['virtual_taxstamp'] > 1) { // in caso di cliente senza addebito di bollo virtuale
             $form['virtual_taxstamp'] = 3;  // forzo al nuovo modo 3 (bollo a carico dell'emittente)
         }
         $form['sconto'] = $cliente['sconto'];
@@ -892,7 +892,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
                 $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
                 /** inizio modifica FP 09/10/2015
-                 * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo 
+                 * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo
                  */
                 //rimossa            $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
                 $in_sconto = $form['in_sconto'];
@@ -962,13 +962,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
                     /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
-                     * e se è il caso creo più righi  
+                     * e se è il caso creo più righi
                      */
                     $i = $next_row;
                     foreach ($lm->divided as $k => $v) {
                         if ($v['qua'] >= 0.00001) {
                             $form['rows'][$i] = $form['rows'][$next_row]; // copio il rigo di origine
-                            $form['rows'][$i]['id_lotmag'] = $k; // setto il lotto 
+                            $form['rows'][$i]['id_lotmag'] = $k; // setto il lotto
                             $form['rows'][$i]['quanti'] = $v['qua']; // e la quantità in base al riparto
                             $i++;
                         }
@@ -976,7 +976,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 if ($artico['payroll_tax'] > 0) {
                     /* se l'articolo impone anche un ulteriore rigo per la cassa previdenziale
-                     * procedo con l'aggiunta di un ulteriore rigo di tipo forfait in base 
+                     * procedo con l'aggiunta di un ulteriore rigo di tipo forfait in base
                      * alla configurazione aziendale
                      */
                     $ptd = gaz_dbi_get_row($gTables['company_config'], 'var', 'payroll_tax_descri');
@@ -1483,17 +1483,18 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
           'jquery/ui/jquery.ui.widget',
           'jquery/ui/jquery.ui.position',
           'jquery/ui/jquery.ui.autocomplete', */
-        /** ENRICO FEDELE */        ));
-
-echo "<script type=\"text/javascript\">
+        /** ENRICO FEDELE */
+));
+?>
+<script>
 function pulldown_menu(selectName, destField)
 {
     // Create a variable url to contain the value of the
     // selected option from the the form named docven and variable selectName
     var url = document.docven[selectName].options[document.docven[selectName].selectedIndex].value;
     document.docven[destField].value = url;
-}";
-?>
+}
+
 </script>
 <script type="text/javascript" language="JavaScript" ID="datapopup">
     var cal = new CalendarPopup();
@@ -1509,13 +1510,13 @@ echo '<form method="POST" name="docven" >';
 $gForm = new venditForm();
 /** inizio modifica FP 28/10/2015 */
 $strArrayDest = base64_encode(serialize($array_destinazioni));
-echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">'; // salvo l'array delle destinazioni in un hidden input 
+echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">'; // salvo l'array delle destinazioni in un hidden input
 /** fine modifica FP */
 echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
 	<input type="hidden" value="' . $form['seziva'] . '" name="seziva" />
 	<input type="hidden" value="' . $form['ritorno'] . '" name="ritorno" />
-        <input type="hidden" value="' . $form['roundup_y'] . '" name="roundup_y">
+	<input type="hidden" value="' . $form['roundup_y'] . '" name="roundup_y">
 	<input type="hidden" value="' . $form['change_pag'] . '" name="change_pag" />
 	<input type="hidden" value="' . $form['protoc'] . '" name="protoc" />
 	<input type="hidden" value="' . $form['numdoc'] . '" name="numdoc" />
@@ -1784,7 +1785,7 @@ echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" 
 /** ENRICO FEDELE */
 /* glyph-icon */
 echo '  </td>
-		<td class="FacetColumnTD" align="right"> 
+		<td class="FacetColumnTD" align="right">
 			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
@@ -1866,7 +1867,7 @@ foreach ($form['rows'] as $k => $v) {
       $msgtoast = "";   //lo cancelliamo
       } */
     /* fine modifica FP */
-    $descrizione = $v['descri'];
+    $descrizione = htmlentities($v['descri'], ENT_QUOTES);
     echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
@@ -1911,7 +1912,7 @@ foreach ($form['rows'] as $k => $v) {
 						</button>
 			 		</td>
 					<td>
-						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="60" size="50" />
+						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 					';
             if ($v['lot_or_serial'] > 0 && $v['id_lotmag'] > 0) {
                 $lm->getAvailableLots($v['codart'], $v['id_mag']);
@@ -1984,7 +1985,7 @@ foreach ($form['rows'] as $k => $v) {
 						<input class="btn btn-xs btn-success btn-block" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 					</td>
 					  <td>
-						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="60" size="50" />
+						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 					</td>
 					<td><input type="hidden" name="rows[' . $k . '][unimis]" value="" /></td>
 					<td><input type="hidden" name="rows[' . $k . '][quanti]" value="" /></td>
@@ -2015,7 +2016,7 @@ foreach ($form['rows'] as $k => $v) {
 						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
 					<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\" />
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
 					</td>
 					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
@@ -2037,7 +2038,7 @@ foreach ($form['rows'] as $k => $v) {
 						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
 					<td>
-						<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"60\" size=\"50\">
+						<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\">
 					</td>
 					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
@@ -2225,7 +2226,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 						<input type=\"text\" name=\"portos\" value=\"" . $form["portos"] . "\" maxlength=\"50\" size=\"25\" class=\"FacetInput\" />\n";
     $select_spediz = new SelectValue("portoresa");
     $select_spediz->output('portos', 'portos');
-    echo "		
+    echo "
 					</td>
 				</tr>
 				<!-- PRIMA RIGA - 8 colonne -->

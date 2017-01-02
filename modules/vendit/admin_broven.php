@@ -1427,7 +1427,7 @@ foreach ($form['rows'] as $k => $v) {
      $msgtoast = "";   //lo cancelliamo
      } */
    /* fine modifica FP */
-   $descrizione = $v['descri'];
+   $descrizione = htmlentities($v['descri'], ENT_QUOTES);;
    echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
    echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
    echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
@@ -1487,7 +1487,7 @@ foreach ($form['rows'] as $k => $v) {
 				<td>
 		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 			   	</td>
-				
+
 				<td>
 					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
 				</td>
@@ -1513,9 +1513,9 @@ foreach ($form['rows'] as $k => $v) {
               			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 					</td>
 			  		<td>
-		 				<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
+		 				<input type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 					</td>
-					
+
 					<td>
 						<input type="hidden" name="rows[' . $k . '][unimis]" value="" />
 					</td>
@@ -1541,7 +1541,7 @@ foreach ($form['rows'] as $k => $v) {
               		<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 				</td>
 				<td>
-					<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" />
+					<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
 				</td>
 				<td>
 					<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
@@ -1563,7 +1563,7 @@ foreach ($form['rows'] as $k => $v) {
               		<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 				</td>
 			  	<td>
-		 			<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\">
+		 			<input type=\"text\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\">
 				</td>
 				<td>
 					<button type=\"image\" name=\"upper_row[" . $k . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
@@ -1611,7 +1611,7 @@ foreach ($form['rows'] as $k => $v) {
 						<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
 					<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"15\" size=\"50\" />
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
 					</td>
 					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
@@ -1634,7 +1634,7 @@ foreach ($form['rows'] as $k => $v) {
               			<input class=\"btn btn-xs btn-success btn-block\" type=\"submit\" name=\"upd_row[$k]\" value=\"" . $script_transl['typerow'][$v['tiprig']] . "\" />
 					</td>
 					<td>
-						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
+						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
 					</td>
 					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>

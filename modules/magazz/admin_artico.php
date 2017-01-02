@@ -155,7 +155,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 gaz_dbi_table_update('artico', $form['ref_code'], $form);
                 $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
                 if (empty($tbt) && $bodytext) {
-                    // è vuoto il nuovo ma non lo era prima, allora lo cancello 
+                    // è vuoto il nuovo ma non lo era prima, allora lo cancello
                     gaz_dbi_del_row($gTables['body_text'], 'id_body', $bodytext['id_body']);
                 } elseif (!empty($tbt) && $bodytext) {
                     // c'è e c'era quindi faccio l'update
@@ -260,7 +260,7 @@ if ($modal === false) {
     $script_transl = $strCommon + $script_transl;
 }
 /** ENRICO FEDELE */
-/* Assegno un id al form, quindi distinguo tra modale e non 
+/* Assegno un id al form, quindi distinguo tra modale e non
  * in caso di finestra modale, aggiungo un campo nascosto che mi serve per salvare nel database
  */
 ?>
@@ -284,6 +284,7 @@ if ($modal === false) {
 </script>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
 <?php
+if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT_QUOTES);
 if ($modal === true) {
     echo '<input type="hidden" name="mode" value="modal" />
           <input type="hidden" name="mode-act" value="submit" />';
@@ -587,7 +588,7 @@ if ($modal_ok_insert === true) {
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['document']; ?></label>
-        <?php if ($ndoc > 0) { // se ho dei documenti  ?> 
+        <?php if ($ndoc > 0) { // se ho dei documenti  ?>
                                     <div>
                                     <?php foreach ($form['rows'] as $k => $val) { ?>
                                             <input type="hidden" value="<?php echo $val['id_doc']; ?>" name="rows[<?php echo $k; ?>][id_doc]">
@@ -684,7 +685,7 @@ if ($modal_ok_insert === true) {
 }
 ?>
             </div>
-        </div> <!-- chiude container --> 
+        </div> <!-- chiude container -->
     </div><!-- chiude panel -->
 </form>
 <script type="text/javascript">
