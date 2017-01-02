@@ -92,12 +92,13 @@ function gaz_flt_var_assign($flt, $typ) {
 // $optval - valore opzionale se diverso dal valore del campo, può essere array (es: stato=0 diventa stato=aperto preso da var)
 function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval = "") {
     ?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
-    <?php if (isset($_GET[$flt]))
+    <?php
+    if (isset($_GET[$flt]))
         $fltget = $_GET[$flt];
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];  ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];    ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -450,11 +451,29 @@ class Config {
         return $this->{$variable};
     }
 
-    function setValue($variable, $value) {
-        $this->{$variable} = $value;
-        //
-        // TODO: Inserimento in tabella
-    //
+    function setValue($variable, $value = array('description' => '', 'cvalue' => '', 'show' => 0)) {
+        /* in $variabile va sempre il nome della variabile, 
+         * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre 
+         * viene inserita qualora non esista.  
+         * In caso di inserimento è necessario passare un array in $value mentre in caso di
+         * aggiornamento è sufficiente un valore */
+        global $gTables;
+        $variable=filter_var(substr($variable,0,100),FILTER_SANITIZE_STRING);
+        $result = gaz_dbi_dyn_query("*", $gTables['config'], "variable='" . $variable . "'");
+        if (gaz_dbi_num_rows($result) >= 1) { // è un aggiornamento
+            if (is_array($value)) {
+                $row = gaz_dbi_fetch_array($result);
+                $value['cvalue'] = filter_var(substr($value['cvalue'],0,100),FILTER_SANITIZE_STRING);
+                $this->{$variable} = $value['cvalue'];
+                $value['variable'] = $variable;;
+                gaz_dbi_table_update('config', array('id', $row['id']), $value);
+            } else {
+                $this->{$variable} = filter_var(substr($value,0,100),FILTER_SANITIZE_STRING);
+                gaz_dbi_put_row($gTables['config'], 'variable', $variable, 'cvalue', $value['cvalue']);
+            }
+        } else { // è un inserimento
+            gaz_dbi_table_insert('config', $value);
+        }
     }
 
 }
@@ -1173,7 +1192,7 @@ class GAzieMail {
         if ($config_notif['val'] == 'yes') {
             $mail->AddCustomHeader($mail->HeaderLine("Disposition-notification-to", $mittente));
         }
-	$mail->setLanguage(strtolower($admin_data['country']));
+        $mail->setLanguage(strtolower($admin_data['country']));
         // Imposto email del mittente
         $mail->SetFrom($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
         // Imposto email del destinatario
@@ -1187,7 +1206,7 @@ class GAzieMail {
         $mail->MsgHTML($body_text['body_text']);
         // Aggiungo la fattura in allegato
         $mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
-	$mail->SMTPDebug = false;
+        $mail->SMTPDebug = false;
         // Invio...
         if ($mail->Send()) {
             echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
@@ -1638,8 +1657,8 @@ class recordnav {
         global $flagorpost;
         global $field;
         global $auxil, $script_transl;
-		global $datfat;
-		global $datemi;
+        global $datfat;
+        global $datemi;
         $first = 0;
         $next = $this->limit + $this->passo;
         $prev = $this->limit - $this->passo;
@@ -1656,9 +1675,9 @@ class recordnav {
         } else {
             echo "<div align=\"center\"><font class=\"FacetFormDataFont\">Num. record = $this->count</font></div>";
             echo "<div align=\"center\">";
-            echo "| << <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=0" . "&datfat=" . $datfat ."&datemi=" . $datemi . "\" >" . ucfirst($script_transl['first']) . "</a> ";
-            echo "| < <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$prev". "&datfat=" . $datfat . "&datemi=" . $datemi . "\">" . ucfirst($script_transl['prev']) . "</a> ";
-            echo "| <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$next". "&datfat=" . $datfat . "&datemi=" . $datemi . "\">" . ucfirst($script_transl['next']) . "</a> > ";
+            echo "| << <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=0" . "&datfat=" . $datfat . "&datemi=" . $datemi . "\" >" . ucfirst($script_transl['first']) . "</a> ";
+            echo "| < <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$prev" . "&datfat=" . $datfat . "&datemi=" . $datemi . "\">" . ucfirst($script_transl['prev']) . "</a> ";
+            echo "| <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$next" . "&datfat=" . $datfat . "&datemi=" . $datemi . "\">" . ucfirst($script_transl['next']) . "</a> > ";
             echo "| <a href=\"" . $_SERVER['PHP_SELF'] . "?field=" . $field . "&auxil=" . $auxil . "&flag_order=" . $flagorpost . "&limit=$this->last" . "&datfat=" . $datfat . "&datemi=" . $datemi . "\">" . ucfirst($script_transl['last']) . "</a> >> |";
             echo "</div>";
         }
@@ -2145,10 +2164,10 @@ class Schedule {
      * */ {
         global $gTables;
         $this->PartnerStatus = array();
-        if($clfoco <= 999 && $clfoco >=100 ) { // ho un mastro clienti o foritori
-            $clfoco = "999999999 OR " . $gTables['clfoco'] . ".codice LIKE '".$clfoco."%'";
-        } elseif($this->target > 0 && $this->id_target>0) {
-            $clfoco = $this->target." AND id_tesdoc_ref = '".$this->id_target."'";
+        if ($clfoco <= 999 && $clfoco >= 100) { // ho un mastro clienti o foritori
+            $clfoco = "999999999 OR " . $gTables['clfoco'] . ".codice LIKE '" . $clfoco . "%'";
+        } elseif ($this->target > 0 && $this->id_target > 0) {
+            $clfoco = $this->target . " AND id_tesdoc_ref = '" . $this->id_target . "'";
         } elseif ($this->target > 0 && $clfoco == 0) {
             $clfoco = $this->target;
         }
@@ -2169,7 +2188,7 @@ class Schedule {
             $k = $r['id_tesdoc_ref'];
             if ($k <> $ctrl_id) { // PARTITA DIVERSA DALLA PRECEDENTE
                 $acc[$k] = array();
-                $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc'],'amount'=>$r['amount']);
+                $this->docData[$k] = array('id_tes' => $r['id_tes'], 'descri' => $r['descri'], 'numdoc' => $r['numdoc'], 'seziva' => $r['seziva'], 'datdoc' => $r['datdoc'], 'amount' => $r['amount']);
             }
             $ex = new DateTime($r['expiry']);
             $interval = $date_ctrl->diff($ex);
