@@ -619,7 +619,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                                 $y_paymov = $form['date_doc_Y'];
                                                 $num_paymov = intval($_POST['protocollo']);
                                             }
-                                            $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov . $form['registroiva'] . $form['sezioneiva'] . str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
+					    if (intval(substr($v['id_tesdoc_ref'],0,4)) <= 2000) {
+                                            	$new_paymov[$j]['id_tesdoc_ref'] = $y_paymov . $form['registroiva'] . $form['sezioneiva'] . str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
+					    }
                                         }
                                         if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
                                             $new_paymov[$j]['id_rigmoc_doc'] = $row_con['id_rig'];
@@ -669,7 +671,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     $y_paymov = $form['date_doc_Y'];
                                     $num_paymov = intval($_POST['protocollo']);
                                 }
-                                $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov . $form['registroiva'] . $form['sezioneiva'] . str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
+	                        if (intval(substr($v['id_tesdoc_ref'],0,4)) <= 2000) {
+                                   $new_paymov[$j]['id_tesdoc_ref'] = $y_paymov . $form['registroiva'] . $form['sezioneiva'] . str_pad($num_paymov, 9, 0, STR_PAD_LEFT);
+				}
                             }
                             if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
                                 $new_paymov[$j]['id_rigmoc_doc'] = $last_id_rig;
