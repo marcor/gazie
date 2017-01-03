@@ -298,7 +298,7 @@ CREATE TABLE `gaz_001clfoco` (
   `status` varchar(10) NOT NULL DEFAULT '',
   `annota` varchar(3000) NOT NULL,
   `adminid` varchar(20) NOT NULL DEFAULT '',
-  `last_modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`codice`),
   KEY `id_agente` (`id_agente`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
