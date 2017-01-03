@@ -29,6 +29,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form=array_merge(gaz_dbi_parse_post('clfoco'),gaz_dbi_parse_post('anagra'));
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = $_POST['hidden_req'];
+    $form['last_modified'] = date("Y-m-d H:i:s");
     $form['e_mail'] = trim($form['e_mail']);
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
