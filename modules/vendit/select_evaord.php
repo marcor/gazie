@@ -725,7 +725,7 @@ echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden
     <input type="hidden" name="volume" value="<?php echo $form['volume']; ?>">
     <input type="hidden" name="id_agente" value="<?php echo $form['id_agente']; ?>">
     <input type="hidden" name="caumag" value="<?php echo $form['caumag']; ?>">
-    
+
     <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?>
 <?php
 $select_cliente = new selectPartner('clfoco');
@@ -859,7 +859,7 @@ if (!empty($form['righi'])) {
                 break;
             case "6":
                 $body_text = gaz_dbi_get_row($gTables['body_text'], 'id_body', $v['id_body_text']);
-                $v['descri'] = substr($body_text['body_text'], 0, 80);
+                $v['descri'] = htmlentities(substr(strip_tags($body_text['body_text']), 0, 80)) . ' ...';
                 $checkin = '';
                 break;
             case "11":
@@ -885,7 +885,7 @@ if (!empty($form['righi'])) {
         echo "<input type=\"hidden\" name=\"righi[$k][ritenuta]\" value=\"" . $v['ritenuta'] . "\">\n";
         echo "<input type=\"hidden\" name=\"righi[$k][codric]\" value=\"" . $v['codric'] . "\">\n";
         echo "<td><input type=\"hidden\" name=\"righi[$k][codart]\" value=\"" . $v['codart'] . "\">" . $v['codart'] . "</td>\n";
-        
+
         echo "<td><input type=\"hidden\" name=\"righi[$k][descri]\" value=\"" . $v['descri'] . "\">" . $v['descri'] . "</td>\n";
         if ( $v['tiprig']<=10 || $v['tiprig']>=14 ) {
             echo "<td align=\"center\"><input type=\"hidden\" name=\"righi[$k][unimis]\" value=\"" . $v['unimis'] . "\">" . $v['unimis'] . "</td>\n";
@@ -903,7 +903,7 @@ if (!empty($form['righi'])) {
                         echo "<td></td>";
                         echo "<td></td>";
                         echo "<td></td>";
-                        
+
         }
         echo "</tr>";
         $ctrl_tes = $v['id_tes'];
