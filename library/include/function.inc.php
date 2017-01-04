@@ -98,7 +98,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];    ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];       ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -458,17 +458,18 @@ class Config {
          * In caso di inserimento è necessario passare un array in $value mentre in caso di
          * aggiornamento è sufficiente un valore */
         global $gTables;
-        $variable=filter_var(substr($variable,0,100),FILTER_SANITIZE_STRING);
+        $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_STRING);
         $result = gaz_dbi_dyn_query("*", $gTables['config'], "variable='" . $variable . "'");
         if (gaz_dbi_num_rows($result) >= 1) { // è un aggiornamento
             if (is_array($value)) {
                 $row = gaz_dbi_fetch_array($result);
-                $value['cvalue'] = filter_var(substr($value['cvalue'],0,100),FILTER_SANITIZE_STRING);
+                $value['cvalue'] = filter_var(substr($value['cvalue'], 0, 100), FILTER_SANITIZE_STRING);
                 $this->{$variable} = $value['cvalue'];
-                $value['variable'] = $variable;;
+                $value['variable'] = $variable;
+                ;
                 gaz_dbi_table_update('config', array('id', $row['id']), $value);
             } else {
-                $this->{$variable} = filter_var(substr($value,0,100),FILTER_SANITIZE_STRING);
+                $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_STRING);
                 gaz_dbi_put_row($gTables['config'], 'variable', $variable, 'cvalue', $value['cvalue']);
             }
         } else { // è un inserimento
@@ -1139,14 +1140,13 @@ class GAzieMail {
         $config_user = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_user');
         $config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password');
         $config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
-        // se non è possibile usare ini_set allora la mail verrà trasmessa usando i
-        // dati attinti su php.ini
-        $body_text = gaz_dbi_get_row($gTables['body_text'], 'table_name_ref', 'body_send_doc_email');
+        // attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
+        $body_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user['Login']);
         $mailto = $partner['e_mail']; //recipient
         $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "-Trasmissione documenti"; //subject
         $email_disclaimer = ("" . $email_disclaimer != "") ? "<p>" . $email_disclaimer . "</p>" : "";
-        // Costruisco il testo HTML dell'email
-        $body_text['body_text'] = "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">Company: " . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
+        // aggiungo al corpo  dell'email
+        $body_text['body_text'] = "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">Company: " . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>" . $body_text['var_value'];
         $admin_data['web_url'] = trim($admin_data['web_url']);
         $body_text['body_text'] .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
         $body_text['body_text'] .= "<address><span style=\"color: #" . $admin_data['colore'] . ";\">User: " . $user['Nome'] . " " . $user['Cognome'] . "</span><br /></address>";

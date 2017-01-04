@@ -38,7 +38,7 @@ if (isset($_SESSION['table_prefix'])) {
 
 
 // tabelle comuni alle aziende della stessa gestione
-$tn = array('admin', 'admin_module', 'anagra', 'aziend', 'classroom', 'config', 
+$tn = array('admin', 'admin_config', 'admin_module', 'anagra', 'aziend', 'classroom', 'config', 
             'country', 'currencies', 'currency_history', 'destina', 'languages', 
             'menu_module', 'menu_script', 'menu_usage', 'module', 'municipalities', 
             'provinces', 'regions', 'students');
