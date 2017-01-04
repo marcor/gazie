@@ -68,7 +68,7 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
           <!-- Settings tab content -->
           <div class="tab-pane" id="control-sidebar-settings-tab">
             <form method="post">
-              <h3 class="control-sidebar-heading">Impostazioni </h3>
+              <!--<h3 class="control-sidebar-heading">Impostazioni </h3>-->
               <?php              
                 printCheckbox( "Stile Fixed", "LTE_Fixed", "Attiva lo stile 'fisso'. Non puoi usare 'fisso' e 'boxed' insieme" );
                 printCheckbox("Stile Boxed", "LTE_Boxed", "Attiva lo stile 'boxed'" );

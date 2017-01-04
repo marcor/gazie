@@ -74,3 +74,6 @@ th a:hover {
 .gaz-table-form {
     background: #aae2a8;
 }
+.sidebar-menu .treeview-menu > li > a {
+    padding-left: 15px;
+}

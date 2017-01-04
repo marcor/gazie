@@ -141,13 +141,12 @@
     <![endif]-->
   </head>
   <?php 
+  
+  // imposto le opzioni del tema caricando le opzioni del database
+  
   $val=$config->getValue('LTE_Fixed');
   if ( !isset($val) ) {
-      $config->setValue('LTE_Fixed', array("variable"=>"LTE_Fixed","description"=>"Attiva lo stile fisso. Non puoi usare fisso e boxed insieme","cvalue"=>"false","show"=>0));
-      $config->setValue('LTE_Boxed', array("variable"=>"LTE_Boxed","description"=>"Attiva lo stile boxed", "cvalue"=>"false", "show"=>0));
-      $config->setValue('LTE_Collapsed', array("variable"=>"LTE_Collapsed","description"=>"Collassa il menu principale", "cvalue"=>"true", "show"=>0));
-      $config->setValue('LTE_Onhover', array("variable"=>"LTE_Onhover","description"=>"Espandi automaticamente il menu", "cvalue"=>"false", "show"=>0));
-      $config->setValue('LTE_SidebarOpen', array("variable"=>"LTE_SidebarOpen","description"=>"Mantieni la barra aperta", "cvalue"=>"false", "show"=>0));
+      $config->setDefaultValue();
       header("Location: ../../modules/root/admin.php");
   } else {
       $val="";
@@ -195,9 +194,9 @@
               <li>
                 <!-- inner menu: contains the actual data -->
                 <ul class="menu">
-<?php
-    $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);   
-    if (gaz_dbi_num_rows($result) > 0) {
+                <?php
+            $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);   
+            if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {
                     $rref = explode('-', $r['transl_ref']);
                     
@@ -242,8 +241,8 @@
                   </li>  
                   <?php
                 }
-    }
-?>
+            }
+            ?>
                 </ul>
               </li>
               <li class="footer"><a href="../../modules/root/admin.php">Vedi tutte</a></li>
@@ -368,7 +367,7 @@
               <!-- Control Sidebar Toggle Button -->
               <?php 
               if ( $admin_aziend['Abilit']==9) {
-                  echo "<li><a href=\"#\" data-toggle=\"control-sidebar\"><i class=\"fa fa-gears\"></i></a></li>";
+                  echo "<li><a href=\"#\" data-toggle=\"control-sidebar\"><i class=\"fa fa-bars\"></i></a></li>";
               } else {
                   echo "<li></li>";
               }
