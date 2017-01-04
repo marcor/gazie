@@ -165,7 +165,9 @@ function dialogSchedule(paymov) {
                             var docref = value.datdoc.substring(0, 4);
                             docref += value.regiva;
                             docref += value.seziva * 1000000000 + parseInt(value.protoc);
-                            updateSchedule(docref);
+							var ex= value.expiry;
+							var am= value.amount;
+                            updateSchedule(docref, ex, am);
                             updateCloseForm();
                         });
                         j++;
@@ -207,7 +209,9 @@ function dialogSchedule(paymov) {
                             var docref = value.datdoc.substring(0, 4);
                             docref += value.regiva;
                             docref += value.seziva * 1000000000 + parseInt(value.protoc);
-                            updateSchedule(docref);
+							var ex= value.expiry;
+							var am= value.amount;
+                            updateSchedule(docref, ex, am);
                             updateCloseForm();
                             updateOpenForm();
                         });
@@ -219,14 +223,19 @@ function dialogSchedule(paymov) {
                 );
     }
 
-    function updateSchedule(docref) {
-
+    function updateSchedule(docref,ex,am) {
+		var expiry = ex.substring(8,10);
+		expiry += ex.substring(4,8);
+		expiry += ex.substring(0,4);
         $("#pm_post_container_" + nrow + " div").each(function (i, v) {
             var idv = $(v).attr('id').split('_');
             var id_sub = idv[2];
             var tesref = $('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first', v).focus().attr('value');
-            if (tesref == '') // replace value only if row is empty
+            if (tesref == '') {// replace value only if row is empty
                 $('input[id=post_' + nrow + '_' + id_sub + '_id_tesdoc_ref]:first', v).val(docref);
+                $('input[id=post_' + nrow + '_' + id_sub + '_expiry]:first', v).val(expiry);
+                $('input[id=post_' + nrow + '_' + id_sub + '_amount]:first', v).val(am);
+			}
         });
 
         updateTips("");
