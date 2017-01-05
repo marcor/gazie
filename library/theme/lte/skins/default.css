@@ -63,6 +63,9 @@ th a:hover {
 .logo {
     /*border-right: 1px solid #000000;*/
 }
+.logo-lg {
+    font-size: 14px;
+}
 .FacetFormTABLE {
     border: 1px solid #000000;
 }

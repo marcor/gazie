@@ -120,7 +120,6 @@
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/AdminLTE.css">
     <link rel="stylesheet" href="../../library/theme/lte/adminlte/dist/css/skins/skin-gazie.css"> <!-- _all-skins.min.css">-->
     <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-    <!--<script src="../../library/theme/lte/adminlte/plugins/jQuery/jQuery-2.1.4.min.js"></script>-->
     <script src="../../js/jquery/jquery.js"></script>
     
     <?php
@@ -166,9 +165,15 @@
         <!-- Logo -->
         <a href="../../modules/root/admin.php" class="logo">
           <!-- mini logo for sidebar mini 50x50 pixels -->
-          <span class="logo-mini"><b>G<?php echo $versSw; ?></b></span>
+          <span class="logo-mini">
+              <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="30" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
+          </span>
           <!-- logo for regular state and mobile devices -->
-          <span class="logo-lg"><b>GA</b>zie <?php echo $versSw; ?></span>
+          <span class="logo-lg">
+              <img src="../../modules/root/view.php?table=aziend&amp;value=<?php echo $admin_aziend["company_id"]; ?>" height="30" alt="Logo" border="0" title="<?php echo $admin_aziend["ragso1"]; ?>" />
+              &nbsp;
+              <?php echo substr( $admin_aziend["ragso1"], 0,16); ?>
+          </span>
         </a>
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top" role="navigation">

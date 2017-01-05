@@ -213,7 +213,7 @@ function apply_highlight($a_json, $parts) {
                 if ($pos - $start > 0) {
                     $no_highlight = mb_substr($label, $start, $pos - $start);
                     $label_highlight .= $no_highlight;
-                }
+                }              
                 $highlight = '<mark>' . mb_substr($label, $pos, $len) . '</mark>';
                 $label_highlight .= $highlight;
                 $start = $pos + $len;

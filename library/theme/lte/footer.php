@@ -117,9 +117,9 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
     <!-- Bootstrap 3.3.5 -->
     <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
     <!-- Slimscroll -->
-    <!--<script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
     <!-- FastClick -->
-    <!--<script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
     <!-- AdminLTE App -->
     <script>
         var AdminLTEOptions = {
@@ -129,7 +129,7 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
         };
     </script>
     <script src="../../library/theme/lte/adminlte/dist/js/app.js"></script>
-    <!-- AdminLTE for demo purposes -->
-    <!--<script src="../../library/theme/lte/adminlte/dist/js/demo.js"></script>-->
+    <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>-->
+    <script src="../../js/custom/gz-library.js"></script>
   </body>
 </html>
