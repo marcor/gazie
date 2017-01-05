@@ -71,8 +71,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $form['paymov'][$k] = $v;  // qui dovrei fare il parsing
             $add_desc[$k] = 0.00;
             foreach ($v as $ki => $vi) { // calcolo il totale 
-                $acc_tot +=$vi['amount'];
-                $add_desc[$k]+=$vi['amount'];
+                $acc_tot += $vi['amount'];
+                $add_desc[$k] += $vi['amount'];
             }
             if ($add_desc[$k] >= 0.01) { // posso mettere una descrizione perchè il pagamento interessa pure questa partita
                 $dd = $paymov->getDocumentData($k);
@@ -85,10 +85,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $desmov = 'RISCOSSO FINO A FAT.n.' . $dd['numdoc'] . '/' . $dd['seziva'];
         }
         if ($acc_tot <= 0) {
-            $msg .='4+';
+            $msg .= '4+';
         }
     } else if (isset($_POST['ins'])) { // non ho movimenti ma ho chiesto di inserirli
-        $msg .='6+';
+        $msg .= '6+';
     }
     $form['date_ini_D'] = intval($_POST['date_ini_D']);
     $form['date_ini_M'] = intval($_POST['date_ini_M']);
@@ -112,7 +112,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     //controllo i campi
     if (!checkdate($form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y'])) {
-        $msg .='0+';
+        $msg .= '0+';
     }
     if (isset($_POST['ins']) && $form['target_account'] < 100000001) {
         $msg = '5+';
@@ -140,7 +140,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         foreach ($form['paymov'] as $k => $v) { //attraverso l'array delle partite
             $acc = 0.00;
             foreach ($v as $ki => $vi) {
-                $acc +=$vi['amount'];
+                $acc += $vi['amount'];
             }
             if ($acc >= 0.01) {
                 paymovInsert(array('id_tesdoc_ref' => $k, 'id_rigmoc_pay' => $rig_id, 'amount' => $acc, 'expiry' => $date));
@@ -203,7 +203,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup'));
                         acc = 0;
                     } else if (acc >= $(this).attr('orival')) {
                         // modifico il valore e lo tolgo dall'accumulatore
-                        $(this).val($(this).attr('orival')*1);
+                        $(this).val($(this).attr('orival') * 1);
                         acc -= parseFloat($(this).attr('orival'));
                     }
                 }
@@ -296,10 +296,11 @@ if ($form['partner'] > 100000000) { // partner selezionato
         $amount = 0.00;
         echo "<tr>";
         echo "<td class=\"FacetDataTD\" colspan='8'><a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Update&id_tes=" . $paymov->docData[$k]['id_tes'] . "\"><i class=\"glyphicon glyphicon-edit\"></i>" .
-        $paymov->docData[$k]['descri'] . ' n.' .
-        $paymov->docData[$k]['numdoc'] . '/' .
-        $paymov->docData[$k]['seziva'] . ' ' .
-        $paymov->docData[$k]['datdoc'] . "</a> REF: $k</td>";
+        $paymov->docData[$k]['descri'];
+        if ($paymov->docData[$k]['numdoc'] >= 1) {
+            echo ' n.'.$paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva'] . ' ' . $paymov->docData[$k]['datdoc'];
+        }
+        echo "</a> REF: $k</td>";
         echo "</tr>\n";
         foreach ($v as $ki => $vi) {
             $class_paymov = 'FacetDataTDevidenziaCL';
@@ -307,13 +308,13 @@ if ($form['partner'] > 100000000) { // partner selezionato
             $cl_exp = '';
             if ($vi['op_val'] >= 0.01) {
                 $v_op = gaz_format_number($vi['op_val']);
-                $paymov_bal+=$vi['op_val'];
+                $paymov_bal += $vi['op_val'];
             }
             $v_cl = '';
             if ($vi['cl_val'] >= 0.01) {
                 $v_cl = gaz_format_number($vi['cl_val']);
                 $cl_exp = gaz_format_date($vi['cl_exp']);
-                $paymov_bal-=$vi['cl_val'];
+                $paymov_bal -= $vi['cl_val'];
             }
             $expo = '';
             $diffValClOp = abs($vi['cl_val'] - (float) $vi['op_val']);
@@ -350,7 +351,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
             echo "<td align=\"center\">" . $expo . "</td>";
             echo "<td align=\"center\">" . $script_transl['status_value'][$vi['status']] . " &nbsp;</td>";
             if ($vi['status'] <> 1 || $vi['status'] < 9) { // accumulo solo se non è chiusa
-                $amount+=round($vi['op_val'] - $vi['cl_val'], 2);
+                $amount += round($vi['op_val'] - $vi['cl_val'], 2);
             }
             echo "</tr>\n";
         }
@@ -367,7 +368,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
         echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" orival=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\" opcl=\"" . $open . "\" value=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\"></td></tr>\n";
     }
     echo "<tr>";
-    echo "<td colspan='3'>" . $script_transl['paymovbal'] .'<input type="text" value="' . number_format($paymov_bal, 2, '.', '') . '" id="total" /></td>';
+    echo "<td colspan='3'>" . $script_transl['paymovbal'] . '<input type="text" value="' . number_format($paymov_bal, 2, '.', '') . '" id="total" /></td>';
     /** inizio modifica FP 28/11/2015
      * aggiunti campi per selezione documento da proporre per il pagamento
      */
