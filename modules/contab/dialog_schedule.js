@@ -182,7 +182,6 @@ function dialogSchedule(paymov) {
                 function (data) {
                     var j = 0;
                     $.each(data, function (i, value) {
-                    	var link_ref = "";
                     	var doc_des = "";
                         var ri = parseInt(value.regiva) || 0;
                         var pr = parseInt(value.protoc) || 0;
@@ -190,14 +189,11 @@ function dialogSchedule(paymov) {
                             $("#db-contain" + nrow + " tbody").append("<tr>" +
                                     "<td class='ui-widget-content ui-state-active' colspan=7" + ' class="ui-widget ui-widget-content " > Altri movimenti di: ' + value.ragso1 + ' ' + value.ragso2 + '</td></tr>');
                         }
-                        if (ri >= 1) {
-                            link_ref = '<button id="linking_' + j + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button>';
-                        }
                         if (pr >= 1) {
                             doc_des = " n." + value.numdoc + "/" + value.seziva + " del " + value.datdoc;
                         }
                         $("#db-contain" + nrow + " tbody").append("<tr>" +
-                                '<td class="ui-widget-right ui-widget-content ">' + link_ref + '</td>' +
+                                '<td class="ui-widget-right ui-widget-content "><button id="linking_' + j + '" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-link"></i></button></td>' +
                                 "<td" + ' class="ui-widget ui-widget-content " > ' + value.descri + doc_des + "</td>" +
                                 "<td" + ' class="ui-widget ui-widget-content " >' + value.expiry + "</td>" +
                                 "<td" + ' class="ui-widget-right ui-widget-content " >' + value.amount + "</td>" +
@@ -206,9 +202,13 @@ function dialogSchedule(paymov) {
                                 "</tr>");
 
                         $("#linking_" + j).click(function () {
-                            var docref = value.datdoc.substring(0, 4);
-                            docref += value.regiva;
-                            docref += value.seziva * 1000000000 + parseInt(value.protoc);
+							if (ri >= 1) { // ha un riferimento ad un documento IVA
+								var docref = value.datdoc.substring(0, 4);
+								docref += value.regiva;
+								docref += value.seziva * 1000000000 + parseInt(value.protoc);
+							} else { // ha un riferimento ad un rigo contabile
+								var docref= value.id_tesdoc_ref;
+							}
 							var ex= value.expiry;
 							var am= value.amount;
                             updateSchedule(docref, ex, am);
