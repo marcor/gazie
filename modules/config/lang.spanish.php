@@ -437,6 +437,7 @@ $strScript = array("admin_aziend.php" =>
         'post_pass' => 'caracteres)',
         'rep_pass' => 'Repite la Contrase&ntilde;a',
         'lang' => 'Idioma',
+        'theme'=>'Motor de interfaz.<br>Estará activo desde el siguiente inicio de sesión',
         'style' => 'Structure Tema / estilo',
         'skin' => 'Tema style',
         'mod_perm' => 'Permiso de m&oacute;dulos',

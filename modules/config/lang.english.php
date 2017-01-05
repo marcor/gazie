@@ -433,6 +433,7 @@ $strScript = array("admin_aziend.php" =>
         'post_pass' => 'characters)',
         'rep_pass' => 'Repeat password',
         'lang' => 'Language',
+        'theme'=>'Interface engine.<br>It will be active from next login',
         'style' => 'Theme structure',
         'skin' => 'Theme style',
         'mod_perm' => 'Modules permit',

@@ -59,6 +59,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["Cognome"] = substr($_POST['Cognome'], 0, 30);
     $form["Nome"] = substr($_POST['Nome'], 0, 30);
     $form["lang"] = substr($_POST['lang'], 0, 15);
+    $form["theme"] = substr($_POST['theme'], 0, 20);
     $form["style"] = substr($_POST['style'], 0, 30);
     $form["skin"] = substr($_POST['skin'], 0, 30);
     $form["Abilit"] = intval($_POST['Abilit']);
@@ -78,7 +79,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
      * La prima entrata per update
      */
     $form = gaz_dbi_get_row($gTables['admin'], "Login", substr($_GET['Login'], 0, 15));
+    // attingo il valore del motore di template dalla tabella configurazione utente
+    $admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form['Login']);
     $form['confpass'] = $form['Password'];
+    $form['theme'] = $admin_config['var_value'];
 } else {
     /*
      * La prima entrata per insert
@@ -86,6 +90,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["Cognome"] = "";
     $form["Nome"] = "";
     $form["image"] = "";
+    $form["theme"] = "library/theme/g7";
     $form["style"] = $admin_aziend['style'];
     $form["skin"] = $admin_aziend['skin'];
     $form["lang"] = $admin_aziend['lang'];
@@ -193,6 +198,11 @@ if (isset($_POST['Submit'])) {
         if ($toDo == 'insert') {
             $form['company_id'] = $user_data['company_id'];
             gaz_dbi_table_insert('admin', $form);
+            $form['adminid'] = $form['Login'];
+            $form['var_descri'] = 'Menu/header/footer personalizzabile';
+            $form['var_name'] = 'theme';
+            $form['var_value'] = $form['theme'];
+            gaz_dbi_table_insert('admin_config', $form);
         } elseif ($toDo == 'update') {
             //cambio la data di modifica password
             $getInit = gaz_dbi_get_row($gTables['admin'], "Login", $form['Login']);
@@ -200,8 +210,19 @@ if (isset($_POST['Submit'])) {
                 $form["datpas"] = date("YmdHis");
             }
             gaz_dbi_table_update('admin', array('Login', $form['Login']), $form);
+            // se esiste aggiorno anche il tema
+            $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form['Login']);
+            if ($admin_config_theme) {
+                gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form['Login'] . "' AND var_name ='theme'", 'var_value', $form['theme']);
+            } else { // altrimenti lo inserisco
+                $form['adminid'] = $form['Login'];
+                $form['var_descri'] = 'Menu/header/footer personalizzabile';
+                $form['var_name'] = 'theme';
+                $form['var_value'] = $form['theme'];
+                gaz_dbi_table_insert('admin_config', $form);
+            }
             // vado ad aggiornare anche la tabella studenti dell'installazione di base qualora ce ne fosse uno 
-            if ($student) {
+            if (@$student) {
                 gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form['Login'], 'student_firstname', $form['Nome']);
                 gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form['Login'], 'student_lastname', $form['Cognome']);
             }
@@ -249,7 +270,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
         echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form['Login'] . "'</div>\n";
         echo "<input type=\"hidden\" value=\"" . $form['Login'] . "\" name=\"Login\" />\n";
     }
-    $gForm = new GAzieForm();
+    $gForm = new configForm();
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
@@ -294,11 +315,19 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                     echo "</td></tr>\n";
                     ?>
                 <tr>
+                    <td class="FacetFieldCaptionTD"><?php echo $script_transl['theme']; ?> </td>
+                    <td colspan="2" class="FacetDataTD">
+                        <?php
+                        $gForm->selThemeDir('theme', $form["theme"]);
+                        ?>
+                    </td>
+                </tr>
+                <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['style']; ?></td>
                     <?php
                     echo '<td colspan="2" class="FacetDataTD">';
                     echo '<select name="style" class="FacetSelect">';
-                    $relativePath = '../../library/theme/' . $config->getValue('theme') . '/scheletons/';
+                    $relativePath = '../..' . $_SESSION['theme'] . '/scheletons/';
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css
@@ -320,7 +349,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                     <?php
                     echo '<td colspan="2" class="FacetDataTD">';
                     echo '<select name="skin" class="FacetSelect">';
-                    $relativePath = '../../library/theme/' . $config->getValue('theme') . '/skins/';
+                    $relativePath = '../..' . $_SESSION['theme'] . '/scheletons/';
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css

@@ -24,5 +24,19 @@ class configForm extends GAzieForm {
         }
         echo "\t </select>\n";
     }
+
+    function selThemeDir($name, $val) {
+        echo '<select name="' . $name . '" class="form-control input-sm">';
+        foreach (glob('../../library/theme/*', GLOB_ONLYDIR) as $dir) {
+            $selected = "";
+            if (substr($dir,5) == $val) {
+                $selected = " selected ";
+            }
+            echo "<option value=\"" . substr($dir,5) . "\"" . $selected . ">" . substr($dir,5) . "</option>\n";
+        }
+        echo "</select>\n";
+    }
+
 }
+
 ?>

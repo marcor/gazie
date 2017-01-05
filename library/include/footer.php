@@ -1,4 +1,5 @@
 <?php
+
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -26,11 +27,9 @@
 if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
     $_SESSION['lastpage'] = $_SERVER["REQUEST_URI"];
 }
-$config = new Config;
-
-if (file_exists( "../../library/theme/".$config->getValue('theme')."/footer.php")) {
-    include "../../library/theme/".$config->getValue('theme')."/footer.php";
+if (file_exists("../.." . $_SESSION['theme'] . "/footer.php")) {
+    include "../.." . $_SESSION['theme'] . "/footer.php";
 } else {
-   include "../../library/theme/g7/footer.php";
+    include "../../library/theme/g7/footer.php";
 }
 ?>

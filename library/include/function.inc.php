@@ -1744,9 +1744,8 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
     $_SESSION["company_id"] = $company_id;
     $_SESSION["table_prefix"] = $table_prefix;
     // appoggio il valore del thema scelto sulla sessione così da non fare la query sul db ad ogni richiesta di esecuzione di qualsiasi script  
-    $config = new Config;
-    $_SESSION["theme"] = $config->getValue('theme');
-
+    $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $login);
+    $_SESSION["theme"] = $admin_config_theme['var_value'];
     $count++;
     //incremento il contatore d'accessi
     gaz_dbi_put_row($gTables['admin'], "Login", $login, "Access", $count);

@@ -436,6 +436,7 @@ $strScript = array(
         'post_pass' => 'caratteri)',
         'rep_pass' => 'Ripeti la Password',
         'lang' => 'Language',
+        'theme' => 'Motore interfaccia<br>(sarà attivo dal prossimo login)',
         'style' => 'Struttura dello stile',
         'skin' => 'Aspetto dello stile',
         'mod_perm' => 'Permessi dei moduli',

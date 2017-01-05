@@ -408,6 +408,7 @@ $strScript = array("admin_aziend.php" =>
         'post_pass' => 'Zeichen)',
         'rep_pass' => 'Kennwort wiederholen',
         'lang' => 'Sprache',
+        'theme'=>'Interface engine.<br>It will be active from next login',
         'style' => 'Theme / style',
         'mod_perm' => 'Module ermöglichen',
         'report' => 'Benutzer list',
