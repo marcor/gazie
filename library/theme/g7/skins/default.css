@@ -245,7 +245,8 @@ table.selectTable td {
 	color: #fff;
 }
 .btn-edit {
-	background-color: #fa50f8;
+	background-color: #449d44 !important;
+	color: #FFFFFF !important;
 }
 .btn-cont {
 	background-color: #aae2a8;
