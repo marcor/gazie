@@ -431,7 +431,7 @@ function dir_writable($folder)
         </tr>
         <tr>
             <td colspan="3" class="FacetDataTD" align="center">
-            <strong><?php echo $msg['gi_'.$form['install_upgrade']].' GAzie '.$versSw ?></strong>
+            <strong><?php echo $msg['gi_'.$form['install_upgrade']].' GAzie '.GAZIE_VERSION ?></strong>
                 <?php
                 if ($form['install_upgrade']=='upgrade') {
                      $lastSql=getSqlFileVersion();

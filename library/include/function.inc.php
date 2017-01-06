@@ -98,7 +98,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];       ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];        ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -476,14 +476,15 @@ class Config {
             gaz_dbi_table_insert('config', $value);
         }
     }
-    
+
     function setDefaultValue() {
-        $this->setValue('LTE_Fixed', array("variable"=>"LTE_Fixed","description"=>"Attiva lo stile fisso. Non puoi usare fisso e boxed insieme","cvalue"=>"false","show"=>0));
-        $this->setValue('LTE_Boxed', array("variable"=>"LTE_Boxed","description"=>"Attiva lo stile boxed", "cvalue"=>"false", "show"=>0));
-        $this->setValue('LTE_Collapsed', array("variable"=>"LTE_Collapsed","description"=>"Collassa il menu principale", "cvalue"=>"true", "show"=>0));
-        $this->setValue('LTE_Onhover', array("variable"=>"LTE_Onhover","description"=>"Espandi automaticamente il menu", "cvalue"=>"false", "show"=>0));
-        $this->setValue('LTE_SidebarOpen', array("variable"=>"LTE_SidebarOpen","description"=>"Mantieni la barra aperta", "cvalue"=>"false", "show"=>0));
+        $this->setValue('LTE_Fixed', array("variable" => "LTE_Fixed", "description" => "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme", "cvalue" => "false", "show" => 0));
+        $this->setValue('LTE_Boxed', array("variable" => "LTE_Boxed", "description" => "Attiva lo stile boxed", "cvalue" => "false", "show" => 0));
+        $this->setValue('LTE_Collapsed', array("variable" => "LTE_Collapsed", "description" => "Collassa il menu principale", "cvalue" => "true", "show" => 0));
+        $this->setValue('LTE_Onhover', array("variable" => "LTE_Onhover", "description" => "Espandi automaticamente il menu", "cvalue" => "false", "show" => 0));
+        $this->setValue('LTE_SidebarOpen', array("variable" => "LTE_SidebarOpen", "description" => "Mantieni la barra aperta", "cvalue" => "false", "show" => 0));
     }
+
 }
 
 // end Config
@@ -1123,18 +1124,10 @@ class GAzieMail {
 
     function sendMail($admin_data, $user, $content, $partner) {
         global $gTables;
-        global $email_enabled;
-        global $email_disclaimer;
 
         require_once "../../library/phpmailer/class.phpmailer.php";
         require_once "../../library/phpmailer/class.smtp.php";
         //
-        // Se è possibile usare la posta elettronica, si procede.
-        //
-        if (!$email_enabled) {
-            echo "invio e-mail <b style=\"color: #ff0000;\">disabilitato... ERROR!</b><br />mail send is <b style=\"color: #ff0000;\">disabled... ERROR!</b> ";
-            return;
-        }
         //
         // Si procede con la costruzione del messaggio.
         //
@@ -1148,16 +1141,18 @@ class GAzieMail {
         $config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password');
         $config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
         // attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
-        $body_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user['Login']);
-        $mailto = $partner['e_mail']; //recipient
-        $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "-Trasmissione documenti"; //subject
-        $email_disclaimer = ("" . $email_disclaimer != "") ? "<p>" . $email_disclaimer . "</p>" : "";
-        // aggiungo al corpo  dell'email
-        $body_text['body_text'] = "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">Company: " . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>" . $body_text['var_value'];
+        $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user['Login']);
+        $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
         $admin_data['web_url'] = trim($admin_data['web_url']);
-        $body_text['body_text'] .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
-        $body_text['body_text'] .= "<address><span style=\"color: #" . $admin_data['colore'] . ";\">User: " . $user['Nome'] . " " . $user['Cognome'] . "</span><br /></address>";
-        $body_text['body_text'] .= "<hr />" . $email_disclaimer;
+        $mailto = $partner['e_mail']; //recipient
+        $subject = $admin_data['ragso1'] . " " . $admin_data['ragso2'] . " - Trasmissione documenti"; //subject
+        // aggiungo al corpo  dell'email
+        $body_text = "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">" . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
+        $body_text .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
+        $body_text .= "<div>" . $company_text['val'] . "</div>\n";
+        $body_text .= "<address><div style=\"color: #" . $admin_data['colore'] . ";\">User: " . $user['Nome'] . " " . $user['Cognome'] . "</div>\n";
+        $body_text .= "<div>" . $user_text['var_value'] . "</div></address>\n";
+        $body_text .= "<hr /><small>" . EMAIL_FOOTER ." ".GAZIE_VERSION. "</small>\n";
         //
         // Inizializzo PHPMailer
         //
@@ -1210,7 +1205,7 @@ class GAzieMail {
         // Imposto l'oggetto dell'email
         $mail->Subject = $subject;
         // Imposto il testo HTML dell'email
-        $mail->MsgHTML($body_text['body_text']);
+        $mail->MsgHTML($body_text);
         // Aggiungo la fattura in allegato
         $mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
         $mail->SMTPDebug = false;

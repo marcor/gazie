@@ -27,7 +27,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $
     exit('Accesso diretto non consentito');
 }
 //versione software
-$versSw = '7.2';
+define('GAZIE_VERSION', '7.2');
 
 //nome DBMS usato per la libreria specifica (MySQL=mysql.lib, SQLite=sqlite.lib, ecc)
 //per il momento disponibile solo la libreria mysql.lib
@@ -81,14 +81,10 @@ $default_user = "amministratore";
 //
 $Timezone = "Europe/Rome";
 //
-// È ammesso inviare messaggi di posta elettronica?
-//
-$email_enabled = TRUE;
-//
 // Testo da aggiungere eventualmente ai messaggi di posta elettronica, sistematicamente,
 // per qualche motivo.
 //
-$email_disclaimer = "";
+define('EMAIL_FOOTER', 'E-mail generata da GAzie ver.');
 //
 // Gazie utilizza la funzione PHP set_time_limit() per consentire il completamento
 // di elaborazioni che richiedono più tempo del normale.

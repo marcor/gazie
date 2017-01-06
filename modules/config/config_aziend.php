@@ -64,11 +64,8 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
 ?>
 <div align="center" class="FacetFormHeaderFont">
     <?php echo $script_transl['title']; ?><br>
-    <?php
-    //print_r ( $admin_aziend );
-    ?>
 </div>
-<div class="container divlarge">
+<div class="container-fluid">
     <ul class="nav nav-tabs">
         <li class="active"><a data-toggle="pill" href="#generale">Configurazione</a></li>
         <?php
@@ -77,25 +74,30 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
         }
         ?>
     </ul>
+    <div id="generale" class="tab-pane fade in active">
+        <form class="form-horizontal" method="post"> 
+            <div class="FacetDataTD">
+                <div class="divgroup">
+                    <?php if (isset($_GET["ok"])) { ?>
+                        <div class="alert alert-danger text-center" role="alert">
+                            <?php echo "Le modifiche sono state salvate correttamente<br/>"; ?>
+                        </div>
+                    <?php } ?>
+                    <?php
+                    if (gaz_dbi_num_rows($result) > 0) {
+                        while ($r = gaz_dbi_fetch_array($result)) {
+                            ?>
 
-    <div class="tab-content divlarge divborder">
-        <div id="generale" class="tab-pane fade in active">
-            <form class="form-horizontal" method="post"> 
-                <div class="FacetDataTD">
-                    <div class="divgroup">
-                        <?php if (isset($_GET["ok"])) { ?>
-                            <div class="alert alert-danger text-center" role="alert">
-                                <?php echo "Le modifiche sono state salvate correttamente<br/>"; ?>
-                            </div>
-                        <?php } ?>
-                        <?php
-                        if (gaz_dbi_num_rows($result) > 0) {
-                            while ($r = gaz_dbi_fetch_array($result)) {
-                                ?>
-
-                                <div class="form-group">
-                                    <label for="input<?php echo $r["id"]; ?>" class="col-sm-5 control-label"><?php echo $r["description"]; ?></label>
-                                    <div class="col-sm-7">
+                            <div class="form-group">
+                                <label for="input<?php echo $r["id"]; ?>" class="col-sm-5 control-label"><?php echo $r["description"]; ?></label>
+                                <div class="col-sm-7">
+                                    <?php
+                                    if ($r['var'] == 'company_email_text') {
+                                        ?>
+                                        <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" class="mceClass"><?php echo $r['val']; ?></textarea>
+                                        <?php
+                                    } else {
+                                        ?>
                                         <input type="<?php
                                         if (strpos($r["var"], "pass") === false) {
                                             echo "text";
@@ -103,41 +105,41 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                                             echo "password";
                                         }
                                         ?>" class="form-control input-sm" id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" placeholder="<?php echo $r["var"]; ?>" value="<?php echo $r["val"]; ?>">
-                                    </div>
+                                           <?php } ?>
                                 </div>
-                                <?php
-                            }
+                            </div>
+                            <?php
                         }
-                        ?>                    
-                        <div class="form-group lastrow">
-                            <div class="col-sm-offset-11 col-sm-1">
-                                <button type="submit" class="btn btn-default">Salva</button>
-                            </div>
+                    }
+                    ?>                    
+                    <div class="form-group lastrow">
+                        <div class="col-sm-offset-11 col-sm-1">
+                            <button type="submit" class="btn btn-default">Salva</button>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
+    </div>
 
-        <div id="elimina" class="tab-pane fade">
-            <form class="form-horizontal" method="post"> 
-                <div>
-                    <div class="divgroup">
-                        <div class="form-group bg-danger">
-                            <div class="col-sm-2 control-label">
-                                <button class="btn btn-default" name="annulla" value="true">Annulla</button>
-                            </div>
-                            <div class="col-sm-8 control-label">
-                                <p class="text-center text-danger">ATTENZIONE!!! CLICCANDO TUTTI I DATI DI QUESTA AZIENDA ANDRANNO DEFINITIVAMENTI ED IRRIMEDIABILMENTE PERSI!</p>
-                            </div>
-                            <div class="col-sm-2">
-                                <button class="btn btn-danger" name="elimina" value="true">Elimina</button>
-                            </div>
+    <div id="elimina" class="tab-pane fade">
+        <form class="form-horizontal" method="post"> 
+            <div>
+                <div class="divgroup">
+                    <div class="form-group bg-danger">
+                        <div class="col-sm-2 control-label">
+                            <button class="btn btn-default" name="annulla" value="true">Annulla</button>
+                        </div>
+                        <div class="col-sm-8 control-label">
+                            <p class="text-center text-danger">ATTENZIONE!!! CLICCANDO TUTTI I DATI DI QUESTA AZIENDA ANDRANNO DEFINITIVAMENTI ED IRRIMEDIABILMENTE PERSI!</p>
+                        </div>
+                        <div class="col-sm-2">
+                            <button class="btn btn-danger" name="elimina" value="true">Elimina</button>
                         </div>
                     </div>
                 </div>
-            </form>
-        </div>
+            </div>
+        </form>
     </div>
 </div>
 <?php

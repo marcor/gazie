@@ -89,7 +89,7 @@ if ($configurazione['cvalue']) {
    $remote_id = http_get($configurazione['cvalue']);
    if (preg_match("/^([0-9]{1,2}).([0-9]{1,2})/",$remote_id,$regs)){
       // versione locale presa da gconfig.php
-      $pz_local = explode(".", $versSw);
+      $pz_local = explode(".", GAZIE_VERSION);
       $pz_remote = explode(".", $remote_id);
       $local = $pz_local[0] * 100 + $pz_local[1];
       $remote = $regs[1]*100 + $regs[2];

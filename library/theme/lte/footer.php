@@ -43,11 +43,11 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
 </section>
     <footer class="main-footer">
         <div class="pull-right hidden-xs">
-          <b>Version</b> <?php echo $versSw; ?>
+          <b>Version</b> <?php echo GAZIE_VERSION; ?>
         </div>
         <!--<strong>-->
-        <b>GA</b>zie Version: <?php echo $versSw; ?> Software Open Source (lic. GPL) <?php echo $strScript['admin.php']['business'] . " " . $strScript['admin.php']['proj']; ?>
-        <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="http://http://www.devincentiis.it">http://www.devincentiis.it</a>
+        <b>GA</b>zie Version: <?php echo GAZIE_VERSION; ?> Software Open Source (lic. GPL) <?php echo $strScript['admin.php']['business'] . " " . $strScript['admin.php']['proj']; ?>
+        <a  target="_new" title="<?php echo $strScript['admin.php']['auth']; ?>" href="http://www.devincentiis.it">http://www.devincentiis.it</a>
     </footer>
       
     <!-- Control Sidebar -->

@@ -103,7 +103,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         ob_start();
     }
     echo "-- GAzie SQL Dump\n";
-    echo "-- version: " . $versSw . "\n";
+    echo "-- version: " . GAZIE_VERSION . "\n";
     echo "-- http://gazie.sourceforge.net\n";
     echo "-- Date: " . date("d-m-Y H:i:s") . "\n";
     echo "-- OS: " . PHP_OS . "\n";
@@ -253,11 +253,11 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     if (!isset($_GET['external'])) { // se  è un backup esterno allora scrivo sul FS del server
         $content = ob_get_contents();
         $zip = new ZipArchive();
-        $filename = '../../data/files/backups/' . $Database . "-" . date("YmdHi") . '-v' . $versSw . '.sql.gaz';
+        $filename = '../../data/files/backups/' . $Database . "-" . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql.gaz';
         if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
             exit("cannot open <$filename>\n");
         }
-        $zip->addFromString($Database . date("YmdHi") . '-v' . $versSw . '.sql', $content);
+        $zip->addFromString($Database . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql', $content);
         $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
         if ($filebackup['cvalue'] == 1) {
             chdir('../../');
