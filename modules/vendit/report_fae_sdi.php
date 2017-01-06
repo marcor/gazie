@@ -113,6 +113,7 @@ $recordnav -> output();
   <option value=""></option>
   <option value="#" <?php if($status =="@") echo "selected";?> ># - Non inviata</option>
   <option value="@" <?php if($status =="@") echo "selected";?> >@ - Inviata</option>
+  <option value="@@" <?php if($status =="@@") echo "selected";?> >@@- Inviata sistema esterno</option>
   <option value="NS" <?php if($status =="NS") echo "selected";?> >NS - Notifica scarto</option>
   <option value="MC" <?php if($status =="MC") echo "selected";?> >MC - Mancata consegna</option>
   <option value="RC" <?php if($status =="RC") echo "selected";?> >RC - Ricevuta consegna</option>
@@ -206,6 +207,9 @@ while ($r = gaz_dbi_fetch_array($result)) {
     } elseif ($r['flux_status'] == "@") {
       $class="FacetDataTD";
       $class1="";
+    } elseif ($r['flux_status'] == "@@") {
+      $class="FacetDataTD";
+      $class1="";	  
     } elseif ($r['flux_status'] == "#") {
       $class="FacetDataTD";
       $class1="";  
@@ -254,7 +258,10 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$modulo_fae_report."\">#</a>" . "</td>";
     } elseif ($r['flux_status'] == "@") {
         $percorso_fae="/fae_inviate/".$r['filename_ori']; //definire un alias per la posizione dei documenti inviati a SDI
-        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$percorso_fae."\">@</a>" . "</td>";       
+        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">". "<a href=\"".$percorso_fae."\">@</a>" . "</td>"; 
+    } elseif ($r['flux_status'] == "@@") {
+        $percorso_faeara="/fae_inviateara/".$r['filename_ori']; //definire un alias per la posizione dei documenti inviati a SDI
+        echo "<td class=\"$class  $class2\" align=\"center\" target=\"_blank\">". "<a href=\"".$percorso_faeara."\">@@</a>" . "</td>";      		
     } else {
         echo "<td class=\"$class  $class2\" align=\"center\" title=\"".$script_transl['flux_status_value'][$r['flux_status']]."\">".$r['flux_status']."</td>";
     }
