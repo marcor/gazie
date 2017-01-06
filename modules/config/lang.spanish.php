@@ -443,7 +443,8 @@ $strScript = array("admin_aziend.php" =>
         'mod_perm' => 'Permiso de m&oacute;dulos',
         'report' => 'Lista de Usuarios',
         'del_this' => 'Usuario',
-        'del_err' => 'No se puede eliminar porque eres el &uacute;nico con derechos de administrador!'
+        'del_err' => 'No se puede eliminar porque eres el &uacute;nico con derechos de administrador!',
+        'body_text'=> 'Testo contenuto nelle email che invierai'
     )
 );
 ?>

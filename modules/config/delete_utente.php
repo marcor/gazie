@@ -36,6 +36,7 @@ if (isset($_POST['Delete'])) {
     if ( $message == "") { // nessun errore
         gaz_dbi_del_row($gTables['admin'], "Login",substr($_POST['Login'],0,15));
         gaz_dbi_del_row($gTables['admin_module'], "adminid",substr($_POST['Login'],0,15));
+        gaz_dbi_del_row($gTables['admin_config'], "adminid",substr($_POST['Login'],0,15));
         header("Location: report_utenti.php");
         exit;
     }

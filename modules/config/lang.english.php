@@ -439,7 +439,8 @@ $strScript = array("admin_aziend.php" =>
         'mod_perm' => 'Modules permit',
         'report' => 'Users list',
         'del_this' => 'User',
-        'del_err' => 'You can not delete because you\'re the only one with administrator rights!'
+        'del_err' => 'You can not delete because you\'re the only one with administrator rights!',
+        'body_text'=> 'Testo contenuto nelle email che invierai'
     )
 );
 ?>

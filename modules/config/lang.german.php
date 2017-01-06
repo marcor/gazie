@@ -413,7 +413,8 @@ $strScript = array("admin_aziend.php" =>
         'mod_perm' => 'Module ermöglichen',
         'report' => 'Benutzer list',
         'del_this' => 'Benutzer',
-        'del_err' => 'Sie können nicht löschen, weil Sie \ der einzige mit Administrator-Rechten!'
+        'del_err' => 'Sie können nicht löschen, weil Sie \ der einzige mit Administrator-Rechten!',
+        'body_text'=> 'Testo contenuto nelle email che invierai'
     )
 );
 ?>
