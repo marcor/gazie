@@ -67,6 +67,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["Login"] = substr($_POST['Login'], 0, 15);
     $form["Password"] = substr($_POST['Password'], 0, 20);
     $form["confpass"] = substr($_POST['confpass'], 0, 20);
+    $form['body_text'] = filter_input(INPUT_POST, 'body_text');
     if ($toDo == 'insert') {
         $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "Login = '" . $form['Login'] . "'", "Login DESC", 0, 1);
         $risultato = gaz_dbi_fetch_array($rs_utente);
@@ -83,6 +84,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form['Login']);
     $form['confpass'] = $form['Password'];
     $form['theme'] = $admin_config['var_value'];
+    // attingo il testo delle email dalla tabella configurazione utente
+    $bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form['Login']);
+    $form['body_text'] = $bodytext['var_value'];
 } else {
     /*
      * La prima entrata per insert
@@ -99,6 +103,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["Login"] = "";
     $form["Password"] = "";
     $form["confpass"] = "";
+    $form['body_text'] = "";
     if (preg_match("/school/", $_SERVER['HTTP_REFERER'])) {
         // nel caso voglio inserire un nuovo insegnante propongo abilitazione a 9
         $form["Abilit"] = 9;
@@ -155,6 +160,7 @@ if (isset($_POST['Submit'])) {
         // aggiorno il db
         $form["datacc"] = date("YmdHis");
         $form["datpas"] = date("YmdHis");
+        $tbt = trim($form['body_text']);
         if ($user_data['Abilit'] == 9) {
             while (list($key, $value) = each($_POST)) {
                 if (preg_match("/^([0-9]{3})acc_/", $key, $id)) {
@@ -203,6 +209,12 @@ if (isset($_POST['Submit'])) {
             $form['var_name'] = 'theme';
             $form['var_value'] = $form['theme'];
             gaz_dbi_table_insert('admin_config', $form);
+            if (!empty($tbt)) {
+                $form['var_descri'] = 'Contenuto in HTML del testo del corpo delle email inviate dell\'utente';
+                $form['var_name'] = 'body_send_doc_email';
+                $form['var_value'] = $tbt;
+                gaz_dbi_table_insert('admin_config', $form);
+            }
         } elseif ($toDo == 'update') {
             //cambio la data di modifica password
             $getInit = gaz_dbi_get_row($gTables['admin'], "Login", $form['Login']);
@@ -219,6 +231,17 @@ if (isset($_POST['Submit'])) {
                 $form['var_descri'] = 'Menu/header/footer personalizzabile';
                 $form['var_name'] = 'theme';
                 $form['var_value'] = $form['theme'];
+                gaz_dbi_table_insert('admin_config', $form);
+            }
+            // aggiorno o inserisco il testo da inserire nelle email trasmesse dall'utente
+            $bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form['Login']);
+            if ($bodytext) {
+                gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form['Login'] . "' AND var_name ='body_send_doc_email'", 'var_value', $tbt);
+            } else {  // non c'era lo inserisco
+                $form['adminid'] = $form['Login'];
+                $form['var_descri'] = 'Contenuto in HTML del testo del corpo delle email inviate dell\'utente';
+                $form['var_name'] = 'body_send_doc_email';
+                $form['var_value'] = $tbt;
                 gaz_dbi_table_insert('admin_config', $form);
             }
             // vado ad aggiornare anche la tabella studenti dell'installazione di base qualora ce ne fosse uno 
@@ -394,6 +417,13 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['rep_pass']; ?> *</td>
                     <td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="login-password" name="confpass" value="<?php print $form["confpass"]; ?>" maxlength="20" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
                 </tr>
+                <tr>
+                    <td class="FacetFieldCaptionTD"><?php echo $script_transl['body_text']; ?></td>
+                    <td colspan="2" class="FacetDataTD">
+                        <textarea id="body_text" name="body_text" class="mceClass"><?php echo $form['body_text']; ?></textarea>
+                    </td>
+                </tr>
+
                 <?php
                 if ($user_data["Abilit"] == 9) {
 

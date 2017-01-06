@@ -442,7 +442,8 @@ $strScript = array(
         'mod_perm' => 'Permessi dei moduli',
         'report' => 'Lista degli Utenti',
         'del_this' => 'Utente',
-        'del_err' => 'Non puoi cancellarti perch&egrave; sei l\'unico ad avere i diritti di amministratore! '
+        'del_err' => 'Non puoi cancellarti perch&egrave; sei l\'unico ad avere i diritti di amministratore! ',
+        'body_text'=> 'Testo contenuto nelle email che invierai'
     ),
     "config_aziend.php" =>
     array('title' => 'Configurazione avanzata azienda')
