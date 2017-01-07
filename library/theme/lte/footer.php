@@ -129,7 +129,7 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
         };
     </script>
     <script src="../../library/theme/lte/adminlte/dist/js/app.js"></script>
-    <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>-->
+    <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
     <script src="../../js/custom/gz-library.js"></script>
   </body>
 </html>
