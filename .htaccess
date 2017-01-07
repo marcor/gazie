@@ -1,3 +1,4 @@
 DirectoryIndex admin.php /404.html
 php_flag magic_quotes_gpc off
 php_value max_input_vars 10000
+Options -Indexes
