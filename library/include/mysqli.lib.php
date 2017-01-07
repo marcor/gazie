@@ -32,6 +32,7 @@ function connectToDB() {
              Potrebbe non essere stato installata, prova a farlo <a href=\"../../setup/install/install.php\"> cliccando QUI! </a> <br />
              <br />No se ha encontrado, la base de datos << $Database >>  ! <br />
 			No pudo ser instalado, trate de hacerlo haciendo <a href=\"../../setup/install/install.php\">  clic AQU&Iacute;! </a>");
+   mysqli_query($link, "SET SESSION sql_mode=''");
    mysqli_set_charset($link, 'utf8');
 }
 
@@ -39,6 +40,7 @@ function connectIsOk() {
    global $Host, $User, $Password, $link;
    $result = True;
    $link = @mysqli_connect($Host, $User, $Password) or ( $result = False); // In $result l'esito della connessione
+   mysqli_options ($link, MYSQLI_INIT_COMMAND, "SET SQL_MODE = ''");
    return $result;
 }
 
