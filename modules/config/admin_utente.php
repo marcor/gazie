@@ -420,7 +420,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                 <tr>
                     <td class="FacetFieldCaptionTD"><?php echo $script_transl['body_text']; ?></td>
                     <td colspan="2" class="FacetDataTD">
-                        <textarea id="body_text" name="body_text" class="mceClass"><?php echo $form['body_text']; ?></textarea>
+                        <textarea id="body_text" name="body_text" class="mceClass" style="width:100%;"><?php echo $form['body_text']; ?></textarea>
                     </td>
                 </tr>
 

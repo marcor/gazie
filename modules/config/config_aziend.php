@@ -94,7 +94,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['company_config'], "1=1", ' id ASC', 0
                                     <?php
                                     if ($r['var'] == 'company_email_text') {
                                         ?>
-                                        <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" class="mceClass"><?php echo $r['val']; ?></textarea>
+                                        <textarea id="input<?php echo $r["id"]; ?>" name="<?php echo $r["var"]; ?>" class="mceClass" style="width:100%;"><?php echo $r['val']; ?></textarea>
                                         <?php
                                     } else {
                                         ?>
