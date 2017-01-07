@@ -59,7 +59,7 @@ if (isset($_GET['ds'])) {
     $utssta = mktime(0, 0, 0, $messta, $giosta, $annsta);
     $luogo_data .= ucwords(strftime("%d %B %Y", $utssta));
 } else {
-    $luogo_data .=ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
+    $luogo_data .= ucwords(strftime("%d %B %Y", mktime(0, 0, 0, date("m"), date("d"), date("Y"))));
 }
 
 class Depliant extends Report_template {
@@ -91,7 +91,7 @@ class Depliant extends Report_template {
             }
             $this->Image('@' . $image, $x + 72, $y, 20, 20, '', $link);
             $this->Cell(93, 5, $code, 'LTR', 2);
-            $this->Cell(93, 5, $description, 'LR', 2);
+            $this->Cell(93, 5, $description, 'LR', 2, 'L', 0, '', 1);
             if ($un > 0) {
                 $un .= ' N./Pack';
             } else {
@@ -103,7 +103,7 @@ class Depliant extends Report_template {
         } elseif (!empty($barcode)) {
             if ($x > 20) {
                 $lf = 1;
-                $y-=15;
+                $y -= 15;
                 $x = 103;
                 $this->SetY($y);
                 $this->SetX($x);
@@ -111,7 +111,7 @@ class Depliant extends Report_template {
             $this->EAN13($x + 40, $y + 5, $barcode, 7);
             $this->SetY($y);
             $this->SetX($x);
-            $this->Cell(93, 5, $code . ' - ' . $description, 'LTR', 2);
+            $this->Cell(93, 5, $code . ' - ' . $description, 'LTR', 2, 'L', 0, '', 1);
             $this->Cell(93, 5, '', 'LR', 2);
             $this->Cell(93, 5, $price . ' ' . $admin_aziend['symbol'] . '/' . $um, 'LR', 2);
             $this->Cell(93, 5, $vat, 'LBR', $lf);
@@ -124,10 +124,10 @@ class Depliant extends Report_template {
             $this->Cell(27, 5, $code, 1, 0, 'L');
             if (strlen(trim($description)) > 36) {
                 $this->SetFont('helvetica', '', 8);
-                $this->Cell(63, 5, $description, 1, 0, 'L');
+                $this->Cell(63, 5, $description, 1, 0, 'L', 0, '', 1);
                 $this->SetFont('helvetica', '', 9);
             } else {
-                $this->Cell(63, 5, $description, 1, 0, 'L');
+                $this->Cell(63, 5, $description, 1, 0, 'L', 0, '', 1);
             }
             $this->Cell(49, 5, $price . ' ' . $admin_aziend['symbol'] . '/' . $um . ' ' . $vat, 1, 0, 'R');
             $this->SetFont('helvetica', '', 7);
@@ -189,7 +189,7 @@ $pdf->setFooterMargin(10);
 $pdf->AddPage();
 $ctrl_cm = 0;
 while ($row = gaz_dbi_fetch_array($result)) {
-    if ($row['depli'] < 1 ){
+    if ($row['depli'] < 1) {
         continue;
     }
     if (intval($_GET['bc']) == 1) { // per stampare i barcode in luogo delle immagini
