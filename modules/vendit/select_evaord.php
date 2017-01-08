@@ -725,6 +725,7 @@ echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden
     <input type="hidden" name="volume" value="<?php echo $form['volume']; ?>">
     <input type="hidden" name="id_agente" value="<?php echo $form['id_agente']; ?>">
     <input type="hidden" name="caumag" value="<?php echo $form['caumag']; ?>">
+    <input type="hidden" name="indspe" value="<?php echo $form['indspe']; ?>'">
 
     <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?>
 <?php
@@ -738,7 +739,6 @@ echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['seziva'] . "</td><td class=\"FacetDataTD\" >\n";
 $gForm->selectNumber('seziva', $form['seziva'], 0, 1, 9, 'FacetDataTD', true);
 echo "\t </td>\n";
-echo '<input type="hidden" name="indspe" value="' . $form['indspe'] . '">';
 if (!empty($msg)) {
     echo '<td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td>\n";
 } else {
@@ -831,10 +831,12 @@ if (!empty($form['righi'])) {
    </tr>";
     $ctrl_tes = 0;
     $total_order = 0;
+    $hRowFlds = '';
     foreach ($form['righi'] as $k => $v) {
         //echo $form['righi'][$k]['tiprig']."<br>";
         $checkin = ' disabled ';
         $imprig = 0;
+        $v['descri'] = htmlentities($v['descri']);
         //calcolo importo rigo
         switch ($v['tiprig']) {
             case "0":
@@ -872,43 +874,51 @@ if (!empty($form['righi'])) {
             echo "<tr><td class=\"FacetDataTD\" colspan=\"9\"> " . $script_transl['from'] . " <a href=\"admin_broven.php?Update&id_tes=" . $v["id_tes"] . "\" title=\"" . $script_transl['upd_ord'] . "\"> " . $script_transl['doc_name'][$v['tipdoc']] . " n." . $v['numdoc'] . "</a> " . $script_transl['del'] . ' ' . gaz_format_date($v['datemi']) . " </td></tr>";
         }
         echo "<tr>";
-        echo "<input type=\"hidden\" name=\"righi[$k][id_tes]\" value=\"" . $v['id_tes'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][datemi]\" value=\"" . $v['datemi'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][tipdoc]\" value=\"" . $v['tipdoc'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][numdoc]\" value=\"" . $v['numdoc'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][id_rig]\" value=\"" . $v['id_rig'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][tiprig]\" value=\"" . $v['tiprig'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][id_doc]\" value=\"" . $v['id_doc'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][id_body_text]\" value=\"" . $v['id_body_text'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][codvat]\" value=\"" . $v['codvat'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][pervat]\" value=\"" . $v['pervat'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][ritenuta]\" value=\"" . $v['ritenuta'] . "\">\n";
-        echo "<input type=\"hidden\" name=\"righi[$k][codric]\" value=\"" . $v['codric'] . "\">\n";
-        echo "<td><input type=\"hidden\" name=\"righi[$k][codart]\" value=\"" . $v['codart'] . "\">" . $v['codart'] . "</td>\n";
+        // form hidden fields holding actual row values
+        $fields = array('id_tes', 'datemi', 'tipdoc', 'numdoc',
+            'id_rig', 'tiprig', 'id_doc', 'id_body_text',
+            'codvat', 'pervat', 'ritenuta', 'codric',
+            'codart', 'descri'
+        );
 
-        echo "<td><input type=\"hidden\" name=\"righi[$k][descri]\" value=\"" . $v['descri'] . "\">" . $v['descri'] . "</td>\n";
+        echo "<td>" . $v['codart'] . "</td>\n";
+        echo "<td>" . $v['descri'] . "</td>\n";
         if ( $v['tiprig']<=10 || $v['tiprig']>=14 ) {
-            echo "<td align=\"center\"><input type=\"hidden\" name=\"righi[$k][unimis]\" value=\"" . $v['unimis'] . "\">" . $v['unimis'] . "</td>\n";
-            echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][quanti]\" value=\"" . $v['quanti'] . "\">" . $v['quanti'] . "</td>\n";
-            echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][prelis]\" value=\"" . $v['prelis'] . "\">" . $v['prelis'] . "</td>\n";
-            echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][provvigione]\" value=\"" . $v['provvigione'] . "\">" . $v['provvigione'] . "</td>\n";
-            echo "<td align=\"right\"><input type=\"hidden\" name=\"righi[$k][sconto]\" value=\"" . $v['sconto'] . "\">" . $v['sconto'] . "</td>\n";
+            $fields = array_merge($fields, array('unimis', 'quanti',
+               'prelis', 'provvigione', 'sconto'
+               )
+            );
+            echo "<td align=\"center\">" . $v['unimis'] . "</td>\n";
+            echo "<td align=\"right\">" . $v['quanti'] . "</td>\n";
+            echo "<td align=\"right\">" . $v['prelis'] . "</td>\n";
+            echo "<td align=\"right\">" . $v['provvigione'] . "</td>\n";
+            echo "<td align=\"right\">" . $v['sconto'] . "</td>\n";
             echo "<td align=\"right\">$imprig</td>\n";
             echo "<td align=\"center\"><input type=\"checkbox\" name=\"righi[$k][checkval]\"  title=\"" . $script_transl['checkbox'] . "\" $checkin value=\"$imprig\" onclick=\"this.form.total.value=calcheck(this);\"></td>\n";
         } else {
-                        echo "<td></td>";
-                        echo "<td></td>";
-                        echo "<td></td>";
-                        echo "<td></td>";
-                        echo "<td></td>";
-                        echo "<td></td>";
-                        echo "<td></td>";
-
+            echo "<td></td>";
+            echo "<td></td>";
+            echo "<td></td>";
+            echo "<td></td>";
+            echo "<td></td>";
+            echo "<td></td>";
+            echo "<td></td>";
         }
         echo "</tr>";
+
         $ctrl_tes = $v['id_tes'];
+        /* probabilmente potevo fare un loop sulle chiavi di $v ma non sono sicuro dell'impatto
+           quindi ho utilizzato un array ad-hoc attenendomi ai soli nomi preesistenti
+        */
+        foreach ($fields as $current) {
+            $hRowFlds .= "<input type=\"hidden\" name=\"righi[$k][$current]\" value=\"{$v[$current]}\">\n";
+        }
     }
     echo "<tr><td class=\"FacetFieldCaptionTD\">\n";
+    echo $hRowFlds;
+    unset($fields, $hRowFlds);
+
+    echo "<input type=\"hidden\" name=\"hiddentot\" value=\"$total_order\">\n";
     echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">&nbsp;</td>\n";
     echo "<td align=\"right\" colspan=\"6\" class=\"FacetFieldCaptionTD\">\n";
     echo "<input type=\"submit\" name=\"ddt\" value=\"" . $script_transl['issue_ddt'] . "\" accesskey=\"d\" />\n";
@@ -916,7 +926,7 @@ if (!empty($form['righi'])) {
     if (!empty($alert_sezione))
         echo " &sup1;";
     echo "<input type=\"submit\" name=\"vco\" value=\"" . $script_transl['issue_cor'] . "\" accesskey=\"c\" />\n";
-    echo "</td><input type=\"hidden\" name=\"hiddentot\" value=\"$total_order\">\n";
+    echo "</td>";
     echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['taxable'] . " " . $admin_aziend['symbol'] . " &nbsp;\n";
     echo "<input type=\"text\"  style=\"text-align:right;\" value=\"" . number_format(($total_order - $total_order * $form['sconto'] / 100 + $form['traspo']), 2, '.', '') . "\" name=\"total\" size=\"8\" readonly />\n";
     echo "</td></tr>";

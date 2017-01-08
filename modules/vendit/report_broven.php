@@ -122,7 +122,7 @@ $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav->output();
 ?>
 <form method="GET" >
-
+    <input type="hidden" name="auxil" value="<?php echo substr($_GET['auxil'], 0, 3); ?>">
     <div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
@@ -162,8 +162,7 @@ $recordnav->output();
         </tr>
         <tr>
             <?php
-            echo '<input type="hidden" name="auxil" value="' . substr($_GET['auxil'], 0, 3) . '">';
-// creo l'array (header => campi) per l'ordinamento dei record
+            // creo l'array (header => campi) per l'ordinamento dei record
             $headers_tesbro = array(
                 "ID" => "id_tes",
                 //$script_transl['type'] => "tipdoc",
