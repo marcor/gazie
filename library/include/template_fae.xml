@@ -11,7 +11,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 				<IdCodice/>
 			</IdTrasmittente>
 			<ProgressivoInvio/>
-			<FormatoTrasmissione/>
+			<FormatoTrasmissione>SDI11</FormatoTrasmissione>
 			<CodiceDestinatario/>
 		</DatiTrasmissione>
 		<CedentePrestatore>

@@ -437,9 +437,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
             $attrVal = $domDoc->createTextNode($id_progressivo);
             $results->appendChild($attrVal);
 
-            $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);
-            $attrVal = $domDoc->createTextNode("SDI11");
-            $results->appendChild($attrVal);
+		   //Il formato della trasmissione è encodato nei file 	
+           // $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/FormatoTrasmissione")->item(0);
+           // $attrVal = $domDoc->createTextNode("SDI11");
+           // $results->appendChild($attrVal);
 
             $codice_trasmittente = $XMLvars->IdCodice;
             $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/IdTrasmittente/IdCodice")->item(0);

@@ -11,7 +11,7 @@ xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.
 				<IdCodice/>
 			</IdTrasmittente>
 			<ProgressivoInvio/>
-			<FormatoTrasmissione/>
+			<FormatoTrasmissione>FPR12</FormatoTrasmissione>
 			<CodiceDestinatario/>
 		</DatiTrasmissione>
 		<CedentePrestatore>
