@@ -8,4 +8,7 @@ ALTER TABLE `gaz_XXXclfoco`	CHANGE COLUMN `last_modified` `last_modified` TIMEST
 ALTER TABLE `gaz_XXXcompany_config`	CHANGE COLUMN `val` `val` VARCHAR(2000) NULL DEFAULT NULL AFTER `var`;
 INSERT INTO `gaz_XXXcompany_config` (`description`,`var`, `val`) SELECT  'Testo in HTML delle email inviate dall\'azienda', 'company_email_text', body_text FROM `gaz_XXXbody_text` WHERE table_name_ref = 'body_send_doc_email';
 DELETE FROM `gaz_XXXbody_text` WHERE  `table_name_ref` = 'body_send_doc_email';
+ALTER TABLE `gaz_anagra` ADD COLUMN `pec_email` VARCHAR(50) NOT NULL DEFAULT '' AFTER `e_mail`;
+ALTER TABLE `gaz_anagra` CHANGE COLUMN `fe_cod_univoco` `fe_cod_univoco` VARCHAR(7) NOT NULL AFTER `pariva`;
+ALTER TABLE `gaz_aziend` ADD COLUMN `pec` VARCHAR(50) NOT NULL DEFAULT '' AFTER `rea`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
