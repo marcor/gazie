@@ -30,6 +30,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = $_POST['hidden_req'];
     $form['last_modified'] = date("Y-m-d H:i:s");
+    $form['pec_email'] = trim($form['pec_email']);
     $form['e_mail'] = trim($form['e_mail']);
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
@@ -146,6 +147,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
        $uts_datnas = mktime(0,0,0,$form['datnas_M'],$form['datnas_D'],$form['datnas_Y']);
        if (!checkdate($form['datnas_M'],$form['datnas_D'],$form['datnas_Y']) && ($admin_aziend['country'] != $form['country'] )) {
           $msg .= "19+";
+       }
+       if (!filter_var($form['pec_email'], FILTER_VALIDATE_EMAIL) && !empty($form['pec_email'])){
+          $msg .= "20+";
        }
        if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])){
           $msg .= "20+";
@@ -396,6 +400,11 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pariva']." </td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <input type=\"text\" name=\"pariva\" value=\"".$form['pariva']."\" align=\"right\" maxlength=\"11\" size=\"11\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['pec_email']."</td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
+      <input type=\"text\" name=\"pec_email\" value=\"".$form['pec_email']."\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['e_mail']."</td>\n";

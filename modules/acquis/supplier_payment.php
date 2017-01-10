@@ -67,8 +67,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $form['paymov'][$k] = $v;  // qui dovrei fare il parsing
             $add_desc[$k] = 0.00;
             foreach ($v as $ki => $vi) { // calcolo il totale 
-                $acc_tot +=$vi['amount'];
-                $add_desc[$k]+=$vi['amount'];
+                $acc_tot += $vi['amount'];
+                $add_desc[$k] += $vi['amount'];
             }
             if ($add_desc[$k] >= 0.01) { // posso mettere una descrizione perchè il pagamento interessa pure questa partita
                 $dd = $paymov->getDocumentData($k);
@@ -81,10 +81,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $desmov = 'PAGATO FINO A FAT.n.' . $dd['numdoc'];
         }
         if ($acc_tot <= 0) {
-            $msg .='4+';
+            $msg .= '4+';
         }
     } else if (isset($_POST['ins'])) { // non ho movimenti ma ho chiesto di inserirli
-        $msg .='6+';
+        $msg .= '6+';
     }
     /** inizio modifica FP 06/01/2016
      * aggiunti campi per selezione documento da proporre per il pagamento
@@ -102,15 +102,17 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['partner'] = intval($_POST['partner']);
     $form['target_account'] = intval($_POST['target_account']);
     $bank_data = gaz_dbi_get_row($gTables['clfoco'], 'codice', $form['target_account']);
-    if ($bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancccario prevede un addebito per bonifici allora lo propongo
-        $form['transfer_fees_acc'] = $bank_data['cosric'];
-        $form['transfer_fees'] = $bank_data['maxrat'];
-    } elseif (substr($form['target_account'], 0, 3) == substr($admin_aziend['cassa_'], 0, 3)) {
-        $form['transfer_fees_acc'] = 0;
-        $form['transfer_fees'] = 0.00;
-    } else {
-        $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
-        $form['transfer_fees'] = floatval($_POST['transfer_fees']);
+    if (!isset($_POST['ins'])) {
+        if ($bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancccario prevede un addebito per bonifici allora lo propongo
+            $form['transfer_fees_acc'] = $bank_data['cosric'];
+            $form['transfer_fees'] = $bank_data['maxrat'];
+        } elseif (substr($form['target_account'], 0, 3) == substr($admin_aziend['cassa_'], 0, 3)) {
+            $form['transfer_fees_acc'] = 0;
+            $form['transfer_fees'] = 0.00;
+        } else {
+            $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
+            $form['transfer_fees'] = floatval($_POST['transfer_fees']);
+        }
     }
     if (isset($_POST['return'])) {
         header("Location: " . $form['ritorno']);
@@ -118,7 +120,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     //controllo i campi
     if (!checkdate($form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y'])) {
-        $msg .='0+';
+        $msg .= '0+';
     }
     if (isset($_POST['ins']) && $form['target_account'] < 100000001) {
         $msg = '5+';
@@ -153,7 +155,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         foreach ($form['paymov'] as $k => $v) { //attraverso l'array delle partite
             $acc = 0.00;
             foreach ($v as $ki => $vi) {
-                $acc +=$vi['amount'];
+                $acc += $vi['amount'];
             }
             if ($acc >= 0.01) {
                 paymovInsert(array('id_tesdoc_ref' => $k, 'id_rigmoc_pay' => $rig_id, 'amount' => $acc, 'expiry' => $date));
@@ -318,13 +320,13 @@ if ($form['partner'] > 100000000) { // partner selezionato
             $cl_exp = '';
             if ($vi['op_val'] >= 0.01) {
                 $v_op = gaz_format_number($vi['op_val']);
-                $paymov_bal+=$vi['op_val'];
+                $paymov_bal += $vi['op_val'];
             }
             $v_cl = '';
             if ($vi['cl_val'] >= 0.01) {
                 $v_cl = gaz_format_number($vi['cl_val']);
                 $cl_exp = gaz_format_date($vi['cl_exp']);
-                $paymov_bal-=$vi['cl_val'];
+                $paymov_bal -= $vi['cl_val'];
             }
             $expo = '';
             if ($vi['expo_day'] >= 1) {
@@ -358,7 +360,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
             echo "<td align=\"center\">" . $expo . "</td>";
             echo "<td align=\"center\">" . $script_transl['status_value'][$vi['status']] . " &nbsp;</td>";
             if ($vi['status'] <> 1 || $vi['status'] < 9) { // accumulo solo se non è chiusa
-                $amount+=round($vi['op_val'] - $vi['cl_val'], 2);
+                $amount += round($vi['op_val'] - $vi['cl_val'], 2);
             }
             echo "</tr>\n";
         }

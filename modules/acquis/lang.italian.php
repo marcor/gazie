@@ -80,6 +80,7 @@ $strScript = array("admin_fornit.php" =>
         'cell' => 'Cellulare',
         'codfis' => 'Codice Fiscale',
         'pariva' => 'Partita I.V.A.',
+        'pec_email' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',
         'cosric' => 'Conto di costo',
         'codpag' => 'Modalit&agrave; di pagamento *',

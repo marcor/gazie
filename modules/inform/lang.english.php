@@ -121,8 +121,8 @@ $strScript = array("report_letter.php" =>
         'rec' => 'Ripristina',
         'dow' => 'Scarica',
         'del' => 'Elimina',
-        'backup_mode'=>'Modalità di backup',
-        'backup_mode_value'=>array('automatic'=>'Automatico','internal'=>'Interno','external'=>'Download')
+        'backup_mode' => 'Modalità di backup',
+        'backup_mode_value' => array('automatic' => 'Automatico', 'internal' => 'Interno', 'external' => 'Download')
     ),
     "report_anagra.php" =>
     array('title' => "Anagrafiche comuni"
@@ -142,6 +142,7 @@ $strScript = array("report_letter.php" =>
             'same_codfis' => 'Esiste gi&agrave; una anagrafica con lo stesso Codice Fiscale',
             'pf_ins_codfis' => 'E\' una persona fisica, inserire il codice fiscale',
             'datnas' => 'La data di nascita &egrave; sbagliata',
+            'pec_email' => 'Indirizzo posta elettronica certificata formalmente sbagliato',
             'e_mail' => 'Indirizzo email formalmente sbagliato',
             'cf_pi_set' => 'E\' stata impostato un codice fiscale uguale alla partita IVA, se giusto, conferma nuovamente la modifica',
         ),
@@ -171,8 +172,10 @@ $strScript = array("report_letter.php" =>
         'codfis' => 'Codice Fiscale',
         'pariva' => 'Partita IVA',
         'fe_cod_univoco' => 'Cod.Univoco Destinatario (fatt.elettronica)',
+        'pec_email' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',
-        'fatt_email' => 'Invio fattura con e-mail'
+        'fatt_email' => 'Invio fattura:',
+        'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2 => 'In formato XML su PEC', 3 => 'In formato PDF su email + XML su PEC')
     )
 );
 ?>

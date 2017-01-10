@@ -77,6 +77,7 @@ $strScript = array("admin_fornit.php" =>
         'cell' => 'Cellphone',
         'codfis' => 'Tax code',
         'pariva' => 'VAT registration number',
+        'pec_email' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',
         'cosric' => 'Cost Account',
         'codpag' => 'Payment method*',

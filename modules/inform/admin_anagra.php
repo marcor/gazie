@@ -99,6 +99,10 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             }
         }
 
+        if (!filter_var($form['pec_email'], FILTER_VALIDATE_EMAIL) && !empty($form['pec_email'])) {
+            $msg['err'][] = 'pec_email';
+        }
+
         if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
             $msg['err'][] = 'e_mail';
         }
@@ -319,6 +323,14 @@ if (count($msg['err']) > 0) { // ho un errore
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
+                    <label for="pec_email" class="col-sm-4 control-label"><?php echo $script_transl['pec_email']; ?></label>
+                    <input class="col-sm-8" type="text" value="<?php echo $form['pec_email']; ?>" name="pec_email" maxlength="50" />
+                </div>
+            </div>
+        </div><!-- chiude row  -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
                     <label for="e_mail" class="col-sm-4 control-label"><?php echo $script_transl['e_mail']; ?></label>
                     <input class="col-sm-8" type="text" value="<?php echo $form['e_mail']; ?>" name="e_mail" maxlength="50" />
                 </div>
@@ -329,7 +341,8 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="form-group">
                     <label for="fatt_email" class="col-sm-4 control-label"><?php echo $script_transl['fatt_email']; ?> </label>
                     <?php
-                    $gForm->selectNumber('fatt_email', $form['fatt_email'], TRUE, 0, 1);
+                    $gForm->variousSelect('fatt_email', $script_transl['fatt_email_value'], $form['fatt_email']);
+                   // $gForm->selectNumber('fatt_email', $form['fatt_email'], TRUE, 0, 1);
                     ?>
                 </div>
             </div>

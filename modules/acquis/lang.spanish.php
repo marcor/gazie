@@ -81,6 +81,7 @@ $strScript = array("admin_fornit.php" =>
         'cell' => 'Celular',
         'codfis' => 'Codigo Tributario',
         'pariva' => 'Coincidir I.V.A.',
+        'pec_email' => 'Posta Elettronica Certificata',
         'e_mail' => 'email',
         'cosric' => 'Cost Account',
         'id_agente' => 'Agente',

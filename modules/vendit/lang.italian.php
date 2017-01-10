@@ -77,6 +77,7 @@ $strScript = array("admin_client.php" =>
         'cell' => 'Cellulare',
         'codfis' => 'Codice Fiscale',
         'pariva' => 'Partita I.V.A.',
+        'pec_email' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',
         'id_agente' => 'Agente',
         'codpag' => 'Modalit&agrave; di pagamento *',
@@ -105,8 +106,8 @@ $strScript = array("admin_client.php" =>
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
         'fe_cod_univoco' => 'Cod.Univoco Ufficio (fatt.elettronica)',
-        'fatt_email' => 'Inviare fattura via email',
-        'fatt_email_value' => array(0 => 'No', 1 => 'Si')
+        'fatt_email' => 'Inviare fattura:',
+        'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2=>'In formato XML su PEC',3=>'In formato PDF su email + XML su PEC')
     ),
     "report_docven.php" =>
     array('title' => 'Lista dei documenti di vendita',

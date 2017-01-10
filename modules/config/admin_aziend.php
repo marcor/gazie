@@ -38,6 +38,7 @@ if ($exist_true) {
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form = gaz_dbi_parse_post('aziend');
     $form['ritorno'] = $_POST['ritorno'];
+    $form['pec'] = trim($form['pec']);
     $form['e_mail'] = trim($form['e_mail']);
     $form['web_url'] = trim($form['web_url']);
     $form['mascli'] = intval(substr($_POST['mascli'], 0, 3));
@@ -123,6 +124,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         $cap = new postal_code;
         if ($cap->check_postal_code($form["capspe"], $form["country"])) {
             $msg['err'][] = 'capspe';
+        }
+        if (!filter_var($form['pec'], FILTER_VALIDATE_EMAIL) && !empty($form['pec'])) {
+            $msg['err'][] = 'pec';
         }
         if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
             $msg['err'][] = 'e_mail';
@@ -421,6 +425,14 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="rea" class="col-sm-4 control-label"><?php echo $script_transl['rea']; ?></label>
                         <input class="col-sm-8" type="text" value="<?php echo $form['rea']; ?>" name="rea" maxlength="32" />
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="pec" class="col-sm-4 control-label"><?php echo $script_transl['pec']; ?></label>
+                        <input class="col-sm-8" type="pec" value="<?php echo $form['pec']; ?>" name="pec" maxlength="50" />
                     </div>
                 </div>
             </div><!-- chiude row  -->

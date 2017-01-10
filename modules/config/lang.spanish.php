@@ -49,6 +49,7 @@ $strScript = array("admin_aziend.php" =>
             'colore' => 'El color que usted elija tiene una luminosidad de menos de 408 (hex88 +88 +88)',
             'image' => 'Debe introducir una imagen para el logotipo de la empresa',
             'capspe' => 'Email formalmente mal la dirección',
+            'pec' => 'Email address formally wrong',
             'e_mail' => 'Web formalmente mal la dirección',
             'web_url' => 'ATECO 2007 code invalid'
         ),
@@ -76,6 +77,7 @@ $strScript = array("admin_aziend.php" =>
         'codfis' => 'Codigo de Impuesto',
         'pariva' => 'Codigo de IVA',
         'rea' => 'R.E.A.',
+        'pec' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',
         'web_url' => 'Web url<br />(es: http://companyname.com)',
         'cod_ateco' => 'Codigo de Actividad (ATECOFIN)',
