@@ -420,13 +420,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
         $cod_destinatario=trim($XMLvars->client['fe_cod_univoco']); // elemento 1.1.4
         if ($XMLvars->docYear <= 2016) { // FAttura Elettronica PA fino al 2016
             $domDoc->load("../../library/include/template_fae.xml");
-            $this->FormatoTrasmissione='FPA';
+            $XMLvars->FormatoTrasmissione='FPA';
         } elseif (strlen($cod_destinatario)<=0 || strlen($cod_destinatario)>=7) { // FAttura Elettronica Privati
             $domDoc->load("../../library/include/template_fae_FPR12.xml");
-            $this->FormatoTrasmissione='FPR';
+            $XMLvars->FormatoTrasmissione='FPR';
         } else { // FAttura Elettronica PA a partire dal 2017
             $domDoc->load("../../library/include/template_fae_FPA12.xml");
-            $this->FormatoTrasmissione='FPA';
+            $XMLvars->FormatoTrasmissione='FPA';
         }
         $xpath = new DOMXPath($domDoc);
         if ($ctrl_doc == 0) {
