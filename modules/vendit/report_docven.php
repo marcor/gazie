@@ -306,7 +306,7 @@ $linkHeaders->output();
                 $rs_ultimo_documento = gaz_dbi_dyn_query("id_tes,tipdoc,protoc", $gTables['tesdoc'], "tipdoc LIKE 'F%' AND seziva = '$seziva'", "datfat DESC, protoc DESC, id_tes DESC", 0, 1);
                 $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
 //recupero le testate in base alle scelte impostate
-                $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*, MAX(" . $gTables['tesdoc'] . ".id_tes) AS reftes," . $gTables['anagra'] . ".fe_cod_univoco," . $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail," . $gTables['clfoco'] . ".codice," . $gTables['pagame'] . ".tippag", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id  LEFT JOIN " . $gTables['pagame'] . " ON " . $gTables['tesdoc'] . ".pagame = " . $gTables['pagame'] . ".codice", $where, $orderby, $limit, $passo);
+                $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*, MAX(" . $gTables['tesdoc'] . ".id_tes) AS reftes," . $gTables['anagra'] . ".fe_cod_univoco," . $gTables['anagra'] . ".pec_email," .  $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail," . $gTables['clfoco'] . ".codice," . $gTables['pagame'] . ".tippag", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id  LEFT JOIN " . $gTables['pagame'] . " ON " . $gTables['tesdoc'] . ".pagame = " . $gTables['pagame'] . ".codice", $where, $orderby, $limit, $passo);
                 $ctrl_doc = "";
                 $ctrl_eff = 999999;
                 while ($r = gaz_dbi_fetch_array($result)) {
@@ -400,7 +400,7 @@ $linkHeaders->output();
 
                         // Colonna "Fattura elettronica"
                 if (substr($r["tipdoc"], 0, 1) == 'F') {
-                    if (strlen($r["fe_cod_univoco"]) != 6) { // se il cliente non è un ufficio della PA tolgo il link
+                    if (strlen($r["fe_cod_univoco"]) != 6 and (strlen($r["fe_cod_univoco"]) == "0" and  $r["pec_email"] == '')) { // se il cliente non è un ufficio della PA tolgo il link
                         $modulo_fae = '';
                         echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-xml disabled\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\"><i class=\"glyphicon glyphicon-tag\"></i></button>";
                         echo "</td>";
