@@ -78,6 +78,7 @@ class invoiceXMLvars {
         $this->cliente1 = $this->client['ragso1'];
         $this->cliente2 = $this->client['ragso2'];
         $this->cliente3 = $this->client['indspe'];
+		$this->pec_email = $this->client['pec_email'];
         if (!empty($this->client['citspe'])) {
             $this->cliente4 = sprintf("%05d", $this->client['capspe']) . ' ' . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
         } else {
@@ -465,9 +466,26 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
             $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['codfis']));
             $results->appendChild($attrVal);
 
+			if ($XMLvars->FormatoTrasmissione == "FPA") {
+			//nodo 1.1.4
             $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
             $results->appendChild($attrVal);
+			} else {
+				if (strlen($cod_destinatario) == "0") {
+					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
+					$attrVal = $domDoc->createTextNode("0000000");
+					$results->appendChild($attrVal);
+					//nodo 1.1.6
+					$el = $domDoc->createElement("PECDestinatario", trim($XMLvars->client['pec_email']));
+					$results1 = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione")->item(0);
+					$results1->appendChild($el);
+				} else {
+					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
+					$attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
+					$results->appendChild($attrVal);
+                }							
+			}	
 
 
             $el = $domDoc->createElement("CodiceFiscale", trim($XMLvars->client['codfis']));
