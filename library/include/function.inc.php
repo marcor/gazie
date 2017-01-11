@@ -98,7 +98,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];        ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];         ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -1152,7 +1152,7 @@ class GAzieMail {
         $body_text .= "<div>" . $company_text['val'] . "</div>\n";
         $body_text .= "<address><div style=\"color: #" . $admin_data['colore'] . ";\">" . $user['Nome'] . " " . $user['Cognome'] . "</div>\n";
         $body_text .= "<div>" . $user_text['var_value'] . "</div></address>\n";
-        $body_text .= "<hr /><small>" . EMAIL_FOOTER ." ".GAZIE_VERSION. "</small>\n";
+        $body_text .= "<hr /><small>" . EMAIL_FOOTER . " " . GAZIE_VERSION . "</small>\n";
         //
         // Inizializzo PHPMailer
         //
@@ -1738,9 +1738,17 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
     $_SESSION["logged_in"] = true;
     $_SESSION["company_id"] = $company_id;
     $_SESSION["table_prefix"] = $table_prefix;
-    // appoggio il valore del thema scelto sulla sessione così da non fare la query sul db ad ogni richiesta di esecuzione di qualsiasi script  
-    $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $login);
-    $_SESSION["theme"] = $admin_config_theme['var_value'];
+    /* appoggio il valore del thema scelto sulla sessione così da non fare la query sul db ad ogni richiesta di esecuzione di qualsiasi script  
+     * però se vengo da un vecchio database non ho la tabella gaz_admin_config allora imposterò il valore di default anche per evitare l'errore
+     * sulla query  
+     */
+    $result = gaz_dbi_query("SHOW TABLES LIKE '" . $gTables['admin_config'] . "'");
+    if (gaz_dbi_num_rows($result) > 0) {  
+        $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $login);
+        $_SESSION["theme"] = $admin_config_theme['var_value'];
+    } else {
+        $_SESSION["theme"] = 'g7';
+    }
     $count++;
     //incremento il contatore d'accessi
     gaz_dbi_put_row($gTables['admin'], "Login", $login, "Access", $count);
