@@ -134,7 +134,7 @@ class Template extends FPDI {
                 $this->Cell(75, 5, $this->cliente4b, 0, 1, 'L', 0, '', 1);
             }
             $this->SetFont('helvetica', '', 7);
-            $this->Cell(115);
+            $this->Cell(1);
             $this->Cell(75, 5, $this->cliente5, 0, 1, 'L', 0, '', 1);
             if (!empty($this->c_Attenzione)) {
                 $this->SetFont('helvetica', '', 10);
