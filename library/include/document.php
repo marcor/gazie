@@ -70,7 +70,11 @@ class DocContabVars {
         $this->perbollo = 0;
         $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
-        $this->codicecli = $tesdoc['clfoco'];   
+        $this->descri_partner = 'Cliente';
+        if (substr($tesdoc['clfoco'], 0, 3) == $admin_aziend['masfor']) {
+            $this->descri_partner = 'Fornitore';
+        }
+        $this->codice_partner = intval(substr($tesdoc['clfoco'], 3, 6));
         $this->cod_univoco = $this->client['fe_cod_univoco'];
         $this->cliente1 = $this->client['ragso1'];
         $this->cliente2 = $this->client['ragso2'];
@@ -247,7 +251,7 @@ class DocContabVars {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
                     $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);
                     $asset = gaz_dbi_get_row($this->gTables['assets'], 'acc_fixed_assets', $rigo['codric'] . "' AND type_mov = '1");
-                    $rigo['codart']= $asset['id'].' - '.$asset['descri'].' ('.$rigo['codric'].')';
+                    $rigo['codart'] = $asset['id'] . ' - ' . $asset['descri'] . ' (' . $rigo['codric'] . ')';
                 }
                 if (!isset($this->castel[$rigo['codvat']])) {
                     $this->castel[$rigo['codvat']] = 0;
