@@ -195,21 +195,21 @@ switch ($admin_aziend['fatimm']) {
 }
 ?>
 <form method="GET" >
-    <div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+    <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
         <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
         <p class="ui-state-highlight" id="mail_attc"></p>
     </div>
 
-    <div id="dialog1" title="<?php echo $script_transl['fae_alert0']; ?>">
+    <div style="display:none" id="dialog1" title="<?php echo $script_transl['fae_alert0']; ?>">
         <p id="fae_alert1"><?php echo $script_transl['fae_alert1']; ?></p>
         <p class="ui-state-highlight" id="fae1"></p>
         <p id="fae_alert2"><?php echo $script_transl['fae_alert2']; ?></p>
         <p class="ui-state-highlight" id="fae2"></p>
     </div>
 
-    <div id="dialog2" title="<?php echo $script_transl['report_alert0']; ?>">
+    <div style="display:none" id="dialog2" title="<?php echo $script_transl['report_alert0']; ?>">
         <p id="report_alert1"><?php echo $script_transl['report_alert1']; ?></p>
         <p class="ui-state-highlight" id="report1"></p>
     </div>
