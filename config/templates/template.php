@@ -50,6 +50,8 @@ class Template extends FPDI {
         $this->decimal_quantity = $docVars->decimal_quantity;
         $this->decimal_price = $docVars->decimal_price;
         $this->perbollo = $docVars->perbollo;
+        $this->codicecli = $docVars->codicecli;
+        $this->cod_univoco = $docVars->cod_univoco;		
         $this->cliente1 = $docVars->cliente1;
         $this->cliente2 = $docVars->cliente2;
         $this->cliente3 = $docVars->cliente3;
@@ -113,6 +115,8 @@ class Template extends FPDI {
                 }
             }
             $this->SetFont('helvetica', '', 10);
+			$this->Cell(10,5,$this->codicecli,0,1,'L');
+			$this->Cell(10,5,$this->cod_univoco,0,1,'L');
             $this->SetXY(110, $interlinea + 3);
             $this->Cell(15, 5, 'Spett.le ', 0, 0, 'R');
             $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);

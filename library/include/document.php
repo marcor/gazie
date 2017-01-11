@@ -70,6 +70,8 @@ class DocContabVars {
         $this->perbollo = 0;
         $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
+        $this->codicecli = $tesdoc['clfoco'];   
+        $this->cod_univoco = $this->client['fe_cod_univoco'];
         $this->cliente1 = $this->client['ragso1'];
         $this->cliente2 = $this->client['ragso2'];
         $this->cliente3 = $this->client['indspe'];
