@@ -48,21 +48,26 @@ if (isset($_GET['all'])) {
          
          if ($status == "NO") {
            // $status="@";           
-           $where = " flux_status LIKE '%@%'";
+           $where = " flux_status LIKE '@'";
            $senza_esito=1;
            $mostra_intesta = 1;
            $mostra_intesta_riga = 0;
          } elseif ($status == "NEEC02") {
-           $where = " flux_status LIKE '%NE%' and flux_descri <> 'EC01'";
+           $where = " flux_status LIKE 'NE' and flux_descri <> 'EC01'";
            $senza_esito=1;
            $mostra_intesta = 1;
            $mostra_intesta_riga = 0;                       
+         } elseif ($status == "@@") {
+           $where = " flux_status LIKE '@@' and filename_ret <> ''";
+           $senza_esito=1;
+           $mostra_intesta = 1;
+           $mostra_intesta_riga = 0;                       		   
          } else {                                 
-           $where = " flux_status LIKE '%".$status."%'";
+           $where = " flux_status LIKE '".$status."'";
            $mostra_intesta = 1;
            $mostra_intesta_riga = 0;
          }  
-     }     
+     }         
   }
 }  
 
