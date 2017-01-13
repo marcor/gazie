@@ -1,27 +1,28 @@
 <?php
+
 /*
- -----------------------------------------------------------------------
-                         GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
-                          (http://www.devincentiis.it)
-                      <http://gazie.sourceforge.net>
- -----------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation,  Inc.,   59
-    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
- -----------------------------------------------------------------------
-*/
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 
@@ -29,15 +30,15 @@ $admin_aziend=checkAdmin();
    del PDF senza che al momento del ritorno indietro (back button) si abbia la richiesta
    da parte del browser di ripostare i dati.
    Vengono sfruttati i registri $_SESSION['print_request'] e $_SESSION['script_ref'];
-   $_SESSION['print_request'] è bidimensionale e al suo interno sono contenuti i dati
-   da passare tramite URL allo script il cui nome è contenuto in ['script_name'],
+   $_SESSION['print_request'] ï¿½ bidimensionale e al suo interno sono contenuti i dati
+   da passare tramite URL allo script il cui nome ï¿½ contenuto in ['script_name'],
    nelle altre key si devono passare il nome della variabile (nella key) ed il suo valore.
 */
 
 if (isset($_SESSION['print_request'])){
     $request = $_SESSION['print_request'];
     unset ($_SESSION['print_request']);
-    if (isset($request['script_name'])) { // se è stata inviata una richiesta di stampa con il nome del template
+    if (isset($request['script_name'])) { // se ï¿½ stata inviata una richiesta di stampa con il nome del template
         //formattazione l'url
         $url="setTimeout(\"window.location='".$request['script_name'].".php?";
         unset($request['script_name']);

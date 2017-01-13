@@ -1,5 +1,29 @@
 <?php
 
+/*
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
+
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
+
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 
@@ -256,53 +280,4 @@ if ( !isset($_GET["Insert"]) ) {
 
 <?php
 require("../../library/include/footer.php");
-?>
-
-
-<!--<script src="../../js/custom/autocomplete.js"></script>
-<script type="text/javascript">
-function updateInputStato(ish){
-    document.getElementById("stato").value = ish;
-}
-function updateInputTecnico(ish){
-    document.getElementById("tecnico").value = ish;
-}
-function calculateTime() {
-        var minend = parseInt($("select[name='ora_fine']").val().split(':')[1],10);
-		var minstart = parseInt($("select[name='ora_inizio']").val().split(':')[1],10);
-		var hstart = parseInt($("select[name='ora_inizio']").val().split(':')[0],10);
-		var hend   = parseInt($("select[name='ora_fine']").val().split(':')[0],10);
-		
-		var min = minend - minstart;
-		if ( min<=-1 ) {
-			min = "30";
-			hend -= 1;
-		}
-		
-		
-		if ( hstart <= hend ) {
-			var hour = hend - hstart;
-		} else {
-			var hour = (hend+24)-hstart;
-		}
-		if ( min == "30" ) min = "50";
-		document.getElementById('ore').value = hour+"."+min;
-    }
-</script>
-<script>
-$( document.getElementById("toggleTec") ).click(function() {
-  $( "#tecnico" ).fadeIn('fast');//toggle( "fold" );
-});
-$( document.getElementById("toggleSta") ).click(function() {
-  $( "#stato" ).fadeIn('fast');
-});
-$(function() {
- $("#tecnico").fadeOut('fast');//toggle('fold');
- $("#stato").toggle('fold');
-})
-</script>-->
-<?php
-   //echo "<pre>";
-   //print_r(get_defined_vars());
-   //echo "</pre>";
 ?>

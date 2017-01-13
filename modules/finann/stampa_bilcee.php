@@ -1,34 +1,35 @@
 <?php
+
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation,  Inc.,   59
-    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 require("../../library/include/datlib.inc.php");
-
 $admin_aziend=checkAdmin();
+
 $nromani = array(0=>"",1=>"I",2=>"II",3=>"III",4=>"IV",5=>"V",6=>"VI",7=>"VII",8=>"VIII",9=>"IX",10=>"X",11=>"XI",12=>"XII",13=>"XIII",14=>"XIV",15=>"XV",16=>"XVI",17=>"XVII",18=>"XVIII",19=>"XIX");
-$attdesc = array('A'=>array("Titolo"=>") CREDITI VERSO SOCI:"),'B'=>array("Titolo"=>") IMMOBILIZZAZIONI:",1=>" - Immobilizzazioni immateriali: ",2=>" - Immobilizzazioni materiali:",3=>" - Immobilizzazioni finanziarie: "),'C'=>array("Titolo"=>") ATTIVO CIRCOLANTE:",1=>" - Rimanenze: ",2=>" - Crediti: ",3=>" - Attività finanziarie: ",4=>" - DisponibilitÃ  liquide: "),'D'=>array("Titolo"=>") RATEI E RISCONTI:"));
+$attdesc = array('A'=>array("Titolo"=>") CREDITI VERSO SOCI:"),'B'=>array("Titolo"=>") IMMOBILIZZAZIONI:",1=>" - Immobilizzazioni immateriali: ",2=>" - Immobilizzazioni materiali:",3=>" - Immobilizzazioni finanziarie: "),'C'=>array("Titolo"=>") ATTIVO CIRCOLANTE:",1=>" - Rimanenze: ",2=>" - Crediti: ",3=>" - Attivitï¿½ finanziarie: ",4=>" - DisponibilitÃ  liquide: "),'D'=>array("Titolo"=>") RATEI E RISCONTI:"));
 $pasdesc = array('A'=>array("Titolo"=>") PATRIMONIO NETTO:",1=>" - Capitale:",2=>" - Riserva da sovrapprezzo delle azioni:",3=>" - Riserva di rivalutazione:",4=>" - Riserva legale:",5=>" - Riserva per azioni proprie in portafoglio:",6=>" - Riserve statutarie:",7=>" - Altre riserve distintamente indicate:",8=>" - Utili (perdite) portati a nuovo:",9=>" - Utile (perdita) dell'esercizio:"),'B'=>array("Titolo"=>") FONDI RISCHI E ONERI:"),'C'=>array("Titolo"=>") TRATTAMENTO DI FINE RAPPORTO DI LAVORO SUBORDINATO:"),'D'=>array("Titolo"=>") DEBITI:"),'E'=>array("Titolo"=>") RATEI E RISCONTI:"));
-$ecodesc = array('A'=>array("Titolo"=>") Valore della produzione:"),'B'=>array("Titolo"=>") Costi della produzione:"),'C'=>array("Titolo"=>") Proventi e oneri finanziari:"),'D'=>array("Titolo"=>") Rettifiche di valore di attività finanziarie:"),'E'=>array("Titolo"=>") Proventi e oneri straordinari:"),'_'=>array("Titolo"=>") Risultato prima delle imposte:"));
+$ecodesc = array('A'=>array("Titolo"=>") Valore della produzione:"),'B'=>array("Titolo"=>") Costi della produzione:"),'C'=>array("Titolo"=>") Proventi e oneri finanziari:"),'D'=>array("Titolo"=>") Rettifiche di valore di attivitï¿½ finanziarie:"),'E'=>array("Titolo"=>") Proventi e oneri straordinari:"),'_'=>array("Titolo"=>") Risultato prima delle imposte:"));
 if (!isset($_GET['bilini']) or !isset($_GET['bilfin'])){
     header("Location: select_bilcee.php");
     exit;
@@ -67,9 +68,9 @@ $rs_castel = gaz_dbi_dyn_query("codcon, ragso1, SUM(import*(darave='D')-import*(
                                 LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra", $where, $orderby);
 //procedura per la creazione dell'array dei conti riclassificati
 while ($castel = gaz_dbi_fetch_array($rs_castel)) {
-      if ($castel["saldo"] > 0) { //se l'eccedenza è in dare
+      if ($castel["saldo"] > 0) { //se l'eccedenza ï¿½ in dare
          if (! in_array(trim($castel['ceedar']),$data)) {//se non e' riclassificato
-            // vedo se c'è la riclassificazione sul mastro
+            // vedo se c'ï¿½ la riclassificazione sul mastro
             $mastro = gaz_dbi_get_row($gTables['clfoco'],'codice',substr($castel['codcon'],0,3)."000000");
             $castel['ceedar']=trim($mastro['ceedar']);
             if (! in_array($castel['ceedar'],$data)) {//se non e' riclassificato neanche il mastro
@@ -78,9 +79,9 @@ while ($castel = gaz_dbi_fetch_array($rs_castel)) {
          }
          $conti[$castel['codcon']] = array($castel["saldo"],$castel["ragso1"],$castel["ceedar"]);
       }
-      if ($castel["saldo"] < 0) {//se l'eccedenza è in avere
+      if ($castel["saldo"] < 0) {//se l'eccedenza ï¿½ in avere
          if (! in_array(trim($castel['ceeave']),$data)) {
-            // vedo se c'è la riclassificazione sul mastro
+            // vedo se c'ï¿½ la riclassificazione sul mastro
             $mastro = gaz_dbi_get_row($gTables['clfoco'],"codice",substr($castel['codcon'],0,3)."000000");
             $castel['ceeave']=trim($mastro['ceeave']);
             if (! in_array(trim($castel['ceeave']),$data)) {//se non e' riclassificato neanche il mastro

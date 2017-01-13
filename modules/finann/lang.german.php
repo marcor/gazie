@@ -1,32 +1,36 @@
 <?php
+
+/*
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
+
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 /*
  --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
-
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
-
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation,  Inc.,   59
-    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
-
     Traduzione Tedesca, Da Sangregorio Antonino.
  --------------------------------------------------------------------------
 */
 
 $strScript = array ("select_comiva.php" =>
-                   array(  "Jährlichen Mitteilung der MwSt.-Daten (Datei IVC)",
+                   array(  "Jï¿½hrlichen Mitteilung der MwSt.-Daten (Datei IVC)",
                            "ALLGEMEINE DATEN",
                            "Abgabenordnung",
                            "Firmenname",
@@ -36,13 +40,13 @@ $strScript = array ("select_comiva.php" =>
                            "Steuernummer",
                            "USt-Id-Nr.",
                            "Getrennte Rechnungslegung",
-                           "Mitteilung von einer Firma die Zugehörigkeit zu einer Gruppe MwSt.",
+                           "Mitteilung von einer Firma die Zugehï¿½rigkeit zu einer Gruppe MwSt.",
                            "Besondere Vorkommnisse",
-                           "ANMELDER [ausfüllen, wenn abweichend von den Steuerpflichtigen]",
+                           "ANMELDER [ausfï¿½llen, wenn abweichend von den Steuerpflichtigen]",
                            "Tax-Code des Unternehmens declanrant",
                            "Tax code",
                            "Termin-Code",
-                           "Gesetzlichen, vertraglichen, de facto Agenten oder geschäftsführendes Mitglied",
+                           "Gesetzlichen, vertraglichen, de facto Agenten oder geschï¿½ftsfï¿½hrendes Mitglied",
                            "Agent of a minor",
                            "Receiver (receivership)",
                            "Manager (judicial custody)",
@@ -125,7 +129,7 @@ $strScript = array ("select_comiva.php" =>
                            " PROFIT & LOSS ",
                            " successive to ",
                            "The present balance is in compliance with the journal entry writings.",
-                           "The choice of the press after all modernizes to the field “last page of the Book Inventories” in the archives company",
+                           "The choice of the press after all modernizes to the field ï¿½last page of the Book Inventoriesï¿½ in the archives company",
                            "Number of first page to print (default: that one write on the archives company + 1)",
                            "Account",
                            "Page ",

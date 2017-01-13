@@ -1,12 +1,11 @@
 <?php
 
-/* $Id: lang.english.php,v 1.5 2010/02/25 15:21:54 devincen Exp $
+/*
   --------------------------------------------------------------------------
-  Gazie - Gestione Azienda
-  Copyright (C) 2004-2010 - Antonio De Vincentiis Montesilvano (PE)
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
-  Spanish Translation by Dante Becerra Lagos softenglish@gmail.com
   --------------------------------------------------------------------------
   Questo programma e` free software;   e` lecito redistribuirlo  e/o
   modificarlo secondo i  termini della Licenza Pubblica Generica GNU

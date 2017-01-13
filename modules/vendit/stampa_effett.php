@@ -1,27 +1,28 @@
 <?php
+
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2015 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation,  Inc.,   59
-    Temple Place, Suite 330, Boston, MA 02111-1307 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/ciftolet.inc.php");
@@ -80,7 +81,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
     //a secondo del tipo di effetto stampo il relativo modulo
     switch($effetto['tipeff'])
     {
-    //questo è il modulo delle ricevute bancarie
+    //questo ï¿½ il modulo delle ricevute bancarie
     case "B":
         $pdf->SetFont('helvetica','',7);
         $pdf->Rect(5,5+$passo*$numefftot,200,50);
@@ -139,7 +140,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(62,5);
         $pdf->Cell(80,5,$cfpiva,0,1,'L');
     break;
-    //questo è il modulo delle cambiali tratte
+    //questo ï¿½ il modulo delle cambiali tratte
     case "T":
         $calc->payment_taxstamp($effetto['impeff'],$admin_aziend['perbol']);
         $impbol = $calc->pay_taxstamp;
@@ -172,7 +173,7 @@ while ($effetto = gaz_dbi_fetch_array($result))
         $pdf->Cell(165,4,'Cambiale-tratta n.'.$effetto['progre'].' emessa '.$salcon.$effetto['numfat'].'/'.$effetto['seziva'].' del '.$datafatt.' di â‚¬ '.$effetto['totfat'],'LTB');
         $pdf->Cell(37,4,'bolli a tergo â‚¬  '.gaz_format_number($impbol),'RTB',1,'R');
     break;
-    //questo è il modulo delle cambiali tratte
+    //questo ï¿½ il modulo delle cambiali tratte
     case "V":
         $calc->payment_taxstamp($effetto['impeff'],$admin_aziend['perbol']);
         $impbol = $calc->pay_taxstamp;
