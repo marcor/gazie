@@ -108,7 +108,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
         }
 
         if (count($msg['err']) <= 0) { // nessun errore
-            $form['datnas'] = gaz_format_date($form['datnas']);
+            $form['datnas'] = gaz_format_date($_POST['datnas'],TRUE);
             gaz_dbi_table_update('anagra', array('id', $form['id']), $form);
             header("Location: " . $form['ritorno']);
             exit;

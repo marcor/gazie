@@ -334,6 +334,13 @@ function gaz_dbi_parse_post($table) {
                 case 246:
                     $acc[$field_meta['data'][$j]->name] = floatval(preg_replace("/\,/", '.', $_POST[$field_meta['data'][$j]->name]));
                     break;
+				case 7:
+				case 10:
+				case 11:
+				case 12:
+				case 13: // campi datetimestamp
+                    $acc[$field_meta['data'][$j]->name] = substr($_POST[$field_meta['data'][$j]->name], 0, 20);
+					break;
                 // i binari non li considero
                 case 252:
                     break;
