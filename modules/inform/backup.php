@@ -79,7 +79,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"" . $script_transl['return'] . "\"></td>
               <td class=\"FacetDataTD\" align=\"right\"><input type=\"submit\" id=\"preventDuplicate\" onClick=\"chkSubmit();\" name=\"submit\" value=\"" . $script_transl['submit'] . "\"></td></tr>";
     echo "</table>\n</form>\n";
-	require("../../library/include/footer.php");
+    require("../../library/include/footer.php");
 } else {
     if (isset($_POST['return'])) {
         header("Location: " . $form['ritorno']);
@@ -187,7 +187,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         } else {
             // ... oppure una tabella normale
             echo "DROP TABLE IF EXISTS `" . $nome_tabella . "`;\n";
-            echo $trow['Create Table'].";\n";
+            echo $trow['Create Table'] . ";\n";
         }
         echo "\n";
 
@@ -198,7 +198,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
             echo "LOCK TABLES `" . $nome_tabella . "` WRITE;\n";
             $head_query_insert = "INSERT INTO `" . $nome_tabella . "` ( ";
             for ($j = 0; $j < $field_meta['num']; $j++) {
-                $head_query_insert .="`" . $field_meta['data'][$j]->name . "`,";
+                $head_query_insert .= "`" . $field_meta['data'][$j]->name . "`,";
             }
             // elimina l'ultima virgola dalla stringa (se esiste)
             $head_query_insert = preg_replace("/,$/", '', $head_query_insert);
@@ -220,18 +220,21 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
                 for ($j = 0; $j < $field_meta['num']; $j++) {
                     $query_insert .= ($first ? "" : ", ");
                     $first = False;
-                    if ($field_meta['data'][$j]->blob && !empty($val[$j])) {
+                    if ($field_meta['data'][$j]->blob && !empty($val[$j])) { // blob
                         $query_insert .= '0x' . bin2hex($val[$j]);
-                    } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
+                    } elseif ($field_meta['data'][$j]->numeric) { // numerico
                         $query_insert .= $val[$j];
-                    } else {
-                        //
-                        // Scelta della codifica.
-                        //
-                    if ($form['text_encoding'] == 1) {
-                            $query_insert .="'" . addslashes(utf8_decode($val[$j])) . "'";
+                    } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
+                        if (empty($val[$j])) {
+                            $query_insert .= "NULL";
                         } else {
-                            $query_insert .="'" . addslashes($val[$j]) . "'";
+                            $query_insert .= "'" . $val[$j] . "'";
+                        }
+                    } else {
+                        if ($form['text_encoding'] == 1) {
+                            $query_insert .= "'" . addslashes(utf8_decode($val[$j])) . "'";
+                        } else {
+                            $query_insert .= "'" . addslashes($val[$j]) . "'";
                         }
                     }
                 }
@@ -245,8 +248,8 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         }
     }
     // aggiungo le viste che ho incontrato (view) alla fine del file di backup
-    foreach ($acc_view as $vw){
-        echo $vw.";\n\n";
+    foreach ($acc_view as $vw) {
+        echo $vw . ";\n\n";
     }
 
     gaz_dbi_put_row($gTables['config'], 'variable', 'last_backup', 'cvalue', date('Y-m-d'));

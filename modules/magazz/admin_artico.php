@@ -53,7 +53,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
     $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
-    $form['last_modified'] = date("Y-m-d H:i:s");
     $form['rows'] = array();
     /** inizio modifica FP 03/12/2015
      * fornitore

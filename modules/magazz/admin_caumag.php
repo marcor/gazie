@@ -1,34 +1,34 @@
 <?php
 /*
- --------------------------------------------------------------------------
-                            GAzie - Gestione Azienda
-    Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
-         (http://www.devincentiis.it)
-           <http://gazie.sourceforge.net>
- --------------------------------------------------------------------------
-    Questo programma e` free software;   e` lecito redistribuirlo  e/o
-    modificarlo secondo i  termini della Licenza Pubblica Generica GNU
-    come e` pubblicata dalla Free Software Foundation; o la versione 2
-    della licenza o (a propria scelta) una versione successiva.
+  --------------------------------------------------------------------------
+  GAzie - Gestione Azienda
+  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  (http://www.devincentiis.it)
+  <http://gazie.sourceforge.net>
+  --------------------------------------------------------------------------
+  Questo programma e` free software;   e` lecito redistribuirlo  e/o
+  modificarlo secondo i  termini della Licenza Pubblica Generica GNU
+  come e` pubblicata dalla Free Software Foundation; o la versione 2
+  della licenza o (a propria scelta) una versione successiva.
 
-    Questo programma  e` distribuito nella speranza  che sia utile, ma
-    SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
-    NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
-    veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
+  Questo programma  e` distribuito nella speranza  che sia utile, ma
+  SENZA   ALCUNA GARANZIA; senza  neppure  la  garanzia implicita di
+  NEGOZIABILITA` o di  APPLICABILITA` PER UN  PARTICOLARE SCOPO.  Si
+  veda la Licenza Pubblica Generica GNU per avere maggiori dettagli.
 
-    Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
-    Generica GNU insieme a   questo programma; in caso  contrario,  si
-    scriva   alla   Free  Software Foundation, 51 Franklin Street,
-    Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
- --------------------------------------------------------------------------
-*/
+  Ognuno dovrebbe avere   ricevuto una copia  della Licenza Pubblica
+  Generica GNU insieme a   questo programma; in caso  contrario,  si
+  scriva   alla   Free  Software Foundation, 51 Franklin Street,
+  Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
+  --------------------------------------------------------------------------
+ */
 require("../../library/include/datlib.inc.php");
 
-$admin_aziend=checkAdmin();
+$admin_aziend = checkAdmin();
 $msg = "";
 
 
-if ((isset($_POST['Update'])) or (isset($_GET['Update']))) {
+if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
     $toDo = 'update';
 } else {
     $toDo = 'insert';
@@ -38,12 +38,12 @@ if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 
-if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Return'])) {
-    header("Location: ".$_POST['ritorno']);
+if ((isset($_GET['Update']) and ! isset($_GET['codice'])) or isset($_POST['Return'])) {
+    header("Location: " . $_POST['ritorno']);
     exit;
 }
 
-if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
+if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
     //qui si dovrebbe fare un parsing di quanto arriva dal browser...
     $form['codice'] = intval($_POST['codice']);
     $form['descri'] = $_POST['descri'];
@@ -52,30 +52,30 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['clifor'] = $_POST['clifor'];
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
-       if ($toDo == 'insert') { // e' un inserimento, controllo se il codice esiste
-          $rs_ctrl = gaz_dbi_get_row($gTables['caumag'],"codice",$form['codice']);
-          if ($rs_ctrl){
-             $msg .= "15+";
-          }
-       }
-       if (empty($form['descri'])){  //descrizione vuota
-             $msg .= "16+";
-       }
-       if ($form['codice']>=98) {  //descrizione vuota
-             $msg .= "17+";
-       }
-       if ($msg == "") {// nessun errore
-          if ($toDo == 'update') { // e' una modifica
-            gaz_dbi_table_update('caumag',$form["codice"],$form);
-          } else { // e' un'inserimento
-            gaz_dbi_table_insert('caumag',$form);
-          }
-          header("Location: ".$_POST['ritorno']);
-          exit;
-       }
-  }
-} elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-    $caumag = gaz_dbi_get_row($gTables['caumag'],"codice",intval($_GET['codice']));
+        if ($toDo == 'insert') { // e' un inserimento, controllo se il codice esiste
+            $rs_ctrl = gaz_dbi_get_row($gTables['caumag'], "codice", $form['codice']);
+            if ($rs_ctrl) {
+                $msg .= "15+";
+            }
+        }
+        if (empty($form['descri'])) {  //descrizione vuota
+            $msg .= "16+";
+        }
+        if ($form['codice'] >= 98) {  //descrizione vuota
+            $msg .= "17+";
+        }
+        if ($msg == "") {// nessun errore
+            if ($toDo == 'update') { // e' una modifica
+                gaz_dbi_table_update('caumag', $form["codice"], $form);
+            } else { // e' un'inserimento
+                gaz_dbi_table_insert('caumag', $form);
+            }
+            header("Location: " . $_POST['ritorno']);
+            exit;
+        }
+    }
+} elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
+    $caumag = gaz_dbi_get_row($gTables['caumag'], "codice", intval($_GET['codice']));
     $form['ritorno'] = $_POST['ritorno'];
     $form['codice'] = $caumag['codice'];
     $form['descri'] = $caumag['descri'];
@@ -84,9 +84,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['operat'] = $caumag['operat'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['caumag'], 1 ,"codice desc",0,1);
+    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['caumag'], 1, "codice desc", 0, 1);
     $ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
-    $form['codice'] = $ultimo_codice['codice']+1;
+    $form['codice'] = $ultimo_codice['codice'] + 1;
     $form['descri'] = "";
     $form['clifor'] = 0;
     $form['insdoc'] = 1;
@@ -95,71 +95,71 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 if ($toDo == 'update') {
-   $title = ucwords($script_transl[$toDo].$script_transl[0])." n.".$form['codice'];
+    $title = ucwords($script_transl[$toDo] . $script_transl[0]) . " n." . $form['codice'];
 } else {
-   $title = ucwords($script_transl[$toDo].$script_transl[0]);
+    $title = ucwords($script_transl[$toDo] . $script_transl[0]);
 }
 print "<form method=\"POST\">\n";
-print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
-print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
+print "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
+print "<input type=\"hidden\" value=\"" . $_POST['ritorno'] . "\" name=\"ritorno\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
     $message = "";
-    $rsmsg = array_slice( explode('+',chop($msg)),0,-1);
-    foreach ($rsmsg as $value){
-            $message .= $script_transl['error']."! -> ";
-            $rsval = explode('-',chop($value));
-            foreach ($rsval as $valmsg){
-                    $message .= $script_transl[$valmsg]." ";
-            }
-            $message .= "<br />";
+    $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
+    foreach ($rsmsg as $value) {
+        $message .= $script_transl['error'] . "! -> ";
+        $rsval = explode('-', chop($value));
+        foreach ($rsval as $valmsg) {
+            $message .= $script_transl[$valmsg] . " ";
+        }
+        $message .= "<br />";
     }
-    echo '<tr><td colspan="5" class="FacetDataTDred">'.$message."</td></tr>\n";
+    echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
 if ($toDo == 'update') {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"codice\" value=\"".$form['codice']."\" />".$form['codice']."</td></tr>\n";
+    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"codice\" value=\"" . $form['codice'] . "\" />" . $form['codice'] . "</td></tr>\n";
 } else {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"".$form['codice']."\" maxlength=\"2\" size=\"2\" /></td></tr>\n";
+    print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"codice\" value=\"" . $form['codice'] . "\" maxlength=\"2\" size=\"2\" /></td></tr>\n";
 }
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"descri\" value=\"" . $form['descri'] . "\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[11]</td><td class=\"FacetDataTD\">\n";
 print "<select name=\"clifor\" class=\"FacetSelect\">\n";
 for ($counter = -1; $counter <= 1; $counter++) {
-    $selected="";
+    $selected = "";
     if ($form["clifor"] == $counter) {
-       $selected = " selected ";
+        $selected = " selected ";
     }
-    print "<option value=\"$counter\" $selected > ".$script_transl[$counter+13]."</option>\n";
+    print "<option value=\"$counter\" $selected > " . $script_transl[$counter + 13] . "</option>\n";
 }
 print "</select></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\">\n";
 print "<select name=\"insdoc\" class=\"FacetSelect\">\n";
 for ($counter = 0; $counter <= 1; $counter++) {
-    $selected="";
+    $selected = "";
     if ($form["insdoc"] == $counter) {
-       $selected = " selected ";
+        $selected = " selected ";
     }
-    print "<option value=\"$counter\" $selected > ".$script_transl[$counter+6]."</option>\n";
+    print "<option value=\"$counter\" $selected > " . $script_transl[$counter + 6] . "</option>\n";
 }
 print "</select></td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 print "<select name=\"operat\" class=\"FacetSelect\">\n";
 for ($counter = -1; $counter <= 1; $counter++) {
-    $selected="";
+    $selected = "";
     if ($form["operat"] == $counter) {
-       $selected = " selected ";
+        $selected = " selected ";
     }
-    print "<option value=\"$counter\" $selected > ".$script_transl[$counter+9]."</option>\n";
+    print "<option value=\"$counter\" $selected > " . $script_transl[$counter + 9] . "</option>\n";
 }
 print "</select></td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
+print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
 print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
-print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
+print "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
 if ($toDo == 'update') {
-   print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['update']).'!"></td></tr><tr></tr>';
+    print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . strtoupper($script_transl['update']) . '!"></td></tr><tr></tr>';
 } else {
-   print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['insert']).'!"></td></tr><tr></tr>';
+    print '<input type="submit" accesskey="i" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="' . strtoupper($script_transl['insert']) . '!"></td></tr><tr></tr>';
 }
 print "</td></tr></table>\n";
 ?>
