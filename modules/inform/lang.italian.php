@@ -141,7 +141,9 @@ $strScript = array(
         'del' => 'Elimina',
         'config' => 'Configurazione',
         'backup_mode' => 'Modalità di backup',
-        'backup_mode_value' => array('automatic' => 'Automatico', 'internal' => 'Locale', 'external' => 'Remoto')
+        'backup_mode_value' => array('automatic' => 'Automatico', 'internal' => 'Locale', 'external' => 'Remoto'),
+        'sure' => 'Sei sicuro?',
+        'recover' => 'Ripristinare'
     ),
     "report_anagra.php" =>
     array('title' => "Anagrafiche comuni"

@@ -31,13 +31,13 @@
     }
 
     require("../../library/include/datlib.inc.php");
-    $config = new Config;
+    $config = new UserConfig;
     $admin_aziend=checkAdmin();
     
-    $form['description'] = $_POST['desc'];
-    $form['variable'] = $_POST['name'];
-    $form['cvalue'] = $_POST['val'];
-    $form['show'] = 0;
+    $form['var_descri'] = $_POST['desc'];
+    $form['var_name'] = $_POST['name'];
+    $form['var_value'] = $_POST['val'];
+    $form['adminid'] = $admin_aziend["Login"];
     
-    $config->setValue ( $form['variable'], $form );
+    $config->setValue ( $form['var_name'], $form );
 ?>

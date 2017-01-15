@@ -487,6 +487,55 @@ class Config {
 
 }
 
+class UserConfig {
+
+    function __construct() {
+        global $gTables;
+        $results = gaz_dbi_query("SELECT var_name, var_value FROM " . $gTables['admin_config']);
+        while ($row = gaz_dbi_fetch_object($results)) {
+            $this->{$row->var_name} = $row->var_value;
+        }
+    }
+
+    function getValue($variable) {
+        return $this->{$variable};
+    }
+
+    function setValue($variable, $value = array('var_descri' => '', 'var_value' => '')) {
+        /* in $variabile va sempre il nome della variabile, 
+         * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre 
+         * viene inserita qualora non esista.  
+         * In caso di inserimento è necessario passare un array in $value mentre in caso di
+         * aggiornamento è sufficiente un valore */
+        global $gTables, $form;
+        $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_STRING);
+        $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable. "'");
+        if (gaz_dbi_num_rows($result) >= 1) { // è un aggiornamento
+            if (is_array($value)) {
+                $row = gaz_dbi_fetch_array($result);
+                $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_STRING);
+                $this->{$variable} = $value['var_value'];
+                $value['var_name'] = $variable;
+                gaz_dbi_table_update('admin_config', array('id', $row['id']), $value);
+            } else {
+                $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_STRING);
+                gaz_dbi_put_row($gTables['admin_config'], 'var_name', $variable, 'var_value', $value['var_value']);
+            }
+        } else { // è un inserimento
+            gaz_dbi_table_insert('admin_config', $value);
+        }
+    }
+
+    function setDefaultValue() {
+        $this->setValue('LTE_Fixed', array("var_name" => "LTE_Fixed", "var_descri" => "Attiva lo stile fisso. Non puoi usare fisso e boxed insieme", "var_value" => "false"));
+        $this->setValue('LTE_Boxed', array("var_name" => "LTE_Boxed", "var_descri" => "Attiva lo stile boxed", "var_value" => "false"));
+        $this->setValue('LTE_Collapsed', array("var_name" => "LTE_Collapsed", "var_descri" => "Collassa il menu principale", "var_value" => "true"));
+        $this->setValue('LTE_Onhover', array("var_name" => "LTE_Onhover", "var_descri" => "Espandi automaticamente il menu", "var_value" => "false"));
+        $this->setValue('LTE_SidebarOpen', array("var_name" => "LTE_SidebarOpen", "var_descri" => "Mantieni la barra aperta", "var_value" => "false"));
+    }
+
+}
+
 // end Config
 
 class configTemplate {

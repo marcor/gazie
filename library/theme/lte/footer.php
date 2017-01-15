@@ -23,20 +23,11 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+
 global $admin_aziend;
 
 require("../../modules/root/lang.".$admin_aziend['lang'].".php");
-
-function printCheckbox( $Caption, $varName, $Descrizione ) {
-    global $config;
-    echo "<div class='form-group'>";
-    echo "<label class='control-sidebar-subheading'>";
-    echo $Caption;
-    if ( $config->getValue($varName)!="false" ) $val = "checked='".$config->getValue($varName)."'";
-    else $val="";
-    echo "<input type='checkbox' hint='".$Descrizione."' class='pull-right' name='".$varName."' ".$val." onclick='processForm(this)' />"; 
-    echo "</label><p>".$Descrizione."</p></div>";
-}
+//require("../../library/theme/lte/function.php");
 
 ?>
 </div>
@@ -75,7 +66,6 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
                 printCheckbox("Menu Ridotto", "LTE_Collapsed", "Collassa il menu principale" );
                 printCheckbox("Menu Automatico", "LTE_Onhover", "Espandi automaticamente il menu" );
                 printCheckbox("Sidebar Aperto", "LTE_SidebarOpen", "Mantieni la barra aperta" );
-                
               ?>
               <div class='form-group'>
                   <a href="">Ripristina default</a>
@@ -87,15 +77,11 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
       <div class="control-sidebar-bg"></div>
     </div><!-- ./wrapper -->
 
-    <!-- jQuery 2.1.4 -->
     <script src="../../js/jquery/jquery.js"></script>
-    <!-- jQuery UI 1.11.4 -->
     <script src="../../js/jquery.ui/jquery-ui.min.js"></script>
-    <!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
-    <script>
+    <script><!-- Resolve conflict in jQuery UI tooltip with Bootstrap tooltip -->
       $.widget.bridge('uibutton', $.ui.button);
-    </script>  
-    
+    </script>    
     <script type="text/javascript">
         function processForm(el) { 
             var checkbox = $(el);
@@ -112,15 +98,10 @@ function printCheckbox( $Caption, $varName, $Descrizione ) {
             });
             //window.location.reload();
         }
-    </script>
-    
-    <!-- Bootstrap 3.3.5 -->
+    </script>  
     <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
-    <!-- Slimscroll -->
     <script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <!-- FastClick -->
     <script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
-    <!-- AdminLTE App -->
     <script>
         var AdminLTEOptions = {
             sidebarExpandOnHover: <?php echo $config->getValue('LTE_Onhover'); ?>,

@@ -135,7 +135,7 @@ $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
                                 <?php
                                 if ( $admin_aziend["Abilit"]=="9") { ?>
                                 <td align="center">
-                                    <a class="btn btn-xs btn-default" href=""><i class="glyphicon glyphicon-repeat"></i></a>
+                                    <a class="btn btn-xs btn-default" href="recover_backup.php?id=<?php echo $file ?>"><i class="glyphicon glyphicon-repeat"></i></a>
                                 </td>
                                 <td align="center">
                                     <a class="btn btn-xs btn-default" href="delete_backup.php?id=<?php echo $file ?>"><i class="glyphicon glyphicon-remove"></i></a>

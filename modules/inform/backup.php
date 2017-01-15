@@ -260,7 +260,7 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
         if ($zip->open($filename, ZipArchive::CREATE) !== TRUE) {
             exit("cannot open <$filename>\n");
         }
-        $zip->addFromString($Database . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql', $content);
+        $zip->addFromString($Database . "-" . date("YmdHi") . '-v' . GAZIE_VERSION . '.sql', $content);
         $filebackup = gaz_dbi_get_row($gTables['config'], 'variable', 'file_backup');
         if ($filebackup['cvalue'] == 1) {
             chdir('../../');

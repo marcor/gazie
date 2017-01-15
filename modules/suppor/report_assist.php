@@ -33,8 +33,6 @@ if ( !isset($_GET['include']) ) {
 }
 
 if ( isset($_GET['chstato'] ) ) {
-   //$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," tipo='ASS'", "stato asc", "0", "9999");   
-   //$rows = gaz_dbi_fetch_all($result);
    $rows = array ("aperto","effettuato","chiuso");
    $found = false;
    for ($t=0; $t<count($rows); $t++ ) {
@@ -64,37 +62,37 @@ if ( isset( $_GET['idinstallazione']) ) {
 }
 
 if ( isset($_GET['flt_passo']) ) {
-	$passo = $_GET['flt_passo'];
+    $passo = $_GET['flt_passo'];
 } else {
-	$passo = 20;
+    $passo = 20;
 }
 
 if ( isset($_GET['flt_tecnico']) ) {
-	$flt_tecnico = $_GET['flt_tecnico'];
-	if ( $flt_tecnico!="tutti" ) {
-		$where .= " and tecnico = '".$flt_tecnico."'";
-	}
+    $flt_tecnico = $_GET['flt_tecnico'];
+    if ( $flt_tecnico!="tutti" ) {
+	$where .= " and tecnico = '".$flt_tecnico."'";
+    }
 } else {
-	$flt_tecnico = "tutti";
+    $flt_tecnico = "tutti";
 }
 if ( isset($_GET['flt_stato']) ) {
-	$flt_stato = $_GET['flt_stato'];
-	if ( $flt_stato!="tutti" ) {
-		if ( $flt_stato=="nochiusi" ) {
-			$where .= " and stato != 'chiuso' and stato != 'contratto' ";
-		} else {
-			$where .= " and stato = '".$flt_stato."'";
-		}
+    $flt_stato = $_GET['flt_stato'];
+    if ( $flt_stato!="tutti" ) {
+    	if ( $flt_stato=="nochiusi" ) {
+            $where .= " and stato != 'chiuso' and stato != 'contratto' ";
+	} else {
+            $where .= " and stato = '".$flt_stato."'";
 	}
+    }
 } else {
-	$flt_stato = "nochiusi";
-	$where .= " and stato != 'chiuso'";
+    $flt_stato = "nochiusi";
+    $where .= " and stato != 'chiuso'";
 }
 
 if ( isset($_GET['flt_cliente']) ) {
-	$flt_cliente = $_GET['flt_cliente'];
+    $flt_cliente = $_GET['flt_cliente'];
 } else {
-	$flt_cliente = "tutti";
+    $flt_cliente = "tutti";
 }
 
 if ( $flt_cliente!="tutti" ) {
@@ -106,11 +104,10 @@ if ( $flt_cliente!="tutti" ) {
     <form method="GET">
       <div class="box-body table-responsive">
 	<table class="Tlarge table table-striped table-bordered table-condensed">
-		<tr>
+            <tr>
 		<td class="FacetFieldCaptionTD" colspan="4">
-			<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="15" size="15" tabindex=1 class="FacetInput">
-			<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
-		
+                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="15" size="15" tabindex=1 class="FacetInput">
+                    <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 		</td>
 		<td class="FacetFieldCaptionTD" colspan="2">
 		<select name="flt_cliente" onchange="this.form.submit()">
@@ -243,7 +240,12 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 		<td><?php echo $a_row["ore"]; ?></td>
       <td><?php echo $a_row["tecnico"]; ?></td>
 		<td>
-         <a href="report_assist.php?chstato=<?php echo $a_row["id"]."&prev=".$a_row["stato"];?>" class="btn btn-xs btn-edit">
+                    <?php
+                    $filtro = "";
+                    if ( isset($_GET["flt_cliente"]) ) {
+                        $filtro = "&flt_cliente=".$_GET["flt_cliente"];
+                    }?>
+         <a href="report_assist.php?chstato=<?php echo $a_row["id"]."&prev=".$a_row["stato"].$filtro; ?>" class="btn btn-xs btn-edit">
             <?php echo $a_row["stato"]; ?>
          </a>
       </td>
