@@ -22,7 +22,7 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   -------------------------------------------------------------------
  */
-    $config = new UserConfig;
+     $user_config = new UserConfig;
     
     require("../../library/theme/lte/function.php");
 
@@ -93,19 +93,19 @@
   
   // imposto le opzioni del tema caricando le opzioni del database
   
-  $val=$config->getValue('LTE_Fixed');
+  $val= $user_config->getValue('LTE_Fixed');
   if ( !isset($val) ) {
-      $config->setDefaultValue();
+       $user_config->setDefaultValue();
       header("Location: ../../modules/root/admin.php");
   } else {
       $val="";
   }
   
-  if ( $config->getValue('LTE_Fixed')=="true" ) $val = " fixed";
-  if ( $config->getValue('LTE_Boxed')=="true" ) $val = " layout-boxed";
-  if ( $config->getValue('LTE_Collapsed')=="true" ) $val .= " sidebar-collapse";
-  if ( $config->getValue('LTE_Onhover')=="true" ) $val .= " wysihtml5-supported sidebar-collapse";    
-  if ( $config->getValue('LTE_SidebarOpen')=="true" ) $val .= " control-sidebar-open";    
+  if (  $user_config->getValue('LTE_Fixed')=="true" ) $val = " fixed";
+  if (  $user_config->getValue('LTE_Boxed')=="true" ) $val = " layout-boxed";
+  if (  $user_config->getValue('LTE_Collapsed')=="true" ) $val .= " sidebar-collapse";
+  if (  $user_config->getValue('LTE_Onhover')=="true" ) $val .= " wysihtml5-supported sidebar-collapse";    
+  if (  $user_config->getValue('LTE_SidebarOpen')=="true" ) $val .= " control-sidebar-open";    
   
   echo "<body class=\"hold-transition skin-blue sidebar-mini ".$val."\">";
   ?>
