@@ -51,8 +51,70 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
         <!-- Tab panes -->
         <div class="tab-content">
           <!-- Home tab content -->
-          <div class="tab-pane" id="control-sidebar-home-tab">
+          <div class="tab-pane active" id="control-sidebar-home-tab">
           
+              <!--<form action="" method="post">
+        <select class="changeStatus" name="changeStatus">
+                <option value="0">Starting</option>
+                <option value="1">Ongoing</option>
+                <option value="2">Over</option>
+        </select>
+        <input class="projectId" type="hidden" name="projectId" value="<?php echo $data['id'];?>"/>
+               </form>-->
+              <ul class="control-sidebar-menu">
+                <?php
+            $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 15);
+            if (gaz_dbi_num_rows($result) > 0) {
+                while ($r = gaz_dbi_fetch_array($result)) {
+                    $rref = explode('-', $r['transl_ref']);
+                    
+                    switch ($rref[1]) {
+                        case 'm1':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['title'];
+                            break;
+                        case 'm2':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
+                            break;
+                        case 'm3':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
+                            break;
+                        case 'sc':
+                            require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $strScript[$rref[2]][$rref[3]];
+                            break;
+                        default:
+                            $rref_name = 'Nome script non trovato';
+                            break;
+                    }
+                    ?>
+                  <li>
+                    <a href="<?php
+                            if ($r["link"] != "")
+                                echo '../../modules' . $r["link"];
+                            else
+                                echo "&nbsp;";
+                            ?>">
+                          <i class="menu-icon fa <?php echo get_rref_type( $r["link"] ); ?>" style="color:#<?php echo $r["color"]; ?>"></i>
+                          <div class="menu-info">
+                            <h4 class="control-sidebar-subheading">
+                                <?php 
+                                    echo pulisci_rref_name( $rref_name );
+                                    //echo $rref_name;
+                                ?>
+                            </h4>
+                            <p><?php echo $r["click"] . ' click'; ?></p>
+                          </div>
+                    </a>
+                  </li>
+                  <?php
+                }
+            }
+            ?>
+                </ul>
+              
           </div><!-- /.tab-pane -->
           <!-- Stats tab content -->
           <div class="tab-pane" id="control-sidebar-stats-tab">Stats Tab Content</div><!-- /.tab-pane -->

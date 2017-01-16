@@ -4,12 +4,6 @@ body {
 .help {
     margin-bottom: 20px;
 }
-.tab-content {
-    /*background-color: #fff;*/
-    border: 1px solid #ddd;
-    border-top: 0px;
-    padding: 15px 15px 15px 15px;
-}
 .contenuto-help {
    background-color: #fff;
 }

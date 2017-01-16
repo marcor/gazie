@@ -1,5 +1,25 @@
 <?php
+  
+function get_rref_type($value) {
+    if ( stristr($value, "report_") ) return "fa-list";
+    if ( stristr($value, "admin_") ) return "fa-pencil";
+    if ( stristr($value, "select_") ) return "fa-print";
+}
 
+function pulisci_rref_name($value) {
+    $value = str_replace("Gestione dei", "", $value);
+    $value = str_replace("Gestione degli", "", $value);
+    $value = str_replace("Gestione", "", $value);
+    $value = str_replace("Emissione di", "", $value);
+    $value = str_replace("Emissione", "", $value);
+    $value = str_replace("Visualizzazione e", "", $value);
+    $value = str_replace("Visualizzazione", "", $value);
+    $value = str_replace("Lista dei", "", $value);
+    $value = str_replace("Selezione e", "", $value);
+    //$value = ucfirst($value);
+    return substr( $value, 0, 28); 
+}
+  
 function printCheckbox( $Caption, $varName, $Descrizione ) {
     global $gTables, $form;
     $config = new UserConfig;
