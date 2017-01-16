@@ -27,7 +27,7 @@ $aut = 9;
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
-$config = new Config;
+$global_config = new Config;
 $user_data = gaz_dbi_get_row($gTables['admin'], "Login", $_SESSION["Login"]);
 $msg = array('err' => array(), 'war' => array());
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
@@ -118,7 +118,7 @@ if (isset($_POST['Submit'])) {
         $msg['err'][] = 'Login';
     if (empty($form["Password"]))
         $msg['err'][] = 'Password';
-    if (strlen($form["Password"]) < $config->getValue('psw_min_length'))
+    if (strlen($form["Password"]) < $global_config->getValue('psw_min_length'))
         $msg['err'][] = 'passlen';
     if ($form["Password"] != $form["confpass"])
         $msg['err'][] = 'confpass';
@@ -405,7 +405,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                 }
                 ?>
                 <tr>
-                    <td class="FacetFieldCaptionTD"><?php echo $script_transl['pre_pass'] . ' ' . $config->getValue('psw_min_length') . ' ' . $script_transl['post_pass']; ?> *</td>
+                    <td class="FacetFieldCaptionTD"><?php echo $script_transl['pre_pass'] . ' ' . $global_config->getValue('psw_min_length') . ' ' . $script_transl['post_pass']; ?> *</td>
                     <td colspan="2" class="FacetDataTD"><input title="Password" type="password" id="login-password" name="Password" value="<?php print $form["Password"]; ?>" maxlength="20" size="20" class="FacetInput" id="ppass" /><div class="FacetDataTDred" id="pmsg"></div>&nbsp;</td>
                 </tr>
                 <tr>
