@@ -153,7 +153,7 @@ $aRiportare = array('top'=>array(array('lun' => 168,'nam'=>'da riporto : '),
                            )
                     );
 
-$pdf = new Report_template();
+$pdf = new Report_template('P','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->AddPage();
 $pdf->Cell(186,6,'STATO PATRIMONIALE AL '.date("d-m-Y",$utsfin),'LTR',1,'C');

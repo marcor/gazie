@@ -93,7 +93,7 @@ $title = array('luogo_data'=>$luogo_data,
                             )
               );
 
-$pdf = new Report_template();
+$pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(39);
 $pdf->SetFooterMargin(20);

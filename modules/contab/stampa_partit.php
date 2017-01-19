@@ -89,7 +89,7 @@ $aRiportare = array('top'=>array(array('lun' => 166,'nam'=>'da riporto : '),
                            array('lun' => 20,'nam'=>'')
                            )
                     );
-$pdf = new Report_template();
+$pdf = new Report_template('P','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(51);
 $pdf->SetFooterMargin(22);

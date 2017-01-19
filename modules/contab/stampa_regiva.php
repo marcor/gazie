@@ -211,7 +211,7 @@ function calcPeriod($dateIni,$dateFin,$period){
 
 // -------------  INIZIO STAMPA  -------------------------------
 
-$pdf = new vatBook();
+$pdf = new vatBook('P','mm','A4',true,'UTF-8',false,true);
 $ini_page = intval($_GET['pi']);
 if ($_GET['cv']=='cover') {
    $ini_page--;

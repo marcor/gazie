@@ -73,7 +73,7 @@ $botCarry = array(array('lenght' => 118, 'name' => 'a riporto : ', 'frame' => 'T
 
 require("../../config/templates/standard_template.php");
 
-$pdf = new Standard_template();
+$pdf = new Standard_template('P','mm','A4',true,'UTF-8',false,true);
 $n_page = intval($_GET['pi']);
 if ($_GET['cv'] == 'cover') {
     $n_page--;

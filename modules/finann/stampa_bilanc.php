@@ -165,7 +165,7 @@ $botCarry = array(array('lenght' => 100,'name'=>'a riporto : ','frame' => 0,'fil
                   array('lenght' => 35,'name'=>'','frame' => 1,'fill'=>0));
 
 require("../../config/templates/standard_template.php");
-$pdf = new Standard_template();
+$pdf = new Standard_template('P','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title,0,1);
 $pdf->AddPage();
 $pdf->SetFont('helvetica','',10);

@@ -67,7 +67,7 @@ $top = array(array('lenght' => 10,'name'=>'Progr.','frame' => 1,'fill'=>1,'font'
              array('lenght' => 20,'name'=>'Avere','frame' => 1,'fill'=>1));
 
 require("../../config/templates/standard_template.php");
-$pdf = new Standard_template();
+$pdf = new Standard_template('P','mm','A4',true,'UTF-8',false,true);
 $n_page = intval($_GET['pagini']);
 if (isset($_GET['copert'])) {
    $n_page--;
