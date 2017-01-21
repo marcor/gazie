@@ -2014,7 +2014,7 @@ class Schedule {
         $this->Partners = $res;
     }
 
-    function getScheduleEntries($ob = 0, $masclifor) {
+    function getScheduleEntries($ob = 0, $masclifor, $date=false) {
         /*
          * genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
          * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso 
@@ -2024,6 +2024,9 @@ class Schedule {
             $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $masclifor . "000001 AND " . $masclifor . "999999";
         } else {
             $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $this->target . "000001 AND " . $this->target . "999999";
+        }
+        if ($date!=false) {
+            $where .= " AND expiry>='".date("Y-m-d", strtotime("-1 month"))."' and expiry<='".date("Y-m-d", strtotime("+2 month"))."'";
         }
         $sqlquery = "SELECT * FROM " . $gTables['paymov']
                 . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig ) "

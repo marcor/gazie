@@ -198,7 +198,7 @@ if ($t > 4 && $t <= 13) {
         <!-- Scadenziari -->
         <div class="row">
             <div class="col-xs-6">
-                <div class="box">
+                <div class="box gaz-home-scadenze">
                     <div class="box-header">
                         <h3 class="box-title">Scadenzario Clienti</h3>
                     </div>
@@ -216,7 +216,7 @@ if ($t > 4 && $t <= 13) {
                         <?php
                         $ctrl_partner = 0;
                         $scdl = new Schedule;
-                        $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli']);
+                        $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli'], true );
                         if (sizeof($scdl->Entries) > 0) {
                             while (list($key, $mv) = each($scdl->Entries)) {
                                 if ($mv["clfoco"] <> $ctrl_partner) {
@@ -246,7 +246,7 @@ if ($t > 4 && $t <= 13) {
             </div>
             <!-- Scadenzario fornitori -->
             <div class="col-xs-6">
-                <div class="box">
+                <div class="box gaz-home-scadenze">
                     <div class="box-header">
                         <h3 class="box-title">Scadenzario Fornitori</h3>
                     </div>
@@ -265,9 +265,7 @@ if ($t > 4 && $t <= 13) {
                         <?php
                         $ctrl_partner = 0;
                         $scdl = new Schedule;
-                        $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor']);
-                        //print_r ($scdl->Entries);
-                        //exit;
+                        $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor'], true);
                         if (sizeof($scdl->Entries) > 0) {
                             while (list($key, $mv) = each($scdl->Entries)) {
                                 if ($mv["clfoco"] <> $ctrl_partner) {

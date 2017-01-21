@@ -99,6 +99,9 @@
 .control-sidebar-menu > li > a {
     padding: 2px 15px;
 }
+.gaz-home-scadenze {
+    min-height: 260px;
+}
 @media only screen and (max-width: 991px) {
     /* Force table to not be like tables anymore */
     #gaz-responsive-table table,
