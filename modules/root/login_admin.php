@@ -254,7 +254,7 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
                         ?>
                         <div style="padding-top:10px" class="form-group">
                             <div class="col-sm-12 controls">
-                                <input style="float:right;" class="btn btn-success" name="actionflag" type="submit" value="Login" >
+                                <input style="float:right;" class="btn btn-success btn-100" name="actionflag" type="submit" value="Login" >
                             </div>
                         </div>
                     </div>  

@@ -206,9 +206,9 @@ if ($t > 4 && $t <= 13) {
                         <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
                         <thead>
                             <tr role="row">
-                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 296px;" aria-label="Cliente">Cliente</th>
-                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 161px;" aria-label="Avere">Avere</th>
-                                <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 191px;" aria-sort="ascending" aria-label="Scadenza">Scadenza</th>
+                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente">Cliente</th>
+                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-label="Avere">Avere</th>
+                                <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Scadenza">Scadenza</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -220,21 +220,27 @@ if ($t > 4 && $t <= 13) {
                         if (sizeof($scdl->Entries) > 0) {
                             while (list($key, $mv) = each($scdl->Entries)) {
                                 $status_descr = '';
+                                if ( $mv['expiry'] <= date("Y-m-d" ) ) {
+                                    $stato_partita="warning";
+                                } else {
+                                    $stato_partita="";
+                                }
                                 if ($mv["clfoco"] <> $ctrl_partner) {
                                     $class_partner = 'FacetDataTD';
                                     $partner = $mv["ragsoc"];
                                 }
                                 $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
                                 if ( $tot >= 0.01 ) {
-                                    echo "<tr class='odd' role='row'>";
+                                    echo "<tr class='odd ".$stato_partita."' role='row'>";
                                     echo "<td>".$partner."</td>";
-                                    echo "<td>".gaz_format_number( $tot )."</td>";
-                                    echo "<td>".gaz_format_date($mv["expiry"])."</td>";
+                                    echo "<td class='right'>".gaz_format_number( $tot )."</td>";
+                                    echo "<td class='right'>".gaz_format_date($mv["expiry"])."</td>";
                                     echo "</tr>";
                                 }
+                                $ctrl_partner = $mv["clfoco"];
                             }
                         }
-                        $ctrl_partner = $mv["clfoco"];
+                        
                         ?>
                         </tbody>
                         <tfoot>
@@ -259,9 +265,9 @@ if ($t > 4 && $t <= 13) {
                         <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
                         <thead>
                             <tr role="row">
-                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 296px;" aria-label="Rendering engine: activate to sort column descending">Fornitore</th>
-                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 161px;" aria-label="Browser: activate to sort column ascending">Dare</th>
-                                <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 191px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending">Scadenza</th>
+                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 300px;" aria-label="Rendering engine: activate to sort column descending">Fornitore</th>
+                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-label="Browser: activate to sort column ascending">Dare</th>
+                                <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending">Scadenza</th>
                             </tr>
                         </thead>
                         
@@ -277,12 +283,17 @@ if ($t > 4 && $t <= 13) {
                                     $class_partner = 'FacetDataTD';
                                     $partner = $mv["ragsoc"];
                                 }
+                                if ( $mv['expiry'] <= date("Y-m-d" ) ) {
+                                    $stato_partita="warning";
+                                } else {
+                                    $stato_partita="";
+                                }
                                 $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
                                 if ( $tot >= 0.01 ) {
-                                    echo "<tr class='odd' role='row'>";
+                                    echo "<tr class='odd ".$stato_partita."' role='row'>";
                                     echo "<td>".$partner."</td>";
-                                    echo "<td>".gaz_format_number($tot)."</td>";
-                                    echo "<td>".gaz_format_date($mv["expiry"])."</td>";
+                                    echo "<td class='right'>".gaz_format_number($tot)."</td>";
+                                    echo "<td class='right'>".gaz_format_date($mv["expiry"])."</td>";
                                     echo "</tr>";
                                 }
                             }

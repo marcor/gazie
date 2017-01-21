@@ -322,9 +322,20 @@ input.input-xs {
 }
 .panel-info {
     border-color: #88c086;
+    max-width: 500px;
+    margin: auto;
+    
 }
 .panel-info > .panel-gazie {
     border-color: #88c086;
+}
+.btn-100 {
+    width: 100px;
+}
+.panel-info > .panel-heading {
+	background-color: #aae2a8 !important;
+	border-color: #88c086;
+	color: #123311;
 }
 #formlogin {
     padding-top: 50px

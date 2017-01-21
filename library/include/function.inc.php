@@ -2026,7 +2026,7 @@ class Schedule {
             $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $this->target . "000001 AND " . $this->target . "999999";
         }
         if ($date!=false) {
-            $where .= " AND expiry>='".date("Y-m-d", strtotime("-1 month"))."' and expiry<='".date("Y-m-d", strtotime("+2 month"))."' group by id_tesdoc_ref ";
+            $where .= " AND expiry>='".date("Y-m-d", strtotime("-5 days"))."' and expiry<='".date("Y-m-d", strtotime("+2 month"))."' group by id_tesdoc_ref ";
         }
         $sqlquery = "SELECT * FROM " . $gTables['paymov']
                 . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig ) "

@@ -215,8 +215,8 @@ table.selectTable td {
 .panel-info {
 	border-color: #88c086;
 }
-.panel-info > .panel-gazie {
-	background-color: #aae2a8;
+.panel-info > .panel-heading {
+	background-color: #aae2a8 !important;
 	border-color: #88c086;
 	color: #123311;
 }

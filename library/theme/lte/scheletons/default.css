@@ -37,6 +37,10 @@
 .glyphicon-edit {
     padding-right: 5px;
 }
+.right {
+    text-align: right;
+    margin-right: 1em;
+}
 .btn-200 {
     width: 200px;
 }
