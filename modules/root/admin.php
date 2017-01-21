@@ -214,23 +214,27 @@ if ($t > 4 && $t <= 13) {
                         <tbody>
                         <!-- Scadenzario clienti -->
                         <?php
-                        $ctrl_partner = 0;
+                        $ctrl_partner = 0;                      
                         $scdl = new Schedule;
                         $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli'], true );
                         if (sizeof($scdl->Entries) > 0) {
                             while (list($key, $mv) = each($scdl->Entries)) {
+                                $status_descr = '';
                                 if ($mv["clfoco"] <> $ctrl_partner) {
                                     $class_partner = 'FacetDataTD';
                                     $partner = $mv["ragsoc"];
                                 }
-                                echo "<tr class='odd' role='row'>";
-                                echo "<td>".$partner."</td>";
-                                echo "<td>".gaz_format_number($mv["amount"])."</td>";
-                                //echo "<td>".$status_descr."</td>";
-                                echo "<td>".gaz_format_date($mv["expiry"])."</td>";
-                                echo "</tr>";
+                                $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
+                                if ( $tot >= 0.01 ) {
+                                    echo "<tr class='odd' role='row'>";
+                                    echo "<td>".$partner."</td>";
+                                    echo "<td>".gaz_format_number( $tot )."</td>";
+                                    echo "<td>".gaz_format_date($mv["expiry"])."</td>";
+                                    echo "</tr>";
+                                }
                             }
                         }
+                        $ctrl_partner = $mv["clfoco"];
                         ?>
                         </tbody>
                         <tfoot>
@@ -244,6 +248,7 @@ if ($t > 4 && $t <= 13) {
                     </div>
                 </div>
             </div>
+            <?php //exit(); ?>
             <!-- Scadenzario fornitori -->
             <div class="col-xs-6">
                 <div class="box gaz-home-scadenze">
@@ -272,12 +277,14 @@ if ($t > 4 && $t <= 13) {
                                     $class_partner = 'FacetDataTD';
                                     $partner = $mv["ragsoc"];
                                 }
-                                echo "<tr class='odd' role='row'>";
-                                echo "<td>".$partner."</td>";
-                                echo "<td>".gaz_format_number($mv["amount"])."</td>";
-                                //echo "<td>".$status_descr."</td>";
-                                echo "<td>".gaz_format_date($mv["expiry"])."</td>";
-                                echo "</tr>";
+                                $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
+                                if ( $tot >= 0.01 ) {
+                                    echo "<tr class='odd' role='row'>";
+                                    echo "<td>".$partner."</td>";
+                                    echo "<td>".gaz_format_number($tot)."</td>";
+                                    echo "<td>".gaz_format_date($mv["expiry"])."</td>";
+                                    echo "</tr>";
+                                }
                             }
                         }
                         ?>

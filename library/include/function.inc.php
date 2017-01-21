@@ -2026,7 +2026,7 @@ class Schedule {
             $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $this->target . "000001 AND " . $this->target . "999999";
         }
         if ($date!=false) {
-            $where .= " AND expiry>='".date("Y-m-d", strtotime("-1 month"))."' and expiry<='".date("Y-m-d", strtotime("+2 month"))."'";
+            $where .= " AND expiry>='".date("Y-m-d", strtotime("-1 month"))."' and expiry<='".date("Y-m-d", strtotime("+2 month"))."' group by id_tesdoc_ref ";
         }
         $sqlquery = "SELECT * FROM " . $gTables['paymov']
                 . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig ) "
@@ -2153,6 +2153,23 @@ class Schedule {
         return round($acc, 2);
     }
 
+    function getAmount($id_tesdoc_ref, $date = false) {
+        /*
+         * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
+         */
+        global $gTables;
+        $date_ctrl = new DateTime($date);
+        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0)- amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
+          SUM(amount*(id_rigmoc_pay>0)) AS pay, 
+          SUM(amount*(id_rigmoc_doc>0))AS doc,
+          MAX(expiry) AS exp
+            FROM " . $gTables['paymov'] . "
+            WHERE id_tesdoc_ref = '" . $id_tesdoc_ref . "' GROUP BY id_tesdoc_ref";
+        $rs = gaz_dbi_query($sqlquery);
+        $r = gaz_dbi_fetch_array($rs);
+        return $r['diff_paydoc'];
+    }
+    
     function getStatus($id_tesdoc_ref, $date = false) {
         /*
          * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
