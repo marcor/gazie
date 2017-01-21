@@ -200,23 +200,23 @@ if ($t > 4 && $t <= 13) {
             <div class="col-xs-6">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="box-title">Scadenziario Clienti</h3>
+                        <h3 class="box-title">Scadenzario Clienti</h3>
                     </div>
                     <div class="box-body">
                         <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
                         <thead>
                             <tr role="row">
-                                <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 296px;" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Cliente</th>
-                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 361px;" aria-label="Browser: activate to sort column ascending">Avere</th>
-                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 321px;" aria-label="Platform(s): activate to sort column ascending">Scadenza</th>
+                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 296px;" aria-label="Cliente">Cliente</th>
+                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 161px;" aria-label="Avere">Avere</th>
+                                <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 191px;" aria-sort="ascending" aria-label="Scadenza">Scadenza</th>
                             </tr>
                         </thead>
                         <tbody>
-                        <!-- Scadenziario clienti -->
+                        <!-- Scadenzario clienti -->
                         <?php
                         $ctrl_partner = 0;
                         $scdl = new Schedule;
-                        $m = $scdl->getScheduleEntries("1", $admin_aziend['mascli']);
+                        $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli']);
                         if (sizeof($scdl->Entries) > 0) {
                             while (list($key, $mv) = each($scdl->Entries)) {
                                 if ($mv["clfoco"] <> $ctrl_partner) {
@@ -233,31 +233,41 @@ if ($t > 4 && $t <= 13) {
                         }
                         ?>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                            </tr>
+                        </tfoot>
                         </table>
                     </div>
                 </div>
             </div>
-            <!-- Scadenziario fornitori -->
+            <!-- Scadenzario fornitori -->
             <div class="col-xs-6">
                 <div class="box">
                     <div class="box-header">
-                        <h3 class="box-title">Scadenziario Fornitori</h3>
+                        <h3 class="box-title">Scadenzario Fornitori</h3>
                     </div>
                     <div class="box-body">
                         <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
                         <thead>
                             <tr role="row">
-                                <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 296px;" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Fornitore</th>
-                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 361px;" aria-label="Browser: activate to sort column ascending">Dare</th>
-                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 321px;" aria-label="Platform(s): activate to sort column ascending">Scadenza</th>
+                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 296px;" aria-label="Rendering engine: activate to sort column descending">Fornitore</th>
+                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 161px;" aria-label="Browser: activate to sort column ascending">Dare</th>
+                                <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 191px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending">Scadenza</th>
                             </tr>
                         </thead>
+                        
                         <tbody>
-                        <!-- Scadenziario fornitori -->
+                        <!-- Scadenzario fornitori -->
                         <?php
                         $ctrl_partner = 0;
                         $scdl = new Schedule;
-                        $m = $scdl->getScheduleEntries("1", $admin_aziend['masfor']);
+                        $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor']);
+                        //print_r ($scdl->Entries);
+                        //exit;
                         if (sizeof($scdl->Entries) > 0) {
                             while (list($key, $mv) = each($scdl->Entries)) {
                                 if ($mv["clfoco"] <> $ctrl_partner) {
@@ -274,6 +284,13 @@ if ($t > 4 && $t <= 13) {
                         }
                         ?>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                                <th rowspan="1" colspan="1"></th>
+                            </tr>
+                        </tfoot>
                         </table>
                     </div>
                 </div>
@@ -405,14 +422,16 @@ require("../../library/include/footer.php");
                     "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
                 },
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
-                "iDisplayLength": 5
+                "iDisplayLength": 5,
+                "order": [2,'asc']
             });
             $('#fornitori').DataTable({
                 "oLanguage": {
                     "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
                 },
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
-                "iDisplayLength": 5
+                "iDisplayLength": 5,
+                "order": [2,'asc']
                 //,
                 //"paging": true,
                 //"lengthChange": false,
