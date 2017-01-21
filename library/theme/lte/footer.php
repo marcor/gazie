@@ -102,7 +102,6 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
                             <h4 class="control-sidebar-subheading">
                                 <?php 
                                     echo pulisci_rref_name( $rref_name );
-                                    //echo $rref_name;
                                 ?>
                             </h4>
                             <p><?php echo $r["click"] . ' click'; ?></p>
@@ -162,8 +161,8 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
         }
     </script>  
     <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
+    <!--<script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>-->
     <script>
         var AdminLTEOptions = {
             sidebarExpandOnHover: <?php echo $config->getValue('LTE_Onhover'); ?>,
@@ -171,10 +170,11 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
             enableBSToppltip: true
         };
     </script>
+    
     <script src="../../library/theme/lte/adminlte/dist/js/app.js"></script>
     <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
     <script src="../../js/custom/gz-library.js"></script>
     <script src="../../js/tinymce/tinymce.min.js"></script>
     <script src="../../js/custom/tinymce.js"></script>
-  </body>
+    </body>
 </html>

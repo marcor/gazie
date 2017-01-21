@@ -4,6 +4,7 @@ function get_rref_type($value) {
     if ( stristr($value, "report_") ) return "fa-list";
     if ( stristr($value, "admin_") ) return "fa-pencil";
     if ( stristr($value, "select_") ) return "fa-print";
+    if ( stristr($value, "accounting_") ) return "fa-suitcase";
 }
 
 function pulisci_rref_name($value) {
@@ -16,6 +17,7 @@ function pulisci_rref_name($value) {
     $value = str_replace("Visualizzazione", "", $value);
     $value = str_replace("Lista dei", "", $value);
     $value = str_replace("Selezione e", "", $value);
+    $value = str_replace("Genera i", "", $value);
     //$value = ucfirst($value);
     return substr( $value, 0, 28); 
 }

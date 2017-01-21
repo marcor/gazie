@@ -194,6 +194,93 @@ if ($t > 4 && $t <= 13) {
                 </div>
             </div>
         </div>
+
+        <!-- Scadenziari -->
+        <div class="row">
+            <div class="col-xs-6">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Scadenziario Clienti</h3>
+                    </div>
+                    <div class="box-body">
+                        <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 296px;" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Cliente</th>
+                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 361px;" aria-label="Browser: activate to sort column ascending">Avere</th>
+                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 321px;" aria-label="Platform(s): activate to sort column ascending">Scadenza</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Scadenziario clienti -->
+                        <?php
+                        $ctrl_partner = 0;
+                        $scdl = new Schedule;
+                        $m = $scdl->getScheduleEntries("1", $admin_aziend['mascli']);
+                        if (sizeof($scdl->Entries) > 0) {
+                            while (list($key, $mv) = each($scdl->Entries)) {
+                                if ($mv["clfoco"] <> $ctrl_partner) {
+                                    $class_partner = 'FacetDataTD';
+                                    $partner = $mv["ragsoc"];
+                                }
+                                echo "<tr class='odd' role='row'>";
+                                echo "<td>".$partner."</td>";
+                                echo "<td>".gaz_format_number($mv["amount"])."</td>";
+                                //echo "<td>".$status_descr."</td>";
+                                echo "<td>".gaz_format_date($mv["expiry"])."</td>";
+                                echo "</tr>";
+                            }
+                        }
+                        ?>
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Scadenziario fornitori -->
+            <div class="col-xs-6">
+                <div class="box">
+                    <div class="box-header">
+                        <h3 class="box-title">Scadenziario Fornitori</h3>
+                    </div>
+                    <div class="box-body">
+                        <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
+                        <thead>
+                            <tr role="row">
+                                <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 296px;" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Fornitore</th>
+                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 361px;" aria-label="Browser: activate to sort column ascending">Dare</th>
+                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 321px;" aria-label="Platform(s): activate to sort column ascending">Scadenza</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <!-- Scadenziario fornitori -->
+                        <?php
+                        $ctrl_partner = 0;
+                        $scdl = new Schedule;
+                        $m = $scdl->getScheduleEntries("1", $admin_aziend['masfor']);
+                        if (sizeof($scdl->Entries) > 0) {
+                            while (list($key, $mv) = each($scdl->Entries)) {
+                                if ($mv["clfoco"] <> $ctrl_partner) {
+                                    $class_partner = 'FacetDataTD';
+                                    $partner = $mv["ragsoc"];
+                                }
+                                echo "<tr class='odd' role='row'>";
+                                echo "<td>".$partner."</td>";
+                                echo "<td>".gaz_format_number($mv["amount"])."</td>";
+                                //echo "<td>".$status_descr."</td>";
+                                echo "<td>".gaz_format_date($mv["expiry"])."</td>";
+                                echo "</tr>";
+                            }
+                        }
+                        ?>
+                        </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
         <div class="collapse navbar-collapse"> 
             <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
             <?php
@@ -310,3 +397,29 @@ if ($t > 4 && $t <= 13) {
 <?php
 require("../../library/include/footer.php");
 ?>
+    <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
+    <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>
+    <script>
+        $(function () {
+            $("#clienti").DataTable({"oLanguage": {
+                    "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
+                },
+                "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
+                "iDisplayLength": 5
+            });
+            $('#fornitori').DataTable({
+                "oLanguage": {
+                    "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
+                },
+                "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
+                "iDisplayLength": 5
+                //,
+                //"paging": true,
+                //"lengthChange": false,
+                //"searching": true,
+                //"ordering": true,
+                //"info": true,
+                //"autoWidth": false
+            });
+        });
+    </script>
