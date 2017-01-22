@@ -184,12 +184,15 @@ function getSqlFileVersion()
 
 function getNextSqlFileName($currentDbVersion, $sqlFiles)
 {
-    foreach ($sqlFiles as $key => $value) {
-        if (($sqlFiles[$key][1] <= $currentDbVersion + 1) and ($currentDbVersion + 1 <= $sqlFiles[$key][2])) {
-            return $sqlFiles[$key][0];
+	$newvers = $currentDbVersion + 1;
+    $namefile = '';
+	foreach ($sqlFiles as $v) {
+        if ($v[1] <= $newvers && $v[2] >= $newvers) {
+            $namefile = $v[0];
         }
     }
-    return '';
+	echo 'FILE='.$namefile.'<br>';
+    return $namefile;
 }
 
 function executeQueryFileInstall($sqlFile,$Database,$table_prefix)
