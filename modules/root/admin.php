@@ -238,7 +238,7 @@ if ($t > 4 && $t <= 13) {
                                     echo "<tr class='odd ".$stato_partita."' role='row'>";
                                     echo "<td>".$partner."</td>";
                                     echo "<td class='right'>".gaz_format_number( $tot )."</td>";
-                                    echo "<td class='right'>".gaz_format_date($mv["expiry"])."</td>";
+                                    echo "<td class='right'><span>".$mv["expiry"]."</span>".gaz_format_date($mv["expiry"])."</td>";
                                     echo "</tr>";
                                 }
                                 $ctrl_partner = $mv["clfoco"];
@@ -297,7 +297,7 @@ if ($t > 4 && $t <= 13) {
                                     echo "<tr class='odd ".$stato_partita."' role='row'>";
                                     echo "<td>".$partner."</td>";
                                     echo "<td class='right'>".gaz_format_number($tot)."</td>";
-                                    echo "<td class='right'>".gaz_format_date($mv["expiry"])."</td>";
+                                    echo "<td class='right'><span>".$mv["expiry"]."</span>".gaz_format_date($mv["expiry"])."</td>";
                                     echo "</tr>";
                                 }
                             }
