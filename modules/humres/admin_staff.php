@@ -272,7 +272,7 @@ echo "</tr>\n";
 echo "</tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['Codice_CCNL'] . " </td>\n";
 echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"Codice_CCNL\" id=\"search_Codice_CCNL\" value=\"" . $form['Codice_CCNL'] . "\" align=\"right\" maxlength=\"30\" size=\"30\" /></td>\n";
+      <input type=\"text\" name=\"Codice_CCNL\" id=\"search_Codice_CCNL\" value=\"" . $form['Codice_CCNL'] . "\" align=\"right\" maxlength=\"30\" size=\"30\" /></td><td class=\"FacetDataTD\"></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['sexper'] . "*</td><td colspan=\"2\" class=\"FacetDataTD\">\n";

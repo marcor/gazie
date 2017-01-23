@@ -75,7 +75,14 @@ $strScript = array("admin.php" =>
             array('href' => "http://www.mozilla.org/products/firefox/all.html",
                 'img' => "firefox.gif",
                 'title' => "Download FIREFOX, the browser GAzie has been tested with!")
-        )
+        ),
+        'sca_scacli' => 'Scadenzario Clienti',
+        'sca_scafor' => 'Scadenzario Fornitori',
+        'sca_cliente' => 'Cliente',
+        'sca_fornitore' => 'Fornitore',
+        'sca_avere' => 'Avere',
+        'sca_dare' => 'Dare',
+        'sca_scadenza' => 'Scadenza'
     ),
     "login_admin.php" =>
     array(/* 0 */ " La nueva contrase&ntilde;a debe tener un largo de al menos ",

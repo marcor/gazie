@@ -74,8 +74,15 @@ $strScript = array("admin.php" =>
                         'title' => "Scarica FIREFOX il browser con il quale &egrave; stato testato Gazie!")
                 ),
                 'last_use' => 'Utilizzati recentemente',
-                'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
-                'most_used' => 'I più utilizzati'
+                'most_used' => 'I più utilizzati',
+                'sca_scacli' => 'Scadenzario Clienti',
+                'sca_scafor' => 'Scadenzario Fornitori',
+                'sca_cliente' => 'Cliente',
+                'sca_fornitore' => 'Fornitore',
+                'sca_avere' => 'Avere',
+                'sca_dare' => 'Dare',
+                'sca_scadenza' => 'Scadenza'
+                
             ),
             "config.php" =>
             array("title" => "Configurazione principale di GAzie",),

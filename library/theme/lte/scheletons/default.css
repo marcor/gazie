@@ -26,6 +26,17 @@
 .form-control {
 
 }
+.img-container img {
+  width: 100%;
+}
+.img-container {
+  width: 30%;
+  /*background: #777;*/
+  margin: 0 auto;
+}
+.usr-picture {
+    height: 50%;
+}
 .btn-50 {
     width: 50px;
 }

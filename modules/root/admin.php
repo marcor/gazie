@@ -165,7 +165,9 @@ if ($t > 4 && $t <= 13) {
                 <div class="panel panel-default company-color panel-company" >
                     <p>
                         <?php echo $script_transl['company'] ?>
-                        <a href="../config/admin_aziend.php"><img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
+                        <div class="img-containter">
+                            <a href="../config/admin_aziend.php"><img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
+                        </div>
                     </p>
                     <p>
                         <?php
@@ -184,9 +186,11 @@ if ($t > 4 && $t <= 13) {
                         <?php echo ucfirst($msg) . " " . $admin_aziend['Nome'] . ' (ip=' . $admin_aziend['last_ip'] . ')'; ?>
                     </p>
                     <p>
+                        <div class="img-containter">
                         <a href="../config/admin_utente.php?Login=<?php echo $admin_aziend['Login']; ?>&Update">
                             <img class="img-circle usr-picture" src="view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" alt="<?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" title="<?php echo $script_transl['change_usr']; ?>" >
                         </a>
+                        </div>
                     </p>
                     <p>
                         <?php echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) ?> 
@@ -200,15 +204,15 @@ if ($t > 4 && $t <= 13) {
             <div class="col-xs-6">
                 <div class="box gaz-home-scadenze">
                     <div class="box-header">
-                        <h3 class="box-title">Scadenzario Clienti</h3>
+                        <h3 class="box-title"><?php echo $script_transl['sca_scacli']; ?></h3>
                     </div>
                     <div class="box-body">
                         <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
                         <thead>
                             <tr role="row">
-                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente">Cliente</th>
-                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-label="Avere">Avere</th>
-                                <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Scadenza">Scadenza</th>
+                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th>
+                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-label="Avere"><?php echo $script_transl['sca_avere']; ?></th>
+                                <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Scadenza"><?php echo $script_transl['sca_scadenza']; ?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -259,15 +263,15 @@ if ($t > 4 && $t <= 13) {
             <div class="col-xs-6">
                 <div class="box gaz-home-scadenze">
                     <div class="box-header">
-                        <h3 class="box-title">Scadenzario Fornitori</h3>
+                        <h3 class="box-title"><?php echo $script_transl['sca_scafor']; ?></h3>
                     </div>
                     <div class="box-body">
                         <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
                         <thead>
                             <tr role="row">
-                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 300px;" aria-label="Rendering engine: activate to sort column descending">Fornitore</th>
-                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-label="Browser: activate to sort column ascending">Dare</th>
-                                <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending">Scadenza</th>
+                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 300px;" aria-label="Rendering engine: activate to sort column descending"><?php echo $script_transl['sca_fornitore']; ?></th>
+                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-label="Browser: activate to sort column ascending"><?php echo $script_transl['sca_dare']; ?></th>
+                                <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending"><?php echo $script_transl['sca_scadenza']; ?></th>
                             </tr>
                         </thead>
                         
@@ -312,7 +316,7 @@ if ($t > 4 && $t <= 13) {
                 </div>
             </div>
         </div>
-
+        <!-- fine scadenzari -->
         
         <div class="collapse navbar-collapse"> 
             <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
