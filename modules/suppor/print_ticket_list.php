@@ -118,7 +118,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	}
    $pdf->SetFont('helvetica','',9);
 
-	$pdf->Cell(12,5,$row['id'],'LTB',0,'R',1,'',1);
+	$pdf->Cell(12,5,$row['codice'],'LTB',0,'R',1,'',1);
 	$pdf->Cell(20,5,gaz_format_date($row['data']),1,0,'C',1,'',1);
    $pdf->Cell(62,5,$row['oggetto'],1,0,'L',1);
 

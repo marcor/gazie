@@ -199,9 +199,12 @@ if ($t > 4 && $t <= 13) {
             </div>
         </div>
 
+        <?php
+        if ( $_SESSION['theme']='/library/theme/lte' ) {
+                ?>
         <!-- Scadenziari -->
         <div class="row">
-            <div class="col-xs-6">
+            <div class="col-sm-6">
                 <div class="box gaz-home-scadenze">
                     <div class="box-header">
                         <h3 class="box-title"><?php echo $script_transl['sca_scacli']; ?></h3>
@@ -260,7 +263,7 @@ if ($t > 4 && $t <= 13) {
             </div>
             <?php //exit(); ?>
             <!-- Scadenzario fornitori -->
-            <div class="col-xs-6">
+            <div class="col-sm-6">
                 <div class="box gaz-home-scadenze">
                     <div class="box-header">
                         <h3 class="box-title"><?php echo $script_transl['sca_scafor']; ?></h3>
@@ -317,6 +320,10 @@ if ($t > 4 && $t <= 13) {
             </div>
         </div>
         <!-- fine scadenzari -->
+        
+        <?php
+        } else {
+            ?>
         
         <div class="collapse navbar-collapse"> 
             <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
@@ -405,6 +412,9 @@ if ($t > 4 && $t <= 13) {
             }
             ?>
         </div>
+        <?php
+        }
+        ?>
         <div id='admin_footer' align="center">
             <div > GAzie Version: <?php echo GAZIE_VERSION; ?> Software Open Source (lic. GPL)
                 <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?> 
@@ -438,12 +448,15 @@ require("../../library/include/footer.php");
     <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script>
         $(function () {
-            $("#clienti").DataTable({"oLanguage": {
+            $("#clienti").DataTable({
+                "oLanguage": {
                     "sUrl": "../../library/theme/lte/plugins/datatables/Italian.json"
                 },
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
                 "iDisplayLength": 5,
-                "order": [2,'asc']
+                "order": [2,'asc'],
+                "responsive": true,
+                "stateSave": true
             });
             $('#fornitori').DataTable({
                 "oLanguage": {
@@ -451,7 +464,9 @@ require("../../library/include/footer.php");
                 },
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
                 "iDisplayLength": 5,
-                "order": [2,'asc']
+                "order": [2,'asc'],
+                "responsive": true,
+                "stateSave": true
                 //,
                 //"paging": true,
                 //"lengthChange": false,
