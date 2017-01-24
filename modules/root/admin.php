@@ -111,8 +111,8 @@ if ($backupMode == "automatic") {
             if (count($files) > $keep["cvalue"] && $keep["cvalue"] > 0) {
                 for ($i = 0; $i < count($files) - ($keep["cvalue"]); $i++)
                     unlink($files[$i]);
-                    // unlink(dirname(__FILE__) . $files[$i];
-                    echo $files[$i]."<br>";
+                // unlink(dirname(__FILE__) . $files[$i];
+                echo $files[$i] . "<br>";
             }
         }
         if (disk_free_space($sysdisk) < $percspace) {
@@ -165,9 +165,9 @@ if ($t > 4 && $t <= 13) {
                 <div class="panel panel-default company-color panel-company" >
                     <p>
                         <?php echo $script_transl['company'] ?>
-                        <div class="img-containter">
-                            <a href="../config/admin_aziend.php"><img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
-                        </div>
+                    <div class="img-containter">
+                        <a href="../config/admin_aziend.php"><img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
+                    </div>
                     </p>
                     <p>
                         <?php
@@ -186,11 +186,11 @@ if ($t > 4 && $t <= 13) {
                         <?php echo ucfirst($msg) . " " . $admin_aziend['Nome'] . ' (ip=' . $admin_aziend['last_ip'] . ')'; ?>
                     </p>
                     <p>
-                        <div class="img-containter">
+                    <div class="img-containter">
                         <a href="../config/admin_utente.php?Login=<?php echo $admin_aziend['Login']; ?>&Update">
                             <img class="img-circle usr-picture" src="view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" alt="<?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" title="<?php echo $script_transl['change_usr']; ?>" >
                         </a>
-                        </div>
+                    </div>
                     </p>
                     <p>
                         <?php echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) ?> 
@@ -200,219 +200,217 @@ if ($t > 4 && $t <= 13) {
         </div>
 
         <?php
-        if ( $_SESSION['theme']='/library/theme/lte' ) {
-                ?>
-        <!-- Scadenziari -->
-        <div class="row">
-            <div class="col-sm-6">
-                <div class="box gaz-home-scadenze">
-                    <div class="box-header">
-                        <h3 class="box-title"><?php echo $script_transl['sca_scacli']; ?></h3>
+        if ($_SESSION['theme'] == '/library/theme/lte' && $admin_aziend['Abilit']>=8 ) {
+            ?>
+            <!-- Scadenziari -->
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="box gaz-home-scadenze">
+                        <div class="box-header">
+                            <h3 class="box-title"><?php echo $script_transl['sca_scacli']; ?></h3>
+                        </div>
+                        <div class="box-body">
+                            <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
+                                <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th>
+                                        <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-label="Avere"><?php echo $script_transl['sca_avere']; ?></th>
+                                        <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Scadenza"><?php echo $script_transl['sca_scadenza']; ?></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Scadenzario clienti -->
+                                    <?php
+                                    $ctrl_partner = 0;
+                                    $scdl = new Schedule;
+                                    $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli'], true);
+                                    if (sizeof($scdl->Entries) > 0) {
+                                        while (list($key, $mv) = each($scdl->Entries)) {
+                                            $status_descr = '';
+                                            if ($mv['expiry'] <= date("Y-m-d")) {
+                                                $stato_partita = "warning";
+                                            } else {
+                                                $stato_partita = "";
+                                            }
+                                            if ($mv["clfoco"] <> $ctrl_partner) {
+                                                $class_partner = 'FacetDataTD';
+                                                $partner = $mv["ragsoc"];
+                                            }
+                                            $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
+                                            if ($tot >= 0.01) {
+                                                echo "<tr class='odd " . $stato_partita . "' role='row'>";
+                                                echo "<td>" . $partner . "</td>";
+                                                echo "<td class='right'>" . gaz_format_number($tot) . "</td>";
+                                                echo "<td class='right'><span>" . $mv["expiry"] . "</span>" . gaz_format_date($mv["expiry"]) . "</td>";
+                                                echo "</tr>";
+                                            }
+                                            $ctrl_partner = $mv["clfoco"];
+                                        }
+                                    }
+                                    ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th rowspan="1" colspan="1"></th>
+                                        <th rowspan="1" colspan="1"></th>
+                                        <th rowspan="1" colspan="1"></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
-                    <div class="box-body">
-                        <table id="clienti" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="clienti_info">
-                        <thead>
-                            <tr role="row">
-                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 300px;" aria-label="Cliente"><?php echo $script_transl['sca_cliente']; ?></th>
-                                <th class="sorting" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-label="Avere"><?php echo $script_transl['sca_avere']; ?></th>
-                                <th class="sorting_asc" tabindex="0" aria-controls="clienti" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Scadenza"><?php echo $script_transl['sca_scadenza']; ?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Scadenzario clienti -->
-                        <?php
-                        $ctrl_partner = 0;                      
-                        $scdl = new Schedule;
-                        $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli'], true );
-                        if (sizeof($scdl->Entries) > 0) {
-                            while (list($key, $mv) = each($scdl->Entries)) {
-                                $status_descr = '';
-                                if ( $mv['expiry'] <= date("Y-m-d" ) ) {
-                                    $stato_partita="warning";
-                                } else {
-                                    $stato_partita="";
-                                }
-                                if ($mv["clfoco"] <> $ctrl_partner) {
-                                    $class_partner = 'FacetDataTD';
-                                    $partner = $mv["ragsoc"];
-                                }
-                                $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
-                                if ( $tot >= 0.01 ) {
-                                    echo "<tr class='odd ".$stato_partita."' role='row'>";
-                                    echo "<td>".$partner."</td>";
-                                    echo "<td class='right'>".gaz_format_number( $tot )."</td>";
-                                    echo "<td class='right'><span>".$mv["expiry"]."</span>".gaz_format_date($mv["expiry"])."</td>";
-                                    echo "</tr>";
-                                }
-                                $ctrl_partner = $mv["clfoco"];
-                            }
-                        }
-                        
-                        ?>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th rowspan="1" colspan="1"></th>
-                                <th rowspan="1" colspan="1"></th>
-                                <th rowspan="1" colspan="1"></th>
-                            </tr>
-                        </tfoot>
-                        </table>
+                </div>
+                <!-- Scadenzario fornitori -->
+                <div class="col-sm-6">
+                    <div class="box gaz-home-scadenze">
+                        <div class="box-header">
+                            <h3 class="box-title"><?php echo $script_transl['sca_scafor']; ?></h3>
+                        </div>
+                        <div class="box-body">
+                            <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
+                                <thead>
+                                    <tr role="row">
+                                        <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 300px;" aria-label="Rendering engine: activate to sort column descending"><?php echo $script_transl['sca_fornitore']; ?></th>
+                                        <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-label="Browser: activate to sort column ascending"><?php echo $script_transl['sca_dare']; ?></th>
+                                        <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending"><?php echo $script_transl['sca_scadenza']; ?></th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <!-- Scadenzario fornitori -->
+                                    <?php
+                                    $ctrl_partner = 0;
+                                    $scdl = new Schedule;
+                                    $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor'], true);
+                                    if (sizeof($scdl->Entries) > 0) {
+                                        while (list($key, $mv) = each($scdl->Entries)) {
+                                            if ($mv["clfoco"] <> $ctrl_partner) {
+                                                $class_partner = 'FacetDataTD';
+                                                $partner = $mv["ragsoc"];
+                                            }
+                                            if ($mv['expiry'] <= date("Y-m-d")) {
+                                                $stato_partita = "warning";
+                                            } else {
+                                                $stato_partita = "";
+                                            }
+                                            $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
+                                            if ($tot >= 0.01) {
+                                                echo "<tr class='odd " . $stato_partita . "' role='row'>";
+                                                echo "<td>" . $partner . "</td>";
+                                                echo "<td class='right'>" . gaz_format_number($tot) . "</td>";
+                                                echo "<td class='right'><span>" . $mv["expiry"] . "</span>" . gaz_format_date($mv["expiry"]) . "</td>";
+                                                echo "</tr>";
+                                            }
+                                        }
+                                    }
+                                    ?>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th rowspan="1" colspan="1"></th>
+                                        <th rowspan="1" colspan="1"></th>
+                                        <th rowspan="1" colspan="1"></th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-            <?php //exit(); ?>
-            <!-- Scadenzario fornitori -->
-            <div class="col-sm-6">
-                <div class="box gaz-home-scadenze">
-                    <div class="box-header">
-                        <h3 class="box-title"><?php echo $script_transl['sca_scafor']; ?></h3>
-                    </div>
-                    <div class="box-body">
-                        <table id="fornitori" class="table table-bordered table-striped dataTable" role="grid" aria-describedby="fornitori_info">
-                        <thead>
-                            <tr role="row">
-                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 300px;" aria-label="Rendering engine: activate to sort column descending"><?php echo $script_transl['sca_fornitore']; ?></th>
-                                <th class="sorting" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-label="Browser: activate to sort column ascending"><?php echo $script_transl['sca_dare']; ?></th>
-                                <th class="sorting_asc" tabindex="0" aria-controls="fornitori" rowspan="1" colspan="1" style="width: 120px;" aria-sort="ascending" aria-label="Platform(s): activate to sort column ascending"><?php echo $script_transl['sca_scadenza']; ?></th>
-                            </tr>
-                        </thead>
-                        
-                        <tbody>
-                        <!-- Scadenzario fornitori -->
-                        <?php
-                        $ctrl_partner = 0;
-                        $scdl = new Schedule;
-                        $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor'], true);
-                        if (sizeof($scdl->Entries) > 0) {
-                            while (list($key, $mv) = each($scdl->Entries)) {
-                                if ($mv["clfoco"] <> $ctrl_partner) {
-                                    $class_partner = 'FacetDataTD';
-                                    $partner = $mv["ragsoc"];
-                                }
-                                if ( $mv['expiry'] <= date("Y-m-d" ) ) {
-                                    $stato_partita="warning";
-                                } else {
-                                    $stato_partita="";
-                                }
-                                $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
-                                if ( $tot >= 0.01 ) {
-                                    echo "<tr class='odd ".$stato_partita."' role='row'>";
-                                    echo "<td>".$partner."</td>";
-                                    echo "<td class='right'>".gaz_format_number($tot)."</td>";
-                                    echo "<td class='right'><span>".$mv["expiry"]."</span>".gaz_format_date($mv["expiry"])."</td>";
-                                    echo "</tr>";
-                                }
-                            }
-                        }
-                        ?>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <th rowspan="1" colspan="1"></th>
-                                <th rowspan="1" colspan="1"></th>
-                                <th rowspan="1" colspan="1"></th>
-                            </tr>
-                        </tfoot>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- fine scadenzari -->
-        
-        <?php
+            <!-- fine scadenzari -->
+
+            <?php
         } else {
             ?>
-        
-        <div class="collapse navbar-collapse"> 
-            <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
-            <?php
-            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
-            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
 
-            if (gaz_dbi_num_rows($result) > 0) {
-                while ($r = gaz_dbi_fetch_array($result)) {
-                    $rref = explode('-', $r['transl_ref']);
-                    $rl = gaz_dbi_fetch_array($res_last);
-                    $rlref = explode('-', $rl['transl_ref']);
-                    switch ($rref[1]) {
-                        case 'm1':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['title'];
-                            break;
-                        case 'm2':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
-                            break;
-                        case 'm3':
-                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
-                            break;
-                        case 'sc':
-                            require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
-                            $rref_name = $strScript[$rref[2]][$rref[3]];
-                            break;
-                        default:
-                            $rref_name = 'Nome script non trovato';
-                            break;
+            <div class="collapse navbar-collapse"> 
+                <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
+                <?php
+                $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
+                $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
+
+                if (gaz_dbi_num_rows($result) > 0) {
+                    while ($r = gaz_dbi_fetch_array($result)) {
+                        $rref = explode('-', $r['transl_ref']);
+                        $rl = gaz_dbi_fetch_array($res_last);
+                        $rlref = explode('-', $rl['transl_ref']);
+                        switch ($rref[1]) {
+                            case 'm1':
+                                require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                                $rref_name = $transl[$rref[0]]['title'];
+                                break;
+                            case 'm2':
+                                require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                                $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
+                                break;
+                            case 'm3':
+                                require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                                $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
+                                break;
+                            case 'sc':
+                                require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                                $rref_name = $strScript[$rref[2]][$rref[3]];
+                                break;
+                            default:
+                                $rref_name = 'Nome script non trovato';
+                                break;
+                        }
+                        switch ($rlref[1]) {
+                            case 'm1':
+                                require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                                $rlref_name = $transl[$rlref[0]]['title'];
+                                break;
+                            case 'm2':
+                                require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                                $rlref_name = $transl[$rlref[0]]['m2'][$rlref[2]][0];
+                                break;
+                            case 'm3':
+                                require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                                $rlref_name = $transl[$rlref[0]]['m3'][$rlref[2]][0];
+                                break;
+                            case 'sc':
+                                require '../' . $rlref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                                $rlref_name = $strScript[$rlref[2]][$rlref[3]];
+                                break;
+                            default:
+                                $rlref_name = 'Nome script non trovato';
+                                break;
+                        }
+                        ?>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <a href="<?php
+            if ($r["link"] != "")
+                echo '../../modules' . $r["link"];
+            else
+                echo "&nbsp;";
+                        ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
+                                    <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
+                            </div>
+                            <div class="col-sm-6">
+                                <a href="<?php
+                       if ($rl["link"] != "")
+                           echo '../../modules' . $rl["link"];
+                       else
+                           echo "&nbsp;";
+                        ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
+                                    <span ><?php
+                    echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>';
+                    if (is_string($rlref_name)) {
+                        echo $rlref_name;
+                    } else {
+                        echo "Errore nello script (array)";
                     }
-                    switch ($rlref[1]) {
-                        case 'm1':
-                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rlref_name = $transl[$rlref[0]]['title'];
-                            break;
-                        case 'm2':
-                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rlref_name = $transl[$rlref[0]]['m2'][$rlref[2]][0];
-                            break;
-                        case 'm3':
-                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                            $rlref_name = $transl[$rlref[0]]['m3'][$rlref[2]][0];
-                            break;
-                        case 'sc':
-                            require '../' . $rlref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
-                            $rlref_name = $strScript[$rlref[2]][$rlref[3]];
-                            break;
-                        default:
-                            $rlref_name = 'Nome script non trovato';
-                            break;
+                    echo '</b>';
+                        ?></span></a>
+                            </div>
+                        </div>
+                        <?php
                     }
-                    ?>
-                    <div class="row">
-                        <div class="col-sm-6">
-                            <a href="<?php
-                            if ($r["link"] != "")
-                                echo '../../modules' . $r["link"];
-                            else
-                                echo "&nbsp;";
-                            ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
-                                <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
-                        </div>
-                        <div class="col-sm-6">
-                            <a href="<?php
-                            if ($rl["link"] != "")
-                                echo '../../modules' . $rl["link"];
-                            else
-                                echo "&nbsp;";
-                            ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
-                                <span ><?php
-                                    echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>';
-                                    if ( is_string($rlref_name) ) {
-                                        echo $rlref_name;
-                                    } else {
-                                        echo "Errore nello script (array)";
-                                    }
-                                    echo '</b>';
-                                    ?></span></a>
-                        </div>
-                    </div>
-                    <?php
                 }
-            }
-            ?>
-        </div>
-        <?php
+                ?>
+            </div>
+            <?php
         }
         ?>
         <div id='admin_footer' align="center">
@@ -443,7 +441,8 @@ if ($t > 4 && $t <= 13) {
 </form>
 <?php
 require("../../library/include/footer.php");
-?>
+if ($_SESSION['theme'] == '/library/theme/lte' && $admin_aziend['Abilit']>=8 ) {
+    ?>
     <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>
     <script>
@@ -454,7 +453,7 @@ require("../../library/include/footer.php");
                 },
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
                 "iDisplayLength": 5,
-                "order": [2,'asc'],
+                "order": [2, 'asc'],
                 "responsive": true,
                 "stateSave": true
             });
@@ -464,16 +463,12 @@ require("../../library/include/footer.php");
                 },
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
                 "iDisplayLength": 5,
-                "order": [2,'asc'],
+                "order": [2, 'asc'],
                 "responsive": true,
                 "stateSave": true
-                //,
-                //"paging": true,
-                //"lengthChange": false,
-                //"searching": true,
-                //"ordering": true,
-                //"info": true,
-                //"autoWidth": false
             });
         });
     </script>
+    <?php
+}
+?>
