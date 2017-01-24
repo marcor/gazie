@@ -200,7 +200,8 @@ if ($t > 4 && $t <= 13) {
         </div>
 
         <?php
-        if ($_SESSION['theme'] == '/library/theme/lte' && $admin_aziend['Abilit']>=8 ) {
+        $schedule_view = gaz_dbi_get_row($gTables['company_config'], 'var', 'schedule_view');
+        if ($_SESSION['theme'] == '/library/theme/lte' && $admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
             ?>
             <!-- Scadenziari -->
             <div class="row">
@@ -380,29 +381,29 @@ if ($t > 4 && $t <= 13) {
                         <div class="row">
                             <div class="col-sm-6">
                                 <a href="<?php
-            if ($r["link"] != "")
-                echo '../../modules' . $r["link"];
-            else
-                echo "&nbsp;";
-                        ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
+                                if ($r["link"] != "")
+                                    echo '../../modules' . $r["link"];
+                                else
+                                    echo "&nbsp;";
+                                ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
                                     <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
                             </div>
                             <div class="col-sm-6">
                                 <a href="<?php
-                       if ($rl["link"] != "")
-                           echo '../../modules' . $rl["link"];
-                       else
-                           echo "&nbsp;";
-                        ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
+                                if ($rl["link"] != "")
+                                    echo '../../modules' . $rl["link"];
+                                else
+                                    echo "&nbsp;";
+                                ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
                                     <span ><?php
-                    echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>';
-                    if (is_string($rlref_name)) {
-                        echo $rlref_name;
-                    } else {
-                        echo "Errore nello script (array)";
-                    }
-                    echo '</b>';
-                        ?></span></a>
+                                        echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>';
+                                        if (is_string($rlref_name)) {
+                                            echo $rlref_name;
+                                        } else {
+                                            echo "Errore nello script (array)";
+                                        }
+                                        echo '</b>';
+                                        ?></span></a>
                             </div>
                         </div>
                         <?php
@@ -441,7 +442,12 @@ if ($t > 4 && $t <= 13) {
 </form>
 <?php
 require("../../library/include/footer.php");
-if ($_SESSION['theme'] == '/library/theme/lte' && $admin_aziend['Abilit']>=8 ) {
+
+/* questa parte sarebbe da mettere nel footer specifico del tema (library/theme/nome_tema/footer.php) 
+ * in ognuno dei quali mettere una classe contenente, oltre al costrutto, anche le varie funzioni 
+ * richiamabili alla fine dagli script php e comunque presenti sui footer di TUTTU i motori di template
+ */
+if ($_SESSION['theme'] == '/library/theme/lte' && $admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     ?>
     <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>
