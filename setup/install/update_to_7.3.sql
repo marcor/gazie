@@ -95,4 +95,5 @@ UPDATE `gaz_XXXtesmov` SET datreg = '2004-01-27' WHERE YEAR(datreg) = 0;
 ALTER TABLE `gaz_XXXcompany_config`	CHANGE COLUMN `val` `val` VARCHAR(2000) NULL DEFAULT NULL AFTER `var`;
 INSERT INTO `gaz_XXXcompany_config` (`description`,`var`, `val`) SELECT  'Testo in HTML delle email inviate dall\'azienda', 'company_email_text', body_text FROM `gaz_XXXbody_text` WHERE table_name_ref = 'body_send_doc_email';
 DELETE FROM `gaz_XXXbody_text` WHERE  `table_name_ref` = 'body_send_doc_email';
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Visualizzazione scadenzario in Home page (0=No,1=Si)', 'schedule_view', '0');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
