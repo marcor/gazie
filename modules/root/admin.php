@@ -201,7 +201,7 @@ if ($t > 4 && $t <= 13) {
 
         <?php
         $schedule_view = gaz_dbi_get_row($gTables['company_config'], 'var', 'schedule_view');
-        if ($_SESSION['theme'] == '/library/theme/lte' && $admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
+        if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
             ?>
             <!-- Scadenziari -->
             <div class="row">
@@ -321,7 +321,8 @@ if ($t > 4 && $t <= 13) {
             <!-- fine scadenzari -->
 
             <?php
-        } else {
+        }
+        if ($_SESSION['theme'] <> '/library/theme/lte') {
             ?>
 
             <div class="collapse navbar-collapse"> 

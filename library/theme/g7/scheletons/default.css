@@ -322,9 +322,7 @@ input.input-xs {
 }
 .panel-info {
     border-color: #88c086;
-    max-width: 500px;
     margin: auto;
-    
 }
 .panel-info > .panel-gazie {
     border-color: #88c086;

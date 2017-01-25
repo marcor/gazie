@@ -201,7 +201,7 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
         <input type="hidden" name="tp" value="<?php echo $tp; ?>" />
         <div class="container">    
             <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
-                <div class="panel panel-info" >
+                <div class="panel panel-info" style="max-width:500px;" >
                     <div class="panel-heading panel-gazie">
                         <div class="panel-title"><img width="5%" src="../../library/images/gazie.gif" /> <?php echo $script_transl['log']; ?> <?php echo $server_lang; ?> <img width="5%" src="../../language/<?php echo $lang; ?>/flag.png" /></div>
                         <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
