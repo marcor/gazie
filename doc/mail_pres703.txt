@@ -1,0 +1,25 @@
+Titolo:
+Numera stellas si potes.
+
+Presentazione: 
+Buon compleanno teenager! 
+Il pargolo sta diventando sempre più grande e per l'occasione è in grande spolvero.
+In una sequela che è anche un soffio per spegnere le tredici candeline vado immediatamente ad elencare le novità che caratterizzano questa versione in ordine di importanza:
+- Grazie alla collaborazione con Giulio Valentino la fattura elettronica è stata aggiornata alla versione 1.2, e adesso è possibile generare un file XML sia in formato pubblica amministrazione (FPA12) che per i privati (FPR12).
+- Aggiunta la possibilità di una eliminazione massiva delle partite chiuse distinta per cliente/fornitore.
+- Dopo i test effettuati dal prof.Paolo Del Romano presso l'ITCG Galiani-De Sterlich ho facilitato l'installazione ed ho risolto diversi piccoli errori relativi al modulo "GAzie a scuola" (school).
+- Sulla stampa PDF della testata dei documenti è stata aggiunta un'area con i dati del partner commerciale, ovvero: Codice, PI, CF e Codice Univoco per la fattura elettronica.
+- Tutti i registri obbligatori sono ottenuti generando un documento PDF/A adatti alla dematerializzazione come previsto per la conservazione legale CAD ottemperando al decreto legislativo 7 marzo 2005 n. 82(Paolo del Romano).
+- Andrea Biasi ha completato l'integrazione con il menù adminLTE che adesso troverete nel pacchetto scaricabile e non solo sul repository.
+- Sempre di Andrea Biasi lo scadenzario in Home Page che è visualizzabile perfettamente quando si utilizza il motore d'interfaccia adminLTE.
+- Corretto l'errore che impediva al menù g7 di essere completamente responsivo.
+- Per le versioni di Mysql maggiori o uguali a 5.7 è stata spostata la definizione di sql-mode sulla proprietà di sessione ( Emilio Gargiulo).
+- Spostata sull'utente la scelta di uno dei tre motori di interfaccia di cui si potrà usufruire (g6,g7,lte).
+- Sempre a livello utente è possibile aggiungere un contenuto testuale, anche in HTML, che verrà accodato sul corpo alle email trasmesse dallo stesso.
+- Il form per l'amministrazione delle anagrafiche comuni adesso è funzionante anche in modifica.
+- Adeguata la lunghezza delle descrizioni sui righi dei documenti a 100 caratteri come sul database(Giovanni V).
+ 
+Approfondimenti:
+Sa fide nostra no la pagat dinari! Ajò! Dimonios! Avanti forza paris!
+
+Antonio de Vincentiis, Montesilvano, 27 Gennaio 2017
