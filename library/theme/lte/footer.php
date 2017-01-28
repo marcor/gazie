@@ -59,7 +59,7 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
                 <option value="1">Ongoing</option>
                 <option value="2">Over</option>
         </select>
-        <input class="projectId" type="hidden" name="projectId" value="<?php echo $data['id'];?>"/>
+        <input class="projectId" type="hidden" name="projectId" value="<?php //echo $data['id'];?>"/>
                </form>-->
               <ul class="control-sidebar-menu">
                 <?php

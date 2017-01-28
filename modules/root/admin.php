@@ -112,7 +112,7 @@ if ($backupMode == "automatic") {
                 for ($i = 0; $i < count($files) - ($keep["cvalue"]); $i++)
                     unlink($files[$i]);
                 // unlink(dirname(__FILE__) . $files[$i];
-                echo $files[$i] . "<br>";
+                //echo $files[$i] . "<br>";
             }
         }
         if (disk_free_space($sysdisk) < $percspace) {

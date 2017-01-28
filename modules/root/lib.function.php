@@ -66,8 +66,9 @@ class CheckDbAlign {
             $sysdisk = array_slice( $sysdisk, 0, count($sysdisk)-2);
             return implode("\\", $sysdisk)."\\data\\files\\backups\\";
         } else {
+            $sysdisk=explode("/", $sysdisk );
             $sysdisk = array_slice( $sysdisk, 0, count($sysdisk)-2);
-            return implode("/", $sysdisk)."/data/files/backup/";
+            return implode("/", $sysdisk)."/data/files/backups/";
         }
     }
     
