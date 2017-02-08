@@ -322,99 +322,94 @@ if ($t > 4 && $t <= 13) {
 
             <?php
         }
-        if ($_SESSION['theme'] <> '/library/theme/lte') {
-            ?>
-
-            <div class="collapse navbar-collapse"> 
-                <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
-                <?php
-                $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
-                $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
-
-                if (gaz_dbi_num_rows($result) > 0) {
-                    while ($r = gaz_dbi_fetch_array($result)) {
-                        $rref = explode('-', $r['transl_ref']);
-                        $rl = gaz_dbi_fetch_array($res_last);
-                        $rlref = explode('-', $rl['transl_ref']);
-                        switch ($rref[1]) {
-                            case 'm1':
-                                require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                                $rref_name = $transl[$rref[0]]['title'];
-                                break;
-                            case 'm2':
-                                require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                                $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
-                                break;
-                            case 'm3':
-                                require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                                $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
-                                break;
-                            case 'sc':
-                                require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
-                                $rref_name = $strScript[$rref[2]][$rref[3]];
-                                break;
-                            default:
-                                $rref_name = 'Nome script non trovato';
-                                break;
-                        }
-                        switch ($rlref[1]) {
-                            case 'm1':
-                                require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                                $rlref_name = $transl[$rlref[0]]['title'];
-                                break;
-                            case 'm2':
-                                require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                                $rlref_name = $transl[$rlref[0]]['m2'][$rlref[2]][0];
-                                break;
-                            case 'm3':
-                                require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
-                                $rlref_name = $transl[$rlref[0]]['m3'][$rlref[2]][0];
-                                break;
-                            case 'sc':
-                                require '../' . $rlref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
-                                $rlref_name = $strScript[$rlref[2]][$rlref[3]];
-                                break;
-                            default:
-                                $rlref_name = 'Nome script non trovato';
-                                break;
-                        }
-                        ?>
-                        <div class="row">
-                            <div class="col-sm-6">
-                                <a href="<?php
-                                if ($r["link"] != "")
-                                    echo '../../modules' . $r["link"];
-                                else
-                                    echo "&nbsp;";
-                                ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
-                                    <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
-                            </div>
-                            <div class="col-sm-6">
-                                <a href="<?php
-                                if ($rl["link"] != "")
-                                    echo '../../modules' . $rl["link"];
-                                else
-                                    echo "&nbsp;";
-                                ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
-                                    <span ><?php
-                                        echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>';
-                                        if (is_string($rlref_name)) {
-                                            echo $rlref_name;
-                                        } else {
-                                            echo "Errore nello script (array)";
-                                        }
-                                        echo '</b>';
-                                        ?></span></a>
-                            </div>
-                        </div>
-                        <?php
-                    }
-                }
-                ?>
-            </div>
-            <?php
-        }
         ?>
+        <div class="collapse navbar-collapse"> 
+            <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
+            <?php
+            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
+            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
+
+            if (gaz_dbi_num_rows($result) > 0) {
+                while ($r = gaz_dbi_fetch_array($result)) {
+                    $rref = explode('-', $r['transl_ref']);
+                    $rl = gaz_dbi_fetch_array($res_last);
+                    $rlref = explode('-', $rl['transl_ref']);
+                    switch ($rref[1]) {
+                        case 'm1':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['title'];
+                            break;
+                        case 'm2':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['m2'][$rref[2]][0];
+                            break;
+                        case 'm3':
+                            require '../' . $rref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $transl[$rref[0]]['m3'][$rref[2]][0];
+                            break;
+                        case 'sc':
+                            require '../' . $rref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                            $rref_name = $strScript[$rref[2]][$rref[3]];
+                            break;
+                        default:
+                            $rref_name = 'Nome script non trovato';
+                            break;
+                    }
+                    switch ($rlref[1]) {
+                        case 'm1':
+                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rlref_name = $transl[$rlref[0]]['title'];
+                            break;
+                        case 'm2':
+                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rlref_name = $transl[$rlref[0]]['m2'][$rlref[2]][0];
+                            break;
+                        case 'm3':
+                            require '../' . $rlref[0] . '/menu.' . $admin_aziend['lang'] . '.php';
+                            $rlref_name = $transl[$rlref[0]]['m3'][$rlref[2]][0];
+                            break;
+                        case 'sc':
+                            require '../' . $rlref[0] . '/lang.' . $admin_aziend['lang'] . '.php';
+                            $rlref_name = $strScript[$rlref[2]][$rlref[3]];
+                            break;
+                        default:
+                            $rlref_name = 'Nome script non trovato';
+                            break;
+                    }
+                    ?>
+                    <div class="row">
+                        <div class="col-sm-6">
+                            <a href="<?php
+                            if ($r["link"] != "")
+                                echo '../../modules' . $r["link"];
+                            else
+                                echo "&nbsp;";
+                            ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $r["color"]; ?>; font-size: 85%; text-align: left;">
+                                <span ><?php echo $r["click"] . ' click - <b>' . $rref_name . '</b>'; ?></span></a>
+                        </div>
+                        <div class="col-sm-6">
+                            <a href="<?php
+                            if ($rl["link"] != "")
+                                echo '../../modules' . $rl["link"];
+                            else
+                                echo "&nbsp;";
+                            ?>" type="button" class="btn btn-default btn-full" style="background-color: #<?php echo $rl["color"]; ?>; font-size: 85%; text-align: left;">
+                                <span ><?php
+                                    echo gaz_time_from(strtotime($rl["last_use"])) . ' - <b>';
+                                    if (is_string($rlref_name)) {
+                                        echo $rlref_name;
+                                    } else {
+                                        echo "Errore nello script (array)";
+                                    }
+                                    echo '</b>';
+                                    ?></span></a>
+                        </div>
+                    </div>
+                    <?php
+                }
+            }
+            ?>
+        </div>
         <div id='admin_footer' align="center">
             <div > GAzie Version: <?php echo GAZIE_VERSION; ?> Software Open Source (lic. GPL)
                 <?php echo $script_transl['business'] . " " . $script_transl['proj']; ?> 
@@ -448,7 +443,7 @@ require("../../library/include/footer.php");
  * in ognuno dei quali mettere una classe contenente, oltre al costrutto, anche le varie funzioni 
  * richiamabili alla fine dagli script php e comunque presenti sui footer di TUTTU i motori di template
  */
-if ($_SESSION['theme'] == '/library/theme/lte' && $admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
+if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
     ?>
     <script src="../../library/theme/lte/plugins/datatables/jquery.dataTables.min.js"></script>
     <script src="../../library/theme/lte/plugins/datatables/dataTables.bootstrap.min.js"></script>

@@ -307,6 +307,16 @@ table.Tsmall {
     padding: 2px;
 }
 
+.gaz-home-scadenze {
+    min-height: 260px;
+}
+#fornitori span {
+    display:none; 
+}
+#clienti span {
+    display:none; 
+}
+
 @media only screen and (max-width: 991px) {
     /* Force table to not be like tables anymore */
     #gaz-responsive-table table,
