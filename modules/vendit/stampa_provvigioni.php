@@ -103,7 +103,7 @@ $item_head['top'] = array(array('lun' => 50, 'nam' => 'Indirizzo'),
 );
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend, $title);
-$pdf->SetTopMargin(47);
+$pdf->SetTopMargin(51);
 $pdf->SetFooterMargin(18);
 $config = new Config;
 $pdf->SetFont('helvetica', '', 7);
@@ -154,7 +154,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
    $pdf->Cell(5, 4, $row['unimis'], 1);
    $pdf->Cell(14, 4, gaz_format_number($row['quanti']), 1, 0, 'R');
    $pdf->Cell(14, 4, number_format($row['prelis'], $admin_aziend['decimal_price'], ',', '.'), 1, 0, 'R');
-   $pdf->Cell(8, 4, $row['sconto'], 1, 0, 'R');
+   $pdf->Cell(8, 4, floatval($row['sconto']), 1, 0, 'R');
    $pdf->Cell(20, 4, gaz_format_number($row_importo), 1, 0, 'R');
    $pdf->Cell(11, 4, gaz_format_number($row['provvigione']), 1, 0, 'R');
    $pdf->Cell(16, 4, gaz_format_number($row_provvig), 1, 1, 'R');
