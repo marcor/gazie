@@ -440,11 +440,6 @@ input.input-xs {
 .btn-articolo {
     padding: 3px 2px 5px 2px;
 }
-.form-inline {
-    width: 220px;
-    padding-top: 7px;
-    padding-right: 10px;
-}
 
 /* loading - the AJAX indicator */
 .ui-autocomplete-loading {

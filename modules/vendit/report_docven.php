@@ -215,7 +215,7 @@ switch ($admin_aziend['fatimm']) {
         <p class="ui-state-highlight" id="report1"></p>
     </div>
 
-    <div align="center"><font class="FacetFormHeaderFont">Documenti di vendita della sezione
+    <div align="center" class="FacetFormHeaderFont">Documenti di vendita della sezione
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
             for ($sez = 1; $sez <= 9; $sez++) {

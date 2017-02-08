@@ -22,6 +22,14 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+
+if (isset($styles) && is_array($styles)) {
+    foreach ($styles as $v) {
+        ?>
+        <link href="../../library/theme/g7/<?php echo $v; ?>" rel="stylesheet" type="text/css" />
+        <?php
+    }
+}
 ?>
 <!-- questo è contenuto in library/theme/g7/footer.php -->
 <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
