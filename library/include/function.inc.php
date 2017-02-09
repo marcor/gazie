@@ -98,7 +98,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];         ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];          ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -501,7 +501,7 @@ class UserConfig {
          * aggiornamento è sufficiente un valore */
         global $gTables, $form;
         $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_STRING);
-        $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable. "'");
+        $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable . "'");
         if (gaz_dbi_num_rows($result) >= 1) { // è un aggiornamento
             if (is_array($value)) {
                 $row = gaz_dbi_fetch_array($result);
@@ -1211,6 +1211,10 @@ class GAzieMail {
                 $mail->IsSMTP();                                // Modalita' SMTP
                 if (!empty($config_secure['val'])) {
                     $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
+                } else {
+                    $mail->SMTPOptions = array('ssl' => array('verify_peer' => false,
+                            'verify_peer_name' => false,
+                            'allow_self_signed' => true));
                 }
                 $mail->SMTPAuth = (!empty($config_user['val']) && $config_mailer['val'] == 'smtp' ? TRUE : FALSE );
                 if ($mail->SMTPAuth) {
@@ -1784,7 +1788,7 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
      * sulla query  
      */
     $result = gaz_dbi_query("SHOW TABLES LIKE '" . $gTables['admin_config'] . "'");
-    if (gaz_dbi_num_rows($result) > 0) {  
+    if (gaz_dbi_num_rows($result) > 0) {
         $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $login);
         $_SESSION["theme"] = $admin_config_theme['var_value'];
     } else {
@@ -2014,7 +2018,7 @@ class Schedule {
         $this->Partners = $res;
     }
 
-    function getScheduleEntries($ob = 0, $masclifor, $date=false) {
+    function getScheduleEntries($ob = 0, $masclifor, $date = false) {
         /*
          * genera un array con tutti i movimenti di partite aperte con quattro tipi di ordinamento
          * se viene settato il partnerTarget allora prende in considerazione solo quelli relativi allo stesso 
@@ -2025,8 +2029,8 @@ class Schedule {
         } else {
             $where = $gTables['rigmoc'] . ".codcon BETWEEN " . $this->target . "000001 AND " . $this->target . "999999";
         }
-        if ($date!=false) {
-            $where .= " AND expiry>='".date("Y-m-d", strtotime("-5 days"))."' and expiry<='".date("Y-m-d", strtotime("+2 month"))."' group by id_tesdoc_ref ";
+        if ($date != false) {
+            $where .= " AND expiry>='" . date("Y-m-d", strtotime("-5 days")) . "' and expiry<='" . date("Y-m-d", strtotime("+2 month")) . "' group by id_tesdoc_ref ";
         }
         $sqlquery = "SELECT * FROM " . $gTables['paymov']
                 . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig ) "
@@ -2169,7 +2173,7 @@ class Schedule {
         $r = gaz_dbi_fetch_array($rs);
         return $r['diff_paydoc'];
     }
-    
+
     function getStatus($id_tesdoc_ref, $date = false) {
         /*
          * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
