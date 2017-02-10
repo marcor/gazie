@@ -1200,6 +1200,7 @@ class GAzieMail {
         $mail = new PHPMailer();
         $mail->Host = $config_host['val'];
         $mail->IsHTML();                                // Modalita' HTML
+        $mail->CharSet = 'UTF-8';
         // Imposto il server SMTP
         if (!empty($config_port['val'])) {
             $mail->Port = $config_port['val'];             // Imposto la porta del servizio SMTP
