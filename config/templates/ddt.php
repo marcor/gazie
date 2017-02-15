@@ -88,7 +88,7 @@ class DDT extends Template_con_scheda
                     $this->Cell(82,6,$rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(10,6,$rigo['unimis'],1,0,'L');
                     $this->Cell(30,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    if ($this->docVars->client['stapre'] == 'S') {
+                    if ($this->docVars->client['stapre'] == 'S' && floatval($rigo['prelis']) >= 0.00001 ) {
                         $this->Cell(25,6,number_format($rigo['prelis'],$this->decimal_price,',',''),'TB',0,'R');
                         $this->Cell(10,6,$rigo['sconto'],1,1,'R');
                     } else {
