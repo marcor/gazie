@@ -286,7 +286,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_prelis'] = $form['rows'][$k_row]['prelis'];
                     $form['in_sconto'] = $form['rows'][$k_row]['sconto'];
                     $form['in_quanti'] = $form['rows'][$k_row]['quanti'];
-                    //$form['in_codvat'] = $form['rows'][$k_row]['codvat'];
+                    $form['in_codvat'] = $form['rows'][$k_row]['codvat'];
                     $form['in_codric'] = $form['rows'][$k_row]['codric'];
                     $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];
                     $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
