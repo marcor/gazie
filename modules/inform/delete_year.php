@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
-
+$year='2000';
 require("../../library/include/header.php");
 $script_transl=HeadMain();
 echo '<div align="center" class="FacetFormHeaderFont">ELIMINAZIONI DATI</div>';
@@ -36,7 +36,7 @@ echo '<div align="center" class="FacetFormHeaderFont">ELIMINAZIONI DATI</div>';
 
 $message = '<tr><th class="FacetFieldCaptionTD">Numero ID</th><th class="FacetFieldCaptionTD">Descrizione </th><th class="FacetFieldCaptionTD">DARE </th><th class="FacetFieldCaptionTD">AVERE </th><th class="FacetFieldCaptionTD">SBILANCIO</th></tr>';
 echo $message;
-$result = gaz_dbi_dyn_query ($gTables['tesdoc'].".id_tes",$gTables['tesdoc'], "YEAR(datemi)<= 2010", 1);
+$result = gaz_dbi_dyn_query ($gTables['tesdoc'].".id_tes",$gTables['tesdoc'], "YEAR(datemi)<= ".$year, 1);
 while ($a_row = gaz_dbi_fetch_array($result)) {
       if ($message){
             $message=false;
@@ -46,17 +46,18 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
       echo "<tr><td class=\"FacetDataTD\" colspan=\"5\" align=\"center\">DOCUMENTO ID ".$a_row['id_tes']." CANCELLATO ! </td></tr>\n";
 }
 
-$result = gaz_dbi_dyn_query ($gTables['tesmov'].".id_tes",$gTables['tesmov'], "YEAR(datreg)<= 2010", 1);
+$result = gaz_dbi_dyn_query ($gTables['tesmov'].".id_tes",$gTables['tesmov'], "YEAR(datreg)<= ".$year, 1);
 while ($a_row = gaz_dbi_fetch_array($result)) {
       if ($message){
             $message=false;
       }
+      gaz_dbi_del_row($gTables['rigmoi'], "id_tes", $a_row['id_tes']);
       gaz_dbi_del_row($gTables['rigmoc'], "id_tes", $a_row['id_tes']);
       gaz_dbi_del_row($gTables['tesmov'], "id_tes", $a_row['id_tes']);
       echo "<tr><td class=\"FacetDataTD\" colspan=\"5\" align=\"center\">MOVIMENTO ID ".$a_row['id_tes']." CANCELLATO ! </td></tr>\n";
 }
 
-$result = gaz_dbi_dyn_query ($gTables['effett'].".id_tes",$gTables['effett'], "YEAR(datemi)<= 2010", 1);
+$result = gaz_dbi_dyn_query ($gTables['effett'].".id_tes",$gTables['effett'], "YEAR(datemi)<= ".$year, 1);
 while ($a_row = gaz_dbi_fetch_array($result)) {
       if ($message){
             $message=false;

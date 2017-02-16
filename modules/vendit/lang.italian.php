@@ -80,6 +80,7 @@ $strScript = array("admin_client.php" =>
         'pec_email' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',
         'id_agente' => 'Agente',
+        'cosric' => 'Conto di ricavo',
         'codpag' => 'Modalit&agrave; di pagamento *',
         'sconto' => '% Sconto da applicare',
         'banapp' => 'Banca d\'appoggio',
@@ -1263,6 +1264,6 @@ $strScript = array("admin_client.php" =>
         'amount' => 'Costo totale del bene € ',
         'ss_amm_min' => 'Ammort.Minister.',
         'super_ammort' => '% Super ammortamento'
-    ),
-);
+    )
+	);
 ?>

@@ -473,6 +473,11 @@ $select_agente->output();
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['cosric'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+$gForm->selectAccount('cosric', $form['cosric'], 4);
+echo "</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['destin'] . " </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <textarea name=\"destin\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["destin"] . "</TEXTAREA></td>\n";

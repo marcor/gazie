@@ -80,6 +80,7 @@ $strScript = array("admin_client.php" =>
         'pec_email' => 'Posta Elettronica Certificata',
         'e_mail' => 'e mail',
         'id_agente' => 'Sales Representative',
+        'cosric' => 'Conto di ricavo',
         'codpag' => 'Payment method*',
         'sconto' => '% Discount applied',
         'banapp' => 'Bank support',
