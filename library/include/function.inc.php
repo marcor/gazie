@@ -1800,6 +1800,14 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
     gaz_dbi_put_row($gTables['admin'], "Login", $login, "Access", $count);
     //modifico l'ultimo IP
     gaz_dbi_put_row($gTables['admin'], "Login", $login, 'last_ip', $_SERVER['REMOTE_ADDR']);
+    /*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio 
+	il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
+        che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti 
+	qui tramite HTTPS 
+    */
+    if (!empty(SET_DYNAMIC_IP)) {
+       @file_get_contents(SET_DYNAMIC_IP);
+    }
 }
 
 function checkAdmin($Livaut = 0) {

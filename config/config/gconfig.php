@@ -124,4 +124,7 @@ define('_SESSION_NAME', 'gazie');
 
 //url di default per l'aggiornamento di GAzie
 $update_URI_files = "http://sourceforge.net/projects/gazie";
+
+// url per comunicare (ping) il mio nuovo IP DINAMICO  all'hosting di appoggio
+define('SET_DYNAMIC_IP',''); 
 ?>
