@@ -499,6 +499,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         }
         $form['id_des'] = $cliente['id_des'];
         $form['in_codvat'] = $cliente['aliiva'];
+        if ($cliente['cosric']>=100000000){
+            $form['in_codric'] = $cliente['cosric'];
+        }
         $form['sconto'] = $cliente['sconto'];
         $form['pagame'] = $cliente['codpag'];
         $form['change_pag'] = $cliente['codpag'];

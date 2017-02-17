@@ -669,6 +669,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
         /** fine modifica FP */
         $form['in_codvat'] = $cliente['aliiva'];
+        if ($cliente['cosric']>=100000000){
+            $form['in_codric'] = $cliente['cosric'];
+        }
         $form['expense_vat'] = $admin_aziend['preeminent_vat'];
         if ($cliente['aliiva'] > 0) {
             $form['expense_vat'] = $cliente['aliiva'];
