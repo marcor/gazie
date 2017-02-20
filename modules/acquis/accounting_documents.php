@@ -72,7 +72,7 @@ function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=9999
     $where = "id_con = 0 AND seziva = $vat_section AND tipdoc LIKE '$type"."_' $d $p";
     $orderby = "datfat ASC, protoc ASC";
     $result = gaz_dbi_dyn_query('tesdoc.*,
-                        pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
+                        pay.tippag,pay.numrat,pay.pagaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,
                         customer.codice,
                         customer.speban AS addebitospese,
                         CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta',
@@ -346,9 +346,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                   if ($v['rit']>0) {  // se ho una ritenuta d'acconto
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['c_ritenute'],'import'=>$v['rit']));
                   }
-                  if ($v['tes']['incaut']=='S') {  // se il pagamento prevede l'incasso automatico
+                  if ($v['tes']['pagaut'] > 1) {  // se il pagamento prevede l'incasso automatico
                       rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_c,'codcon'=>$v['tes']['clfoco'],'import'=>($tot['tot']-$v['rit'])));
-                      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$admin_aziend['cassa_'],'import'=>($tot['tot']-$v['rit'])));
+                      rigmocInsert(array('id_tes'=>$tes_id,'darave'=>$da_p,'codcon'=>$v['tes']['pagaut'],'import'=>($tot['tot']-$v['rit'])));
                   } else { // altrimenti inserisco le partite aperte
                       foreach($rate['import'] as $k_rate=>$v_rate) {
                         // preparo l'array da inserire sui movimenti delle partite aperte

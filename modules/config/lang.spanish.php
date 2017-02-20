@@ -100,10 +100,10 @@ $strScript = array("admin_aziend.php" =>
         'mas_cost_assets' => 'Mastro costi ammortamento',
         'lost_cost_assets' => 'Conto quote perse ammortamento',
         'min_rate_deprec' => 'Amortización mínima tasa (%)',
-        'super_amm_account'=>'Conto costo super ammortamento',
-        'super_amm_rate'=>'Percentuale eccedente il 100%',
-        'capital_loss_account'=>'Conto minusvalenze',
-        'capital_gains_account'=>'Conto plusvalenze',
+        'super_amm_account' => 'Conto costo super ammortamento',
+        'super_amm_rate' => 'Percentuale eccedente il 100%',
+        'capital_loss_account' => 'Conto minusvalenze',
+        'capital_gains_account' => 'Conto plusvalenze',
         'cassa_' => 'Cuenta de Efectivo',
         'ivaacq' => 'Cuenta de IVA Compras',
         'ivaven' => 'Cuenta de IVA Ventas',
@@ -235,6 +235,7 @@ $strScript = array("admin_aziend.php" =>
         "Descripci&oacute;n",
         "Tipo de Pago",
         "D&eacute;bito",
+        'pagaut' => "Simultaneous payment",
         "Tipo de efecto",
         "Comenzando el d&iacute;a",
         "Mes excluido",
@@ -382,8 +383,8 @@ $strScript = array("admin_aziend.php" =>
         "Codigo menor que 1!",
         "Descripcion vacia!",
         "La naci&oacute;n es incompatible con el IBAN!",
-		'transfer_fees_acc'=>'Conto spese bonifici',
-		'transfer_fees'=>'Addebito per bonifici'),
+        'transfer_fees_acc' => 'Conto spese bonifici',
+        'transfer_fees' => 'Addebito per bonifici'),
     "admin_vettore.php" =>
     array('title' => ' Administracion de transportistas',
         'ins_this' => 'Introduzca un nuevo transportista',
@@ -426,7 +427,7 @@ $strScript = array("admin_aziend.php" =>
             'filmim' => "El archivo debe estar en formato JPG",
             'filsiz' => "La imagen no debe ser mayor de 10 KB",
             'Abilit' => "No se puede tener un nivel inferior al 9 porque es el administrador del pasado!",
-            'Abilit_stud'=>"No se puede tener un nivel inferior al 7 porque es el administrador del pasado!",
+            'Abilit_stud' => "No se puede tener un nivel inferior al 7 porque es el administrador del pasado!",
             'charpass' => "The password can not contain any special characters \" / > <"
         ),
         'Login' => "Pseud&oacute;nimo",
@@ -439,14 +440,14 @@ $strScript = array("admin_aziend.php" =>
         'post_pass' => 'caracteres)',
         'rep_pass' => 'Repite la Contrase&ntilde;a',
         'lang' => 'Idioma',
-        'theme'=>'Motor de interfaz.<br>Estará activo desde el siguiente inicio de sesión',
+        'theme' => 'Motor de interfaz.<br>Estará activo desde el siguiente inicio de sesión',
         'style' => 'Structure Tema / estilo',
         'skin' => 'Tema style',
         'mod_perm' => 'Permiso de m&oacute;dulos',
         'report' => 'Lista de Usuarios',
         'del_this' => 'Usuario',
         'del_err' => 'No se puede eliminar porque eres el &uacute;nico con derechos de administrador!',
-        'body_text'=> 'Testo contenuto nelle email che invierai'
+        'body_text' => 'Testo contenuto nelle email che invierai'
     )
 );
 ?>

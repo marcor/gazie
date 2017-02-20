@@ -414,9 +414,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 if ($v['rit'] > 0) {  // se ho una ritenuta d'acconto
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['c_ritenute'], 'import' => $v['rit']));
                 }
-                if (($v['tes']['incaut'] == 'S') && ($v['tes']['tippag'] <> 'K')) {  // se il pagamento prevede l'incasso automatico 
+                if (($v['tes']['incaut'] > 1) && ($v['tes']['tippag'] <> 'K')) {  // se il pagamento prevede l'incasso automatico 
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['cassa_'], 'import' => ($tot['tot'] - $v['rit'])));
+                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'])));
                 } elseif ($v['tes']['tippag'] == 'K') {// se effettuato con carte viene incassato direttamente su C.C.
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['id_bank'], 'import' => ($tot['tot'] - $v['rit'])));

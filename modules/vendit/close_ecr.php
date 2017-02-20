@@ -140,7 +140,7 @@ function getAccountedTickets($id_cash)
                            $cast_acc[$tes['id_bank']]['D']+=$tot_row;
                         }else{
                                                                 
-                        if ($tes['incaut']=='S') { //  ha pagato contanti vado per cassa 
+                        if ($tes['incaut'] > 1) { //  ha pagato contanti vado per cassa 
                         if (!isset($cast_acc[$tes['clfoco']]['A'])) {
                                $cast_acc[$tes['clfoco']]['A']=0;
                            }

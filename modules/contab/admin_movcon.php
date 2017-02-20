@@ -1274,13 +1274,21 @@ echo "</script>\n";
         } else {
             $tabnum = '';
         }
-        echo "<td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['numdocumen'] . "\" maxlength=\"20\" size=\"20\" name=\"numdocumen\" $tabnum></td>";
         echo "<td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['protocollo'] . "\" maxlength=\"7\" size=\"7\" name=\"protocollo\"></td>";
+        echo "<td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['numdocumen'] . "\" maxlength=\"20\" size=\"20\" name=\"numdocumen\" $tabnum></td>";
         echo "<td class=\"FacetDataTD\">\n";
         $gForm->CalendarPopup('date_doc', $form['date_doc_D'], $form['date_doc_M'], $form['date_doc_Y'], 'FacetSelect', 1);
         echo "</td>\n";
         $partnersel = $anagrafica->getPartner($form['cod_partner']);
-        echo "<td class=\"FacetDataTD\" >" . $partnersel['ragso1'] . " " . $partnersel['citspe'] . "</td></tr></table>";
+        echo "<td class=\"FacetDataTD\">" . $partnersel['ragso1'] . " " . $partnersel['citspe'] . "</td></tr>\n";
+        if ($toDo == 'insert') {
+            $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
+            if (($pay['incaut'] > 1 && ($form['registroiva'] >= 1 && $form['registroiva'] <= 5)) || ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 8))) {
+                $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['incaut']);
+                echo "<td class=\"FacetDataTDred warning text-right\" colspan='5'>ATTENZIONE!!! Il pagamento <span class='FacetDataTD'>".$pay['descri']."</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto:  <span class='FacetDataTD'>". $pay['pagaut'] . '-' . $payacc['descri'] . "</span></td></tr>\n";
+            }
+        }
+        echo "</table>";
     } else {
         echo "<input type=\"hidden\" name=\"sezioneiva\" value=\"" . $form['sezioneiva'] . "\">\n";
         echo "<input type=\"hidden\" name=\"numdocumen\" value=\"" . $form['numdocumen'] . "\">\n";

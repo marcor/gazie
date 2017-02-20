@@ -157,7 +157,7 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
             if ($row['clfoco'] == $ctrlc && $row['pagame'] != $ctrlp) {
                 $acc['error'][$i][$row['id_tes']][] = 'cust_pay';
             }
-            if ($row['incaut'] == 'S') {
+            if ($row['incaut'] > 1) {
                 $acc['error'][$i][$row['id_tes']][] = 'aut_pay';
             }
             if (($row['tippag'] == 'B' || $row['tippag'] == 'T') && $row['banapp'] == 0) {

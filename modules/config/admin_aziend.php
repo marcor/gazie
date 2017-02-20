@@ -725,7 +725,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="ivaera" class="col-sm-4 control-label"><?php echo $script_transl['ivaera']; ?></label>
                         <?php
-                        $gForm->selectAccount('ivaera', $form['ivaera'], substr($form['ivaera'], 0, 1), '', false, "col-sm-8");
+                        $gForm->selectAccount('ivaera', $form['ivaera'],array('sub',1,2,5,9) , '', false, "col-sm-8");
                         ?>
                     </div>
                 </div>

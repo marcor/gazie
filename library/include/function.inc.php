@@ -1486,7 +1486,7 @@ class GAzieForm {
         echo "\t </select>\n";
     }
 
-    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 350px;"') {
+    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 350px;"', $mas_only = true) {
         global $gTables, $admin_aziend;
         $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
             6 => "gaz-transitori", 7 => "gaz-transitori", 8 => "gaz-transitori", 9 => "gaz-transitori");
@@ -1531,7 +1531,7 @@ class GAzieForm {
             $v = $r["codice"];
             $c = intval($v / 100000000);
             $selected .= ' class="' . $bg_class[$c] . '" ';
-            if (intval($type) > 99 || (is_array($type) && count($type) == 1)) {
+            if ((intval($type) > 99 || (is_array($type) && count($type) == 1)) && $mas_only) {
                 $v = intval(substr($r["codice"], 0, 3));
             }
             if ($val == $v) {

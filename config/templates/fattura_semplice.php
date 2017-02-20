@@ -332,7 +332,7 @@ class FatturaSemplice extends Template {
             $this->Cell(62, 6, '', 'LR', 1);
             $this->Cell(62, 6, '', 'LRB', 1);
         }
-        if ($this->pagame['incaut'] == 'S' || $this->pagame['tippag'] == 'C') {
+        if ($this->pagame['incaut'] > 1 || $this->pagame['tippag'] == 'C') {
             $this->docVars->open_drawer();
         }
         $this->Cell(130, 6, 'Date di Scadenza e Importo Rate', 'LTR', 0, 'C', 1);

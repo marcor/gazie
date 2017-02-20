@@ -366,7 +366,7 @@ class FatturaImmediata extends Template_con_scheda
            $this->Cell(62, 5, $this->tesdoc['spediz'],'LRB',0,'C');
            $this->Cell(124, 5,'','LBR',1);
         }
-        if($this->pagame['incaut']=='S' || $this->pagame['tippag']=='C') {
+        if($this->pagame['incaut'] > 1 || $this->pagame['tippag']=='C') {
            $this->docVars->open_drawer();
         }
         if (empty($this->docVars->vettor['ragione_sociale'])){

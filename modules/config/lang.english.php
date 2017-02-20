@@ -231,6 +231,7 @@ $strScript = array("admin_aziend.php" =>
         "Description",
         "Payment type",
         "Simultaneous collection",
+        'pagaut' => "Simultaneous payment",
         "Type of effect",
         "Effect days",
         "Excluded month",
