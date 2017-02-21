@@ -299,7 +299,7 @@ $strScript = array("admin_fornit.php" =>
         'type_value' => array('A' => 'dei documenti di Acquisto'),
         'proini' => 'Protocollo iniziale',
         'profin' => 'Protocollo finale',
-        'preview' => 'Anteprima di contablizzazione',
+        'preview' => 'Anteprima di contabilizzazione',
         'date_reg' => 'Data',
         'protoc' => 'Protocollo',
         'doc_type' => 'Tipo',
@@ -335,7 +335,7 @@ $strScript = array("admin_fornit.php" =>
             'Inserire almeno 2 caratteri!',
             'Cambia fornitore'
         ),
-        'errors' => array('La data  non &egrave; corretta!',
+        'errors' => array('La data non &egrave; corretta!',
             'Non sono stati trovati movimenti!'
         ),
         'account' => 'Fornitore ',
