@@ -45,7 +45,7 @@ class contabForm extends GAzieForm {
             if ($r['codice'] == $val) {
                 $selected = "selected ";
             }
-            $selected .= ' class="'. $bg_class[$c] . '" ';
+            $selected .= ' class="' . $bg_class[$c] . '" ';
             if ($v == $admin_aziend['mascli'] || $v == $admin_aziend['masfor']) {
                 $selected .= ' style=" color: red; font-weight: bold;" ';
                 $view = $v . '-' . strtoupper($r['descri']);
@@ -158,7 +158,7 @@ class contabForm extends GAzieForm {
             if ($val == $r['codice']) {
                 $selected = " selected ";
             }
-            $selected .= ' class="'. $bg_class[$c] . '" ';
+            $selected .= ' class="' . $bg_class[$c] . '" ';
             if (substr($r['codice'], -6) == '000000') {
                 $selected .= " color: red; font-weight: bold;\" ";
                 $view = $v . '-' . strtoupper($r['descri']);
@@ -376,6 +376,24 @@ class contabForm extends GAzieForm {
             }
             echo "</select>\n";
         }
+    }
+
+    /* sends a Javascript toast to the client */
+
+    function toast($message, $id = 'alert-discount', $class = 'alert-warning') {
+        /*
+          echo "<script type='text/javascript'>toast('$message');</script>"; */
+        if (!empty($message)) {
+            echo '<div class="container">
+					<div id="' . $id . '" class="row alert ' . $class . ' fade in" role="alert">
+						<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
+							<span aria-hidden="true">&times;</span>
+						</button>
+						<span class="glyphicon glyphicon-alert" aria-hidden="true"></span>&nbsp;' . $message . '
+					</div>
+				  </div>';
+        }
+        return '';
     }
 
 }

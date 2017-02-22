@@ -299,7 +299,7 @@ for( $i = 1; $i <= $p_max; $i++ ) {
             $pdf->Cell(18,4,gaz_format_date($v['datreg']),'LTB',0,'C');
             $pdf->Cell(32,4,$v['numdoc'],'LTB',0,'C');
             $pdf->Cell(18,4,gaz_format_date($v['datdoc']),'LTB',0,'R');
-            $pdf->Cell(112,4,$v['ragsoc'],'LTR',1,'L');
+            $pdf->Cell(112,4,$v['ragsoc'],'LTR',1,'L',1,'',1);
             $topCarry[1]['name']= gaz_format_number($totimponi).' ';
             $botCarry[1]['name']= gaz_format_number($totimponi).' ';
             $topCarry[2]['name']= gaz_format_number($totimpost).' ';
@@ -308,9 +308,9 @@ for( $i = 1; $i <= $p_max; $i++ ) {
             $botCarry[3]['name']= gaz_format_number($totimponi+$totimpost).' ';
             $pdf->setTopCarryBar($topCarry);
             $pdf->setBotCarryBar($botCarry);
-            $pdf->Cell(66,4,$v['descri'],'LTB',0,'R');
+            $pdf->Cell(66,4,$v['descri'],'LTB',0,'R',0,'',1);
             $pdf->Cell(12,4,'cod. '.$v['codiva'],1,0,'C');
-            $pdf->Cell(40,4,$v['desiva'],1,0,'L');
+            $pdf->Cell(40,4,$v['desiva'],1,0,'L',0,'',1);
             $pdf->Cell(20,4,gaz_format_number($v['imponi']),1,0,'R');
             $pdf->Cell(14,4,gaz_format_number($v['periva']).'%',1,0,'C');
             $pdf->Cell(18,4,gaz_format_number($v['impost']),1,0,'R');
@@ -319,7 +319,7 @@ for( $i = 1; $i <= $p_max; $i++ ) {
             if (isset($v['acc_rows'])) {
                 foreach ($v['acc_rows']as $k1=>$v1){
                     $pdf->SetFont('helvetica','',7);
-                    $pdf->Cell(50,4,$k1."-".substr($v1['descri'],0,23),'L');
+                    $pdf->Cell(50,4,$k1."-".substr($v1['descri'],0,23),'L',0,'',0);
                     $pdf->Cell(1,4,$admin_aziend['symbol']);
                     $pdf->Cell(15,4,gaz_format_number($v1['value']),'R',1,'R');
                     $pdf->SetFont('helvetica','',8);
@@ -357,16 +357,17 @@ for( $i = 1; $i <= $p_max; $i++ ) {
     $pdf->SetFont('helvetica','B',10);
     $pdf->Ln(6);
     $pdf->Cell(190,6,$pdf->script_transl['vat_castle_title'],1,1,'C',1);
-    $pdf->Cell(20,5,'cod.',1,0,'C');
-    $pdf->Cell(60,5,$pdf->script_transl['descri'],1,0,'C');
-    $pdf->Cell(30,5,$pdf->script_transl['taxable'],1,0,'R');
-    $pdf->Cell(20,5,'%',1,0,'C');
-    $pdf->Cell(30,5,$pdf->script_transl['tax'],1,0,'R');
-    $pdf->Cell(30,5,$pdf->script_transl['tot'],1,1,'R');
+    $pdf->Cell(20,5,'cod.',1,0,'C',1);
+    $pdf->Cell(60,5,$pdf->script_transl['descri'],1,0,'C',1);
+    $pdf->Cell(30,5,$pdf->script_transl['taxable'],1,0,'R',1);
+    $pdf->Cell(20,5,'%',1,0,'C',1);
+    $pdf->Cell(30,5,$pdf->script_transl['tax'],1,0,'R',1);
+    $pdf->Cell(30,5,$pdf->script_transl['tot'],1,1,'R',1);
+    $pdf->SetFont('helvetica','',10);
     foreach ($pdf->vat_castle as $k=>$v) {
          $iva = gaz_dbi_get_row($gTables['aliiva'],"codice",$k);
          $pdf->Cell(20,5,$k,1,0,'C');
-         $pdf->Cell(60,5,$iva['descri'],1,0,'C');
+         $pdf->Cell(60,5,$iva['descri'],1,0,'C',0,'',1);
          $pdf->Cell(30,5,gaz_format_number($v['taxable']),1,0,'R');
          $pdf->Cell(20,5,$iva['aliquo'].'%',1,0,'C');
          $pdf->Cell(30,5,gaz_format_number($v['tax']),1,0,'R');
@@ -383,14 +384,14 @@ for( $i = 1; $i <= $p_max; $i++ ) {
         $pdf->SetFont('helvetica','B',10);
         $pdf->Cell(35);
         $pdf->Cell(120,6,$pdf->script_transl['acc_castle_title'],1,2,'C',1);
-        $pdf->Cell(20,5,'cod.',1,0,'C');
-        $pdf->Cell(75,5,$pdf->script_transl['descri'],1,0,'C');
-        $pdf->Cell(25,5,$pdf->script_transl['amount'],1,1,'R');
+        $pdf->Cell(20,5,'cod.',1,0,'C',1);
+        $pdf->Cell(75,5,$pdf->script_transl['descri'],1,0,'C',1,'',1);
+        $pdf->Cell(25,5,$pdf->script_transl['amount'],1,1,'R',1);
         $pdf->SetFont('helvetica','',8);
         foreach($pdf->acc_castle as $k=>$v) {
             $pdf->Cell(35);
             $pdf->Cell(20,5,$k,1,0,'C');
-            $pdf->Cell(75,5,$v['descri'],1,0,'L');
+            $pdf->Cell(75,5,$v['descri'],1,0,'L',0,'',1);
             $pdf->Cell(25,5,gaz_format_number($v['value']),1,1,'R');
         }
     }

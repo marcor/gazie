@@ -67,6 +67,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['date_doc_M'] = substr($testata['datdoc'], 5, 2);
     $form['date_doc_Y'] = substr($testata['datdoc'], 0, 4);
     $form['cod_partner'] = $testata['clfoco'];
+    $form['pay_closure'] = 0;
     if ($form['numdocumen'] > 0 or ! empty($form['numdocumen'])) {
         $form['inserimdoc'] = '1';
     } else {
@@ -154,8 +155,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['date_doc_D'] = intval($_POST['date_doc_D']);
     $form['date_doc_M'] = intval($_POST['date_doc_M']);
     $form['date_doc_Y'] = intval($_POST['date_doc_Y']);
-
     $form['cod_partner'] = $_POST['cod_partner'];
+    $form['pay_closure'] = $_POST['pay_closure'];
+    $partnersel = $anagrafica->getPartner($form['cod_partner']);
     //ricarico i registri per il form del rigo di inserimento contabile
     $form['insert_mastro'] = $_POST['insert_mastro'];
     $form['insert_conto'] = $_POST['insert_conto'];
@@ -187,8 +189,25 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 if ($_POST['cod_partner'] == 0 and $form['conto_rc' . $i] > 0) {
                     $partner = $anagrafica->getPartner($form['conto_rc' . $i]);
                     $loadCosRic = substr($form['conto_rc' . $i], 0, 1);
+                    $form['cod_partner'] = '';
                 }
                 $form['cod_partner'] = $_POST['conto_rc' . $i];
+                $partnersel = $anagrafica->getPartner($form['conto_rc' . $i]);
+                $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
+                // in caso di pagamento immediato tolgo le partite aperte
+                if ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 9) && $form['operatore'] == 1) { // è un documento di acquisto pagato immediatamente (es.contanti-assegno-bancomat-carta)  
+                    $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['pagaut']);
+                    $form['pay_closure'] = $payacc['codice'];
+                    unset($_POST['paymov'][$i]);
+                } elseif ($pay['incaut'] > 1 && ($form['registroiva'] >= 1 && $form['registroiva'] <= 5) && $form['operatore'] == 1) { // è un documento di vendita con pagamento immediato 
+                    $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['incaut']);
+                    $form['pay_closure'] = $payacc['codice'];
+                    unset($_POST['paymov'][$i]);
+                }
+                // in $form['pay_closure'] ho la contropartita di chiusura
+            } else {
+                $form['pay_closure'] = 0;
+                $form['cod_partner'] = 0;
             }
             if (($form['mastro_rc'][$i] == $mastroclienti && $form['darave_rc'][$i] == 'D') || ($form['mastro_rc'][$i] == $mastrofornitori && $form['darave_rc'][$i] == 'A')) { // è un rigo di documento o addebito (apertura partita)
                 $form['paymov_op_cl'][$i] = 1;
@@ -207,6 +226,8 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             } else {
                 $form['paymov'][$i]['new'] = array('id' => 'new', 'id_tesdoc_ref' => 'new', 'amount' => '0.00', 'expiry' => '');
             }
+            // controllo se il pagamento del cliente/fornitore prevede che vengano 
+            // eseguite le scritture di chiusura e nel caso setto il valore giusto
         }
         if ($loadCosRic == 1 && substr($form['conto_rc' . $i], 0, 1) == 4 && $partner['cosric'] > 0 && $form['registroiva'] > 0) {  //e' un  cliente agisce sui ricavi
             $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000";
@@ -635,7 +656,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                             }
                         } else {
                             // NON HO PARTITE POSTATE SU QUESTO RIGO
-                            if ($count_oldpaymov > 0) { // ...e se prima li avevo: li devo eliminare  TUTTI   
+                            if ($count_oldpaymov > 0 && $form['pay_closure'] <= 0) {
+                                // ...e se prima li avevo: li devo eliminare  TUTTI
+                                // ma solo se il pagamento non prevede una lo deselezione automatica
                                 foreach ($calc->RigmocEntries as $v) { // attraverso il vecchio array
                                     $calc->updatePaymov(array('id_del' => $v['id']));
                                 }
@@ -738,6 +761,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 );
                 tesmovUpdate($codice, $newValue);
             } else { //se è un'inserimento
+                $payment_closure = false; // mi servirà per stabilire se scrivere i due righi per ii pagamento
                 //inserisco la testata
                 $newValue = array('caucon' => substr($_POST['codcausale'], 0, 3),
                     'descri' => substr($_POST['descrizion'], 0, 100),
@@ -855,6 +879,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         gaz_dbi_table_insert('assets', $new_am);
                     }
                 }
+                // qui inserisco i movimento di pagamento 
             }
             if ($toDo == 'insert') {
                 header("Location: report_movcon.php");
@@ -908,6 +933,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['darave_rc'] = array();
     $form['importorc'] = array();
     $form['cod_partner'] = 0;
+    $form['pay_closure'] = 0;
     //registri per il form dei righi iva
     $_POST['rigiva'] = 0;
     $form['id_rig_ri'] = array();
@@ -1258,7 +1284,7 @@ echo "</script>\n";
     if ($form["inserimdoc"] == 1) {
         echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['insdoc'] . "</div>";
         echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-        echo "<tr><td class=\"FacetDataTD\" >" . $script_transl['seziva'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['numdoc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['protoc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['date_doc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['partner'] . "</td></tr>";
+        echo "<tr><td class=\"FacetDataTD\" >" . $script_transl['seziva'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['protoc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['numdoc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['date_doc'] . "</td><td class=\"FacetDataTD\" >" . $script_transl['partner'] . "</td></tr>";
         echo "<tr><td class=\"FacetDataTD\" >";
         echo "<select name=\"sezioneiva\" class=\"FacetSelect\" onchange=\"this.form.submit()\">";
         for ($sez = 1; $sez <= 9; $sez++) {
@@ -1279,15 +1305,7 @@ echo "</script>\n";
         echo "<td class=\"FacetDataTD\">\n";
         $gForm->CalendarPopup('date_doc', $form['date_doc_D'], $form['date_doc_M'], $form['date_doc_Y'], 'FacetSelect', 1);
         echo "</td>\n";
-        $partnersel = $anagrafica->getPartner($form['cod_partner']);
         echo "<td class=\"FacetDataTD\">" . $partnersel['ragso1'] . " " . $partnersel['citspe'] . "</td></tr>\n";
-        if ($toDo == 'insert') {
-            $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
-            if (($pay['incaut'] > 1 && ($form['registroiva'] >= 1 && $form['registroiva'] <= 5)) || ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 8))) {
-                $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['incaut']);
-                echo "<td class=\"FacetDataTDred warning text-right\" colspan='5'>ATTENZIONE!!! Il pagamento <span class='FacetDataTD'>".$pay['descri']."</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto:  <span class='FacetDataTD'>". $pay['pagaut'] . '-' . $payacc['descri'] . "</span></td></tr>\n";
-            }
-        }
         echo "</table>";
     } else {
         echo "<input type=\"hidden\" name=\"sezioneiva\" value=\"" . $form['sezioneiva'] . "\">\n";
@@ -1298,6 +1316,7 @@ echo "</script>\n";
         echo "<input type=\"hidden\" name=\"date_doc_Y\" value=\"" . $form['date_doc_Y'] . "\">\n";
     }
     echo "<input type=\"hidden\" name=\"cod_partner\" value=\"" . $form['cod_partner'] . "\">\n";
+    echo "<input type=\"hidden\" name=\"pay_closure\" value=\"" . $form['pay_closure'] . "\">\n";
 
 //inserimento movimento iva
     if ($form["registroiva"] > 0) {
@@ -1358,6 +1377,11 @@ echo "</script>\n";
     }
 //inserimento movimento contabile
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['del_this'] . "</div>\n";
+    if ($form['pay_closure'] >= 1) {
+        $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
+        $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['pay_closure']);
+        $gForm->toast("ATTENZIONE!!! Il pagamento <span class='FacetDataTD'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span class='FacetDataTD'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
+    }
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
     echo "<tr><td class=\"FacetColumnTD\">" . $script_transl['mas'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['sub'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['amount'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['daav'] . "</td><td class=\"FacetColumnTD\">" . $script_transl['addrow'] . "!</td></tr>\n";
     echo "<tr>\n";
@@ -1526,7 +1550,6 @@ echo "</script>\n";
             echo '
         <div id="paymov_last_id' . $i . '" value="' . $i_j . '"></div>
         ';
-            $partnersel = $anagrafica->getPartner($form['conto_rc' . $i]);
             if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
                 echo '<div id="dialog_open' . $i . '" partner="' . $partnersel['ragso1'] . '" title="Apertura: ' . $form['descrizion'] . ' - ' . $partnersel['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
             } else {  // chiusura partita
