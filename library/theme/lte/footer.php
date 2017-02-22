@@ -161,8 +161,8 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
         }
     </script>  
     <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../../library/theme/lte/adminlte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
-    <script src="../../library/theme/lte/adminlte/plugins/fastclick/fastclick.min.js"></script>
+    <script src="../../library/theme/lte/plugins/slimScroll/jquery.slimscroll.min.js"></script>
+    <script src="../../library/theme/lte/plugins/fastclick/fastclick.min.js"></script>
     <script>
         var AdminLTEOptions = {
             sidebarExpandOnHover: <?php echo $config->getValue('LTE_Onhover'); ?>,
