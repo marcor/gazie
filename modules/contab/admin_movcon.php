@@ -68,6 +68,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['date_doc_Y'] = substr($testata['datdoc'], 0, 4);
     $form['cod_partner'] = $testata['clfoco'];
     $form['pay_closure'] = 0;
+    $partnersel = $anagrafica->getPartner($form['cod_partner']);
     if ($form['numdocumen'] > 0 or ! empty($form['numdocumen'])) {
         $form['inserimdoc'] = '1';
     } else {
@@ -198,11 +199,11 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 if ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 9) && $form['operatore'] == 1) { // è un documento di acquisto pagato immediatamente (es.contanti-assegno-bancomat-carta)  
                     $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['pagaut']);
                     $form['pay_closure'] = $payacc['codice'];
-                    unset($_POST['paymov'][$i]);
+                    $form['pay_importo'] = $form['importorc'][$i];
                 } elseif ($pay['incaut'] > 1 && ($form['registroiva'] >= 1 && $form['registroiva'] <= 5) && $form['operatore'] == 1) { // è un documento di vendita con pagamento immediato 
                     $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['incaut']);
                     $form['pay_closure'] = $payacc['codice'];
-                    unset($_POST['paymov'][$i]);
+                    $form['pay_importo'] = $form['importorc'][$i];
                 }
                 // in $form['pay_closure'] ho la contropartita di chiusura
             } else {
@@ -761,7 +762,6 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 );
                 tesmovUpdate($codice, $newValue);
             } else { //se è un'inserimento
-                $payment_closure = false; // mi servirà per stabilire se scrivere i due righi per ii pagamento
                 //inserisco la testata
                 $newValue = array('caucon' => substr($_POST['codcausale'], 0, 3),
                     'descri' => substr($_POST['descrizion'], 0, 100),
@@ -802,7 +802,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => $ad, 'codcon' => intval($_POST['conto_rc' . $i]), 'import' => floatval($_POST['importorc'][$i])));
                     $last_id_rig = gaz_dbi_last_id();
                     // INSERISCO PURE LE EVENTUALI PARTITE APERTE
-                    if (isset($form['paymov'][$i])) {
+                    if (isset($form['paymov'][$i]) && $form['pay_closure'] <= 0) { // ma solo se non ho un pagamento contestuale
                         $new_paymov = array_values($form['paymov'][$i]);
                         foreach ($new_paymov as $k => $v) { // attraverso il nuovo array
                             $j = $k;
@@ -879,7 +879,16 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         gaz_dbi_table_insert('assets', $new_am);
                     }
                 }
-                // qui inserisco i movimento di pagamento 
+                // qui inserisco l'eventuale movimento di pagamento 
+                if ($form['pay_closure']>=1) {
+                   if (substr($form['cod_partner'],0,3) == $admin_aziend['mascli']) { // un cliente
+	               rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $form['pay_closure'], 'import' => $form['pay_importo']));
+		       rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $form['cod_partner'], 'import' => $form['pay_importo']));
+		   } else {
+		       rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $form['cod_partner'], 'import' => $form['pay_importo']));
+	               rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $form['pay_closure'], 'import' => $form['pay_importo']));
+		   }
+		}
             }
             if ($toDo == 'insert') {
                 header("Location: report_movcon.php");
