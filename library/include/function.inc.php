@@ -1805,7 +1805,7 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
         che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti 
 	qui tramite HTTPS 
     */
-    if (!empty(SET_DYNAMIC_IP)) {
+    if (SET_DYNAMIC_IP != '') {
        @file_get_contents(SET_DYNAMIC_IP);
     }
 }

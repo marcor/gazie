@@ -40,8 +40,9 @@ if ( isset($_GET['codice'])) {
 	$where .= " and codice like '$fornit%$codice%'";
 } else $codice = "";
 if (isset($_GET['auxil'])) {
-   $auxil = $_GET['auxil'];
+   $auxil = addslashes($_GET['auxil']);
    $where .= " and ragso1 like '%$auxil%'";
+   $auxil = stripslashes($_GET['auxil']);
 } else $auxil = "";
 if (isset($_GET['flt_tipo']) && $_GET['flt_tipo']!='All') {
    $tipo = $_GET['flt_tipo'];

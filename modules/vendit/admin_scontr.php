@@ -195,7 +195,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         } elseif ($form["clfoco"] == $admin_aziend['mascli']) { //  e' un cliente anonimo
             // il pagamento dev'essere contestuale, non si fa credito agli anonimi!
             $payment = gaz_dbi_get_row($gTables['pagame'], 'codice', $form["pagame"]);
-            if ($payment['incaut'] > 100000000) {
+            if ($payment['incaut'] <= 100000000) {
                 $msg['err'][] = "incaut";
             }
         }
