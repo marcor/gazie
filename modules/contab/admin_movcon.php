@@ -29,6 +29,7 @@ $mastrofornitori = $admin_aziend['masfor'] . "000000";
 $anagrafica = new Anagrafica();
 $msg = "";
 $form = array();
+$partner_max_value = array();
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 } else {
@@ -195,7 +196,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $form['cod_partner'] = $_POST['conto_rc' . $i];
                 $partnersel = $anagrafica->getPartner($form['conto_rc' . $i]);
                 $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
-                // in caso di pagamento immediato tolgo le partite aperte
+                // in caso di pagamento immediato dovrò settare l'importo di chiusura ed il relativo conto
                 if ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 9) && $form['operatore'] == 1) { // è un documento di acquisto pagato immediatamente (es.contanti-assegno-bancomat-carta)  
                     $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['pagaut']);
                     $form['pay_closure'] = $payacc['codice'];
@@ -476,12 +477,12 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
 
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
-        $ctrltotdar = 0.00;
-        $ctrltotmov = 0.00;
-        $ctrltotave = 0.00;
-        $ctrlsaldo = 0.00;
-
-        $ctrlmoviva = 0.00;
+        $ctrl_tot_D = 0.00;
+        $ctrl_tot_A = 0.00;
+        $ctrl_mov_iva = 0.00;
+        $ctrl_bal = 0.00;
+        $ctrl_mov_con = 0.00;
+        $acc_partner_mov = array();
         //calcolo i totali dare e avere per poter eseguire il controllo
         for ($i = 0; $i < $_POST['rigcon']; $i++) {
             $_POST['importorc'][$i] = preg_replace("/\,/", '.', $_POST['importorc'][$i]);
@@ -494,16 +495,19 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             }
             if ($_POST['registroiva'] == 4 && (
                     substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masban'] || substr($_POST['conto_rc' . $i], 0, 3) == substr($admin_aziend['cassa_'], 0, 3))) {
-                $ctrlmoviva = number_format($_POST['importorc'][$i] + $ctrlmoviva, 2, '.', '');
+                $ctrl_mov_con = number_format($_POST['importorc'][$i] + $ctrl_mov_con, 2, '.', '');
             } elseif (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] || substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'] || (preg_match("/^id_([0-9]+)$/", $_POST['conto_rc' . $i], $match))) {
-                $ctrlmoviva = number_format($_POST['importorc'][$i], 2, '.', '');
+                // qui faccio il push del valore massimo che trovo  
+                if ($ctrl_mov_con <= $_POST['importorc'][$i]) {
+                    $ctrl_mov_con = number_format($_POST['importorc'][$i], 2, '.', '');
+                }
             }
             if ($_POST['darave_rc'][$i] == "D") {
-                $ctrltotdar += $_POST['importorc'][$i];
+                $ctrl_tot_D += $_POST['importorc'][$i];
             } else {
-                $ctrltotave += $_POST['importorc'][$i];
+                $ctrl_tot_A += $_POST['importorc'][$i];
             }
-            $ctrlsaldo = number_format($ctrltotdar - $ctrltotave, 2, '.', '');
+            $ctrl_bal = number_format($ctrl_tot_D - $ctrl_tot_A, 2, '.', '');
         }
         //calcolo i totali iva per poter eseguire il controllo
         if (!isset($_POST['rigiva'])) {
@@ -512,23 +516,23 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         for ($i = 0; $i < $_POST['rigiva']; $i++) {
             $_POST['imponi_ri'][$i] = preg_replace("/\,/", '.', $_POST['imponi_ri'][$i]);
             $_POST['impost_ri'][$i] = preg_replace("/\,/", '.', $_POST['impost_ri'][$i]);
-            $ctrltotmov += $_POST['imponi_ri'][$i] + $_POST['impost_ri'][$i];
+            $ctrl_mov_iva += $_POST['imponi_ri'][$i] + $_POST['impost_ri'][$i];
         }
-        $ctrltotmov = number_format($ctrltotmov, 2, '.', '');
-        if ($ctrlsaldo != 0) {
+        $ctrl_mov_iva = number_format($ctrl_mov_iva, 2, '.', '');
+        if ($ctrl_bal != 0) {
             $msg .= "2+";
         }
-        if ($ctrltotdar == 0) {
+        if ($ctrl_tot_D == 0) {
             $msg .= "3+";
         }
-        if ($ctrltotave == 0) {
+        if ($ctrl_tot_A == 0) {
             $msg .= "4+";
         }
-        if ($_POST['registroiva'] > 0 && $ctrltotmov == 0) {
+        if ($_POST['registroiva'] > 0 && $ctrl_mov_iva == 0) {
             $msg .= "5+";
         }
-        if ($_POST['registroiva'] > 0 && $ctrltotmov <> $ctrlmoviva) {
-            print $ctrltotmov . ' ' . $ctrlmoviva . '<br><hr>';
+        if ($_POST['registroiva'] > 0 && $ctrl_mov_iva <> $ctrl_mov_con) {
+            print $ctrl_mov_iva . ' ' . $ctrl_mov_con . '<br><hr>';
             $msg .= "6+";
         }
         if (empty($_POST['descrizion'])) {
@@ -880,15 +884,15 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     }
                 }
                 // qui inserisco l'eventuale movimento di pagamento 
-                if ($form['pay_closure']>=1) {
-                   if (substr($form['cod_partner'],0,3) == $admin_aziend['mascli']) { // un cliente
-	               rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $form['pay_closure'], 'import' => $form['pay_importo']));
-		       rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $form['cod_partner'], 'import' => $form['pay_importo']));
-		   } else {
-		       rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $form['cod_partner'], 'import' => $form['pay_importo']));
-	               rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $form['pay_closure'], 'import' => $form['pay_importo']));
-		   }
-		}
+                if ($form['pay_closure'] >= 1) {
+                    if (substr($form['cod_partner'], 0, 3) == $admin_aziend['mascli']) { // un cliente
+                        rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $form['pay_closure'], 'import' => $form['pay_importo']));
+                        rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $form['cod_partner'], 'import' => $form['pay_importo']));
+                    } else {
+                        rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'D', 'codcon' => $form['cod_partner'], 'import' => $form['pay_importo']));
+                        rigmocInsert(array('id_tes' => $ultimo_id, 'darave' => 'A', 'codcon' => $form['pay_closure'], 'import' => $form['pay_importo']));
+                    }
+                }
             }
             if ($toDo == 'insert') {
                 header("Location: report_movcon.php");
