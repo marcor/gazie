@@ -170,6 +170,7 @@ class Login {
                 // "Adding the charset to the DSN is very important for security reasons,
                 // most examples you'll see around leave it out. MAKE SURE TO INCLUDE THE CHARSET!"
                 $this->db_connection = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8', DB_USER, DB_PASS);
+                $this->db_connection->exec("/*!50701 SET SESSION sql_mode='' */");
                 return true;
             } catch (PDOException $e) {
                 $this->errors[] = MESSAGE_DATABASE_ERROR . $e->getMessage();
@@ -212,6 +213,20 @@ class Login {
         // !empty($_SESSION['student_name']) && ($_SESSION['student_logged_in'] == 1)
         // when we called this method (in the constructor)
         $this->student_is_logged_in = true;
+    }
+    // recupero ip chiamante
+    private function getUserIP() {
+        $client = @$_SERVER['HTTP_CLIENT_IP'];
+        $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
+        $remote = $_SERVER['REMOTE_ADDR'];
+        if (filter_var($client, FILTER_VALIDATE_IP)) {
+            $ip = $client;
+        } elseif (filter_var($forward, FILTER_VALIDATE_IP)) {
+            $ip = $forward;
+        } else {
+            $ip = $remote;
+        }
+        return $ip;
     }
 
     /**
@@ -324,7 +339,7 @@ class Login {
                 $this->errors[] = MESSAGE_ACCOUNT_NOT_ACTIVATED;
             } else {
                 // GAZIE : get admin_password
-                $psw = $this->db_connection->prepare('SELECT Password FROM ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin WHERE Login = :student_name');
+                $psw = $this->db_connection->prepare('SELECT Password, Access FROM ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin WHERE Login = :student_name');
                 $psw->bindValue(':student_name', $result_row->student_name, PDO::PARAM_STR);
                 $psw->execute();
                 // get result row (as an object)
@@ -345,6 +360,13 @@ class Login {
                 $this->student_name = $result_row->student_name;
                 $this->student_email = $result_row->student_email;
                 $this->student_is_logged_in = true;
+
+                // aggiorno la tabella gazXXXX_admin con i nuovi valori di access e last_ip
+                $log = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin SET Access = :Access, last_ip = :last_ip  WHERE Login = :student_name');
+                $log->bindValue(':student_name', $result_row->student_name, PDO::PARAM_STR);
+                $log->bindValue(':Access', $rs_psw->Access + 1, PDO::PARAM_INT);
+                $log->bindValue(':last_ip', $this->getUserIP(), PDO::PARAM_STR);
+                $log->execute();
 
                 // reset the failed login counter for that user
                 $sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students '
@@ -663,9 +685,9 @@ class Login {
         } else {
             $mail->IsMail();
         }
-        $mail->IsHTML(true);          
+        $mail->IsHTML(true);
 
-        $mail->From =  $this->email_conf['order_mail'];
+        $mail->From = $this->email_conf['order_mail'];
         $mail->FromName = EMAIL_PASSWORDRESET_FROM_NAME;
         $mail->AddAddress($student_email);
         $mail->Subject = EMAIL_PASSWORDRESET_SUBJECT;
@@ -673,7 +695,8 @@ class Login {
         $mail->AddEmbeddedImage('../../library/images/gazie.gif', 'glogo');
 
         $link = EMAIL_PASSWORDRESET_URL . '?student_name=' . urlencode($student_name) . '&verification_code=' . urlencode($student_password_reset_hash);
-        $mail->Body = EMAIL_PASSWORDRESET_CONTENT . '<br> <img height="64" src="cid:glogo" /> <a href="' . $link.'"> <img src="cid:gschool" /> '.MESSAGE_EMAIL_LINK_FOR_RESET.'</a>';;
+        $mail->Body = EMAIL_PASSWORDRESET_CONTENT . '<br> <img height="64" src="cid:glogo" /> <a href="' . $link . '"> <img src="cid:gschool" /> ' . MESSAGE_EMAIL_LINK_FOR_RESET . '</a>';
+        ;
 
         if (!$mail->Send()) {
             $this->errors[] = MESSAGE_PASSWORD_RESET_MAIL_FAILED . $mail->ErrorInfo;
