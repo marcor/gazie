@@ -322,7 +322,7 @@ switch ($admin_aziend['fatimm']) {
                 // customer data
                 $match_cust = true;
                 $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $r['clfoco']);
-                $pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $clfoco['codpag']);
+                $pagame = gaz_dbi_get_row($gTables['pagame'], 'codice', $r['pagame']);
                 $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
                 if (!empty($cliente) && stripos($anagra['ragso1'], $_GET['cliente']) === false) {
                     $match_cust = false;
