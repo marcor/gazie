@@ -90,7 +90,7 @@ class Depliant extends Report_template {
                 $link = 'admin_artico.php?codice=' . $code . '&Update';
             }
             $this->Image('@' . $image, $x + 72, $y, 20, 20, '', $link);
-            $this->Cell(93, 5, $code, 'LTR', 2);
+            $this->Cell(93, 5, $code, 'LTR', 2, 'L', 0, '', 1);
             $this->Cell(93, 5, $description, 'LR', 2, 'L', 0, '', 1);
             if ($un > 0) {
                 $un .= ' N./Pack';
