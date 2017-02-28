@@ -138,143 +138,143 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
 ?>
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
-        <link rel="stylesheet" href="../../library/bootstrap/css/bootstrap.min.css" >
-        <link rel="shortcut icon" href="../../library/images/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/default.css">
-        <link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/skins/default.css">
-        <title>Gazie - Login</title>
-        <noscript>
-    <h1>
-        ATTENTION!!! <br>Yours browser it is not qualified to execute code Javascript, in order to use GAZIE is indispensable to change such formulation!<br>
-        ATTENZIONE!!!<br>Il tuo browser non &egrave; abilitato ad eseguire codice Javascript, per usare GAZIE &egrave; indispensabile cambiare tale impostazione!<br>
-    </h1>
-    </noscript>
-    <script language="JavaScript" src="../../js/cookies/cookies.js"></script>
-    <script language="JavaScript" src="../../js/md5/md5.js"></script>
-    <script language="JavaScript" src="../../js/jquery/jquery.js"></script>
-    <script language="JavaScript" src="../../js/capslockstate/src/jquery.capslockstate.js"></script>
-    <!-- ENRICO FEDELE -->
-    <script type="text/javascript">
-        $(document).ready(function () {
-            /* Bind to capslockstate events and update display based on state  */
-            $(window).bind("capsOn", function (event) {
-                if ($("#login-password:focus").length > 0) {
-                    $("#capsWarning").show();
-                }
-            });
-            $(window).bind("capsOff capsUnknown", function (event) {
-                $("#capsWarning").hide();
-            });
-            $("#login-password").bind("focusout", function (event) {
-                $("#capsWarning").hide();
-            });
-            $("#login-password").bind("focusin", function (event) {
-                if ($(window).capslockstate("state") === true) {
-                    $("#capsWarning").show();
-                }
-            });
-            /* 
-             * Initialize the capslockstate plugin.
-             * Monitoring is happening at the window level.
-             */
-            $(window).capslockstate();
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it" />
+	<link rel="stylesheet" href="../../library/bootstrap/css/bootstrap.min.css" />
+	<link rel="shortcut icon" href="../../library/images/favicon.ico" />
+	<link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/default.css" />
+	<link rel="stylesheet" type="text/css" href="../../library/theme/g7/skins/default.css" />
+	<title>Gazie - Login</title>
+	<noscript>
+	<h1>
+		ATTENTION!!!<br />Yours browser it is not qualified to execute code Javascript, in order to use GAZIE is indispensable to change such formulation!<br />
+		ATTENZIONE!!!<br />Il tuo browser non &egrave; abilitato ad eseguire codice Javascript, per usare GAZIE &egrave; indispensabile cambiare tale impostazione!<br />
+	</h1>
+	</noscript>
+	<script language="JavaScript" src="../../js/cookies/cookies.js"></script>
+	<script language="JavaScript" src="../../js/md5/md5.js"></script>
+	<script language="JavaScript" src="../../js/jquery/jquery.js"></script>
+	<script language="JavaScript" src="../../js/capslockstate/src/jquery.capslockstate.js"></script>
+	<!-- ENRICO FEDELE -->
+	<script type="text/javascript">
+		$(document).ready(function () {
+			/* Bind to capslockstate events and update display based on state  */
+			$(window).bind("capsOn", function (event) {
+				if ($("#login-password:focus").length > 0) {
+					$("#capsWarning").show();
+				}
+			});
+			$(window).bind("capsOff capsUnknown", function (event) {
+				$("#capsWarning").hide();
+			});
+			$("#login-password").bind("focusout", function (event) {
+				$("#capsWarning").hide();
+			});
+			$("#login-password").bind("focusin", function (event) {
+				if ($(window).capslockstate("state") === true) {
+					$("#capsWarning").show();
+				}
+			});
+			/* 
+			 * Initialize the capslockstate plugin.
+			 * Monitoring is happening at the window level.
+			 */
+			$(window).capslockstate();
 
-        });
-        function showPassword() {
-            var key_attr = $('#Password').attr('type');
-            if (key_attr != 'text') {
-                $('.checkbox').addClass('show');
-                $('#Password').attr('type', 'text');
-            } else {
-                $('.checkbox').removeClass('show');
-                $('#Password').attr('type', 'password');
-            }
-        }
-    </script>
+		});
+		function showPassword() {
+			var key_attr = $('#Password').attr('type');
+			if (key_attr != 'text') {
+				$('.checkbox').addClass('show');
+				$('#Password').attr('type', 'text');
+			} else {
+				$('.checkbox').removeClass('show');
+				$('#Password').attr('type', 'password');
+			}
+		}
+	</script>
 </head>
 <body background="../../library/images/sfondo.png">
-    <form method="post" onsubmit="document.forms[0].Password.value = hex_hmac_md5(document.forms[0].Password.value, GetCookie('<?php echo session_name(); ?>'));" action="<?php echo "login_admin.php?tp=" . $tp; ?> ">
-        <input type="hidden" name="tp" value="<?php echo $tp; ?>" />
-        <div class="container">    
-            <div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
-                <div class="panel panel-info" style="max-width:500px;" >
-                    <div class="panel-heading panel-gazie">
-                        <div class="panel-title"><img width="5%" src="../../library/images/gazie.gif" /> <?php echo $script_transl['log']; ?> <?php echo $server_lang; ?> <img width="5%" src="../../language/<?php echo $lang; ?>/flag.png" /></div>
-                        <div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
-                    </div>
-                    <div style="padding-top:10px" class="panel-body" >
-                        <?php
-                        if (!$message == "") {
-                            echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
-                            print $message;
-                            echo '</div>';
-                        }
-                        ?>
-                        <h4 ><?php echo $script_transl['welcome']; ?></h4>
-                        <p><?php echo $script_transl['intro']; ?></p>
-                        <p><?php echo $script_transl['usr_psw']; ?></p><br/>
-                        <div style="padding-bottom: 25px;" class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                            <input style="height: 34px;"  id="login-username" type="text" class="form-control" name="Login" value="<?php
-                            if (isset($_POST['Login'])) {
-                                echo $form['Login'];
-                            } else {
-                                if (isset($usr)) {
-                                    echo $usr;
-                                }
-                            };
-                            ?>" placeholder="Inserisci il Nome Utente">
-                        </div>
+	<form method="post" onsubmit="document.forms[0].Password.value = hex_hmac_md5(document.forms[0].Password.value, GetCookie('<?php echo session_name(); ?>'));" action="<?php echo "login_admin.php?tp=" . $tp; ?> ">
+		<input type="hidden" name="tp" value="<?php echo $tp; ?>" />
+		<div class="container">    
+			<div id="loginbox" style="margin-top:50px;" class="mainbox mainbox col-sm-offset-2 col-sm-8">                    
+				<div class="panel panel-info" style="max-width:500px;" >
+					<div class="panel-heading panel-gazie">
+						<div class="panel-title"><img width="5%" src="../../library/images/gazie.gif" /> <?php echo $script_transl['log']; ?> <?php echo $server_lang; ?> <img width="5%" src="../../language/<?php echo $lang; ?>/flag.png" /></div>
+						<div style="color: red; float:right; font-size: 100%; position: relative; top:-10px"></div>
+					</div>
+					<div style="padding-top:10px" class="panel-body" >
+						<?php
+						if (!$message == "") {
+							echo '<div id="login-alert" class="alert alert-danger col-sm-12">';
+							print $message;
+							echo '</div>';
+						}
+						?>
+						<h4 ><?php echo $script_transl['welcome']; ?></h4>
+						<p><?php echo $script_transl['intro']; ?></p>
+						<p><?php echo $script_transl['usr_psw']; ?></p><br />
+						<div style="padding-bottom: 25px;" class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+							<input style="height: 34px;"  id="login-username" type="text" class="form-control" name="Login" value="<?php
+							if (isset($_POST['Login'])) {
+								echo $form['Login'];
+							} else {
+								if (isset($usr)) {
+									echo $usr;
+								}
+							};
+							?>" placeholder="Inserisci il Nome Utente">
+						</div>
 
-                        <div style="padding-bottom: 25px;" class="input-group">
-                            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                            <input  type="password" style="height: 34px;"  id="login-password" class="form-control" name="Password" placeholder="<?php echo $script_transl['ins_psw']; ?>">
-                        </div>
-                        <div id="capsWarning" class="alert alert-warning col-sm-12" style="display:none;">Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!</div>
-                        <?php
-                        if ($newpass == true) {
-                            ?>
-                            <?php echo $script_transl['label_new_psw']; ?>
-                            <div style="padding-bottom: 25px;" class="input-group">
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                <input style="height: 34px;"  id="login-password" type="password" class="form-control" name="Nuovapass" placeholder="<?php echo $script_transl['new_psw']; ?>">
-                            </div>
+						<div style="padding-bottom: 25px;" class="input-group">
+							<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+							<input  type="password" style="height: 34px;"  id="login-password" class="form-control" name="Password" placeholder="<?php echo $script_transl['ins_psw']; ?>">
+						</div>
+						<div id="capsWarning" class="alert alert-warning col-sm-12" style="display:none;">Blocco maiuscole attivato! Caps lock on! Bloqueo de mayusculas!</div>
+						<?php
+						if ($newpass == true) {
+							?>
+							<?php echo $script_transl['label_new_psw']; ?>
+							<div style="padding-bottom: 25px;" class="input-group">
+								<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+								<input style="height: 34px;"  id="login-password" type="password" class="form-control" name="Nuovapass" placeholder="<?php echo $script_transl['new_psw']; ?>">
+							</div>
 
-                            <?php echo $script_transl['label_conf_psw']; ?>			
-                            <div style="padding-bottom: 25px;" class="input-group">	
-                                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                                <input style="height: 34px;" id="login-password" type="password" class="form-control" name="Confepass" placeholder="<?php echo $script_transl['conf_psw']; ?>">
-                            </div>
-                            <?php
-                        }
-                        ?>
-                        <div style="padding-top:10px" class="form-group">
-                            <div class="col-sm-12 controls">
-                                <input style="float:right;" class="btn btn-success btn-100" name="actionflag" type="submit" value="Login" >
-                            </div>
-                        </div>
-                    </div>  
-                    <?php if (@checkSchool()) { ?>
-                        <div style="padding-top:10px" class="panel-body" >
-                            <div style="padding-top:10px" class="form-group">
-                                <div class="col-sm-12 controls">
-                                    <a href="../school/student_login.php" > 
-                                        <?php echo $script_transl['student']; ?>
-                                        <img src="../school/school.png">
-                                    </a>
-                                </div>
-                            </div>
+							<?php echo $script_transl['label_conf_psw']; ?>			
+							<div style="padding-bottom: 25px;" class="input-group">	
+								<span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+								<input style="height: 34px;" id="login-password" type="password" class="form-control" name="Confepass" placeholder="<?php echo $script_transl['conf_psw']; ?>">
+							</div>
+							<?php
+						}
+						?>
+						<div style="padding-top:10px" class="form-group">
+							<div class="col-sm-12 controls">
+								<input style="float:right;" class="btn btn-success btn-100" name="actionflag" type="submit" value="Login" >
+							</div>
+						</div>
+					</div>  
+					<?php if (@checkSchool()) { ?>
+						<div style="padding-top:10px" class="panel-body" >
+							<div style="padding-top:10px" class="form-group">
+								<div class="col-sm-12 controls">
+									<a href="../school/student_login.php" > 
+										<?php echo $script_transl['student']; ?>
+										<img src="../school/school.png">
+									</a>
+								</div>
+							</div>
 
-                        </div> 
-                    <?php }  ?>
-                </div>  
-            </div>
-        </div><!-- chiude div container -->
-    </form>
+						</div> 
+					<?php }  ?>
+				</div>  
+			</div>
+		</div><!-- chiude div container -->
+	</form>
 </body>
 </html>
 <?php
