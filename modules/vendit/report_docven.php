@@ -28,7 +28,7 @@ $anno = date("Y");
 $cliente = '';
 $message = "";
 $lot = new lotmag();
-$partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode');
 
 function print_querytime($prev) {
     list($usec, $sec) = explode(" ", microtime());
@@ -256,7 +256,7 @@ switch ($admin_aziend['fatimm']) {
                 <td class="FacetFieldCaptionTD">
 
                     <?php
-                    if ($partner_select_mode == null or $partner_select_mode == "0") {
+                    if ($partner_select_mode['val'] == null or $partner_select_mode['val'] == "0") {
                         gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1");
                     } else {
                         gaz_flt_disp_int("cliente", "Cliente");

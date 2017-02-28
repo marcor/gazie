@@ -24,7 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode')['val'];
+$partner_select_mode = gaz_dbi_get_row($gTables['company_config'], 'var', 'partner_select_mode');
 $message = "";
 $anno = date("Y");
 if (isset($_GET['auxil'])) {
@@ -153,7 +153,7 @@ function confirMail(link){
                 <td class="FacetFieldCaptionTD">
 
                     <?php
-                    if ($partner_select_mode == null or $partner_select_mode == "0") {
+                    if ($partner_select_mode['val'] == null or $partner_select_mode['val'] == "0") {
                         gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesdoc"] . ".clfoco", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1");
                     } else {
                         gaz_flt_disp_int("cliente", "Cliente");
@@ -253,7 +253,7 @@ function confirMail(link){
 
                             // Colonna "Mail"
                             echo "<td align=\"center\">";
-                            if (!empty($r["e_mail"])) {
+                            if (!empty($anagra["e_mail"])) {
                                 echo '<a class="btn btn-xs btn-default btn-mail" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $urlPrintDoc . '&dest=E" href="#" title="mailto: ' . $anagra["e_mail"] . '"
                 mail="' . $anagra["e_mail"] . '" namedoc="' . $r['tipdoc'] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope" title="Invia documento per email"></i></a>';
                             } else {
