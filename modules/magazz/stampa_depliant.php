@@ -121,7 +121,7 @@ class Depliant extends Report_template {
                 $this->SetX(10);
             }
             $this->SetX(10);
-            $this->Cell(27, 5, $code, 1, 0, 'L');
+            $this->Cell(27, 5, $code, 1, 0, 'L', 0, '', 1);
             if (strlen(trim($description)) > 36) {
                 $this->SetFont('helvetica', '', 8);
                 $this->Cell(63, 5, $description, 1, 0, 'L', 0, '', 1);

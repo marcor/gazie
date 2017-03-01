@@ -1390,7 +1390,7 @@ echo "</script>\n";
     }
 //inserimento movimento contabile
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['del_this'] . "</div>\n";
-    if ($form['pay_closure'] >= 1) {
+    if ($form['pay_closure'] >= 1 && $toDo == 'insert') {
         $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
         $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['pay_closure']);
         $gForm->toast("ATTENZIONE!!! Il pagamento <span class='FacetDataTD'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span class='FacetDataTD'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
