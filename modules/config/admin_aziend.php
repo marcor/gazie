@@ -1099,7 +1099,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     </div>
                 </div>
             </div><!-- chiude row  -->
-            <?php for ($i = 1; $i <= 3; $i++) { ?>
+            <?php for ($i = 1; $i <= 9; $i++) { ?>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">

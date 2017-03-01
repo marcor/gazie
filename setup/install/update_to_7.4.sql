@@ -6,3 +6,5 @@ UPDATE `gaz_XXXpagame` SET `pagaut`=(SELECT `cassa_` FROM `gaz_aziend` WHERE `co
 UPDATE `gaz_XXXpagame` SET `incaut`=(SELECT `cassa_` FROM `gaz_aziend` WHERE `codice`= CONVERT('XXX',UNSIGNED INTEGER) LIMIT 1) WHERE `incaut` = 'S';
 ALTER TABLE `gaz_XXXpagame` CHANGE `incaut` `incaut` INT(9) NOT NULL DEFAULT 0;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
+UPDATE `gaz_config` SET `cvalue` = '99' WHERE `id` =2;
+ALTER TABLE `gaz_aziend` ADD COLUMN `desez4` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez3`, ADD COLUMN `desez5` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez4`, ADD COLUMN `desez6` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez5`, ADD COLUMN `desez7` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez6`, ADD COLUMN `desez8` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez7`, ADD COLUMN `desez9` VARCHAR(50) NOT NULL DEFAULT 'AUTOFATTURE - REVERSE CHARGE' AFTER `desez8`;
