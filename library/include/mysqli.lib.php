@@ -609,14 +609,14 @@ function tesdocUpdate($codice, $newValue) {
 
 function tesmovUpdate($codice, $newValue) {
     $table = 'tesmov';
-    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
+    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'reverse_charge_idtes', 'coll_dich_iva', 'libgio', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesmovInsert($newValue) {
     $table = 'tesmov';
-    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
+    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'reverse_charge_idtes', 'coll_dich_iva', 'libgio', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
     $last_id = tableInsert($table, $columns, $newValue);
     return $last_id;

@@ -254,8 +254,8 @@ for( $i = 1; $i <= $p_max; $i++ ) {
                       array('lenght' => 20,'name'=>'','frame' => 1,'fill'=>1));
     $top = array(array('lenght' => 10,'name'=>$pdf->script_transl['top']['prot'],'frame' => 1,'fill'=>1,'font'=>7),
                  array('lenght' => 18,'name'=>$pdf->script_transl['top']['dreg'],'frame' => 1,'fill'=>1),
-                 array('lenght' => 32,'name'=>$pdf->script_transl['top']['desc'],'frame' => 1,'fill'=>1),
-                 array('lenght' => 18,'name'=>$pdf->script_transl['top']['ddoc'],'frame' => 1,'fill'=>1),
+                 array('lenght' => 28,'name'=>$pdf->script_transl['top']['desc'],'frame' => 1,'fill'=>1),
+                 array('lenght' => 22,'name'=>$pdf->script_transl['top']['ddoc'],'frame' => 1,'fill'=>1),
                  array('lenght' => 40,'name'=>$pdf->script_transl['partner_descri'][$pdf->typbook],'frame' => 1,'fill'=>1),
                  array('lenght' => 20,'name'=>$pdf->script_transl['top']['txbl'],'frame' => 1,'fill'=>1),
                  array('lenght' => 14,'name'=>$pdf->script_transl['top']['perc'],'frame' => 1,'fill'=>1),
@@ -308,8 +308,9 @@ for( $i = 1; $i <= $p_max; $i++ ) {
             $botCarry[3]['name']= gaz_format_number($totimponi+$totimpost).' ';
             $pdf->setTopCarryBar($topCarry);
             $pdf->setBotCarryBar($botCarry);
-            $pdf->Cell(66,4,$v['descri'],'LTB',0,'R',0,'',1);
-            $pdf->Cell(12,4,'cod. '.$v['codiva'],1,0,'C');
+            $pdf->Cell(56,4,$v['descri'],'LTB',0,'R',0,'',1);
+            $pdf->Cell(12,4,$v['coll_dich_iva'],'LTB',0,'C',0,'',1);
+            $pdf->Cell(10,4,'cod '.$v['codiva'],1,0,'C');
             $pdf->Cell(40,4,$v['desiva'],1,0,'L',0,'',1);
             $pdf->Cell(20,4,gaz_format_number($v['imponi']),1,0,'R');
             $pdf->Cell(14,4,gaz_format_number($v['periva']).'%',1,0,'C');
@@ -328,8 +329,8 @@ for( $i = 1; $i <= $p_max; $i++ ) {
             $maxY = $pdf->GetY();                        
         } else { // righi iva successivi al primo
             $pdf->SetY($topY);
-            $pdf->Cell(66,4,'','L');
-            $pdf->Cell(12,4,'cod. '.$v['codiva'],1,0,'C');
+            $pdf->Cell(68,4,'','L');
+            $pdf->Cell(10,4,'cod '.$v['codiva'],1,0,'C');
             $pdf->Cell(40,4,$v['desiva'],1,0,'L');
             $pdf->Cell(20,4,gaz_format_number($v['imponi']),1,0,'R');
             $pdf->Cell(14,4,gaz_format_number($v['periva']).'%',1,0,'C');

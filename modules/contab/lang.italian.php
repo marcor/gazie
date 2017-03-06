@@ -290,7 +290,7 @@ $strScript = array("select_liqiva.php" =>
         'top' => array('prot' => 'N.Prot.',
             'dreg' => 'Data Reg.',
             'desc' => 'N.Documento/Descr.',
-            'ddoc' => 'Data Doc.',
+            'ddoc' => 'DataDoc/Tipo IVA',
             'txbl' => 'Imponibile',
             'perc' => 'Perc.',
             'tax' => 'Imposta',
