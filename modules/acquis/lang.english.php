@@ -104,7 +104,9 @@ $strScript = array("admin_fornit.php" =>
         'ritenuta' => '% Withholding',
         'status' => 'Visibility at the research',
         'status_value' => array('' => 'Yes', 'HIDDEN' => 'Hidden'),
-        'annota' => 'Note'
+        'annota' => 'Note',
+        'id_agente' => 'Agente',
+        'coll_dich_iva' => 'Riferimento alla Dichiarazione IVA'
     ),
     "report_broacq.php" =>
     array('New Preveter', 'New Order',

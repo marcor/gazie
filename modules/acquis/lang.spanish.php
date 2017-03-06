@@ -109,7 +109,9 @@ $strScript = array("admin_fornit.php" =>
         'ritenuta' => '% Retencion',
         'status' => 'Visibilidad de Investigacion',
         'status_value' => array('' => 'Activo', 'HIDDEN' => 'Deshabilitado'),
-        'annota' => 'Anotaciones'
+        'annota' => 'Anotaciones',
+        'id_agente' => 'Agente',
+        'coll_dich_iva' => 'Riferimento alla Dichiarazione IVA'
     ),
     "report_broacq.php" =>
     array('New Preveter', 'New Order',

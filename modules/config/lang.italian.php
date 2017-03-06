@@ -179,6 +179,7 @@ $strScript = array(
         ),
         'sperib' => 'Spese incasso RIBA da addebitare ',
         'desez' => 'Descrizione della ',
+        'reverse_charge_sez' => 'Sezione utilizzata per il reverse charge',
         'fatimm' => 'Sezione delle Fatture Immediate',
         'fatimm_value' => array('R' => 'Sezione del Report', 'U' => 'Sezione ultima emissione',
             '1' => 'Propone sempre 1', '2' => 'Propone sempre 2', '3' => 'Propone sempre 3'),
@@ -259,6 +260,7 @@ $strScript = array(
         'codice' => "Codice",
         'descri' => "Descizione",
         'type' => "Tipo",
+        'coll_dich_iva' => "Dichiarazione",
         'aliquo' => "Percentuale",
         'taxstamp' => 'Soggetto a bollo',
         'fae_natura' => "Natura fatt.elettronica PA",
@@ -278,6 +280,7 @@ $strScript = array(
         "Indicare la natura dell'esenzione/esclusione!",
         'fae_natura' => "Natura fatt.elettronica PA",
         'taxstamp' => 'Soggetto a bollo',
+        'coll_dich_iva' => "Riferim.Dichiarazione",
         'yn_value' => array(1 => 'Si', 0 => 'No')
     ),
     "admin_banapp.php" =>

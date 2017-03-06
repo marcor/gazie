@@ -1112,6 +1112,16 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="row">
                 <div class="col-md-12">
                     <div class="form-group">
+                        <label for="reverse_charge_sez" class="col-sm-4 control-label"><?php echo $script_transl['reverse_charge_sez']; ?></label>
+                        <?php
+                        $gForm->selectNumber('reverse_charge_sez', $form['reverse_charge_sez'], 0, 1, 9, "col-sm-8", '', 'style="max-width: 100px;"');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
                         <label for="fatimm" class="col-sm-4 control-label"><?php echo $script_transl['fatimm']; ?></label>
                         <?php
                         $gForm->variousSelect('fatimm', $script_transl['fatimm_value'], $form['fatimm'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');

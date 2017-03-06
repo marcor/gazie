@@ -522,6 +522,11 @@ $gForm->variousSelect('op_type', $script_transl['op_type_value'], $form['op_type
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['coll_dich_iva'] . "</td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"coll_dich_iva\" value=\"" . $form['coll_dich_iva'] . "\" maxlength=\"15\" size=\"10\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['allegato'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
 $gForm->variousSelect('allegato', $script_transl['allegato_value'], $form['allegato'], 'FacetSelect', false);
 echo "\t </td>\n";

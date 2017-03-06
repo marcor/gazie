@@ -112,7 +112,8 @@ $strScript = array("admin_client.php" =>
         'annota' => 'Anotaciones',
         'fe_cod_univoco' => 'Código de cliente único (factura electrónica)',
         'fatt_email' => 'Inviare fattura:',
-        'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2=>'In formato XML su PEC',3=>'In formato PDF su email + formato XML su PEC')
+        'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2=>'In formato XML su PEC',3=>'In formato PDF su email + formato XML su PEC'),
+        'coll_dich_iva' => 'Riferimento alla Dichiarazione IVA'
     ),
     "report_docven.php" =>
     array('title' => 'Lista dei documenti di vendita',

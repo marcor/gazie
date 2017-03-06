@@ -32,6 +32,7 @@ $headers = array  (
             $script_transl['codice']=>'codice',
             $script_transl['descri']=>'descri',
             $script_transl['type']=>'tipiva',
+            $script_transl['coll_dich_iva']=>'coll_dich_iva',
             $script_transl['aliquo']=>'aliquo',
             $script_transl['taxstamp']=>'taxstamp',
             $script_transl['fae_natura']=>'fae_natura',
@@ -46,6 +47,7 @@ while ($a_row = gaz_dbi_fetch_array($result))
     echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_aliiva.php?Update&codice=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["codice"]."</a> &nbsp</td>";
     echo "<td>".$a_row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['tipiva'][$a_row["tipiva"]]."</td>";
+    echo "<td align=\"center\">".$a_row["coll_dich_iva"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["aliquo"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['yn_value'][$a_row["taxstamp"]]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["fae_natura"]." &nbsp;</td>";

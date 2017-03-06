@@ -87,6 +87,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $ultimo = gaz_dbi_fetch_array($rs_ultimo);
     $form['codice'] = $ultimo['codice']+1;
     $form['tipiva'] = 'I';
+    $form['coll_dich_iva'] = '';
     $form['descri'] = '';
     $form['aliquo'] = '';
     $form['taxstamp'] = 1;
@@ -135,6 +136,10 @@ foreach ($script_transl['tipiva'] as $key => $value)
         echo "<option value=\"".$key."\"".$selected.">".$key.' - '.$value."</option>";
         }
 echo "</select></td></tr>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">Riferim. per dichiarazione</td>
+     <td class=\"FacetDataTD\">\n";
+echo "\t<input type=\"text\" name=\"coll_dich_iva\" value=\"".$form['coll_dich_iva']."\" maxlength=\"15\" size=\"5\" class=\"FacetInput\">\n";
+echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl[2]."</td>
      <td class=\"FacetDataTD\">\n";
 echo "\t<input type=\"text\" name=\"descri\" value=\"".$form['descri']."\" maxlength=\"50\" size=\"30\" class=\"FacetInput\">\n";

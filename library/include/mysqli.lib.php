@@ -334,13 +334,13 @@ function gaz_dbi_parse_post($table) {
                 case 246:
                     $acc[$field_meta['data'][$j]->name] = floatval(preg_replace("/\,/", '.', $_POST[$field_meta['data'][$j]->name]));
                     break;
-				case 7:
-				case 10:
-				case 11:
-				case 12:
-				case 13: // campi datetimestamp
+                case 7:
+                case 10:
+                case 11:
+                case 12:
+                case 13: // campi datetimestamp
                     $acc[$field_meta['data'][$j]->name] = substr($_POST[$field_meta['data'][$j]->name], 0, 20);
-					break;
+                    break;
                 // i binari non li considero
                 case 252:
                     break;
@@ -618,7 +618,8 @@ function tesmovInsert($newValue) {
     $table = 'tesmov';
     $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
-    tableInsert($table, $columns, $newValue);
+    $last_id = tableInsert($table, $columns, $newValue);
+    return $last_id;
 }
 
 function movmagInsert($newValue) {

@@ -181,6 +181,7 @@ $strScript = array("admin_aziend.php" =>
         ),
         'sperib' => 'RIBA gastos de recaudaci&oacute;n a ser cargados ',
         'desez' => 'Descripcion de ',
+        'reverse_charge_sez' => 'Sezione utilizzata per il reverse charge',
         'fatimm' => 'Secci&oacute;n de factura inmediata',
         'fatimm_value' => array('R' => 'Seccion Reporte', 'U' => 'Seccion de la ultima entrada',
             '1' => 'Siempre 1', '2' => 'Siempre 2', '3' => 'Siempre 3'),
@@ -261,6 +262,7 @@ $strScript = array("admin_aziend.php" =>
         'codice' => "Codigo",
         'descri' => "Descripcion",
         'type' => "Tipo",
+        'coll_dich_iva'=>"Dichiarazione",
         'aliquo' => "Percentual",
         'fae_natura' => "Nature - PA electronic invoice",
         'taxstamp' => 'Subject to stamp duty',
@@ -279,8 +281,10 @@ $strScript = array("admin_aziend.php" =>
         "Tipo IVA",
         "Select the nature of the exemption / exclusion!",
         'taxstamp' => 'Subject to stamp duty',
-        'yn_value' => array(1 => 'Yes', 0 => 'No'),
-        'fae_natura' => "Nature - PA electronic invoice"
+        'fae_natura' => "Nature - PA electronic invoice",
+        'coll_dich_iva'=>"Riferim.Dichiarazione",
+        'yn_value' => array(1 => 'Si', 0 => 'No')
+
     ),
     "admin_banapp.php" =>
     array('title' => 'Administraci&oacute;n de Apoyo de Banco',

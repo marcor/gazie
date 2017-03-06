@@ -178,14 +178,15 @@ $strScript = array("select_liqiva.php" =>
             'La data del documento non dev\'essere successiva a quella del movimento!',
             'ATTENZIONE stai modificando un movimento che interessa un registro IVA!',
             'Stai tentando di registrare un documento gi&agrave; registrato',
-            'Il totale dei movimenti dello scadenziario non coincidono con l\'importo del rigo ad esso relativo'
+            'Il totale dei movimenti dello scadenziario non coincidono con l\'importo del rigo ad esso relativo',
+            'Se stai registrando una fattura con reverse charge non è possibile avere più righi IVA'
         ),
         'id_testata' => 'Numero di movimento',
         'date_reg' => 'Data di registrazione',
         'descri' => 'Descrizione',
         'caucon' => 'Causale contabile',
         'v_caucon' => 'Conferma la Causale!',
-        'insdoc' => 'Dati del documento di riferimento',
+        'insdoc' => 'Riferimenti al documento',
         'insdoc_value' => array(0 => 'No', 1 => 'Si'),
         'regiva' => 'Registro I.V.A.',
         'regiva_value' => array(0 => 'Nessuno', 2 => 'Fatture di Vendita', 4 => 'Corrispettivi', 6 => 'Fatture d\'Acquisto'),
@@ -219,6 +220,9 @@ $strScript = array("select_liqiva.php" =>
         'sourcedoc' => 'Documento che ha originato il movimento',
         'source' => 'Origine',
         'customer_receipt' => 'Stampa la ricevuta',
+        'ins_other' => 'Altri dati',
+        'reverse_charge' => 'Reverse charge',
+        'coll_dich_iva' => 'Collegamento alla dichiarazione IVA',
     ),
     "report_piacon.php" =>
     array('title' => 'Piano dei conti',
