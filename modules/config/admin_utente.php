@@ -169,7 +169,7 @@ if (isset($_POST['Submit'])) {
                     updateAccessRights($form['Login'], 1, 3, $user_data['company_id']);
                     $mod_data = gaz_dbi_get_row($gTables['module'], 'name', preg_replace("/^[0-9]{3}nusr_/", '', $key));
                     if (!empty($mod_data)) {
-                        updateAccessRights($form['Login'], $mod_data['id'], $value, $user_data['company_id']);
+                        updateAccessRights($form['Login'], $mod_data['id'], $value, $id[1]);
                     }
                 } elseif (preg_match("/^([0-9]{3})new_/", $key, $id) && $value == 3) { // il nuovo modulo non  presente in gaz_module
                     $name = preg_replace("/^[0-9]{3}new_/", '', $key);
