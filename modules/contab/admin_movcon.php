@@ -67,7 +67,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['datdoc'] = gaz_format_date($testata['datdoc'], false, true);
     $form['cod_partner'] = $testata['clfoco'];
     $form['reverse_charge'] = $testata['reverse_charge_idtes'];
-    $form['coll_dich_iva'] = $testata['coll_dich_iva'];
+    $form['operation_type'] = $testata['operation_type'];
     $form['pay_closure'] = 0;
     $partnersel = $anagrafica->getPartner($form['cod_partner']);
     if ($form['numdocumen'] > 0 or ! empty($form['numdocumen'])) {
@@ -156,7 +156,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['datdoc'] = substr($_POST['datdoc'], 0, 10);
     $form['cod_partner'] = $_POST['cod_partner'];
     $form['reverse_charge'] = substr($_POST['reverse_charge'], 0, 9);
-    $form['coll_dich_iva'] = substr($_POST['coll_dich_iva'], 0, 15);
+    $form['operation_type'] = substr($_POST['operation_type'], 0, 15);
     $form['pay_closure'] = $_POST['pay_closure'];
     $partnersel = $anagrafica->getPartner($form['cod_partner']);
     //ricarico i registri per il form del rigo di inserimento contabile
@@ -191,9 +191,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $partner = $anagrafica->getPartner($form['conto_rc' . $i]);
                     $loadCosRic = substr($form['conto_rc' . $i], 0, 1);
                     $form['cod_partner'] = '';
-                    // ricarico pure l'eventuale riferimento alla dichiarazione iva ma solo se vuota
-                    if ($form['coll_dich_iva'] == '') {
-                        $form['coll_dich_iva'] = $partner['coll_dich_iva'];
+                    // ricarico pure l'eventuale riferimento al tipo di operazione ma solo se vuoto
+                    if ($form['operation_type'] == '') {
+                        $form['operation_type'] = $partner['operation_type'];
                     }
                 }
                 $form['cod_partner'] = $_POST['conto_rc' . $i];
@@ -420,9 +420,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             if (intval($form['reverse_charge']) == 0 && $ivarigo['fae_natura'] == 'N6') {
                 $form['reverse_charge'] = 'N6';
             }
-            // riporterò in dichiarazione al giusto campo
-            if ($ivarigo['coll_dich_iva'] != '') {
-                $form['coll_dich_iva'] = $ivarigo['coll_dich_iva'];
+            // riporterò il tipo operazione al giusto campo
+            if ($ivarigo['operation_type'] != '') {
+                $form['operation_type'] = $ivarigo['operation_type'];
             }
 
             if ($form['registroiva'] == 4) { //se è un corrispettivo faccio lo scorporo
@@ -790,7 +790,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     'clfoco' => intval($_POST['cod_partner']),
                     'regiva' => substr($_POST['registroiva'], 0, 1),
                     'operat' => intval($_POST['operatore']),
-                    'coll_dich_iva' => $form['coll_dich_iva']
+                    'operation_type' => $form['operation_type']
                 );
                 tesmovUpdate($codice, $newValue);
             } else { //se è un'inserimento
@@ -805,7 +805,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     'clfoco' => intval($_POST['cod_partner']),
                     'regiva' => substr($_POST['registroiva'], 0, 1),
                     'operat' => intval($_POST['operatore']),
-                    'coll_dich_iva' => substr($_POST['coll_dich_iva'], 0, 15)
+                    'operation_type' => substr($_POST['operation_type'], 0, 15)
                 );
                 // INSERISCO e recupero l'id assegnato
                 $ultimo_id = tesmovInsert($newValue);
@@ -827,7 +827,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         'clfoco' => $rc_cli['codice'],
                         'regiva' => 2,
                         'operat' => 1,
-                        'coll_dich_iva' => substr($_POST['coll_dich_iva'], 0, 15),
+                        'operation_type' => substr($_POST['operation_type'], 0, 15),
                         'reverse_charge_idtes' => $ultimo_id
                     );
                     // trovo l'ultimo protocollo della sezione del reverse charge
@@ -1027,7 +1027,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['importorc'] = array();
     $form['cod_partner'] = 0;
     $form['reverse_charge'] = '';
-    $form['coll_dich_iva'] = '';
+    $form['operation_type'] = '';
     $form['pay_closure'] = 0;
     //registri per il form dei righi iva
     $_POST['rigiva'] = 0;
@@ -1409,8 +1409,10 @@ echo "</script>\n";
                     </div>                    
                     <div class="col-sm-12 col-md-6 col-lg-6">
                         <div class="form-group">
-                            <label for="coll_dich_iva" class="col-sm-6 control-label"><?php echo $script_transl['coll_dich_iva']; ?></label>
-                            <input class="col-sm-6" type="text"  placeholder="<?php echo $script_transl['coll_dich_iva']; ?>" value="<?php echo $form['coll_dich_iva']; ?>" name="coll_dich_iva" />
+                            <label for="operation_type" class="col-sm-6 control-label"><?php echo $script_transl['operation_type']; ?></label>
+                            <?php
+                            $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
+                            ?>
                         </div>
                     </div>
                 </div><!-- chiude tab-pane  -->
@@ -1432,7 +1434,7 @@ echo "</script>\n";
         <input type="hidden" name="sezioneiva" value="<?php echo $form['sezioneiva']; ?>" />
         <input type="hidden" name="numdocumen" value="<?php echo $form['numdocumen']; ?>" />
         <input type="hidden" name="protocollo" value="<?php echo $form['protocollo']; ?>" />
-        <input type="hidden" name="coll_dich_iva" value="<?php echo $form['coll_dich_iva']; ?>" />
+        <input type="hidden" name="operation_type" value="<?php echo $form['operation_type']; ?>" />
         <?php
     }
     ?>

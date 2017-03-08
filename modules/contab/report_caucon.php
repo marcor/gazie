@@ -39,7 +39,6 @@ $headers_caucon = array  (
             $script_transl['descri'] => "descri",
             $script_transl['regiva']=> "regiva",
             $script_transl['operat']=> "operat",
-            $script_transl['pay_schedule']=> "pay_schedule",
             $script_transl['delete']=> ""
             );
 $linkHeaders = new linkHeaders($headers_caucon);
@@ -51,7 +50,6 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<td>".$row["descri"]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['regiva_value'][$row["regiva"]]." &nbsp;</td>";
     echo "<td align=\"center\">".$script_transl['operat_value'][$row["operat"]]." &nbsp;</td>";
-    echo "<td align=\"center\">".$script_transl['pay_schedule_value'][$row["pay_schedule"]]." &nbsp;</td>";
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_caucon.php?codice=".$row["codice"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }

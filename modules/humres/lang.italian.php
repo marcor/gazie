@@ -74,8 +74,6 @@ $strScript = array("admin_staff.php" =>
         'e_mail' => 'e mail',
         'id_agente' => 'Agente',
         'iban' => 'IBAN',
-        'op_type' => 'Tipologia operazioni',
-        'op_type_value' => array(1 => 'Cessione di beni', 2 => 'Prestazione di servizi'),
         'allegato' => 'Allegato IVA - Elenco Clienti',
         'yn_value' => array('S' => 'Si', 'N' => 'No'),
         'aliiva' => 'Riduzione I.V.A.',

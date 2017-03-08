@@ -262,7 +262,7 @@ $strScript = array("admin_aziend.php" =>
         'taxstamp' => 'Subject to stamp duty',
         'yn_value' => array(1 => 'Yes', 0 => 'No'),
         'fae_natura' => "Nature - PA electronic invoice",
-        'coll_dich_iva'=>"Riferim.Dichiarazione",
+        'operation_type'=>"Operation type",
     ),
     "admin_aliiva.php" =>
     array("VAT rate",
@@ -278,7 +278,7 @@ $strScript = array("admin_aziend.php" =>
         "Select the nature of the exemption / exclusion!",
         'fae_natura' => "Nature - PA electronic invoice",
         'taxstamp' => 'Subject to stamp duty',
-        'coll_dich_iva'=>"Dichiarazione",
+        'operation_type'=>"Operation type",
         'yn_value' => array(1 => 'Si', 0 => 'No')
     ),
     "admin_banapp.php" =>

@@ -262,7 +262,7 @@ $strScript = array("admin_aziend.php" =>
         'codice' => "Codigo",
         'descri' => "Descripcion",
         'type' => "Tipo",
-        'coll_dich_iva'=>"Dichiarazione",
+        'operation_type'=>"Operation type",
         'aliquo' => "Percentual",
         'fae_natura' => "Nature - PA electronic invoice",
         'taxstamp' => 'Subject to stamp duty',
@@ -282,7 +282,7 @@ $strScript = array("admin_aziend.php" =>
         "Select the nature of the exemption / exclusion!",
         'taxstamp' => 'Subject to stamp duty',
         'fae_natura' => "Nature - PA electronic invoice",
-        'coll_dich_iva'=>"Riferim.Dichiarazione",
+        'operation_type'=>"Operation type",
         'yn_value' => array(1 => 'Si', 0 => 'No')
 
     ),

@@ -12,8 +12,9 @@ UPDATE `gaz_config` SET `cvalue` = '100' WHERE `id` =2;
 ALTER TABLE `gaz_aziend` ADD COLUMN `reverse_charge_sez` INT(1) NOT NULL DEFAULT '9' AFTER `desez9`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesmov`	ADD COLUMN `reverse_charge_idtes` INT(9) NOT NULL AFTER `operat`;
-ALTER TABLE `gaz_XXXtesmov`	ADD COLUMN `coll_dich_iva` VARCHAR(15) NOT NULL AFTER `reverse_charge_idtes`;
-ALTER TABLE `gaz_XXXaliiva` ADD COLUMN `coll_dich_iva` CHAR(15) NOT NULL DEFAULT '' AFTER `tipiva`;
-INSERT INTO `gaz_XXXaliiva` (`codice`, `tipiva`, `coll_dich_iva`, `aliquo`, `fae_natura`, `descri`, `status`, `annota`) SELECT MAX(`codice`)+1, 'I', 'VJ', '22', 'N6', 'REVERSE CHARGE art.17c.6 IVA al 22%','','' FROM `gaz_XXXaliiva`;
-ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `coll_dich_iva` VARCHAR(15) NOT NULL DEFAULT '' AFTER `ceeave`;
+ALTER TABLE `gaz_XXXtesmov`	ADD COLUMN `operation_type` VARCHAR(15) NOT NULL AFTER `reverse_charge_idtes`;
+ALTER TABLE `gaz_XXXaliiva` ADD COLUMN `operation_type` CHAR(15) NOT NULL DEFAULT '' AFTER `tipiva`;
+INSERT INTO `gaz_XXXaliiva` (`codice`, `tipiva`, `operation_type`, `aliquo`, `fae_natura`, `descri`, `status`, `annota`) SELECT MAX(`codice`)+1, 'I', 'VJ', '22', 'N6', 'REVERSE CHARGE art.17c.6 IVA al 22%','','' FROM `gaz_XXXaliiva`;
+ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `operation_type` VARCHAR(15) NOT NULL DEFAULT '' AFTER `ceeave`;
+ALTER TABLE `gaz_XXXclfoco`	DROP COLUMN `op_type`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

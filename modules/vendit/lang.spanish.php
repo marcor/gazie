@@ -101,8 +101,6 @@ $strScript = array("admin_client.php" =>
         'speban' => 'Costos bancarias de débito ',
         'spefat' => 'Costes de facturaci&oacute;n de débito',
         'stapre' => 'Los precios de impresion sobre el DDT ',
-        'op_type' => 'Tipos de operaciones',
-        'op_type_value' => array(1 => 'Venta de bienes', 2 => 'Venta de servicios'),
         'allegato' => 'Anexo IVA - Clientes',
         'yn_value' => array('S' => 'Si', 'N' => 'No'),
         'aliiva' => 'Reduccion de I.V.A.',
@@ -113,7 +111,7 @@ $strScript = array("admin_client.php" =>
         'fe_cod_univoco' => 'Código de cliente único (factura electrónica)',
         'fatt_email' => 'Inviare fattura:',
         'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2=>'In formato XML su PEC',3=>'In formato PDF su email + formato XML su PEC'),
-        'coll_dich_iva' => 'Riferimento alla Dichiarazione IVA'
+        'operation_type' => 'Tipo di operazione'
     ),
     "report_docven.php" =>
     array('title' => 'Lista dei documenti di vendita',

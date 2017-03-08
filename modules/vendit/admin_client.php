@@ -478,6 +478,11 @@ $gForm->selectAccount('cosric', $form['cosric'], 4);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['operation_type'] . "</td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">";
+    $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
+echo "</td></tr>\n";
+echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['destin'] . " </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <textarea name=\"destin\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["destin"] . "</TEXTAREA></td>\n";
@@ -532,11 +537,6 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ritenuta'] . "</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"ritenuta\" value=\"" . $form['ritenuta'] . "\" align=\"right\" maxlength=\"4\" size=\"4\" /></td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['op_type'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->variousSelect('op_type', $script_transl['op_type_value'], $form['op_type'], 'FacetSelect', false);
-echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['allegato'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";

@@ -286,10 +286,7 @@ $gForm->CalendarPopup('date_fin',$form['date_fin_D'],$form['date_fin_M'],$form['
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['sem_ord']."</td><td class=\"FacetDataTD\">\n";
-$gForm->variousSelect('sem_ord',$script_transl['sem_ord_value'],$form['sem_ord'],'FacetSelect',false);
-echo "</td>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cover']."</td><td class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['cover']."</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
 $gForm->selCheckbox('cover',$form['cover']);
 echo "</td>\n";
 echo "</tr>\n";

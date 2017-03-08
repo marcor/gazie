@@ -97,8 +97,6 @@ $strScript = array("admin_client.php" =>
         'speban' => 'Addebito spese bancarie',
         'spefat' => 'Addebito spese di fatturazione',
         'stapre' => 'Stampa prezzi su D.d.T.',
-        'op_type' => 'Tipologia operazioni',
-        'op_type_value' => array(1 => 'Cessione di beni', 2 => 'Prestazione di servizi'),
         'allegato' => 'Spesometro - Elenco Clienti',
         'yn_value' => array('S' => 'Si', 'N' => 'No'),
         'aliiva' => 'Riduzione I.V.A.',
@@ -109,7 +107,7 @@ $strScript = array("admin_client.php" =>
         'fe_cod_univoco' => 'Cod.Univoco Ufficio (fatt.elettronica)',
         'fatt_email' => 'Inviare fattura:',
         'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2=>'In formato XML su PEC',3=>'In formato PDF su email + XML su PEC'),
-        'coll_dich_iva' => 'Riferimento alla Dichiarazione IVA'
+        'operation_type' => 'Tipo di operazione'
     ),
     "report_docven.php" =>
     array('title' => 'Lista dei documenti di vendita',

@@ -69,12 +69,12 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
         if (empty($r['tipiva'])) {  // errore: aliquota IVA non tipizzata
             $r['err_t'] = 'ERROR';
         }
-        if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perch� � cambiato l'anno
+        if ($c_sr != ($r['ctrl_sr'])) { // devo azzerare tutto perché cambiato l'anno
             $c_sr = 0;
             $c_id = 0;
             $c_p = 0;
             $c_ndoc = array();
-            if ($r['protoc'] <> 1) { // errore: il protocollo non � 1
+            if ($r['protoc'] <> 1) { // errore: il protocollo non é 1
                 // non lo rilevo in quanto i registri IVA non sono annuali
             }
         } else {
@@ -83,7 +83,7 @@ function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
                 $r['err_p'] = $ex;
             }
         }
-        if ($r['regiva'] < 4) { // il controllo sul numero solo per i registri delle fatture
+        if ($r['regiva'] < 4 & $vat_section <> $admin_aziend['reverse_charge_sez']) { // il controllo sul numero solo per i registri delle fatture di vendita e non reverse charge
             if ($r['caucon'] == 'FAD') {
                 $r['caucon'] = 'FAI';
             }

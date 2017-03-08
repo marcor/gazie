@@ -96,8 +96,6 @@ $strScript = array("admin_fornit.php" =>
         'speban' => 'Charge the bank expenses',
         'spefat' => 'Charge the cost of billing',
         'stapre' => 'Print prices on shipping documents',
-        'op_type' => 'Operation type',
-        'op_type_value' => array(3 => 'Purchase of goods', 4 => 'Purchase of services'),
         'allegato' => 'Attached VAT - Customers report',
         'yn_value' => array('S' => 'Yes', 'N' => 'No'),
         'aliiva' => 'VAT reduction',
@@ -106,7 +104,7 @@ $strScript = array("admin_fornit.php" =>
         'status_value' => array('' => 'Yes', 'HIDDEN' => 'Hidden'),
         'annota' => 'Note',
         'id_agente' => 'Agente',
-        'coll_dich_iva' => 'Riferimento alla Dichiarazione IVA'
+        'operation_type' => 'Operation type'
     ),
     "report_broacq.php" =>
     array('New Preveter', 'New Order',

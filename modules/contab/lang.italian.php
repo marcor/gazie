@@ -36,9 +36,6 @@ $strScript = array("select_liqiva.php" =>
         'descri_value' => array('M' => 'del mese di ', 'T' => 'del trimestre '
         ),
         'date_ini' => 'Data registrazione inizio  ',
-        'sem_ord' => ' Regime ',
-        'sem_ord_value' => array(0 => ' Contabilit&agrave; ordinaria ', 1 => ' Contabilit&agrave; semplificata '
-        ),
         'cover' => 'Stampa la copertina',
         'date_fin' => 'Data registrazione fine ',
         'header' => array('Sezione' => '', 'Registro' => '', 'Descrizione aliquota' => '', 'Imponibile' => '',
@@ -222,7 +219,7 @@ $strScript = array("select_liqiva.php" =>
         'customer_receipt' => 'Stampa la ricevuta',
         'ins_other' => 'Altri dati',
         'reverse_charge' => 'Reverse charge',
-        'coll_dich_iva' => 'Collegamento alla dichiarazione IVA',
+        'operation_type' => 'Tipo di operazione',
     ),
     "report_piacon.php" =>
     array('title' => 'Piano dei conti',
@@ -262,7 +259,7 @@ $strScript = array("select_liqiva.php" =>
         ),
         'date_ini' => 'Data registrazione inizio  ',
         'sem_ord' => ' Regime ',
-        'sem_ord_value' => array(0 => ' Contabilit&agrave; ordinaria ', 1 => ' Contabilit&agrave; semplificata '
+        'sem_ord_value' => array(0 => ' Senza conti costi/ricavi ', 1 => ' Con conti costi/ricavi '
         ),
         'cover' => 'Stampa la copertina',
         'date_fin' => 'Data registrazione fine ',
@@ -290,7 +287,7 @@ $strScript = array("select_liqiva.php" =>
         'top' => array('prot' => 'N.Prot.',
             'dreg' => 'Data Reg.',
             'desc' => 'N.Documento/Descr.',
-            'ddoc' => 'DataDoc/Tipo IVA',
+            'ddoc' => 'DataDoc/Tipo Op.',
             'txbl' => 'Imponibile',
             'perc' => 'Perc.',
             'tax' => 'Imposta',
@@ -303,7 +300,11 @@ $strScript = array("select_liqiva.php" =>
         'tot' => 'totale',
         'tot_descri' => 'TOTALE GENERALE',
         'acc_castle_title' => ' RIEPILOGO TOTALI CONTI ',
-        'amount' => 'importo'
+        'amount' => 'importo',
+        'operation_type_title' => 'Legenda dei tipi di operazioni',
+        'operation_type_code' => 'Codice',
+        'operation_type_name' => 'Descrizione',
+        'operation_type_other' => 'TUTTE LE OPERAZIONI'
     ),
     "select_libgio.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa dei Libro giornale',
@@ -385,7 +386,6 @@ $strScript = array("select_liqiva.php" =>
         'tax' => "Imposta",
         'riepil' => 'Riepilogativo',
         'quadro' => 'Quadro',
-        'op_type_value' => array(1 => 'Cessione di beni', 2 => 'Prestazione di servizi', 3 => 'Acquisto di beni', 4 => 'Acquisto di servizi'),
         'err' => array(
             'ragso1' => '&Egrave; necessario indicare la Ragione Sociale 1',
             'ragso2' => '&Egrave; necessario indicare il Nome',

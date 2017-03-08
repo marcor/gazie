@@ -200,7 +200,6 @@ $strScript = array("select_comiva.php" =>
         'tax' => "Imposta",
         'riepil' => 'Riepilogativo',
         'quadro' => 'Quadro',
-        'op_type_value' => array(1 => 'Cessione di beni', 2 => 'Prestazione di servizi', 3 => 'Acquisto di beni', 4 => 'Acquisto di servizi'),
         'errors' => array("CORREGGI !",
             "Codice fiscale uguale a 0 e non indicato come riepilogativo",
             "Codice fiscale sbagliato per una persona fisica",

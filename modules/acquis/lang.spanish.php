@@ -104,14 +104,12 @@ $strScript = array("admin_fornit.php" =>
         'allegato' => 'Anexo IVA - Clientes',
         'yn_value' => array('S' => 'Si', 'N' => 'No'),
         'aliiva' => 'Reduccion de I.V.A.',
-        'op_type' => 'Tipos de operaciones',
-        'op_type_value' => array(3 => 'Compra de bienes', 4 => 'Compra de servicios'),
         'ritenuta' => '% Retencion',
         'status' => 'Visibilidad de Investigacion',
         'status_value' => array('' => 'Activo', 'HIDDEN' => 'Deshabilitado'),
         'annota' => 'Anotaciones',
         'id_agente' => 'Agente',
-        'coll_dich_iva' => 'Riferimento alla Dichiarazione IVA'
+        'operation_type' => 'Operation type'
     ),
     "report_broacq.php" =>
     array('New Preveter', 'New Order',

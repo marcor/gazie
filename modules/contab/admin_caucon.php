@@ -52,7 +52,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form["insdoc"] = $cau["insdoc"];
     $form["regiva"] = $cau["regiva"];
     $form["operat"] = $cau["operat"];
-    $form["pay_schedule"] = $cau["pay_schedule"];
     for ($i=1; $i<=6; $i++) {
       $form["contr".$i] = $cau["contr".$i];
       $form["tipim".$i] = $cau["tipim".$i];
@@ -66,7 +65,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form["insdoc"] = intval($_POST["insdoc"]);
     $form["regiva"] = intval($_POST["regiva"]);
     $form["operat"] = intval($_POST["operat"]);
-    $form["pay_schedule"] = intval($_POST["pay_schedule"]);
     $chk_acc=true;
     for ($i=1; $i<=6; $i++) {
       $form["contr".$i] = intval($_POST["contr".$i]);
@@ -128,7 +126,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form["insdoc"] = 0;
     $form["regiva"] = 0;
     $form["operat"] = 0;
-    $form["pay_schedule"] = 0;
     for ($i=1; $i<=6; $i++) {
       $form["contr".$i] = 0;
       $form["tipim".$i] = '';
@@ -175,11 +172,6 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">".$script_transl['operat']."</td><td class=\"FacetDataTD\">\n";
 $gForm->variousSelect('operat',$script_transl['operat_value'],$form['operat']);
-echo "\t </td>\n";
-echo "</tr>\n";
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">".$script_transl['pay_schedule']."</td><td class=\"FacetDataTD\">\n";
-$gForm->variousSelect('pay_schedule',$script_transl['pay_schedule_value'],$form['pay_schedule']);
 echo "\t </td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

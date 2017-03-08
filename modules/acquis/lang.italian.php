@@ -110,7 +110,7 @@ $strScript = array("admin_fornit.php" =>
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
         'id_agente' => 'Agente',
-        'coll_dich_iva' => 'Riferimento alla Dichiarazione IVA'
+        'operation_type' => 'Tipo di operazione'
     ),
     "report_broacq.php" =>
     array('Nuovo Preventivo', 'Nuovo Ordine',

@@ -197,8 +197,6 @@ $strScript = array("select_comiva.php" =>
         'imptype_value' => array(1 => 'Taxable', 2 => 'NO Taxable', 3 => 'Free', 4 => 'Taxable with VAT unexposed'),
         'amount' => "Amount of consideration",
         'tax' => "Tax",
-        'op_type' => 'Operation Type',
-        'op_type_value' => array(1 => 'Supply of goods', 2 => 'Provision of services', 3 => 'Purchase of goods', 4 => 'Purchase of services'),
         'errors' => array("CORREGGI !",
             "Codice fiscale uguale a 0",
             "Codice fiscale sbagliato per una persona fisica",

@@ -260,7 +260,7 @@ $strScript = array(
         'codice' => "Codice",
         'descri' => "Descizione",
         'type' => "Tipo",
-        'coll_dich_iva' => "Dichiarazione",
+        'operation_type' => "Tipo di operazione",
         'aliquo' => "Percentuale",
         'taxstamp' => 'Soggetto a bollo',
         'fae_natura' => "Natura fatt.elettronica PA",
@@ -280,7 +280,7 @@ $strScript = array(
         "Indicare la natura dell'esenzione/esclusione!",
         'fae_natura' => "Natura fatt.elettronica PA",
         'taxstamp' => 'Soggetto a bollo',
-        'coll_dich_iva' => "Riferim.Dichiarazione",
+        'operation_type' => "Tipo di operazione",
         'yn_value' => array(1 => 'Si', 0 => 'No')
     ),
     "admin_banapp.php" =>
