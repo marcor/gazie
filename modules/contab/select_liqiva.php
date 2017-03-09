@@ -141,7 +141,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_fin_M']=date("m",$utsdatfin);
     $form['date_fin_Y']=date("Y",$utsdatfin);
     $form['sta_def']=false;
-    $form['sem_ord']=$admin_aziend['regime'];
     $form['cover']=false;
     $form['page_ini'] = $admin_aziend['upgrie']+1;
     $form['carry']=getPreviousCredit(date("Ymd",$utsdatcar));
@@ -160,7 +159,6 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     } else {
        $form['sta_def']='';
     }
-    $form['sem_ord']=substr($_POST['sem_ord'],0,1);
     if (isset($_POST['cover'])){
        $form['cover']=substr($_POST['cover'],0,8);
     } else {
@@ -222,7 +220,7 @@ if (isset($_POST['print']) && $msg=='') {
                                      'ds'=>$form['descri'],
                                      'pi'=>$form['page_ini'],
                                      'sd'=>$form['sta_def'],
-                                     'mt'=>$form['sem_ord'],
+                                     'mt'=>'',
                                      'cv'=>$form['cover'],
                                      'cr'=>$form['carry'],
                                      'ri'=>date("dmY",$utsini),

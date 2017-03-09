@@ -26,21 +26,17 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
 
-function getPage_ini($vat_section, $vat_reg) {
-    global $admin_aziend;
-    $page = 1;
-    switch ($vat_reg) {
-        case 2:
-            $page = $admin_aziend["upgve$vat_section"] + 1;
-            break;
-        case 4:
-            $page = $admin_aziend["upgco$vat_section"] + 1;
-            break;
-        case 6:
-            $page = $admin_aziend["upgac$vat_section"] + 1;
-            break;
+function getPage_ini($sez, $reg) {
+    global $gTables;
+    if ($reg == 6) {
+        $reg = 'upgac' . $sez;
+    } elseif ($reg == 4) {
+        $reg = 'upgco' . $sez;
+    } else {
+        $reg = 'upgve' . $sez;
     }
-    return $page;
+    $r = gaz_dbi_get_row($gTables['company_data'], 'var', $reg);
+    return $r['data'] + 1;
 }
 
 function getMovements($vat_section, $vat_reg, $date_ini, $date_fin) {
@@ -138,7 +134,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['vat_section'] = 1;
     $form['vat_reg'] = 1;
     $form['sta_def'] = false;
-    $form['sem_ord'] = $admin_aziend['regime'];
+    $form['sem_ord'] = 1;
     $form['cover'] = false;
     $form['page_ini'] = getPage_ini(1, 2);
 } else { // accessi successivi
@@ -162,7 +158,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     } else {
         $form['jump'] = '';
     }
-    $form['sem_ord'] = substr($_POST['sem_ord'], 0, 1);
+    $form['sem_ord'] = intval($_POST['sem_ord']);
     if (isset($_POST['cover'])) {
         $form['cover'] = substr($_POST['cover'], 0, 8);
     } else {
@@ -184,12 +180,12 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 //controllo i campi
 if (!checkdate($form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']) ||
         !checkdate($form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y'])) {
-    $msg .='0+';
+    $msg .= '0+';
 }
 $utsini = mktime(0, 0, 0, $form['date_ini_M'], $form['date_ini_D'], $form['date_ini_Y']);
 $utsfin = mktime(0, 0, 0, $form['date_fin_M'], $form['date_fin_D'], $form['date_fin_Y']);
 if ($utsini > $utsfin) {
-    $msg .='1+';
+    $msg .= '1+';
 }
 // fine controlli
 
@@ -317,9 +313,9 @@ if (isset($_POST['preview']) and $msg == '') {
                 $mv['ragsoc'] = $mv['descri'];
                 $mv['descri'] = '';
             }
-            $totimponi+=$imponi;
+            $totimponi += $imponi;
             if ($mv['tipiva'] <> 'D' || $mv['tipiva'] <> 'T') { // se indetraibili o split payment PA
-                $totimpost+=$impost;
+                $totimpost += $impost;
             }
             if (!isset($castle_imponi[$mv['codiva']])) {
                 $castle_imponi[$mv['codiva']] = 0;
@@ -327,8 +323,8 @@ if (isset($_POST['preview']) and $msg == '') {
                 $castle_descri[$mv['codiva']] = $mv['desvat'];
                 $castle_percen[$mv['codiva']] = $mv['periva'];
             }
-            $castle_imponi[$mv['codiva']]+=$imponi;
-            $castle_impost[$mv['codiva']]+=$impost;
+            $castle_imponi[$mv['codiva']] += $imponi;
+            $castle_impost[$mv['codiva']] += $impost;
             $red_p = '';
             if (isset($mv['err_p'])) {
                 $red_p = 'red';

@@ -258,7 +258,7 @@ $strScript = array("select_liqiva.php" =>
         'descri_value' => array('M' => 'del mese di ', 'T' => 'del trimestre '
         ),
         'date_ini' => 'Data registrazione inizio  ',
-        'sem_ord' => ' Regime ',
+        'sem_ord' => ' Dettaglio ',
         'sem_ord_value' => array(0 => ' Senza conti costi/ricavi ', 1 => ' Con conti costi/ricavi '
         ),
         'cover' => 'Stampa la copertina',
@@ -280,8 +280,8 @@ $strScript = array("select_liqiva.php" =>
         'partner_descri' => array(2 => 'Ragione Sociale Cliente',
             4 => 'Descrizione',
             6 => 'Ragione Sociale Fornitore'),
-        'vat_section' => 'sezione I.V.A. n.',
-        'page' => 'pagina',
+        'vat_section' => ' sez. IVA n.',
+        'page' => 'pag.',
         'top_carry' => 'da riporto : ',
         'bot_carry' => 'a riporto : ',
         'top' => array('prot' => 'N.Prot.',
@@ -304,7 +304,7 @@ $strScript = array("select_liqiva.php" =>
         'operation_type_title' => 'Legenda dei tipi di operazioni',
         'operation_type_code' => 'Codice',
         'operation_type_name' => 'Descrizione',
-        'operation_type_other' => 'TUTTE LE OPERAZIONI'
+        'operation_type_other' => 'OPERAZIONI NORMALI'
     ),
     "select_libgio.php" =>
     array('title' => 'Selezione per la visualizzazione e/o la stampa dei Libro giornale',

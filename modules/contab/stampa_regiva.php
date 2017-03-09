@@ -74,12 +74,17 @@ class vatBook extends Standard_template {
         $this->rows = array();
         $this->vat_castle = array();
         $this->acc_castle = array();
+        $this->acc_operation_type = array();
         $this->taxable = 0.00;
         $this->tax = 0.00;
         $ctrl_idtes = 0;
         while ($mov = gaz_dbi_fetch_array($result)) {
             $codiva = $mov['codiva'];
             $id_tes = $mov['id_tes'];
+            $op_typ = trim($mov['operation_type']);
+            if ($op_typ == '') {
+                $op_typ = 0;
+            }
             switch ($mov['operat']) {
                 case "1":
                     $taxable = $mov['imponi'];
@@ -112,6 +117,11 @@ class vatBook extends Standard_template {
             $this->vat_castle[$codiva]['tax'] += $tax;
             //se e' una semplificata recupero anche i righi contabili
             $this->acc_rows = array();
+            if (!isset($this->acc_operation_type[$op_typ])) {
+                $this->acc_operation_type[$op_typ] = $taxable;
+            } else {
+                $this->acc_operation_type[$op_typ] += $taxable;
+            }
             if ($this->semplificata == 1 && $ctrl_idtes <> $id_tes) {
                 $rs_accounting_rows = gaz_dbi_dyn_query("*", $gTables['rigmoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON (" . $gTables['rigmoc'] . ".codcon = " . $gTables['clfoco'] . ".codice)", "id_tes = '" . $mov['id_tes'] . "'
                            AND codcon NOT LIKE '" . $this->azienda['mascli'] . "%'
@@ -262,8 +272,8 @@ for ($i = 1; $i <= $p_max; $i++) {
         array('lenght' => 20, 'name' => $pdf->script_transl['top']['tot'], 'frame' => 1, 'fill' => 1));
     $pdf->setTopBar($top);
     $pdf->AddPage();
-    $pdf->setFooterMargin(21);
-    $pdf->setTopMargin(44);
+    $pdf->setFooterMargin(20.5);
+    $pdf->setTopMargin(44.5);
     $pdf->SetFont('helvetica', '', 8);
     $maxY = $pdf->GetY();
     $ctrl = 0;
@@ -319,8 +329,8 @@ for ($i = 1; $i <= $p_max; $i++) {
             if (isset($v['acc_rows'])) {
                 foreach ($v['acc_rows']as $k1 => $v1) {
                     $pdf->SetFont('helvetica', '', 7);
-                    $pdf->Cell(14, 4, $k1, 'L');
-                    $pdf->Cell(36, 4, $v1['descri'], '', 0, '', 0, '', 1);
+                    $pdf->Cell(10, 4, $k1, 'L', 0, '', 0, '', 1);
+                    $pdf->Cell(42, 4, $v1['descri'], '', 0, '', 0, '', 1);
                     $pdf->Cell(1, 4, $admin_aziend['symbol']);
                     $pdf->Cell(15, 4, gaz_format_number($v1['value']), 'R', 1, 'R');
                     $pdf->SetFont('helvetica', '', 8);
@@ -360,15 +370,23 @@ for ($i = 1; $i <= $p_max; $i++) {
         $xml = simplexml_load_file('../../library/include/operation_type.xml');
         $pdf->SetFont('helvetica', 'B', 6);
         $pdf->Ln(2);
-        $pdf->Cell(93, 3, $pdf->script_transl['operation_type_title'], 1, 1, 'C');
+        $pdf->Cell(108, 3, $pdf->script_transl['operation_type_title'], 1, 1, 'C', 1);
         $pdf->Cell(15, 3, $pdf->script_transl['operation_type_code'], 1, 0, 'C');
-        $pdf->Cell(78, 3, $pdf->script_transl['operation_type_name'], 1, 1);
+        $pdf->Cell(78, 3, $pdf->script_transl['operation_type_name'], 1, 0);
+        $pdf->Cell(15, 3, ucfirst($pdf->script_transl['amount']), 1, 1, 'C');
         $pdf->SetFont('helvetica', '', 7);
         $pdf->Cell(15, 3, ' =', 'LTB', 0, 'R');
-        $pdf->Cell(78, 3, $pdf->script_transl['operation_type_other'], 'RTB', 1);
+        $pdf->Cell(75, 3, $pdf->script_transl['operation_type_other'], 'TB');
+        $pdf->Cell(3, 3, $admin_aziend['symbol'], 'TB');
+        $pdf->Cell(15, 3, gaz_format_number($pdf->acc_operation_type[0]), 'RTB', 1, 'R');
         foreach ($xml->record as $v) {
-            $pdf->Cell(15, 3, $v->field[0] . ' =', 'LTB', 0, 'R');
-            $pdf->Cell(78, 3, $v->field[1], 'RTB', 1);
+            $n = (array) $v->field;
+            if (isset($pdf->acc_operation_type[$n[0]])) {
+                $pdf->Cell(15, 3, $v->field[0] . ' =', 'LTB', 0, 'R');
+                $pdf->Cell(75, 3, $v->field[1], 'TB');
+                $pdf->Cell(3, 3, $admin_aziend['symbol'], 'TB');
+                $pdf->Cell(15, 3, gaz_format_number($pdf->acc_operation_type[$n[0]]), 'RTB', 1, 'R');
+            }
         }
         // fine stampa legenda tipi operazioni
     }
@@ -426,7 +444,7 @@ if ($_GET['sd'] == 'sta_def') {
             $azireg = 'upgac' . intval($_GET['vs']);
             break;
     }
-    gaz_dbi_put_row($gTables['aziend'], 'codice', $admin_aziend['codice'], $azireg, $pdf->getGroupPageNo() + $ini_page - 1);
+    gaz_dbi_put_row($gTables['company_data'], 'var', $azireg, 'data', $pdf->getGroupPageNo() + $ini_page - 1);
 }
 $pdf->Output($descri_period . '.pdf');
 ?>

@@ -172,18 +172,6 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             $new_company['codfis'] = '00000000000';
             $new_company['pariva'] = 0;
             $new_company['rea'] = 'INSERIRE REA';
-            $new_company['upgrie'] = 0;
-            $new_company['upggio'] = 0;
-            $new_company['upginv'] = 0;
-            $new_company['upgve1'] = 0;
-            $new_company['upgve2'] = 0;
-            $new_company['upgve3'] = 0;
-            $new_company['upgac1'] = 0;
-            $new_company['upgac2'] = 0;
-            $new_company['upgac3'] = 0;
-            $new_company['upgco1'] = 0;
-            $new_company['upgco2'] = 0;
-            $new_company['upgco3'] = 0;
             gaz_dbi_table_insert('aziend', $new_company);
             // procedo all'abilitazione degli utenti in base alla scelta fatta dal'operatore
             $user_abilit = gaz_dbi_dyn_query('*', $gTables['admin_module'], $where_user, 'moduleid');
