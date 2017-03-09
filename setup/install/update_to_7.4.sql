@@ -10,6 +10,7 @@ UPDATE `gaz_config` SET `cvalue` = '99' WHERE `id` =2;
 ALTER TABLE `gaz_aziend` ADD COLUMN `desez4` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez3`, ADD COLUMN `desez5` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez4`, ADD COLUMN `desez6` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez5`, ADD COLUMN `desez7` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez6`, ADD COLUMN `desez8` VARCHAR(50) NOT NULL DEFAULT '' AFTER `desez7`, ADD COLUMN `desez9` VARCHAR(50) NOT NULL DEFAULT 'AUTOFATTURE - REVERSE CHARGE' AFTER `desez8`;
 UPDATE `gaz_config` SET `cvalue` = '100' WHERE `id` =2;
 ALTER TABLE `gaz_aziend` ADD COLUMN `reverse_charge_sez` INT(1) NOT NULL DEFAULT '9' AFTER `desez9`;
+ALTER TABLE `gaz_aziend` DROP COLUMN `upgrie`, DROP COLUMN `upggio`, DROP COLUMN `upginv`, DROP COLUMN `upgve1`, DROP COLUMN `upgve2`, DROP COLUMN `upgve3`, DROP COLUMN `upgac1`, DROP COLUMN `upgac2`, DROP COLUMN `upgac3`, DROP COLUMN `upgco1`, DROP COLUMN `upgco2`, DROP COLUMN `upgco3`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesmov`	ADD COLUMN `reverse_charge_idtes` INT(9) NOT NULL AFTER `operat`;
 ALTER TABLE `gaz_XXXtesmov`	ADD COLUMN `operation_type` VARCHAR(15) NOT NULL AFTER `reverse_charge_idtes`;

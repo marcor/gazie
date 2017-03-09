@@ -101,7 +101,7 @@ class vatBook extends Standard_template {
             }
             // aggiungo ai totali generali
             $this->taxable += $taxable;
-            if ($mov['tipiva'] != "D" || $mov['tipiva'] != "T") {  // indetraibile o split payment
+            if ($mov['tipiva'] != "D" && $mov['tipiva'] != "T") {  // indetraibile o split payment
                 $this->tax += $tax;
             }
 
@@ -280,6 +280,7 @@ for ($i = 1; $i <= $p_max; $i++) {
     $totimponi = 0.00;
     $totimpost = 0.00;
     foreach ($pdf->rows as $k => $v) {
+        $fill = false;
         switch ($v['operat']) {
             case "1":
                 $imponi = $v['imponi'];
@@ -288,6 +289,7 @@ for ($i = 1; $i <= $p_max; $i++) {
             case "2":
                 $imponi = number_format(-$v['imponi'], 2, '.', '');
                 $impost = number_format(-$v['impost'], 2, '.', '');
+                $fill = true;
                 break;
             default:
                 $imponi = 0;
@@ -295,7 +297,7 @@ for ($i = 1; $i <= $p_max; $i++) {
                 break;
         }
         $totimponi += $imponi;
-        if ($v['tipiva'] != "D" || $v['tipiva'] != "T") {  // indetraibile o split payment
+        if ($v['tipiva'] != "D" && $v['tipiva'] != "T") {  // indetraibile o split payment
             $totimpost += $impost;
         }
         if ($ctrl != $v['id_tes']) { // primo rigo iva del movimento contabile
@@ -317,7 +319,7 @@ for ($i = 1; $i <= $p_max; $i++) {
             $botCarry[3]['name'] = gaz_format_number($totimponi + $totimpost) . ' ';
             $pdf->setTopCarryBar($topCarry);
             $pdf->setBotCarryBar($botCarry);
-            $pdf->Cell(56, 4, $v['descri'], 'LTB', 0, 'R', 0, '', 1);
+            $pdf->Cell(56, 4, $v['descri'], 'LTB', 0, 'R', $fill, '', 1);
             $pdf->Cell(12, 4, $v['operation_type'], 'LTB', 0, 'C', 0, '', 1);
             $pdf->Cell(10, 4, 'cod ' . $v['codiva'], 1, 0, 'C');
             $pdf->Cell(40, 4, $v['desiva'], 1, 0, 'L', 0, '', 1);
@@ -406,7 +408,12 @@ for ($i = 1; $i <= $p_max; $i++) {
         $pdf->Cell(60, 5, $iva['descri'], 1, 0, 'C', 0, '', 1);
         $pdf->Cell(30, 5, gaz_format_number($v['taxable']), 1, 0, 'R');
         $pdf->Cell(20, 5, $iva['aliquo'] . '%', 1, 0, 'C');
-        $pdf->Cell(30, 5, gaz_format_number($v['tax']), 1, 0, 'R');
+        $align = 'R';
+        if ($iva['tipiva'] == 'D' || $iva['tipiva'] == 'T') {
+            // metto in evidenza che è indetraibile allineandolo a sinistra
+            $align = 'L';
+        }
+        $pdf->Cell(30, 5, gaz_format_number($v['tax']), 1, 0, $align);
         $pdf->Cell(30, 5, gaz_format_number($v['taxable'] + $v['tax']), 1, 1, 'R');
     }
     $pdf->SetFont('helvetica', 'B', 10);
