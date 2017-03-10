@@ -514,7 +514,7 @@ function mergeTable($table1, $campi1, $table2, $campi2, $campomerge, $where) {
 
 function rigmoiInsert($newValue) {
     $table = 'rigmoi';
-    $columns = array('id_rig', 'id_tes', 'tipiva', 'codiva', 'periva', 'imponi', 'impost');
+    $columns = array('id_rig', 'id_tes', 'tipiva', 'reverse_charge_idtes', 'operation_type', 'codiva', 'periva', 'imponi', 'impost');
     tableInsert($table, $columns, $newValue);
 }
 
@@ -609,14 +609,14 @@ function tesdocUpdate($codice, $newValue) {
 
 function tesmovUpdate($codice, $newValue) {
     $table = 'tesmov';
-    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'reverse_charge_idtes', 'operation_type', 'libgio', 'adminid');
+    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesmovInsert($newValue) {
     $table = 'tesmov';
-    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'reverse_charge_idtes', 'operation_type', 'libgio', 'adminid');
+    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
     $last_id = tableInsert($table, $columns, $newValue);
     return $last_id;

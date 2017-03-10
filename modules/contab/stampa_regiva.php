@@ -74,7 +74,7 @@ class vatBook extends Standard_template {
         $this->rows = array();
         $this->vat_castle = array();
         $this->acc_castle = array();
-        $this->acc_operation_type = array();
+        $this->acc_operation_type[0] = 0;
         $this->taxable = 0.00;
         $this->tax = 0.00;
         $ctrl_idtes = 0;
