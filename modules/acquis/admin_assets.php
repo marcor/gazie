@@ -262,6 +262,7 @@ if ((isset($_POST['Insert'])) || ( isset($_POST['Update']))) {   //se non e' il 
                 $form['codiva'] = $form['codvat'];
                 $form['periva'] = $iva['aliquo'];
                 $form['tipiva'] = $iva['tipiva'];
+                $form['operation_type'] = 'BENAMM';
                 gaz_dbi_table_insert('rigmoi', $form);
                 //e rigo conto imposta
                 $form['codcon'] = $admin_aziend['ivaacq'];

@@ -764,7 +764,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         $vv['imponi'] = floatval($_POST['imponi_ri'][$i]);
                         $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                         $vv['reverse_charge_idtes'] = intval($_POST['reverse_charge_ri'][$i]);
-                        $vv['operation_type'] = substr($_POST['operation_type_ri'][$i],0,15);
+                        $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
                         gaz_dbi_table_update('rigmoi', array('id_rig', $row_iva['id_rig']), $vv);
                     } else { //altrimenti lo elimino
                         gaz_dbi_del_row($gTables['rigmoi'], "id_rig", $row_iva['id_rig']);
@@ -781,7 +781,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $vv['imponi'] = floatval($_POST['imponi_ri'][$i]);
                     $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                     $vv['reverse_charge_idtes'] = intval($_POST['reverse_charge_ri'][$i]);
-                    $vv['operation_type'] = substr($_POST['operation_type_ri'][$i],0,15);
+                    $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
                     rigmoiInsert($vv);
                 }
                 //modifico la testata
@@ -824,6 +824,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $vv['imponi'] = floatval($_POST['imponi_ri'][$i]);
                     $vv['impost'] = floatval($_POST['impost_ri'][$i]);
                     $vv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
+                    $reverse_charge_iva = 0;
                     if ($form['reverse_charge_ri'][$i] == 'N6') { // dovrò inserire una testata per il reverse charge
                         // per prima cosa dovrò controllare se c'è il cliente con la stessa anagrafica
                         $partner = $anagrafica->getPartner(intval($_POST['cod_partner']));
@@ -863,12 +864,13 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         $rcv['codiva'] = $rcv['codice'];
                         $rcv['id_tes'] = $rc_lastid;
                         $rcv['periva'] = $rcv['aliquo'];
-                        $rcv['imponi'] = floatval($_POST['imponi_ri'][0]);
-                        $rcv['impost'] = floatval($_POST['impost_ri'][0]);
+                        $rcv['imponi'] = floatval($_POST['imponi_ri'][$i]);
+                        $rcv['impost'] = floatval($_POST['impost_ri'][$i]);
                         $rcv['reverse_charge_idtes'] = $ultimo_id;
-                        $rcv['operation_type'] = floatval($_POST['operation_type_ri'][$i]);
+                        $rcv['operation_type'] = substr($_POST['operation_type_ri'][$i], 0, 15);
                         rigmoiInsert($rcv);
-
+                        // mi servirà per detrarre l'imposta relativa al rigo del reverse charge dall'apertura della partita
+                        $reverse_charge_iva += $rcv['impost'];
                         // inserisco i tre righi contabili della fattura che va sul registro IVA vendite    
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $rcv['imponi'] + $rcv['impost']));
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $rcv['imponi']));
@@ -927,7 +929,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     if ($datadoc == 0) {
                                         $datadoc = $datareg;
                                     }
-                                    $rs_ex = $ex->CalcExpiry(floatval($_POST['importorc'][$i]), $datadoc, $pag['tipdec'], $pag['giodec'], $pag['numrat'], $pag['tiprat'], $pag['mesesc'], $pag['giosuc']);
+                                    $rs_ex = $ex->CalcExpiry(round($_POST['importorc'][$i]-$reverse_charge_iva,2), $datadoc, $pag['tipdec'], $pag['giodec'], $pag['numrat'], $pag['tiprat'], $pag['mesesc'], $pag['giosuc']);
                                     foreach ($rs_ex as $ve) { // attraverso le rate
                                         $new_paymov[$j]['amount'] = $ve['amount'];
                                         $new_paymov[$j]['expiry'] = $ve['date'];
@@ -1411,7 +1413,7 @@ echo "</script>\n";
                 if ($partnersel['ragso1'] != '') {
                     ?>
                     <div class="tab-content col-sm-12 col-md-12 col-lg-12">
-                        <?php echo $partnersel['ragso1'] . " " . $partnersel['ragso2'] . " - " . $partnersel['indspe']. " - " . $partnersel['citspe'] . " - Partita IVA:" . $partnersel['pariva']; ?>
+                        <?php echo $partnersel['ragso1'] . " " . $partnersel['ragso2'] . " - " . $partnersel['indspe'] . " - " . $partnersel['citspe'] . " - Partita IVA:" . $partnersel['pariva']; ?>
                     </div><!-- chiude tab-content  -->
                     <?php
                 }
