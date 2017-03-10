@@ -166,7 +166,7 @@ if ($t > 4 && $t <= 13) {
                     <p>
                         <?php echo $script_transl['company'] ?>
                     <div class="img-containter">
-                        <a href="../config/admin_aziend.php"><img class="img-circle usr-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
+                        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
                     </div>
                     </p>
                     <p>
@@ -456,7 +456,8 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
                 "iDisplayLength": 5,
                 "order": [2, 'asc'],
-                "responsive": true,
+                "filter": false,
+				"responsive": true,
                 "stateSave": true
             });
             $('#fornitori').DataTable({
@@ -466,7 +467,8 @@ if ($admin_aziend['Abilit'] >= 8 && $schedule_view['val'] >= 1) {
                 "lengthMenu": [[5, 10, 20, -1], [5, 10, 20, "Tutti"]],
                 "iDisplayLength": 5,
                 "order": [2, 'asc'],
-                "responsive": true,
+                "filter": false,
+				"responsive": true,
                 "stateSave": true
             });
         });

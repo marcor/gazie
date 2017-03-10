@@ -18,7 +18,7 @@
     max-height: 500px;
 }
 .content-wrapper {
-    min-width: 500px;
+    min-width: 300px;
 }
 #admin_footer {
     margin-top: 30px;
@@ -34,8 +34,13 @@
   /*background: #777;*/
   margin: 0 auto;
 }
+.dit-picture {
+	width: 50%;
+	max-width: 300px;
+}
 .usr-picture {
-    height: 50%;
+    width: 33%;
+	max-width: 200px;
 }
 .btn-50 {
     width: 50px;
@@ -97,10 +102,15 @@
 
 }
 .panel-company {
-    height: 360px;
+    min-height: 200px;
+	width: 100%;
+}
+.navbar-static-bottom {
+	border-bottom: 1px solid #000;
 }
 .panel-user {
-    height: 360px;
+    min-height: 200px;
+	width: 100%;
 }
 .sidebar-menu .treeview-menu > li > a {
     padding: 5px 5px 5px 5px;

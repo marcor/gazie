@@ -84,10 +84,10 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         <link href="../../library/theme/lte/skins/<?php echo $skin; ?>" rel="stylesheet" type="text/css" />
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
         <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-        <!--[if lt IE 9]>
+        <!--[if lt IE 9]>-->
             <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
             <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-        <![endif]-->
+        <!--<![endif]-->
     </head>
     <?php
     // imposto le opzioni del tema caricando le opzioni del database
@@ -304,7 +304,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                                     <li class="user-body">
                                         <div class="col-xs-4 text-center">
                                             <a href="../config/admin_aziend.php">
-                                                <img class="img-circle usr-picture" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" width="70" alt="Logo" border="0" >
+                                                <img class="img-circle" src="../../modules/root/view.php?table=aziend&value=<?php echo $admin_aziend['company_id']; ?>" width="90" alt="Logo" border="0" >
                                             </a>
                                         </div>
                                         <div class="col-xs-8 text-center" align="center">
