@@ -425,10 +425,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $form['reverse_charge_ri'][$riiv] = 'N6';
             }
             // riporterò il tipo operazione al giusto campo
-            if ($ivarigo['operation_type'] != '') {
-                $form['operation_type'] = $ivarigo['operation_type'];
+            if ($ivarigo['operation_type'] != '' && $_POST['operation_type'] == '') {
+                $form['operation_type_ri'][$riiv] = $ivarigo['operation_type'];
             }
-
             if ($form['registroiva'] == 4) { //se è un corrispettivo faccio lo scorporo
                 $form['imponi_ri'][$riiv] = number_format(round(preg_replace("/\,/", '.', $_POST['insert_imponi']) / (100 + $ivarigo['aliquo']) * 10000) / 100, 2, '.', '');
                 $form['impost_ri'][$riiv] = number_format(preg_replace("/\,/", '.', $_POST['insert_imponi']) - $form['imponi_ri'][$riiv], 2, '.', '');
@@ -929,7 +928,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     if ($datadoc == 0) {
                                         $datadoc = $datareg;
                                     }
-                                    $rs_ex = $ex->CalcExpiry(round($_POST['importorc'][$i]-$reverse_charge_iva,2), $datadoc, $pag['tipdec'], $pag['giodec'], $pag['numrat'], $pag['tiprat'], $pag['mesesc'], $pag['giosuc']);
+                                    $rs_ex = $ex->CalcExpiry(round($_POST['importorc'][$i] - $reverse_charge_iva, 2), $datadoc, $pag['tipdec'], $pag['giodec'], $pag['numrat'], $pag['tiprat'], $pag['mesesc'], $pag['giosuc']);
                                     foreach ($rs_ex as $ve) { // attraverso le rate
                                         $new_paymov[$j]['amount'] = $ve['amount'];
                                         $new_paymov[$j]['expiry'] = $ve['date'];

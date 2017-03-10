@@ -42,7 +42,7 @@
     </record>
     <record id="opertype_SUBEDI" model="">
         <field name="code">SUBEDI</field>
-        <field name="name">SUBAPPALTATORI EDILI</field>
+        <field name="name">ACQUISTO DA SUBAPPALTORI EDILIZIA</field>
     </record>
     <record id="opertype_FANOES" model="">
         <field name="code">FAESDI</field>
@@ -76,6 +76,10 @@
         <field name="code">OROARG</field>
         <field name="name">ACQUISTO ORO ARGENTO S/IVA DOGANA</field>
     </record>
+    <record id="opertype_ACQ741" model="">
+        <field name="code">ACQ741</field>
+        <field name="name">ACQUISTI ART.74 C.1 I.E</field>
+    </record>
     <record id="opertype_CREIMP" model="">
         <field name="code">CREIMP</field>
         <field name="name">CREDITO D'IMPOSTA</field>
@@ -83,5 +87,17 @@
     <record id="opertype_CESOIN" model="">
         <field name="code">CESOIN</field>
         <field name="name">CESSIONI SOGGETTI A INTERESSI</field>
+    </record>
+    <record id="opertype_BECOOP" model="">
+        <field name="code">BECOOP</field>
+        <field name="name">PASSAGGIO BENE COOPERATIVA</field>
+    </record>
+    <record id="opertype_FABABI" model="">
+        <field name="code">FABABI</field>
+        <field name="name">ACQUISTO FABBRICATO ABITATIVO</field>
+    </record>
+    <record id="opertype_PRO748" model="">
+        <field name="code">PRO748</field>
+        <field name="name">PROVVIGIONI ART.74 TER C.8</field>
     </record>
 </data>

@@ -343,7 +343,7 @@ for ($i = 1; $i <= $p_max; $i++) {
             $pdf->SetY($topY);
             $pdf->Cell(68, 4, '', 'L');
             $pdf->Cell(10, 4, 'cod ' . $v['codiva'], 1, 0, 'C');
-            $pdf->Cell(40, 4, $v['desiva'], 1, 0, 'L');
+            $pdf->Cell(40, 4, $v['desiva'], 1, 0, 'L', 0, '', 1);
             $pdf->Cell(20, 4, gaz_format_number($v['imponi']), 1, 0, 'R');
             $pdf->Cell(14, 4, gaz_format_number($v['periva']) . '%', 1, 0, 'C');
             $pdf->Cell(18, 4, gaz_format_number($v['impost']), 1, 0, 'R');
