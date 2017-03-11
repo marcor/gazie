@@ -759,7 +759,7 @@ class AgenziaEntrate {
                     $cod_ini = 'SE' . str_pad($se, 3, '0', STR_PAD_LEFT);
                     $this->accu_D .= $this->createElement($cod_ini . '007', $ElementsData['ragso1'] . ' ' . $ElementsData['ragso2']) .
                             $this->createElement($cod_ini . '008', $ElementsData['citspe']) .
-                            $this->createElement($cod_ini . '009', str_pad($ElementsData['cod_agenzia_entrate'], 3, "0", STR_PAD_LEFT)) .
+                            $this->createElement($cod_ini . '009', str_pad($ElementsData['cod_agenzia_entrate'], 3, "0",STR_PAD_LEFT), STR_PAD_LEFT) .
                             $this->createElement($cod_ini . '010', $ElementsData['indspe']) .
                             $this->createElement($cod_ini . '011', $ElementsData['codfis']) .
                             $this->createElement($cod_ini . '012', substr($ElementsData['datdoc'], 8, 2) . substr($ElementsData['datdoc'], 5, 2) . substr($ElementsData['datdoc'], 0, 4), STR_PAD_LEFT) .

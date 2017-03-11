@@ -1374,6 +1374,11 @@ echo "</script>\n";
     <?php
 //inserimento dati documenti
     if ($form["inserimdoc"] == 1) {
+        if (empty($form['numdocumen'])) {
+            $tabnum = ' tabindex="10" ';
+        } else {
+            $tabnum = '';
+        }
         ?>
         <div class="panel panel-default">
             <div class="container-fluid">
@@ -1397,7 +1402,7 @@ echo "</script>\n";
                         <div class="col-sm-6 col-md-3 col-lg-3">
                             <div class="form-group">
                                 <label for="numdocumen" class="col-sm-6 control-label"><?php echo $script_transl['numdoc']; ?></label>
-                                <input class="col-sm-6" type="text"  placeholder="<?php echo $script_transl['numdoc']; ?>" value="<?php echo $form['numdocumen']; ?>" name="numdocumen" />
+                                <input class="col-sm-6" type="text" <?php echo $tabnum; ?> placeholder="<?php echo $script_transl['numdoc']; ?>" value="<?php echo $form['numdocumen']; ?>" name="numdocumen" />
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-3 col-lg-3">
@@ -1440,6 +1445,13 @@ echo "</script>\n";
         } elseif ($form['reverse_charge'] >= 1) { // vengo da un reverse charge già inserito
             $gForm->toast('Il movimento ha una aliquota IVA (natura=N6) che ha aggiunto un rigo (n.<a  href="select_partit.php?id=' . $form['reverse_charge'] . '">' . $form['reverse_charge'] . "</a>) sul Registro IVA vendite per REVERSE CHARGE", 'alert-last-row', 'alert-success');
         }
+        if ($_POST['rigiva'] == 0) { //se non ci sono righi tabulo
+            $tabimp = ' tabindex="20" ';
+            $tabsmt = ' tabindex="21" ';
+        } else {
+            $tabimp = '';
+            $tabsmt = '';
+        }
         ?>
         <div class="panel panel-default">
             <div class="container-fluid">
@@ -1451,7 +1463,7 @@ echo "</script>\n";
                         <div class="col-sm-6 col-md-3 col-lg-3">
                             <div class="form-group">
                                 <label for="taxable" class="col-sm-6 control-label"><?php echo $script_transl['taxable']; ?></label>
-                                <input class="col-sm-6" type="text"  placeholder="<?php echo $script_transl['taxable']; ?>" value="<?php echo $form['insert_imponi']; ?>" name="insert_imponi" />
+                                <input class="col-sm-6" type="text" <?php echo $tabimp; ?> placeholder="<?php echo $script_transl['taxable']; ?>" value="<?php echo $form['insert_imponi']; ?>" name="insert_imponi" />
                             </div>
                         </div>
                         <div class="col-sm-6 col-md-3 col-lg-3">
@@ -1466,7 +1478,7 @@ echo "</script>\n";
                                 </div>
                             </div>
                         </div>
-                        <div class="col-sm-6 col-md-3 col-lg-3">
+                        <div class="col-sm-6 col-md-5 col-lg-5">
                             <div class="form-group">
                                 <label for="operation_type" class="col-sm-6 control-label"><?php echo $script_transl['operation_type']; ?></label>
                                 <?php
@@ -1474,18 +1486,10 @@ echo "</script>\n";
                                 ?>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label for="tax" class="col-sm-6 control-label"><?php echo $script_transl['tax']; ?></label>
-                            <?php
-                            if ($_POST['rigiva'] == 0) { //se non ci sono righi tabulo
-                                $tabimp = ' tabindex="20" ';
-                                $tabsmt = ' tabindex="21" ';
-                            } else {
-                                $tabimp = '';
-                                $tabsmt = '';
-                            }
-                            ?>
-                            <button type="submit" class="btn btn-default btn-sm" name="adi" title="<?php echo $script_transl['addrow']; ?>" <?php echo $tabsmt; ?> ><i class="glyphicon glyphicon-ok"></i></button>
+                        <div class="col-sm-6 col-md-1 col-lg-1">
+                            <div class="form-group">
+                                <button type="submit" class="btn btn-default btn-sm" name="adi" title="<?php echo $script_transl['addrow']; ?>" <?php echo $tabsmt; ?> ><i class="glyphicon glyphicon-ok"></i></button>
+                            </div>
                         </div>
                     </div>                    
                 </div><!-- chiude tab-pane  -->
