@@ -366,11 +366,6 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             $_POST['rigcon'] = $newRow;
         }
     }
-    // Se viene inviata la richiesta si aggiunge un rigo contabile
-    /** ENRICO FEDELE */
-    /* Con button non funziona _x */
-    //if (isset($_POST['add_x'])) {
-    /** ENRICO FEDELE */
     if (isset($_POST['add'])) {
         $rigo = $_POST['rigcon'];
         $form['id_rig_rc'][$rigo] = "";
@@ -469,6 +464,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $cod = array_splice($form['codiva_ri'], $delri, 1);
         array_splice($form['imponi_ri'], $delri, 1);
         array_splice($form['impost_ri'], $delri, 1);
+        array_splice($form['operation_type_ri'], $delri, 1);
         $_POST['rigiva'] --;
         if (intval($form['reverse_charge']) >= 1) {
             // se sto eliminando un rigo che aveva già generato un movimento in registro vendite lo dovrò eliminare

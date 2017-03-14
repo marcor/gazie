@@ -95,7 +95,7 @@ $saldo_periodo = 0.00;
 while ($row = gaz_dbi_fetch_array($result)) {
     if ($ctrl_sezione != $row['seziva']) {
         if ($ctrl_registro != 0) {
-            $pdf->Cell(114, 6, $script_transl['t_reg'], 0, 0, 'R');
+            $pdf->Cell(109, 6, $script_transl['t_reg'], 0, 0, 'R');
             $pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
         }
         $pdf->Ln(1);
@@ -106,27 +106,27 @@ while ($row = gaz_dbi_fetch_array($result)) {
     }
     if ($ctrl_registro != $row['regiva']) {
         if ($ctrl_registro != 0) {
-            $pdf->Cell(114, 6, $script_transl['t_reg'], 0, 0, 'R');
+            $pdf->Cell(109, 6, $script_transl['t_reg'], 0, 0, 'R');
             $pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
         }
         $pdf->Cell(70, 6, $script_transl['regiva_value'][$row['regiva']], 1, 1, 'L', 1);
         $pdf->SetFont('helvetica', '', 8);
         $pdf->Cell(10, 4, $script_transl['code'], 1, 0, 'C');
-        $pdf->Cell(60, 4, $script_transl['descri'], 1, 0, 'C');
+        $pdf->Cell(60, 4, $script_transl['descri'], 1, 0, 'C', 0, '', 1);
         $pdf->Cell(29, 4, $script_transl['imp'], 1, 0, 'C');
-        $pdf->Cell(15, 4, $script_transl['rate'], 1, 0, 'C');
+        $pdf->Cell(10, 4, $script_transl['rate'], 1, 0, 'C');
         $pdf->Cell(20, 4, $script_transl['iva'], 1, 0, 'C');
         $pdf->Cell(20, 4, $script_transl['isp'], 1, 0, 'C');
         $pdf->Cell(20, 4, $script_transl['ind'], 1, 0, 'C');
-        $pdf->Cell(20, 4, $script_transl['tot'], 1, 1, 'R');
+        $pdf->Cell(25, 4, $script_transl['tot'], 1, 1, 'R');
         $pdf->SetFont('helvetica', '', 10);
         $totale_iva_registro = 0.00;
         $ctrl_registro = $row['regiva'];
     }
     $pdf->Cell(10, 6, $row['codiva'], 1, 0, 'C');
-    $pdf->Cell(60, 6, $row['descri'], 1, 0, 'C');
+    $pdf->Cell(60, 6, $row['descri'], 1, 0, 'C', 0, '', 1);
     $pdf->Cell(29, 6, gaz_format_number($row['imponibile']), 1, 0, 'R');
-    $pdf->Cell(15, 6, floatval($row['aliquo']), 1, 0, 'C');
+    $pdf->Cell(10, 6, floatval($row['aliquo']), 1, 0, 'C');
     if ($row['tipiva'] == 'D') { // indetraibile
         $row['isp'] = 0;
         $row['ind'] = $row['imposta'];
@@ -144,9 +144,9 @@ while ($row = gaz_dbi_fetch_array($result)) {
     $pdf->Cell(20, 6, gaz_format_number($row['imposta']), 1, 0, 'R');
     $pdf->Cell(20, 6, gaz_format_number($row['isp']), 1, 0, 'R');
     $pdf->Cell(20, 6, gaz_format_number($row['ind']), 1, 0, 'R');
-    $pdf->Cell(20, 6, gaz_format_number($row['imponibile'] + $row['imposta'] + $row['isp']), 1, 1, 'R');
+    $pdf->Cell(25, 6, gaz_format_number($row['imponibile'] + $row['imposta'] + $row['isp']), 1, 1, 'R');
 }
-$pdf->Cell(114, 6, $script_transl['t_reg'], 0, 0, 'R');
+$pdf->Cell(109, 6, $script_transl['t_reg'], 0, 0, 'R');
 $pdf->Cell(20, 6, gaz_format_number($totale_iva_registro), 1, 1, 'R', 1);
 $pdf->Ln(2);
 
@@ -154,9 +154,9 @@ $pdf->Ln(2);
 $pdf->Cell(54, 6);
 if ($saldo_periodo < 0) {
     $pdf->SetTextColor(255, 0, 0);
-    $pdf->Cell(55, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['t_neg']), 'LTB', 0, 'L', 1);
+    $pdf->Cell(50, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['t_neg']), 'LTB', 0, 'L', 1);
 } else {
-    $pdf->Cell(55, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['t_pos']), 'LTB', 0, 'L', 1);
+    $pdf->Cell(50, 6, strtoupper($script_transl['tot'] . ' ' . $script_transl['t_pos']), 'LTB', 0, 'L', 1);
 }
 $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
 $pdf->Cell(20, 6, gaz_format_number($saldo_periodo), 'RTB', 1, 'R', 1);
@@ -165,7 +165,7 @@ $pdf->SetTextColor(0);
 // credito riportato dal periodo precedente
 if ($_GET['cr'] > 0) {
     $pdf->Cell(54, 6);
-    $pdf->Cell(55, 6, $script_transl['carry'], 'LTB', 0, 'L');
+    $pdf->Cell(45, 6, $script_transl['carry'], 'LTB', 0, 'L');
     $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L');
     $pdf->Cell(20, 6, '-' . gaz_format_number($_GET['cr']), 'RTB', 1, 'R');
 }
@@ -176,7 +176,7 @@ $saldo_totale = $saldo_periodo - floatval($_GET['cr']);
 if ($saldo_totale > 0 && $admin_aziend['ivam_t'] == 'T') {
     $interessi = 0;
     $interessi = round($saldo_totale * $admin_aziend['interessi'] / 100, 2);
-    $pdf->Cell(114, 6, $script_transl['inter'] . $admin_aziend['interessi'] . '% ', 0, 0, 'R');
+    $pdf->Cell(109, 6, $script_transl['inter'] . $admin_aziend['interessi'] . '% ', 0, 0, 'R');
     $pdf->Cell(20, 6, gaz_format_number($interessi), 1, 1, 'R');
     $saldo_totale += $interessi;
 }
@@ -186,7 +186,7 @@ if ($saldo_totale > 0) { // se ho da pagare
     $pdf->Ln(2);
     $pdf->Cell(31, 6);
     $pdf->SetFont('helvetica', 'B', 12);
-    $pdf->Cell(72, 6, strtoupper($script_transl['tot'] . $script_transl['pay']), 'LTB', 0, 'L', 1);
+    $pdf->Cell(67, 6, strtoupper($script_transl['tot'] . $script_transl['pay']), 'LTB', 0, 'L', 1);
     $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L', 1);
     $pdf->Cell(26, 6, gaz_format_number($saldo_totale), 'RTB', 1, 'R', 1);
 
