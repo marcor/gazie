@@ -208,7 +208,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
         $('#amm_min').selectmenu();
         $('#causale_pagam_770').selectmenu();
         $('#fiscal_reg').selectmenu();
-        $("#datnas, #virtual_stamp_auth_date").datepicker();
+        $("#datnas, #virtual_stamp_auth_date").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
     });
     $(document).ready(function () {
         $('.simple_color_custom').simpleColor({

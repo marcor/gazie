@@ -406,7 +406,7 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
             $("#amount_rate").text(amount_rate.toFixed(2).toString());
             ;
         }
-        $("#datreg, #datfat").datepicker();
+        $("#datreg, #datfat").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datreg").change(function () {
             this.form.submit();
         });

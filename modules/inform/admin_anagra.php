@@ -126,7 +126,7 @@ $gForm = new venditForm();
 ?>
 <script>
     $(function () {
-        $("#datnas").datepicker();
+        $("#datnas").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
     });
 </script>
 

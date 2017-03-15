@@ -730,7 +730,7 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
 ?>
 <script type="text/javascript">
     $(function () {
-        $("#datemi").datepicker();
+        $("#datemi").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datemi").change(function () {
             this.form.submit();
         });

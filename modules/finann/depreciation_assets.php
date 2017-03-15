@@ -286,7 +286,7 @@ $script_transl = HeadMain();
 ?>
 <script>
     $(function () {
-        $("#datreg").datepicker();
+        $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datreg").change(function () {
             this.form.submit();
         });

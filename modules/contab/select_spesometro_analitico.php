@@ -662,11 +662,11 @@ $gForm = new contabForm();
 ?>
 <script type="text/javascript">
     $(function () {
-        $("#datini").datepicker();
+        $("#datini").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datini").change(function () {
             this.form.submit();
         });
-        $("#datfin").datepicker();
+        $("#datfin").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#datfin").change(function () {
             this.form.submit();
         });

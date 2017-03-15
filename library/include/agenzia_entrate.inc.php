@@ -487,7 +487,8 @@ class AgenziaEntrate {
 // --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21) ANTE 2012
 
 
-    /*     * **** creaFileART21_poli MODELLO COMUNICAZIONE POLIVALENTE DAL 2013
+/* --- INIZIO creaFileART21_poli MODELLO COMUNICAZIONE POLIVALENTE DAL 2013
+  
       $testa = array monodimensionale con i seguenti index:
       [codfis] = Codice Fiscale del contribuente 16 alfanumerico o 11 numerico
       [pariva] = Partita IVA del contribuente 11 numerico
@@ -651,7 +652,7 @@ class AgenziaEntrate {
             switch ($ElementsData['quadro']) {
                 case 'FE':  //FATTURE EMESSE                D
                     $fe++;
-                    $this->D_elements +=5;
+                    $this->D_elements += 5;
                     if ($fe == 6) { // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
                         $this->D_elements = 50;
                     }
@@ -663,6 +664,9 @@ class AgenziaEntrate {
                     } else {
                         $this->accu_D .= $this->createElement($cod_ini . '001', $ElementsData['pariva']);
                     }
+                    if ($ElementsData['pariva'] == $this->PIContribuente || $ElementsData['codfis'] == $this->CFContribuente) { // se è una autofattura almeno il CF o la PI coincidono
+                        $this->accu_D .= $this->createElement($cod_ini . '006', '1', STR_PAD_LEFT);
+                    }
                     $this->accu_D .= $this->createElement($cod_ini . '007', substr($ElementsData['datdoc'], 8, 2) . substr($ElementsData['datdoc'], 5, 2) . substr($ElementsData['datdoc'], 0, 4), STR_PAD_LEFT) .
                             $this->createElement($cod_ini . '009', $ElementsData['numdoc'] . '/' . $ElementsData['seziva']) .
                             $this->createElement($cod_ini . '010', round($ElementsData['operazioni_imponibili'] + $ElementsData['operazioni_nonimp'] + $ElementsData['operazioni_esente']), STR_PAD_LEFT) .
@@ -671,7 +675,7 @@ class AgenziaEntrate {
                     break;
                 case 'FR':  //FATTURE RICEVUTE              D
                     $fr++;
-                    $this->D_elements +=5;
+                    $this->D_elements += 5;
                     if ($fr == 6) { // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
                         $this->D_elements = 50;
                     }
@@ -684,19 +688,23 @@ class AgenziaEntrate {
                     } else {
                         $this->FR = 1;
                         $this->progr_FR++;
-                        ;
                         $this->accu_D .= $this->createElement($cod_ini . '001', $ElementsData['pariva']);
                     }
                     $this->accu_D .= $this->createElement($cod_ini . '003', substr($ElementsData['datdoc'], 8, 2) . substr($ElementsData['datdoc'], 5, 2) . substr($ElementsData['datdoc'], 0, 4), STR_PAD_LEFT) .
-                            $this->createElement($cod_ini . '004', substr($ElementsData['datreg'], 8, 2) . substr($ElementsData['datreg'], 5, 2) . substr($ElementsData['datreg'], 0, 4), STR_PAD_LEFT) .
-                            $this->createElement($cod_ini . '008', round($ElementsData['operazioni_imponibili'] + $ElementsData['operazioni_nonimp'] + $ElementsData['operazioni_esente']), STR_PAD_LEFT) .
-                            $this->createElement($cod_ini . '009', round($ElementsData['imposte_addebitate']), STR_PAD_LEFT)
-                    ;
+                            $this->createElement($cod_ini . '004', substr($ElementsData['datreg'], 8, 2) . substr($ElementsData['datreg'], 5, 2) . substr($ElementsData['datreg'], 0, 4), STR_PAD_LEFT);
+                    if ($ElementsData['reverse_charge_idtes'] >= 1) { // c'è il reverse charge
+                        $this->accu_D .= $this->createElement($cod_ini . '006', '1', STR_PAD_LEFT);
+                    }
+                    if ($ElementsData['pariva'] == $this->PIContribuente || $ElementsData['codfis'] == $this->CFContribuente) { // se è una autofattura almeno il CF o la PI coincidono
+                        $this->accu_D .= $this->createElement($cod_ini . '007', '1', STR_PAD_LEFT);
+                    }
+                    $this->accu_D .= $this->createElement($cod_ini . '008', round($ElementsData['operazioni_imponibili'] + $ElementsData['operazioni_nonimp'] + $ElementsData['operazioni_esente']), STR_PAD_LEFT) .
+                            $this->createElement($cod_ini . '009', round($ElementsData['imposte_addebitate']), STR_PAD_LEFT);
                     break;
                 case 'NE':  //NOTE EMESSE
                     $ne++;
                     $this->NE = 1;
-                    $this->D_elements +=5;
+                    $this->D_elements += 5;
                     if ($ne == 10) { // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
                         $this->D_elements = 50;
                     }
@@ -716,7 +724,7 @@ class AgenziaEntrate {
                 case 'NR':  //NOTE RICEVUTE
                     $nr++;
                     $this->NR = 1;
-                    $this->D_elements +=5;
+                    $this->D_elements += 5;
                     if ($nr == 10) { // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
                         $this->D_elements = 50;
                     }
@@ -733,7 +741,7 @@ class AgenziaEntrate {
                 case 'DF':  //OPERAZIONI SENZA FATTURA      D
                     $df++;
                     $this->DF = 1;
-                    $this->D_elements +=3;
+                    $this->D_elements += 3;
                     if ($df == 10) { // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
                         $this->D_elements = 50;
                     }
@@ -751,7 +759,7 @@ class AgenziaEntrate {
                 case 'SE':  //OPERAZIONI SAN MARINO         D
                     $se++;
                     $this->SE = 1;
-                    $this->D_elements +=10;
+                    $this->D_elements += 10;
                     if ($se == 10) { // forzo il prossimo ciclo al passaggio ad un nuovo modulo aumentando il valore di D_elements
                         $this->D_elements = 50;
                     }
@@ -759,7 +767,7 @@ class AgenziaEntrate {
                     $cod_ini = 'SE' . str_pad($se, 3, '0', STR_PAD_LEFT);
                     $this->accu_D .= $this->createElement($cod_ini . '007', $ElementsData['ragso1'] . ' ' . $ElementsData['ragso2']) .
                             $this->createElement($cod_ini . '008', $ElementsData['citspe']) .
-                            $this->createElement($cod_ini . '009', str_pad($ElementsData['cod_agenzia_entrate'], 3, "0",STR_PAD_LEFT), STR_PAD_LEFT) .
+                            $this->createElement($cod_ini . '009', str_pad($ElementsData['cod_agenzia_entrate'], 3, "0", STR_PAD_LEFT), STR_PAD_LEFT) .
                             $this->createElement($cod_ini . '010', $ElementsData['indspe']) .
                             $this->createElement($cod_ini . '011', $ElementsData['codfis']) .
                             $this->createElement($cod_ini . '012', substr($ElementsData['datdoc'], 8, 2) . substr($ElementsData['datdoc'], 5, 2) . substr($ElementsData['datdoc'], 0, 4), STR_PAD_LEFT) .
@@ -778,25 +786,25 @@ class AgenziaEntrate {
     function Record_E() { // RECORD DATI RIEPILOGATIVI
         $acc = "E" . $this->CFContribuente . '00000001' . str_repeat(' ', 48) . $this->SoftHouseId;
         if ($this->FE > 0) {
-            $acc .='TA004001' . str_pad($this->progr_FE, 16, ' ', STR_PAD_LEFT);
+            $acc .= 'TA004001' . str_pad($this->progr_FE, 16, ' ', STR_PAD_LEFT);
         }
         if ($this->FR > 0) {
-            $acc .='TA005001' . str_pad($this->progr_FR, 16, ' ', STR_PAD_LEFT);
+            $acc .= 'TA005001' . str_pad($this->progr_FR, 16, ' ', STR_PAD_LEFT);
         }
         if ($this->FR_riepil > 0) {
-            $acc .='TA005002' . str_pad($this->progr_FR_riepil, 16, ' ', STR_PAD_LEFT);
+            $acc .= 'TA005002' . str_pad($this->progr_FR_riepil, 16, ' ', STR_PAD_LEFT);
         }
         if ($this->NE > 0) {
-            $acc .='TA006001' . str_pad($this->progr_NE, 16, ' ', STR_PAD_LEFT);
+            $acc .= 'TA006001' . str_pad($this->progr_NE, 16, ' ', STR_PAD_LEFT);
         }
         if ($this->NR > 0) {
-            $acc .='TA007001' . str_pad($this->progr_NR, 16, ' ', STR_PAD_LEFT);
+            $acc .= 'TA007001' . str_pad($this->progr_NR, 16, ' ', STR_PAD_LEFT);
         }
         if ($this->DF > 0) {
-            $acc .='TA008001' . str_pad($this->progr_DF, 16, ' ', STR_PAD_LEFT);
+            $acc .= 'TA008001' . str_pad($this->progr_DF, 16, ' ', STR_PAD_LEFT);
         }
         if ($this->SE > 0) {
-            $acc .='TA010001' . str_pad($this->progr_SE, 16, ' ', STR_PAD_LEFT);
+            $acc .= 'TA010001' . str_pad($this->progr_SE, 16, ' ', STR_PAD_LEFT);
         }
         return str_pad($acc, 1897, ' ', STR_PAD_RIGHT) . "A\r\n";
     }
