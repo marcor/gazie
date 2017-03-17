@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2016 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -31,24 +31,30 @@ function getDocRef($data) {
     return $r;
 }
 
-if (isset($_GET['auxil'])) {
-    $auxil = $_GET['auxil'];
-    if ($_GET['auxil'] == 'VPR') {
-        $what = 'VPR';
-    } else {
-        $what = 'VOR';//substr($auxil, 0, 2) . "_";
-    }
-    $where = "tipdoc LIKE '$what'";
-} else {
-    $auxil = 'VOR';
-    $_GET['auxil'] = 'VOR';
-    $where = "tipdoc LIKE '$auxil'";
+$days = array(
+    'Domenica',
+    'Lunedi',
+    'Martedi',
+    'Mercoledi',
+    'Giovedi',
+    'Venerdi',
+    'Sabato'
+);
+
+if (isset($_GET['tipdoc'])) {
+    $where = "tipdoc LIKE '".$_GET['tipdoc']."'";    
 }
+if (isset($_POST['tipdoc'])) {
+    $where = "tipdoc LIKE '".$_POST['tipdoc']."'";    
+}
+
 $all = $where;
+
+//if ( !isset($_GET['giorno']) ) $_GET['giorno'] = jddayofweek(0);
 
 gaz_flt_var_assign('id_tes', 'i');
 gaz_flt_var_assign('numdoc', 'i');
-gaz_flt_var_assign('datemi', 'd');
+gaz_flt_var_assign('giorno', 'i');
 gaz_flt_var_assign('clfoco', 'v');
 
 if (isset($_GET['all'])) {
@@ -62,7 +68,7 @@ if (isset($_GET['all'])) {
     } else {
         $what = substr($auxil, 0, 2) . "_";
     }
-    $where = "tipdoc LIKE '$what'";
+    $where = "tipdoc LIKE 'VOG'";
     $passo = 100000;
     $numero = '';
 }
@@ -116,21 +122,20 @@ if (!isset($_GET['flag_order']))
 $a = substr($auxil, 0, 3);
 ?>
 
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title_value'][$_GET['auxil']]; ?></div>
+<div align="center" class="FacetFormHeaderFont"><?php echo "Gestione ordini giornalieri"; ?></div>
 <?php
 $recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
 $recordnav->output();
 ?>
 <form method="GET" >
-    <input type="hidden" name="auxil" value="<?php echo substr($_GET['auxil'], 0, 3); ?>">
+
     <div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
         <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
         <p class="ui-state-highlight" id="mail_attc"></p>
     </div>
-    <div class="box-primary table-responsive">
-    <table class="Tlarge table table-striped table-bordered table-condensed">
+    <table class="Tlarge">
         <tr>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_int("id_tes", "Numero Prot."); ?>
@@ -139,7 +144,26 @@ $recordnav->output();
                 <?php gaz_flt_disp_int("numdoc", "Numero Doc."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); ?>
+               <select class="form-control input-sm" onchange="this.form.submit()" name="giorno">
+                  <?php
+                    if ( isset($_GET['giorno']) ) $gg = $_GET['giorno'];
+                    else $gg = 'All';
+                  ?>
+                  <option value="All" <?php if ($gg=='All') echo "selected"; ?>>Tutti</option>
+                  <option value="0" <?php if ($gg=='0') echo "selected"; ?>>Domenica</option>
+                  <option value="1" <?php if ($gg=='1') echo "selected"; ?>>Lunedì</option>
+                  <option value="2" <?php if ($gg=='2') echo "selected"; ?>>Martedì</option>
+                  <option value="3" <?php if ($gg=='3') echo "selected"; ?>>Mercoledì</option>
+                  <option value="4" <?php if ($gg=='4') echo "selected"; ?>>Giovedì</option>
+                  <option value="5" <?php if ($gg=='5') echo "selected"; ?>>Venerdì</option>
+                  <option value="6" <?php if ($gg=='6') echo "selected"; ?>>Sabato</option>
+               </select>
+               <?php 
+               //echo $gg."cciao";
+               //gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); 
+                //gaz_flt_disp_select("giorno", "giorno", $gTables["tesbro"], $all, $orderby);
+
+                ?>
             </td>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, $orderby, "ragso1"); ?>
@@ -162,14 +186,18 @@ $recordnav->output();
         </tr>
         <tr>
             <?php
-            // creo l'array (header => campi) per l'ordinamento dei record
+            echo '<input type="hidden" name="auxil" value="' . substr($auxil, 0, 3) . '">';
+            echo '<input type="hidden" name="tipdoc" value="VOG">';
+            
+// creo l'array (header => campi) per l'ordinamento dei record
             $headers_tesbro = array(
                 "ID" => "id_tes",
                 //$script_transl['type'] => "tipdoc",
                 $script_transl['number'] => "numdoc",
-                $script_transl['date'] => "datemi",
+                "Giorno" => "giorno",
                 "Cliente" => "clfoco",
-                $script_transl['status'] => "status",
+                "Azione" => "",
+                //$script_transl['status'] => "status",
                 $script_transl['print'] => "",
                 "Mail" => "",
                 $script_transl['duplicate'] => "",
@@ -189,11 +217,11 @@ $recordnav->output();
         while ($r = gaz_dbi_fetch_array($result)) {
             if ($r["tipdoc"] == 'VPR') {
                 $modulo = "stampa_precli.php?id_tes=" . $r['id_tes'];
-                $modifi = "admin_broven.php?Update&id_tes=" . $r['id_tes'];
+                $modifi = "admin_broven_gio.php?Update&id_tes=" . $r['id_tes'];
             }
             if (substr($r["tipdoc"], 1, 1) == 'O') {
                 $modulo = "stampa_ordcli.php?id_tes=" . $r['id_tes'];
-                $modifi = "admin_broven.php?Update&id_tes=" . $r['id_tes'];
+                $modifi = "admin_broven_gio.php?Update&id_tes=" . $r['id_tes'];
             }
             echo "<tr class=\"FacetDataTD\">";
 
@@ -204,7 +232,7 @@ $recordnav->output();
             }
             //echo "<td>".$script_transl['type_value'][$r["tipdoc"]]." &nbsp;</td>";
             echo "<td>" . $r["numdoc"] . " &nbsp;</td>";
-            echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+            echo "<td>" . $days[$r["giorno"]] . " &nbsp;</td>";
             echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a> &nbsp;</td>";
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
@@ -352,10 +380,9 @@ $recordnav->output();
             echo "</tr>\n";
         }
         ?>
-        <tr><th class="FacetFieldCaptionTD" colspan="9"></th></tr>
-    </table>
-    </div>
 </form>
+</table>
+</div>
 <?php
 require("../../library/include/footer.php");
 ?>
