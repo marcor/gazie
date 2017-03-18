@@ -17,6 +17,9 @@
 .navbar-nav > .notifications-menu > .dropdown-menu > li .menu, .navbar-nav > .messages-menu > .dropdown-menu > li .menu, .navbar-nav > .tasks-menu > .dropdown-menu > li .menu {
     max-height: 500px;
 }
+.navbar-static-top {
+	border-bottom: 1px solid #000 !important;
+}
 .content-wrapper {
     min-width: 300px;
 }
@@ -80,6 +83,14 @@
 {
     padding: 5px 5px 5px 5px;
 }
+.FacetDataTD input,select,textarea {
+	padding-left: 10px;
+	margin-left: 5px;
+}
+
+.form-group input {
+	padding-left: 10px;
+}
 .tab-content {
     background-color: #222d32;
     border: 0px solid #ddd;
@@ -90,14 +101,18 @@
     border-collapse: initial;
     margin-bottom: 0px;
 }
+.Tmiddle {
+	width: 50%;
+}
 #products-list
 {
     border-top: 0px solid;
 }
 .main-header {
     border-collapse: separate;
-    border: 1px solid;
+    /*border: 1px solid;*/
 }
+
 .logo {
 
 }

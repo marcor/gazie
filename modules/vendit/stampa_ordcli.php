@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 require("../../library/include/document.php");
 $tesbro = gaz_dbi_get_row($gTables['tesbro'],"id_tes", intval($_GET['id_tes']));
-if ($tesbro['tipdoc']=='VOR') {
+if ($tesbro['tipdoc']=='VOR' || $tesbro['tipdoc']=='VOG') {
     if (isset($_GET['dest'])&& $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
         createDocument($tesbro, 'OrdineCliente',$gTables,'rigbro','E');
     } else {

@@ -51,7 +51,6 @@ if ((isset($_GET['Update']) and ! isset($_GET['id_tes'])) and ! isset($_GET['tip
    exit;
 }
 
-
 if (isset($_POST['newdestin'])) {
    $_POST['id_des'] = 0;
    $_POST['destin'] = "";
@@ -226,7 +225,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                $form['in_prelis'] = $form['rows'][$k_row]['prelis'];
                $form['in_sconto'] = $form['rows'][$k_row]['sconto'];
                $form['in_quanti'] = $form['rows'][$k_row]['quanti'];
-               //$form['in_codvat'] = $form['rows'][$k_row]['codvat'];
                $form['in_codric'] = $form['rows'][$k_row]['codric'];
                $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];
                $form['in_id_mag'] = $form['rows'][$k_row]['id_mag'];
@@ -234,15 +232,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                $form['in_scorta'] = $form['rows'][$k_row]['scorta'];
                $form['in_pesosp'] = $form['rows'][$k_row]['pesosp'];
                $form['in_status'] = "UPDROW" . $k_row;
-               /* if ($form['in_artsea'] == 'D') {
-                 $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
-                 $form['cosear'] = $artico_u['descri'];
-                 } elseif ($form['in_artsea'] == 'B') {
-                 $artico_u = gaz_dbi_get_row($gTables['artico'], 'codice', $form['rows'][$k_row]['codart']);
-                 $form['cosear'] = $artico_u['barcode'];
-                 } else { */
                $form['cosear'] = $form['rows'][$k_row]['codart'];
-               //}
+
                array_splice($form['rows'], $k_row, 1);
                $next_row--;
             }
@@ -272,32 +263,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
       $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
       $initra = $form['anntra'] . "-" . $form['mestra'] . "-" . $form['giotra'];
       $utstra = mktime(0, 0, 0, $form['mestra'], $form['giotra'], $form['anntra']);
-      /*if (!checkdate($form['mestra'], $form['giotra'], $form['anntra']))
-         $msg .= "37+";
-      if ($utstra < $utsemi) {
-         $msg .= "38+";
-      }*/
+
       if (!isset($_POST['rows'])) {
          $msg .= "39+";
       }
-      // --- inizio controllo coerenza date-numerazione
-      /*if ($toDo == 'update') {  // controlli in caso di modifica
-         $rs_query = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], "YEAR(datemi) = " . $form['annemi'] . " and datemi < '$datemi' and tipdoc = '" . $form['tipdoc'] . "' and seziva = $sezione", "datemi DESC, numdoc DESC", 0, 1);
-         $result = gaz_dbi_fetch_array($rs_query); //giorni precedenti
-         if ($result and ( $form['numdoc'] < $result['numdoc'])) {
-            $msg .= "42+";
-         }
-      } else {    //controlli in caso di inserimento
-         $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesbro'], "YEAR(datemi) = " . $form['annemi'] . " and tipdoc = '" . $form['tipdoc'] . "' and seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
-         $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
-         $utsUltimoDocumento = mktime(0, 0, 0, substr($ultimo_tipo['datemi'], 5, 2), substr($ultimo_tipo['datemi'], 8, 2), substr($ultimo_tipo['datemi'], 0, 4));
-         if ($ultimo_tipo and ( $utsUltimoDocumento > $utsemi)) {
-            $msg .= "45+";
-         }
-      }*/
-      // --- fine controllo coerenza date-numeri
-      //if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi']))
-         //$msg .= "46+";
+
+
       if (empty($form['clfoco']))
          $msg .= "47+";
       if (empty($form['pagame']))
@@ -553,10 +524,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
    }
 
    // Se viene inviata la richiesta di conferma rigo
-   /** ENRICO FEDELE */
-   /* Con button non funziona _x */
-   //if (isset($_POST['in_submit_x'])) {
-   /** ENRICO FEDELE */
    if (isset($_POST['in_submit'])) {
       $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['in_codart']);
       // addizione ai totali peso,pezzi,volume
@@ -594,10 +561,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['pervat'] = $iva_row['aliquo'];
             $form['rows'][$old_key]['tipiva'] = $iva_row['tipiva'];
          }
-         /* $form['rows'][$old_key]['codvat'] = $form['in_codvat'];
-           $iva_row = gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
-           $form['rows'][$old_key]['pervat'] = $iva_row['aliquo'];
-           $form['rows'][$old_key]['tipiva'] = $iva_row['tipiva']; */
          $form['rows'][$old_key]['scorta'] = '';
          $form['rows'][$old_key]['annota'] = '';
          $form['rows'][$old_key]['pesosp'] = '';
@@ -1073,72 +1036,7 @@ if ($form['id_tes'] > 0) {
 } else {
    $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
-echo "<script type=\"text/javascript\">";
-/* foreach ($form['rows'] as $k => $v) {
-  if ($v['tiprig'] > 5 || $v['tiprig'] < 9) {
-  echo "\n// Initialize TinyMCE with the new plugin and menu button
-  tinyMCE.init({
-  mode : \"specific_textareas\",
-  theme : \"advanced\",
-  forced_root_block : false,
-  force_br_newlines : true,
-  force_p_newlines : false,
-  elements : \"row_" . $k."\",
-  plugins : \"table,advlink\",
-  theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
-  theme_advanced_buttons2 : \"\",
-  theme_advanced_buttons3 : \"\",
-  theme_advanced_toolbar_location : \"external\",
-  theme_advanced_toolbar_align : \"left\",
-  editor_selector  : \"mceClass" . $k."\",
-  });\n";
-  }
-  } */
 
-echo "
-function pulldown_menu(selectName, destField)
-{
-    // Create a variable url to contain the value of the
-    // selected option from the the form named broven and variable selectName
-    var url = document.broven[selectName].options[document.broven[selectName].selectedIndex].value;
-    document.broven[destField].value = url;
-}";
-echo "
-   function preStampa() // stampa il dettaglio del preventivo senza salvarlo
-    {
-        var mywindow = window.open('', 'my div', 'height=400,width=600');
-        mywindow.document.write('<html><head><title>Stampa</title>');
-        
-        mywindow.document.write('</head><body >');
-        //alert($('[name=\"change\"]').val());
-        mywindow.document.write('<h1>CLIENTE: '+$('[name=\"change\"]').val()+'</h1>');
-        mywindow.document.write('<table name=lista border=1> ');
-        mywindow.document.write($('[name=\"elenco\"]').html());
-        mywindow.document.write('</table> ');
-        mywindow.document.write('<h2>TOTALE: &#8364; '+$('[name=\"totale\"]').html()+'</h2>');
-        mywindow.document.write('</body></html>');
-
-        mywindow.document.close(); // necessary for IE >= 10
-        mywindow.focus(); // necessary for IE >= 10
-
-        mywindow.print();
-        mywindow.close();
-
-        return true;
-    }
-";
-echo "</script>";
-?>
-<SCRIPT LANGUAGE="JavaScript" ID="datapopup">
-   var cal = new CalendarPopup();
-   cal.setReturnFunction("setMultipleValues");
-   function setMultipleValues(y, m, d) {
-       document.broven.anntra.value = y;
-       document.broven.mestra.value = LZ(m);
-       document.broven.giotra.value = LZ(d);
-   }
-</SCRIPT>
-<?php
 echo "<form method=\"POST\" name=\"broven\">\n";
 $gForm = new venditForm();
 echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="">
@@ -1155,7 +1053,7 @@ echo '	<input type="hidden" name="' . ucfirst($toDo) . '" value="">
 $select_cliente = new selectPartner('clfoco');
 $select_cliente->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['mascli']);
 echo '	</div>
-		<table class="Tlarge">
+		<table class="Tlarge table table-striped table-bordered table-condensed">
 			<tr>
 				<td class="FacetFieldCaptionTD">' . $script_transl[4] . '</td>
 				<td class="FacetDataTD">
@@ -1200,36 +1098,6 @@ echo "<input name='gioemi' type='hidden' value=".$form['gioemi'].">";
 echo "<input name='mesemi' type='hidden' value=".$form['mesemi'].">";
 echo "<input name='annemi' type='hidden' value=".$form['annemi'].">";
 
-/*					<select name="gioemi" class="FacetSelect">';
-for ($counter = 1; $counter <= 31; $counter++) {
-   $selected = "";
-   if ($counter == $form['gioemi']) {
-      $selected = ' selected=""';
-   }
-   echo '					<option value="' . $counter . '"' . $selected . '>' . $counter . '</option>';
-}
-echo '				</select>';
-// select del mese
-echo '				<select name="mesemi" class="FacetSelect">';
-for ($counter = 1; $counter <= 12; $counter++) {
-   $selected = "";
-   if ($counter == $form['mesemi']) {
-      $selected = ' selected=""';
-   }
-   $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-   echo '					<option value="' . $counter . '"' . $selected . '>' . $nome_mese . '</option>';
-}
-echo '				</select>';
-// select del anno
-echo '				<select name="annemi" class="FacetSelect" onchange="this.form.submit()">';
-for ($counter = $form['annemi'] - 10; $counter <= $form['annemi'] + 10; $counter++) {
-   $selected = "";
-   if ($counter == $form['annemi']) {
-      $selected = ' selected=""';
-   }
-   echo '					<option value="' . $counter . '"' . $selected . '>' . $counter . '</option>';
-}
-echo '				</select>*/
 echo '				</td>
 			</tr>
 			<tr>
@@ -1316,26 +1184,15 @@ echo '		</td>
 	  <input type="hidden" value="' . $form['hidden_req'] . '" name="hidden_req" />
 	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 	  	<tr>
-			<td class="FacetColumnTD">' . $script_transl[15] . ':&nbsp;';
+        <td class="FacetColumnTD">' . $script_transl[17] . ':';
+/** ENRICO FEDELE */
+$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+echo $script_transl[15] . ':&nbsp;';
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
 //$select_artico->output($form['cosear'], $form['in_artsea']);
 $select_artico->output($form['cosear']);
-/*
-  echo 'ricerca per <select name="in_artsea" class="FacetDataTDsmall">';
-  $selArray = array('C' => 'Codice articolo', 'B' => 'Codice a barre', 'D' => 'Descrizione');
-  foreach ($selArray as $k => $v) {
-  $selected = "";
-  if (isset($form["in_artsea"]) and $form["in_artsea"] == $k) {
-  $selected = " selected ";
-  }
-  echo '<option value="'.$k.'" '.$selected.' > '.$v.' </option>';
-  }
-  / *echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";* /
 
-  echo '			</select> */
-/** ENRICO FEDELE */
-/* glyph-icon */
 echo '			</td>
 			<td class="FacetColumnTD">
 				' . $script_transl[16] . ':&nbsp;<input type="text" value="' . $form['in_quanti'] . '" maxlength="11" size="7" name="in_quanti" tabindex="5" accesskey="q" />
@@ -1346,10 +1203,7 @@ echo '			</td>
 				</button>
 			</td>
 		</tr>
-		<tr>
-			<td class="FacetColumnTD">' . $script_transl[17] . ':';
-/** ENRICO FEDELE */
-$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+		<tr><td class="FacetColumnTD">';
 echo $script_transl[18] . ": ";
 $select_codric = new selectconven("in_codric");
 $select_codric->addSelected($form['in_codric']);
@@ -1456,12 +1310,6 @@ foreach ($form['rows'] as $k => $v) {
          if ($v['pesosp'] <> 0) {
             $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
          }
-         /*
-           echo '<td title="'.$script_transl['update'].$script_transl['thisrow'].'! Sottoscorta = '.$v['scorta'].'">
-           <input class="'.$scorta_col.'" type="submit" name="upd_row['.$k.']" value="'.$v['codart'].'" />
-           </td>
-           ';
-          */
 
          echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
 					<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
@@ -1702,16 +1550,7 @@ echo "			</select>
 			<td class=\"FacetFieldCaptionTD text-right\">" . $script_transl[51] . "</td>
 			<td class=\"FacetDataTD\">
 			<!--	<select name=\"caumag\" class=\"FacetSelect\">\n";
-//$result = gaz_dbi_dyn_query("*", $gTables['caumag'], " clifor = -1 AND operat = " . $docOperat[$form['tipdoc']], "codice, descri");
-/*while ($row = gaz_dbi_fetch_array($result)) {
-   $selected = "";
-   if ($form["caumag"] == $row['codice']) {
-      $selected = ' selected=""';
-   }
-   echo "				<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . "-" . substr($row['descri'], 0, 20) . "</option>\n";
-}*/
-/** ENRICO FEDELE */
-/* td non chiuso */
+
 echo "			</select>-->
 			</td>
 			<td class=\"FacetFieldCaptionTD text-right\">$script_transl[55]</td>
@@ -1801,9 +1640,51 @@ if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
 }
 echo "	</table>";
 ?>
-</form>
 </table>
+</form>
 </div>
+<script type="text/javascript">
+    function pulldown_menu(selectName, destField)
+    {
+        // Create a variable url to contain the value of the
+        // selected option from the the form named broven and variable selectName
+        var url = document.broven[selectName].options[document.broven[selectName].selectedIndex].value;
+        document.broven[destField].value = url;
+    }
+    
+   function preStampa() // stampa il dettaglio del preventivo senza salvarlo
+    {
+        var mywindow = window.open('', 'my div', 'height=400,width=600');
+        mywindow.document.write('<html><head><title>Stampa</title>');
+        
+        mywindow.document.write('</head><body >');
+        //alert($('[name=\"change\"]').val());
+        mywindow.document.write('<h1>CLIENTE: '+$('[name=\"change\"]').val()+'</h1>');
+        mywindow.document.write('<table name=lista border=1> ');
+        mywindow.document.write($('[name=\"elenco\"]').html());
+        mywindow.document.write('</table> ');
+        mywindow.document.write('<h2>TOTALE: &#8364; '+$('[name=\"totale\"]').html()+'</h2>');
+        mywindow.document.write('</body></html>');
+
+        mywindow.document.close(); // necessary for IE >= 10
+        mywindow.focus(); // necessary for IE >= 10
+
+        mywindow.print();
+        mywindow.close();
+
+        return true;
+    }
+</script>
+
+<SCRIPT LANGUAGE="JavaScript" ID="datapopup">
+   var cal = new CalendarPopup();
+   cal.setReturnFunction("setMultipleValues");
+   function setMultipleValues(y, m, d) {
+       document.broven.anntra.value = y;
+       document.broven.mestra.value = LZ(m);
+       document.broven.giotra.value = LZ(d);
+   }
+</SCRIPT>
 <?php
 require("../../library/include/footer.php");
 ?>

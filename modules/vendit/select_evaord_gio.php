@@ -44,7 +44,6 @@ $docOperat = $upd_mm->getOperators();
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
-   
 
 //if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il controllo di presenza ordini evadibili
 function azzera() {
@@ -305,65 +304,6 @@ exit;
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
 ?>
-<script type="text/javascript">
-    function pulldown_menu(selectName, destField)
-    {
-        // Create a variable url to contain the value of the
-        // selected option from the the form named broven and variable selectName
-        var url = document.myform[selectName].options[document.myform[selectName].selectedIndex].value;
-        document.myform[destField].value = url;
-    }
-
-    function calcheck(checkin)
-    {
-        with (checkin.form) {
-            if (checkin.checked == false) {
-                hiddentot.value = eval(hiddentot.value) - eval(checkin.value);
-            } else {
-                hiddentot.value = eval(hiddentot.value) + eval(checkin.value);
-            }
-            var totalecheck = eval(hiddentot.value) - eval(hiddentot.value) * eval(sconto.value) / 100 + eval(traspo.value);
-            return((Math.round(totalecheck * 100) / 100).toFixed(2));
-        }
-    }
-
-    function summa(sumtraspo)
-    {
-        if (isNaN(parseFloat(eval(sumtraspo.value)))) {
-            sumtraspo.value = 0.00;
-        }
-        var totalecheck = eval(document.myform.hiddentot.value) - eval(document.myform.hiddentot.value) * eval(document.myform.sconto.value) / 100 + eval(sumtraspo.value);
-        return((Math.round(totalecheck * 100) / 100).toFixed(2));
-    }
-
-    function sconta(percsconto)
-    {
-        if (isNaN(parseFloat(eval(percsconto.value)))) {
-            percsconto.value = 0.00;
-        }
-        var totalecheck = eval(document.myform.hiddentot.value) - eval(document.myform.hiddentot.value) * eval(percsconto.value) / 100 + eval(document.myform.traspo.value);
-        return((Math.round(totalecheck * 100) / 100).toFixed(2));
-    }
-
-</script>
-<script type="text/javascript" id="datapopup">
-    var cal = new CalendarPopup();
-    cal.setReturnFunction("setMultipleValues");
-    function setMultipleValues(y, m, d) {
-        document.getElementById(calName + '_Y').value = y;
-        document.getElementById(calName + '_M').selectedIndex = m * 1 - 1;
-        document.getElementById(calName + '_D').selectedIndex = d * 1 - 1;
-    }
-    function setDate(name) {
-        calName = name.toString();
-        var year = document.getElementById(calName + '_Y').value.toString();
-        var month = document.getElementById(calName + '_M').value.toString();
-        var day = document.getElementById(calName + '_D').value.toString();
-        var mdy = month + '/' + day + '/' + year;
-        cal.setReturnFunction('setMultipleValues');
-        cal.showCalendar('anchor', mdy);
-    }
-</script>
 <div class="FacetFormHeaderFont" align="center">
    Creazione DDT da Ordini Giornalieri
 </div>
@@ -412,6 +352,7 @@ echo "\t </td>";
    <select name="giorno">
       <?php
          foreach ( $days as $key=>$day) {
+            if ( $key == date('N', strtotime("now")) ) $key = $key."' selected='true";
             echo "<option value='".$key."'>".$day."</option>";
          }
       ?>
@@ -492,7 +433,7 @@ echo "</td>\n";
 echo "</tr></table>\n";
 if (!empty($form['righi'])) {
     echo '<div align="center"><b>' . $script_transl['preview_title'] . '</b></div>';
-    echo "<table class=\"Tlarge\">";
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
     echo "<tr class=\"FacetFieldCaptionTD\"><td> " . $script_transl['codart'] . "</td>
    <td> " . $script_transl['descri'] . "</td>
    <td align=\"center\"> " . $script_transl['unimis'] . "</td>
@@ -582,6 +523,65 @@ if (!empty($form['righi'])) {
     </table>
     </div>
 </form>
+<script type="text/javascript">
+    function pulldown_menu(selectName, destField)
+    {
+        // Create a variable url to contain the value of the
+        // selected option from the the form named broven and variable selectName
+        var url = document.myform[selectName].options[document.myform[selectName].selectedIndex].value;
+        document.myform[destField].value = url;
+    }
+
+    function calcheck(checkin)
+    {
+        with (checkin.form) {
+            if (checkin.checked == false) {
+                hiddentot.value = eval(hiddentot.value) - eval(checkin.value);
+            } else {
+                hiddentot.value = eval(hiddentot.value) + eval(checkin.value);
+            }
+            var totalecheck = eval(hiddentot.value) - eval(hiddentot.value) * eval(sconto.value) / 100 + eval(traspo.value);
+            return((Math.round(totalecheck * 100) / 100).toFixed(2));
+        }
+    }
+
+    function summa(sumtraspo)
+    {
+        if (isNaN(parseFloat(eval(sumtraspo.value)))) {
+            sumtraspo.value = 0.00;
+        }
+        var totalecheck = eval(document.myform.hiddentot.value) - eval(document.myform.hiddentot.value) * eval(document.myform.sconto.value) / 100 + eval(sumtraspo.value);
+        return((Math.round(totalecheck * 100) / 100).toFixed(2));
+    }
+
+    function sconta(percsconto)
+    {
+        if (isNaN(parseFloat(eval(percsconto.value)))) {
+            percsconto.value = 0.00;
+        }
+        var totalecheck = eval(document.myform.hiddentot.value) - eval(document.myform.hiddentot.value) * eval(percsconto.value) / 100 + eval(document.myform.traspo.value);
+        return((Math.round(totalecheck * 100) / 100).toFixed(2));
+    }
+
+</script>
+<script type="text/javascript" id="datapopup">
+    var cal = new CalendarPopup();
+    cal.setReturnFunction("setMultipleValues");
+    function setMultipleValues(y, m, d) {
+        document.getElementById(calName + '_Y').value = y;
+        document.getElementById(calName + '_M').selectedIndex = m * 1 - 1;
+        document.getElementById(calName + '_D').selectedIndex = d * 1 - 1;
+    }
+    function setDate(name) {
+        calName = name.toString();
+        var year = document.getElementById(calName + '_Y').value.toString();
+        var month = document.getElementById(calName + '_M').value.toString();
+        var day = document.getElementById(calName + '_D').value.toString();
+        var mdy = month + '/' + day + '/' + year;
+        cal.setReturnFunction('setMultipleValues');
+        cal.showCalendar('anchor', mdy);
+    }
+</script>
 <?php
 require("../../library/include/footer.php");
 ?>

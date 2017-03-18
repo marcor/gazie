@@ -112,11 +112,14 @@ table.selectTable td {
 	color : #000000;
 }
 .FacetDataTDsmall {
-	background-color : #c9edc8;
+	/*background-color : #c9edc8;*/
 	color : #000000;
 	font-size : 90%;
 	border-bottom-color:  #fff;
 	border-right-color: #fff;
+}
+.form-control {
+	width: 50%;
 }
 .FacetDataTDsmall a {
 	font-size : 90%;
@@ -170,7 +173,7 @@ table.selectTable td {
 }
 .FacetSelect {
 	font-size : 100%;
-	background-color : #C9EDC8;
+	/*background-color : #C9EDC8;*/
 }
 .FacetSmall {
 	font-size : 90%;

@@ -251,6 +251,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
             $posizione = array_pop( $posizione );
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
+			if ( strpos($posizione,"_gio")>0 ) $posizione = "report_broven.php?auxil=VOR";
             
             $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
             if ( !gaz_dbi_num_rows($result)>0 ) {
@@ -275,7 +276,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 }
                 echo "</ol>";
             } else {
-                // @titolo se siamo sul terzo livello
+                // @titolo se siamo sul terzo livello		
                 $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'"',' id',0,1);
                 if ( $r = gaz_dbi_fetch_array($result3) ) {
                     echo "<h1>";
