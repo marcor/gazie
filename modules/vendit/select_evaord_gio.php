@@ -89,7 +89,7 @@ function azzera() {
 if (!isset($_POST['id_tes'])) $form = azzera();
 
 if ( isset($_POST['giorno']) ) {
-   $res_orgio = gaz_dbi_dyn_query ("*", $gTables['tesbro'], "tipdoc='VOG' and giorno=".$_POST['giorno'],"id_tes");
+   $res_orgio = gaz_dbi_dyn_query ("*", $gTables['tesbro'], "tipdoc='VOG' and weekday_repeat=".$_POST['giorno'],"id_tes");
    $rows = gaz_dbi_fetch_all ( $res_orgio );
 
    foreach ( $rows as $riga ) {
@@ -137,7 +137,7 @@ if ( isset($_POST['giorno']) ) {
         $anagrafica = new Anagrafica();
         $cliente = $anagrafica->getPartner($form['clfoco']);
         $form['search']['clfoco'] = substr($cliente['ragso1'], 0, 10);
-        $form['giorno'] = $testate['giorno'];
+        $form['weekday_repeat'] = $testate['weekday_repeat'];
         $form['seziva'] = $testate['seziva'];
         $form['tipdoc'] = $testate['tipdoc'];
         $form['indspe'] = $cliente['indspe'];
@@ -297,8 +297,7 @@ if ( isset($_POST['giorno']) ) {
         
     } else echo $msg;
 }
-header("Location: report_broven_gio.php?tipdoc=VOG");
-//header("Location: invsta_docven.php");
+header("Location: report_doctra.php");
 exit;
 }
 require("../../library/include/header.php");
@@ -351,9 +350,16 @@ echo "\t </td>";
 <td class="FacetDataTD">
    <select name="giorno">
       <?php
-         foreach ( $days as $key=>$day) {
-            if ( $key == date('N', strtotime("now")) ) $key = $key."' selected='true";
-            echo "<option value='".$key."'>".$day."</option>";
+        foreach ( $days as $key=>$day) {
+            $selected = "";
+            if ( isset($_GET["weekday"]) ) {
+                if ( $key==$_GET["weekday"] ) $selected = "selected";
+            } else {
+                $gg = date("N");
+                if ( $gg==7 ) $gg=0;
+                if ( $key == $gg ) $selected = "selected";
+            }
+            echo "<option value='".$key."' ".$selected.">".$day."</option>";
          }
       ?>
    </select>

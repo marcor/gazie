@@ -311,7 +311,7 @@ $recordnav->output();
                     gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r["id_tes"], "status", "RIGENERATO");
                 }
                 if ( $what=="VOG" ) {
-                    echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?day=".$r['weekday_repeat']."\">evadi</a></td>";
+                    echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?weekday=".$r['weekday_repeat']."\">evadi</a></td>";
                 } else {
                     echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a></td>";
                 }
