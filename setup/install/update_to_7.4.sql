@@ -50,10 +50,10 @@ INSERT INTO `gaz_XXXcompany_data` (`description`, `var`, `data`) VALUES ('Ultima
 INSERT INTO `gaz_XXXcompany_data` (`description`, `var`, `data`) VALUES ('Ultima pagina Registro dei Corrispettivi della sezione IVA 9', 'upgco9', '0');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
 UPDATE `gaz_config` SET `cvalue` = '101' WHERE `id` =2;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 5, 'report_broven_gio.php?tipdoc=VOG', '', '', 46, '', 4  FROM `gaz_menu_script`;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 5, 'admin_broven_gio.php?Insert&tipdoc=VOG', '', '', 47, '', 5  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 5, 'report_broven.php?tipdoc=VOG', '', '', 46, '', 4  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 5, 'admin_broven.php?Insert&tipdoc=VOG', '', '', 47, '', 5  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 5, 'select_evaord_gio.php', '', '', 48, '', 6  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
-ALTER TABLE `gaz_XXXtesbro` ADD `giorno` INT(2) NOT NULL AFTER `datemi`;
-ALTER TABLE `gaz_XXXtesdoc` ADD `giorno` INT NOT NULL AFTER `datemi`;
+ALTER TABLE `gaz_XXXtesbro` ADD `weekday_repeat` INT(2) NOT NULL AFTER `datemi`;
+ALTER TABLE `gaz_XXXtesdoc` ADD `weekday_repeat` INT NOT NULL AFTER `datemi`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

@@ -566,7 +566,7 @@ function rigdocUpdate($codice, $newValue) {
 function tesbroInsert($newValue) {
     $table = 'tesbro';
     $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
-        'clfoco', 'pagame', 'banapp', 'vettor', 'giorno', 'listin', 'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
         'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
         'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
@@ -576,7 +576,7 @@ function tesbroInsert($newValue) {
 function tesbroUpdate($codice, $newValue) {
     $table = 'tesbro';
     $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
-        'clfoco', 'pagame', 'banapp', 'vettor', 'giorno', 'listin', 'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
         'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
         'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];

@@ -28,6 +28,16 @@ $admin_aziend = checkAdmin();
 $msgtoast = "";
 $msg = "";
 
+$days = array(
+			    'Domenica',
+			    'Lunedi',
+			    'Martedi',
+			    'Mercoledi',
+			    'Giovedi',
+			    'Venerdi',
+			    'Sabato'
+			);
+
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
 if (!isset($_POST['ritorno'])) {
@@ -72,6 +82,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['gioemi'] = $_POST['gioemi'];
     $form['mesemi'] = $_POST['mesemi'];
     $form['annemi'] = $_POST['annemi'];
+    $form['weekday_repeat'] = $_POST['weekday_repeat'];
     $form['giotra'] = $_POST['giotra'];
     $form['mestra'] = $_POST['mestra'];
     $form['anntra'] = $_POST['anntra'];
@@ -929,6 +940,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['numrat'] = 1;
     }
     $form['banapp'] = $tesbro['banapp'];
+    $form['weekday_repeat']= $tesbro['weekday_repeat'];
     $form['vettor'] = $tesbro['vettor'];
     $form['id_agente'] = $tesbro['id_agente'];
     $provvigione = new Agenti;
@@ -993,6 +1005,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['tipdoc'] = $_GET['tipdoc'];
     }
     $form['id_tes'] = "";
+    $form['weekday_repeat'] = date("N")-1;
     $form['gioemi'] = date("d");
     $form['mesemi'] = date("m");
     $form['annemi'] = date("Y");
@@ -1212,38 +1225,55 @@ if (!empty($msg)) {
    					<td>' . $cliente['indspe'] . '<br /></td>';
 }
 echo '			<td class="FacetFieldCaptionTD">' . $script_transl[6] . '</td>
-				<td class="FacetDataTD">
-					<select name="gioemi" class="FacetSelect">';
-for ($counter = 1; $counter <= 31; $counter++) {
-    $selected = "";
-    if ($counter == $form['gioemi']) {
-        $selected = ' selected=""';
+				<td class="FacetDataTD">';
+if ( $form['tipdoc']=='VOG' ) {
+    echo "<input name='gioemi' type='hidden' value=".$form['gioemi'].">";
+    echo "<input name='mesemi' type='hidden' value=".$form['mesemi'].">";
+    echo "<input name='annemi' type='hidden' value=".$form['annemi'].">";
+    
+    echo '<select name="weekday_repeat" class="FacetSelect">';
+    for ( $t=0; $t!=7; $t++ ) {
+        if ( $t == $form['weekday_repeat'] ) $selected = " selected";
+        else $selected = "";
+        echo "<option value='".$t."' ".$selected.">".$days[$t]."</option>";
     }
-    echo '					<option value="' . $counter . '"' . $selected . '>' . $counter . '</option>';
-}
-echo '				</select>';
-// select del mese
-echo '				<select name="mesemi" class="FacetSelect">';
-for ($counter = 1; $counter <= 12; $counter++) {
-    $selected = "";
-    if ($counter == $form['mesemi']) {
-        $selected = ' selected=""';
+    echo '</select>';
+} else {
+    echo "<input name='weekday_repeat' type='hidden' value=".$form['weekday_repeat'].">";
+
+    echo '<select name="gioemi" class="FacetSelect">';
+    for ($counter = 1; $counter <= 31; $counter++) {
+        $selected = "";
+        if ($counter == $form['gioemi']) {
+            $selected = ' selected=""';
+        }
+        echo '					<option value="' . $counter . '"' . $selected . '>' . $counter . '</option>';
     }
-    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-    echo '					<option value="' . $counter . '"' . $selected . '>' . $nome_mese . '</option>';
-}
-echo '				</select>';
-// select del anno
-echo '				<select name="annemi" class="FacetSelect" onchange="this.form.submit()">';
-for ($counter = $form['annemi'] - 10; $counter <= $form['annemi'] + 10; $counter++) {
-    $selected = "";
-    if ($counter == $form['annemi']) {
-        $selected = ' selected=""';
+    echo '				</select>';
+    // select del mese
+    echo '				<select name="mesemi" class="FacetSelect">';
+    for ($counter = 1; $counter <= 12; $counter++) {
+        $selected = "";
+        if ($counter == $form['mesemi']) {
+            $selected = ' selected=""';
+        }
+        $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+        echo '					<option value="' . $counter . '"' . $selected . '>' . $nome_mese . '</option>';
     }
-    echo '					<option value="' . $counter . '"' . $selected . '>' . $counter . '</option>';
+    echo '				</select>';
+    // select del anno
+    echo '				<select name="annemi" class="FacetSelect" onchange="this.form.submit()">';
+    for ($counter = $form['annemi'] - 10; $counter <= $form['annemi'] + 10; $counter++) {
+        $selected = "";
+        if ($counter == $form['annemi']) {
+            $selected = ' selected=""';
+        }
+        echo '					<option value="' . $counter . '"' . $selected . '>' . $counter . '</option>';
+    }
+    echo '				</select>';
 }
-echo '				</select>
-				</td>
+echo '              
+                </td>
 			</tr>
 			<tr>
 				<td class="FacetFieldCaptionTD">' . $script_transl[7] . '</td>

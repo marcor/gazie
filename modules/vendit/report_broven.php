@@ -25,6 +25,16 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
+$days = array(
+    'Domenica',
+    'Lunedi',
+    'Martedi',
+    'Mercoledi',
+    'Giovedi',
+    'Venerdi',
+    'Sabato'
+);
+
 function getDocRef($data) {
     global $gTables;
     $r = array();
@@ -35,8 +45,10 @@ if (isset($_GET['auxil'])) {
     $auxil = $_GET['auxil'];
     if ($_GET['auxil'] == 'VPR') {
         $what = 'VPR';
+    } else if ($_GET['auxil'] == 'VOG') {
+        $what = 'VOG'; 
     } else {
-        $what = 'VOR';//substr($auxil, 0, 2) . "_";
+        $what = 'VOR';
     }
     $where = "tipdoc LIKE '$what'";
 } else {
@@ -44,11 +56,25 @@ if (isset($_GET['auxil'])) {
     $_GET['auxil'] = 'VOR';
     $where = "tipdoc LIKE '$auxil'";
 }
+
+/*if (isset($_GET['tipdoc'])) {
+    $tipdoc=$_GET['tipdoc'];
+    $where = "tipdoc LIKE '".$_GET['tipdoc']."'";    
+}
+if (isset($_POST['tipdoc'])) {
+    $tipdoc=$_POST['tipdoc'];
+    $where = "tipdoc LIKE '".$_POST['tipdoc']."'";    
+}*/
+
 $all = $where;
 
 gaz_flt_var_assign('id_tes', 'i');
 gaz_flt_var_assign('numdoc', 'i');
-gaz_flt_var_assign('datemi', 'd');
+if ( $what == "VOG" ) { 
+    gaz_flt_var_assign('weekday_repeat', 'i');
+} else {
+    gaz_flt_var_assign('datemi', 'd');
+}
 gaz_flt_var_assign('clfoco', 'v');
 
 if (isset($_GET['all'])) {
@@ -139,7 +165,28 @@ $recordnav->output();
                 <?php gaz_flt_disp_int("numdoc", "Numero Doc."); ?>
             </td>
             <td class="FacetFieldCaptionTD">
-                <?php gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); ?>
+                <?php 
+                    if ( $what=="VOG" ) {
+                        ?>
+                            <select class="form-control input-sm" onchange="this.form.submit()" name="giorno">
+			                <?php
+			                   if ( isset($_GET['giorno']) ) $gg = $_GET['giorno'];
+			                   else $gg = 'All';
+			                ?>
+			                <option value="All" <?php if ($gg=='All') echo "selected"; ?>>Tutti</option>
+			                <option value="0" <?php if ($gg=='0') echo "selected"; ?>>Domenica</option>
+			                <option value="1" <?php if ($gg=='1') echo "selected"; ?>>Lunedì</option>
+			                <option value="2" <?php if ($gg=='2') echo "selected"; ?>>Martedì</option>
+			                <option value="3" <?php if ($gg=='3') echo "selected"; ?>>Mercoledì</option>
+			                <option value="4" <?php if ($gg=='4') echo "selected"; ?>>Giovedì</option>
+			                <option value="5" <?php if ($gg=='5') echo "selected"; ?>>Venerdì</option>
+			                <option value="6" <?php if ($gg=='6') echo "selected"; ?>>Sabato</option>
+			                </select>
+                        <?php
+                    } else {
+                        gaz_flt_disp_select("datemi", "YEAR(datemi) as datemi", $gTables["tesbro"], $all, $orderby); 
+                    }
+                ?>
             </td>
             <td class="FacetFieldCaptionTD">
                 <?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, $orderby, "ragso1"); ?>
@@ -163,7 +210,21 @@ $recordnav->output();
         <tr>
             <?php
             // creo l'array (header => campi) per l'ordinamento dei record
-            $headers_tesbro = array(
+            if ( $what=="VOG" ) {
+                $headers_tesbro = array(
+                "ID" => "id_tes",
+                //$script_transl['type'] => "tipdoc",
+                $script_transl['number'] => "numdoc",
+                $script_transl['weekday_repeat'] => "weekday_repeat",
+                "Cliente" => "clfoco",
+                $script_transl['status'] => "status",
+                $script_transl['print'] => "",
+                "Mail" => "",
+                $script_transl['duplicate'] => "",
+                $script_transl['delete'] => ""
+                );
+            } else {
+                $headers_tesbro = array(
                 "ID" => "id_tes",
                 //$script_transl['type'] => "tipdoc",
                 $script_transl['number'] => "numdoc",
@@ -174,7 +235,8 @@ $recordnav->output();
                 "Mail" => "",
                 $script_transl['duplicate'] => "",
                 $script_transl['delete'] => ""
-            );
+                );
+            }
             $linkHeaders = new linkHeaders($headers_tesbro);
             $linkHeaders->output();
             ?>
@@ -204,7 +266,11 @@ $recordnav->output();
             }
             //echo "<td>".$script_transl['type_value'][$r["tipdoc"]]." &nbsp;</td>";
             echo "<td>" . $r["numdoc"] . " &nbsp;</td>";
-            echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+            if ( $what=="VOG" ) {
+                echo "<td>" . $days[$r["weekday_repeat"]] . " &nbsp;</td>";
+            } else {
+                echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
+            }
             echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a> &nbsp;</td>";
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
@@ -244,7 +310,11 @@ $recordnav->output();
         if ($r["status"] != "GENERATO") {
                     gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r["id_tes"], "status", "RIGENERATO");
                 }
-                echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a></td>";
+                if ( $what=="VOG" ) {
+                    echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord_gio.php?day=".$r['weekday_repeat']."\">evadi</a></td>";
+                } else {
+                    echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a></td>";
+                }
             } elseif ($remains_atleastone) {
                 echo "<td>";
 
@@ -284,7 +354,11 @@ $recordnav->output();
                         }
                     }
                 }
-                echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a></td>";
+                if ( $what=="VOG" ) {
+                    echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord_gio.php\">evadi il rimanente</a></td>";
+                } else {
+                    echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a></td>";
+                }
             } else {
                 echo "<td>";
                 //
