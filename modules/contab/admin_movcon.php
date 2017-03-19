@@ -1526,7 +1526,7 @@ echo "</script>\n";
         $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
     }
     ?>
-</div><!-- chiude panel  -->
+<!--</div><!-- chiude panel  -->
 <?php
 //inserimento movimento contabile
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['del_this'] . "</div>\n";
