@@ -28,15 +28,9 @@ $admin_aziend = checkAdmin();
 $msgtoast = "";
 $msg = "";
 
-$days = array(
-			    'Domenica',
-			    'Lunedi',
-			    'Martedi',
-			    'Mercoledi',
-			    'Giovedi',
-			    'Venerdi',
-			    'Sabato'
-			);
+function getDayNameFromDayNumber($day_number) {
+    return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
+}
 
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
@@ -1113,26 +1107,6 @@ if ($form['id_tes'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]);
 }
 echo "<script type=\"text/javascript\">";
-/* foreach ($form['rows'] as $k => $v) {
-  if ($v['tiprig'] > 5 || $v['tiprig'] < 9) {
-  echo "\n// Initialize TinyMCE with the new plugin and menu button
-  tinyMCE.init({
-  mode : \"specific_textareas\",
-  theme : \"advanced\",
-  forced_root_block : false,
-  force_br_newlines : true,
-  force_p_newlines : false,
-  elements : \"row_" . $k."\",
-  plugins : \"table,advlink\",
-  theme_advanced_buttons1 : \"mymenubutton,bold,italic,underline,separator,strikethrough,justifyleft,justifycenter,justifyright,justifyfull,bullist,numlist,undo,redo,|,link,unlink,code,|,formatselect,forecolor,backcolor,|,tablecontrols\",
-  theme_advanced_buttons2 : \"\",
-  theme_advanced_buttons3 : \"\",
-  theme_advanced_toolbar_location : \"external\",
-  theme_advanced_toolbar_align : \"left\",
-  editor_selector  : \"mceClass" . $k."\",
-  });\n";
-  }
-  } */
 
 echo "
 function pulldown_menu(selectName, destField)
@@ -1235,7 +1209,7 @@ if ( $form['tipdoc']=='VOG' ) {
     for ( $t=0; $t!=7; $t++ ) {
         if ( $t == $form['weekday_repeat'] ) $selected = " selected";
         else $selected = "";
-        echo "<option value='".$t."' ".$selected.">".$days[$t]."</option>";
+        echo "<option value='".$t."' ".$selected.">". getDayNameFromDayNumber($t)."</option>";
     }
     echo '</select>';
 } else {
