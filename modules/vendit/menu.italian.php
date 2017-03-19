@@ -82,9 +82,9 @@ $transl['vendit'] = array('name' => "Vendite",
         43 => array("Stampa analisi fatturato clienti", "Analisi fatturato clienti"),
         44 => array("Stampa analisi fatturato cliente x fornitore", "Analisi fatturato cliente x fornitore"),
         45 => array("Vendita bene ammortizzabile (su libro cespiti)", "Alienazione bene ammortizzabile"),
-        46 => array("Visualizza Ordini Giornalieri", "Ordini giornalieri"),
-        47 => array("Nuovo ordine giornaliero", "Inserisci ordine giornaliero"),
-        48 => array("Evadi ordini giornalieri", "Evadi ordini giornalieri"),
+        46 => array("Visualizza Ordini settimanali del giorno", "Ordini settimanali del giorno"),
+        47 => array("Nuovo ordine settimanale del giorno", "Inserisci ordine settimanale del giorno"),
+        48 => array("Evadi ordini settimanali del giorno", "Evadi ordini settimanali del giorno"),
     )
 );
 ?>

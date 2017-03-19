@@ -293,7 +293,7 @@ $strScript = array("admin_client.php" =>
         'caumag' => 'Causale magazzino',
     ),
     "admin_broven.php" =>
-    array(array("VPR" => "Preventivo a Cliente", "VOR" => "Ordine da Cliente", "VOW" => "Ordine dal Web", "VOG" => "Ordine giornaliero"),
+    array(array("VPR" => "Preventivo a Cliente", "VOR" => "Ordine da Cliente", "VOW" => "Ordine dal Web", "VOG" => "Ordine settimanale del giorno"),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia cliente/fornitore'),
@@ -376,7 +376,7 @@ $strScript = array("admin_client.php" =>
         'last_row' => 'Ultimo rigo inserito'
     ),
     "admin_broven_gio.php" =>
-    array(array("VPR" => "Preventivo a Cliente", "VOR" => "Ordine da Cliente", "VOW" => "Ordine dal Web", "VOG" => "Ordine giornaliero"),
+    array(array("VPR" => "Preventivo a Cliente", "VOR" => "Ordine da Cliente", "VOW" => "Ordine dal Web", "VOG" => "Ordine settimanale del giorno"),
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia cliente/fornitore'),
@@ -559,15 +559,15 @@ $strScript = array("admin_client.php" =>
         'title_value' => array('VPR' => 'Preventivi a clienti',
             'VOR' => 'Ordini dei clienti',
             'VOW' => 'Ordini dal web',
-            'VOG' => 'Ordine Giornaliero'),
+            'VOG' => 'Ordine settimanale del giorno'),
         'link_title' => array('VPR' => 'Nuovo Preventivo a cliente',
             'VOR' => 'Nuovo Ordine da cliente',
             'VOW' => 'Acquisisci Ordini dal web',
-            'VOG' => 'Ordine Giornaliero'),
+            'VOG' => 'Ordine settimanale del giorno'),
         'link_value' => array('VPR' => 'admin_broven.php?Insert&tipdoc=VPR',
             'VOR' => 'admin_broven.php?Insert&tipdoc=VOR',
             'VOW' => 'import_gaziecart.php',
-            'VOG' => 'Ordine Giornaliero'
+            'VOG' => 'Ordine settimanale del giorno'
             ),
         'issue_ord' => 'Evadi Ordini',
         'id' => 'ID',
@@ -575,7 +575,7 @@ $strScript = array("admin_client.php" =>
         'type_value' => array('VPR' => 'Preventivo',
             'VOR' => 'Ordine',
             'VOW' => 'Ordine web',
-            'VOG' => 'Ordine Giornaliero'),
+            'VOG' => 'Ordine settimanale del giorno'),
         'date' => 'Data',
         'number' => 'Numero',
         'issue' => 'Evadi',

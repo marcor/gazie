@@ -28,15 +28,9 @@ $admin_aziend = checkAdmin();
 $anno = date("Y");
 $msg = "";
 
-$days = array(
-    'Domenica',
-    'Lunedi',
-    'Martedi',
-    'Mercoledi',
-    'Giovedi',
-    'Venerdi',
-    'Sabato'
-);
+function getDayNameFromDayNumber($day_number) {
+    return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
+}
 
 $upd_mm = new magazzForm;
 $docOperat = $upd_mm->getOperators();
@@ -82,14 +76,15 @@ function azzera() {
     $form['gross_weight'] = 0;
     $form['units'] = 0;
     $form['volume'] = 0;
-    
+    $form['weekday_repeat']=0;    
+    $form['tipdoc']='';    
     return $form;
 }
 
 if (!isset($_POST['id_tes'])) $form = azzera();
 
-if ( isset($_POST['giorno']) ) {
-   $res_orgio = gaz_dbi_dyn_query ("*", $gTables['tesbro'], "tipdoc='VOG' and weekday_repeat=".$_POST['giorno'],"id_tes");
+if ( isset($_POST['weekday_repeat']) ) {
+   $res_orgio = gaz_dbi_dyn_query ("*", $gTables['tesbro'], "tipdoc='VOG' and weekday_repeat=".intval($_POST['weekday_repeat']),"id_tes");
    $rows = gaz_dbi_fetch_all ( $res_orgio );
 
    foreach ( $rows as $riga ) {
@@ -302,13 +297,22 @@ exit;
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
-?>
-<div class="FacetFormHeaderFont" align="center">
-   Creazione DDT da Ordini Giornalieri
-</div>
-<form method="POST" name="myform">
-<?php
 $gForm = new venditForm();
+?>
+<form method="POST" name="myform">
+<div class="FacetFormHeaderFont" align="center">
+   Creazione DDT da Ordini settimanali del Giorno:
+      <?php
+    echo '<select name="weekday_repeat" class="FacetSelect">';
+    for ( $t=0; $t!=7; $t++ ) {
+        if ( $t == $form['weekday_repeat'] ) $selected = " selected";
+        else $selected = "";
+        echo "<option value='".$t."' ".$selected.">". getDayNameFromDayNumber($t)."</option>";
+    }
+    echo '</select>';
+      ?>
+</div>
+<?php
 $alert_sezione = '';
 switch ($admin_aziend['fatimm']) {
     case 1:
@@ -348,21 +352,6 @@ echo "\t </td>";
    Ordini del giorno 
 </td>
 <td class="FacetDataTD">
-   <select name="giorno">
-      <?php
-        foreach ( $days as $key=>$day) {
-            $selected = "";
-            if ( isset($_GET["weekday"]) ) {
-                if ( $key==$_GET["weekday"] ) $selected = "selected";
-            } else {
-                $gg = date("N");
-                if ( $gg==7 ) $gg=0;
-                if ( $key == $gg ) $selected = "selected";
-            }
-            echo "<option value='".$key."' ".$selected.">".$day."</option>";
-         }
-      ?>
-   </select>
 </td>
 <td colspan="2" class="FacetFieldCaptionTD">
    <input type="submit" accesskey="o" name="gddt" value="GENERA DDT!" />

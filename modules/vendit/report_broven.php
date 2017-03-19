@@ -25,15 +25,9 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
-$days = array(
-    'Domenica',
-    'Lunedi',
-    'Martedi',
-    'Mercoledi',
-    'Giovedi',
-    'Venerdi',
-    'Sabato'
-);
+function getDayNameFromDayNumber($day_number) {
+    return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19+$day_number, 2017))));
+}
 
 function getDocRef($data) {
     global $gTables;
@@ -258,7 +252,7 @@ $recordnav->output();
             //echo "<td>".$script_transl['type_value'][$r["tipdoc"]]." &nbsp;</td>";
             echo "<td>" . $r["numdoc"] . " &nbsp;</td>";
             if ( $what=="VOG" ) {
-                echo "<td>" . $days[$r["weekday_repeat"]] . " &nbsp;</td>";
+                echo "<td>". getDayNameFromDayNumber($r["weekday_repeat"]). " &nbsp;</td>";
             } else {
                 echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
             }
