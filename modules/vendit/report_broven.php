@@ -57,15 +57,6 @@ if (isset($_GET['auxil'])) {
     $where = "tipdoc LIKE '$auxil'";
 }
 
-/*if (isset($_GET['tipdoc'])) {
-    $tipdoc=$_GET['tipdoc'];
-    $where = "tipdoc LIKE '".$_GET['tipdoc']."'";    
-}
-if (isset($_POST['tipdoc'])) {
-    $tipdoc=$_POST['tipdoc'];
-    $where = "tipdoc LIKE '".$_POST['tipdoc']."'";    
-}*/
-
 $all = $where;
 
 gaz_flt_var_assign('id_tes', 'i');
@@ -168,18 +159,18 @@ $recordnav->output();
                 <?php 
                     if ( $what=="VOG" ) {
                         ?>
-                            <select class="form-control input-sm" onchange="this.form.submit()" name="giorno">
+                            <select class="form-control input-sm" onchange="this.form.submit()" name="weekday_repeat">
 			                <?php
-			                   if ( isset($_GET['giorno']) ) $gg = $_GET['giorno'];
+			                   if ( isset($_GET['weekday_repeat']) ) $gg = $_GET['weekday_repeat'];
 			                   else $gg = 'All';
 			                ?>
 			                <option value="All" <?php if ($gg=='All') echo "selected"; ?>>Tutti</option>
 			                <option value="0" <?php if ($gg=='0') echo "selected"; ?>>Domenica</option>
-			                <option value="1" <?php if ($gg=='1') echo "selected"; ?>>Lunedì</option>
-			                <option value="2" <?php if ($gg=='2') echo "selected"; ?>>Martedì</option>
-			                <option value="3" <?php if ($gg=='3') echo "selected"; ?>>Mercoledì</option>
-			                <option value="4" <?php if ($gg=='4') echo "selected"; ?>>Giovedì</option>
-			                <option value="5" <?php if ($gg=='5') echo "selected"; ?>>Venerdì</option>
+			                <option value="1" <?php if ($gg=='1') echo "selected"; ?>>Lunedi</option>
+			                <option value="2" <?php if ($gg=='2') echo "selected"; ?>>Martedi</option>
+			                <option value="3" <?php if ($gg=='3') echo "selected"; ?>>Mercoledi</option>
+			                <option value="4" <?php if ($gg=='4') echo "selected"; ?>>Giovedi</option>
+			                <option value="5" <?php if ($gg=='5') echo "selected"; ?>>Venerdi</option>
 			                <option value="6" <?php if ($gg=='6') echo "selected"; ?>>Sabato</option>
 			                </select>
                         <?php

@@ -252,7 +252,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $posizione = array_pop( $posizione );
             
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
-			if ( strpos($posizione, "admin_broven.php")!==false || strpos($posizione, "VO")!==false ) $posizione = "report_broven.php?auxil=VOR";
+			if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
             
             $result    = gaz_dbi_dyn_query("*", $gTables['menu_module'] , ' link="'.$posizione.'" ',' id',0,1);
             if ( !gaz_dbi_num_rows($result)>0 ) {
