@@ -867,13 +867,13 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         // mi servirà per detrarre l'imposta relativa al rigo del reverse charge dall'apertura della partita
                         $reverse_charge_iva += $rcv['impost'];
                         // inserisco i tre righi contabili della fattura che va sul registro IVA vendite    
-                        rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $rcv['imponi'] + $rcv['impost']));
-                        rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $rcv['imponi']));
-                        rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'D', 'codcon' => $admin_aziend['ivaven'], 'import' => $rcv['impost']));
+                        rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'D', 'codcon' => $rc_cli['codice'], 'import' => $rcv['imponi'] + $rcv['impost']));
+                        rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $rcv['imponi']));
+                        rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $admin_aziend['ivaven'], 'import' => $rcv['impost']));
 
                         // infine creo un movimento di storno dell'IVA    
-                        rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $rcv['impost']));
                         rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'D', 'codcon' => $newValue['clfoco'], 'import' => $rcv['impost']));
+                        rigmocInsert(array('id_tes' => $rc_lastid, 'darave' => 'A', 'codcon' => $rc_cli['codice'], 'import' => $rcv['impost']));
                     }
                     // infine inserisco il relativo rigo iva
                     rigmoiInsert($vv);
