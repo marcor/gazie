@@ -42,30 +42,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
       $form['search'][$k] = $v;
    }
    if (isset($_POST['Submit'])) { // conferma tutto
-//      if ($toDo == 'update') {  // controlli in caso di modifica
-//         if ($form['codice'] != $form['ref_code']) { // se sto modificando il codice originario
-//            // controllo che la destinazione ci sia gia'
-//            $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['destina'], "codice = '" . $form['codice'] . "'", "codice DESC", 0, 1);
-//            $rs = gaz_dbi_fetch_array($rs_articolo);
-//            if ($rs) {
-//               $msg .= "0+";
-//            }
-//            // controllo che il precedente non abbia movimenti di magazzino associati
-//            $rs_articolo = gaz_dbi_dyn_query('destina', $gTables['movmag'], "artico = '" . $form['ref_code'] . "'", "artico DESC", 0, 1);
-//            $rs = gaz_dbi_fetch_array($rs_articolo);
-//            if ($rs) {
-//               $msg .= "1+";
-//            }
-//         }
-//      } else {
-//         // controllo che la destinazione ci sia gia'
-//         $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['destina'], "codice = '" . $form['codice'] . "'", "codice DESC", 0, 1);
-//         $rs = gaz_dbi_fetch_array($rs_articolo);
-//         if ($rs) {
-//            $msg .= "2+";
-//         }
-//      }
-//      $msg .= (empty($form["codice"]) ? "5+" : '');
       $msg .= (empty($form["id_anagra"]) ? "0+" : '');
       $msg .= (empty($form["indspe"]) ? "1+" : '');
       $msg .= (empty($form["capspe"]) ? "2+" : '');
@@ -95,7 +71,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
    $form['ref_code'] = "";
    $form['country'] = $admin_aziend['country'];
    $form['search']['id_anagra'] = '';
-//   $form['id_anagra'] = '';
 }
 
 require("../../library/include/header.php");
@@ -176,6 +151,11 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['e_mail'] . "</td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
       <input type=\"text\" codice=\"email\" name=\"e_mail\" value=\"" . $form['e_mail'] . "\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\"><a href=\"http://www.indicepa.gov.it/ricerca/n-lista-uffici-figli.php\" target=\"blank\">" . $script_transl['fe_cod_ufficio'] . "</a></td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <input type=\"text\" name=\"fe_cod_ufficio\" value=\"" . $form['fe_cod_ufficio'] . "\" align=\"right\" maxlength=\"7\" size=\"7\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td>\n";

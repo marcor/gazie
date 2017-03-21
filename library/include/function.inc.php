@@ -98,7 +98,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];          ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];           ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -1417,13 +1417,17 @@ class GAzieForm {
         echo "</select>\n";
     }
 
-    function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '') {
+    function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false) {
         global $gTables;
         $refresh = '';
         if (!$order) {
             $order = $key;
         }
-        $query = 'SELECT * FROM `' . $gTables[$table] . '` ORDER BY `' . $order . '`';
+        $query = 'SELECT * FROM `' . $gTables[$table] . '` ';
+        if ($where) {
+            $query .= ' WHERE '.$where;
+        }
+        $query .= ' ORDER BY `' . $order . '`';
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
@@ -1801,12 +1805,12 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
     //modifico l'ultimo IP
     gaz_dbi_put_row($gTables['admin'], "Login", $login, 'last_ip', $_SERVER['REMOTE_ADDR']);
     /*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio 
-	il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
-        che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti 
-	qui tramite HTTPS 
-    */
+      il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
+      che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
+      qui tramite HTTPS
+     */
     if (SET_DYNAMIC_IP != '') {
-       @file_get_contents(SET_DYNAMIC_IP);
+        @file_get_contents(SET_DYNAMIC_IP);
     }
 }
 

@@ -185,6 +185,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['imball'] = $_POST['imball'];
     $form['destin'] = $_POST['destin'];
     $form['id_des'] = substr($_POST['id_des'], 3);
+    $form['id_des_same_company'] = intval($_POST['id_des_same_company']);
     $form['traspo'] = $_POST['traspo'];
     $form['spevar'] = $_POST['spevar'];
     $form['cauven'] = $_POST['cauven'];
@@ -198,9 +199,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['gioord'] = $_POST['gioord'];
     $form['mesord'] = $_POST['mesord'];
     $form['annord'] = $_POST['annord'];
-    $strArrayDest = $_POST['rs_destinazioni'];
-    $array_destinazioni = unserialize(base64_decode($strArrayDest)); // recupero l'array delle destinazioni
-    /** fine modifica FP */
     $form['caucon'] = $_POST['caucon'];
     $form['sconto'] = floatval(preg_replace("/\,/", '.', $_POST['sconto']));
     // inizio rigo di input
@@ -442,7 +440,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $msgrigo = $i + 1;
                     $msg .= "49+";
                 }
-                if ($v['codric']<100000000) {
+                if ($v['codric'] < 100000000) {
                     $msgrigo = $i + 1;
                     $msg .= "61+";
                 }
@@ -661,15 +659,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['id_des'] = $cliente['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
         $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
-        /** inizio modifica FP 27/10/2015
-         * carico gli indirizzi di destinazione dalla tabella gaz_destina
-         */
-        $idAnagrafe = $cliente['id_anagra'];
-        $rs_query_destinazioni = gaz_dbi_dyn_query("*", $gTables['destina'], "id_anagra='$idAnagrafe'");
-        $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
-        /** fine modifica FP */
+        $des_same = gaz_dbi_get_row($gTables['destina'], "id_anagra", $cliente['id_anagra']);
+        $form['id_des_same_company'] = $des_same['codice'];
         $form['in_codvat'] = $cliente['aliiva'];
-        if ($cliente['cosric']>=100000000){
+        if ($cliente['cosric'] >= 100000000) {
             $form['in_codric'] = $cliente['cosric'];
         }
         $form['expense_vat'] = $admin_aziend['preeminent_vat'];
@@ -1205,11 +1198,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
      */
 //rimossa    $form['in_sconto'] = 0;
     $form['in_sconto'] = '#';
-    /* carico gli indirizzi di destinazione dalla tabella gaz_destina */
-    $idAnagrafe = $cliente['id_anagra'];
-    $rs_query_destinazioni = gaz_dbi_dyn_query("*", $gTables['destina'], "id_anagra='$idAnagrafe'");
-    $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
-    /* fine modifica FP */
     $form['in_quanti'] = 0;
     $form['in_codvat'] = 0;
     $form['in_codric'] = $admin_aziend['impven'];
@@ -1277,6 +1265,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['imball'] = $tesdoc['imball'];
     $form['destin'] = $tesdoc['destin'];
     $form['id_des'] = $tesdoc['id_des'];
+    $form['id_des_same_company'] = $tesdoc['id_des_same_company'];
     $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
     $form['traspo'] = $tesdoc['traspo'];
     $form['spevar'] = $tesdoc['spevar'];
@@ -1382,7 +1371,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['gioord'] = date("d");
     $form['mesord'] = date("m");
     $form['annord'] = date("Y");
-    $array_destinazioni = array();
     /* fine modifica FP */
     $form['in_quanti'] = 0;
     $form['in_codvat'] = 0;
@@ -1443,7 +1431,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['volume'] = 0;
     $form['listin'] = "";
     $form['destin'] = "";
-    $form['id_des'] = "";
+    $form['id_des'] = 0;
+    $form['id_des_same_company'] = 0;
     $form['search']['id_des'] = '';
     $form['spediz'] = "";
     $form['portos'] = "";
@@ -1487,16 +1476,16 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
           'jquery/ui/jquery.ui.position',
           'jquery/ui/jquery.ui.autocomplete', */
         /** ENRICO FEDELE */
-));
+        ));
 ?>
 <script>
-function pulldown_menu(selectName, destField)
-{
-    // Create a variable url to contain the value of the
-    // selected option from the the form named docven and variable selectName
-    var url = document.docven[selectName].options[document.docven[selectName].selectedIndex].value;
-    document.docven[destField].value = url;
-}
+    function pulldown_menu(selectName, destField)
+    {
+        // Create a variable url to contain the value of the
+        // selected option from the the form named docven and variable selectName
+        var url = document.docven[selectName].options[document.docven[selectName].selectedIndex].value;
+        document.docven[destField].value = url;
+    }
 
 </script>
 <script type="text/javascript" language="JavaScript" ID="datapopup">
@@ -1511,10 +1500,6 @@ function pulldown_menu(selectName, destField)
 <?php
 echo '<form method="POST" name="docven" >';
 $gForm = new venditForm();
-/** inizio modifica FP 28/10/2015 */
-$strArrayDest = base64_encode(serialize($array_destinazioni));
-echo '<input type="hidden" value="' . $strArrayDest . '" name="rs_destinazioni">'; // salvo l'array delle destinazioni in un hidden input
-/** fine modifica FP */
 echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
 	<input type="hidden" value="' . $form['seziva'] . '" name="seziva" />
@@ -1852,9 +1837,9 @@ foreach ($form['rows'] as $k => $v) {
         }
         $totimp_body += $imprig;
         $castle[$v['codvat']]['impcast'] += $v_for_castle;
-        $rit+=round($imprig * $v['ritenuta'] / 100, 2);
+        $rit += round($imprig * $v['ritenuta'] / 100, 2);
     } elseif ($v['tiprig'] == 3) {
-        $carry+=$v['prelis'];
+        $carry += $v['prelis'];
     } elseif ($v['tiprig'] == 90) { // rigo vendita cespite ammortizzabile
         $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
         $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
@@ -2263,22 +2248,25 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     echo "				\t</select>
 						</td>
 						<td class=\"FacetFieldCaptionTD\">$script_transl[10]</td>\n";
-    if ($form['id_des'] > 0) { // la destinazione �� un'altra anagrafica
-        echo "			<td class=\"FacetDataTD\">\n";
+    if ($form['id_des_same_company'] > 0) { //  è una destinazione legata all'anagrafica
+        echo "<td class=\"FacetDataTD\">\n";
+        $gForm->selectFromDB('destina', 'id_des_same_company', 'codice', $form['id_des_same_company'], 'codice', true, '-', 'unita_locale1', '', 'FacetSelect', null, '', "id_anagra = '" . $cliente['id_anagra'] . "'");
+        echo "	<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
+                <input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" /></td>\n";
+    } elseif ($form['id_des'] > 0) { // la destinazione è un'altra anagrafica
+        echo "<td class=\"FacetDataTD\">\n";
         $select_id_des = new selectPartner('id_des');
         $select_id_des->selectDocPartner('id_des', 'id_' . $form['id_des'], $form['search']['id_des'], 'id_des', $script_transl['mesg'], $admin_aziend['mascli']);
-        echo "				<input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" />
+        echo "			<input type=\"hidden\" name=\"id_des_same_company\" value=\"" . $form['id_des_same_company'] . "\">
+                                <input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" />
 						</td>\n";
     } else {
-        /** inizio modifica FP 28/10/2015 */
-// rimossa      echo "<td class=\"FacetDataTD\"><textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea></td>\n";
         echo "			<td class=\"FacetDataTD\">";
-        echo selectDestinazione($array_destinazioni);
         echo "				<textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
 						</td>
+						<input type=\"hidden\" name=\"id_des_same_company\" value=\"" . $form['id_des_same_company'] . "\">
 						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
 						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
-        /** fine modifica FP */
     }
     echo "			<td align=\"right\" class=\"FacetFieldCaptionTD\">$script_transl[54]</td>
 					<td class=\"FacetDataTD\"><input type=\"text\" value=\"" . $form['units'] . "\" name=\"units\" maxlength=\"6\" size=\"4\" ></td>
@@ -2306,6 +2294,7 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 			<input type="hidden" value="' . $form['oratra'] . '" name="oratra" />
 			<input type="hidden" value="' . $form['mintra'] . '" name="mintra" />
 			<input type="hidden" value="' . $form['id_des'] . '" name="id_des" />
+			<input type="hidden" value="' . $form['id_des_same_company'] . '" name="id_des_same_company" />
 			<input type="hidden" value="' . $form['search']['id_des'] . '" name="search[id_des]" />
 			<input type="hidden" value="' . $form['destin'] . '" name="destin" />
 			<input type="hidden" value="' . $form['net_weight'] . '" name="net_weight" />

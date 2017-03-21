@@ -65,11 +65,11 @@ $script_transl = HeadMain();
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD">Ragione sociale 1 &nbsp;</td>
-            <td class="FacetDataTD"><?php echo $form["ragso1"]; ?>&nbsp;</td>
+            <td class="FacetDataTD"><?php echo $form["unita_locale1"]; ?>&nbsp;</td>
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD">Ragione sociale 2 &nbsp;</td>
-            <td class="FacetDataTD"><?php echo $form["ragso2"]; ?>&nbsp;</td>
+            <td class="FacetDataTD"><?php echo $form["unita_locale2"]; ?>&nbsp;</td>
         </tr>
         <tr>
             <td class="FacetFieldCaptionTD">Indirizzo &nbsp;</td>

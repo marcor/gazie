@@ -1203,6 +1203,7 @@ $strScript = array("admin_client.php" =>
         'fax' => 'Fax',
         'cell' => 'Cellulare',
         'e_mail' => 'e mail',
+        'fe_cod_ufficio' => 'Cod.Univoco Ufficio (fatt.elettronica)',
         'status' => 'Visibilit&agrave; alla ricerca',
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',

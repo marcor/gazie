@@ -113,7 +113,12 @@ class DocContabVars {
         $this->id_agente = gaz_dbi_get_row($gTables['agenti'], 'id_agente', $tesdoc['id_agente']);
         $this->rs_agente = $anagrafica->getPartner($this->id_agente['id_fornitore']);
         $this->name_agente = substr($this->rs_agente['ragso1'] . " " . $this->rs_agente['ragso2'], 0, 47);
-        if ((isset($tesdoc['id_des'])) and ( $tesdoc['id_des'] > 0)) {
+        if ((isset($tesdoc['id_des_same_company'])) and ( $tesdoc['id_des_same_company'] > 0)) {
+            $this->partner_dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
+            $this->destinazione = substr($this->partner_dest['unita_locale1'] . " " . $this->partner_dest['unita_locale2'], 0, 45);
+            $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);
+            $this->destinazione .= "\n" . substr($this->partner_dest['capspe'] . " " . $this->partner_dest['citspe'] . " (" . $this->partner_dest['prospe'] . ")", 0, 45);
+        } elseif ((isset($tesdoc['id_des'])) and ( $tesdoc['id_des'] > 0)) {
             $this->partner_dest = $anagrafica->getPartnerData($tesdoc['id_des']);
             $this->destinazione = substr($this->partner_dest['ragso1'] . " " . $this->partner_dest['ragso2'], 0, 45);
             $this->destinazione .= "\n" . substr($this->partner_dest['indspe'], 0, 45);

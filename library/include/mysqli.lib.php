@@ -270,7 +270,7 @@ function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit =
     }
     //echo $query."<br>";
     //msgDebug($query);
-    
+
     $result = mysqli_query($link, $query);
     if (!$result)
         die(" Errore di gaz_dbi_dyn_query:<strong> " . $query . " </strong> " . mysqli_error($link));
@@ -566,7 +566,7 @@ function rigdocUpdate($codice, $newValue) {
 function tesbroInsert($newValue) {
     $table = 'tesbro';
     $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
-        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
         'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
         'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
@@ -576,7 +576,7 @@ function tesbroInsert($newValue) {
 function tesbroUpdate($codice, $newValue) {
     $table = 'tesbro';
     $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
-        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
         'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
         'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
@@ -586,7 +586,7 @@ function tesbroUpdate($codice, $newValue) {
 function tesdocInsert($newValue) {
     $table = 'tesdoc';
     $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
-        'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
+        'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
         'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
         'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
         /** inizio modifica FP 19/10/2015 */
@@ -599,7 +599,7 @@ function tesdocInsert($newValue) {
 function tesdocUpdate($codice, $newValue) {
     $table = 'tesdoc';
     $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
-        'destin', 'id_des', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
+        'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
         'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
         'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
         /** inizio modifica FP 19/10/2015 */
