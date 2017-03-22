@@ -263,7 +263,7 @@ $strScript = array("browse_document.php" =>
         'barcode' => 'Stampa',
         'barcode_value' => array(0 => 'Immagini', 1 => 'Codici a Barre'),
         'listino' => 'Price list',
-        'listino_value' => array(1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 'web' => 'of web sales')
+        'listino_value' => array(1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 4 => ' of sales 4', 'web' => 'of web sales')
     ),
     "select_listin.php" =>
     array('title' => 'Selezione per la stampa dei listini',
@@ -281,7 +281,7 @@ $strScript = array("browse_document.php" =>
         'cm_fin' => 'Categoria merceologica fine ',
         'art_fin' => 'Articolo fine ',
         'listino' => 'Price list ',
-        'listino_value' => array(0 => 'of purchase', 1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 'web' => 'of web sales')
+        'listino_value' => array(0 => 'of purchase', 1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 4 => ' of sales 4', 'web' => 'of web sales')
     ),
     "update_prezzi.php" =>
     array('title' => 'Update item prices',
@@ -299,7 +299,7 @@ $strScript = array("browse_document.php" =>
         'art_fin' => 'Articolo fine ',
         'lis_obj' => 'Object change price list',
         'lis_bas' => 'Base price list',
-        'listino_value' => array(0 => 'of purchase', 1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 'web' => 'of web sales'),
+        'listino_value' => array(0 => 'of purchase', 1 => ' of sales 1', 2 => ' of sales 2', 3 => ' of sales 3', 4 => ' of sales 4', 'web' => 'of web sales'),
         'mode' => 'Modalit&agrave; di modifica',
         'mode_value' => array('A' => 'Sostituzione', 'B' => 'Somma in percentuale', 'C' => 'Somma valore',
             'D' => 'Moltiplicazione per valore', 'E' => 'Divisione per valore', 'F' => 'Azzeramento e somma percentuale'),

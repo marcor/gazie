@@ -35,6 +35,7 @@ $article['preacq'] = number_format($article['preacq'],$admin_aziend['decimal_pri
 $article['preve1'] = number_format($article['preve1'],$admin_aziend['decimal_price'],',','.');
 $article['preve2'] = number_format($article['preve2'],$admin_aziend['decimal_price'],',','.');
 $article['preve3'] = number_format($article['preve3'],$admin_aziend['decimal_price'],',','.');
+$article['preve4'] = number_format($article['preve4'],$admin_aziend['decimal_price'],',','.');
 
 $item_head = array('top'=>array(array('lun' => 21,'nam'=>'Codice'),
                                 array('lun' => 18,'nam'=>'Cat.Merc'),

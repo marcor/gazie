@@ -267,7 +267,7 @@ $strScript = array("browse_document.php" =>
         'barcode' => 'Imprimir',
         'barcode_value' => array(0 => 'Imagenes', 1 => 'Codigos de barras'),
         'listino' => 'Lista',
-        'listino_value' => array(0 => 'de compra', 1 => ' de venta 1', 2 => ' de venta 2', 3 => ' de venta 3', 'web' => 'de venta en l&iacute;nea')
+        'listino_value' => array(0 => 'de compra', 1 => ' de venta 1', 2 => ' de venta 2', 3 => ' de venta 3', 4 => ' de venta 4', 'web' => 'de venta en l&iacute;nea')
     ),
     "select_listin.php" =>
     array('title' => 'seleccion para la impresion de las listas',
@@ -285,7 +285,7 @@ $strScript = array("browse_document.php" =>
         'cm_fin' => 'Categoria de mercaderia final ',
         'art_fin' => 'Articulo final ',
         'listino' => 'Lista',
-        'listino_value' => array(0 => 'de compra', 1 => ' de venta 1', 2 => ' de venta 2', 3 => ' de venta 3', 'web' => 'de venta en l&iacute;nea')
+        'listino_value' => array(0 => 'de compra', 1 => ' de venta 1', 2 => ' de venta 2', 3 => ' de venta 3', 4 => ' de venta 4', 'web' => 'de venta en l&iacute;nea')
     ),
     "update_prezzi.php" =>
     array('title' => 'Actualizacion de precios de itemes',
@@ -303,7 +303,7 @@ $strScript = array("browse_document.php" =>
         'art_fin' => 'Articulo final ',
         'lis_obj' => 'Lista objeto de la modificacion',
         'lis_bas' => 'Lista base de calculo',
-        'listino_value' => array(0 => 'de compra', 1 => ' de venta 1', 2 => ' de venta  2', 3 => ' de venta  3', 'web' => 'de venta en l&iacute;nea'),
+        'listino_value' => array(0 => 'de compra', 1 => ' de venta 1', 2 => ' de venta  2', 3 => ' de venta  3', 4 => ' de venta 4', 'web' => 'de venta en l&iacute;nea'),
         'mode' => 'El modo de modificacion',
         'mode_value' => array('A' => 'Sustitucion', 'B' => 'Suma en porcentaje', 'C' => 'Suma valor',
             'D' => 'Multiplicacion para valor', 'E' => 'Division por valor', 'F' => 'Ajuste a cero y suma percentual'),

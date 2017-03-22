@@ -157,6 +157,9 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
          case '3':
             $price = $row['preve3'];
             break;
+         case '4':
+            $price = $row['preve4'];
+            break;
          case 'web':
             $price = $row['web_price'] * $row['web_multiplier'];
             $row['unimis'] = $row['web_mu'];

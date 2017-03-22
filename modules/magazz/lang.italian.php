@@ -276,7 +276,7 @@ $strScript = array("browse_document.php" =>
         'barcode' => 'Stampa',
         'barcode_value' => array(0 => 'Immagini', 1 => 'Codici a Barre'),
         'listino' => 'Listino',
-        'listino_value' => array(1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 'web' => ' di Vendita Online')
+        'listino_value' => array(1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 4 => ' di Vendita 4', 'web' => ' di Vendita Online')
     ),
     "select_listin.php" =>
     array('title' => 'Selezione per la stampa dei listini',
@@ -294,7 +294,7 @@ $strScript = array("browse_document.php" =>
         'cm_fin' => 'Categoria merceologica fine ',
         'art_fin' => 'Articolo fine ',
         'listino' => 'Listino',
-        'listino_value' => array(0 => 'd\'Acquisto', 1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 'web' => ' di Vendita Online'),
+        'listino_value' => array(0 => 'd\'Acquisto', 1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 4 => ' di Vendita 4', 'web' => ' di Vendita Online'),
         'id_anagra' => 'Fornitore (vuoto per tutti)',
         'ordineStampa' => 'Ordine di Stampa',
         'alternativeOrdineStampa' => array('default',
@@ -341,7 +341,7 @@ $strScript = array("browse_document.php" =>
         'art_fin' => 'Articolo fine ',
         'lis_obj' => 'Listino oggetto della modifica',
         'lis_bas' => 'Listino base di calcolo',
-        'listino_value' => array(0 => 'd\'Acquisto', 1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 'web' => ' di Vendita Online'),
+        'listino_value' => array(0 => 'd\'Acquisto', 1 => ' di Vendita 1', 2 => ' di Vendita 2', 3 => ' di Vendita 3', 4 => ' di Vendita 4', 'web' => ' di Vendita Online'),
         'mode' => 'Modalit&agrave; di modifica',
         'mode_value' => array('A' => 'Sostituzione', 'B' => 'Somma in percentuale', 'C' => 'Somma valore',
             'D' => 'Moltiplicazione per valore', 'E' => 'Divisione per valore', 'F' => 'Azzeramento e somma percentuale'),
