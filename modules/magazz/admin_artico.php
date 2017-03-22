@@ -276,7 +276,7 @@ if ($modal === false) {
         var p3 = ($("#preve3").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
         $("#preve3_sc").val(p3);
         var p4 = ($("#preve4").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
-        $("#preve4_sc").val(p3);
+        $("#preve4_sc").val(p4);
     }
 
     $(function () {
