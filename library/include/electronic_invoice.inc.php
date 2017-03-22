@@ -638,6 +638,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
                         $el1->appendChild($el2);
                         $el2 = $domDoc->createElement("Percentuale", number_format(abs($rigo['sconto']), 2, '.', ''));
                         $el1->appendChild($el2);
+						//promemoria Importo non dovrebbe riferirsi al totale dello sconto ma allo sconto per singolo PrezzoUnitario
                         $el2 = $domDoc->createElement("Importo", number_format(abs($rigo['imp_sconto']), 2, '.', ''));
                         $el1->appendChild($el2);
                     }
