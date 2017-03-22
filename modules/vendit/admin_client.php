@@ -462,7 +462,7 @@ echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['listin'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->selectNumber('listin', $form['listin'], 0, 1, 3);
+$gForm->selectNumber('listin', $form['listin'], 0, 1, 4);
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";

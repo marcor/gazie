@@ -52,6 +52,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
     $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
     $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
+    $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
     $form['rows'] = array();
     /** inizio modifica FP 03/12/2015
@@ -197,6 +198,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
     $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
     $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
+    $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
     $form['rows'] = array();
     /** inizio modifica FP 03/12/2015
@@ -231,6 +233,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
     $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
     $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
+    $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
     $form['web_public'] = 1;
     $form['depli_public'] = 1;
@@ -272,10 +275,12 @@ if ($modal === false) {
         $("#preve2_sc").val(p2);
         var p3 = ($("#preve3").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
         $("#preve3_sc").val(p3);
+        var p4 = ($("#preve4").val() * (1 - $("#sconto").val() / 100)).toFixed(<?php echo $admin_aziend['decimal_price']; ?>);
+        $("#preve4_sc").val(p3);
     }
 
     $(function () {
-        $("#preve1,#preve2,#preve3,#sconto").change(function () {
+        $("#preve1,#preve2,#preve3,#preve4,#sconto").change(function () {
             var v = $(this).val().replace(/,/, '.');
             $(this).val(v);
             calcDiscount();
@@ -450,6 +455,16 @@ if ($modal_ok_insert === true) {
                             <input type="number" step="any" min="0" id="preve3" name="preve3" value="<?php echo $form['preve3']; ?>"  maxlength="15" />
     <?php echo $script_transl['preve3_sc']; ?>
                             <input type="text" readonly="true" id="preve3_sc" name="preve3_sc" value="<?php echo gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)); ?>" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="preve4" class="col-sm-4 control-label"><?php echo $script_transl['preve4']; ?></label>
+                            <input type="number" step="any" min="0" id="preve4" name="preve4" value="<?php echo $form['preve4']; ?>"  maxlength="15" />
+    <?php echo $script_transl['preve4_sc']; ?>
+                            <input type="text" readonly="true" id="preve4_sc" name="preve4_sc" value="<?php echo gaz_format_number($form['preve4'] * (1 - $form['sconto'] / 100)); ?>" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->

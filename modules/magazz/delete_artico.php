@@ -90,6 +90,10 @@ $script_transl = HeadMain();
             <td class="FacetDataTD"><?php print $form["preve3"] ?>&nbsp;</td>
         </tr>
         <tr>
+            <td class="FacetFieldCaptionTD">Prezzo listino 4 &nbsp;</td>
+            <td class="FacetDataTD"><?php print $form["preve4"] ?>&nbsp;</td>
+        </tr>
+        <tr>
             <td class="FacetFieldCaptionTD">Aliquota I.V.A &nbsp;</td>
             <td class="FacetDataTD"><?php print $form["aliiva"] ?>&nbsp;</td>
         </TR>

@@ -61,4 +61,5 @@ INSERT INTO gaz_XXXcaucon (codice, descri, operat) SELECT * FROM (SELECT 'APE', 
 INSERT INTO gaz_XXXcaucon (codice, descri, operat) SELECT * FROM (SELECT 'CHI', 'CHIUSURA CONTI', 0) AS tmp WHERE NOT EXISTS (SELECT codice FROM gaz_XXXcaucon WHERE codice = 'CHI') LIMIT 1;
 ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `id_des_same_company` INT(9) NOT NULL AFTER `id_des`;
 ALTER TABLE `gaz_XXXtesbro`	ADD COLUMN `id_des_same_company` INT(9) NOT NULL AFTER `id_des`;
+ALTER TABLE `gaz_XXXartico` ADD `preve4` DECIMAL( 14, 5 ) NULL DEFAULT '0.00000' AFTER `preve3`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

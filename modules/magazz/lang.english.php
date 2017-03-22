@@ -363,6 +363,8 @@ $strScript = array("browse_document.php" =>
         'preve1' => 'Selling price of a list 1',
         'preve2' => 'Selling price of a list 2',
         'preve3' => 'Selling price of a list 3',
+        'preve4' => 'Selling price of a list 4',
+        'preve4_sc' => 'Prezzo scontato 4',
         'preve1_sc' => 'Prezzo scontato 1',
         'preve2_sc' => 'Prezzo scontato 2',
         'preve3_sc' => 'Prezzo scontato 3',
