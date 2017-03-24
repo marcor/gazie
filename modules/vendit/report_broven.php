@@ -79,20 +79,7 @@ if (isset($_GET['all'])) {
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array(/** ENRICO FEDELE */
-    /* 'jquery/jquery-1.7.1.min',
-      'jquery/ui/jquery.ui.core',
-      'jquery/ui/jquery.ui.widget',
-      'jquery/ui/jquery.ui.mouse',
-      'jquery/ui/jquery.ui.button',
-      'jquery/ui/jquery.ui.dialog',
-      'jquery/ui/jquery.ui.position',
-      'jquery/ui/jquery.ui.draggable',
-      'jquery/ui/jquery.ui.resizable',
-      'jquery/ui/jquery.effects.core',
-      'jquery/ui/jquery.effects.scale', */
-    /** ENRICO FEDELE */
-    'custom/modal_form'));
+$script_transl = HeadMain(0, array('custom/modal_form'));
 echo '<script>
 $(function() {
    $( "#dialog" ).dialog({
@@ -134,7 +121,7 @@ $recordnav->output();
 ?>
 <form method="GET" >
     <input type="hidden" name="auxil" value="<?php echo substr($_GET['auxil'], 0, 3); ?>">
-    <div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+    <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
         <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
         <p class="ui-state-highlight" id="mail_adrs"></p>
         <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>

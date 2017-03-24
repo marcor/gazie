@@ -297,6 +297,7 @@ $strScript = array("admin_client.php" =>
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!',
             'Cambia cliente/fornitore'),
+        'title' => 'Preventivi e ordini',
         " corpo ",
         " piede ",
         " Tira su ",
@@ -1060,7 +1061,10 @@ $strScript = array("admin_client.php" =>
             'La data di emissione non &egrave; corretta',
             'La data di inizio trasporto non &egrave; corretta',
             'La data di inizio trasporto non pu&ograve; essere precedente alla data di emissione',
-            'NON HAI ESEGUITO LA CHIUSURA GIORNALIERA DEL REGISTRATORE DI CASSA FALLO PRIMA DI EMETTERNE UNO!!!'
+            'NON HAI ESEGUITO LA CHIUSURA GIORNALIERA DEL REGISTRATORE DI CASSA FALLO PRIMA DI EMETTERNE UNO!!!',
+            "C'è almeno un DdT già emesso con data successiva a quella scelta per l'evasione",
+            "C'è almeno uno scontrino emesso con data successiva a quella scelta per l'evasione",
+            "C'è almeno una fattura già emessa con data successiva a quella scelta per l'evasione"
         ),
         'customer' => 'Cliente',
         'search_customer' => array('La ricerca non ha dato risultati!',

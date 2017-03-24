@@ -264,6 +264,16 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
     if ($utsIniziotrasporto < $utsDataemiss) {
         $msg .= "6+";
     }
+    // controllo che la data dell'ultimo ddt emesso non sia successiva a questa
+    $rs_lastddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND ( tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND seziva = " . $form['seziva'], "numdoc DESC", 0, 1);
+    $r = gaz_dbi_fetch_array($rs_lastddt);
+    if ($r) {
+        $uts_last_data_emiss = gaz_format_date($r['datemi'], false, 2); // mktime
+        if ($uts_last_data_emiss > $utsDataemiss) {
+            $msg .= "8+";
+        }
+    }
+
     if ($msg == "") {//procedo all'inserimento
         $iniziotrasporto .= " " . $_POST['initra_H'] . ":" . $_POST['initra_I'] . ":00";
         require("lang." . $admin_aziend['lang'] . ".php");
@@ -348,7 +358,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
     }
 } elseif (isset($_POST['vco'])) { //conferma dell'evasione di un corrispettivo
     //controllo i campi
-    $dataemiss = $_POST['datemi_Y'] . "-" . $_POST['datemi_M'] . "-" . $_POST['datemi_D'];
+    $dataemiss = $form['datemi_Y'] . "-" . $form['datemi_M'] . "-" . $form['datemi_D'];
     $utsDataemiss = mktime(0, 0, 0, $_POST['datemi_M'], $_POST['datemi_D'], $_POST['datemi_Y']);
     $iniziotrasporto = $_POST['initra_Y'] . "-" . $_POST['initra_M'] . "-" . $_POST['initra_D'];
     $utsIniziotrasporto = mktime(0, 0, 0, $_POST['initra_M'], $_POST['initra_D'], $_POST['initra_Y']);
@@ -385,7 +395,16 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
     if ($utsIniziotrasporto < $utsDataemiss) {
         $msg .= "6+";
     }
-    if ($msg == "") {//procedo all'inserimento
+    // controllo che la data dell'ultimo scontrino emesso non sia successiva a questa
+    $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc = 'VCO' AND seziva = " . $form['seziva'], "datemi DESC", 0, 1);
+    $r = gaz_dbi_fetch_array($rs_last);
+    if ($r) {
+        $uts_last_data_emiss = gaz_format_date($r['datemi'], false, 2); // mktime
+        if ($uts_last_data_emiss > $utsDataemiss) {
+            $msg .= "9+";
+        }
+    }
+    if ($msg == "e") {//procedo all'inserimento
         require("lang." . $admin_aziend['lang'] . ".php");
         $script_transl = $strScript['select_evaord.php'];
         $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend['Login']);
@@ -548,6 +567,15 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         $msg .= "5+";
     if ($utsIniziotrasporto < $utsDataemiss) {
         $msg .= "6+";
+    }
+    // controllo che la data dell'ultima fattura emessa non sia successiva a questa
+    $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND tipdoc LIKE 'F__'  AND seziva = " . $form['seziva'], "protoc DESC", 0, 1);
+    $r = gaz_dbi_fetch_array($rs_last);
+    if ($r) {
+        $uts_last_data_emiss = gaz_format_date($r['datfat'], false, 2); // mktime
+        if ($uts_last_data_emiss > $utsDataemiss) {
+            $msg .= "10+";
+        }
     }
     if ($msg == "") {//procedo all'inserimento
         require("lang." . $admin_aziend['lang'] . ".php");

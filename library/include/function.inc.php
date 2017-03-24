@@ -223,6 +223,8 @@ function gaz_format_date($date, $from_form = false, $to_form = false) {
         $uts = mktime(0, 0, 0, intval(substr($date, 5, 2)), intval(substr($date, 8, 2)), intval(substr($date, 0, 4)));
         if ($to_form === false) { // adatto al db
             return date("d-m-Y", $uts);
+        } elseif ($to_form === 2) { // restituisce l'mktime
+            return $uts;
         } else { // adatto ai form input
             return date("d/m/Y", $uts);
         }
