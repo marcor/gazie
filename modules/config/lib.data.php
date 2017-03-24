@@ -26,14 +26,14 @@
 
 function aliivaInsert($newValue) {
     $table = 'aliiva';
-    $columns = array('codice', 'tipiva', 'aliquo', 'fae_natura', 'descri', 'status', 'annota', 'adminid');
+    $columns = array('codice', 'tipiva', 'operation_type', 'aliquo', 'fae_natura', 'descri', 'status', 'annota', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
     tableInsert($table, $columns, $newValue);
 }
 
 function aliivaUpdate($codice, $newValue) {
     $table = 'aliiva';
-    $columns = array('codice', 'tipiva', 'aliquo', 'taxstamp', 'fae_natura', 'descri', 'status', 'annota', 'adminid');
+    $columns = array('codice', 'tipiva', 'operation_type', 'aliquo', 'taxstamp', 'fae_natura', 'descri', 'status', 'annota', 'adminid');
     $newValue['adminid'] = $_SESSION['Login'];
     tableUpdate($table, $columns, $codice, $newValue);
 }

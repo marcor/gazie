@@ -15,7 +15,7 @@ ALTER TABLE `gaz_aziend` DROP COLUMN `upgrie`, DROP COLUMN `upggio`, DROP COLUMN
 ALTER TABLE `gaz_XXXrigmoi`	ADD COLUMN `reverse_charge_idtes` INT(9) NOT NULL AFTER `tipiva`;
 ALTER TABLE `gaz_XXXrigmoi`	ADD COLUMN `operation_type` VARCHAR(15) NOT NULL AFTER `reverse_charge_idtes`;
 ALTER TABLE `gaz_XXXaliiva` ADD COLUMN `operation_type` CHAR(15) NOT NULL DEFAULT '' AFTER `tipiva`;
-INSERT INTO `gaz_XXXaliiva` (`codice`, `tipiva`, `operation_type`, `aliquo`, `fae_natura`, `descri`, `status`, `annota`) SELECT MAX(`codice`)+1, 'I', 'VJ', '22', 'N6', 'REVERSE CHARGE art.17c.6 IVA al 22%','','' FROM `gaz_XXXaliiva`;
+INSERT INTO `gaz_XXXaliiva` (`codice`, `tipiva`, `operation_type`, `aliquo`, `fae_natura`, `descri`, `status`, `annota`) SELECT MAX(`codice`)+1, 'I', 'SERVIZ', '22', 'N6', 'REVERSE CHARGE art.17c.6 IVA al 22%','','' FROM `gaz_XXXaliiva`;
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `operation_type` VARCHAR(15) NOT NULL DEFAULT '' AFTER `ceeave`;
 ALTER TABLE `gaz_XXXclfoco`	DROP COLUMN `op_type`;
 INSERT INTO `gaz_XXXcompany_data` (`description`, `var`, `data`) VALUES ('Ultima pagina riepilogativo IVA', 'upgrie', '0');
