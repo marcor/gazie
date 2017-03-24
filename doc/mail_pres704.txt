@@ -1,0 +1,32 @@
+Titolo:
+Vivere est cogitare.
+
+Presentazione: 
+Dopo aver sottoposto a controllo il tracciato dello spesometro ed aggiunto i valori "autofattura" e "reverse charge" ho ritenuto che era arrivato il momento giusto per il rilascio di questa versione.
+Le novità che la caratterizzano sono fondamentalmente due:
+
+1) l'automatizzazione delle scritture contabili relative agli acquisti con aliquote IVA in reverse-charge, per intenderci quelle che sulla fattura elettronica hanno il campo "natura = N6", e spesso sono riferite agli art.17c6 e/o art.74c7 del DPR633/72.
+
+2) l'aggiunta di un file XML ( library/include/operation_type.xml ) contenente i "tipi di operazione". Adesso il suo contenuto ampliabile/personalizzabile fornisce la possibilità di indicare a livello di righi IVA dei movimenti contabili questa ulteriore informazione. Con GAzie 7.4 il nuovo campo produrrà una leggenda sui registri IVA acquisti (periodici o annuali) con l'aggregazione dei totali per ogni tipo indicato sui righi stessi. Se ne deduce che si faciliterà di molto la compilazione della dichiarazione IVA annuale, non dovranno essere più scomodati i partitari per distinguere le varie tipologie di acquisti (merci, servizi, beni ammortizzabili, leasing, ecc). Inoltre: la stessa apre la strada alla produzione diretta di un tracciato elettronico per le dichiarazioni IVA, ammesso che questa non venga a breve sostituita dai dati che, almeno secondo la logica, dovranno essere inviati tramite lo spesometro analitico periodico e/o liquidazioni.
+
+Oltre alle due importanti implementazioni citate sono stati fatti tanti altri miglioramenti:
+- le destinazioni legate ai clienti adesso permettono di indicare anche il "codice univoco ufficio", questo permette di selezionare le unità locali sui documenti di vendita per i clienti (PA e privati) che pur avendo un'unica partita IVA hanno diverse sedi produttive e/o uffici. Anche il tracciato XML della fattura elettronica riporterà questa eventuale eccezione (Antonio de Vincentiis) 
+- annidate le query (eliminate le join) per incrementare enormemente la velocità sui report fatture e DdT (Antonio de Vincentiis)
+- da oggi in amministrazione dei movimenti contabili la gestione delle partite aperte consente l'indicazione di un valore inferiore o pari a quello del rigo e non completamente vincolato ad esso, questo consentirà una ulteriore e più flessibile gestione dello scadenzario quando lo si inizia ad utilizzare su un database proveniente da vecchie versioni (Antonio de Vincentiis)
+- sempre in contabilità: l'inserimento di movimenti relativi a vendite o acquisti genereranno automaticamente la scrittura di chiusura verso cassa o banca nel caso in cui il cliente/fornitore abbia in anagrafica una tipologia di pagamento che prevede l'incasso contestuale (contanti, bancomat, assegno, ecc) e la partita non verrà aperta (Antonio de Vincentiis)
+- risolto l'impedimento di invio mail su server SMTP senza SSL (Antonio de Vincentiis)
+- eliminato il problema che non permetteva di cancellare in automatico i vecchi backup (Andrea Biasi)
+- aggiunti i conti di ricavo anche sulle anagrafiche dei clienti (Antonio de Vincentiis)
+- risolto il problema del controllo che impediva l'inserimento/modifica in caso di chiusura parziale e contemporanea di più conti clienti/fornitori presenti sulla stessa registrazione contabile, ad es. in caso di registrazione di una parcella con ritenuta d'acconto che chiude parzialmente il conto cliente/fornitore (Antonio de Vincentiis)
+- corretto l'errore di mancato aggiornamento numero di accessi degli studenti sul modulo GAZie a scuola  (Antonio de Vincentiis)
+- corretto l'errore sul report delle fatture che riproponeva, ma non la eseguiva, l'emissione di RiBa quando il pagamento dall'anagrafica cliente e quello della testata del documento non coincidevano (Antonio de Vincentiis)
+- corretta la mancata icona per invio mail su report DdT (Antonio de Vincentiis)
+- corretto errore nel salvataggio dei permessi degli utenti (Angelo Romano)
+- tolto l'errore di controllo che impediva la modifica di movimenti relativi alla contabilizzazione di scontrini (passati per cassa/banca) (Antonio de Vincentiis)
+- corretti i problemi relativi alle date in caso di evasione e/o modifica dei preventivi a clienti  (Antonio de Vincentiis)
+- aumentato il numero di listini di vendita da 3 a 4 (Andrea andry83)  
+
+Approfondimenti:
+"l'esempio il cuore ci forgiò, e dei fratelli il nobile eroismo alla lotta ci temprò"
+
+Antonio de Vincentiis, Montesilvano, 24 Marzo 2017
