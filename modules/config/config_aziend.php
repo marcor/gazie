@@ -30,7 +30,7 @@ $admin_aziend = checkAdmin(9);
 if (isset($_POST["elimina"])) {   // si vuole eliminare l'azienda
     $t_erased = array();
     $tp = $table_prefix . '_' . str_pad($admin_aziend["company_id"], 3, '0', STR_PAD_LEFT);
-    print $tp;
+    //print $tp;
     $ve = gaz_dbi_query("SELECT CONCAT(  'DROP VIEW `', TABLE_NAME,  '`;' ) AS query, TABLE_NAME as tn FROM INFORMATION_SCHEMA.VIEWS WHERE TABLE_NAME LIKE  '" . $tp . "%'");
     while ($r = gaz_dbi_fetch_array($ve)) {
         $t_erased[] = $r['tn'];

@@ -180,7 +180,9 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                 gaz_dbi_table_insert('admin_module', $r);
             }
             changeEnterprise($form['codice']);
-            mkdir("../../data/files/" . $form['codice'], 0740);
+            if ( !file_exists("../../data/files/" . $form['codice']) ) {
+                mkdir("../../data/files/" . $form['codice'], 0740);
+            }
             header("Location: admin_aziend.php?Update&codice=" . $form['codice']);
             exit;
         }
