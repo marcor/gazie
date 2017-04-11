@@ -176,5 +176,6 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
     <script src="../../js/custom/gz-library.js"></script>
     <script src="../../js/tinymce/tinymce.min.js"></script>
     <script src="../../js/custom/tinymce.js"></script>
+    <script src="../../js/jquery.ui/datepicker-<?php echo substr($admin_aziend['lang'], 0, 2); ?>.js"></script>
     </body>
 </html>
