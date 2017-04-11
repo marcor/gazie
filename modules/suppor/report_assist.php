@@ -27,6 +27,9 @@ $titolo = 'Assistenza Clienti';
 $totale_ore = 0;
 $stati = array();
 
+$orderby = "data asc";
+$where 	= "tipo = 'ASS' ";
+
 if ( !isset($_GET['include']) ) {
    require_once("../../library/include/header.php");
    $script_transl=HeadMain();  
@@ -95,6 +98,16 @@ if ( isset($_GET['flt_cliente']) ) {
     $flt_cliente = "tutti";
 }
 
+gaz_flt_var_assign('id', 'i');
+gaz_flt_var_assign('data', 'd');
+gaz_flt_var_assign('clfoco', 'v');
+gaz_flt_var_assign('telefo', 'v');
+gaz_flt_var_assign('oggetto', 'v');
+gaz_flt_var_assign('descrizione', "v");
+gaz_flt_var_assign('tecnico', "v");
+gaz_flt_var_assign('stato', "v");
+
+
 if ( $flt_cliente!="tutti" ) {
 	$where .= " and ".$gTables['assist'].".clfoco = '".$flt_cliente."'";
 }
@@ -105,14 +118,15 @@ if ( $flt_cliente!="tutti" ) {
       <div class="box-body table-responsive">
 	<table class="Tlarge table table-striped table-bordered table-condensed">
             <tr>
-		<td class="FacetFieldCaptionTD" colspan="4">
-                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="15" size="15" tabindex=1 class="FacetInput">
-                    <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+		<td class="FacetFieldCaptionTD" colspan="1">
+                    <!--<input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="15" size="15" tabindex=1 class="FacetInput">
+                    <input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">-->
+                    <?php gaz_flt_disp_int("id", "Numero"); ?>
 		</td>
-		<td class="FacetFieldCaptionTD" colspan="2">
-		<select name="flt_cliente" onchange="this.form.submit()">
+		<td class="FacetFieldCaptionTD" colspan="1">
+		<!--<select name="flt_cliente" onchange="this.form.submit()">
 			<?php
-			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".clfoco, ".$gTables['anagra'].".ragso1",	$gTables['assist'].
+			/*$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".clfoco, ".$gTables['anagra'].".ragso1",	$gTables['assist'].
 				" LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['assist'].".clfoco = ".$gTables['clfoco'].".codice".
 				" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id"
 				,$where, "clfoco", "0", "9999");
@@ -121,26 +135,34 @@ if ( $flt_cliente!="tutti" ) {
 					if ( $flt_cliente == $stati["clfoco"] ) $selected = "selected";
 					else $selected = "";
 					echo "<option value=\"".$stati["clfoco"]."\" ".$selected.">".$stati["ragso1"]."</option>";
-			}
+			}*/
 			?>
-		</select>
+		</select>-->
+                    <?php gaz_flt_disp_select("data", "YEAR(data) as data", $gTables["assist"], "9999", $orderby); ?>
 		</td>
-		<td class="FacetFieldCaptionTD">&nbsp;</td>
-        <td class="FacetFieldCaptionTD"><select name="flt_tecnico" onchange="this.form.submit()">
+                <td class="FacetFieldCaptionTD">
+                    <?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["assist"] . ".clfoco", $gTables['assist'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['assist'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1"); ?>
+                </td>
+                <td class="FacetFieldCaptionTD">
+                    <!--<select name="flt_tecnico" onchange="this.form.submit()">
 			<?php
-			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
+			/*$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".tecnico", $gTables['assist'],"", "tecnico", "0", "9999");
 			echo "<option value=\"tutti\" ".($flt_tecnico=="tutti"?"selected":"").">tutti</option>";
 			while ($tecnici = gaz_dbi_fetch_array($result)) {
 					if ( $flt_tecnico == $tecnici["tecnico"] ) {
                         $selected = "selected"; 
                     } else $selected = "";
 					echo "<option value=\"".$tecnici["tecnico"]."\" ".$selected.">".$tecnici["tecnico"]."</option>";
-			}
+			}*/
 			?>
-		</select></td>
-		<td class="FacetFieldCaptionTD"><select name="flt_stato" onchange="this.form.submit()">
+		</select>-->
+                    <?php gaz_flt_disp_int("telefo", "Telefono"); ?>
+                </td>
+		<td class="FacetFieldCaptionTD">
+                    <?php gaz_flt_disp_int("oggetto", "Oggetto"); ?>
+                    <!--<select name="flt_stato" onchange="this.form.submit()">
 			<?php
-			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," tipo='ASS' and stato!='chiuso'", "stato", "0", "9999");
+			/*$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato", $gTables['assist']," tipo='ASS' and stato!='chiuso'", "stato", "0", "9999");
 			echo "<option value=\"tutti\" ".($flt_stato=="tutti"?"selected":"").">tutti</option>";
 			echo "<option value=\"nochiusi\" ".($flt_stato=="nochiusi"?"selected":"").">non chiuso</option>";
          echo "<option value=\"chiuso\" ".($flt_stato=="chiuso"?"selected":"").">chiuso</option>";
@@ -149,13 +171,27 @@ if ( $flt_cliente!="tutti" ) {
 					if ( $flt_stato == $stati["stato"] ) $selected = "selected"; 
 					else $selected = "";
 					echo "<option value=\"".$stati["stato"]."\" ".$selected.">".$stati["stato"]."</option>";
-			}
+			}*/
 			?>
-		</select></td>
-		<td class="FacetFieldCaptionTD" colspan="2">
+		</select>-->
+                    </td>
+		<td class="FacetFieldCaptionTD" colspan="1">
+                    <?php gaz_flt_disp_int("descrizione", "Descrizione"); ?>
 			<!--<input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">-->
-			<a class="btn btn-xs btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&flt_cliente=<?php echo $flt_cliente; ?>&flt_stato=<?php echo $flt_stato; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>
+			<!--<a class="btn btn-xs btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&flt_cliente=<?php echo $flt_cliente; ?>&flt_stato=<?php echo $flt_stato; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>-->
 		</td>
+                <td class="FacetFieldCaptionTD" colspan="2">
+                    <?php gaz_flt_disp_select("tecnico", "tecnico", $gTables["assist"], "9999", "tecnico"); ?>
+                </td>
+                <td class="FacetFieldCaptionTD">
+                     <?php gaz_flt_disp_select("stato", "stato", $gTables["assist"], "9999", "stato"); ?>
+                </td>
+                <td class="FacetFieldCaptionTD">
+                    <a class="btn btn-sm btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&flt_cliente=<?php echo $flt_cliente; ?>&flt_stato=<?php echo $flt_stato; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>
+                </td>
+                <td class="FacetFieldCaptionTD">
+                    &nbsp;
+                </td>
 		</tr>
 
 		<?php 
