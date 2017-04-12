@@ -173,6 +173,9 @@ function confirMail(link){
                     &nbsp;
                 </td>
                 <td class="FacetFieldCaptionTD">
+                    &nbsp;
+                </td>
+                <td class="FacetFieldCaptionTD">
                     <input class="btn btn-sm btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
                 </td>
                 <td class="FacetFieldCaptionTD">
@@ -183,7 +186,7 @@ function confirMail(link){
             <tr>
                 <?php
                 $linkHeaders = new linkHeaders($script_transl['header']);
-                $linkHeaders->setAlign(array('left', 'left', 'center', 'center', 'left', 'center', 'center', 'center', 'center', 'center', 'center'));
+                $linkHeaders->setAlign(array('left', 'left', 'center', 'center', 'left', 'left', 'center', 'center', 'center', 'center', 'center', 'center'));
                 $linkHeaders->output();
                 ?>
             </tr>
@@ -201,6 +204,7 @@ function confirMail(link){
                 $match_cust = true;
                 $clfoco = gaz_dbi_get_row($gTables['clfoco'], 'codice', $r['clfoco']);
                 $anagra = gaz_dbi_get_row($gTables['anagra'], 'id', $clfoco['id_anagra']);
+                $destina = gaz_dbi_get_row($gTables['destina'], 'codice', $r['id_des_same_company']);
                 if (!empty($cliente) && stripos($anagra['ragso1'], $_GET['cliente']) === false ) {
                     $match_cust=false;
                 }
@@ -224,6 +228,9 @@ function confirMail(link){
                                 <a href="report_client.php?auxil=<?php echo htmlspecialchars($anagra["ragso1"]); ?>&search=Cerca">
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>
+                            </td>
+                            <td>
+                                <?php echo "<a href=\"admin_destinazioni.php?codice=".$destina["codice"]."&Update\">".$destina["unita_locale1"]."</a>"; ?>
                             </td>
                             <?php
                             // Colonna status
@@ -298,6 +305,9 @@ function confirMail(link){
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>
                             </td>
+                            <td>
+                                <?php echo "<a href=\"admin_destinazioni.php?codice=".$destina["codice"]."&Update\">".$destina["unita_locale1"]."</a>"; ?>
+                            </td>
                             <?php
                             echo "<td class=\"alert alert-danger\"  align=\"center\"><div class=\"btn btn-xs btn-warning\">" . $script_transl['from_suppl'] . "</div></td>";
 
@@ -343,6 +353,9 @@ function confirMail(link){
                                 <a href="report_client.php?auxil=<?php echo htmlspecialchars($anagra["ragso1"]); ?>&search=Cerca">
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>
+                            </td>
+                            <td>
+                                <?php echo "<a href=\"admin_destinazioni.php?codice=".$destina["codice"]."&Update\">".$destina["unita_locale1"]."</a>"; ?>
                             </td>
                             <?php
                             // Colonna Stato

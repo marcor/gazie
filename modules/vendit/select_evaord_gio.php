@@ -65,6 +65,8 @@ function azzera() {
     $form['imball'] = "";
     $form['pagame'] = "";
     $form['destin'] = '';
+    $form['id_des'] = 0;
+    $form['id_des_same_company'] = 0;
     $form['caumag'] = '';
     $form['id_agente'] = 0;
     $form['banapp'] = "";
@@ -112,6 +114,8 @@ if ( isset($_POST['weekday_repeat']) ) {
     $form['imball'] = $_POST['imball'];
     $form['pagame'] = $_POST['pagame'];
     $form['destin'] = $_POST['destin'];
+    $form['id_des'] = $_POST['id_des'];
+    $form['id_des_same_company'] = $_POST['id_des_same_company'];
     $form['caumag'] = '';
     $form['id_agente'] = $_POST['id_agente'];
     $form['banapp'] = $_POST['banapp'];
@@ -123,14 +127,19 @@ if ( isset($_POST['weekday_repeat']) ) {
     $form['gross_weight'] = 0;
     $form['units'] = 0;
     $form['volume'] = 0;
+    foreach ($_POST['search'] as $k => $v) {
+        $form['search'][$k] = $v;
+    }
     
       $_GET['id_tes'] = $riga['id_tes']; 
       if (isset($_GET['id_tes'])) { //se � stato richiesto un ordine specifico lo carico
         $form['id_tes'] = intval($_GET['id_tes']);
         $testate = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $form['id_tes']);
+        
         $form['clfoco'] = $testate['clfoco'];
         $anagrafica = new Anagrafica();
         $cliente = $anagrafica->getPartner($form['clfoco']);
+        $id_des = $anagrafica->getPartner($testate['id_des']);
         $form['search']['clfoco'] = substr($cliente['ragso1'], 0, 10);
         $form['weekday_repeat'] = $testate['weekday_repeat'];
         $form['seziva'] = $testate['seziva'];
@@ -144,6 +153,8 @@ if ( isset($_POST['weekday_repeat']) ) {
         $form['imball'] = $testate['imball'];
         $form['pagame'] = $testate['pagame'];
         $form['destin'] = $testate['destin'];
+        $form['id_des'] = $testate['id_des'];
+        $form['id_des_same_company'] = $testate['id_des_same_company'];
         $form['caumag'] = $testate['caumag'];
         $form['id_agente'] = $testate['id_agente'];
         $form['banapp'] = $testate['banapp'];
@@ -152,6 +163,7 @@ if ( isset($_POST['weekday_repeat']) ) {
         $form['listin'] = $testate['listin'];
         $form['net_weight'] = $testate['net_weight'];
         $form['gross_weight'] = $testate['gross_weight'];
+        $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
         $form['units'] = $testate['units'];
         $form['volume'] = $testate['volume'];
         $rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . $form['id_tes'], "id_rig asc");
@@ -393,7 +405,27 @@ echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pagame'] . "</td><
 $gForm->selectFromDB('pagame', 'pagame', 'codice', $form['pagame'], 'codice', 1, ' ', 'descri');
 echo "\t </td>\n";
 echo '<td class="FacetFieldCaptionTD">' . $script_transl['destin'] . "</td>\n";
-echo "<td class=\"FacetDataTD\"><textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form['destin'] . "</textarea></td>\n";
+        if ($form['id_des_same_company'] > 0) { //  è una destinazione legata all'anagrafica
+            echo "<td class=\"FacetDataTD\">\n";
+            $gForm->selectFromDB('destina', 'id_des_same_company', 'codice', $form['id_des_same_company'], 'codice', true, '-', 'unita_locale1', '', 'FacetSelect', null, '', "id_anagra = '" . $cliente['id_anagra'] . "'");
+            echo "	<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
+                <input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" /></td>\n";
+        } elseif ($form['id_des'] > 0) { // la destinazione è un'altra anagrafica
+            echo "<td class=\"FacetDataTD\">\n";
+            $select_id_des = new selectPartner('id_des');
+            $select_id_des->selectDocPartner('id_des', 'id_' . $form['id_des'], $form['search']['id_des'], 'id_des', $script_transl['mesg'], $admin_aziend['mascli']);
+            echo "			<input type=\"hidden\" name=\"id_des_same_company\" value=\"" . $form['id_des_same_company'] . "\">
+                                <input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" />
+						</td>\n";
+        } else {
+            echo "			<td class=\"FacetDataTD\">";
+            echo "				<textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
+						</td>
+						<input type=\"hidden\" name=\"id_des_same_company\" value=\"" . $form['id_des_same_company'] . "\">";
+			echo "<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">";
+			echo "<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
+        }
+//echo "<td class=\"FacetDataTD\"><textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form['destin'] . "</textarea></td>\n";
 echo "</tr><tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td>";
 echo "<td class=\"FacetDataTD\">\n";

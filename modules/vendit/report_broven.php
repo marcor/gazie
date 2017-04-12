@@ -61,12 +61,14 @@ if ( $what == "VOG" ) {
     gaz_flt_var_assign('datemi', 'd');
 }
 gaz_flt_var_assign('clfoco', 'v');
+gaz_flt_var_assign("unita_locale1", 'v');
 
 if (isset($_GET['all'])) {
     $_GET['id_tes'] = "";
     $_GET['numdoc'] = "";
     $_GET['datemi'] = "";
     $_GET['clfoco'] = "";
+    $_GET['unita_locale1'] = "";
     $auxil = $_GET['auxil'] . "&all=yes";
     if ($_GET['auxil'] == 'VPR') {
         $what = 'VPR';
@@ -80,6 +82,7 @@ if (isset($_GET['all'])) {
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/modal_form'));
+
 echo '<script>
 $(function() {
    $( "#dialog" ).dialog({
@@ -109,6 +112,7 @@ function confirMail(link){
    $("#dialog" ).dialog( "open" );
 }
 </script>';
+
 if (!isset($_GET['flag_order']))
     $orderby = "datemi DESC, numdoc DESC";
 $a = substr($auxil, 0, 3);
@@ -164,7 +168,7 @@ $recordnav->output();
                 <?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["tesbro"] . ".clfoco", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, $orderby, "ragso1"); ?>
             </td>
             <td class=FacetFieldCaptionTD>
-                &nbsp;
+                <?php gaz_flt_disp_select("unita_locale1", $gTables['destina'].".unita_locale1", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id left join ". $gTables['destina']." on " .$gTables['tesbro'].".id_des_same_company = " . $gTables['destina'] . ".codice" , $all, $orderby, "unita_locale1"); ?>
             </td>
             <td class=FacetFieldCaptionTD>
                 &nbsp;
@@ -178,6 +182,9 @@ $recordnav->output();
             <td class="FacetFieldCaptionTD">
                 <input type="submit" class="btn btn-sm btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value = 1;">
             </td>
+            <td class="FacetFieldCaptionTD">
+                &nbsp;
+            </td>
         </tr>
         <tr>
             <?php
@@ -189,6 +196,7 @@ $recordnav->output();
                 $script_transl['number'] => "numdoc",
                 $script_transl['weekday_repeat'] => "weekday_repeat",
                 "Cliente" => "clfoco",
+                "Destinazione" => "unita_locale1",
                 $script_transl['status'] => "status",
                 $script_transl['print'] => "",
                 "Mail" => "",
@@ -202,6 +210,7 @@ $recordnav->output();
                 $script_transl['number'] => "numdoc",
                 $script_transl['date'] => "datemi",
                 "Cliente" => "clfoco",
+                "Destinazione" => "unita_locale1",
                 $script_transl['status'] => "status",
                 $script_transl['print'] => "",
                 "Mail" => "",
@@ -215,7 +224,7 @@ $recordnav->output();
         </tr>
         <?php
 //recupero le testate in base alle scelte impostate
-        $result = gaz_dbi_dyn_query($gTables['tesbro'] . ".*," . $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail," . $gTables["clfoco"] . ".codice", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
+        $result = gaz_dbi_dyn_query($gTables['tesbro'] . ".*," . $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail," . $gTables["clfoco"] . ".codice, ".$gTables["destina"].".*", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id  left join '. $gTables['destina'].' on ' .$gTables['tesbro'].'.id_des_same_company = ' . $gTables['destina'] . '.codice', $where, $orderby, $limit, $passo);
         if ($result == false) {
             die(mysql_error());
         }
@@ -244,6 +253,8 @@ $recordnav->output();
                 echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
             }
             echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a> &nbsp;</td>";
+            echo "<td>".$r["unita_locale1"]."</td>";
+            
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
             $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
@@ -398,7 +409,7 @@ $recordnav->output();
             echo "</tr>\n";
         }
         ?>
-        <tr><th class="FacetFieldCaptionTD" colspan="9"></th></tr>
+        <tr><th class="FacetFieldCaptionTD" colspan="10"></th></tr>
     </table>
     </div>
 </form>
