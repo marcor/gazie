@@ -32,8 +32,7 @@ if ( isset($_GET['ritorno']) ) {
    $form['id'] = $_GET['id'];
    $form['clfoco'] = $_GET['clfoco'];
    $form['ritorno']= $_GET['ritorno'];
-}
-if ( isset($_POST['ritorno']) ) {
+} else if ( isset($_POST['ritorno']) ) {
    $form['id'] = $_POST['id'];
    $form['clfoco'] = $_POST['clfoco'];
    $form['ritorno']= $_POST['ritorno'];

@@ -269,6 +269,10 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 $result2 = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' id_menu='.$riga["id"].' ','id',0);
                 
                 echo "<ol class=\"breadcrumb\">";
+                
+                //da fare salvare i moduli più usati tramite la stella
+                //echo "<li><a><i class=\"fa fa-star-o\"></i></a>";
+                
                 echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
                 //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
                 while ($r = gaz_dbi_fetch_array($result2)) {

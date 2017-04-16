@@ -115,7 +115,6 @@ function confirMail(link){
         <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
         <p class="ui-state-highlight" id="mail_attc"></p>
     </div>
-
     <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?>
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php

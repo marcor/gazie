@@ -171,9 +171,9 @@ if (isset($_POST['Submit'])) {
                     if (!empty($mod_data)) {
                         updateAccessRights($form['Login'], $mod_data['id'], $value, $id[1]);
                     }
-                } elseif (preg_match("/^([0-9]{3})new_/", $key, $id) && $value == 3) { // il nuovo modulo non  presente in gaz_module
+                } elseif (preg_match("/^([0-9]{3})new_/", $key, $id) && $value == 3) { // il nuovo modulo non ÂŠ presente in gaz_module
                     $name = preg_replace("/^[0-9]{3}new_/", '', $key);
-                    // includo il file dei dati per creazione del men
+                    // includo il file dei dati per creazione del menÂ—
                     require("../../modules/" . $name . "/menu.creation_data.php");
                     // trovo l'ultimo peso assegnato ai moduli esistenti e lo accodo
                     $rs_last = gaz_dbi_dyn_query("MAX(weight)+1 AS max_we", $gTables['module'], 'id > 1');
@@ -372,7 +372,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                     <?php
                     echo '<td colspan="2" class="FacetDataTD">';
                     echo '<select name="skin" class="FacetSelect">';
-                    $relativePath = '../..' . $_SESSION['theme'] . '/scheletons/';
+                    $relativePath = '../..' . $_SESSION['theme'] . '/skins/';
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css
