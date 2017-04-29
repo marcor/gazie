@@ -99,6 +99,10 @@ class Received extends Template {
                     $this->Cell(105, 5, $rigo['descri'], 'LR', 0, 'L');
                     $this->Cell(81, 5, '', 'R', 1);
                     break;
+                case "6":
+                case "8":
+                    $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
+                    break;
             }
         }
     }
