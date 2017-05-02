@@ -48,7 +48,8 @@ if ( isset($_GET['chstato'] ) ) {
          $stato = $rows[0];
       }
    }
-   gaz_dbi_table_update("assist", array ("id", $_GET['chstato']), array("stato" => $stato));
+   gaz_dbi_table_update("assist", array ("id", $_GET['chstato'])
+           , array("stato" => $stato));
 }
 
 if ( isset($_GET['auxil']) ) {
@@ -89,7 +90,8 @@ if ( isset($_GET['flt_stato']) ) {
     }
 } else {
     $flt_stato = "nochiusi";
-    $where .= " and stato != 'chiuso'";
+    //$where .= " and stato != 'chiuso'";
+    $where .= " ";
 }
 
 if ( isset($_GET['flt_cliente']) ) {
@@ -181,10 +183,10 @@ if ( $flt_cliente!="tutti" ) {
 			<!--<a class="btn btn-xs btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&flt_cliente=<?php echo $flt_cliente; ?>&flt_stato=<?php echo $flt_stato; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>-->
 		</td>
                 <td class="FacetFieldCaptionTD" colspan="2">
-                    <?php gaz_flt_disp_select("tecnico", "tecnico", $gTables["assist"], "9999", "tecnico"); ?>
+                    <?php gaz_flt_disp_select("tecnico", "tecnico", $gTables["assist"], "1=1", "tecnico"); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
-                     <?php gaz_flt_disp_select("stato", "stato", $gTables["assist"], "9999", "stato"); ?>
+                     <?php gaz_flt_disp_select("stato", "stato", $gTables["assist"], "tipo='ASS'", "stato"); ?>
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <a class="btn btn-sm btn-default" href="print_ticket_list.php?auxil=<?php echo $auxil; ?>&flt_cliente=<?php echo $flt_cliente; ?>&flt_stato=<?php echo $flt_stato; ?>&flt_passo=<?php echo $passo; ?>"><i class="glyphicon glyphicon-list"></i>&nbsp;Stampa Lista</a>

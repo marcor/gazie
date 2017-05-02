@@ -354,7 +354,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css
-                            if (!preg_match("/^[a-z0-9\s\_]+\.css$/", $file)) {
+                            if (!preg_match("/^[a-z0-9\s\_\-]+\.css$/", $file)) {
                                 continue;
                             }
                             $selected = "";
@@ -376,7 +376,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                     if ($handle = opendir($relativePath)) {
                         while ($file = readdir($handle)) {
                             // accetto solo i file css
-                            if (!preg_match("/^[a-z0-9\s\_]+\.css$/", $file)) {
+                            if (!preg_match("/^[a-z0-9\s\_\-]+\.css$/", $file)) {
                                 continue;
                             }
                             $selected = "";

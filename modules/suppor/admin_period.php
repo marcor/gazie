@@ -144,7 +144,7 @@ else {
    $form['ogni'] = "Anni";
    //echo $form['stato'];
 	$form['search']['clfoco']='';
-	$form['ritorno']=$_SERVER['HTTP_REFERER'];
+	$form['ritorno']="../../modules/suppor/report_period.php";//$_SERVER['HTTP_REFERER'];
 	$form['ref_code']='';
 }
 

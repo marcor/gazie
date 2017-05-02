@@ -49,24 +49,19 @@ $result = gaz_dbi_dyn_query($gTables['assist'].".*,
 		" LEFT JOIN ".$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id',
 		$where, "id", $limit, $passo);
 		
-//$result = gaz_dbi_dyn_query ($what, $table,$where,"clfoco");
-//echo " what: ".$what. " table: ".$table. " where: ".$where." <br>";
-
-/*while ($a_row = gaz_dbi_fetch_array($result)) {
-	echo $a_row["descri"]."<br>";
-}*/
-
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(32);
 $pdf->SetFooterMargin(20);
 $config = new Config;
-$pdf->AddPage('P',$config->getValue('page_format'));
-$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 
 $row = gaz_dbi_fetch_array($result);
 
-$html = "<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">";
+$html="";
+if ( $row['stato']=='aperto') {
+$pdf->AddPage('P',$config->getValue('page_format'));
+$pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
+$html .= "<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">";
 $html .= "Nome Tecnico : <b>".$row["tecnico"]."</b><br/>";
 $html .= "Cliente : <b>". $row["codice"] ." - ". $row["ragso1"]."</b><br>";
 if ( $row["telefo"] ) $html .= "Telefono : <b>".$row["telefo"]."</b><br>";
@@ -103,16 +98,221 @@ $html .= "</span>
 					</li>
 				</ol><table><tr><td align=\"center\">Firma cliente</td><td align=\"center\">Firma tecnico</td></tr></table>
 			";
-
-/*<<<EOD
-<h1>Welcome to <a href="http://www.tcpdf.org" style="text-decoration:none;background-color:#CC0000;color:black;">&nbsp;<span style="color:black;">TC</span><span style="color:white;">PDF</span>&nbsp;</a>!</h1>
-<i>This is the first example of TCPDF library.</i>
-<p>This text is printed using the <i>writeHTMLCell()</i> method but you can also use: <i>Multicell(), writeHTML(), Write(), Cell() and Text()</i>.</p>
-<p>Please check the source code documentation and other examples for further information.</p>
-<p style="color:#CC0000;">TO IMPROVE AND EXPAND TCPDF I NEED YOUR SUPPORT, PLEASE <a href="http://sourceforge.net/donate/index.php?group_id=128076">MAKE A DONATION!</a></p>
-EOD;*/
+} else if ( $row['stato']=='effettuato' ) {
+    $intervento = str_pad($row["id"], 6, '0', STR_PAD_LEFT);
+    $pdf->AddPage('P',$config->getValue('page_format'));
+    $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
+    $html .= "<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">";
+    $html .= <<<END
+<body style="width: 790px;">
+<div style="text-align: center;"> Resoconto di intervento / codice <span
+style="font-weight: bold;">#$row[tipo]$intervento</span> / cliente <span
+style="font-weight: bold;">@$row[ragso1]</span><br>
+</div>
+<br>
+<table style="text-align: left; width: 540px;" border="1"
+cellpadding="5" cellspacing="0">
+<tbody>
+<tr>
+<td style="vertical-align: top; width: 95%;"><small>Oggetto
+dell'intervento</small><br>
+<div style="text-align: right;">$row[oggetto]<br>
+</div>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><small>Descrizione del problema</small><br>
+<div style="text-align: right;">$row[descrizione]<br>
+</div>
+</td>
+</tr>
+<tr>
+<td style="vertical-align: top;"><small>Tecnico</small>
+<div style="text-align: right;">$row[tecnico] </div>
+</td>
+</tr>
+</tbody>
+</table>
+<br>
+<br>
+<table style="text-align: left; width: 540px; height: 180px;" border="1"
+cellpadding="5" cellspacing="0">
+<tbody>
+<tr>
+<td style="vertical-align: top;"><small>Dettaglio attività svolte</small><br>
+<div style="text-align: justify;">$row[soluzione]<br>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<br>
+<br>
+<table class="MsoNormalTable"
+style="border: medium none ; border-collapse: collapse;" border="1"
+cellpadding="0" cellspacing="0">
+<tbody>
+<tr style="height: 78.8pt;">
+<td
+style="border: 1pt solid windowtext; padding: 0cm 3.5pt; width: 282.5pt; height: 78.8pt;">
+<table class="MsoNormalTable"
+style="border: medium none ; border-collapse: collapse;" border="1"
+cellpadding="0" cellspacing="0">
+<tbody>
+<tr style="page-break-inside: avoid;">
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73"><small><small> </small></small>
+<h2><small><small><span style="font-weight: normal;">Codice</span><o:p></o:p></small></small></h2>
+<small><small> </small></small></td>
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
+valign="top" width="220"><small><small> </small></small>
+<h2><small><small><span style="font-weight: normal;">Materiale
+sostituito</span><o:p></o:p></small></small></h2>
+<small><small> </small></small></td>
+<td
+style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73"><small><small> </small></small>
+<h2><small><small><span style="font-weight: normal;">Q.ta'</span><o:p></o:p></small></small></h2>
+<small><small> </small></small></td>
+</tr>
+<tr style="page-break-inside: avoid;">
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73"><br>
+</td>
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
+valign="top" width="220">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><br>
+<o:p></o:p></span></p>
+</td>
+<td
+style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt; vertical-align: middle;">
+<br>
+</td>
+</tr>
+<tr style="page-break-inside: avoid;">
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
+valign="top" width="220">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+<td
+style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+</tr>
+<tr style="page-break-inside: avoid;">
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
+valign="top" width="220">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+<td
+style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+</tr>
+<tr style="page-break-inside: avoid;">
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+<td
+style="border-style: none solid solid none; border-color: -moz-use-text-color windowtext windowtext -moz-use-text-color; border-width: medium 1pt 1pt medium; padding: 1.4pt 3.5pt; width: 164.85pt;"
+valign="top" width="220">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+<td
+style="border-style: none none solid; border-color: -moz-use-text-color -moz-use-text-color windowtext; border-width: medium medium 1pt; padding: 1.4pt 3.5pt; width: 54.95pt;"
+valign="top" width="73">
+<p class="MsoNormal"><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;" lang="DE"><o:p>&nbsp;</o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</td>
+<td
+style="border-style: solid solid solid none; border-color: windowtext windowtext windowtext -moz-use-text-color; border-width: 1pt 1pt 1pt medium; padding: 0cm 3.5pt; width: 282.5pt; height: 78.8pt; vertical-align: top;">
+<h1><small><small><small><span style="font-weight: normal;">Il
+cliente constata la ricezione dei servizi sopra indicati</span></small></small></small><o:p></o:p></h1>
+<p class="MsoNormal"><b><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal"><b><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal"><b><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal"><b><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p>&nbsp;</o:p></span></b></p>
+<p class="MsoNormal"><b><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;">Timbro e
+firma </span></b><span
+style="font-size: 10pt; font-family: &quot;Arial&quot;,sans-serif;">___________________________________</span><span
+style="font-size: 4pt; font-family: &quot;Arial&quot;,sans-serif;"><o:p></o:p></span></p>
+</td>
+</tr>
+</tbody>
+</table>
+</body>
+END;
+    $html .= "</span>";
+}
 
 $pdf->writeHTMLCell(0, 20, '', '', $html, 0, 1, 0, true, '', true);
-	
 $pdf->Output();
 ?>
+
+<!--
+Array ( [0] => 4 [id] => 4 
+        [1] => 1 [idinstallazione] => 1 
+        [2] => ASS [tipo] => ASS 
+        [3] => 4 [codice] => 103000012 
+        [4] => amministratore [utente] => amministratore 
+        [5] => 2017-04-16 [data] => 2017-04-16 
+        [6] => Andrea [tecnico] => Andrea 
+        [7] => rimozione cpu [oggetto] => rimozione cpu 
+        [8] => ciccop [descrizione] => ciccop 
+        [9] => [soluzione] => 
+        [10] => 08:00 [ora_inizio] => 08:00 
+        [11] => 12:30 [ora_fine] => 12:30 
+        [12] => [info_agg] => 
+        [13] => 103000012 [clfoco] => 103000012 
+        [14] => 4.50 [ore] => 4.50 
+        [15] => [codart] => 
+        [16] => [prezzo] => 
+        [17] => [codeart] => 
+        [18] => 0 [ripetizione] => 0 
+        [19] => [ogni] => 
+        [20] => effettuato [stato] => effettuato 
+        [21] => [note] => 
+        [22] => Delta [ragso1] => Delta 
+        [23] => [telefo] => 
+        [24] => [cell] => 
+        [25] => [fax] => 
+        [26] => 103000012 )
+-->

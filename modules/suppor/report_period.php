@@ -95,7 +95,7 @@ if ( isset( $_GET['idinstallazione']) ) {
 
 // imposto le variabili per i filtri
 gaz_flt_var_assign('id', 'i');
-gaz_flt_var_assign('data', 'd');
+//gaz_flt_var_assign('data', 'd');
 gaz_flt_var_assign('clfoco', 'v');
 gaz_flt_var_assign('telefo', 'v');
 gaz_flt_var_assign('oggetto', 'v');
@@ -107,9 +107,15 @@ gaz_flt_var_assign('stato', "v");
 if ( isset($_GET["flt_passo"]) ) $passo = $_GET['flt_passo'];
 
 // se è stato premuto il tasto mostra tutti
-if ( !isset($_GET["all"]) ) {
-   $where .= " and stato != 'chiuso'";
-   $where .= "and data>'".date("Y-m-d", strtotime("-1 month"))."' and data<'".date("Y-m-d", strtotime("+2 month"))."'";
+if ( !isset($_GET["all"]) && isset($_GET["data"]) ) {
+    if ( $_GET["data"]=1) {
+        $where = "data>'".date("Y-m-d", strtotime("-1 month"))."' and data<'".date("Y-m-d", strtotime("+1 month"))."'";
+    }
+    if ( $_GET["data"]=2) {
+        $where = "data>'".date("Y-m-d", time())."' and data<'".date("Y-m-d", strtotime("+2 month"))."'";
+    }
+   //$where .= " and stato != 'chiuso'";
+   //$where .= "and data>'".date("Y-m-d", strtotime("-1 month"))."' and data<'".date("Y-m-d", strtotime("+2 month"))."'";
 }
 
 if ( isset( $_GET['idinstallazione']) ) {
@@ -138,7 +144,13 @@ if ( isset( $_GET['idinstallazione']) ) {
                         <?php gaz_flt_disp_int("id", "Numero"); ?>
 		</td>
 		<td class="FacetFieldCaptionTD">
-			<?php gaz_flt_disp_select("data", "YEAR(data) as data", $gTables["assist"], "9999", $orderby); ?>
+			<?php //gaz_flt_disp_select("data", "YEAR(data) as data", $gTables["assist"], "9999", $orderby); ?>
+                    <select class="form-control input-sm" name="data" onchange="this.form.submit()">
+                        <option value="0" <?php echo ($_GET['data']==0 ? "selected" : ""); ?>>Tutti</option>
+                        <option value="1" <?php echo ($_GET['data']==1 ? "selected" : ""); ?>>Mese precedente</option>
+                        <option value="2" <?php echo ($_GET['data']==2 ? "selected" : ""); ?>> Mese successivo</option>
+                    </select>
+                    
 		</td>
 		<td class="FacetFieldCaptionTD">
 			<?php gaz_flt_disp_select("clfoco", $gTables['anagra'] . ".ragso1," . $gTables["assist"] . ".clfoco", $gTables['assist'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['assist'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['clfoco'] . ".id_anagra = " . $gTables['anagra'] . ".id", $all, "ragso1", "ragso1"); ?>
@@ -152,15 +164,15 @@ if ( isset( $_GET['idinstallazione']) ) {
 		<td class="FacetFieldCaptionTD">
 			<?php gaz_flt_disp_int("descrizione", "Descrizione"); ?>
 		</td>
-        <td class="FacetFieldCaptionTD">
-			<?php gaz_flt_disp_select("tecnico", "tecnico", $gTables["assist"], "9999", "tecnico"); ?>
+                <td class="FacetFieldCaptionTD">
+			<?php gaz_flt_disp_select("tecnico", "tecnico", $gTables["assist"], "1=1", "tecnico"); ?>
 		</td>
 		<td class="FacetFieldCaptionTD">
-			<?php gaz_flt_disp_select("stato", "stato", $gTables["assist"], "9999", "stato", $per_stato); ?>
+			<?php gaz_flt_disp_select("stato", "stato", $gTables["assist"], "tipo='ASP'", "stato", $per_stato); ?>
 		</td>
 		<td class="FacetFieldCaptionTD" colspan="2">
-         <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
-			<input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+                    <input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+                    <input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 		</td>
 		</tr>
 

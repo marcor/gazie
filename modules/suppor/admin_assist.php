@@ -37,15 +37,15 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso	
 	$form=gaz_dbi_parse_post('assist');
 	$anagrafica = new Anagrafica();
-   $cliente = $anagrafica->getPartner($_POST['clfoco']);
+        $cliente = $anagrafica->getPartner($_POST['clfoco']);
 	if ( isset($_POST['hidden_req']) ) $form['hidden_req'] = $_POST['hidden_req'];
-   // ...e della testata
-   foreach($_POST['search'] as $k=>$v){
-      $form['search'][$k]=$v;
-   }
+        // ...e della testata
+        foreach($_POST['search'] as $k=>$v){
+            $form['search'][$k]=$v;
+        }
 	$form['codice'] = trim($form['codice']);
 	$form['tipo'] = 'ASS';
-   $form['id'] = $_POST['id'];
+        $form['id'] = $_POST['id'];
 	$form['descrizione'] = $_POST['descrizione'];
 	$form['soluzione'] = $_POST['soluzione'];
 	$form['clfoco'] = $_POST['clfoco'];
@@ -58,7 +58,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['utente'] = $_SESSION["Login"];
     
 	$form['rows'] = array();	
-   if (isset($_POST['Submit'])) {
+        if (isset($_POST['Submit'])) {
 		// conferma tutto       
 		if ($toDo == 'update') {
 			// controlli in caso di modifica         
@@ -82,35 +82,35 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 		$msg .= (empty($form["codice"]) ? "5+" : '');
 		$msg .= (empty($form["oggetto"]) ? "6+" : '');
 		if (empty($msg)) { 
-		   if (preg_match("/^id_([0-9]+)$/",$form['clfoco'],$match)) {
-            $new_clfoco = $anagrafica->getPartnerData($match[1],1);
-            $form['clfoco']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
-         }
-			// aggiorno il db          
-			if ($toDo == 'insert') {
-                if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
-				gaz_dbi_table_insert('assist',$form);
-			} elseif ($toDo == 'update') {             
-                if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
-				gaz_dbi_table_update('assist',$form['ref_code'],$form);
-			}          
-			//header("Location: ".$form['ritorno']);
-         header("Location: associa_install.php?id=".$form['codice']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
-			exit;
+                    if (preg_match("/^id_([0-9]+)$/",$form['clfoco'],$match)) {
+                        $new_clfoco = $anagrafica->getPartnerData($match[1],1);
+                        $form['clfoco']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
+                    }
+                    // aggiorno il db          
+                    if ($toDo == 'insert') {
+                        if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
+                    	gaz_dbi_table_insert('assist',$form);
+                    } elseif ($toDo == 'update') {             
+                        if ( $form['clfoco']==0 ) $form['clfoco']=103000001;
+                        gaz_dbi_table_update('assist',$form['ref_code'],$form);
+                    }          
+                    //header("Location: ".$form['ritorno']);
+                    header("Location: associa_install.php?id=".$form['codice']."&clfoco=".$form['clfoco']."&ritorno=".$form['ritorno']);
+                    exit;
 		}    
 	} elseif (isset($_POST['Return'])) { // torno indietro          
-		header("Location: ".$form['ritorno']);
-        exit;
+            header("Location: ".$form['ritorno']);
+            exit;
 	}
 } elseif (!isset($_POST['Update']) && isset($_GET['Update'])) { 
-	$assist = gaz_dbi_get_row($gTables['assist'],"codice",$_GET['codice']);
 	//se e' il primo accesso per UPDATE    
+        $assist = gaz_dbi_get_row($gTables['assist'],"codice",$_GET['codice']);
 	$anagrafica = new Anagrafica();
-    $cliente = $anagrafica->getPartner($assist['clfoco']);
+        $cliente = $anagrafica->getPartner($assist['clfoco']);
 	$form = gaz_dbi_get_row($gTables['assist'], 'codice', $_GET['codice']);
 	$form['search']['clfoco']=substr($cliente['ragso1'],0,10);
-    $form['ritorno']=$_SERVER['HTTP_REFERER'];
-    $form['ref_code']=$form['codice'];
+        $form['ritorno']="../../modules/suppor/report_assist.php";
+        $form['ref_code']=$form['codice'];
 } else { 
 	//se e' il primo accesso per INSERT   
 	$form=gaz_dbi_fields('assist');
@@ -122,16 +122,16 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	} else {      
 		$form['codice'] = 1;
 	}  
-   $rs_ultimo_tec = gaz_dbi_dyn_query("codice,tecnico", $gTables['assist'],"tecnico<>''","codice desc");
+        $rs_ultimo_tec = gaz_dbi_dyn_query("codice,tecnico", $gTables['assist'],"tecnico<>''","codice desc");
 	$ultimo_tecnico = gaz_dbi_fetch_array($rs_ultimo_tec);
-   $form['tecnico'] = $ultimo_tecnico['tecnico']; 
+        $form['tecnico'] = $ultimo_tecnico['tecnico']; 
 	$form['tipo'] = 'ASS';	
-   $form['utente'] = $_SESSION["Login"];
+        $form['utente'] = $_SESSION["Login"];
 	$form['data'] = date("Y-m-d");
 	$form['ore'] = "0.00";
 	$form['stato'] = 'aperto';
 	$form['search']['clfoco']='';
-	$form['ritorno']=$_SERVER['HTTP_REFERER'];
+        $form['ritorno']="../../modules/suppor/report_assist.php";
 	$form['ref_code']='';
 }
 
@@ -256,15 +256,15 @@ $select_cliente = new selectPartner('clfoco');
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['stato']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
 		<select name="cstato" onchange="updateInputStato(this.value)">
-			<option value="aperto" <?php if ( $form['stato']=='aperto') echo '"selected"'; ?>>aperto</option>";
-         <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo '"selected"'; ?>>chiuso</option>";
-			<option value="contratto" <?php if ( $form['stato']=='contratto') echo '"selected"'; ?>>contratto</option>";
-         <?php
+			<option value="aperto" <?php if ( $form['stato']=='aperto') echo 'selected'; ?>>aperto</option>";
+                        <option value="chiuso" <?php if ( $form['stato']=='chiuso') echo 'selected'; ?>>chiuso</option>";
+			<option value="contratto" <?php if ( $form['stato']=='contratto') echo 'selected'; ?>>contratto</option>";
+                        <?php
 			$result = gaz_dbi_dyn_query(" DISTINCT ".$gTables['assist'].".stato,".$gTables['assist'].".tipo", $gTables['assist']," stato!='aperto' and stato!='chiuso' and stato != 'contratto' and tipo='ASS'", "stato", "0", "9999");
 			while ($stati = gaz_dbi_fetch_array($result)) {				
-					if ( $form['stato'] == $stati["stato"] ) $selected = "selected"; 
-					else $selected = "";
-					echo "<option value=\"".$stati["stato"]."\" ".$selected.">".$stati["stato"]."</option>";
+                            if ( $form['stato'] == $stati['stato'] ) $selected = "selected"; 
+                            else $selected = "";
+                            echo "<option value='".$stati['stato']."' ".$selected.">".$stati['stato']."</option>";
 			}
 			?>
 		</select> 

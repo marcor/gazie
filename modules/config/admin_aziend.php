@@ -188,6 +188,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['id_currency'] = 1;
     $form['decimal_price'] = 3;
     $form['ivaera'] = 5;
+    $form['image'] = file_get_contents( "../../library/images/comp_logo.gif");
     $form['web_url'] = 'http://';
     // rilevo l'eventuale intermediario
     $intermediary = gaz_dbi_get_row($gTables['config'], 'variable', 'intermediary');
