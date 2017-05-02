@@ -291,6 +291,7 @@ if (isset($_POST['genera']) && $msg == "") {
             }
         }
         //Mando in stampa le fatture generate
+        if ( $sez=="" ) $sez=1;
         $locazione = "Location: select_docforprint.php?tipdoc=2&seziva=" . $sez . "&proini=" . $invoices['last_protoc'] .
                 "&profin=" . $protoc .
                 "&datini=" . date("Ymd", $utsexe) .

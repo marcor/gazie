@@ -39,7 +39,6 @@ if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 
-//if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il controllo di presenza ordini evadibili
 function azzera() {
    $anno = date("Y");
     $_POST['num_rigo'] = 0;
@@ -120,6 +119,8 @@ if ( isset($_POST['weekday_repeat']) ) {
     $form['id_agente'] = $_POST['id_agente'];
     $form['banapp'] = $_POST['banapp'];
     $form['spediz'] = $_POST['spediz'];
+    $form['portos'] = $_POST['portos'];
+    $form['imball'] = $_POST['imball'];
     $form['sconto'] = $_POST['sconto'];
     $form['ivaspe'] = $admin_aziend['preeminent_vat'];
     $form['listin'] = 1;
@@ -145,12 +146,12 @@ if ( isset($_POST['weekday_repeat']) ) {
         $form['seziva'] = $testate['seziva'];
         $form['tipdoc'] = $testate['tipdoc'];
         $form['indspe'] = $cliente['indspe'];
-        $form['traspo'] = $testate['traspo'];
+        //$form['traspo'] = $testate['traspo'];
         $form['speban'] = $testate['speban'];
         $form['stamp'] = $testate['stamp'];
-        $form['vettor'] = $testate['vettor'];
-        $form['portos'] = $testate['portos'];
-        $form['imball'] = $testate['imball'];
+        //$form['vettor'] = $testate['vettor'];
+        //$form['portos'] = $testate['portos'];
+        //$form['imball'] = $testate['imball'];
         $form['pagame'] = $testate['pagame'];
         $form['destin'] = $testate['destin'];
         $form['id_des'] = $testate['id_des'];
@@ -158,7 +159,7 @@ if ( isset($_POST['weekday_repeat']) ) {
         $form['caumag'] = $testate['caumag'];
         $form['id_agente'] = $testate['id_agente'];
         $form['banapp'] = $testate['banapp'];
-        $form['spediz'] = $testate['spediz'];
+        //$form['spediz'] = $testate['spediz'];
         $form['sconto'] = $testate['sconto'];
         $form['listin'] = $testate['listin'];
         $form['net_weight'] = $testate['net_weight'];
@@ -210,7 +211,7 @@ if ( isset($_POST['weekday_repeat']) ) {
                 $inevasi = "ok";
         }
         if (empty($inevasi)) {
-            $msg .= "2+";
+            //$msg .= "2+";
         }
     }
     if (empty($form["pagame"]))
@@ -242,7 +243,7 @@ if ( isset($_POST['weekday_repeat']) ) {
         $form['ddt_type'] = 'T';
         $form['template'] = "FatturaSemplice";
         $form['id_con'] = '';
-        $form['status'] = 'GENERATO';
+        $form['status'] = ''; //GENERATO
         $form['initra'] = $iniziotrasporto;
         $form['datemi'] = $dataemiss;
           
@@ -278,7 +279,7 @@ if ( isset($_POST['weekday_repeat']) ) {
                     );
                 }
                 //modifico il rigo dell'ordine indicandoci l'id della testata del DdT
-                //gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
+                gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
             //}
             if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non � il primo rigo processato
                 //controllo se ci sono ancora righi inevasi

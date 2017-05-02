@@ -253,7 +253,7 @@ $recordnav->output();
                 echo "<td>" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
             }
             echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a> &nbsp;</td>";
-            echo "<td>".$r["unita_locale1"]."</td>";
+            echo "<td><a href=\"admin_destinazioni.php?codice=".$r["codice"]."&Update\">".$r["unita_locale1"]."</a></td>";
             
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.

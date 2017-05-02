@@ -65,6 +65,7 @@ $result = gaz_dbi_dyn_query("*", $gTables['tesbro'], "id_tes = " . intval($_GET[
 $rs_righi = gaz_dbi_dyn_query("*", $gTables['rigbro'], "id_tes = " . intval($_GET['id_tes']), "id_tes desc");
 $numrig = gaz_dbi_num_rows($rs_righi);
 $form = gaz_dbi_fetch_array($result);
+$tipobro="";
 switch ($form['tipdoc']) {
    case "VPR":
       $tipobro = "il preventivo";
