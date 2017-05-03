@@ -85,11 +85,21 @@ $anagrafica = new Anagrafica();
 $cliente = $anagrafica->getPartner($form['clfoco']);
 
 function trovaNuovoNumero($gTables) {
-   $orderBy = "datemi desc, numdoc desc";
-   $rs_ultimo_documento = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], 1, $orderBy, 0, 1);
-   $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
-   // se e' il primo documento dell'anno, resetto il contatore
-   if ($ultimo_documento) {
+	// modifica di Antonio Espasiano come da post :
+	// https://sourceforge.net/p/gazie/discussion/468173/thread/572dcb76/
+	//
+	$orderBy = "datemi desc, numdoc desc";
+	parse_str(parse_url($_POST['ritorno'],PHP_URL_QUERY),$output);
+	$rs_ultimo_documento = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], $gTables['tesbro'].".tipdoc="."'".$output['auxil']."'", $orderBy, 0, 1);
+	$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+	// se e' il primo documento dell'anno, resetto il contatore
+	if ($ultimo_documento) {
+	/*$orderBy = "datemi desc, numdoc desc";
+	$rs_ultimo_documento = gaz_dbi_dyn_query("numdoc", $gTables['tesbro'], 1, $orderBy, 0, 1);
+	$ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
+	se e' il primo documento dell'anno, resetto il contatore
+	if ($ultimo_documento) {
+	*/
       $numdoc = $ultimo_documento['numdoc'] + 1;
    } else {
       $numdoc = 1;
