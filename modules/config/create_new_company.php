@@ -167,6 +167,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             $new_company['citspe'] = $upd;
             $new_company['prospe'] = '';
             $new_company['telefo'] = '';
+            $new_company['image']  = file_get_contents('../../library/images/comp_logo.gif');
             $new_company['fax'] = '';
             $new_company['e_mail'] = $upd;
             $new_company['codfis'] = '00000000000';
