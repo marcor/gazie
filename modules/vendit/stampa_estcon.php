@@ -108,6 +108,7 @@ while ($movimenti = gaz_dbi_fetch_array($result)){
 if (isset($_GET["dest"]) && $_GET["dest"]=='E'){ // � stata richiesta una e-mail
    $dest = 'S';     // Genero l'output pdf come stringa binaria
    // Costruisco oggetto con tutti i dati del file pdf da allegare
+   $content = new StdClass; //PHP Strict standards: Creating default object from empty value
    $content->name = 'Estratto_conto_del_'.intval($_GET["annini"]).'_'.intval($_GET["annfin"]).'.pdf';
    $content->string = $pdf->Output('Estratto_conto_del_'.intval($_GET["annini"]).'_'.intval($_GET["annfin"]).'.pdf', $dest);
    $content->encoding = "base64";

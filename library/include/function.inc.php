@@ -1333,7 +1333,7 @@ class GAzieForm {
     function CalendarPopup($name, $day, $month, $year, $class = 'FacetSelect', $refresh = '') {
         global $script_transl;
         if (!empty($refresh)) {
-            $refresh = ' onchange="this.form.hidden_req.value=' . $refresh . '; this.form.submit();"';
+            $refresh = ' onchange="this.form.hidden_req.value=\'' . $refresh . '\'; this.form.submit();"';
         }
 
         echo '<select name="' . $name . '_D" id="' . $name . '_D" class="' . $class . '"' . $refresh . '>';
