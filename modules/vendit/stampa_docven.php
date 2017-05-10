@@ -82,7 +82,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         $fattEmail = '';
     } else {
         $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
-        $fattEmail = " AND B.fatt_email = $invioPerEmail";
+        $fattEmail = " AND C.fatt_email = $invioPerEmail";
     }
     //recupero i documenti da stampare
     $where = "tipdoc = 'FAD' AND seziva = "
@@ -104,7 +104,8 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             . $fattEmail;
     ;
     //recupero i documenti da stampare
-    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice ";
+    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice ".
+                                    "left join " . $gTables['anagra'] . " C on B.id_anagra=C.id ";
     $orderby = "datfat ASC, protoc ASC, id_tes ASC";
 //    $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
     $clientiRS = gaz_dbi_dyn_query("distinct(A.clfoco) as clfoco", $from, $where);
@@ -197,7 +198,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         $fattEmail = '';
     } else {
         $invioPerEmail = ($_GET['ts'] == 1 ? 0 : 1);
-        $fattEmail = " AND B.fatt_email = $invioPerEmail";
+        $fattEmail = " AND C.fatt_email = $invioPerEmail";
     }
     //recupero i documenti da stampare
     $where = $where
