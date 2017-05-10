@@ -150,7 +150,8 @@ $pdf->Cell(150,4,'TOTALI : ',1,0,'L');
 $pdf->Cell(20,4,gaz_format_number($tot_dare),1,0,'R',1);
 $pdf->Cell(20,4,gaz_format_number($tot_avere),1,0,'R',1);
 if (isset($_GET['stadef'])) {
-    gaz_dbi_put_row($gTables['aziend'],"codice",$admin_aziend['codice'],'upggio', $pdf->getGroupPageNo()+$n_page-1);
+    gaz_dbi_put_row($gTables['company_data'],'var','upggio','data',$pdf->getGroupPageNo() + $n_page - 1 );
+    //gaz_dbi_put_row($gTables['aziend'],"codice",$admin_aziend['codice'],'upggio', $pdf->getGroupPageNo()+$n_page-1);
 }
 $pdf->Output($title.'.pdf');
 ?>

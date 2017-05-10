@@ -200,7 +200,8 @@ if ($saldo_totale > 0) { // se ho da pagare
 }
 
 if ($_GET['sd'] == 'sta_def') {
-    gaz_dbi_put_row($gTables['aziend'], 'codice', 1, 'upgrie', $pdf->getGroupPageNo() + $n_page - 1);
+    gaz_dbi_put_row($gTables['company_data'],'var','upgrie','data',$pdf->getGroupPageNo() + $n_page - 1 );
+    //gaz_dbi_put_row($gTables['aziend'], 'codice', 1, 'upgrie', $pdf->getGroupPageNo() + $n_page - 1);
 }
 $pdf->Output($title . '.pdf');
 ?>

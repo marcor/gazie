@@ -142,7 +142,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['date_fin_Y']=date("Y",$utsdatfin);
     $form['sta_def']=false;
     $form['cover']=false;
-    $form['page_ini'] = $admin_aziend['upgrie']+1;
+    $upgrie = gaz_dbi_get_row($gTables['company_data'],'var','upgrie');
+    $form['page_ini'] = $upgrie['data']+1;
     $form['carry']=getPreviousCredit(date("Ymd",$utsdatcar));
 } else { // accessi successivi
     $form['hidden_req']=htmlentities($_POST['hidden_req']);

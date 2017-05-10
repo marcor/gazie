@@ -27,7 +27,9 @@ $admin_aziend=checkAdmin();
 $msg = "";
 
 if (!isset($_GET['valdar'])) {  //al primo accesso
-    $form['pagini'] = $admin_aziend["upggio"]+1;
+    $upggio = gaz_dbi_get_row($gTables['company_data'],'var','upggio');
+    $form['pagini'] = $upggio['data']+1;
+    //$form['pagini'] = $admin_aziend["upggio"]+1;
     $form['stadef'] = false;
     $form['copert'] = false;
     $form['valdar'] = 0;
