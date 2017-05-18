@@ -40,7 +40,7 @@ $transl['contab'] = array('name' => "Contabilit&agrave;",
         5 => array("Stampa il piano dei conti", "Stampa Piano dei Conti"),
         6 => array("Visualizzazione e stampa di estratti conto o partite aperte", "Estratti Conto/Partite Aperte"),
         7 => array("Visualizzazione e stampa di dare/avere clienti/fornitori", "Analisi Debiti/Crediti"),
-        8 => array("Spesometro analitico", "Spesometro analitico"),
+        8 => array("Comunicazione liquidazioni IVA", "Comunicazione liquidazioni IVA"),
     )
 );
 ?>
