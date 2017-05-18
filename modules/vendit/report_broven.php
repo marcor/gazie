@@ -224,7 +224,7 @@ $recordnav->output();
         </tr>
         <?php
 //recupero le testate in base alle scelte impostate
-        $result = gaz_dbi_dyn_query($gTables['tesbro'] . ".*," . $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail," . $gTables["clfoco"] . ".codice, ".$gTables["destina"].".*", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id  left join '. $gTables['destina'].' on ' .$gTables['tesbro'].'.id_des_same_company = ' . $gTables['destina'] . '.codice', $where, $orderby, $limit, $passo);
+        $result = gaz_dbi_dyn_query($gTables['tesbro'] . ".*," . $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail AS base_mail," . $gTables["clfoco"] . ".codice, ".$gTables["destina"].".*", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id  left join '. $gTables['destina'].' on ' .$gTables['tesbro'].'.id_des_same_company = ' . $gTables['destina'] . '.codice', $where, $orderby, $limit, $passo);
         if ($result == false) {
             die(mysql_error());
         }
@@ -389,10 +389,13 @@ $recordnav->output();
             echo "</td>";
             // Colonna "Mail"
             echo "<td align=\"center\">";
-            if (!empty($r["e_mail"])) {
+            if (!empty($r["e_mail"])){ // ho una mail sulla destinazione
                 echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r["e_mail"] . '"
         mail="' . $r["e_mail"] . '" namedoc="' . $script_transl['type_value'][$r["tipdoc"]] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
-            } else {
+            } elseif (!empty($r["base_mail"])) { // ho una mail sul cliente
+                echo '<a class="btn btn-xs btn-default btn-email" onclick="confirMail(this);return false;" id="doc' . $r["id_tes"] . '" url="' . $modulo . '&dest=E" href="#" title="mailto: ' . $r["base_mail"] . '"
+        mail="' . $r["base_mail"] . '" namedoc="' . $script_transl['type_value'][$r["tipdoc"]] . ' n.' . $r["numdoc"] . ' del ' . gaz_format_date($r["datemi"]) . '"><i class="glyphicon glyphicon-envelope"></i></a>';
+            } else { // non ho mail
                 echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice=' . substr($r["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
             }
             echo "</td>";
