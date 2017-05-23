@@ -24,8 +24,30 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+
 $msg = array('err' => array(), 'war' => array());
-require("../../library/include/check.inc.php");
+
+if (!isset($_POST['ritorno'])) {
+    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+} else {
+    $form['ritorno'] = $_POST['ritorno'];
+}
+
+if ((isset($_GET['Update']) and ! isset($_GET['id_tes']))) {
+    header("Location: " . $form['ritorno']);
+    exit;
+}
+
+if (count($msg['err']) < 1) { // nessun errore
+    if ($toDo == 'update') { // e' una modifica
+        tesdocUpdate(array('id_tes', $form['id_tes']), $form);
+        header("Location: " . $form['ritorno']);
+        exit;
+    } else { // e' un'inserimento
+        header("Location: invsta_docven.php");
+        exit;
+    }
+}
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -36,6 +58,7 @@ if (count($msg['err']) > 0) { // ho un errore
 ?>
 
 <form method="POST" name="form" enctype="multipart/form-data">
+    <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
     <div class="panel panel-default gaz-table-form">
         <div class="container-fluid">

@@ -40,7 +40,7 @@ if (isset($_POST['Delete'])) {
 }
 
 if (isset($_POST['Return'])) {
-    header("Location: report_client.php");
+    header("Location: staff_report.php");
     exit;
 }
 

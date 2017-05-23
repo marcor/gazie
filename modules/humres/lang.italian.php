@@ -96,6 +96,7 @@ $strScript = array("admin_staff.php" =>
             "Città" => "citspe",
             "Telefono" => "telefo",
             "C.F." => "",
+            "Visualizza <br /> e/o stampa"=>"",
             "Cancella" => "")
     ),
     "delete_staff.php" =>

@@ -1133,14 +1133,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     if (isset($_POST['upper_row'])) {
         $upp_key = key($_POST['upper_row']);
         $k_next = $upp_key - 1;
-        if (isset($form["row_$k_next"])) { //se ho un rigo testo prima gli cambio l'index
-            $form["row_$upp_key"] = $form["row_$k_next"];
-            unset($form["row_$k_next"]);
-        }
         if ($upp_key > 0) {
             $new_key = $upp_key - 1;
         } else {
             $new_key = $next_row - 1;
+        }
+        if (isset($form["row_$upp_key"])) { //se sto spostando un rigo testo
+            $form["row_$new_key"] = $form["row_$upp_key"];
+            unset($form["row_$upp_key"]);
+        } elseif(isset($form["row_$new_key"]))  { //se lo sto spostando dove prima c'era un rigo testo
+            $form["row_$upp_key"] = $form["row_$new_key"];
+            unset($form["row_$new_key"]);
         }
         $pull_row = $form['rows'][$new_key];
         $form['rows'][$new_key] = $form['rows'][$upp_key];

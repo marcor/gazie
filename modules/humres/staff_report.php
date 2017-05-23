@@ -95,7 +95,7 @@ $script_transl = HeadMain();
             <tr>        
                 <?php
                 $result = gaz_dbi_dyn_query('*', $gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id'
-                        . ' LEFT JOIN ' . $gTables['staff'] . ' ON ' . $gTables['staff'] . '.id_clfoco = ' . $gTables['clfoco'] . '.codice', $where, $orderby, $limit, $passo);
+                        . ' LEFT JOIN ' . $gTables['staff'] . ' ON ' . $gTables['staff'] . '.id_clfoco = ' . $gTables['clfoco'] . '.codice', $where. ' AND SUBSTRING(' . $gTables['staff'] . '.id_clfoco,4,6) > 0', $orderby, $limit, $passo);
                 $recordnav = new recordnav($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $limit, $passo);
                 $recordnav->output();
                 ?>
@@ -108,38 +108,38 @@ $script_transl = HeadMain();
                 ?>
             </tr>
             <?php
-            while ($a_row = gaz_dbi_fetch_array($result)) {
+            while ($r = gaz_dbi_fetch_array($result)) {
                 echo "<tr>";
                 // Colonna codice staffe
-                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" . substr($a_row["id_clfoco"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . intval(substr($a_row["id_clfoco"], 3)) . "</a> &nbsp</td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_staff.php?codice=" . substr($r["id_clfoco"], 3) . "&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . intval(substr($r["id_clfoco"], 3)) . "</a> &nbsp</td>";
                 // Colonna cognome
-                echo "<td class=\"FacetDataTD\" >" . $a_row["ragso1"] . " &nbsp;</td>";
+                echo "<td class=\"FacetDataTD\" >" . $r["ragso1"] . " &nbsp;</td>";
                 // Colonna nome
-                echo "<td class=\"FacetDataTD\" >" . $a_row["ragso2"] . " &nbsp;</td>";
+                echo "<td class=\"FacetDataTD\" >" . $r["ragso2"] . " &nbsp;</td>";
                 // colonna sesso
-                echo "<td class=\"FacetDataTD\" align=\"center\">" . $a_row["sexper"] . "</td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\">" . $r["sexper"] . "</td>";
                 // Colonna mansione
-                echo "<td class=\"FacetDataTD\" >" . $a_row["job_title"] . " &nbsp;</td>";
+                echo "<td class=\"FacetDataTD\" >" . $r["job_title"] . " &nbsp;</td>";
                 // colonna indirizzo
-                $google_string = str_replace(" ", "+", $a_row["indspe"]) . "," . str_replace(" ", "+", $a_row["capspe"]) . "," . str_replace(" ", "+", $a_row["citspe"]) . "," . str_replace(" ", "+", $a_row["prospe"]);
-                echo "<td class=\"FacetDataTD\" title=\"" . $a_row["capspe"] . " " . $a_row["indspe"] . "\">";
-                echo "<a class=\"btn btn-xs btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/place/" . $google_string . "\">" . $a_row["citspe"] . " (" . $a_row["prospe"] . ")&nbsp;<i class=\"glyphicon glyphicon-map-marker\"></i></a>";
+                $google_string = str_replace(" ", "+", $r["indspe"]) . "," . str_replace(" ", "+", $r["capspe"]) . "," . str_replace(" ", "+", $r["citspe"]) . "," . str_replace(" ", "+", $r["prospe"]);
+                echo "<td class=\"FacetDataTD\" title=\"" . $r["capspe"] . " " . $r["indspe"] . "\">";
+                echo "<a class=\"btn btn-xs btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/place/" . $google_string . "\">" . $r["citspe"] . " (" . $r["prospe"] . ")&nbsp;<i class=\"glyphicon glyphicon-map-marker\"></i></a>";
                 echo "</td>";
                 // composizione telefono
                 $title = "";
                 $telefono = "";
-                if (!empty($a_row["telefo"])) {
-                    $telefono = $a_row["telefo"];
-                    if (!empty($a_row["cell"])) {
-                        $title .= "cell:" . $a_row["cell"];
+                if (!empty($r["telefo"])) {
+                    $telefono = $r["telefo"];
+                    if (!empty($r["cell"])) {
+                        $title .= "cell:" . $r["cell"];
                     }
-                    if (!empty($a_row["fax"])) {
-                        $title .= " fax:" . $a_row["fax"];
+                    if (!empty($r["fax"])) {
+                        $title .= " fax:" . $r["fax"];
                     }
-                } elseif (!empty($a_row["cell"])) {
-                    $telefono = $a_row["cell"];
-                    if (!empty($a_row["fax"])) {
-                        $title .= " fax:" . $a_row["fax"];
+                } elseif (!empty($r["cell"])) {
+                    $telefono = $r["cell"];
+                    if (!empty($r["fax"])) {
+                        $title .= " fax:" . $r["fax"];
                     }
                 } else {
                     $telefono = "_";
@@ -148,9 +148,14 @@ $script_transl = HeadMain();
                 // colonna telefono
                 echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">" . gaz_html_call_tel($telefono) . " &nbsp;</td>";
                 // colonna fiscali
-                echo "<td class=\"FacetDataTD\" align=\"center\">" . $a_row['codfis'] . "</td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\">" . $r['codfis'] . "</td>";
+                // colonna contabilità
+                echo '<td class="FacetDataTD" align="center"><a class="btn btn-xs btn-default" href="../contab/select_partit.php?id=' . $r["id_clfoco"] . '" target="_blank">
+                    <i class="glyphicon glyphicon-check"></i>&nbsp;<i class="glyphicon glyphicon-print"></i>
+                    </a></td>';
+
                 // colonna stampa privacy
-                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_staff.php?codice=" . $a_row["id_clfoco"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_staff.php?codice=" . $r["id_clfoco"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                 echo "</tr>\n";
             }
             ?>

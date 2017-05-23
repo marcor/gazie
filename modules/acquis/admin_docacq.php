@@ -1496,7 +1496,7 @@ foreach ($form['rows'] as $key => $value) {
 				  </td>';
 
             echo '<td>
-					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
+					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="rows[' . $key . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 ';
             if ($value['lot_or_serial'] > 0) {
                 if (empty($form['rows'][$key]['filename'])) {

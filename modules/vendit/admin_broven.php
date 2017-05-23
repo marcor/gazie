@@ -834,15 +834,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // Se viene inviata la richiesta di spostamento verso l'alto del rigo
     if (isset($_POST['upper_row'])) {
         $upp_key = key($_POST['upper_row']);
-        $k_next = $upp_key - 1;
-        if (isset($form["row_$k_next"])) { //se ho un rigo testo prima gli cambio l'index
-            $form["row_$upp_key"] = $form["row_$k_next"];
-            unset($form["row_$k_next"]);
-        }
         if ($upp_key > 0) {
             $new_key = $upp_key - 1;
         } else {
             $new_key = $next_row - 1;
+        }
+        if (isset($form["row_$upp_key"])) { //se sto spostando un rigo testo
+            $form["row_$new_key"] = $form["row_$upp_key"];
+            unset($form["row_$upp_key"]);
+        } elseif(isset($form["row_$new_key"]))  { //se lo sto spostando dove prima c'era un rigo testo
+            $form["row_$upp_key"] = $form["row_$new_key"];
+            unset($form["row_$new_key"]);
         }
         $updated_row = $form['rows'][$new_key];
         $form['rows'][$new_key] = $form['rows'][$upp_key];
@@ -1594,10 +1596,16 @@ foreach ($form['rows'] as $k => $v) {
               <textarea id="row_'.$k.'" name="row_'.$k.'" class="mceClass'.$k.'" style="width:100%;height:100px;">'.$form["row_$k"].'</textarea>
              */
             echo '	<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
+					<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+						<i class="glyphicon glyphicon-arrow-up"></i>
+					</button>
 		 			<input class="FacetDataTDsmall" type="submit" name="upd_row[' . $k . ']" value="' . $script_transl['typerow'][$v['tiprig']] . '" />
 				</td>
 				<td colspan="10">
-					<textarea id="row_' . $k . '" name="row_' . $k . '" class="mceClass" style="width:100%;height:100px;">' . $form["row_$k"] . '</textarea>
+					<textarea id="row_' . $k . 
+                '" name="row_' . $k . 
+                '" class="mceClass" style="width:100%;height:100px;">'
+                . $form["row_$k"] . '</textarea>
 				</td>
 				<input type="hidden" value="" name="rows[' . $k . '][descri]" />
 				<input type="hidden" value="" name="rows[' . $k . '][unimis]" />
