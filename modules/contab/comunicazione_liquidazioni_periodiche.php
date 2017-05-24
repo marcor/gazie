@@ -33,19 +33,28 @@ if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_POST['ritorno'];
 }
 
-if ((isset($_GET['Update']) and ! isset($_GET['id_tes']))) {
+if ((isset($_GET['Update']) && !isset($_GET['id']))) {
     header("Location: " . $form['ritorno']);
     exit;
 }
 
-if (count($msg['err']) < 1) { // nessun errore
-    if ($toDo == 'update') { // e' una modifica
-        tesdocUpdate(array('id_tes', $form['id_tes']), $form);
-        header("Location: " . $form['ritorno']);
-        exit;
-    } else { // e' un'inserimento
-        header("Location: invsta_docven.php");
-        exit;
+if (isset($_POST['Update']) || isset($_GET['Update'])) {
+    $toDo = 'update';
+} else {
+    $toDo = 'insert';
+}
+
+// Se viene inviata la richiesta di conferma totale ...
+if (isset($_POST['ins'])) {
+    if (count($msg['err']) < 1) { // nessun errore
+        if ($toDo == 'update') { // e' una modifica
+            tesdocUpdate(array('id_tes', $form['id_tes']), $form);
+            header("Location: " . $form['ritorno']);
+            exit;
+        } else { // e' un'inserimento
+            header("Location: comunicazione_liquidazioni_report.php");
+            exit;
+        }
     }
 }
 
@@ -63,37 +72,144 @@ if (count($msg['err']) > 0) { // ho un errore
     <div class="panel panel-default gaz-table-form">
         <div class="container-fluid">
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
+                <div class="form-group">
+                    <label for="vp2" class="col-sm-1 col-md-1 col-lg-1 control-label">VP2</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                        <?php echo $script_transl['vp2']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp2" name="vp2" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
                     </div>
                 </div>
-            </div><!-- chiude row  -->
+            </div> <!-- chiude row  -->
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
+                <div class="form-group">
+                    <label for="vp3" class="col-sm-1 col-md-1 col-lg-1 control-label">VP3</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp3']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp3" name="vp3" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
                     </div>
                 </div>
-            </div><!-- chiude row  -->
+            </div> <!-- chiude row  -->
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
+                <div class="form-group">
+                    <label for="vp4" class="col-sm-1 col-md-1 col-lg-1 control-label">VP4</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                        <?php echo $script_transl['vp4']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp4" name="vp4" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
                     </div>
                 </div>
-            </div><!-- chiude row  -->
+            </div> <!-- chiude row  -->
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <div class="col-sm-8">
-                        </div>
+                <div class="form-group">
+                    <label for="vp5" class="col-sm-1 col-md-1 col-lg-1 control-label">VP5</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp5']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp5" name="vp5" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
                     </div>
                 </div>
-            </div><!-- chiude row  -->
+            </div> <!-- chiude row  -->
             <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
+                <div class="form-group">
+                    <label for="vp6" class="col-sm-1 col-md-1 col-lg-1 control-label">VP6</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                        <?php echo $script_transl['vp6']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp6" name="vp6" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp6c']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp6c" name="vp6c" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
                     </div>
                 </div>
-            </div><!-- chiude row  -->
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="vp7" class="col-sm-1 col-md-1 col-lg-1 control-label">VP7</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                        <?php echo $script_transl['vp7']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp7" name="vp7" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="vp8" class="col-sm-1 col-md-1 col-lg-1 control-label">VP8</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp8']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp8" name="vp8" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="vp9" class="col-sm-1 col-md-1 col-lg-1 control-label">VP9</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp9']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp5" name="vp9" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="vp10" class="col-sm-1 col-md-1 col-lg-1 control-label">VP10</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp10']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp10" name="vp10" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="vp11" class="col-sm-1 col-md-1 col-lg-1 control-label">VP11</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp11']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp10" name="vp11" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="vp12" class="col-sm-1 col-md-1 col-lg-1 control-label">VP12</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                        <?php echo $script_transl['vp12']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp12" name="vp12" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="vp13" class="col-sm-1 col-md-1 col-lg-1 control-label">VP13</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp13']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp13" name="vp13" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
+            <div class="row">
+                <div class="form-group">
+                    <label for="vp14" class="col-sm-1 col-md-1 col-lg-1 control-label">VP14</label>
+                    <div class="col-sm-6 col-md-6 col-lg-6 ">
+                        <?php echo $script_transl['vp14']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp14" name="vp14" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                    <div class="col-sm-5 col-md-5 col-lg-5 ">
+                        <?php echo $script_transl['vp14c']; ?>
+                        <input type="number" step="0.01" min="0.1" max="100" class="form-control" id="vp14c" name="vp14c" placeholder="<?php echo ''; ?>" value="<?php echo ''; ?>">
+                    </div>
+                </div>
+            </div> <!-- chiude row  -->
         </div><!-- chiude container  -->
     </div><!-- chiude panel  -->
 </form>
