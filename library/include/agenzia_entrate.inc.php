@@ -487,8 +487,8 @@ class AgenziaEntrate {
 // --- FINE FUNZIONI COMUNICAZIONE OPERAZIONI RILEVANTI AI FINI IVA (ART21) ANTE 2012
 
 
-/* --- INIZIO creaFileART21_poli MODELLO COMUNICAZIONE POLIVALENTE DAL 2013
-  
+    /* --- INIZIO creaFileART21_poli MODELLO COMUNICAZIONE POLIVALENTE DAL 2013
+
       $testa = array monodimensionale con i seguenti index:
       [codfis] = Codice Fiscale del contribuente 16 alfanumerico o 11 numerico
       [pariva] = Partita IVA del contribuente 11 numerico
@@ -827,4 +827,100 @@ class AgenziaEntrate {
 // --- FINE FUNZIONE CREA FILE COMUNICAZIONE POLIVALENTE
 }
 
+// --- INIZIO FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DELLE LIQUIDAZIONI PERIODICHE
+function creaFileIVP17($aziend, $data) {
+    $domDoc = new DOMDocument;
+    $domDoc->load("../../library/include/template_IVP17.xml");
+    $xpath = new DOMXPath($domDoc);
+    $res = $xpath->query('//*[@identificativo = ""]');
+    $res->item(0)->setAttribute('identificativo', $data['trimestre_liquidabile']); // non so se si può utilizzare questo metodo per valorizzare l'identificativo
+    $results = $xpath->query("//iv:Fornitura/iv:Comunicazione/iv:Frontespizio/iv:CodiceFiscale")->item(0);
+    $attrVal = $domDoc->createTextNode($aziend['codfis']);
+    $results->appendChild($attrVal);
+    $results = $xpath->query("//iv:Fornitura/iv:Comunicazione/iv:Frontespizio/iv:AnnoImposta")->item(0);
+    $attrVal = $domDoc->createTextNode($data['y']);
+    $results->appendChild($attrVal);
+    $results = $xpath->query("//iv:Fornitura/iv:Comunicazione/iv:Frontespizio/iv:PartitaIVA")->item(0);
+    $attrVal = $domDoc->createTextNode($aziend['pariva']);
+    $results->appendChild($attrVal);
+    $results = $xpath->query("//iv:Fornitura/iv:Comunicazione/iv:Frontespizio/iv:IdentificativoProdSoftware")->item(0);
+    $attrVal = $domDoc->createTextNode($aziend['pariva']);
+    $results->appendChild($attrVal);
+    $results = $xpath->query("//iv:Fornitura/iv:Comunicazione/iv:DatiContabili")->item(0);
+    foreach ($data['mods'] as $k => $v) {
+        $el = $domDoc->createElement("iv:Modulo", "");
+        if ($aziend['ivam_t'] == 'M') { // mensile
+            $el1 = $domDoc->createElement("iv:Mese", intval($k));
+        } else { // trimestrale
+            $el1 = $domDoc->createElement("iv:Trimestre", intval($k));
+        }
+        $el->appendChild($el1);
+        if ($v['vp2'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:TotaleOperazioniAttive", number_format($v['vp2'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp3'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:TotaleOperazioniPassive", number_format($v['vp3'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp4'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:IvaEsigibile", number_format($v['vp4'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp5'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:IvaDetratta", number_format($v['vp5'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if (($v['vp4'] - $v['vp5']) >= 0.01) { // debito
+            $el1 = $domDoc->createElement("iv:IvaDovuta", number_format(round($v['vp4'] - $v['vp5'], 2), 2, ',', ''));
+        } elseif (($v['vp4'] - $v['vp5']) <= -0.01) { // credito
+            $el1 = $domDoc->createElement("iv:IvaCredito", number_format(round($v['vp5'] - $v['vp4'], 2), 2, ',', ''));
+        } else {
+            $el1 = $domDoc->createElement("iv:IvaDovuta", number_format(0.00, 2, ',', ''));
+        }
+        $el->appendChild($el1);
+        if ($v['vp7'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:DebitoPrecedente", number_format($v['vp7'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp8'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:CreditoPeriodoPrecedente", number_format($v['vp8'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp9'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:CreditoAnnoPrecedente:", number_format($v['vp9'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp10'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:VersamentiAutoUE", number_format($v['vp10'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp11'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:CreditiImposta", number_format($v['vp11'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp12'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:InteressiDovuti", number_format($v['vp12'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        if ($v['vp13'] >= 0.01) {
+            $el1 = $domDoc->createElement("iv:Acconto", number_format($v['vp13'], 2, ',', ''));
+            $el->appendChild($el1);
+        }
+        $ImportoDaVersare = round($v['vp4'] - $v['vp5'] + $v['vp7'] - $v['vp8'] - $v['vp9'] - $v['vp10'] - $v['vp11'] + $v['vp12'] - $v['vp13'], 2);
+        if ($ImportoDaVersare >= 0.00) { // versamento debito
+            $el1 = $domDoc->createElement("iv:ImportoDaVersare", number_format(round($v['vp4'] - $v['vp5'], 2), 2, ',', ''));
+        } else { // da riportare a credito
+            $el1 = $domDoc->createElement("iv:ImportoACredito:", number_format(-round($v['vp4'] - $v['vp5'], 2), 2, ',', ''));
+        }
+        $el->appendChild($el1);
+
+        $results->appendChild($el);
+    }
+    header("Content-type: application/xml");
+    header("Content-Disposition: attachment; filename=".$aziend['country'].$aziend['codfis']."_LI_".$data['trimestre_liquidabile'].".xml");
+    print $domDoc->saveXML();
+}
+
+// --- FINE FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DELLE LIQUIDAZIONI PERIODICHE
 ?>

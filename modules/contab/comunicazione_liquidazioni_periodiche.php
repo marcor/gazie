@@ -24,7 +24,6 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-
 $msg = array('err' => array(), 'war' => array());
 
 function getMovimentiPeriodo($trimestre_liquidabile) {
@@ -103,12 +102,14 @@ if (!isset($_POST['ritorno'])) {
     } else { // è un inserimento
         // controllo se ad oggi è possibile fare una liquidazione
         $y = date('Y');
+        $form['y'] = $y;
         $m = date('m') % 3 - 1;
         if ($m == 0) {
             $y--;
             $m = 4;
         }
         $trimestre_liquidabile = $y . $m;
+        $form['trimestre_liquidabile'] = $trimestre_liquidabile;
         // cerco l'ultimo file xml generato
         $rs_query = gaz_dbi_dyn_query("*", $gTables['liquidazioni_iva'], 1, "anno DESC, mese_trimestre DESC", 0, 1);
         $ultima_liquidazione = gaz_dbi_fetch_array($rs_query);
@@ -134,8 +135,13 @@ if (!isset($_POST['ritorno'])) {
             $form['mods'] = $d;
         }
     }
-} else {
-    $form['ritorno'] = $_POST['ritorno'];
+} else { // nei post successivi (submit)
+    $form = $_POST; // dovrò fare il parsing per la sicurezza
+    if (isset($_POST['Submit'])) {
+        require("../../library/include/agenzia_entrate.inc.php");
+        creaFileIVP17($admin_aziend, $form);
+        exit;
+    }
 }
 
 if ((isset($_GET['Update']) && !isset($_GET['id']))) {
@@ -193,21 +199,33 @@ if (count($msg['err']) > 0) { // ho un errore
 
     </STYLE>
     <form method="POST" name="form" enctype="multipart/form-data">
+        <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
         <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
-        <div class="text-center"><b><?php echo $script_transl['title'] . ' ' . $script_transl['periodo_val'][substr($trimestre_liquidabile, 4, 1)] . ' ' . $script_transl['ivam_t_val']['T'] . ' ' . $y; ?></b></div>
+        <input type="hidden" value="<?php echo $form['y']; ?>" name="y">
+        <input type="hidden" value="<?php echo $form['trimestre_liquidabile']; ?>" name="trimestre_liquidabile">
+        <div class="text-center"><b><?php echo $script_transl['title'] . ' ' . $script_transl['periodo_val'][substr($form['trimestre_liquidabile'], 4, 1)] . ' ' . $script_transl['ivam_t_val']['T'] . ' ' . $form['y']; ?></b></div>
         <?php
-        foreach ($form['mods'] as $k => $v) { 
+        foreach ($form['mods'] as $k => $v) {
             if (($v['vp4'] - $v['vp5']) >= 0.01) { // debito
                 $vp6c = 0.00;
                 $vp6d = round($v['vp4'] - $v['vp5'], 2);
-            } elseif (($v['vp4'] - $v['vp5']) <= -0.01) { // debito
+            } elseif (($v['vp4'] - $v['vp5']) <= -0.01) { // credito
                 $vp6d = 0.00;
                 $vp6c = round($v['vp5'] - $v['vp4'], 2);
             } else {
                 $vp6d = 0.00;
                 $vp6c = 0.00;
             }
+            $ImportoDaVersare = round($v['vp4'] - $v['vp5'] + $v['vp7'] - $v['vp8'] - $v['vp9'] - $v['vp10'] - $v['vp11'] + $v['vp12'] - $v['vp13'], 2);
+            if ($ImportoDaVersare >= 0.00) { // versamento debito
+                $vp14c = 0.00;
+                $vp14d = $ImportoDaVersare;
+            } else { // da riportare a credito
+                $vp14c = -$ImportoDaVersare;
+                $vp14d = 0.00;
+            }
             ?>
+            <input type="hidden" value="<?php echo $v['nome_periodo']; ?>" name="mods[<?php echo $k; ?>][nome_periodo]">
             <div class="panel panel-default gaz-table-form">
                 <div class="verticaltext">
                     <div class="verticaltext_content"><?php echo $v['nome_periodo']; ?></div>
@@ -217,7 +235,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 <label for="vp2" class="col-sm-1 col-md-1 col-lg-1 control-label">VP2</label>
                                 <div class="col-sm-6 col-md-6 col-lg-6">
                                     <?php echo $script_transl['vp2']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp2" name="mods[<?php echo $k; ?>]vp2" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp2']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp2" name="mods[<?php echo $k; ?>][vp2]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp2']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -228,7 +246,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5">
                                     <?php echo $script_transl['vp3']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp3" name="mods[<?php echo $k; ?>]vp3" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp3']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp3" name="mods[<?php echo $k; ?>][vp3]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp3']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -237,7 +255,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 <label for="vp4" class="col-sm-1 col-md-1 col-lg-1 control-label">VP4</label>
                                 <div class="col-sm-6 col-md-6 col-lg-6">
                                     <?php echo $script_transl['vp4']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp4" name="mods[<?php echo $k; ?>]vp4" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp4']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp4" name="mods[<?php echo $k; ?>][vp4]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp4']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -248,7 +266,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5">
                                     <?php echo $script_transl['vp5']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp5" name="mods[<?php echo $k; ?>]vp5" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp5']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp5" name="mods[<?php echo $k; ?>][vp5]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp5']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -257,14 +275,14 @@ if (count($msg['err']) > 0) { // ho un errore
                                 <label for="vp6" class="col-sm-1 col-md-1 col-lg-1 control-label">VP6</label>
                                 <div class="col-sm-6 col-md-6 col-lg-6 bg-warning">
                                     <?php echo $script_transl['vp6']; ?>
-                                    <div class="form-control" id="vp6d" name="vp6d" >
-                                    <?php echo $vp6d; ?>
+                                    <div class="form-control text-center" id="vp6d" name="vp6d" >
+                                        <?php echo $vp6d; ?>
                                     </div>
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5 bg-warning">
                                     <?php echo $script_transl['vp6c']; ?>
-                                    <div class="form-control" id="vp6c" name="vp6c" >
-                                    <?php echo $vp6c; ?>
+                                    <div class="form-control text-center" id="vp6c" name="vp6c" >
+                                        <?php echo $vp6c; ?>
                                     </div>
                                 </div>
                             </div>
@@ -274,7 +292,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 <label for="vp7" class="col-sm-1 col-md-1 col-lg-1 control-label">VP7</label>
                                 <div class="col-sm-6 col-md-6 col-lg-6">
                                     <?php echo $script_transl['vp7']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp7" name="mods[<?php echo $k; ?>]vp7" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp7']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp7" name="mods[<?php echo $k; ?>][vp7]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp7']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -285,7 +303,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5">
                                     <?php echo $script_transl['vp8']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp8" name="mods[<?php echo $k; ?>]vp8" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp8']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp8" name="mods[<?php echo $k; ?>][vp8]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp8']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -296,7 +314,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5">
                                     <?php echo $script_transl['vp9']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp5" name="mods[<?php echo $k; ?>]vp9" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp9']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp5" name="mods[<?php echo $k; ?>][vp9]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp9']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -307,7 +325,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5">
                                     <?php echo $script_transl['vp10']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp10" name="mods[<?php echo $k; ?>]vp10" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp10']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp10" name="mods[<?php echo $k; ?>][vp10]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp10']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -318,7 +336,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5">
                                     <?php echo $script_transl['vp11']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp10" name="mods[<?php echo $k; ?>]vp11" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp11']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp10" name="mods[<?php echo $k; ?>][vp11]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp11']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -327,7 +345,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 <label for="vp12" class="col-sm-1 col-md-1 col-lg-1 control-label">VP12</label>
                                 <div class="col-sm-6 col-md-6 col-lg-6">
                                     <?php echo $script_transl['vp12']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp12" name="mods[<?php echo $k; ?>]vp12" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp12']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp12" name="mods[<?php echo $k; ?>][vp12]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp12']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -338,7 +356,7 @@ if (count($msg['err']) > 0) { // ho un errore
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5">
                                     <?php echo $script_transl['vp13']; ?>
-                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp13" name="mods[<?php echo $k; ?>]vp13" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp13']; ?>">
+                                    <input type="number" step="0.01" min="0.00" class="form-control" id="vp13" name="mods[<?php echo $k; ?>][vp13]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp13']; ?>">
                                 </div>
                             </div>
                         </div> <!-- chiude row  -->
@@ -347,12 +365,14 @@ if (count($msg['err']) > 0) { // ho un errore
                                 <label for="vp14" class="col-sm-1 col-md-1 col-lg-1 control-label">VP14</label>
                                 <div class="col-sm-6 col-md-6 col-lg-6 bg-warning">
                                     <?php echo $script_transl['vp14']; ?>
-                                    <div class="form-control" id="vp14d" name="vp14d" >
+                                    <div class="form-control text-center" id="vp14d" name="vp14d" >
+                                        <?php echo $vp14d; ?>
                                     </div>
                                 </div>
                                 <div class="col-sm-5 col-md-5 col-lg-5 bg-warning">
                                     <?php echo $script_transl['vp14c']; ?>
-                                    <div class="form-control" id="vp14c" name="vp14c" >
+                                    <div class="form-control text-center" id="vp14c" name="vp14c" >
+                                        <?php echo $vp14c; ?>
                                     </div>
                                 </div>
                             </div>
@@ -361,6 +381,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 </div><!-- chiude vertical text -->
             </div><!-- chiude panel  -->
         <?php } ?>
+        <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="Genera il file XML per la comunicazione trimestrale dell'IVA" /></div>
     </form>
     <?php
     require("../../library/include/footer.php");

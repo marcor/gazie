@@ -5,11 +5,11 @@
     </iv:Intestazione>
     <iv:Comunicazione identificativo="">
         <iv:Frontespizio>
-            <iv:CodiceFiscale></iv:CodiceFiscale>
-            <iv:AnnoImposta></iv:AnnoImposta>
-            <iv:PartitaIVA></iv:PartitaIVA>
+            <iv:CodiceFiscale/>
+            <iv:AnnoImposta/>
+            <iv:PartitaIVA/>
             <iv:FirmaDichiarazione>1</iv:FirmaDichiarazione>
-            <iv:IdentificativoProdSoftware></iv:IdentificativoProdSoftware>
+            <iv:IdentificativoProdSoftware/>
         </iv:Frontespizio>
         <iv:DatiContabili>
         </iv:DatiContabili>
