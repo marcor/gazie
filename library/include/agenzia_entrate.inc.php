@@ -917,9 +917,9 @@ function creaFileIVP17($aziend, $data) {
 
         $results->appendChild($el);
     }
-    header("Content-type: application/xml");
-    header("Content-Disposition: attachment; filename=".$aziend['country'].$aziend['codfis']."_LI_".$data['trimestre_liquidabile'].".xml");
-    print $domDoc->saveXML();
+    $filename = '../../data/files/'. $aziend['codice'].'/' . $aziend['country'].$aziend['codfis']."_LI_".$data['trimestre_liquidabile'].".xml";
+    // salvo il file sul server
+    $domDoc->save($filename);
 }
 
 // --- FINE FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DELLE LIQUIDAZIONI PERIODICHE

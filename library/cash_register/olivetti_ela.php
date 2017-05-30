@@ -29,7 +29,7 @@
   collegata al PC configurata a 9600 baud, 8 bit dati, No parità, 2 bit stop, No controllo flusso, ovvero (9600-8-N-2-N)
 
   I ambiente Linux è indispensabile che il server web abbia i permessi per poter accedere alla porta seriale RS232 che
-  normalmente è il file "/dev/ttyS0" equivalente alla "COM1" degli ambienti Windows; per fare questo si devono dare i seguenti comandi:
+  normalmente è il file "/dev/ttyUSB0" equivalente alla "COM1" degli ambienti Windows; per fare questo si devono dare i seguenti comandi:
 
   sudo addgroup www-data dialout
 
@@ -40,7 +40,7 @@
 
   mettendoci dentro la seguente riga:
 
-  KERNEL=="ttyS[0-9]", GROUP="dialout", MODE="0777"
+  KERNEL=="ttyUSB[0-9]", GROUP="dialout", MODE="0777"
 
   poi si fa il restart di udev:
 
@@ -56,19 +56,19 @@
 class olivetti_ela {
 
     function __construct() {
-        // di default la seriale usata è la "/dev/ttyS0" equivalente a "COM1" su Windows
+        // di default la seriale usata è la "/dev/ttyUSB0" equivalente a "COM1" su Windows
         $this->serial = '0';
         $this->_open = false;
     }
 
     public function set_serial($dev) {
-        // cambio della seriale di default (ttyS0 o COM1)
+        // cambio della seriale di default (ttyUSB0 o COM1)
 
         /*  il numero intero di seriale da passare è comunque quello dei sistemi Linux,
           su Windows automaticamente esso viene aumentato di 1; quindi
           per usare COM1 su Windows si deve comunque passare "0", in ogni caso
           su $dev si pu� passare al posto del numero anche una stringa corrispondente
-          alla periferica realmente interessata es. "/dev/ttyS0" su Linux o "COM1" su
+          alla periferica realmente interessata es. "/dev/ttyUSB0" su Linux o "COM1" su
           Windows.
          */
 
@@ -148,7 +148,7 @@ class olivetti_ela {
         $sysname = substr(php_uname(), 0, 3);
         if ($sysname == "Lin") {
             if (is_numeric(substr($this->serial, 0, 1))) {
-                $_serial = '/dev/ttyS' . intval(substr($this->serial, 0, 1));
+                $_serial = '/dev/ttyUSB' . intval(substr($this->serial, 0, 1));
             } else {
                 $_serial = $this->serial;
             }

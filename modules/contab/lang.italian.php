@@ -363,6 +363,7 @@ $strScript = array("select_liqiva.php" =>
     ),
     "comunicazione_liquidazioni_periodiche.php" =>
     array('title' => "Comunicazione liquidazioni periodiche IVA ",
+        'war'=>array('download'=>'Il file xml è pronto per essere utilizzato:'),
         'err'=>array('nodata'=>'Non ci sono dati per liquidare questo trimestre',
                 'eseguita'=>'La liquidazione è già stata fatta, puoi modificarla'),
         'codice_fiscale' => 'Codice Fiscale del contribuente',
