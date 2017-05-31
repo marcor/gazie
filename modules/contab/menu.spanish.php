@@ -46,6 +46,7 @@ $transl['contab'] = array('name' => "Contabilidad",
         6 => array("Visualizzazione e stampa di estratti conto o partite aperte", "Estratti Conto/Partite Aperte"),
         7 => array("View and print credit/debit customers/suppliers", "Debit/Credit review"),
         8 => array("Spesometro analitico", "Spesometro analitico"),
+        9 => array("File XML per Comunicazioni liquidazioni IVA", "Lista File Comunicazioni liquidazioni IVA"),
     )
 );
 ?>

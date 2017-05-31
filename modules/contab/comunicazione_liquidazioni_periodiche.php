@@ -104,6 +104,21 @@ if (!isset($_POST['ritorno'])) {
     $form['mods'] = array();
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     if ((isset($_GET['Update']) && isset($_GET['id']))) { // è una modifica
+        $liq = gaz_dbi_get_row($gTables['liquidazioni_iva'], "id", intval($_GET['id']));
+        $rs_liq = gaz_dbi_dyn_query("*", $gTables['liquidazioni_iva'], "nome_file_xml = '" . $liq['nome_file_xml'] . "'", "mese_trimestre");
+        while ($r = gaz_dbi_fetch_array($rs_liq)) {
+            $form['mods'][$r['mese_trimestre']] = $r;
+            $form['mods'][$r['mese_trimestre']]['nome_periodo'] = str_pad(" " . strftime('%B', mktime(0, 0, 0, $r['mese_trimestre'], 1, $r['anno'])) . " " . $r['anno'] . " ", 20, "*", STR_PAD_BOTH);
+            if ($r['periodicità'] == "T") {
+                $form['mods'][$r['mese_trimestre']]['nome_periodo'] = null;
+            }
+        }
+        if ($liq['periodicità'] == 'T') {
+            $form['trimestre_liquidabile'] = $liq['anno'] . $liq['mese_trimestre'];
+        } else { // mensili
+            $form['trimestre_liquidabile'] = $liq['anno'] . ceil($liq['mese_trimestre'] / 3);
+        }
+        $form['y'] = $liq['anno'];
     } else { // è un inserimento
         // controllo se ad oggi è possibile fare una liquidazione
         $y = date('Y');
@@ -139,9 +154,18 @@ if (!isset($_POST['ritorno'])) {
     $form = $_POST; // dovrò fare il parsing per la sicurezza
     if (isset($_POST['Submit'])) {
         if ($toDo == 'update') { // e' una modifica
-            tesdocUpdate(array('id_tes', $form['id_tes']), $form);
-            header("Location: " . $form['ritorno']);
-            exit;
+            foreach ($form['mods'] as $ki => $vi) {
+                $vi['periodicità'] = $admin_aziend['ivam_t'];
+                $vi['anno'] = $form['y'];
+                $vi['mese_trimestre'] = $ki;
+                $vi['nome_file_xml'] = $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . $form['trimestre_liquidabile'] . ".xml";
+                // aggiorno il database
+                $id = array('anno', "'".$vi['anno']."' AND mese_trimestre = '" . $ki."'");
+                gaz_dbi_table_update('liquidazioni_iva', $id, $vi);
+            }
+            require("../../library/include/agenzia_entrate.inc.php");
+            creaFileIVP17($admin_aziend, $form);
+            $msg['war'][] = "download";
         } else { // e' un'inserimento
             foreach ($form['mods'] as $ki => $vi) {
                 $vi['periodicità'] = $admin_aziend['ivam_t'];
@@ -155,17 +179,17 @@ if (!isset($_POST['ritorno'])) {
             $msg['war'][] = "download";
         }
     } elseif (isset($_POST['Download'])) {
-        $file = '../../data/files/'. $admin_aziend['codice'].'/' . $admin_aziend['country'].$admin_aziend['codfis']."_LI_".$form['trimestre_liquidabile'].".xml";
+        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . $form['trimestre_liquidabile'] . ".xml";
         header("Pragma: public", true);
         header("Expires: 0"); // set expiration time
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
         header("Content-Type: application/force-download");
         header("Content-Type: application/octet-stream");
         header("Content-Type: application/download");
-        header("Content-Disposition: attachment; filename=".basename($file));
+        header("Content-Disposition: attachment; filename=" . basename($file));
         header("Content-Transfer-Encoding: binary");
-        header("Content-Length: ".filesize($file));
-        die(file_get_contents($file)); 
+        header("Content-Length: " . filesize($file));
+        die(file_get_contents($file));
         exit;
     }
 }

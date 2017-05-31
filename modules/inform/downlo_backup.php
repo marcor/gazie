@@ -44,8 +44,3 @@ if (isset($_POST['Return'])){
 }
 
 ?>
-</table>
-</form>
-<?php
-require("../../library/include/footer.php");
-?>
