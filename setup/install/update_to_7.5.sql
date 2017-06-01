@@ -1,4 +1,5 @@
 UPDATE `gaz_config` SET `cvalue` = '102' WHERE `id` =2;
+ALTER TABLE `gaz_menu_usage` CHANGE COLUMN `transl_ref` `transl_ref` VARCHAR(64) NOT NULL AFTER `company_id`;
 UPDATE `gaz_menu_script` SET `link`='comunicazione_liquidazioni_periodiche.php' WHERE  `link`='select_spesometro_analitico.php';
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='select_liqiva.php'), 'report_comunicazioni_liquidazioni_periodiche.php', '', '', 9, '', 5  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
