@@ -287,7 +287,7 @@ $strScript = array("admin_fornit.php" =>
         'codvat' => 'I.V.A.',
         'amount' => 'Costo totale del bene € ',
         'ss_amm_min' => 'Ammort.Minister.',
-        'super_ammort'=>'% Super ammortamento'
+        'super_ammort' => '% Super ammortamento'
     ),
     "accounting_documents.php" =>
     array('title' => 'Genera i movimenti contabili a partire dai documenti d\'acquisto',
@@ -398,8 +398,8 @@ $strScript = array("admin_fornit.php" =>
             'Stai tentando di inserire il pagamento ad un fornitore senza movimenti'
         ),
         'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
-		'transfer_fees_acc'=>'Conto spese bonifico',
-		'transfer_fees'=>'Addebito per bonifico'
+        'transfer_fees_acc' => 'Conto spese bonifico',
+        'transfer_fees' => 'Addebito per bonifico'
     ),
     "admin_agenti_forn.php" =>
     array("Agenti di Fornitori ",
@@ -550,6 +550,19 @@ $strScript = array("admin_fornit.php" =>
     ),
     "report_acqddt.php" =>
     array('title' => 'Documenti di trasporto ricevuti da fornitori ',
-    )
+    ),
+    "bank_receipt_payment.php" =>
+    array('title' => 'Pagamento RiBa a fornitori',
+        'print_title' => 'SCADENZARIO FORNITORI ',
+        'errors' => array('La data  non &egrave; corretta!',
+            'err' => 'Ci sono degli errori che impediscono la stampa'
+        ),
+        'date_ini' => 'Data di riferimento ',
+        'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
+            , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => ''
+        ),
+        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+        'remove' => 'Elimina tutte le partite chiuse di '
+    ),
 );
 ?>
