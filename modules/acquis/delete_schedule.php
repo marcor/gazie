@@ -48,9 +48,13 @@ if (!isset($_POST['ritorno'])) {
 if (isset($_POST['Delete'])) {
     foreach ($paymov->PartnerStatus as $k => $v) {
         foreach ($v as $ki => $vi) {
-            if ($vi['status'] == 1 && $vi['expo_day'] <= 0) { // ma solo le chiuse non esposte
-                gaz_dbi_del_row($gTables['paymov'], 'id_tesdoc_ref', $k);
+            $ctrl_close_paymov = false;
+            if ($vi['expo_day'] <= 0 && $vi['cl_val'] == $vi['op_val']) {
+                $ctrl_close_paymov = true;
             }
+        }
+        if ($ctrl_close_paymov) { // ma solo le chiuse 
+            gaz_dbi_del_row($gTables['paymov'], 'id_tesdoc_ref', $k);
         }
     }
     header("Location: " . $_POST['ritorno']);
@@ -87,37 +91,40 @@ $script_transl = HeadMain('delete_schedule');
             <?php
             foreach ($paymov->PartnerStatus as $k => $v) {
                 foreach ($v as $ki => $vi) {
-                    if ($vi['status'] == 1 && $vi['expo_day'] <= 0) { // ma solo le chiuse non esposte
-                        ?>
-
-                        <div class="row">
-                            <div class="col-sm-6 col-md-3 col-lg-3">
-                                <div class="form-group">
-                                    <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['id_tesdoc_ref']; ?></label>
-                                    <div class="col-sm-8"><?php echo $k; ?></div>                
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-3 col-lg-3">
-                                <div class="form-group">
-                                    <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
-                                    <div class="col-sm-8"><?php echo $paymov->docData[$k]['descri'] . ' ' . $paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva']; ?></div>                
-                                </div>
-                            </div>                    
-                            <div class="col-sm-6 col-md-3 col-lg-3">
-                                <div class="form-group">
-                                    <label for="ragsoc" class="col-sm-4 control-label">del</label>
-                                    <div class="col-sm-8"><?php echo ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']); ?></div>                
-                                </div>
-                            </div>
-                            <div class="col-sm-6 col-md-3 col-lg-3">
-                                <div class="form-group">
-                                    <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['amount']; ?></label>
-                                    <div class="col-sm-8"><?php echo $paymov->docData[$k]['amount']; ?></div>                
-                                </div>
-                            </div>
-                        </div> <!-- chiude row  -->
-                        <?php
+                    $ctrl_close_paymov = false;
+                    if ($vi['expo_day'] <= 0 && $vi['cl_val'] == $vi['op_val']) {
+                        $ctrl_close_paymov = true;
                     }
+                }
+                if ($ctrl_close_paymov) { // ma solo le chiuse 
+                    ?>
+                    <div class="row">
+                        <div class="col-sm-6 col-md-3 col-lg-3">
+                            <div class="form-group">
+                                <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['id_tesdoc_ref']; ?></label>
+                                <div class="col-sm-8"><?php echo $k; ?></div>                
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-3">
+                            <div class="form-group">
+                                <label for="descri" class="col-sm-4 control-label"><?php echo $script_transl['descri']; ?></label>
+                                <div class="col-sm-8"><?php echo $paymov->docData[$k]['descri'] . ' ' . $paymov->docData[$k]['numdoc'] . '/' . $paymov->docData[$k]['seziva']; ?></div>                
+                            </div>
+                        </div>                    
+                        <div class="col-sm-6 col-md-3 col-lg-3">
+                            <div class="form-group">
+                                <label for="ragsoc" class="col-sm-4 control-label">del</label>
+                                <div class="col-sm-8"><?php echo ' del ' . gaz_format_date($paymov->docData[$k]['datdoc']); ?></div>                
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 col-lg-3">
+                            <div class="form-group">
+                                <label for="id_tesdoc_ref" class="col-sm-4 control-label"><?php echo $script_transl['amount']; ?></label>
+                                <div class="col-sm-8"><?php echo $paymov->docData[$k]['amount']; ?></div>                
+                            </div>
+                        </div>
+                    </div> <!-- chiude row  -->
+                    <?php
                 }
             }
             ?>

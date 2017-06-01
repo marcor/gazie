@@ -151,8 +151,24 @@ if (!isset($_POST['ritorno'])) {
         }
     }
 } else { // nei post successivi (submit)
-    $form = $_POST; // dovrò fare il parsing per la sicurezza
+    $form['y'] = intval($_POST['y']);
+    $form['trimestre_liquidabile'] = intval($_POST['trimestre_liquidabile']);
+    $form['ritorno'] = $_POST['ritorno'];
     if (isset($_POST['Submit'])) {
+        foreach ($_POST['mods'] as $k => $v) {
+            $form['mods'][$k]['nome_periodo'] = substr($v['nome_periodo'], 0, 24);
+            $form['mods'][$k]['vp2'] = floatval($v['vp2']);
+            $form['mods'][$k]['vp3'] = floatval($v['vp3']);
+            $form['mods'][$k]['vp4'] = floatval($v['vp4']);
+            $form['mods'][$k]['vp5'] = floatval($v['vp5']);
+            $form['mods'][$k]['vp7'] = floatval($v['vp7']);
+            $form['mods'][$k]['vp8'] = floatval($v['vp8']);
+            $form['mods'][$k]['vp9'] = floatval($v['vp9']);
+            $form['mods'][$k]['vp10'] = floatval($v['vp10']);
+            $form['mods'][$k]['vp11'] = floatval($v['vp11']);
+            $form['mods'][$k]['vp12'] = floatval($v['vp12']);
+            $form['mods'][$k]['vp13'] = floatval($v['vp13']);
+        }
         if ($toDo == 'update') { // e' una modifica
             foreach ($form['mods'] as $ki => $vi) {
                 $vi['periodicità'] = $admin_aziend['ivam_t'];
@@ -160,7 +176,7 @@ if (!isset($_POST['ritorno'])) {
                 $vi['mese_trimestre'] = $ki;
                 $vi['nome_file_xml'] = $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . $form['trimestre_liquidabile'] . ".xml";
                 // aggiorno il database
-                $id = array('anno', "'".$vi['anno']."' AND mese_trimestre = '" . $ki."'");
+                $id = array('anno', "'" . $vi['anno'] . "' AND mese_trimestre = '" . $ki . "'");
                 gaz_dbi_table_update('liquidazioni_iva', $id, $vi);
             }
             require("../../library/include/agenzia_entrate.inc.php");
