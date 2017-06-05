@@ -62,7 +62,7 @@ if (isset($_GET['ds'])) {
 $where = " codcon BETWEEN ".$_GET['codice']." AND ".$_GET['codfin']." AND".
          " datreg BETWEEN '".$dataini."' AND '".$datafin."'";
 $what = $gTables['rigmoc'].".*, ".$gTables['tesmov'].".id_tes, ".
-        $gTables['tesmov'].".descri AS tesdes, ".$gTables['tesmov'].".datreg, ".$gTables['tesmov'].".datreg, ".$gTables['tesmov'].".seziva, ".
+        $gTables['tesmov'].".descri AS tesdes, ".$gTables['tesmov'].".caucon, ".$gTables['tesmov'].".datreg, ".$gTables['tesmov'].".seziva, ".
         $gTables['tesmov'].".datdoc, ".$gTables['tesmov'].".numdoc, ".$gTables['tesmov'].".protoc, ".
         $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri, t_part.descri AS partner ";
 $table = $gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON (".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes)
@@ -129,7 +129,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
       $aRiportare['top'][1]['nam'] = gaz_format_number($movSaldo);
       $aRiportare['bot'][1]['nam'] = gaz_format_number($movSaldo);
       $pdf->Cell(18,4,$datareg,1,0,'C');
-      if (!empty($row['partner']) || !empty($row['numdoc'])){
+      if ((!empty($row['partner']) || !empty($row['numdoc'])) && $row['caucon'] != 'APE' && $row['caucon'] != 'CHI'){
           $pdf->SetFont('helvetica','',6);
           $row['tesdes'].=' ('.$row['partner'];
           if (!empty($row['numdoc'])){
