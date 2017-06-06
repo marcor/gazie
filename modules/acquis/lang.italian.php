@@ -551,18 +551,17 @@ $strScript = array("admin_fornit.php" =>
     "report_acqddt.php" =>
     array('title' => 'Documenti di trasporto ricevuti da fornitori ',
     ),
-    "bank_receipt_payment.php" =>
-    array('title' => 'Pagamento RiBa a fornitori',
-        'print_title' => 'SCADENZARIO FORNITORI ',
-        'errors' => array('La data  non &egrave; corretta!',
-            'err' => 'Ci sono degli errori che impediscono la stampa'
-        ),
-        'date_ini' => 'Data di riferimento ',
-        'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
-            , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => ''
-        ),
+    "bank_receipts_payment.php" =>
+    array('title' => 'Registra disposizione di pagamenti',
+        'errors' => array(),
+        'entry_date' => 'Data di registrazione',
+        'default_descri' => 'PAGATE RIBA A FORNITORI',
+        'expiry_ini' => 'Data di scadenza iniziale',
+        'expiry_fin' => 'Data di scadenza finale',
+        'target_account' => 'Conto corrente di addebito',
+        'transfer_fees_acc' => 'Conto addebito spese bancarie',
+        'transfer_fees' => 'Eventuali spese bancarie',
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
-        'remove' => 'Elimina tutte le partite chiuse di '
     ),
 );
 ?>

@@ -198,8 +198,12 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     if ($form['operation_type'] == '') {
                         $form['operation_type'] = $partner['operation_type'];
                     }
+                    if ($form['inserimdoc'] > 0) { // solo se è previsto l'utilizzo dei dati dei documenti setto il partner
+                        $form['cod_partner'] = $_POST['conto_rc' . $i];
+                    } else {
+                        $form['cod_partner'] = '';
+                    }
                 }
-                $form['cod_partner'] = $_POST['conto_rc' . $i];
                 $partnersel = $anagrafica->getPartner($form['conto_rc' . $i]);
                 $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
                 // in caso di pagamento immediato dovrò settare l'importo di chiusura ed il relativo conto
@@ -1526,192 +1530,192 @@ echo "</script>\n";
         $gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
     }
     ?>
-<!--</div><!-- chiude panel  -->
-<?php
+    <!--</div><!-- chiude panel  -->
+    <?php
 //inserimento movimento contabile
-echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['del_this'] . "</div>\n";
-if ($form['pay_closure'] >= 1 && $toDo == 'insert') {
-    $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
-    $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['pay_closure']);
-    $gForm->toast("ATTENZIONE!!! Il pagamento <span style='background-color: yellow;'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span style='background-color: yellow;'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
-}
-echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
-echo "<tr><td class=\"bg-info\">" . $script_transl['mas'] . "</td><td class=\"bg-info\">" . $script_transl['sub'] . "</td><td class=\"bg-info\">" . $script_transl['amount'] . "</td><td class=\"bg-info\">" . $script_transl['daav'] . "</td><td class=\"bg-info\">" . $script_transl['addrow'] . "!</td></tr>\n";
-echo "<tr>\n";
-echo "<td class=\"bg-info\">\n#";
-$gForm->selMasterAcc('insert_mastro', $form['insert_mastro'], 'insert_mastro');
-echo "</td>\n";
-echo "<td class=\"bg-info\">\n";
-$gForm->lockSubtoMaster($form['insert_mastro'], 'insert_conto');
-$gForm->sub_Account('insert_conto', $form['insert_conto'], $form['search']['insert_conto'], $form['hidden_req'], $script_transl['mesg']);
-echo "</td>\n";
-echo "<td class=\"bg-info\"><div onmousedown=\"toggleContent('insert')\" class=\"clickarea\" style=\"cursor:pointer;\">";
-echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" size=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
-$gForm->settleAccount('insert', $form['insert_conto'], sprintf("%04d%02d%02d", $form['date_reg_Y'], $form['date_reg_M'], $form['date_reg_D']));
-echo "</td>";
-echo "\t<td  class=\"bg-info\">\n";
-$gForm->variousSelect('insert_darave', $script_transl['daav_value'], $form['insert_darave'], 'FacetSelect', false);
-echo "\t </td>\n";
+    echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['del_this'] . "</div>\n";
+    if ($form['pay_closure'] >= 1 && $toDo == 'insert') {
+        $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
+        $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['pay_closure']);
+        $gForm->toast("ATTENZIONE!!! Il pagamento <span style='background-color: yellow;'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span style='background-color: yellow;'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
+    }
+    echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+    echo "<tr><td class=\"bg-info\">" . $script_transl['mas'] . "</td><td class=\"bg-info\">" . $script_transl['sub'] . "</td><td class=\"bg-info\">" . $script_transl['amount'] . "</td><td class=\"bg-info\">" . $script_transl['daav'] . "</td><td class=\"bg-info\">" . $script_transl['addrow'] . "!</td></tr>\n";
+    echo "<tr>\n";
+    echo "<td class=\"bg-info\">\n#";
+    $gForm->selMasterAcc('insert_mastro', $form['insert_mastro'], 'insert_mastro');
+    echo "</td>\n";
+    echo "<td class=\"bg-info\">\n";
+    $gForm->lockSubtoMaster($form['insert_mastro'], 'insert_conto');
+    $gForm->sub_Account('insert_conto', $form['insert_conto'], $form['search']['insert_conto'], $form['hidden_req'], $script_transl['mesg']);
+    echo "</td>\n";
+    echo "<td class=\"bg-info\"><div onmousedown=\"toggleContent('insert')\" class=\"clickarea\" style=\"cursor:pointer;\">";
+    echo "<input style=\"text-align:right;\" type=\"text\" value=\"\" maxlength=\"13\" size=\"13\" id=\"insert_import\" name=\"insert_import\"> &crarr;</div>\n";
+    $gForm->settleAccount('insert', $form['insert_conto'], sprintf("%04d%02d%02d", $form['date_reg_Y'], $form['date_reg_M'], $form['date_reg_D']));
+    echo "</td>";
+    echo "\t<td  class=\"bg-info\">\n";
+    $gForm->variousSelect('insert_darave', $script_transl['daav_value'], $form['insert_darave'], 'FacetSelect', false);
+    echo "\t </td>\n";
 //echo "<td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"add\" src=\"../../library/images/vbut.gif\" title=\"".$script_transl['addrow']."\"></td></tr>\n";
 
-/** ENRICO FEDELE */
-/* glyph-icon */
-echo '  <td class="bg-info" align="right"> 
+    /** ENRICO FEDELE */
+    /* glyph-icon */
+    echo '  <td class="bg-info" align="right"> 
 			<button type="submit" class="btn btn-default btn-sm" name="add" title="' . $script_transl['addrow'] . '"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
-/** ENRICO FEDELE */
-echo "<TR><td class=\"FacetColumnTD\" colspan=\"5\"></td></tr>";
+    /** ENRICO FEDELE */
+    echo "<TR><td class=\"FacetColumnTD\" colspan=\"5\"></td></tr>";
 //fine rigo inserimento
 // inizio righi già inseriti
 // faccio un primo ciclo del form per sommare e analizzare gli sbilanciamenti
-$form['tot_D'] = 0.00;
-$form['tot_A'] = 0.00;
-for ($i = 0; $i < $_POST['rigcon']; $i++) {
-    $val = sprintf("%01.2f", preg_replace("/\,/", '.', $form['importorc'][$i]));
-    if ($form["darave_rc"][$i] == 'D') {
-        $form['tot_D'] += $val;
-    } else {
-        $form['tot_A'] += $val;
+    $form['tot_D'] = 0.00;
+    $form['tot_A'] = 0.00;
+    for ($i = 0; $i < $_POST['rigcon']; $i++) {
+        $val = sprintf("%01.2f", preg_replace("/\,/", '.', $form['importorc'][$i]));
+        if ($form["darave_rc"][$i] == 'D') {
+            $form['tot_D'] += $val;
+        } else {
+            $form['tot_A'] += $val;
+        }
     }
-}
-$diffDA = number_format($form['tot_D'] - $form['tot_A'], 2, '.', '');
-if ($diffDA <> 0) {
-    if ($form['tot_D'] == 0) {
-        $d_but = ' style="text-align:right; background-color:#FFAAAA;" disabled ';
-        $a_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
+    $diffDA = number_format($form['tot_D'] - $form['tot_A'], 2, '.', '');
+    if ($diffDA <> 0) {
+        if ($form['tot_D'] == 0) {
+            $d_but = ' style="text-align:right; background-color:#FFAAAA;" disabled ';
+            $a_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
+        } elseif ($form['tot_A'] == 0) {
+            $d_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
+            $a_but = ' style="text-align:right; background-color:#FFAAAA;" disabled ';
+        } else {
+            $d_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
+            $a_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
+        }
+        $i_but = ' disabled ';
+        $diffV = ' <input style="text-align:center;" value="' . $diffDA . '" type="text" name="diffV" disabled />';
     } elseif ($form['tot_A'] == 0) {
         $d_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
-        $a_but = ' style="text-align:right; background-color:#FFAAAA;" disabled ';
-    } else {
-        $d_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
         $a_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
+        $i_but = ' disabled ';
+        $diffV = ' <input style="text-align:center;" value="Movimenti a zero" type="text" name="diffV" disabled />';
+    } else {
+        $d_but = ' style="text-align:right; background-color:#BBBBBB;" disabled ';
+        $a_but = ' style="text-align:right; background-color:#BBBBBB;" disabled ';
+        $i_but = '';
+        $diffV = ' <input style="text-align:center;" value="' . $script_transl['bal'] . '" type="text" name="diffV" disabled />';
     }
-    $i_but = ' disabled ';
-    $diffV = ' <input style="text-align:center;" value="' . $diffDA . '" type="text" name="diffV" disabled />';
-} elseif ($form['tot_A'] == 0) {
-    $d_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
-    $a_but = ' style="text-align:right; background-color:#FFAAAA;" title="' . $script_transl['bal_title'] . '" ';
-    $i_but = ' disabled ';
-    $diffV = ' <input style="text-align:center;" value="Movimenti a zero" type="text" name="diffV" disabled />';
-} else {
-    $d_but = ' style="text-align:right; background-color:#BBBBBB;" disabled ';
-    $a_but = ' style="text-align:right; background-color:#BBBBBB;" disabled ';
-    $i_but = '';
-    $diffV = ' <input style="text-align:center;" value="' . $script_transl['bal'] . '" type="text" name="diffV" disabled />';
-}
 //fine analisi sbilanciamento
 
-for ($i = 0; $i < $_POST['rigcon']; $i++) {
-    if ($form['registroiva'] > 0 and ( substr($form['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] or
-            substr($form['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'])) {
-        $form['insert_partner'] = $form['conto_rc' . $i];
-    }
-    echo "<tr>";
-    echo "<td class=\"FacetDataTD\">" . ($i + 1);
-    $gForm->selMasterAcc("mastro_rc[$i]", $form["mastro_rc"][$i], "mastro_rc[$i]");
-    echo "</td>\n";
-    echo "<td class=\"FacetDataTD\">";
-    $gForm->lockSubtoMaster($form["mastro_rc"][$i], 'conto_rc' . $i);
-    $gForm->sub_Account('conto_rc' . $i, $form['conto_rc' . $i], $form['search']['conto_rc' . $i], $form['hidden_req'], $script_transl['mesg']);
-    if (!preg_match("/^id_([0-9]+)$/", $form['conto_rc' . $i], $match)) { // non è un partner da inserire sul piano dei conti
-        echo '<a class="btn btn-xs btn-default" href="select_partit.php?id=' . $form['conto_rc' . $i] . '" title="' . $script_transl['visacc'] . '" target="_new">
+    for ($i = 0; $i < $_POST['rigcon']; $i++) {
+        if ($form['registroiva'] > 0 and ( substr($form['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] or
+                substr($form['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'])) {
+            $form['insert_partner'] = $form['conto_rc' . $i];
+        }
+        echo "<tr>";
+        echo "<td class=\"FacetDataTD\">" . ($i + 1);
+        $gForm->selMasterAcc("mastro_rc[$i]", $form["mastro_rc"][$i], "mastro_rc[$i]");
+        echo "</td>\n";
+        echo "<td class=\"FacetDataTD\">";
+        $gForm->lockSubtoMaster($form["mastro_rc"][$i], 'conto_rc' . $i);
+        $gForm->sub_Account('conto_rc' . $i, $form['conto_rc' . $i], $form['search']['conto_rc' . $i], $form['hidden_req'], $script_transl['mesg']);
+        if (!preg_match("/^id_([0-9]+)$/", $form['conto_rc' . $i], $match)) { // non è un partner da inserire sul piano dei conti
+            echo '<a class="btn btn-xs btn-default" href="select_partit.php?id=' . $form['conto_rc' . $i] . '" title="' . $script_transl['visacc'] . '" target="_new">
 								<i class="glyphicon glyphicon-eye-open"></i>
 							  </a>';
-    }
-    echo "</td>\n";
+        }
+        echo "</td>\n";
 
-    $val = sprintf("%01.2f", preg_replace("/\,/", '.', $form['importorc'][$i]));
-    $valsty = ' style="text-align:right;" ';
-    if ($val < 0.01) {
-        $valsty = ' style="text-align:right; background-color:#FFAAAA;" ';
-    }
-    echo "<td class=\"FacetDataTD\">
+        $val = sprintf("%01.2f", preg_replace("/\,/", '.', $form['importorc'][$i]));
+        $valsty = ' style="text-align:right;" ';
+        if ($val < 0.01) {
+            $valsty = ' style="text-align:right; background-color:#FFAAAA;" ';
+        }
+        echo "<td class=\"FacetDataTD\">
           <input type=\"text\" name=\"importorc[$i]\" ID=\"impoRC$i\" value=\"$val\" $valsty onchange=\"updateTot($i,this);\" maxlength=\"13\" size=\"13\"  tabindex=\"" . (30 + $i * 2) . "\" >\n";
-    echo "<input type=\"hidden\" ID=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"" . $form['id_rig_rc'][$i] . "\">\n";
-    echo "<input type=\"hidden\" ID=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"" . $form['paymov_op_cl'][$i] . "\">\n";
-    // inizio input degli sbilanci
-    if ($form['darave_rc'][$i] == 'D' && $form['tot_D'] > $form['tot_A'] ||
-            $form['darave_rc'][$i] == 'A' && $form['tot_A'] > $form['tot_D']) {
-        $r_but = ' value="&dArr;" title="' . $script_transl['subval'] . ' ';
-        if (abs($diffDA) < $form['importorc'][$i]) {
-            $r_but = ' value="&dArr;" title="' . $script_transl['subval'] . ' ' . abs($diffDA) . " " . $admin_aziend['symbol'] . "\" ";
-        } else {
-            $r_but = ' value="&dArr;" disabled ';
+        echo "<input type=\"hidden\" ID=\"id_rig_rc$i\" name=\"id_rig_rc[$i]\" value=\"" . $form['id_rig_rc'][$i] . "\">\n";
+        echo "<input type=\"hidden\" ID=\"paymov_op_cl$i\" name=\"paymov_op_cl[$i]\" value=\"" . $form['paymov_op_cl'][$i] . "\">\n";
+        // inizio input degli sbilanci
+        if ($form['darave_rc'][$i] == 'D' && $form['tot_D'] > $form['tot_A'] ||
+                $form['darave_rc'][$i] == 'A' && $form['tot_A'] > $form['tot_D']) {
+            $r_but = ' value="&dArr;" title="' . $script_transl['subval'] . ' ';
+            if (abs($diffDA) < $form['importorc'][$i]) {
+                $r_but = ' value="&dArr;" title="' . $script_transl['subval'] . ' ' . abs($diffDA) . " " . $admin_aziend['symbol'] . "\" ";
+            } else {
+                $r_but = ' value="&dArr;" disabled ';
+            }
+        } elseif ($form['darave_rc'][$i] == 'D' && $form['tot_D'] < $form['tot_A'] ||
+                $form['darave_rc'][$i] == 'A' && $form['tot_A'] < $form['tot_D']) {
+            $r_but = ' value="&uArr;" title="' . $script_transl['addval'] . ' ' . abs($diffDA) . " " . $admin_aziend['symbol'] . "\" ";
+        } else {                                     //bilanciato
+            $r_but = ' value="&hArr;" disabled';
         }
-    } elseif ($form['darave_rc'][$i] == 'D' && $form['tot_D'] < $form['tot_A'] ||
-            $form['darave_rc'][$i] == 'A' && $form['tot_A'] < $form['tot_D']) {
-        $r_but = ' value="&uArr;" title="' . $script_transl['addval'] . ' ' . abs($diffDA) . " " . $admin_aziend['symbol'] . "\" ";
-    } else {                                     //bilanciato
-        $r_but = ' value="&hArr;" disabled';
-    }
-    echo "<input type=\"button\" ID=\"balbRC$i\" name=\"balb[$i]\" $r_but  onclick=\"balance($i);\"/>\n";
-    echo "</td>";
-    //fine inpunt degli sbilanci
-    echo "<td class=\"FacetDataTD\"><select class=\"FacetSelect\" ID=\"daavRC$i\" name=\"darave_rc[$i]\" onchange=\"this.form.submit()\" tabindex=\"" . (31 + $i * 2) . "\">";
-    foreach ($script_transl['daav_value'] as $key => $value) {
-        $selected = "";
-        if ($form["darave_rc"][$i] == $key) {
-            $selected = " selected ";
+        echo "<input type=\"button\" ID=\"balbRC$i\" name=\"balb[$i]\" $r_but  onclick=\"balance($i);\"/>\n";
+        echo "</td>";
+        //fine inpunt degli sbilanci
+        echo "<td class=\"FacetDataTD\"><select class=\"FacetSelect\" ID=\"daavRC$i\" name=\"darave_rc[$i]\" onchange=\"this.form.submit()\" tabindex=\"" . (31 + $i * 2) . "\">";
+        foreach ($script_transl['daav_value'] as $key => $value) {
+            $selected = "";
+            if ($form["darave_rc"][$i] == $key) {
+                $selected = " selected ";
+            }
+            echo "<option value=\"" . $key . "\"" . $selected . ">" . $value . "</option>\n";
         }
-        echo "<option value=\"" . $key . "\"" . $selected . ">" . $value . "</option>\n";
-    }
-    echo "</select></td>\n";
+        echo "</select></td>\n";
 
-    //echo "<td class=\"FacetDataTD\" align=\"right\"><input type=\"image\" name=\"del[$i]\"  src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delrow']."!\" ></td></tr>\n";
-    /** ENRICO FEDELE */
-    /* glyph icon */
-    echo '  <td class="FacetDataTD" align="right">
+        //echo "<td class=\"FacetDataTD\" align=\"right\"><input type=\"image\" name=\"del[$i]\"  src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delrow']."!\" ></td></tr>\n";
+        /** ENRICO FEDELE */
+        /* glyph icon */
+        echo '  <td class="FacetDataTD" align="right">
 			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $i . ']" title="' . $script_transl['delrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
 			</td>
 		  </tr>';
-    /** ENRICO FEDELE */
-}
+        /** ENRICO FEDELE */
+    }
 
 //faccio il post del numero di righi
-echo "<input type=\"hidden\" value=\"" . $_POST['rigcon'] . "\" name=\"rigcon\">";
-echo "<input type=\"hidden\" value=\"" . $form['id_testata'] . "\" name=\"id_testata\">";
-echo '<tr><td>';
-echo '<input name="Back" type="button" value="' . $script_transl['return'] . '!" onclick="location.href=\'' . $form['ritorno'] . '\'">';
-echo '<td colspan="2">' . $script_transl['tot_d'] . ' :';
-echo "<input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" ID=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
-echo $diffV . ' ' . $script_transl['tot_a'] . ' :';
-echo "<input type=\"button\" $a_but value=\"" . number_format($form['tot_A'], 2, '.', '') . "\" ID=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
-echo "</td>\n";
-echo '<td align="right">';
-echo '<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . strtoupper($script_transl[$toDo]) . '!">';
-echo "\n</td></tr></table>";
+    echo "<input type=\"hidden\" value=\"" . $_POST['rigcon'] . "\" name=\"rigcon\">";
+    echo "<input type=\"hidden\" value=\"" . $form['id_testata'] . "\" name=\"id_testata\">";
+    echo '<tr><td>';
+    echo '<input name="Back" type="button" value="' . $script_transl['return'] . '!" onclick="location.href=\'' . $form['ritorno'] . '\'">';
+    echo '<td colspan="2">' . $script_transl['tot_d'] . ' :';
+    echo "<input type=\"button\" $d_but value=\"" . number_format($form['tot_D'], 2, '.', '') . "\" ID=\"tot_D\" name=\"tot_D\" onclick=\"tot_bal('D');\" />\n";
+    echo $diffV . ' ' . $script_transl['tot_a'] . ' :';
+    echo "<input type=\"button\" $a_but value=\"" . number_format($form['tot_A'], 2, '.', '') . "\" ID=\"tot_A\" name=\"tot_A\" onclick=\"tot_bal('A');\" />\n";
+    echo "</td>\n";
+    echo '<td align="right">';
+    echo '<input name="ins" id="preventDuplicate" onClick="chkSubmit();" type="submit" ' . $i_but . ' tabindex="99" value="' . strtoupper($script_transl[$toDo]) . '!">';
+    echo "\n</td></tr></table>";
 
 // INIZIO creazione dialog-schedule dei partner
-for ($i = 0; $i < $_POST['rigcon']; $i++) {
-    if (isset($form['paymov'][$i])) {
-        $pm_row = 0;
-        echo '
+    for ($i = 0; $i < $_POST['rigcon']; $i++) {
+        if (isset($form['paymov'][$i])) {
+            $pm_row = 0;
+            echo '
         <div id="pm_post_container_' . $i . '">';
-        foreach ($form['paymov'][$i] as $i_j => $v_j) {
-            echo '<div id="pm_post_' . $pm_row . '">
+            foreach ($form['paymov'][$i] as $i_j => $v_j) {
+                echo '<div id="pm_post_' . $pm_row . '">
                   <input type="hidden" id="post_' . $i . '_' . $pm_row . '_id" name="paymov[' . $i . '][' . $pm_row . '][id]" value="' . $form['paymov'][$i][$i_j]['id'] . '" />
                   <input type="hidden" id="post_' . $i . '_' . $pm_row . '_id_tesdoc_ref" name="paymov[' . $i . '][' . $pm_row . '][id_tesdoc_ref]" value="' . $form['paymov'][$i][$i_j]['id_tesdoc_ref'] . '" />
                   <input type="hidden" id="post_' . $i . '_' . $pm_row . '_expiry" name="paymov[' . $i . '][' . $pm_row . '][expiry]" value="' . $form['paymov'][$i][$i_j]['expiry'] . '" />
                   <input type="hidden" id="post_' . $i . '_' . $pm_row . '_amount" name="paymov[' . $i . '][' . $pm_row . '][amount]" value="' . $form['paymov'][$i][$i_j]['amount'] . '" />
                   </div>
                  ';
-            $pm_row++;
-        }
-        echo '</div>
+                $pm_row++;
+            }
+            echo '</div>
         ';
-        echo '
+            echo '
         <div id="paymov_last_id' . $i . '" value="' . $i_j . '"></div>
         ';
-        if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
-            echo '<div id="dialog_open' . $i . '" partner="' . $partnersel['ragso1'] . '" title="Apertura: ' . $form['descrizion'] . ' - ' . $partnersel['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
-        } else {  // chiusura partita
-            echo '<div id="dialog_close' . $i . '" partner="' . $partnersel['ragso1'] . '" title="Chiusura: ' . $form['descrizion'] . ' - ' . $partnersel['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
-        }
-        echo '<p class="validateTips"></p>
+            if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
+                echo '<div id="dialog_open' . $i . '" partner="' . $partnersel['ragso1'] . '" title="Apertura: ' . $form['descrizion'] . ' - ' . $partnersel['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
+            } else {  // chiusura partita
+                echo '<div id="dialog_close' . $i . '" partner="' . $partnersel['ragso1'] . '" title="Chiusura: ' . $form['descrizion'] . ' - ' . $partnersel['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
+            }
+            echo '<p class="validateTips"></p>
         <table id="pm_form_container_' . $i . '" class="ui-widget ui-widget-content" width="100%">
         <tbody>';
-        echo '
+            echo '
              </tbody>
             </table>
             <table  width="100%" id="db-contain' . $i . '" class="ui-widget ui-widget-content">
@@ -1720,10 +1724,10 @@ for ($i = 0; $i < $_POST['rigcon']; $i++) {
             </table>
         </div>
         ';
+        }
     }
-}
 // FINE creazione form dialog-schedule
-?>
+    ?>
 </form>
 <?php
 require("../../library/include/footer.php");

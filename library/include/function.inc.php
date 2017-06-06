@@ -98,7 +98,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
     else
         $fltget = "";
     ?>
-        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];           ?>
+        <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];            ?>
 
         <?php
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
@@ -1015,10 +1015,10 @@ class selectartico extends SelectBox {
 // classe per la generazione di select box dei conti ricavi di vendita-costi d'acquisto
 class selectconven extends SelectBox {
 
-    function output($mastri, $class = false) {
+    function output($mastri, $class = false, $empty = false) {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['clfoco'] . "` WHERE codice LIKE '" . $mastri . "%' AND codice NOT LIKE '%000000' ORDER BY `codice` ASC";
-        SelectBox::_output($query, 'codice', False, '-', 'descri', 'codice', '', $class);
+        SelectBox::_output($query, 'codice', $empty, '-', 'descri', 'codice', '', $class);
     }
 
 }
@@ -1427,7 +1427,7 @@ class GAzieForm {
         }
         $query = 'SELECT * FROM `' . $gTables[$table] . '` ';
         if ($where) {
-            $query .= ' WHERE '.$where;
+            $query .= ' WHERE ' . $where;
         }
         $query .= ' ORDER BY `' . $order . '`';
         if (!empty($val_hiddenReq)) {

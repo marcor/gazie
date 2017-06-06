@@ -23,21 +23,18 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
-$paymov = new Schedule;
 $anagrafica = new Anagrafica();
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['paymov'] = array();
-    $form['expiry_ini'] = date("d-m-Y");
-    $form['expiry_fin'] = date("d-m-Y");
+    $form['entry_date'] = date("d/m/Y");
+    $form['expiry_ini'] = date("d/m/Y");
+    $form['expiry_fin'] = date("t/m/Y");
     $form['target_account'] = 0;
     $form['transfer_fees_acc'] = 0;
     $form['transfer_fees'] = 0.00;
-    /* aggiunta descrizione modificabile */
-    $form['descr_mov'] = '';
-    /** fine modifica FP */
 } else { // accessi successivi
     $first = false;
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
@@ -53,19 +50,13 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 $add_desc[$k] += $vi['amount'];
             }
         }
-        if (strlen($desmov) <= 85) { // la descrizione entra in 50 caratteri
-            $desmov = 'PAGATO x FAT.' . $desmov;
-        } else { // la descrizione è troppo lunga
-            $desmov = 'PAGATO FINO A FAT.n.';
-        }
         if ($acc_tot <= 0) {
             $msg .= '4+';
         }
     } else if (isset($_POST['ins'])) { // non ho movimenti ma ho chiesto di inserirli
         $msg .= '6+';
     }
-    $form['descr_mov'] = $_POST['descr_mov'];
-    /** fine modifica FP */
+    $form['entry_date'] = substr($_POST['entry_date'], 0, 10);
     $form['expiry_ini'] = substr($_POST['expiry_ini'], 0, 10);
     $form['expiry_fin'] = substr($_POST['expiry_fin'], 0, 10);
     $form['target_account'] = intval($_POST['target_account']);
@@ -86,22 +77,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         header("Location: " . $form['ritorno']);
         exit;
     }
-    //controllo i campi
-    if (!checkdate($form['expiry_fin'], $form['expiry_ini'], $form['date_ini_Y'])) {
-        $msg .= '0+';
-    }
     if (isset($_POST['ins']) && $form['target_account'] < 100000001) {
         $msg = '5+';
     }
     // fine controlli
     if (isset($_POST['ins']) && $msg == '') {
-        /** inizio modifica FP 09/01/2016
-         * descrizione modificabile
-         */
-        if (!empty($form['descr_mov'])) {
-            $desmov = $form['descr_mov'];
-        }
-        /** fine modifica FP */
         $tes_val = array('caucon' => '',
             'descri' => $desmov,
             'datreg' => $date,
@@ -133,75 +113,153 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
 }
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', /** ENRICO FEDELE */));
+$script_transl = HeadMain();
+$gForm = new acquisForm();
 ?>
 <SCRIPT type="text/javascript">
     $(function () {
-        $("#expiry_ini, #expiry_fin").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        $("#entry_date,#expiry_ini, #expiry_fin").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
         $("#expiry_ini, #expiry_fin").change(function () {
             this.form.submit();
         });
+        $('input:checkbox').on('change', function () {
+            var sum = 0;
+            $('.check').each(function () {
+                if (this.checked)
+                    sum = sum + parseFloat($(this).val());
+            });
+            $('#total').text(Math.round(sum * 100) / 100)
+        }).trigger("change");
+        $("#checkAll").click(function () {
+            $('input:checkbox').not(this).prop('checked', this.checked);
+        });
     });
 </script>
-<?php
-echo "<form method=\"POST\" name=\"select\">\n";
-echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['ritorno'] . "\" name=\"ritorno\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['numdoc'] . "\" name=\"numdoc\" />\n";
-echo "<input type=\"hidden\" value=\"" . $form['datdoc'] . "\" name=\"datdoc\" />\n";
-$gForm = new acquisForm();
-echo "<br /><div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['title'];
-echo "</div>\n";
-echo "<table class=\"Tmiddle\">\n";
-if (!empty($msg)) {
-    echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['mesg']) . "</td></tr>\n";
-}
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_ini'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
-$gForm->CalendarPopup('date_ini', $form['expiry_ini'], $form['expiry_fin'], $form['date_ini_Y'], 'FacetSelect', 1);
-echo "</td>\n";
-echo "</tr>\n";
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl['target_account'] . "</td>\n ";
-echo "<td class=\"FacetFieldCaptionTD\">";
-echo "\t <select name=\"target_account\" tabindex=\"4\"   class=\"FacetSelect\" onchange=\"this.form.submit()\">\n"; //impropriamente usato per il numero di conto d'accredito
-/** inizio modifica FP 28/11/2015 */
-$isDocumentoSelezionato = !empty($form['numdoc']) && !empty($form['datdoc']);
-/** fine modifica FP */
-$masban = $admin_aziend['masban'] * 1000000;
-$casse = substr($admin_aziend['cassa_'], 0, 3);
-$mascas = $casse * 1000000;
-$res = gaz_dbi_dyn_query('*', $gTables['clfoco'], "(codice LIKE '$casse%' AND codice > '$mascas') or (codice LIKE '" . $admin_aziend['masban'] . "%' AND codice > '$masban')", "codice ASC"); //recupero i c/c
-echo "\t\t <option value=\"0\">--------------------------</option>\n";
-while ($a = gaz_dbi_fetch_array($res)) {
-    $sel = "";
-    if ($a["codice"] == $form['target_account']) {
-        $sel = "selected";
-    }
-    echo "\t\t <option value=\"" . $a["codice"] . "\" $sel >" . $a["codice"] . " - " . $a["descri"] . "</option>\n";
-}
-echo "\t </select></td>\n";
-echo "</tr>";
-/** inizio modifica FP 09/01/2016
- * descrizione modificabile
- */
-echo "<tr>";
-echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['descr_mov'] . "</td>\n ";
-echo "<td class=\"FacetDataTD\"> <input type=\"text\" name=\"descr_mov\" value=\"" . $form['descr_mov'] . "\" maxlength=\"85\" size=\"85\"></td>";
-echo "</tr>";
-/** fine modifica FP */
-// qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito 
-echo "</tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['transfer_fees'] . "</td><td class=\"FacetDataTD\">
-       <input type=\"text\" name=\"transfer_fees\" value=\"" . $form['transfer_fees'] . "\" maxlength=\"5\" size=\"5\" />
-       </td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['transfer_fees_acc'] . "</td><td class=\"FacetDataTD\">";
-$gForm->selectAccount('transfer_fees_acc', $form['transfer_fees_acc'], array('sub', 3), '', false, "col-sm-8");
-echo "</td></tr>\n";
-// fine campi per proposta dei costi di bonifico bancario
+<form role="form" method="post" name="pay_riba" enctype="multipart/form-data" >
+    <input type="hidden" value="<?php echo $form['hidden_req'] ?>" name="hidden_req" />
+    <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
+    <div class="text-center">
+        <p><b><?php echo $script_transl['title']; ?></b></p>
+    </div>
+    <div class="panel panel-default gaz-table-form">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="entry_date" class="col-sm-4 control-label"><?php echo $script_transl['entry_date']; ?></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="entry_date" name="entry_date" value="<?php echo $form['entry_date']; ?>">
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="target_account" class="col-sm-4 control-label"><?php echo $script_transl['target_account']; ?></label>
+                        <div class="col-sm-8">
+                            <?php
+                            $select_bank = new selectconven("target_account");
+                            $select_bank->addSelected($form['target_account']);
+                            $select_bank->output($admin_aziend['masban'], false, true);
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="expiry_ini" class="col-sm-4 control-label"><?php echo $script_transl['expiry_ini']; ?></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="expiry_ini" name="expiry_ini" tabindex=1 value="<?php echo $form['expiry_ini']; ?>">
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="expiry_fin" class="col-sm-4 control-label"><?php echo $script_transl['expiry_fin']; ?></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="expiry_fin" name="expiry_fin" tabindex=2 value="<?php echo $form['expiry_fin']; ?>">
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="transfer_fees_acc" class="col-sm-4 control-label"><?php echo $script_transl['transfer_fees_acc']; ?></label>
+                        <div class="col-sm-8">
+                            <?php
+                            $gForm->selectAccount('transfer_fees_acc', $form['transfer_fees_acc'], 3, '', false, "col-sm-6 small");
+                            ?>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="transfer_fees" class="col-sm-4 control-label"><?php echo $script_transl['transfer_fees']; ?></label>
+                        <div class="col-sm-4">
+                            <input type="number" step="0.01" min="0.00" max="100" class="form-control" id="transfer_fees" name="transfer_fees" placeholder="<?php echo $script_transl['transfer_fees']; ?>" value="<?php echo $form['transfer_fees']; ?>">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div> <!-- chiude container -->
+    </div><!-- chiude panel -->
+    <div class="panel panel-default gaz-table-form">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="entry_date" class="col-sm-11 control-label"><?php ?></label>
+                        <div class="col-sm-1">
+                            Seleziona tutto <input type="checkbox" id="checkAll">
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="entry_date" class="col-sm-11 control-label"><?php ?></label>
+                        <div class="col-sm-1" id="total">
+                            0
+                        </div>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <?php
+            $paymov = new Schedule;
+            $rs = gaz_dbi_dyn_query("*", $gTables['paymov'], "expiry BETWEEN '" . gaz_format_date($form['expiry_ini'], true) . "' AND '" . gaz_format_date($form['expiry_fin'], true) . "' AND id_rigmoc_doc >= 1", "expiry");
+            while ($r = gaz_dbi_fetch_array($rs)) {
+                $doc_data = $paymov->getDocumentData($r['id_tesdoc_ref']);
+                $status = $paymov->getAmount($r['id_tesdoc_ref'], gaz_format_date($form['expiry_fin'], true));
+                if (substr($doc_data['clfoco'], 0, 3) == $admin_aziend['masfor'] &&
+                        $status >= 0.01) { // considero solo i fornitori non saldati 
+                    ?>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="entry_date" class="col-sm-11 control-label"><?php echo 'Per ' . $doc_data['descri'] . ' ' . $doc_data['numdoc'] . ' del ' . gaz_format_date($doc_data['datdoc']) . '  € ' . gaz_format_number($r['amount']). '  scad.' . gaz_format_date($r['expiry']); ?></label>
+                                <div class="col-sm-1">
+                                    <input type="checkbox" class="check" value="<?php echo $r['amount']; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>">
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- chiude row  -->
+                    <?php
+                }
+            }
+            ?>
+        </div> <!-- chiude container -->
+    </div><!-- chiude panel -->
+</form>
 
-echo "</table>\n";
-echo "</table></form>";
-?>
 <?php
 require("../../library/include/footer.php");
 ?>

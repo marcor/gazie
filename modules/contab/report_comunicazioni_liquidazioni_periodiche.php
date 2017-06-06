@@ -53,7 +53,6 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                         <th class="FacetFieldCaptionTD"><?php echo $script_transl['vp5']; ?></th>
                         <th class="FacetFieldCaptionTD"><?php echo $script_transl['vp7-13']; ?></th>
                         <th class="FacetFieldCaptionTD"><?php echo $script_transl['vp14']; ?></th>
-                        <th class="FacetFieldCaptionTD"><?php echo $script_transl['delete']; ?></th>
                             <?php
                             $result = gaz_dbi_dyn_query('*', $gTables['liquidazioni_iva'], 1, 'anno DESC, mese_trimestre DESC');
                             while ($row = gaz_dbi_fetch_array($result)) {
@@ -71,7 +70,6 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                                 echo "<td align=\"center\">" . gaz_format_number($row["vp5"]) . " &nbsp;</td>";
                                 echo "<td align=\"center\">" . gaz_format_number($altro) . " &nbsp;</td>";
                                 echo "<td align=\"center\">" . gaz_format_number($row['vp4']-$row['vp5']+$altro) . " &nbsp;</td>";
-                                echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_comunicazione_liquidazioni_periodiche.php?file=" . $row["nome_file_xml"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                                 echo "</tr>";
                             }
                             ?>
