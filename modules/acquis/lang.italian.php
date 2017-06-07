@@ -553,7 +553,9 @@ $strScript = array("admin_fornit.php" =>
     ),
     "bank_receipts_payment.php" =>
     array('title' => 'Registra disposizione di pagamenti',
-        'errors' => array(),
+        'err' => array(
+            'nopay' => 'Non è stato selezionata alcuna scadenza'
+        ),
         'entry_date' => 'Data di registrazione',
         'default_descri' => 'PAGATE RIBA A FORNITORI',
         'expiry_ini' => 'Data di scadenza iniziale',
@@ -561,7 +563,13 @@ $strScript = array("admin_fornit.php" =>
         'target_account' => 'Conto corrente di addebito',
         'transfer_fees_acc' => 'Conto addebito spese bancarie',
         'transfer_fees' => 'Eventuali spese bancarie',
+        'description' => 'Descrizione del movimento contabile',
+        'description_value' => 'DISPOSTO PAGAMENTO RI.BA.',
         'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+        'sel_riba' => 'Seleziona RiBa',
+        'sel_other' => 'Seleziona Altri',
+        'sel_all' => 'Seleziona TUTTO!',
+        'confirm_entry' => 'Conferma registrazione pagamenti selezionati',
     ),
 );
 ?>
