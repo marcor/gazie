@@ -368,6 +368,29 @@ $strScript = array("admin_fornit.php" =>
         'descr_mov' => 'Descrizione del movimento<br>(vuoto per descrizione standard)',
 		'transfer_fees_acc'=>'Conto spese bonifico',
 		'transfer_fees'=>'Addebito per bonifico'
-   )
+   ),
+    "bank_receipts_payment.php" =>
+    array('title' => 'Registra disposizione di pagamenti',
+        'err' => array(
+            'nopay' => 'Non è stata selezionata alcuna scadenza',
+            'noacc' => 'Non è stato selezionato il conto corrente di addebito',
+            'expif' => 'La data di inizio non può essere successiva a quella di fine scadenza'
+        ),
+        'entry_date' => 'Data di registrazione',
+        'expiry_ini' => 'Data di scadenza iniziale',
+        'expiry_fin' => 'Data di scadenza finale',
+        'target_account' => 'Conto corrente di addebito',
+        'transfer_fees_acc' => 'Conto addebito spese bancarie',
+        'transfer_fees' => 'Eventuali spese bancarie',
+        'description' => 'Descrizione del movimento contabile',
+        'description_value' => 'DISPOSTO PAGAMENTO RI.BA.',
+        'status_value' => array(0 => 'APERTA', 1 => 'CHIUSA', 2 => 'ESPOSTA', 3 => 'SCADUTA', 9 => 'ANTICIPO'),
+        'sel_riba' => 'Seleziona RiBa',
+        'sel_other' => 'Seleziona Altri',
+        'sel_all' => 'Seleziona TUTTO!',
+        'total' => 'TOTALE €',
+        'confirm_entry' => 'Conferma la registrazione dei pagamenti selezionati',
+        'upd_entry'=> 'Modifica il movimento contabile generato da questo documento'
+    )
 );
 ?>

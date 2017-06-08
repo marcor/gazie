@@ -547,6 +547,7 @@ $strScript = array("admin_client.php" =>
         'number' => 'Numero',
         'invoice' => 'Fattura <br> allegata',
         'print_lot' => 'Stampa certificato',
+        'pagame' => 'Pagamento',
         'status' => 'Stato',
         'status_value' => array(0 => 'EMESSO', 1 => 'CONTABILIZZATO'),
         'send' => 'Invia nuovamente all\'ECR',

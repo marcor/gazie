@@ -524,7 +524,8 @@ function rigmoiInsert($newValue) {
 function rigmocInsert($newValue) {
     $table = 'rigmoc';
     $columns = array('id_rig', 'id_tes', 'darave', 'codcon', 'import');
-    tableInsert($table, $columns, $newValue);
+    $last_id = tableInsert($table, $columns, $newValue);
+    return $last_id;
 }
 
 function paymovInsert($newValue) {

@@ -116,6 +116,7 @@ $headers_tesdoc = array(
     $script_transl['date'] => "datemi",
     $script_transl['number'] => "numdoc",
     $script_transl['invoice'] => "clfoco",
+    $script_transl['pagame'] => "",
     $script_transl['status'] => "",
     $script_transl['amount'] => "",
     'Cert.' => "",
@@ -135,6 +136,8 @@ $linkHeaders->output();
             $cast_vat = array();
             $cast_acc = array();
             $tot_tes = 0;
+            $pagamento = gaz_dbi_get_row($gTables['pagame'], 'codice', $row['pagame']);
+
             //recupero i dati righi per creare i castelletti
             $rs_rig = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $row['id_tes'], "id_rig");
             while ($v = gaz_dbi_fetch_array($rs_rig)) {
@@ -217,6 +220,8 @@ $linkHeaders->output();
             echo "<td align=\"center\">" . $row["numdoc"] . " &nbsp;</td>";
             // Colonna fattura
             echo "<td align=\"center\">$invoice</td>";
+            // Colonna pagamento
+            echo "<td align=\"center\">" . $pagamento["descri"] . " &nbsp;</td>";
             // Colonna stato
             echo "<td align=\"center\">" . $status . " &nbsp;</td>";
              // Colonna importo

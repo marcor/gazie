@@ -50,12 +50,59 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['transfer_fees'] = floatval($_POST['transfer_fees']);
     $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
     $form['description'] = substr($_POST['description'], 0, 50);
-    if (isset($_POST['pay'])) {
-        foreach ($_POST['pay'] as $k => $v) {
-            print $v;
+    if (isset($_POST['ins'])) {
+
+        // ----- INIZIO CONTROLLI FORMALI -----
+        if ($form['target_account'] < 100000000) { // no ho selezionato il conto di adebito
+            $msg['err'][] = 'noacc';
         }
-    } else {
-        $msg['err'][] = 'nopay';
+        if (!isset($_POST['pay'])) {
+            $msg['err'][] = 'nopay';
+        }
+        $ed = gaz_format_date($form['entry_date'], 2);
+        $ei = gaz_format_date($form['expiry_ini'], 2);
+        $ef = gaz_format_date($form['expiry_fin'], 2);
+        if ($ei > $ef) {
+            $msg['err'][] = 'expif';
+        }
+        // ----- FINE CONTROLLI FORMALI -----
+
+        if (count($msg['err']) <= 0) { // non ci sono errori, posso procedere
+            $paymov = new Schedule;
+            // inserisco i dati postati
+            $newValue = array('caucon' => 'PRB',
+                'descri' => $form['description'],
+                'id_doc' => 0,
+                'datreg' => gaz_format_date($form['entry_date'], TRUE),
+                'seziva' => 0,
+                'protoc' => 0,
+                'numdoc' => '',
+                'datdoc' => gaz_format_date($form['entry_date'], TRUE),
+                'clfoco' => 0,
+                'regiva' => 0,
+                'operat' => 0
+            );
+            $tes_id = tesmovInsert($newValue);
+            $tot = 0.00;
+            foreach ($_POST['pay'] as $k => $v) {
+                // print '<br>key=' . $k . '<br>amount=' . $v . '<br>expiry=' . $_POST['expiry'][$k] . '<br>';
+                $tot += $v;
+                $doc_data = $paymov->getDocumentData($k);
+                $rig_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $doc_data['clfoco'], 'import' => $v));
+                $paymov_value = array('id_tesdoc_ref' => $k,
+                    'id_rigmoc_doc' => $rig_id,
+                    'amount' => $v,
+                    'expiry' => substr($_POST['expiry'][$k], 0, 10));
+                paymovInsert($paymov_value);
+            }
+            if ($form['transfer_fees'] >= 0.01 && $form['transfer_fees_acc'] > 100000000) { // ho le spese bancarie 
+                rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $form['transfer_fees_acc'], 'import' => $form['transfer_fees']));
+                $tot += $form['transfer_fees'];
+            }
+            rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $form['target_account'], 'import' => round($tot, 2)));
+            header("Location: ../contab/report_movcon.php");
+            exit;
+        }
     }
 }
 require("../../library/include/header.php");
@@ -194,7 +241,7 @@ $gForm = new acquisForm();
                     <div class="col-sm-3">
                         <?php echo $script_transl['sel_all']; ?> <input type="checkbox" id="checkAll">
                     </div>
-                    <div class="col-sm-2">TOTALE €</div>
+                    <div class="col-sm-2"><?php echo $script_transl['total']; ?></div>
                     <div class="col-sm-1 pull-right" id="total">0.00</div>
                 </div>
             </div><!-- chiude row  -->
@@ -204,34 +251,35 @@ $gForm = new acquisForm();
             while ($r = gaz_dbi_fetch_array($rs)) {
                 $doc_data = $paymov->getDocumentData($r['id_tesdoc_ref']);
                 $status = $paymov->getAmount($r['id_tesdoc_ref'], gaz_format_date($form['expiry_fin'], true));
-                $fornitore = $anagrafica->getPartner($doc_data['clfoco']);
-                $pagamento = gaz_dbi_get_row($gTables['pagame'], 'codice', $fornitore['codpag']);
-                $class = 'check_other';
-                if ($pagamento['tippag'] == 'B') {
-                    $class = 'check_riba';
-                }
                 if (substr($doc_data['clfoco'], 0, 3) == $admin_aziend['masfor'] &&
                         $status >= 0.01) { // considero solo i fornitori non saldati 
+                    $fornitore = $anagrafica->getPartner($doc_data['clfoco']);
+                    $pagamento = gaz_dbi_get_row($gTables['pagame'], 'codice', $fornitore['codpag']);
+                    $class = 'check_other';
+                    if ($pagamento['tippag'] == 'B') {
+                        $class = 'check_riba';
+                    }
                     ?>
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="entry_date" class="col-sm-11 control-label">
                                     <?php echo $fornitore['ragso1'] . ' ' . $fornitore['ragso2']; ?>
-                                    <a class="btn btn-xs btn-default btn-edit" title="Modifica il movimento contabile generato da questo documento" href="../contab/admin_movcon.php?id_tes=<?php echo $doc_data['id_tes']; ?>&Update">
-                                        <?php echo ' ' . $doc_data['descri'] . ' ' . $doc_data['numdoc'] . ' del ' . gaz_format_date($doc_data['datdoc']); ?>
+                                    <a class="btn btn-xs btn-default btn-edit" title="<?php echo $script_transl['upd_entry']; ?>" href="../contab/admin_movcon.php?id_tes=<?php echo $doc_data['id_tes']; ?>&Update">
+                                        <?php echo ' ' . $doc_data['descri'] . ' ' . $doc_data['numdoc'] . ' del ' . gaz_format_date($doc_data['datdoc']) . ' prot.' . $doc_data['protoc']; ?>
                                     </a>
                                 </label>
                             </div>
                             <div class="col-sm-1 pull-right">
                                 <input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $r['amount']; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>" name="pay[<?php echo $r['id_tesdoc_ref']; ?>]">
+                                <input type="hidden" value="<?php echo $r['expiry']; ?>" name="expiry[<?php echo $r['id_tesdoc_ref']; ?>]">
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="col-sm-8">
                                 <?php echo $pagamento['descri']; ?>
                             </div>
-                            <div class="col-sm-4">
+                            <div class="col-sm-4 pull-right">
                                 <?php echo 'scad.' . gaz_format_date($r['expiry']) . ' di € ' . gaz_format_number($r['amount']); ?>
                             </div>
                         </div>
