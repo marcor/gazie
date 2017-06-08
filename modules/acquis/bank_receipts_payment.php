@@ -90,7 +90,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 $doc_data = $paymov->getDocumentData($k);
                 $rig_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $doc_data['clfoco'], 'import' => $v));
                 $paymov_value = array('id_tesdoc_ref' => $k,
-                    'id_rigmoc_doc' => $rig_id,
+                    'id_rigmoc_pay' => $rig_id,
                     'amount' => $v,
                     'expiry' => substr($_POST['expiry'][$k], 0, 10));
                 paymovInsert($paymov_value);
