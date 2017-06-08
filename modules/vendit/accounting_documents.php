@@ -156,18 +156,18 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                     $cast_vat[$r['codvat']]['periva'] = $r['pervat'];
                     $cast_vat[$r['codvat']]['tipiva'] = $r['tipiva'];
                 }
-                $cast_vat[$r['codvat']]['impcast']+=$importo;
-                $cast_vat[$r['codvat']]['ivacast']+=round(($importo * $r['pervat']) / 100, 2);
+                $cast_vat[$r['codvat']]['impcast'] += $importo;
+                $cast_vat[$r['codvat']]['ivacast'] += round(($importo * $r['pervat']) / 100, 2);
                 $totimpdoc += $importo;
                 //creo il castelletto conti
                 if (!isset($cast_acc[$r['codric']]['import'])) {
                     $cast_acc[$r['codric']]['import'] = 0;
                 }
-                $cast_acc[$r['codric']]['import']+=$importo;
+                $cast_acc[$r['codric']]['import'] += $importo;
                 if ($r['tiprig'] == 90) { // se è una vendita cespite lo indico sull'array dei conti
                     $cast_acc[$r['codric']]['asset'] = 1;
                 }
-                $rit+=round($importo * $r['ritenuta'] / 100, 2);
+                $rit += round($importo * $r['ritenuta'] / 100, 2);
                 // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)   
                 if ($r['tipiva'] == 'T') {
                     $ivasplitpay += round(($importo * $r['pervat']) / 100, 2);
@@ -357,7 +357,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                     rigmoiInsert($vv);
                 }
                 //inserisco i righi contabili nel db
-                if ($v['tes']['tipdoc'] == 'VCO') {  // se è uno scontrino cassa anzichè scontrino
+                if ($v['tes']['tipdoc'] == 'VCO') {  // se è uno scontrino cassa anzichè cliente
                     $v['tes']['clfoco'] = $admin_aziend['cassa_'];
                 }
                 rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
@@ -365,47 +365,46 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 $paymov_id = gaz_dbi_last_id();
                 foreach ($v['acc'] as $acc_k => $acc_v) {
                     if ($acc_v['import'] != 0) {
-						if (isset($acc_v['asset'])){ // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza 
-							$asset = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $acc_k . "' AND type_mov = '1"); // riprendo l'asset
-							// calcolo il costo storico
-							$rs=gaz_dbi_dyn_query ($gTables['rigmoc'].".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = ".$acc_k);
-							$saldo_costo_storico=0;
-							while ($r = gaz_dbi_fetch_array($rs)) {
-								    $saldo_costo_storico += $r['dare'];
-									$saldo_costo_storico -= $r['avere'];
-							}
-							// calcolo il fondo ammortamento
-							$rs=gaz_dbi_dyn_query ($gTables['rigmoc'].".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = ".$asset['acc_found_assets']);
-							$saldo_fondo_ammortamento=0;
-							while ($r = gaz_dbi_fetch_array($rs)) {
-								    $saldo_fondo_ammortamento += $r['dare'];
-									$saldo_fondo_ammortamento -= $r['avere'];
-							}
-							// calcolo il residuo che dovrebbe essere in dare (+)
-							$rest=$saldo_costo_storico+$saldo_fondo_ammortamento;
-							$plus_minus=round($acc_v['import']-$rest,2);
-							// intanto storno il costo storico ed il fondo ammortamento
-							rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $acc_k, 'import' => $saldo_costo_storico));
-							rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $asset['acc_found_assets'], 'import' =>abs($saldo_fondo_ammortamento)));
-							// quindi si possono verificare due condizioni: vendita ad un prezzo inferiore al residuo (minusvalenza) oppure  superiore (plusvalenza)
-							if ($plus_minus >= 0.01){ // c'è una plusvalenza
-								rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' =>$admin_aziend['capital_gains_account'], 'import' => $plus_minus));
-								
-							} elseif ($plus_minus <= -0.01) { // è una minusvalenza
-								rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' =>$admin_aziend['capital_loss_account'], 'import' => abs($plus_minus)));
-							} else { // è pari non plusvalenza ne minusvalenza
-							}
-							// infine inserisco il rigo sulla tabella degli assets
-							unset($asset['id']);
-							$asset['id_movcon']=$tes_id;
-							$asset['type_mov']=90;
-							$asset['descri']='ALIENAZIONE DEL BENE';
-							$asset['pagame']= $v['tes']['pagame'];
-							$asset['a_value']=$acc_v['import'];
-							gaz_dbi_table_insert('assets', $asset);
-						} else {
-							rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $acc_k, 'import' => $acc_v['import']));
-						}
+                        if (isset($acc_v['asset'])) { // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza 
+                            $asset = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $acc_k . "' AND type_mov = '1"); // riprendo l'asset
+                            // calcolo il costo storico
+                            $rs = gaz_dbi_dyn_query($gTables['rigmoc'] . ".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = " . $acc_k);
+                            $saldo_costo_storico = 0;
+                            while ($r = gaz_dbi_fetch_array($rs)) {
+                                $saldo_costo_storico += $r['dare'];
+                                $saldo_costo_storico -= $r['avere'];
+                            }
+                            // calcolo il fondo ammortamento
+                            $rs = gaz_dbi_dyn_query($gTables['rigmoc'] . ".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = " . $asset['acc_found_assets']);
+                            $saldo_fondo_ammortamento = 0;
+                            while ($r = gaz_dbi_fetch_array($rs)) {
+                                $saldo_fondo_ammortamento += $r['dare'];
+                                $saldo_fondo_ammortamento -= $r['avere'];
+                            }
+                            // calcolo il residuo che dovrebbe essere in dare (+)
+                            $rest = $saldo_costo_storico + $saldo_fondo_ammortamento;
+                            $plus_minus = round($acc_v['import'] - $rest, 2);
+                            // intanto storno il costo storico ed il fondo ammortamento
+                            rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $acc_k, 'import' => $saldo_costo_storico));
+                            rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $asset['acc_found_assets'], 'import' => abs($saldo_fondo_ammortamento)));
+                            // quindi si possono verificare due condizioni: vendita ad un prezzo inferiore al residuo (minusvalenza) oppure  superiore (plusvalenza)
+                            if ($plus_minus >= 0.01) { // c'è una plusvalenza
+                                rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $admin_aziend['capital_gains_account'], 'import' => $plus_minus));
+                            } elseif ($plus_minus <= -0.01) { // è una minusvalenza
+                                rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $admin_aziend['capital_loss_account'], 'import' => abs($plus_minus)));
+                            } else { // è pari non plusvalenza ne minusvalenza
+                            }
+                            // infine inserisco il rigo sulla tabella degli assets
+                            unset($asset['id']);
+                            $asset['id_movcon'] = $tes_id;
+                            $asset['type_mov'] = 90;
+                            $asset['descri'] = 'ALIENAZIONE DEL BENE';
+                            $asset['pagame'] = $v['tes']['pagame'];
+                            $asset['a_value'] = $acc_v['import'];
+                            gaz_dbi_table_insert('assets', $asset);
+                        } else {
+                            rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $acc_k, 'import' => $acc_v['import']));
+                        }
                     }
                 }
                 if ($tot['vat'] > 0) {
@@ -414,12 +413,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 if ($v['rit'] > 0) {  // se ho una ritenuta d'acconto
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['c_ritenute'], 'import' => $v['rit']));
                 }
-                if (($v['tes']['incaut'] > 1) && ($v['tes']['tippag'] <> 'K')) {  // se il pagamento prevede l'incasso automatico 
+                if ($v['tes']['incaut'] > 100000000) {  // se il pagamento prevede l'incasso automatico 
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
                     rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'])));
-                } elseif ($v['tes']['tippag'] == 'K') {// se effettuato con carte viene incassato direttamente su C.C.
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['id_bank'], 'import' => ($tot['tot'] - $v['rit'])));
                 } else { // altrimenti inserisco le partite aperte
                     foreach ($rate['import'] as $k_rate => $v_rate) {
                         // preparo l'array da inserire sui movimenti delle partite aperte

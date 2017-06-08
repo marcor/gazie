@@ -29,7 +29,6 @@ $mastrofornitori = $admin_aziend['masfor'] . "000000";
 $anagrafica = new Anagrafica();
 $msg = "";
 $form = array();
-$partner_max_value = array();
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 } else {
@@ -520,10 +519,8 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $msg .= "1+";
             }
             if ($_POST['registroiva'] == 4 && (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masban'] || substr($_POST['conto_rc' . $i], 0, 3) == substr($admin_aziend['cassa_'], 0, 3))) {
-                // in caso di scontrino anonimo chiuso su cassa/banca faccio il push del valore massimo che trovo  
-                if ($ctrl_mov_con <= $_POST['importorc'][$i]) {
-                    $ctrl_mov_con = number_format($_POST['importorc'][$i], 2, '.', '');
-                }
+                // in caso di scontrino anonimo chiuso su cassa/banca faccio la somma dei conti di incasso che trovo  
+                $ctrl_mov_con += number_format($_POST['importorc'][$i], 2, '.', '');
             } elseif (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] || substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'] || (preg_match("/^id_([0-9]+)$/", $_POST['conto_rc' . $i], $match))) {
                 // ... ed anche in caso di cliente/fornitore eseguo il push del valore massimo   
                 if ($ctrl_mov_con <= $_POST['importorc'][$i]) {
