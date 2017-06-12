@@ -85,10 +85,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $tes_id = tesmovInsert($newValue);
             $tot = 0.00;
             foreach ($_POST['pay'] as $k => $v) {
-                // print '<br>key=' . $k . '<br>amount=' . $v . '<br>expiry=' . $_POST['expiry'][$k] . '<br>';
                 $tot += $v;
-                $doc_data = $paymov->getDocFromID($k);
-                $rig_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $doc_data['clfoco'], 'import' => $v));
+                $rig_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => intval($_POST['clfoco'][$k]), 'import' => $v));
                 $paymov_value = array('id_tesdoc_ref' => $k,
                     'id_rigmoc_pay' => $rig_id,
                     'amount' => $v,
@@ -273,6 +271,7 @@ $gForm = new acquisForm();
                             <div class="col-sm-1 pull-right">
                                 <input type="checkbox" class="<?php echo $class; ?>" value="<?php echo $r['amount']; ?>" id="<?php echo $r['id_tesdoc_ref']; ?>" name="pay[<?php echo $r['id_tesdoc_ref']; ?>]">
                                 <input type="hidden" value="<?php echo $r['expiry']; ?>" name="expiry[<?php echo $r['id_tesdoc_ref']; ?>]">
+                                <input type="hidden" value="<?php echo $doc_data['clfoco']; ?>" name="clfoco[<?php echo $r['id_tesdoc_ref']; ?>]">
                             </div>
                         </div>
                         <div class="col-md-12">
