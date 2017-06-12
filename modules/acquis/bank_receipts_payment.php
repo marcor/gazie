@@ -87,7 +87,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             foreach ($_POST['pay'] as $k => $v) {
                 // print '<br>key=' . $k . '<br>amount=' . $v . '<br>expiry=' . $_POST['expiry'][$k] . '<br>';
                 $tot += $v;
-                $doc_data = $paymov->getDocumentData($k);
+                $doc_data = $paymov->getDocFromID($k);
                 $rig_id = rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $doc_data['clfoco'], 'import' => $v));
                 $paymov_value = array('id_tesdoc_ref' => $k,
                     'id_rigmoc_pay' => $rig_id,
