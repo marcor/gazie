@@ -415,6 +415,7 @@ function dialogSchedule(paymov) {
         var id_btn = new Date().valueOf().toString();
 
         $("#pm_post_container_" + nrow).append('<div id="pm_post_' + id_btn + '">' +
+                '<input type="hidden" id="post_' + nrow + '_' + id_btn + '_id" name="paymov[' + nrow + '][' + id_btn + '][id]" value="new" />' +
                 '<input type="hidden" id="post_' + nrow + '_' + id_btn + '_id_tesdoc_ref" name="paymov[' + nrow + '][' + id_btn + '][id_tesdoc_ref]" value="' + tesdoc_ref + '" />' +
                 '<input type="hidden" id="post_' + nrow + '_' + id_btn + '_expiry" name="paymov[' + nrow + '][' + id_btn + '][expiry]" value="" />' +
                 '<input type="hidden" id="post_' + nrow + '_' + id_btn + '_amount" name="paymov[' + nrow + '][' + id_btn + '][amount]" value="0.00" />' +

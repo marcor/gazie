@@ -247,9 +247,9 @@ $gForm = new acquisForm();
             </div><!-- chiude row  -->
             <?php
             $paymov = new Schedule;
-            $rs = gaz_dbi_dyn_query("*", $gTables['paymov'], "expiry BETWEEN '" . gaz_format_date($form['expiry_ini'], true) . "' AND '" . gaz_format_date($form['expiry_fin'], true) . "' AND id_rigmoc_doc >= 1", "expiry");
+            $rs = gaz_dbi_dyn_query("*", $gTables['paymov'], "expiry BETWEEN '" . gaz_format_date($form['expiry_ini'], true) . "' AND '" . gaz_format_date($form['expiry_fin'], true) . "' AND id_rigmoc_doc >= 1", "amount");
             while ($r = gaz_dbi_fetch_array($rs)) {
-                $doc_data = $paymov->getDocumentData($r['id_tesdoc_ref']);
+                $doc_data = $paymov->getDocFromID($r['id_rigmoc_doc']);
                 $status = $paymov->getAmount($r['id_tesdoc_ref'], gaz_format_date($form['expiry_fin'], true));
                 if (substr($doc_data['clfoco'], 0, 3) == $admin_aziend['masfor'] &&
                         $status >= 0.01) { // considero solo i fornitori non saldati 
