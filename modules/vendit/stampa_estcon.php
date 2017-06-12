@@ -96,10 +96,10 @@ while ($movimenti = gaz_dbi_fetch_array($result)){
     $pdf->Cell(75,4,$movimenti['descri'],1,0,'L');
     if ($movimenti['numdoc'] > 0) {
         $pdf->Cell(18,4,$movimenti['numdoc']."/".$movimenti['seziva'],1,0,'C');
+        $pdf->Cell(18,4,$datadoc,1,0,'R');
     } else {
-        $pdf->Cell(18,4,'',1);
+        $pdf->Cell(36,4,'',1);
     }
-    $pdf->Cell(18,4,$datadoc,1,0,'R');
     if ($dare != 0) $pdf->Cell(18,4,$dare,1,0,'R'); else $pdf->Cell(18,4,'',1);
     if ($avere != 0) $pdf->Cell(18,4,$avere,1,0,'R'); else $pdf->Cell(18,4,'',1);
     $pdf->Cell(20,4,gaz_format_number($saldo),1,1,'R');
