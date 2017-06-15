@@ -56,10 +56,10 @@ if (isset($_POST['hidden_req'])) { // accessi successivi allo script
                             <?php
                             $result = gaz_dbi_dyn_query('*', $gTables['liquidazioni_iva'], 1, 'anno DESC, mese_trimestre DESC');
                             while ($row = gaz_dbi_fetch_array($result)) {
-                                if ($row["periodicità"] == 'T') {
-                                    $descri_per = $script_transl['periodo_val'][$row['mese_trimestre']] . ' ' . $script_transl['periodicità_val'][$row["periodicità"]] . ' ' . $row["anno"];
+                                if ($row["periodicita"] == 'T') {
+                                    $descri_per = $script_transl['periodo_val'][$row['mese_trimestre']] . ' ' . $script_transl['periodicita_val'][$row["periodicita"]] . ' ' . $row["anno"];
                                 } else {
-                                    $descri_per = $script_transl['periodicità_val'][$row["periodicità"]] . ' ' . strftime('%B', mktime(0, 0, 0, $row['mese_trimestre'], 1, $row["anno"])) . ' ' . $row["anno"];
+                                    $descri_per = $script_transl['periodicita_val'][$row["periodicita"]] . ' ' . strftime('%B', mktime(0, 0, 0, $row['mese_trimestre'], 1, $row["anno"])) . ' ' . $row["anno"];
                                 }
                                 $altro=round($row['vp7'] - $row['vp8'] - $row['vp9'] - $row['vp10'] - $row['vp11'] + $row['vp12'] - $row['vp13'], 2);
                                 echo "<tr class=\"FacetDataTD\">";

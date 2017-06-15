@@ -37,27 +37,52 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
     if ($admin_aziend['ivam_t'] == 'T') { // un unico modulo per tutto il TRIMESTRE
         $date_ini->modify('+2 month');
         $df = $date_ini->format('Y-m-t');
-        $mod_periodi = array(0 => array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $trimestre));
+        $mod_periodi = array(0 => array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $trimestre, 'cre' => false));
     } else { // moduli MENSILI
+        // sul primo mese vedo se ho un credito da quello precedente
+        $date_carry = new DateTime($y . '-' . $m . '-1');
+        $date_carry->modify('-1 month');
+        $carry = gaz_dbi_get_row($gTables['liquidazioni_iva'], "mese_trimestre", $date_carry->format('m') . "' AND anno = '" . $date_carry->format('Y'));
+        $saldo = round($carry['vp4'] - $carry['vp5'] + $carry['vp7'] - $carry['vp8'] - $carry['vp9'] - $carry['vp10'] - $carry['vp11'] + $carry['vp12'] - $carry['vp13'], 2);
+        if ($saldo <= -0.01) { // se c'è un credito
+            $cre = $saldo;
+        } else {
+            $cre = false;
+        }
+        // fine ripresa eventuale credito precedente
         $df = $date_ini->format('Y-m-t');
-        $mod_periodi = array(0 => array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m')));
+        $mod_periodi = array(0 => array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => $cre));
         $date_ini->modify('+1 month');
         $di = $date_ini->format('Y-m-d');
         $df = $date_ini->format('Y-m-t');
-        $mod_periodi[] = array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'));
+        $mod_periodi[] = array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => false);
         $date_ini->modify('+1 month');
         $di = $date_ini->format('Y-m-d');
         $df = $date_ini->format('Y-m-t');
-        $mod_periodi[] = array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'));
+        $mod_periodi[] = array('ini' => $di, 'fin' => $df, 'mese_trimestre' => $date_ini->format('m'), 'cre' => false);
     }
+    $first = true;
+    $carry_cre = 0.00;
     foreach ($mod_periodi as $date) {
         $np = str_pad(" " . strftime('%B', mktime(0, 0, 0, $date['mese_trimestre'], 1, $y)) . " " . $y . " ", 20, "*", STR_PAD_BOTH);
         if ($admin_aziend['ivam_t'] == "T") {
             $np = null;
         }
+        if ($date['cre']) { // ho un credito dalla precedente liquidazione
+            if ($date['mese_trimestre'] == 1) { //è dell'anno precedente
+                $vp8 = 0;
+                $vp9 = -$date['cre'];
+            } else { // è del periodo precedente
+                $vp8 = -$date['cre'];
+                $vp9 = 0;
+            }
+        } else {
+            $vp8 = 0;
+            $vp9 = 0;
+        }
         $acc[$date['mese_trimestre']] = array(
-            'periodicità' => $admin_aziend['ivam_t'], 'anno' => $y, 'nome_periodo' => $np,
-            'vp2' => 0, 'vp3' => 0, 'vp4' => 0, 'vp5' => 0, 'vp7' => 0, 'vp8' => 0, 'vp9' => 0, 'vp10' => 0, 'vp11' => 0, 'vp12' => 0, 'vp13' => 0
+            'periodicita' => $admin_aziend['ivam_t'], 'anno' => $y, 'nome_periodo' => $np,
+            'vp2' => 0, 'vp3' => 0, 'vp4' => 0, 'vp5' => 0, 'vp7' => 0, 'vp8' => $vp8, 'vp9' => $vp9, 'vp10' => 0, 'vp11' => 0, 'vp12' => 0, 'vp13' => 0
         );
         //recupero tutti i movimenti iva dei periodi
         $sqlquery = "SELECT seziva,regiva,codiva,aliquo," . $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
@@ -89,6 +114,14 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
                 $acc[$date['mese_trimestre']]['vp4'] += $r['iva'];
             }
         }
+        if ($first) {
+            $first = false;
+        } else { // nei mesi successivi riporto l'eventuale credito
+            if ($carry_cre <= 0.01) {
+                $acc[$date['mese_trimestre']]['vp8'] = -$carry_cre;
+            }
+        }
+        $carry_cre = round($carry_cre + $acc[$date['mese_trimestre']]['vp4'] - $acc[$date['mese_trimestre']]['vp5'] - $vp8 - $vp9, 2);
     }
     return $acc; // nell'accumulatore gli array con i dati per riempire il form
 }
@@ -109,11 +142,11 @@ if (!isset($_POST['ritorno'])) {
         while ($r = gaz_dbi_fetch_array($rs_liq)) {
             $form['mods'][$r['mese_trimestre']] = $r;
             $form['mods'][$r['mese_trimestre']]['nome_periodo'] = str_pad(" " . strftime('%B', mktime(0, 0, 0, $r['mese_trimestre'], 1, $r['anno'])) . " " . $r['anno'] . " ", 20, "*", STR_PAD_BOTH);
-            if ($r['periodicità'] == "T") {
+            if ($r['periodicita'] == "T") {
                 $form['mods'][$r['mese_trimestre']]['nome_periodo'] = null;
             }
         }
-        if ($liq['periodicità'] == 'T') {
+        if ($liq['periodicita'] == 'T') {
             $form['trimestre_liquidabile'] = $liq['anno'] . $liq['mese_trimestre'];
         } else { // mensili
             $form['trimestre_liquidabile'] = $liq['anno'] . ceil($liq['mese_trimestre'] / 3);
@@ -122,7 +155,6 @@ if (!isset($_POST['ritorno'])) {
     } else { // è un inserimento
         // controllo se ad oggi è possibile fare una liquidazione
         $y = date('Y');
-        $form['y'] = $y;
         $m = floor((date('m') - 1) / 3);
         if ($m == 0) {
             $y--;
@@ -130,11 +162,12 @@ if (!isset($_POST['ritorno'])) {
         }
         $trimestre_liquidabile = $y . $m;
         $form['trimestre_liquidabile'] = $trimestre_liquidabile;
+        $form['y'] = $y;
         // cerco l'ultimo file xml generato
         $rs_query = gaz_dbi_dyn_query("*", $gTables['liquidazioni_iva'], 1, "anno DESC, mese_trimestre DESC", 0, 1);
         $ultima_liquidazione = gaz_dbi_fetch_array($rs_query);
         if ($ultima_liquidazione) {
-            if ($ultima_liquidazione['periodicità'] == 'T') { // ho fatto una liquidazione trimestrale
+            if ($ultima_liquidazione['periodicita'] == 'T') { // ho fatto una liquidazione trimestrale
                 $ultimo_trimestre_liquidato = $ultima_liquidazione['anno'] . $ultima_liquidazione['mese_trimestre'];
             } else {
                 $ultimo_trimestre_liquidato = $ultima_liquidazione['anno'] . floor($ultima_liquidazione['mese_trimestre'] / 3);
@@ -162,8 +195,16 @@ if (!isset($_POST['ritorno'])) {
             $form['mods'][$k]['vp4'] = floatval($v['vp4']);
             $form['mods'][$k]['vp5'] = floatval($v['vp5']);
             $form['mods'][$k]['vp7'] = floatval($v['vp7']);
-            $form['mods'][$k]['vp8'] = floatval($v['vp8']);
-            $form['mods'][$k]['vp9'] = floatval($v['vp9']);
+            if (isset($v['vp8'])) {
+                $form['mods'][$k]['vp8'] = floatval($v['vp8']);
+            } else {
+                $form['mods'][$k]['vp8'] = 0;
+            }
+            if (isset($v['vp9'])) {
+                $form['mods'][$k]['vp9'] = floatval($v['vp9']);
+            } else {
+                $form['mods'][$k]['vp9'] = 0;
+            }
             $form['mods'][$k]['vp10'] = floatval($v['vp10']);
             $form['mods'][$k]['vp11'] = floatval($v['vp11']);
             $form['mods'][$k]['vp12'] = floatval($v['vp12']);
@@ -171,7 +212,7 @@ if (!isset($_POST['ritorno'])) {
         }
         if ($toDo == 'update') { // e' una modifica
             foreach ($form['mods'] as $ki => $vi) {
-                $vi['periodicità'] = $admin_aziend['ivam_t'];
+                $vi['periodicita'] = $admin_aziend['ivam_t'];
                 $vi['anno'] = $form['y'];
                 $vi['mese_trimestre'] = $ki;
                 $vi['nome_file_xml'] = $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . $form['trimestre_liquidabile'] . ".xml";
@@ -184,7 +225,7 @@ if (!isset($_POST['ritorno'])) {
             $msg['war'][] = "download";
         } else { // e' un'inserimento
             foreach ($form['mods'] as $ki => $vi) {
-                $vi['periodicità'] = $admin_aziend['ivam_t'];
+                $vi['periodicita'] = $admin_aziend['ivam_t'];
                 $vi['anno'] = $form['y'];
                 $vi['mese_trimestre'] = $ki;
                 $vi['nome_file_xml'] = $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . $form['trimestre_liquidabile'] . ".xml";
@@ -254,6 +295,13 @@ $gForm = new contabForm();
             $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
         } else {
             foreach ($form['mods'] as $k => $v) {
+                if ($k == 1) {
+                    $vp8disab = 'disabled';
+                    $vp9disab = '';
+                } else {
+                    $vp8disab = '';
+                    $vp9disab = 'disabled';
+                }
                 if (($v['vp4'] - $v['vp5']) >= 0.01) { // debito
                     $vp6c = 0.00;
                     $vp6d = round($v['vp4'] - $v['vp5'], 2);
@@ -351,7 +399,7 @@ $gForm = new contabForm();
                                     </div>
                                     <div class="col-sm-5 col-md-5 col-lg-5">
                                         <?php echo $script_transl['vp8']; ?>
-                                        <input type="number" step="0.01" min="0.00" class="form-control" id="vp8" name="mods[<?php echo $k; ?>][vp8]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp8']; ?>">
+                                        <input <?php echo $vp8disab; ?> type="number" step="0.01" min="0.00" class="form-control" id="vp8" name="mods[<?php echo $k; ?>][vp8]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp8']; ?>">
                                     </div>
                                 </div>
                             </div> <!-- chiude row  -->
@@ -362,7 +410,7 @@ $gForm = new contabForm();
                                     </div>
                                     <div class="col-sm-5 col-md-5 col-lg-5">
                                         <?php echo $script_transl['vp9']; ?>
-                                        <input type="number" step="0.01" min="0.00" class="form-control" id="vp5" name="mods[<?php echo $k; ?>][vp9]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp9']; ?>">
+                                        <input <?php echo $vp9disab; ?> type="number" step="0.01" min="0.00" class="form-control" id="vp5" name="mods[<?php echo $k; ?>][vp9]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp9']; ?>">
                                     </div>
                                 </div>
                             </div> <!-- chiude row  -->

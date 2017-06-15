@@ -351,7 +351,7 @@ $strScript = array("select_liqiva.php" =>
         'anno' => 'Anno',
         'periodo' => 'Periodo',
         'periodo_val' => array(1 => 'Primo', 2 => 'Secondo', 3 => 'Terzo', 4 => 'Quarto'),
-        'periodicità_val' => array('M' => 'Mese', 'T' => 'trimestre'),
+        'periodicita_val' => array('M' => 'Mese', 'T' => 'trimestre'),
         'vp4' => 'IVA esigibile',
         'vp5' => 'IVA detratta',
         'vp7-13' => 'Altro',
