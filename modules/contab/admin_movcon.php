@@ -179,6 +179,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     }
     //ricarico i registri per il form dei righi contabili già  immessi
     $loadCosRic = 0;
+    $countPartners = 0;
     for ($i = 0; $i < $_POST['rigcon']; $i++) {
         $form['id_rig_rc'][$i] = $_POST['id_rig_rc'][$i];
         $form['mastro_rc'][$i] = $_POST['mastro_rc'][$i];
@@ -188,6 +189,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $form['paymov_op_cl'][$i] = 0;
         if ($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) {
             if ($_POST['conto_rc' . $i] > 0) {
+                $countPartners++;
                 //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
                 if ($_POST['cod_partner'] == 0 and $form['conto_rc' . $i] > 0) {
                     $partner = $anagrafica->getPartner($form['conto_rc' . $i]);
@@ -197,7 +199,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     if ($form['operation_type'] == '') {
                         $form['operation_type'] = $partner['operation_type'];
                     }
-                    if ($form['inserimdoc'] > 0) { // solo se è previsto l'utilizzo dei dati dei documenti setto il partner
+                    if ($form['inserimdoc'] > 0 && $countPartners==1) { // solo se è previsto l'utilizzo dei dati dei documenti ed ho un solo partner lo setto
                         $form['cod_partner'] = $_POST['conto_rc' . $i];
                     } else {
                         $form['cod_partner'] = '';
@@ -237,8 +239,8 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             } else {
                 $form['paymov'][$i]['new'] = array('id' => 'new', 'id_tesdoc_ref' => 'new', 'amount' => '0.00', 'expiry' => '');
             }
-            // controllo se il pagamento del cliente/fornitore prevede che vengano 
-            // eseguite le scritture di chiusura e nel caso setto il valore giusto
+            /* controllo se il pagamento del cliente/fornitore prevede che vengano 
+               eseguite le scritture di chiusura e nel caso setto il valore giusto */
         }
         if ($loadCosRic == 1 && substr($form['conto_rc' . $i], 0, 1) == 4 && $partner['cosric'] > 0 && $form['registroiva'] > 0) {  //e' un  cliente agisce sui ricavi
             $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000";
@@ -1704,10 +1706,11 @@ echo "</script>\n";
             echo '
         <div id="paymov_last_id' . $i . '" value="' . $i_j . '"></div>
         ';
+            $partner_paymov = $anagrafica->getPartner($form['conto_rc' . $i]);
             if ($form['paymov_op_cl'][$i] == 1) { // apertura partita
-                echo '<div id="dialog_open' . $i . '" partner="' . $partnersel['ragso1'] . '" title="Apertura: ' . $form['descrizion'] . ' - ' . $partnersel['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
+                echo '<div id="dialog_open' . $i . '" partner="' . $partner_paymov['ragso1'] . '" title="Apertura: ' . $form['descrizion'] . ' - ' . $partner_paymov['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
             } else {  // chiusura partita
-                echo '<div id="dialog_close' . $i . '" partner="' . $partnersel['ragso1'] . '" title="Chiusura: ' . $form['descrizion'] . ' - ' . $partnersel['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
+                echo '<div id="dialog_close' . $i . '" partner="' . $partner_paymov['ragso1'] . '" title="Chiusura: ' . $form['descrizion'] . ' - ' . $partner_paymov['ragso1'] . ' - ' . $admin_aziend['html_symbol'] . ' ' . sprintf("%01.2f", preg_replace("/\,/", ".", $form["importorc"][$i])) . '">';
             }
             echo '<p class="validateTips"></p>
         <table id="pm_form_container_' . $i . '" class="ui-widget ui-widget-content" width="100%">
