@@ -168,7 +168,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                     $cast_acc[$r['codric']]['asset'] = 1;
                 }
                 $rit += round($importo * $r['ritenuta'] / 100, 2);
-                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment PA)   
+                // aggiungo all'accumulatore l'eventuale iva non esigibile (split payment)   
                 if ($r['tipiva'] == 'T') {
                     $ivasplitpay += round(($importo * $r['pervat']) / 100, 2);
                 }
@@ -438,7 +438,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                 if ($v['isp'] > 0) {
                     // inserisco la testata del movimento di storno Split payment
                     $newValue = array('caucon' => 'ISP',
-                        'descri' => 'STORNO IVA SPLIT PAYMENT PA',
+                        'descri' => 'STORNO IVA SPLIT PAYMENT',
                         'id_doc' => $v['tes']['id_tes'],
                         'datreg' => $v['tes']['datfat'],
                         'seziva' => $v['tes']['seziva'],

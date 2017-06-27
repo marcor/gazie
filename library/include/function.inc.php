@@ -1921,7 +1921,7 @@ class Compute {
                         $this->total_exc_with_duty += $new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                     }
                     $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
-                    if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment PA
+                    if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment 
                         $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
                     }
                     $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
@@ -1949,7 +1949,7 @@ class Compute {
                 if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // è senza IVA ed è soggetto a bolli
                     $this->total_exc_with_duty += $new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
-                if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment PA
+                if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment 
                     $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
                 }
                 $this->total_imp += $new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
@@ -1967,7 +1967,7 @@ class Compute {
                 if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // è senza IVA ed è soggetto a bolli
                     $this->total_exc_with_duty += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
-                if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment PA
+                if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment 
                     $this->total_isp += $new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore 
                 }
                 $this->total_imp += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale

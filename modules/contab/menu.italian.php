@@ -42,6 +42,7 @@ $transl['contab'] = array('name' => "Contabilit&agrave;",
         7 => array("Visualizzazione e stampa di dare/avere clienti/fornitori", "Analisi Debiti/Crediti"),
         8 => array("Comunicazione liquidazioni IVA", "Comunicazione liquidazioni IVA"),
         9 => array("File XML per Comunicazioni liquidazioni IVA", "Lista File Comunicazioni liquidazioni IVA"),
+        10 => array("File XML per Comunicazione dati fatture", "Comunicazione dati fatture")
     )
 );
 ?>

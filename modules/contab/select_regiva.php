@@ -314,7 +314,7 @@ if (isset($_POST['preview']) and $msg == '') {
                 $mv['descri'] = '';
             }
             $totimponi += $imponi;
-            if ($mv['tipiva'] != 'D' && $mv['tipiva'] != 'T') { // se indetraibili o split payment PA
+            if ($mv['tipiva'] != 'D' && $mv['tipiva'] != 'T') { // se indetraibili o split payment
                 $totimpost += $impost;
             }
             if (!isset($castle_imponi[$mv['codiva']])) {

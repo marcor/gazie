@@ -208,7 +208,8 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             . "' AND $num_name BETWEEN " . intval($_GET['ni']) . " AND " . intval($_GET['nf'])
             . " AND protoc BETWEEN " . intval($_GET['pi']) . " AND " . intval($_GET['pf'])
             . $cliente . $agente . $fattEmail;
-    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice ";
+    $from = $gTables['tesdoc'] . " A left join " . $gTables['clfoco'] . " B on A.clfoco=B.codice 
+                                     left join " . $gTables['anagra'] . " C on B.id_anagra=C.id  ";
     //recupero i documenti da stampare
     $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
     if ($testate->num_rows > 0) {
