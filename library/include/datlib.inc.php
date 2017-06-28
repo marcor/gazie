@@ -73,7 +73,7 @@ if (@file_exists('./lib.data.php')) {
 
 //tabelle aziendali
 $tn = array('aliiva', 'agenti', 'artico', 'assets', 'banapp', 'body_text', 'cash_register',
-    'catmer', 'caucon', 'caumag', 'clfoco', 'company_config', 'company_data', 'contract',
+    'catmer', 'caucon', 'caumag', 'clfoco', 'company_config', 'company_data', 'comunicazioni_dati_fatture', 'contract',
     'effett', 'extcon', 'files', 'imball', 'letter', 'liquidazioni_iva', 'lotmag', 'movmag',
     'pagame', 'paymov', 'portos', 'provvigioni', 'rigbro', 'rigdoc', 'rigmoc', 'rigmoi',
     'spediz', 'staff', 'staff_skills', 'tesbro', 'tesdoc', 'tesmov', 'vettor', 'fae_flux',

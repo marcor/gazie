@@ -29,7 +29,7 @@ $transl['contab'] = array('name' => "Contabilit&agrave;",
         2 => array("Gestione del Piano dei Conti", "Piano dei conti"),
         3 => array("Gestione dell'Archivio delle Causali Contabili", "Causali Contabili"),
         4 => array("Visualizzazione e stampa dei registri I.V.A.", "Registri IVA"),
-        5 => array("Visualizzazione e stampa del registro riepilogativo I.V.A.", "Liquidazione IVA"),
+        5 => array("Preparazione file per Comunicazioni dati", "Comunicazioni dati"),
         6 => array("Visualizzazione e stampa del Libro Giornale", "Libro Giornale"),
         7 => array("Visualizzazione e stampa della situazione contabile", "Situazione contabile")
     ),
@@ -42,7 +42,8 @@ $transl['contab'] = array('name' => "Contabilit&agrave;",
         7 => array("Visualizzazione e stampa di dare/avere clienti/fornitori", "Analisi Debiti/Crediti"),
         8 => array("Comunicazione liquidazioni IVA", "Comunicazione liquidazioni IVA"),
         9 => array("File XML per Comunicazioni liquidazioni IVA", "Lista File Comunicazioni liquidazioni IVA"),
-        10 => array("File XML per Comunicazione dati fatture", "Comunicazione dati fatture")
+        10 => array("File XML per Comunicazione dati fatture", "Comunicazione dati fatture"),
+        11 => array("Visualizzazione e stampa del registro riepilogativo I.V.A.", "Liquidazione IVA")
     )
 );
 ?>
