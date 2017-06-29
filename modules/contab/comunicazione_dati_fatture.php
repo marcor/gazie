@@ -27,9 +27,32 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 require("../../library/include/check.inc.php");
 
-function createRowsAndErrors($trimestre) {
+function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
     global $gTables, $admin_aziend, $script_transl;
     $nuw = new check_VATno_TAXcode();
+    if ($periodicita == 'T') { // trimestrale
+        if ($trimestre_semestre == 1) {
+            $date_ini = new DateTime($anno . '-1-1');
+        } elseif ($trimestre_semestre == 2) {
+            $date_ini = new DateTime($anno . '-4-1');
+        } elseif ($trimestre_semestre == 3) {
+            $date_ini = new DateTime($anno . '-7-1');
+        } else {
+            $date_ini = new DateTime($anno . '-10-1');
+        }
+        $di = $date_ini->format('Y-m-t');
+        $date_ini->modify('+2 month');
+        $df = $date_ini->format('Y-m-t');
+    } else { // semestrale
+        if ($trimestre_semestre == 1) {
+            $date_ini = new DateTime($anno . '-1-1');
+        } else {
+            $date_ini = new DateTime($anno . '-7-1');
+        }
+        $di = $date_ini->format('Y-m-t');
+        $date_ini->modify('+5 month');
+        $df = $date_ini->format('Y-m-t');
+    }
     $sqlquery = "SELECT " . $gTables['rigmoi'] . ".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
                citspe,prospe,country,codfis,pariva," . $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc,
                " . $gTables['tesmov'] . ".numdoc," . $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva,
@@ -43,10 +66,10 @@ function createRowsAndErrors($trimestre) {
                LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesmov'] . ".clfoco = " . $gTables['clfoco'] . ".codice
                LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra
                LEFT JOIN " . $gTables['country'] . " ON " . $gTables['anagra'] . ".country = " . $gTables['country'] . ".iso
-               WHERE YEAR(datreg) = " . substr($trimestre, 0, 4) . "
+               WHERE datreg BETWEEN '" . $di . "' AND '" . $df . "'
                  AND ( " . $gTables['tesmov'] . ".clfoco LIKE '" . $admin_aziend['masfor'] . "%' OR " . $gTables['tesmov'] . ".clfoco LIKE '" . $admin_aziend['mascli'] . "%')
                  AND " . $gTables['clfoco'] . ".allegato > 0 AND " . $gTables['tesmov'] . ".seziva <> " . $admin_aziend['reverse_charge_sez'] . "
-               ORDER BY regiva,operat,clfoco,datreg";
+               ORDER BY regiva,operat,clfoco,datreg,protoc";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact = array();
     $error_transact = array();
@@ -56,7 +79,6 @@ function createRowsAndErrors($trimestre) {
         $ctrl_id = 0;
         $value_imponi = 0.00;
         $value_impost = 0.00;
-
         while ($row = gaz_dbi_fetch_array($result)) {
             if ($row['operat'] >= 1) {
                 $value_imponi = $row['imponibile'];
@@ -177,6 +199,8 @@ function createRowsAndErrors($trimestre) {
                                 $castel_transact[$row['idtes']]['quadro'] = 'NE';
                                 $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                             }
+                            // aggiungo la sezione al numero documento
+                            $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
                         } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
                             if ($row['operat'] == 1) { // Fattura
                                 $castel_transact[$row['idtes']]['quadro'] = 'FR';
@@ -200,6 +224,8 @@ function createRowsAndErrors($trimestre) {
                                     $castel_transact[$row['idtes']]['quadro'] = 'NE';
                                     $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                                 }
+                                // aggiungo la sezione al numero documento
+                                $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
                             } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
                                 // nei quadri FR NR è possibile indicare la sola partita iva
                                 $castel_transact[$row['idtes']]['pariva'] = $castel_transact[$row['idtes']]['codfis'];
@@ -220,6 +246,8 @@ function createRowsAndErrors($trimestre) {
                                 $castel_transact[$row['idtes']]['quadro'] = 'NE';
                                 $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                             }
+                            // aggiungo la sezione al numero documento
+                            $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
                         } else {                // privati con scontrino
                             $castel_transact[$row['idtes']]['quadro'] = 'DF';
                         }
@@ -339,6 +367,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 if (!isset($_POST['ritorno'])) {
 // al primo accesso allo script
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    $form['hidden_req'] = '';
     if ((isset($_GET['Update']) && isset($_GET['id']))) { // è una modifica
     } else { // è un inserimento
 // controllo se ad oggi è possibile fare una liquidazione
@@ -348,11 +377,12 @@ if (!isset($_POST['ritorno'])) {
             $y--;
             $m = 4;
         }
-        $trimestre_riferimento = $y . $m;
-        $form['trimestre_riferimento'] = $trimestre_riferimento;
-        $form['y'] = $y;
+        $trimestre_semestre = $y . $m;
+        $form['trimestre_semestre'] = $m;
+        $form['anno'] = $y;
+        $form['periodicita'] = 'T';
 // cerco l'ultimo file xml generato
-        $rs_query = gaz_dbi_dyn_query("*", $gTables['comunicazioni_dati_fatture'], 1, "anno DESC, mese_trimestre DESC", 0, 1);
+        $rs_query = gaz_dbi_dyn_query("*", $gTables['comunicazioni_dati_fatture'], 1, "anno DESC, trimestre_semestre DESC", 0, 1);
         $ultima_comunicazione = gaz_dbi_fetch_array($rs_query);
         if ($ultima_comunicazione) {
             if ($ultima_comunicazione['periodicita'] == 'T') { // ho fatto una liquidazione trimestrale
@@ -363,16 +393,18 @@ if (!isset($_POST['ritorno'])) {
         } else { // non ho mai fatto liquidazioni, propongo la prima da fare
             $ultimo_trimestre_liquidato = 0;
         }
-        if ($ultimo_trimestre_liquidato >= $trimestre_riferimento) {
+        if ($ultimo_trimestre_liquidato >= $trimestre_semestre) {
             $msg['err'][] = "eseguita";
         } else {
 // propongo una liquidazione in base ai dati che trovo sui movimenti IVA
         }
     }
 } else { // nei post successivi (submit)
-    $form['y'] = intval($_POST['y']);
-    $form['trimestre_riferimento'] = intval($_POST['trimestre_riferimento']);
+    $form['anno'] = intval($_POST['anno']);
+    $form['trimestre_semestre'] = intval($_POST['trimestre_semestre']);
+    $form['periodicita'] = substr($_POST['periodicita'], 0, 1);
     $form['ritorno'] = $_POST['ritorno'];
+    $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     if (isset($_POST['Submit'])) {
         if ($toDo == 'update') { // e' una modifica
 // aggiorno il database
@@ -388,7 +420,7 @@ if (!isset($_POST['ritorno'])) {
             $msg['war'][] = "download";
         }
     } elseif (isset($_POST['Download'])) {
-        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_" . $form['trimestre_riferimento'] . ".xml";
+        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_" . $form['trimestre_semestre'] . ".xml";
         header("Pragma: public", true);
         header("Expires: 0"); // set expiration time
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -435,119 +467,144 @@ $gForm = new contabForm();
 
     </STYLE>
     <form method="POST" name="form" enctype="multipart/form-data">
-        <input type="hidden" name="<?php echo ucfirst($toDo); ?>" value="">
+        <input type="hidden" name="hidden_req" value="<?php echo $form['hidden_req']; ?>">
         <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
-        <input type="hidden" value="<?php echo $form['y']; ?>" name="y">
-        <input type="hidden" value="<?php echo $form['trimestre_riferimento']; ?>" name="trimestre_riferimento">
-        <div class="text-center"><b><?php echo $script_transl['title'] . ' ' . $script_transl['periodo_val'][substr($form['trimestre_riferimento'], 4, 1)] . ' ' . $form['y']; ?></b></div>
+        <input type="hidden" name="<?php echo ucfirst($toDo) ?>" value="">
+        <input type="hidden" value="<?php echo $form['trimestre_semestre']; ?>" name="trimestre_semestre">
+        <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
+        <div class="panel panel-default gaz-table-form">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="anno" class="col-sm-4 control-label"><?php echo $script_transl['anno_imposta']; ?></label>
+                            <?php
+                            $gForm->selectNumber('anno', $form['anno'], 0, $form['anno'] - 5, $form['anno'] + 5, "col-sm-8", 'anno_imposta', 'style="max-width: 100px;"');
+                            ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="periodicita" class="col-sm-4 control-label"><?php echo $script_transl['periodicita']; ?></label>
+                            <?php
+                            $gForm->variousSelect('periodicita', $script_transl['periodicita_value'], $form['periodicita'], "col-sm-8", false, 'periodicita', false, 'style="max-width: 300px;"');
+                            ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="trimestre_semestre" class="col-sm-4 control-label"><?php echo $script_transl['trimestre_semestre']; ?></label>
+                            <?php
+                            $gForm->variousSelect('trimestre_semestre', $script_transl['trimestre_semestre_value'][$form['periodicita']], $form['trimestre_semestre'], "col-sm-8", false, 'trimestre_semestre', false, 'style="max-width: 300px;"');
+                            ?>
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->
+            </div><!-- chiude container  -->
+        </div><!-- chiude panel  -->
         <?php
-        if (count($msg['err']) > 0) { // ho un errore
-            $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
-        } elseif (count($msg['war']) > 0) {
-            $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
-        } else {
-            
-        }
-        if (count($msg['war']) > 0) {
-            ?>
-            <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-warning" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . $form['trimestre_riferimento'] . ".xml"; ?>" /></div>
-            <?php
-        } else if (count($msg['err']) == 0) {
-            $queryData = createRowsAndErrors($trimestre_riferimento);
-            if (count($queryData[1]) >= 1) { // ho degli errori
-                // print_r($queryData[1]);
-                echo '<div class="container">';
-                foreach ($queryData[1] as $k => $v) {
-                    echo '<div class="row alert alert-warning fade in" role="alert">
+        $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
+        if (count($queryData[1]) >= 1) { // ho degli errori
+            echo '<div class="container">';
+            foreach ($queryData[1] as $k => $v) {
+                echo '<div class="row alert alert-warning fade in" role="alert">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
 					<span aria-hidden="true">&times;</span>
 				</button>
 				';
-                    echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span><a class="btn btn-xs btn-default" href="../inform/admin_anagra.php?id=' . $queryData[0][$k]['id_anagra'] . '&Update" > ' . $queryData[0][$k]['ragso1'] . '</a> ERROR! => ' . $v[0] . ' <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=' . $k . '">' . $queryData[0][$k]['numdoc'] . '</a><br>';
-                    echo "</div>\n";
-                }
+                echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span><a class="btn btn-xs btn-default" href="../inform/admin_anagra.php?id=' . $queryData[0][$k]['id_anagra'] . '&Update" > ' . $queryData[0][$k]['ragso1'] . '</a> ERROR! => ' . $v[0] . ' <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=' . $k . '">' . $queryData[0][$k]['numdoc'] . '</a><br>';
                 echo "</div>\n";
-            } else {
-                ?> 
-                <div class="panel panel-default">
-                    <div id="gaz-responsive-table"  class="container-fluid">
-                        <table class="table table-responsive table-striped table-condensed cf">
-                            <thead>
-                                <tr class="bg-success">              
-                                    <th>
-                                        <?php echo $script_transl["TipoDocumento"]; ?>
-                                    </th>
-                                    <th>
-                                        <?php echo $script_transl["Data"]; ?>
-                                    </th>
-                                    <th>
-                                        <?php echo $script_transl["Numero"]; ?>
-                                    </th>
-                                    <th>
-                                        <?php echo $script_transl["DataRegistrazione"]; ?>
-                                    </th>
-                                    <th>
-                                        <?php echo $script_transl["ImponibileImporto"]; ?>
-                                    </th>
-                                    <th class="text-right">
-                                        <?php echo $script_transl["Imposta"]; ?>
-                                    </th>
-                                    <th class="text-right">
-                                        <?php echo $script_transl["Aliquota"]; ?>
-                                    </th>
-                                </tr>      
-                            </thead>    
-                            <tbody id="all_rows">
+            }
+            echo "</div>\n";
+        } else {
+            ?> 
+            <div class="panel panel-default">
+                <div id="gaz-responsive-table"  class="container-fluid">
+                    <table class="table table-responsive table-striped table-condensed cf">
+                        <thead>
+                            <tr class="bg-success">              
+                                <th>
+                                    <?php echo $script_transl["TipoDocumento"]; ?>
+                                </th>
+                                <th>
+                                    <?php echo $script_transl["Numero"]; ?>
+                                </th>
+                                <th>
+                                    <?php echo $script_transl["Data"]; ?>
+                                </th>
+                                <th>
+                                    <?php echo $script_transl["DataRegistrazione"]; ?>
+                                </th>
+                                <th>
+                                    <?php echo $script_transl["ImponibileImporto"]; ?>
+                                </th>
+                                <th class="text-right">
+                                    <?php echo $script_transl["Imposta"]; ?>
+                                </th>
+                                <th class="text-right">
+                                    <?php echo $script_transl["Aliquota"]; ?>
+                                </th>
+                            </tr>      
+                        </thead>    
+                        <tbody id="all_rows">
 
-                                <?php
-                                $ctrl_partner = 0;
-                                foreach ($queryData[0] as $k => $v) {
-                                    if ($ctrl_partner <> $v['clfoco']) {
-                                        ?>
-                                        <tr>              
-                                            <td colspan=7 data-title="<?php echo $script_transl["CessionarioCommittente"]; ?>" class="text-center text-info">
-                                                <b>   <?php echo $v["ragso1"] . ' ' . $v["ragso2"]; ?> </b>
-                                            </td>
-                                        </tr>
-                                        <?php
-                                    }
+                            <?php
+                            // CREO L'ARRAY ASSOCIATIVO DEI TIPI DOCUMENTI
+                            $xml = simplexml_load_file('../../library/include/tipi_documenti.xml');
+                            foreach ($xml as $d) {
+                                $v_td = get_object_vars($d);
+                                $td[$v_td['field'][0]] = $v_td['field'][1];
+                            }
+                            $td['TD99'] = 'NON INSERIBILE';
+                            // FINE CREAZIONE
+                            $ctrl_partner = 0;
+                            foreach ($queryData[0] as $k => $v) {
+                                if ($ctrl_partner <> $v['clfoco']) {
                                     ?>
-                                    <tr>
-                                        <td data-title="<?php echo $script_transl["TipoDocumento"]; ?>">
-                                            <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $k; ?></a>
-                                            <?php echo $v["caucon"].' '.$v["tipo_documento"]; ?>
+                                    <tr>              
+                                        <td colspan=7 data-title="<?php echo $script_transl["CessionarioCommittente"]; ?>" class="text-info">
+                                            <b>   <?php echo $v["ragso1"] . ' ' . $v["ragso2"]; ?> </b> <?php echo $script_transl["partita_iva"] . ' ' . $v["pariva"] . ' ' . $script_transl["codice_fiscale"] . ' ' . $v["codfis"]; ?>
                                         </td>
-                                        <td data-title="<?php echo $script_transl["Data"]; ?>">
-                                            <?php echo gaz_format_date($v["datdoc"]); ?>
-                                        </td>
-                                        <td data-title="<?php echo $script_transl["Numero"]; ?>">
-                                            <?php echo $v["numdoc"]; ?>
-                                        </td>
-                                        <td data-title="<?php echo $script_transl["DataRegistrazione"]; ?>">
-                                            <?php echo gaz_format_date($v["datreg"]); ?>
-                                        </td>
-                                        <td data-title="<?php echo $script_transl["ImponibileImporto"]; ?>" class="text-right">
-                                            <?php echo gaz_format_number($v['imponibile']); ?>
-                                        </td>
-                                        <td data-title="<?php echo $script_transl["Imposta"]; ?>"  class="text-right">
-                                            <?php echo gaz_format_number($v['imposta']); ?>
-                                        </td>
-                                        <td data-title="<?php echo $script_transl["Aliquota"]; ?>"  class="text-right">
-                                            <?php echo floatval($v['periva']); ?>%
-                                        </td>
-                                    </tr> 
+                                    </tr>
                                     <?php
-                                    $ctrl_partner = $v['clfoco'];
                                 }
                                 ?>
-                            </tbody>     
-                        </table>
-                    </div>  
-                </div>
-                <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="Genera il file XML per la comunicazione trimestrale dell'IVA" /></div>
-                    <?php
-                }
-                ?>
+                                <tr>
+                                    <td data-title="<?php echo $script_transl["TipoDocumento"]; ?>">
+                                        <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
+                                    </td>
+                                    <td data-title="<?php echo $script_transl["Numero"]; ?>" class="text-center">
+                                        <?php echo $v["numdoc"]; ?>
+                                    </td>
+                                    <td data-title="<?php echo $script_transl["Data"]; ?>" class="text-center">
+                                        <?php echo gaz_format_date($v["datdoc"]); ?>
+                                    </td>
+                                    <td data-title="<?php echo $script_transl["DataRegistrazione"]; ?>" class="text-center">
+                                        <?php echo gaz_format_date($v["datreg"]); ?>
+                                    </td>
+                                    <td data-title="<?php echo $script_transl["ImponibileImporto"]; ?>" class="text-right">
+                                        <?php echo gaz_format_number($v['imponibile']); ?>
+                                    </td>
+                                    <td data-title="<?php echo $script_transl["Imposta"]; ?>"  class="text-right">
+                                        <?php echo gaz_format_number($v['imposta']); ?>
+                                    </td>
+                                    <td data-title="<?php echo $script_transl["Aliquota"]; ?>"  class="text-right">
+                                        <?php echo floatval($v['periva']); ?>%
+                                    </td>
+                                </tr> 
+                                <?php
+                                $ctrl_partner = $v['clfoco'];
+                            }
+                            ?>
+                        </tbody>     
+                    </table>
+                </div>  
+            </div>
+            <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="<?php echo $script_transl["ok"]; ?>" /></div>
                 <?php
             }
             ?>   

@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <data>
-    <record id="tipo_TD01" model="">
+    <record id="tipoTD01" model="">
         <field name="code">TD01</field>
         <field name="name">Fattura</field>
     </record>
-    <record id="tipo_TD04" model="">
+    <record id="tipoTD04" model="">
         <field name="code">TD04</field>
         <field name="name">Nota di credito</field>
     </record>
-    <record id="tipo_TD05" model="">
+    <record id="tipoTD05" model="">
         <field name="code">TD05</field>
         <field name="name">Nota di debito</field>
     </record>
-    <record id="tipo_TD07" model="">
+    <record id="tipoTD07" model="">
         <field name="code">TD07</field>
         <field name="name">Fattura semplifica</field>
     </record>
-    <record id="tipo_TD08" model="">
+    <record id="tipoTD08" model="">
         <field name="code">TD08</field>
         <field name="name">Nota di credito semplifica</field>
     </record>
-    <record id="tipo_TD10" model="">
+    <record id="tipoTD10" model="">
         <field name="code">TD10</field>
         <field name="name">Fattura di acquisto intracomunitario beni</field>
     </record>
-    <record id="tipo_TD11" model="">
+    <record id="tipoTD11" model="">
         <field name="code">TD11</field>
         <field name="name">Fattura di acquisto intracomunitario servizi</field>
     </record>
