@@ -200,7 +200,9 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                                 $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                             }
                             // aggiungo la sezione al numero documento
-                            $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
+                            if (!empty($castel_transact[$row['idtes']]['seziva'])) {
+                                $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
+                            }
                         } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
                             if ($row['operat'] == 1) { // Fattura
                                 $castel_transact[$row['idtes']]['quadro'] = 'FR';
@@ -225,7 +227,9 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                                     $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                                 }
                                 // aggiungo la sezione al numero documento
-                                $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
+                                if (!empty($castel_transact[$row['idtes']]['seziva'])) {
+                                    $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
+                                }
                             } else {                // ACQUISTI - Fatture Ricevute o Note Ricevute
                                 // nei quadri FR NR è possibile indicare la sola partita iva
                                 $castel_transact[$row['idtes']]['pariva'] = $castel_transact[$row['idtes']]['codfis'];
@@ -247,7 +251,9 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                                 $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                             }
                             // aggiungo la sezione al numero documento
-                            $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
+                            if (!empty($castel_transact[$row['idtes']]['seziva'])) {
+                                $castel_transact[$row['idtes']]['numdoc'] .= '/' . $castel_transact[$row['idtes']]['seziva'];
+                            }
                         } else {                // privati con scontrino
                             $castel_transact[$row['idtes']]['quadro'] = 'DF';
                         }
@@ -514,9 +520,12 @@ $gForm = new contabForm();
                 echo '<div class="row alert alert-warning fade in" role="alert">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
 					<span aria-hidden="true">&times;</span>
-				</button>
-				';
-                echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span><a class="btn btn-xs btn-default" href="../inform/admin_anagra.php?id=' . $queryData[0][$k]['id_anagra'] . '&Update" > ' . $queryData[0][$k]['ragso1'] . '</a> ERROR! => ' . $v[0] . ' <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=' . $k . '">' . $queryData[0][$k]['numdoc'] . '</a><br>';
+				</button>';
+                if ($k == 0) {
+                    echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> ERROR! => ' . $v . '<br>';
+                } else {
+                    echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> <a class="btn btn-xs btn-default" href="../inform/admin_anagra.php?id=' . $queryData[0][$k]['id_anagra'] . '&Update" > ' . $queryData[0][$k]['ragso1'] . '</a> ERROR! => ' . $v[0] . ' <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=' . $k . '">' . $queryData[0][$k]['numdoc'] . '</a><br>';
+                }
                 echo "</div>\n";
             }
             echo "</div>\n";
@@ -567,7 +576,13 @@ $gForm = new contabForm();
                                     ?>
                                     <tr>              
                                         <td colspan=7 data-title="<?php echo $script_transl["CessionarioCommittente"]; ?>" class="text-info">
-                                            <b>   <?php echo $v["ragso1"] . ' ' . $v["ragso2"]; ?> </b> <?php echo $script_transl["partita_iva"] . ' ' . $v["pariva"] . ' ' . $script_transl["codice_fiscale"] . ' ' . $v["codfis"]; ?>
+                                            <b>   <?php echo $v["ragso1"] . ' ' . $v["ragso2"]; ?> </b> 
+                                            <?php
+                                            if ($v["pariva"] >= 1) {
+                                                echo $script_transl["partita_iva"] . ' ' . $v["pariva"];
+                                            }
+                                            echo ' ' . $script_transl["codice_fiscale"] . ' ' . $v["codfis"];
+                                            ?>
                                         </td>
                                     </tr>
                                     <?php
