@@ -439,7 +439,8 @@ $strScript = array("select_liqiva.php" =>
             "Aliquota IVA che non prevede una imposta e che invece &egrave; diversa da 0",
             "Non si pu&ograve; generare il File perch&egrave; sono stati rilevati errori da correggere (vedi in seguito)",
             "Non sono stati trovati movimenti IVA da riportare in elenco!",
-            "Non ho trovato movimenti relativi a clienti e/o fornitori per il periodo selezionato!"),
+            "Non ho trovato movimenti relativi a clienti e/o fornitori per il periodo selezionato!",
+            'legrap_pf_nome'=>"Sul cliente e/o fornitore persona fisica manca il nome e/o cognome del legale rappresentante!"),
         'ok' => 'Genera il file ZIP contenente i due file XML per la comunicazione dati fatture (quadri DTE e DTR)',
     ),
     "comunicazioni_doc.php" =>

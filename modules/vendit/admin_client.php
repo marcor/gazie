@@ -60,7 +60,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         require("../../library/include/check.inc.php");
         if (strlen($form["ragso1"]) < 4) {
-            $msg .= '0+';
+            if (!empty($form["legrap_pf_nome"]) && !empty($form["legrap_pf_cognome"]) && $form["sexper"] != 'G') {// setto la ragione sociale con l'eventuale legale rappresentante
+                $form["ragso1"] = strtoupper($form["legrap_pf_cognome"] . ' ' . $form["legrap_pf_nome"]);
+            } else { // altrimenti do errore                
+                $msg .= '0+';
+            }
         }
         if (empty($form["indspe"])) {
             $msg .= '1+';
@@ -299,7 +303,7 @@ if ($toDo == 'insert') {
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso1'] . "* </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"ragso1\" value=\"" . $form['ragso1'] . "\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"ragso1\" placeholder=\"" . $script_transl['ragso1_placeholder'] . "\" value=\"" . $form['ragso1'] . "\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['ragso2'] . " </td>\n";
@@ -309,9 +313,9 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['legrap_pf_nome'] . " </td>\n";
 echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"legrap_pf_nome\" value=\"" . $form['legrap_pf_nome'] . "\" align=\"right\" maxlength=\"60\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"legrap_pf_nome\" title=\"" . $script_transl['legrap_pf_title'] . "\" value=\"" . $form['legrap_pf_nome'] . "\" align=\"right\" maxlength=\"60\" size=\"50\" /></td>\n";
 echo "\t<td class=\"FacetDataTD\">
-      <input type=\"text\" name=\"legrap_pf_cognome\" value=\"" . $form['legrap_pf_cognome'] . "\" align=\"right\" maxlength=\"60\" size=\"50\" /></td>\n";
+      <input type=\"text\" name=\"legrap_pf_cognome\" title=\"" . $script_transl['legrap_pf_title'] . "\" value=\"" . $form['legrap_pf_cognome'] . "\" align=\"right\" maxlength=\"60\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['sexper'] . "*</td><td colspan=\"2\" class=\"FacetDataTD\">\n";

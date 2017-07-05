@@ -60,9 +60,9 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
         $df = $date_ini->format('Y-m-t');
     }
     $sqlquery = "SELECT " . $gTables['rigmoi'] . ".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
-               citspe,prospe,capspe,legrap_pf_nome,legrap_pf_cognome,country,codfis,pariva," . 
-               $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc," . $gTables['tesmov'] . ".numdoc," . 
-               $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva," . $gTables['tesmov'] . ".caucon,datreg,datnas,luonas,pronas,counas,
+               citspe,prospe,capspe,legrap_pf_nome,legrap_pf_cognome,country,codfis,pariva,id_anagra," .
+            $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc," . $gTables['tesmov'] . ".numdoc," .
+            $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva," . $gTables['tesmov'] . ".caucon,datreg,datnas,luonas,pronas,counas,
                id_doc,iso,black_list,cod_agenzia_entrate, operat, impost AS imposta," . $gTables['rigmoi'] . ".id_tes
                AS idtes, imponi AS imponibile FROM " . $gTables['rigmoi'] . "
                LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
@@ -143,6 +143,9 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                             $error_transact[$row['idtes']][] = $script_transl['errors'][7];
                         }
                     }
+                    if ($row['sexper'] != 'G' && (empty($row['legrap_pf_nome']) || empty($row['legrap_pf_cognome']))) {
+                        $error_transact[$row['idtes']][] = $script_transl['errors']['legrap_pf_nome'];
+                    }
                 } else {
                     // È un soggetto con codice fiscale senza partita IVA 
                     $resultcf = $nuw->check_TAXcode($row['codfis']);
@@ -161,6 +164,9 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                         $error_transact[$row['idtes']][] = $script_transl['errors'][6];
                     } elseif (!empty($resultcf)) {
                         $error_transact[$row['idtes']][] = $script_transl['errors'][7];
+                    }
+                    if ($row['sexper'] != 'G' && (empty($row['legrap_pf_nome']) || empty($row['legrap_pf_cognome']))) {
+                        $error_transact[$row['idtes']][] = $script_transl['errors']['legrap_pf_nome'];
                     }
                 }
                 // fine controlli su CF e PI
@@ -307,7 +313,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                         if ($value_impost == 0) {  //se non c'è imposta il movimento è sbagliato
                             $error_transact[$row['idtes']][] = $script_transl['errors'][11];
                         }
-                        if ($row['tipiva']== 'T') {  //scissione dei pagamenti
+                        if ($row['tipiva'] == 'T') {  //scissione dei pagamenti
                             $castel_transact[$row['idtes']]['esigibilita_iva'] = 'S';
                         }
                         break;
@@ -337,7 +343,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                         if ($value_impost == 0) {  //se non c'è imposta il movimento è sbagliato
                             $error_transact[$row['idtes']][] = $script_transl['errors'][11];
                         }
-                        if ($row['tipiva']== 'T') {  //scissione dei pagamenti
+                        if ($row['tipiva'] == 'T') {  //scissione dei pagamenti
                             $castel_transact[$row['idtes']]['esigibilita_iva'] = 'S';
                         }
                         break;

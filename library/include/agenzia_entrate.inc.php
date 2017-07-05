@@ -949,22 +949,22 @@ function creaFileDAT10($aziend, $data, $nome_blocco = 'DTE') {
     $el_2_1_2 = $doc->createElement("AltriIdentificativi", "");
     // la denominazione se persona giuridica, nome e cognome se persona giuridica
     if ($aziend['sexper'] == 'G') {
-        $el_2_1_2_1 = $doc->createElement("Denominazione", $aziend['ragso1'] . ' ' . $aziend['ragso2']);
+        $el_2_1_2_1 = $doc->createElement("Denominazione", strtoupper(str_replace('€', 'e', $aziend['ragso1'] . ' ' . $aziend['ragso2'])));
         $el_2_1_2->appendChild($el_2_1_2_1);
     } else {
-        $el_2_1_2_2 = $doc->createElement("Nome", $aziend['ragso2']);
+        $el_2_1_2_2 = $doc->createElement("Nome", strtoupper($aziend['legrap_pf_nome']));
         $el_2_1_2->appendChild($el_2_1_2_2);
-        $el_2_1_2_3 = $doc->createElement("Cognome", $aziend['ragso1']);
+        $el_2_1_2_3 = $doc->createElement("Cognome", strtoupper($aziend['legrap_pf_cognome']));
         $el_2_1_2->appendChild($el_2_1_2_3);
     }
     $el_2_1_2_4 = $doc->createElement("Sede", '');
-    $el_2_1_2_4_1 = $doc->createElement("Indirizzo", $aziend['indspe']);
+    $el_2_1_2_4_1 = $doc->createElement("Indirizzo", strtoupper($aziend['indspe']));
     $el_2_1_2_4->appendChild($el_2_1_2_4_1);
     $el_2_1_2_4_3 = $doc->createElement("CAP", $aziend['capspe']);
     $el_2_1_2_4->appendChild($el_2_1_2_4_3);
-    $el_2_1_2_4_4 = $doc->createElement("Comune", $aziend['citspe']);
+    $el_2_1_2_4_4 = $doc->createElement("Comune", strtoupper($aziend['citspe']));
     $el_2_1_2_4->appendChild($el_2_1_2_4_4);
-    $el_2_1_2_4_5 = $doc->createElement("Provincia", $aziend['prospe']);
+    $el_2_1_2_4_5 = $doc->createElement("Provincia", strtoupper($aziend['prospe']));
     $el_2_1_2_4->appendChild($el_2_1_2_4_5);
     $el_2_1_2_4_6 = $doc->createElement("Nazione", $aziend['country']);
     $el_2_1_2_4->appendChild($el_2_1_2_4_6);
@@ -991,22 +991,22 @@ function creaFileDAT10($aziend, $data, $nome_blocco = 'DTE') {
                 $el_2_2_2 = $doc->createElement("AltriIdentificativi", "");
                 // la denominazione se persona giuridica, nome e cognome se persona giuridica
                 if ($v['sexper'] == 'G') {
-                    $el_2_2_2_1 = $doc->createElement("Denominazione", str_replace('&', 'e', $v['ragso1'] . ' ' . $v['ragso2']));
+                    $el_2_2_2_1 = $doc->createElement("Denominazione", str_replace('&', 'e', strtoupper($v['ragso1'] . ' ' . $v['ragso2'])));
                     $el_2_2_2->appendChild($el_2_2_2_1);
                 } else {
-                    $el_2_2_2_2 = $doc->createElement("Nome", $v['legrap_pf_nome']);
+                    $el_2_2_2_2 = $doc->createElement("Nome", strtoupper($v['legrap_pf_nome']));
                     $el_2_2_2->appendChild($el_2_2_2_2);
-                    $el_2_2_2_3 = $doc->createElement("Cognome", $v['legrap_pf_cognome']);
+                    $el_2_2_2_3 = $doc->createElement("Cognome", strtoupper($v['legrap_pf_cognome']));
                     $el_2_2_2->appendChild($el_2_2_2_3);
                 }
                 $el_2_2_2_4 = $doc->createElement("Sede", '');
-                $el_2_2_2_4_1 = $doc->createElement("Indirizzo", $v['indspe']);
+                $el_2_2_2_4_1 = $doc->createElement("Indirizzo", strtoupper($v['indspe']));
                 $el_2_2_2_4->appendChild($el_2_2_2_4_1);
                 $el_2_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
                 $el_2_2_2_4->appendChild($el_2_2_2_4_3);
-                $el_2_2_2_4_4 = $doc->createElement("Comune", $v['citspe']);
+                $el_2_2_2_4_4 = $doc->createElement("Comune", strtoupper($v['citspe']));
                 $el_2_2_2_4->appendChild($el_2_2_2_4_4);
-                $el_2_2_2_4_5 = $doc->createElement("Provincia", $v['prospe']);
+                $el_2_2_2_4_5 = $doc->createElement("Provincia", strtoupper($v['prospe']));
                 $el_2_2_2_4->appendChild($el_2_2_2_4_5);
                 $el_2_2_2_4_6 = $doc->createElement("Nazione", $v['country']);
                 $el_2_2_2_4->appendChild($el_2_2_2_4_6);
@@ -1026,13 +1026,13 @@ function creaFileDAT10($aziend, $data, $nome_blocco = 'DTE') {
             $el_2_2_3_2 = $doc->createElement("DatiRiepilogo", "");
             $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", $v['imponi']);
             $el_2_2_3_2->appendChild($el_2_2_3_2_1);
-            $el_2_2_3_2_2 = $doc->createElement("DatiIVA",'');
-            $el_2_2_3_2_2_1 = $doc->createElement("Imposta",$v['impost']);
+            $el_2_2_3_2_2 = $doc->createElement("DatiIVA", '');
+            $el_2_2_3_2_2_1 = $doc->createElement("Imposta", $v['impost']);
             $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_1);
-            $el_2_2_3_2_2_2 = $doc->createElement("Aliquota",$v['periva']);
+            $el_2_2_3_2_2_2 = $doc->createElement("Aliquota", $v['periva']);
             $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_2);
             $el_2_2_3_2->appendChild($el_2_2_3_2_2);
-            if (!empty($v['fae_natura'])){
+            if (!empty($v['fae_natura'])) {
                 $el_2_2_3_2_3 = $doc->createElement("Natura", $v['fae_natura']);
                 $el_2_2_3_2->appendChild($el_2_2_3_2_3);
             }

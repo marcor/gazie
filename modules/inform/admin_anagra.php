@@ -39,7 +39,11 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
     if (isset($_POST['Submit'])) { // conferma tutto
         require("../../library/include/check.inc.php");
         if (strlen($form["ragso1"]) < 4) {
-            $msg['err'][] = 'ragso1';
+            if (!empty($form["legrap_pf_nome"]) && !empty($form["legrap_pf_cognome"]) && $form["sexper"] != 'G') {// setto la ragione sociale con l'eventuale legale rappresentante
+                $form["ragso1"] = strtoupper($form["legrap_pf_cognome"] . ' ' . $form["legrap_pf_nome"]);
+            } else { // altrimenti do errore                
+                $msg['err'][] = 'ragso1';
+            }
         }
         if (empty($form["indspe"])) {
             $msg['err'][] = 'indspe';
@@ -108,7 +112,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
         }
 
         if (count($msg['err']) <= 0) { // nessun errore
-            $form['datnas'] = gaz_format_date($_POST['datnas'],TRUE);
+            $form['datnas'] = gaz_format_date($_POST['datnas'], TRUE);
             gaz_dbi_table_update('anagra', array('id', $form['id']), $form);
             header("Location: " . $form['ritorno']);
             exit;
@@ -146,7 +150,7 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="ragso1" class="col-sm-4 control-label"><?php echo $script_transl['ragso1']; ?> *</label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['ragso1']; ?>" name="ragso1" maxlength="50" />
+                    <input class="col-sm-8" type="text" placeholder="<?php echo $script_transl['ragso1_placeholder']; ?>" value="<?php echo $form['ragso1']; ?>" name="ragso1" maxlength="50" />
                 </div>
             </div>
         </div><!-- chiude row  -->
@@ -170,8 +174,8 @@ if (count($msg['err']) > 0) { // ho un errore
             <div class="col-md-12">
                 <div class="form-group">
                     <label for="legrap_pf_nome" class="col-sm-4 control-label"><?php echo $script_transl['legrap_pf_nome']; ?></label>
-                    <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_nome']; ?>" name="legrap_pf_nome" maxlength="60" />
-                    <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_cognome']; ?>" name="legrap_pf_cognome" maxlength="60" />
+                    <input class="col-sm-4" type="text" title="<?php echo $script_transl['legrap_pf_title']; ?>" value="<?php echo $form['legrap_pf_nome']; ?>" name="legrap_pf_nome" maxlength="60" />
+                    <input class="col-sm-4" type="text" title="<?php echo $script_transl['legrap_pf_title']; ?>" value="<?php echo $form['legrap_pf_cognome']; ?>" name="legrap_pf_cognome" maxlength="60" />
                 </div>
             </div>
         </div><!-- chiude row  -->
@@ -343,7 +347,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <label for="fatt_email" class="col-sm-4 control-label"><?php echo $script_transl['fatt_email']; ?> </label>
                     <?php
                     $gForm->variousSelect('fatt_email', $script_transl['fatt_email_value'], $form['fatt_email']);
-                   // $gForm->selectNumber('fatt_email', $form['fatt_email'], TRUE, 0, 1);
+                    // $gForm->selectNumber('fatt_email', $form['fatt_email'], TRUE, 0, 1);
                     ?>
                 </div>
             </div>
