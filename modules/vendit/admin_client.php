@@ -307,9 +307,11 @@ echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"ragso2\" value=\"" . $form['ragso2'] . "\" align=\"right\" maxlength=\"50\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['legrap'] . " </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
-      <input type=\"text\" name=\"legrap\" value=\"" . $form['legrap'] . "\" align=\"right\" maxlength=\"100\" size=\"50\" /></td>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['legrap_pf_nome'] . " </td>\n";
+echo "\t<td class=\"FacetDataTD\">
+      <input type=\"text\" name=\"legrap_pf_nome\" value=\"" . $form['legrap_pf_nome'] . "\" align=\"right\" maxlength=\"60\" size=\"50\" /></td>\n";
+echo "\t<td class=\"FacetDataTD\">
+      <input type=\"text\" name=\"legrap_pf_cognome\" value=\"" . $form['legrap_pf_cognome'] . "\" align=\"right\" maxlength=\"60\" size=\"50\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['sexper'] . "*</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
@@ -480,7 +482,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['operation_type'] . "</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">";
-    $gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
+$gForm->selectFromXML('../../library/include/operation_type.xml', 'operation_type', 'operation_type', $form['operation_type'], true, '', 'col-sm-6');
 echo "</td></tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['destin'] . " </td>\n";

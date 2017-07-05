@@ -59,7 +59,7 @@ $strScript = array("admin_aziend.php" =>
         'image' => "Logotipo de la empresa<br />(jpg,png,gif) aprox. 400x400px max 64kb",
         'intermediary' => "Intermediario para Agenzia delle Entrate",
         'sedleg' => "Domicilio legal",
-        'legrap' => "Representante legal ",
+        'legrap_pf_nome' => "Representante legal ",
         'sexper' => "Genero de la persona jur&iacute;dica ",
         'sexper_value' => array('' => '-', 'M' => 'Masculino', 'F' => 'Femenino', 'G' => 'Legal'),
         'datnas' => 'Fecha de Nacimiento',

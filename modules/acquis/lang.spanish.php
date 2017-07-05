@@ -67,7 +67,7 @@ $strScript = array("admin_fornit.php" =>
         'datnas' => 'Date of birth',
         'pronas' => 'Province of birth',
         'counas' => 'Country of birth',
-        'legrap' => "Representante legal ",
+        'legrap_pf_nome' => "Representante legal ",
         'sexper' => "Sexo/persona juridica ",
         'sexper_value' => array('' => '-', 'M' => 'Masculino', 'F' => 'Femenino', 'G' => 'Juridica'),
         'indspe' => 'Direccion',

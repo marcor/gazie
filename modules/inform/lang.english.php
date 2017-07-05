@@ -150,7 +150,7 @@ $strScript = array("report_letter.php" =>
         'ragso1' => "Ragione sociale 1",
         'ragso2' => "Ragione sociale 2",
         'sedleg' => 'Sede legale',
-        'legrap' => 'Legale rappresentante',
+        'legrap_pf_nome' => 'Legale rappresentante',
         'luonas' => 'Luogo di nascita',
         'datnas' => 'Data di Nascita',
         'pronas' => 'Provincia di nascita',

@@ -159,7 +159,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
             $new_company['ragso2'] = $upd;
             $new_company['image'] = '';
             $new_company['sedleg'] = '';
-            $new_company['legrap'] = '';
+            $new_company['legrap_pf_nome'] = '';
             $new_company['luonas'] = '';
             $new_company['pronas'] = '';
             $new_company['indspe'] = $upd;

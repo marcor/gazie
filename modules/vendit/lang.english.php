@@ -63,7 +63,7 @@ $strScript = array("admin_client.php" =>
         'datnas' => 'Date of birth',
         'pronas' => 'Province of birth',
         'counas' => 'Country of birth',
-        'legrap' => "Legal representative ",
+        'legrap_pf_nome' => "Legal representative ",
         'sexper' => "Sex/legal person",
         'sexper_value' => array('' => '-', 'M' => 'Male', 'F' => 'Female', 'G' => 'Legal'),
         'indspe' => 'Address',

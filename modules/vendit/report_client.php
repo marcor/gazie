@@ -70,7 +70,8 @@ if (isset($_GET['ricerca_completa'])) {
     $ricerca_testo = $_GET['ricerca_completa'];
     $where .= " and ( ragso1 like '%" . $ricerca_testo . "%' ";
     $where .= " or ragso2 like '%" . $ricerca_testo . "%' ";
-    $where .= " or legrap like '%" . $ricerca_testo . "%' ";
+    $where .= " or legrap_pf_nome like '%" . $ricerca_testo . "%' ";
+    $where .= " or legrap_pf_cognome like '%" . $ricerca_testo . "%' ";
     $where .= " or pariva like '%" . $ricerca_testo . "%' ";
     $where .= " or codfis like '%" . $ricerca_testo . "%' ";
     $where .= " or citspe like '%" . $ricerca_testo . "%' )";

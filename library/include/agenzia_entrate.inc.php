@@ -917,10 +917,143 @@ function creaFileIVP17($aziend, $data) {
 
         $results->appendChild($el);
     }
-    $filename = '../../data/files/'. $aziend['codice'].'/' . $aziend['country'].$aziend['codfis']."_LI_".$data['trimestre_liquidabile'].".xml";
+    $filename = '../../data/files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_LI_" . $data['trimestre_liquidabile'] . ".xml";
     // salvo il file sul server
     $domDoc->save($filename);
 }
 
 // --- FINE FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DELLE LIQUIDAZIONI PERIODICHE
+// --- INIZIO FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DEI DATI DELLE FATTURE (SPESOMETRO)
+function creaFileDAT10($aziend, $data, $nome_blocco = 'DTE') {
+    $doc = new DOMDocument;
+    $doc->load("../../library/include/template_DAT10.xml");
+    $doc->preserveWhiteSpace = false;
+    $doc->formatOutput = true;
+    $xpath = new DOMXPath($doc);
+    $res = $xpath->query("//ns2:DatiFattura")->item(0);
+    $root = $doc->createElement($nome_blocco);
+    $res->appendChild($root);
+    $res = $xpath->query("//ns2:DatiFattura/" . $nome_blocco)->item(0);
+    // 2.1 - Blocco contenente le informazioni relative al cedente/prestatore (azienda)
+    $el_2_1 = $doc->createElement("CedentePrestatoreDTE", "");
+    $el_2_1_1 = $doc->createElement("IdentificativiFiscali", "");
+    $el_2_1_1_1 = $doc->createElement("IdFiscaleIVA", "");
+    $el_2_1_1_1_1 = $doc->createElement("IdPaese", $aziend['country']);
+    $el_2_1_1_1->appendChild($el_2_1_1_1_1);
+    $el_2_1_1_1_2 = $doc->createElement("IdCodice", $aziend['pariva']);
+    $el_2_1_1_1->appendChild($el_2_1_1_1_2);
+    $el_2_1_1->appendChild($el_2_1_1_1);
+    $el_2_1_1_2 = $doc->createElement("CodiceFiscale", $aziend['codfis']);
+    $el_2_1_1->appendChild($el_2_1_1_2);
+    $el_2_1->appendChild($el_2_1_1);
+    $el_2_1_2 = $doc->createElement("AltriIdentificativi", "");
+    // la denominazione se persona giuridica, nome e cognome se persona giuridica
+    if ($aziend['sexper'] == 'G') {
+        $el_2_1_2_1 = $doc->createElement("Denominazione", $aziend['ragso1'] . ' ' . $aziend['ragso2']);
+        $el_2_1_2->appendChild($el_2_1_2_1);
+    } else {
+        $el_2_1_2_2 = $doc->createElement("Nome", $aziend['ragso2']);
+        $el_2_1_2->appendChild($el_2_1_2_2);
+        $el_2_1_2_3 = $doc->createElement("Cognome", $aziend['ragso1']);
+        $el_2_1_2->appendChild($el_2_1_2_3);
+    }
+    $el_2_1_2_4 = $doc->createElement("Sede", '');
+    $el_2_1_2_4_1 = $doc->createElement("Indirizzo", $aziend['indspe']);
+    $el_2_1_2_4->appendChild($el_2_1_2_4_1);
+    $el_2_1_2_4_3 = $doc->createElement("CAP", $aziend['capspe']);
+    $el_2_1_2_4->appendChild($el_2_1_2_4_3);
+    $el_2_1_2_4_4 = $doc->createElement("Comune", $aziend['citspe']);
+    $el_2_1_2_4->appendChild($el_2_1_2_4_4);
+    $el_2_1_2_4_5 = $doc->createElement("Provincia", $aziend['prospe']);
+    $el_2_1_2_4->appendChild($el_2_1_2_4_5);
+    $el_2_1_2_4_6 = $doc->createElement("Nazione", $aziend['country']);
+    $el_2_1_2_4->appendChild($el_2_1_2_4_6);
+    $el_2_1_2->appendChild($el_2_1_2_4);
+    $el_2_1->appendChild($el_2_1_2);
+    $res->appendChild($el_2_1);
+    $ctrl_partner = 0;
+    foreach ($data as $k => $v) {
+        if ($nome_blocco == 'DFE' && $v['regiva'] < 6) {
+            // ---------- FATTURE EMESSE --------------
+            if ($ctrl_partner <> $v['clfoco']) {
+                // 2.2 - Blocco contenente le informazioni relative al cessionario/committente (cliente) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
+                $el_2_2 = $doc->createElement("CessionarioCommittenteDTE", "");
+                $el_2_2_1 = $doc->createElement("IdentificativiFiscali", "");
+                $el_2_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
+                $el_2_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
+                $el_2_2_1_1->appendChild($el_2_2_1_1_1);
+                $el_2_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
+                $el_2_2_1_1->appendChild($el_2_2_1_1_2);
+                $el_2_2_1->appendChild($el_2_2_1_1);
+                $el_2_2_1_2 = $doc->createElement("CodiceFiscale", $v['codfis']);
+                $el_2_2_1->appendChild($el_2_2_1_2);
+                $el_2_2->appendChild($el_2_2_1);
+                $el_2_2_2 = $doc->createElement("AltriIdentificativi", "");
+                // la denominazione se persona giuridica, nome e cognome se persona giuridica
+                if ($v['sexper'] == 'G') {
+                    $el_2_2_2_1 = $doc->createElement("Denominazione", str_replace('&', 'e', $v['ragso1'] . ' ' . $v['ragso2']));
+                    $el_2_2_2->appendChild($el_2_2_2_1);
+                } else {
+                    $el_2_2_2_2 = $doc->createElement("Nome", $v['legrap_pf_nome']);
+                    $el_2_2_2->appendChild($el_2_2_2_2);
+                    $el_2_2_2_3 = $doc->createElement("Cognome", $v['legrap_pf_cognome']);
+                    $el_2_2_2->appendChild($el_2_2_2_3);
+                }
+                $el_2_2_2_4 = $doc->createElement("Sede", '');
+                $el_2_2_2_4_1 = $doc->createElement("Indirizzo", $v['indspe']);
+                $el_2_2_2_4->appendChild($el_2_2_2_4_1);
+                $el_2_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
+                $el_2_2_2_4->appendChild($el_2_2_2_4_3);
+                $el_2_2_2_4_4 = $doc->createElement("Comune", $v['citspe']);
+                $el_2_2_2_4->appendChild($el_2_2_2_4_4);
+                $el_2_2_2_4_5 = $doc->createElement("Provincia", $v['prospe']);
+                $el_2_2_2_4->appendChild($el_2_2_2_4_5);
+                $el_2_2_2_4_6 = $doc->createElement("Nazione", $v['country']);
+                $el_2_2_2_4->appendChild($el_2_2_2_4_6);
+                $el_2_2_2->appendChild($el_2_2_2_4);
+                $el_2_2->appendChild($el_2_2_2);
+            }
+            // 2.2.3 - Blocco dati fatture (reiterabile 1000 volte)
+            $el_2_2_3 = $doc->createElement("DatiFatturaBodyDTE", "");
+            $el_2_2_3_1 = $doc->createElement("DatiGenerali", "");
+            $el_2_2_3_1_1 = $doc->createElement("TipoDocumento", $v['tipo_documento']);
+            $el_2_2_3_1->appendChild($el_2_2_3_1_1);
+            $el_2_2_3_1_2 = $doc->createElement("Data", $v['datdoc']);
+            $el_2_2_3_1->appendChild($el_2_2_3_1_2);
+            $el_2_2_3_1_3 = $doc->createElement("Numero", $v['numdoc']);
+            $el_2_2_3_1->appendChild($el_2_2_3_1_3);
+            $el_2_2_3->appendChild($el_2_2_3_1);
+            $el_2_2_3_2 = $doc->createElement("DatiRiepilogo", "");
+            $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", $v['imponi']);
+            $el_2_2_3_2->appendChild($el_2_2_3_2_1);
+            $el_2_2_3_2_2 = $doc->createElement("DatiIVA",'');
+            $el_2_2_3_2_2_1 = $doc->createElement("Imposta",$v['impost']);
+            $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_1);
+            $el_2_2_3_2_2_2 = $doc->createElement("Aliquota",$v['periva']);
+            $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_2);
+            $el_2_2_3_2->appendChild($el_2_2_3_2_2);
+            if (!empty($v['fae_natura'])){
+                $el_2_2_3_2_3 = $doc->createElement("Natura", $v['fae_natura']);
+                $el_2_2_3_2->appendChild($el_2_2_3_2_3);
+            }
+            $el_2_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $v['esigibilita_iva']);
+            $el_2_2_3_2->appendChild($el_2_2_3_2_6);
+            $el_2_2_3->appendChild($el_2_2_3_2);
+            $el_2_2->appendChild($el_2_2_3);
+        } elseif ($nome_blocco == 'DTR' && $v['regiva'] >= 6) {
+            // ---------- FATTURE RICEVUTE --------------
+            if ($ctrl_partner <> $v['clfoco']) {
+                
+            }
+        }
+        // chiudo tutto
+        $res->appendChild($el_2_2);
+        $ctrl_partner = $v['clfoco'];
+    }
+    $filename = '../../data/files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_DF_00001.xml";
+    // salvo il file sul server
+    $doc->save($filename);
+}
+
+// --- FINE FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DEI DATI DELLE FATTURE (SPESOMETRO)
 ?>

@@ -160,11 +160,11 @@ function getHeaderData() {
             $Testa['fatal_error'] = 'sexper';
         }
         $Testa['sesso'] = strtoupper($admin_aziend['sexper']);
-        if (!empty($admin_aziend['legrap'])) {
+        if (!empty($admin_aziend['legrap_pf_nome'])) {
             // persona fisica con cognome e nome non separati nel campo legale rappresentante
             $Testa['cognome'] = '';
             $Testa['nome'] = '';
-            $line = strtoupper($admin_aziend['legrap']);
+            $line = strtoupper($admin_aziend['legrap_pf_nome']);
             $nuova = explode(' ', chop($line));
             $lenght = count($nuova);
             $middle = intval(($lenght + 1) / 2);
@@ -180,7 +180,7 @@ function getHeaderData() {
             $Testa['cognome'] = strtoupper($admin_aziend['ragso1']);
             $Testa['nome'] = strtoupper($admin_aziend['ragso2']);
         } else {
-            $Testa['fatal_error'] = 'legrap';
+            $Testa['fatal_error'] = 'legrap_pf_nome';
         }
         if (empty($admin_aziend['luonas'])) {
             $Testa['fatal_error'] = 'luonas';

@@ -169,8 +169,9 @@ if (count($msg['err']) > 0) { // ho un errore
         <div class="row">
             <div class="col-md-12">
                 <div class="form-group">
-                    <label for="legrap" class="col-sm-4 control-label"><?php echo $script_transl['legrap']; ?></label>
-                    <input class="col-sm-8" type="text" value="<?php echo $form['legrap']; ?>" name="legrap" maxlength="100" />
+                    <label for="legrap_pf_nome" class="col-sm-4 control-label"><?php echo $script_transl['legrap_pf_nome']; ?></label>
+                    <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_nome']; ?>" name="legrap_pf_nome" maxlength="60" />
+                    <input class="col-sm-4" type="text" value="<?php echo $form['legrap_pf_cognome']; ?>" name="legrap_pf_cognome" maxlength="60" />
                 </div>
             </div>
         </div><!-- chiude row  -->

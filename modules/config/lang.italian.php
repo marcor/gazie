@@ -56,7 +56,7 @@ $strScript = array(
         'image' => "Logo Aziendale<br /> (jpg,png,gif) circa 400x400px max 64kb",
         'intermediary' => "Intermediario presso l'Agenzia delle Entrate",
         'sedleg' => "Sede legale",
-        'legrap' => "Legale rappresentante ",
+        'legrap_pf_nome' => "Legale rappr(Nome - Cognome)",
         'sexper' => "Sesso/pers.giuridica ",
         'sexper_value' => array('' => '-', 'M' => 'Maschio', 'F' => 'Femmina', 'G' => 'Giuridica'),
         'datnas' => 'Data di nascita',

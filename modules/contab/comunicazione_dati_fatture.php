@@ -27,6 +27,12 @@ $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 require("../../library/include/check.inc.php");
 
+if (isset($_POST['Update']) || isset($_GET['Update'])) {
+    $toDo = 'update';
+} else {
+    $toDo = 'insert';
+}
+
 function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
     global $gTables, $admin_aziend, $script_transl;
     $nuw = new check_VATno_TAXcode();
@@ -54,12 +60,11 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
         $df = $date_ini->format('Y-m-t');
     }
     $sqlquery = "SELECT " . $gTables['rigmoi'] . ".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
-               citspe,prospe,country,codfis,pariva," . $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc,
-               " . $gTables['tesmov'] . ".numdoc," . $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva,
-               " . $gTables['tesmov'] . ".caucon," . $gTables['tesdoc'] . ".numfat AS n_fatt,id_anagra,
-			   datreg,datnas,luonas,pronas,counas,id_doc,iso,black_list,cod_agenzia_entrate,
-               operat, impost AS imposta," . $gTables['rigmoi'] . ".id_tes AS idtes,
-               imponi AS imponibile FROM " . $gTables['rigmoi'] . "
+               citspe,prospe,capspe,legrap_pf_nome,legrap_pf_cognome,country,codfis,pariva," . 
+               $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc," . $gTables['tesmov'] . ".numdoc," . 
+               $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva," . $gTables['tesmov'] . ".caucon,datreg,datnas,luonas,pronas,counas,
+               id_doc,iso,black_list,cod_agenzia_entrate, operat, impost AS imposta," . $gTables['rigmoi'] . ".id_tes
+               AS idtes, imponi AS imponibile FROM " . $gTables['rigmoi'] . "
                LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
                LEFT JOIN " . $gTables['tesdoc'] . " ON " . $gTables['tesmov'] . ".id_doc = " . $gTables['tesdoc'] . ".id_tes
                LEFT JOIN " . $gTables['aliiva'] . " ON " . $gTables['rigmoi'] . ".codiva = " . $gTables['aliiva'] . ".codice
@@ -292,17 +297,21 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 $castel_transact[$row['idtes']]['operazioni_esente'] = 0;
                 $castel_transact[$row['idtes']]['operazioni_nonimp'] = 0;
                 $castel_transact[$row['idtes']]['tipiva'] = 1;
+                $castel_transact[$row['idtes']]['esigibilita_iva'] = 'I'; // [I]: esigibilità immediata [D]: esigibilità differita [S] scissione dei pagamenti
                 switch ($row['tipiva']) {
                     case 'I':
                     case 'D':
+                    case 'T':
                         $castel_transact[$row['idtes']]['operazioni_imponibili'] = $value_imponi;
                         $castel_transact[$row['idtes']]['imposte_addebitate'] = $value_impost;
                         if ($value_impost == 0) {  //se non c'è imposta il movimento è sbagliato
                             $error_transact[$row['idtes']][] = $script_transl['errors'][11];
                         }
+                        if ($row['tipiva']== 'T') {  //scissione dei pagamenti
+                            $castel_transact[$row['idtes']]['esigibilita_iva'] = 'S';
+                        }
                         break;
                     case 'E':
-
                         $castel_transact[$row['idtes']]['tipiva'] = 3;
                         $castel_transact[$row['idtes']]['operazioni_esente'] = $value_imponi;
                         if ($value_impost != 0) {  //se c'è imposta il movimento è sbagliato
@@ -322,10 +331,14 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 switch ($row['tipiva']) {
                     case 'I':
                     case 'D':
+                    case 'T':
                         $castel_transact[$row['idtes']]['operazioni_imponibili'] += $value_imponi;
                         $castel_transact[$row['idtes']]['imposte_addebitate'] += $value_impost;
                         if ($value_impost == 0) {  //se non c'è imposta il movimento è sbagliato
                             $error_transact[$row['idtes']][] = $script_transl['errors'][11];
+                        }
+                        if ($row['tipiva']== 'T') {  //scissione dei pagamenti
+                            $castel_transact[$row['idtes']]['esigibilita_iva'] = 'S';
                         }
                         break;
                     case 'E':
@@ -420,10 +433,13 @@ if (!isset($_POST['ritorno'])) {
             creaFileDAT10($admin_aziend, $form);
             $msg['war'][] = "download";
         } else { // e' un'inserimento
-            gaz_dbi_table_insert('liquidazioni_iva', $vi);
+            $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
             require("../../library/include/agenzia_entrate.inc.php");
-            creaFileDAT10($admin_aziend, $form);
-            $msg['war'][] = "download";
+            $dat10 = creaFileDAT10($admin_aziend, $queryData[0], 'DFE');
+            print $dat10;
+//            gaz_dbi_table_insert('comunicazioni_dati_fatture', $dat);
+//            $msg['war'][] = "download";
+            exit;
         }
     } elseif (isset($_POST['Download'])) {
         $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_" . $form['trimestre_semestre'] . ".xml";

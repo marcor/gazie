@@ -144,11 +144,11 @@ function getHeaderData() {
             $Testa['fatal_error'] = '';
         }
         $Testa['sesso'] = strtoupper($admin_aziend['sexper']);
-        if (!empty($admin_aziend['legrap'])) {
+        if (!empty($admin_aziend['legrap_pf_nome'])) {
             // persona fisica con cognome e nome non separati nel campo legale rappresentante
             $Testa['cognome'] = '';
             $Testa['nome'] = '';
-            $line = strtoupper($admin_aziend['legrap']);
+            $line = strtoupper($admin_aziend['legrap_pf_nome']);
             $nuova = explode(' ', chop($line));
             $lenght = count($nuova);
             $middle = intval(($lenght + 1) / 2);
