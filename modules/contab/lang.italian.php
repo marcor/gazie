@@ -443,6 +443,14 @@ $strScript = array("select_liqiva.php" =>
             'legrap_pf_nome'=>"Sul cliente e/o fornitore persona fisica manca il nome e/o cognome del legale rappresentante!"),
         'ok' => 'Genera il file ZIP contenente i due file XML per la comunicazione dati fatture (quadri DTE e DTR)',
     ),
+    "report_comunicazioni_dati_fatture.php" =>
+    array('title' => "Lista delle comunicazioni periodiche dei dati fatture",
+        'anno' => 'Anno',
+        'periodicita' => 'Periodicità',
+        'periodicita_value' => array('M' => 'Mensile', 'T' => 'Trimestrale', 'S' => 'Semestrale'),
+        'trimestre_semestre' => 'Periodo',
+        'trimestre_semestre_value' => array('T'=>array(1 => 'Primo (gennaio-marzo)', 2 => 'Secondo (aprile-giugno)', 3 => 'Terzo (luglio-settembre)', 4 => 'Quarto (ottobre-dicembre)'),'S'=>array(1 => 'Primo (gennaio-giugno)', 2 => 'Secondo (luglio-dicembre)'))
+    ),
     "comunicazioni_doc.php" =>
     array('title' => "Comunicazioni dati",
         'text'=>"In questo sottomenù troverete tutte le procedure per l'invio dati in formato XML all'Agenzia delle Entrate"

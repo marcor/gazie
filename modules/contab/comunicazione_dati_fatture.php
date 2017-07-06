@@ -411,9 +411,9 @@ if (!isset($_POST['ritorno'])) {
         $ultima_comunicazione = gaz_dbi_fetch_array($rs_query);
         if ($ultima_comunicazione) {
             if ($ultima_comunicazione['periodicita'] == 'T') { // ho fatto una liquidazione trimestrale
-                $ultimo_trimestre_liquidato = $ultima_comunicazione['anno'] . $ultima_comunicazione['mese_trimestre'];
-            } else {
-                $ultimo_trimestre_liquidato = $ultima_comunicazione['anno'] . floor($ultima_comunicazione['mese_trimestre'] / 3);
+                $ultimo_trimestre_liquidato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'];
+            } else { // semestrale
+                $ultimo_trimestre_liquidato = $ultima_liquidazione['anno'] . $ultima_comunicazione['trimestre_semestre'] * 2;
             }
         } else { // non ho mai fatto liquidazioni, propongo la prima da fare
             $ultimo_trimestre_liquidato = 0;
@@ -421,7 +421,7 @@ if (!isset($_POST['ritorno'])) {
         if ($ultimo_trimestre_liquidato >= $trimestre_semestre) {
             $msg['err'][] = "eseguita";
         } else {
-// propongo una liquidazione in base ai dati che trovo sui movimenti IVA
+            // propongo una liquidazione in base ai dati che trovo sui movimenti IVA
         }
     }
 } else { // nei post successivi (submit)
@@ -431,24 +431,28 @@ if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     if (isset($_POST['Submit'])) {
+        $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
         if ($toDo == 'update') { // e' una modifica
-// aggiorno il database
-            $id = array('anno', "'" . $vi['anno'] . "' AND mese_trimestre = '" . $ki . "'");
-            gaz_dbi_table_update('liquidazioni_iva', $id, $vi);
+            // aggiorno il database
+            $id = array('anno', "'" . $form['anno'] . "' AND trimestre_semestre = '" . $form['trimestre_semestre'] . "'");
             require("../../library/include/agenzia_entrate.inc.php");
-            creaFileDAT10($admin_aziend, $form);
+            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0',STR_PAD_LEFT));
+            foreach ($files as $blocco => $nome_blocco) {
+                $form['nome_file_' . $blocco] = $nome_blocco;
+            }
+            gaz_dbi_table_update('liquidazioni_iva', $id, $form);
             $msg['war'][] = "download";
         } else { // e' un'inserimento
-            $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
             require("../../library/include/agenzia_entrate.inc.php");
-            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . $form['trimestre_semestre']);
-            print_r($files);
-//            gaz_dbi_table_insert('comunicazioni_dati_fatture', $dat);
-//            $msg['war'][] = "download";
-            exit;
+            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0',STR_PAD_LEFT));
+            foreach ($files as $blocco => $nome_blocco) {
+                $form['nome_file_' . $blocco] = $nome_blocco;
+            }
+            gaz_dbi_table_insert('comunicazioni_dati_fatture', $form);
+            $msg['war'][] = "download";
         }
     } elseif (isset($_POST['Download'])) {
-        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_" . $form['trimestre_semestre'] . ".xml";
+        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" . substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0',STR_PAD_LEFT) . ".zip";
         header("Pragma: public", true);
         header("Expires: 0"); // set expiration time
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -500,151 +504,164 @@ $gForm = new contabForm();
         <input type="hidden" name="<?php echo ucfirst($toDo) ?>" value="">
         <input type="hidden" value="<?php echo $form['trimestre_semestre']; ?>" name="trimestre_semestre">
         <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
-        <div class="panel panel-default gaz-table-form">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="anno" class="col-sm-4 control-label"><?php echo $script_transl['anno_imposta']; ?></label>
-                            <?php
-                            $gForm->selectNumber('anno', $form['anno'], 0, $form['anno'] - 5, $form['anno'] + 5, "col-sm-8", 'anno_imposta', 'style="max-width: 100px;"');
-                            ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="periodicita" class="col-sm-4 control-label"><?php echo $script_transl['periodicita']; ?></label>
-                            <?php
-                            $gForm->variousSelect('periodicita', $script_transl['periodicita_value'], $form['periodicita'], "col-sm-8", false, 'periodicita', false, 'style="max-width: 300px;"');
-                            ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="trimestre_semestre" class="col-sm-4 control-label"><?php echo $script_transl['trimestre_semestre']; ?></label>
-                            <?php
-                            $gForm->variousSelect('trimestre_semestre', $script_transl['trimestre_semestre_value'][$form['periodicita']], $form['trimestre_semestre'], "col-sm-8", false, 'trimestre_semestre', false, 'style="max-width: 300px;"');
-                            ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-            </div><!-- chiude container  -->
-        </div><!-- chiude panel  -->
         <?php
-        $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
-        if (count($queryData[1]) >= 1) { // ho degli errori
-            echo '<div class="container">';
-            foreach ($queryData[1] as $k => $v) {
-                echo '<div class="row alert alert-warning fade in" role="alert">
+        if (count($msg['err']) > 0) { // ho un errore
+            $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+        } elseif (count($msg['war']) > 0) {
+            $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+        } else {
+            ?>
+            <div class="panel panel-default gaz-table-form">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="anno" class="col-sm-4 control-label"><?php echo $script_transl['anno_imposta']; ?></label>
+                                <?php
+                                $gForm->selectNumber('anno', $form['anno'], 0, $form['anno'] - 5, $form['anno'] + 5, "col-sm-8", 'anno_imposta', 'style="max-width: 100px;"');
+                                ?>
+                            </div>
+                        </div>
+                    </div><!-- chiude row  -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="periodicita" class="col-sm-4 control-label"><?php echo $script_transl['periodicita']; ?></label>
+                                <?php
+                                $gForm->variousSelect('periodicita', $script_transl['periodicita_value'], $form['periodicita'], "col-sm-8", false, 'periodicita', false, 'style="max-width: 300px;"');
+                                ?>
+                            </div>
+                        </div>
+                    </div><!-- chiude row  -->
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="trimestre_semestre" class="col-sm-4 control-label"><?php echo $script_transl['trimestre_semestre']; ?></label>
+                                <?php
+                                $gForm->variousSelect('trimestre_semestre', $script_transl['trimestre_semestre_value'][$form['periodicita']], $form['trimestre_semestre'], "col-sm-8", false, 'trimestre_semestre', false, 'style="max-width: 300px;"');
+                                ?>
+                            </div>
+                        </div>
+                    </div><!-- chiude row  -->
+                </div><!-- chiude container  -->
+            </div><!-- chiude panel  -->
+            <?php
+            $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
+            if (count($queryData[1]) >= 1) { // ho degli errori
+                echo '<div class="container">';
+                foreach ($queryData[1] as $k => $v) {
+                    echo '<div class="row alert alert-warning fade in" role="alert">
 				<button type="button" class="close" data-dismiss="alert" aria-label="Chiudi">
 					<span aria-hidden="true">&times;</span>
 				</button>';
-                if ($k == 0) {
-                    echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> ERROR! => ' . $v . '<br>';
-                } else {
-                    echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> <a class="btn btn-xs btn-default" href="../inform/admin_anagra.php?id=' . $queryData[0][$k]['id_anagra'] . '&Update" > ' . $queryData[0][$k]['ragso1'] . '</a> ERROR! => ' . $v[0] . ' <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=' . $k . '">' . $queryData[0][$k]['numdoc'] . '</a><br>';
+                    if ($k == 0) {
+                        echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> ERROR! => ' . $v . '<br>';
+                    } else {
+                        echo '<span class="glyphicon glyphicon-alert" aria-hidden="true"></span> <a class="btn btn-xs btn-default" href="../inform/admin_anagra.php?id=' . $queryData[0][$k]['id_anagra'] . '&Update" > ' . $queryData[0][$k]['ragso1'] . '</a> ERROR! => ' . $v[0] . ' <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=' . $k . '">' . $queryData[0][$k]['numdoc'] . '</a><br>';
+                    }
+                    echo "</div>\n";
                 }
                 echo "</div>\n";
-            }
-            echo "</div>\n";
-        } else {
-            ?> 
-            <div class="panel panel-default">
-                <div id="gaz-responsive-table"  class="container-fluid">
-                    <table class="table table-responsive table-striped table-condensed cf">
-                        <thead>
-                            <tr class="bg-success">              
-                                <th>
-                                    <?php echo $script_transl["TipoDocumento"]; ?>
-                                </th>
-                                <th>
-                                    <?php echo $script_transl["Numero"]; ?>
-                                </th>
-                                <th>
-                                    <?php echo $script_transl["Data"]; ?>
-                                </th>
-                                <th>
-                                    <?php echo $script_transl["DataRegistrazione"]; ?>
-                                </th>
-                                <th>
-                                    <?php echo $script_transl["ImponibileImporto"]; ?>
-                                </th>
-                                <th class="text-right">
-                                    <?php echo $script_transl["Imposta"]; ?>
-                                </th>
-                                <th class="text-right">
-                                    <?php echo $script_transl["Aliquota"]; ?>
-                                </th>
-                            </tr>      
-                        </thead>    
-                        <tbody id="all_rows">
+            } else {
+                ?> 
+                <div class="panel panel-default">
+                    <div id="gaz-responsive-table"  class="container-fluid">
+                        <table class="table table-responsive table-striped table-condensed cf">
+                            <thead>
+                                <tr class="bg-success">              
+                                    <th>
+                                        <?php echo $script_transl["TipoDocumento"]; ?>
+                                    </th>
+                                    <th>
+                                        <?php echo $script_transl["Numero"]; ?>
+                                    </th>
+                                    <th>
+                                        <?php echo $script_transl["Data"]; ?>
+                                    </th>
+                                    <th>
+                                        <?php echo $script_transl["DataRegistrazione"]; ?>
+                                    </th>
+                                    <th>
+                                        <?php echo $script_transl["ImponibileImporto"]; ?>
+                                    </th>
+                                    <th class="text-right">
+                                        <?php echo $script_transl["Imposta"]; ?>
+                                    </th>
+                                    <th class="text-right">
+                                        <?php echo $script_transl["Aliquota"]; ?>
+                                    </th>
+                                </tr>      
+                            </thead>    
+                            <tbody id="all_rows">
 
-                            <?php
-                            // CREO L'ARRAY ASSOCIATIVO DEI TIPI DOCUMENTI
-                            $xml = simplexml_load_file('../../library/include/tipi_documenti.xml');
-                            foreach ($xml as $d) {
-                                $v_td = get_object_vars($d);
-                                $td[$v_td['field'][0]] = $v_td['field'][1];
-                            }
-                            $td['TD99'] = 'NON INSERIBILE';
-                            // FINE CREAZIONE
-                            $ctrl_partner = 0;
-                            foreach ($queryData[0] as $k => $v) {
-                                if ($ctrl_partner <> $v['clfoco']) {
+                                <?php
+                                // CREO L'ARRAY ASSOCIATIVO DEI TIPI DOCUMENTI
+                                $xml = simplexml_load_file('../../library/include/tipi_documenti.xml');
+                                foreach ($xml as $d) {
+                                    $v_td = get_object_vars($d);
+                                    $td[$v_td['field'][0]] = $v_td['field'][1];
+                                }
+                                $td['TD99'] = 'NON INSERIBILE';
+                                // FINE CREAZIONE
+                                $ctrl_partner = 0;
+                                foreach ($queryData[0] as $k => $v) {
+                                    if ($ctrl_partner <> $v['clfoco']) {
+                                        ?>
+                                        <tr>              
+                                            <td colspan=7 data-title="<?php echo $script_transl["CessionarioCommittente"]; ?>" class="text-info">
+                                                <b>   <?php echo $v["ragso1"] . ' ' . $v["ragso2"]; ?> </b> 
+                                                <?php
+                                                if ($v["pariva"] >= 1) {
+                                                    echo $script_transl["partita_iva"] . ' ' . $v["pariva"];
+                                                }
+                                                echo ' ' . $script_transl["codice_fiscale"] . ' ' . $v["codfis"];
+                                                ?>
+                                            </td>
+                                        </tr>
+                                        <?php
+                                    }
                                     ?>
-                                    <tr>              
-                                        <td colspan=7 data-title="<?php echo $script_transl["CessionarioCommittente"]; ?>" class="text-info">
-                                            <b>   <?php echo $v["ragso1"] . ' ' . $v["ragso2"]; ?> </b> 
-                                            <?php
-                                            if ($v["pariva"] >= 1) {
-                                                echo $script_transl["partita_iva"] . ' ' . $v["pariva"];
-                                            }
-                                            echo ' ' . $script_transl["codice_fiscale"] . ' ' . $v["codfis"];
-                                            ?>
+                                    <tr>
+                                        <td data-title="<?php echo $script_transl["TipoDocumento"]; ?>">
+                                            <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
                                         </td>
-                                    </tr>
+                                        <td data-title="<?php echo $script_transl["Numero"]; ?>" class="text-center">
+                                            <?php echo $v["numdoc"]; ?>
+                                        </td>
+                                        <td data-title="<?php echo $script_transl["Data"]; ?>" class="text-center">
+                                            <?php echo gaz_format_date($v["datdoc"]); ?>
+                                        </td>
+                                        <td data-title="<?php echo $script_transl["DataRegistrazione"]; ?>" class="text-center">
+                                            <?php echo gaz_format_date($v["datreg"]); ?>
+                                        </td>
+                                        <td data-title="<?php echo $script_transl["ImponibileImporto"]; ?>" class="text-right">
+                                            <?php echo gaz_format_number($v['imponibile']); ?>
+                                        </td>
+                                        <td data-title="<?php echo $script_transl["Imposta"]; ?>"  class="text-right">
+                                            <?php echo gaz_format_number($v['imposta']); ?>
+                                        </td>
+                                        <td data-title="<?php echo $script_transl["Aliquota"]; ?>"  class="text-right">
+                                            <?php echo floatval($v['periva']); ?>%
+                                        </td>
+                                    </tr> 
                                     <?php
+                                    $ctrl_partner = $v['clfoco'];
                                 }
                                 ?>
-                                <tr>
-                                    <td data-title="<?php echo $script_transl["TipoDocumento"]; ?>">
-                                        <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
-                                    </td>
-                                    <td data-title="<?php echo $script_transl["Numero"]; ?>" class="text-center">
-                                        <?php echo $v["numdoc"]; ?>
-                                    </td>
-                                    <td data-title="<?php echo $script_transl["Data"]; ?>" class="text-center">
-                                        <?php echo gaz_format_date($v["datdoc"]); ?>
-                                    </td>
-                                    <td data-title="<?php echo $script_transl["DataRegistrazione"]; ?>" class="text-center">
-                                        <?php echo gaz_format_date($v["datreg"]); ?>
-                                    </td>
-                                    <td data-title="<?php echo $script_transl["ImponibileImporto"]; ?>" class="text-right">
-                                        <?php echo gaz_format_number($v['imponibile']); ?>
-                                    </td>
-                                    <td data-title="<?php echo $script_transl["Imposta"]; ?>"  class="text-right">
-                                        <?php echo gaz_format_number($v['imposta']); ?>
-                                    </td>
-                                    <td data-title="<?php echo $script_transl["Aliquota"]; ?>"  class="text-right">
-                                        <?php echo floatval($v['periva']); ?>%
-                                    </td>
-                                </tr> 
-                                <?php
-                                $ctrl_partner = $v['clfoco'];
-                            }
-                            ?>
-                        </tbody>     
-                    </table>
-                </div>  
-            </div>
-            <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="<?php echo $script_transl["ok"]; ?>" /></div>
+                            </tbody>     
+                        </table>
+                    </div>  
+                </div>
                 <?php
             }
-            ?>   
+        }
+        if (count($msg['war']) > 0) {
+            ?>
+            <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-warning" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . ".xml"; ?>" /></div>
+        <?php } else if (count($msg['err']) == 0) {
+            ?>
+            <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="<?php echo $script_transl["ok"]; ?>" /></div>
+            <?php } ?>   
     </form>
     <?php
     require("../../library/include/footer.php");

@@ -1160,7 +1160,7 @@ function creaFileDAT10($aziend, $data, $periodo) {
         }
         $file = $aziend['country'] . $aziend['codfis'] . "_DF_" . substr($nome_blocco, -1) . $periodo . ".xml";
         $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
-        $acc[]=$file;
+        $acc[$nome_blocco]=$file;
         // salvo il file sul server
         $doc->save($fileurl);
     }
