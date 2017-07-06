@@ -441,8 +441,8 @@ if (!isset($_POST['ritorno'])) {
         } else { // e' un'inserimento
             $queryData = createRowsAndErrors($form['anno'], $form['periodicita'], $form['trimestre_semestre']);
             require("../../library/include/agenzia_entrate.inc.php");
-            $dat10 = creaFileDAT10($admin_aziend, $queryData[0], 'DFE');
-            print $dat10;
+            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . $form['trimestre_semestre']);
+            print_r($files);
 //            gaz_dbi_table_insert('comunicazioni_dati_fatture', $dat);
 //            $msg['war'][] = "download";
             exit;

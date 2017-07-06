@@ -924,135 +924,247 @@ function creaFileIVP17($aziend, $data) {
 
 // --- FINE FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DELLE LIQUIDAZIONI PERIODICHE
 // --- INIZIO FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DEI DATI DELLE FATTURE (SPESOMETRO)
-function creaFileDAT10($aziend, $data, $nome_blocco = 'DTE') {
+function creaFileDAT10($aziend, $data, $periodo) {
+    $blocchi = array('DTE', 'DTR');
     $doc = new DOMDocument;
-    $doc->load("../../library/include/template_DAT10.xml");
-    $doc->preserveWhiteSpace = false;
-    $doc->formatOutput = true;
-    $xpath = new DOMXPath($doc);
-    $res = $xpath->query("//ns2:DatiFattura")->item(0);
-    $root = $doc->createElement($nome_blocco);
-    $res->appendChild($root);
-    $res = $xpath->query("//ns2:DatiFattura/" . $nome_blocco)->item(0);
-    // 2.1 - Blocco contenente le informazioni relative al cedente/prestatore (azienda)
-    $el_2_1 = $doc->createElement("CedentePrestatoreDTE", "");
-    $el_2_1_1 = $doc->createElement("IdentificativiFiscali", "");
-    $el_2_1_1_1 = $doc->createElement("IdFiscaleIVA", "");
-    $el_2_1_1_1_1 = $doc->createElement("IdPaese", $aziend['country']);
-    $el_2_1_1_1->appendChild($el_2_1_1_1_1);
-    $el_2_1_1_1_2 = $doc->createElement("IdCodice", $aziend['pariva']);
-    $el_2_1_1_1->appendChild($el_2_1_1_1_2);
-    $el_2_1_1->appendChild($el_2_1_1_1);
-    $el_2_1_1_2 = $doc->createElement("CodiceFiscale", $aziend['codfis']);
-    $el_2_1_1->appendChild($el_2_1_1_2);
-    $el_2_1->appendChild($el_2_1_1);
-    $el_2_1_2 = $doc->createElement("AltriIdentificativi", "");
-    // la denominazione se persona giuridica, nome e cognome se persona giuridica
-    if ($aziend['sexper'] == 'G') {
-        $el_2_1_2_1 = $doc->createElement("Denominazione", strtoupper(str_replace('€', 'e', $aziend['ragso1'] . ' ' . $aziend['ragso2'])));
-        $el_2_1_2->appendChild($el_2_1_2_1);
-    } else {
-        $el_2_1_2_2 = $doc->createElement("Nome", strtoupper($aziend['legrap_pf_nome']));
-        $el_2_1_2->appendChild($el_2_1_2_2);
-        $el_2_1_2_3 = $doc->createElement("Cognome", strtoupper($aziend['legrap_pf_cognome']));
-        $el_2_1_2->appendChild($el_2_1_2_3);
-    }
-    $el_2_1_2_4 = $doc->createElement("Sede", '');
-    $el_2_1_2_4_1 = $doc->createElement("Indirizzo", strtoupper($aziend['indspe']));
-    $el_2_1_2_4->appendChild($el_2_1_2_4_1);
-    $el_2_1_2_4_3 = $doc->createElement("CAP", $aziend['capspe']);
-    $el_2_1_2_4->appendChild($el_2_1_2_4_3);
-    $el_2_1_2_4_4 = $doc->createElement("Comune", strtoupper($aziend['citspe']));
-    $el_2_1_2_4->appendChild($el_2_1_2_4_4);
-    $el_2_1_2_4_5 = $doc->createElement("Provincia", strtoupper($aziend['prospe']));
-    $el_2_1_2_4->appendChild($el_2_1_2_4_5);
-    $el_2_1_2_4_6 = $doc->createElement("Nazione", $aziend['country']);
-    $el_2_1_2_4->appendChild($el_2_1_2_4_6);
-    $el_2_1_2->appendChild($el_2_1_2_4);
-    $el_2_1->appendChild($el_2_1_2);
-    $res->appendChild($el_2_1);
-    $ctrl_partner = 0;
-    foreach ($data as $k => $v) {
-        if ($nome_blocco == 'DFE' && $v['regiva'] < 6) {
-            // ---------- FATTURE EMESSE --------------
-            if ($ctrl_partner <> $v['clfoco']) {
-                // 2.2 - Blocco contenente le informazioni relative al cessionario/committente (cliente) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
-                $el_2_2 = $doc->createElement("CessionarioCommittenteDTE", "");
-                $el_2_2_1 = $doc->createElement("IdentificativiFiscali", "");
-                $el_2_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
-                $el_2_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
-                $el_2_2_1_1->appendChild($el_2_2_1_1_1);
-                $el_2_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
-                $el_2_2_1_1->appendChild($el_2_2_1_1_2);
-                $el_2_2_1->appendChild($el_2_2_1_1);
-                $el_2_2_1_2 = $doc->createElement("CodiceFiscale", $v['codfis']);
-                $el_2_2_1->appendChild($el_2_2_1_2);
-                $el_2_2->appendChild($el_2_2_1);
-                $el_2_2_2 = $doc->createElement("AltriIdentificativi", "");
-                // la denominazione se persona giuridica, nome e cognome se persona giuridica
-                if ($v['sexper'] == 'G') {
-                    $el_2_2_2_1 = $doc->createElement("Denominazione", str_replace('&', 'e', strtoupper($v['ragso1'] . ' ' . $v['ragso2'])));
-                    $el_2_2_2->appendChild($el_2_2_2_1);
-                } else {
-                    $el_2_2_2_2 = $doc->createElement("Nome", strtoupper($v['legrap_pf_nome']));
-                    $el_2_2_2->appendChild($el_2_2_2_2);
-                    $el_2_2_2_3 = $doc->createElement("Cognome", strtoupper($v['legrap_pf_cognome']));
-                    $el_2_2_2->appendChild($el_2_2_2_3);
+    foreach ($blocchi as $nome_blocco) {
+        $doc->load("../../library/include/template_DAT10.xml");
+        $xpath = new DOMXPath($doc);
+        $res = $xpath->query("//ns2:DatiFattura")->item(0);
+        $root = $doc->createElement($nome_blocco);
+        $res->appendChild($root);
+        $res = $xpath->query("//ns2:DatiFattura/" . $nome_blocco)->item(0);
+        if ($nome_blocco == 'DTE') {
+            // 2.1 - Blocco contenente le informazioni relative al cedente/prestatore (azienda)
+            $el_2_1 = $doc->createElement("CedentePrestatoreDTE", "");
+            $el_2_1_1 = $doc->createElement("IdentificativiFiscali", "");
+            $el_2_1_1_1 = $doc->createElement("IdFiscaleIVA", "");
+            $el_2_1_1_1_1 = $doc->createElement("IdPaese", $aziend['country']);
+            $el_2_1_1_1->appendChild($el_2_1_1_1_1);
+            $el_2_1_1_1_2 = $doc->createElement("IdCodice", $aziend['pariva']);
+            $el_2_1_1_1->appendChild($el_2_1_1_1_2);
+            $el_2_1_1->appendChild($el_2_1_1_1);
+            $el_2_1_1_2 = $doc->createElement("CodiceFiscale", $aziend['codfis']);
+            $el_2_1_1->appendChild($el_2_1_1_2);
+            $el_2_1->appendChild($el_2_1_1);
+            $el_2_1_2 = $doc->createElement("AltriIdentificativi", "");
+            // la denominazione se persona giuridica, nome e cognome se persona giuridica
+            if ($aziend['sexper'] == 'G') {
+                $el_2_1_2_1 = $doc->createElement("Denominazione", strtoupper(str_replace('€', 'e', $aziend['ragso1'] . ' ' . $aziend['ragso2'])));
+                $el_2_1_2->appendChild($el_2_1_2_1);
+            } else {
+                $el_2_1_2_2 = $doc->createElement("Nome", strtoupper($aziend['legrap_pf_nome']));
+                $el_2_1_2->appendChild($el_2_1_2_2);
+                $el_2_1_2_3 = $doc->createElement("Cognome", strtoupper($aziend['legrap_pf_cognome']));
+                $el_2_1_2->appendChild($el_2_1_2_3);
+            }
+            $el_2_1_2_4 = $doc->createElement("Sede", '');
+            $el_2_1_2_4_1 = $doc->createElement("Indirizzo", strtoupper($aziend['indspe']));
+            $el_2_1_2_4->appendChild($el_2_1_2_4_1);
+            $el_2_1_2_4_3 = $doc->createElement("CAP", $aziend['capspe']);
+            $el_2_1_2_4->appendChild($el_2_1_2_4_3);
+            $el_2_1_2_4_4 = $doc->createElement("Comune", strtoupper($aziend['citspe']));
+            $el_2_1_2_4->appendChild($el_2_1_2_4_4);
+            $el_2_1_2_4_5 = $doc->createElement("Provincia", strtoupper($aziend['prospe']));
+            $el_2_1_2_4->appendChild($el_2_1_2_4_5);
+            $el_2_1_2_4_6 = $doc->createElement("Nazione", $aziend['country']);
+            $el_2_1_2_4->appendChild($el_2_1_2_4_6);
+            $el_2_1_2->appendChild($el_2_1_2_4);
+            $el_2_1->appendChild($el_2_1_2);
+            $res->appendChild($el_2_1);
+        } elseif ($nome_blocco == 'DTR') {
+            // 3.1 - Blocco contenente le informazioni relative al cedente/prestatore (azienda)
+            $el_3_1 = $doc->createElement("CessionarioCommittenteDTR", "");
+            $el_3_1_1 = $doc->createElement("IdentificativiFiscali", "");
+            $el_3_1_1_1 = $doc->createElement("IdFiscaleIVA", "");
+            $el_3_1_1_1_1 = $doc->createElement("IdPaese", $aziend['country']);
+            $el_3_1_1_1->appendChild($el_3_1_1_1_1);
+            $el_3_1_1_1_2 = $doc->createElement("IdCodice", $aziend['pariva']);
+            $el_3_1_1_1->appendChild($el_3_1_1_1_2);
+            $el_3_1_1->appendChild($el_3_1_1_1);
+            $el_3_1_1_2 = $doc->createElement("CodiceFiscale", $aziend['codfis']);
+            $el_3_1_1->appendChild($el_3_1_1_2);
+            $el_3_1->appendChild($el_3_1_1);
+            $el_3_1_2 = $doc->createElement("AltriIdentificativi", "");
+            // la denominazione se persona giuridica, nome e cognome se persona giuridica
+            if ($aziend['sexper'] == 'G') {
+                $el_3_1_2_1 = $doc->createElement("Denominazione", strtoupper(str_replace('€', 'e', $aziend['ragso1'] . ' ' . $aziend['ragso2'])));
+                $el_3_1_2->appendChild($el_3_1_2_1);
+            } else {
+                $el_3_1_2_2 = $doc->createElement("Nome", strtoupper($aziend['legrap_pf_nome']));
+                $el_3_1_2->appendChild($el_3_1_2_2);
+                $el_3_1_2_3 = $doc->createElement("Cognome", strtoupper($aziend['legrap_pf_cognome']));
+                $el_3_1_2->appendChild($el_3_1_2_3);
+            }
+            $el_3_1_2_4 = $doc->createElement("Sede", '');
+            $el_3_1_2_4_1 = $doc->createElement("Indirizzo", strtoupper($aziend['indspe']));
+            $el_3_1_2_4->appendChild($el_3_1_2_4_1);
+            $el_3_1_2_4_3 = $doc->createElement("CAP", $aziend['capspe']);
+            $el_3_1_2_4->appendChild($el_3_1_2_4_3);
+            $el_3_1_2_4_4 = $doc->createElement("Comune", strtoupper($aziend['citspe']));
+            $el_3_1_2_4->appendChild($el_3_1_2_4_4);
+            $el_3_1_2_4_5 = $doc->createElement("Provincia", strtoupper($aziend['prospe']));
+            $el_3_1_2_4->appendChild($el_3_1_2_4_5);
+            $el_3_1_2_4_6 = $doc->createElement("Nazione", $aziend['country']);
+            $el_3_1_2_4->appendChild($el_3_1_2_4_6);
+            $el_3_1_2->appendChild($el_3_1_2_4);
+            $el_3_1->appendChild($el_3_1_2);
+            $res->appendChild($el_3_1);
+        } elseif ($nome_blocco == 'ANN') { // SOLO PER PROMEMORIA: NON GESTISCO GLI ANNULLAMENTI 
+            $el_4_1 = $doc->createElement("IdFile", "");
+            $res->appendChild($el_4_1);
+            $el_4_2 = $doc->createElement("Posizione", "");
+            $res->appendChild($el_4_2);
+        }
+        $ctrl_partner = 0;
+        foreach ($data as $k => $v) {
+            if ($nome_blocco == 'DTE' && $v['regiva'] < 6) {
+                // ---------- FATTURE EMESSE --------------
+                if ($ctrl_partner <> $v['clfoco']) {
+                    // 2.2 - Blocco contenente le informazioni relative al cessionario/committente (cliente) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
+                    $el_2_2 = $doc->createElement("CessionarioCommittenteDTE", "");
+                    $el_2_2_1 = $doc->createElement("IdentificativiFiscali", "");
+                    $el_2_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
+                    $el_2_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
+                    $el_2_2_1_1->appendChild($el_2_2_1_1_1);
+                    $el_2_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
+                    $el_2_2_1_1->appendChild($el_2_2_1_1_2);
+                    $el_2_2_1->appendChild($el_2_2_1_1);
+                    $el_2_2_1_2 = $doc->createElement("CodiceFiscale", $v['codfis']);
+                    $el_2_2_1->appendChild($el_2_2_1_2);
+                    $el_2_2->appendChild($el_2_2_1);
+                    $el_2_2_2 = $doc->createElement("AltriIdentificativi", "");
+                    // la denominazione se persona giuridica, nome e cognome se persona giuridica
+                    if ($v['sexper'] == 'G') {
+                        $el_2_2_2_1 = $doc->createElement("Denominazione", str_replace('&', 'e', strtoupper($v['ragso1'] . ' ' . $v['ragso2'])));
+                        $el_2_2_2->appendChild($el_2_2_2_1);
+                    } else {
+                        $el_2_2_2_2 = $doc->createElement("Nome", strtoupper($v['legrap_pf_nome']));
+                        $el_2_2_2->appendChild($el_2_2_2_2);
+                        $el_2_2_2_3 = $doc->createElement("Cognome", strtoupper($v['legrap_pf_cognome']));
+                        $el_2_2_2->appendChild($el_2_2_2_3);
+                    }
+                    $el_2_2_2_4 = $doc->createElement("Sede", '');
+                    $el_2_2_2_4_1 = $doc->createElement("Indirizzo", strtoupper($v['indspe']));
+                    $el_2_2_2_4->appendChild($el_2_2_2_4_1);
+                    $el_2_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
+                    $el_2_2_2_4->appendChild($el_2_2_2_4_3);
+                    $el_2_2_2_4_4 = $doc->createElement("Comune", strtoupper($v['citspe']));
+                    $el_2_2_2_4->appendChild($el_2_2_2_4_4);
+                    $el_2_2_2_4_5 = $doc->createElement("Provincia", strtoupper($v['prospe']));
+                    $el_2_2_2_4->appendChild($el_2_2_2_4_5);
+                    $el_2_2_2_4_6 = $doc->createElement("Nazione", $v['country']);
+                    $el_2_2_2_4->appendChild($el_2_2_2_4_6);
+                    $el_2_2_2->appendChild($el_2_2_2_4);
+                    $el_2_2->appendChild($el_2_2_2);
                 }
-                $el_2_2_2_4 = $doc->createElement("Sede", '');
-                $el_2_2_2_4_1 = $doc->createElement("Indirizzo", strtoupper($v['indspe']));
-                $el_2_2_2_4->appendChild($el_2_2_2_4_1);
-                $el_2_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
-                $el_2_2_2_4->appendChild($el_2_2_2_4_3);
-                $el_2_2_2_4_4 = $doc->createElement("Comune", strtoupper($v['citspe']));
-                $el_2_2_2_4->appendChild($el_2_2_2_4_4);
-                $el_2_2_2_4_5 = $doc->createElement("Provincia", strtoupper($v['prospe']));
-                $el_2_2_2_4->appendChild($el_2_2_2_4_5);
-                $el_2_2_2_4_6 = $doc->createElement("Nazione", $v['country']);
-                $el_2_2_2_4->appendChild($el_2_2_2_4_6);
-                $el_2_2_2->appendChild($el_2_2_2_4);
-                $el_2_2->appendChild($el_2_2_2);
-            }
-            // 2.2.3 - Blocco dati fatture (reiterabile 1000 volte)
-            $el_2_2_3 = $doc->createElement("DatiFatturaBodyDTE", "");
-            $el_2_2_3_1 = $doc->createElement("DatiGenerali", "");
-            $el_2_2_3_1_1 = $doc->createElement("TipoDocumento", $v['tipo_documento']);
-            $el_2_2_3_1->appendChild($el_2_2_3_1_1);
-            $el_2_2_3_1_2 = $doc->createElement("Data", $v['datdoc']);
-            $el_2_2_3_1->appendChild($el_2_2_3_1_2);
-            $el_2_2_3_1_3 = $doc->createElement("Numero", $v['numdoc']);
-            $el_2_2_3_1->appendChild($el_2_2_3_1_3);
-            $el_2_2_3->appendChild($el_2_2_3_1);
-            $el_2_2_3_2 = $doc->createElement("DatiRiepilogo", "");
-            $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", $v['imponi']);
-            $el_2_2_3_2->appendChild($el_2_2_3_2_1);
-            $el_2_2_3_2_2 = $doc->createElement("DatiIVA", '');
-            $el_2_2_3_2_2_1 = $doc->createElement("Imposta", $v['impost']);
-            $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_1);
-            $el_2_2_3_2_2_2 = $doc->createElement("Aliquota", $v['periva']);
-            $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_2);
-            $el_2_2_3_2->appendChild($el_2_2_3_2_2);
-            if (!empty($v['fae_natura'])) {
-                $el_2_2_3_2_3 = $doc->createElement("Natura", $v['fae_natura']);
-                $el_2_2_3_2->appendChild($el_2_2_3_2_3);
-            }
-            $el_2_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $v['esigibilita_iva']);
-            $el_2_2_3_2->appendChild($el_2_2_3_2_6);
-            $el_2_2_3->appendChild($el_2_2_3_2);
-            $el_2_2->appendChild($el_2_2_3);
-        } elseif ($nome_blocco == 'DTR' && $v['regiva'] >= 6) {
-            // ---------- FATTURE RICEVUTE --------------
-            if ($ctrl_partner <> $v['clfoco']) {
-                
+                // 2.2.3 - Blocco dati fatture (reiterabile 1000 volte)
+                $el_2_2_3 = $doc->createElement("DatiFatturaBodyDTE", "");
+                $el_2_2_3_1 = $doc->createElement("DatiGenerali", "");
+                $el_2_2_3_1_1 = $doc->createElement("TipoDocumento", $v['tipo_documento']);
+                $el_2_2_3_1->appendChild($el_2_2_3_1_1);
+                $el_2_2_3_1_2 = $doc->createElement("Data", $v['datdoc']);
+                $el_2_2_3_1->appendChild($el_2_2_3_1_2);
+                $el_2_2_3_1_3 = $doc->createElement("Numero", $v['numdoc']);
+                $el_2_2_3_1->appendChild($el_2_2_3_1_3);
+                $el_2_2_3->appendChild($el_2_2_3_1);
+                $el_2_2_3_2 = $doc->createElement("DatiRiepilogo", "");
+                $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", $v['imponi']);
+                $el_2_2_3_2->appendChild($el_2_2_3_2_1);
+                $el_2_2_3_2_2 = $doc->createElement("DatiIVA", '');
+                $el_2_2_3_2_2_1 = $doc->createElement("Imposta", $v['impost']);
+                $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_1);
+                $el_2_2_3_2_2_2 = $doc->createElement("Aliquota", $v['periva']);
+                $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_2);
+                $el_2_2_3_2->appendChild($el_2_2_3_2_2);
+                if (!empty($v['fae_natura'])) {
+                    $el_2_2_3_2_3 = $doc->createElement("Natura", $v['fae_natura']);
+                    $el_2_2_3_2->appendChild($el_2_2_3_2_3);
+                }
+                $el_2_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $v['esigibilita_iva']);
+                $el_2_2_3_2->appendChild($el_2_2_3_2_6);
+                $el_2_2_3->appendChild($el_2_2_3_2);
+                $el_2_2->appendChild($el_2_2_3);
+                $res->appendChild($el_2_2);
+                $ctrl_partner = $v['clfoco'];
+            } elseif ($nome_blocco == 'DTR' && $v['regiva'] >= 6) {
+                // ---------- FATTURE RICEVUTE --------------
+                if ($ctrl_partner <> $v['clfoco']) {
+                    // 3.2 - Blocco contenente le informazioni relative al cessionario/committente (fornitore) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
+                    $el_3_2 = $doc->createElement("CessionarioCommittenteDTR", "");
+                    $el_3_2_1 = $doc->createElement("IdentificativiFiscali", "");
+                    $el_3_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
+                    $el_3_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
+                    $el_3_2_1_1->appendChild($el_3_2_1_1_1);
+                    $el_3_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
+                    $el_3_2_1_1->appendChild($el_3_2_1_1_2);
+                    $el_3_2_1->appendChild($el_3_2_1_1);
+                    $el_3_2_1_2 = $doc->createElement("CodiceFiscale", $v['codfis']);
+                    $el_3_2_1->appendChild($el_3_2_1_2);
+                    $el_3_2->appendChild($el_3_2_1);
+                    $el_3_2_2 = $doc->createElement("AltriIdentificativi", "");
+                    // la denominazione se persona giuridica, nome e cognome se persona giuridica
+                    if ($v['sexper'] == 'G') {
+                        $el_3_2_2_1 = $doc->createElement("Denominazione", str_replace('&', 'e', strtoupper($v['ragso1'] . ' ' . $v['ragso2'])));
+                        $el_3_2_2->appendChild($el_3_2_2_1);
+                    } else {
+                        $el_3_2_2_2 = $doc->createElement("Nome", strtoupper($v['legrap_pf_nome']));
+                        $el_3_2_2->appendChild($el_3_2_2_2);
+                        $el_3_2_2_3 = $doc->createElement("Cognome", strtoupper($v['legrap_pf_cognome']));
+                        $el_3_2_2->appendChild($el_3_2_2_3);
+                    }
+                    $el_3_2_2_4 = $doc->createElement("Sede", '');
+                    $el_3_2_2_4_1 = $doc->createElement("Indirizzo", strtoupper($v['indspe']));
+                    $el_3_2_2_4->appendChild($el_3_2_2_4_1);
+                    $el_3_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
+                    $el_3_2_2_4->appendChild($el_3_2_2_4_3);
+                    $el_3_2_2_4_4 = $doc->createElement("Comune", strtoupper($v['citspe']));
+                    $el_3_2_2_4->appendChild($el_3_2_2_4_4);
+                    $el_3_2_2_4_5 = $doc->createElement("Provincia", strtoupper($v['prospe']));
+                    $el_3_2_2_4->appendChild($el_3_2_2_4_5);
+                    $el_3_2_2_4_6 = $doc->createElement("Nazione", $v['country']);
+                    $el_3_2_2_4->appendChild($el_3_2_2_4_6);
+                    $el_3_2_2->appendChild($el_3_2_2_4);
+                    $el_3_2->appendChild($el_3_2_2);
+                }
+                // 3.2.3 - Blocco dati fatture (reiterabile 1000 volte)
+                $el_3_2_3 = $doc->createElement("DatiFatturaBodyDTR", "");
+                $el_3_2_3_1 = $doc->createElement("DatiGenerali", "");
+                $el_3_2_3_1_1 = $doc->createElement("TipoDocumento", $v['tipo_documento']);
+                $el_3_2_3_1->appendChild($el_3_2_3_1_1);
+                $el_3_2_3_1_2 = $doc->createElement("Data", $v['datdoc']);
+                $el_3_2_3_1->appendChild($el_3_2_3_1_2);
+                $el_3_2_3_1_3 = $doc->createElement("Numero", $v['numdoc']);
+                $el_3_2_3_1->appendChild($el_3_2_3_1_3);
+                $el_3_2_3->appendChild($el_3_2_3_1);
+                $el_3_2_3_2 = $doc->createElement("DatiRiepilogo", "");
+                $el_3_2_3_2_1 = $doc->createElement("ImponibileImporto", $v['imponi']);
+                $el_3_2_3_2->appendChild($el_3_2_3_2_1);
+                $el_3_2_3_2_2 = $doc->createElement("DatiIVA", '');
+                $el_3_2_3_2_2_1 = $doc->createElement("Imposta", $v['impost']);
+                $el_3_2_3_2_2->appendChild($el_3_2_3_2_2_1);
+                $el_3_2_3_2_2_2 = $doc->createElement("Aliquota", $v['periva']);
+                $el_3_2_3_2_2->appendChild($el_3_2_3_2_2_2);
+                $el_3_2_3_2->appendChild($el_3_2_3_2_2);
+                if (!empty($v['fae_natura'])) {
+                    $el_3_2_3_2_3 = $doc->createElement("Natura", $v['fae_natura']);
+                    $el_3_2_3_2->appendChild($el_3_2_3_2_3);
+                }
+                $el_3_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $v['esigibilita_iva']);
+                $el_3_2_3_2->appendChild($el_3_2_3_2_6);
+                $el_3_2_3->appendChild($el_3_2_3_2);
+                $el_3_2->appendChild($el_3_2_3);
+                $res->appendChild($el_3_2);
+                $ctrl_partner = $v['clfoco'];
             }
         }
-        // chiudo tutto
-        $res->appendChild($el_2_2);
-        $ctrl_partner = $v['clfoco'];
+        $file = $aziend['country'] . $aziend['codfis'] . "_DF_" . substr($nome_blocco, -1) . $periodo . ".xml";
+        $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
+        $acc[]=$file;
+        // salvo il file sul server
+        $doc->save($fileurl);
     }
-    $filename = '../../data/files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_DF_00001.xml";
-    // salvo il file sul server
-    $doc->save($filename);
+    return $acc;
 }
 
 // --- FINE FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DEI DATI DELLE FATTURE (SPESOMETRO)
