@@ -394,6 +394,10 @@ if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
     if ((isset($_GET['Update']) && isset($_GET['id']))) { // è una modifica
+        $cdf = gaz_dbi_get_row($gTables['comunicazioni_dati_fatture'], "id", intval($_GET['id']));
+        $form['trimestre_semestre'] = $cdf['trimestre_semestre'];
+        $form['anno'] = $cdf['anno'];
+        $form['periodicita'] = $cdf['periodicita'];
     } else { // è un inserimento
 // controllo se ad oggi è possibile fare una liquidazione
         $y = date('Y');
@@ -436,15 +440,15 @@ if (!isset($_POST['ritorno'])) {
             // aggiorno il database
             $id = array('anno', "'" . $form['anno'] . "' AND trimestre_semestre = '" . $form['trimestre_semestre'] . "'");
             require("../../library/include/agenzia_entrate.inc.php");
-            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0',STR_PAD_LEFT));
+            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
             foreach ($files as $blocco => $nome_blocco) {
                 $form['nome_file_' . $blocco] = $nome_blocco;
             }
-            gaz_dbi_table_update('liquidazioni_iva', $id, $form);
+            gaz_dbi_table_update('comunicazioni_dati_fatture', $id, $form);
             $msg['war'][] = "download";
         } else { // e' un'inserimento
             require("../../library/include/agenzia_entrate.inc.php");
-            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0',STR_PAD_LEFT));
+            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
             foreach ($files as $blocco => $nome_blocco) {
                 $form['nome_file_' . $blocco] = $nome_blocco;
             }
@@ -452,7 +456,7 @@ if (!isset($_POST['ritorno'])) {
             $msg['war'][] = "download";
         }
     } elseif (isset($_POST['Download'])) {
-        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" . substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0',STR_PAD_LEFT) . ".zip";
+        $file = '../../data/files/' . $admin_aziend['codice'] . '/' . $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" . substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT) . ".zip";
         header("Pragma: public", true);
         header("Expires: 0"); // set expiration time
         header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
@@ -502,13 +506,16 @@ $gForm = new contabForm();
         <input type="hidden" name="hidden_req" value="<?php echo $form['hidden_req']; ?>">
         <input type="hidden" value="<?php echo $form['ritorno']; ?>" name="ritorno">
         <input type="hidden" name="<?php echo ucfirst($toDo) ?>" value="">
-        <input type="hidden" value="<?php echo $form['trimestre_semestre']; ?>" name="trimestre_semestre">
         <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
         <?php
         if (count($msg['err']) > 0) { // ho un errore
             $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
         } elseif (count($msg['war']) > 0) {
-            $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+            $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');?>
+            <input type="hidden" name="anno" value="<?php echo $form['anno']; ?>">
+            <input type="hidden" name="periodicita" value="<?php echo $form['periodicita']; ?>">
+            <input type="hidden" name="trimestre_semestre" value="<?php echo $form['trimestre_semestre']; ?>">
+        <?php
         } else {
             ?>
             <div class="panel panel-default gaz-table-form">
@@ -564,8 +571,9 @@ $gForm = new contabForm();
                 echo "</div>\n";
             } else {
                 ?> 
-                <div class="panel panel-default">
+                <div class="panel panel-info">
                     <div id="gaz-responsive-table"  class="container-fluid">
+                        <div class="col-xs-12 text-center bg-danger"><b>FILE DTE -FATTURE EMESSE</b></div>
                         <table class="table table-responsive table-striped table-condensed cf">
                             <thead>
                                 <tr class="bg-success">              
@@ -603,8 +611,54 @@ $gForm = new contabForm();
                                 }
                                 $td['TD99'] = 'NON INSERIBILE';
                                 // FINE CREAZIONE
+                                $ctrl_quadro = 'DTE';
+                                $quadro = 'DTE';
                                 $ctrl_partner = 0;
                                 foreach ($queryData[0] as $k => $v) {
+                                    if ($v['regiva'] >= 6) {
+                                        $quadro = 'DTR';
+                                    } else {
+                                        $quadro = 'DTE';
+                                    }
+                                    if ($ctrl_quadro != $quadro) { // AL CAMBIO QUADRO STAMPO L'INTESTAZIONE
+                                        ?>
+                                    </tbody>     
+                                </table>
+                            </div>  
+                        </div>
+                        <div class="panel panel-default">
+                            <div id="gaz-responsive-table"  class="container-fluid">
+                            <div class="col-xs-12 text-center bg-danger"><b>FILE DTR - FATTURE RICEVUTE</b></div>
+                                <table class="table table-responsive table-striped table-condensed cf">
+                                    <thead>
+                                        <tr class="bg-success">              
+                                            <th>
+                                                <?php echo $script_transl["TipoDocumento"]; ?>
+                                            </th>
+                                            <th>
+                                                <?php echo $script_transl["Numero"]; ?>
+                                            </th>
+                                            <th>
+                                                <?php echo $script_transl["Data"]; ?>
+                                            </th>
+                                            <th>
+                                                <?php echo $script_transl["DataRegistrazione"]; ?>
+                                            </th>
+                                            <th>
+                                                <?php echo $script_transl["ImponibileImporto"]; ?>
+                                            </th>
+                                            <th class="text-right">
+                                                <?php echo $script_transl["Imposta"]; ?>
+                                            </th>
+                                            <th class="text-right">
+                                                <?php echo $script_transl["Aliquota"]; ?>
+                                            </th>
+                                        </tr>      
+                                    </thead>    
+                                    <tbody id="all_rows">
+
+                                        <?php
+                                    }
                                     if ($ctrl_partner <> $v['clfoco']) {
                                         ?>
                                         <tr>              
@@ -645,6 +699,7 @@ $gForm = new contabForm();
                                         </td>
                                     </tr> 
                                     <?php
+                                    $ctrl_quadro = $quadro;
                                     $ctrl_partner = $v['clfoco'];
                                 }
                                 ?>
@@ -657,7 +712,7 @@ $gForm = new contabForm();
         }
         if (count($msg['war']) > 0) {
             ?>
-            <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-warning" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_LI_" . ".xml"; ?>" /></div>
+            <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-warning" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" .substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT). ".zip"; ?>" /></div>
         <?php } else if (count($msg['err']) == 0) {
             ?>
             <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="<?php echo $script_transl["ok"]; ?>" /></div>

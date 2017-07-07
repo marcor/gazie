@@ -1160,9 +1160,21 @@ function creaFileDAT10($aziend, $data, $periodo) {
         }
         $file = $aziend['country'] . $aziend['codfis'] . "_DF_" . substr($nome_blocco, -1) . $periodo . ".xml";
         $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
-        $acc[$nome_blocco]=$file;
+        $acc[$nome_blocco] = $file;
         // salvo il file sul server
         $doc->save($fileurl);
+    }
+    // creo lo zip
+    $baseurl = '../../data/files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_DF_";
+    $zipname = $baseurl . 'Z' . $periodo . ".zip";
+    $zip = new ZipArchive();
+    if ($zip->open($zipname, ZIPARCHIVE::CREATE) !== TRUE) {
+        exit("non sono riuscito creare il file ZIP");
+    } else {
+        $zip->addFile($baseurl . 'R' . $periodo . ".xml", basename($baseurl . 'R' . $periodo . ".xml"));
+        $zip->addFile($baseurl . 'E' . $periodo . ".xml", $acc['DTE']);
+        $zip->close();
+        $acc['ZIP'] = $aziend['country'] . $aziend['codfis'] . '_DF_Z' . $periodo . ".zip";
     }
     return $acc;
 }
