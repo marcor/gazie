@@ -38,24 +38,24 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
     $nuw = new check_VATno_TAXcode();
     if ($periodicita == 'T') { // trimestrale
         if ($trimestre_semestre == 1) {
-            $date_ini = new DateTime($anno . '-1-1');
+            $date_ini = new DateTime($anno . '-01-01');
         } elseif ($trimestre_semestre == 2) {
-            $date_ini = new DateTime($anno . '-4-1');
+            $date_ini = new DateTime($anno . '-04-01');
         } elseif ($trimestre_semestre == 3) {
-            $date_ini = new DateTime($anno . '-7-1');
+            $date_ini = new DateTime($anno . '-07-01');
         } else {
-            $date_ini = new DateTime($anno . '-10-1');
+            $date_ini = new DateTime($anno . '-10-01');
         }
-        $di = $date_ini->format('Y-m-t');
+        $di = $date_ini->format('Y-m-d');
         $date_ini->modify('+2 month');
         $df = $date_ini->format('Y-m-t');
     } else { // semestrale
         if ($trimestre_semestre == 1) {
-            $date_ini = new DateTime($anno . '-1-1');
+            $date_ini = new DateTime($anno . '-01-01');
         } else {
-            $date_ini = new DateTime($anno . '-7-1');
+            $date_ini = new DateTime($anno . '-07-01');
         }
-        $di = $date_ini->format('Y-m-t');
+        $di = $date_ini->format('Y-m-d');
         $date_ini->modify('+5 month');
         $df = $date_ini->format('Y-m-t');
     }
