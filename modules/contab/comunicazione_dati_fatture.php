@@ -362,9 +362,26 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 }
                 // fine addiziona valori imponibile,imposta,esente,non imponibile
             }
-
-
             // fine valorizzazione imponibile,imposta,esente,non imponibile
+            //  INIZIO creazione castelletto iva
+            if (!isset($castel_transact[$row['idtes']]['riepilogo'][$row['codiva']])) {
+                $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']] = 
+                array('imponibile' => 0,
+                'imposta' => 0,
+                'aliquota' => $row['periva'],
+                'natura' => '',
+                'detraibile' => '',
+                'deducibile' => '',
+                'esigibilita' => 'I');
+            }
+            if ($row['tipiva'] == 'T') {  // se è una aliquota con scissione dei pagamenti
+                $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['esigibilita'] = 'S';
+            } else if ($row['tipiva'] == 'D') { // se è una imposta indetraibile
+                $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['detraibile'] = 0.00;
+            }
+            $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['imponibile'] += $row['imponi'];
+            $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']]['imposta'] += $row['impost'];
+            // FINE creazione castelletto iva
             $ctrl_id = $row['idtes'];
         }
         // se il precedente movimento non ha raggiunto l'importo lo elimino
@@ -511,11 +528,12 @@ $gForm = new contabForm();
         if (count($msg['err']) > 0) { // ho un errore
             $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
         } elseif (count($msg['war']) > 0) {
-            $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');?>
+            $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+            ?>
             <input type="hidden" name="anno" value="<?php echo $form['anno']; ?>">
             <input type="hidden" name="periodicita" value="<?php echo $form['periodicita']; ?>">
             <input type="hidden" name="trimestre_semestre" value="<?php echo $form['trimestre_semestre']; ?>">
-        <?php
+            <?php
         } else {
             ?>
             <div class="panel panel-default gaz-table-form">
@@ -628,7 +646,7 @@ $gForm = new contabForm();
                         </div>
                         <div class="panel panel-default">
                             <div id="gaz-responsive-table"  class="container-fluid">
-                            <div class="col-xs-12 text-center bg-danger"><b>FILE DTR - FATTURE RICEVUTE</b></div>
+                                <div class="col-xs-12 text-center bg-danger"><b>FILE DTR - FATTURE RICEVUTE</b></div>
                                 <table class="table table-responsive table-striped table-condensed cf">
                                     <thead>
                                         <tr class="bg-success">              
@@ -712,7 +730,7 @@ $gForm = new contabForm();
         }
         if (count($msg['war']) > 0) {
             ?>
-            <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-warning" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" .substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT). ".zip"; ?>" /></div>
+            <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-warning" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" . substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT) . ".zip"; ?>" /></div>
         <?php } else if (count($msg['err']) == 0) {
             ?>
             <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="<?php echo $script_transl["ok"]; ?>" /></div>

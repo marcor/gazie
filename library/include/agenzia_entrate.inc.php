@@ -1068,23 +1068,25 @@ function creaFileDAT10($aziend, $data, $periodo) {
                 $el_2_2_3_1_3 = $doc->createElement("Numero", $v['numdoc']);
                 $el_2_2_3_1->appendChild($el_2_2_3_1_3);
                 $el_2_2_3->appendChild($el_2_2_3_1);
-                $el_2_2_3_2 = $doc->createElement("DatiRiepilogo", "");
-                $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", $v['imponi']);
-                $el_2_2_3_2->appendChild($el_2_2_3_2_1);
-                $el_2_2_3_2_2 = $doc->createElement("DatiIVA", '');
-                $el_2_2_3_2_2_1 = $doc->createElement("Imposta", $v['impost']);
-                $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_1);
-                $el_2_2_3_2_2_2 = $doc->createElement("Aliquota", $v['periva']);
-                $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_2);
-                $el_2_2_3_2->appendChild($el_2_2_3_2_2);
-                if (!empty($v['fae_natura'])) {
-                    $el_2_2_3_2_3 = $doc->createElement("Natura", $v['fae_natura']);
-                    $el_2_2_3_2->appendChild($el_2_2_3_2_3);
+                foreach ($v['riepilogo'] as $kr => $vr) {
+                    $el_2_2_3_2 = $doc->createElement("DatiRiepilogo", "");
+                    $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", $vr['imponibile']);
+                    $el_2_2_3_2->appendChild($el_2_2_3_2_1);
+                    $el_2_2_3_2_2 = $doc->createElement("DatiIVA", '');
+                    $el_2_2_3_2_2_1 = $doc->createElement("Imposta", $vr['imposta']);
+                    $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_1);
+                    $el_2_2_3_2_2_2 = $doc->createElement("Aliquota", $vr['aliquota']);
+                    $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_2);
+                    $el_2_2_3_2->appendChild($el_2_2_3_2_2);
+                    if (!empty($vr['natura'])) {
+                        $el_2_2_3_2_3 = $doc->createElement("Natura", $vr['natura']);
+                        $el_2_2_3_2->appendChild($el_2_2_3_2_3);
+                    }
+                    $el_2_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $vr['esigibilita']);
+                    $el_2_2_3_2->appendChild($el_2_2_3_2_6);
+                    $el_2_2_3->appendChild($el_2_2_3_2);
+                    $el_2_2->appendChild($el_2_2_3);
                 }
-                $el_2_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $v['esigibilita_iva']);
-                $el_2_2_3_2->appendChild($el_2_2_3_2_6);
-                $el_2_2_3->appendChild($el_2_2_3_2);
-                $el_2_2->appendChild($el_2_2_3);
                 $res->appendChild($el_2_2);
                 $ctrl_partner = $v['clfoco'];
             } elseif ($nome_blocco == 'DTR' && $v['regiva'] >= 6) {
@@ -1137,23 +1139,29 @@ function creaFileDAT10($aziend, $data, $periodo) {
                 $el_3_2_3_1_3 = $doc->createElement("Numero", $v['numdoc']);
                 $el_3_2_3_1->appendChild($el_3_2_3_1_3);
                 $el_3_2_3->appendChild($el_3_2_3_1);
-                $el_3_2_3_2 = $doc->createElement("DatiRiepilogo", "");
-                $el_3_2_3_2_1 = $doc->createElement("ImponibileImporto", $v['imponi']);
-                $el_3_2_3_2->appendChild($el_3_2_3_2_1);
-                $el_3_2_3_2_2 = $doc->createElement("DatiIVA", '');
-                $el_3_2_3_2_2_1 = $doc->createElement("Imposta", $v['impost']);
-                $el_3_2_3_2_2->appendChild($el_3_2_3_2_2_1);
-                $el_3_2_3_2_2_2 = $doc->createElement("Aliquota", $v['periva']);
-                $el_3_2_3_2_2->appendChild($el_3_2_3_2_2_2);
-                $el_3_2_3_2->appendChild($el_3_2_3_2_2);
-                if (!empty($v['fae_natura'])) {
-                    $el_3_2_3_2_3 = $doc->createElement("Natura", $v['fae_natura']);
-                    $el_3_2_3_2->appendChild($el_3_2_3_2_3);
+                foreach ($v['riepilogo'] as $kr => $vr) {
+                    $el_3_2_3_2 = $doc->createElement("DatiRiepilogo", "");
+                    $el_3_2_3_2_1 = $doc->createElement("ImponibileImporto", $vr['imponibile']);
+                    $el_3_2_3_2->appendChild($el_3_2_3_2_1);
+                    $el_3_2_3_2_2 = $doc->createElement("DatiIVA", '');
+                    $el_3_2_3_2_2_1 = $doc->createElement("Imposta", $vr['imposta']);
+                    $el_3_2_3_2_2->appendChild($el_3_2_3_2_2_1);
+                    $el_3_2_3_2_2_2 = $doc->createElement("Aliquota", $vr['aliquota']);
+                    $el_3_2_3_2_2->appendChild($el_3_2_3_2_2_2);
+                    $el_3_2_3_2->appendChild($el_3_2_3_2_2);
+                    if (!empty($vr['natura'])) {
+                        $el_3_2_3_2_3 = $doc->createElement("Natura", $vr['natura']);
+                        $el_3_2_3_2->appendChild($el_3_2_3_2_3);
+                    }
+                    if ($vr['detraibile']===0.00) { // in caso di IVA indetraibile la indico sull'apposito elemento
+                        $el_3_2_3_2_4 = $doc->createElement("Detraibile", '0.00');
+                        $el_3_2_3_2->appendChild($el_3_2_3_2_4);
+                    }
+                    //$el_3_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $vr['esigibilita']);
+                    //$el_3_2_3_2->appendChild($el_3_2_3_2_6);
+                    $el_3_2_3->appendChild($el_3_2_3_2);
+                    $el_3_2->appendChild($el_3_2_3);
                 }
-                $el_3_2_3_2_6 = $doc->createElement("EsigibilitaIVA", $v['esigibilita_iva']);
-                $el_3_2_3_2->appendChild($el_3_2_3_2_6);
-                $el_3_2_3->appendChild($el_3_2_3_2);
-                $el_3_2->appendChild($el_3_2_3);
                 $res->appendChild($el_3_2);
                 $ctrl_partner = $v['clfoco'];
             }
