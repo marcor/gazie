@@ -1018,7 +1018,7 @@ function creaFileDAT10($aziend, $data, $periodo) {
         }
         $ctrl_partner = 0;
         foreach ($data as $k => $v) {
-            if ($nome_blocco == 'DTE' && $v['regiva'] < 6) {
+            if ($nome_blocco == 'DTE' && $v['regiva'] < 6 && $v['tipo_documento'] != 'TD99') {
                 // ---------- FATTURE EMESSE --------------
                 if ($ctrl_partner <> $v['clfoco']) {
                     // 2.2 - Blocco contenente le informazioni relative al cessionario/committente (cliente) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
@@ -1089,7 +1089,7 @@ function creaFileDAT10($aziend, $data, $periodo) {
                 }
                 $res->appendChild($el_2_2);
                 $ctrl_partner = $v['clfoco'];
-            } elseif ($nome_blocco == 'DTR' && $v['regiva'] >= 6) {
+            } elseif ($nome_blocco == 'DTR' && $v['regiva'] >= 6 && $v['tipo_documento'] != 'TD99') {
                 // ---------- FATTURE RICEVUTE --------------
                 if ($ctrl_partner <> $v['clfoco']) {
                     // 3.2 - Blocco contenente le informazioni relative al cessionario/committente (fornitore) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
@@ -1153,7 +1153,7 @@ function creaFileDAT10($aziend, $data, $periodo) {
                         $el_3_2_3_2_3 = $doc->createElement("Natura", $vr['natura']);
                         $el_3_2_3_2->appendChild($el_3_2_3_2_3);
                     }
-                    if ($vr['detraibile']===0.00) { // in caso di IVA indetraibile la indico sull'apposito elemento
+                    if ($vr['detraibile'] === 0.00) { // in caso di IVA indetraibile la indico sull'apposito elemento
                         $el_3_2_3_2_4 = $doc->createElement("Detraibile", '0.00');
                         $el_3_2_3_2->appendChild($el_3_2_3_2_4);
                     }

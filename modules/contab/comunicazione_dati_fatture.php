@@ -60,7 +60,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
         $df = $date_ini->format('Y-m-t');
     }
     $sqlquery = "SELECT " . $gTables['rigmoi'] . ".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
-               citspe,prospe,capspe,legrap_pf_nome,legrap_pf_cognome,country,codfis,pariva,id_anagra," .
+               citspe,prospe,capspe,legrap_pf_nome,legrap_pf_cognome,country,codfis,pariva,id_anagra,fae_natura," .
             $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc," . $gTables['tesmov'] . ".numdoc," .
             $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva," . $gTables['tesmov'] . ".caucon,datreg,datnas,luonas,pronas,counas,
                id_doc,iso,black_list,cod_agenzia_entrate, operat, impost AS imposta," . $gTables['rigmoi'] . ".id_tes
@@ -359,7 +359,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 $castel_transact[$row['idtes']]['riepilogo'][$row['codiva']] = array('imponibile' => 0,
                     'imposta' => 0,
                     'aliquota' => $row['periva'],
-                    'natura' => '',
+                    'natura' => $row['fae_natura'],
                     'detraibile' => '',
                     'deducibile' => '',
                     'esigibilita' => 'I');
@@ -601,6 +601,8 @@ $gForm = new contabForm();
                 }
                 echo "</div>\n";
             } else {
+                // bottoni differenziati in base al tipo ddi documento
+                $td_class=array('TD01'=>'btn-default','TD04'=>'btn-warning','TD10'=>'btn-info','TD11'=>'btn-success','TD99'=>'btn-danger');
                 ?> 
                 <div class="panel panel-info">
                     <div id="gaz-responsive-table"  class="container-fluid">
@@ -708,7 +710,7 @@ $gForm = new contabForm();
                                     ?>
                                     <tr>
                                         <td data-title="<?php echo $script_transl["TipoDocumento"]; ?>">
-                                          <?php echo $v["tipo_documento"]; ?>  <a class="btn btn-xs btn-default" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
+                                          <?php echo $v["tipo_documento"]; ?>  <a class="btn btn-xs <?php echo $td_class[$v["tipo_documento"]];?>" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
                                         </td>
                                         <td data-title="<?php echo $script_transl["Numero"]; ?>" class="text-center">
             <?php echo $v["numdoc"]; ?>
@@ -743,10 +745,10 @@ $gForm = new contabForm();
         }
         if (count($msg['war']) > 0) {
             ?>
-            <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-warning" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" . substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT) . ".zip"; ?>" /></div>
+            <div class="col-sm-12 text-center"><input name="Download" type="submit" class="btn btn-success" value="<?php echo $admin_aziend['country'] . $admin_aziend['codfis'] . "_DF_Z" . substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT) . ".zip"; ?>" /></div>
         <?php } else if (count($msg['err']) == 0) {
             ?>
-            <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-warning" value="<?php echo $script_transl["ok"]; ?>" /></div>
+            <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-success" value="<?php echo $script_transl["ok"]; ?>" /></div>
     <?php } ?>   
     </form>
     <?php
