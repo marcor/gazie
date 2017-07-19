@@ -202,13 +202,7 @@ if ($conti) {
         }
         $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
         $pdf->Cell(20,5,substr($key,3,6),'L',0,'R');
-        if (strlen($descri['descri'])>40){
-           $pdf->SetFont('helvetica','',8);
-           $pdf->Cell(80,5,substr($descri['descri'],0,55));
-           $pdf->SetFont('helvetica','',10);
-        } else {
-           $pdf->Cell(80,5,$descri['descri']);
-        }
+        $pdf->Cell(80,5,$descri['descri'],'L',0,'L',0,'',1);
         $pdf->Cell(35,5,gaz_format_number($value),'L',1,'R');
         $totmas += $value;
         $topCarry[1]['name']= gaz_format_number($totmas);
@@ -258,7 +252,7 @@ if ($conti) {
         }
         $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
         $pdf->Cell(20,5,substr($key,3,6),'L',0,'R');
-        $pdf->Cell(80,5,$descri['descri']);
+        $pdf->Cell(80,5,$descri['descri'],'L',0,'L',0,'',1);
         $pdf->Cell(35,5,gaz_format_number(-$value),'L',1,'R');
         $totmas += $value;
         $topCarry[1]['name']= gaz_format_number(-$totmas);
@@ -311,7 +305,7 @@ if ($conti) {
         }
         $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
         $pdf->Cell(20,5,substr($key,3,6),'L',0,'R');
-        $pdf->Cell(80,5,$descri['descri']);
+        $pdf->Cell(80,5,$descri['descri'],'L',0,'L',0,'',1);
         $pdf->Cell(35,5,gaz_format_number(-$value),'L',1,'R');
         $totmas += $value;
         $topCarry[1]['name']= gaz_format_number(-$totmas);
@@ -361,7 +355,7 @@ if ($conti) {
         }
         $descri = gaz_dbi_get_row($gTables['clfoco'],"codice",$key);
         $pdf->Cell(20,5,substr($key,3,6),'L',0,'R');
-        $pdf->Cell(80,5,$descri['descri']);
+        $pdf->Cell(80,5,$descri['descri'],'L',0,'L',0,'',1);
         $pdf->Cell(35,5,gaz_format_number($value),'L',1,'R');
         $totmas += $value;
         $topCarry[1]['name']= gaz_format_number($totmas);
