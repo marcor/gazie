@@ -80,7 +80,7 @@ class CheckDbAlign {
         } else {
             $sysdisk=explode("/", $sysdisk );
             $sysdisk = array_slice( $sysdisk, 0, count($sysdisk)-2);
-            return $sysdisk;
+            return implode("/", $sysdisk);
         }
     }
 

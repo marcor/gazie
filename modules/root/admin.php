@@ -124,7 +124,9 @@ if ($backupMode == "automatic") {
                 $i++;
             }
         }
-        header("Location: ../../modules/inform/backup.php?internal");
+        if (checkAccessRights($_SESSION['Login'], 'inform', $_SESSION['company_id']) != 0) {
+            header("Location: ../../modules/inform/backup.php?internal");
+        }
     }
 }
 
