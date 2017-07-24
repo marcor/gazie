@@ -66,7 +66,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         foreach ($_POST['paymov'] as $k => $v) {
             $form['paymov'][$k] = $v;  // qui dovrei fare il parsing
             $add_desc[$k] = 0.00;
-            foreach ($v as $ki => $vi) { // calcolo il totale 
+            foreach ($v as $ki => $vi) { // calcolo il totale
                 $acc_tot += $vi['amount'];
                 $add_desc[$k] += $vi['amount'];
             }
@@ -103,7 +103,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['target_account'] = intval($_POST['target_account']);
     $bank_data = gaz_dbi_get_row($gTables['clfoco'], 'codice', $form['target_account']);
     if (!isset($_POST['ins'])) {
-        if ($bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancccario prevede un addebito per bonifici allora lo propongo
+        if ($bank_data['maxrat'] >= 0.01 && $_POST['transfer_fees'] < 0.01) { // se il conto corrente bancario prevede un addebito per bonifici allora lo propongo
             $form['transfer_fees_acc'] = $bank_data['cosric'];
             $form['transfer_fees'] = $bank_data['maxrat'];
         } elseif (substr($form['target_account'], 0, 3) == substr($admin_aziend['cassa_'], 0, 3)) {
@@ -113,6 +113,9 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
             $form['transfer_fees'] = floatval($_POST['transfer_fees']);
         }
+    } else {
+        $form['transfer_fees_acc'] = intval($_POST['transfer_fees_acc']);
+        $form['transfer_fees'] = floatval($_POST['transfer_fees']);
     }
     if (isset($_POST['return'])) {
         header("Location: " . $form['ritorno']);
@@ -192,7 +195,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', /** ENRICO FED
         cal.setReturnFunction('setMultipleValues');
         cal.showCalendar('anchor', mdy);
     }
-    // ricalcolo i valori in caso di cambiamenti sugli importi 
+    // ricalcolo i valori in caso di cambiamenti sugli importi
     $(document).ready(function () {
         $('#tablebody tr td [opcl]').change(function () {
             var sum = 0;
@@ -270,7 +273,7 @@ echo "<td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['descr_
 echo "<td class=\"FacetDataTD\"> <input type=\"text\" name=\"descr_mov\" value=\"" . $form['descr_mov'] . "\" maxlength=\"85\" size=\"85\"></td>";
 echo "</tr>";
 /** fine modifica FP */
-// qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito 
+// qui aggiungo i dati necessari in fase di pagamento delle fatture di acquisto con bonifico bancario (sullo scadenzario) per poter proporre le eventuali spese per bonifico ed il relativo conto di costo di addebito
 echo "</tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\" colspan=\"2\">" . $script_transl['transfer_fees'] . "</td><td class=\"FacetDataTD\">
        <input type=\"text\" name=\"transfer_fees\" value=\"" . $form['transfer_fees'] . "\" maxlength=\"5\" size=\"5\" />
@@ -332,7 +335,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
             if ($vi['expo_day'] >= 1) {
                 $expo = $vi['expo_day'];
                 if ($vi['cl_val'] == $vi['op_val']) {
-                    $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza 
+                    $vi['status'] = 2; // la partita è chiusa ma è esposta a rischio insolvenza
                     $class_paymov = 'FacetDataTDevidenziaOK';
                 }
             } else {
