@@ -315,7 +315,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                             $error_transact[$row['idtes']][] = $script_transl['errors'][12];
                         }
                         break;
-                    case 'N':
+                    default : // ex case 'N':
                         $castel_transact[$row['idtes']]['tipiva'] = 2;
                         $castel_transact[$row['idtes']]['operazioni_nonimp'] = $value_imponi;
                         if ($value_impost != 0) {  //se c'è imposta il movimento è sbagliato
@@ -344,7 +344,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                             $error_transact[$row['idtes']][] = $script_transl['errors'][12];
                         }
                         break;
-                    case 'N':
+                    default : // ex case 'N':
                         $castel_transact[$row['idtes']]['operazioni_nonimp'] += $value_imponi;
                         if ($value_impost != 0) {  //se c'è imposta il movimento è sbagliato
                             $error_transact[$row['idtes']][] = $script_transl['errors'][12];
