@@ -111,6 +111,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                     if ($row['country'] == 'SM') {
                         // SAN MARINO 
                     } else {
+                        
                     }
                 } elseif (empty($resultpi) && !empty($row['pariva'])) {
                     // ha la partita IVA ed è giusta 
@@ -279,15 +280,19 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                     }
                 }
                 // fine ricerca contratti
-                if (!empty($row['sedleg'])) {
-                    if (preg_match("/([\w\,\.\s]+)([0-9]{5})[\s]+([\w\s\']+)\(([\w]{2})\)/", $row['sedleg'], $regs)) {
-                        $castel_transact[$row['idtes']]['Indirizzo'] = $regs[1];
-                        $castel_transact[$row['idtes']]['Comune'] = $regs[3];
-                        $castel_transact[$row['idtes']]['Provincia'] = $regs[4];
-                    } else {
-                        $error_transact[$row['idtes']][] = $script_transl['errors'][10];
+                
+                if ($admin_aziend['country'] == $row['country']) {
+                    if (strlen(trim($row['sedleg'])) > 4) {
+                        if (preg_match("/([\w\,\.\s]+)([0-9]{5})[\s]+([\w\s\']+)\(([\w]{2})\)/", $row['sedleg'], $regs)) {
+                            $castel_transact[$row['idtes']]['Indirizzo'] = $regs[1];
+                            $castel_transact[$row['idtes']]['Comune'] = $regs[1];
+                            $castel_transact[$row['idtes']]['Provincia'] = $regs[4];
+                        } else {
+                            $error_transact[$row['idtes']][] = $script_transl['errors'][10];
+                        }
                     }
                 }
+                
                 // inizio valorizzazione imponibile,imposta,senza_iva,art8
                 $castel_transact[$row['idtes']]['operazioni_imponibili'] = 0;
                 $castel_transact[$row['idtes']]['imposte_addebitate'] = 0;
@@ -387,10 +392,10 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 $castel_transact[$row['idtes']]['beni'] += $row['imponi']; // bene
             }
             if ($chk_intra == 'EU') { // SE è UN ACQUISTO INTRA tipizzo in base alla prevalenza
-                if ($castel_transact[$row['idtes']]['servizi'] > $castel_transact[$row['idtes']]['beni']) {  
+                if ($castel_transact[$row['idtes']]['servizi'] > $castel_transact[$row['idtes']]['beni']) {
                     // C'è una prevalenza di SERVIZI
                     $castel_transact[$row['idtes']]['tipo_documento'] = 'TD11';
-                } else {   
+                } else {
                     // acquisto di BENI
                     $castel_transact[$row['idtes']]['tipo_documento'] = 'TD10';
                 }
@@ -602,7 +607,7 @@ $gForm = new contabForm();
                 echo "</div>\n";
             } else {
                 // bottoni differenziati in base al tipo ddi documento
-                $td_class=array('TD01'=>'btn-default','TD04'=>'btn-warning','TD10'=>'btn-info','TD11'=>'btn-success','TD99'=>'btn-danger');
+                $td_class = array('TD01' => 'btn-default', 'TD04' => 'btn-warning', 'TD10' => 'btn-info', 'TD11' => 'btn-success', 'TD99' => 'btn-danger');
                 ?> 
                 <div class="panel panel-info">
                     <div id="gaz-responsive-table"  class="container-fluid">
@@ -710,7 +715,7 @@ $gForm = new contabForm();
                                     ?>
                                     <tr>
                                         <td data-title="<?php echo $script_transl["TipoDocumento"]; ?>">
-                                          <?php echo $v["tipo_documento"]; ?>  <a class="btn btn-xs <?php echo $td_class[$v["tipo_documento"]];?>" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
+            <?php echo $v["tipo_documento"]; ?>  <a class="btn btn-xs <?php echo $td_class[$v["tipo_documento"]]; ?>" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
                                         </td>
                                         <td data-title="<?php echo $script_transl["Numero"]; ?>" class="text-center">
             <?php echo $v["numdoc"]; ?>
