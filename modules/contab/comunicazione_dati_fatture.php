@@ -475,7 +475,7 @@ if (!isset($_POST['ritorno'])) {
             // aggiorno il database
             $id = array('anno', "'" . $form['anno'] . "' AND trimestre_semestre = '" . $form['trimestre_semestre'] . "'");
             require("../../library/include/agenzia_entrate.inc.php");
-            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
+            $files = creaFileDAT20($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
             foreach ($files as $blocco => $nome_blocco) {
                 $form['nome_file_' . $blocco] = $nome_blocco;
             }
@@ -483,7 +483,7 @@ if (!isset($_POST['ritorno'])) {
             $msg['war'][] = "download";
         } else { // e' un'inserimento
             require("../../library/include/agenzia_entrate.inc.php");
-            $files = creaFileDAT10($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
+            $files = creaFileDAT20($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
             foreach ($files as $blocco => $nome_blocco) {
                 $form['nome_file_' . $blocco] = $nome_blocco;
             }

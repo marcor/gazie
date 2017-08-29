@@ -924,12 +924,15 @@ function creaFileIVP17($aziend, $data) {
 
 // --- FINE FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DELLE LIQUIDAZIONI PERIODICHE
 // --- INIZIO FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DEI DATI DELLE FATTURE (SPESOMETRO)
-function creaFileDAT10($aziend, $data, $periodo) {
+function creaFileDAT20($aziend, $data, $periodo) {
     $blocchi = array('DTE', 'DTR');
     $doc = new DOMDocument;
     foreach ($blocchi as $nome_blocco) {
-        $doc->load("../../library/include/template_DAT10.xml");
+        $doc->load("../../library/include/template_DAT20.xml");
         $xpath = new DOMXPath($doc);
+        $res = $xpath->query("//ns2:DatiFattura/DatiFatturaHeader/ProgressivoInvio")->item(0);
+        $root = $doc->createTextNode($periodo);
+        $res->appendChild($root);
         $res = $xpath->query("//ns2:DatiFattura")->item(0);
         $root = $doc->createElement($nome_blocco);
         $res->appendChild($root);
@@ -944,10 +947,10 @@ function creaFileDAT10($aziend, $data, $periodo) {
             $el_2_1_1_1_2 = $doc->createElement("IdCodice", $aziend['pariva']);
             $el_2_1_1_1->appendChild($el_2_1_1_1_2);
             $el_2_1_1->appendChild($el_2_1_1_1);
-            $el_2_1_1_2 = $doc->createElement("CodiceFiscale", $aziend['codfis']);
+            $el_2_1_1_2 = $doc->createElement("CodiceFiscale", strtoupper($aziend['codfis']));
             $el_2_1_1->appendChild($el_2_1_1_2);
             $el_2_1->appendChild($el_2_1_1);
-            $el_2_1_2 = $doc->createElement("AltriIdentificativi", "");
+            $el_2_1_2 = $doc->createElement("AltriDatiIdentificativi", "");
             // la denominazione se persona giuridica, nome e cognome se persona giuridica
             if ($aziend['sexper'] == 'G') {
                 $el_2_1_2_1 = $doc->createElement("Denominazione", strtoupper(str_replace('€', 'e', $aziend['ragso1'] . ' ' . $aziend['ragso2'])));
@@ -982,10 +985,10 @@ function creaFileDAT10($aziend, $data, $periodo) {
             $el_3_1_1_1_2 = $doc->createElement("IdCodice", $aziend['pariva']);
             $el_3_1_1_1->appendChild($el_3_1_1_1_2);
             $el_3_1_1->appendChild($el_3_1_1_1);
-            $el_3_1_1_2 = $doc->createElement("CodiceFiscale", $aziend['codfis']);
+            $el_3_1_1_2 = $doc->createElement("CodiceFiscale", strtoupper($aziend['codfis']));
             $el_3_1_1->appendChild($el_3_1_1_2);
             $el_3_1->appendChild($el_3_1_1);
-            $el_3_1_2 = $doc->createElement("AltriIdentificativi", "");
+            $el_3_1_2 = $doc->createElement("AltriDatiIdentificativi", "");
             // la denominazione se persona giuridica, nome e cognome se persona giuridica
             if ($aziend['sexper'] == 'G') {
                 $el_3_1_2_1 = $doc->createElement("Denominazione", strtoupper(str_replace('€', 'e', $aziend['ragso1'] . ' ' . $aziend['ragso2'])));
@@ -1030,10 +1033,10 @@ function creaFileDAT10($aziend, $data, $periodo) {
                     $el_2_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
                     $el_2_2_1_1->appendChild($el_2_2_1_1_2);
                     $el_2_2_1->appendChild($el_2_2_1_1);
-                    $el_2_2_1_2 = $doc->createElement("CodiceFiscale", $v['codfis']);
+                    $el_2_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
                     $el_2_2_1->appendChild($el_2_2_1_2);
                     $el_2_2->appendChild($el_2_2_1);
-                    $el_2_2_2 = $doc->createElement("AltriIdentificativi", "");
+                    $el_2_2_2 = $doc->createElement("AltriDatiIdentificativi", "");
                     // la denominazione se persona giuridica, nome e cognome se persona giuridica
                     if ($v['sexper'] == 'G') {
                         $el_2_2_2_1 = $doc->createElement("Denominazione", str_replace('&', 'e', strtoupper($v['ragso1'] . ' ' . $v['ragso2'])));
@@ -1070,12 +1073,12 @@ function creaFileDAT10($aziend, $data, $periodo) {
                 $el_2_2_3->appendChild($el_2_2_3_1);
                 foreach ($v['riepilogo'] as $kr => $vr) {
                     $el_2_2_3_2 = $doc->createElement("DatiRiepilogo", "");
-                    $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", $vr['imponibile']);
+                    $el_2_2_3_2_1 = $doc->createElement("ImponibileImporto", number_format($vr['imponibile'], 2, '.', ''));
                     $el_2_2_3_2->appendChild($el_2_2_3_2_1);
                     $el_2_2_3_2_2 = $doc->createElement("DatiIVA", '');
-                    $el_2_2_3_2_2_1 = $doc->createElement("Imposta", $vr['imposta']);
+                    $el_2_2_3_2_2_1 = $doc->createElement("Imposta", number_format($vr['imposta'], 2, '.', ''));
                     $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_1);
-                    $el_2_2_3_2_2_2 = $doc->createElement("Aliquota", $vr['aliquota']);
+                    $el_2_2_3_2_2_2 = $doc->createElement("Aliquota", number_format($vr['aliquota'], 2, '.', ''));
                     $el_2_2_3_2_2->appendChild($el_2_2_3_2_2_2);
                     $el_2_2_3_2->appendChild($el_2_2_3_2_2);
                     if (!empty($vr['natura'])) {
@@ -1093,7 +1096,7 @@ function creaFileDAT10($aziend, $data, $periodo) {
                 // ---------- FATTURE RICEVUTE --------------
                 if ($ctrl_partner <> $v['clfoco']) {
                     // 3.2 - Blocco contenente le informazioni relative al cessionario/committente (fornitore) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
-                    $el_3_2 = $doc->createElement("CessionarioCommittenteDTR", "");
+                    $el_3_2 = $doc->createElement("CedentePrestatoreDTR", "");
                     $el_3_2_1 = $doc->createElement("IdentificativiFiscali", "");
                     $el_3_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
                     $el_3_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
@@ -1101,10 +1104,10 @@ function creaFileDAT10($aziend, $data, $periodo) {
                     $el_3_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
                     $el_3_2_1_1->appendChild($el_3_2_1_1_2);
                     $el_3_2_1->appendChild($el_3_2_1_1);
-                    $el_3_2_1_2 = $doc->createElement("CodiceFiscale", $v['codfis']);
+                    $el_3_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
                     $el_3_2_1->appendChild($el_3_2_1_2);
                     $el_3_2->appendChild($el_3_2_1);
-                    $el_3_2_2 = $doc->createElement("AltriIdentificativi", "");
+                    $el_3_2_2 = $doc->createElement("AltriDatiIdentificativi", "");
                     // la denominazione se persona giuridica, nome e cognome se persona giuridica
                     if ($v['sexper'] == 'G') {
                         $el_3_2_2_1 = $doc->createElement("Denominazione", str_replace('&', 'e', strtoupper($v['ragso1'] . ' ' . $v['ragso2'])));
@@ -1138,15 +1141,17 @@ function creaFileDAT10($aziend, $data, $periodo) {
                 $el_3_2_3_1->appendChild($el_3_2_3_1_2);
                 $el_3_2_3_1_3 = $doc->createElement("Numero", $v['numdoc']);
                 $el_3_2_3_1->appendChild($el_3_2_3_1_3);
+                $el_3_2_3_1_4 = $doc->createElement("DataRegistrazione", $v['datreg']);
+                $el_3_2_3_1->appendChild($el_3_2_3_1_4);
                 $el_3_2_3->appendChild($el_3_2_3_1);
                 foreach ($v['riepilogo'] as $kr => $vr) {
                     $el_3_2_3_2 = $doc->createElement("DatiRiepilogo", "");
-                    $el_3_2_3_2_1 = $doc->createElement("ImponibileImporto", $vr['imponibile']);
+                    $el_3_2_3_2_1 = $doc->createElement("ImponibileImporto", number_format($vr['imponibile'], 2, '.', ''));
                     $el_3_2_3_2->appendChild($el_3_2_3_2_1);
                     $el_3_2_3_2_2 = $doc->createElement("DatiIVA", '');
-                    $el_3_2_3_2_2_1 = $doc->createElement("Imposta", $vr['imposta']);
+                    $el_3_2_3_2_2_1 = $doc->createElement("Imposta", number_format($vr['imposta'], 2, '.', ''));
                     $el_3_2_3_2_2->appendChild($el_3_2_3_2_2_1);
-                    $el_3_2_3_2_2_2 = $doc->createElement("Aliquota", $vr['aliquota']);
+                    $el_3_2_3_2_2_2 = $doc->createElement("Aliquota", number_format($vr['aliquota'], 2, '.', ''));
                     $el_3_2_3_2_2->appendChild($el_3_2_3_2_2_2);
                     $el_3_2_3_2->appendChild($el_3_2_3_2_2);
                     if (!empty($vr['natura'])) {
