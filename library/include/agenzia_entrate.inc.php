@@ -1030,7 +1030,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     $el_2_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
                     $el_2_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
                     $el_2_2_1_1->appendChild($el_2_2_1_1_1);
-                    $el_2_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
+                    $el_2_2_1_1_2 = $doc->createElement("IdCodice", intval($v['pariva']));
                     $el_2_2_1_1->appendChild($el_2_2_1_1_2);
                     $el_2_2_1->appendChild($el_2_2_1_1);
                     $el_2_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
@@ -1101,7 +1101,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     $el_3_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
                     $el_3_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
                     $el_3_2_1_1->appendChild($el_3_2_1_1_1);
-                    $el_3_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
+                    $el_3_2_1_1_2 = $doc->createElement("IdCodice", intval($v['pariva']));
                     $el_3_2_1_1->appendChild($el_3_2_1_1_2);
                     $el_3_2_1->appendChild($el_3_2_1_1);
                     $el_3_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
