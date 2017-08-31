@@ -175,17 +175,18 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 $castel_transact[$row['idtes']]['quadro'] = 'ZZ';
                 $castel_transact[$row['idtes']]['tipo_documento'] = 'TD99'; // NON TIPIZZATO
                 if ($row['country'] <> $admin_aziend['country']) { // ESTERO
+                    $country = gaz_dbi_get_row($gTables['country'], "iso", $row['country']);
                     $castel_transact[$row['idtes']]['istat_country'] = $row['country'];
                     $castel_transact[$row['idtes']]['cod_ade'] = $row['cod_agenzia_entrate'];
-                    if ($row['country'] == 'SM') {
-                        // SAN MARINO 
-                        $castel_transact[$row['idtes']]['quadro'] = 'SE';
-                    } else {
-                        // NON RESIDENTE
-                        $castel_transact[$row['idtes']]['quadro'] = 'FN';
-                    }
-                    if ($row['regiva'] >= 6) { // ACQUISTI INTRACOMUNITARIO
+                    if ($country['istat_area'] == 11) { // INTRACOMUNITARIO
                         $chk_intra = 'EU';
+                    } else {
+                        $chk_intra = 'ZZ'; // EXTRACEE
+                    }
+                    if ($row['operat'] == 1) { // Fattura
+                        $castel_transact[$row['idtes']]['tipo_documento'] = 'TD01';
+                    } else {                // Note
+                        $castel_transact[$row['idtes']]['tipo_documento'] = 'TD04';
                     }
                 } else { //ITALIA
                     if ($row['regiva'] == 4 && (!empty($row['n_fatt']))) { // se è un documento allegato ad uno scontrino utilizzo il numero fattura in tesdoc
@@ -280,7 +281,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                     }
                 }
                 // fine ricerca contratti
-                
+
                 if ($admin_aziend['country'] == $row['country']) {
                     if (strlen(trim($row['sedleg'])) > 4) {
                         if (preg_match("/([\w\,\.\s]+)([0-9]{5})[\s]+([\w\s\']+)\(([\w]{2})\)/", $row['sedleg'], $regs)) {
@@ -292,7 +293,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                         }
                     }
                 }
-                
+
                 // inizio valorizzazione imponibile,imposta,senza_iva,art8
                 $castel_transact[$row['idtes']]['operazioni_imponibili'] = 0;
                 $castel_transact[$row['idtes']]['imposte_addebitate'] = 0;
@@ -391,13 +392,15 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
             } else {
                 $castel_transact[$row['idtes']]['beni'] += $row['imponi']; // bene
             }
-            if ($chk_intra == 'EU') { // SE è UN ACQUISTO INTRA tipizzo in base alla prevalenza
-                if ($castel_transact[$row['idtes']]['servizi'] > $castel_transact[$row['idtes']]['beni']) {
-                    // C'è una prevalenza di SERVIZI
-                    $castel_transact[$row['idtes']]['tipo_documento'] = 'TD11';
-                } else {
-                    // acquisto di BENI
-                    $castel_transact[$row['idtes']]['tipo_documento'] = 'TD10';
+            if ($chk_intra == 'EU') { // PARTNER INTRACOMUNITARIO
+                if ($row['regiva'] >= 6) { // ACQUISTI INTRACOMUNITARIO tipizzo in base alla prevalenza
+                    if ($castel_transact[$row['idtes']]['servizi'] > $castel_transact[$row['idtes']]['beni']) {
+                        // C'è una prevalenza di SERVIZI
+                        $castel_transact[$row['idtes']]['tipo_documento'] = 'TD11';
+                    } else {
+                        // acquisto di BENI
+                        $castel_transact[$row['idtes']]['tipo_documento'] = 'TD10';
+                    }
                 }
             }
             $ctrl_id = $row['idtes'];
@@ -616,25 +619,25 @@ $gForm = new contabForm();
                             <thead>
                                 <tr class="bg-success">              
                                     <th>
-        <?php echo $script_transl["TipoDocumento"]; ?>
+                                        <?php echo $script_transl["TipoDocumento"]; ?>
                                     </th>
                                     <th>
-        <?php echo $script_transl["Numero"]; ?>
+                                        <?php echo $script_transl["Numero"]; ?>
                                     </th>
                                     <th>
-        <?php echo $script_transl["Data"]; ?>
+                                        <?php echo $script_transl["Data"]; ?>
                                     </th>
                                     <th>
-        <?php echo $script_transl["DataRegistrazione"]; ?>
+                                        <?php echo $script_transl["DataRegistrazione"]; ?>
                                     </th>
                                     <th>
-        <?php echo $script_transl["ImponibileImporto"]; ?>
+                                        <?php echo $script_transl["ImponibileImporto"]; ?>
                                     </th>
                                     <th class="text-right">
-        <?php echo $script_transl["Imposta"]; ?>
+                                        <?php echo $script_transl["Imposta"]; ?>
                                     </th>
                                     <th class="text-right">
-        <?php echo $script_transl["Aliquota"]; ?>
+                                        <?php echo $script_transl["Aliquota"]; ?>
                                     </th>
                                 </tr>      
                             </thead>    
@@ -671,25 +674,25 @@ $gForm = new contabForm();
                                     <thead>
                                         <tr class="bg-success">              
                                             <th>
-                <?php echo $script_transl["TipoDocumento"]; ?>
+                                                <?php echo $script_transl["TipoDocumento"]; ?>
                                             </th>
                                             <th>
-                <?php echo $script_transl["Numero"]; ?>
+                                                <?php echo $script_transl["Numero"]; ?>
                                             </th>
                                             <th>
-                <?php echo $script_transl["Data"]; ?>
+                                                <?php echo $script_transl["Data"]; ?>
                                             </th>
                                             <th>
-                <?php echo $script_transl["DataRegistrazione"]; ?>
+                                                <?php echo $script_transl["DataRegistrazione"]; ?>
                                             </th>
                                             <th>
-                <?php echo $script_transl["ImponibileImporto"]; ?>
+                                                <?php echo $script_transl["ImponibileImporto"]; ?>
                                             </th>
                                             <th class="text-right">
-                <?php echo $script_transl["Imposta"]; ?>
+                                                <?php echo $script_transl["Imposta"]; ?>
                                             </th>
                                             <th class="text-right">
-                <?php echo $script_transl["Aliquota"]; ?>
+                                                <?php echo $script_transl["Aliquota"]; ?>
                                             </th>
                                         </tr>      
                                     </thead>    
@@ -715,25 +718,25 @@ $gForm = new contabForm();
                                     ?>
                                     <tr>
                                         <td data-title="<?php echo $script_transl["TipoDocumento"]; ?>">
-            <?php echo $v["tipo_documento"]; ?>  <a class="btn btn-xs <?php echo $td_class[$v["tipo_documento"]]; ?>" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
+                                            <?php echo $v["tipo_documento"]; ?>  <a class="btn btn-xs <?php echo $td_class[$v["tipo_documento"]]; ?>" href="admin_movcon.php?Update&id_tes=<?php echo $k; ?>" title="<?php echo $v["caucon"]; ?>"><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo ucfirst($td[$v["tipo_documento"]]) . ' prot.' . $v["protoc"]; ?></a>
                                         </td>
                                         <td data-title="<?php echo $script_transl["Numero"]; ?>" class="text-center">
-            <?php echo $v["numdoc"]; ?>
+                                            <?php echo $v["numdoc"]; ?>
                                         </td>
                                         <td data-title="<?php echo $script_transl["Data"]; ?>" class="text-center">
-            <?php echo gaz_format_date($v["datdoc"]); ?>
+                                            <?php echo gaz_format_date($v["datdoc"]); ?>
                                         </td>
                                         <td data-title="<?php echo $script_transl["DataRegistrazione"]; ?>" class="text-center">
-            <?php echo gaz_format_date($v["datreg"]); ?>
+                                            <?php echo gaz_format_date($v["datreg"]); ?>
                                         </td>
                                         <td data-title="<?php echo $script_transl["ImponibileImporto"]; ?>" class="text-right">
-            <?php echo gaz_format_number($v['operazioni_imponibili']); ?>
+                                            <?php echo gaz_format_number($v['operazioni_imponibili']); ?>
                                         </td>
                                         <td data-title="<?php echo $script_transl["Imposta"]; ?>"  class="text-right">
-            <?php echo gaz_format_number($v['imposte_addebitate']); ?>
+                                            <?php echo gaz_format_number($v['imposte_addebitate']); ?>
                                         </td>
                                         <td data-title="<?php echo $script_transl["Aliquota"]; ?>"  class="text-right">
-            <?php echo floatval($v['periva']); ?>%
+                                            <?php echo floatval($v['periva']); ?>%
                                         </td>
                                     </tr> 
                                     <?php
@@ -754,7 +757,7 @@ $gForm = new contabForm();
         <?php } else if (count($msg['err']) == 0) {
             ?>
             <div class="col-sm-12 text-center"><input name="Submit" type="submit" class="btn btn-success" value="<?php echo $script_transl["ok"]; ?>" /></div>
-    <?php } ?>   
+            <?php } ?>   
     </form>
     <?php
     require("../../library/include/footer.php");
