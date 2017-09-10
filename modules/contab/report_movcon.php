@@ -172,7 +172,7 @@ $script_transl = HeadMain('', '', 'admin_movcon');
             echo "<tr class=\"FacetDataTD\">";
             echo "<td align=\"right\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_movcon.php?id_tes=" . $a_row["id_tes"] . "&Update\" title=\"Modifica\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["id_tes"] . "</a> &nbsp</td>";
             echo "<td align=\"center\">" . gaz_format_date($a_row["datreg"]) . " &nbsp;</td>";
-            echo '<td align="center"><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $a_row["id_tes"] . '" data-title="' . $tt . '" >' . $a_row["caucon"] . "</div> &nbsp;</td>";
+            echo '<td align="center"><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $a_row["id_tes"] . '" data-title="' . $tt . '" >' . $a_row["caucon"] . "</div></td>";
             echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $a_row["id_tes"] . '" data-title="' . $tt . '" >' . $a_row["descri"] . '</div></td>';
             if ($a_row["protoc"] > 0) {
                 echo "<td align=\"center\">" . $a_row["protoc"] . "/" . $a_row["seziva"] . "";
