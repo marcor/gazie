@@ -834,7 +834,7 @@ class selectPartner extends SelectBox {
                     $partner = $this->queryAnagra(" a.ragso1 LIKE '" . addslashes($strSearch) . "%'");
                 }
                 if (count($partner) > 0) {
-                    echo "\t<select name=\"$name\" $tab1 class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
+                    echo "\t<select name=\"$name\" $tab1 class=\"FacetSelect\" onchange=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
                     echo "<option value=\"0\"> ---------- </option>";
                     if ($anonimo > 100) {
                         echo "<option value=\"$anonimo\">" . $mesg[5] . "</option>";
