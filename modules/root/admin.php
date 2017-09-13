@@ -161,6 +161,15 @@ if ($t > 4 && $t <= 13) {
             </div>
             <?php
         }
+        if (empty($admin_aziend['legrap_pf_nome']) || empty($admin_aziend['legrap_pf_cognome'])) {
+            ?>
+            <div class="alert alert-danger text-center" role="alert">
+                <?php
+                    echo $script_transl['errors']['legrap'] ;
+                ?>
+            </div>
+            <?php
+        }
         ?>
         <div class="row text-center">
             <div class="col-sm-6">

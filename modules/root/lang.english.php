@@ -33,7 +33,8 @@ $strScript = array("admin.php" =>
             ' to version ',
             '  by clicking HERE ',
             ' He remembers that for the good application working the directive magic_quotes_gpc must be set  Off into php.ini file!',
-            ' Attenzione il backup esterno risale a più di 10 giorni, fallo adesso '
+            ' Attenzione il backup esterno risale a più di 10 giorni, fallo adesso ',
+            'legrap' => ' ATTENZIONE!!! Hai dimenticato di indicare il nome e/o il cognome del legale rappresentante'
         ),
         'access' => ", this is your access n.",
         'pass' => "<br />Last password update: ",

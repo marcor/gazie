@@ -37,7 +37,8 @@ $strScript = array("admin.php" =>
             ' a version ',
             '  hacer clic AQUI ',
             ' Recordar que para el buen funcionamiento de la aplicacion la directiva magic_quotes_gpc debe estar en Off en el archivo php.ini!',
-            ' Attenzione il backup esterno risale a più di 10 giorni, fallo adesso '
+            ' Attenzione il backup esterno risale a più di 10 giorni, fallo adesso ',
+            'legrap' => ' ATTENZIONE!!! Hai dimenticato di indicare il nome e/o il cognome del legale rappresentante'
         ),
         'access' => ", este es su acceso numero",
         'pass' => "<br />Ultima actualizacion de clave : ",

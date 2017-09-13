@@ -1027,15 +1027,14 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     // 2.2 - Blocco contenente le informazioni relative al cessionario/committente (cliente) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
                     $el_2_2 = $doc->createElement("CessionarioCommittenteDTE", "");
                     $el_2_2_1 = $doc->createElement("IdentificativiFiscali", "");
-                    $el_2_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
-                    $el_2_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
-                    $el_2_2_1_1->appendChild($el_2_2_1_1_1);
-                    if (strlen($v['pariva']) <= 1) {
-                        $v['pariva'] = "0";
+                    if (strlen($v['pariva']) > 5) { // il cliente ha una Partita IVA (metto 5 per evitare problemi con gli stranieri)
+                        $el_2_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
+                        $el_2_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
+                        $el_2_2_1_1->appendChild($el_2_2_1_1_1);
+                        $el_2_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
+                        $el_2_2_1_1->appendChild($el_2_2_1_1_2);
+                        $el_2_2_1->appendChild($el_2_2_1_1);
                     }
-                    $el_2_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
-                    $el_2_2_1_1->appendChild($el_2_2_1_1_2);
-                    $el_2_2_1->appendChild($el_2_2_1_1);
                     $el_2_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
                     $el_2_2_1->appendChild($el_2_2_1_2);
                     $el_2_2->appendChild($el_2_2_1);
@@ -1101,15 +1100,14 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     // 3.2 - Blocco contenente le informazioni relative al cessionario/committente (fornitore) e ai dati fattura a lui riferiti (reiterabile 1000 volte)
                     $el_3_2 = $doc->createElement("CedentePrestatoreDTR", "");
                     $el_3_2_1 = $doc->createElement("IdentificativiFiscali", "");
-                    $el_3_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
-                    $el_3_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
-                    $el_3_2_1_1->appendChild($el_3_2_1_1_1);
-                    if (strlen($v['pariva']) <= 1) {
-                        $v['pariva'] = "0";
+                    if (strlen($v['pariva']) > 5) { // il cliente ha una Partita IVA (metto 5 per evitare problemi con gli stranieri)
+                        $el_3_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
+                        $el_3_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
+                        $el_3_2_1_1->appendChild($el_3_2_1_1_1);
+                        $el_3_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
+                        $el_3_2_1_1->appendChild($el_3_2_1_1_2);
+                        $el_3_2_1->appendChild($el_3_2_1_1);
                     }
-                    $el_3_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
-                    $el_3_2_1_1->appendChild($el_3_2_1_1_2);
-                    $el_3_2_1->appendChild($el_3_2_1_1);
                     $el_3_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
                     $el_3_2_1->appendChild($el_3_2_1_2);
                     $el_3_2->appendChild($el_3_2_1);
