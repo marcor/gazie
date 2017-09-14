@@ -1,0 +1,12 @@
+Titolo:
+Nemo dat quod non habet.
+
+Presentazione: 
+La versione che rilascio oggi è atta a soddisfare le normative e le specifiche tecniche relative alla Comunicazione Dati Fatture 2017 (ex Spesometro). Come molti sanno questo tracciato elettronico è più adeguato ai nostri tempi di quanto non fosse quello dell'anno passato; più precisamente esso è un file XML con molti elementi simili alle fatture elettroniche per la pubblica amministrazione.
+Andando sulla voce di menù "Contabilità->Comunicazione dati fatture" avrete la possibilità di controllare il contenuto dei file DTR(fatture ricevute) e DTE (fatture emesse) prima di generarli; ricordo che questi due saranno contenuti in una cartella compressa e conservata sul filesystem del server. Dopo aver fatto il downlaod dovrete scompattare l'archivio e tramite il sito "Fatture e corrispettivi" dell'Agenzia delle Entrate "sigillare" singolarmente i due. Una volta sigillati potrete trasmettere gli stessi, volendo dopo averli ricompressi. Ringrazio pubblicamente danielemz, Salvatore Faro, Marco Vinicio Sinibaldi e i l prof. Paolo del Romano per aver condiviso le loro esperienze partecipando attivamente alla discussione sul forum, così facendo il lavoro di programmazione è stato più facile e rapido. Abbiamo eseguito diversi test per controllare la correttezza formale dei file generati da GAzie. Quando le prove fatte non hanno dato più errori ho deciso di pubblicare il risultato per permettere anche a voi di adempiere a questo obbligo che dopo la scadenza del prossimo 28 settembre per il primo semestre sarà trimestrale come per le liquidazioni.
+Il menù della contabilità è stato modificato all'uopo, vedrete la voce "Comunicazioni dati" per accedere alle varie procedure atte alla trasmissione delle liquidazioni periodiche e dei dati fatture, mentre cliccando direttamente sulla voce "Registri IVA" accederete alla visualizzazione e/o stampa dei vari registri IVA obbligatori, sono in  formato pdf-a, ovvero conservabili elettronicamente.
+
+Alta novità: 
+sulla lista dei movimenti contabili e sui partitari vi potrete avvalere di un tooltip che al passaggio del mouse visualizza tutto il movimento contabile (contropartite).
+  
+Antonio de Vincentiis, Montesilvano, 14 Settembre 2017
