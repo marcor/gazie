@@ -123,6 +123,11 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
         }
         $carry_cre = round($carry_cre + $acc[$date['mese_trimestre']]['vp4'] - $acc[$date['mese_trimestre']]['vp5'] - $vp8 - $vp9, 2);
     }
+    $totale = $acc[$date['mese_trimestre']]['vp4'] - $acc[$date['mese_trimestre']]['vp5'] - $vp8 - $vp9;
+    if ($totale >= 0.01 && $admin_aziend['ivam_t'] == 'T') { // aggiungo gli interessi se ho un'iva trimestrale
+        $interessi = round($totale * $admin_aziend['interessi'] / 100, 2);
+        $acc[$date['mese_trimestre']]['vp12'] = $interessi;
+    }
     return $acc; // nell'accumulatore gli array con i dati per riempire il form
 }
 
