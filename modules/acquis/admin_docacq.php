@@ -1330,9 +1330,9 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (no
     echo "<td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl[0][$form['tipdoc']] . " " . $script_transl[52] . " </td>\n";
     echo "<td><input type=\"text\" name=\"numfat\" value=\"" . $form['numfat'] . "\" maxlength=\"20\" size=\"20\"></td>\n";
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td>";
-    echo "<td class=\"FacetDataTD\"><input TYPE=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">\n";
-    echo "<input TYPE=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">\n";
-    echo "<input TYPE=\"text\" id=\"datepicker\" class=\"hasDatepicker\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">\n";
+    echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">\n";
+    echo "<input type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">\n";
+    echo "<input type=\"text\" id=\"datepicker\" class=\"hasDatepicker\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">\n";
     echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></a>";
     echo '<i class="glyphicon glyphicon-calendar"></i></a>';
@@ -1642,14 +1642,14 @@ foreach ($form['rows'] as $key => $value) {
 		  </tr>';
     /** ENRICO FEDELE */
 }
-
-if (count($form['rows']) > 0) {
+$i = count($form['rows']);
+if ($i > 0) {
     $msgtoast = $upd_mm->toast($msgtoast);  //lo mostriamo
 
-    if (isset($_POST['in_submit']) && count($form['rows']) > 5) {
-        /* for($i=0;$i<3;$i++) {	//	Predisposizione per mostrare gli ultimi n articoli inseriti (in ordine inverso ovviamente)
-          $msgtoast .= $last_row[$i].'<br />';
-          } */
+    if (isset($_POST['in_submit']) && $i > 5) {
+        /* for($x=0;$x<3;$x++) {	//	Predisposizione per mostrare gli ultimi n articoli inseriti (in ordine inverso ovviamente)
+          $msgtoast .= $last_row[$x].'<br />';
+        } */
         $msgtoast .= $last_row[0];
         $msgtoast = $upd_mm->toast($script_transl['last_row'] . ': ' . $msgtoast, 'alert-last-row', 'alert-success');  //lo mostriamo
     }
@@ -1811,7 +1811,7 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acq
 //fine piede
 echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"" . $form["sconto"] . "\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[35]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] " . $admin_aziend['symbol'] . "</td>\n";
 $chk_add_iva_tes = 0;
-$i = count($form['rows']);
+
 foreach ($castel as $key => $value) {
     $result = gaz_dbi_get_row($gTables['aliiva'], "codice", $key);
     $impcast = CalcolaImportoRigo(1, $value, $form['sconto']);
