@@ -55,7 +55,7 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
         $tot = 0.00;
         while ($rr = gaz_dbi_fetch_array($res_rig)) {
             $account = $anagrafica->getPartner($rr["codcon"]);
-            $r['tt'] .= '<tr><td>' . $account['descri'] . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+            $r['tt'] .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
             if ($rr['darave'] == 'D') {
                 $tot += $rr['import'];
             }
