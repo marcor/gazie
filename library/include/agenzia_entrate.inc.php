@@ -1035,8 +1035,10 @@ function creaFileDAT20($aziend, $data, $periodo) {
                         $el_2_2_1_1->appendChild($el_2_2_1_1_2);
                         $el_2_2_1->appendChild($el_2_2_1_1);
                     }
-                    $el_2_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
-                    $el_2_2_1->appendChild($el_2_2_1_2);
+                    if (strlen(trim($v['codfis'])) > 0) {
+                        $el_2_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
+                        $el_2_2_1->appendChild($el_2_2_1_2);
+                    }
                     $el_2_2->appendChild($el_2_2_1);
                     $el_2_2_2 = $doc->createElement("AltriDatiIdentificativi", "");
                     // la denominazione se persona giuridica, nome e cognome se persona giuridica
@@ -1052,8 +1054,10 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     $el_2_2_2_4 = $doc->createElement("Sede", '');
                     $el_2_2_2_4_1 = $doc->createElement("Indirizzo", strtoupper($v['indspe']));
                     $el_2_2_2_4->appendChild($el_2_2_2_4_1);
-                    $el_2_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
-                    $el_2_2_2_4->appendChild($el_2_2_2_4_3);
+                    if (strlen(trim($v['capspe'])) > 0) {
+                        $el_2_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
+                        $el_2_2_2_4->appendChild($el_2_2_2_4_3);
+                    }
                     $el_2_2_2_4_4 = $doc->createElement("Comune", strtoupper($v['citspe']));
                     $el_2_2_2_4->appendChild($el_2_2_2_4_4);
                     $el_2_2_2_4_5 = $doc->createElement("Provincia", strtoupper($v['prospe']));
@@ -1104,12 +1108,14 @@ function creaFileDAT20($aziend, $data, $periodo) {
                         $el_3_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
                         $el_3_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
                         $el_3_2_1_1->appendChild($el_3_2_1_1_1);
-                        $el_3_2_1_1_2 = $doc->createElement("IdCodice", $v['pariva']);
+                        $el_3_2_1_1_2 = $doc->createElement("IdCodice", ($v['pariva'] == '99999999999' ? "OO" : $v['country']));
                         $el_3_2_1_1->appendChild($el_3_2_1_1_2);
                         $el_3_2_1->appendChild($el_3_2_1_1);
                     }
-                    $el_3_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
-                    $el_3_2_1->appendChild($el_3_2_1_2);
+                    if (strlen(trim($v['codfis'])) > 0) {
+                        $el_3_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
+                        $el_3_2_1->appendChild($el_3_2_1_2);
+                    }
                     $el_3_2->appendChild($el_3_2_1);
                     $el_3_2_2 = $doc->createElement("AltriDatiIdentificativi", "");
                     // la denominazione se persona giuridica, nome e cognome se persona giuridica
