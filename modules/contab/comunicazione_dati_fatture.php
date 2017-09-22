@@ -105,6 +105,10 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 }
                 // inizio controlli su CF e PI
                 $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
+                // danielemz - temporaneo per imposta 2017- bolle doganali
+                if ($row['pariva'] == '99999999999') {
+                    $resultpi = "";
+                }
                 $resultcf = $nuw->check_VAT_reg_no($row['codfis']);
                 if ($admin_aziend['country'] != $row['country']) {
                     // È uno non residente 
@@ -115,9 +119,10 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                     }
                 } elseif (empty($resultpi) && !empty($row['pariva'])) {
                     // ha la partita IVA ed è giusta 
-                    if (strlen(trim($row['codfis'])) == 11) {
+                    if (trim($row['pariva']) == "99999999999") {
+                        // danielemz - temporaneo, forzatura per superare i controlli bolletta doganale imposta 2017
+                    } elseif (strlen(trim($row['codfis'])) == 11) {
                         // È una persona giuridica
-
                         if (intval($row['codfis']) == 0 && $row['allegato'] < 2) { // se non è un riepilogativo 
                             $error_transact[$row['idtes']][] = $script_transl['errors'][1];
                         } elseif ($row['sexper'] != 'G') {

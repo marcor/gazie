@@ -92,6 +92,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         $cf_pi = new check_VATno_TAXcode();
         $r_pi = $cf_pi->check_VAT_reg_no($form['pariva'], $form['country']);
+
+        // danielemz - temporaneo per imposta 2017- bolle doganali
+        if (isset($form['pariva']) && trim($form['pariva']) == '99999999999') {
+            $r_pi = "";
+        } 
         if (strlen(trim($form['codfis'])) == 11) {
             $r_cf = $cf_pi->check_VAT_reg_no($form['codfis'], $form['country']);
             if ($form['sexper'] != 'G') {
@@ -402,7 +407,7 @@ echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pariva'] . " </td>\n";
 echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
-      <input type=\"text\" name=\"pariva\" value=\"" . $form['pariva'] . "\" align=\"right\" maxlength=\"11\" size=\"11\" /></td>\n";
+      <input type=\"text\" name=\"pariva\" value=\"" . $form['pariva'] . "\" align=\"right\" maxlength=\"11\" size=\"11\" title=\"11 volte 9 per bolletta doganale\" /></td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['pec_email'] . "</td>\n";
