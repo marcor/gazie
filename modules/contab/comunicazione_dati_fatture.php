@@ -94,15 +94,6 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
             }
             if ($ctrl_id <> $row['idtes']) {
                 $chk_intra = 'IT';
-                // se il precedente movimento non ha raggiunto l'importo lo elimino
-                if (isset($castel_transact[$ctrl_id]) && $castel_transact[$ctrl_id]['operazioni_imponibili'] < 0.5 && $castel_transact[$ctrl_id]['operazioni_esente'] < 0.5 && $castel_transact[$ctrl_id]['operazioni_nonimp'] < 0.5 && $castel_transact[$ctrl_id]['contract'] < 0.5) {
-                    unset($castel_transact[$ctrl_id]);
-                    unset($error_transact[$ctrl_id]);
-                }
-                if (isset($castel_transact[$ctrl_id]) && $castel_transact[$ctrl_id]['quadro'] == 'DF' && $castel_transact[$ctrl_id]['operazioni_imponibili'] < $min_limit && $castel_transact[$ctrl_id]['contract'] < $min_limit) {
-                    unset($castel_transact[$ctrl_id]);
-                    unset($error_transact[$ctrl_id]);
-                }
                 // inizio controlli su CF e PI
                 $resultpi = $nuw->check_VAT_reg_no($row['pariva']);
                 // danielemz - temporaneo per imposta 2017- bolle doganali
