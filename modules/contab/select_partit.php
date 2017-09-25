@@ -48,21 +48,22 @@ function getMovements($account_ini, $account_fin, $date_ini, $date_fin) {
     $rs = gaz_dbi_dyn_query($select, $table, $where, $orderby);
     $anagrafica = new Anagrafica();
     while ($r = gaz_dbi_fetch_array($rs)) {
-
-        // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento 
-        $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $r["id_tes"], 'id_rig');
-        $r['tt'] = '<table><th colspan=3 >' . $r['tesdes'] . '</th>';
-        $tot = 0.00;
-        while ($rr = gaz_dbi_fetch_array($res_rig)) {
-            $account = $anagrafica->getPartner($rr["codcon"]);
-            $r['tt'] .= '<tr><td>' . htmlspecialchars( $account['descri'] ) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
-            if ($rr['darave'] == 'D') {
-                $tot += $rr['import'];
+        $r['tt'] = '';
+        if ($account_ini == $account_fin || $account_fin == 0) {
+            // INIZIO crezione tabella per la visualizzazione sul tootip di tutto il movimento e facccio la somma del totale movimento 
+            $res_rig = gaz_dbi_dyn_query("*", $gTables['rigmoc'], 'id_tes=' . $r["id_tes"], 'id_rig');
+            $r['tt'] = '<table><th colspan=3 >' . $r['tesdes'] . '</th>';
+            $tot = 0.00;
+            while ($rr = gaz_dbi_fetch_array($res_rig)) {
+                $account = $anagrafica->getPartner($rr["codcon"]);
+                $r['tt'] .= '<tr><td>' . htmlspecialchars($account['descri']) . '</td><td align=right>' . $rr['import'] . '</td><td align=right>' . $rr['darave'] . '</td></tr>';
+                if ($rr['darave'] == 'D') {
+                    $tot += $rr['import'];
+                }
             }
+            $r['tt'] .= '</table>';
+            // FINE creazione tabella per il tooltip
         }
-        $r['tt'] .= '</table>';
-        // FINE creazione tabella per il tooltip
-
         $m[] = $r;
     }
     return $m;
