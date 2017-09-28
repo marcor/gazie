@@ -177,7 +177,7 @@ if ($t > 4 && $t <= 13) {
                     <p>
                         <?php echo $script_transl['company'] ?>
                     <div class="img-containter">
-                        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
+                        <a href="../config/admin_aziend.php"><img class="img-circle dit-picture" src="view.php?table=aziend&value=<?php echo $form['company_id']; ?>" alt="Logo" style="max-width: 100%;" border="0" title="<?php echo $script_transl['upd_company']; ?>" ></a>
                     </div>
                     </p>
                     <p>
@@ -199,7 +199,7 @@ if ($t > 4 && $t <= 13) {
                     <p>
                     <div class="img-containter">
                         <a href="../config/admin_utente.php?Login=<?php echo $admin_aziend['Login']; ?>&Update">
-                            <img class="img-circle usr-picture" src="view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" alt="<?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" title="<?php echo $script_transl['change_usr']; ?>" >
+                            <img class="img-circle usr-picture" src="view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" alt="<?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" style="max-width: 100%;" title="<?php echo $script_transl['change_usr']; ?>" >
                         </a>
                     </div>
                     </p>
@@ -244,16 +244,11 @@ if ($t > 4 && $t <= 13) {
                                             } else {
                                                 $stato_partita = "";
                                             }
-                                            if ($mv["clfoco"] <> $ctrl_partner) {
-                                                $class_partner = 'FacetDataTD';
-                                                $partner = $mv["ragsoc"];
-                                            }
-                                            $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
-                                            if ($tot >= 0.01) {
+                                            if ($mv["amount"] >= 0.01) {
                                                 echo "<tr class='odd " . $stato_partita . "' role='row'>";
-                                                echo "<td>" . $partner . "</td>";
-                                                echo "<td class='right'>" . gaz_format_number($tot) . "</td>";
-                                                echo "<td class='right'><span>" . $mv["expiry"] . "</span>" . gaz_format_date($mv["expiry"]) . "</td>";
+                                                echo "<td>" . $mv["ragsoc"] . "</td>";
+                                                echo "<td align='right'>" . gaz_format_number($mv["amount"]) . "</td>";
+                                                echo "<td align='center'><span>" . $mv["expiry"] . "</span>" . gaz_format_date($mv["expiry"]) . "</td>";
                                                 echo "</tr>";
                                             }
                                             $ctrl_partner = $mv["clfoco"];
@@ -296,21 +291,16 @@ if ($t > 4 && $t <= 13) {
                                     $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor'], true);
                                     if (sizeof($scdl->Entries) > 0) {
                                         while (list($key, $mv) = each($scdl->Entries)) {
-                                            if ($mv["clfoco"] <> $ctrl_partner) {
-                                                $class_partner = 'FacetDataTD';
-                                                $partner = $mv["ragsoc"];
-                                            }
                                             if ($mv['expiry'] <= date("Y-m-d")) {
                                                 $stato_partita = "warning";
                                             } else {
                                                 $stato_partita = "";
                                             }
-                                            $tot = $scdl->getAmount($mv["id_tesdoc_ref"]);
-                                            if ($tot >= 0.01) {
+                                            if ($mv["amount"] >= 0.01) {
                                                 echo "<tr class='odd " . $stato_partita . "' role='row'>";
-                                                echo "<td>" . $partner . "</td>";
-                                                echo "<td class='right'>" . gaz_format_number($tot) . "</td>";
-                                                echo "<td class='right'><span>" . $mv["expiry"] . "</span>" . gaz_format_date($mv["expiry"]) . "</td>";
+                                                echo "<td>" . $mv["ragsoc"] . "</td>";
+                                                echo "<td align='right'>" . gaz_format_number($mv["amount"]) . "</td>";
+                                                echo "<td align='center'><span>" . $mv["expiry"] . "</span>" . gaz_format_date($mv["expiry"]) . "</td>";
                                                 echo "</tr>";
                                             }
                                         }
