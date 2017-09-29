@@ -1108,7 +1108,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
                         $el_3_2_1_1 = $doc->createElement("IdFiscaleIVA", "");
                         $el_3_2_1_1_1 = $doc->createElement("IdPaese", $v['country']);
                         $el_3_2_1_1->appendChild($el_3_2_1_1_1);
-                        $el_3_2_1_1_2 = $doc->createElement("IdCodice", ($v['pariva'] == '99999999999' ? "OO" : $v['country']));
+                        $el_3_2_1_1_2 = $doc->createElement("IdCodice", ($v['pariva'] == '99999999999' ? "OO" : $v['pariva']));
                         $el_3_2_1_1->appendChild($el_3_2_1_1_2);
                         $el_3_2_1->appendChild($el_3_2_1_1);
                     }
