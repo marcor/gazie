@@ -389,7 +389,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                 $castel_transact[$row['idtes']]['beni'] += $row['imponi']; // bene
             }
             if ($chk_intra == 'EU') { // PARTNER INTRACOMUNITARIO
-                if ($row['regiva'] >= 6) { // ACQUISTI INTRACOMUNITARIO tipizzo in base alla prevalenza
+                if ($row['regiva'] >= 6 && $row['operat'] == 1)  { // ACQUISTI INTRACOMUNITARIO tipizzo in base alla prevalenza
                     if ($castel_transact[$row['idtes']]['servizi'] > $castel_transact[$row['idtes']]['beni']) {
                         // C'è una prevalenza di SERVIZI
                         $castel_transact[$row['idtes']]['tipo_documento'] = 'TD11';
