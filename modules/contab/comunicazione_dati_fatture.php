@@ -433,7 +433,7 @@ if (!isset($_POST['ritorno'])) {
         $form['anno'] = $cdf['anno'];
         $form['periodicita'] = $cdf['periodicita'];
     } else { // è un inserimento
-// controllo se ad oggi è possibile fare una liquidazione
+// controllo se ad oggi è possibile fare una comunicazione
         $y = date('Y');
         $m = floor((date('m') - 1) / 3);
         if ($m == 0) {
@@ -448,18 +448,18 @@ if (!isset($_POST['ritorno'])) {
         $rs_query = gaz_dbi_dyn_query("*", $gTables['comunicazioni_dati_fatture'], 1, "anno DESC, trimestre_semestre DESC", 0, 1);
         $ultima_comunicazione = gaz_dbi_fetch_array($rs_query);
         if ($ultima_comunicazione) {
-            if ($ultima_comunicazione['periodicita'] == 'T') { // ho fatto una liquidazione trimestrale
-                $ultimo_trimestre_liquidato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'];
+            if ($ultima_comunicazione['periodicita'] == 'T') { // ho fatto una comunicazione trimestrale
+                $ultimo_trimestre_comunicato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'];
             } else { // semestrale
-                $ultimo_trimestre_liquidato = $ultima_liquidazione['anno'] . $ultima_comunicazione['trimestre_semestre'] * 2;
+                $ultimo_trimestre_comunicato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'] * 2;
             }
         } else { // non ho mai fatto liquidazioni, propongo la prima da fare
-            $ultimo_trimestre_liquidato = 0;
+            $ultimo_trimestre_comunicato = 0;
         }
-        if ($ultimo_trimestre_liquidato >= $trimestre_semestre) {
+        if ($ultimo_trimestre_comunicato >= $trimestre_semestre) {
             $msg['err'][] = "eseguita";
         } else {
-            // propongo una liquidazione in base ai dati che trovo sui movimenti IVA
+            // propongo una comunicazione in base ai dati che trovo sui movimenti IVA
         }
     }
 } else { // nei post successivi (submit)
