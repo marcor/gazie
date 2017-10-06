@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 
 /*
   --------------------------------------------------------------------------
@@ -1035,7 +1035,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
                         $el_2_2_1_1->appendChild($el_2_2_1_1_2);
                         $el_2_2_1->appendChild($el_2_2_1_1);
                     }
-                    if (strlen(trim($v['codfis'])) > 0 && $v['country'] == 'IT') {
+                    if (preg_match('/[A-Z0-9]{11,16}/', strtoupper(trim($v['codfis']))) && $v['country'] == 'IT') {
                         $el_2_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
                         $el_2_2_1->appendChild($el_2_2_1_2);
                     }
@@ -1043,19 +1043,19 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     $el_2_2_2 = $doc->createElement("AltriDatiIdentificativi", "");
                     // la denominazione se persona giuridica, nome e cognome se persona giuridica
                     if ($v['sexper'] == 'G') {
-                        $el_2_2_2_1 = $doc->createElement("Denominazione", preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['ragso1'] . ' ' . $v['ragso2']))));
+                        $el_2_2_2_1 = $doc->createElement("Denominazione", substr(preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars(str_replace('&', 'e', $v['ragso1'] . ' ' . $v['ragso2'])))), 0, 80));
                         $el_2_2_2->appendChild($el_2_2_2_1);
                     } else {
-                        $el_2_2_2_2 = $doc->createElement("Nome", preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['legrap_pf_nome']))));
+                        $el_2_2_2_2 = $doc->createElement("Nome", substr(preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['legrap_pf_nome']))), 0, 60));
                         $el_2_2_2->appendChild($el_2_2_2_2);
-                        $el_2_2_2_3 = $doc->createElement("Cognome", preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['legrap_pf_cognome']))));
+                        $el_2_2_2_3 = $doc->createElement("Cognome", substr(preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['legrap_pf_cognome']))), 0, 60));
                         $el_2_2_2->appendChild($el_2_2_2_3);
                     }
                     $el_2_2_2_4 = $doc->createElement("Sede", '');
-                    $el_2_2_2_4_1 = $doc->createElement("Indirizzo", preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['indspe']))));
+                    $el_2_2_2_4_1 = $doc->createElement("Indirizzo", substr(preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['indspe']))), 0, 60));
                     $el_2_2_2_4->appendChild($el_2_2_2_4_1);
-                    if (is_numeric($v['capspe']) && strlen($v['capspe']) == 5) { // per evitare l'errore (loro) il cap lo scrivo solo se è italiano
-                        $el_2_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
+                    if (is_numeric($v['capspe']) && strlen($v['capspe']) <= 5) { // per evitare l'errore (loro) il cap lo scrivo solo se è italiano
+                        $el_2_2_2_4_3 = $doc->createElement("CAP", str_pad($v['capspe'], 5, "0", STR_PAD_LEFT));
                         $el_2_2_2_4->appendChild($el_2_2_2_4_3);
                     }
                     $el_2_2_2_4_4 = $doc->createElement("Comune", strtoupper($v['citspe']));
@@ -1114,7 +1114,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
                         $el_3_2_1_1->appendChild($el_3_2_1_1_2);
                         $el_3_2_1->appendChild($el_3_2_1_1);
                     }
-                    if (strlen(trim($v['codfis'])) > 0 && $v['country'] == 'IT') {
+					if (preg_match('/[A-Z0-9]{11,16}/', strtoupper(trim($v['codfis']))) && $v['country'] == 'IT') {
                         $el_3_2_1_2 = $doc->createElement("CodiceFiscale", strtoupper($v['codfis']));
                         $el_3_2_1->appendChild($el_3_2_1_2);
                     }
@@ -1122,19 +1122,19 @@ function creaFileDAT20($aziend, $data, $periodo) {
                     $el_3_2_2 = $doc->createElement("AltriDatiIdentificativi", "");
                     // la denominazione se persona giuridica, nome e cognome se persona giuridica
                     if ($v['sexper'] == 'G') {
-                        $el_3_2_2_1 = $doc->createElement("Denominazione", preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['ragso1'] . ' ' . $v['ragso2']))));
+                        $el_3_2_2_1 = $doc->createElement("Denominazione", substr(preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars(str_replace('&', 'e', $v['ragso1'] . ' ' . $v['ragso2'])))), 0, 80));
                         $el_3_2_2->appendChild($el_3_2_2_1);
                     } else {
-                        $el_3_2_2_2 = $doc->createElement("Nome", preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['legrap_pf_nome']))));
+                        $el_3_2_2_2 = $doc->createElement("Nome", substr(preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['legrap_pf_nome']))), 0, 60));
                         $el_3_2_2->appendChild($el_3_2_2_2);
-                        $el_3_2_2_3 = $doc->createElement("Cognome", preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['legrap_pf_cognome']))));
+                        $el_3_2_2_3 = $doc->createElement("Cognome", substr(preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['legrap_pf_cognome']))), 0, 60));
                         $el_3_2_2->appendChild($el_3_2_2_3);
                     }
                     $el_3_2_2_4 = $doc->createElement("Sede", '');
-                    $el_3_2_2_4_1 = $doc->createElement("Indirizzo", preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['indspe']))));
+                    $el_3_2_2_4_1 = $doc->createElement("Indirizzo", substr(preg_replace('/[[:^print:]]/', '', strtoupper(htmlspecialchars($v['indspe']))), 0, 60));
                     $el_3_2_2_4->appendChild($el_3_2_2_4_1);
-                    if (is_numeric($v['capspe']) && strlen($v['capspe']) == 5) { // per evitare l'errore (loro) il cap lo scrivo solo se è italiano
-                        $el_3_2_2_4_3 = $doc->createElement("CAP", $v['capspe']);
+                    if (is_numeric($v['capspe']) && strlen($v['capspe']) <= 5) { // per evitare l'errore (loro) il cap lo scrivo solo se è italiano
+                        $el_3_2_2_4_3 = $doc->createElement("CAP", str_pad($v['capspe'], 5, "0", STR_PAD_LEFT));
                         $el_3_2_2_4->appendChild($el_3_2_2_4_3);
                     }
                     $el_3_2_2_4_4 = $doc->createElement("Comune", strtoupper($v['citspe']));
