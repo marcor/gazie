@@ -104,6 +104,7 @@ if ( !isset($_POST['this_date_Y']) )
 	echo "\t </tr>\n";
 	echo "</table>\n";
 	echo "</form>\n";
+    require("../../library/include/footer.php");
 }
 else {
 $utsdate= mktime(0,0,0,$form['this_date_M'],$form['this_date_D'],$form['this_date_Y']);
@@ -166,7 +167,9 @@ if (isset($form['a'])) {
 		if ($ctrl_cm <> $v['i_g']) {
 			$ctrl_cm = $v['i_g'];
 		}
-		
+
+		//echo "<br>".$v['g_d']." ".$k . " ". $v['i_d']." ".gaz_format_quantity($v['v_a'],0,$admin_aziend['decimal_price'] )." ".gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'] )." ". gaz_format_quantity($v['v_g'],0,$admin_aziend['decimal_price'] );
+        
 		$exporter->addRow(
 				array(
 						$v['g_d'],
@@ -176,7 +179,6 @@ if (isset($form['a'])) {
 						gaz_format_quantity($v['g_a'],0,$admin_aziend['decimal_quantity'] ),
 						gaz_format_quantity($v['v_g'],0,$admin_aziend['decimal_price'] ),
 				));
-		
 		$elem_n++;
 	}
 }

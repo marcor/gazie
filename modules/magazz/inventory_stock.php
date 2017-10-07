@@ -296,9 +296,10 @@ if (!empty($msg)) {
 				</td>
 			</tr>';
 }
+//' . $script_transl['select'] . '</th>
 echo '	<thead>
 			<tr>
-				<th class="FacetFieldCaptionTD">' . $script_transl['select'] . '</th>
+				<th class="FacetFieldCaptionTD"><a href="export_inventory_stock.php" class="btn btn-default btn-xs">Esporta</a></th>
 				<th class="FacetFieldCaptionTD">' . $script_transl['code'] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl['descri'] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl['mu'] . '</th>
