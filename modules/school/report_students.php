@@ -63,6 +63,10 @@ function getGravatar($email,$d = 'mm') {
                             </a>
                         </th>
                         <th>
+                            <a href="#" class="orby" data-order="Login">
+                                <?php echo $script_transl["Login"]; ?>
+                            </a>
+                        <th>
                             <a href="#" class="orby" data-order="email">
                                 <?php echo $script_transl["email"]; ?>
                             </a>
@@ -98,6 +102,7 @@ function getGravatar($email,$d = 'mm') {
                         echo "<td>" . $cr["classe"] . " " . $cr["sezione"] . " " . $cr["anno_scolastico"] . "/" . substr($cr["anno_scolastico"] + 1, 2, 2) . " &nbsp;</td>";
                         echo "<td>" . $r["student_lastname"] . " &nbsp;</td>";
                         echo "<td>" . $r["student_firstname"] . " &nbsp;</td>";
+                        echo "<td>" . $r["student_name"] . " &nbsp;</td>";
                         echo '<td><img src="'.  getGravatar($r["student_email"]).'" height="32"> ' . $r["student_email"] . " </td>";
                         echo "<td>" . $r["student_telephone"] . " </td>";
                         echo '<td class="';

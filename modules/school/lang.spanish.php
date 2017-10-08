@@ -62,6 +62,7 @@ $strScript = array(
         'classe' => 'Classe',
         'Cognome' => "Cognome",
         'Nome' => 'Nome',
+        'Login' => 'username',
         'email' => "E-Mail",
         'telephone' => "Telefono"
     ),

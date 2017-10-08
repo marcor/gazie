@@ -90,6 +90,8 @@ class Registration {
                 // "Adding the charset to the DSN is very important for security reasons,
                 // most examples you'll see around leave it out. MAKE SURE TO INCLUDE THE CHARSET!"
                 $this->db_connection = new PDO('mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8', DB_USER, DB_PASS);
+				$query_select_classroom = $this->db_connection->prepare("/*!50701 SET SESSION sql_mode='' */");
+				$query_select_classroom->execute();
                 return true;
                 // If an error is catched, database connection failed
             } catch (PDOException $e) {
