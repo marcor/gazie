@@ -943,12 +943,12 @@ function creaFileDAT20($aziend, $data, $periodo) {
         // controllo se ho un cambio partner, nel caso mia sia avvicinato al limite di 1000 genero un altro file
         if ($ctrl_partner <> $v['clfoco'] && $partner_number >= 998) {
             $file_group_number++;
-            $partner_number = 0;
         }
         if ($v['regiva'] < 6 && $v['tipo_documento'] != 'TD99') {
             $type = 'DTE';
             // ---------- FATTURE EMESSE --------------
             if ($ctrl_block_file != $type . $file_group_number) { // ho un nuovo file perché è cambiato il tipo oppure ho superato il li limite 1000
+				$partner_number = 0;
                 if ($ctrl_block_file) { // non è il primo quindi LO scrivo su un nuovo file
                     $file = $aziend['country'] . $aziend['codfis'] . "_DF_" . end($block_name) . substr($periodo, 0, 2) . substr($periodo, -1) . ".xml";
                     $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
@@ -1092,6 +1092,7 @@ function creaFileDAT20($aziend, $data, $periodo) {
             $type = 'DTR';
             // ---------- FATTURE RICEVUTE --------------
             if ($ctrl_block_file != $type . $file_group_number) { // ho un nuovo file perché è cambiato il tipo oppure ho superato il li limite 1000
+				$partner_number = 0;
                 if ($ctrl_block_file) { // non è il primo quindi LO scrivo su un nuovo file
                     $file = $aziend['country'] . $aziend['codfis'] . "_DF_" . end($block_name) . substr($periodo, 0, 2) . substr($periodo, -1) . ".xml";
                     $fileurl = '../../data/files/' . $aziend['codice'] . '/' . $file;
