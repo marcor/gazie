@@ -930,6 +930,8 @@ function creaHeadFile() {
 
 function creaFileDAT20($aziend, $data, $periodo) {
     $doc = new DOMDocument;
+	$doc->preserveWhiteSpace = false;
+	$doc->formatOutput = true;
     $ctrl_partner = 0;
     $ctrl_block_file = FALSE;
     $block_name = array();
