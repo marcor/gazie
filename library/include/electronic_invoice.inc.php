@@ -225,6 +225,8 @@ class invoiceXMLvars {
         $nr = 1;
         $results = array();
         $dom = new DOMDocument;
+		$dom->preserveWhiteSpace = false;
+		$dom->formatOutput = true;
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             $rigo['imp_sconto'] = 0.00;
             if ($rigo['tiprig'] <= 1) {
@@ -410,6 +412,8 @@ class invoiceXMLvars {
 function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false) {
     $XMLvars = new invoiceXMLvars();
     $domDoc = new DOMDocument;
+	$domDoc->preserveWhiteSpace = false;
+	$domDoc->formatOutput = true;
     $ctrl_doc = 0;
     $n_linea = 1;
     // definisco le variabili dei totali 

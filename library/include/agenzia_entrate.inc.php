@@ -829,6 +829,8 @@ class AgenziaEntrate {
 // --- INIZIO FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DELLE LIQUIDAZIONI PERIODICHE
 function creaFileIVP17($aziend, $data) {
     $domDoc = new DOMDocument;
+	$doc->preserveWhiteSpace = false;
+	$doc->formatOutput = true;
     $domDoc->load("../../library/include/template_IVP17.xml");
     $xpath = new DOMXPath($domDoc);
     $res = $xpath->query('//*[@identificativo = ""]');
