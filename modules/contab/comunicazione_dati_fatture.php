@@ -475,17 +475,27 @@ if (!isset($_POST['ritorno'])) {
             $id = array('anno', "'" . $form['anno'] . "' AND trimestre_semestre = '" . $form['trimestre_semestre'] . "'");
             require("../../library/include/agenzia_entrate.inc.php");
             $files = creaFileDAT20($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
-            foreach ($files as $blocco => $nome_blocco) {
-                $form['nome_file_' . $blocco] = $nome_blocco;
+            foreach ($files['files'] as $n_f) {
+				if (substr($n_f,-9,1)=='R'){
+					$form['nome_file_DTR'] = $n_f;
+				} else {
+					$form['nome_file_DTE'] = $n_f;
+				}
             }
+            $form['nome_file_ZIP'] = $files['ZIP'];
             gaz_dbi_table_update('comunicazioni_dati_fatture', $id, $form);
             $msg['war'][] = "download";
         } else { // e' un'inserimento
             require("../../library/include/agenzia_entrate.inc.php");
             $files = creaFileDAT20($admin_aziend, $queryData[0], substr($form['anno'], -2) . str_pad($form['trimestre_semestre'], 2, '0', STR_PAD_LEFT));
-            foreach ($files as $blocco => $nome_blocco) {
-                $form['nome_file_' . $blocco] = $nome_blocco;
+            foreach ($files['files'] as $n_f) {
+				if (substr($n_f,-9,1)=='R'){
+					$form['nome_file_DTR'] = $n_f;
+				} else {
+					$form['nome_file_DTE'] = $n_f;
+				}
             }
+            $form['nome_file_ZIP'] = $files['ZIP'];
             gaz_dbi_table_insert('comunicazioni_dati_fatture', $form);
             $msg['war'][] = "download";
         }

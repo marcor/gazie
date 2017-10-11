@@ -1257,7 +1257,8 @@ function creaFileDAT20($aziend, $data, $periodo) {
     } else {
         foreach ($block_name as $vbn) {
             $zip->addFile($baseurl . $vbn . substr($periodo, 0, 2) . substr($periodo, -1) . ".xml", basename($baseurl . $vbn . substr($periodo, 0, 2) . substr($periodo, -1) . ".xml"));
-        }
+			$acc['files'][] = $aziend['country'] . $aziend['codfis'] . "_DF_".$vbn . substr($periodo, 0, 2) . substr($periodo, -1) . ".xml";
+			}
         $zip->close();
         $acc['ZIP'] = $aziend['country'] . $aziend['codfis'] . '_DF_Z' . $periodo . ".zip";
     }
