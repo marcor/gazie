@@ -981,8 +981,8 @@ function creaFileDAT20($aziend, $data, $periodo) {
                 $el_2_1_2 = $doc->createElement("AltriDatiIdentificativi", "");
                 // la denominazione se persona giuridica, nome e cognome se persona giuridica
                 if ($aziend['sexper'] == 'G') {
-				$row['ragso1']=str_replace('&','E',$row['ragso1']);
-				$row['ragso2']=str_replace('&','E',$row['ragso2']);
+					$aziend['ragso1']=str_replace('&','E',$aziend['ragso1']);
+					$aziend['ragso2']=str_replace('&','E',$aziend['ragso2']);
                     $el_2_1_2_1 = $doc->createElement("Denominazione", preg_replace('/[^A-Z0-9 _",\-\'\.]/', '', strtoupper(str_replace('&','E',$aziend['ragso1'] . ' ' . $aziend['ragso2']))));
                     $el_2_1_2->appendChild($el_2_1_2_1);
                 } else {
