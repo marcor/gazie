@@ -60,6 +60,9 @@ $User = "root";
 //
 $Password = "";
 //
+// Porta sulla quale è in ascolto il database
+$Port = 3306;
+//
 // Prefisso delle tabelle di Gazie.
 //
 // ATTENZIONE: il prefisso delle tabelle predefinito è "gaz". Eventualmente, si

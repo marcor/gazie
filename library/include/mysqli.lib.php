@@ -26,7 +26,7 @@
 
 function connectToDB() {
     global $link, $Host, $Database, $User, $Password;
-    $link = @mysqli_connect($Host, $User, $Password, $Database) or die("Was not found, << $Database >>  database! <br />
+    $link = @mysqli_connect($Host, $User, $Password, $Database, $Port) or die("Was not found, << $Database >>  database! <br />
              Could not be installed, try to do so by <a href=\"../../setup/install/install.php\"> clicking HERE! </a><br />
              <br />Non &egrave; stata trovata la base dati di nome << $Database >>! <br />
              Potrebbe non essere stato installata, prova a farlo <a href=\"../../setup/install/install.php\"> cliccando QUI! </a> <br />
