@@ -31,8 +31,8 @@ if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordin
     $ca = filter_input(INPUT_POST, 'codart');
 } else {
     $rn = '0';
-    $ob = 'descri';
-    $so = 'ASC';
+    $ob = 'last_used';
+    $so = 'DESC';
     $cs = '';
     $ca = '';
 }
