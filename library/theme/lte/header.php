@@ -60,7 +60,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title><?php echo $admin_aziend['ragso1']; ?></title>
+        <title><?php echo gettitolo($mod_uri).' > '.$admin_aziend['ragso1']; ?></title>
         <link rel="shortcut icon" href="../../library/images/favicon.ico">			
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <!--<link rel="stylesheet" href="../../library/theme/lte/adminlte/bootstrap/css/bootstrap.min.css">-->

@@ -1,4 +1,11 @@
 <?php
+
+function gettitolo($uri) {
+    $part = explode("/",$uri);
+    $part = explode(".",$part[2]);
+    $part = str_replace("_", " ", $part[0]);
+    return ucwords($part);
+}
   
 function get_rref_type($value) {
     if ( stristr($value, "report_") ) return "fa-list";
