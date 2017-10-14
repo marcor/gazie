@@ -67,6 +67,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['cod_partner'] = $testata['clfoco'];
     $form['pay_closure'] = 0;
     $partnersel = $anagrafica->getPartner($form['cod_partner']);
+    $form['pagame'] = $partnersel['codpag'];
     if ($form['numdocumen'] > 0 or ! empty($form['numdocumen'])) {
         $form['inserimdoc'] = '1';
     } else {
@@ -157,6 +158,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['cod_partner'] = $_POST['cod_partner'];
     $form['pay_closure'] = $_POST['pay_closure'];
     $partnersel = $anagrafica->getPartner($form['cod_partner']);
+    $form['pagame'] = intval($_POST['pagame']);
     //ricarico i registri per il form del rigo di inserimento contabile
     $form['insert_mastro'] = $_POST['insert_mastro'];
     $form['insert_conto'] = $_POST['insert_conto'];
@@ -190,23 +192,24 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         if ($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) {
             if ($_POST['conto_rc' . $i] > 0) {
                 $countPartners++;
+                $partnersel = $anagrafica->getPartner($form['conto_rc' . $i]);
                 //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
                 if ($_POST['cod_partner'] == 0 and $form['conto_rc' . $i] > 0) {
-                    $partner = $anagrafica->getPartner($form['conto_rc' . $i]);
+                    $partner = $partnersel;
                     $loadCosRic = substr($form['conto_rc' . $i], 0, 1);
                     $form['cod_partner'] = '';
                     // ricarico pure l'eventuale riferimento al tipo di operazione ma solo se vuoto
                     if ($form['operation_type'] == '') {
                         $form['operation_type'] = $partner['operation_type'];
                     }
-                    if ($form['inserimdoc'] > 0 && $countPartners==1) { // solo se è previsto l'utilizzo dei dati dei documenti ed ho un solo partner lo setto
+                    if ($form['inserimdoc'] > 0 && $countPartners == 1) { // solo se è previsto l'utilizzo dei dati dei documenti ed ho un solo partner lo setto
                         $form['cod_partner'] = $_POST['conto_rc' . $i];
                     } else {
                         $form['cod_partner'] = '';
                     }
+                    $form['pagame'] = $partner['codpag'];
                 }
-                $partnersel = $anagrafica->getPartner($form['conto_rc' . $i]);
-                $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
+                $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
                 // in caso di pagamento immediato dovrò settare l'importo di chiusura ed il relativo conto
                 if ($pay['pagaut'] > 1 && ($form['registroiva'] >= 6 && $form['registroiva'] <= 9) && $form['operatore'] == 1) { // è un documento di acquisto pagato immediatamente (es.contanti-assegno-bancomat-carta)  
                     $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['pagaut']);
@@ -216,6 +219,8 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $pay['incaut']);
                     $form['pay_closure'] = $payacc['codice'];
                     $form['pay_importo'] = $form['importorc'][$i];
+                } else {
+                    $form['pay_closure'] = 0;
                 }
                 // in $form['pay_closure'] ho la contropartita di chiusura
             } else {
@@ -240,7 +245,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $form['paymov'][$i]['new'] = array('id' => 'new', 'id_tesdoc_ref' => 'new', 'amount' => '0.00', 'expiry' => '');
             }
             /* controllo se il pagamento del cliente/fornitore prevede che vengano 
-               eseguite le scritture di chiusura e nel caso setto il valore giusto */
+              eseguite le scritture di chiusura e nel caso setto il valore giusto */
         }
         if ($loadCosRic == 1 && substr($form['conto_rc' . $i], 0, 1) == 4 && $partner['cosric'] > 0 && $form['registroiva'] > 0) {  //e' un  cliente agisce sui ricavi
             $form['mastro_rc'][$i] = substr($partner['cosric'], 0, 3) . "000000";
@@ -1035,6 +1040,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['darave_rc'] = array();
     $form['importorc'] = array();
     $form['cod_partner'] = 0;
+    $form['pagame'] = 0;
     $form['pay_closure'] = 0;
     //registri per il form dei righi iva
     $_POST['rigiva'] = 0;
@@ -1416,8 +1422,16 @@ echo "</script>\n";
                 if ($partnersel['ragso1'] != '') {
                     ?>
                     <div class="tab-content col-sm-12 col-md-12 col-lg-12">
-                        <?php echo $partnersel['ragso1'] . " " . $partnersel['ragso2'] . " - " . $partnersel['indspe'] . " - " . $partnersel['citspe'] . " - Partita IVA:" . $partnersel['pariva']; ?>
+                        <?php
+                        echo $partnersel['ragso1'] . " " . $partnersel['ragso2'] . " - " . $partnersel['indspe'] . " - " . $partnersel['citspe'] . " - Partita IVA:" . $partnersel['pariva'] . " Pagamento:";
+                        $select_pagame = new selectpagame("pagame");
+                        $select_pagame->addSelected($form["pagame"]);
+                        $select_pagame->output('change_pag', "small");
+                        ?>
                     </div><!-- chiude tab-content  -->
+                    <?php } else {
+                    ?>
+                    <input type="hidden" name="pagame" value="<?php echo $form['pagame']; ?>" />
                     <?php
                 }
                 ?>
@@ -1427,6 +1441,7 @@ echo "</script>\n";
     } else {
         ?>
         <input type="hidden" name="datdoc" value="<?php echo $form['datdoc']; ?>" />
+        <input type="hidden" name="pagame" value="<?php echo $form['pagame']; ?>" />
         <input type="hidden" name="sezioneiva" value="<?php echo $form['sezioneiva']; ?>" />
         <input type="hidden" name="numdocumen" value="<?php echo $form['numdocumen']; ?>" />
         <input type="hidden" name="protocollo" value="<?php echo $form['protocollo']; ?>" />
@@ -1534,7 +1549,7 @@ echo "</script>\n";
 //inserimento movimento contabile
     echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['del_this'] . "</div>\n";
     if ($form['pay_closure'] >= 1 && $toDo == 'insert') {
-        $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $partnersel['codpag']);
+        $pay = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         $payacc = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['pay_closure']);
         $gForm->toast("ATTENZIONE!!! Il pagamento <span style='background-color: yellow;'>" . $pay['descri'] . "</span> prevede che al termine della registrazione siano aggiunti due righi per la chiusura automatica della partita sul conto: <span style='background-color: yellow;'>" . $pay['pagaut'] . '-' . $payacc['descri'] . "</span>", 'alert-last-row', 'alert-success');  //lo mostriamo
     }
