@@ -662,7 +662,6 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                         $new_paymov[$j]['expiry'] = gaz_format_date($new_paymov[$j]['expiry'], true);
                                         $calc->updatePaymov($new_paymov[$j]);
                                     }
-                                    $j++;
                                 }
                             } else { // prima non li avevo quindi adesso devo introdurre TUTTI I NUOVI 
                                 foreach ($new_paymov as $k => $v) { // attraverso il nuovo array
