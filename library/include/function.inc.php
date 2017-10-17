@@ -968,7 +968,7 @@ class selectPartner extends SelectBox {
 // classe per la generazione di select box degli articoli
 class selectartico extends SelectBox {
 
-    function output($cerca, $field = 'C', $class = 'FacetSelect') {
+    function output($cerca, $field = 'C', $class = 'FacetSelect',$sele=1) {
         global $gTables, $script_transl, $script_transl;
         $msg = "";
         $tabula = ' tabindex="4" ';
@@ -983,17 +983,19 @@ class selectartico extends SelectBox {
             // $result = gaz_dbi_dyn_query("codice,descri,barcode", $gTables['artico'], "codice LIKE '" . addslashes($cerca) . $opera, "descri DESC");
             $numclfoco = gaz_dbi_num_rows($result);
             if ($numclfoco > 0) {
-                $tabula = "";
-                echo ' <select tabindex="4" name="' . $this->name . '" class="' . $class . '">';
-                while ($a_row = gaz_dbi_fetch_array($result)) {
-                    $selected = "";
-                    if ($a_row["codice"] == $this->selected) {
-                        $selected = ' selected=""';
-                    }
-                    echo ' <option value="' . $a_row["codice"] . '"' . $selected . '>' . $a_row["codice"] . '-' . $a_row["descri"] . '</option>';
-                }
-                echo ' </select>';
-            } else {
+				if ($sele) {
+					$tabula = "";
+					echo ' <select tabindex="4" name="' . $this->name . '" class="' . $class . '">';
+					while ($a_row = gaz_dbi_fetch_array($result)) {
+						$selected = "";
+						if ($a_row["codice"] == $this->selected) {
+							$selected = ' selected=""';
+						}
+						echo ' <option value="' . $a_row["codice"] . '"' . $selected . '>' . $a_row["codice"] . '-' . $a_row["descri"] . '</option>';
+					}
+					echo ' </select>';
+				}
+			} else {
                 $msg = $script_transl['notfound'] . '!';
                 echo '<input type="hidden" name="' . $this->name . '" value="" />';
             }

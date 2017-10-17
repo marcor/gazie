@@ -28,13 +28,11 @@ if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordin
     $ob = filter_input(INPUT_POST, 'order_by');
     $so = filter_input(INPUT_POST, 'sort');
     $cs = filter_input(INPUT_POST, 'cosear');
-    $ca = filter_input(INPUT_POST, 'codart');
 } else {
     $rn = '0';
     $ob = 'last_used';
     $so = 'DESC';
     $cs = '';
-    $ca = '';
 }
 require("../../library/include/header.php");
 ?>
@@ -110,13 +108,13 @@ $gForm = new magazzForm();
 ?>
 <form method="POST" id="form">
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
-    <div class="panel panel-info col-lg-6">
+    <div class="panel panel-info col-lg-8">
         <div class="container-fluid">
-            <label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>
-            <?php
+		<label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>
+		<?php
             $select_artico = new selectartico("codart");
-            $select_artico->addSelected($ca);
-            $select_artico->output(substr($cs, 0, 20), 'C', "col-lg-3");
+            $select_artico->output(substr($cs, 0, 20), 'C', "col-lg-3",0);
+			echo ' aggiungi il simbolo % dopo il codice o seleziona l\'articolo dall\'elenco';
             ?>
         </div>
     </div>
