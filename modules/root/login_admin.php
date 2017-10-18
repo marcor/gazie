@@ -146,7 +146,7 @@ if ((isset($_SESSION['Abilit']) and isset($_SESSION["Login"])) and ( $_SESSION['
 	<link rel="shortcut icon" href="../../library/images/favicon.ico" />
 	<link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/default.css" />
 	<link rel="stylesheet" type="text/css" href="../../library/theme/g7/skins/default.css" />
-	<title>Gazie - Login</title>
+	<title>GAzie - Login</title>
 	<noscript>
 	<h1>
 		ATTENTION!!!<br />Yours browser it is not qualified to execute code Javascript, in order to use GAZIE is indispensable to change such formulation!<br />

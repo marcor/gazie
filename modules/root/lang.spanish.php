@@ -88,7 +88,7 @@ $strScript = array("admin.php" =>
     "login_admin.php" =>
     array(/* 0 */ " La nueva contrase&ntilde;a debe tener un largo de al menos ",
         /* 1 */ " caracteres,<BR> diferente de la antigua e igual a la de la confirmaci&oacute;n!<br>",
-        /* 2 */ " ha tenido acceso a Gazie <br> pero su contrase&ntilde;a ha caducado, debe insertar una nueva!<br>",
+        /* 2 */ " ha tenido acceso a GAzie <br> pero su contrase&ntilde;a ha caducado, debe insertar una nueva!<br>",
         /* 3 */ " Usuario y/o contrase&ntilde;a incorrecta!<br>",
         /* 4 */ " Acceso denegado a este m&oacute;dulo!",
         /* 5 */ " Nueva contrase&ntilde;a",

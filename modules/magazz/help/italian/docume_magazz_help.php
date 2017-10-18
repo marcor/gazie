@@ -79,7 +79,7 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		rappresentano implicitamente il movimento (per esempio nel caso dell'emissione
 		dei documenti di trasporto o di fatture). In condizioni normali, la produzione
 		di questi movimenti automatici avviene senza alcuna richiesta esplicita; tuttavia,
-		&egrave; possibile configurare Gazie in modo che non lo faccia: in questa
+		&egrave; possibile configurare GAzie in modo che non lo faccia: in questa
 		evenienza particolare, si pu&ograve; rendere utile la voce
 		<strong>Genera movimenti di magazzino</strong> per ottenere queste
 		registrazioni.</p> -->

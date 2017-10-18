@@ -57,7 +57,7 @@ $strScript = array("admin.php" =>
                 'title' => "APACHE il Server Web pi&ugrave; utilizzato nel mondo"),
             array('href' => "http://dev.mysql.com/downloads/",
                 'img' => "mysqldbms.gif",
-                'title' => "MySQL, il database dentro il quale Gazie archivia i suoi dati"),
+                'title' => "MySQL, il database dentro il quale GAzie archivia i suoi dati"),
             array('href' => "http://www.php.net",
                 'img' => "phppower.gif",
                 'title' => "Sito ufficiale di PHP, il linguaggio per il Web Dinamico"),

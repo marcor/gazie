@@ -89,7 +89,7 @@ $Timezone = "Europe/Rome";
 //
 define('EMAIL_FOOTER', 'E-mail generata da GAzie ver.');
 //
-// Gazie utilizza la funzione PHP set_time_limit() per consentire il completamento
+// GAzie utilizza la funzione PHP set_time_limit() per consentire il completamento
 // di elaborazioni che richiedono più tempo del normale.
 // In condizioni normali, la variabile $disable_set_time_limit deve corrispondere
 // a FALSE. La modifica del valore a TRUE serve solo in situazioni eccezionali,

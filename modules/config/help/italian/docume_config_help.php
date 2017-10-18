@@ -26,7 +26,7 @@
 	ventunesimo del registro IVA &laquo;C&raquo; delle vendite. Gazie
 	per&ograve; definisce le serie di numerazione come &laquo;sezioni&raquo;
 	e le numera con una cifra numerica. Pertanto, il documento 21/C viene
-	rappresentato come 21/3. Inoltre, con Gazie la serie (la sezione) appare
+	rappresentato come 21/3. Inoltre, con GAzie la serie (la sezione) appare
 	sempre e non &egrave; possibile farne a meno se se ne intende gestire
 	una sola.</p>
 </div>
@@ -117,7 +117,7 @@
 	<div id="Utenti" class="tab-pane fade in">
 		<p class="help-text">A partire da questa voce del men&ugrave; &egrave; possibile
 		accedere all'elenco degli utenti della procedura, o alla maschera
-		di inserimento di un nuovo utente. Gazie richiede che sia presente
+		di inserimento di un nuovo utente. GAzie richiede che sia presente
 		almeno l'utente <strong>amministratore</strong>, ma ne possono
 		essere definiti altri, con minori privilegi.</p>
 	</div>
