@@ -52,7 +52,8 @@ $strScript = array("browse_document.php" =>
         'retention_tax' => 'Ritenuta',
         'payroll_tax' => 'Cassa Prev.',
         'barcode' => 'Cod.Barre',
-        'clone' => 'Duplica'
+        'clone' => 'Duplica',
+		'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona' 
     ),
     "report_statis.php" =>
     array("statistica ",

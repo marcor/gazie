@@ -40,6 +40,20 @@ $strScript = array("browse_document.php" =>
         'code' => "Code"),
     "report_artico.php" =>
     array('title' => 'Goods and service report',
+        'codice' => "Codice",
+        'descri' => "Descrizione",
+        'good_or_service' => "Merce-Servizio",
+        'unimis' => "U.M.",
+        'catmer' => "Cat. merc.",
+        'preacq' => 'Prezzo acquisto',
+        'preve1' => 'Prezzo vend.1',
+        'stock' => 'Giacenza',
+        'aliiva' => 'IVA',
+        'retention_tax' => 'Ritenuta',
+        'payroll_tax' => 'Cassa Prev.',
+        'barcode' => 'Cod.Barre',
+        'clone' => 'Duplica',
+		'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona' 
     ),
     "report_statis.php" =>
     array("statistic ",

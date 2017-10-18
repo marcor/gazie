@@ -114,7 +114,7 @@ $gForm = new magazzForm();
 		<?php
             $select_artico = new selectartico("codart");
             $select_artico->output(substr($cs, 0, 20), 'C', "col-lg-3",0);
-			echo ' aggiungi il simbolo % dopo il codice o seleziona l\'articolo dall\'elenco';
+			echo $script_transl['cosear'];
             ?>
         </div>
     </div>
