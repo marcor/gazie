@@ -40,11 +40,10 @@ if (isset($_GET['auxil1'])) {
 }
 
 if (isset($_GET['all'])) {
-	$auxil = "&all=yes";
-	$passo = 100000;
+    $auxil = "&all=yes";
 } else {
 	if (isset($_GET['auxil']) and $auxil1=="") {
-		$where .= " AND ragso1 LIKE '".addslashes($auxil)."%'";
+		$where .= " AND ragso1 LIKE '%".addslashes($auxil)."%'";
 	} elseif (isset($_GET['auxil1'])) {
 		$codicetemp = intval($mascli)+intval($auxil1); 
 		$where .= " AND id LIKE '".$codicetemp."%'";
@@ -55,18 +54,7 @@ if (!isset($_GET['field'])) {
 	$orderby = "id DESC";
 }
 
-if ( isset($_GET['ricerca_completa'])) {
-	$ricerca_testo = $_GET['ricerca_completa'];
-	$where .= " and ( ragso1 like '%".$ricerca_testo."%' ";
-	$where .= " or ragso2 like '%".$ricerca_testo."%' ";
-	$where .= " or pariva like '%".$ricerca_testo."%' ";
-	$where .= " or pariva like '%".$ricerca_testo."%' ";
-	$where .= " or codfis like '%".$ricerca_testo."%' ";
-	$where .= " or citspe like '%".$ricerca_testo."%' )";
-}
-
 ?>
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl["title"]; ?></div>
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <tr>
@@ -76,11 +64,12 @@ if ( isset($_GET['ricerca_completa'])) {
 <td class="FacetFieldCaptionTD">
 <input placeholder="Cerca Ragione Sociale" class="input-xs form-control" type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="7" tabindex="1" class="FacetInput">
 </td>
-<td class="FacetFieldCaptionTD">
-<input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
+<td class="FacetFieldCaptionTD" colspan="5">&nbsp;</td>
+<td class="FacetFieldCaptionTD" align="right">
+<input type="submit" class="btn btn-sm btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;">
 </td>
-<td class="FacetFieldCaptionTD" colspan="6">
-<input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
+<td class="FacetFieldCaptionTD" align="center">
+<input type="submit" class="btn btn-sm btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;">
 </td>
 </tr>
 <?php
@@ -105,12 +94,12 @@ $recordnav -> output();
 </tr>
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
-    echo "<tr>";
-    echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"admin_anagra.php?id=".$a_row["id"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id"]."</a> &nbsp</td>";
-	echo "<td class=\"FacetDataTD\" title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." ".$a_row["ragso2"]."</td>";
-	echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["sexper"]."</td>";
+    echo "<tr class=\"FacetDataTD\">";
+    echo "<td ><a class=\"btn btn-xs btn-default\" href=\"admin_anagra.php?id=".$a_row["id"]."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id"]."</a> &nbsp</td>";
+	echo "<td title=\"".$a_row["ragso2"]."\">".$a_row["ragso1"]." ".$a_row["ragso2"]."</td>";
+	echo "<td align=\"center\">".$a_row["sexper"]."</td>";
 	$google_string = str_replace(" ","+",$a_row["indspe"]).",".str_replace(" ","+",$a_row["capspe"]).",".str_replace(" ","+",$a_row["citspe"]).",".str_replace(" ","+",$a_row["prospe"]);
-    echo "<td class=\"FacetDataTD\" title=\"".$a_row["capspe"]." ".$a_row["indspe"]."\">";
+    echo "<td title=\"".$a_row["capspe"]." ".$a_row["indspe"]."\">";
 	echo "<a class=\"btn btn-xs btn-default\" target=\"_blank\" href=\"https://www.google.it/maps/place/".$google_string."\">".$a_row["citspe"]." (".$a_row["prospe"].")&nbsp;<i class=\"glyphicon glyphicon-map-marker\"></i></a>";
 	echo "</td>";
 	$title = "";
@@ -134,11 +123,27 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
        $telefono = "_";
        $title = " nessun contatto telefonico memorizzato ";
     }
-	echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["telefo"])." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["cell"])." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["fax"])." &nbsp;</td>";
-    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["e_mail"]."</a> &nbsp;</td>";   
-    echo "<td class=\"FacetDataTD\" title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["pariva"]." <br/> ".$a_row["codfis"]."</a> &nbsp;</td>";   
+	echo "<td title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["telefo"])." &nbsp;</td>";
+    echo "<td title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["cell"])." &nbsp;</td>";
+    echo "<td title=\"$title\" align=\"center\">".gaz_html_call_tel($a_row["fax"])." &nbsp;</td>";
+    echo "<td title=\"$title\" align=\"center\"><a href='mailto:".$a_row["e_mail"]."'>".$a_row["e_mail"]."</a> &nbsp;</td>";   
+
+    // colonna dati fiscali
+    if ($a_row['pariva'] > 0 and empty($a_row['codfis'])) {
+        echo "<td align=\"center\">" . $a_row['country'] . " " . $a_row['pariva'] . "</td>";
+    } elseif ($a_row['pariva'] == 0 and ! empty($a_row['codfis'])) {
+        echo "<td align=\"center\">" . $a_row['codfis'] . "</td>";
+    } elseif ($a_row['pariva'] > 0 and ! empty($a_row['codfis'])) {
+        if ($a_row['pariva'] == $a_row['codfis']) {
+            echo "<td align=\"center\">";
+            echo gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']);
+            echo "</td>";
+        } else {
+            echo "<td align=\"center\">" . gaz_html_ae_checkiva($a_row['country'], $a_row['pariva']) . "<br>" . $a_row['codfis'] . "</td>";
+        }
+    } else {
+        echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
+    }
 
     echo "</tr>\n";
 }
