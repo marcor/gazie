@@ -1162,7 +1162,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                                     echo ' disabled  title="Hai già arrotondato una volta!" ';
                                 }
                                 echo '><i class="glyphicon glyphicon-arrow-up"></i></button></div>'
-                                . '<div class="col-sm-8"><b>' . $admin_aziend['symbol'] . ' ' . gaz_format_number($tot) . '</b></div>'
+                                . '<div class="col-sm-8"><b>' . $admin_aziend['html_symbol'] . ' ' . gaz_format_number($tot) . '</b></div>'
                                 . '<div class="col-sm-2"><button type="submit" class="btn btn-default btn-sm" name="rounddown" ><i class="glyphicon glyphicon-arrow-down"></i></button></div>'
                                 . '</td>'
                                 . '<td class="text-center">' . gaz_format_number($form['net_weight']) . '</td>'

@@ -292,7 +292,7 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "<td class=\"FacetDataTD\"><A HREF=\"http://localhost/gazie/modules/vendit/update_effett.php?id_tes=".$v['id_tes']."\">".$v["progre"]."</A></td>";
         echo "<td class=\"FacetDataTD\">".$v["tipeff"]." </td>";
         echo "<td class=\"FacetDataTD\">".gaz_format_date($v["scaden"])."</td>";
-        echo "<td class=\"FacetDataTD\" align=\"right\">".$admin_aziend['symbol'].' '.gaz_format_number($v["impeff"])." </td>";
+        echo "<td class=\"FacetDataTD\" align=\"right\">".$admin_aziend['html_symbol'].' '.gaz_format_number($v["impeff"])." </td>";
         echo "<td class=\"FacetDataTD\">".$v["customer"]." </td>";
         echo "<td class=\"FacetDataTD\"><A HREF=\"http://localhost/gazie/modules/vendit/admin_docven.php?id_tes=".$v['id_tes']."&Update\">n.".$v["numfat"]."/".$v["seziva"]." - ".gaz_format_date($v["datfat"])."</a></td>";
         echo "<td class=\"FacetDataTD\">".$v["desban"]." </td>";
@@ -312,7 +312,7 @@ if (isset($_POST['preview']) and $msg=='') {
     echo '<TD colspan="4" class="FacetDataTD">'.
                  $script_transl['tot']." n.".
                  $r['tot']['num'].' '.
-                 $admin_aziend['symbol'].' '.
+                 $admin_aziend['html_symbol'].' '.
                  gaz_format_number($r['tot']['value'])."</td>\n".
                  '<TD colspan="3" class="FacetDataTD"></td>';
     echo "</tr>";

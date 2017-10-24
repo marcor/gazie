@@ -1056,7 +1056,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 
     // fine rigo input
     $form['search']['clfoco'] = '';
-    $form['print_total'] = 0;
+    $form['print_total'] = 1;
     $form['delivery_time'] = 30;
     $form['day_of_validity'] = 10;
     $form['cosear'] = "";
@@ -1736,7 +1736,7 @@ $select_spediz->output('portos', 'portos');
 echo "			</td>
 			</tr>
 			<tr>
-				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[28] " . $admin_aziend['symbol'] . "</td>
+				<td class=\"FacetFieldCaptionTD text-right\">$script_transl[28] " . $admin_aziend['html_symbol'] . "</td>
 				<td class=\"FacetDataTD\">
 					<input type=\"text\" value=\"" . $form['traspo'] . "\" name=\"traspo\" maxlength=\"6\" size=\"3\" onchange=\"this.form.submit()\" />
 				</td>
@@ -1817,7 +1817,7 @@ echo '			</td>
 				<td class="FacetFieldCaptionTD text-right">' . $script_transl[32] . '</td>
 				<td class="FacetFieldCaptionTD text-right">' . $script_transl[19] . '</td>
 				<td class="FacetFieldCaptionTD text-right">' . $script_transl['stamp'] . '</td>
-				<td class="FacetFieldCaptionTD text-right">' . $admin_aziend['symbol'] . $script_transl[36] . '</td>
+				<td class="FacetFieldCaptionTD text-right">' . $admin_aziend['html_symbol'] . $script_transl[36] . '</td>
 			</tr>';
 
 foreach ($calc->castle as $k => $v) {

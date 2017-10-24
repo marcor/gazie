@@ -1644,7 +1644,7 @@ $select_banapp->addSelected($form["banapp"]);
 $select_banapp->output();
 echo "</td></tr>\n";
 echo "<tr>\n";
-echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['traspo_title'] . "\">$script_transl[28]" . ' ' . $admin_aziend['symbol'] . "</td>\n";
+echo "<td align=\"left\" class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['traspo_title'] . "\">$script_transl[28]" . ' ' . $admin_aziend['html_symbol'] . "</td>\n";
 echo "<td class=\"FacetDataTD\" title=\"" . $script_transl['traspo_title'] . "\"><input type=\"text\" value=\"" . $form['traspo'] . "\" name=\"traspo\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
 echo "<td class=\"FacetFieldCaptionTD\" title=\"" . $script_transl['speban_title'] . "\">" . $script_transl['speban'] . "</td>
       <td class=\"FacetDataTD\" title=\"" . $script_transl['speban_title'] . "\"><input type=\"text\" value=\"" . $form['speban'] . "\" name=\"speban\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\" /> x " . $form['numrat'] . " ";
@@ -2326,7 +2326,7 @@ echo '	<tr>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl[32] . '</td>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl[19] . '</td>
 			<td class="FacetFieldCaptionTD text-right">' . $script_transl['stamp'] . '</td>
-			<td class="FacetFieldCaptionTD text-right">' . $script_transl[36] . ' ' . $admin_aziend['symbol'] . '</td>
+			<td class="FacetFieldCaptionTD text-right">' . $script_transl[36] . ' ' . $admin_aziend['html_symbol'] . '</td>
 		</tr>';
 $i = 0;
 foreach ($calc->castle as $k => $v) {

@@ -137,7 +137,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $next_row = 0;
     if (isset($_POST['righi'])) {
         foreach ($_POST['righi'] as $next_row => $value) {
-            $form['righi'][$next_row]['descri'] = substr($value['descri'], 0, 50);
+            $form['righi'][$next_row]['descri'] = substr($value['descri'], 0, 100);
             $form['righi'][$next_row]['tiprig'] = intval($value['tiprig']);
             $form['righi'][$next_row]['codart'] = substr($value['codart'], 0, 15);
             $form['righi'][$next_row]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);

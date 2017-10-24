@@ -172,7 +172,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if (isset($_POST["row_$i"])) { //se ho un rigo testo
                 $form["row_$i"] = $_POST["row_$i"];
             }
-            $form['rows'][$i]['descri'] = substr($value['descri'], 0, 50);
+            $form['rows'][$i]['descri'] = substr($value['descri'], 0, 100);
             $form['rows'][$i]['tiprig'] = intval($value['tiprig']);
             $form['rows'][$i]['codart'] = substr($value['codart'], 0, 15);
             $form['rows'][$i]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
@@ -1564,7 +1564,7 @@ foreach ($form['rows'] as $key => $value) {
 					<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>
-					<td></td>
+					<td><input type=\"hidden\" name=\"rows[{$key}][identifier]\" value=\"\" /><input type=\"hidden\" name=\"rows[{$key}][expiry]\" value=\"\" /></td>
 					<td align=\"right\">
 						<input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" />
 					</td>
@@ -1588,7 +1588,7 @@ foreach ($form['rows'] as $key => $value) {
 					<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][prelis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>
-					<td></td>
+					<td><input type=\"hidden\" name=\"rows[{$key}][identifier]\" value=\"\" /><input type=\"hidden\" name=\"rows[{$key}][expiry]\" value=\"\" /></td>
 					<td></td>
 					<td></td>\n";
             $last_row[] = array_unshift($last_row, 'descrittivo');
@@ -1606,7 +1606,7 @@ foreach ($form['rows'] as $key => $value) {
 					<td><input type=\"hidden\" name=\"rows[{$key}][unimis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][quanti]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>
-					<td></td>
+					<td><input type=\"hidden\" name=\"rows[{$key}][identifier]\" value=\"\" /><input type=\"hidden\" name=\"rows[{$key}][expiry]\" value=\"\" /></td>
 					<td align=\"right\">
 						<input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" />
 					</td>
@@ -1628,7 +1628,9 @@ foreach ($form['rows'] as $key => $value) {
 				  <input type="hidden" name="rows[' . $key . '][quanti]" value="" />
 				  <input type="hidden" name="rows[' . $key . '][prelis]" value="" />
 				  <input type="hidden" name="rows[' . $key . '][sconto]" value="" />
-				  <input type="hidden" name="rows[' . $key . '][provvigione]" value="" />';
+				  <input type="hidden" name="rows[' . $key . '][provvigione]" value="" />;
+				  <input type="hidden" name="rows[' . $key . '][identifier]" value="" />
+				  <input type="hidden" name="rows[' . $key . '][expiry]" value="" />';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
             break;
     }
@@ -1809,7 +1811,7 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { //piede adatto ad un documento d'acq
     echo "	</tr>";
 }
 //fine piede
-echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"" . $form["sconto"] . "\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[35]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] " . $admin_aziend['symbol'] . "</td>\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[33]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[34]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">%$script_transl[24]<input type=\"text\" name=\"sconto\" value=\"" . $form["sconto"] . "\" maxlength=\"6\" size=\"1\" onchange=\"this.form.submit()\"></td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[32]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[19]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[35]</td><td class=\"FacetFieldCaptionTD\" align=\"right\">$script_transl[36] " . $admin_aziend['html_symbol'] . "</td>\n";
 $chk_add_iva_tes = 0;
 
 foreach ($castel as $key => $value) {

@@ -132,12 +132,14 @@ class OrdineCliente extends Template
         $this->Cell(18,4, 'Aliquota',1,0,'C',1);
         $this->Cell(25,4, 'Imposta',1,1,'C',1);
         $this->docVars->setTotal($this->tesdoc['traspo']);
-        foreach ($this->docVars->cast as $key => $value) {
-            $this->Cell(62);
-            $this->Cell(18, 4, gaz_format_number($value['impcast']).' ', 0, 0, 'R');
-            $this->Cell(32, 4, $value['descriz'],0,0,'C');
-            $this->Cell(18, 4, gaz_format_number($value['ivacast']).' ',0,1,'R');
-        }
+		if ( $this->tesdoc['print_total']>0){
+			foreach ($this->docVars->cast as $key => $value) {
+				$this->Cell(62);
+				$this->Cell(18, 4, gaz_format_number($value['impcast']).' ', 0, 0, 'R');
+				$this->Cell(32, 4, $value['descriz'],0,0,'C');
+				$this->Cell(18, 4, gaz_format_number($value['ivacast']).' ',0,1,'R');
+			}
+		}
         $totimpmer = $this->docVars->totimpmer;
         $speseincasso = $this->docVars->speseincasso;
         $totimpfat = $this->docVars->totimpfat;
@@ -155,19 +157,27 @@ class OrdineCliente extends Template
         $this->Cell(36, 6,'Tot.Imponibile',1,0,'C',1);
         $this->Cell(26, 6,'Tot. I.V.A.',1,0,'C',1);
         $this->Cell(22, 6,'Peso in kg',1,1,'C',1);
+		if ( $this->tesdoc['print_total']>0){
+			$this->Cell(36, 6, gaz_format_number($totimpmer),1,0,'C');
+			$this->Cell(16, 6, gaz_format_number($this->tesdoc['sconto']),1,0,'C');
+			$this->Cell(24, 6, gaz_format_number($speseincasso),1,0,'C');
+			$this->Cell(26, 6, gaz_format_number($this->tesdoc['traspo']),1,0,'C');
+			$this->Cell(36, 6, gaz_format_number($totimpfat),1,0,'C');
+			$this->Cell(26, 6, gaz_format_number($totivafat),1,0,'C');
+			$this->Cell(22, 6, '',1,0,'C');
+		} else {
+			$this->Cell(186, 6, '',1);
+		}
 
-        $this->Cell(36, 6, gaz_format_number($totimpmer),1,0,'C');
-        $this->Cell(16, 6, gaz_format_number($this->tesdoc['sconto']),1,0,'C');
-        $this->Cell(24, 6, gaz_format_number($speseincasso),1,0,'C');
-        $this->Cell(26, 6, gaz_format_number($this->tesdoc['traspo']),1,0,'C');
-        $this->Cell(36, 6, gaz_format_number($totimpfat),1,0,'C');
-        $this->Cell(26, 6, gaz_format_number($totivafat),1,0,'C');
-        $this->Cell(22, 6, '',1,0,'C');
         $this->SetY(218);
         $this->Cell(130);
         $this->SetFont('helvetica','B',18);
-        $this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol+$taxstamp), 1, 1, 'C');
-        $this->SetY(224);
+		if ( $this->tesdoc['print_total']>0){
+			$this->Cell(56, 24, '€ '.gaz_format_number($totimpfat + $totivafat + $impbol+$taxstamp), 1, 1, 'C');
+        } else {
+			$this->Cell(56, 24, '',1);
+		}
+		$this->SetY(224);
         $this->SetFont('helvetica','',9);
         $this->Cell(62, 6,'Spedizione',1,1,'C',1);
         $this->Cell(62, 6,$this->tesdoc['spediz'],1,1,'C');
