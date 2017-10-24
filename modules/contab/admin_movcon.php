@@ -515,6 +515,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $ctrl_bal = 0.00;
         $ctrl_mov_con = 0.00;
         $acc_partner_mov = array();
+		$fattura_allegata = false; 
         //calcolo i totali dare e avere per poter eseguire il controllo
         for ($i = 0; $i < $_POST['rigcon']; $i++) {
             $_POST['importorc'][$i] = preg_replace("/\,/", '.', $_POST['importorc'][$i]);
@@ -525,10 +526,16 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             if ($_POST['importorc'][$i] == 0) { //controllo che non ci siamo valori a 0
                 $msg .= "1+";
             }
-            if ($_POST['registroiva'] == 4 && (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masban'] || substr($_POST['conto_rc' . $i], 0, 3) == substr($admin_aziend['cassa_'], 0, 3))) {
-                // in caso di scontrino anonimo chiuso su cassa/banca faccio la somma dei conti di incasso che trovo  
-                $ctrl_mov_con += number_format($_POST['importorc'][$i], 2, '.', '');
-            } elseif (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] || substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'] || (preg_match("/^id_([0-9]+)$/", $_POST['conto_rc' . $i], $match))) {
+            if ($_POST['registroiva'] == 4){ // il movimento riguarda il registro  IVA corrispettivi
+				if (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] || substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'] || (preg_match("/^id_([0-9]+)$/", $_POST['conto_rc' . $i], $match))) { // in caso di scontrino intestato faccio il push al valore massimo
+					$fattura_allegata = true; 
+					if ($ctrl_mov_con <= $_POST['importorc'][$i]) {
+						$ctrl_mov_con = number_format($_POST['importorc'][$i], 2, '.', '');
+					}
+				} elseif ((substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masban'] || substr($_POST['conto_rc' . $i], 0, 3) == substr($admin_aziend['cassa_'], 0, 3)) && $fattura_allegata == false ) {
+                    $ctrl_mov_con += number_format($_POST['importorc'][$i], 2, '.', '');
+				}
+			} elseif (substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['mascli'] || substr($_POST['conto_rc' . $i], 0, 3) == $admin_aziend['masfor'] || (preg_match("/^id_([0-9]+)$/", $_POST['conto_rc' . $i], $match))) {
                 // ... ed anche in caso di cliente/fornitore eseguo il push del valore massimo   
                 if ($ctrl_mov_con <= $_POST['importorc'][$i]) {
                     $ctrl_mov_con = number_format($_POST['importorc'][$i], 2, '.', '');
