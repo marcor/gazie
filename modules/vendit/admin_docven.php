@@ -897,15 +897,19 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($in_sconto != "#") {
                     $form['rows'][$next_row]['sconto'] = $in_sconto;
                 } else {
-                    $comp = new venditCalc();
-                    $tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
-                    if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
-                        $form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
+					if ($form["sconto"] > 0) { // gestione sconto cliente sul totale merce o sul rigo
                         $form['rows'][$next_row]['sconto'] = 0;
-                    } else {
-                        $form['rows'][$next_row]['sconto'] = $tmpPrezzoNetto_Sconto;
+					} else {
+						$comp = new venditCalc();
+						$tmpPrezzoNetto_Sconto = $comp->trovaPrezzoNetto_Sconto($cliente['codice'], $form['rows'][$next_row]['codart'], $artico['sconto']);
+						if ($tmpPrezzoNetto_Sconto < 0) { // è un prezzo netto
+							$form['rows'][$next_row]['prelis'] = -$tmpPrezzoNetto_Sconto;
+							$form['rows'][$next_row]['sconto'] = 0;
+						} else {
+							$form['rows'][$next_row]['sconto'] = $tmpPrezzoNetto_Sconto;
+						}
                     }
-                    /*                     * ** TODO da modificare */
+					/*                     * ** TODO da modificare */
 //               $form['rows'][$next_row]['sconto'] = $artico['sconto'];
 //               if ($artico['sconto'] != 0) {
 //                  $msgtoast = $form['rows'][$next_row]['codart'] . ": sconto da anagrafe articoli";
