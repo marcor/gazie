@@ -912,7 +912,7 @@ function creaFileIVP17($aziend, $data) {
         if ($ImportoDaVersare >= 0.00) { // versamento debito
             $el1 = $domDoc->createElement("iv:ImportoDaVersare", number_format(round($ImportoDaVersare, 2), 2, ',', ''));
         } else { // da riportare a credito
-            $el1 = $domDoc->createElement("iv:ImportoACredito:", number_format(-round($ImportoDaVersare, 2), 2, ',', ''));
+            $el1 = $domDoc->createElement("iv:ImportoACredito", number_format(-round($ImportoDaVersare, 2), 2, ',', ''));
         }
         $el->appendChild($el1);
 
