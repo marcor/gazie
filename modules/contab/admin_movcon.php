@@ -934,7 +934,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                                     require_once("../../library/include/expiry_calc.php");
                                     $ex = new Expiry;
                                     $partner = $anagrafica->getPartner(intval($_POST['conto_rc' . $i]));
-                                    $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $partner['codpag']);
+                                    $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
                                     if ($datadoc == 0) {
                                         $datadoc = $datareg;
                                     }
@@ -1429,13 +1429,21 @@ echo "</script>\n";
                     ?>
                     <div class="tab-content col-sm-12 col-md-12 col-lg-12">
                         <?php
-                        echo $partnersel['ragso1'] . " " . $partnersel['ragso2'] . " - " . $partnersel['indspe'] . " - " . $partnersel['citspe'] . " - Partita IVA:" . $partnersel['pariva'] . " Pagamento:";
-                        $select_pagame = new selectpagame("pagame");
-                        $select_pagame->addSelected($form["pagame"]);
-                        $select_pagame->output('change_pag', "small");
-                        ?>
+                        echo $partnersel['ragso1'] . " " . $partnersel['ragso2'] . " - " . $partnersel['indspe'] . " - " . $partnersel['citspe'] . " - Partita IVA:" . $partnersel['pariva'];
+						if ($toDo == 'insert'){
+							echo  " Pagamento:";
+							$select_pagame = new selectpagame("pagame");
+							$select_pagame->addSelected($form["pagame"]);
+							$select_pagame->output('change_pag', "small");
+                        } else {
+						?>
+						<input type="hidden" name="pagame" value="<?php echo $form['pagame']; ?>" />
+						<?php
+						}
+						?>
                     </div><!-- chiude tab-content  -->
-                    <?php } else {
+                    <?php 
+				} else {
                     ?>
                     <input type="hidden" name="pagame" value="<?php echo $form['pagame']; ?>" />
                     <?php
