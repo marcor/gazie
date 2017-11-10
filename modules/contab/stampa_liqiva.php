@@ -165,7 +165,7 @@ $pdf->SetTextColor(0);
 // credito riportato dal periodo precedente
 if ($_GET['cr'] > 0) {
     $pdf->Cell(54, 6);
-    $pdf->Cell(45, 6, $script_transl['carry'], 'LTB', 0, 'L');
+    $pdf->Cell(50, 6, $script_transl['carry'], 'LTB', 0, 'L');
     $pdf->Cell(5, 6, $admin_aziend['symbol'], 'TB', 0, 'L');
     $pdf->Cell(20, 6, '-' . gaz_format_number($_GET['cr']), 'RTB', 1, 'R');
 }
