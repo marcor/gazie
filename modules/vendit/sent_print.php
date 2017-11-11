@@ -40,17 +40,18 @@ if (isset($_SESSION['print_request'])){
     unset ($_SESSION['print_request']);
     if (isset($request['script_name'])) { // se � stata inviata una richiesta di stampa con il nome del template
         //formattazione l'url
-        $url="setTimeout(\"window.location='".$request['script_name'].".php?";
+        $url="setTimeout(window.open('".$request['script_name'].".php?";
         unset($request['script_name']);
         foreach($request as $k=>$v){
            $url .=$k.'='.preg_replace("/\'/",'`',$v).'&';
         }
-        $url .="'\",500)\n";
+        $url .="',target=\"_blank\"),500)\n";
         //fine formattazione url
         echo "<HTML><HEAD><TITLE>Wait for PDF</TITLE>\n";
         echo "<script type=\"text/javascript\">\n";
         echo $url;
         echo "</script></HEAD>\n<BODY><DIV align=\"center\">Wait for PDF</DIV><DIV align=\"center\">Aspetta il PDF</DIV></BODY></HTML>";
+        header("Refresh: 1;".$_SERVER['HTTP_REFERER']);
     } else {  //altrimenti torno indietro
         header("Location: ".$_SERVER['HTTP_REFERER']);
         exit;
