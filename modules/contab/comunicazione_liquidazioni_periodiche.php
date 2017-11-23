@@ -102,7 +102,12 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
                 $r['isp'] = $r['iva'];
                 $r['ind'] = 0;
                 $r['iva'] = 0;
-            } else { // iva normale
+            } elseif ($r['tipiva'] == 'C') { // ESCLUSO - FUORI CAMPO 
+                $r['isp'] = 0;
+                $r['ind'] = 0;
+                $r['iva'] = 0;
+				$r['imponibile'] = 0;
+			} else { // iva normale
                 $r['ind'] = 0;
                 $r['isp'] = 0;
             }
