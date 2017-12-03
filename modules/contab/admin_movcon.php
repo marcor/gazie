@@ -995,7 +995,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 }
             }
             if ($toDo == 'insert') {
-                header("Location: report_movcon.php");
+                header("Location: admin_movcon.php?Insert&new=".$ultimo_id); // ritorno su questo script per inserirne un altro
             } else {
                 header("Location: " . $form['ritorno']);
             }
@@ -1312,6 +1312,9 @@ echo "</script>\n";
 <form method="POST" name="myform">
     <?php
     $gForm = new contabForm();
+    if (isset($_GET['new']) && !isset($_POST['Insert'])) { // se ho inserito il movimento senza errori lo ricordo ma rimango sullo script
+        $gForm->toast('Il movimento <a href="admin_movcon.php?id_tes='.$_GET['new'].'&Update" >'.$_GET['new'].'</a> è stato inserito con successo', 'alert-last-row', 'alert-success');
+    }
     echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">";
     echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
     echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
