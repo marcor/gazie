@@ -191,7 +191,9 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $form['paymov_op_cl'][$i] = 0;
         if ($_POST['mastro_rc'][$i] == $mastroclienti || $_POST['mastro_rc'][$i] == $mastrofornitori) {
             if ($_POST['conto_rc' . $i] > 0) {
-                $countPartners++;
+				if ($_POST['conto_rc' . $i] != $form['cod_partner']) { // ho già un partner selezionato e questo è diverso 
+					$countPartners++;
+				}
                 $partnersel = $anagrafica->getPartner($form['conto_rc' . $i]);
                 //se viene inserito un nuovo partner do l'ok alla ricarica della contropartita costi/ricavi in base al conto presente sull'archivio clfoco
                 if ($_POST['cod_partner'] == 0 and $form['conto_rc' . $i] > 0) {
