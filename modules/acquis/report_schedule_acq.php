@@ -37,17 +37,18 @@ $linkHeaders->output();
 $result = gaz_dbi_dyn_query('*', $gTables['paymov'], 1, 'id DESC');
 while ($a_row = gaz_dbi_fetch_array($result)) {
     // faccio una subquery che è più veloce di JOIN per ricavare l'id_tes
-    $tes = gaz_dbi_get_row($gTables['rigmoc'], 'id_rig = ' . $a_row["id_rigmoc_pay"] . ' OR id_rig', $a_row["id_rigmoc_doc"]);
+    $rigmoc = gaz_dbi_get_row($gTables['rigmoc'], 'id_rig = ' . $a_row["id_rigmoc_pay"] . ' OR id_rig', $a_row["id_rigmoc_doc"]);
+    $tesmov = gaz_dbi_get_row($gTables['tesmov'],'id_tes',$rigmoc['id_tes']);
     echo "<tr class=\"FacetDataTD\">";
     echo "<td>" . $a_row["id"] . " &nbsp;</td>";
-    echo "<td align=\"center\">" . $a_row["id_tesdoc_ref"] . "</td>";
+    echo "<td>" . $a_row["id_tesdoc_ref"] . "</td>";
     if ($a_row["id_rigmoc_doc"] > 0) {
-        echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $tes["id_tes"] . "&Update\">" . $tes["id_tes"] . " &nbsp;</td>";
+        echo "<td><a class=\"btn btn-xs btn-default btn-warning\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $rigmoc["id_tes"] . "&Update\">" . $rigmoc["id_tes"] . "</a>&nbsp; ".$tesmov["descri"]." &nbsp;</td>";
     } else {
         echo "<td></td>";
     }
     if ($a_row["id_rigmoc_pay"] > 0) {
-        echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $tes["id_tes"] . "&Update\">" . $tes["id_tes"] . " &nbsp;</td>";
+        echo "<td><a class=\"btn btn-xs btn-default btn-success\"  style=\"font-size:10px;\" href=\"../contab/admin_movcon.php?id_tes=" . $rigmoc["id_tes"] . "&Update\">" . $rigmoc["id_tes"] . "</a>&nbsp; ".$tesmov["descri"]." &nbsp;</td>";
     } else {
         echo "<td></td>";
     }
