@@ -369,7 +369,7 @@ if ($modal_ok_insert === true) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="lot_or_serial" class="col-sm-4 control-label"><?php echo $script_transl['lot_or_serial'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
+                            <label for="lot_or_serial" class="col-sm-4 control-label"><?php echo $script_transl['lot_or_serial']; ?></label>
     <?php
     $gForm->variousSelect('lot_or_serial', $script_transl['lot_or_serial_value'], $form['lot_or_serial'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
     ?>
