@@ -112,7 +112,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     $_FILES['userfile']['type'] == "image/x-gif"))
                 $msg['err'][] = 'filmim';
             // controllo che il file non sia piu' grande di circa 10kb
-            if ($_FILES['userfile']['size'] > 10999)
+            if ($_FILES['userfile']['size'] > 63999)
                 $msg['err'][] = 'filsiz';
         }
         if (empty($form["codice"])) {
