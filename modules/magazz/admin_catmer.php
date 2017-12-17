@@ -55,8 +55,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                $_FILES['userfile']['type'] == "image/gif" ||
                $_FILES['userfile']['type'] == "image/x-gif"))
               $msg .= '8+';
-              // controllo che il file non sia pi&ugrave; grande di 10kb
-          if ( $_FILES['userfile']['size'] > 10999)
+              // controllo che il file non sia pi&ugrave; grande di 64Kb
+          if ( $_FILES['userfile']['size'] > 63999)
               $msg .= '9+';
        }
 
