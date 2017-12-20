@@ -115,14 +115,16 @@ class Template extends FPDI {
                     $this->MultiCell(80, 4, $this->destinazione, 'LBR', 'L');
                 }
             }
-            $this->SetXY(35, $interlinea - 5);
-            $this->Cell(15, 4, $this->descri_partner, 'LT', 0, 'R', 1);
-            $this->Cell(70, 4, ': ' . $this->cliente5, 'TR', 1);
-            $this->Cell(25);
-            $this->Cell(25, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
-            $this->Cell(35, 4, ' cod.univoco: ' . $this->cod_univoco, 'RB', 0, 'L');
-            $this->Cell(25, 4, '', 'T');
-            $this->SetXY(110, $interlinea + 3);
+			if ($this->codice_partner > 0){
+				$this->SetXY(35, $interlinea - 5);
+				$this->Cell(15, 4, $this->descri_partner, 'LT', 0, 'R', 1);
+				$this->Cell(70, 4, ': ' . $this->cliente5, 'TR', 1);
+				$this->Cell(25);
+				$this->Cell(25, 4, ' cod.: ' . $this->codice_partner, 'LB', 0, 'L');
+				$this->Cell(35, 4, ' cod.univoco: ' . $this->cod_univoco, 'RB', 0, 'L');
+				$this->Cell(25, 4, '', 'T');
+            }
+			$this->SetXY(110, $interlinea + 3);
             $this->SetFont('helvetica', '', 10);
             $this->Cell(15, 5, 'Spett.le ', 0, 0, 'R');
             $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);

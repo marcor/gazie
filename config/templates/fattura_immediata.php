@@ -34,12 +34,21 @@ class FatturaImmediata extends Template_con_scheda
         $this->giorno = substr($this->tesdoc['datfat'],8,2);
         $this->mese = substr($this->tesdoc['datfat'],5,2);
         $this->anno = substr($this->tesdoc['datfat'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+		if ($this->tesdoc['datfat']){
+			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+		} else {
+			$nomemese = '';
+		}
         $this->virtual_taxstamp=$this->tesdoc['virtual_taxstamp'];
         $this->taxstamp=$this->tesdoc['taxstamp'];
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
-        $this->tipdoc = 'Fattura immediata n.'.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+		if ($this->tesdoc['numfat']>0){
+			$numfat = $this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'];
+		} else {
+			$numfat = '_ _ _ _ _ _ _';
+		}
+        $this->tipdoc = 'Fattura immediata n.'.$numfat.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
     }
     function newPage() {
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));

@@ -32,7 +32,11 @@ class DDT extends Template_con_scheda
         $this->giorno = substr($this->tesdoc['datemi'],8,2);
         $this->mese = substr($this->tesdoc['datemi'],5,2);
         $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
+		if ($this->tesdoc['datfat']){
+			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+		} else {
+			$nomemese = '';
+		}
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
         if ($this->tesdoc['tipdoc'] == 'DDR') {
@@ -46,7 +50,12 @@ class DDT extends Template_con_scheda
         } else {
             $descri='Documento di Trasporto n.';
         }
-        $this->tipdoc = $descri.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+		if ($this->tesdoc['numdoc']>0){
+			$numdoc = $this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'];
+		} else {
+			$numdoc = ' _ _ _ _ _ _ _';
+		}
+        $this->tipdoc = $descri.$numdoc.' del '.$this->giorno.' '.$nomemese.' '.$this->anno;
     }
 
     function newPage() {

@@ -35,7 +35,11 @@ class FatturaSemplice extends Template {
         $this->giorno = substr($this->tesdoc['datfat'], 8, 2);
         $this->mese = substr($this->tesdoc['datfat'], 5, 2);
         $this->anno = substr($this->tesdoc['datfat'], 0, 4);
-        $this->nomemese = ucwords(strftime("%B", mktime(0, 0, 0, substr($this->tesdoc['datfat'], 5, 2), 1, 0)));
+		if ($this->tesdoc['datfat']){
+			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+		} else {
+			$nomemese = '';
+		}
         $this->sconto = $this->tesdoc['sconto'];
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->trasporto = $this->tesdoc['traspo'];
@@ -48,7 +52,12 @@ class FatturaSemplice extends Template {
         } else {
             $descri = 'Fattura immediata n.';
         }
-        $this->tipdoc = $descri . $this->tesdoc['numfat'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . ' ' . $this->nomemese . ' ' . $this->anno;
+		if ($this->tesdoc['numfat']>0){
+			$numfat = $this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'];
+		} else {
+			$numfat = ' _ _ _ _ _ _ _';
+		}
+        $this->tipdoc = $descri . $numfat . ' del ' . $this->giorno . ' ' . $nomemese . ' ' . $this->anno;
     }
 
     function newPage() {
