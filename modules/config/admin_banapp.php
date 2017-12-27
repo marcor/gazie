@@ -132,11 +132,11 @@ echo "\t<td class=\"FacetDataTD\" colspan=\"2\">
 echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['codpro']."</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";
-echo "\t<input type=\"text\" name=\"codpro\" value=\"".$form['codpro']."\" maxlength=\"20\" size=\"20\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"codpro\" value=\"".$form['codpro']."\" maxlength=\"2\" size=\"2\" class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['annota']."</td>
      <td class=\"FacetDataTD\" colspan=\"2\">\n";
-echo "\t<input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"20\" size=\"20\" class=\"FacetInput\">\n";
+echo "\t<input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" class=\"FacetInput\">\n";
 echo "</td></tr>";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['sqn']."</td>";
