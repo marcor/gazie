@@ -620,6 +620,11 @@ class Anagrafica {
         }
         $v['descri'] = $v['ragso1'];
         $v['codpag'] = $payment;
+		// inserisco i valori sono quelli statisticamente più utilizzati
+        $v['speban'] = 'S';
+        $v['addbol'] = 'S';
+        $v['spefat'] = 'N';
+        $v['stapre'] = 'S';
         if (isset($v['ragso2'])) {
             $v['descri'] .= $v['ragso2'];
         }

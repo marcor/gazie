@@ -92,7 +92,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
           $anagrafica = new Anagrafica();
           if (preg_match("/^id_([0-9]+)$/",$form['clfoco'],$match)) {
              $new_clfoco = $anagrafica->getPartnerData($match[1],1);
-             $form['clfoco']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
+             $form['clfoco']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli'],$form['pagame']);
           }
           if ($toDo == 'insert') {
               // ricavo il progressivo annuo, ma se e' il primo effetto dell'anno, resetto il contatore

@@ -629,7 +629,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         $account_new = intval($_POST['conto_rc' . $i]);
                         if (preg_match("/^id_([0-9]+)$/", substr($_POST['conto_rc' . $i], 0, 12), $match)) { // E' un partner da inserire sul piano dei conti
                             $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
-                            $account_new = $anagrafica->anagra_to_clfoco($new_clfoco, substr($_POST['mastro_rc'][$i], 0, 3));
+                            $account_new = $anagrafica->anagra_to_clfoco($new_clfoco, substr($_POST['mastro_rc'][$i], 0, 3),$form['pagame']);
                         }
                         rigmocUpdate(array('id_rig', $row_con['id_rig']), array('id_tes' => intval($_POST['id_testata']), 'darave' => substr($_POST['darave_rc'][$i], 0, 1), 'codcon' => $account_new, 'import' => floatval($_POST['importorc'][$i])));
                         // questa era troppo lenta nelle macchine molto lente 
@@ -721,7 +721,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 for ($i = $i; $i <= $count; $i++) {
                     if (preg_match("/^id_([0-9]+)$/", substr($_POST['conto_rc' . $i], 0, 12), $match)) { // è un partner da inserire sul piano dei conti
                         $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
-                        $_POST['conto_rc' . $i] = $anagrafica->anagra_to_clfoco($new_clfoco, substr($_POST['mastro_rc'][$i], 0, 3));
+                        $_POST['conto_rc' . $i] = $anagrafica->anagra_to_clfoco($new_clfoco, substr($_POST['mastro_rc'][$i], 0, 3),$form['pagame']);
                     }
                     rigmocInsert(array('id_tes' => intval($_POST['id_testata']), 'darave' => substr($_POST['darave_rc'][$i], 0, 1), 'codcon' => intval($_POST['conto_rc' . $i]), 'import' => floatval($_POST['importorc'][$i])));
                     $last_id_rig = gaz_dbi_last_id();
@@ -843,7 +843,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                         if ($rc_cli) { // ho già il cliente 
                         } else { // non ho il cliente lo dovrò creare sul piano dei conti
                             $new_cli = $anagrafica->getPartnerData($partner['id']);
-                            $rc_cli['codice'] = $anagrafica->anagra_to_clfoco($new_cli, $admin_aziend['mascli']);
+                            $rc_cli['codice'] = $anagrafica->anagra_to_clfoco($new_cli, $admin_aziend['mascli'],$form['pagame']);
                         }
                         $rc_val = array('caucon' => 'FAI',
                             'descri' => 'FATTURA REVERSE CHARGE',
@@ -901,7 +901,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $ad = substr($_POST['darave_rc'][$i], 0, 1);
                     if (preg_match("/^id_([0-9]+)$/", $account, $match)) { // è un partner da inserire sul piano dei conti
                         $new_clfoco = $anagrafica->getPartnerData($match[1], 1);
-                        $_POST['conto_rc' . $i] = $anagrafica->anagra_to_clfoco($new_clfoco, substr($_POST['mastro_rc'][$i], 0, 3));
+                        $_POST['conto_rc' . $i] = $anagrafica->anagra_to_clfoco($new_clfoco, substr($_POST['mastro_rc'][$i], 0, 3),$form['pagame']);
                         // modifico la testata precedentemente introdotta per aggiungerci 
                         gaz_dbi_table_update('tesmov', array('id_tes', $ultimo_id), array('clfoco' => $_POST['conto_rc' . $i]));
                     }

@@ -154,7 +154,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        if ($msg == "") { // nessun errore
           if (preg_match("/^id_([0-9]+)$/",$form['id_customer'],$match)) {
              $new_clfoco = $anagrafica->getPartnerData($match[1],1);
-             $form['id_customer']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli']);
+             $form['id_customer']=$anagrafica->anagra_to_clfoco($new_clfoco,$admin_aziend['mascli'],$form['payment_method']);
           }
           if ($toDo == 'update') { // e' una modifica
              $old_rows = gaz_dbi_dyn_query("*", $gTables['contract_row'], "id_contract = ".$form['id_contract'],"id_contract");
