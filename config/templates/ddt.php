@@ -33,7 +33,7 @@ class DDT extends Template_con_scheda
         $this->mese = substr($this->tesdoc['datemi'],5,2);
         $this->anno = substr($this->tesdoc['datemi'],0,4);
 		if ($this->tesdoc['datfat']){
-			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
+			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
 		} else {
 			$nomemese = '';
 		}
