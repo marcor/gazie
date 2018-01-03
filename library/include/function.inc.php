@@ -778,7 +778,7 @@ class selectPartner extends SelectBox {
             echo "\t<input type=\"hidden\" name=\"$this->name\" value=\"\">\n";
         }
         echo $put_anagra;
-        echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $cerca . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+        echo "\t<input type=\"text\" name=\"ragso1\" " . $tabula . " accesskey=\"e\" value=\"" . $cerca . "\" maxlength=\"16\" size=\"10\" class=\"FacetInput\">\n";
         echo $msg;
         //echo "\t<input type=\"image\" align=\"middle\" accesskey=\"c\" " . $tabula . " name=\"clfoco\" src=\"../../library/images/cerbut.gif\" title=\"" . $script_transl['search'] . "\">\n";
         /** ENRICO FEDELE */
@@ -834,7 +834,7 @@ class selectPartner extends SelectBox {
                     //echo "---".$m."-".$codicetemp."-".$codicecer; //debug
                 } elseif (substr($strSearch, 0, 1) == '#') { //ricerca conoscendo il codice univoco ufficio
                     $partner = $this->queryAnagra(" a.fe_cod_univoco LIKE '%" . addslashes(substr($strSearch, 1)) . "%'");
-                } elseif (is_numeric(substr($strSearch, 6, 2))) {   //ricerca per codice fiscale
+                } elseif ( preg_match('/^[a-z]{6}[0-9]{2}[a-z][0-9]{2}[a-z][0-9]{3}[a-z]$/i', $strSearch)) {   //ricerca per codice fiscale
                     $partner = $this->queryAnagra(" a.codfis LIKE '%" . addslashes($strSearch) . "%'");
                 } else {                                      //ricerca per ragione sociale
                     $partner = $this->queryAnagra(" a.ragso1 LIKE '" . addslashes($strSearch) . "%'");
@@ -889,7 +889,7 @@ class selectPartner extends SelectBox {
                 $msg = $mesg[1];
                 echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
             }
-            echo "\t<input type=\"text\" $tab2 id=\"search_$name\" name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+            echo "\t<input type=\"text\" $tab2 id=\"search_$name\" name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"16\" size=\"10\" class=\"FacetInput\">\n";
             if (isset($msg)) {
                 echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">\n";
             }
@@ -945,7 +945,7 @@ class selectPartner extends SelectBox {
                 $msg = $mesg[1];
                 echo "\t<input type=\"hidden\" name=\"$name\" value=\"$val\">\n";
             }
-            echo "\t<input type=\"text\"  $tab2  name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
+            echo "\t<input type=\"text\"  $tab2  name=\"search[$name]\" value=\"" . $strSearch . "\" maxlength=\"16\" size=\"10\" class=\"FacetInput\">\n";
             if (isset($msg)) {
                 echo "<input type=\"text\" style=\"color: red; font-weight: bold;\" size=\"" . strlen($msg) . "\" disabled value=\"$msg\">";
             }
