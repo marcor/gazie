@@ -610,7 +610,7 @@ class Anagrafica {
         gaz_dbi_table_update('anagra', array('id', $newValue['id_anagra']), $newValue);
     }
 
-    function anagra_to_clfoco($v, $m) {
+    function anagra_to_clfoco($v, $m, $payment=1) {
         $last_partner = gaz_dbi_dyn_query("*", $this->gTables['clfoco'], 'codice BETWEEN ' . $m . '000001 AND ' . $m . '999999', "codice DESC", 0, 1);
         $last = gaz_dbi_fetch_array($last_partner);
         if ($last) {
@@ -619,6 +619,7 @@ class Anagrafica {
             $v['codice'] = $m . '000001';
         }
         $v['descri'] = $v['ragso1'];
+        $v['codpag'] = $payment;
         if (isset($v['ragso2'])) {
             $v['descri'] .= $v['ragso2'];
         }

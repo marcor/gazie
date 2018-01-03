@@ -387,7 +387,7 @@ if (isset($invoices['data'])) {
     $protoc = $invoices['last_protoc'];
     $numfat = $invoices['last_numfat'];
     $tot = 0.00;
-    foreach ($invoices['data'] as $vt) {
+    foreach ($invoices['data'] as $kt=>$vt) {
         $ctrl_first = true;
         // attraverso l'array delle fatture proposte
         foreach ($vt as $kr => $vr) {
@@ -396,6 +396,7 @@ if (isset($invoices['data'])) {
             } else {
                 $c = 'FacetDataTD';
             }
+			
             $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
             $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
             if (($vr == 'yes' && $tes['tipdoc'] == 'DDT' && !in_array($kr, $form['changeStatus'])) || (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != 'DDT')) {
@@ -406,8 +407,14 @@ if (isset($invoices['data'])) {
                     $tot = 0.00;
                     $anagrafica = new Anagrafica();
                     $cliente = $anagrafica->getPartner($tes['clfoco']);
+					if ($invoices['error'][$kt][$kr][0]=='cust_pay'){
+						$btn_class ="btn-danger";
+						$cliente['ragso2'] .= '<span class="bg-danger">'.$script_transl['errors']['cust_pay'].'</span>';
+					} else {
+						$btn_class ="btn-default";
+					}
                     echo "<tr>";
-                    echo "<td  class=\"FacetDataTDevidenziaOK\" colspan=\"8\">" . $script_transl['add_invoice'] . $numfat . '/' . $tes['seziva'] . ' pr.' . $protoc . " a " . $cliente['ragso1'] . ' ' . $cliente['ragso2'] . " &nbsp;</td>";
+                    echo '<td  class="FacetDataTDevidenziaOK" colspan="8">' . $script_transl['add_invoice'] . $numfat . '/' . $tes['seziva'] . ' pr.' . $protoc . " a " . $cliente['ragso1'] . ' ' . $cliente['ragso2'] . " &nbsp;</td>";
                     echo "</tr>\n";
                     $ctrl_first = false;
                 }
@@ -418,7 +425,7 @@ if (isset($invoices['data'])) {
                     $descr_agg = ' ' . $script_transl['ddt_type'][$tes['ddt_type']];
                 }
                 echo $tes['tipdoc'] . $descr_agg
-                . " &nbsp;<a class=\"btn btn-xs btn-default btn-edit\"  href=\"admin_docven.php?Update&id_tes=" . $kr
+                . ' &nbsp;<a class="btn btn-xs '.$btn_class.'"  href="admin_docven.php?Update&id_tes=' . $kr
                 . "\" ><i class=\"glyphicon glyphicon-edit\"></i>" . $tes['numdoc'] . '/' . $tes['seziva'] . " </a>"
                 . " del " . gaz_format_date($tes['datemi']) . " &nbsp;  &hArr; " . $pag['descri'];
                 if ($vr == 'maybe') {
@@ -492,8 +499,8 @@ if (isset($invoices['data'])) {
         if ($tot >= 0.01) {
             echo "<tr>";
             echo "<td colspan=\"6\">  &nbsp;</td>";
-            echo "<td class=\"FacetDataTDred\">TOTALE </td>";
-            echo "<td class=\"FacetDataTDred\" align=\"right\"> " . gaz_format_number($tot) . " </td>";
+            echo "<td><b>TOTALE </b></td>";
+            echo "<td align=\"right\"> <b>" . gaz_format_number($tot) . " </b>+IVA</td>";
             echo "</tr>\n";
         }
     }

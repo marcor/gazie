@@ -999,7 +999,7 @@ $strScript = array("admin_client.php" =>
             'La data di emissione precede quella dell\'ultima fattura emessa',
             'aut_pay' => 'Pagamento che prevede l\'incasso automatico',
             'no_bank' => 'ATTENZIONE! MANCA LA BANCA D\'APPOGGIO',
-            'cust_pay' => 'Cliente con diversi pagamenti',
+            'cust_pay' => 'Cliente con DdT con diversi pagamenti',
         ),
         'cliente' => 'Cliente: ',
         'date_exe' => 'Data di emissione ',
