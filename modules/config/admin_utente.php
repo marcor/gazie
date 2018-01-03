@@ -130,8 +130,8 @@ if (isset($_POST['Submit'])) {
     if (!empty($_FILES['userfile']['name'])) {
         if (!( $_FILES['userfile']['type'] == "image/jpeg" || $_FILES['userfile']['type'] == "image/pjpeg"))
             $msg['err'][] = 'filmim';
-        // controllo che il file non sia pi&ugrave; grande di 10kb
-        if ($_FILES['userfile']['size'] > 10999)
+        // controllo che il file non sia pi&ugrave; grande di 64kb
+        if ($_FILES['userfile']['size'] > 63999)
             $msg['err'][] = 'filsiz';
     }
     if ($form["Abilit"] < 9) {

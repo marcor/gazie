@@ -424,7 +424,7 @@ $strScript = array("admin_aziend.php" =>
             'confpass' => "The password is different from that of confirmation!",
             'upabilit' => "You can't increase your level of competency the operation is reserved for the administrator!",
             'filmim' => "The file must be in JPG format",
-            'filsiz' => "The image must not be larger than 10 kb",
+            'filsiz' => "The image must not be larger than 64kb",
             'Abilit' => "You can not have a level lower than 9 because you are the last administrator!",
             'Abilit_stud' => "You can not have a level lower than 7 because you are the last administrator!",
             'charpass' => "The password can not contain any special characters \" / < >"
@@ -432,7 +432,7 @@ $strScript = array("admin_aziend.php" =>
         'Login' => "Nickname",
         'Cognome' => "Surname",
         'Nome' => "Name",
-        'image' => 'Image<br />(only JPG format, max 10kb)',
+        'image' => 'Image<br />(only JPG format, max 64kb)',
         'Abilit' => "Level",
         'Access' => "Access number",
         'pre_pass' => 'Password (min.',

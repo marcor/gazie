@@ -429,7 +429,7 @@ $strScript = array("admin_aziend.php" =>
             'confpass' => "La contrase&ntilde;a es diferente de la de la confirmaci&oacute;n!",
             'upabilit' => "No puede aumentar su nivel de competencia de la operaci&oacute;n est&aacute; reservado para el administrador!",
             'filmim' => "El archivo debe estar en formato JPG",
-            'filsiz' => "La imagen no debe ser mayor de 10 KB",
+            'filsiz' => "La imagen no debe ser mayor de 64kb",
             'Abilit' => "No se puede tener un nivel inferior al 9 porque es el administrador del pasado!",
             'Abilit_stud' => "No se puede tener un nivel inferior al 7 porque es el administrador del pasado!",
             'charpass' => "The password can not contain any special characters \" / > <"
@@ -437,7 +437,7 @@ $strScript = array("admin_aziend.php" =>
         'Login' => "Pseud&oacute;nimo",
         'Cognome' => "Apellido",
         'Nome' => "Nombre",
-        'image' => 'Icon de lo usuario<br />(solo formato JPG, max 10kb)',
+        'image' => 'Icon de lo usuario<br />(solo formato JPG, max 64kb)',
         'Abilit' => "Nivel",
         'Access' => "Acceso",
         'pre_pass' => 'Contrase&ntilde;a (min.',
