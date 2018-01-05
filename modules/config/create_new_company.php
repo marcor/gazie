@@ -34,8 +34,12 @@ function createNewTable($table, $new_id) {
 
     $key = 'Create Table';
     if (array_key_exists('Create View', $row)) $key = 'Create View';
-    $retval = preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $new_id), $row[$key]) . ";\n\n";
-
+	// aggiung una query per l'azzeramento dell'eventuale auto_increment 
+	$prep_sql=$row[$key].";\n";
+	if (preg_match("/AUTO_INCREMENT=/i", $prep_sql) && preg_match("/$table_prefix\_[0-9]{3}/", $prep_sql)) {
+		$prep_sql."ALTER TABLE `".$table."` AUTO_INCREMENT=0;\n";
+	}
+    $retval = preg_replace("/$table_prefix\_[0-9]{3}/", $table_prefix . sprintf('_%03d', $new_id), $prep_sql);
     return $retval;
 }
 

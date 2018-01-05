@@ -35,7 +35,7 @@ $strScript = array("admin.php" =>
             '  cliccando QUI ',
             ' Ricordati che, per il buon funzionamento dell\'applicazione, la direttiva magic_quotes_gpc deve essere posta a Off nel file php.ini!',
             ' ATTENZIONE!!! Sono oltre 10 giorni che non fai il backup, fallo adesso ',
-            'legrap' => ' ATTENZIONE!!! Hai dimenticato di indicare il nome e/o il cognome del legale rappresentante'
+            'legrap' => ' ATTENZIONE!!! In configurazione azienda (clicca sul logo) si deve indicare il nome e il cognome del legale rappresentante'
         ),
         'access' => "questo è il tuo ",
         'pass' => "&ordm; accesso!<br />La tua password &egrave; del ",
