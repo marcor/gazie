@@ -202,14 +202,14 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
    $title = array('luogo_data' => $luogo_data,
        'title' => "Listino " . $descrlis . $titoloAddizionale,
        'hile' => array(
-           array('lun' => 20, 'nam' => 'Codice'),
-           array('lun' => 130, 'nam' => 'Descrizione'),
+           array('lun' => 30, 'nam' => 'Codice'),
+           array('lun' => 100, 'nam' => 'Descrizione'),
            array('lun' => 10, 'nam' => 'U.M.'),
            array('lun' => 20, 'nam' => 'Prezzo'),
            array('lun' => 20, 'nam' => 'Sconto'),
            array('lun' => 20, 'nam' => 'Prezzo finito'),
            array('lun' => 20, 'nam' => 'Importo'),
-           array('lun' => 30, 'nam' => 'Categoria'),
+           array('lun' => 50, 'nam' => 'Categoria'),
        )
    );
    $gForm = new magazzForm();
@@ -255,8 +255,8 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
       $pdf->SetFillColor($color[0], $color[1], $color[2]);
 
       /* Celle con riempimento */
-      $pdf->Cell(20, 4, $row['codart'], 1, 0, 'L', true);
-      $pdf->Cell(130, 4, $row['desart'], 1, 0, 'L', true);
+      $pdf->Cell(30, 4, $row['codart'], 1, 0, 'L', true);
+      $pdf->Cell(100, 4, $row['desart'], 1, 0, 'L', true);
       $pdf->Cell(10, 4, $row['unimis'], 1, 0, 'L', true);
       $pdf->Cell(20, 4, number_format($price, $admin_aziend['decimal_price'], ',', '.'), 1, 0, 'R', true);
       $sconto=$row['sconto'];
@@ -267,7 +267,7 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
       $aliquotaIva=$row['aliquo'];
       $importo=$prezzoScontato*(1+$aliquotaIva/100);
       $pdf->Cell(20, 4, number_format($importo, $admin_aziend['decimal_price'], ',', '.'), 1, 0, 'R', true);
-      $pdf->Cell(30, 4, $row['descat'], 1, 1, 'L', true); /* A capo dopo questa cella */
+      $pdf->Cell(50, 4, $row['descat'], 1, 1, 'C', true); /* A capo dopo questa cella */
 //      $ctrlcatmer = $row["catmer"];
    }
 }
