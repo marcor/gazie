@@ -407,7 +407,7 @@ if (isset($invoices['data'])) {
                     $tot = 0.00;
                     $anagrafica = new Anagrafica();
                     $cliente = $anagrafica->getPartner($tes['clfoco']);
-					if ($invoices['error'][$kt][$kr][0]=='cust_pay'){
+					if (isset($invoices['error'][$kt]) && $invoices['error'][$kt][$kr][0]=='cust_pay'){
 						$btn_class ="btn-danger";
 						$cliente['ragso2'] .= '<span class="bg-danger">'.$script_transl['errors']['cust_pay'].'</span>';
 					} else {
