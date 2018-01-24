@@ -210,7 +210,9 @@ class postal_code
                }
                break;
                case 'GB':
-               if(!preg_match("/^[A-Z]{1}[0-9A-Z]{3,5}[A-Z]{1}$/", $v) ) {
+               //if(!preg_match("/^[A-Z]{1}[0-9A-Z]{3,5}[A-Z]{1}$/", $v) ) {
+               //if(!preg_match('/^([g][i][r][0][a][a])$|^((([a-pr-uwyz]{1}([0]|[1-9]\d?))|([a-pr-uwyz]{1}[a-hk-y]{1}([0]|[1-9]\d?))|([a-pr-uwyz]{1}[1-9][a-hjkps-uw]{1})|([a-pr-uwyz]{1}[a-hk-y]{1}[1-9][a-z]{1}))(\d[abd-hjlnp-uw-z]{2})?)$/i', $v) ) {
+               if(!preg_match("/^[A-Z]{1}[0-9A-Z]{1,2}[A-Z-]{1}[0-9A-Z]{1,3}$/", $v) ) {
                    return "Invalid postal code";
                } else {
                    return false;
