@@ -438,7 +438,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         }
         if ($msg == "") {// nessun errore
-            $sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOR'";
+			// creo la descrizione del preventivo di origine
+            require("lang." . $admin_aziend['lang'] . ".php");
+            $descripreventivo = "rif. " . $strScript['admin_broven.php'][0]['VPR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
+			// fine creazione descrizione preventivo di origine	
+			$sql_documento = "YEAR(datemi) = " . date("Y") . " and tipdoc = 'VOR'";
             $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesbro'], $sql_documento, "numdoc desc", 0, 1);
             $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
             if ($ultimo_documento) {
@@ -446,8 +450,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else {
                 $form['numdoc'] = 1;
             }
-            require("lang." . $admin_aziend['lang'] . ".php");
-            $descripreventivo = "rif. " . $strScript['admin_broven.php'][0]['VPR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
             //inserisco la testata
             $form['initra'] = $initra;
             $form['datemi'] = date("Y-m-d");
