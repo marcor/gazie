@@ -428,11 +428,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $msg .= "48+";
         //controllo che i rows non abbiano descrizioni  e unita' di misura vuote in presenza di quantita diverse da 0
         foreach ($form['rows'] as $i => $v) {
-            if ($v['descri'] == '' and $v['quanti']) {
+            if ($v['descri'] == '' && ($v['quanti'] >= 0.00001 || $v['quanti'] <= -0.00001)) {
                 $msgrigo = $i + 1;
                 $msg .= "49+";
             }
-            if ($v['unimis'] == '' and $v['quanti']) {
+            if ($v['unimis'] == '' && ($v['quanti'] >= 0.00001 || $v['quanti'] <= -0.00001)) {
                 $msgrigo = $i + 1;
                 $msg .= "50+";
             }
@@ -447,7 +447,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['numdoc'] = 1;
             }
             require("lang." . $admin_aziend['lang'] . ".php");
-            $descriordine = "rif. " . $strScript['admin_broven.php'][0]['VOR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
+            $descripreventivo = "rif. " . $strScript['admin_broven.php'][0]['VPR'] . " n." . $form['numdoc'] . " del " . $form['gioemi'] . "." . $form['mesemi'] . "." . $form['annemi'];
             //inserisco la testata
             $form['initra'] = $initra;
             $form['datemi'] = date("Y-m-d");
@@ -457,7 +457,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             //recupero l'id assegnato dall'inserimento
             $ultimo_id = gaz_dbi_last_id();
             //inserisco un rigo descrittivo per il riferimento al preventivo sull'ordine
-            $descirow = array('id_tes' => $ultimo_id, 'tiprig' => 2, 'descri' => $descriordine);
+            $descrirow = array('id_tes' => $ultimo_id, 'tiprig' => 2, 'descri' => $descripreventivo);
             rigbroInsert($descrirow);
             //inserisco i rows
             $count = count($form['rows']);
@@ -465,7 +465,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$i]['id_tes'] = $ultimo_id;
                 rigbroInsert($form['rows'][$i]);
                 $last_rigbro_id = gaz_dbi_last_id();
-                if (isset($form["row_$i"])) { //se � un rigo testo lo inserisco il contenuto in body_text
+                if (isset($form["row_$i"])) { //se è un rigo testo lo inserisco il contenuto in body_text
                     bodytextInsert(array('table_name_ref' => 'rigbro', 'id_ref' => $last_rigbro_id, 'body_text' => $form["row_$i"], 'lang_id' => $admin_aziend['id_language']));
                     gaz_dbi_put_row($gTables['rigbro'], 'id_rig', $last_rigbro_id, 'id_body_text', gaz_dbi_last_id());
                 }
