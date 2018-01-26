@@ -876,7 +876,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$next_row]['status'] = "INSERT";
             $form['rows'][$next_row]['scorta'] = '';
-            $form['rows'][$next_row]['ritenuta'] = 0;
+            $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['rows'][$next_row]['codart'] = $form['in_codart'];
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
