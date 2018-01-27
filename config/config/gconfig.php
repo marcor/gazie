@@ -27,7 +27,7 @@ if (isset($_SERVER['SCRIPT_FILENAME']) && (str_replace('\\', '/', __FILE__) == $
     exit('Accesso diretto non consentito');
 }
 //versione software
-define('GAZIE_VERSION', '7.7');
+define('GAZIE_VERSION', '7.8');
 
 //nome DBMS usato per la libreria specifica (MySQL=mysql.lib, SQLite=sqlite.lib, ecc)
 //per il momento disponibile solo la libreria mysql.lib
@@ -60,7 +60,7 @@ $User = "root";
 //
 $Password = "";
 //
-// Porta sulla quale è in ascolto il database
+// Porta sulla quale è in ascolto il database (normalmente 3306 per mysql, 3307 per mariadb)
 $Port = 3306;
 //
 // Prefisso delle tabelle di Gazie.

@@ -1,0 +1,21 @@
+Titolo:
+Materiam superabat opus.
+
+Presentazione: 
+Come consuetudine il 27 gennaio è un giorno riservato al rilascio di una nuova versione di GAzie; a quattordici anni di distanza dalla prima pubblicazione ho volutamente atteso questa data per accumulare tutte le migliorie apportate e sotto elencate.
+
+- Aggiunta la possibilità di variare la modalità di pagamento durante l'inserimento dei movimenti contabili. E' molto utile non dipendere esclusivamente da quanto inserito sull'anagrafica del fornitore in fase di registrazione delle fatture d'acquisto perché così non si dovrà riprendere il movimento per variare le eventuali partite dello scadenzario se diverse dal solito.
+- Risolte problematiche insorte su ragioni sociali contenenti il carattere "&" in comunicazione dati fatture.
+- Corretto l'errore che impediva l'aggiunta di più di un rigo contemporaneamente sullo scadenzario.
+- Sono stati tolti i fuori campo (esclusi) dalle operazioni attive/passive IVA delle comunicazioni liquidazioni periodiche.
+- Aggiunto il nome del partner commerciale sulle descrizioni dei movimenti contabili
+- Per consentire un più veloce inserimento di molti movimenti contabili consecutivi alla conferma non esce dalla procedura ma prosegue sullo stesso avvisando che tutto è andato a buon fine
+- Corretto errore di mancato settaggio partner commerciale sulla tabella gaz_tesmov quando un movimento contabile movimentava più righi con lo stesso partner, ad es. in caso di registrazione di fattura d'acquisto pagata.
+- Aumentata la dimensione delle immagini degli articoli di magazzino, delle categorie. merceologiche e degli utenti al massimo consentito dai campi BLOB di mysql/mariadb (64kb).
+- Ripristinata segnalazione clienti con pagamenti diversi in fatturazione differita da ddt, in fase di inserimento automatico da anagrafica a piano conti aziendale adesso i clienti acquisiscono la prima modalità di pagamento utilizzata sul primo documento di vendita emesso.
+- Risolto il problema che impediva la selezione delle anagrafiche che avevano dei numeri nella stessa posizione dei codici fiscali.
+- In creazione nuova azienda adesso vengono azzerati valori di auto_increment delle nuove tabelle.
+- Corretti gli errori di riferimento quando venivano generati gli ordini a partire dai preventivi.
+- Adesso anche sui righi di tipo "normale" dei documenti di vendita si può indicare la ritenuta d'acconto.
+
+Antonio de Vincentiis, Montesilvano, 27 Gennaio 2018
