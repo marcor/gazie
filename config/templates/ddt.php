@@ -105,9 +105,9 @@ class DDT extends Template_con_scheda
                         $this->Cell(10,6,'','R',1);
                     }
                 } elseif ($rigo['tiprig'] == 2) {
-                   $this->Cell(30,6,'','L');
-                   $this->Cell(122,6,$rigo['descri'],'LR');
-                   $this->Cell(35,6,'','R',1);
+                   //$this->Cell(30,6,'','L');
+                   $this->Cell(122,6,$rigo['descri'],'LR',0,'L', 0, '', 1);
+                   $this->Cell(65,6,'','R',1);
                 } elseif ($rigo['tiprig']==6 || $rigo['tiprig']==7) {
                     $this->writeHtmlCell(187,6,10,$this->GetY(),$rigo['descri'],1,1);
                 } elseif ($rigo['tiprig'] == 11) {
