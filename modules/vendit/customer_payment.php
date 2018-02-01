@@ -367,6 +367,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
         echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
         echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" orival=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\" opcl=\"" . $open . "\" value=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\"></td></tr>\n";
     }
+	$paymov_bal = round($paymov_bal, 2);
     echo "<tr>";
     echo "<td colspan='3'>" . $script_transl['paymovbal'] . '<input type="text" value="' . number_format($paymov_bal, 2, '.', '') . '" id="total" /></td>';
     /** inizio modifica FP 28/11/2015
@@ -375,7 +376,6 @@ if ($form['partner'] > 100000000) { // partner selezionato
 //rimosso  if ($paymov_bal < $acc_bal) {
     if ($paymov_bal < $acc_bal && !$isDocumentoSelezionato) {   // se sto guardando solo un documento specifico non controllo lo sbilancio
         /** fine modifica FP */
-
         echo "<td class=\"FacetDataTDred\" colspan='4'>" . $script_transl['mesg'][3] . " <a class=\"btn btn-xs btn-default btn-edit\" href=\"../contab/admin_movcon.php?Insert\"><i class=\"glyphicon glyphicon-edit\"> </i></td>";
     }
     echo '<td class="FacetFieldCaptionTD" align="center"><input name="ins" id="preventDuplicate" onClick="chkSubmit();" onClick="chkSubmit();" type="submit" value="' . strtoupper($script_transl['insert']) . '!"></td>';
