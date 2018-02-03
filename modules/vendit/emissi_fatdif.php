@@ -414,7 +414,7 @@ if (isset($invoices['data'])) {
 						$btn_class ="btn-default";
 					}
                     echo "<tr>";
-                    echo '<td  class="FacetDataTDevidenziaOK" colspan="8">' . $script_transl['add_invoice'] . $numfat . '/' . $tes['seziva'] . ' pr.' . $protoc . " a " . $cliente['ragso1'] . ' ' . $cliente['ragso2'] . " &nbsp;</td>";
+                    echo '<td  class="FacetDataTDevidenziaOK" colspan="8"><b>' .$cliente['ragso1'] . ' ' . $cliente['ragso2'] .'</b> '. $script_transl['add_invoice'] . $numfat . '/' . $tes['seziva'] . ' pr.' . $protoc . " &nbsp;</td>";
                     echo "</tr>\n";
                     $ctrl_first = false;
                 }
