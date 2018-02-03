@@ -24,6 +24,8 @@
   --------------------------------------------------------------------------
  */
 
+//*+- Nuovo stringa per colonna Fornitore in array 'Lista delle merci e dei servizi' - DC - 02 feb 2018
+
 $strScript = array("browse_document.php" =>
     array('title' => "Lista dei Documenti/Certificati",
         'errors' => array('Il formato del file non è stato accettato!',
@@ -53,7 +55,8 @@ $strScript = array("browse_document.php" =>
         'payroll_tax' => 'Cassa Prev.',
         'barcode' => 'Cod.Barre',
         'clone' => 'Duplica',
-		'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona' 
+		'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona',
+        'clfoco'=>'Fornitore',
     ),
     "report_statis.php" =>
     array("statistica ",

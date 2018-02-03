@@ -46,12 +46,14 @@ require("../../library/include/header.php");
     $(window).load(function () {
         loadmore();
     });
+                                   
     function loadmore()
     {
         var rn = $("#row_no").val();
         var ob = $("#order_by").val();
         var so = $("#sort").val();
         var ca = '<?php echo $cs ?>';
+        
         $.ajax({
             type: 'post',
             url: 'report_artico_scroll.php',
@@ -59,7 +61,7 @@ require("../../library/include/header.php");
                 rowno: rn,
                 orderby: ob,
                 sort: so,
-                codart: ca
+                codart: ca,
             },
             beforeSend: function () {
                 $('#loader-icon').show();
@@ -110,13 +112,13 @@ $gForm = new magazzForm();
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
     <div class="panel panel-info col-lg-8">
         <div class="container-fluid">
-		<label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>
+        <label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>
 		<?php
             $select_artico = new selectartico("codart");
             $select_artico->output(substr($cs, 0, 20), 'C', "col-lg-3",0);
 			echo $script_transl['cosear'];
             ?>
-        </div>
+		</div>
     </div>
     <div class="panel panel-default">
         <div id="gaz-responsive-table"  class="container-fluid">
@@ -151,6 +153,13 @@ $gForm = new magazzForm();
                                 <?php echo $script_transl["preve1"]; ?>
                             </a>
                         </th>
+                        <!--+ nuova colonna fornitore - DC - 02 feb 2018 -->
+						<th>
+							<a href="#" class="orby" data-order="clfoco">
+								<?php echo $script_transl["clfoco"]; ?>
+							</a>
+                        </th>
+                        <!--- nuova colonna fornitore -->
                         <th class="text-right">
                             <?php echo $script_transl["preacq"]; ?>
                         </th>
@@ -162,7 +171,7 @@ $gForm = new magazzForm();
                                 <?php echo $script_transl["aliiva"]; ?>
                             </a>
                         </th>
-                        <th class="text-center">
+						<th class="text-center">
                             <?php echo $script_transl["retention_tax"]; ?>
                         </th>
                         <th class="text-center">

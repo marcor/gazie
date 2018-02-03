@@ -51,12 +51,14 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $ob = filter_input(INPUT_POST, 'orderby');
     $so = filter_input(INPUT_POST, 'sort');
     $ca = filter_input(INPUT_POST, 'codart');
+    
     if (empty($ca)) {
         $where = '1';
     } else {
         $where = "codice LIKE '" . $ca . "'";
         $no = '0';
     }
+    
     $gForm = new magazzForm();
     $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $ob . ' ' . $so, $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
@@ -64,6 +66,11 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         $mv = $gForm->getStockValue(false, $row['codice']);
         $magval = array_pop($mv);
         $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $row["aliiva"]);
+		
+		//*+ Recupero Ragione sociale Fornitore - DC - 02 feb 2018 
+        $rsfor = gaz_dbi_get_row($gTables['clfoco'], "codice", $row["clfoco"]);
+		//*- Recupero Ragione sociale Fornitore
+		
         $ldoc = '';
         if ($lastdoc) {
             $ldoc = '<a href="../root/retrieve.php?id_doc=' . $lastdoc["id_doc"] . '">
@@ -115,7 +122,12 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             <td data-title="<?php echo $script_transl["preve1"]; ?>" class="text-right">
                 <?php echo number_format($row["preve1"], $admin_aziend['decimal_price'], ',', '.'); ?>
             </td>
-            <td data-title="<?php echo $script_transl["preacq"]; ?>" class="text-right">
+            <!--+ nuova colonna fornitore - DC - 02 feb 2018  -->
+			<th title="<?php echo $script_transl["clfoco"]; ?>: <?php echo $row["clfoco"]; ?>">
+				<?php echo $rsfor['descri']; ?>
+            </th>
+			<!--- nuova colonna fornitore -->
+			<td data-title="<?php echo $script_transl["preacq"]; ?>" class="text-right">
                 <?php echo number_format($row["preacq"], $admin_aziend['decimal_price'], ',', '.'); ?>
             </td>
             <td data-title="<?php echo $script_transl["stock"]; ?>" title="<?php echo $admin_aziend['symbol'] . ' ' . $magval['v_g']; ?>" class="text-center">
@@ -124,7 +136,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             <td data-title="<?php echo $script_transl["aliiva"]; ?>">
                 <?php echo floatval($iva['aliquo']) . '%'; ?>
             </td>
-            <td data-title="<?php echo $script_transl["retention_tax"]; ?>" class="text-center" >
+			<td data-title="<?php echo $script_transl["retention_tax"]; ?>" class="text-center" >
                 <?php echo $ret; ?>&nbsp;
             </td>
             <td data-title="<?php echo $script_transl["payroll_tax"]; ?>" class="text-center">
