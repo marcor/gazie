@@ -28,6 +28,8 @@
   -- TRANSLATED BY : Dante Becerra Lagos (softenglish@gmail.com)
  */
 
+//*+- Nuova stringa per colonna Fornitore in array 'Lista delle merci e dei servizi' - DC - 02 feb 2018
+
 $strScript = array("browse_document.php" =>
     array('title' => "Lista de documentos / certificados",
         'errors' => array('El formato de archivo no fue aceptada!',
@@ -58,6 +60,7 @@ $strScript = array("browse_document.php" =>
         'barcode' => 'Cod.Barre',
         'clone' => 'Duplica',
 		'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona' 
+        'clfoco'=>'Proveedor',
     ),
     "report_statis.php" =>
     array("estatistico ",
