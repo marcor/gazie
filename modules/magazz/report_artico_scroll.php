@@ -70,7 +70,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		//*+ Recupero Ragione sociale Fornitore - DC - 02 feb 2018 
         $rsfor = gaz_dbi_get_row($gTables['clfoco'], "codice", $row["clfoco"]);
 		//*- Recupero Ragione sociale Fornitore
-		
+		if ($rsfor['descri']==''){
+			$rsfor['descri']='-';
+		}	
         $ldoc = '';
         if ($lastdoc) {
             $ldoc = '<a href="../root/retrieve.php?id_doc=' . $lastdoc["id_doc"] . '">
@@ -123,9 +125,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
                 <?php echo number_format($row["preve1"], $admin_aziend['decimal_price'], ',', '.'); ?>
             </td>
             <!--+ nuova colonna fornitore - DC - 02 feb 2018  -->
-			<th title="<?php echo $script_transl["clfoco"]; ?>: <?php echo $row["clfoco"]; ?>">
+			<td data-title="<?php echo $script_transl["clfoco"]; ?>">
 				<?php echo $rsfor['descri']; ?>
-            </th>
+            </td>
 			<!--- nuova colonna fornitore -->
 			<td data-title="<?php echo $script_transl["preacq"]; ?>" class="text-right">
                 <?php echo number_format($row["preacq"], $admin_aziend['decimal_price'], ',', '.'); ?>
