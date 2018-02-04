@@ -30,8 +30,11 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
     ini_set('memory_limit', '128M');
     gaz_set_time_limit(0);
 }
-
-require("../../config/templates/report_template.php");
+$template='templates';
+if (strlen($admin_aziend['template']) > 1) {
+	$template .= '.'.$admin_aziend['template'];
+}
+require("../../config/".$template."/report_template.php");
 if (!isset($_GET['ci']) or ! isset($_GET['cf']) or ! isset($_GET['ai']) or ! isset($_GET['af'])) {
     header("Location: select_deplia.php");
     exit;

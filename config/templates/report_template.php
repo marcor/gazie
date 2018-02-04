@@ -86,7 +86,7 @@ class Report_template extends TCPDF {
             $this->printCover();
         } else {
             $this->SetFont('helvetica', '', 9);
-            $this->Image('@' . $this->logo, 15, 8, 30, 0, '', $this->link);
+            $this->Image('@' . $this->logo, 15, 5, 0, 27, '', $this->link);
             $this->Cell(40, 4);
             $this->Cell(118, 4, $this->intesta1, 0, 0, 'L',0,'',1);
             if (isset($this->altri_dati['page'])) { // � stato passato il valore di pagina da stampare
