@@ -361,7 +361,8 @@ $strScript = array("browse_document.php" =>
             'descri'=>'Enter a description',
             'unimis'=>'Insert the unit sales',
             'aliiva'=>'Enter the VAT rate',
-            'lotmag'=>'Per avere la tracciabilit� per lotti � necessario attivare la contabilit� di magazzino in configurazione azienda'
+            'lotmag'=>'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
+			'char' => 'Sul codice articolo ho sostituito i caratteri speciali non consentiti con "_" '
         ),
         'codice' => "Code",
         'descri' => "Description",

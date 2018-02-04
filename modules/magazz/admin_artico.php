@@ -131,6 +131,12 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1) {
             $msg['err'][] = 'lotmag';
         }
+		// controllo che non ci siano caratteri speciali sul codice articolo (danno problemi con l'inventario)
+		$pattern = '/[\'\/~`\!@#\$%\^&\*\(\) \+=\{\}\[\]\|;:"\<\>,\.\?\\\]/';
+        if (preg_match($pattern, $form["codice"],$match)) {
+			$form["codice"] = str_replace($match,'_',$form["codice"]);
+            $msg['err'][] = 'char';
+        }
         if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
                 $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
