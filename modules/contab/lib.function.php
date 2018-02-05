@@ -142,37 +142,6 @@ class contabForm extends GAzieForm {
         }
     }
 
-    function selCauAccount($name, $val, $class = 'FacetSelect') {
-        global $gTables, $admin_aziend;
-        $where = "(codice < " . intval($admin_aziend['mascli'] . '000001') . " OR codice > " . intval($admin_aziend['mascli'] . '999999') . ") AND
-                (codice < " . intval($admin_aziend['masfor'] . '000001') . " OR codice > " . intval($admin_aziend['mascli'] . '999999') . ")";
-        $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
-            6 => "gaz-transitori", 7 => "gaz-transitori", 8 => "gaz-transitori", 9 => "gaz-transitori");
-        echo "\t<select name=\"$name\" class=\"FacetSelect\">\n";
-        echo "<option value=\"0\"> ---------- </option>";
-        $result = gaz_dbi_dyn_query("*", $gTables['clfoco'], $where, "codice ASC");
-        while ($r = gaz_dbi_fetch_array($result)) {
-            $v = intval($r['codice'] / 1000000);
-            $c = intval($v / 100);
-            $selected = '';
-            if ($val == $r['codice']) {
-                $selected = " selected ";
-            }
-            $selected .= ' class="' . $bg_class[$c] . '" ';
-            if (substr($r['codice'], -6) == '000000') {
-                $selected .= " color: red; font-weight: bold;\" ";
-                $view = $v . '-' . strtoupper($r['descri']);
-            } else {
-                $view = $r['codice'] . '-' . $r['descri'];
-                $selected .= "\" ";
-            }
-
-            echo "\t\t <option value=\"" . $r['codice'] . "\" $selected >$view</option>\n";
-            $c = $v;
-        }
-        echo "</select>\n";
-    }
-
     function settleAccount($name, $val, $date_r = false) {
         if (preg_match("/^id_([0-9]+)$/", $val, $match)) { // è un partner da inserire sul piano dei conti
             $val = 0;
@@ -360,7 +329,7 @@ class contabForm extends GAzieForm {
         } else {   // altri sottoconti
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"\">\n";
             echo "\t<select name=\"$name\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
-            echo "<option value=\"0\"> ---------- </option>";
+            echo "<option value=\"0\"> - - - - - - - - - - - - - - - - - - - </option>";
             $result = gaz_dbi_dyn_query("*", $gTables['clfoco'], $where, "codice ASC");
             while ($r = gaz_dbi_fetch_array($result)) {
                 $selected = '';
@@ -402,6 +371,7 @@ function rigmocUpdate($id, $newValue) {
     $columns = array('id_tes', 'darave', 'codcon', 'import');
     tableUpdate('rigmoc', $columns, $id, $newValue);
 }
+
 
 function calcNumPartitaAperta(&$mv) {
     if ($mv && empty($mv["id_tesdoc_ref"])) { // non è stata aperta una partita perchè pagamento immediato

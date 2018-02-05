@@ -109,15 +109,15 @@ $strScript = array("select_liqiva.php" =>
             'Inserire almeno 2 caratteri!',
             'Cambia cliente/fornitore'
         ),
-        'errors' => array('Inserire un codice valido!',
-            '&Egrave; necessario inserire una descrizione!',
-            'Codice esistente usare l\'apposita procedura se lo si vuole modificare!',
-            'Si deve definire almeno un conto!',
-            'Codice riservato alla CHIUSURA AUTOMATICA CONTI!',
-            'Codice riservato alla APERTURA AUTOMATICA CONTI!',
-            'Codice riservato al RILEVAMENTO AMMORTAMENTI DI FINE ANNO!'
+        'err' => array('codice_emp' => 'Inserire un codice valido!',
+            'descri' => '&Egrave; necessario inserire una descrizione!',
+            'codice_exi' => 'Codice causale esistente!',
+            'clfoco_ref' => "C'&egrave; almeno un rigo con conto non definito!",
+            'CHI' => 'Codice riservato alla CHIUSURA AUTOMATICA CONTI!',
+            'APE' => 'Codice riservato alla APERTURA AUTOMATICA CONTI!',
+            'AMM' => 'Codice riservato al RILEVAMENTO AMMORTAMENTI DI FINE ANNO!'
         ),
-        'head' => 'Conti da movimentare ',
+        'head' => 'Conti movimentati ',
         'codice' => 'Codice causale *',
         'descri' => 'Descrizione *',
         'insdoc' => 'Inserimento dati documento di riferimento',
@@ -128,13 +128,15 @@ $strScript = array("select_liqiva.php" =>
         'operat_value' => array(0 => 'Non opera', 1 => 'Somma', 2 => 'Sottrae'),
         'pay_schedule' => 'Partite aperte (scadenzario)',
         'pay_schedule_value' => array(0 => 'Non opera', 1 => 'Documento vendita/acquisto (apre)', 2 => 'Pagamento (chiude)'),
-        'contr' => 'Conto (minimo 1) *',
-        'tipim' => 'Tipo di importo',
+        'clfoco_mastro' => 'Mastro',
+        'clfoco_sub' => 'Sottoconto',
+        'tipim' => 'Tipo importo',
         'tipim_value' => array('' => '', 'A' => 'Totale', 'B' => 'Imponibile', 'C' => 'Imposta'),
         'daav' => 'DARE/AVERE',
         'daav_value' => array('D' => 'DARE', 'A' => 'AVERE'),
         'report' => 'Lista delle causali contabili',
-        'del_this' => 'Causale contabile '
+        'del_this' => 'Causale contabile ',
+        'add_row' => 'Aggiungi un rigo'
     ),
     "admin_piacon.php" =>
     array('title' => 'Gestione del piano dei conti',

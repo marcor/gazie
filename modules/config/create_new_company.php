@@ -89,6 +89,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
                 if (preg_match("/[a-zA-Z0-9]*.aliiva$/", $r[0]) ||
                         preg_match("/[a-zA-Z0-9]*.caumag$/", $r[0]) ||
                         preg_match("/[a-zA-Z0-9]*.caucon$/", $r[0]) ||
+                        preg_match("/[a-zA-Z0-9]*.caucon_rows$/", $r[0]) ||
                         preg_match("/[a-zA-Z0-9]*.pagame$/", $r[0]) ||
                         preg_match("/[a-zA-Z0-9]*.portos$/", $r[0]) ||
                         preg_match("/[a-zA-Z0-9]*.spediz$/", $r[0])) { // queste tabelle le copio identiche anche con i dati provenienti dall'azienda di riferimento

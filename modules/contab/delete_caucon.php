@@ -24,6 +24,8 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if (isset($_POST['Delete'])){
         gaz_dbi_del_row($gTables['caucon'], "codice", substr($_POST['codice'],0,3));
+		//cancello anche i righi 
+		gaz_dbi_del_row($gTables['caucon_rows'], "caucon_cod", substr($_POST['codice'],0,3));
         header("Location: report_caucon.php");
         exit;
 } else {
@@ -58,12 +60,15 @@ $script_transl=HeadMain('','','admin_caucon');
 <td colspan="2" class="FacetFormHeaderFont" align="center"><?php echo $script_transl['head']; ?></td>
 </tr>
 <?php
-for( $i = 1; $i <= 6; $i++ ) {
-   echo '<tr><td class="FacetDataTD">'.$form["contr$i"].'</td><td class="FacetDataTD">';
-        if (!empty($form["daav_$i"])){
-           echo $script_transl['daav_value'][$form["daav_$i"]];
-        }
+    $result = gaz_dbi_dyn_query("*", $gTables['caucon_rows'],"caucon_cod = '".$form['codice']."'");
+    while ($a_row = gaz_dbi_fetch_array($result)) {
+		$descri_acc = gaz_dbi_get_row($gTables['clfoco'], "codice", $a_row["clfoco_ref"]);
+		echo '<tr><td class="FacetDataTD">'.$descri_acc["descri"].'</td><td class="FacetDataTD">';
+        echo $script_transl['daav_value'][$a_row["dare_avere"]];
         echo "</td></tr>\n";
+    }
+
+for( $i = 1; $i <= 6; $i++ ) {
 }
 ?>
 <tr>

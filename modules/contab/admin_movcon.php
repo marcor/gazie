@@ -340,24 +340,25 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             $form['registroiva'] = $causa['regiva'];
             $form['operatore'] = $causa['operat'];
             $newRow = 0;
-            for ($i = 1; $i <= 6; $i++) { //se ce ne sono, carico le contropartite
-                if ($causa["contr$i"] > 0) {
+            $rs_caucon_rows = gaz_dbi_dyn_query("*", $gTables['caucon_rows'], "caucon_cod = '" . $form['codcausale']."'", "n_order");
+            while ($caucon_rows = gaz_dbi_fetch_array($rs_caucon_rows)) { //se ce ne sono, carico le contropartite
+                if ($caucon_rows["clfoco_ref"] > 100000000) { // ho una contropartita da proporre
                     if (!isset($form['id_rig_rc'][$newRow])) { //se e' un rigo inesistente
                         $form['id_rig_rc'][$newRow] = 'NUOVO';
                     }
-                    if (substr($causa["contr$i"], 3, 6) == 0) {
-                        if (substr($causa["contr$i"], 0, 3) == substr($form['cod_partner'], 0, 3)) {
+                    if (substr($caucon_rows["clfoco_ref"], 3, 6) == 0) {
+                        if (substr($caucon_rows["clfoco_ref"], 0, 3) == substr($form['cod_partner'], 0, 3)) {
                             $form['conto_rc' . $newRow] = $form['cod_partner'];
                             ;
                         } else {
                             $form['conto_rc' . $newRow] = 0;
                         }
                     } else {
-                        $form['conto_rc' . $newRow] = $causa["contr$i"];
+                        $form['conto_rc' . $newRow] = $caucon_rows["clfoco_ref"];
                     }
-                    $form['mastro_rc'][$newRow] = substr($causa["contr$i"], 0, 3) . "000000";
+                    $form['mastro_rc'][$newRow] = substr($caucon_rows["clfoco_ref"], 0, 3) . "000000";
                     $form['search']['conto_rc' . $newRow] = '';
-                    $form['darave_rc'][$newRow] = $causa["daav_$i"];
+                    $form['darave_rc'][$newRow] = $caucon_rows["dare_avere"];
                     if (isset($nuovo_importo[$newRow])) {
                         $form['importorc'][$newRow] = $nuovo_importo[$newRow];
                     } else {
@@ -449,10 +450,12 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $imponi += $form['imponi_ri'][$i];
                 $impost += $form['impost_ri'][$i];
             } //fine calcolo
+			
             for ($rc = 0; $rc < $_POST['rigcon']; $rc++) { //mi ripasso le contropartite inserite e ci indroduco l'eventuale giusto valore
-                for ($i = 1; $i <= 6; $i++) {
-                    if ($causa["contr$i"] == $form['conto_rc' . $rc] or ( substr($causa["contr$i"], 3, 6) == 0 and substr($form['mastro_rc'][$rc], 0, 3) == substr($causa["contr$i"], 0, 3))) {
-                        switch ($causa["tipim$i"]) {
+				$rs_caucon_rows = gaz_dbi_dyn_query("*", $gTables['caucon_rows'], "caucon_cod = '" . $form['codcausale']."'", "n_order");
+				while ($caucon_rows = gaz_dbi_fetch_array($rs_caucon_rows)) { //contropartite in causale
+                    if ($caucon_rows["clfoco_ref"] == $form['conto_rc' . $rc] || ( substr($caucon_rows["clfoco_ref"], 3, 6) == 0 and substr($form['mastro_rc'][$rc], 0, 3) == substr($caucon_rows["clfoco_ref"], 0, 3))) {
+                        switch ($caucon_rows["type_imp"]) {
                             case "A": //totale
                                 $form['importorc'][$rc] = $imponi + $impost;
                                 break;

@@ -1178,7 +1178,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                         ?>
                         <tr> 
                             <td colspan="7">
-                                <input class="bg-danger" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
+                                <input class="bg-danger center-block" id="preventDuplicate" tabindex=10 onClick="chkSubmit();" type="submit" name="ins" value="<?php 
                                 if ($toDo == 'insert'){
                                     echo $script_transl['send_ecr'] . ' ' . $ecr['descri'];
                                 } else {
