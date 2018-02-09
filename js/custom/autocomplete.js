@@ -103,5 +103,20 @@ $(function() {
 			return false;
 		}
 	});
+	$( "#search_municipalities" ).autocomplete({
+		source: "../../modules/root/search.php?opt=municipalities",
+		minLength: 2,
+        html: true, // optional (jquery.ui.autocomplete.html.js required)
+ 
+      	// optional (if other layers overlap autocomplete list)
+        open: function(event, ui) {
+            $(".ui-autocomplete").css("z-index", 1000);
+        },
+		select: function(event, ui) {
+			$("#search_municipalities").val(ui.item.value);
+			$(this).closest("form").submit();
+		}
+	});
+	
 });
 

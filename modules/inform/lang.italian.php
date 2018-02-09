@@ -204,6 +204,16 @@ $strScript = array(
         'e_mail' => 'e mail',
         'fatt_email' => 'Invio fattura:',
         'fatt_email_value' => array(0 => 'No, solo stampa PDF', 1 => 'In formato PDF su email', 2 => 'In formato XML su PEC', 3 => 'In formato PDF su email + XML su PEC')
+    ),
+	"report_municipalities.php" =>
+    array('title' => 'Lista dei comuni',
+        'id' => "ID",
+        'name' => "Nome",
+        'id_province' => "Provincia",
+        'postal_code' => "Codice postale",
+        'dialing_code' => "Prefisso tel.",
+        'clone' => 'Duplica',
+		'name_search'=>'aggiungi "%" e invia per ricerca, oppure seleziona'
     )
 );
 ?>
