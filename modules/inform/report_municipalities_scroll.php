@@ -40,12 +40,10 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $ob = filter_input(INPUT_POST, 'orderby');
     $so = filter_input(INPUT_POST, 'sort');
     $ca = filter_input(INPUT_POST, 'id');
-    
     if (empty($ca)) {
         $where = '1';
     } else {
         $where = "id LIKE '" . $ca . "'";
-        $no = '0';
     }
     
     $gForm = new informForm();

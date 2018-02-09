@@ -24,7 +24,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
 if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordinamento
-    $rn = filter_input(INPUT_POST, 'row_no');
+    $rn = 0;
     $ob = filter_input(INPUT_POST, 'order_by');
     $so = filter_input(INPUT_POST, 'sort');
     $cs = filter_input(INPUT_POST, 'cosear');

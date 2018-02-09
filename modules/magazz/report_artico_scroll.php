@@ -56,7 +56,6 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         $where = '1';
     } else {
         $where = "codice LIKE '" . $ca . "'";
-        $no = '0';
     }
     
     $gForm = new magazzForm();

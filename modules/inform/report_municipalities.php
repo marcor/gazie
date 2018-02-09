@@ -24,7 +24,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
 if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordinamento
-    $rn = filter_input(INPUT_POST, 'row_no');
+    $rn = '0';
     $ob = filter_input(INPUT_POST, 'order_by');
     $so = filter_input(INPUT_POST, 'sort');
     $cs = filter_input(INPUT_POST, 'name_search');
@@ -34,6 +34,7 @@ if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordin
     $so = 'ASC';
     $cs = '';
 }
+
 require("../../library/include/header.php");
 ?>
 <script type="text/javascript">
@@ -77,7 +78,7 @@ require("../../library/include/header.php");
                             placement: 'auto bottom',
                             delay: {show: 50},
                             title: function () {
-                                return '<span>' + this.getAttribute('data-label') + '</span><img src="../root/view.php?table=municipalities&value=' + this.getAttribute('data-id') + '" onerror="this.src=\'../../library/images/link_break.png\'" alt="' + this.getAttribute('data-label') + '"  style="max-height:150px;" />';
+                                return '<span>' + this.getAttribute('data-label') + '</span>';
                             }
                         });
             }

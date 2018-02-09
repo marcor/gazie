@@ -46,7 +46,9 @@ $transl['inform'] = array('name' => "Herramientas & Info",
         6 => array("Aggiorna GAzieCart", "Aggiorna GAzieCart"),
         7 => array("Aggiorna sito web", "Crea/aggiorna sito Statico"),
         8 => array("Backup su browser", "Backup remoto"),
-        9 => array("Backup su server","Backup locale")
+        9 => array("Backup su server","Backup locale"),
+        10 => array("Anagrafiche clienti-fornitori", "Anagrafiche clienti-fornitori"),
+        11 => array("Comuni","Municipalità")
     )
 );
 ?>
