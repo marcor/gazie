@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -111,16 +111,28 @@ $gForm = new informForm();
 ?>
 <form method="POST" id="form">
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
-    <div class="panel panel-info col-lg-8">
-        <div class="container-fluid">
-        <label for="id" class="col-lg-3 control-label"><?php echo $script_transl['id'].'-'.$script_transl['name']; ?></label>
-			<?php
-            $select_municipalities = new selectmunicipalities("id");
-            $select_municipalities->output(substr($cs, 0, 20), 'C', "col-lg-3",0);
-			echo $script_transl['name_search'];
-            ?>
+	<div class="panel panel-info">
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col-lg-8">
+				<label for="id" class="col-lg-3 control-label"><?php echo $script_transl['id'].'-'.$script_transl['name']; ?></label>
+				<?php
+				echo ' <input type="text" class="col-lg-3" name="name_search" id="search_municipalities" value="' .substr($cs, 0, 20) . '"  maxlength="16" />';
+				echo $script_transl['name_search'];
+				?>
+				</div>
+				<div class="col-lg-4">
+                <a class="btn btn-sm btn-edit" href="admin_municipalities.php?Insert">
+                    <i class="glyphicon glyphicon-edit">				
+					<?php
+					echo $script_transl['insert_mun'];
+					?>
+					</i>
+                </a>
+				</div>
+			</div>
 		</div>
-    </div>
+	</div>
     <div class="panel panel-default">
         <div id="gaz-responsive-table"  class="container-fluid">
             <table class="table table-responsive table-striped table-condensed cf">
@@ -150,9 +162,6 @@ $gForm = new informForm();
                             <a href="#" class="orby" data-order="dialing_code">
                                 <?php echo $script_transl["dialing_code"]; ?>
                             </a>
-                        </th>
-                        <th class="text-center">
-                            <?php echo $script_transl["clone"]; ?>
                         </th>
                         <th class="text-center">
                             <?php echo $script_transl["delete"]; ?>

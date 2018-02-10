@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -53,24 +53,19 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         ?>
         <tr>              
             <td data-title="<?php echo $script_transl["id"]; ?>">
-                <a class="btn btn-xs btn-default" href="../inform/admin_municipalities.php?Update&codice=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
+                <a class="btn btn-xs btn-default" href="../inform/admin_municipalities.php?Update&id=<?php echo $row['id']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['id']; ?></a>
             </td>
             <td data-title="<?php echo $script_transl["name"]; ?>">
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["name"]; ?>" data-label="<?php echo $row['name']; ?>"><?php echo $row["name"]; ?></span>
             </td>
             <td data-title="<?php echo $script_transl["id_province"]; ?>">
-                <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["id_province"]; ?>" data-label="<?php echo $row['id_province']; ?>"><?php echo $provinces["name"]; ?></span>
+                <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["id_province"]; ?>" data-label="<?php echo $row['id_province']; ?>"><?php echo $row['id_province'].'-'.$provinces["name"]; ?></span>
             </td>
             <td data-title="<?php echo $script_transl["postal_code"]; ?>" class="text-center">
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["postal_code"]; ?>" data-label="<?php echo $row['postal_code']; ?>"><?php echo $row["postal_code"]; ?></span>
             </td>
             <td data-title="<?php echo $script_transl["dialing_code"]; ?>" class="text-center">
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["dialing_code"]; ?>" data-label="<?php echo $row['dialing_code']; ?>"><?php echo $row["dialing_code"]; ?></span>
-            </td>
-            <td data-title="<?php echo $script_transl["clone"] . ' in ' . $row["id"]; ?>_2" class="text-center">
-                <a class="btn btn-xs btn-default" href="clone_municipalities.php?id=<?php echo $row["id"]; ?>">
-                    <i class="glyphicon glyphicon-export"></i>
-                </a>
             </td>
             <td class="text-center">
                 <a class="btn btn-xs btn-default btn-elimina" href="delete_municipalities.php?id=<?php echo $row["id"]; ?>">

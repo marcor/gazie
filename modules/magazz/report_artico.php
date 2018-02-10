@@ -2,7 +2,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -114,10 +114,8 @@ $gForm = new magazzForm();
         <div class="container-fluid">
         <label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>
 		<?php
-            $select_artico = new selectartico("codart");
-            $select_artico->output(substr($cs, 0, 20), 'C', "col-lg-3",0);
-			echo $script_transl['cosear'];
-            ?>
+		echo ' <input type="text" class="col-lg-3" name="cosear" id="search_cosear" value="' .substr($cs, 0, 20) . '"  maxlength="16" />';
+        ?>
 		</div>
     </div>
     <div class="panel panel-default">

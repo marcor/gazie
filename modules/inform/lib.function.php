@@ -3,7 +3,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -25,18 +25,5 @@
  */
 
 class informForm extends GAzieForm {
-
-
-
 }
-
-// classe per la generazione di select box degli articoli
-class selectmunicipalities extends SelectBox {
-    function output($cerca, $field = 'C', $class = 'FacetSelect',$sele=1) {
-        global $gTables, $script_transl;
-        echo '&nbsp;<input type="text" class="' . $class . '" name="name_search" id="search_municipalities" value="' . $cerca . '"  maxlength="16" />';
-    }
-
-}
-
 ?>

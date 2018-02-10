@@ -3,7 +3,7 @@
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
-  Copyright (C) 2004-2017 - Antonio De Vincentiis Montesilvano (PE)
+  Copyright (C) 2004-2018 - Antonio De Vincentiis Montesilvano (PE)
   (http://www.devincentiis.it)
   <http://gazie.sourceforge.net>
   --------------------------------------------------------------------------
@@ -212,8 +212,27 @@ $strScript = array(
         'id_province' => "Provincia",
         'postal_code' => "Codice postale",
         'dialing_code' => "Prefisso tel.",
-        'clone' => 'Duplica',
+        'insert_mun' => 'Inserisci un nuovo comune',
 		'name_search'=>'aggiungi "%" e invia per ricerca, oppure seleziona'
+    ),
+	"admin_municipalities.php" =>
+    array('title' => 'Gestione archivio dei comuni',
+        'ins_this' => "Inserimento nuovo comune",
+        'upd_this' => "Modifica il comune con ID:",
+        'err' => array('name' => '&Egrave; necessario indicare il nome del comune',
+            'postal_code' => '&Egrave; necessario indicare il codice postale',
+            'email' => 'L\'indirizzo e-mail è sbagliato',
+            'web_url' => 'L\'indirizzo del sito web è sbagliato'
+        ),
+        'id' => "ID",
+        'name' => "Nome",
+        'id_province' => "Provincia",
+        'postal_code' => "Codice postale",
+        'dialing_code' => "Prefisso telefonico",
+        'stat_code' => 'Codice statistico',
+		'code_register'=>'Codice alfanumerico',
+		'web_url'=>'Sito web',
+		'email'=>'E-Mail'
     )
 );
 ?>
