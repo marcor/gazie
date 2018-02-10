@@ -336,8 +336,8 @@ class lotmag {
             LEFT JOIN " . $gTables['movmag'] . " AS mm ON rd.id_mag = mm.id_mov  
             WHERE rd.id_tes = " . $id_tesdoc . " AND mm.id_lotmag > 0 LIMIT 1";
       $result = gaz_dbi_query($sqlquery);
-      $row = gaz_dbi_fetch_array($result);
-      if (count($row) > 1) { // il documento ha almeno un lotto caricato 
+      $rows = gaz_dbi_num_rows($result);
+      if ($rows > 1) { // il documento ha almeno un lotto caricato 
          $r = true;
       }
       return $r;

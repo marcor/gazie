@@ -172,8 +172,9 @@ if ($form['do_backup'] != 1 && isset($_GET['external'])) {
     echo "\n";
     $acc_view = array();
     while ($a_row = gaz_dbi_fetch_array($result)) {// navigazione tra gli elementi dell'array associativo (navigazione tra ciascuna delle tabelle ottenute dalla query di cui sopra)
-        list ($key, $nome_tabella) = each($a_row); // conversione di ciascun elemento dell'array associativo nelle variabili chiave e valore corrispondenti (nomi tabelle).
-        if (preg_match("/^" . $table_prefix . "_/", $nome_tabella)) {
+	$key = key($a_row);
+	$nome_tabella = array_values($a_row)[0];
+	if (preg_match("/^" . $table_prefix . "_/", $nome_tabella)) {
             
         } else {
             continue;

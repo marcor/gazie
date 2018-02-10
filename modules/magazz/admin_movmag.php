@@ -345,7 +345,7 @@ if ($form['clfoco'] == 0) {
             $clifor = $script_transl[5];
             echo "\t<select name=\"clfoco\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='new_price'; this.form.submit();\">\n";
             echo "<option value=\"000000000\"> ---------- </option>";
-            while (list($key, $row) = each($partner)) {
+			foreach ($partner AS $key => $row) {
                 $selected = "";
                 if ($row["codice"] == $form['clfoco']) {
                     $selected = "selected";

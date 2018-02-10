@@ -178,7 +178,7 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders->output();
         echo "</tr>";
         $sum=0.00;
-        while (list($key, $mv) = each($m)) {
+		foreach ($m AS $key => $mv) {
             $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
             $datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
             $movQuanti = $mv['quanti']*$mv['operat'];

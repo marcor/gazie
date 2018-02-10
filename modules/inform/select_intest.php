@@ -147,7 +147,7 @@ if ($_POST['cod_partner'] == 0) {
          $tabula="";
          echo "\t<select name=\"cod_partner\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
          echo "<option value=\"000000000\"> ---------- </option>";
-         while (list($key, $row) = each($partner)) {
+ 		 foreach ($partner AS $key => $row) {
            $selected = "";
            if ($row["codice"] == $_POST['cod_partner']) {
                $selected = "selected";

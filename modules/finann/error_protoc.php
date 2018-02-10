@@ -98,7 +98,7 @@ if (sizeof($m) > 0) {
     $linkHeaders = new linkHeaders($script_transl['header']);
     $linkHeaders->output();
     echo "</tr>";
-    while (list($key, $mv) = each($m)) {
+	foreach ($m AS $key => $mv) {
         if ($mv['err'] == 'P') {
             $p = 'red" >' . $mv["pr"] . $script_transl['expect'] . $mv["ex"];
             $nred = '';

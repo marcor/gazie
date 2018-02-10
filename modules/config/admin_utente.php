@@ -162,7 +162,7 @@ if (isset($_POST['Submit'])) {
         $form["datpas"] = date("YmdHis");
         $tbt = trim($form['body_text']);
         if ($user_data['Abilit'] == 9) {
-            while (list($key, $value) = each($_POST)) {
+			foreach ($_POST AS $key => $value) {
                 if (preg_match("/^([0-9]{3})acc_/", $key, $id)) {
                     updateAccessRights($form['Login'], preg_replace("/^[0-9]{3}acc_/", '', $key), $value, $id[1]);
                 } elseif (preg_match("/^([0-9]{3})nusr_/", $key, $id)) {

@@ -605,7 +605,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
         $cig = "";
         $cup = "";
         $id_documento = "";
-        while (list($key, $rigo) = each($lines)) {
+		foreach ($lines AS $key => $rigo) {
             $nl = false;
             switch ($rigo['tiprig']) {
                 case "0":       // normale

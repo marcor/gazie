@@ -197,7 +197,7 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders=new linkHeaders($script_transl['header']);
         $linkHeaders->output();
         echo "</tr>";
-        while (list($key, $mv) = each($m)) {
+		foreach ($m AS $key => $mv) {
             if ($ctr_mv != $mv['tipeff']) {
                   echo "\t<tr>\n";
                   echo "\t<td colspan=\"6\">".$mv['tipeff'].' - '.$script_transl['type_value'][$mv['tipeff']]."</td>\n";

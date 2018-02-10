@@ -101,7 +101,7 @@ $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',7);
 if (sizeof($result) > 0) {
-  while (list($key, $row) = each($result)) {
+	foreach ($result AS $key => $row) {
       $datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
       $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
       $movQuanti = $row['quanti']*$row['operat'];

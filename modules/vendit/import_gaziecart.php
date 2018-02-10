@@ -173,7 +173,7 @@ if (!isset($_POST['ritorno'])) { // al primo accesso allo script
         $conn = imap_open("{" . $form['server'] . ":110/pop3/notls}INBOX", $regs[1], $form['pass']);
         $n_messaggi = imap_num_msg($conn);
         $messaggi = imap_fetch_overview($conn, "1:$n_messaggi");
-        while (list($key, $value) = each($messaggi)) {
+		foreach ($messaggi AS $key => $value) {
             if ($value->seen == 0) {
                 if (preg_match("/^Ordine n\.([0-9]{14})$/", $value->subject, $regs)) {  // se l'oggetto e' un ordine proveniente da GAzieCart prelevo l'allegato
                     // in $regs[1] c'� il numero dell'ordine che serve per controllare se � gi� stato elaborato

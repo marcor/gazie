@@ -79,7 +79,7 @@ class DDT extends Template_con_scheda
     function compose()
     {
         $lines = $this->docVars->getRigo();
-        while (list($key, $rigo) = each($lines)) {
+		foreach ($lines AS $key => $rigo) {
             if ($rigo['sconto'] < 0.001) {
                 $rigo['sconto']='';
             }

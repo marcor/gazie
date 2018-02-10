@@ -298,7 +298,7 @@ if (isset($_POST['preview']) and $msg == '') {
         $totimpost = 0.00;
         $totindetr = 0.00;
         $ctrlmopre = 0;
-        while (list($key, $mv) = each($m)) {
+		foreach ($m AS $key => $mv) {
             if ($mv['operat'] == 1) {
                 $imponi = $mv['imponi'];
                 $impost = $mv['impost'];

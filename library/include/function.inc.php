@@ -754,7 +754,7 @@ class selectPartner extends SelectBox {
             if ($numclfoco > 0) {
                 $tabula = " ";
                 echo "\t <select name=\"$this->name\" class=\"FacetSelect\">\n";
-                while (list($key, $a_row) = each($partners)) {
+				foreach ($partners AS $key => $a_row) {
                     $selected = "";
                     $style = '';
                     if ($a_row["codice"] == $this->selected) {

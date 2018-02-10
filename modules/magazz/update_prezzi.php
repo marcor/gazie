@@ -179,7 +179,7 @@ if (isset($_POST['submit']) && $msg=='') {
         } else {
            $name_obj='preve'.$form['lis_obj'];
         }
-        while (list($key, $mv) = each($m)) {
+		foreach ($m AS $key => $mv) {
             $new_price=compute_new_price($mv[$name_bas],$mv[$name_obj],$form['valore'],$form['mode'],$form['round_mode'],$form['weight_valadd'],$mv['peso_specifico']);
             // questo e' troppo lento: gaz_dbi_put_row($gTables['artico'],'codice',$mv['codice'],$name_obj,$new_price);
             gaz_dbi_query ("UPDATE ".$gTables['artico']." SET ".$name_obj." = ".$new_price." WHERE codice = '".$mv['codice']."';");
@@ -274,7 +274,7 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders->output();
         echo "</tr>";
         $ctr_mv=0;
-        while (list($key, $mv) = each($m)) {
+		foreach ($m AS $key => $mv) {
             if ($mv['catmer']>$ctr_mv){
                 $cm=gaz_dbi_get_row($gTables['catmer'],'codice',$mv['catmer']);
                 echo "<tr><td class=\"FacetFieldCaptionTD\">".$mv['catmer'].' - '.$cm['descri']." &nbsp</td><td colspan=\"5\"></td></tr>\n";

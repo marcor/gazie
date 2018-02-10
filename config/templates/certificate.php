@@ -69,7 +69,7 @@ class Certificate extends Template {
         $this->atLeastOneWithoutDoc = false;
         $this->lines = $this->docVars->getLots();
         $this->SetFillColor(255, 150, 150);
-        while (list($key, $rigo) = each($this->lines)) {
+		foreach ($this->lines AS $key => $rigo) {
             $fill = 0;
             if (!empty($rigo['ext'])) {
                 $this->noDocs = false;
@@ -105,7 +105,7 @@ class Certificate extends Template {
     function compose() {
         $this->print_header = false;
         reset($this->lines);
-        while (list($key, $rigo) = each($this->lines)) {
+		foreach ($this->lines AS $key => $rigo) {
             $this->SetTextColor(255, 50, 50);
             if ($this->noDocs) {
                 $this->SetFont('helvetica', '', 16);

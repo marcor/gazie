@@ -237,7 +237,7 @@ if ($t > 4 && $t <= 13) {
                                     $scdl = new Schedule;
                                     $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli'], true);
                                     if (sizeof($scdl->Entries) > 0) {
-                                        while (list($key, $mv) = each($scdl->Entries)) {
+										foreach ($scdl->Entries AS $key => $mv) {
                                             $status_descr = '';
                                             if ($mv['expiry'] <= date("Y-m-d")) {
                                                 $stato_partita = "warning";
@@ -290,7 +290,7 @@ if ($t > 4 && $t <= 13) {
                                     $scdl = new Schedule;
                                     $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor'], true);
                                     if (sizeof($scdl->Entries) > 0) {
-                                        while (list($key, $mv) = each($scdl->Entries)) {
+										foreach ($scdl->Entries AS $key => $mv) {
                                             if ($mv['expiry'] <= date("Y-m-d")) {
                                                 $stato_partita = "warning";
                                             } else {

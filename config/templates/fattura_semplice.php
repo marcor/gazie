@@ -100,7 +100,7 @@ class FatturaSemplice extends Template {
 
     function body() {
         $lines = $this->docVars->getRigo();
-        while (list($key, $rigo) = each($lines)) {
+		foreach ($lines AS $key => $rigo) {
             if (($this->GetY() >= 166 && $this->docVars->taxstamp >= 0.01 ) || $this->GetY() >= 195) { // mi serve per poter stampare la casella del bollo
                 $this->Cell(186, 6, '', 'T', 1);
                 $this->SetFont('helvetica', '', 20);

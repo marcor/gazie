@@ -292,7 +292,7 @@ if ($form['id_fornitore'] == 0) {
          $tabula="";
          echo "\t<select name=\"id_fornitore\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
          echo "<option value=\"000000000\"> ---------- </option>";
-         while (list($key, $row) = each($fornitore)) {
+		 foreach ($fornitore AS $key => $row) {
            $selected = "";
            if ($row["codice"] == $form['id_fornitore']) {
                $selected = "selected";

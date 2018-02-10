@@ -115,7 +115,7 @@ if (isset($_POST['submit']) && $msg=='') {
   //Modifico l'aliquota IVA di tutti gli articoli selezionati...
   $m=getItems($form['rate_obj'],$form['cm_ini'],$form['cm_fin'],$form['art_ini'],$form['art_fin']);
   if (sizeof($m) > 0) {
-        while (list($key, $mv) = each($m)) {
+		foreach ($m AS $key => $mv) {
             // questo e' troppo lento: gaz_dbi_put_row($gTables['artico'],'codice',$mv['codice'],$name_obj,$new_price);
             gaz_dbi_query ("UPDATE ".$gTables['artico']." SET aliiva = ".$form['rate_new']." WHERE codice = '".$mv['codice']."';");
         }
@@ -193,7 +193,7 @@ if (isset($_POST['preview']) and $msg=='') {
         $linkHeaders->output();
         echo "</tr>";
         $ctr_mv=0;
-        while (list($key, $mv) = each($m)) {
+		foreach ($m AS $key => $mv) {
             if ($mv['catmer']>$ctr_mv){
                 $cm=gaz_dbi_get_row($gTables['catmer'],'codice',$mv['catmer']);
                 echo "<tr><td class=\"FacetFieldCaptionTD\">".$mv['catmer'].' - '.$cm['descri']." &nbsp</td><td colspan=\"5\"></td></tr>\n";

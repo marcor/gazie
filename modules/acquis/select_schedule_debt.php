@@ -85,7 +85,7 @@ if (sizeof($scdl->Entries) > 0) {
 				</thead>
 				<tbody>';
 
-    while (list($key, $mv) = each($scdl->Entries)) {
+	foreach ($scdl->Entries AS $key => $mv) {
         $class_partner = '';
         $class_paymov = '';
         $class_id_tes = '';

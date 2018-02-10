@@ -177,7 +177,8 @@ function gaz_dbi_get_single_value($table, $campo, $where) {
     if (!$result)
         die(" Error gaz_dbi_get_single_value: " . mysqli_error($link));
     $ris = mysqli_fetch_array($result, MYSQLI_NUM);
-    if (count($ris) == 1) {
+    $rn = mysqli_num_rows($result);
+    if ($rn == 1) {
         return $ris[0];
     } else {
         return null;
@@ -469,7 +470,7 @@ function tableInsert($table, $columns, $newValue) {
     $first = True;
     $colName = "";
     $colValue = "";
-    while (list($key, $field) = each($columns)) {
+	foreach ($columns AS $key => $field) {
         $colName .= ($first ? $field : ',' . $field);
         $colValue .= ($first ? " '" : ", '");
         $first = False;
@@ -482,11 +483,11 @@ function tableInsert($table, $columns, $newValue) {
     return mysqli_insert_id($link);
 }
 
-function tableUpdate($table, $column, $codice, $newValue) {
+function tableUpdate($table, $columns, $codice, $newValue) {
     global $link, $gTables;
     $first = True;
     $query = "UPDATE " . $gTables[$table] . ' SET';
-    while (list($key, $field) = each($column)) {
+	foreach ($columns AS $key => $field) {
         $query .= ($first ? " $field = '" : ", $field = '");
         $first = False;
         $query .= (isset($newValue[$field]) ? addslashes($newValue[$field]) : '') . "'";

@@ -95,8 +95,7 @@ if (sizeof($scdl->Entries) > 0) {
     $tot_dare = 0;
     $tot_avere = 0;
     /* ENRICO FEDELE */
-
-    while (list($key, $mv) = each($scdl->Entries)) {
+	foreach ($scdl->Entries AS $key => $mv) {
         $pdf->SetFont('helvetica', '', 6);
         $border_partner = 0;
         $partner = '';

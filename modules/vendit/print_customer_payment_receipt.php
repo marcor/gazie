@@ -98,7 +98,7 @@ $ctrl_pm=0;
 $pdf->SetFont('helvetica','',10);
 $pdf->Cell(100,6,$d['d'][1]['descri'],1,1,'L',1,'',1);
 
-while (list($k, $mv) = each($d['d'])) {
+foreach ($d['d'] AS $k => $mv) {
     if ($ctrl_pm <> $mv["id_tesdoc_ref"]){
     }
     $pdf->Cell(30,6,$mv['id_tesdoc_ref'],'LTB',0,'L',0,'',1);
