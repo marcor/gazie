@@ -233,6 +233,33 @@ $strScript = array(
 		'code_register'=>'Codice alfanumerico',
 		'web_url'=>'Sito web',
 		'email'=>'E-Mail'
+    ),
+	"report_provinces.php" =>
+    array('title' => 'Lista delle province',
+        'id' => "ID",
+        'name' => "Nome",
+        'id_region' => "Regione",
+        'abbreviation' => "Sigla provincia",
+        'stat_code' => "Codice statistico",
+        'insert_pro' => 'Inserisci una nuova provincia',
+		'name_search'=>'aggiungi "%" e invia per ricerca, oppure seleziona'
+    ),
+	"admin_provinces.php" =>
+    array('title' => 'Gestione archivio delle province',
+        'ins_this' => "Inserimento nuova provincia",
+        'upd_this' => "Modifica la provincia con ID:",
+        'err' => array('name' => '&Egrave; necessario indicare il nome della provincia',
+            'abbreviation' => '&Egrave; necessario indicare la sigla della provincia',
+            'email' => 'L\'indirizzo e-mail è sbagliato',
+            'web_url' => 'L\'indirizzo del sito web è sbagliato'
+        ),
+        'id' => "ID",
+        'name' => "Nome",
+        'abbreviation' => "Sigla provincia",
+        'id_region' => "Regione",
+        'stat_code' => 'Codice statistico',
+		'web_url'=>'Sito web',
+		'email'=>'E-Mail'
     )
 );
 ?>

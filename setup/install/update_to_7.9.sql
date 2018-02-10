@@ -13,4 +13,4 @@ DELETE FROM `gaz_XXXcaucon_rows` WHERE `clfoco_ref` = 0;
 UPDATE `gaz_config` SET `cvalue` = '108' WHERE `id` =2;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='report_anagra.php'), 'report_anagra.php', '', '', 10, '', 5  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='report_anagra.php'), 'report_municipalities.php', '', '', 11, '', 10  FROM `gaz_menu_script`;
-
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT id FROM `gaz_menu_module` WHERE `link`='report_anagra.php'), 'report_provinces.php', '', '', 12, '', 15  FROM `gaz_menu_script`;
