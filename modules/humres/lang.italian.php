@@ -109,6 +109,13 @@ $strScript = array("admin_staff.php" =>
         "job_title" => 'Mansione',
         "citspe" => 'Città',
         "telefo" => 'Telefono'
+    ),
+    "employee_timesheet.php" =>
+    array('title' => "Registro delle presenze",
+	        'err' => array('&Egrave; necessario indicare Nome e Cognome',
+            '&Egrave; necessario indicare l\'indirizzo',
+            'Il codice di avviamento postale (CAP) &egrave; sbagliato'),
+        'text'=>""
     )
 );
 ?>

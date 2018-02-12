@@ -27,7 +27,8 @@ $transl['humres'] = array('name' => "Risorse umane",
     'title' => "Risorse umane",
     'm2' => array(1 => array("Lista del personale", "Lista del personale")
     ),
-    'm3' => array(1 => array("Nuovo collaboratore", "Nuovo Collaboratore")
+    'm3' => array(1 => array("Nuovo collaboratore", "Nuovo Collaboratore"),
+				  2 => array("Registro orario", "Registro orario")
     )
 );
 ?>
