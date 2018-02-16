@@ -458,12 +458,13 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                     $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form['Login'] . "') AS set_co ";
                     $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
                     while ($co = gaz_dbi_fetch_array($co_rs)) {
+                        $co_id = sprintf('%03d', $co['id']);
+                        echo '<input type=hidden name="' . $co_id . 'nusr_root" value="3">';
                         echo "<tr><td align=\"center\" colspan=\"3\">" . $co['ragsoc'] . '  - ' . $co['set_co'] . "</tr>\n";
                         echo "<tr><td class=\"FacetDataTD\">" . $script_transl['mod_perm'] . ":</td>\n";
                         echo "<td>" . $script_transl['all'] . "</td>\n";
                         echo "<td>" . $script_transl['none'] . "</td></tr>\n";
                         $mod_found = getModule($form['Login'], $co['id']);
-                        $co_id = sprintf('%03d', $co['id']);
                         foreach ($mod_found as $mod) {
                             echo "<tr>\n";
                             echo '<td class="FacetFieldCaptionTD">
