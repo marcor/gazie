@@ -94,7 +94,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["Cognome"] = "";
     $form["Nome"] = "";
     $form["image"] = "";
-    $form["theme"] = "library/theme/g7";
+    $form["theme"] = "/library/theme/g7";
     $form["style"] = $admin_aziend['style'];
     $form["skin"] = $admin_aziend['skin'];
     $form["lang"] = $admin_aziend['lang'];
@@ -459,9 +459,8 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                     $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
                     while ($co = gaz_dbi_fetch_array($co_rs)) {
                         $co_id = sprintf('%03d', $co['id']);
-                        echo '<input type=hidden name="' . $co_id . 'nusr_root" value="3">';
                         echo "<tr><td align=\"center\" colspan=\"3\">" . $co['ragsoc'] . '  - ' . $co['set_co'] . "</tr>\n";
-                        echo "<tr><td class=\"FacetDataTD\">" . $script_transl['mod_perm'] . ":</td>\n";
+                        echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3">'. $script_transl['mod_perm'] . ":</td>\n";
                         echo "<td>" . $script_transl['all'] . "</td>\n";
                         echo "<td>" . $script_transl['none'] . "</td></tr>\n";
                         $mod_found = getModule($form['Login'], $co['id']);

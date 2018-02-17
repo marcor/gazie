@@ -55,7 +55,7 @@ $strScript = array("browse_document.php" =>
         'payroll_tax' => 'Cassa Prev.',
         'barcode' => 'Cod.Barre',
         'clone' => 'Duplica',
-		'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona' 
+        'cosear'=>'aggiungi "%" e invia per ricerca, oppure seleziona', 
         'clfoco'=>'Supplier',
     ),
     "report_statis.php" =>
