@@ -1601,7 +1601,7 @@ echo "</script>\n";
 		</td>
 	  </tr>';
     /** ENRICO FEDELE */
-    echo "<TR><td class=\"FacetColumnTD\" colspan=\"5\"></td></tr>";
+    echo "<tr><td class=\"FacetColumnTD\" colspan=\"5\"></td></tr>";
 //fine rigo inserimento
 // inizio righi già inseriti
 // faccio un primo ciclo del form per sommare e analizzare gli sbilanciamenti

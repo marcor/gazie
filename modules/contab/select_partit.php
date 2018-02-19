@@ -389,7 +389,7 @@ if (isset($_POST['preview']) and $msg == '') {
         echo "\t </td>\n";
         echo "\t </tr>\n";
     } else {
-        echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][4] . "</TD></TR>\n";
+        echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][4] . "</td></tr>\n";
     }
     echo "</table></form>";
 }

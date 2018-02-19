@@ -281,7 +281,7 @@ if (isset($_POST['preview']) and $msg=='') {
   echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
   if (sizeof($r['data'])>0) {
         echo "<tr>";
-        echo '<TD colspan="7" align="center" class="FacetDataTD">'.$script_transl['preview']."</td>\n";
+        echo '<td colspan="7" align="center" class="FacetDataTD">'.$script_transl['preview']."</td>\n";
         echo "</tr>";
         echo "<tr>";
         $linkHeaders=new linkHeaders($script_transl['header']);
@@ -309,12 +309,12 @@ if (isset($_POST['preview']) and $msg=='') {
         echo "<td align=\"center\">".$v["coordi"]." </td>";
         echo "</tr>\n";
     }
-    echo '<TD colspan="4" class="FacetDataTD">'.
+    echo '<td colspan="4" class="FacetDataTD">'.
                  $script_transl['tot']." n.".
                  $r['tot']['num'].' '.
                  $admin_aziend['html_symbol'].' '.
                  gaz_format_number($r['tot']['value'])."</td>\n".
-                 '<TD colspan="3" class="FacetDataTD"></td>';
+                 '<td colspan="3" class="FacetDataTD"></td>';
     echo "</tr>";
     echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
     echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
@@ -324,7 +324,7 @@ if (isset($_POST['preview']) and $msg=='') {
     echo "\t </tr>\n";
   } else {
         echo "<tr>";
-        echo '<TD colspan="7" align="center" class="FacetDataTDred">'.$script_transl['errors'][0]."</td>\n";
+        echo '<td colspan="7" align="center" class="FacetDataTDred">'.$script_transl['errors'][0]."</td>\n";
         echo "</tr>";
   }
   echo "</table>\n";

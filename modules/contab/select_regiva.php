@@ -365,7 +365,7 @@ if (isset($_POST['preview']) and $msg == '') {
             echo "<tr><td colspan=3></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . $castle_descri[$key] . "</td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($value) . " &nbsp;</td><td align=\"right\" class=\"FacetDataTD\">" . $castle_percen[$key] . "% &nbsp;</td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($castle_impost[$key]) . " &nbsp;</td></tr>";
         }
         echo "<tr><td colspan=3></td><td colspan=4><HR></td></tr>";
-        echo "<tr><td colspan=2></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . $script_transl['t_gen'] . "</td><td class=\"FacetDataTD\"align=\"right\">" . gaz_format_number($totale) . " &nbsp;</td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($totimponi, 2, '.', '') . " &nbsp;</td><TD></TD><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($totimpost, 2, '.', '') . " &nbsp;</td></tr>";
+        echo "<tr><td colspan=2></td><td class=\"FacetDataTD\">" . $script_transl['tot'] . $script_transl['t_gen'] . "</td><td class=\"FacetDataTD\"align=\"right\">" . gaz_format_number($totale) . " &nbsp;</td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($totimponi, 2, '.', '') . " &nbsp;</td><td></td><td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($totimpost, 2, '.', '') . " &nbsp;</td></tr>";
         if ($err == 0) {
             echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
             echo '<td colspan="7" align="right"><input type="submit" name="print" value="';

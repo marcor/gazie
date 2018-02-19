@@ -1378,7 +1378,7 @@ $select_artico->output($form['cosear']);
   }
   echo '<option value="'.$k.'" '.$selected.' > '.$v.' </option>';
   }
-  / *echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";* /
+  / *echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'] . $script_transl['thisrow'] . "!\">\n";* /
 
   echo '			</select> */
 /** ENRICO FEDELE */

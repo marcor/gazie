@@ -209,7 +209,7 @@ if (isset($_POST['preview'])) {
         echo "<td class=\"text-right\" colspan='2'><a title=\"Elimina tutte le partite chiuse di tutti i clienti\" class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_schedule.php?all\"><i class=\"glyphicon glyphicon-remove\"></i> &nbsp;" . $script_transl['remove'] . " TUTTI!!!</a></td>";
         echo "\t </tr>\n";
     } else {
-        echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][1] . "</TD></TR>\n";
+        echo "<tr><td class=\"FacetDataTDred\" align=\"center\">" . $script_transl['errors'][1] . "</td></tr>\n";
     }
     echo "</table></form>";
 }

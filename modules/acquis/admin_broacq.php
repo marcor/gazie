@@ -798,7 +798,7 @@ echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-t
 /** ENRICO FEDELE */
 echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
 /*
-  echo "</TD><TD class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n"; */
+  echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"".$script_transl['submit'].$script_transl['thisrow']."!\">\n"; */
 /** ENRICO FEDELE */
 /* glyph-icon */
 echo '  </td>
@@ -826,7 +826,7 @@ echo "</td><td class=\"FacetColumnTD\"> $script_transl[19]: ";
 $select_in_codvat = new selectaliiva("in_codvat");
 $select_in_codvat->addSelected($form["in_codvat"]);
 $select_in_codvat->output();
-echo "</td><td class=\"FacetColumnTD\"></TD></tr>\n";
+echo "</td><td class=\"FacetColumnTD\"></td></tr>\n";
 $quatot = 0;
 $totimpmer = 0.00;
 $totivafat = 0.00;
@@ -1000,7 +1000,7 @@ foreach ($form['righi'] as $key => $value) {
             break;
     }
     /*
-      echo "<TD align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n"; */
+      echo "<td align=\"right\"><input type=\"image\" name=\"del[{$key}]\" src=\"../../library/images/xbut.gif\" title=\"".$script_transl['delete'].$script_transl['thisrow']."!\" /></td></tr>\n"; */
     /** ENRICO FEDELE */
     /* glyph icon */
     echo '  <td class="FacetColumnTD" align="right">

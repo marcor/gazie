@@ -159,7 +159,7 @@ while ($rs = gaz_dbi_fetch_array($result)){
       }
 }
 echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['nrow']."</td><td class=\"FacetDataTD\" colspan=\"3\">".$nr." &nbsp;</td></tr>";
-echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['tot_d']."</TD><TD class=\"FacetDataTD\">".gaz_format_number($dare)."</td><td class=\"FacetFieldCaptionTD\">".$script_transl['tot_a']."</TD><td class=\"FacetDataTD\">".gaz_format_number($avere)." &nbsp;</td></tr>";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['tot_d']."</td><td class=\"FacetDataTD\">".gaz_format_number($dare)."</td><td class=\"FacetFieldCaptionTD\">".$script_transl['tot_a']."</td><td class=\"FacetDataTD\">".gaz_format_number($avere)." &nbsp;</td></tr>";
 echo "<tr><td class=\"FacetFieldCaptionTD\"> &nbsp;</td><td align=\"right\" class=\"FacetFooterTD\" colspan=4><input type=\"submit\" name=\"Return\" value=\"Indietro\"><input type=\"submit\" name=\"stampa\" value=\"".$script_transl['print']." !\" > ".$script_transl['cover']." <input type=\"checkbox\"  name=\"copert\" value=1></td></tr>";
 ?>
 </table>

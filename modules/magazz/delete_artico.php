@@ -72,7 +72,7 @@ $script_transl = HeadMain();
         <tr>
             <td class="FacetFieldCaptionTD">Categoria merceologica  &nbsp;</td>
             <td class="FacetDataTD"><?php print $form["catmer"] ?>&nbsp;</td>
-        </TR>
+        </tr>
         <tr>
             <td class="FacetFieldCaptionTD">Prezzo d'acquisto &nbsp;</td>
             <td class="FacetDataTD"><?php print $form["preacq"] ?>&nbsp;</td>
@@ -96,7 +96,7 @@ $script_transl = HeadMain();
         <tr>
             <td class="FacetFieldCaptionTD">Aliquota I.V.A &nbsp;</td>
             <td class="FacetDataTD"><?php print $form["aliiva"] ?>&nbsp;</td>
-        </TR>
+        </tr>
         <tr>
             <td class="FacetFieldCaptionTD">Conto contropartita &nbsp;</td>
             <td class="FacetDataTD"><?php print $form["codcon"] ?>&nbsp;</td>

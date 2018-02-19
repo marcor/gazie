@@ -504,7 +504,7 @@ if (isset($invoices['data'])) {
             echo "</tr>\n";
         }
     }
-    echo "<tr><td  align=\"right\" colspan=\"8\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA !\"></TD></TR>";
+    echo "<tr><td  align=\"right\" colspan=\"8\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA !\"></td></tr>";
 } else {
     echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\" align=\"right\">Non ci sono DdT  da fatturare</td></tr>";
 }
@@ -525,7 +525,7 @@ if (@count($invoices['excluded'])) {
 }
 
 if (count($form['changeStatus']) > 0) {
-    echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\">Ai Ddt sottosegnati è stato cambiato manualmente il loro stato rispetto alla proposta automatica:  </td></TR>";
+    echo "<tr><td class=\"FacetDataTDred\" colspan=\"7\">Ai Ddt sottosegnati è stato cambiato manualmente il loro stato rispetto alla proposta automatica:  </td></tr>";
     foreach ($form['changeStatus'] as $k => $id_tes) {
         $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $id_tes);
         $anagrafica = new Anagrafica();

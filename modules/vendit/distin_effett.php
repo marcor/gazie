@@ -294,7 +294,7 @@ if (isset($_POST['preview']) and $msg=='') {
   echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
   if (sizeof($r['data'])>0) {
         echo "<tr>";
-        echo '<TD colspan="7" align="center" class="FacetDataTD">'.$script_transl['preview']."</td>\n";
+        echo '<td colspan="7" align="center" class="FacetDataTD">'.$script_transl['preview']."</td>\n";
         echo "</tr>";
         echo "<tr>";
         $linkHeaders=new linkHeaders($script_transl['header']);
@@ -305,17 +305,17 @@ if (isset($_POST['preview']) and $msg=='') {
         if ($ctrl_type!=$v['tipeff']){
            if ($ctrl_type!='') {
               echo "<tr>";
-              echo '<TD colspan="3" class="FacetDataTD">n.'.
+              echo '<td colspan="3" class="FacetDataTD">n.'.
                  $r['type'][$ctrl_type]['num'].' '.
                  $script_transl['type_value'][$ctrl_type]."</td>\n".
-                 '<TD class="FacetDataTD" align="right">'.
+                 '<td class="FacetDataTD" align="right">'.
                  $admin_aziend['html_symbol'].' '.
                  gaz_format_number($r['type'][$ctrl_type]['value'])."</td>\n".
-                 '<TD colspan="3" class="FacetDataTD"></td>';
+                 '<td colspan="3" class="FacetDataTD"></td>';
               echo "</tr>";
            }
            echo "<tr>";
-           echo '<TD colspan="7" class="FacetDataTDred">'.$script_transl['type_value'][$v['tipeff']].":</td>\n";
+           echo '<td colspan="7" class="FacetDataTDred">'.$script_transl['type_value'][$v['tipeff']].":</td>\n";
            echo "</tr>";
         }
         echo "<tr>";
@@ -341,21 +341,21 @@ if (isset($_POST['preview']) and $msg=='') {
         $ctrl_type=$v['tipeff'];
     }
     echo "<tr>";
-    echo '<TD colspan="3" class="FacetDataTD">n.'.
+    echo '<td colspan="3" class="FacetDataTD">n.'.
                  $r['type'][$ctrl_type]['num'].' '.
                  $script_transl['type_value'][$ctrl_type]."</td>\n".
-                 '<TD class="FacetDataTD" align="right">'.
+                 '<td class="FacetDataTD" align="right">'.
                  $admin_aziend['html_symbol'].' '.
                  gaz_format_number($r['type'][$ctrl_type]['value'])."</td>\n".
-                 '<TD colspan="3" class="FacetDataTD"></td>';
+                 '<td colspan="3" class="FacetDataTD"></td>';
     echo "</tr>";
     echo "<tr>";
-    echo '<TD colspan="4" class="FacetDataTD">'.
+    echo '<td colspan="4" class="FacetDataTD">'.
                  $script_transl['tot']." n.".
                  $r['tot']['num'].' '.
                  $admin_aziend['html_symbol'].' '.
                  gaz_format_number($r['tot']['value'])."</td>\n".
-                 '<TD colspan="3" class="FacetDataTD"></td>';
+                 '<td colspan="3" class="FacetDataTD"></td>';
     echo "</tr>";
     echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
     echo '<td colspan="7" align="right"><input type="submit" name="print" value="';
@@ -365,7 +365,7 @@ if (isset($_POST['preview']) and $msg=='') {
     echo "\t </tr>\n";
   } else {
         echo "<tr>";
-        echo '<TD colspan="7" align="center" class="FacetDataTDred">'.$script_transl['errors'][0]."</td>\n";
+        echo '<td colspan="7" align="center" class="FacetDataTDred">'.$script_transl['errors'][0]."</td>\n";
         echo "</tr>";
   }
   echo "</table>\n";

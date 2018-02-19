@@ -322,8 +322,8 @@ $script_transl = HeadMain();
             $totEffetti+=$effett['impeff'];
         }
         $strTotEffetti = gaz_format_number($totEffetti);
-        echo "<tr><td colspan=\"5\" align=\"right\" class=\"FacetFieldCaptionTD\">Totale</TD><td align=\"right\" class=\"FacetFieldCaptionTD\">$strTotEffetti</td></TR>";
-        echo "<tr><td colspan=\"9\" align=\"right\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA CONTABILIZZAZIONE DEGLI EFFETTI SOPRAELENCATI !\"></TD></TR>";
+        echo "<tr><td colspan=\"5\" align=\"right\" class=\"FacetFieldCaptionTD\">Totale</td><td align=\"right\" class=\"FacetFieldCaptionTD\">$strTotEffetti</td></tr>";
+        echo "<tr><td colspan=\"9\" align=\"right\"><input type=\"submit\" name=\"genera\" value=\"CONFERMA LA CONTABILIZZAZIONE DEGLI EFFETTI SOPRAELENCATI !\"></td></tr>";
         echo '</table>';
     }
     ?>

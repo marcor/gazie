@@ -89,12 +89,12 @@ $script_transl=HeadMain('','','admin_movcon');
     <?php
     while ($a_row = gaz_dbi_fetch_array($rs_righcon)) {
         $descricon = gaz_dbi_get_row($gTables['clfoco'],"codice",$a_row['codcon']);
-        echo "<TR><td class=\"FacetFieldCaptionTD\">".$descricon['descri']." &nbsp; </td>";
+        echo "<tr><td class=\"FacetFieldCaptionTD\">".$descricon['descri']." &nbsp; </td>";
         echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["import"]." &nbsp; </td>";
         echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["darave"]." &nbsp; </td></tr>";
     }
     ?>
-<TR>
+<tr>
  <td align="right">
 <?php
 echo '<input type="submit" accesskey="r" name="Return" value="'.$script_transl['return'].'"></td><td colspan="2">

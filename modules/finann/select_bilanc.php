@@ -438,7 +438,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
            echo "<tr><td colspan=\"3\"></td><td align=\"right\" class=\"FacetDataTD\">".gaz_format_number(-$totmas)."</td><tr>";
 	    }
         if ($ctrl_bal == 0 ) {
-          echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"stampa\" value=\"".strtoupper($script_transl['print'].$script_transl[0])." !\"></TD></TR>";
+          echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"stampa\" value=\"".strtoupper($script_transl['print'].$script_transl[0])." !\"></td></tr>";
         }
         echo "</table>\n";
     }

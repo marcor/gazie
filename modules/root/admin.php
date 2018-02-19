@@ -182,12 +182,12 @@ if ($t > 4 && $t <= 13) {
                     </p>
                     <p>
                         <?php
-                        echo $script_transl['mesg_co'][2] . ' ⇒ ';
+                        echo $script_transl['mesg_co'][2] . ' &rArr; ';
                         selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
                         ?>
                     </p>
                     <p>
-                        <?php echo $script_transl['logout']; ?> ⇒ <input name="logout" type="submit" value=" Logout ">
+                        <?php echo $script_transl['logout']; ?> &rArr; <input name="logout" type="submit" value=" Logout ">
                     </p>
                 </div>
             </div>

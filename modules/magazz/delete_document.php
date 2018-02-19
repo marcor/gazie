@@ -63,7 +63,7 @@ $script_transl=HeadMain('','','browse_document');
     <td class="FacetFieldCaptionTD">File: </td>
     <td class="FacetDataTD" colspan=2><?php print DATA_DIR.'files/'.$form['id_doc'].'.'.$form["extension"] ?>&nbsp;</td>
   </tr>
-<TR>
+<tr>
  <td align="right">
 <?php
 echo '<input type="submit" accesskey="r" name="Return" value="'.$script_transl['return'].'"></td><td colspan="2">

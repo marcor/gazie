@@ -428,7 +428,7 @@ if (isset($_GET['visualizza']) and $message == "")
         $totrom =0.00;
         $totlet =0.00;
         $totale =0.00;
-        echo "<div><center><b>ANTEPRIMA BILANCIO IV direttiva CEE AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></CENTER></div>\n";
+        echo "<div><center><b>ANTEPRIMA BILANCIO IV direttiva CEE AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</b></center></div>\n";
         echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         echo "<tr><td colspan=\"4\">Questo bilancio, riclassificato secondo la IV direttiva CEE, &egrave; stato generato leggendo i movimenti compresi nel periodo selezionato escludendo tutti quelli di apertura e chiusura, unica eccezione &egrave; l'apertura effettuata entro l'anno successivo alla data impostata come inizio periodo.</td></tr>\n";
 
@@ -439,11 +439,11 @@ if (isset($_GET['visualizza']) and $message == "")
           }
         else
           {
-            echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"stampa\" value=\"STAMPA IL BILANCIO CEE !\"></TD></TR>\n";
+            echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"stampa\" value=\"STAMPA IL BILANCIO CEE !\"></td></tr>\n";
           }
-        echo "<tr><td colspan=\"4\"><hr></TD></TR>\n";
-        echo "<tr><TD><hr></TD><TD align=\"center\" class=\"FacetFormHeaderFont\">SITUAZIONE PATRIMONIALE AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</TD><td colspan=\"2\"><hr></TD></TR>\n";
-        echo "<tr><TD align=\"left\"  class=\"FacetFormHeaderFont\" style=\"color: blue;\">ATTIVO</TD><td colspan=\"3\"></TD></TR>\n";
+        echo "<tr><td colspan=\"4\"><hr></td></tr>\n";
+        echo "<tr><td><hr></td><td align=\"center\" class=\"FacetFormHeaderFont\">SITUAZIONE PATRIMONIALE AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</td><td colspan=\"2\"><hr></td></tr>\n";
+        echo "<tr><td align=\"left\"  class=\"FacetFormHeaderFont\" style=\"color: blue;\">ATTIVO</td><td colspan=\"3\"></td></tr>\n";
         foreach ($attivo as $keylet => $vallet)
           {
             if (! key_exists($keylet,$attdesc))
@@ -452,14 +452,14 @@ if (isset($_GET['visualizza']) and $message == "")
                 $attdesc[$keylet]['Titolo']= '';
                 $attdesc[$keylet][0]= ucfirst($noclass);
               }
-            echo "<tr><TD align=\"left\" class=\"FacetFormHeaderFont\">".$keylet.$attdesc[$keylet]['Titolo']." </TD><td colspan=\"3\"></TD></TR>\n";
+            echo "<tr><td align=\"left\" class=\"FacetFormHeaderFont\">".$keylet.$attdesc[$keylet]['Titolo']." </td><td colspan=\"3\"></td></tr>\n";
             foreach ($vallet as $keyrom => $valrom)
               {
                 if (! key_exists($keyrom,$attdesc))
                   {
                     $attdesc[$keylet][intval($keyrom)]= '';
                   }
-                echo "<tr><TD align=\"left\">".$nromani[intval($keyrom)].$attdesc[$keylet][intval($keyrom)]." </TD><td colspan=\"3\"></TD></TR>\n";
+                echo "<tr><td align=\"left\">".$nromani[intval($keyrom)].$attdesc[$keylet][intval($keyrom)]." </td><td colspan=\"3\"></td></tr>\n";
                 foreach ($valrom as $key => $value)
                   {
                     $conto = substr($key,4,3);
@@ -542,8 +542,8 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<tr><td align=\"center\" colspan=\"2\"></td><td colspan=\"2\"><hr></td></tr>";
         echo "<tr><td align=\"right\" colspan=\"2\" class=\"FacetFormHeaderFont\" style=\"color: blue;\"> TOTALE DELL'ATTIVO </td><td>Euro</td><td align=\"right\" class=\"FacetFormHeaderFont\" style=\"color: blue;\">".number_format($totale,2,'.','')."</td></tr>";
         $totale=0.00;
-        echo "<tr><td colspan=\"4\"><hr></TD></TR>\n";
-        echo "<tr><TD align=\"left\"  class=\"FacetFormHeaderFont\" style=\"color: brown;\">PASSIVO</TD><td colspan=\"3\"></TD></TR>";
+        echo "<tr><td colspan=\"4\"><hr></td></tr>\n";
+        echo "<tr><td align=\"left\"  class=\"FacetFormHeaderFont\" style=\"color: brown;\">PASSIVO</td><td colspan=\"3\"></td></tr>";
         foreach ($passivo as $keylet => $vallet)
           {
             if (! key_exists($keylet,$pasdesc))
@@ -552,7 +552,7 @@ if (isset($_GET['visualizza']) and $message == "")
                 $pasdesc[$keylet]['Titolo']= '';
                 $pasdesc[$keylet][0]= ucfirst($noclass);
               }
-            echo "<tr><TD align=\"left\" class=\"FacetFormHeaderFont\">".$keylet.$pasdesc[$keylet]['Titolo']." </TD><td colspan=\"3\"></TD></TR>\n";
+            echo "<tr><td align=\"left\" class=\"FacetFormHeaderFont\">".$keylet.$pasdesc[$keylet]['Titolo']." </td><td colspan=\"3\"></td></tr>\n";
             foreach ($vallet as $keyrom => $valrom)
               {
                 if (! key_exists($keyrom,$pasdesc))
@@ -561,7 +561,7 @@ if (isset($_GET['visualizza']) and $message == "")
                   }
                 if ($keyrom != 0)
                   {
-                    echo "<tr><TD align=\"left\">".$nromani[intval($keyrom)].$pasdesc[$keylet][intval($keyrom)]." </TD><td colspan=\"3\"></TD></TR>\n";
+                    echo "<tr><td align=\"left\">".$nromani[intval($keyrom)].$pasdesc[$keylet][intval($keyrom)]." </td><td colspan=\"3\"></td></tr>\n";
                   }
                 foreach ($valrom as $key => $value)
                   {
@@ -635,9 +635,9 @@ if (isset($_GET['visualizza']) and $message == "")
         echo "<tr><td align=\"center\" colspan=\"2\"></td><td colspan=\"2\"><hr></td></tr>";
         echo "<tr><td align=\"right\" colspan=\"2\" class=\"FacetFormHeaderFont\" style=\"color: brown;\"> TOTALE DEL PASSIVO </td><td>Euro</td><td align=\"right\" class=\"FacetFormHeaderFont\" style=\"color: brown;\">".number_format($totale,2,'.','')."</td></tr>\n";
         $totale=0.00;
-        echo "<tr><td colspan=\"4\"><hr></TD></TR>\n";
-        echo "<tr><TD><hr></TD><TD align=\"center\" class=\"FacetFormHeaderFont\">CONTO ECONOMICO DAL ".$_GET['gioini']."-".$_GET['mesini']."-".$_GET['annini']." AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</TD><td colspan=\"2\"><hr></TD></TR>";
-        echo "<tr><TD align=\"left\"  class=\"FacetFormHeaderFont\" style=\"color: orange;\">CONTO ECONOMICO</TD><td colspan=\"3\"></TD></TR>";
+        echo "<tr><td colspan=\"4\"><hr></td></tr>\n";
+        echo "<tr><td><hr></td><td align=\"center\" class=\"FacetFormHeaderFont\">CONTO ECONOMICO DAL ".$_GET['gioini']."-".$_GET['mesini']."-".$_GET['annini']." AL ".$_GET['giofin']."-".$_GET['mesfin']."-".$_GET['annfin']."</td><td colspan=\"2\"><hr></td></tr>";
+        echo "<tr><td align=\"left\"  class=\"FacetFormHeaderFont\" style=\"color: orange;\">CONTO ECONOMICO</td><td colspan=\"3\"></td></tr>";
         foreach ($risulta as $keylet => $vallet)
           {
             if (! key_exists($keylet,$ecodesc))
@@ -646,7 +646,7 @@ if (isset($_GET['visualizza']) and $message == "")
                 $ecodesc[$keylet]['Titolo']= '';
                 $ecodesc[$keylet][0]= ucfirst($noclass);
               }
-            echo "<tr><TD align=\"left\" class=\"FacetFormHeaderFont\">".$keylet.$ecodesc[$keylet]['Titolo']." </TD><td colspan=\"3\"></TD></TR>\n";
+            echo "<tr><td align=\"left\" class=\"FacetFormHeaderFont\">".$keylet.$ecodesc[$keylet]['Titolo']." </td><td colspan=\"3\"></td></tr>\n";
             foreach ($vallet as $keyrom => $valrom)
               {
                 foreach ($valrom as $key => $value)

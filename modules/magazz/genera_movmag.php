@@ -198,7 +198,7 @@ if (isset($_GET['anteprima']) and $msg == "") {
              echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($valore)." </td>";
              echo "</tr>\n";
        }
-       echo "<tr><td colspan=\"6\" align=\"center\"><input type=\"submit\" name=\"insert\" value=\"".strtoupper($script_transl[0])." !\"></TD></TR>";
+       echo "<tr><td colspan=\"6\" align=\"center\"><input type=\"submit\" name=\"insert\" value=\"".strtoupper($script_transl[0])." !\"></td></tr>";
     } else {
        echo "<tr><td class=\"FacetDataTDred\" align=\"center\">".$script_transl[6]."</td></tr>";
     }

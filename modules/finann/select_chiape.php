@@ -307,12 +307,12 @@ if (isset($_POST['preview']) and $msg=='') {
         $eco = $anagrafica->getPartner($form['economic_result']);
         echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
         if ($ctrl_bal != 0 ) {
-          echo "<tr><td colspan=\"4\" ><a href=\"./error_rigmoc.php\" class=\"FacetDataTDred\">".$script_transl['errors'][3]."! -> ".$admin_aziend['symbol']." $ctrl_bal </a></TD></TR>";
+          echo "<tr><td colspan=\"4\" ><a href=\"./error_rigmoc.php\" class=\"FacetDataTDred\">".$script_transl['errors'][3]."! -> ".$admin_aziend['symbol']." $ctrl_bal </a></td></tr>";
         }
-        echo "<tr><TD><hr></TD><TD class=\"FacetFieldCaptionTD\" align=\"center\">".$script_transl['view'].$script_transl['closing'].$script_transl['of'].date("d-m-Y",$uts_date_closing)."</TD><td colspan=\"2\"><hr></TD></TR>";
+        echo "<tr><td><hr></td><td class=\"FacetFieldCaptionTD\" align=\"center\">".$script_transl['view'].$script_transl['closing'].$script_transl['of'].date("d-m-Y",$uts_date_closing)."</td><td colspan=\"2\"><hr></td></tr>";
         echo "<tr><td>".$script_transl['code']."</td><td>".$script_transl['descr']."</td><td align=\"right\">".$script_transl['entry']."</td><td align=\"right\">".$script_transl['exit']."</td><tr>";
-        echo "<tr><td class=\"FacetSelect\" align=\"center\" colspan=\"4\">".$script_transl['economic']."</TD></TR>";
-        echo "<tr><td class=\"FacetSelect\">".$script_transl['costs']."</TD><td colspan=\"3\"></td></TR>";
+        echo "<tr><td class=\"FacetSelect\" align=\"center\" colspan=\"4\">".$script_transl['economic']."</td></tr>";
+        echo "<tr><td class=\"FacetSelect\">".$script_transl['costs']."</td><td colspan=\"3\"></td></tr>";
         foreach ($accounts['cos'] as $k => $v){
              echo "<tr><td>".$k."</td><td>".$v['name']."</td><td></td><td align=\"right\">".gaz_format_number($v['val'])."</td><tr>";
         }
@@ -328,7 +328,7 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "<tr><td>".$form['economic_result']."</td><td>".$eco['descri']."</td><td align=\"right\">".gaz_format_number(-$income)."</td><td></td><tr>";
             echo "<tr><td class=\"FacetDataTD\">".$form['operating_profit']."</td><td class=\"FacetDataTD\">".$pro['descri']."</td><td class=\"FacetDataTD\">".$script_transl['operating_profit']."</td><td class=\"FacetDataTD\" align=\"right\">".gaz_format_number(-$income)."</td><tr>";
         }
-        echo "<tr><td class=\"FacetSelect\">".$script_transl['revenues']."</TD><td colspan=\"3\"></td></TR>";
+        echo "<tr><td class=\"FacetSelect\">".$script_transl['revenues']."</td><td colspan=\"3\"></td></tr>";
         foreach ($accounts['ric'] as $k => $v){
              echo "<tr><td>".$k."</td><td>".$v['name']."</td><td align=\"right\">".gaz_format_number(-$v['val'])."</td><td></td><tr>";
         }
@@ -344,33 +344,33 @@ if (isset($_POST['preview']) and $msg=='') {
             echo "<tr><td>".$form['economic_result']."</td><td>".$eco['descri']."</td><td align=\"right\">".gaz_format_number($income)."</td><td></td><tr>";
             echo "<tr><td class=\"FacetDataTDred\">".$form['operating_losses']."</td><td class=\"FacetDataTDred\">".$los['descri']."</td><td class=\"FacetDataTDred\">".$script_transl['operating_losses']."</td><td class=\"FacetDataTDred\" align=\"right\">".gaz_format_number($income)."</td><tr>";
         }
-        echo "<tr><td class=\"FacetSelect\" align=\"center\" colspan=\"4\">".$script_transl['sheet']."</TD></TR>";
-        echo "<tr><td class=\"FacetSelect\">".$script_transl['assets']."</TD><td colspan=\"3\"></td></TR>";
+        echo "<tr><td class=\"FacetSelect\" align=\"center\" colspan=\"4\">".$script_transl['sheet']."</td></tr>";
+        echo "<tr><td class=\"FacetSelect\">".$script_transl['assets']."</td><td colspan=\"3\"></td></tr>";
         foreach ($accounts['att'] as $k => $v){
               echo "<tr><td>".$k."</td><td>".$v['name']."</td><td></td><td align=\"right\">".gaz_format_number($v['val'])."</td><tr>";
         }
         $clo = $anagrafica->getPartner($form['closing_balance']);
         echo "<tr><td class=\"FacetSelect\" >".$form['closing_balance']."</td><td class=\"FacetSelect\" >".$clo['descri']."</td><td  class=\"FacetSelect\"  align=\"right\">".gaz_format_number($assets)."</td><td></td><tr>";
-        echo "<tr><td class=\"FacetSelect\">".$script_transl['liabilities']."</TD><td colspan=\"3\"></td></TR>";
+        echo "<tr><td class=\"FacetSelect\">".$script_transl['liabilities']."</td><td colspan=\"3\"></td></tr>";
         foreach ($accounts['pas'] as $k => $v){
             echo "<tr><td>".$k."</td><td>".$v['name']."</td><td align=\"right\">".gaz_format_number(-$v['val'])."</td><td></td><tr>";
         }
         echo "<tr><td>".$form['closing_balance']."</td><td>".$clo['descri']."</td><td></td><td align=\"right\">".gaz_format_number(-$liabilities)."</td><tr>";
-        echo "<tr><TD><hr></TD><TD class=\"FacetFieldCaptionTD\" align=\"center\">".$script_transl['view'].$script_transl['opening'].$script_transl['of'].date("d-m-Y",$uts_date_opening)."</TD><td colspan=\"2\"><hr></TD></TR>";
+        echo "<tr><td><hr></td><td class=\"FacetFieldCaptionTD\" align=\"center\">".$script_transl['view'].$script_transl['opening'].$script_transl['of'].date("d-m-Y",$uts_date_opening)."</td><td colspan=\"2\"><hr></td></tr>";
         echo "<tr><td>".$script_transl['code']."</td><td>".$script_transl['descr']."</td><td align=\"right\">".$script_transl['entry']."</td><td align=\"right\">".$script_transl['exit']."</td><tr>";
-        echo "<tr><td class=\"FacetSelect\">".$script_transl['assets']."</TD><td colspan=\"3\"></td></TR>";
+        echo "<tr><td class=\"FacetSelect\">".$script_transl['assets']."</td><td colspan=\"3\"></td></tr>";
         foreach ($accounts['att'] as $k => $v){
             echo "<tr><td>".$k."</td><td>".$v['name']."</td><td align=\"right\">".gaz_format_number($v['val'])."</td><td></td><tr>";
         }
         $ope = $anagrafica->getPartner($form['opening_balance']);
         echo "<tr><td>".$form['opening_balance']."</td><td>".$ope['descri']."</td><td></td><td align=\"right\">".gaz_format_number($assets)."</td><tr>";
-        echo "<tr><td class=\"FacetSelect\">".$script_transl['liabilities']."</TD><td colspan=\"3\"></td></TR>";
+        echo "<tr><td class=\"FacetSelect\">".$script_transl['liabilities']."</td><td colspan=\"3\"></td></tr>";
         foreach ($accounts['pas'] as $k => $v){
             echo "<tr><td>".$k."</td><td>".$v['name']."</td><td></td><td align=\"right\">".gaz_format_number(-$v['val'])."</td><tr>";
         }
         echo "<tr><td>".$form['opening_balance']."</td><td>".$ope['descri']."</td><td align=\"right\">".gaz_format_number(-$liabilities)."</td></td><td><tr>";
         if ($ctrl_bal == 0 ) {
-          echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"genera\" value=\"".strtoupper($script_transl['submit'])." !\"></TD></TR>";
+          echo "<tr><td colspan=\"4\" align=\"center\"><input type=\"submit\" name=\"genera\" value=\"".strtoupper($script_transl['submit'])." !\"></td></tr>";
         }
     }
     echo "</table>";
