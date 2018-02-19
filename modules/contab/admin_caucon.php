@@ -315,7 +315,7 @@ if (count($msg['err']) > 0) { // ho un errore
 ?>
             <div class="row">
                 <div class="col-sm-6 col-md-4 col-lg-2">
-                <input class="bg-edit tabindex=10 onClick="chkSubmit();" type="submit" name="insrow" value="<?php echo $script_transl['add_row'];?>"> 
+                <input class="bg-edit" tabindex=10 onClick="chkSubmit();" type="submit" name="insrow" value="<?php echo $script_transl['add_row'];?>"> 
                 </div>
 				<div class="col-sm-6 col-md-8 col-lg-10">
                 </div>
