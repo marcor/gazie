@@ -1628,7 +1628,7 @@ foreach ($form['rows'] as $key => $value) {
 				  <input type="hidden" name="rows[' . $key . '][quanti]" value="" />
 				  <input type="hidden" name="rows[' . $key . '][prelis]" value="" />
 				  <input type="hidden" name="rows[' . $key . '][sconto]" value="" />
-				  <input type="hidden" name="rows[' . $key . '][provvigione]" value="" />;
+				  <input type="hidden" name="rows[' . $key . '][provvigione]" value="" />
 				  <input type="hidden" name="rows[' . $key . '][identifier]" value="" />
 				  <input type="hidden" name="rows[' . $key . '][expiry]" value="" />';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
