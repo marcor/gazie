@@ -115,7 +115,13 @@ $strScript = array("admin_staff.php" =>
 	        'err' => array('&Egrave; necessario indicare Nome e Cognome',
             '&Egrave; necessario indicare l\'indirizzo',
             'Il codice di avviamento postale (CAP) &egrave; sbagliato'),
-        'text'=>""
+        'work_hou'=>"Ore lavorate Ordinarie",
+        'work_hextra'=>"Ore lavorate Straordinarie",
+        'absence_hou'=>"Ore di assenza",
+        'absence_cau'=>"Causale assenza",
+        'other_cau'=>"Altra causale",
+        'other_qua'=>"Altra quantita",
+		'note'=>"Note",
     )
 );
 ?>
