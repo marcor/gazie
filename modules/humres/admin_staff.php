@@ -125,6 +125,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['codice'] = $real_code;
             $form['id_clfoco'] = $real_code;
             $form['datnas'] = date("Ymd", $uts_datnas);
+            $form['start_date'] = gaz_format_date($form['start_date'], true);
+            $form['end_date'] = gaz_format_date($form['end_date'], true);
             if ($toDo == 'insert') {
                 if ($form['id_anagra'] > 0) {
                     gaz_dbi_table_insert('clfoco', $form);
@@ -157,6 +159,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = substr($form['datnas'], 0, 4);
     $form['datnas_M'] = substr($form['datnas'], 5, 2);
     $form['datnas_D'] = substr($form['datnas'], 8, 2);
+    $form['start_date'] = gaz_format_date($staff['start_date'], false, false);
+    $form['end_date'] = gaz_format_date($staff['end_date'], false, false);
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $anagrafica = new Anagrafica();
     $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mas_staff'] . "000000 AND " . $admin_aziend['mas_staff'] . "999999", "codice DESC", 0, 1);
@@ -172,6 +176,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = 1900;
     $form['datnas_M'] = 1;
     $form['datnas_D'] = 1;
+    $form['start_date'] = date("d/m/Y");
+    $form['end_date'] = date("d/m/Y");
     $form['counas'] = $admin_aziend['country'];
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
@@ -209,6 +215,11 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
+$(function () {
+    $('#start_date').datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+    $('#end_date').datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+});
+
 </script>
 ";
 echo "<form method=\"POST\" name=\"form\">\n";
@@ -361,6 +372,20 @@ echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['annota'] . "</td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"annota\" value=\"" . $form['annota'] . "\" align=\"right\" maxlength=\"100\" size=\"50\" /></td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['start_date'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+?>
+<input type="text" class="form-control" id="start_date" name="start_date" value="<?php echo $form['start_date']; ?>">
+<?php
+echo "\t</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['end_date'] . "</td><td colspan=\"2\" class=\"FacetDataTD\">\n";
+?>
+<input type="text" class="form-control" id="end_date" name="end_date" value="<?php echo $form['end_date']; ?>">
+<?php
+echo "\t</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['sqn'] . "</td>";

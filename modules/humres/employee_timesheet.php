@@ -45,7 +45,7 @@ function getStartToEndDate($week, $year) {
 function getWorkers($date) {
 	global $gTables;
     $orderby = "id_staff ASC";
-    $where = "end_date IS NULL OR end_date <= " . $date;
+    $where = "end_date IS NULL OR end_date >= " . $date;
     $field = 'staff.id_staff, CONCAT(ana.ragso1,\' \',ana.ragso2) AS worker_descri ';
     $from = $gTables['staff'] . ' AS staff ' .
             'LEFT JOIN ' . $gTables['clfoco'] . ' AS worker ON staff.id_clfoco=worker.codice ' .

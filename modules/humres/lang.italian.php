@@ -82,7 +82,9 @@ $strScript = array("admin_staff.php" =>
         'status_value' => array('' => 'Attiva', 'HIDDEN' => 'Disabilitata'),
         'annota' => 'Annotazioni',
         'Codice_CCNL' => 'Codice CCNL',
-        'job_title' => 'Mansione'
+        'job_title' => 'Mansione',
+        'start_date'=>"Data assunzione",
+		'end_date'=>"Data Fine Rapporto",
     ),
     "staff_report.php" =>
     array('title' => 'Lista dei lavoratori',
