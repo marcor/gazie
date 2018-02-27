@@ -1218,7 +1218,7 @@ class GAzieMail {
         switch ($config_mailer['val']) {
             case "smtp":
                 // Invio tramite protocollo SMTP
-                $mail->SMTPDebug = 2;                           // Attivo il debug
+                $mail->SMTPDebug = false;                           // Attivo il debug
                 $mail->IsSMTP();                                // Modalita' SMTP
                 if (!empty($config_secure['val'])) {
                     $mail->SMTPSecure = $config_secure['val']; // Invio tramite protocollo criptato
@@ -1254,7 +1254,7 @@ class GAzieMail {
         // Imposto email del mittente
         $mail->SetFrom($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
         // Imposto email del destinatario
-//$mailto="ironeman@tiscali.it";
+        $mail->Hostname = $config_host;
         $mail->AddAddress($mailto);
         // Aggiungo l'email del mittente tra i destinatari in cc
         $mail->AddCC($mittente, $admin_data['ragso1'] . " " . $admin_data['ragso2']);
@@ -1264,7 +1264,6 @@ class GAzieMail {
         $mail->MsgHTML($body_text);
         // Aggiungo la fattura in allegato
         $mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
-        $mail->SMTPDebug = false;
         // Invio...
         if ($mail->Send()) {
             echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
