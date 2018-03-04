@@ -87,30 +87,30 @@ class Report_template extends TCPDF {
         } else {
             $this->SetFont('helvetica', '', 9);
             $this->Image('@' . $this->logo, 15, 5, 0, 27, '', $this->link);
-            $this->Cell(40, 4);
+            $this->Cell(50, 4);
             $this->Cell(118, 4, $this->intesta1, 0, 0, 'L',0,'',1);
             if (isset($this->altri_dati['page'])) { // � stato passato il valore di pagina da stampare
                 $this->Cell(30, 4, $this->altri_dati['page'] . $this->GroupPageNo(), 0, 1, 'R');
             } else {
                 $this->Cell(30, 4, 'Pagina ' . $this->getGroupPageNo() . ' di ' . $this->getPageGroupAlias(), 0, 1, 'R');
             }
-            $this->Cell(40, 4);
+            $this->Cell(50, 4);
             $this->Cell(130, 4, $this->intesta2, 0, 2, 'L');
             $this->Cell(130, 4, $this->intesta3, 0, 2, 'L');
             $this->Cell(118, 4, $this->intesta4, 0, 0, 'L');
             $this->Cell(30, 4, $this->luogo, 0, 1, 'R');
             if (!empty($this->item_image)) { //C'� una immagine associata
-                $this->Image('@' . $this->item_image, 177, 28, 0, 20, '', $this->item_link);
+                $this->Image('@' . $this->item_image, 190, 25, 0, 20, '', $this->item_link);
                 $this->Ln(4);
             }
             if (isset($this->intesta_item_group) and is_array($this->intesta_item_group)) { // c'� una descrizione dell'articolo
                 $this->SetFont('helvetica', '', 9);
-                $this->Cell(40);
+                $this->Cell(50);
                 foreach ($this->intesta_item_group['top'] as $key => $value) {
                     $this->Cell($value['lun'], 4, $value['nam'], 1, 0, 'C', 1);
                 }
                 $this->Cell(1, 4, '', 0, 1);
-                $this->Cell(40);
+                $this->Cell(50);
                 foreach ($this->intesta_item_group['bot'] as $key => $value) {
                     $this->Cell($value['lun'], 4, $value['nam'], 1, 0, 'C');
                 }
@@ -118,7 +118,7 @@ class Report_template extends TCPDF {
                 $this->SetFont('helvetica', '', 8);
             }
             if (is_array($this->altri_dati) and isset($this->altri_dati['title'])) { // � una intestazione con titolo e testata tabella
-                $this->Cell(40);
+                $this->Cell(50);
                 $this->SetFont('helvetica', '', 12);
                 $this->Cell(150, 12, $this->altri_dati['title'], 0, 1, 'L', 0, '', 1);
                 $this->SetFont('helvetica', '', 9);

@@ -56,29 +56,31 @@ INSERT INTO `gaz_XXXstaff_absence_type` (`id_absence`, `inps_ref`, `causal`, `de
 	(34, '', 'FER', 'Ferie godute collettive', 'Ferie godute collett.', 136),
 	(35, '', '', 'Indennità sostitutiva di preavviso', 'Indenn. sost. preavviso', 140),
 	(36, '', '', 'Aspettativa funzioni elettive', 'Aspett. funzioni elett.', 144);
-CREATE TABLE `gaz_XXXstaff_worked_hours` (
-  `id_worked_hours` int(9) NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `gaz_001staff_worked_hours` (
   `id_staff` int(9) NOT NULL DEFAULT '0',
-  `id_work_type` int(9) NOT NULL DEFAULT '0',
-  `id_absence_type` int(9) NOT NULL DEFAULT '0',
-  `work_day` date NULL DEFAULT NULL,
-  `worked_hours` decimal(3,2) NOT NULL,
-  `id_orderman` int(9) NULL DEFAULT NULL COMMENT 'sarà legato al piano dei conti per gestire le commesse (centri di costo)',
+  `work_day` date DEFAULT NULL,
+  `hours_normal` decimal(3,2) NOT NULL,
+  `id_work_type_extra` int(3) NOT NULL DEFAULT '0',
+  `hours_extra` decimal(3,2) NOT NULL,
+  `id_absence_type` int(3) NOT NULL DEFAULT '0',
+  `hours_absence` decimal(3,2) NOT NULL,
+  `id_other_type` int(3) NOT NULL DEFAULT '0',
+  `hours_other` decimal(3,2) NOT NULL,
   `note` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id_worked_hours`)
+  `id_orderman` int(9) DEFAULT NULL COMMENT 'sarà legato al piano dei conti per gestire le commesse (centri di costo)'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 CREATE TABLE `gaz_001staff_work_type` (
-  `id_work_type` int(3) NOT NULL AUTO_INCREMENT,
-  `id_worker_type` int(3) NOT NULL,
+  `id_work` int(3) NOT NULL AUTO_INCREMENT,
+  `id_work_type` int(3) NOT NULL,
   `hour_year_limit` int(4) NOT NULL,
   `hour_month_limit` int(3) NOT NULL,
   `hour_week_limit` decimal(3,1) NOT NULL,
   `hour_day_limit` decimal(3,2) NOT NULL,
   `increase` decimal(3,2) NOT NULL,
   `descri` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`id_work_type`)
+  PRIMARY KEY (`id_work`)
 ) ENGINE=MyISAM AUTO_INCREMENT=689 DEFAULT CHARSET=utf8;
-INSERT INTO `gaz_001staff_work_type` (`id_work_type`, `id_worker_type`, `hour_year_limit`, `hour_month_limit`, `hour_week_limit`, `hour_day_limit`, `increase`, `descri`) VALUES
+INSERT INTO `gaz_001staff_work_type` (`id_work`, `id_work_type`, `hour_year_limit`, `hour_month_limit`, `hour_week_limit`, `hour_day_limit`, `increase`, `descri`) VALUES
 	(1, 11, 0, 0, 0.0, 8.00, 0.00, 'Lavoro ordinario (nessuna maggiorazione)'),
 	(2, 56, 0, 0, 0.0, 8.00, 0.13, 'Lavoro straordinario diurno feriale (dalla 41 alla 48 ora settimanale)'),
 	(3, 56, 0, 0, 0.0, 8.00, 0.28, 'Lavoro straordinario diurno'),
