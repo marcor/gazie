@@ -93,7 +93,7 @@ if (isset($_POST['week'])) { // accessi successivi
 			$form['week'] =52;
 		}
 	}
-	if (isset($_POST['go_insert'])){
+	if (isset($_POST['go_insert']) || isset($_POST['go_print'])){
 		$week_days = getStartToEndDate($form['week'], $form['year']);
 		// inserisco o modifico i dati sul database
 		foreach ($_POST['rows'] as $id_worker=>$v_dates){ 
@@ -107,8 +107,12 @@ if (isset($_POST['week'])) { // accessi successivi
 					$v['work_day']=$k_date;
 					gaz_dbi_table_insert('staff_worked_hours', $v);
 				}
-				header("Location: docume_humres.php"); 
 			}
+		}
+		if (isset($_POST['go_insert'])) {
+			header("Location: docume_humres.php"); 
+		} else {
+			header("Location: print_timesheet.php?year=".$form['year']."&week=".$form['week']);
 		}
 	}
 } else { // al primo accesso
@@ -258,7 +262,7 @@ $gForm = new humresForm();
                         </td>
                         <td><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sat']."][hours_extra]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sat']]['hours_extra']; ?>">
                         </td>
-                        <td class="bg-warning"><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sun']."][hours_normal]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sun']]['hours_extra']; ?>">
+                        <td class="bg-warning"><input class="form-control" name="<?php echo "rows[".$k."][".$week_days['sun']."][hours_extra]"; ?>" maxlength="4" type="text" value="<?php echo $form['rows'][$k][$week_days['sun']]['hours_extra']; ?>">
                         </td>
                     </tr>      
                     <tr>              
@@ -406,7 +410,18 @@ $gForm = new humresForm();
     }
 	?>
 			<div class="row">
-				<div class="col-sm-8">
+				<div class="col-xs-6">
+                <button name="go_print" class="btn btn-sm btn-default">
+                    <i class="glyphicon glyphicon-print">				
+					<?php
+					echo ucwords($script_transl['print'].$script_transl['title'].' '.strftime( '%B', strtotime($week_days['mon'])));
+					?>
+					</i>
+                </button>
+				</div>
+				<div class="col-xs-2">
+				</div>
+				<div class="col-xs-4">
                 <button name="go_insert" class="btn btn-sm btn-edit">
                     <i class="glyphicon glyphicon-edit">				
 					<?php

@@ -125,6 +125,15 @@ $strScript = array("admin_staff.php" =>
         'other_cau'=>"Altra causale",
         'other_qua'=>"Altra quantita",
 		'note'=>"Note",
+		'bot' => 'a riportare : ',
+        'top' => 'da riporto :  ',
+        'item_head' => array('Codice', 'Cat.Merc', 'Descrizione', 'U.M.', 'ScortaMin.'),
+        'header' => array('Data', 'Causale', 'Descrizione documento',
+            'Prezzo', 'UM', 'Quantita',
+            ' carico', ' scarico',
+            'Q.ta giacenza', 'Val. giacenza'
+        ),
+
     )
 );
 ?>
