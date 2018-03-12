@@ -170,13 +170,15 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 $stamp = 0;
                 $round_stamp = 0;
                 $taxstamp = 0;
+                $virtual_taxstamp = 0;
                 /*
                   IN modules/vendit/lib.function.php IL METODO contractCalc NON CALCOLA total_exc_with_duty E AVVIENE COME ANOMALIA CHE VIENE SEMPRE APPLICATO IL BOLLO
                  */
-                if ($calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] > 0) {
+                if (isset($calc->total_exc_with_duty) && $calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] > 0) {
                     $taxstamp = $admin_aziend['taxstamp'];
+                    $virtual_taxstamp = $admin_aziend['virtual_taxstamp'];
                 }
-                if ($paym['tippag'] == 'T') {  //se il pagamento prevede il bollo
+                if ($paym['tippag'] == 'T') { //se il pagamento prevede il bollo
                     $stamp = $admin_aziend['perbol'];
                     $round_stamp = $admin_aziend['round_bol'];
                 }
@@ -186,7 +188,7 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                     'datfat' => $form['this_date'], 'clfoco' => $cntr['id_customer'],
                     'pagame' => $cntr['payment_method'], 'banapp' => $cntr['bank'],
                     'speban' => $speban, 'expense_vat' => $admin_aziend['preeminent_vat'], 'stamp' => $stamp, 'round_stamp' => $round_stamp,
-                    'taxstamp' => $taxstamp, 'virtual_taxstamp' => $admin_aziend['virtual_taxstamp'],
+                    'taxstamp' => $taxstamp, 'virtual_taxstamp' => $virtual_taxstamp,
                     'id_agente' => $cntr['id_agente'], 'id_contract' => $k, 'initra' => $form['this_date'],
                     'status' => 'GENERATO', 'template' => 'FatturaSemplice'
                 );
