@@ -74,3 +74,17 @@ th a:hover {
 .sidebar-menu .treeview-menu > li > a {
     padding-left: 15px;
 }
+div.th {
+	background: #aae2a8;
+	border: 1px solid #000;
+	border-bottom: 0px;
+}
+.left {
+	border-right: 0px;
+}
+.right {
+	border-left: 0px;
+}
+.lateral {
+    background-color: #000;
+}

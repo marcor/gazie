@@ -59,6 +59,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
+    $form['delivery_time'] = intval($_POST['delivery_time']);
+    $form['day_of_validity'] = intval($_POST['day_of_validity']);
     $form['cosear'] = $_POST['cosear'];
     $form['seziva'] = $_POST['seziva'];
     $form['tipdoc'] = $_POST['tipdoc'];
@@ -75,6 +77,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['numrat'] = $_POST['numrat'];
     $form['pagame'] = $_POST['pagame'];
     $form['change_pag'] = $_POST['change_pag'];
+    $form['print_total'] = intval($_POST['print_total']);
+
     if ($form['change_pag'] != $form['pagame']) {  //se è stato cambiato il pagamento
         $new_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['pagame']);
         $old_pag = gaz_dbi_get_row($gTables['pagame'], "codice", $form['change_pag']);
@@ -523,6 +527,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // fine rigo input
     $form['righi'] = array();
     // ...e della testata
+    $form['print_total'] = $tesbro['print_total'];
+    $form['delivery_time'] = $tesbro['delivery_time'];
+    $form['day_of_validity'] = $tesbro['day_of_validity'];
     $form['search']['clfoco'] = $fornitore['ragso1'];
     $form['cosear'] = "";
     $form['seziva'] = $tesbro['seziva'];
@@ -641,6 +648,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['id_agente'] = 0;
     $form['id_pro'] = 0;
     $form['sconto'] = 0;
+    $form['print_total'] = 1;
+    $form['delivery_time'] = 10;
+    $form['day_of_validity'] = 15;
     $fornitore['indspe'] = "";
 }
 require("../../library/include/header.php");

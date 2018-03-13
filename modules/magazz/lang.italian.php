@@ -44,6 +44,7 @@ $strScript = array("browse_document.php" =>
     array('title' => 'Lista delle merci e dei servizi',
         'codice' => "Codice",
         'descri' => "Descrizione",
+		'ricerca' => "Ricerca",
         'good_or_service' => "Merce-Servizio",
         'unimis' => "U.M.",
         'catmer' => "Cat. merc.",
