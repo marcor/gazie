@@ -228,9 +228,20 @@ if (isset($resultFatturato)) {
    $linkHeaders->output();
    $totFatturato = 0;
    $totCosti = 0;
+   
+   //*+ DC - 14/03/2018
+   // array da usare per grafici
+   $emparray = array();
+   //*- DC - 14/03/2018
+	  
    while ($mv = gaz_dbi_fetch_array($resultFatturato)) {
       $nFatturato = $mv['imp_ven'];
       if ($nFatturato > 0) {
+
+		 //*+ DC - 14/03/2018
+		 $emparray[] = $mv;
+		 //*- DC - 14/03/2018
+		
          $nCosti = $mv['imp_acq'];
          $margine = ($nFatturato - $nCosti) * 100 / $nFatturato;
          $totFatturato+=$nFatturato;
@@ -259,6 +270,183 @@ if (isset($resultFatturato)) {
 ?>
 </table>
 </form>
+
+<!--+ DC - 14/03/2018 -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<!-- Lo script che segue è utile quando i dati vengono caricati con AJAX -->
+<!--script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script-->
+
+<br/>
+
+<script type="text/javascript">
+      
+    // Load the Visualization API for corechart/piechart/bar package.
+    google.charts.load('current', {'packages':['corechart']});
+	google.charts.load('current', {'packages':['bar']});
+	
+	// Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(drawChart);
+      
+	function drawChart(data) {
+    /*var jsonData = $.ajax({
+          url: "getData.php",
+          dataType: "json",
+          async: false
+          }).responseText;*/ // OK con getData e file_get_contents
+          
+	// Create our data table out of JSON data loaded from server.
+    //var data = new google.visualization.DataTable(jsonData); // OK con getData e file_get_contents
+      
+	//var data = new google.visualization.DataTable(<?php $jsonData ?>); // non va bene sullo SQL puro restiuito e trasformato in JSON
+
+	// -----------------------------
+	// Add rows + data at the same time
+	// -----------------------------
+	// Pie Chart Margine %
+	var data = new google.visualization.DataTable();
+
+	// Declare columns
+	data.addColumn('string', 'Fornitore');
+	data.addColumn('number', 'Margine');
+	// Add data.
+	<?php
+	if( $emparray ) {
+		foreach ($emparray as $mvf)	{
+			$margine = ($mvf[2] - $mvf[3]) * 100 / $mvf[2];
+	?>
+		data.addRows([
+					 ['<?php echo $mvf[1]?>', {v:<?php echo $margine?>}]
+					 ]);
+	<?php
+		}
+	}
+	?>
+
+	var options = {
+					title: 'MARGINE in % tra Fatturato/Costo per Fornitore',
+					titleTextStyle: { color: '#757575',
+									  fontName: 'Roboto',
+									  fontSize: 14,
+									  bold: false,
+									},
+					legend: {/*position: 'right',*/ textStyle: {color: '#757575', fontSize: 12}, alignment: 'center', /*position: 'labeled'*/},
+					fontSize: 12,
+					fontName: 'Roboto',
+					/*fontSmoothing: 'antialiased',*/
+					is3D: true,
+					pieStartAngle: 7,
+					pieResidueSliceLabel: 'Altro < 3%',
+					sliceVisibilityThreshold: .03,
+					pieSliceText: 'value',
+					pieSliceTextStyle: {
+										 color: 'black',
+										 bold: 'true',
+									   },
+					tooltip: {showColorCode: true},
+					/*width: $('.cols_chart').width(),
+					height: $('.cols_chart').width()*/
+				  };
+	
+	// Instantiate and draw our chart, passing in some options.
+    var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
+    chart.draw(data, options); //, {width: 400, height: 240}
+	  
+	// -----------------------------
+	// Add rows + data at the same time
+	// -----------------------------
+	// Bar Chart Fatturato/Costi/Margine %
+	// Declare series
+	var dataBars = new google.visualization.DataTable();
+
+	// Add legends with data type
+	dataBars.addColumn('string', 'Fornitore');
+	dataBars.addColumn('number', 'Fatturato');
+	dataBars.addColumn('number', 'Costi');
+	dataBars.addColumn('number', 'Margine %');
+
+	// Add data.
+
+	<?php
+	if( $emparray ) {
+		foreach ($emparray as $mvf)	{
+			$margine = ($mvf[2] - $mvf[3]) * 100 / $mvf[2];
+	?>
+		dataBars.addRow(['<?php echo $mvf[1]?>', <?php echo $mvf[2]?>, <?php echo $mvf[3]?>, <?php echo $margine?>]);
+	<?php
+		}
+	}
+	?>
+
+	var bar_options = {
+						chart: {
+								 title: 'Vendite per fornitore',
+								 subtitle: 'Fatturato, Costi e Margine'
+							   },
+						legend: { position: 'right', maxLines: 2 },
+						axes: {
+								x: {
+									 0: {side: 'bottom'}
+								   }
+							  },
+						bars: 'horizontal',
+						/*width: $('.cols_chart').width(),
+						height: $('.cols_chart').width()*/
+					  };
+	  
+		// Instantiate and draw our chart, passing in some options.
+		var bar_chart = new google.charts.Bar(document.getElementById('bar_chart_div'));
+		bar_chart.draw(dataBars, bar_options);
+	}
+	  
+	window.addEventListener('resize', function () {
+			drawChart();
+    }/*, false*/);
+</script>
+
+<style>
+.chart {
+  width: 100%; 
+  min-height: 450px;
+  border: 1px solid #ccc;
+  padding: 3px;
+}
+.row {
+  margin:0 !important;
+}
+</style>
+  
+<!--+ not used -->
+<div id="chart_area" style="width:100%">
+	<!--Div that will hold the pie chart-->
+	<column cols="6" class="cols_chart">
+	<div id="pie_chart_divx" style="/*text-align: -webkit-center; width:35%; border: 1px solid #ccc; padding: 3px; float:right*/"></div>
+    <!--Div that will hold the bar chart-->
+    <div id="bar_chart_divx" style="/*text-align: -webkit-center; width:65%; border: 1px solid #ccc; padding: 3px;*/"></div>
+	</column>
+	<!--text-align: -webkit-center;
+    display: inline;-->
+</div>
+<!--- not used -->
+
+<div class="row">
+  <!-- Titolo aggiuntivo (opzioneale, per ora disattivato)
+  <div class="col-md-12 text-center">
+    <h3>Rappresentazione grafica dati estrapolati</h3>
+  </div>
+  -->
+  <div class="col-md-4 col-md-offset-4">
+    <!--hr /-->
+  </div>
+  <div class="clearfix"></div>
+  <div class="col-md-4">
+    <div id="pie_chart_div" class="chart"></div>
+  </div>
+  <div class="col-md-8">
+    <div id="bar_chart_div" class="chart"></div>
+  </div>
+</div>
+<!--- DC - 14/03/2018 -->
+
 <?php
 require("../../library/include/footer.php");
 ?>

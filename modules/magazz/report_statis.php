@@ -194,6 +194,260 @@ foreach ($castelletto_articoli as $key=>$value) {
 }
 echo "</table>";
 ?>
+<!--+ DC - 14/03/2018 -->
+<!--?php
+var_dump($castelletto_articoli);
+foreach ($castelletto_articoli as $key=>$value) {
+	echo $key. " / ".$value['descri']. " / ".$value['unimis']. " / ".$value['quanti']. " / ".$value['valore']." <br>";
+}
+?-->
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<!-- Lo script che segue è utile quando i dati vengono caricati con AJAX -->
+<!--script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script-->
+
+<br/>
+	
+<!-- Questo primo script utilizza il bar chart advanced che però non mi permette di fare alcune cose - per ora commento -->
+<!--script type="text/javascript">
+	
+    // Load the Visualization API for corechart and bar package.
+    google.charts.load('current', {'packages':['corechart']});
+	google.charts.load('current', {'packages':['bar']});
+	
+	// Set a callback to run when the Google Visualization API is loaded.
+    google.charts.setOnLoadCallback(drawChart);
+	
+	function drawChart(data) {
+    /*var jsonData = $.ajax({
+          url: "getData.php",
+          dataType: "json",
+          async: false
+          }).responseText;*/ // OK con getData e file_get_contents
+          
+	// Create our data table out of JSON data loaded from server.
+    //var data = new google.visualization.DataTable(jsonData); // OK con getData e file_get_contents
+      
+	//var data = new google.visualization.DataTable(<?php $jsonData ?>); // non va bene sullo SQL puro restiuito e trasformato in JSON
+
+	// -----------------------------
+	// Add rows + data at the same time
+	// -----------------------------
+	// Bar Chart vendite/acquisti Articoli ordinati per categoria/quantità/valore
+	// Declare series
+		
+	// -----------------------------
+	// Add rows + data at the same time
+	// -----------------------------
+	// Bar Chart vendite/acquisti Articoli ordinati per categoria/quantità/valore
+	// Declare series
+	var dataBars = new google.visualization.DataTable();
+	
+	var tipoAV="";
+	<?php
+	if( $form['acqven']==0 ) { ?>
+		tipoAV="Vendite";
+	<?php
+	}
+	else { ?>
+		tipoAV="Acquisti";
+	<?php
+	}
+	?>
+	
+	var titleChart=tipoAV+" per Articolo";
+	
+	var tipoORD="";
+	var tipoDato="";
+	<?php
+	if( $form['ordine']==0 ) { ?>
+		tipoORD="Categoria merceologica";
+		tipoDato="Quantità";
+	<?php
+	}
+	elseif( $form['ordine']==1 ) { ?>
+		tipoORD="Quantità";
+		tipoDato="Quantità";
+	<?php
+	}
+	else { ?>
+		tipoORD="Valore";
+		tipoDato="Valore";
+	<?php
+	}
+	?>
+	
+	var Anno='<?php echo $form['annimp'] ?>';
+	
+	alert('ciaone');
+	
+	var subtitleChart="Anno "+Anno+" ordinato per "+tipoORD;
+	
+	alert(subtitleChart);
+	
+	// Add legends with data type
+	dataBars.addColumn('string', 'Articolo');
+	/*dataBars.addColumn('string', 'UM');
+	dataBars.addColumn('number', 'Quantità');*/
+	dataBars.addColumn('number', tipoDato);
+	
+	// Add data.
+	dataBars.addRow(['USBLIGHT', 10]);
+	dataBars.addRow(['PENGUIN', 20]);
+	
+	var bar_options = {
+						chart: {
+								 title: titleChart,
+								 subtitle: subtitleChart
+							   },
+						legend: { position: 'none' },
+						bars: 'horizontal',
+					  };
+		
+	// Instantiate and draw our chart, passing in some options.
+	var bar_chart = new google.charts.Bar(document.getElementById('bar_chart_div'));
+	bar_chart.draw(dataBars, bar_options);
+	}  
+</script-->
+
+<script type="text/javascript">
+	google.charts.load('current', {'packages':['corechart']});
+	google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+		var dataTable = new google.visualization.DataTable();
+	
+		var tipoAV="";
+		<?php
+		if( $form['acqven']==0 ) { ?>
+			tipoAV="Vendite";
+		<?php
+		}
+		else { ?>
+			tipoAV="Acquisti";
+		<?php
+		}
+		?>
+	
+		var titleChart=tipoAV+" per Articolo";
+		//alert(titleChart);
+		
+		var tipoORD="";
+		var tipoDato="";
+		<?php
+		if( $form['ordine']==0 ) { ?>
+			tipoORD="Categoria merceologica";
+			tipoDato="Quantità";
+		<?php
+		}
+		elseif( $form['ordine']==1 ) { ?>
+			tipoORD="Quantità";
+			tipoDato="Quantità";
+		<?php
+		}
+		else { ?>
+			tipoORD="Valore";
+			tipoDato="Valore";
+		<?php
+		}
+		?>
+	
+		var Anno='<?php echo $form['annimp'] ?>';
+		
+		var subtitleChart="Anno "+Anno+" ordinato per "+tipoORD;
+		//alert(subtitleChart);
+		
+		var titleExt=titleChart+' - '+subtitleChart;
+        
+		dataTable.addColumn('string', 'Articolo');
+        dataTable.addColumn('number', tipoDato);
+        // A column for custom tooltip content
+        dataTable.addColumn({type: 'string', role: 'tooltip'});
+        /*dataTable.addRows([
+          ['2010', 600,'$600K in our first year!'],
+          ['2011', 1500, 'Sunspot activity made this our best year ever!'],
+          ['2012', 800, '$800K in 2012.'],
+          ['2013', 1000, '$1M in sales last year.']
+        ]);*/
+		<?php
+		foreach ($castelletto_articoli as $key=>$value) {
+		?>
+			//echo . " / ".$value['descri']. " / ".$value['unimis']. " / ".$value['quanti']. " / ".$value['valore']." <br>";
+			var dato=0;
+			var datoQV="";
+			if (tipoORD == "Valore") {
+				dato=<?php echo $value['valore'] ?>;
+				datoQV='<?php echo $value['descri'] ?>'+' - Valore: '+'<?php echo $value['valore'] ?>';
+			} else {
+				dato=<?php echo $value['quanti'] ?>;
+				datoQV='<?php echo $value['descri'] ?>'+' - Q.tà: '+'<?php echo $value['quanti'] ?>'+' '+'<?php echo $value['unimis'] ?>';
+			}
+			dataTable.addRow(['<?php echo $key ?>', dato, datoQV]);
+		<?php
+		}
+		?>
+
+        var options = { 
+					    title: titleExt,
+						subtitle: subtitleChart,
+						titleTextStyle: { color: '#757575',
+										  fontName: 'Roboto',
+										  fontSize: 16,
+										  bold: false,
+										},
+						legend: 'none',
+						bars: 'horizontal',
+						/*width: $('.cols_chart').width(),
+						height: $('.cols_chart').width()*/
+		              };
+        var chart = new google.visualization.BarChart(document.getElementById('chart_div'));
+        chart.draw(dataTable, options);
+      }
+	  
+	window.addEventListener('resize', function () {
+			drawChart();
+    }, false);
+</script>
+
+<style>
+.chart {
+  width: 100%; 
+  min-height: 450px;
+  border: 1px solid #ccc;
+  padding: 3px;
+}
+.row {
+  margin:0 !important;
+}
+</style>
+  
+<!--+ not used -->
+<div id="chart_area" style="width:100%">
+    <!--Div that will hold the bar chart-->
+    <!--div id="bar_chart_div" style="width:100%; border: 1px solid #ccc; padding: 3px;"></div>-->
+    <!--Div that will hold the bar chart-->
+	<column cols="6" class="cols_chart">
+		<div id="chart_divx" style="/*text-align: -webkit-center; width:100%; border: 1px solid #ccc; padding: 3px;*/"></div>
+	</column>
+</div>
+<!--- not used -->
+
+<div class="row">
+  <!-- Titolo aggiuntivo (opzioneale, per ora disattivato)
+  <div class="col-md-12 text-center">
+    <h3>Rappresentazione grafica dati estrapolati</h3>
+  </div>
+  -->
+  <div class="col-md-4 col-md-offset-4">
+    <!--hr /-->
+  </div>
+  <div class="clearfix"></div>
+  <div class="col-md-12">
+    <div id="chart_div" class="chart"></div>
+  </div>
+</div>
+<!--- DC - 14/03/2018 -->
+
 <?php
 require("../../library/include/footer.php");
 ?>
