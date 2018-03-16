@@ -1,12 +1,12 @@
 UPDATE `gaz_config` SET `cvalue` = '107' WHERE `id` =2;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 CREATE TABLE `gaz_XXXcaucon_rows` (`caucon_cod` CHAR(3) NOT NULL DEFAULT '', `clfoco_ref` INT(9) NOT NULL DEFAULT '0', `type_imp` CHAR(1) NOT NULL DEFAULT '',	`dare_avere` CHAR(1) NOT NULL DEFAULT '', `n_order` INT(3) NOT NULL DEFAULT '0') ENGINE=MyISAM DEFAULT CHARSET=utf8;
-INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr1`,`tipim1`,`daav_1`,1 FROM `gaz_001caucon`;
-INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr2`,`tipim2`,`daav_2`,2 FROM `gaz_001caucon`;
-INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr3`,`tipim3`,`daav_3`,3 FROM `gaz_001caucon`;
-INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr4`,`tipim4`,`daav_4`,4 FROM `gaz_001caucon`;
-INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr5`,`tipim5`,`daav_5`,5 FROM `gaz_001caucon`;
-INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr6`,`tipim6`,`daav_6`,6 FROM `gaz_001caucon`;
+INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr1`,`tipim1`,`daav_1`,1 FROM `gaz_XXXcaucon`;
+INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr2`,`tipim2`,`daav_2`,2 FROM `gaz_XXXcaucon`;
+INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr3`,`tipim3`,`daav_3`,3 FROM `gaz_XXXcaucon`;
+INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr4`,`tipim4`,`daav_4`,4 FROM `gaz_XXXcaucon`;
+INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr5`,`tipim5`,`daav_5`,5 FROM `gaz_XXXcaucon`;
+INSERT INTO `gaz_XXXcaucon_rows` (`caucon_cod`,clfoco_ref,type_imp,dare_avere,n_order) SELECT `codice`,`contr6`,`tipim6`,`daav_6`,6 FROM `gaz_XXXcaucon`;
 ALTER TABLE `gaz_XXXcaucon` DROP COLUMN `contr1`, DROP COLUMN `tipim1`, DROP COLUMN `daav_1`, DROP COLUMN `contr2`, DROP COLUMN `tipim2`, DROP COLUMN `daav_2`, DROP COLUMN `contr3`, DROP COLUMN `tipim3`, DROP COLUMN `daav_3`, DROP COLUMN `contr4`, DROP COLUMN `tipim4`, DROP COLUMN `daav_4`, DROP COLUMN `contr5`, DROP COLUMN `tipim5`, DROP COLUMN `daav_5`, DROP COLUMN `contr6`, DROP COLUMN `tipim6`, DROP COLUMN `daav_6`;
 DELETE FROM `gaz_XXXcaucon_rows` WHERE `clfoco_ref` = 0;
 ALTER TABLE `gaz_XXXstaff` ADD COLUMN `id_worker_type` INT(3) NOT NULL AFTER `id_contract`;
@@ -56,7 +56,7 @@ INSERT INTO `gaz_XXXstaff_absence_type` (`id_absence`, `inps_ref`, `causal`, `de
 	(34, '', 'FER', 'Ferie godute collettive', 'Ferie godute collett.', 136),
 	(35, '', '', 'Indennità sostitutiva di preavviso', 'Indenn. sost. preavviso', 140),
 	(36, '', '', 'Aspettativa funzioni elettive', 'Aspett. funzioni elett.', 144);
-CREATE TABLE IF NOT EXISTS `gaz_001staff_worked_hours` (
+CREATE TABLE IF NOT EXISTS `gaz_XXXstaff_worked_hours` (
   `id_staff` int(9) NOT NULL DEFAULT '0',
   `work_day` date DEFAULT NULL,
   `hours_normal` decimal(3,2) NOT NULL,
@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS `gaz_001staff_worked_hours` (
   `note` varchar(255) DEFAULT NULL,
   `id_orderman` int(9) DEFAULT NULL COMMENT 'sarà legato al piano dei conti per gestire le commesse (centri di costo)'
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-CREATE TABLE `gaz_001staff_work_type` (
+CREATE TABLE `gaz_XXXstaff_work_type` (
   `id_work` int(3) NOT NULL AUTO_INCREMENT,
   `id_work_type` int(3) NOT NULL,
   `hour_year_limit` int(4) NOT NULL,
@@ -80,7 +80,7 @@ CREATE TABLE `gaz_001staff_work_type` (
   `descri` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_work`)
 ) ENGINE=MyISAM AUTO_INCREMENT=689 DEFAULT CHARSET=utf8;
-INSERT INTO `gaz_001staff_work_type` (`id_work`, `id_work_type`, `hour_year_limit`, `hour_month_limit`, `hour_week_limit`, `hour_day_limit`, `increase`, `descri`) VALUES
+INSERT INTO `gaz_XXXstaff_work_type` (`id_work`, `id_work_type`, `hour_year_limit`, `hour_month_limit`, `hour_week_limit`, `hour_day_limit`, `increase`, `descri`) VALUES
 	(1, 11, 0, 0, 0.0, 8.00, 0.00, 'Lavoro ordinario (nessuna maggiorazione)'),
 	(2, 56, 0, 0, 0.0, 8.00, 0.13, 'Lavoro straordinario diurno feriale (dalla 41 alla 48 ora settimanale)'),
 	(3, 56, 0, 0, 0.0, 8.00, 0.28, 'Lavoro straordinario diurno'),
