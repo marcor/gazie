@@ -145,6 +145,7 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
     if (isset($_POST['create']) && empty($msg)) {
         $first_protoc = 0;
         $first_numdoc = 0;
+        require("lang." . $admin_aziend['lang'] . ".php");
         foreach ($billable as $k => $val) {
             if (isset($_POST['check_' . $k])) { // se è stato selezionato il contratto da fatturare
                 $last = lastDocNumber($form['this_date_Y'], $val['doc_type'], $form['vat_section']);
@@ -174,7 +175,7 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 /*
                   IN modules/vendit/lib.function.php IL METODO contractCalc NON CALCOLA total_exc_with_duty E AVVIENE COME ANOMALIA CHE VIENE SEMPRE APPLICATO IL BOLLO
                  */
-                if (isset($calc->total_exc_with_duty) && $calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] > 0) {
+                if (isset($calc->total_exc_with_duty) && $calc->total_exc_with_duty > $admin_aziend['taxstamp_limit'] && $admin_aziend['virtual_taxstamp'] != '0') {
                     $taxstamp = $admin_aziend['taxstamp'];
                     $virtual_taxstamp = $admin_aziend['virtual_taxstamp'];
                 }
@@ -195,7 +196,6 @@ if (!isset($_POST['vat_section'])) { // al primo accesso
                 tesdocInsert($head_data);
                 $tesdoc_id = gaz_dbi_last_id();
                 //inserisco i primi 2 righi (sempre)
-                require("lang." . $admin_aziend['lang'] . ".php");
                 $uts_conclusion = mktime(0, 0, 0, substr($cntr['conclusion_date'], 5, 2), substr($cntr['conclusion_date'], 8, 2), substr($cntr['conclusion_date'], 0, 4));
                 $conclusion_date = strftime("%d %B %Y", $uts_conclusion);
                 $rows_data = array('id_tes' => $tesdoc_id, 'tiprig' => 2,
