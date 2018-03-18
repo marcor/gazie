@@ -24,8 +24,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$msg = "";
-
+$msg = "";$print_magval="";
+$gForm = new magazzForm(); // Antonio Germani attivo funzione calcolo giacenza di magazzino
 
 if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -117,8 +117,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['scochi'] = substr($_POST['scochi'],0,50);
     $form['artico'] = $_POST['artico'];
     $form['quanti'] = gaz_format_quantity($_POST['quanti'], 0, $admin_aziend['decimal_quantity']);
-    $form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
-    $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
+   // $form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
+   // $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
     $form['status'] = substr($_POST['status'], 0, 10);
 // Antonio Germani tolto non serve $form['search_partner'] = $_POST['search_partner'];
     $form['search_item'] = $_POST['search_item'];
@@ -131,7 +131,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['operat'] = $causa['operat'];
 		
-		/* Antonio Germani questo non serve più clfoco è il campo di coltivazione
+		/* Antonio Germani questo non serve più clfoco è adesso il campo di coltivazione
         $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
         if (($causa['clifor'] < 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['mascli'])) {
             $form['clfoco'] = 0;
@@ -188,6 +188,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($form['quanti'] == 0) {  //la quantit� � zero
             $msg .= "19+";
         }
+	 // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
+	 $mv = $gForm->getStockValue(false, $form['artico']);
+        $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
+		if ($form["operat"] == -1 and ($print_magval-$form['quanti']<0)) { //Antonio Germani quantità insufficiente
+			$msg .= "23+";
+			}
         if (empty($msg)) { // nessun errore
             $upd_mm = new magazzForm;
             //formatto le date
@@ -411,19 +417,26 @@ if ($form['artico'] == '') {
     echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
     /** ENRICO FEDELE */
 } else {
+	
+	
     $item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
     $print_unimis = $item[$unimis];
+	// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
+	 $mv = $gForm->getStockValue(false, $item['codice']);
+        $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
+	 
     echo "<input type=\"submit\" value=\"" . substr($item['descri'], 0, 30) . "\" name=\"newitem\" title=\"" . ucfirst($script_transl['update']) . "!\">\n ";
     echo "\t<input type=\"hidden\" name=\"artico\" value=\"" . $form['artico'] . "\">\n";
     echo "\t<input type=\"hidden\" name=\"search_item\" value=\"" . $form['search_item'] . "\">\n";
 }
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis</td></tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis". ' ',$script_transl[22],' '."$print_magval".' '."$print_unimis</td></tr>\n";
 /* Antonio Germani sospendo il prezzo e lo sconto che nel quaderno di campagna non servono
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[14] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scorig'] . "\" maxlength=\"4\" size=\"4\" name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>\n";
 
 fine sospendo prezzo e sconto */
+
 echo "<td class=\"FacetFieldCaptionTD\">" . $strScript["admin_caumag.php"][4] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"operat\" class=\"FacetSelect\">\n";
 for ($counter = -1; $counter <= 1; $counter++) {
@@ -433,12 +446,15 @@ for ($counter = -1; $counter <= 1; $counter++) {
     }
     echo "<option value=\"$counter\" $selected > " . $strScript["admin_caumag.php"][$counter + 9] . "</option>\n";
 }
+
 /*ANtonio Germani - visualizzo l'operatore */
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[21]."</td><td class=\"FacetDataTD\">".$form["adminid"]."</td>\n"; 
 /* fine visualizzo l'operatore */
 echo "</select></td></tr><tr><td colspan=\"3\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
+
 echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
 echo "</td><td align=\"right\">\n";
+
 if ($toDo == 'update') {
     echo '<input type="submit" accesskey="m" name="Insert" value="' . strtoupper($script_transl['update']) . '!"></td></tr><tr></tr>';
 } else {

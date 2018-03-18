@@ -88,7 +88,7 @@ $strScript = array("browse_document.php" =>
 		"Data attuaz.",
 		"Operat."),
     "admin_movmag.php" =>
-    array("movimento di magazzino ",
+    array("movimento quaderno di campagna ",
         "Data della registrazione ",
         "Causale ",
         "Campo",
@@ -110,6 +110,8 @@ $strScript = array("browse_document.php" =>
         "La quantit&agrave; non pu&ograve; essere uguale a zero!",
 		"Avversità riscontrata",
 		"Operatore",
+		"Giacenza",
+		"Giacenza di magazzino insufficiente",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
