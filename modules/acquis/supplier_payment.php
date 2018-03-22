@@ -67,8 +67,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
             $form['paymov'][$k] = $v;  // qui dovrei fare il parsing
             $add_desc[$k] = 0.00;
             foreach ($v as $ki => $vi) { // calcolo il totale
-                $acc_tot += $vi['amount'];
-                $add_desc[$k] += $vi['amount'];
+                $acc_tot += floatval($vi['amount']);
+                $add_desc[$k] += floatval($vi['amount']);
             }
             if ($add_desc[$k] >= 0.01) { // posso mettere una descrizione perchè il pagamento interessa pure questa partita
                 $dd = $paymov->getDocumentData($k);
@@ -377,7 +377,7 @@ if ($form['partner'] > 100000000) { // partner selezionato
             $open = 'op';
         }
         echo '<input type="hidden" id="post_' . $k . '_' . $ki . '_id_tesdoc_ref" name="paymov[' . $k . '][' . $ki . '][id_tesdoc_ref]" value="' . $k . "\" />";
-        echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" orival=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\" opcl=\"" . $open . "\" value=\"" . number_format($form['paymov'][$k][$ki]['amount'], 2, '.', '') . "\"></td></tr>\n";
+        echo "<tr><td colspan='7'></td><td align='right'><input style=\"text-align: right;\" type=\"text\" name=\"paymov[$k][$ki][amount]\" orival=\"" . number_format(floatval($form['paymov'][$k][$ki]['amount']), 2, '.', '') . "\" opcl=\"" . $open . "\" value=\"" . number_format(floatval($form['paymov'][$k][$ki]['amount']), 2, '.', '') . "\"></td></tr>\n";
     }
     echo "<tr>";
     echo "<td colspan='3'>" . $script_transl['paymovbal'] . '<input type="text" value="' . number_format($paymov_bal, 2, '.', '') . '" id="total" /></td>';
