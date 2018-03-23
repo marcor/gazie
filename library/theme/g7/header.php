@@ -2,13 +2,14 @@
 <html lang="en">
     <head>
         <meta http-equiv="content-language" content="en, it, es">
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<meta name="mobile-web-app-capable" content="yes">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="author" content="Antonio de Vincentiis http://www.devincentiis.it">
-        <link rel="shortcut icon" href="../../library/images/favicon.ico">			
+        <link rel="shortcut icon" href="../../library/images/favicon.ico" />			
+		<link rel="icon" sizes="192x192" href="../../library/images/gaz192.png" />
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link href="../../js/jquery.ui/jquery-ui.css" rel="stylesheet">
-        <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet">
+        <link href="../../library/theme/g7/smartmenus-master/bootstrap/jquery.smartmenus.bootstrap.css" rel="stylesheet" />
         <script src="../../js/jquery/jquery.js"></script>
 
         <?php

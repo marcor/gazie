@@ -59,9 +59,11 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
 <html>
     <head>
         <meta charset="utf-8">
+		<meta name="mobile-web-app-capable" content="yes">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title><?php echo gettitolo($mod_uri).' > '.$admin_aziend['ragso1']; ?></title>
         <link rel="shortcut icon" href="../../library/images/favicon.ico">			
+		<link rel="icon" sizes="192x192" href="../../library/images/gaz192.png" />
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <!--<link rel="stylesheet" href="../../library/theme/lte/adminlte/bootstrap/css/bootstrap.min.css">-->
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
