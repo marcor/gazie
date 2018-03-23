@@ -26,10 +26,10 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $message='';
 if (isset($_POST['Delete'])) {
-    $rs_check_mov = gaz_dbi_dyn_query("clfoco", $gTables['tesmov'], "clfoco = '" . intval($_POST['codice']) . "'", "id_tes asc", 0, 1);
+    $rs_check_mov = gaz_dbi_dyn_query("codcon", $gTables['rigmoc'], "codcon = '" . intval($_POST['codice']) . "'");
     $check_mov = gaz_dbi_num_rows($rs_check_mov);
     if ($check_mov > 0) {
-        $message .= "Cliente non cancellabile perche' ha " . $check_mov . " movimenti contabili!<br>";
+        $message .= "Collaboratore non cancellabile perche' ha " . $check_mov . " movimenti contabili!<br>";
     }
     if ($message == "") {
         gaz_dbi_del_row($gTables['clfoco'], "codice", intval($_POST['codice']));
