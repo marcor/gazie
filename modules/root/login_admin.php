@@ -107,12 +107,30 @@ if (isset($_POST['actionflag'])) {
                 }
                 $newpass = true;
             } else {
-                if (isset($_SESSION["lastpage"]) && !empty($_SESSION["lastpage"]) && !strstr($_SESSION["lastpage"], "login_admin") == "login_admin.php") {
-                    $lastpage = $_SESSION["lastpage"];
-                    $_SESSION['lastpage'] = "";
-                    header("Location: " . $lastpage);
+                require_once('./login_config.php');
+                // load the login class
+                require_once('classes/Login.php');
+
+                // create a login object. when this object is created, it will do all login/logout stuff automatically
+                // so this single line handles the entire login process.
+                $login = new Login();
+
+                // ... ask if we are logged in here:
+                if ($login->isUserLoggedIn() == true) {
+                    // the user is logged in. you can do whatever you want here.
+                    // for demonstration purposes, we simply show the "you are logged in" view.
+                    if (isset($_SESSION['lastpage']) && !empty($_SESSION['lastpage']) && !strstr($_SESSION['lastpage'], 'login_admin') == 'login_admin.php') {
+                        $lastpage = $_SESSION['lastpage'];
+                        $_SESSION['lastpage'] = '';
+                        header('Location: ' . $lastpage);
+                    } else {
+                        header('Location: ../root/admin.php');
+                    }
+                    exit;
                 } else {
-                    header("Location: ../root/admin.php");
+                    // the user is not logged in. you can do whatever you want here.
+                    // for demonstration purposes, we simply show the "you are not logged in" view.
+                    header('Location: ../root/login_admin.php');
                 }
                 exit;
             }
