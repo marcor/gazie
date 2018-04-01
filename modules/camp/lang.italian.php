@@ -88,7 +88,7 @@ $strScript = array("browse_document.php" =>
 		"Data attuaz.",
 		"Operat."),
     "admin_movmag.php" =>
-    array("movimento quaderno di campagna ",
+    array("movimento registro di campagna ",
         "Data della registrazione ",
         "Causale ",
         "Campo",
@@ -443,7 +443,7 @@ $strScript = array("browse_document.php" =>
         'codcon' => 'Conto di ricavo su vendite',
         'id_cost' => 'Conto di costo su acquisti',
         'annota' => 'Annotazioni (pubblicate anche sul web)',
-        'document' => 'Documenti e/o certificazioni',
+        'document' => 'Scheda di Sicurezza',
         'web_mu' => 'Unit&agrave; di misura online',
         'web_price' => 'Prezzo di vendita online',
         'web_multiplier' => 'Moltiplicatore prezzo web',

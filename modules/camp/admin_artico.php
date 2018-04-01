@@ -358,7 +358,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna     <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="barcode" class="col-sm-4 control-label"><?php echo $script_transl['barcode']; ?></label>
@@ -384,7 +384,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+              <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?></label>
@@ -402,7 +402,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="ragstat" class="col-sm-4 control-label"><?php echo $script_transl['ragstat']; ?></label>
@@ -412,7 +412,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
@@ -420,7 +420,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="sconto" class="col-sm-4 control-label"><?php echo $script_transl['sconto']; ?></label>
@@ -428,7 +428,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve1" class="col-sm-4 control-label"><?php echo $script_transl['preve1']; ?></label>
@@ -438,7 +438,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve2" class="col-sm-4 control-label"><?php echo $script_transl['preve2']; ?></label>
@@ -448,7 +448,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve3" class="col-sm-4 control-label"><?php echo $script_transl['preve3']; ?></label>
@@ -458,7 +458,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preve4" class="col-sm-4 control-label"><?php echo $script_transl['preve4']; ?></label>
@@ -468,7 +468,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?></label>
@@ -478,7 +478,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
@@ -488,7 +488,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
@@ -506,7 +506,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="valore" class="col-sm-4 control-label"><?php echo $script_transl['valore']; ?></label>
@@ -514,7 +514,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="last_cost" class="col-sm-4 control-label"><?php echo $script_transl['last_cost']; ?></label>
@@ -546,7 +546,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
@@ -554,7 +554,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['volume_specifico']; ?></label>
@@ -562,7 +562,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
@@ -570,7 +570,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
@@ -580,7 +580,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
@@ -590,7 +590,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['annota']; ?></label>
@@ -636,7 +636,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_mu" class="col-sm-4 control-label"><?php echo $script_transl['web_mu']; ?></label>
@@ -644,7 +644,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
@@ -652,7 +652,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_multiplier" class="col-sm-4 control-label"><?php echo $script_transl['web_multiplier']; ?></label>
@@ -660,7 +660,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
@@ -668,7 +668,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
@@ -678,7 +678,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+ <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>

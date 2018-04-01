@@ -67,7 +67,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         $ldoc = '';
         if ($lastdoc) {
             $ldoc = '<a href="../root/retrieve.php?id_doc=' . $lastdoc["id_doc"] . '">
-		<i class="glyphicon glyphicon-file" title="Ultimo certificato e/o documentazione disponibile"></i>
+		<i class="glyphicon glyphicon-file" title="Scheda di sicurezza (ultima inserita)"></i>
 		</a>';
         }
         if ($row["good_or_service"] > 0) {
