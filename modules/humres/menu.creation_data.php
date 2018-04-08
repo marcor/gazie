@@ -27,7 +27,6 @@ $menu_data = array( 'm1'=>array('link'=>"docume_humres.php"),
                                ),
                     'm3'=>array('m2'=>array(1=>array(
                                                     array('translate_key'=>1,'link'=>"admin_staff.php",'weight'=>1)
-                                                    )
                                             ),
 											2=>array(
                                                     array('translate_key'=>2,'link'=>"employee_timesheet.php",'weight'=>5)

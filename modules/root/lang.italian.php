@@ -120,6 +120,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("MESSAGE_PSW", "Inserisci il nome utente e la password che hai scelto in fase di iscrizione al servizio");
     define("MESSAGE_PSW_ADMIN", "Inserisci le credenziali di accesso per iniziare:");
     define("MESSAGE_WELCOME_REGISTRATION", "Registrati su: <b>GAzie a scuola</b>");
+    define("MESSAGE_WELCOME_REGISTRATION_ADMIN", "Registrati su: <b>GAzie</b>");
     define("MESSAGE_INTRO_REGISTRATION", "così ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
     define("MESSAGE_PSW_REGISTRATION", "Dopo aver scelto la classe compila tutti gli altri campi del form sottostante, successivamante riceverai una mail con un link da cliccare per confermare l'accesso al servizio");
     define("MESSAGE_CLASSROOM_REGISTRATION", "Scegli la classe di appartenenza");
@@ -164,6 +165,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("MESSAGE_VERIFICATION_MAIL_ERROR", "Sorry, we could not send you an verification mail. Your account has NOT been created.");
     define("MESSAGE_VERIFICATION_MAIL_NOT_SENT", "Verification Mail NOT successfully sent! Error: ");
     define("MESSAGE_VERIFICATION_MAIL_SENT", "Le tue credenziali sono state registrate con successo. Ti abbiamo inviato una mail per verificare la correttezza del tuo indirizzo. Solo quando cliccherai sul link in essa contenuto il gestionale GAzie a scuola sarà operativo e potrai accederci.");
+    define("MESSAGE_VERIFICATION_MAIL_SENT_ADMIN", "Le tue credenziali sono state registrate con successo. Ti abbiamo inviato una mail per verificare la correttezza del tuo indirizzo. Solo quando cliccherai sul link in essa contenuto il gestionale GAzie sarà operativo e potrai accederci.");
     define("MESSAGE_USER_DOES_NOT_EXIST", "Questo nome utente non esiste!");
     define("MESSAGE_USERNAME_BAD_LENGTH", "Username cannot be shorter than 2 or longer than 64 characters");
     define("MESSAGE_USERNAME_CHANGE_FAILED", "Sorry, your chosen username renaming failed");
@@ -208,12 +210,12 @@ if (!defined("MESSAGE_WELCOME")) {
 
 // ex config 
 // for: password reset email data
-    define("EMAIL_PASSWORDRESET_FROM_NAME", "GAzie a scuola");
-    define("EMAIL_PASSWORDRESET_SUBJECT", "Reimpostazione password di GAzie a scuola");
+    define("EMAIL_PASSWORDRESET_FROM_NAME", "GAzie");
+    define("EMAIL_PASSWORDRESET_SUBJECT", "Reimpostazione password di GAzie");
     define("EMAIL_PASSWORDRESET_CONTENT", "Clicca sul link seguente per reimpostare la tua password:");
 // for: verification email data
-    define("EMAIL_VERIFICATION_FROM_NAME", "GAzie a scuola");
-    define("EMAIL_VERIFICATION_SUBJECT", "Registrazione su GAzie a scuola");
+    define("EMAIL_VERIFICATION_FROM_NAME", "GAzie");
+    define("EMAIL_VERIFICATION_SUBJECT", "Registrazione su GAzie");
     define("EMAIL_VERIFICATION_CONTENT", "Clicca su questo link per completare la registrazione e accedere al servizio GAzie a scuola:");
 }
 ?>
