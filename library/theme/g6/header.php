@@ -118,11 +118,11 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
 
 //aggiornamento automatico della tabella gaz_menu_usage
                                 if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le statistiche solo in caso di cambio script
-                                   $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
+                                   $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend["user_name"] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
                                    $value = array();
                                    if (gaz_dbi_num_rows($result) == 0) {
                                       $value['transl_ref'] = get_transl_referer($mod_uri);
-                                      $value['adminid'] = $admin_aziend['Login'];
+                                      $value['adminid'] = $admin_aziend["user_name"];
                                       $value['company_id'] = $admin_aziend['company_id'];
                                       $value['link'] = $mod_uri;
                                       $value['click'] = 1;
@@ -131,7 +131,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                                       gaz_dbi_table_insert('menu_usage', $value);
                                    } else {
                                       $usage = gaz_dbi_fetch_array($result);
-                                      gaz_dbi_put_query($gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '"', 'click', $usage['click'] + 1);
+                                      gaz_dbi_put_query($gTables['menu_usage'], ' adminid="' . $admin_aziend["user_name"] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '"', 'click', $usage['click'] + 1);
                                    }
                                 }
 
@@ -159,7 +159,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                                          echo '			<link rel="stylesheet" type="text/css" href="../../modules/' . $v . '">';
                                       }
                                    }
-                                   $result = getAccessRights($_SESSION['Login'], $_SESSION['company_id']);
+                                   $result = getAccessRights($_SESSION["user_name"], $_SESSION['company_id']);
                                    if (gaz_dbi_num_rows($result) > 0) {
                                       // creo l'array associativo per la generazione del menu con JSCookMenu
                                       $ctrl_m1 = 0;

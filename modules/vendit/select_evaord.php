@@ -363,7 +363,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
     $iniziotrasporto = $_POST['initra_Y'] . "-" . $_POST['initra_M'] . "-" . $_POST['initra_D'];
     $utsIniziotrasporto = mktime(0, 0, 0, $_POST['initra_M'], $_POST['initra_D'], $_POST['initra_Y']);
     $gForm = new venditForm();
-    $ecr = $gForm->getECR_userData($admin_aziend['Login']);
+    $ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
     // ALLERTO SE NON E' STATA ESEGUITA LA CHIUSURA/CONTABILIZZAZIONE DEL GIORNO PRECEDENTE
     $rs_no_accounted = gaz_dbi_dyn_query("datemi", $gTables['tesdoc'], "id_con = 0 AND tipdoc = 'VCO' AND datemi < '$dataemiss' AND tipdoc = 'VCO'", 'id_tes', 0, 1);
     $no_accounted = gaz_dbi_fetch_array($rs_no_accounted);
@@ -407,7 +407,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
     if ($msg == "e") {//procedo all'inserimento
         require("lang." . $admin_aziend['lang'] . ".php");
         $script_transl = $strScript['select_evaord.php'];
-        $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend['Login']);
+        $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
         if (!$ecr_user) {
             header("Location: error_msg.php?ref=admin_scontr");
             exit;

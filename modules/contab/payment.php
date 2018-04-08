@@ -42,7 +42,7 @@ if (!isset($_GET['hidden_req'])) { //al primo accesso allo script
 }
 $gForm = new GAzieForm();
 if (isset($_GET['salva'])) {
-   $adminid = $admin_aziend['Login'];
+   $adminid = $admin_aziend["user_name"];
 //   $dataRegistrazione = mktime(0, 0, 0, $_GET['date_reg_M'], $_GET['date_reg_D'], $_GET['date_reg_Y']);
    $dataRegistrazione = gaz_create_date($_GET['date_reg_D'],$_GET['date_reg_M'],$_GET['date_reg_Y']);
    $target_account = $_GET['target_account'];

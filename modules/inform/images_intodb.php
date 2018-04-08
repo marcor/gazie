@@ -53,7 +53,7 @@ if ($handle = opendir($relativePath)) {
            imm_to_db ($regs[0],$gTables['catmer'],$regs[1],'codice', 'catmer');
            print $regs[0]." inserito nella tabella categorie merceologiche <br />";
         } elseif (preg_match("/^UTE([^\w]{1,20})\.jpg/",$file,$regs)){ //... se è l'immagine di un utente in admin
-           imm_to_db ($regs[0],$gTables['admin'],$regs[1],'Login', 'admin');
+           imm_to_db ($regs[0],$gTables['admin'],$regs[1],"user_name", 'admin');
            print $regs[0]." inserito nella tabella utenti<br />";
         }
     }

@@ -28,16 +28,16 @@ if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 $global_config = new Config;
-$user_data = gaz_dbi_get_row($gTables['admin'], "Login", $_SESSION["Login"]);
+$user_data = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
 $msg = array('err' => array(), 'war' => array());
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
     $toDo = 'update';
-    $accessi = $_GET['Login'];
-    if (!isset($_GET['Login'])) {
+    $accessi = $_GET["user_name"];
+    if (!isset($_GET["user_name"])) {
         header("Location: " . $_POST['ritorno']);
         exit;
     }
-    if ($_SESSION['Login'] == $_GET['Login'] or $user_data['Abilit'] == 9) {
+    if ($_SESSION["user_name"] == $_GET["user_name"] or $user_data['Abilit'] == 9) {
         $aut = 0;
     }
 } elseif ((isset($_POST['Insert'])) or ( isset($_GET['Insert']))) {
@@ -56,20 +56,20 @@ if (isset($_POST['Return'])) {
 }
 
 if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il primo accesso
-    $form["Cognome"] = substr($_POST['Cognome'], 0, 30);
-    $form["Nome"] = substr($_POST['Nome'], 0, 30);
+    $form["user_lastname"] = substr($_POST['user_lastname'], 0, 30);
+    $form["user_firstname"] = substr($_POST['user_firstname'], 0, 30);
     $form["lang"] = substr($_POST['lang'], 0, 15);
     $form["theme"] = substr($_POST['theme'], 0, 20);
     $form["style"] = substr($_POST['style'], 0, 30);
     $form["skin"] = substr($_POST['skin'], 0, 30);
     $form["Abilit"] = intval($_POST['Abilit']);
     $form["Access"] = intval($_POST['Access']);
-    $form["Login"] = substr($_POST['Login'], 0, 15);
+    $form["user_name"] = substr($_POST["user_name"], 0, 15);
     $form["Password"] = substr($_POST['Password'], 0, 20);
     $form["confpass"] = substr($_POST['confpass'], 0, 20);
     $form['body_text'] = filter_input(INPUT_POST, 'body_text');
     if ($toDo == 'insert') {
-        $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "Login = '" . $form['Login'] . "'", "Login DESC", 0, 1);
+        $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "user_name = '" . $form["user_name"] . "'", "user_name DESC", 0, 1);
         $risultato = gaz_dbi_fetch_array($rs_utente);
         if ($risultato) {
             $msg['err'][] = 'exlogin';
@@ -79,20 +79,20 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     /*
      * La prima entrata per update
      */
-    $form = gaz_dbi_get_row($gTables['admin'], "Login", substr($_GET['Login'], 0, 15));
+    $form = gaz_dbi_get_row($gTables['admin'], "user_name", substr($_GET["user_name"], 0, 15));
     // attingo il valore del motore di template dalla tabella configurazione utente
-    $admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form['Login']);
+    $admin_config = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form["user_name"]);
     $form['confpass'] = $form['Password'];
     $form['theme'] = $admin_config['var_value'];
     // attingo il testo delle email dalla tabella configurazione utente
-    $bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form['Login']);
+    $bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form["user_name"]);
     $form['body_text'] = $bodytext['var_value'];
 } else {
     /*
      * La prima entrata per insert
      */
-    $form["Cognome"] = "";
-    $form["Nome"] = "";
+    $form["user_lastname"] = "";
+    $form["user_firstname"] = "";
     $form["image"] = "";
     $form["theme"] = "/library/theme/g7";
     $form["style"] = $admin_aziend['style'];
@@ -100,7 +100,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
     $form["lang"] = $admin_aziend['lang'];
     $form["Abilit"] = 5;
     $form["Access"] = 0;
-    $form["Login"] = "";
+    $form["user_name"] = "";
     $form["Password"] = "";
     $form["confpass"] = "";
     $form['body_text'] = "";
@@ -112,10 +112,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 
 if (isset($_POST['Submit'])) {
     //controllo i campi
-    if (empty($form["Cognome"]))
-        $msg['err'][] = 'Cognome';
-    if (empty($form["Login"]))
-        $msg['err'][] = 'Login';
+    if (empty($form["user_lastname"]))
+        $msg['err'][] = 'user_lastname';
+    if (empty($form["user_name"]))
+        $msg['err'][] = "user_name";
     if (empty($form["Password"]))
         $msg['err'][] = 'Password';
     if (strlen($form["Password"]) < $global_config->getValue('psw_min_length'))
@@ -135,8 +135,8 @@ if (isset($_POST['Submit'])) {
             $msg['err'][] = 'filsiz';
     }
     if ($form["Abilit"] < 9) {
-        $ricerca = trim($form["Login"]);
-        $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "Login <> '$ricerca' AND Abilit ='9'", "Login", 0, 1);
+        $ricerca = trim($form["user_name"]);
+        $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "user_name <> '$ricerca' AND Abilit ='9'", "user_name", 0, 1);
         $risultato = gaz_dbi_fetch_array($rs_utente);
         $student = false;
         if (preg_match("/([a-z0-9]{1,9})[0-9]{4}$/", $table_prefix, $tp)) {
@@ -154,7 +154,7 @@ if (isset($_POST['Submit'])) {
         if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
             $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
         } else {   // altrimenti riprendo la vecchia
-            $oldimage = gaz_dbi_get_row($gTables['admin'], 'Login', $form['Login']);
+            $oldimage = gaz_dbi_get_row($gTables['admin'], "user_name", $form["user_name"]);
             $form['image'] = $oldimage['image'];
         }
         // aggiorno il db
@@ -164,12 +164,12 @@ if (isset($_POST['Submit'])) {
         if ($user_data['Abilit'] == 9) {
 			foreach ($_POST AS $key => $value) {
                 if (preg_match("/^([0-9]{3})acc_/", $key, $id)) {
-                    updateAccessRights($form['Login'], preg_replace("/^[0-9]{3}acc_/", '', $key), $value, $id[1]);
+                    updateAccessRights($form["user_name"], preg_replace("/^[0-9]{3}acc_/", '', $key), $value, $id[1]);
                 } elseif (preg_match("/^([0-9]{3})nusr_/", $key, $id)) {
-                    updateAccessRights($form['Login'], 1, 3, $user_data['company_id']);
+                    updateAccessRights($form["user_name"], 1, 3, $user_data['company_id']);
                     $mod_data = gaz_dbi_get_row($gTables['module'], 'name', preg_replace("/^[0-9]{3}nusr_/", '', $key));
                     if (!empty($mod_data)) {
-                        updateAccessRights($form['Login'], $mod_data['id'], $value, $id[1]);
+                        updateAccessRights($form["user_name"], $mod_data['id'], $value, $id[1]);
                     }
                 } elseif (preg_match("/^([0-9]{3})new_/", $key, $id) && $value == 3) { // il nuovo modulo non ÂŠ presente in gaz_module
                     $name = preg_replace("/^[0-9]{3}new_/", '', $key);
@@ -181,7 +181,7 @@ if (isset($_POST['Submit'])) {
                     gaz_dbi_table_insert('module', array('name' => $name, 'link' => $menu_data['m1']['link'], 'icon' => $name . '.png', 'weight' => $r['max_we']));
                     //recupero l'id assegnato dall'inserimento
                     $mod_id = gaz_dbi_last_id();
-                    updateAccessRights($form['Login'], $mod_id, 3, $id[1]);
+                    updateAccessRights($form["user_name"], $mod_id, 3, $id[1]);
                     // trovo l'ultimo id del sub menu
                     $rs_last = gaz_dbi_dyn_query("MAX(id)+1 AS max_id", $gTables['menu_module'], 1);
                     $r = gaz_dbi_fetch_array($rs_last);
@@ -204,7 +204,7 @@ if (isset($_POST['Submit'])) {
         if ($toDo == 'insert') {
             $form['company_id'] = $user_data['company_id'];
             gaz_dbi_table_insert('admin', $form);
-            $form['adminid'] = $form['Login'];
+            $form['adminid'] = $form["user_name"];
             $form['var_descri'] = 'Menu/header/footer personalizzabile';
             $form['var_name'] = 'theme';
             $form['var_value'] = $form['theme'];
@@ -217,28 +217,28 @@ if (isset($_POST['Submit'])) {
             }
         } elseif ($toDo == 'update') {
             //cambio la data di modifica password
-            $getInit = gaz_dbi_get_row($gTables['admin'], "Login", $form['Login']);
+            $getInit = gaz_dbi_get_row($gTables['admin'], "user_name", $form["user_name"]);
             if ($form["Password"] != $getInit["Password"]) {
                 $form["datpas"] = date("YmdHis");
             }
-            gaz_dbi_table_update('admin', array('Login', $form['Login']), $form);
+            gaz_dbi_table_update('admin', array("user_name", $form["user_name"]), $form);
             // se esiste aggiorno anche il tema
-            $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form['Login']);
+            $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $form["user_name"]);
             if ($admin_config_theme) {
-                gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form['Login'] . "' AND var_name ='theme'", 'var_value', $form['theme']);
+                gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form["user_name"] . "' AND var_name ='theme'", 'var_value', $form['theme']);
             } else { // altrimenti lo inserisco
-                $form['adminid'] = $form['Login'];
+                $form['adminid'] = $form["user_name"];
                 $form['var_descri'] = 'Menu/header/footer personalizzabile';
                 $form['var_name'] = 'theme';
                 $form['var_value'] = $form['theme'];
                 gaz_dbi_table_insert('admin_config', $form);
             }
             // aggiorno o inserisco il testo da inserire nelle email trasmesse dall'utente
-            $bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form['Login']);
+            $bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form["user_name"]);
             if ($bodytext) {
-                gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form['Login'] . "' AND var_name ='body_send_doc_email'", 'var_value', $tbt);
+                gaz_dbi_put_query($gTables['admin_config'], "adminid = '" . $form["user_name"] . "' AND var_name ='body_send_doc_email'", 'var_value', $tbt);
             } else {  // non c'era lo inserisco
-                $form['adminid'] = $form['Login'];
+                $form['adminid'] = $form["user_name"];
                 $form['var_descri'] = 'Contenuto in HTML del testo del corpo delle email inviate dell\'utente';
                 $form['var_name'] = 'body_send_doc_email';
                 $form['var_value'] = $tbt;
@@ -246,8 +246,8 @@ if (isset($_POST['Submit'])) {
             }
             // vado ad aggiornare anche la tabella studenti dell'installazione di base qualora ce ne fosse uno 
             if (@$student) {
-                gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form['Login'], 'student_firstname', $form['Nome']);
-                gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form['Login'], 'student_lastname', $form['Cognome']);
+                gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form["user_name"], 'student_firstname', $form['user_firstname']);
+                gaz_dbi_put_row($tp[1] . '_students', 'student_name', $form["user_name"], 'student_lastname', $form['user_lastname']);
             }
         }
         header("Location: " . $_POST['ritorno']);
@@ -290,8 +290,8 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
     if ($toDo == 'insert') {
         echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
     } else {
-        echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form['Login'] . "'</div>\n";
-        echo "<input type=\"hidden\" value=\"" . $form['Login'] . "\" name=\"Login\" />\n";
+        echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['upd_this'] . " '" . $form["user_name"] . "'</div>\n";
+        echo "<input type=\"hidden\" value=\"" . $form["user_name"] . "\" name=\"user_name\" />\n";
     }
     $gForm = new configForm();
     if (count($msg['err']) > 0) { // ho un errore
@@ -304,16 +304,16 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
         <div class="container-fluid">
             <table class="table table-striped">
                 <tr>
-                    <td class="FacetFieldCaptionTD"><?php echo $script_transl['Cognome']; ?>* </td>
-                    <td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="Cognome" value="<?php print $form["Cognome"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
+                    <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_lastname']; ?>* </td>
+                    <td colspan="2" class="FacetDataTD"><input title="Cognome" type="text" name="user_lastname" value="<?php print $form["user_lastname"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td class="FacetFieldCaptionTD"><?php echo $script_transl['Nome']; ?></td>
-                    <td colspan="2" class="FacetDataTD"><input title="Nome" type="text" name="Nome" value="<?php print $form["Nome"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
+                    <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_firstname']; ?></td>
+                    <td colspan="2" class="FacetDataTD"><input title="Nome" type="text" name="user_firstname" value="<?php print $form["user_firstname"] ?>" maxlength="30" size="30" class="FacetInput">&nbsp;</td>
                 </tr>
                 <tr>
                     <?php
-                    print "<td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=admin&value=" . $form['Login'] . "&field=Login\" width=\"100\"></td>";
+                    print "<td class=\"FacetFieldCaptionTD\"><img src=\"../root/view.php?table=admin&value=" . $form["user_name"] . "&field=user_name\" width=\"100\"></td>";
                     print "<td colspan=\"2\" class=\"FacetDataTD\">" . $script_transl['image'] . ":<br /><input name=\"userfile\" type=\"file\" class=\"FacetDataTD\"></td>";
                     ?>
                 </tr>
@@ -399,8 +399,8 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                 </tr>
                 <?php
                 if ($toDo == 'insert') {
-                    echo '<tr><td class="FacetFieldCaptionTD">' . $script_transl['Login'] . ' *</td>
-       <td class="FacetDataTD" colspan="2"><input title="Login" type="text" name="Login" value="' . $form["Login"] . '" maxlength="20" size="20" class="FacetInput">&nbsp;</td>
+                    echo '<tr><td class="FacetFieldCaptionTD">' . $script_transl["user_name"] . ' *</td>
+       <td class="FacetDataTD" colspan="2"><input title="user_name" type="text" name="user_name" value="' . $form["user_name"] . '" maxlength="20" size="20" class="FacetInput">&nbsp;</td>
        </tr>';
                 }
                 ?>
@@ -455,7 +455,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
 
                     //richiamo tutte le aziende installate e vedo se l'utente  e' abilitato o no ad essa
                     $table = $gTables['aziend'] . ' AS a';
-                    $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form['Login'] . "') AS set_co ";
+                    $what = "a.codice AS id, ragso1 AS ragsoc, (SELECT COUNT(*) FROM " . $gTables['admin_module'] . " WHERE a.codice=" . $gTables['admin_module'] . ".company_id AND " . $gTables['admin_module'] . ".adminid='" . $form["user_name"] . "') AS set_co ";
                     $co_rs = gaz_dbi_dyn_query($what, $table, 1, "ragsoc ASC");
                     while ($co = gaz_dbi_fetch_array($co_rs)) {
                         $co_id = sprintf('%03d', $co['id']);
@@ -463,7 +463,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
                         echo "<tr><td class=\"FacetDataTD\">" .'<input type=hidden name="' . $co_id . 'nusr_root" value="3">'. $script_transl['mod_perm'] . ":</td>\n";
                         echo "<td>" . $script_transl['all'] . "</td>\n";
                         echo "<td>" . $script_transl['none'] . "</td></tr>\n";
-                        $mod_found = getModule($form['Login'], $co['id']);
+                        $mod_found = getModule($form["user_name"], $co['id']);
                         foreach ($mod_found as $mod) {
                             echo "<tr>\n";
                             echo '<td class="FacetFieldCaptionTD">

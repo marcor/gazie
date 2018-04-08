@@ -53,7 +53,7 @@ $item_head['bot']= array(array('lun' => 21,'nam'=>$article['codice']),
 $pdf = new report_Template();
 $pdf->setVars($admin_aziend);
 $config = new Config;
-$pdf->setAuthor($admin_aziend['ragso1'].' '.$_SESSION['Login']);
+$pdf->setAuthor($admin_aziend['ragso1'].' '.$_SESSION["user_name"]);
 $pdf->setTitle('Stampa codici a barre');
 $pdf->SetTopMargin(40);
 if (empty($article['image'])){

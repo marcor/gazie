@@ -48,7 +48,7 @@ if (empty($lettera['oggetto'])){
 $testata['c_a'] = $lettera['c_a'];
 $testata['corpo'] = $lettera['corpo'];
 if ($lettera['signature'] > 0){
-    $testata['signature'] = $admin_aziend['Nome'].' '.$admin_aziend['Cognome'];
+    $testata['signature'] = $admin_aziend['user_firstname'].' '.$admin_aziend['user_lastname'];
 } else {
     $testata['signature'] = '';
 }

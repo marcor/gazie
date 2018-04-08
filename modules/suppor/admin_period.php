@@ -59,7 +59,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	//$form['ora_fine'] = $_POST['ora_fine'];
    $form['ripetizione'] = $_POST['ripetizione'];
    $form['ogni'] = $_POST['ogni'];
-	$form['utente'] = $_SESSION["Login"];
+	$form['utente'] = $_SESSION["user_name"];
   
 	$form['rows'] = array();	
    if (isset($_POST['Submit'])) {
@@ -130,7 +130,7 @@ else {
 		$form['codice'] = 1;
 	}  
 	$form['tipo'] = 'ASS';	
-    $form['utente'] = $_SESSION["Login"];
+    $form['utente'] = $_SESSION["user_name"];
 	$form['data'] = date("Y-m-d");
    $form['cosear'] = '';
    $form['codart'] = '';

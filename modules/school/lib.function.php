@@ -33,10 +33,10 @@ class schoolForm extends GAzieForm {
         $rs = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($rs)) {
             $selected = '';
-            if ($r['Login'] == $val) {
+            if ($r["user_name"] == $val) {
                 $selected = "selected";
             }
-            echo "\t\t <option value=\"" . $r['Login'] . "\" $selected >" . $r['Nome'].' '.$r['Cognome'] . "</option>\n";
+            echo "\t\t <option value=\"" . $r["user_name"] . "\" $selected >" . $r['user_firstname'].' '.$r['user_lastname'] . "</option>\n";
         }
         echo "\t </select>\n";
     }

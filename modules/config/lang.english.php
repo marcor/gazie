@@ -417,8 +417,8 @@ $strScript = array("admin_aziend.php" =>
         'upd_this' => 'Update User',
         'err' => array(
             'exlogin' => 'Nickname already exist!',
-            'Cognome' => 'Enter Surname!',
-            'Login' => "Enter Nickname!",
+            'user_lastname' => 'Enter Surname!',
+            "user_name" => "Enter Nickname!",
             'Password' => "Enter Password!",
             'passlen' => "The password is not long enough!",
             'confpass' => "The password is different from that of confirmation!",
@@ -429,9 +429,9 @@ $strScript = array("admin_aziend.php" =>
             'Abilit_stud' => "You can not have a level lower than 7 because you are the last administrator!",
             'charpass' => "The password can not contain any special characters \" / < >"
         ),
-        'Login' => "Nickname",
-        'Cognome' => "Surname",
-        'Nome' => "Name",
+        "user_name" => "Nickname",
+        'user_lastname' => "Surname",
+        'user_firstname' => "Name",
         'image' => 'Image<br />(only JPG format, max 64kb)',
         'Abilit' => "Level",
         'Access' => "Access number",

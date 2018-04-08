@@ -26,22 +26,22 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin(9);
 $message='';
 if (isset($_POST['Delete'])) {
-    $ricerca=$_POST["Login"];
-    $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "Login <> '$ricerca' AND Abilit = 9 ", "Login",0,1);
+    $ricerca=$_POST["user_name"];
+    $rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "user_name <> '$ricerca' AND Abilit = 9 ", "user_name",0,1);
     $last_admin = gaz_dbi_fetch_array($rs_utente);
     if (!$last_admin) {
         $message = "del_err";
-        $form = gaz_dbi_get_row($gTables['admin'], "Login", substr($_GET['Login'],0,15));
+        $form = gaz_dbi_get_row($gTables['admin'], "user_name", substr($_GET["user_name"],0,15));
     }
     if ( $message == "") { // nessun errore
-        gaz_dbi_del_row($gTables['admin'], "Login",substr($_POST['Login'],0,15));
-        gaz_dbi_del_row($gTables['admin_module'], "adminid",substr($_POST['Login'],0,15));
-        gaz_dbi_del_row($gTables['admin_config'], "adminid",substr($_POST['Login'],0,15));
+        gaz_dbi_del_row($gTables['admin'], "user_name",substr($_POST["user_name"],0,15));
+        gaz_dbi_del_row($gTables['admin_module'], "adminid",substr($_POST["user_name"],0,15));
+        gaz_dbi_del_row($gTables['admin_config'], "adminid",substr($_POST["user_name"],0,15));
         header("Location: report_utenti.php");
         exit;
     }
 } else {
-    $form = gaz_dbi_get_row($gTables['admin'], "Login", substr($_GET['Login'],0,15));
+    $form = gaz_dbi_get_row($gTables['admin'], "user_name", substr($_GET["user_name"],0,15));
 }
 if (isset($_POST['Return'])) {
    header("Location: report_utenti.php");
@@ -51,8 +51,8 @@ require("../../library/include/header.php");
 $script_transl=HeadMain('','','admin_utente');
 ?>
 <form method="POST">
-<input type="hidden" name="Login" value="<?php print $form['Login'];?>">
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['del_this'].': '.$form['Login']; ?></div>
+<input type="hidden" name="user_name" value="<?php print $form["user_name"];?>">
+<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['warning'].'!!! '.$script_transl['delete'].$script_transl['del_this'].': '.$form["user_name"]; ?></div>
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
 <?php
 if (!$message == "") {
@@ -60,12 +60,12 @@ if (!$message == "") {
 }
 ?>
 <tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['Cognome']; ?></td>
-<td class="FacetDataTD"><?php print $form["Cognome"] ?>&nbsp;</td>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_lastname']; ?></td>
+<td class="FacetDataTD"><?php print $form["user_lastname"] ?>&nbsp;</td>
 </tr>
 <tr>
-<td class="FacetFieldCaptionTD"><?php echo $script_transl['Nome']; ?></td>
-<td class="FacetDataTD"><?php print $form["Nome"] ?>&nbsp;</td>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_firstname']; ?></td>
+<td class="FacetDataTD"><?php print $form["user_firstname"] ?>&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['Abilit']; ?></td>

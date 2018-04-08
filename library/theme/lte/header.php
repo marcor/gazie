@@ -38,11 +38,11 @@ if (isset($_POST['logout'])) {
 }
 
 if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le statistiche solo in caso di cambio script
-    $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
+    $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend["user_name"] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
     $value = array();
     if (gaz_dbi_num_rows($result) == 0) {
         $value['transl_ref'] = get_transl_referer($mod_uri);
-        $value['adminid'] = $admin_aziend['Login'];
+        $value['adminid'] = $admin_aziend["user_name"];
         $value['company_id'] = $admin_aziend['company_id'];
         $value['link'] = $mod_uri;
         $value['click'] = 1;
@@ -51,7 +51,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         gaz_dbi_table_insert('menu_usage', $value);
     } else {
         $usage = gaz_dbi_fetch_array($result);
-        gaz_dbi_put_query($gTables['menu_usage'], ' adminid="' . $admin_aziend['Login'] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '"', 'click', $usage['click'] + 1);
+        gaz_dbi_put_query($gTables['menu_usage'], ' adminid="' . $admin_aziend["user_name"] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '"', 'click', $usage['click'] + 1);
     }
 }
 ?>
@@ -158,7 +158,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                                         <!-- inner menu: contains the actual data -->
                                         <ul class="menu">
                                             <?php
-                                            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
+                                            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' click DESC, last_use DESC', 0, 8);
                                             if (gaz_dbi_num_rows($result) > 0) {
                                                 while ($r = gaz_dbi_fetch_array($result)) {
                                                     $rref = explode('-', $r['transl_ref']);
@@ -224,7 +224,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                                         <!-- inner menu: contains the actual data -->
                                         <ul class="menu">
                                             <?php
-                                            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
+                                            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' last_use DESC, click DESC', 0, 8);
                                             if (gaz_dbi_num_rows($res_last) > 0) {
                                                 while ($rl = gaz_dbi_fetch_array($res_last)) {
                                                     $rlref = explode('-', $rl['transl_ref']);
@@ -287,15 +287,15 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                             <!-- User Account: style can be found in dropdown.less -->
                             <li class="dropdown user user-menu">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                    <img src="<?php echo '../root/view.php?table=admin&field=Login&value=' . $admin_aziend['Login']; ?>" class="user-image" alt="User Image">
-                                    <span class="hidden-xs"><?php echo $admin_aziend['Nome'] . ' ' . $admin_aziend['Cognome']; ?></span>
+                                    <img src="<?php echo '../root/view.php?table=admin&field=user_name&value=' . $admin_aziend["user_name"]; ?>" class="user-image" alt="User Image">
+                                    <span class="hidden-xs"><?php echo $admin_aziend['user_firstname'] . ' ' . $admin_aziend['user_lastname']; ?></span>
                                 </a>
                                 <ul class="dropdown-menu">
                                     <!-- User image -->
                                     <li class="user-header">
-                                        <img src="<?php echo '../root/view.php?table=admin&field=Login&value=' . $admin_aziend['Login']; ?>" class="img-circle" alt="User Image">
+                                        <img src="<?php echo '../root/view.php?table=admin&field=user_name&value=' . $admin_aziend["user_name"]; ?>" class="img-circle" alt="User Image">
                                         <p>
-<?php echo $admin_aziend['Nome'] . ' ' . $admin_aziend['Cognome']; ?>
+<?php echo $admin_aziend['user_firstname'] . ' ' . $admin_aziend['user_lastname']; ?>
                                             <small>
                                                 Questo è il tuo <b><?php echo $admin_aziend['Access']; ?>°</b> accesso<br/>
                                                 La tua password risale al <b><?php echo gaz_format_date($admin_aziend['datpas']); ?></b><br>
@@ -320,7 +320,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                                     <!-- Menu Footer-->
                                     <li class="user-footer">
                                         <div class="pull-left">
-                                            <a href="../../modules/config/admin_utente.php?Login=<?php echo $admin_aziend['Login']; ?>&Update" class="btn btn-default btn-flat">Profilo</a>
+                                            <a href="../../modules/config/admin_utente.php?user_name=<?php echo $admin_aziend["user_name"]; ?>&Update" class="btn btn-default btn-flat">Profilo</a>
                                         </div>
                                         <div class="pull-right">
                                             <input name="logout" type="submit" value=" Logout " class="btn btn-default btn-flat">
@@ -348,7 +348,7 @@ if ($admin_aziend['Abilit'] == 9) {
                     <!-- Sidebar user panel -->
                     <!--<div class="user-panel">
                       <div class="pull-left image">
-                        <img src="<?php //echo '../root/view.php?table=admin&field=Login&value=' . $admin_aziend['Login'];  ?>" class="img-circle" alt="User Image">
+                        <img src="<?php //echo '../root/view.php?table=admin&field=user_name&value=' . $admin_aziend["user_name"];  ?>" class="img-circle" alt="User Image">
                       </div>
                       <div class="pull-left info">
                         <p><?php //echo $admin_aziend['Nome'].' '.$admin_aziend['Cognome'];  ?></p>

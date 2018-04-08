@@ -117,7 +117,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo '			<link rel="stylesheet" type="text/css" href="../../modules/' . $v . '">';
         }
     }
-    $result = getAccessRights($_SESSION['Login'], $_SESSION['company_id']);
+    $result = getAccessRights($_SESSION["user_name"], $_SESSION['company_id']);
     if (gaz_dbi_num_rows($result) > 0) {
         // creo l'array associativo per la generazione del menu con JSCookMenu
         $ctrl_m1 = 0;

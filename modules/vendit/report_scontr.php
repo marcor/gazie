@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non pu� emettere scontrini
-$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend['Login']);
+$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
 if (!$ecr_user) {
     header("Location: error_msg.php?ref=admin_scontr");
     exit;
@@ -45,7 +45,7 @@ function getLastId($date, $seziva) {
 }
 
 $gForm = new venditForm();
-$ecr = $gForm->getECR_userData($admin_aziend['Login']);
+$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 $where = "tipdoc = 'VCO' AND seziva = " . $ecr['seziva'];
 $all = $where;
 if (isset($_GET['all'])) {

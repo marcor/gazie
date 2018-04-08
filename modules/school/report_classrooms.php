@@ -69,13 +69,13 @@ $gForm = new schoolForm();
                     <?php
                     $result = gaz_dbi_dyn_query('*', $gTables['classroom'],1,'id DESC');
                     while ($r = gaz_dbi_fetch_array($result)) {
-                        $te = gaz_dbi_get_row($gTables['admin'], "Login", $r["teacher"]);
+                        $te = gaz_dbi_get_row($gTables['admin'], "user_name", $r["teacher"]);
                         echo '<tr class="FacetDataTD" title="'.$r["title_note"] .'">';
                         echo "<td title=\"" . $script_transl['update'] . "\"><a class=\"btn btn-xs btn-default\" href=\"admin_classroom.php?id=" . $r["id"] . "&Update\">" . $r["id"] . " </a> &nbsp</td>";
                         echo "<td>" . $r["classe"] . " &nbsp;</td>";
                         echo "<td>" . $r["sezione"] . " &nbsp;</td>";
                         echo "<td>" . $r["anno_scolastico"] . "/" . substr($r["anno_scolastico"] + 1, 2, 2) . " </td>";
-                        echo "<td>" . $te["Nome"] . " " . $te["Cognome"] . " &nbsp;</td>";
+                        echo "<td>" . $te["user_firstname"] . " " . $te["user_lastname"] . " &nbsp;</td>";
                         echo '<td><a class="btn btn-xs btn-default btn-elimina" href="delete_classroom.php?id=' . $r["id"] . '"><i class="glyphicon glyphicon-remove"></i></a></td>';
                         echo "</tr>";
                     }

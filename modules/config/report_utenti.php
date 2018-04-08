@@ -33,9 +33,9 @@ $recordnav -> output();
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 <?php
 $headers_utenti = array  (
-              $script_transl['Login'] => "Login",
-              $script_transl['Cognome'] => "Cognome",
-              $script_transl['Nome'] => "Nome",
+              $script_transl["user_name"] => "user_name",
+              $script_transl['user_lastname'] => "Cognome",
+              $script_transl['user_firstname'] => "Nome",
               $script_transl['Abilit'] => "Abilit",
               $script_transl['Access'] => "Access",
               $script_transl['delete'] => ""
@@ -45,12 +45,12 @@ $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['admin'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<tr class=\"FacetDataTD\">";
-    echo "<td title=\"".$script_transl['update']."\"><a class=\"btn btn-xs btn-default\" href=\"admin_utente.php?Login=".$a_row["Login"]."&Update\">".$a_row["Login"]." </a> &nbsp</td>";
-    echo "<td>".$a_row["Cognome"]." &nbsp;</td>";
-    echo "<td>".$a_row["Nome"]." &nbsp;</td>";
+    echo "<td title=\"".$script_transl['update']."\"><a class=\"btn btn-xs btn-default\" href=\"admin_utente.php?user_name=".$a_row["user_name"]."&Update\">".$a_row["user_name"]." </a> &nbsp</td>";
+    echo "<td>".$a_row["user_lastname"]." &nbsp;</td>";
+    echo "<td>".$a_row["user_firstname"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["Abilit"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["Access"]." &nbsp;</td>";
-    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_utente.php?Login=".$a_row["Login"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_utente.php?user_name=".$a_row["user_name"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
 }
 ?>

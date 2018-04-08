@@ -32,7 +32,7 @@ function effettInsert ($newValue)
     $columns = array('tipeff','datemi','progre','numfat','seziva','protoc','datfat',
                      'totfat','salacc','impeff','scaden','clfoco','pagame',
                      'banapp','banacc','id_doc','id_con','cigcup','status','adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableInsert($table, $columns, $newValue);
 }
 
@@ -40,7 +40,7 @@ function agentiInsert ($codice, $newValue)
 {
     $table = 'agenti';
     $columns = array('id_agente','id_fornitore','base_percent','tipo_contratto','adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableInsert($table, $columns, $newValue);
 }
 
@@ -48,7 +48,7 @@ function agentiUpdate ($codice, $newValue)
 {
     $table = 'agenti';
     $columns = array('id_agente','id_fornitore','base_percent','tipo_contratto','adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
@@ -76,7 +76,7 @@ function contractUpdate ($newValue,$codice=false)
                       'bank', 'periodicity', 'payment_method', 'tacit_renewal', 'current_fee',
                       'id_con', 'cod_revenue', 'vat_code', 'id_body_text', 'last_reassessment',
                       'id_agente', 'provvigione', 'status', 'note', 'adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     if (is_array($codice)) {
        tableUpdate($table, $columns, $codice, $newValue);
     } else {
@@ -91,7 +91,7 @@ function contractRowUpdate ($newValue,$codice=false)
     $table = 'contract_row';
     $columns = array( 'id_contract','descri','unimis','quanti',
                       'price','discount','vat_code','cod_revenue','status');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     if (is_array($codice)) {
        tableUpdate($table, $columns, $codice, $newValue);
     } else {
@@ -103,7 +103,7 @@ function provvigioniInsert ($newValue)
 {
     $table = 'provvigioni';
     $columns = array('id_agente','id_provvigione','cod_articolo','cod_catmer','percentuale');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableInsert($table, $columns, $newValue);
 }
 
@@ -111,7 +111,7 @@ function provvigioniUpdate ($codice, $newValue)
 {
     $table = 'provvigioni';
     $columns = array('id_agente','id_provvigione','cod_articolo','cod_catmer','percentuale');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 

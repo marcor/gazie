@@ -125,7 +125,7 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
    $gForm = new magazzForm();
    $pdf = new Report_template();
    $pdf->setVars($admin_aziend, $title, 'L');
-   $pdf->setAuthor($admin_aziend['ragso1'] . ' ' . $_SESSION['Login']);
+   $pdf->setAuthor($admin_aziend['ragso1'] . ' ' . $_SESSION["user_name"]);
 //$pdf->setTitle($title['title']);
    $pdf->SetTopMargin(35);
    $pdf->setFooterMargin(10);
@@ -215,7 +215,7 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
    $gForm = new magazzForm();
    $pdf = new Report_template();
    $pdf->setVars($admin_aziend, $title, 'L');
-   $pdf->setAuthor($admin_aziend['ragso1'] . ' ' . $_SESSION['Login']);
+   $pdf->setAuthor($admin_aziend['ragso1'] . ' ' . $_SESSION["user_name"]);
    $pdf->setFooterMargin(10);
    $pdf->setTopMargin(40);
    $pdf->AddPage('L');

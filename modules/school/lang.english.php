@@ -27,7 +27,7 @@
 $strScript = array(
     "report_teachers.php" =>
     array('title' => 'Elenco degli insegnanti',
-        'Login' => "Login",
+        "user_name" => "user_name",
         'Cognome' => "Cognome",
         'Nome' => "Nome"
     ),
@@ -62,7 +62,7 @@ $strScript = array(
         'classe' => 'Classe',
         'Cognome' => "Cognome",
         'Nome' => 'Nome',
-        'Login' => 'username',
+        "user_name" => 'username',
         'email' => "E-Mail",
         'telephone' => "Telefono"
     ),

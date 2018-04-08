@@ -263,7 +263,7 @@ class Login {
                         $_SESSION['student_name'] = $result_row->student_name;
                         $_SESSION['student_email'] = $result_row->student_email;
                         $_SESSION['student_logged_in'] = 1;
-                        $_SESSION['Login'] = $result_row->student_name;
+                        $_SESSION["user_name"] = $result_row->student_name;
                         $_SESSION['logged_in'] = 1;
                         $_SESSION['Abilit'] = 1;
                         $_SESSION['company_id'] = 1;
@@ -350,7 +350,7 @@ class Login {
                 $_SESSION['student_name'] = $result_row->student_name;
                 $_SESSION['student_email'] = $result_row->student_email;
                 $_SESSION['student_logged_in'] = 1;
-                $_SESSION['Login'] = $result_row->student_name;
+                $_SESSION["user_name"] = $result_row->student_name;
                 $_SESSION['logged_in'] = 1;
                 $_SESSION['Abilit'] = 1;
                 $_SESSION['company_id'] = 1;

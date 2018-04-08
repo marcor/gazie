@@ -31,7 +31,7 @@ class DocContabVars {
         $this->gTables = $gTables;
         $admin_aziend = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->azienda = $admin_aziend;
-        $this->user = gaz_dbi_get_row($gTables['admin'], 'Login', $_SESSION['Login']);
+        $this->user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
         $this->pagame = gaz_dbi_get_row($gTables['pagame'], "codice", $tesdoc['pagame']);
 
         if (isset($tesdoc['caumag']) && (!is_null($tesdoc['caumag']))) {
@@ -346,7 +346,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $configTemplate = new configTemplate;
     require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
     $pdf = new $templateName();
-    $ecr = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $_SESSION['Login']);
+    $ecr = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $_SESSION["user_name"]);
     if (!empty($ecr['driver'])) {
         require("../../library/cash_register/" . $ecr['driver'] . ".php");
         $ticket_printer = new $ecr['driver'];
@@ -360,7 +360,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $pdf->setTesDoc();
     //$pdf->SetPageFormat($config->getValue('page_format'));
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
-    $pdf->setAuthor($docVars->user['Cognome'] . ' ' . $docVars->user['Nome']);
+    $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
     $pdf->setTitle($templateName);
     $pdf->setTopMargin(79);
     $pdf->setHeaderMargin(5);
@@ -436,7 +436,7 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false) {
         $pdf->setTesDoc();
         if ($ctrlprotoc == 0) {
             $pdf->setCreator('GAzie - ' . $docVars->intesta1);
-            $pdf->setAuthor($docVars->user['Cognome'] . ' ' . $docVars->user['Nome']);
+            $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
             $pdf->Open();
         }
         //aggiungo una pagina
@@ -510,7 +510,7 @@ function createInvoiceFromDDT($result, $gTables, $dest = false) {
             $pdf->setTesDoc();
             if ($ctrlprotoc == 0) {
                 $pdf->setCreator('GAzie - ' . $docVars->intesta1);
-                $pdf->setAuthor($docVars->user['Cognome'] . ' ' . $docVars->user['Nome']);
+                $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
                 $pdf->Open();
             }
             //aggiungo una pagina

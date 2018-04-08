@@ -112,9 +112,13 @@ $errors = array(
 if (!defined("MESSAGE_WELCOME")) {
 // GAzie
     define("MESSAGE_WELCOME", "Benvenuto su: <b>GAzie a scuola</b>");
+    define("MESSAGE_WELCOME_ADMIN", "Benvenuto su: <b>GAzie</b>");
     define("MESSAGE_LOG", "Accesso al gestionale didattico su server localizzato in ");
+    define("MESSAGE_LOG_ADMIN", "Accesso al gestionale su server localizzato in ");
     define("MESSAGE_INTRO", "con esso ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
+    define("MESSAGE_INTRO_ADMIN", "il Gestionale multiAZIEndale che ti permette di tenere sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
     define("MESSAGE_PSW", "Inserisci il nome utente e la password che hai scelto in fase di iscrizione al servizio");
+    define("MESSAGE_PSW_ADMIN", "Inserisci le credenziali di accesso per iniziare:");
     define("MESSAGE_WELCOME_REGISTRATION", "Registrati su: <b>GAzie a scuola</b>");
     define("MESSAGE_INTRO_REGISTRATION", "così ti potrai esercitare nell'utilizzo di un gestionale multiaziendale che tiene sotto controllo i conti, la documentazione, le vendite, gli acquisti, il magazzino e tanto altro e di molte ditte contemporaneamente.");
     define("MESSAGE_PSW_REGISTRATION", "Dopo aver scelto la classe compila tutti gli altri campi del form sottostante, successivamante riceverai una mail con un link da cliccare per confermare l'accesso al servizio");
@@ -189,6 +193,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("WORDING_PROFILE_PICTURE", "Your profile picture (from gravatar):");
     define("WORDING_REGISTER", "Registrami");
     define("WORDING_REGISTER_NEW_ACCOUNT", "Sono un nuovo alunno");
+    define("WORDING_REGISTER_NEW_ADMIN", "Sono un nuovo utente");
     define("WORDING_REGISTRATION_CAPTCHA", "Inserisci i caratteri che vedi nell'immagine di sopra");
     define("WORDING_REGISTRATION_EMAIL", "Email (Attenzione! Inserisci un indirizzo valido per poter ricevere la mail con il link per la verifica)");
     define("WORDING_REGISTRATION_PASSWORD", "Password (minimo 8 caratteri!)");

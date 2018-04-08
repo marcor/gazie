@@ -30,7 +30,7 @@ if (isset($_POST['Delete'])) {
     exit;
 } else {
     $form = gaz_dbi_get_row($gTables['letter'], "id_let", $_GET['id_let']);
-    if ($form['adminid'] != $_SESSION['Login']) { //non � l'utente che ha scritto la lettera
+    if ($form['adminid'] != $_SESSION["user_name"]) { //non � l'utente che ha scritto la lettera
         header("Location: report_letter.php");
         exit;
     }

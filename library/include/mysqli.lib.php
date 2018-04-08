@@ -396,7 +396,7 @@ function gaz_dbi_table_insert($table, $value) {
                     $colValue .= "'" . $elem . "'";
                 }
             } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
-                $colValue .= "'" . $_SESSION['Login'] . "'";
+                $colValue .= "'" . $_SESSION["user_name"] . "'";
             } elseif ($field_meta['data'][$j]->name == 'last_modified') {
                 $colValue .= "'" . date("Y-m-d H:i:s") . "'";
             } else {
@@ -446,7 +446,7 @@ function gaz_dbi_table_update($table, $id, $newValue) {
                 $quote_id = '';
             }
         } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
-            $query .= ", adminid = '" . $_SESSION['Login'] . "'";
+            $query .= ", adminid = '" . $_SESSION["user_name"] . "'";
         }
     }
     //   se in $id c'è un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
@@ -571,7 +571,7 @@ function tesbroInsert($newValue) {
         'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
         'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
         'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableInsert($table, $columns, $newValue);
 }
 
@@ -581,7 +581,7 @@ function tesbroUpdate($codice, $newValue) {
         'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
         'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
         'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
@@ -594,7 +594,7 @@ function tesdocInsert($newValue) {
         /** inizio modifica FP 19/10/2015 */
         'ragbol', 'data_ordine'
             /** fine modifica FP */            );
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableInsert($table, $columns, $newValue);
 }
 
@@ -608,21 +608,21 @@ function tesdocUpdate($codice, $newValue) {
         'ragbol', 'data_ordine'
             /** fine modifica FP */
     );
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesmovUpdate($codice, $newValue) {
     $table = 'tesmov';
     $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesmovInsert($newValue) {
     $table = 'tesmov';
     $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     $last_id = tableInsert($table, $columns, $newValue);
     return $last_id;
 }
@@ -630,14 +630,14 @@ function tesmovInsert($newValue) {
 function movmagInsert($newValue) {
     $table = 'movmag';
     $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableInsert($table, $columns, $newValue);
 }
 
 function movmagUpdate($codice, $newValue) {
     $table = 'movmag';
     $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
-    $newValue['adminid'] = $_SESSION['Login'];
+    $newValue['adminid'] = $_SESSION["user_name"];
     tableUpdate($table, $columns, $codice, $newValue);
 }
 

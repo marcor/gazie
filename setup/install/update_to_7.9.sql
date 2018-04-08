@@ -79,7 +79,7 @@ CREATE TABLE `gaz_XXXstaff_work_type` (
   `increase` decimal(3,2) NOT NULL,
   `descri` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id_work`)
-) ENGINE=MyISAM AUTO_INCREMENT=689 DEFAULT CHARSET=utf8;
+) ENGINE=MyISAM AUTO_INCREMENT=115 DEFAULT CHARSET=utf8;
 INSERT INTO `gaz_XXXstaff_work_type` (`id_work`, `id_work_type`, `hour_year_limit`, `hour_month_limit`, `hour_week_limit`, `hour_day_limit`, `increase`, `descri`) VALUES
 	(1, 1, 0, 0, 5.0, 8.00, 0.35, 'Prime 5 ore settimanali straordinario diurno'),
 	(2, 1, 0, 0, 0.0, 8.00, 0.30, 'Lavoro straordinario'),
@@ -228,7 +228,11 @@ UPDATE `gaz_municipalities` t1 INNER JOIN `gaz_temp` t2 ON t1.code_register = t2
 DROP TABLE `gaz_temp`;
 
 ALTER TABLE `gaz_admin` 
- ADD `user_password_hash` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'user''s password in salted and hashed format' AFTER `last_ip`, 
+ ADD `user_id` VARCHAR(30) NOT NULL AFTER `last_ip`,
+ ADD `user_firstname` VARCHAR(30) NOT NULL COMMENT 'user\'s first name'  AFTER `user_id`,
+ ADD `user_lastname` VARCHAR(30) NOT NULL COMMENT 'user\'s last name'  AFTER `user_firstname`,
+ ADD `user_name` VARCHAR(64) NOT NULL COMMENT 'user\'s name, unique'   AFTER `user_lastname`,
+ ADD `user_password_hash` VARCHAR(255) COLLATE utf8_unicode_ci NOT NULL COMMENT 'user''s password in salted and hashed format' AFTER `user_name`, 
  ADD `user_email` VARCHAR(64) COLLATE utf8_unicode_ci NOT NULL COMMENT 'user''s email, unique'  AFTER `user_password_hash`, 
  ADD `user_telephone` VARCHAR(30) NOT NULL COMMENT 'user''s telephone number'  AFTER `user_email`, 
  ADD `user_active` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'user''s activation status'  AFTER `user_telephone`, 
@@ -240,3 +244,23 @@ ALTER TABLE `gaz_admin`
  ADD `user_last_failed_login` INT(10) DEFAULT NULL COMMENT 'unix timestamp of last failed login attempt' AFTER `user_failed_logins`, 
  ADD `user_registration_datetime` DATETIME NOT NULL DEFAULT '2004-01-27 00:00:00' AFTER `user_last_failed_login`, 
  ADD `user_registration_ip` VARCHAR(39) COLLATE utf8_unicode_ci NOT NULL DEFAULT '0.0.0.0' AFTER `user_registration_datetime`;
+ ALTER TABLE `gaz_admin` DROP PRIMARY KEY;
+ UPDATE `gaz_admin` SET user_name = Login WHERE 1;
+ UPDATE `gaz_admin` SET user_firstname = Nome WHERE 1;
+ UPDATE `gaz_admin` SET user_lastname = Cognome WHERE 1;
+ UPDATE `gaz_admin` SET user_active = 1 WHERE 1;
+ ALTER TABLE `gaz_admin` DROP COLUMN Nome, DROP COLUMN Cognome, DROP COLUMN Login;
+ INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES
+	('GAzie admin mail', 'admin_mail', 'sysadmin@miodominio.it'),
+	('Password for access', 'admin_mail_pass', 'mail_password'),
+	('SMTP Mail Server', 'admin_smtp_server', 'smtp.miodominio.it'),
+	('Mail Notification Request', 'admin_return_notification', 'yes'),
+	('Mailer (mail,smtp,sendmail,qmail)', 'admin_mailer', 'smtp'),
+	('SMTP Port (25,587,465)', 'admin_smtp_port', '465'),
+	('SMTP Secure (tls,ssl)', 'admin_smtp_secure', 'ssl'),
+	('SMTP Username (empty for no auth)', 'admin_smtp_user', 'sysadmin@miodominio.it'),
+	('SMTP Password', 'admin_smtp_password', 'smtp_password'),
+	('Cookie secret key for hash', 'cookie_secret_key', '1gp@GaZi{+$78sfpMJFe-18s')	;
+SET @id := 0;
+UPDATE `gaz_admin` SET user_id = (@id := @id+1);
+ALTER TABLE `gaz_admin` ADD PRIMARY KEY (`user_id`); 

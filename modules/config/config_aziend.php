@@ -46,7 +46,7 @@ if (isset($_POST["elimina"])) {   // si vuole eliminare l'azienda
     // cancello il rigo dalla tabella aziend 
     gaz_dbi_del_row($gTables['aziend'], 'codice', $admin_aziend["company_id"]);
     // mi sposto con le attività sulla prima azienda 
-    gaz_dbi_put_row($gTables['admin'], 'Login', $admin_aziend["Login"], 'company_id', 1);
+    gaz_dbi_put_row($gTables['admin'], "user_name", $admin_aziend["user_name"], 'company_id', 1);
     session_destroy();
     header("Location: ../root/login_admin.php?tp=" . $table_prefix);
     exit;

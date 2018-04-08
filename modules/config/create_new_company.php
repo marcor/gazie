@@ -55,7 +55,7 @@ if (isset($_POST['ritorno'])) {   //se non e' il primo accesso
         $where_user = "company_id = " . $form['ref_co'];
     } else {
         $form['users'] = '';
-        $where_user = "company_id = " . $form['ref_co'] . " AND adminid = '" . $_SESSION['Login'] . "'";
+        $where_user = "company_id = " . $form['ref_co'] . " AND adminid = '" . $_SESSION["user_name"] . "'";
     }
     if (isset($_POST['Submit'])) { // conferma tutto
         //eseguo i controlli formali

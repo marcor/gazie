@@ -1,0 +1,8 @@
+<Files ~ "\.(htaccess|sql)$">
+order allow,deny
+deny from all
+</Files>
+<Files ~ "^update.*\.php$">
+order allow,deny
+deny from all
+</Files>

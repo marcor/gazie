@@ -81,7 +81,7 @@ function createCertificate($testata, $gTables, $id_movmag = 0, $dest = false) {
     $pdf->setVars($docVars, 'Certificate');
     $pdf->setTesDoc();
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
-    $pdf->setAuthor($docVars->user['Cognome'] . ' ' . $docVars->user['Nome']);
+    $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
     $pdf->setTitle('Certificates');
     $pdf->setTopMargin(79);
     $pdf->setHeaderMargin(5);

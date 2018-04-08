@@ -37,7 +37,7 @@
     $form['var_descri'] = $_POST['desc'];
     $form['var_name'] = $_POST['name'];
     $form['var_value'] = $_POST['val'];
-    $form['adminid'] = $admin_aziend["Login"];
+    $form['adminid'] = $admin_aziend["user_name"];
     
     $config->setValue ( $form['var_name'], $form );
 ?>

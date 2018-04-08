@@ -30,7 +30,7 @@ $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
 $gForm = new venditForm();
 $magazz = new magazzForm();
-$ecr = $gForm->getECR_userData($admin_aziend['Login']);
+$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 $operat = $magazz->getOperators();
 $lm = new lotmag;
 
@@ -668,7 +668,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non può emettere scontrini
-    $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend['Login']);
+    $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
     if (!$ecr_user) {
         header("Location: error_msg.php?ref=admin_scontr");
         exit;

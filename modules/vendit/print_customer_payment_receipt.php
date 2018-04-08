@@ -117,7 +117,7 @@ $pdf->Cell(36,6,'€ '.gaz_format_number($d['d'][1]['import']),'RTB',1,'R',1,'',
 $pdf->Ln(10);
 $pdf->SetFont('courier','',8);
 $pdf->Cell(100,6,'');
-$pdf->Cell(60,6,$admin_aziend['Nome'].' '.$admin_aziend['Cognome'],0,1,'C');
+$pdf->Cell(60,6,$admin_aziend['user_firstname'].' '.$admin_aziend['user_lastname'],0,1,'C');
 $pdf->Cell(100,6);
 $pdf->Cell(60,20,'____________________________',0,0,'C');
 $pdf->setRiporti('');

@@ -141,8 +141,8 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 $res2 = gaz_dbi_dyn_query ('*', $gTables['admin']);	
  $colonna="0";
 	while($c_row = $res2->fetch_assoc()) { 
-	if ($row['adminid']==$c_row["Login"]) { 
-	$pdf->Cell(18,6,$c_row['Cognome']." ".$c_row['Nome'],1, 1, 'l', 0, '', 1);
+	if ($row['adminid']==$c_row["user_name"]) { 
+	$pdf->Cell(18,6,$c_row['user_lastname']." ".$c_row['user_firstname'],1, 1, 'l', 0, '', 1);
 	 $colonna="1";
 		} 
 	}

@@ -65,15 +65,18 @@ if (!isset($_POST['hidden_req'])){           // al primo accesso allo script
     }
 } else {                                     // negli accessi successivi
     connectIsOk();
-    $form['hidden_req'] = substr($_POST['hidden_req'],0,16);
+    $form['hidden_req'] = substr($_POST['hidden_req'],0,20);
     $form['lang'] = substr($_POST['lang'],0,16);
     $form['install_upgrade'] = substr($_POST['install_upgrade'],0,16);
     if (isset($_POST['upgrade'])) {              // AGGIORNO
       if (databaseIsAlign()) {               // la base dati e' aggiornata!
          $err[] = 'is_align';
+		 if (strlen($form['hidden_req']) > 10){ // il db è allineato ma ho trovato da eseguire uno script php  correlato
+			include($form['hidden_req']);
+		 }
       } else { 
          connectToDB ();
-         executeQueryFileUpgrade($table_prefix);
+         $form['hidden_req']=executeQueryFileUpgrade($table_prefix,$form['hidden_req']);
       }
     }
     if (isset($_POST['install'])) {              //INSTALLO
@@ -215,7 +218,7 @@ function executeQueryFileInstall($sqlFile,$Database,$table_prefix)
     return true;
 }
 
-function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestione delle sottosezioni
+function executeQueryFileUpgrade($table_prefix,$exe_script) // funzione dedicata alla gestione delle sottosezioni
 {
     global $disable_set_time_limit;
     if (!$disable_set_time_limit) {
@@ -283,6 +286,11 @@ function executeQueryFileUpgrade($table_prefix) // funzione dedicata alla gestio
             }
         }
     }
+	if (empty($exe_script)) {
+		// eseguo una sola volta un eventuale script correlato alle query contenuto nel file di aggiornamento
+		$exe_script=executeScriptFileUpgrade($sqlFile); 
+	}
+	return $exe_script; // ritorno un valore diverso da vuoto se voglio una esecuzione
 }
 
 
@@ -387,6 +395,17 @@ function dir_writable($folder)
         $isw = true;
     }
     return $isw;
+}
+
+function executeScriptFileUpgrade($name_sql) // se ho un file php da eseguire dopo la query sql
+{
+	$filename = pathinfo($name_sql, PATHINFO_FILENAME).'.php';		
+	if (file_exists($filename)) {
+		// ho un file da eseguire alla fine delle query
+		return $filename;
+	} else {
+		return '';	
+	}
 }
 ?>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">

@@ -106,7 +106,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
     $lettera = gaz_dbi_get_row($gTables['letter'], 'id_let', intval($_GET['id_let']));
-    if ($lettera['adminid'] != $_SESSION['Login']) { //non � l'utente che ha scritto la lettera
+    if ($lettera['adminid'] != $_SESSION["user_name"]) { //non � l'utente che ha scritto la lettera
         header("Location: report_letter.php");
         exit;
     }

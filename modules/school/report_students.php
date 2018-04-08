@@ -63,8 +63,8 @@ function getGravatar($email,$d = 'mm') {
                             </a>
                         </th>
                         <th>
-                            <a href="#" class="orby" data-order="Login">
-                                <?php echo $script_transl["Login"]; ?>
+                            <a href="#" class="orby" data-order="user_name">
+                                <?php echo $script_transl["user_name"]; ?>
                             </a>
                         <th>
                             <a href="#" class="orby" data-order="email">

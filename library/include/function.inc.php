@@ -190,7 +190,7 @@ function formatSizeUnits($bytes) {
 function gaz_format_number($number = 0) {
     global $gTables;
     $currency = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.company_id = ' . $gTables['aziend'] . '.codice
-                                                    LEFT JOIN ' . $gTables['currencies'] . ' ON ' . $gTables['currencies'] . '.id = ' . $gTables['aziend'] . '.id_currency', "Login", $_SESSION["Login"]);
+                                                    LEFT JOIN ' . $gTables['currencies'] . ' ON ' . $gTables['currencies'] . '.id = ' . $gTables['aziend'] . '.id_currency', "user_name", $_SESSION["user_name"]);
     return number_format(floatval($number), $currency['decimal_place'], $currency['decimal_symbol'], $currency['thousands_symbol']);
 }
 
@@ -1192,7 +1192,7 @@ class GAzieMail {
         $config_pass = gaz_dbi_get_row($gTables['company_config'], 'var', 'smtp_password');
         $config_replyTo = gaz_dbi_get_row($gTables['company_config'], 'var', 'reply_to');
         // attingo il contenuto del corpo della email dall'apposito campo della tabella configurazione utente
-        $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user['Login']);
+        $user_text = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $user["user_name"]);
         $company_text = gaz_dbi_get_row($gTables['company_config'], 'var', 'company_email_text');
         $admin_data['web_url'] = trim($admin_data['web_url']);
         $mailto = $partner['e_mail']; //recipient
@@ -1201,7 +1201,7 @@ class GAzieMail {
         $body_text = "<h3><span style=\"color: #000000; background-color: #" . $admin_data['colore'] . ";\">" . $admin_data['ragso1'] . " " . $admin_data['ragso2'] . "</span></h3>";
         $body_text .= ( empty($admin_data['web_url']) ? "" : "<h4><span style=\"color: #000000;\">Web: <a href=\"" . $admin_data['web_url'] . "\">" . $admin_data['web_url'] . "</a></span></h4>" );
         $body_text .= "<div>" . $company_text['val'] . "</div>\n";
-        $body_text .= "<address><div style=\"color: #" . $admin_data['colore'] . ";\">" . $user['Nome'] . " " . $user['Cognome'] . "</div>\n";
+        $body_text .= "<address><div style=\"color: #" . $admin_data['colore'] . ";\">" . $user['user_firstname'] . " " . $user['user_lastname'] . "</div>\n";
         $body_text .= "<div>" . $user_text['var_value'] . "</div></address>\n";
         $body_text .= "<hr /><small>" . EMAIL_FOOTER . " " . GAZIE_VERSION . "</small>\n";
         //
@@ -1788,11 +1788,11 @@ class linkHeaders {
     }
 
 }
-
+/*
 function cleanMemberSession($abilit, $login, $password, $count, $company_id, $table_prefix) {
     global $gTables;
     $_SESSION["Abilit"] = true;
-    $_SESSION["Login"] = $login;
+    $_SESSION["user_name"] = $login;
     $_SESSION["Password"] = $password;
     $_SESSION["logged_in"] = true;
     $_SESSION["company_id"] = $company_id;
@@ -1800,7 +1800,7 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
     /* appoggio il valore del thema scelto sulla sessione così da non fare la query sul db ad ogni richiesta di esecuzione di qualsiasi script  
      * però se vengo da un vecchio database non ho la tabella gaz_admin_config allora imposterò il valore di default anche per evitare l'errore
      * sulla query  
-     */
+    
     $result = gaz_dbi_query("SHOW TABLES LIKE '" . $gTables['admin_config'] . "'");
     if (gaz_dbi_num_rows($result) > 0) {
         $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $login);
@@ -1810,30 +1810,28 @@ function cleanMemberSession($abilit, $login, $password, $count, $company_id, $ta
     }
     $count++;
     //incremento il contatore d'accessi
-    gaz_dbi_put_row($gTables['admin'], "Login", $login, "Access", $count);
+    gaz_dbi_put_row($gTables['admin'], "user_name", $login, "Access", $count);
     //modifico l'ultimo IP
-    gaz_dbi_put_row($gTables['admin'], "Login", $login, 'last_ip', $_SERVER['REMOTE_ADDR']);
+    gaz_dbi_put_row($gTables['admin'], "user_name", $login, 'last_ip', $_SERVER['REMOTE_ADDR']);
     /*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio 
       il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
       che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
       qui tramite HTTPS
-     */
+     
     if (SET_DYNAMIC_IP != '') {
         @file_get_contents(SET_DYNAMIC_IP);
     }
-}
+}*/
 
 function checkAdmin($Livaut = 0) {
     global $gTables, $module, $table_prefix;
-    $_SESSION["logged_in"] = false;
     $_SESSION["Abilit"] = false;
     // Se utente non  loggato lo mandiamo alla pagina di login
-    if ((!isset($_SESSION["Login"])) or ( $_SESSION["Login"] == "Null")) {
-        $_SESSION["Login"] = "Null";
-        header("Location: ../root/login_admin.php?tp=" . $table_prefix);
+    if (!isset($_SESSION["user_name"])) {
+        header("Location: ../root/login_user.php?tp=" . $table_prefix);
         exit;
     }
-    if (checkAccessRights($_SESSION['Login'], $module, $_SESSION['company_id']) == 0) {
+    if (checkAccessRights($_SESSION["user_name"], $module, $_SESSION['company_id']) == 0) {
         // Se utente non ha il diritto di accedere al modulo, lo mostriamo
         // il messaggio di errore, ma senza obligarlo di fare un altro (inutile) login
         header("Location: ../root/access_error.php?module=" . $module);
@@ -1846,29 +1844,24 @@ function checkAdmin($Livaut = 0) {
     } else {
         $c_e = 'company_id';
     }
-    $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "Login", $_SESSION["Login"]);
+    $admin_aziend = gaz_dbi_get_row($gTables['admin'] . ' LEFT JOIN ' . $gTables['aziend'] . ' ON ' . $gTables['admin'] . '.' . $c_e . '= ' . $gTables['aziend'] . '.codice', "user_name", $_SESSION["user_name"]);
     $currency = array();
     if (isset($admin_aziend['id_currency'])) {
         $currency = gaz_dbi_get_row($gTables['currencies'], "id", $admin_aziend['id_currency']);
     }
     if ($Livaut > $admin_aziend["Abilit"]) {
-        header("Location: ../root/login_admin.php?tp=" . $table_prefix);
+        header("Location: ../root/login_user.php?tp=" . $table_prefix);
         exit;
     } else {
         $_SESSION["Abilit"] = true;
     }
 
-    if (!$admin_aziend || $admin_aziend["Password"] != $_SESSION["Password"]) {
-        header("Location: ../root/login_admin.php?tp=" . $table_prefix);
-        exit;
-    }
-    $_SESSION["logged_in"] = true;
     return array_merge($admin_aziend, $currency);
 }
 
 function changeEnterprise($new_co = 1) {
     global $gTables;
-    gaz_dbi_put_row($gTables['admin'], 'Login', $_SESSION['Login'], 'company_id', $new_co);
+    gaz_dbi_put_row($gTables['admin'], "user_name", $_SESSION["user_name"], 'company_id', $new_co);
     $_SESSION['company_id'] = $new_co;
 }
 

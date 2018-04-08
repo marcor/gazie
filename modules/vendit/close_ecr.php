@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 // se l'utente non ha alcun registratore di cassa associato nella tabella cash_register non pu� emettere scontrini
-$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend['Login']);
+$ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
 if (!$ecr_user) {
     header("Location: error_msg.php?ref=admin_scontr");
     exit;
@@ -44,7 +44,7 @@ if (isset($_POST['return'])) {
 
 
 $gForm = new venditForm();
-$ecr = $gForm->getECR_userData($admin_aziend['Login']);
+$ecr = $gForm->getECR_userData($admin_aziend["user_name"]);
 
 function getLastProtoc($year, $seziva, $reg = 4) {
     global $gTables;

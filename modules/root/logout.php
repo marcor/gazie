@@ -25,5 +25,5 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 session_destroy();
-header("Location: login_admin.php?tp=".$table_prefix);
+header("Location: login_user.php?tp=".$table_prefix);
 exit;

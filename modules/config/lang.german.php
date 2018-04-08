@@ -388,8 +388,8 @@ $strScript = array("admin_aziend.php" =>
         'upd_this' => 'Update Benutzer',
         'err' => array(
             'exlogin' => 'Nickname bereits vorhanden!',
-            'Cognome' => 'Geben Sie Name!',
-            'Login' => "Geben Sie Nickname!",
+            'user_lastname' => 'Geben Sie Name!',
+            "user_name" => "Geben Sie Nickname!",
             'Password' => "Enter Password!",
             'passlen' => "Das Passwort ist nicht lang genug!",
             'confpass' => "Das Passwort ist verschieden von der Bestätigung!",
@@ -398,9 +398,9 @@ $strScript = array("admin_aziend.php" =>
             'filsiz' => "Das Bild darf nicht größer als 64Kb sein",
             'Abilit' => "Man kann nicht mit einem geringeren als 9, weil Sie die letzte Administrator sind!"
         ),
-        'Login' => "Nickname",
-        'Cognome' => "Familienname",
-        'Nome' => "Name",
+        "user_name" => "Nickname",
+        'user_lastname' => "Familienname",
+        'user_firstname' => "Name",
         'image' => 'Image <br /> (nur JPG-Format, max 64kb)',
         'Abilit' => "Ebene",
         'Access' => "Access-Nummer",

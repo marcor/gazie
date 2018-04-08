@@ -55,7 +55,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
  	$form['ritorno'] = $_POST['ritorno'];
 	$form['ref_code'] = $_POST['ref_code'];
 	
-	$form['utente'] = $_SESSION["Login"];
+	$form['utente'] = $_SESSION["user_name"];
     
 	//$form['rows'] = array();	
    if (isset($_POST['Submit'])) {
@@ -128,7 +128,7 @@ else {
 		$form['codice'] = 1;
 	}  
 	//$form['tipo'] = 'ASS';
-   $form['utente'] = $_SESSION["Login"];
+   $form['utente'] = $_SESSION["user_name"];
 	$form['datainst'] = date("Y-m-d");
    $form['seriale'] = '';
    //$form['cosear'] = '';

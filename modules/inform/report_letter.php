@@ -63,16 +63,16 @@ if (isset($_GET['auxil'])) {
    $auxil = $_GET['auxil'];
 } else {
    $auxil = "";
-   $where = "ragso1 LIKE '$auxil%' AND ".$gTables['letter'].".adminid = '".$_SESSION['Login']."'";
+   $where = "ragso1 LIKE '$auxil%' AND ".$gTables['letter'].".adminid = '".$_SESSION["user_name"]."'";
 }
 
 if (isset($_GET['all'])) {
    $auxil = "&all=yes";
-   $where = $gTables['letter'].".adminid = '".$_SESSION['Login']."'";
+   $where = $gTables['letter'].".adminid = '".$_SESSION["user_name"]."'";
    $passo = 100000;
 } else {
    if (isset($_GET['auxil'])) {
-      $where = "ragso1 like '".addslashes($auxil)."%' AND ".$gTables['letter'].".adminid = '".$_SESSION['Login']."'";
+      $where = "ragso1 like '".addslashes($auxil)."%' AND ".$gTables['letter'].".adminid = '".$_SESSION["user_name"]."'";
    }
 }
 

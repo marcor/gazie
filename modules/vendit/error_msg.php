@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 $gForm = new venditForm();
-$ecr=$gForm->getECR_userData($admin_aziend['Login']);
+$ecr=$gForm->getECR_userData($admin_aziend["user_name"]);
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 $str=substr($_GET['ref'],0,20);

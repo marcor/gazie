@@ -44,7 +44,7 @@ if (!isset($_POST['hidden_req'])) {
 function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $class = 'FacetSelect') {
     global $gTables, $admin_aziend;
     $table = $gTables['aziend'] . ' LEFT JOIN ' . $gTables['admin_module'] . ' ON ' . $gTables['admin_module'] . '.company_id = ' . $gTables['aziend'] . '.codice';
-    $where = $gTables['admin_module'] . '.adminid=\'' . $admin_aziend['Login'] . '\' GROUP BY company_id';
+    $where = $gTables['admin_module'] . '.adminid=\'' . $admin_aziend["user_name"] . '\' GROUP BY company_id';
     if ($val > 0 && $val < 1000) { // vengo da una modifica della precedente select case quindi non serve la ricerca
         $co_rs = gaz_dbi_dyn_query("*", $table, 'company_id = ' . $val . ' AND ' . $where, "ragso1 ASC");
         $co = gaz_dbi_fetch_array($co_rs);
@@ -124,7 +124,7 @@ if ($backupMode == "automatic") {
                 $i++;
             }
         }
-        if (checkAccessRights($_SESSION['Login'], 'inform', $_SESSION['company_id']) != 0) {
+        if (checkAccessRights($_SESSION["user_name"], 'inform', $_SESSION['company_id']) != 0) {
             header("Location: ../../modules/inform/backup.php?internal");
         }
     }
@@ -194,12 +194,12 @@ if ($t > 4 && $t <= 13) {
             <div class="col-sm-6">
                 <div class="panel panel-default panel-user" >
                     <p>
-                        <?php echo ucfirst($msg) . " " . $admin_aziend['Nome'] . ' (ip=' . $admin_aziend['last_ip'] . ')'; ?>
+                        <?php echo ucfirst($msg) . " " . $admin_aziend['user_firstname'] . ' (ip=' . $admin_aziend['last_ip'] . ')'; ?>
                     </p>
                     <p>
                     <div class="img-containter">
-                        <a href="../config/admin_utente.php?Login=<?php echo $admin_aziend['Login']; ?>&Update">
-                            <img class="img-circle usr-picture" src="view.php?table=admin&field=Login&value=<?php echo $admin_aziend['Login'] ?>" alt="<?php echo $admin_aziend['Cognome'] . ' ' . $admin_aziend['Nome']; ?>" style="max-width: 100%;" title="<?php echo $script_transl['change_usr']; ?>" >
+                        <a href="../config/admin_utente.php?user_name=<?php echo $admin_aziend["user_name"]; ?>&Update">
+                            <img class="img-circle usr-picture" src="view.php?table=admin&field=user_name&value=<?php echo $admin_aziend["user_name"] ?>" alt="<?php echo $admin_aziend['user_lastname'] . ' ' . $admin_aziend['user_firstname']; ?>" style="max-width: 100%;" title="<?php echo $script_transl['change_usr']; ?>" >
                         </a>
                     </div>
                     </p>
@@ -327,8 +327,8 @@ if ($t > 4 && $t <= 13) {
         <div class="collapse navbar-collapse"> 
             <!-- per adesso lo faccio collassare in caso di small device anche se si potrebbe fare uno switch in verticale -->
             <?php
-            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' click DESC, last_use DESC', 0, 8);
-            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend['Login'] . '" ', ' last_use DESC, click DESC', 0, 8);
+            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' click DESC, last_use DESC', 0, 8);
+            $res_last = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $form['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' last_use DESC, click DESC', 0, 8);
 
             if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {

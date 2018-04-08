@@ -55,7 +55,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$form['ora_inizio'] = $_POST['ora_inizio'];
 	$form['ora_fine'] = $_POST['ora_fine'];
 	$form['note'] = $_POST['note'];
-	$form['utente'] = $_SESSION["Login"];
+	$form['utente'] = $_SESSION["user_name"];
     
 	$form['rows'] = array();	
         if (isset($_POST['Submit'])) {
@@ -126,7 +126,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	$ultimo_tecnico = gaz_dbi_fetch_array($rs_ultimo_tec);
         $form['tecnico'] = $ultimo_tecnico['tecnico']; 
 	$form['tipo'] = 'ASS';	
-        $form['utente'] = $_SESSION["Login"];
+        $form['utente'] = $_SESSION["user_name"];
 	$form['data'] = date("Y-m-d");
 	$form['ore'] = "0.00";
 	$form['stato'] = 'aperto';

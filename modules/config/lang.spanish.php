@@ -422,8 +422,8 @@ $strScript = array("admin_aziend.php" =>
         'upd_this' => 'Actualizar Usuario',
         'err' => array(
             'exlogin' => 'El Pseud&oacute;nimo elegido ya est&aacute; siendo usado!',
-            'Cognome' => 'Ingrese apellido!',
-            'Login' => "Ingrese Pseud&oacute;nimo!",
+            'user_lastname' => 'Ingrese apellido!',
+            "user_name" => "Ingrese Pseud&oacute;nimo!",
             'Password' => "Ingrese la contrase&ntilde;a!",
             'passlen' => "La contrase&ntilde;a no es suficientemente largo!",
             'confpass' => "La contrase&ntilde;a es diferente de la de la confirmaci&oacute;n!",
@@ -434,9 +434,9 @@ $strScript = array("admin_aziend.php" =>
             'Abilit_stud' => "No se puede tener un nivel inferior al 7 porque es el administrador del pasado!",
             'charpass' => "The password can not contain any special characters \" / > <"
         ),
-        'Login' => "Pseud&oacute;nimo",
-        'Cognome' => "Apellido",
-        'Nome' => "Nombre",
+        "user_name" => "Pseud&oacute;nimo",
+        'user_lastname' => "Apellido",
+        'user_fistname' => "Nombre",
         'image' => 'Icon de lo usuario<br />(solo formato JPG, max 64kb)',
         'Abilit' => "Nivel",
         'Access' => "Acceso",
