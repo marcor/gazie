@@ -248,6 +248,14 @@ class Login
                     $result_row = $sth->fetchObject();
 
                     if (isset($result_row->user_id)) {
+						// INIZIO ---- ripresa del valore del tema (g6,g7,lte) 
+						$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name');
+						$rt->bindValue(':user_name', $result_row->user_name, PDO::PARAM_STR);
+						$rt->execute();
+						// get result row (as an object)
+						$rt_row = $rt->fetchObject();
+                        $_SESSION['theme'] = $rt_row->var_value;
+						// FINE ---- ripresa del valore del tema (g6,g7,lte)
                         // write user data into PHP SESSION [a file on your server]
                         $_SESSION['user_id'] = $result_row->user_id;
                         $_SESSION['user_name'] = $result_row->user_name;
@@ -325,6 +333,14 @@ class Login
             } else if ($result_row->user_active != 1) {
                 $this->errors[] = MESSAGE_ACCOUNT_NOT_ACTIVATED;
             } else {
+				// INIZIO ---- ripresa del valore del tema (g6,g7,lte) 
+				$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name');
+				$rt->bindValue(':user_name', $result_row->user_name, PDO::PARAM_STR);
+				$rt->execute();
+				// get result row (as an object)
+				$rt_row = $rt->fetchObject();
+                $_SESSION['theme'] = $rt_row->var_value;
+				// FINE ---- ripresa del valore del tema (g6,g7,lte)
                 // write user data into PHP SESSION [a file on your server]
                 $_SESSION['user_id'] = $result_row->user_id;
                 $_SESSION['user_name'] = $result_row->user_name;
