@@ -33,6 +33,12 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
 </div>
 </section>
     <footer class="main-footer">
+    <?php
+         // mostra le variabili $global e $server nella pagina
+         echo "<div>";
+         if ( $debug_active == true ) d($GLOBALS, $_SERVER);
+         echo "</div>";
+    ?>
         <div class="pull-right hidden-xs">
           <b>Version</b> <?php echo GAZIE_VERSION; ?>
         </div>
@@ -159,6 +165,10 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
             });
             //window.location.reload();
         }
+        <?php
+         // mostra le variabili $global e $server nella pagina
+         if ( $debug_active == true ) d($GLOBALS, $_SERVER);
+    ?>
     </script>  
     <script src="../../library/bootstrap/js/bootstrap.min.js"></script>
     <script src="../../library/theme/lte/plugins/slimScroll/jquery.slimscroll.min.js"></script>

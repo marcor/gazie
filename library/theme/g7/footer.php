@@ -30,6 +30,7 @@ if (isset($styles) && is_array($styles)) {
         <?php
     }
 }
+if ( $debug_active==true ) echo "<div>".d($GLOBALS, $_SERVER)."</div>";
 ?>
 <!-- questo è contenuto in library/theme/g7/footer.php -->
 <script src="../../library/bootstrap/js/bootstrap.min.js"></script>

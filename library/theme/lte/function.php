@@ -106,7 +106,7 @@ function submenu($array, $index, $sub="") {
 }
 
 function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $cssArray = '') {
-    global $module, $admin_aziend, $radix, $scriptname, $gTables, $mod_uri;
+    global $module, $admin_aziend, $radix, $scriptname, $gTables, $mod_uri, $debug_active;
     if (is_array($jsArray)) {
         foreach ($jsArray as $v) {
             echo '			<script type="text/javascript" src="../../js/' . $v . '.js"></script>';
@@ -344,7 +344,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 			}
 		 }
 		 </script>
-		 <!--<div class="container" role="main">-->';
+         <!--<div class="container" role="main">-->';
          return ($strCommon + $translated_script);
 }
 

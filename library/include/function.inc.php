@@ -73,15 +73,18 @@ function getTextBetweenTags($tag, $html, $strict = 0) {
     return $out;
 }
 
-function gaz_flt_var_assign($flt, $typ) {
+function gaz_flt_var_assign($flt, $typ, $tab="") {
     global $where;
     if (isset($_GET[$flt]) && $_GET[$flt] != 'All' && $_GET[$flt] != "") {
+        if ( $tab!="" ) $tab .=".";
         if ($typ == "i") {
-            $where .= " AND " . $flt . " = " . intval($_GET[$flt]) . " ";
+            $where .= " AND " . $tab.$flt . " = " . intval($_GET[$flt]) . " ";
         } else if ($typ == "v") {
-            $where .= " AND " . $flt . " LIKE '%" . addslashes(substr($_GET[$flt], 0, 30)) . "%'";
+            if ( $_GET[$flt]=="nochiusi") $op .= " !='chiuso'";
+            else $op = " LIKE '%" . addslashes(substr($_GET[$flt], 0, 30)) . "%'";
+            $where .= " AND " . $tab.$flt .$op ;
         } else if ($typ == "d") {
-            $where .= " AND $flt >= \"" . intval($_GET[$flt]) . "/01/01\" and $flt <= \"" . intval($_GET[$flt]) . "/12/31\"";
+            $where .= " AND $tab$flt >= \"" . intval($_GET[$flt]) . "/01/01\" and $tab$flt <= \"" . intval($_GET[$flt]) . "/12/31\"";
         }
     }
 }
@@ -101,6 +104,11 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
         <option value="All" <?php echo ($flt == "All") ? "selected" : ""; ?>>Tutti</option> <?php //echo $script_transl['tuttitipi'];             ?>
 
         <?php
+        if ( $flt=="stato") {
+            echo '<option value="nochiusi"';
+            echo ($fltget == "nochiusi") ? "selected" : "";
+            echo '>Non chiusi</option>';
+        }
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
         while ($val = gaz_dbi_fetch_array($res)) {
             if ($fltget == $val[$flt])

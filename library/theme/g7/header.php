@@ -130,7 +130,7 @@
         }
 
         function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $cssArray = '') {
-            global $module, $admin_aziend, $radix, $scriptname;
+            global $module, $admin_aziend, $radix, $scriptname, $debug_active;
             /* - In $idScript si deve passare l'id dell'array submenu (m2) in menu.language.php (per mettere nel tag <TITLE> )
               oltre che il nome del modulo anche quello dello script tradotto
               - In $jsArray di devono passare i nomi dei file javascript che si vogliono caricare e presenti nella directory 'js'
