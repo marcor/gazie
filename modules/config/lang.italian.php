@@ -447,6 +447,8 @@ $strScript = array(
         'user_password_old' => 'Vecchia Password',
         'user_password_new' => 'Nuova Password',
         'user_password_ver' => 'Verifica Password',
+		'user_active' => 'Abilitazione utente',
+		'user_active_value' => array('1'=>'Attivo','0'=>'Disattivo'),
         'lang' => 'Language',
         'theme' => 'Motore interfaccia<br>(sarà attivo dal prossimo login)',
         'style' => 'Struttura dello stile',

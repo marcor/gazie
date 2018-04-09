@@ -228,7 +228,7 @@ UPDATE `gaz_municipalities` t1 INNER JOIN `gaz_temp` t2 ON t1.code_register = t2
 DROP TABLE `gaz_temp`;
 
 ALTER TABLE `gaz_admin` 
- ADD `user_id` VARCHAR(30) NOT NULL AFTER `last_ip`,
+ ADD `user_id` INT(6) NOT NULL AFTER `last_ip`,
  ADD `user_firstname` VARCHAR(30) NOT NULL COMMENT 'user\'s first name'  AFTER `user_id`,
  ADD `user_lastname` VARCHAR(30) NOT NULL COMMENT 'user\'s last name'  AFTER `user_firstname`,
  ADD `user_name` VARCHAR(64) NOT NULL COMMENT 'user\'s name, unique'   AFTER `user_lastname`,
@@ -263,4 +263,6 @@ ALTER TABLE `gaz_admin`
 	('Cookie secret key for hash', 'cookie_secret_key', '1gp@GaZi{+$78sfpMJFe-18s')	;
 SET @id := 0;
 UPDATE `gaz_admin` SET user_id = (@id := @id+1);
-ALTER TABLE `gaz_admin` ADD PRIMARY KEY (`user_id`); 
+ALTER TABLE `gaz_admin` ADD PRIMARY KEY (`user_id`);
+ALTER TABLE `gaz_admin`	CHANGE COLUMN `user_id` `user_id` INT(6) NOT NULL AUTO_INCREMENT AFTER `last_ip`;
+ 

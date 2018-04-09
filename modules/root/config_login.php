@@ -83,7 +83,9 @@ define("DB_PASS", $Password);
  */
 define("COOKIE_RUNTIME", 1209600);
 define("COOKIE_DOMAIN", $Host);
-define("COOKIE_SECRET_KEY", "1gp@GaZi{+$78sfpMJFe-92s");
+
+// l'autentica tramite cookie non lo utilizzo comunque l'ho SPOSTATO SULLA TABELLA gaz_config del database
+//define("COOKIE_SECRET_KEY", "1gp@GaZi{+$78sfpMJFe-92s");
 
 /**
  * Configuration for: Email server credentials

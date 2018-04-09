@@ -133,7 +133,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("MESSAGE_EMAIL_LINK_FOR_RESET", "CLICCA QUI PER REIMPOSTARE LA TUA PASSWORD");
 
 // login & registration classes
-    define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Your account is not activated yet. Please click on the confirm link in the mail.");
+    define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Il tuo account non è attivo. Clicca sul link di conferma della mail che abbiamo inviato oppure contatta l'amministratore di sistema.");
     define("MESSAGE_CAPTCHA_WRONG", "I caratteri di controllo che hai inserito non coincidono con quelli dell'immagine!");
     define("MESSAGE_COOKIE_INVALID", "Invalid cookie");
     define("MESSAGE_DATABASE_ERROR", "Database connection problem.");

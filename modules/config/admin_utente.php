@@ -58,7 +58,7 @@ if (isset($_POST['Return'])) {
 if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il primo accesso
 	$form["user_lastname"] = substr($_POST['user_lastname'], 0, 30);
 	$form["user_firstname"] = substr($_POST['user_firstname'], 0, 30);
-    $form['user_email'] = trim($_POST['user_email']);
+	$form['user_email'] = trim($_POST['user_email']);
 	$form["lang"] = substr($_POST['lang'], 0, 15);
 	$form["theme"] = substr($_POST['theme'], 0, 20);
 	$form["style"] = substr($_POST['style'], 0, 30);
@@ -69,6 +69,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["user_password_old"] = substr($_POST['user_password_old'], 0, 40);
 	$form["user_password_new"] = substr($_POST['user_password_new'], 0, 40);
 	$form["user_password_ver"] = substr($_POST['user_password_ver'], 0, 40);
+	$form["user_active"] = intval($_POST['user_active']);
 	$form['body_text'] = filter_input(INPUT_POST, 'body_text');
 	if ($toDo == 'insert') {
 		$rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "user_name = '" . $form["user_name"] . "'", "user_name DESC", 0, 1);
@@ -97,7 +98,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	*/
 	$form["user_lastname"] = "";
 	$form["user_firstname"] = "";
-    $form['user_email'] = '';
+	$form['user_email'] = '';
 	$form["image"] = "";
 	$form["theme"] = "/library/theme/g7";
 	$form["style"] = $admin_aziend['style'];
@@ -109,6 +110,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['user_password_old'] = '';
 	$form['user_password_new'] = '';
 	$form['user_password_ver'] = '';
+	$form["user_active"] = 1;
 	$form['body_text'] = "";
 	if (preg_match("/school/", $_SERVER['HTTP_REFERER'])) {
 		// nel caso voglio inserire un nuovo insegnante propongo abilitazione a 9
@@ -123,9 +125,9 @@ if (isset($_POST['Submit'])) {
 	$msg['err'][] = 'user_lastname';
 	if (empty($form["user_name"]))
 	$msg['err'][] = "user_name";
-    if (!filter_var($form['user_email'], FILTER_VALIDATE_EMAIL) && !empty($form['user_email'])) {
+	if (!filter_var($form['user_email'], FILTER_VALIDATE_EMAIL) && !empty($form['user_email'])) {
 		$msg['err'][] = 'email'; // non coincide, segnalo l'errore
-    }
+	}
 	if ($toDo == 'update' && !empty($form["user_password_old"])) {
 		if (password_verify( $form["user_password_old"]  , $old_data["user_password_hash"] )) { 
 			// voglio reimpostare la password ed è giusta
@@ -138,12 +140,12 @@ if (isset($_POST['Submit'])) {
 		
 	}
 	if ($form["user_password_new"] != $form["user_password_ver"])
-		$msg['err'][] = 'confpass';
+	$msg['err'][] = 'confpass';
 	if (preg_match("/[<> \/\"]+/i", $form["user_password_new"])) {
 		$msg['err'][] = 'charpass';
 	}
 	if ($form["Abilit"] > $user_data["Abilit"])
-		$msg['err'][] = 'upabilit';
+	$msg['err'][] = 'upabilit';
 	if (!empty($_FILES['userfile']['name'])) {
 		if (!( $_FILES['userfile']['type'] == "image/jpeg" || $_FILES['userfile']['type'] == "image/pjpeg"))
 		$msg['err'][] = 'filmim';
@@ -219,6 +221,12 @@ if (isset($_POST['Submit'])) {
 		}
 		if ($toDo == 'insert') {
 			$form['company_id'] = $user_data['company_id'];
+			$form['user_registration_datetime']= date('Y-m-d H:i:s');
+			$form['user_active']=1;
+			// faccio l'hash della password prima di scrivere sul db
+			require_once('../../modules/root/config_login.php');
+			$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
+			$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
 			gaz_dbi_table_insert('admin', $form);
 			$form['adminid'] = $form["user_name"];
 			$form['var_descri'] = 'Menu/header/footer personalizzabile';
@@ -237,8 +245,8 @@ if (isset($_POST['Submit'])) {
 					$form["datpas"] = date("YmdHis"); //cambio la data di modifica password
 					// faccio l'hash della password prima di scrivere sul db
 					require_once('../../modules/root/config_login.php');
-                    $hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
-                    $form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
+					$hash_cost_factor = (defined('HASH_COST_FACTOR') ? HASH_COST_FACTOR : null);
+					$form["user_password_hash"] = password_hash($form["user_password_new"] , PASSWORD_DEFAULT, array('cost' => $hash_cost_factor));
 				} 
 			}
 			gaz_dbi_table_update('admin', array("user_name", $form["user_name"]), $form);
@@ -444,6 +452,14 @@ if ($toDo == 'insert') {
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_ver']; ?></td>
 <td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="login-password" name="user_password_ver" value="<?php print $form["user_password_ver"]; ?>" maxlength="40" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
+</tr>
+<tr>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['user_active']; ?></td>
+<td colspan="2" class="FacetDataTD">                        
+<?php
+    $gForm->variousSelect('user_active', $script_transl['user_active_value'], $form['user_active'], "col-sm-8", true, '', false, 'style="max-width: 300px;"');
+?>
+<div class="FacetDataTDred" id="user_active"></div>&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['body_text']; ?></td>
