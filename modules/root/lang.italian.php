@@ -131,6 +131,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("WORDING_GO_TO_LOGIN", "Vai alla pagina per l'accesso");
     define("MESSAGE_EMAIL_LINK_FOR_VERIFYNG", "CLICCA QUI PER ATTIVARE");
     define("MESSAGE_EMAIL_LINK_FOR_RESET", "CLICCA QUI PER REIMPOSTARE LA TUA PASSWORD");
+    define("MESSAGE_TRY_UPDATE_DATABASE", "<a href='../../setup/install/install.php'> Aggiorna il database prima di accedere</a>");
 
 // login & registration classes
     define("MESSAGE_ACCOUNT_NOT_ACTIVATED", "Il tuo account non è attivo. Clicca sul link di conferma della mail che abbiamo inviato oppure contatta l'amministratore di sistema.");
@@ -147,7 +148,7 @@ if (!defined("MESSAGE_WELCOME")) {
     define("MESSAGE_LINK_PARAMETER_EMPTY", "Empty link parameter data.");
     define("MESSAGE_LOGGED_OUT", "You have been logged out.");
 // The "login failed"-message is a security improved feedback that doesn't show a potential attacker if the user exists or not
-    define("MESSAGE_LOGIN_FAILED", "Le credenziali di accesso sbagliate. Riprova.");
+    define("MESSAGE_LOGIN_FAILED", "Le credenziali di accesso sono sbagliate. Riprova.");
     define("MESSAGE_OLD_PASSWORD_WRONG", "Your OLD password was wrong.");
     define("MESSAGE_PASSWORD_BAD_CONFIRM", "Le due password non coincidono");
     define("MESSAGE_PASSWORD_CHANGE_FAILED", "Sorry, your password changing failed.");
