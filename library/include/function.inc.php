@@ -1796,40 +1796,7 @@ class linkHeaders {
     }
 
 }
-/*
-function cleanMemberSession($abilit, $login, $password, $count, $company_id, $table_prefix) {
-    global $gTables;
-    $_SESSION["Abilit"] = true;
-    $_SESSION["user_name"] = $login;
-    $_SESSION["Password"] = $password;
-    $_SESSION["logged_in"] = true;
-    $_SESSION["company_id"] = $company_id;
-    $_SESSION["table_prefix"] = $table_prefix;
-    /* appoggio il valore del thema scelto sulla sessione così da non fare la query sul db ad ogni richiesta di esecuzione di qualsiasi script  
-     * però se vengo da un vecchio database non ho la tabella gaz_admin_config allora imposterò il valore di default anche per evitare l'errore
-     * sulla query  
-    
-    $result = gaz_dbi_query("SHOW TABLES LIKE '" . $gTables['admin_config'] . "'");
-    if (gaz_dbi_num_rows($result) > 0) {
-        $admin_config_theme = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "theme' AND adminid = '" . $login);
-        $_SESSION["theme"] = $admin_config_theme['var_value'];
-    } else {
-        $_SESSION["theme"] = 'g7';
-    }
-    $count++;
-    //incremento il contatore d'accessi
-    gaz_dbi_put_row($gTables['admin'], "user_name", $login, "Access", $count);
-    //modifico l'ultimo IP
-    gaz_dbi_put_row($gTables['admin'], "user_name", $login, 'last_ip', $_SERVER['REMOTE_ADDR']);
-    /*  se sul file config/config/gconfig.php scelgo di comunicare ad un hosting d'appoggio 
-      il mio eventuale nuovo IP DINAMICO del router ADSL faccio un ping ad esso così altri utenti
-      che sono a conoscenza del meccanismo possono richiederlo e successivamente essere ridiretti
-      qui tramite HTTPS
-     
-    if (SET_DYNAMIC_IP != '') {
-        @file_get_contents(SET_DYNAMIC_IP);
-    }
-}*/
+
 
 function checkAdmin($Livaut = 0) {
     global $gTables, $module, $table_prefix;

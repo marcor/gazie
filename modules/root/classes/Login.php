@@ -272,8 +272,13 @@ class Login
 
 						// increment the login counter for that user
 						$acc = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
-						. ' SET Access = Access+1 WHERE user_name = :user_name');
+						. " SET Access = Access+1, last_ip = '". $this->getUserIP()."' WHERE user_name = :user_name ;");
 						$acc->execute(array(':user_name' => $result_row->user_name));
+
+						// insert login user data into gaz_admin_login_history
+						$acc = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_admin_login_history '
+						. ' (`login_user_id`, `login_datetime`, `login_user_ip`) VALUES ('. $result_row->user_id.",'".date('Y-m-d H:i:s')."', '".$this->getUserIP()."');");
+						$acc->execute();
 
 						// write user data into PHP SESSION [a file on your server]
 						$_SESSION['user_id'] = $result_row->user_id;
@@ -371,8 +376,13 @@ class Login
 
 				// increment the login counter for that user
 				$acc = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_admin '
-				. ' SET Access = Access+1 WHERE user_name = :user_name');
+				. " SET Access = Access+1, last_ip = '". $this->getUserIP()."' WHERE user_name = :user_name ;");
 				$acc->execute(array(':user_name' => $result_row->user_name));
+
+				// insert login user data into gaz_admin_login_history
+				$acc = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_admin_login_history '
+				. ' (`login_user_id`, `login_datetime`, `login_user_ip`) VALUES ('. $result_row->user_id.",'".date('Y-m-d H:i:s')."', '".$this->getUserIP()."');");
+				$acc->execute();
 
 				// write user data into PHP SESSION [a file on your server]
 				$_SESSION['user_id'] = $result_row->user_id;

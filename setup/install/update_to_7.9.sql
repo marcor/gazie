@@ -265,4 +265,9 @@ SET @id := 0;
 UPDATE `gaz_admin` SET user_id = (@id := @id+1);
 ALTER TABLE `gaz_admin` ADD PRIMARY KEY (`user_id`);
 ALTER TABLE `gaz_admin`	CHANGE COLUMN `user_id` `user_id` INT(6) NOT NULL AUTO_INCREMENT AFTER `last_ip`;
- 
+ALTER TABLE `gaz_admin`	CHANGE COLUMN `last_ip` `last_ip` VARCHAR(39) NOT NULL AFTER `Access`;
+CREATE TABLE `gaz_admin_login_history` (
+	`login_user_id` INT(6) NOT NULL,
+	`login_datetime` DATETIME NULL DEFAULT NULL,
+	`login_user_ip` VARCHAR(39) NULL DEFAULT NULL
+) COMMENT='Tabella che tiene traccia di tutti i login effettuati dagli utenti, unito ai campi <last_modified> sulle varie tabelle e la tabella <gaz_menu_usage> servirà agli amministratori di sistema per controllare le attività degli utenti' ENGINE=MyISAM DEFAULT CHARSET=utf8;
