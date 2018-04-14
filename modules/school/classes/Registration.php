@@ -103,7 +103,7 @@ class Registration {
 
     public function select_classroom() {
         $this->databaseConnection();
-        $query_select_classroom = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_classroom LEFT JOIN ' . DB_TABLE_PREFIX . '_admin ON ' . DB_TABLE_PREFIX . '_classroom.teacher = ' . DB_TABLE_PREFIX . '_admin.Login');
+        $query_select_classroom = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_classroom LEFT JOIN ' . DB_TABLE_PREFIX . '_admin ON ' . DB_TABLE_PREFIX . '_classroom.teacher = ' . DB_TABLE_PREFIX . '_admin.user_name');
         $query_select_classroom->execute();
         $this->classroom_data = $query_select_classroom->fetchAll();
     }
@@ -176,15 +176,12 @@ class Registration {
                 $student_activation_hash = sha1(uniqid(mt_rand(), true));
 
                 // write new gaz_students data into database
-                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_students (student_classroom_id,  student_firstname,  student_lastname,  student_name,  student_password_hash,  student_rememberme_token,  student_email,  student_telephone,  student_activation_hash,  student_registration_ip, student_registration_datetime) VALUES(:student_classroom_id, :student_firstname, :student_lastname, :student_name, :student_password_hash, :student_rememberme_token, :student_email, :student_telephone, :student_activation_hash, :student_registration_ip, now())');
+                $query_new_student_insert = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . '_students (student_classroom_id,  student_firstname,  student_lastname,  student_name,  student_password_hash, student_email,  student_telephone,  student_activation_hash,  student_registration_ip, student_registration_datetime) VALUES(:student_classroom_id, :student_firstname, :student_lastname, :student_name, :student_password_hash, :student_email, :student_telephone, :student_activation_hash, :student_registration_ip, now())');
                 $query_new_student_insert->bindValue(':student_classroom_id', $student_classroom_id, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_firstname', $student_firstname, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_lastname', $student_lastname, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_name', $student_name, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_password_hash', $student_password_hash, PDO::PARAM_STR);
-                // GAZIE inizio uso impropriamente e temporaneamente, mi servirà per mettere la password in chiaro sulla tabella gaz_admin
-                $query_new_student_insert->bindValue(':student_rememberme_token', $student_password, PDO::PARAM_STR);
-                // GAZIE fine
                 $query_new_student_insert->bindValue(':student_email', $student_email, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_telephone', $student_telephone, PDO::PARAM_STR);
                 $query_new_student_insert->bindValue(':student_activation_hash', $student_activation_hash, PDO::PARAM_STR);
@@ -223,13 +220,13 @@ class Registration {
     public function sendVerificationEmail($student_id, $student_email, $student_activation_hash) {
         $mail = new PHPMailer;
         // get email send config from GAzie db
-        $var = array('order_mail', 'smtp_server', 'return_notification', 'mailer', 'smtp_port', 'smtp_secure', 'smtp_user', 'smtp_password');
+        $var = array('admin_mail', 'admin_smtp_server', 'admin_return_notification', 'admin_mailer', 'admin_smtp_port', 'admin_smtp_secure', 'admin_smtp_user', 'admin_smtp_password');
         foreach ($var as $v) {
-            $query_email_smtp_conf = $this->db_connection->prepare('SELECT val FROM ' . DB_TABLE_PREFIX . '_001company_config WHERE var=:var');
-            $query_email_smtp_conf->bindValue(':var', $v, PDO::PARAM_STR);
+            $query_email_smtp_conf = $this->db_connection->prepare('SELECT cvalue FROM ' . DB_TABLE_PREFIX . '_config WHERE variable=:variable');
+            $query_email_smtp_conf->bindValue(':variable', $v, PDO::PARAM_STR);
             $query_email_smtp_conf->execute();
             $r = $query_email_smtp_conf->fetchAll();
-            $this->email_conf[$v] = $r[0]['val'];
+            $this->email_conf[$v] = $r[0]['cvalue'];
         }
         // please look into the config/config.php for much more info on how to use this!
         // use SMTP or use mail()
@@ -241,22 +238,22 @@ class Registration {
             // Enable SMTP authentication
             $mail->SMTPAuth = EMAIL_SMTP_AUTH;
             // Enable encryption, usually SSL/TLS
-            $email_smtp_encr = trim($this->email_conf['smtp_secure']);
+            $email_smtp_encr = trim($this->email_conf['admin_smtp_secure']);
             if (strlen($email_smtp_encr) > 2) {
                 $mail->SMTPSecure = $email_smtp_encr;
             }
 
             // Specify host server
-            $mail->Host = $this->email_conf['smtp_server']; // EMAIL_SMTP_HOST;
-            $mail->Username = $this->email_conf['smtp_user']; //EMAIL_SMTP_USERNAME;
-            $mail->Password = $this->email_conf['smtp_password']; //EMAIL_SMTP_PASSWORD;
-            $mail->Port = $this->email_conf['smtp_port']; //EMAIL_SMTP_PORT;
+            $mail->Host = $this->email_conf['admin_smtp_server']; // EMAIL_SMTP_HOST;
+            $mail->Username = $this->email_conf['admin_smtp_user']; //EMAIL_SMTP_USERNAME;
+            $mail->Password = $this->email_conf['admin_smtp_password']; //EMAIL_SMTP_PASSWORD;
+            $mail->Port = $this->email_conf['admin_smtp_port']; //EMAIL_SMTP_PORT;
         } else {
             $mail->IsMail();
         }
         $mail->IsHTML(true);          
         // Impropriamente uso order_mail in quanto nelle installazioni didattiche non si ricevono ordini
-        $mail->From = $this->email_conf['order_mail'];
+        $mail->From = $this->email_conf['admin_mail'];
 
         $mail->FromName = EMAIL_VERIFICATION_FROM_NAME;
         $mail->AddAddress($student_email);
@@ -334,43 +331,34 @@ class Registration {
                 /* GAZIE 
                  * qui faccio tutto quanto occorre per creare una nuova serie di tabelle con prefisso
                  * per avere una nuova gestione separata dello studente che si è registrato */
-                $query_get_student_password = $this->db_connection->prepare('SELECT student_rememberme_token, student_name, student_firstname, student_lastname, student_email FROM ' . DB_TABLE_PREFIX . '_students WHERE student_id = :student_id');
+                $query_get_student_password = $this->db_connection->prepare('SELECT student_password_hash, student_name, student_firstname, student_lastname, student_email FROM ' . DB_TABLE_PREFIX . '_students WHERE student_id = :student_id');
                 $query_get_student_password->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
                 $query_get_student_password->execute();
                 $r = $query_get_student_password->fetch(PDO::FETCH_NUM, PDO::FETCH_ORI_LAST);
-                $student_password = $r[0]; //questa la userò per popolare gaz_admin della Password
-                $student_name = $r[1]; // Login
+                $student_password = $r[0]; //questa la userò per popolare gaz_admin della hash della password
+                $student_name = $r[1]; // user_name
                 $student_firstname = $r[2]; // Nome
                 $student_lastname = $r[3]; // Cognome
                 $student_email = $r[4]; // email
                 $last_file = $this->getInstallSqlFile();
                 $this->executeQueryFileInstall($student_id, $last_file);
-                $this->db_connection->query('DELETE FROM `' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin` WHERE  `Login`='amministratore';");
+                $this->db_connection->query('DELETE FROM `' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin` WHERE  `user_name`='amministratore';");
                 // add student into new gazNNNN_admin
                 $gravatar_url = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($student_email))).'?d=mm';
                 $gravatar_img = @file_get_contents($gravatar_url);
-                $query_add_student_to_admin = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_admin (Cognome, Nome,image, lang, Login,  Password, Abilit, company_id, datpas) VALUES(:Cognome, :Nome,:image, :lang, :Login, :Password, 7 , 1, NOW())');
-                $query_add_student_to_admin->bindValue(':Login', $student_name, PDO::PARAM_STR);
-                $query_add_student_to_admin->bindValue(':Nome', $student_firstname, PDO::PARAM_STR);
-                $query_add_student_to_admin->bindValue(':Cognome', $student_lastname, PDO::PARAM_STR);
+                $query_add_student_to_admin = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_admin (user_lastname, user_firstname,image, lang, user_name,  user_password_hash, user_active, company_id, datpas) VALUES(:user_lastname, :user_firstname,:image, :lang, :user_name, :user_password_hash, 7 , 1, NOW())');
+                $query_add_student_to_admin->bindValue(':user_name', $student_name, PDO::PARAM_STR);
+                $query_add_student_to_admin->bindValue(':user_firstname', $student_firstname, PDO::PARAM_STR);
+                $query_add_student_to_admin->bindValue(':user_lastname', $student_lastname, PDO::PARAM_STR);
                 $query_add_student_to_admin->bindValue(':image', $gravatar_img, PDO::PARAM_LOB);
                 $query_add_student_to_admin->bindValue(':lang', TRANSL_LANG, PDO::PARAM_STR);
-                $query_add_student_to_admin->bindValue(':Password', $student_password, PDO::PARAM_STR);
+                $query_add_student_to_admin->bindValue(':user_password_hash', $student_password, PDO::PARAM_STR);
                 $query_add_student_to_admin->execute();
-                // delete password from inappropriate field
-                $query_update_user = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . "_students SET student_rememberme_token = '' WHERE student_id = :student_id");
-                $query_update_user->bindValue(':student_id', intval(trim($student_id)), PDO::PARAM_INT);
-                $query_update_user->execute();
                 // update admin_module with new username
                 $query_update_admin_module = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin_module SET adminid = :student_name WHERE adminid = 'amministratore'");
                 $query_update_admin_module->bindValue(':student_name', $student_name, PDO::PARAM_STR);
-                ;
                 $query_update_admin_module->execute();
-
-
                 /* GAZIE FINE                 */
-
-
 
                 $this->verification_successful = true;
                 $this->messages[] = MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL . $last_file;

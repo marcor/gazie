@@ -58,8 +58,8 @@ $gForm = new schoolForm();
                     while ($r = gaz_dbi_fetch_array($rs)) {
                         echo "<tr class=\"FacetDataTD\">";
                         echo "<td title=\"" . $script_transl['update'] . "\"><a class=\"btn btn-xs btn-default\" href=\"../config/admin_utente.php?user_name=" . $r["user_name"] . "&Update\">" . $r["user_name"] . " </a> &nbsp</td>";
-                        echo "<td>" . $r["Cognome"] . " &nbsp;</td>";
-                        echo "<td>" . $r["Nome"] . " &nbsp;</td>";
+                        echo "<td>" . $r["user_lastname"] . " &nbsp;</td>";
+                        echo "<td>" . $r["user_firstname"] . " &nbsp;</td>";
                         echo "</tr>";
                     }
                     ?>

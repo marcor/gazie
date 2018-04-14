@@ -261,13 +261,10 @@ class Login {
                         $_SESSION['table_prefix'] = DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT);
                         $_SESSION['student_id'] = $result_row->student_id;
                         $_SESSION['student_name'] = $result_row->student_name;
-                        $_SESSION['student_email'] = $result_row->student_email;
-                        $_SESSION['student_logged_in'] = 1;
                         $_SESSION["user_name"] = $result_row->student_name;
-                        $_SESSION['logged_in'] = 1;
-                        $_SESSION['Abilit'] = 1;
+                        $_SESSION['student_email'] = $result_row->student_email;
                         $_SESSION['company_id'] = 1;
-                        $_SESSION['Password'] = $rs_psw->Password;
+                        $_SESSION['student_logged_in'] = 1;
 
                         // declare user id, set the login status to true
                         $this->student_id = $result_row->student_id;
@@ -348,13 +345,10 @@ class Login {
                 $_SESSION['table_prefix'] = DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT);
                 $_SESSION['student_id'] = $result_row->student_id;
                 $_SESSION['student_name'] = $result_row->student_name;
-                $_SESSION['student_email'] = $result_row->student_email;
-                $_SESSION['student_logged_in'] = 1;
                 $_SESSION["user_name"] = $result_row->student_name;
-                $_SESSION['logged_in'] = 1;
-                $_SESSION['Abilit'] = 1;
+                $_SESSION['student_email'] = $result_row->student_email;
                 $_SESSION['company_id'] = 1;
-                $_SESSION['Password'] = $rs_psw->Password;
+                $_SESSION['student_logged_in'] = 1;
                 // declare user id, set the login status to true
                 $this->student_id = $result_row->student_id;
                 $this->student_name = $result_row->student_name;
@@ -653,14 +647,14 @@ class Login {
     public function sendPasswordResetMail($student_name, $student_email, $student_password_reset_hash) {
         $mail = new PHPMailer;
         // get email send config from GAzie db
-        $var = array('order_mail', 'smtp_server', 'return_notification', 'mailer', 'smtp_port', 'smtp_secure', 'smtp_user', 'smtp_password');
-        foreach ($var as $v) {
-            $query_email_smtp_conf = $this->db_connection->prepare('SELECT val FROM ' . DB_TABLE_PREFIX . '_001company_config WHERE var=:var');
-            $query_email_smtp_conf->bindValue(':var', $v, PDO::PARAM_STR);
-            $query_email_smtp_conf->execute();
-            $r = $query_email_smtp_conf->fetchAll();
-            $this->email_conf[$v] = $r[0]['val'];
-        }
+		$var = array('admin_mail', 'admin_smtp_server', 'admin_return_notification', 'admin_mailer', 'admin_smtp_port', 'admin_smtp_secure', 'admin_smtp_user', 'admin_smtp_password');
+		foreach ($var as $v) {
+			$query_email_smtp_conf = $this->db_connection->prepare('SELECT cvalue FROM ' . DB_TABLE_PREFIX . '_config WHERE variable=:variable');
+			$query_email_smtp_conf->bindValue(':variable', $v, PDO::PARAM_STR);
+			$query_email_smtp_conf->execute();
+			$r = $query_email_smtp_conf->fetchAll();
+			$this->email_conf[$v] = $r[0]['cvalue'];
+		}
 
         // please look into the config/config.php for much more info on how to use this!
         // use SMTP or use mail()
@@ -672,22 +666,21 @@ class Login {
             // Enable SMTP authentication
             $mail->SMTPAuth = EMAIL_SMTP_AUTH;
             // Enable encryption, usually SSL/TLS
-            $email_smtp_encr = trim($this->email_conf['smtp_secure']);
+            $email_smtp_encr = trim($this->email_conf['admin_smtp_secure']);
             if (strlen($email_smtp_encr) > 2) {
                 $mail->SMTPSecure = $email_smtp_encr;
             }
 
             // Specify host server
-            $mail->Host = $this->email_conf['smtp_server']; // EMAIL_SMTP_HOST;
-            $mail->Username = $this->email_conf['smtp_user']; //EMAIL_SMTP_USERNAME;
-            $mail->Password = $this->email_conf['smtp_password']; //EMAIL_SMTP_PASSWORD;
-            $mail->Port = $this->email_conf['smtp_port']; //EMAIL_SMTP_PORT;
+			$mail->Host = $this->email_conf['admin_smtp_server']; // EMAIL_SMTP_HOST;
+			$mail->Username = $this->email_conf['admin_smtp_user']; //EMAIL_SMTP_USERNAME;
+			$mail->Password = $this->email_conf['admin_smtp_password']; //EMAIL_SMTP_PASSWORD;
+			$mail->Port = $this->email_conf['admin_smtp_port']; //EMAIL_SMTP_PORT;
         } else {
             $mail->IsMail();
         }
         $mail->IsHTML(true);
-
-        $mail->From = $this->email_conf['order_mail'];
+        $mail->From = $this->email_conf['admin_mail'];
         $mail->FromName = EMAIL_PASSWORDRESET_FROM_NAME;
         $mail->AddAddress($student_email);
         $mail->Subject = EMAIL_PASSWORDRESET_SUBJECT;
