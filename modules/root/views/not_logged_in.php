@@ -16,6 +16,11 @@
                     <p><?php echo MESSAGE_INTRO_ADMIN; ?></p>
                     <p><?php echo MESSAGE_PSW_ADMIN; ?></p><br/>
                     <?php
+					if (is_numeric(substr($table_prefix,-4))) {
+						// se è stato uno studente ad aver fatto il logout lo riporto sulla giusta pagina
+						header("Location: ../school/student_login.php");
+						exit;	
+					}
                     if (isset($login)) {
                         if ($login->errors) {
                             foreach ($login->errors as $error) {
@@ -62,11 +67,6 @@
                     </div>
                 </div>  
 					<?php if (@checkSchool()) { 
-								if (is_numeric(substr($table_prefix,-4))) {
-									// se è stato uno studente ad aver fatto il logout lo riporto sulla giusta pagina
-									header("Location: ../school/student_login.php");
-									exit;	
-								}
 					?>
 						<div style="padding-top:10px" class="panel-body" >
 							<div style="padding-top:10px" class="form-group">
