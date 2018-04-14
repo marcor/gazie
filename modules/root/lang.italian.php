@@ -157,8 +157,8 @@ if (!defined("MESSAGE_WELCOME")) {
     define("MESSAGE_PASSWORD_RESET_MAIL_FAILED", "Password reset mail NOT successfully sent! Error: ");
     define("MESSAGE_PASSWORD_RESET_MAIL_SUCCESSFULLY_SENT", "La mail per la reimpostazione della password è stata inviata con successo!");
     define("MESSAGE_PASSWORD_TOO_SHORT", "Password has a minimum length of 6 characters");
-    define("MESSAGE_PASSWORD_WRONG", "Wrong password. Try again.");
-    define("MESSAGE_PASSWORD_WRONG_3_TIMES", "You have entered an incorrect password 3 or more times already. Please wait 30 seconds to try again.");
+    define("MESSAGE_PASSWORD_WRONG", "Credenziali sbagliate. Riprova");
+    define("MESSAGE_PASSWORD_WRONG_3_TIMES", "Hai sbagliato  la password 3 o più volte. Attendi 30 seconds per provare di nuovo.");
     define("MESSAGE_REGISTRATION_ACTIVATION_NOT_SUCCESSFUL", "Spiecenti, ma il codice di verifica non risulta essere più valido!");
     define("MESSAGE_REGISTRATION_ACTIVATION_SUCCESSFUL", "L'attivazione ha avuto successo, ho popolato il tuo database con il file: ");
     define("MESSAGE_REGISTRATION_FAILED", "Sorry, your registration failed. Please go back and try again.");
@@ -208,6 +208,8 @@ if (!defined("MESSAGE_WELCOME")) {
     define("WORDING_SUBMIT_NEW_PASSWORD", "Registra la nuova password");
     define("WORDING_USERNAME", "Nome utente");
     define("WORDING_YOU_ARE_LOGGED_IN_AS", "You are logged in as ");
+    define("WORDING_LOGIN_AS_STUDENT", "Se sei uno studente puoi accedere da qui");
+	
 
 // ex config 
 // for: password reset email data

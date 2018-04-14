@@ -31,7 +31,7 @@
                                 echo '</div>';
                             }
                         }
-                    }
+                    } 
                     ?>
                     <div style="padding-bottom: 25px;" class="input-group">
                         <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
@@ -61,10 +61,41 @@
                         </div>-->
                     </div>
                 </div>  
+					<?php if (@checkSchool()) { 
+								if (is_numeric(substr($table_prefix,-4))) {
+									// se è stato uno studente ad aver fatto il logout lo riporto sulla giusta pagina
+									header("Location: ../school/student_login.php");
+									exit;	
+								}
+					?>
+						<div style="padding-top:10px" class="panel-body" >
+							<div style="padding-top:10px" class="form-group">
+								<div class="col-sm-12 controls">
+									<a href="../school/student_login.php" > 
+										<?php echo WORDING_LOGIN_AS_STUDENT; ?>
+										<img src="../school/school.png">
+									</a>
+								</div>
+							</div>
+
+						</div> 
+					<?php }  ?>
             </div>  
         </div>
     </div><!-- chiude div container -->
 </form>
 
 
-<?php include('_footer.php'); ?>
+<?php 
+include('_footer.php'); 
+
+function checkSchool() {
+    global $gTables;
+    $ns = gaz_dbi_record_count($gTables['classroom'], 1);
+    if ($ns >= 1) {
+        return true;
+    } else {
+        return false;
+    }
+}
+?>

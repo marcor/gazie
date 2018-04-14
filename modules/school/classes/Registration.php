@@ -342,11 +342,12 @@ class Registration {
                 $student_email = $r[4]; // email
                 $last_file = $this->getInstallSqlFile();
                 $this->executeQueryFileInstall($student_id, $last_file);
-                $this->db_connection->query('DELETE FROM `' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin` WHERE  `user_name`='amministratore';");
+                $this->db_connection->query('TRUNCATE `' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . "_admin`;");
                 // add student into new gazNNNN_admin
                 $gravatar_url = 'https://www.gravatar.com/avatar/' . md5(strtolower(trim($student_email))).'?d=mm';
                 $gravatar_img = @file_get_contents($gravatar_url);
-                $query_add_student_to_admin = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_admin (user_lastname, user_firstname,image, lang, user_name,  user_password_hash, user_active, company_id, datpas) VALUES(:user_lastname, :user_firstname,:image, :lang, :user_name, :user_password_hash, 7 , 1, NOW())');
+                $query_add_student_to_admin = $this->db_connection->prepare('INSERT INTO ' . DB_TABLE_PREFIX . str_pad($student_id, 4, '0', STR_PAD_LEFT) . '_admin (user_id, user_lastname, user_firstname,image, lang, user_name,  user_password_hash, user_active, Abilit,  company_id, datpas) VALUES(:user_id, :user_lastname, :user_firstname,:image, :lang, :user_name, :user_password_hash, 1, 7 , 1, NOW())');
+                $query_add_student_to_admin->bindValue(':user_id', intval(trim($student_id)), PDO::PARAM_INT);
                 $query_add_student_to_admin->bindValue(':user_name', $student_name, PDO::PARAM_STR);
                 $query_add_student_to_admin->bindValue(':user_firstname', $student_firstname, PDO::PARAM_STR);
                 $query_add_student_to_admin->bindValue(':user_lastname', $student_lastname, PDO::PARAM_STR);

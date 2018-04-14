@@ -249,14 +249,9 @@ class Login {
                     $sth->execute();
                     // get result row (as an object)
                     $result_row = $sth->fetchObject();
-
-                    // GAZIE : get admin_password
-                    $psw = $this->db_connection->prepare('SELECT Password FROM ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin WHERE Login = :student_name');
-                    $psw->bindValue(':student_name', $result_row->student_name, PDO::PARAM_STR);
-                    $psw->execute();
-                    // get result row (as an object)
-                    $rs_psw = $psw->fetchObject();
                     if (isset($result_row->student_id)) {
+
+						
                         // write user data into PHP SESSION [a file on your server]
                         $_SESSION['table_prefix'] = DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT);
                         $_SESSION['student_id'] = $result_row->student_id;
@@ -271,6 +266,20 @@ class Login {
                         $this->student_name = $result_row->student_name;
                         $this->student_email = $result_row->student_email;
                         $this->student_is_logged_in = true;
+
+						// INIZIO ---- ripresa del valore del tema (g6,g7,lte) 
+						$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name');
+						$rt->bindValue(':user_name', $result_row->student_name, PDO::PARAM_STR);
+						$rt->execute();
+						// get result row (as an object)
+						$rt_row = $rt->fetchObject();
+						$_SESSION['theme'] = $rt_row->var_value;
+						// FINE ---- ripresa del valore del tema (g6,g7,lte)
+
+						// increment the login counter for that user
+						$acc = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX. str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin '
+						. " SET Access = Access+1, last_ip = '". $this->getUserIP()."' WHERE user_name = :user_name ;");
+						$acc->execute(array(':user_name' => $result_row->student_name));
 
                         // Cookie token usable only once
                         $this->newRememberMeCookie();
@@ -335,12 +344,7 @@ class Login {
             } else if ($result_row->student_active != 1) {
                 $this->errors[] = MESSAGE_ACCOUNT_NOT_ACTIVATED;
             } else {
-                // GAZIE : get admin_password
-                $psw = $this->db_connection->prepare('SELECT Password, Access FROM ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin WHERE Login = :student_name');
-                $psw->bindValue(':student_name', $result_row->student_name, PDO::PARAM_STR);
-                $psw->execute();
-                // get result row (as an object)
-                $rs_psw = $psw->fetchObject();
+				
                 // write user data into PHP SESSION [a file on your server]
                 $_SESSION['table_prefix'] = DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT);
                 $_SESSION['student_id'] = $result_row->student_id;
@@ -355,12 +359,20 @@ class Login {
                 $this->student_email = $result_row->student_email;
                 $this->student_is_logged_in = true;
 
-                // aggiorno la tabella gazXXXX_admin con i nuovi valori di access e last_ip
-                $log = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin SET Access = :Access, last_ip = :last_ip  WHERE Login = :student_name');
-                $log->bindValue(':student_name', $result_row->student_name, PDO::PARAM_STR);
-                $log->bindValue(':Access', $rs_psw->Access + 1, PDO::PARAM_INT);
-                $log->bindValue(':last_ip', $this->getUserIP(), PDO::PARAM_STR);
-                $log->execute();
+				// INIZIO ---- ripresa del valore del tema (g6,g7,lte) 
+				$rt = $this->db_connection->prepare('SELECT var_value FROM ' . DB_TABLE_PREFIX. str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin_config WHERE var_name = \'theme\' AND adminid = :user_name');
+				$rt->bindValue(':user_name', $result_row->student_name, PDO::PARAM_STR);
+				$rt->execute();
+				// get result row (as an object)
+				$rt_row = $rt->fetchObject();
+				$_SESSION['theme'] = $rt_row->var_value;
+				// FINE ---- ripresa del valore del tema (g6,g7,lte)
+
+				// increment the login counter for that user
+				$acc = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . str_pad($result_row->student_id, 4, '0', STR_PAD_LEFT) . '_admin '
+				. " SET Access = Access+1, last_ip = '". $this->getUserIP()."' WHERE user_name = :user_name ;");
+				$acc->execute(array(':user_name' => $result_row->student_name));
+
 
                 // reset the failed login counter for that user
                 $sth = $this->db_connection->prepare('UPDATE ' . DB_TABLE_PREFIX . '_students '
