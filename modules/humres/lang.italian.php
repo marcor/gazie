@@ -127,13 +127,8 @@ $strScript = array("admin_staff.php" =>
 		'note'=>"Note",
 		'bot' => 'a riportare : ',
         'top' => 'da riporto :  ',
-        'item_head' => array('Codice', 'Cat.Merc', 'Descrizione', 'U.M.', 'ScortaMin.'),
-        'header' => array('Data', 'Causale', 'Descrizione documento',
-            'Prezzo', 'UM', 'Quantita',
-            ' carico', ' scarico',
-            'Q.ta giacenza', 'Val. giacenza'
-        ),
-
-    )
+        'item_head' => array("id\nN.","Cognome\nNome"),
+        'header' => array("id\nN.","Dati del\nCollaboratore")
+		)
 );
 ?>

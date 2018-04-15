@@ -123,8 +123,10 @@ class Report_template extends TCPDF {
                 $this->Cell(150, 12, $this->altri_dati['title'], 0, 1, 'L', 0, '', 1);
                 $this->SetFont('helvetica', '', 9);
                 foreach ($this->altri_dati['hile'] as $key => $value) {
-//                 $this->Cell($value['lun'],4,$value['nam'],1,0,'C',1);
-                    $this->MultiCell($value['lun'], 4, $value['nam'], 1, 'C', 1, 0); // per avere intestazioni su più righe
+					if (isset($value['col'])){
+						$this->SetFillColor($value['col'][0],$value['col'][1],$value['col'][2]);
+					}
+                    $this->MultiCell($value['lun'], 4, $value['nam'], 1, 'C', 1, 0); // per avere intestazioni su più righe usa \n"
                 }
                 $this->Cell(1, 4, '', 0, 1);
                 $this->SetFont('helvetica', '', 8);

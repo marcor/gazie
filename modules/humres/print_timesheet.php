@@ -42,6 +42,14 @@ $dto->modify('first day of this month');
 $first_day = $dto->format('Y-m-d');
 $dto->modify('last day of this month');
 $last_day = $dto->format('Y-m-d');
+$aDates = array();
+$st_date = strtotime($first_day);
+$ed_date = strtotime($last_day);
+for ($i = $st_date; $i <= $ed_date; $i += (60 * 60 * 24)) {
+	$currDate = array('strdate'=>date('Y-m-d', $i),'daydate'=>date('w',$i),'tsdate'=>$i);
+	// in $aDates accumulo i giorni del mese
+    $aDates[] = $currDate;
+}
 
 $luogo_data=$admin_aziend['citspe'].", lì " . ucwords(strftime("%d %B %Y", mktime (0,0,0,date("m"),date("d"),date("Y"))));
 
@@ -54,37 +62,28 @@ $what="*";
 $tables=$gTables['staff_worked_hours'].' AS wh LEFT JOIN '.$gTables['staff'] . ' AS st ON wh.id_staff=st.id_staff ' . 'LEFT JOIN ' . $gTables['clfoco'] . ' AS wo ON st.id_clfoco=wo.codice ' . 'LEFT JOIN ' . $gTables['anagra'] . ' AS an ON wo.id_anagra=an.id ';
 $result = gaz_dbi_dyn_query ($what, $tables,$where,'wh.id_staff ASC, wh.work_day ASC');
 
-$item_head = array('top'=>array(array('lun' => 21,'nam'=>$script_transl['item_head'][0]),
-                                array('lun' => 18,'nam'=>$script_transl['item_head'][1]),
-                                array('lun' => 60,'nam'=>$script_transl['item_head'][2]),
-                                array('lun' => 10,'nam'=>$script_transl['item_head'][3]),
-                                array('lun' => 18,'nam'=>$script_transl['item_head'][4])
-                               )
-                   );
-
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>$script_transl['title'],
-               'hile'=>array(array('lun' => 16,'nam'=>$script_transl['header'][0]),
-                             array('lun' => 30,'nam'=>$script_transl['header'][1]),
-                             array('lun' => 100,'nam'=>$script_transl['header'][2]),
-                             array('lun' => 17,'nam'=>$script_transl['header'][3]),
-                             array('lun' => 8,'nam'=>$script_transl['header'][4]),
-                             array('lun' => 17,'nam'=>$script_transl['header'][5]),
-                             array('lun' => 17,'nam'=>$script_transl['header'][6]),
-                             array('lun' => 17,'nam'=>$script_transl['header'][7]),
-                             array('lun' => 20,'nam'=>$script_transl['header'][8]),
-                             array('lun' => 20,'nam'=>$script_transl['header'][9])
+               'title'=>$script_transl['title'].' del mese di '.strftime("%B %Y", strtotime($first_day)),
+               'hile'=>array(array('lun' => 5,'nam'=>$script_transl['header'][0]),
+                             array('lun' => 45,'nam'=>$script_transl['header'][1])
                             )
               );
-$aRiportare = array('top'=>array(array('lun' => 222,'nam'=>$script_transl['top']),
-                           array('lun' => 20,'nam'=>''),
-                           array('lun' => 20,'nam'=>'')
-                           ),
-                    'bot'=>array(array('lun' => 222,'nam'=>$script_transl['bot']),
-                           array('lun' => 20,'nam'=>''),
-                           array('lun' => 20,'nam'=>'')
-                           )
-                    );
+// accodo a $title l'array dei giorni segnando le domeniche in rosso
+for ($i=0; $i<=30; $i++){
+	if (isset($aDates[$i])){
+		$col=array(255,255,255);
+		if ($aDates[$i]['daydate']==0){
+			$col=array(255,150,150);
+		}
+		if ($aDates[$i]['daydate']==6){
+			$col=array(255,180,120);
+		}
+		$title['hile'][]=array('lun'=>7,'nam'=>substr($aDates[$i]['strdate'],-2)."\n". substr(strftime("%A", strtotime($aDates[$i]['strdate'])),0,3), 'col'=>$col);
+	} else {
+		$title['hile'][]=array('lun'=>7,'nam'=>" \n ");
+	}
+}
+ 
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(51);
@@ -94,36 +93,16 @@ $pdf->AddPage('L',$config->getValue('page_format'));
 $ctrlWorker='';
 $ctrl_id=0;
 while ($mv = gaz_dbi_fetch_array($result)) {
-      $pdf->setRiporti($aRiportare);
-      if ($ctrlWorker!=$mv['id_staff'] && $ctrlWorker!='') {
-         if (!empty($ctrlWorker)) {
-                   $pdf->StartPageGroup();
-                   $pdf->SetFont('helvetica','B',8);
-                   $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].strftime("%d-%m-%Y",$utsrf).' : ',1,0,'R');
-                   $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
-                   $pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
-                   $pdf->SetFont('helvetica','',7);
-         }
-         $aRiportare['top'][1]['nam'] = 0;
-         $aRiportare['bot'][1]['nam'] = 0;
-         $aRiportare['top'][2]['nam'] = 0;
-         $aRiportare['bot'][2]['nam'] = 0;
-         $item_head['bot']= array(array('lun' => 21,'nam'=>$mv['id_staff']),
-                                  array('lun' => 18,'nam'=>$mv['catmer']),
-                                  array('lun' => 60,'nam'=>$mv['desart']),
-                                  array('lun' => 10,'nam'=>$mv['unimis']),
-                                  array('lun' => 18,'nam'=>number_format($mv['scorta'],1,',',''))
-                                  );
-        $pdf->setRiporti('');
-      }
-      $pdf->Cell(20,4,$mv['id_staff'],1,0,'R');
-      $pdf->Cell(120,4,$mv['descri'],1,1,'R');
-      $ctrlWorker = $mv['id_staff'];
+	//print_r($mv);
+    if ($ctrlWorker!=$mv['id_staff']) {
+		if (!empty($ctrlWorker)) { // sono al primo ciclo
+    
+		}
+		$pdf->Cell(5,5,$mv['id_staff'],1,0,'R');
+		$pdf->Cell(45,5,$mv['descri'],1,1,'R');
+    }
+    $ctrlWorker = $mv['id_staff'];
 }
-$pdf->SetFont('helvetica','B',8);
-$pdf->Cell($aRiportare['top'][0]['lun'],4,' : ',1,0,'R');
-$pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
-$pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
 $pdf->SetFont('helvetica','',7);
 $pdf->setRiporti('');
 $pdf->Output();
