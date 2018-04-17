@@ -28,7 +28,7 @@ class humresForm extends GAzieForm {
     function selectHextraType($name,$val) {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['staff_work_type'] . '` ';
-        $query .= 'WHERE descri LIKE "%strao%" ORDER BY `id_work_type`';
+        $query .= 'WHERE id_work_type = 1 ORDER BY `id_work_type`';
         $ret0 = '<div';
         $ret1 =  '<select name="'.$name.'" class="col-sm-12 dropdownmenustyle">';
         $ret1 .= '<option value="0"></option>';
@@ -49,7 +49,7 @@ class humresForm extends GAzieForm {
     function selectAbsenceCau($name,$val) {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['staff_absence_type'] . '` ';
-        $query .= 'WHERE 1 ORDER BY `order_id`';
+        $query .= 'WHERE 1';
         $ret0 = '<div';
         $ret1 =  '<select name="'.$name.'" class="col-sm-12 dropdownmenustyle">';
         $ret1 .= '<option value="0"></option>';
@@ -61,7 +61,7 @@ class humresForm extends GAzieForm {
                 $selected = " selected";
 				$r['descri']=substr($r['descri'],0,5);
              }
-            $ret1 .= '<option value="' . $r['id_absence'] . '"'. $selected.' >'.$r['id_absence'].'-'.$r['descri'].' '.$r['inps_ref']. "</option>\n";
+            $ret1 .= '<option value="' . $r['id_absence'] . '"'. $selected.' >'.$r['causal'].'-'.$r['descri']. "</option>\n";
         }
 		$ret0 .= '>';
         echo $ret0.$ret1."\t </select>\n</div>\n";
@@ -70,7 +70,7 @@ class humresForm extends GAzieForm {
     function selectOtherType($name,$val) {
         global $gTables;
         $query = 'SELECT * FROM `' . $gTables['staff_work_type'] . '` ';
-        $query .= 'WHERE 1 ORDER BY id_work_type, descri';
+        $query .= 'WHERE id_work_type > 1  ORDER BY id_work_type, descri';
         $ret0 = '<div';
         $ret1 =  '<select name="'.$name.'" class="col-sm-12 dropdownmenustyle">';
         $ret1 .= '<option value="0"></option>';
@@ -82,7 +82,7 @@ class humresForm extends GAzieForm {
                 $selected = " selected";
 				$r['descri']=substr($r['descri'],0,5);
 			}
-            $ret1 .= '<option value="' . $r['id_work'] . '"'. $selected.' >'.$r['descri'].' '.$r['increase']. "</option>\n";
+            $ret1 .= '<option value="' . $r['id_work'] . '"'. $selected.' >'.$r['id_work_type'].' '.$r['descri'].' '.$r['increase']. "</option>\n";
         }
 		$ret0 .= '>';
         echo $ret0.$ret1."\t </select>\n</div>\n";

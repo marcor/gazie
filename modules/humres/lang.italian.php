@@ -114,9 +114,17 @@ $strScript = array("admin_staff.php" =>
     ),
     "employee_timesheet.php" =>
     array('title' => "Registro delle presenze",
-	        'err' => array('&Egrave; necessario indicare Nome e Cognome',
-            '&Egrave; necessario indicare l\'indirizzo',
-            'Il codice di avviamento postale (CAP) &egrave; sbagliato'),
+	      'err' => array('&Egrave; necessario indicare Nome e Cognome',
+				'&Egrave; necessario indicare l\'indirizzo',
+				'Il codice di avviamento postale (CAP) &egrave; sbagliato'),
+		  'work_type'=>array(0=>array('ORD','Lavoro ordinario'),
+							1=>array('STR','Lavoro straordinario'),
+							2=>array('NOT','Lavoro notturno'),
+							3=>array('DOM','Lavoro domenicale'),
+							4=>array('FES','Lavoro festivo'),
+							5=>array('MAG','Lavoro ordinario domenicale e/o festivo'),
+							6=>array('TUR','Lavoro in turni')
+						),
         'work_hou'=>"Ore lavorate Ordinarie",
         'cau_hextra'=>"Tipo di Straordinario",
         'work_hextra'=>"Ore Straordinarie",
@@ -128,7 +136,13 @@ $strScript = array("admin_staff.php" =>
 		'bot' => 'a riportare : ',
         'top' => 'da riporto :  ',
         'item_head' => array("id\nN.","Cognome\nNome"),
-        'header' => array("id\nN.","Dati del\nCollaboratore")
+        'header' => array("id\nN.","Dati del\nCollaboratore","Tipo\nore"),
+		'hours_normal'=>"ore normali",
+		'hours_extra'=>"ore straordinarie",
+		'absence_type'=>"causale assenza",
+		'hours_absence'=>"ore assenza",
+		'other_type'=>"altra causale",
+		'hours_other'=>"altra quantità",
 		)
 );
 ?>

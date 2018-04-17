@@ -40,9 +40,9 @@ if (isset($_SESSION['table_prefix'])) {
 
 // tabelle comuni alle aziende della stessa gestione
 $tn = array('admin', 'admin_config', 'admin_module', 'anagra', 'aziend', 'classroom', 'config',
-    'country', 'currencies', 'currency_history', 'destina', 'languages',
-    'menu_module', 'menu_script', 'menu_usage', 'module', 'municipalities',
-    'provinces', 'regions', 'students');
+    'country', 'currencies', 'currency_history', 'destina', 'languages', 'menu_module', 
+	'menu_script', 'menu_usage', 'module', 'municipalities', 'provinces', 'regions',
+	'staff_absence_type', 'staff_work_type', 'students');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $v;
 }
@@ -75,12 +75,11 @@ if (@file_exists('./lib.data.php')) {
 //tabelle aziendali
 $tn = array('aliiva', 'agenti', 'artico', 'assets', 'banapp', 'body_text', 'campi', 'cash_register',
     'catmer', 'caucon', 'caucon_rows', 'caumag', 'clfoco', 'company_config', 'company_data',
-	'comunicazioni_dati_fatture', 'contract', 'effett', 'extcon', 'files', 'imball', 
-	'letter', 'liquidazioni_iva', 'lotmag', 'movmag', 'pagame', 'paymov', 'portos', 
-	'provvigioni', 'rigbro', 'rigdoc', 'rigmoc', 'rigmoi', 'spediz', 'staff', 'staff_skills',
-	'staff_absence_type', 'staff_work_type', 'staff_worked_hours', 'tesbro',
-	'tesdoc', 'tesmov', 'vettor', 'fae_flux', 'assist', 'ragstat', 'agenti_forn',
-	'movimenti', 'sconti_articoli', 'sconti_raggruppamenti', 'instal', 'orderman');
+	'comunicazioni_dati_fatture', 'contract', 'effett', 'extcon', 'files', 'imball', 'letter', 
+	'liquidazioni_iva', 'lotmag', 'movmag', 'pagame', 'paymov', 'portos', 'provvigioni', 'rigbro', 
+	'rigdoc', 'rigmoc', 'rigmoi', 'spediz', 'staff', 'staff_skills', 'staff_worked_hours', 'tesbro',
+	'tesdoc', 'tesmov', 'vettor', 'fae_flux', 'assist',	'ragstat', 'agenti_forn',	'movimenti', 
+	'sconti_articoli', 'sconti_raggruppamenti', 'instal', 'orderman');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $id . $v;
 }

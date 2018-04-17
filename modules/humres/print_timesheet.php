@@ -57,15 +57,15 @@ require("../../config/templates/report_template.php");
 require("lang.".$admin_aziend['lang'].".php");
 $script_transl=$strScript['employee_timesheet.php'];
 
-$where=" work_day BETWEEN '".$first_day."' AND '".$last_day."'";
+$where=" start_date <= '".$first_day."'";
 $what="*";
-$tables=$gTables['staff_worked_hours'].' AS wh LEFT JOIN '.$gTables['staff'] . ' AS st ON wh.id_staff=st.id_staff ' . 'LEFT JOIN ' . $gTables['clfoco'] . ' AS wo ON st.id_clfoco=wo.codice ' . 'LEFT JOIN ' . $gTables['anagra'] . ' AS an ON wo.id_anagra=an.id ';
-$result = gaz_dbi_dyn_query ($what, $tables,$where,'wh.id_staff ASC, wh.work_day ASC');
+$tables=$gTables['staff'] . ' AS st LEFT JOIN ' . $gTables['clfoco'] . ' AS wo ON st.id_clfoco=wo.codice ';
+$result = gaz_dbi_dyn_query ($what, $tables,$where,'joined_date DESC');
 
 $title = array('luogo_data'=>$luogo_data,
                'title'=>$script_transl['title'].' del mese di '.strftime("%B %Y", strtotime($first_day)),
-               'hile'=>array(array('lun' => 5,'nam'=>$script_transl['header'][0]),
-                             array('lun' => 45,'nam'=>$script_transl['header'][1])
+               'hile'=>array(array('lun' => 40,'nam'=>$script_transl['header'][1]),
+                             array('lun' => 20,'nam'=>$script_transl['header'][2],'col'=>array(255,255,255))
                             )
               );
 // accodo a $title l'array dei giorni segnando le domeniche in rosso
@@ -76,9 +76,9 @@ for ($i=0; $i<=30; $i++){
 			$col=array(255,150,150);
 		}
 		if ($aDates[$i]['daydate']==6){
-			$col=array(255,180,120);
+			$col=array(255,230,200);
 		}
-		$title['hile'][]=array('lun'=>7,'nam'=>substr($aDates[$i]['strdate'],-2)."\n". substr(strftime("%A", strtotime($aDates[$i]['strdate'])),0,3), 'col'=>$col);
+		$title['hile'][]=array('lun'=>7,'nam'=>substr($aDates[$i]['strdate'],-2)."\n". substr(strftime("%A", strtotime($aDates[$i]['strdate'])),0,2), 'col'=>$col);
 	} else {
 		$title['hile'][]=array('lun'=>7,'nam'=>" \n ");
 	}
@@ -95,12 +95,146 @@ $ctrl_id=0;
 while ($mv = gaz_dbi_fetch_array($result)) {
 	//print_r($mv);
     if ($ctrlWorker!=$mv['id_staff']) {
-		if (!empty($ctrlWorker)) { // sono al primo ciclo
-    
+		$y=$pdf->getY();
+		$init_y=$y;
+		$anagrafica = new Anagrafica();
+		$worker = $anagrafica->getPartner($mv['codice']);
+		if (!empty($ctrlWorker)) { // non sono al primo lavoratore
+		
 		}
-		$pdf->Cell(5,5,$mv['id_staff'],1,0,'R');
-		$pdf->Cell(45,5,$mv['descri'],1,1,'R');
+        $pdf->SetFillColor(hexdec(substr($pdf->colore, 0, 2)), hexdec(substr($pdf->colore, 2, 2)), hexdec(substr($pdf->colore, 4, 2)));
+		$pdf->Cell(40,5,$mv['id_staff'].') '.$mv['descri'],'RTL',2,'L',1, '', 1);
+		$pdf->Cell(40,5,$mv['job_title'],'RL',2, '', 0,'',1);
+		$pdf->Cell(40,5,$worker['indspe'],'RL',2,'R');
+ 		$pdf->Cell(40,5,$worker['citspe'].' ('.$worker['prospe'].')','RL',2,'R');
+ 		$pdf->Cell(40,5,$worker['codfis'],'RL',2);
+ 		$pdf->Cell(40,5,'Tel.'.$worker['telefo'],'RBL',0,'R');
+		$x=$pdf->getX();
+		// ritorno al primo rigo del lavoratore
+		$pdf->setXY($x,$y);
+		$pdf->SetFillColor(220,220,220);
+		$pdf->Cell(20,5,$script_transl['hours_normal'], 'T', 2, 'C', 0, '', 1);
+		$pdf->Cell(20,5,$script_transl['hours_extra'],'RL',2, 'C', 1, '', 1);
+		$pdf->Cell(20,5,$script_transl['absence_type'],'RL',2, 'C', 0, '', 1);
+		$pdf->Cell(20,5,$script_transl['hours_absence'],'RL',2, 'C', 1, '', 1);
+		$pdf->Cell(20,5,$script_transl['other_type'],'RL',2, 'C', 0, '', 1);
+		$pdf->Cell(20,5,$script_transl['hours_other'],'RBL',0, 'C', 1, '', 1);
+		$x=$pdf->getX();
+		// attraverso il mese
+		// inizializzo la legenda
+		$leg_absence=array();
+		$leg_other=array();
+		$leg_note=array();
+		for ($i=0; $i<=30; $i++){
+			// ritorno al primo rigo del lavoratore
+			$pdf->setXY($x,$y);
+			if (isset($aDates[$i])) {
+				$pdf->SetFillColor(255,255,255);
+				$k=$i+1;
+				// richiamo dal database i dati del giorno
+				$work_h = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff", $mv['id_staff']."' AND work_day = '".$aDates[$i]['strdate']);
+				
+				if ($work_h['hours_normal']>=0.01){
+					$hn=number_format($work_h['hours_normal'],1,',','');
+				} else {
+					$hn='-';	
+				}
+				if ($work_h['hours_extra']>=0.01){
+					$he=number_format($work_h['hours_normal'],1,',','');
+				} else {
+					$he='';	
+				}
+				if ($work_h['id_absence_type']>=1){
+					$r_at = gaz_dbi_get_row($gTables['staff_absence_type'], "id_absence", $work_h['id_absence_type']);
+					$at=$r_at['causal'];
+					$leg_absence[$at]=$r_at['descri_ext'];
+				} else {
+					$at='';	
+				}
+				if ($work_h['hours_absence']>=0.01){
+					$ha=number_format($work_h['hours_absence'],1,',','');
+				} else {
+					$ha='';	
+				}
+				if ($work_h['id_other_type']>=1){
+					$r_ot = gaz_dbi_get_row($gTables['staff_work_type'], "id_work", $work_h['id_other_type']);
+					$ot=$script_transl['work_type'][$r_ot['id_work_type']][0];
+					$leg_other[$ot]= $script_transl['work_type'][$r_ot['id_work_type']][1].'=>'.$r_ot['descri'];
+				} else {
+					$ot='';	
+				}
+				if ($work_h['hours_other']>=0.01){
+					$ho=number_format($work_h['hours_other'],1,',','');
+				} else {
+					$ho='';	
+				}
+				if (!empty(trim($work_h['note']))){
+					$note=$work_h['note'];
+					$dn=gaz_format_date($i);
+					$leg_note[$dn]= $note;
+				}
+				if ($aDates[$i]['daydate']==0){
+					$pdf->SetFillColor(255,150,150);
+					$pdf->Cell(7,5,$hn,'RTL',2,'C',1);
+				} else if ($aDates[$i]['daydate']==6){
+					$pdf->SetFillColor(255,230,200);
+					$pdf->Cell(7,5,$hn,'RTL',2,'C',1);
+				} else {
+					$pdf->Cell(7,5,$hn,'RTL',2,'C');
+				}
+				$pdf->SetFillColor(220,220,220);
+				$pdf->Cell(7,5,$he,'RL',2,'L',1);
+				$pdf->Cell(7,5,$at,'RL',2,'C');
+				$pdf->Cell(7,5,$ha,'RL',2,'L',1);
+				$pdf->Cell(7,5,$ot,'RL',2,'C');
+				$pdf->Cell(7,5,$ho,'RBL',0,'L',1);
+				$x=$pdf->getX();
+			}
+		}
+		$pdf->setY($init_y+25);
+		$pdf->Ln();
+		// stampa legende
+		if (count($leg_absence)>=1){
+			// creo il testo della legenda delle assenze
+			$txt='';
+			foreach($leg_absence as $k=>$v){
+				$txt .= $k.' ) '.$v."\n";
+			}
+			$pdf->setX(5);
+			$pdf->Cell(45,3,'Legenda tipi assenze:',0,0,'R');
+			$pdf->setX(10);
+			$pdf->setCellPaddings(40);
+			$pdf->MultiCell(277,7,$txt, 1, 'L', 0, 1, '', '', true);
+			$pdf->setCellPaddings(1);
+		}
+		if (count($leg_other)>=1){
+			// creo il testo della legenda delle ore diverse
+			$txt='';
+			foreach($leg_other as $k=>$v){
+				$txt .= $k.' ) '.$v."\n";
+			}
+			$pdf->setX(5);
+			$pdf->Cell(45,3,'Legenda altri tipi:',0,0,'R');
+			$pdf->setX(10);
+			$pdf->setCellPaddings(40);
+			$pdf->MultiCell(277,7,$txt, 1, 'L', 0, 1, '', '', true);
+			$pdf->setCellPaddings(1);
+		}
+		if (count($leg_note)>=1){
+			// creo il testo della legenda delle note sui giorni
+			$txt='';
+			foreach($leg_note as $k=>$v){
+				$txt .= 'in data '.$k.': '.$v."\n";
+			}
+			$pdf->setX(5);
+			$pdf->Cell(45,3,'Note:',0,0,'R');
+			$pdf->setX(10);
+			$pdf->setCellPaddings(40);
+			$pdf->MultiCell(277,7,$txt, 1, 'L', 0, 1, '', '', true);
+			$pdf->setCellPaddings(1);
+		}
     }
+	$pdf->Ln(2);
     $ctrlWorker = $mv['id_staff'];
 }
 $pdf->SetFont('helvetica','',7);
