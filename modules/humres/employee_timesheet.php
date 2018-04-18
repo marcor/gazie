@@ -45,7 +45,7 @@ function getStartToEndDate($week, $year) {
 function getWorkers($date) {
 	global $gTables;
     $orderby = "id_staff ASC";
-    $where = "end_date IS NULL OR end_date >= " . $date;
+    $where = "end_date <= '2000-01-01' OR end_date >= '" . $date."'";
     $field = 'staff.id_staff, CONCAT(ana.ragso1,\' \',ana.ragso2) AS worker_descri ';
     $from = $gTables['staff'] . ' AS staff ' .
             'LEFT JOIN ' . $gTables['clfoco'] . ' AS worker ON staff.id_clfoco=worker.codice ' .
@@ -151,7 +151,7 @@ $gForm = new humresForm();
 				<div class="col-lg-12 text-center"><button type="button" class="btn btn-xs btn-default" id="prev"><i class="glyphicon glyphicon-chevron-left"></i><?php echo ucfirst($script_transl['prev']); ?></button> <b><?php echo intval($form["week"]).'^'; ?> SETTIMANA <?php echo ' -> dal '.gaz_format_date($week_days['mon']).' al '.gaz_format_date($week_days['sun']); ?> </b> <button type="button"  class="btn btn-xs btn-default" id="next"><i class="glyphicon glyphicon-chevron-right"></i><?php echo ucfirst($script_transl['next']); ?></button></div>
 			</div>
 	<?php
-	$workers=getWorkers($week_days['sun']);
+	$workers=getWorkers($week_days['mon']);
     foreach ($workers as $k => $v) {
 		$form['rows'] = getStaffTimesheet($k,$week_days);
 	?>

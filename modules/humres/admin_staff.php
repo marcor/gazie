@@ -36,7 +36,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = intval($_POST['datnas_Y']);
     $form['datnas_M'] = intval($_POST['datnas_M']);
     $form['datnas_D'] = intval($_POST['datnas_D']);
-
+	if (substr($form['end_date'],-4)<=1999) {
+		$form['end_date'] = '';
+	}
     $toDo = 'update';
     if (isset($_POST['Insert'])) {
         $toDo = 'insert';
@@ -160,7 +162,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_M'] = substr($form['datnas'], 5, 2);
     $form['datnas_D'] = substr($form['datnas'], 8, 2);
     $form['start_date'] = gaz_format_date($staff['start_date'], false, false);
-    $form['end_date'] = gaz_format_date($staff['end_date'], false, false);
+	if (substr($staff['end_date'],0,4)>1999) {
+		$form['end_date'] = gaz_format_date($staff['end_date'], false, false);
+	} else {
+		$form['end_date'] = '';
+	}
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $anagrafica = new Anagrafica();
     $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mas_staff'] . "000000 AND " . $admin_aziend['mas_staff'] . "999999", "codice DESC", 0, 1);
@@ -177,7 +183,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_M'] = 1;
     $form['datnas_D'] = 1;
     $form['start_date'] = date("d/m/Y");
-    $form['end_date'] = date("d/m/Y");
+    $form['end_date'] = '';
     $form['counas'] = $admin_aziend['country'];
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $form['hidden_req'] = '';
