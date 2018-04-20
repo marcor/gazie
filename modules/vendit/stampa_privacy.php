@@ -37,7 +37,7 @@ if (substr($codice,0,3) != $admin_aziend['mascli'] or substr($codice,3,9) == 0) 
         header("Location: ".$ritorno);
 }
 require("../../library/include/document.php");
-$testata= array('id_tes'=> 0,'seziva'=>0,'tipdoc'=>'NOP','protoc'=>0,'numdoc'=>0,
+$testata= array('id_tes'=> 0,'seziva'=>0,'tipdoc'=>'','protoc'=>0,'numdoc'=>0,
           'numfat'=>0,'datfat'=>0,'clfoco'=>$codice,
           'datemi'=>0,'pagame'=>0,'banapp'=>0,'vettor'=>0,
           'listin'=>0,'spediz'=>'','portos'=>'','imball'=>'INFORMATIVA SUL TRATTAMENTO DEI DATI PERSONALI',
