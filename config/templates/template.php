@@ -96,7 +96,7 @@ class Template extends FPDI {
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
             $this->Ln($interlinea);
             $this->SetFont('helvetica', '', 11);
-            $this->Cell(110, 5, $this->tipdoc, 1, 1, 'L', 1);
+            $this->Cell(110, 5, $this->tipdoc, 1, 1, 'L', 1, '', 1);
             if ($this->tesdoc['tipdoc'] == 'NOP' || $this->withoutPageGroup) {
                 $this->Cell(30, 5);
             } else {
