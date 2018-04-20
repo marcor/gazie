@@ -65,7 +65,7 @@ if (!strstr($_SERVER["REQUEST_URI"], "login_admin") == "login_admin.php") {
                             <script src="../../js/jquery/jquery.js"></script>
                             <!--<script src="../../js/custom/gz-library.js"></script>-->
                             <!--<script src="../../library/bootstrap/js/bootstrap.min.js"></script>-->
-                            <script language="javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>
+                            <!--<script language="javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.22/jquery-ui.min.js"></script>-->
                             <script src="../../js/jquery.ui/datepicker-<?php echo substr($admin_aziend['lang'],0,2); ?>.js"></script>
                             <script src="../../js/custom/jquery.ui.autocomplete.html.js"></script>
                             

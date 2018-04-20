@@ -25,6 +25,7 @@
  */
 ?>
 <!-- questo è contenuto in library/theme/g6/footer.php -->
+<script src="../../js/jquery.ui/jquery-ui.min.js"></script>
 </div><!-- chiude div container role main --></body>
 </html>
 
