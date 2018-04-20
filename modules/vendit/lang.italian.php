@@ -24,6 +24,8 @@
   --------------------------------------------------------------------------
  */
 
+//*+- Nuove stringhe per modulo select_analisi_avanzamento_per_fornitore.php - DC - 19 apr 2018
+
 $strScript = array("admin_client.php" =>
     array('title' => 'Gestione dei clienti',
         'ins_this' => 'Inserisci un cliente',
@@ -1372,6 +1374,26 @@ $strScript = array("admin_client.php" =>
         ),
         'header' => array('Cod. fornitore' => '', 'Fornitore' => '', 'Fatturato' => '', 'Costi' => '',
             'Margine %' => ''
+        ),
+    ),
+    "select_analisi_avanzamento_per_fornitore.php" =>
+    array('title' => 'Analisi avanzamento venduto/acquistato x fornitore',
+        "Data Vendite inizio",
+        "Data Vendite fine",
+        "Data Acquisti inizio",
+        "Data Acquisti fine",
+        'preview' => 'Anteprima',
+        'print' => 'Stampa',
+        'totale' => 'TOTALE',
+        'partner' => 'Cliente ',
+        'errors' => array('Inserire il cliente'
+        ),
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia cliente',
+        ),
+        'header' => array('Cod. fornitore' => '', 'Fornitore' => '', 'Acquistato' => '', 'Venduto' => '',
+            'Avanzamento %' => ''
         ),
     ),
     "asset_sales.php" =>

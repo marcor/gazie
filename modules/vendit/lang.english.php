@@ -24,6 +24,8 @@
   --------------------------------------------------------------------------
  */
 
+ //*+- Nuove stringhe per modulo select_analisi_avanzamento_per_fornitore.php - DC - 19 apr 2018 (TRADOTTE)
+
 $strScript = array("admin_client.php" =>
     array('title' => 'Customers management',
         'ins_this' => 'Insert new customer',
@@ -1001,6 +1003,26 @@ $strScript = array("admin_client.php" =>
         'datfat' => 'Data fattura',
         'amount' => 'Importo riscosso',
         'tot' => 'TOTALE DELLA RISCOSSIONE',
+    ),
+    "select_analisi_avanzamento_per_fornitore.php" =>
+    array('title' => 'Progress sold / purchased x supplier analysis',
+        "Sales start date",
+        "Sales end date",
+        "Purchase start date",
+        "Purchase end date",
+        'preview' => 'Preview',
+        'print' => 'Print',
+        'totale' => 'TOTAL',
+        'partner' => 'Customer ',
+        'errors' => array('Select the customer'
+        ),
+        'mesg' => array('The search yielded no results!',
+            'Insert at least 2 characters!',
+            'Changing customer',
+        ),
+        'header' => array('Supplier code' => '', 'Supplier' => '', 'Purchased' => '', 'Sold' => '',
+            'Progress %' => ''
+        ),
     ),
     "report_fae_sdi.php" =>
     array('title' => 'TRAFFICO DATI FATTURAZIONE ELETTRONICA',
