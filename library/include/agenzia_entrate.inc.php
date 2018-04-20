@@ -889,7 +889,7 @@ function creaFileIVP17($aziend, $data) {
             $el->appendChild($el1);
         }
         if ($v['vp9'] >= 0.01) {
-            $el1 = $domDoc->createElement("iv:CreditoAnnoPrecedente:", number_format($v['vp9'], 2, ',', ''));
+            $el1 = $domDoc->createElement("iv:CreditoAnnoPrecedente", number_format($v['vp9'], 2, ',', ''));
             $el->appendChild($el1);
         }
         if ($v['vp10'] >= 0.01) {
