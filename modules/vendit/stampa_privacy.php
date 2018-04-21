@@ -37,11 +37,16 @@ if (substr($codice,0,3) != $admin_aziend['mascli'] or substr($codice,3,9) == 0) 
         header("Location: ".$ritorno);
 }
 require("../../library/include/document.php");
+$anagrafica = new Anagrafica();
+$cliente = $anagrafica->getPartner($codice);
 $testata= array('id_tes'=> 0,'seziva'=>0,'tipdoc'=>'','protoc'=>0,'numdoc'=>0,
           'numfat'=>0,'datfat'=>0,'clfoco'=>$codice,
           'datemi'=>0,'pagame'=>0,'banapp'=>0,'vettor'=>0,
-          'listin'=>0,'spediz'=>'','portos'=>'','imball'=>'INFORMATIVA SUL TRATTAMENTO DEI DATI PERSONALI',
+          'listin'=>0,'spediz'=>'','portos'=>'','imball'=>'',
           'traspo'=>0,'speban'=>0,'spevar'=>0,'ivaspe'=>0,'sconto'=>0,'id_agente'=>0,'initra'=>0,
           'geneff'=>0,'id_contract'=>0,'id_con'=>0,'status'=>'','template'=>'InformativaPrivacy');
+if (!empty(trim($cliente['sedleg']))){ // sposto l'eventuale sede legale al posto della destinazione merce in testata
+	$testata['destin']=array('Sede legale',$cliente['sedleg']);	
+}
 createDocument($testata, 'InformativaPrivacy',$gTables);
 ?>

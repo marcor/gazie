@@ -29,6 +29,7 @@ class InformativaPrivacy extends Template
     function setTesDoc()
     {
         $this->tesdoc = $this->docVars->tesdoc;
+        $this->tesdoc = $this->docVars->tesdoc;
         $this->intesta1 = $this->docVars->intesta1;
         $this->intesta1bis = $this->docVars->intesta1bis;
         $this->intesta2 = $this->docVars->intesta2;
@@ -54,7 +55,7 @@ class InformativaPrivacy extends Template
         $this->giorno = substr($this->tesdoc['datemi'],8,2);
         $this->mese = substr($this->tesdoc['datemi'],5,2);
         $this->anno = substr($this->tesdoc['datemi'],0,4);
-        $this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datemi'],5,2),1,0)));
+		$this->clientSedeLegale =''; // la sede legale verrà stampata al posto della destinazione
     }
 
     function newPage() {
