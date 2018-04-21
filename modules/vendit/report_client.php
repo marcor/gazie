@@ -31,6 +31,11 @@ $titolo = 'Clienti';
 $mascli = $admin_aziend['mascli'] . "000000";
 $clienti = $admin_aziend['mascli'];
 require("../../library/include/header.php");
+if (isset($_GET['privacy'])) {
+	echo '<script>    window.onload = function(){
+         window.open("stampa_privacy.php?codice='.intval($_GET['privacy']).'", "_blank"); // will open new tab on window.onload
+		} </script>';
+}
 $script_transl = HeadMain();
 $where = "codice BETWEEN " . $clienti . "000000 AND " . $clienti . "999999 and codice > $mascli";
 $all = $where;

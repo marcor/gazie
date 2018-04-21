@@ -182,7 +182,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             } elseif ($toDo == 'update') {
                 $anagrafica->updatePartners($form['codice'], $form);
             }
-            header("Location: " . $form['ritorno']);
+            header("Location: report_client.php?codice=".intval(substr($real_code,-6))."&privacy=" . $form['codice']);
             exit;
         }
     } elseif (isset($_POST['Return'])) { // torno indietro
