@@ -248,7 +248,7 @@ In Fede: __________________________
 In Fede: __________________________";
 
         $this->SetFont('courier','',7);
-        $this->WriteHTMLCell(184,4,10,67,$testo, 0, 0, 0, true, 'J');
+        $this->WriteHTMLCell(184,4,10,65,$testo, 0, 0, 0, true, 'J');
     }
     function pageFooter()
     {

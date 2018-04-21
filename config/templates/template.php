@@ -83,14 +83,14 @@ class Template extends FPDI {
             $this->SetFont('times', 'B', 14);
             $this->Cell(130, 6, $this->intesta1, 0, 1, 'L');
             $this->SetFont('helvetica', '', 8);
-            $interlinea = 14;
+            $interlinea = 10;
             if (!empty($this->intesta1bis)) {
-                $this->Cell(130, 4, $this->intesta1bis, 0, 2, 'L');
-                $interlinea = 10;
+                $this->Cell(130, 3, $this->intesta1bis, 0, 2, 'L');
+                $interlinea = 7;
             }
-            $this->Cell(130, 4, $this->intesta2, 0, 2, 'L');
-            $this->Cell(130, 4, $this->intesta3, 0, 2, 'L');
-            $this->Cell(130, 4, $this->intesta4, 0, 0, 'L');
+            $this->Cell(130, 3, $this->intesta2, 0, 2, 'L');
+            $this->Cell(130, 3, $this->intesta3, 0, 2, 'L');
+            $this->Cell(130, 3, $this->intesta4, 0, 0, 'L');
             $this->Image('@' . $this->logo, 140, 5, 40, 0, '', $this->link);
             $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
