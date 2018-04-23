@@ -94,7 +94,12 @@ class Standard_template extends TCPDF {
             $this->SetFont('helvetica', '', 30);
             $this->MultiCell(100, 16, $this->cover, 1, 'C', 1);
         } else {
-            $this->Image('@' . $this->logo, 15, 8, 30, 0, '', $this->link);
+			$im = imagecreatefromstring ( $this->logo );
+			$ix = imagesx($im);
+			$iy = imagesy($im);
+			$x=34; $y=0;
+			if ($x<$y){	$x=0; $y=27; }
+            $this->Image('@' . $this->logo, 10, 10, $x, $y, '', $this->link);
             $this->Cell(40, 4);
             $this->SetFont('times', 'B', 10);
             $this->Cell(123, 5, $this->intesta1, 0, 0, 'L', 0, '', 1);
