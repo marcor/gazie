@@ -26,14 +26,28 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
 if(!isset($_GET["annfin"])) {
-            $annfin = date("Y");
+    $annfin = date("Y");
 } else {
-            $annfin = $_GET["annfin"];
+    $annfin = intval($_GET["annfin"]);
 }
 if(!isset($_GET["annini"])) {
-            $annini = date("Y")-5;
+	// controllo l'ultima apertura conti disponibile
+    $rs_ultima_apertura = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
+    $ultima_apertura = gaz_dbi_fetch_array($rs_ultima_apertura);
+    if ($ultima_apertura){
+		$annini = substr($ultima_apertura['datreg'],0,4);
+	} else {
+		// non avendo aperture trovo la prima registrazione
+		$rs_prima_registrazione = gaz_dbi_dyn_query("*", $gTables['tesmov'], 1 , "datreg ASC", 0, 1);
+		$prima_registrazione = gaz_dbi_fetch_array($rs_prima_registrazione);
+		if ($prima_registrazione) {
+			$annini = substr($prima_registrazione['datreg'],0,4);
+		} else {
+			$annini = date("Y");
+		}
+	}
 } else {
-            $annini = $_GET["annini"];
+    $annini = intval($_GET["annini"]);
 }
 
 $message = "";
@@ -57,20 +71,7 @@ list($usec, $sec) = explode(' ',microtime());
 $querytime_after = ((float)$usec + (float)$sec);
 $querytime = $querytime_after - $querytime_before;
 require("../../library/include/header.php");
-$script_transl=HeadMain(0,array(/** ENRICO FEDELE */
-								  /*'jquery/jquery-1.7.1.min',
-                                  'jquery/ui/jquery.ui.core',
-                                  'jquery/ui/jquery.ui.widget',
-                                  'jquery/ui/jquery.ui.mouse',
-                                  'jquery/ui/jquery.ui.button',
-                                  'jquery/ui/jquery.ui.dialog',
-                                  'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.draggable',
-                                  'jquery/ui/jquery.ui.resizable',
-                                  'jquery/ui/jquery.effects.core',
-                                  'jquery/ui/jquery.effects.scale',*/
-								  /** ENRICO FEDELE */
-                                  'custom/modal_form'));
+$script_transl=HeadMain(0,array('custom/modal_form'));
 
 ?><script>
 

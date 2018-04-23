@@ -30,8 +30,21 @@ if(!isset($_GET["annfin"])) {
     $annfin = intval($_GET["annfin"]);
 }
 if(!isset($_GET["annini"])) {
-    $annini = date("Y")-5;
-     $_GET["annini"] = '';
+	// controllo l'ultima apertura conti disponibile
+    $rs_ultima_apertura = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
+    $ultima_apertura = gaz_dbi_fetch_array($rs_ultima_apertura);
+    if ($ultima_apertura){
+		$annini = substr($ultima_apertura['datreg'],0,4);
+	} else {
+		// non avendo aperture trovo la prima registrazione
+		$rs_prima_registrazione = gaz_dbi_dyn_query("*", $gTables['tesmov'], 1 , "datreg ASC", 0, 1);
+		$prima_registrazione = gaz_dbi_fetch_array($rs_prima_registrazione);
+		if ($prima_registrazione) {
+			$annini = substr($prima_registrazione['datreg'],0,4);
+		} else {
+			$annini = date("Y");
+		}
+	}
 } else {
     $annini = intval($_GET["annini"]);
 }
