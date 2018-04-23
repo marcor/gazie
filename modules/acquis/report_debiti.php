@@ -143,7 +143,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          echo "<td align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";
          echo "<td align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
          echo "<td align=\"center\" title=\"".$script_transl['pay_title'].$r['ragso1']."\">
-		 		<a class=\"btn btn-xs btn-default\" href=\"salcon_debiti.php?codice=".$r["codcon"]."\">
+		 		<a class=\"btn btn-xs btn-default\" href=\"supplier_payment.php?partner=".$r["codcon"]."\">
 					<i class=\"glyphicon glyphicon-piggy-bank\"></i>
 				</a>
 			</td>";

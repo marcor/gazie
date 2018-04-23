@@ -196,7 +196,7 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['dare'])." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
-         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" title=\"Effettuato un pagamento da ".$r["ragso1"]."\"  href=\"salcon_credit.php?codice=".$r['codcon']."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
+         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" title=\"Effettuato un pagamento da ".$r["ragso1"]."\"  href=\"customer_payment.php?partner=".$r['codcon']."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
          echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&annfin=".$annfin."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
     // Colonna "Mail"
     echo "<td class=\"FacetDataTD\" align=\"center\">";
