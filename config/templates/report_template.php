@@ -87,10 +87,9 @@ class Report_template extends TCPDF {
         } else {
             $this->SetFont('helvetica', '', 9);
 			$im = imagecreatefromstring ( $this->logo );
-			$ix = imagesx($im);
-			$iy = imagesy($im);
+			$ratio = round(imagesx($im)/imagesy($im),2);
 			$x=42; $y=0;
-			if ($x<$y){	$x=0; $y=27; }
+			if ($ratio<1.55){ $x=0; $y=27; }
             $this->Image('@' . $this->logo, 15, 5, $x, $y, '', $this->link);
             $this->Cell(50, 4);
             $this->Cell(118, 4, $this->intesta1, 0, 0, 'L',0,'',1);

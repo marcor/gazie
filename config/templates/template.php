@@ -91,7 +91,11 @@ class Template extends FPDI {
             $this->Cell(130, 3, $this->intesta2, 0, 2, 'L');
             $this->Cell(130, 3, $this->intesta3, 0, 2, 'L');
             $this->Cell(130, 3, $this->intesta4, 0, 0, 'L');
-            $this->Image('@' . $this->logo, 140, 5, 40, 0, '', $this->link);
+			$im = imagecreatefromstring ( $this->logo );
+			$ratio = round(imagesx($im)/imagesy($im),2);
+			$x=60; $y=0;
+			if ($ratio<1.71){ $x=0; $y=35; }
+            $this->Image('@' . $this->logo, 130, 5, $x, $y, '', $this->link);
             $this->Line(0, 93, 3, 93); //questa marca la linea d'aiuto per la piegatura del documento
             $this->Line(0, 143, 3, 143); //questa marca la linea d'aiuto per la foratura del documento
             $this->Ln($interlinea);

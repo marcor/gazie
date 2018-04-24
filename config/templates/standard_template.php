@@ -95,10 +95,9 @@ class Standard_template extends TCPDF {
             $this->MultiCell(100, 16, $this->cover, 1, 'C', 1);
         } else {
 			$im = imagecreatefromstring ( $this->logo );
-			$ix = imagesx($im);
-			$iy = imagesy($im);
+			$ratio = round(imagesx($im)/imagesy($im),2);
 			$x=34; $y=0;
-			if ($x<$y){	$x=0; $y=27; }
+			if ($ratio<1.26){ $x=0; $y=27; }
             $this->Image('@' . $this->logo, 10, 10, $x, $y, '', $this->link);
             $this->Cell(40, 4);
             $this->SetFont('times', 'B', 10);
