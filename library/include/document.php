@@ -338,6 +338,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'OrdineFornitore' => 'ordine_fornitore',
         'PreventivoFornitore' => 'preventivo_fornitore',
         'InformativaPrivacy' => 'informativa_privacy',
+		'NominaResponsabile'=>'nomina_responsabile',
         'DDT' => 'ddt',
         'Etichette' => 'etichette'
     );
