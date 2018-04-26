@@ -50,8 +50,11 @@ if ( isset($_GET['chstato'] ) ) {
     gaz_dbi_table_update("assist", array ("id", $_GET['chstato']), array("stato" => $stato));
     header ();
 } else {
-    $_GET['stato']="nochiusi";
+    if ( !isset($_GET['stato']) ) $_GET['stato']="nochiusi";
 }
+
+if ( !isset( $_GET["clfoco"] )) $_GET["clfoco"] = "All";
+if ( !isset( $_GET["oggetto"] )) $_GET["oggetto"] = "";
 
 $where = "tipo = 'ASS' and ".$gTables['anagra'].".ragso1 like '%%'";
 $all	= $where;

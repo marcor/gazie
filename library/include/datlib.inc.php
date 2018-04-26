@@ -27,7 +27,7 @@
 require("../../config/config/gconfig.php");
 require('../../library/include/' . $NomeDB . '.lib.php');
 require("../../library/include/function.inc.php");
-require ("../../library/kint/build/kint.php");
+if ( $debug_active ) require ("../../library/kint/build/kint.php");
 
 if (isset($_SESSION['table_prefix'])) {
     $table_prefix = substr($_SESSION['table_prefix'], 0, 12);

@@ -75,6 +75,7 @@ function getTextBetweenTags($tag, $html, $strict = 0) {
 
 function gaz_flt_var_assign($flt, $typ, $tab="") {
     global $where;
+    $op = "";
     if (isset($_GET[$flt]) && $_GET[$flt] != 'All' && $_GET[$flt] != "") {
         if ( $tab!="" ) $tab .=".";
         if ($typ == "i") {
@@ -107,7 +108,7 @@ function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval
         if ( $flt=="stato") {
             echo '<option value="nochiusi"';
             echo ($fltget == "nochiusi") ? "selected" : "";
-            echo '>Non chiusi</option>';
+            echo '>non chiusi</option>';
         }
         $res = gaz_dbi_dyn_query("distinct " . $fltdistinct, $tbl, $where, $orderby);
         while ($val = gaz_dbi_fetch_array($res)) {

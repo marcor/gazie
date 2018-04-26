@@ -107,16 +107,21 @@ gaz_flt_var_assign('stato', "v");
 if ( isset($_GET["flt_passo"]) ) $passo = $_GET['flt_passo'];
 
 // se è stato premuto il tasto mostra tutti
-if ( !isset($_GET["all"]) && isset($_GET["data"]) ) {
-    if ( $_GET["data"]=1) {
-        $where = "data>'".date("Y-m-d", strtotime("-1 month"))."' and data<'".date("Y-m-d", strtotime("+1 month"))."'";
+if ( !isset($_GET["all"]) && isset($_GET["data"]) && $_GET["data"]!=0 ) {
+    if ( $_GET["data"]==1) {
+        $where .= "and data>'".date("Y-m-d", strtotime("-1 month"))."' and data<'".date("Y-m-d", strtotime("+1 month"))."'";
     }
-    if ( $_GET["data"]=2) {
-        $where = "data>'".date("Y-m-d", time())."' and data<'".date("Y-m-d", strtotime("+2 month"))."'";
+    if ( $_GET["data"]==2) {
+        $where .= " and data>'".date("Y-m-d", time())."' and data<'".date("Y-m-d", strtotime("+2 month"))."'";
+    }
+    if ( $_GET["data"]==0) {
+        $where .= " and data='%%'";
     }
    //$where .= " and stato != 'chiuso'";
    //$where .= "and data>'".date("Y-m-d", strtotime("-1 month"))."' and data<'".date("Y-m-d", strtotime("+2 month"))."'";
 }
+
+if ( !isset( $_GET['data']) ) $_GET['data']=2;
 
 if ( isset( $_GET['idinstallazione']) ) {
    $title = "Assistenze Periodiche";
