@@ -56,7 +56,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td>".$a_row["user_firstname"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["Abilit"]." &nbsp;</td>";
     // colonna stampa nomina trattamento dati personali 
-    echo "<td title=\"stampa nomina responsabile trattamento dati personali\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_nomina.php?user_id=" . $a_row["user_id"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a></td>";
+    echo "<td title=\"".$ri_descr."\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_nomina.php?user_id=" . $a_row["user_id"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a></td>";
     echo "<td align=\"center\">".$a_row["Access"]." &nbsp;</td>";
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_utente.php?user_name=".$a_row["user_name"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
