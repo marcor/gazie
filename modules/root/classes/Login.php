@@ -286,6 +286,7 @@ class Login
 						$_SESSION['user_email'] = $result_row->user_email;
 						$_SESSION['company_id'] = $result_row->company_id;
 						$_SESSION['user_logged_in'] = 1;
+						//$_SESSION['aes_key'] = '';
 
 						// declare user id, set the login status to true
 						$this->user_id = $result_row->user_id;
@@ -400,6 +401,7 @@ class Login
 				$_SESSION['user_email'] = $result_row->user_email;
 				$_SESSION['company_id'] = $result_row->company_id;
 				$_SESSION['user_logged_in'] = 1;
+				//$_SESSION['aes_key'] = '';
 
 				// declare user id, set the login status to true
 				$this->user_id = $result_row->user_id;

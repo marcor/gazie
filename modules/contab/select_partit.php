@@ -144,7 +144,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['master_ini'] = intval($_POST['master_ini']);
     $form['account_ini'] = intval($_POST['account_ini']);
     $form['master_fin'] = intval($_POST['master_fin']);
-    $form['account_fin'] = intval($_POST['account_fin']);
+    $form['account_fin'] = isset($_POST['account_fin']) ? intval($_POST['account_fin']) : 0;
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
