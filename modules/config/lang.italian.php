@@ -460,6 +460,15 @@ $strScript = array(
         'body_text' => 'Testo contenuto nelle email che invierai'
     ),
     "config_aziend.php" =>
-    array('title' => 'Configurazione avanzata azienda')
+    array('title' => 'Configurazione avanzata azienda'),
+	"edit_privacy_regol.php" =>
+    array('title' => 'Regolamento per l’utilizzo e la gestione delle risorse informatiche',
+        'ins_this' => 'Inserisci il Regolamento per l’utilizzo e la gestione delle risorse informatiche',
+        'upd_this' => 'Modifica il Regolamento per l’utilizzo e la gestione delle risorse informatiche',
+        'err' => array(
+            'body_text' => 'Testo del regolamento troppo breve'
+        ),
+        'body_text' => "Testo "
+ 	)
 );
 ?>

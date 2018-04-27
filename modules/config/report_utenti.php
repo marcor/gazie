@@ -46,9 +46,11 @@ $linkHeaders -> output();
 $result = gaz_dbi_dyn_query ('*', $gTables['admin'], $where, $orderby, $limit, $passo);
 while ($a_row = gaz_dbi_fetch_array($result)) {
 	// RESPONSABILE O INCARICATO: DIPENDE DAL LIVELLO DI ABILITAZIONE
-	$ri_descr='stampa NOMINA INCARICATO trattamento dati personali';
+	$ri_descr='stampa nomina INCARICATO trattamento dati personali';
+	$regol_lnk='';
 	if ($a_row["Abilit"]>8){
-		$ri_descr='stampa NOMINA RESPONSABILE trattamento dati personali';
+		$ri_descr='stampa nomina RESPONSABILE trattamento dati personali';
+		$regol_lnk=' _ <a title="stampa e/o edita il REGOLAMENTO per l’utilizzo e la gestione delle risorse informatiche" class="btn btn-xs btn-default" href="edit_privacy_regol.php?user_id=' . $a_row["user_id"] . '" target="_blank"><i class="glyphicon glyphicon-list"></i></a> ';
 	}
     echo "<tr class=\"FacetDataTD\">";
     echo "<td title=\"".$script_transl['update']."\"><a class=\"btn btn-xs btn-default\" href=\"admin_utente.php?user_name=".$a_row["user_name"]."&Update\">".$a_row["user_name"]." </a> &nbsp</td>";
@@ -56,7 +58,10 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     echo "<td>".$a_row["user_firstname"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["Abilit"]." &nbsp;</td>";
     // colonna stampa nomina trattamento dati personali 
-    echo "<td title=\"".$ri_descr."\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_nomina.php?user_id=" . $a_row["user_id"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a></td>";
+    echo "<td align=\"center\"><a title=\"".$ri_descr."\" class=\"btn btn-xs btn-default\" href=\"stampa_nomina.php?user_id=" . $a_row["user_id"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a>".
+	$regol_lnk."
+	</td>";
+	// fine colonna privacy
     echo "<td align=\"center\">".$a_row["Access"]." &nbsp;</td>";
     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_utente.php?user_name=".$a_row["user_name"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
     echo "</tr>";
