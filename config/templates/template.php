@@ -62,6 +62,7 @@ class Template extends FPDI {
         $this->agente = $docVars->name_agente;
         $this->destinazione = $docVars->destinazione;
         $this->clientSedeLegale = '';
+		$this->pers_title = $docVars->pers_title;
         if (!empty($docVars->clientSedeLegale)) {
             foreach ($docVars->clientSedeLegale as $value) {
                 $this->clientSedeLegale .= $value . ' ';
@@ -130,7 +131,7 @@ class Template extends FPDI {
             }
 			$this->SetXY(110, $interlinea + 3);
             $this->SetFont('helvetica', '', 10);
-            $this->Cell(15, 5, 'Spett.le ', 0, 0, 'R');
+            $this->Cell(15, 5, $this->pers_title.' ', 0, 0, 'R');
             $this->Cell(75, 5, $this->cliente1, 0, 1, 'L', 0, '', 1);
             if (!empty($this->cliente2)) {
                 $this->Cell(115);

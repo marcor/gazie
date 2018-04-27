@@ -37,12 +37,7 @@ class NominaIncaricatoInterno extends Template
         $this->intesta4 = $this->docVars->intesta4;
         $this->colore = $this->docVars->colore;
         $this->tipdoc = 'NOMINA A INCARICATO DEL TRATTAMENTO DEI DATI PERSONALI';
-        $this->cliente1 = 'signor :';
-        $this->cliente2 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
-        $this->cliente3 = $this->docVars->cliente3;
-        $this->cliente4 = $this->docVars->cliente4;
-        $this->cliente5 = $this->docVars->cliente5;
-        $this->cliente6 = $this->docVars->client['sexper'];
+        $this->cliente1 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
 		$this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.date('d M Y');
 		$this->pec = $this->docVars->azienda['pec'];
         if ($this->docVars->intesta5 == 'F'){
@@ -56,6 +51,8 @@ class NominaIncaricatoInterno extends Template
         $this->mese = substr($this->tesdoc['datemi'],5,2);
         $this->anno = substr($this->tesdoc['datemi'],0,4);
 		$this->clientSedeLegale =''; // la sede legale verrà stampata al posto della destinazione
+		$this->pers_title=$this->docVars->intesta5 ;
+		$this->pers_title='Informativa alla nomina per il Sig.';
     }
 
     function newPage() {
@@ -170,25 +167,21 @@ Rifiutare la nomina equivale a:</p>
 	</li>
 </ul>
 ";
-
+		$this->setTopMargin(53);
         $this->SetFont('courier','',9);
 		$this->y=$this->GetY();
-        $this->WriteHTMLCell(184,4,10,$this->y-20,$premessa, 0, 1, 0, true, 'J');
-        $this->SetFont('courier','B',12);
+        $this->WriteHTMLCell(184,4,10,$this->y-25,$premessa, 0, 1, 0, true, 'J');
+        $this->SetFont('courier','B',10);
         $this->Cell(184,4,'NOMINA', 0, 1, 'C');
 		$this->y=$this->GetY();
-        $this->SetFont('courier','',10);
+        $this->SetFont('courier','',9);
         $this->WriteHTMLCell(184,4,10,$this->y+3,$nomina, 0, 1, 0, true, 'J');
-        $this->Ln(5);
-        $this->SetFont('courier','',10);
-        $this->Cell(184,4,$this->luogo, 0, 1);
-        $this->Ln(5);
-        $this->SetFont('courier','B',10);
-        $this->Cell(92);
+        $this->Ln(2);
+        $this->SetFont('courier','',9);
+        $this->Cell(92,4,$this->luogo);
+        $this->SetFont('courier','B',9);
         $this->Cell(92,4,'firma del Titolare o del Responsabile del Trattamento', 0, 1, 'R');
-        $this->Ln(8);
-        $this->Cell(92);
-        $this->Cell(92,4,'','B',1);
+
     }
     function pageFooter()
     {

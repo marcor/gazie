@@ -45,7 +45,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         } elseif ($toDo == 'update') {
 			gaz_dbi_put_row($gTables['body_text'], 'table_name_ref', 'privacy_regol', 'body_text', $form['body_text']);
         }
-        header("Location: report_utenti.php");
+        header("Location: print_privacy_regol.php");
         exit;
     }
 } elseif ($exist_true) { //se e' il primo accesso per UPDATE

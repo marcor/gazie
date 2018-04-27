@@ -37,12 +37,7 @@ class NominaResponsabile extends Template
         $this->intesta4 = $this->docVars->intesta4;
         $this->colore = $this->docVars->colore;
         $this->tipdoc = 'NOMINA A RESPONSABILE DEL TRATTAMENTO DEI DATI PERSONALI';
-        $this->cliente1 = 'signor :';
-        $this->cliente2 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
-        $this->cliente3 = $this->docVars->cliente3;
-        $this->cliente4 = $this->docVars->cliente4;
-        $this->cliente5 = $this->docVars->cliente5;
-        $this->cliente6 = $this->docVars->client['sexper'];
+        $this->cliente1 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
 		$this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.date('d M Y');
 		$this->pec = $this->docVars->azienda['pec'];
         if ($this->docVars->intesta5 == 'F'){
@@ -56,6 +51,7 @@ class NominaResponsabile extends Template
         $this->mese = substr($this->tesdoc['datemi'],5,2);
         $this->anno = substr($this->tesdoc['datemi'],0,4);
 		$this->clientSedeLegale =''; // la sede legale verrà stampata al posto della destinazione
+		$this->pers_title='per il Sig.';
     }
 
     function newPage() {
@@ -95,11 +91,11 @@ class NominaResponsabile extends Template
 		<li>Il Responsabile effettua il trattamento attenendosi alle istruzioni impartite dal Titolare il quale, anche tramite verifiche periodiche, vigila sulla puntuale osservanza delle disposizioni di cui al comma 2 e delle proprie istruzioni.</li>
 	</ol>
 </ul>
-<p><b>ritenuto che il/la signor/a {$this->cliente2}</b>, per l’ambito di attribuzioni, funzioni e competenze conferite, abbia i requisiti di esperienza, capacità ed affidabilità idonei a garantire il pieno rispetto delle vigenti disposizioni in materia di trattamento dei dati, ivi compreso il profilo relativo alla sicurezza;<br>
+<p><b>ritenuto che il/la signor/a {$this->cliente1}</b>, per l’ambito di attribuzioni, funzioni e competenze conferite, abbia i requisiti di esperienza, capacità ed affidabilità idonei a garantire il pieno rispetto delle vigenti disposizioni in materia di trattamento dei dati, ivi compreso il profilo relativo alla sicurezza;<br>
 <b>ciò premesso;</b>
 </p>";
     $nomina = "
-<p><b>Il/la signor/a {$this->cliente2}</b>, in qualità di Responsabile del trattamento dei dati effettuato presso {$ucDescAzienda} <b>{$this->intesta1} {$this->intesta1bis}</b> con strumenti elettronici o comunque automatizzati o con strumenti diversi, per l’ambito di attribuzioni, competenze e funzioni assegnate.<br>
+<p><b>Il/la signor/a {$this->cliente1}</b>, in qualità di Responsabile del trattamento dei dati effettuato presso {$ucDescAzienda} <b>{$this->intesta1} {$this->intesta1bis}</b> con strumenti elettronici o comunque automatizzati o con strumenti diversi, per l’ambito di attribuzioni, competenze e funzioni assegnate.<br>
 In qualità di Responsabile del trattamento dei dati, ha il compito e la responsabilità di adempiere a tutto quanto necessario per il rispetto delle disposizioni vigenti in materia e di osservare scrupolosamente quanto in essa previsto, nonché le seguenti istruzioni impartite dal Titolare.<br>
 <b>Il Responsabile del Trattamento si impegna, entro e non oltre 30 gg. dalla data di sottoscrizione ed accettazione della presente nomina, ad impartire per iscritto ai propri collaboratori incaricati del trattamento, istruzioni in merito alle operazioni di trattamento dei dati personali ed a vigilare sulla loro puntuale applicazione.</b></p>
 ";
@@ -513,7 +509,7 @@ $note8 = "<p><sup>(11)</sup><b>Art.30 - Incaricati del trattamento</b></p>
         $this->SetFont('courier','B',10);
         $this->Cell(62,4,'IL TITOLARE', 0, 0, 'C');
         $this->Cell(30);
-        $this->Cell(92,4,'Per accettazione IL RESPONSABILE DEL TRATTAMENTO', 0, 1, 'R');
+        $this->Cell(92,4,'per accettazione IL RESPONSABILE DEL TRATTAMENTO', 0, 1, 'R');
         $this->Ln(8);
         $this->Cell(62,4,'','B');
         $this->Cell(30);
@@ -521,7 +517,7 @@ $note8 = "<p><sup>(11)</sup><b>Art.30 - Incaricati del trattamento</b></p>
         $this->SetFont('courier','',7);
         $this->Cell(62,4,$this->intesta1.' '.$this->intesta1bis);
         $this->Cell(30);
-        $this->Cell(92,4,$this->cliente2);
+        $this->Cell(92,4,$this->cliente1);
     }
     function pageFooter()
     {

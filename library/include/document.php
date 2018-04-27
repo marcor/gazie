@@ -177,6 +177,7 @@ class DocContabVars {
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
         $this->withoutPageGroup = false;
+		$this->pers_title = 'Spett.le';
     }
 
     function initializeTotals() {
@@ -340,6 +341,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'InformativaPrivacy' => 'informativa_privacy',
 		'NominaResponsabile'=>'nomina_responsabile',
 		'NominaIncaricatoInterno'=>'nomina_incaricato_interno',
+		'RegolamentoPrivacy'=>'privacy_regol',
         'DDT' => 'ddt',
         'Etichette' => 'etichette'
     );
