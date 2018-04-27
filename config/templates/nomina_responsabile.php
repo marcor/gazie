@@ -99,29 +99,29 @@ class NominaResponsabile extends Template
 In qualità di Responsabile del trattamento dei dati, ha il compito e la responsabilità di adempiere a tutto quanto necessario per il rispetto delle disposizioni vigenti in materia e di osservare scrupolosamente quanto in essa previsto, nonché le seguenti istruzioni impartite dal Titolare.<br>
 <b>Il Responsabile del Trattamento si impegna, entro e non oltre 30 gg. dalla data di sottoscrizione ed accettazione della presente nomina, ad impartire per iscritto ai propri collaboratori incaricati del trattamento, istruzioni in merito alle operazioni di trattamento dei dati personali ed a vigilare sulla loro puntuale applicazione.</b></p>
 ";
-	$compiti1 = "<p>Ogni trattamento di dati personali deve avvenire, nel rispetto primario dei seguenti principi di ordine generale:
+	$compiti1 = "<p>Ogni trattamento di dati personali deve avvenire nel rispetto primario dei seguenti principi di ordine generale:
 Ai sensi dell’art. 11<sup>(1)</sup> del Codice, che prescrive le “Modalità del trattamento e requisiti dei dati”, per ciascun trattamento di propria competenza, il RESPONSABILE deve fare in modo che siano sempre rispettati i seguenti presupposti:</p>
 <ul>
-<li>i dati devono essere <b>trattati</b>:
-<ul>
-	<li> secondo il principio di <b>liceità</b>, vale a dire conformemente alle disposizioni del Codice, nonché alle disposizioni del Codice Civile, per cui, più in particolare, il trattamento non deve essere contrario a norme imperative, all’ordine pubblico ed al buon costume;
+	<li>i dati devono essere <b>trattati</b>:
+		<ul>
+		<li> secondo il principio di <b>liceità </b>, vale a dire conformemente alle disposizioni del Codice, nonché alle disposizioni del Codice Civile, per cui, più in particolare, il trattamento non deve essere contrario a norme imperative, all’ordine pubblico ed al buon costume;
+		</li>
+		<li> secondo il principio fondamentale di <b>correttezza</b>, il quale deve ispirare chiunque tratti qualcosa che appartiene alla sfera altrui;
+		</li>
+		</ul>
 	</li>
-	<li> secondo il principio fondamentale di <b>correttezza</b>, il quale deve ispirare chiunque tratti qualcosa che appartiene alla sfera altrui;
+	<li> i dati devono essere <b>raccolti</b> solo per <u>scopi</u>:
+		<ul>
+		<li> <b>determinati</b>, vale a dire che non è consentita la raccolta come attività fine a se stessa;
+		</li>
+		<li> <b>espliciti</b>, nel senso che il soggetto interessato va informato sulle finalità del trattamento;
+		</li>
+		<li> <b>legittimi</b>, cioè, oltre al trattamento, come è evidente, anche il fine della raccolta dei dati deve essere lecito;
+		</li>
+		<li> <b>compatibili</b> con il presupposto per il quale sono inizialmente trattati, specialmente nelle operazioni di comunicazione e diffusione degli stessi;
+		</li>
+		</ul>
 	</li>
-</ul>
-</li>
-<li> i dati devono essere <b>raccolti</b> solo per <u>scopi</u>:
-<ul>
-	<li> <b>determinati</b>, vale a dire che non è consentita la raccolta come attività fine a se stessa;
-	</li>
-	<li> <b>espliciti</b>, nel senso che il soggetto interessato va informato sulle finalità del trattamento;
-	</li>
-	<li> <b>legittimi</b>, cioè, oltre al trattamento, come è evidente, anche il fine della raccolta dei dati deve essere lecito;
-	</li>
-	<li> <b>compatibili</b> con il presupposto per il quale sono inizialmente trattati, specialmente nelle operazioni di comunicazione e diffusione degli stessi;
-	</li>
-</ul>
-</li>
 </ul>";
 $note1 = "<p><sup>(1)</sup><b>Art.11 - Modalità del trattamento e requisiti dei dati</b></p>
 <ol>
@@ -451,7 +451,7 @@ $note8 = "<p><sup>(11)</sup><b>Art.30 - Incaricati del trattamento</b></p>
         $this->MultiCell(104,4,"PRINCIPI GENERALI DA OSSERVARE", 'B', 'L', 0, 1);
 		$this->y=$this->GetY();
         $this->SetFont('courier','',10);
-        $this->WriteHTMLCell(184,4,10,$this->y,$compiti1, 'B', 1, 0, true, 'J');
+        $this->WriteHTMLCell(184,4,10,95,$compiti1, 'B', 1, 0, true, 'J');
 		$this->y=$this->GetY();
         $this->SetFont('courier','',7);
         $this->WriteHTMLCell(184,4,10,$this->y+2,$note1, 0, 1, 0, true, 'J');
