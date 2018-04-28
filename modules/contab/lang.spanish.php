@@ -156,6 +156,8 @@ $strScript = array("select_liqiva.php" =>
         'descri' => "Descripcion",
         'ceedar' => "Reclassificacion de hoja de balance EEC / DEBITOS",
         'ceeave' => "Reclassificacion de hoja de balance EEC / CREDITOS",
+		'paymov' => "Apre scadenzario",
+		'paymov_value' => array(''=>'No','D'=>'Apre in DARE','A'=>'Apre in AVERE'),
         'annota' => "Note"
     ),
     "admin_movcon.php" =>

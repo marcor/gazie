@@ -49,6 +49,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['descri'] = substr($_POST['descri'],0,50);
     $form['ceedar'] = substr($_POST['ceedar'],0,8);
     $form['ceeave'] = substr($_POST['ceeave'],0,8);
+    $form['paymov'] = substr($_POST['paymov'],0,1);
     $form['annota'] = filter_var($_POST['annota'],FILTER_SANITIZE_STRING);
     if (isset($_POST['Submit'])) { // conferma tutto
        //eseguo i controlli formali
@@ -90,6 +91,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['descri'] = '';
     $form['ceedar'] = '';
     $form['ceeave'] = '';
+    $form['paymov'] = '';
     $form['annota'] = '';
 }
 
@@ -150,6 +152,10 @@ foreach ($data as $rigo) {
         echo "<option value=\"".$rigo[0]."\"".$selected."> ".substr($rigo[0],0,2)." ".$spqr." ".substr($rigo[0],4,4)." ".$rigo[1];
         echo "</option>\n";
 }
+echo "</td></tr>";
+echo "<tr><td class=\"FacetFieldCaptionTD\">".$script_transl['paymov']."</td>\n";
+echo "\t<td class=\"FacetDataTD\" colspan=\"2\">\n";
+$gForm->variousSelect('paymov', $script_transl['paymov_value'], $form['paymov'], "col-sm-8", false, '', false);
 echo "</td></tr>";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['annota']." </td>\n";

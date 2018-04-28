@@ -152,6 +152,8 @@ $strScript = array("select_liqiva.php" =>
         'descri' => "Descrizione",
         'ceedar' => "Riclassificazione Bilancio CEE / DARE",
         'ceeave' => "Riclassificazione Bilancio CEE / AVERE",
+		'paymov' => "Apre scadenzario",
+		'paymov_value' => array(''=>'No','D'=>'Apre in DARE (portafoglio attivo)','A'=>'Apre in AVERE (portafoglio passivo)'),
         'annota' => "Note"
     ),
     "admin_movcon.php" =>
