@@ -23,7 +23,7 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-$admin_aziend=checkAdmin(9);
+$admin_aziend=checkAdmin();
 require("../../library/include/document.php");
 $rs_text = gaz_dbi_get_row($gTables['body_text'], 'table_name_ref', 'privacy_regol');
 $content = html_entity_decode($rs_text['body_text']);

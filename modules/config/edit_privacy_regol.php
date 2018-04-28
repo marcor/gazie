@@ -24,7 +24,7 @@
  */
 
 require("../../library/include/datlib.inc.php");
-$admin_aziend = checkAdmin(7);
+$admin_aziend = checkAdmin(9);
 $msg = array('err' => array(), 'war' => array());
 $rs_text = gaz_dbi_dyn_query('*', $gTables['body_text'], "table_name_ref = 'privacy_regol'");
 $exist_true = gaz_dbi_fetch_array($rs_text);

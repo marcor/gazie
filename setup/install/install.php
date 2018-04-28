@@ -256,12 +256,12 @@ function executeQueryFileUpgrade($table_prefix,$exe_script) // funzione dedicata
             }
             $sql .= $line;
             // Il punto e virgola indica la fine di ciascuna istruzione SQL , ciascuna di esse viene accumulata
-            if (!preg_match("/;/", $sql)) {
+			if (!preg_match("/;\s*\n/", $sql)) {
                 continue;// incremento dell'accumulatore
             }
             // Sostituisce il prefisso standard ed elimina il punto e virgola
             $sql = preg_replace("/gaz_/", $table_prefix.'_', $sql);
-            $sql = preg_replace("/;/", "", $sql);
+            $sql = preg_replace("/;\s*\n/", "\n", $sql);
             if ($activateWhile){
                // Esegue l'istruzione sulle tabelle di tutte le aziende installate.
                $sql_ori=$sql;;
