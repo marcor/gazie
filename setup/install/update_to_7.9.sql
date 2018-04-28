@@ -271,3 +271,4 @@ INSERT INTO `gaz_staff_work_type` (`id_work`, `id_work_type`, `hour_year_limit`,
 (113, 1, 0, 0, '0.0', '8.00', '0.03', 'Straordinario con riposo compensativo'),
 (114, 1, 0, 0, '0.0', '8.00', '0.14', 'Straordinario notturno con riposo compensativo'),
 (115, 1, 0, 0, '0.0', '8.00', '0.22', 'Straordinario notturno festivo con riposo compensativo');
+ALTER TABLE `gaz_admin` ADD `aes_key` TINYTEXT NOT NULL AFTER `user_password_hash`;
