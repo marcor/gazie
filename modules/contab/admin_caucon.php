@@ -181,6 +181,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 }
 require("../../library/include/header.php");
 $script_transl=HeadMain();
+?>
+<script type="text/javascript">
+    $(function () {
+		$('.dropdownmenustyle').selectmenu();        
+	});
+</script>
+<?php
+
 echo "<form method=\"POST\" name=\"select\">\n";
 echo "<input type=\"hidden\" value=\"".$form['hidden_req']."\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
@@ -270,7 +278,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="clfoco_mastro" class="col-sm-6 control-label"><?php echo $script_transl['clfoco_mastro']; ?></label>
                         <?php
-						$gForm->selMasterAcc('rows['.$k.'][clfoco_mastro]', $form['rows'][$k]['clfoco_mastro'], 'rows['.$k.'][clfoco_mastro]');
+						$gForm->selMasterAcc('rows['.$k.'][clfoco_mastro]', $form['rows'][$k]['clfoco_mastro'], 'rows['.$k.'][clfoco_mastro]','col-sm-6 dropdownmenustyle');
 						$gForm->lockSubtoMaster($form['rows'][$k]["clfoco_mastro"], 'clfoco_sub' . $k);
                         ?>
                     </div>
@@ -282,7 +290,7 @@ if (count($msg['err']) > 0) { // ho un errore
 						$gForm->selSubAccount('clfoco_sub' . $k, $form['clfoco_sub' . $k], 
 						$form['search']['clfoco_sub' . $k], 
 						$form['hidden_req'], 
-						$script_transl['mesg']);
+						$script_transl['mesg'],'col-sm-6 dropdownmenustyle');
                         ?>
                     </div>
                 </div>

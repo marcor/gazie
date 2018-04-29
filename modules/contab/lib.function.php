@@ -92,7 +92,7 @@ class contabForm extends GAzieForm {
                 echo ' <button class="btn btn-warning btn-xs" title="Scadenzario" onclick="dialogSchedule(this);return false;" id="paymov' . $val . $name . '"><i class="glyphicon glyphicon-time"></i></button> ';
             } else {
                 if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
-                    echo "\t<select name=\"$name\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
+                    echo "\t<select name=\"$name\" class=\"".$class."\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
                     echo "<option value=\"0\"> ---------- </option>";
                     $partner = $anagrafica->queryPartners("*", $where . " AND ragso1 LIKE '" . addslashes($strSearch) . "%'", "codice ASC");
                     if (count($partner) > 0) {
@@ -123,7 +123,7 @@ class contabForm extends GAzieForm {
             }
         } else {   // altri sottoconti
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"\">\n";
-            echo "\t<select name=\"$name\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
+            echo "\t<select name=\"$name\" class=\"".$class."\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";
             echo "<option value=\"0\"> ---------- </option>";
             $result = gaz_dbi_dyn_query("*", $gTables['clfoco'], $where, "codice ASC");
             while ($r = gaz_dbi_fetch_array($result)) {
