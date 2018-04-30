@@ -260,6 +260,33 @@ $strScript = array(
         'stat_code' => 'Codice statistico',
 		'web_url'=>'Sito web',
 		'email'=>'E-Mail'
+    ),
+    "report_ruburl.php" =>
+    array('title'       => 'Gestione archivio dei siti internet',
+        'subtitle'      => 'Accesso rapido ai siti aziendali',
+        'ins_this'      => "Inserimento nuovo indirizzo",
+        'upd_this'      => "Modifica l'indirizzo",
+        'id'            => "id",
+        'description'   => "Descrizione",
+        'address'       => "Indirizzo",
+        'open'          => "Visita",
+        'opentab'       => "Apri in un'altra finestra",
+        'search'        => "Cerca",
+        'delete'        => "Elimina",
+        'category'      => "Categoria"
+    ),
+    "admin_ruburl.php"  =>
+    array('title'       => 'Aggiungi sito internet',
+        'subtitle'      => 'Inserisci la descrizione e l\'indirizzo completo del tipo protocollo',
+        'description'   => 'Descrizione',
+        'address'       => 'Indirizzo',
+        'category'      => 'Categoria',
+        'other'         => 'Altro',
+        'inscat'        => 'Inserisci una categoria',
+        'insdes'        => 'Inserisci una descrizione',
+        'insadd'        => 'Inserisci l\'indirizzo in formato URL',
+        'back'          => 'Torna alla rubrica',
+        'add'           => 'Aggiungi'
     )
 );
 ?>

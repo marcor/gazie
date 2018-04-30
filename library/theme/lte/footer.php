@@ -33,12 +33,12 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
 </div>
 </section>
     <footer class="main-footer">
-    <?php
+        <?php
          // mostra le variabili $global e $server nella pagina
          echo "<div>";
          if ( $debug_active == true ) d($GLOBALS, $_SERVER);
          echo "</div>";
-    ?>
+        ?>
         <div class="pull-right hidden-xs">
           <b>Version</b> <?php echo GAZIE_VERSION; ?>
         </div>
