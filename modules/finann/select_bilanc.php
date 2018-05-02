@@ -155,7 +155,7 @@ if (!isset($_GET['gioini'])) { //al primo accesso allo script
     $_GET['mesfin'] = "12";
     $_GET['annfin'] = $anno-1;
     $_GET['stadef'] = 0;
-    $_GET['pagini'] = $admin_aziend['upginv']+1;
+    $_GET['pagini'] = (!empty($admin_aziend['upginv'])) ? $admin_aziend['upginv']+1 : 1;
     $_GET['dettcf'] = 1;
 } else {
 	if (isset($_GET['stadef'])) {
