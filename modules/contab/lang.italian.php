@@ -391,6 +391,8 @@ $strScript = array("select_liqiva.php" =>
         'vp11' => 'Crediti d’imposta',
         'vp12' => 'Interessi dovuti per liquidazioni trimestrali',
         'vp13' => 'Acconto dovuto',
+        'vp13m' => 'Metodo',
+        'vp13m_val' => array(0 => '', 1 => 'Storico', 2 => 'Previsionale', 3 => 'Analitico',4 => 'Settore Utenze'),
         'vp14' => 'IVA da versare',
         'vp14c' => 'o a credito',
     ),

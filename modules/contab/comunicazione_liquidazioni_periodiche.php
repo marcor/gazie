@@ -82,7 +82,7 @@ function getMovimentiPeriodo($trimestre_liquidabile) {
         }
         $acc[$date['mese_trimestre']] = array(
             'periodicita' => $admin_aziend['ivam_t'], 'anno' => $y, 'nome_periodo' => $np,
-            'vp2' => 0, 'vp3' => 0, 'vp4' => 0, 'vp5' => 0, 'vp7' => 0, 'vp8' => $vp8, 'vp9' => $vp9, 'vp10' => 0, 'vp11' => 0, 'vp12' => 0, 'vp13' => 0
+            'vp2' => 0, 'vp3' => 0, 'vp4' => 0, 'vp5' => 0, 'vp7' => 0, 'vp8' => $vp8, 'vp9' => $vp9, 'vp10' => 0, 'vp11' => 0, 'vp12' => 0, 'vp13' => 0,'vp13m' => 0
         );
         //recupero tutti i movimenti iva dei periodi
         $sqlquery = "SELECT seziva,regiva,codiva,aliquo," . $gTables['aliiva'] . ".tipiva," . $gTables['aliiva'] . ".descri,
@@ -218,7 +218,12 @@ if (!isset($_POST['ritorno'])) {
             $form['mods'][$k]['vp10'] = floatval($v['vp10']);
             $form['mods'][$k]['vp11'] = floatval($v['vp11']);
             $form['mods'][$k]['vp12'] = floatval($v['vp12']);
-            $form['mods'][$k]['vp13'] = floatval($v['vp13']);
+            if (isset($v['vp13'])) {
+				$form['mods'][$k]['vp13'] = floatval($v['vp13']);
+            } else {
+                $form['mods'][$k]['vp13'] = 0;
+            }
+            $form['mods'][$k]['vp13m'] = intval($v['vp13m']);
         }
         if ($toDo == 'update') { // e' una modifica
             foreach ($form['mods'] as $ki => $vi) {
@@ -457,12 +462,26 @@ $gForm = new contabForm();
                             </div> <!-- chiude row  -->
                             <div class="row">
                                 <div class="form-group">
-                                    <label for="vp13" class="col-sm-1 col-md-1 col-lg-1 control-label">VP13</label>
+                                    <label for="vp13m" class="col-sm-1 col-md-1 col-lg-1 control-label">VP13</label>
                                     <div class="col-sm-6 col-md-6 col-lg-6">
-                                    </div>
+                                        <?php 
+										$tl = substr($form['trimestre_liquidabile'],-1);
+										if ($k == 12 || ($tl == 4 && $form['mods'][$k]['periodicita'] == 'T')  ) { 
+											// nel quarto trimestre o ultimo mese scelgo il metodo di acconto 
+											$vp13disab='';
+											echo $script_transl['vp13m']; 
+											$gForm->variousSelect('mods['.$k.'][vp13m]', $script_transl['vp13m_val'], $form['mods'][$k]['vp13m'], "col-lg-12", true, '', false, 'col-lg-12');
+										} else { 
+											$vp13disab='disabled';
+											?>
+											<input type="hidden" name="mods[<?php echo $k; ?>][vp13m]" value="<?php echo $v['vp13m']; ?>">
+											<?php											
+										}
+										?>
+                                   </div>
                                     <div class="col-sm-5 col-md-5 col-lg-5">
                                         <?php echo $script_transl['vp13']; ?>
-                                        <input type="number" step="0.01" min="0.00" class="form-control" id="vp13" name="mods[<?php echo $k; ?>][vp13]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp13']; ?>">
+                                        <input <?php echo $vp13disab; ?> type="number" step="0.01" min="0.00" class="form-control" id="vp13" name="mods[<?php echo $k; ?>][vp13]" placeholder="<?php echo ''; ?>" value="<?php echo $v['vp13']; ?>">
                                     </div>
                                 </div>
                             </div> <!-- chiude row  -->

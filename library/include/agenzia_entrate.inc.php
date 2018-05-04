@@ -913,6 +913,10 @@ function creaFileIVP($aziend, $data) {
             $el->appendChild($el1);
         }
         if ($v['vp13'] >= 0.01) {
+			if ($y >= 18) {
+				$el1 = $domDoc->createElement("iv:Metodo", intval($v['vp13m']));
+            }
+			$el->appendChild($el1);
             $el1 = $domDoc->createElement("iv:Acconto", number_format($v['vp13'], 2, ',', ''));
             $el->appendChild($el1);
         }
