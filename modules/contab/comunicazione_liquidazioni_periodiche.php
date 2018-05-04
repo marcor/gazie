@@ -231,7 +231,7 @@ if (!isset($_POST['ritorno'])) {
                 gaz_dbi_table_update('liquidazioni_iva', $id, $vi);
             }
             require("../../library/include/agenzia_entrate.inc.php");
-            creaFileIVP17($admin_aziend, $form);
+            creaFileIVP($admin_aziend, $form);
             $msg['war'][] = "download";
         } else { // e' un'inserimento
             foreach ($form['mods'] as $ki => $vi) {
@@ -242,7 +242,7 @@ if (!isset($_POST['ritorno'])) {
                 gaz_dbi_table_insert('liquidazioni_iva', $vi);
             }
             require("../../library/include/agenzia_entrate.inc.php");
-            creaFileIVP17($admin_aziend, $form);
+            creaFileIVP($admin_aziend, $form);
             $msg['war'][] = "download";
         }
     } elseif (isset($_POST['Download'])) {

@@ -8,6 +8,10 @@
         <field name="code">SERVIZ</field>
         <field name="name">ACQUISTO SERVIZI</field>
     </record>
+    <record id="opertype_SERVIZ" model="">
+        <field name="code">LOCAZI</field>
+        <field name="name">CANONI DI LOCAZIONE</field>
+    </record>
     <record id="opertype_ROTTAM" model="">
         <field name="code">ROTTAM</field>
         <field name="name">ROTTAMI E MATERIALI RECUPERO</field>

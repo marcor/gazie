@@ -156,6 +156,7 @@ $aRiportare = array('top'=>array(array('lun' => 168,'nam'=>'da riporto : '),
 $pdf = new Report_template('P','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->AddPage();
+$pdf->SetFooterMargin(20);
 $pdf->Cell(186,6,'STATO PATRIMONIALE AL '.date("d-m-Y",$utsfin),'LTR',1,'C');
 $pdf->SetFont('helvetica','B',12);
 $pdf->SetTextColor(0,0,255);

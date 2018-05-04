@@ -827,11 +827,13 @@ class AgenziaEntrate {
 }
 
 // --- INIZIO FUNZIONE PER LA CREAZIONE DELLA COMUNICAZIONE DELLE LIQUIDAZIONI PERIODICHE
-function creaFileIVP17($aziend, $data) {
+function creaFileIVP($aziend, $data) {
     $domDoc = new DOMDocument;
-	$doc->preserveWhiteSpace = false;
-	$doc->formatOutput = true;
-    $domDoc->load("../../library/include/template_IVP17.xml");
+	$domDoc->preserveWhiteSpace = false;
+	$domDoc->formatOutput = true;
+	//ricavo l'anno di imposta (già dal 2018 lo hanno cambiato)
+	$y = substr($data['y'],-2);
+    $domDoc->load("../../library/include/template_IVP".$y.".xml");
     $xpath = new DOMXPath($domDoc);
     $res = $xpath->query('//*[@identificativo = ""]');
     $res->item(0)->setAttribute('identificativo', $data['trimestre_liquidabile']); // non so se si può utilizzare questo metodo per valorizzare l'identificativo
@@ -848,8 +850,14 @@ function creaFileIVP17($aziend, $data) {
     $attrVal = $domDoc->createTextNode($aziend['pariva']);
     $results->appendChild($attrVal);
     $results = $xpath->query("//iv:Fornitura/iv:Comunicazione/iv:DatiContabili")->item(0);
+	$NumeroModulo=1;
     foreach ($data['mods'] as $k => $v) {
         $el = $domDoc->createElement("iv:Modulo", "");
+        // nella comunicazione IVA del 2018 hanno aggiunto questo elemento
+		if ($y >= 18) {
+            $el1 = $domDoc->createElement("iv:NumeroModulo", $NumeroModulo);
+            $el->appendChild($el1);
+        }
         if ($aziend['ivam_t'] == 'M') { // mensile
             $el1 = $domDoc->createElement("iv:Mese", intval($k));
         } else { // trimestrale
@@ -915,8 +923,8 @@ function creaFileIVP17($aziend, $data) {
             $el1 = $domDoc->createElement("iv:ImportoACredito", number_format(-round($ImportoDaVersare, 2), 2, ',', ''));
         }
         $el->appendChild($el1);
-
         $results->appendChild($el);
+		$NumeroModulo++;
     }
     $filename = '../../data/files/' . $aziend['codice'] . '/' . $aziend['country'] . $aziend['codfis'] . "_LI_" . $data['trimestre_liquidabile'] . ".xml";
     // salvo il file sul server
