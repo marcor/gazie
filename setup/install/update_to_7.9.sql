@@ -87,15 +87,16 @@ ALTER TABLE `gaz_admin`
  UPDATE `gaz_admin` SET user_active = 1 WHERE 1;
  ALTER TABLE `gaz_admin` DROP COLUMN Nome, DROP COLUMN Cognome, DROP COLUMN Login;
  INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES
-	('GAzie admin mail', 'admin_mail', 'sysadmin@miodominio.it'),
-	('Password for access', 'admin_mail_pass', 'mail_password'),
-	('SMTP Mail Server', 'admin_smtp_server', 'smtp.miodominio.it'),
-	('Mail Notification Request', 'admin_return_notification', 'yes'),
-	('Mailer (mail,smtp,sendmail,qmail)', 'admin_mailer', 'smtp'),
-	('SMTP Port (25,587,465)', 'admin_smtp_port', '465'),
-	('SMTP Secure (tls,ssl)', 'admin_smtp_secure', 'ssl'),
-	('SMTP Username (empty for no auth)', 'admin_smtp_user', 'sysadmin@miodominio.it'),
-	('SMTP Password', 'admin_smtp_password', 'smtp_password'),
+	('GAzie admin mail', 'admin_mail',(SELECT val FROM `gaz_001company_config` WHERE `var`='order_mail')),
+	('GAzie admin mail inbox server', 'admin_mail_server',(SELECT val FROM `gaz_001company_config` WHERE `var`='order_server')),
+	('Password for access', 'admin_mail_pass', (SELECT val FROM `gaz_001company_config` WHERE `var`='order_pass')),
+	('SMTP Mail Server', 'admin_smtp_server', (SELECT val FROM `gaz_001company_config` WHERE `var`='smtp_server')),
+	('Mail Notification Request', 'admin_return_notification',(SELECT val FROM `gaz_001company_config` WHERE `var`='return_notification')),
+	('Mailer (mail,smtp,sendmail,qmail)', 'admin_mailer',(SELECT val FROM `gaz_001company_config` WHERE `var`='mailer')),
+	('SMTP Port (25,587,465)', 'admin_smtp_port',(SELECT val FROM `gaz_001company_config` WHERE `var`='smtp_port')),
+	('SMTP Secure (tls,ssl)', 'admin_smtp_secure',(SELECT val FROM `gaz_001company_config` WHERE `var`='smtp_secure')),
+	('SMTP Username (empty for no auth)', 'admin_smtp_user',(SELECT val FROM `gaz_001company_config` WHERE `var`='smtp_user')),
+	('SMTP Password', 'admin_smtp_password',(SELECT val FROM `gaz_001company_config` WHERE `var`='smtp_password')),
 	('Cookie secret key for hash', 'cookie_secret_key', '1gp@GaZi{+$78sfpMJFe-18s')	;
 SET @id := 0;
 UPDATE `gaz_admin` SET user_id = (@id := @id+1);
