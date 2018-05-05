@@ -1,0 +1,9 @@
+/*
+ *	Place your custom CSS styles here, they will override all existing styles
+ */
+ .skin-blue .sidebar-menu > li:hover > a,
+.skin-blue .sidebar-menu > li.active > a {
+  color: ;
+  background: ;
+  border-left-color: ;
+}

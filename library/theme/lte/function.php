@@ -219,8 +219,8 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 
     
     $i = 0;
-    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400" );   
-    $icons = array ("fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle");
+    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400", "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500" );   
+    $icons = array ("fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle");
     foreach ($menuArray as $link) {
 /*        if ( $i==0 ) {
             echo "<li class=\"treeview\">";
