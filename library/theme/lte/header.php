@@ -65,7 +65,6 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
         <link rel="shortcut icon" href="../../library/images/favicon.ico">			
 		<link rel="icon" sizes="192x192" href="../../library/images/gaz192.png" />
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-        <!--<link rel="stylesheet" href="../../library/theme/lte/adminlte/bootstrap/css/bootstrap.min.css">-->
         <link href="../../library/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
         <link rel="stylesheet" href="../../library/theme/lte/font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="../../library/theme/lte/ionicons/css/ionicons.min.css">
@@ -145,7 +144,7 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                             else
                                 $fileDocs = $module;*/
                             //echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $fileDocs . ".php\"><i class=\"fa fa-question\"></i></a></li>";
-                            echo "<li><a target=\"_new\" href=\"../../modules/wiki/\"><i class=\"fa fa-question\"></i></a></li>";
+                            echo "<li><a href=\"../../modules/wiki/\"><i class=\"fa fa-question\"></i></a></li>";
                             ?>
                             <!-- Messages: style can be found in dropdown.less-->
                             <li class="dropdown messages-menu">

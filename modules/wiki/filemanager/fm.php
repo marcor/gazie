@@ -694,7 +694,7 @@ if (isset($_GET['upload']) && !FM_READONLY) {
 
     <div class="path">
         <p><b>Uploading files</b></p>
-        <p class="break-word">Destination folder: <?php echo fm_enc(fm_convert_win(FM_ROOT_PATH . '/' . FM_PATH)) ?></p>
+        <p class="break-word">Cartella di destinazione: <?php //echo fm_enc(fm_convert_win(FM_ROOT_PATH . '/' . FM_PATH)) ?>Libreria della WIKI</p>
         <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]).'?p='.fm_enc(FM_PATH) ?>" class="dropzone" id="fileuploader" enctype="multipart/form-data">
             <input type="hidden" name="p" value="<?php echo fm_enc(FM_PATH) ?>">
             <div class="fallback">
@@ -1130,10 +1130,10 @@ $all_files_size = 0;
 <?php } ?>
 <table class="table" id="main-table"><thead><tr>
 <?php if (!FM_READONLY): ?><th style="width:3%"><label><input type="checkbox" title="Invert selection" onclick="checkbox_toggle()"></label></th><?php endif; ?>
-<th>Name</th><th style="width:10%">Size</th>
-<th style="width:12%">Modified</th>
-<?php if (!FM_IS_WIN): ?><th style="width:6%">Perms</th><th style="width:10%">Owner</th><?php endif; ?>
-<th style="width:<?php if (!FM_READONLY): ?>13<?php else: ?>6.5<?php endif; ?>%">Actions</th></tr></thead>
+<th>Nome</th><th style="width:10%">Dimensione</th>
+<th style="width:12%">Ultima modifica</th>
+<?php if (!FM_IS_WIN): ?><th style="width:6%">Perms</th><th style="width:10%">Proprietario</th><?php endif; ?>
+<th style="width:<?php if (!FM_READONLY): ?>13<?php else: ?>6.5<?php endif; ?>%">Azioni</th></tr></thead>
 <?php
 // link to parent folder
 if ($parent !== false) {
@@ -1228,15 +1228,15 @@ folders: <?php echo $num_folders ?>
 ?>
 </table>
 <?php if (!FM_READONLY): ?>
-<p class="path footer-links"><a href="#/select-all" class="group-btn" onclick="select_all();return false;"><i class="fa fa-check-square"></i> Select all</a> &nbsp;
-<a href="#/unselect-all" class="group-btn" onclick="unselect_all();return false;"><i class="fa fa-window-close"></i> Unselect all</a> &nbsp;
-<a href="#/invert-all" class="group-btn" onclick="invert_all();return false;"><i class="fa fa-th-list"></i> Invert selection</a> &nbsp;
+<p class="path footer-links"><a href="#/select-all" class="group-btn" onclick="select_all();return false;"><i class="fa fa-check-square"></i> Seleziona tutti</a> &nbsp;
+<a href="#/unselect-all" class="group-btn" onclick="unselect_all();return false;"><i class="fa fa-window-close"></i> Deseleziona tutti</a> &nbsp;
+<a href="#/invert-all" class="group-btn" onclick="invert_all();return false;"><i class="fa fa-th-list"></i> Inverti la selezione</a> &nbsp;
 <input type="submit" class="hidden" name="delete" id="a-delete" value="Delete" onclick="return confirm('Delete selected files and folders?')">
-<a href="javascript:document.getElementById('a-delete').click();" class="group-btn"><i class="fa fa-trash"></i> Delete </a> &nbsp;
+<a href="javascript:document.getElementById('a-delete').click();" class="group-btn"><i class="fa fa-trash"></i> Cancella </a> &nbsp;
 <input type="submit" class="hidden" name="zip" id="a-zip" value="Zip" onclick="return confirm('Create archive?')">
-<a href="javascript:document.getElementById('a-zip').click();" class="group-btn"><i class="fa fa-file-archive-o"></i> Zip </a> &nbsp;
+<a href="javascript:document.getElementById('a-zip').click();" class="group-btn"><i class="fa fa-file-archive-o"></i> Crea Zip </a> &nbsp;
 <input type="submit" class="hidden" name="copy" id="a-copy" value="Copy">
-<a href="javascript:document.getElementById('a-copy').click();" class="group-btn"><i class="fa fa-files-o"></i> Copy </a>
+<a href="javascript:document.getElementById('a-copy').click();" class="group-btn"><i class="fa fa-files-o"></i> Copia </a>
 <a href="https://github.com/prasathmani/tinyfilemanager" target="_blank" class="float-right" style="color:silver">H3K | Tiny File Manager</a></p>
 <?php endif; ?>
 </form>
@@ -1960,9 +1960,9 @@ function fm_show_nav_path($path)
 
         <div class="float-right">
         <?php if (!FM_READONLY): ?>
-        <a title="Search" href="javascript:showSearch('<?php echo urlencode(FM_PATH) ?>')"><i class="fa fa-search"></i></a>
-        <a title="Upload files" href="?p=<?php echo urlencode(FM_PATH) ?>&amp;upload"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a>
-        <a title="New folder" href="#createNewItem" ><i class="fa fa-plus-square"></i></a>
+        <a title="Cerca" href="javascript:showSearch('<?php echo urlencode(FM_PATH) ?>')"><i class="fa fa-search"></i></a>
+        <a title="Carica files" href="?p=<?php echo urlencode(FM_PATH) ?>&amp;upload"><i class="fa fa-cloud-upload" aria-hidden="true"></i></a>
+        <a title="Nuova cartella" href="#createNewItem" ><i class="fa fa-plus-square"></i></a>
         <?php endif; ?>
         <?php if (FM_USE_AUTH): ?><a title="Logout" href="?logout=1"><i class="fa fa-sign-out" aria-hidden="true"></i></a><?php endif; ?>
         </div>
@@ -2063,12 +2063,12 @@ a img,img{border:none}.filename,td,th{white-space:nowrap}.close,.close:focus,.cl
 </head>
 <body>
 <div id="wrapper">
-  <div id="createNewItem" class="modalDialog"><div class="model-wrapper"><a href="#close" title="Close" class="close">X</a><h2>Create New Item</h2><p>
-        <label for="newfile">Item Type &nbsp; : </label><input type="radio" name="newfile" id="newfile" value="file">File <input type="radio" name="newfile" value="folder" checked> Folder<br><label for="newfilename">Item Name : </label><input type="text" name="newfilename" id="newfilename" value=""><br>
-        <input type="submit" name="submit" class="group-btn" value="Create Now" onclick="newfolder('<?php echo fm_enc(FM_PATH) ?>');return false;"></p></div></div>
-    <div id="searchResult" class="modalDialog"><div class="model-wrapper"><a href="#close" title="Close" class="close">X</a>
-    <input type="search" name="search" value="" placeholder="Find a item in current folder...">
-    <h2>Search Results</h2>
+  <div id="createNewItem" class="modalDialog"><div class="model-wrapper"><a href="#close" title="Chiudi" class="close">X</a><h2>Crea un nuovo file</h2><p>
+        <label for="newfile">Tipo &nbsp; : </label><input type="radio" name="newfile" id="newfile" value="file">File <input type="radio" name="newfile" value="folder" checked> Cartella<br><label for="newfilename">Nome file : </label><input type="text" name="newfilename" id="newfilename" value=""><br>
+        <input type="submit" name="submit" class="group-btn" value="Crea adesso" onclick="newfolder('<?php echo fm_enc(FM_PATH) ?>');return false;"></p></div></div>
+    <div id="searchResult" class="modalDialog"><div class="model-wrapper"><a href="#close" title="Chiudi" class="close">X</a>
+    <input type="search" name="search" value="" placeholder="Cerca un file nella cartella corrente...">
+    <h2>Risultati della ricerca</h2>
     <div id="searchresultWrapper"></div>
     </div></div>
 <?php
