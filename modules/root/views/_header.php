@@ -6,8 +6,8 @@
         <meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
         <link rel="stylesheet" href="../../library/bootstrap/css/bootstrap.min.css" >
         <link rel="shortcut icon" href="../../library/images/favicon.ico">
-        <link rel="stylesheet" type="text/css" href="../../library/style/base.css">
-        <link rel="stylesheet" type="text/css" href="../../library/style/skins/base.css">
+        <link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/default.css">
+        <link rel="stylesheet" type="text/css" href="../../library/theme/g7/skins/default.css">
         <title>GAzie - Login</title>
 
 </head>
