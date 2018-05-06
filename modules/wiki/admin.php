@@ -1,5 +1,4 @@
 <?php
-// DirectoryIndex admin.php /404.html
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 

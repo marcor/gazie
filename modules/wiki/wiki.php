@@ -78,7 +78,7 @@ class Wiki
         $finfo = finfo_open(FILEINFO_MIME);
         $mime_type = finfo_file($finfo, $path);
 
-        if (substr($mime_type, 0, 4) != 'text') {
+        if (substr($mime_type, 0, 4) != 'text' && filesize($path)>0) {
             // not an ASCII file, send it directly to the browser
             $file = fopen($path, 'rb');
 
