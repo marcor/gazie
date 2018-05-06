@@ -73,7 +73,10 @@ $strScript = array("browse_document.php" =>
         " Categoria merc. ",
         " Quantit&agrave; ",
         " Valore in ",
-        " Fuori "),
+        " Fuori ",
+        " del mese ",
+        " della categoria "),
+
     "report_movmag.php" =>
     array("movimenti di magazzino ",
         "codice",

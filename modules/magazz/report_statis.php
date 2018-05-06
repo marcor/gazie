@@ -28,12 +28,18 @@ $admin_aziend=checkAdmin();
 $message = "";
 
 $anno = date("Y");
+$mese = 0;
+$catmer = 0;
 if (!isset($_POST['annimp'])) { //al primo accesso allo script
      $form['annimp'] = $anno;
+     $form['mesimp'] = $mese;
+     $form['catmer'] = $catmer;
      $form['ordine'] = 0;
      $form['acqven'] = 0;
 } else {
      $form['annimp'] = intval($_POST['annimp']);
+     $form['mesimp'] = intval($_POST['mesimp']);
+     $form['catmer'] = intval($_POST['catmer']);
      $form['ordine'] = $_POST['ordine'];
      $form['acqven'] = $_POST['acqven'];
 }
@@ -51,8 +57,15 @@ $sqlquery = 'SELECT datemi,'.$gTables['tesdoc'].'.clfoco,tiprig,codart,'.$gTable
             $gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].
             '.codice LEFT JOIN '.$gTables['anagra'].' ON '.
             $gTables['anagra'].'.id = '.$gTables['clfoco'].
-            '.id_anagra WHERE YEAR(datemi) = '.$form['annimp'].' AND tiprig BETWEEN 0 AND 1 AND '.$where.
-            'ORDER BY catmer, codart, datemi DESC';
+            '.id_anagra WHERE YEAR(datemi) = '.$form['annimp'];
+if ( $form['mesimp']!=0) {
+    $sqlquery .= ' and MONTH(datemi) = '.$form['mesimp'];
+}
+if ( $form['catmer']!=0) {
+    $sqlquery .= ' and catmer = '.$form['catmer'];
+}
+$sqlquery .= ' AND tiprig BETWEEN 0 AND 1 AND '.$where;
+            ' ORDER BY catmer, codart, datemi DESC';
 $rs_documenti = gaz_dbi_query($sqlquery);
 // preparo il castelletto delle vendite degli articoli partendo dai movimenti
 $totali=array();
@@ -141,7 +154,38 @@ for( $counter = $anno-10; $counter <= $anno+10; $counter++ ) {
             $selected = "selected";
     echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
-echo "\t </select> ".$script_transl[4];
+echo "\t </select> ";
+echo $script_transl[14];
+
+// creo una select che mi fa scegliere i mesi
+echo "<select name=\"mesimp\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+echo "\t <option value=\"0\" $selected>Tutti i mesi</option>\n";
+for( $counter = 1; $counter <=12; $counter++ ) {
+    $selected = "";
+    if($counter == $form['mesimp'])
+            $selected = "selected";
+    echo "\t <option value=\"$counter\"  $selected >$month[$counter]</option>\n"; //date("M",strtotime($anno."-".$counter."-01"))."</option>\n";
+}
+echo "\t </select> ";
+echo $script_transl[15];
+
+// inserisco le categorie merceologiche nella SELECTBOX
+$querycat = "select * from ".$gTables['catmer']." order by codice asc";
+$result = gaz_dbi_query($querycat);
+echo "<select name=\"catmer\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+echo "\t <option value=\"0\" $selected>Tutte le categorie</option>\n";
+$counter = 1;
+while ($rig = gaz_dbi_fetch_array($result)) {
+    $selected = "";
+    if($counter == $form['catmer'])
+            $selected = "selected";
+    echo "\t <option value=\"$counter\"  $selected >".$rig['descri']."</option>\n";
+    $counter++;
+}
+echo "\t </select> ";
+
+
+echo $script_transl[4];
 echo " <select name=\"ordine\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for( $counter = 0; $counter <= 2; $counter++ ) {
      $i = $counter + 10;
@@ -149,7 +193,10 @@ for( $counter = 0; $counter <= 2; $counter++ ) {
      if($counter == $form['ordine']) $selected = "selected";
      echo "\t <option value=\"$counter\"  $selected >".$script_transl[$i]."</option>\n";
 }
-echo "\t </select></div>\n";
+echo "\t </select>";
+
+
+echo "</div>\n";
 echo "</form>";
 echo "<table border=\"0\" align=\"center\" bgcolor=\"white\">";
 $i=0;
@@ -194,6 +241,10 @@ foreach ($castelletto_articoli as $key=>$value) {
 }
 echo "</table>";
 ?>
+<?php
+//require("../../library/include/footer.php");
+?>
+
 <!--+ DC - 14/03/2018 -->
 <!--?php
 var_dump($castelletto_articoli);
