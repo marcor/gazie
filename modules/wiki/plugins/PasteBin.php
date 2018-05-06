@@ -23,7 +23,7 @@ class PasteBin
 	/**
 	 * API URL for POST requests
 	 */
-	const API_POST_URL = 'http://pastebin.com/api/api_post.php';
+	//const API_POST_URL = 'http://pastebin.com/api/api_post.php';
 
 	/**
 	 * API params field names
