@@ -347,7 +347,8 @@ function message_fatal_error($text) {
 				<head>
 					<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 					<meta name="author" content="Antonio De Vincentiis http://www.devincentiis.it">
-					<link rel="stylesheet" type="text/css" href="../../library/style/stylesheet.css">
+					<link rel="stylesheet" type="text/css" href="../../library/theme/g7/scheletons/default.css">
+					<link rel="stylesheet" type="text/css" href="../../library/theme/g7/skins/default.css">
 					<link rel="shortcut icon" href="../../library/images/favicon.ico">
 					<title>Fatal error</title>
 				</head>
