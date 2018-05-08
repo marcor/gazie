@@ -38,7 +38,7 @@ class NominaResponsabile extends Template
         $this->colore = $this->docVars->colore;
         $this->tipdoc = 'NOMINA A RESPONSABILE DEL TRATTAMENTO DEI DATI PERSONALI';
         $this->cliente1 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
-		$this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.date('d M Y');
+		$this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.strftime('%d %B %Y');
 		$this->pec = $this->docVars->azienda['pec'];
         if ($this->docVars->intesta5 == 'F'){
            $this->descriAzienda = 'la ditta';
