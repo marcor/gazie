@@ -43,7 +43,7 @@ class InformativaPrivacy extends Template
         $this->cliente4 = $this->docVars->cliente4;
         $this->cliente5 = $this->docVars->cliente5;
         $this->cliente6 = $this->docVars->client['sexper'];
-		$this->luogo = $this->docVars->client['citspe'].' ('.$this->docVars->client['prospe'].')';
+		$this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].')';
 		$this->pec = $this->docVars->azienda['pec'];
         if ($this->docVars->intesta5 == 'F'){
            $this->descriAzienda = 'la sottoscritta';
