@@ -94,6 +94,9 @@ $ctrl_id=0;
 while ($mv = gaz_dbi_fetch_array($result)) {
 	//print_r($mv);
     if ($ctrlWorker!=$mv['id_staff']) {
+		if ($pdf->getY()>160){
+			$pdf->AddPage('L',$config->getValue('page_format'));
+		}
 		$y=$pdf->getY();
 		$init_y=$y;
 		$anagrafica = new Anagrafica();
@@ -107,7 +110,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 		$pdf->Cell(40,5,$worker['indspe'],'RL',2,'R');
  		$pdf->Cell(40,5,$worker['citspe'].' ('.$worker['prospe'].')','RL',2,'R');
  		$pdf->Cell(40,5,$worker['codfis'],'RL',2);
- 		$pdf->Cell(40,5,'Tel.'.$worker['telefo'],'RBL',0,'R');
+ 		$pdf->Cell(40,5,'Tel.'.$worker['telefo'].' / '.$worker['cell'],'RBL',0,'R');
 		$x=$pdf->getX();
 		// ritorno al primo rigo del lavoratore
 		$pdf->setXY($x,$y);
