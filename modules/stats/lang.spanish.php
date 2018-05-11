@@ -64,7 +64,7 @@ $strScript = array("docume_stats.php" =>
         'errors' => array('Inserire il livello da analizzare!',
         ),
     ),
-    "select_esportazione_articoli_venduti_per_fornitore.php" =>
+    "esportazione_articoli_venduti_per_fornitore.php" =>
     array('title' => 'Esportazione articoli venduti',
         'errors' => array('Inserire l\'anno da analizzare!', 'Manca il fornitore!',
         ),

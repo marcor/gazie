@@ -36,7 +36,7 @@ $menu_data = array( 'm1'=>array('link'=>"docume_stats.php"),
 													),
 											2=>array(
                                                     array('translate_key'=>5,'link'=>"select_analisi_avanzamento_per_fornitore.php",'weight'=>5),
-													array('translate_key'=>6,'link'=>"select_esportazione_articoli_venduti_per fornitore.php",'weight'=>10)
+													array('translate_key'=>6,'link'=>"esportazione_articoli_venduti_per_fornitore.php",'weight'=>10)
 													),
 											3=>array(
                                                     array('translate_key'=>7,'link'=>"stats_magazz",'weight'=>5)
