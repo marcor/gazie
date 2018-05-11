@@ -82,7 +82,6 @@ $what = $what . ", sum(CASE WHEN (tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*r
 $ragstatArray[] = array('codice' => '', 'descri' => 'TOTALE');
 
 $result = gaz_dbi_dyn_query($what, $table, $where, $order, 0, 20000, $group);
-//$dimPagina = "A3";
 $dimCol = 20;
 $aRiportare = array('top' => array(array('lun' => 168, 'nam' => 'da riporto : '),
         array('lun' => 19, 'nam' => '')
@@ -113,7 +112,6 @@ $pdf = new Report_template();
 $pdf->setVars($admin_aziend, $title);
 $pdf->SetTopMargin(52);
 $pdf->SetFooterMargin(18);
-$pdf->SetLeftMargin(3);
 $pdf->SetFont('helvetica', '', 9);
 
 $ctrlAgente = 0;
@@ -148,8 +146,12 @@ function intestaPagina($pdf, $config, $ctrlAgente, $row, $aRiportare, $item_head
       $pdf->setPageTitle('Analisi agente dal ' . format_date($datini) . " al " . format_date($datfin) . ': '
               . $row['codice_agente'] . " - " . $agente['ragso1'] . ' ' . $agente['ragso2']);
       $pdf->setItemGroup($item_head);
-      $dimPagina = ($numColonne > 9 ? ($numColonne > 16 ? "A1" : "A2") : "A3");
-      $pdf->AddPage('L', $dimPagina);
+      $dimPagina = ($numColonne > 4 ? ($numColonne > 9 ? ($numColonne > 16 ? "A1" : "A2") : "A3") : "A4");
+	  if ($numColonne < 4) {
+         $pdf->AddPage();
+	  } else {
+         $pdf->AddPage('L', $dimPagina);
+	  }
    }
 }
 
