@@ -104,12 +104,12 @@
 
 //aggiornamento automatico della tabella gaz_menu_usage
         if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le statistiche solo in caso di cambio script
-            $result = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend["user_name"] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
+            $result = @gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' adminid="' . $admin_aziend["user_name"] . '" AND company_id="' . $admin_aziend['company_id'] . '" AND link="' . $mod_uri . '" ', ' adminid', 0, 1);
             $value = array();
             if (gaz_dbi_num_rows($result) == 0) {
                 $value['transl_ref'] = get_transl_referer($mod_uri);
-                $value['adminid'] = $admin_aziend["user_name"];
-                $value['company_id'] = $admin_aziend['company_id'];
+                $value['adminid'] = @$admin_aziend["user_name"];
+                $value['company_id'] = @$admin_aziend['company_id'];
                 $value['link'] = $mod_uri;
                 $value['click'] = 1;
                 $value['color'] = pastelColors();

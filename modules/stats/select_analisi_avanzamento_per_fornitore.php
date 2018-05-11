@@ -22,24 +22,28 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+
+//*+ DC - 19/04/2018
+// Nuova analisi statistica:
+// Viene calcolato l'avanzamento delle vendite (in %) rispetto all'acquistato raggruppato per fornitore abituale presente su articolo
+// L'analisi parte dai movimenti di magazzino (movmag) ed estrae per periodo (distinto tra acquistato e venduto) il totale acquistato/venduto
+// I dati vengono raggruppati per fornitore impostato su anagrafica articolo
+// Risulta quindi indispensabile la corretta imputazione del codice fornitore sull'anagrafica articolo
+// Questa analisi mi fa capire tra i fornitori che tratto quelli che sono più remunerativi nei periodi indicati dandomi la possibilità di
+// valutare quali fornitori tenere e quali escludere per il rifornimento di merce (settore abbigliamento al dettaglio)
+//*- DC - 19/04/2018
+
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
 
-$mastrofornitori = $admin_aziend['masfor'] . "000000";
-$inifornitori = $admin_aziend['masfor'] . '000001';
-$finfornitori = $admin_aziend['masfor'] . '999999';
-$msg = '';
+$msg = ''; // anche se non sono previste situazioni di errori da gestire (lascio per uso futuro)
 
 if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $msg = '';
    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-//   if (isset($_GET['id_agente'])) { //se mi viene richiesto un agente specifico...
-//      $form['id_agente'] = intval($_GET['id_agente']);
-//   } else {
-//      $form['id_agente'] = 0;
-//   }
-//   $form['cerca_agente'] = '';
+   
+   // Data inizio / fine per vendite
    if (isset($_POST['datini'])) {
       $form['gi'] = substr($_POST['datini'], 6, 2);
       $form['mi'] = substr($_POST['datini'], 4, 2);
@@ -58,11 +62,31 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['mf'] = date("m");
       $form['af'] = date("Y");
    }
-   $form['search']['partner'] = '';
-   $form['partner'] = 0;
-   unset($resultFatturato);
+   
+   // Data inizio / fine per acquisti
+   if (isset($_POST['datiniA'])) {
+      $form['giA'] = substr($_POST['datiniA'], 6, 2);
+      $form['miA'] = substr($_POST['datiniA'], 4, 2);
+      $form['aiA'] = substr($_POST['datiniA'], 0, 4);
+   } else {
+      $form['giA'] = 1;
+      $form['miA'] = 1;
+      $form['aiA'] = date("Y");
+   }
+   if (isset($_POST['datfinA'])) {
+      $form['gfA'] = substr($_POST['datfinA'], 6, 2);
+      $form['mfA'] = substr($_POST['datfinA'], 4, 2);
+      $form['afA'] = substr($_POST['datfinA'], 0, 4);
+   } else {
+      $form['gfA'] = date("d");
+      $form['mfA'] = date("m");
+      $form['afA'] = date("Y");
+   }
+   
+   unset($resultAnalisi);
    $form['hidden_req'] = '';
 } else { // le richieste successive
+   // Data inizio / fine per vendite
    $form['ritorno'] = $_POST['ritorno'];
    $form['gi'] = intval($_POST['gi']);
    $form['mi'] = intval($_POST['mi']);
@@ -70,52 +94,61 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $form['gf'] = intval($_POST['gf']);
    $form['mf'] = intval($_POST['mf']);
    $form['af'] = intval($_POST['af']);
-   $form['search']['partner'] = substr($_POST['search']['partner'], 0, 20);
-   $form['partner'] = intval($_POST['partner']);
+   // Data inizio / fine per acquisti
+   $form['giA'] = intval($_POST['giA']);
+   $form['miA'] = intval($_POST['miA']);
+   $form['aiA'] = intval($_POST['aiA']);
+   $form['gfA'] = intval($_POST['gfA']);
+   $form['mfA'] = intval($_POST['mfA']);
+   $form['afA'] = intval($_POST['afA']);
+   
    $form['hidden_req'] = $_POST['hidden_req'];
 }
 
 
 if (isset($_POST['preview'])) {
-   if (empty($form['partner'])) {
-      $msg .= "0+";
-   }
+   // controllo situazioni di errore // per ora nessuna prevista
    if (empty($msg)) { //non ci sono errori
+	  // Data inizio / fine per vendite
       $datini = sprintf("%04d%02d%02d", $form['ai'], $form['mi'], $form['gi']);
       $datfin = sprintf("%04d%02d%02d", $form['af'], $form['mf'], $form['gf']);
-//       $_SESSION['print_request'] = array('livello'=>$form['livello'],'di'=>$datini,'df'=>$datfin);
-//       header("Location: invsta_analisi_agenti.php");
-      $what = "fornitori.codice as codice_fornitore, concat(dati_fornitori.ragso1,' ',dati_fornitori.ragso2) as nome_fornitore, 
-sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*rigdoc.prelis*(1-rigdoc.sconto/100) ELSE 0 END) as imp_ven,
-sum(CASE WHEN (tesdoc.datfat between '$datini' and '$datfin' and tesdoc.tipdoc like 'FA%') THEN rigdoc.quanti*artico.preacq ELSE 0 END) as imp_acq";
-      $tab_rigdoc = $gTables['rigdoc'];
-      $tab_tesdoc = $gTables['tesdoc'];
+	  // Data inizio / fine per acquisti
+      $datiniA = sprintf("%04d%02d%02d", $form['aiA'], $form['miA'], $form['giA']);
+      $datfinA = sprintf("%04d%02d%02d", $form['afA'], $form['mfA'], $form['gfA']);
+	  
+	  $what = "fornitori.codice as codice_fornitore, dati_fornitori.ragso1 as nome_fornitore, 
+sum(CASE
+                WHEN (movmag.datreg between '$datini' and '$datfin' and movmag.tipdoc='FAI') THEN movmag.quanti*movmag.prezzo*(1-movmag.scorig/100) 
+		        WHEN (movmag.datreg between '$datini' and '$datfin' and movmag.tipdoc='FNC') THEN (-1)*movmag.quanti*movmag.prezzo*(1-movmag.scorig/100) 
+				ELSE 0 END) as totValVen,
+sum(CASE
+                WHEN (movmag.datreg between '$datiniA' and '$datfinA' and movmag.tipdoc='AFA') THEN movmag.quanti*movmag.prezzo*(1-movmag.scorig/100) 
+		        WHEN (movmag.datreg between '$datiniA' and '$datfinA' and movmag.tipdoc='AFC') THEN (-1)*movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
+				ELSE 0 END) as totValAcq";
+      
+	  $tab_movmag = $gTables['movmag'];
       $tab_artico = $gTables['artico'];
       $tab_anagra = $gTables['anagra'];
       $tab_clfoco = $gTables['clfoco'];
-      $table = "$tab_rigdoc rigdoc 
-left join $tab_tesdoc tesdoc on rigdoc.id_tes=tesdoc.id_tes 
-left join $tab_artico artico on artico.codice=rigdoc.codart 
+      
+	  $table = "$tab_movmag movmag 
+left join $tab_artico artico on artico.codice=movmag.artico 
 left join $tab_clfoco fornitori on artico.clfoco=fornitori.codice 
-left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id 
-left join $tab_clfoco clienti on tesdoc.clfoco=clienti.codice 
-left join $tab_anagra dati_clienti on clienti.id_anagra=dati_clienti.id ";
-      $codcli = $form['partner'];
-      $where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 " .
-              " and clienti.codice = '$codcli'";
-      $order = "nome_fornitore";
-      $group = "fornitori.codice";
-      $resultFatturato = gaz_dbi_dyn_query($what, $table, $where, $order, 0, 20000, $group);
+left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id";
+      
+	  $where = "artico.clfoco>0 and movmag.quanti<>0 ";
+      $order = "nome_fornitore, codice_fornitore";
+      $group = "fornitori.codice"; // artico.clfoco
+      $resultAnalisi = gaz_dbi_dyn_query($what, $table, $where, $order, 0, 20000, $group);
    }
 }
 
 if (isset($_POST['Return'])) {
-   header("Location:docume_vendit.php");
+   header("Location:../root/docume_root.php"); // richiamato script 'help' di base di GAzie
    exit;
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-$vendForm = new venditForm();
 
 echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
@@ -135,12 +168,8 @@ if (!empty($msg)) {
    }
    echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . '</td></tr>';
 }
-echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['partner'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
-$vendForm->selectCustomer('partner', $form['partner'], $form['search']['partner'], $form['hidden_req'], $script_transl['mesg']);
-echo "</td>\n";
-echo "</tr>\n";
 
+// Data inizio / fine per vendite
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[0]</td>";
 echo "<td class=\"FacetDataTD\">";
 // select del giorno
@@ -162,7 +191,7 @@ for ($counter = 1; $counter <= 12; $counter++) {
    echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
-// select del anno
+// select dell'anno
 echo "\t <select name=\"ai\" class=\"FacetSelect\">\n";
 for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
    $selected = "";
@@ -194,7 +223,7 @@ for ($counter = 1; $counter <= 12; $counter++) {
    echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
 }
 echo "\t </select>\n";
-// select del anno
+// select dell'anno
 echo "\t <select name=\"af\" class=\"FacetSelect\">\n";
 for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
    $selected = "";
@@ -205,63 +234,113 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 echo "\t </select>\n";
 echo "</td></tr>";
 
-//echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td>";
-//echo "<td class=\"FacetDataTD\">";
-//echo "<input title=\"anno da analizzare\" type=\"text\" name=\"livello\" value=\"" .
-// $form["livello"] . "\" maxlength=\"5\" size=\"5\" class=\"FacetInput\">";
-//echo "</td></tr>";
-//echo "<tr>\n";
-//echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['id_agente'] . "</td>";
-//echo "<td  class=\"FacetDataTD\">\n";
-//$select_agente = new selectAgente("id_agente");
-//$select_agente->addSelected($form["id_agente"]);
-//$select_agente->output();
-//echo "</td></tr>\n";
+// Data inizio / fine per acquisti
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td>";
+echo "<td class=\"FacetDataTD\">";
+// select del giorno
+echo "\t <select name=\"giA\" class=\"FacetSelect\">\n";
+for ($counter = 1; $counter <= 31; $counter++) {
+   $selected = "";
+   if ($counter == $form['giA'])
+      $selected = "selected";
+   echo "\t\t <option value=\"$counter\" $selected >$counter</option>\n";
+}
+echo "\t </select>\n";
+// select del mese
+echo "\t <select name=\"miA\" class=\"FacetSelect\">\n";
+for ($counter = 1; $counter <= 12; $counter++) {
+   $selected = "";
+   if ($counter == $form['miA'])
+      $selected = "selected";
+   $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+   echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+}
+echo "\t </select>\n";
+// select dell'anno
+echo "\t <select name=\"aiA\" class=\"FacetSelect\">\n";
+for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
+   $selected = "";
+   if ($counter == $form['aiA'])
+      $selected = "selected";
+   echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+
+echo "\t </select>\n";
+echo "</td></tr>";
+echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td>";
+echo "<td class=\"FacetDataTD\">";
+// select del giorno
+echo "\t <select name=\"gfA\" class=\"FacetSelect\">\n";
+for ($counter = 1; $counter <= 31; $counter++) {
+   $selected = "";
+   if ($counter == $form['gfA'])
+      $selected = "selected";
+   echo "\t\t <option value=\"$counter\" $selected >$counter</option>\n";
+}
+echo "\t </select>\n";
+// select del mese
+echo "\t <select name=\"mfA\" class=\"FacetSelect\">\n";
+for ($counter = 1; $counter <= 12; $counter++) {
+   $selected = "";
+   if ($counter == $form['mfA'])
+      $selected = "selected";
+   $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+   echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+}
+echo "\t </select>\n";
+// select dell'anno
+echo "\t <select name=\"afA\" class=\"FacetSelect\">\n";
+for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
+   $selected = "";
+   if ($counter == $form['afA'])
+      $selected = "selected";
+   echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+echo "\t </select>\n";
+echo "</td></tr>";
 
 echo "<tr>\n
      <td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"Return\" value=\"" . ucfirst($script_transl['return']) . "\"></td>\n
      <td align=\"right\" class=\"FacetFooterTD\"><input type=\"submit\" accesskey=\"i\" name=\"preview\" value=\"" . ucfirst($script_transl['preview']) . "\"></td>\n
      </tr>\n</table>";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
-if (isset($resultFatturato)) {
+if (isset($resultAnalisi)) {
    $linkHeaders = new linkHeaders($script_transl['header']);
    $linkHeaders->output();
    $totFatturato = 0;
    $totCosti = 0;
    
-   //*+ DC - 14/03/2018
    // array da usare per grafici
-   $emparray = array();
-   //*- DC - 14/03/2018
+   $GCarray = array();
 	  
-   while ($mv = gaz_dbi_fetch_array($resultFatturato)) {
-      $nFatturato = $mv['imp_ven'];
-      if ($nFatturato > 0) {
+   while ($mv = gaz_dbi_fetch_array($resultAnalisi)) {
+      $nAcquistato = $mv['totValAcq'];
+      if ($nAcquistato > 0) {
 
-		 //*+ DC - 14/03/2018
-		 $emparray[] = $mv;
-		 //*- DC - 14/03/2018
+		 $GCarray[] = $mv;
 		
-         $nCosti = $mv['imp_acq'];
-         $margine = ($nFatturato - $nCosti) * 100 / $nFatturato;
-         $totFatturato+=$nFatturato;
-         $totCosti+=$nCosti;
+         $nVenduto = $mv['totValVen'];
+         $avanzamento = ($nVenduto*100) / $nAcquistato;
+         $totFatturato+=$nVenduto;
+         $totCosti+=$nAcquistato;
          echo "<tr>";
          echo "<td class=\"FacetFieldCaptionTD\">" . substr($mv[0], 3) . " &nbsp;</td>";
          echo "<td align=\"left\" class=\"FacetDataTD\">" . $mv[1] . " &nbsp;</td>";
-         echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($nFatturato) . " &nbsp;</td>";
-         echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($nCosti) . " &nbsp;</td>";
-         echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($margine) . " &nbsp;</td>";
+         echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($nAcquistato) . " &nbsp;</td>";
+         echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($nVenduto) . " &nbsp;</td>";
+         echo "<td align=\"right\" class=\"FacetDataTD\">" . gaz_format_number($avanzamento) . " &nbsp;</td>";
          echo "</tr>";
       }
    }
-   $margine = ($totFatturato > 0 ? ($totFatturato - $totCosti) * 100 / $totFatturato : 0);
+   
+   $avanzamento = ($totCosti > 0 ? ($totFatturato*100) / $totCosti : 0);
+   
    echo "<tr>";
    echo "<td class=\"FacetFieldCaptionTD\"> &nbsp;</td>";
    echo "<td align=\"left\" class=\"FacetDataTD\"><B>" . $script_transl['totale'] . "</B> &nbsp;</td>";
-   echo "<td align=\"right\" class=\"FacetDataTD\"><B>" . gaz_format_number($totFatturato) . "</B> &nbsp;</td>";
    echo "<td align=\"right\" class=\"FacetDataTD\"><B>" . gaz_format_number($totCosti) . "</B> &nbsp;</td>";
-   echo "<td align=\"right\" class=\"FacetDataTD\"><B>" . gaz_format_number($margine) . "</B> &nbsp;</td>";
+   echo "<td align=\"right\" class=\"FacetDataTD\"><B>" . gaz_format_number($totFatturato) . "</B> &nbsp;</td>";
+   echo "<td align=\"right\" class=\"FacetDataTD\"><B>" . gaz_format_number($avanzamento) . "</B> &nbsp;</td>";
    echo "</tr>";
    echo '<tr class="FacetFieldCaptionTD">
 	 			<td colspan="12" align="right"><input type="button" name="print" onclick="window.print();" value="' . $script_transl['print'] . '"></td>
@@ -271,10 +350,11 @@ if (isset($resultFatturato)) {
 </table>
 </form>
 
-<!--+ DC - 14/03/2018 -->
+<!--+ Google Chart JS -->
 <!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
 <!-- Lo script che segue è utile quando i dati vengono caricati con AJAX -->
 <!--script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script-->
+<!--- Google Chart JS -->
 
 <br/>
 
@@ -302,20 +382,20 @@ if (isset($resultFatturato)) {
 	// -----------------------------
 	// Add rows + data at the same time
 	// -----------------------------
-	// Pie Chart Margine %
+	// Pie Chart Avanzamento %
 	var data = new google.visualization.DataTable();
 
 	// Declare columns
 	data.addColumn('string', 'Fornitore');
-	data.addColumn('number', 'Margine');
+	data.addColumn('number', 'Avanzamento');
 	// Add data.
 	<?php
-	if( $emparray ) {
-		foreach ($emparray as $mvf)	{
-			$margine = ($mvf[2] - $mvf[3]) * 100 / $mvf[2];
+	if( $GCarray ) {
+		foreach ($GCarray as $mvf)	{
+			$avanzamento = ($mvf[3] > 0 ? ($mvf[2]*100) / $mvf[3] : 0);
 	?>
 		data.addRows([
-					 ['<?php echo $mvf[1]?>', {v:<?php echo $margine?>}]
+					 ['<?php echo $mvf[1]?>', {v:<?php echo $avanzamento?>}]
 					 ]);
 	<?php
 		}
@@ -323,7 +403,7 @@ if (isset($resultFatturato)) {
 	?>
 
 	var options = {
-					title: 'MARGINE in % tra Fatturato/Costo per Fornitore',
+					title: 'Avanzamento in % del Venduto su Acquistato (reale) per Fornitore',
 					titleTextStyle: { color: '#757575',
 									  fontName: 'Roboto',
 									  fontSize: 14,
@@ -354,24 +434,24 @@ if (isset($resultFatturato)) {
 	// -----------------------------
 	// Add rows + data at the same time
 	// -----------------------------
-	// Bar Chart Fatturato/Costi/Margine %
+	// Bar Chart Acquistato/Venduto/Avanzamento %
 	// Declare series
 	var dataBars = new google.visualization.DataTable();
 
 	// Add legends with data type
 	dataBars.addColumn('string', 'Fornitore');
-	dataBars.addColumn('number', 'Fatturato');
-	dataBars.addColumn('number', 'Costi');
-	dataBars.addColumn('number', 'Margine %');
+	dataBars.addColumn('number', 'Acquistato');
+	dataBars.addColumn('number', 'Venduto');
+	dataBars.addColumn('number', 'Avanzamento %');
 
 	// Add data.
 
 	<?php
-	if( $emparray ) {
-		foreach ($emparray as $mvf)	{
-			$margine = ($mvf[2] - $mvf[3]) * 100 / $mvf[2];
+	if( $GCarray ) {
+		foreach ($GCarray as $mvf)	{
+			$avanzamento = ($mvf[3] > 0 ? ($mvf[2]*100) / $mvf[3] : 0);
 	?>
-		dataBars.addRow(['<?php echo $mvf[1]?>', <?php echo $mvf[2]?>, <?php echo $mvf[3]?>, <?php echo $margine?>]);
+		dataBars.addRow(['<?php echo $mvf[1]?>', <?php echo $mvf[3]?>, <?php echo $mvf[2]?>, <?php echo $avanzamento?>]);
 	<?php
 		}
 	}
@@ -379,8 +459,8 @@ if (isset($resultFatturato)) {
 
 	var bar_options = {
 						chart: {
-								 title: 'Vendite per fornitore',
-								 subtitle: 'Fatturato, Costi e Margine'
+								 title: 'Avanzamento venduto su acquistato per fornitore',
+								 subtitle: 'Acquistato, Venduto ed Avanzamento (reali)'
 							   },
 						legend: { position: 'right', maxLines: 2 },
 						axes: {
@@ -445,7 +525,6 @@ if (isset($resultFatturato)) {
     <div id="bar_chart_div" class="chart"></div>
   </div>
 </div>
-<!--- DC - 14/03/2018 -->
 
 <?php
 require("../../library/include/footer.php");
