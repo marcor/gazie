@@ -35,18 +35,18 @@ if (isset($_SESSION['print_request'])) {
       echo "<HTML><HEAD><TITLE>Wait for PDF</TITLE>\n";
       echo "<script type=\"text/javascript\">\n";
       $_SESSION['script_ref'] = $_SERVER['HTTP_REFERER'];
-      $url = "setTimeout(\"window.location='stampa_an_acq_clienti.php?cl=" . $id_tes['codcli'] .
+      $url = "setTimeout(\"window.location='stampa_analisi_acquisti_clienti.php?cl=" . $id_tes['codcli'] .
               "&an=" . $id_tes['anno'] .
               "&pe=" . $id_tes['ckdata'] .
               "'\",1000)\n";
       echo $url;
       echo "</script></HEAD>\n<BODY><DIV align=\"center\">Wait for PDF</DIV><DIV align=\"center\">Aspetta il PDF</DIV></BODY></HTML>";
    } else {
-      header("Location:select_an_acq_clienti.php");
+      header("Location:select_analisi_acquisti_clienti.php");
       exit;
    }
 } else {
-   $locazione = 'select_an_acq_clienti.php';
+   $locazione = 'select_analisi_acquisti_clienti.php';
    if (isset($_SESSION['script_ref'])) {
       $locazione = $_SESSION['script_ref'];
       unset($_SESSION['script_ref']);

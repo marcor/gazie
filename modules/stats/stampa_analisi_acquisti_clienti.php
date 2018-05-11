@@ -31,7 +31,7 @@ $config = new Config;
 require("lang." . $admin_aziend['lang'] . ".php");
 
 if (!isset($_GET['an']) || !isset($_GET['pe'])) {
-   header("Location: select_an_acq_clienti.php");
+   header("Location: select_analisi_acquisti_clienti.php");
    exit;
 }
 $anno = $_GET['an'];
@@ -119,8 +119,6 @@ $pdf = new Report_template();
 $pdf->setVars($admin_aziend, $title);
 $pdf->SetTopMargin(47);
 $pdf->SetFooterMargin(18);
-$pdf->SetLeftMargin(3);
-//$pdf->AddPage('L', $config->getValue('page_format'));
 $pdf->SetFont('helvetica', '', 9);
 
 $tot_imponibile = 0.00;

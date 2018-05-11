@@ -62,17 +62,17 @@ if (isset($_POST['Print'])) {
    if (empty($msg)) { //non ci sono errori
       $_SESSION['print_request'] = $form;
       $_SESSION['print_request']['ckdata']=$_POST['ckdata'];
-      header("Location: invsta_an_acq_clienti.php");
+      header("Location: invsta_analisi_acquisti_clienti.php");
       exit;
    }
 }
 
 if (isset($_POST['Return'])) {
-   header("Location:docume_vendit.php");
+   header("Location:stats_vendit.php");
    exit;
 }
 require("../../library/include/header.php");
-$script_transl = HeadMain('', '', 'select_an_acq_clienti');
+$script_transl = HeadMain('', '', 'select_analisi_acquisti_clienti');
 echo "<form method=\"POST\">";
 echo "<input type=\"hidden\" name=\"ritorno\" value=\"" . $form['ritorno'] . "\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">Analisi acquisti clienti";
