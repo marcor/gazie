@@ -110,7 +110,7 @@ $item_head['top'] = array(
 
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend, $title);
-$pdf->SetTopMargin(52);
+$pdf->SetTopMargin(56);
 $pdf->SetFooterMargin(18);
 $pdf->SetFont('helvetica', '', 9);
 
@@ -132,13 +132,13 @@ while ($row = gaz_dbi_fetch_array($result)) {
 //   $pdf->Cell(1, 4, "", 1, 1, 'R', true, '', 1);
    $ctrlAgente = $row["codice_agente"];
 }
-rigaTotali($pdf, "totale agente", $totAgente, $dimCol, $numCol);
+rigaTotali($pdf, "TOTALE AGENTE", $totAgente, $dimCol, $numCol);
 $pdf->Output();
 
 function intestaPagina($pdf, $config, $ctrlAgente, $row, $aRiportare, $item_head, $dimCol, &$totAgente, $numColonne, $datini, $datfin) {
    if ($ctrlAgente != $row['codice_agente']) {
       if ($ctrlAgente > 0) {
-         rigaTotali($pdf, "totale agente", $totAgente, $dimCol, $numColonne);
+         rigaTotali($pdf, "TOTALE AGENTE", $totAgente, $dimCol, $numColonne);
       }
       $item_head['bot'] = array();
       $agente = getNewAgente($row['codice_agente']);
@@ -163,7 +163,7 @@ function initTotali(&$totArray, $dim) {
 }
 
 function rigaTotali($pdf, $stringa, &$totArray, $dimCol, $numCol) {
-   $pdf->Cell(62, 4, $stringa, 1, 0, 'L', true, '', 1);
+   $pdf->Cell(62, 4, $stringa, 1, 0, 'R', true, '', 1);
 //   $totaleRiga = 0;
    for ($k = 0; $k < $numCol; $k++) {
       $imp = $totArray['imp'][$k];

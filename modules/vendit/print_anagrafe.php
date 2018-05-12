@@ -55,9 +55,7 @@ $title = array('luogo_data' => $luogo_data,
     'hile' => array(/* array('lun' => 45, 'nam' => 'Cliente'), */
         array('lun' => 60, 'nam' => 'Ragione Sociale'),
         array('lun' => 60, 'nam' => 'Sede Legale'),
-        array('lun' => 20, 'nam' => 'Telefono'),
-        array('lun' => 20, 'nam' => 'Cellulare'),
-//        array('lun' => 20, 'nam' => 'Fax'),
+        array('lun' => 40, 'nam' => 'Telefono'),
         array('lun' => 40, 'nam' => 'Email'),
     )
 );
@@ -69,15 +67,13 @@ $pdf->SetLeftMargin(5);
 $pdf->SetFillColor(160, 255, 220);
 $pdf->AddPage();
 //$config = new Config;
-$rs = gaz_dbi_dyn_query("concat(ragso1,space(1),ragso2) as ragioneSociale, sedleg, telefo, cell, fax, e_mail", $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ", $where, "ragioneSociale");
+$rs = gaz_dbi_dyn_query("concat(ragso1,space(1),ragso2) as ragioneSociale, concat (indspe, space(1), citspe, ' (',prospe,')') as sede, concat(telefo, space(1), cell, space(1), fax) as telefono, e_mail", $gTables['clfoco'] . " clfoco LEFT JOIN " . $gTables['anagra'] . " anagra ON anagra.id = clfoco.id_anagra ", $where, "ragioneSociale");
 
 while ($cliente = gaz_dbi_fetch_array($rs)) {
    $pdf->SetFont('helvetica', '', 10);
    $pdf->Cell(60, 0, $cliente['ragioneSociale'], 1, 0, 'L', false, '', 1);
-   $pdf->Cell(60, 0, $cliente['sedleg'], 1, 0, 'L', false, '', 1);
-   $pdf->Cell(20, 0, $cliente["telefo"], 1, 0, 'L', false, '', 1);
-   $pdf->Cell(20, 0, $cliente["cell"], 1, 0, 'L', false, '', 1);
-//   $pdf->Cell(20, 0, $cliente["fax"], 1, 0, 'L', false, '', 1);
+   $pdf->Cell(60, 0, $cliente['sede'], 1, 0, 'L', false, '', 1);
+   $pdf->Cell(40, 0, $cliente["telefono"], 1, 0, 'L', false, '', 1);
    $pdf->Cell(40, 0, $cliente["e_mail"], 1, 1, 'L', false, '', 1);
 }
 $pdf->Output();
