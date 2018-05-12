@@ -90,7 +90,6 @@ $pdf->setLang($admin_aziend['lang']);
 $pdf->SetTopMargin(10);
 $pdf->SetFooterMargin(10);
 $pdf->SetHeaderMargin(5);
-$pdf->AliasNbPages();
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $pdf->StartPageGroup();
 $pdf->AddPage();

@@ -133,7 +133,7 @@ class Template_con_scheda extends Template
         $this->Cell(66,4,'Dati compilatore (5)',1);
         $this->Cell(66,4,'Firma compilatore',1,1);
         $this->Cell(52,12,$this->docVars->azienda['citspe'].', '.$this->giorno.'.'.$this->mese.'.'.$this->anno,1);
-        $this->Cell(66,12,$this->docVars->user['Nome'].' '.$this->docVars->user['Cognome'],1);
+        $this->Cell(66,12,$this->docVars->user['user_firstname'].' '.$this->docVars->user['user_firstname'],1);
         $this->Cell(66,12,'',1,1);
 
         $this->Cell(67,3,'-----------------------------------------------------------',0,1);

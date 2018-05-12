@@ -48,7 +48,6 @@ $pdf->Open();
 $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(false);
 $pdf->SetAutoPageBreak(1,1);
-$pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $nuw = new numberstowords_it();

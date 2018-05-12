@@ -130,7 +130,6 @@ class PDF extends TCPDF
 }
 
 $pdf=new PDF();
-$pdf->AliasNbPages();
 $pdf->SetTopMargin(65);
 $pdf->SetHeaderMargin(5);
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));

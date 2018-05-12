@@ -81,7 +81,6 @@ class FatturaSemplice extends Template {
 
     function compose() {
         $this->setTesDoc();
-        $this->AliasNbPages();
         $dataddt = substr($this->tesdoc['datemi'], 8, 2) . '-' . substr($this->tesdoc['datemi'], 5, 2) . '-' . substr($this->tesdoc['datemi'], 0, 4);
         if ($this->tesdoc['tipdoc'] == 'FAD') {
             $this->SetFont('helvetica', 'B', 9);

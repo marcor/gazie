@@ -42,7 +42,6 @@ $pdf=new TCPDF();
 $pdf->Open();
 $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(false);
-$pdf->AliasNbPages();
 $pdf->SetTopMargin(5);
 $pdf->SetHeaderMargin(5);
 $pdf->AliasNbPages();

@@ -362,14 +362,12 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     $docVars->initializeTotals();
     $pdf->setVars($docVars, $templateName);
     $pdf->setTesDoc();
-    //$pdf->SetPageFormat($config->getValue('page_format'));
     $pdf->setCreator('GAzie - ' . $docVars->intesta1);
     $pdf->setAuthor($docVars->user['user_lastname'] . ' ' . $docVars->user['user_firstname']);
     $pdf->setTitle($templateName);
     $pdf->setTopMargin(79);
     $pdf->setHeaderMargin(5);
     $pdf->Open();
-//   $pdf->AliasNbPages();
     $pdf->pageHeader();
     $pdf->compose();
     $pdf->pageFooter();
