@@ -34,8 +34,8 @@ if (!isset($_GET['an']) || !isset($_GET['pe'])) {
    header("Location: select_analisi_acquisti_clienti.php");
    exit;
 }
-$anno = $_GET['an'];
-$periodo = $_GET['pe'];
+$anno = intval($_GET['an']);
+$periodo = intval($_GET['pe']);
 if (!isset($_GET['cl']) or ( empty($_GET['cl']))) {
    $cliente = '';
 } else {
@@ -48,9 +48,9 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
 
 $where = "tesdoc.tipdoc like 'F%' and rigdoc.quanti>0 and artico.ragstat is not null and artico.ragstat!=''" . $cliente;
 $what = " clienti.codice as codice_cliente, concat(dati_clienti.ragso1,' ',dati_clienti.ragso2) as nome_cliente,fornitori.codice as codice_fornitore, concat(dati_fornitori.ragso1,' ',dati_fornitori.ragso2) as nome_fornitore, artico.ragstat as codice_ragstat, artico.codice as codice_articolo, artico.descri as descrizione, ragstat.descri as nome_ragstat ";
-$table = $gTables['rigdoc'] . " rigdoc join "
-        . $gTables['tesdoc'] . " tesdoc on rigdoc.id_tes=tesdoc.id_tes join "
-        . $gTables['artico'] . " artico on artico.codice=rigdoc.codart join "
+$table = $gTables['rigdoc'] . " rigdoc left join "
+        . $gTables['tesdoc'] . " tesdoc on rigdoc.id_tes=tesdoc.id_tes left join "
+        . $gTables['artico'] . " artico on artico.codice=rigdoc.codart left join "
         . $gTables['clfoco'] . " fornitori on artico.clfoco=fornitori.codice join "
         . $gTables['anagra'] . " dati_fornitori on fornitori.id_anagra=dati_fornitori.id join "
         . $gTables['clfoco'] . " clienti on tesdoc.clfoco=clienti.codice join "
@@ -63,7 +63,6 @@ if ($periodo == 1) {  // trimestre
    $incMMInizio = 3;
    $incMMFine = 2;
    $maxPeriodi = 4;
-   $descrPeriodo = "T";
    $dimPagina = $config->getValue('page_format');
    $dimCol = 20;
 } else {
@@ -72,7 +71,7 @@ if ($periodo == 1) {  // trimestre
    $maxPeriodi = 12;
    $descrPeriodo = "M";
    $dimPagina = 'A3';
-   $dimCol = 14;
+   $dimCol = 13;
 }
 for ($cat = 1; $cat <= 12; $cat+=$incMMInizio) { // costruiamo la query per ogni periodo (mese o trimestre)
    $contaRagstat++;
@@ -101,25 +100,24 @@ $title = array('luogo_data' => $luogo_data,
     'hile' => array(
         array('lun' => 16, 'nam' => 'Cod.Art.'),
         array('lun' => 62, 'nam' => 'Articolo'),
-//        array('lun' => 15, 'nam' => 'Qt.1° Tr.'),
-//        array('lun' => 15, 'nam' => 'Ft.1° Tr.'),
-    )
+   )
 );
 for ($k = 1; $k <= $maxPeriodi; $k++) {
-   $title['hile'][] = array('lun' => $dimCol, 'nam' => "Qt. $descrPeriodo$k");
-   $title['hile'][] = array('lun' => $dimCol, 'nam' => "Imp. $descrPeriodo$k");
+	if ($periodo == 1) {  // trimestre
+		$descrPeriodo = $k."°Trim";
+	} else {
+		$descrPeriodo = ucwords(substr(strftime("%B", mktime (0,0,0,$k,1,0)),0,3));
+	}
+   $title['hile'][] = array('lun' => $dimCol*2, 'nam' => "Qt/Imp ".$descrPeriodo);
 }
 $item_head['top'] = array(
-//    array('lun' => 80, 'nam' => 'Fornitore'),
-//    array('lun' => 80, 'nam' => 'Cliente'),
-//    array('lun' => 80, 'nam' => 'Categoria')
 );
 
 $pdf = new Report_template();
 $pdf->setVars($admin_aziend, $title);
 $pdf->SetTopMargin(47);
 $pdf->SetFooterMargin(18);
-$pdf->SetFont('helvetica', '', 9);
+$pdf->SetFont('helvetica', '', 7);
 
 $tot_imponibile = 0.00;
 $tot_iva = 0.00;
@@ -137,31 +135,41 @@ while ($row = gaz_dbi_fetch_array($result)) {
    $pdf->Cell(62, 4, $row["descrizione"], 1, 0, '', false, '', 1);
    for ($k = 1; $k <= $maxPeriodi; $k++) {
       $qt = $row["qt_ft$k"] - $row["qt_nc$k"];
-      $pdf->Cell($dimCol, 4, gaz_format_number($qt), 1, 0, 'R', false, '', 1);
       $totCategoria['qt'][$k] +=$qt;
       $totAgente['qt'][$k] +=$qt;
+	  if ($qt>=0.00001){
+		  $qt=floatval($qt);
+	  } else {
+		  $qt='';
+	  }
+      $pdf->Cell($dimCol, 4, $qt, 1, 0, 'R', false, '', 1);
       $imp = $row["imp_ft$k"] - $row["imp_nc$k"];
       $pdf->SetFillColor(235, 235, 235);
-      $pdf->Cell($dimCol, 4, gaz_format_number($imp), 1, ($k < $maxPeriodi ? 0 : 1), 'R', true, '', 1);
       $totCategoria['imp'][$k] +=$imp;
       $totAgente['imp'][$k] +=$imp;
+	  if ($imp>=0.00001){
+		  $imp=gaz_format_number($imp);
+	  } else {
+		  $imp='';
+	  }
+      $pdf->Cell($dimCol, 4, $imp, 1, ($k < $maxPeriodi ? 0 : 1), 'R', true, '', 1);
    }
    $ctrlFornitore = $row["codice_fornitore"];
    $ctrlCliente = $row["codice_cliente"];
    $ctrlCategoria = $row["codice_ragstat"];
 }
-rigaTotali($pdf, "totale categoria", $maxPeriodi, $totCategoria, $dimCol);
-rigaTotali($pdf, "totale cliente", $maxPeriodi, $totAgente, $dimCol, 'b');
+rigaTotali($pdf, "Totale cat.statistica", $maxPeriodi, $totCategoria, $dimCol);
+rigaTotali($pdf, "Totale cliente", $maxPeriodi, $totAgente, $dimCol, 'b');
 $pdf->Output();
 
 function intestaPagina($pdf, $config, $ctrlFornitore, $ctrlCliente, $ctrlCategoria, $row, $aRiportare, $item_head, $dimPagina, $maxPeriodi, $dimCol, &$totCategoria, &$totCliente) {
    if ($ctrlCliente != $row['codice_cliente']) {
       if ($ctrlCliente > 0) {
-         rigaTotali($pdf, "totale categoria", $maxPeriodi, $totCategoria, $dimCol);
-         rigaTotali($pdf, "totale cliente", $maxPeriodi, $totCliente, $dimCol, 'b');
+         rigaTotali($pdf, "Totale cat.statistica", $maxPeriodi, $totCategoria, $dimCol);
+         rigaTotali($pdf, "Totale cliente", $maxPeriodi, $totCliente, $dimCol, 'b');
       }
       $item_head['bot'] = array();
-      $pdf->setPageTitle('Analisi acquisti cliente: ' . $row['codice_cliente'] . " - " . $row['nome_cliente']);
+      $pdf->setPageTitle('Analisi acquisti per categorie statistiche del cliente: ' . intval(substr($row['codice_cliente'],-6)) . " - " . $row['nome_cliente']);
       $pdf->setItemGroup($item_head);
       $pdf->AddPage('L', $dimPagina);
    }
@@ -189,8 +197,20 @@ function rigaTotali($pdf, $stringa, $maxPeriodi, &$totArray, $dimCol, $fill = 'a
    }
    $pdf->Cell(78, 4, $stringa, 1, 0, 'L', true, '', 1);
    for ($k = 1; $k <= $maxPeriodi; $k++) {
-      $pdf->Cell($dimCol, 4, gaz_format_number($totArray['qt'][$k]), 1, 0, 'R', true, '', 1);
-      $pdf->Cell($dimCol, 4, gaz_format_number($totArray['imp'][$k]), 1, ($k < $maxPeriodi ? 0 : 1), 'R', true, '', 1);
+	  $qt = $totArray['qt'][$k];
+	  $imp = $totArray['imp'][$k];
+	  if ($qt>=0.00001){
+		  $qt=floatval($qt);
+	  } else {
+		  $qt='';
+	  }
+	  if ($imp>=0.00001){
+		  $imp=gaz_format_number($imp);
+	  } else {
+		  $imp='';
+	  }
+      $pdf->Cell($dimCol, 4, $qt, 1, 0, 'R', true, '', 1);
+      $pdf->Cell($dimCol, 4, $imp, 1, ($k < $maxPeriodi ? 0 : 1), 'R', true, '', 1);
    }
    initTotali($totArray, $maxPeriodi);
 }
