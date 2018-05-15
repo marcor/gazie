@@ -142,7 +142,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	  } else {
 		  $qt='';
 	  }
-      $pdf->Cell($dimCol, 4, $qt, 1, 0, 'R', false, '', 1);
+      $pdf->Cell($dimCol, 4, $qt, 'LTB', 0, 'R', false, '', 1);
       $imp = $row["imp_ft$k"] - $row["imp_nc$k"];
       $pdf->SetFillColor(235, 235, 235);
       $totCategoria['imp'][$k] +=$imp;
@@ -152,7 +152,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 	  } else {
 		  $imp='';
 	  }
-      $pdf->Cell($dimCol, 4, $imp, 1, ($k < $maxPeriodi ? 0 : 1), 'R', true, '', 1);
+      $pdf->Cell($dimCol, 4, $imp, 'RTB', ($k < $maxPeriodi ? 0 : 1), 'R', true, '', 1);
    }
    $ctrlFornitore = $row["codice_fornitore"];
    $ctrlCliente = $row["codice_cliente"];

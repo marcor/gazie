@@ -184,7 +184,7 @@ $script_transl=HeadMain();
 ?>
 <script type="text/javascript">
     $(function () {
-		$('.dropdownmenustyle').selectmenu();        
+		$('.dropdownmenustyle').selectmenu({ change: function( event, ui ) {  this.form.submit(); }});  
 	});
 </script>
 <?php
@@ -278,7 +278,7 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="clfoco_mastro" class="col-sm-6 control-label"><?php echo $script_transl['clfoco_mastro']; ?></label>
                         <?php
-						$gForm->selMasterAcc('rows['.$k.'][clfoco_mastro]', $form['rows'][$k]['clfoco_mastro'], 'rows['.$k.'][clfoco_mastro]','col-sm-6 dropdownmenustyle');
+						$gForm->selMasterAcc('rows['.$k.'][clfoco_mastro]', $form['rows'][$k]['clfoco_mastro'], "rows[$k][clfoco_mastro]",'col-sm-6 dropdownmenustyle');
 						$gForm->lockSubtoMaster($form['rows'][$k]["clfoco_mastro"], 'clfoco_sub' . $k);
                         ?>
                     </div>

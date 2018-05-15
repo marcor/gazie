@@ -434,7 +434,7 @@ echo "</tr>\n";
 
 echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['codpag'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
-$gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'codice', 1, ' - ', 'descri');
+$gForm->selectFromDB('pagame', 'codpag', 'codice', $form['codpag'], 'tippag`, `giodec`, `numrat', true, ' ', 'descri');
 echo "</td>\n";
 echo "</tr>\n";
 echo "<tr>\n";
