@@ -278,6 +278,67 @@ function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit =
     return $result;
 }
 
+// funzione gaz_aes_field_anagra
+function gaz_aes_field_anagra($field) {
+	$aes_field = '';
+	switch ($field) {
+		case 'ragso1':
+		case 'ragso2':
+		case 'indspe':
+		case 'latitude':
+		case 'longitude':
+		case 'telefo':
+		case 'fax':
+		case 'cell':
+		case 'codfis':
+		case 'pariva':
+		case 'e_mail':
+		case 'pec_email':
+			//$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field."_aes" . "), UNHEX($_SESSION['aes_key'])) USING utf8) AS $field";
+			$aes_field .= $field;
+			break;
+		default:
+			$aes_field .= $field;
+			break;
+	}
+	return $aes_field;
+}
+
+// funzione gaz_dbi_query_anagra
+function gaz_dbi_query_anagra($select, $tabella, $where, $orderby, $limit = 0, $passo = 2000000, $groupby = '') {
+    global $link, $session;
+	$select_fields = '';
+	foreach ($select as $field) {
+		$select_fields .= ((empty($select_fields)) ? "" : ",") . gaz_aes_field_anagra($field) . (($field=='*' || strpos($field, '.')!==false || strpos($field, 'AES_DECRYPT')===false) ? "" : " AS $field ");
+	}
+    $query = "SELECT " . $select_fields . " FROM " . $tabella;
+    if (count($where)) {
+        $query .= " WHERE 1 ";
+		foreach ($where as $condition_field=>$condition_compare) {
+			$query .= " AND " . gaz_aes_field_anagra($condition_field) . $condition_compare;
+		}
+    }
+
+    if ($groupby != '') {
+        $query .= " GROUP BY $groupby ";
+    }
+
+    if (count($orderby)) {
+        $query .= " ORDER BY ";
+		foreach ($orderby as $order_field=>$order_value) {
+			$query .= gaz_aes_field_anagra($order_field) . " " . $order_value . " ";
+		}
+    }
+    $query .= " LIMIT " . $limit . ", " . $passo;
+    /**/echo $query."<br>";
+    /**/msgDebug($query);
+
+    $result = mysqli_query($link, $query);
+    if (!$result)
+        die(" Errore di gaz_dbi_dyn_query:<strong> " . $query . " </strong> " . mysqli_error($link));
+    return $result;
+}
+
 function gaz_dbi_fields($table) {
     /*
      * $table - il nome della tabella all'interno dell'array $gTables

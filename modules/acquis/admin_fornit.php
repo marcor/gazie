@@ -118,7 +118,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             if ($partner_with_same_pi) { // c'� gi� un fornitore sul piano dei conti
                 $msg .= "10+";
             } elseif ($form['id_anagra'] == 0) { // � un nuovo fornitore senza anagrafica
-                $rs_anagra_with_same_pi = gaz_dbi_dyn_query('*', $gTables['anagra'], " pariva = '" . $form['pariva'] . "'", "pariva DESC", 0, 1);
+                $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
                 $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
                 if ($anagra_with_same_pi) { // c'� gi� un'anagrafica con la stessa PI non serve reinserirlo ma avverto
                     // devo attivare tutte le interfacce per la scelta!
@@ -135,7 +135,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             if ($partner_with_same_cf) { // c'� gi� un fornitore sul piano dei conti
                 $msg .= "12+";
             } elseif ($form['id_anagra'] == 0) { // � un nuovo fornitore senza anagrafica
-                $rs_anagra_with_same_cf = gaz_dbi_dyn_query('*', $gTables['anagra'], " codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
+                $rs_anagra_with_same_cf = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("codfis" => "='" . $form['codfis'] . "'"), array("codfis" => "DESC"), 0, 1);
                 $anagra_with_same_cf = gaz_dbi_fetch_array($rs_anagra_with_same_cf);
                 if ($anagra_with_same_cf) { // c'� gi� un'anagrafica con lo stesso CF non serve reinserirlo ma avverto
                     // devo attivare tutte le interfacce per la scelta!
