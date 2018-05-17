@@ -1,0 +1,9 @@
+Titolo:
+Nihil sub sole novum.
+
+Presentazione:
+Se si esclude lo spostamento dei vari script per le statistiche in un nuovo modulo attivabile in configurazione utente questa versione può ritenersi del tutto identica alla precedente.
+Il rilascio, pertanto, è dovuto alla correzione di alcuni errori che si sono evidenziati quando la 7.9 veniva installata sui server che 
+non localizzavano in italiano, oppure con un restrittivo sql_mode di MySQL/MariaDB.
+  
+Antonio de Vincentiis, Montesilvano, 17 Maggio 2018
