@@ -55,8 +55,8 @@ INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 5, 'admin_broven.php?Insert&tipd
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, 5, 'select_evaord_gio.php', '', '', 48, '', 6  FROM `gaz_menu_script`;
 ALTER TABLE `gaz_destina` ADD COLUMN `fe_cod_ufficio` VARCHAR(7) NOT NULL DEFAULT '' AFTER `e_mail`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
-ALTER TABLE `gaz_XXXtesbro` ADD `weekday_repeat` INT(2) NOT NULL AFTER `datemi`;
-ALTER TABLE `gaz_XXXtesdoc` ADD `weekday_repeat` INT NOT NULL AFTER `datemi`;
+ALTER TABLE `gaz_XXXtesbro` ADD `weekday_repeat` INT(2) NOT NULL DEFAULT '0' AFTER `datemi`;
+ALTER TABLE `gaz_XXXtesdoc` ADD `weekday_repeat` INT NOT NULL DEFAULT '0' AFTER `datemi`;
 INSERT INTO gaz_XXXcaucon (codice, descri, operat) SELECT * FROM (SELECT 'APE', 'APERTURA CONTI', 0) AS tmp WHERE NOT EXISTS (SELECT codice FROM gaz_XXXcaucon WHERE codice = 'APE') LIMIT 1;
 INSERT INTO gaz_XXXcaucon (codice, descri, operat) SELECT * FROM (SELECT 'CHI', 'CHIUSURA CONTI', 0) AS tmp WHERE NOT EXISTS (SELECT codice FROM gaz_XXXcaucon WHERE codice = 'CHI') LIMIT 1;
 ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `id_des_same_company` INT(9) NOT NULL AFTER `id_des`;

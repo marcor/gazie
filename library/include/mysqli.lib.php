@@ -294,7 +294,7 @@ function gaz_aes_field_anagra($field) {
 		case 'pariva':
 		case 'e_mail':
 		case 'pec_email':
-			//$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field."_aes" . "), UNHEX($_SESSION['aes_key'])) USING utf8) AS $field";
+			//$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field."_aes" . "), UNHEX('$_SESSION['aes_key']')) USING utf8) AS $field";
 			$aes_field .= $field;
 			break;
 		default:
