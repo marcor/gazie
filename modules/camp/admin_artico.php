@@ -47,7 +47,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
-    // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
+    /*Antonio Germani non serve per quaderno di campagna / i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
     $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
     $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
@@ -124,9 +124,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (empty($form["unimis"])) {
             $msg['err'][] = 'unimis';
         }
-        if (empty($form["aliiva"])) {
+       /* Antonio Germani l'aliquota IVA non è obbligatoria perché non serve nel quaderno di campagna
+	   if (empty($form["aliiva"])) {
             $msg['err'][] = 'aliiva';
-        }
+        }*/
         // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
         if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1) {
             $msg['err'][] = 'lotmag';
