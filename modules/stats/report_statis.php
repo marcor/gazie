@@ -22,6 +22,11 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
+
+//*+ DC - 23/05/2018
+// - Rappresentazione dei dati tramite grafici creati con libreria OPEN SOURCE Chart.js
+//*- DC - 23/05/2018
+
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
@@ -194,6 +199,241 @@ foreach ($castelletto_articoli as $key=>$value) {
 }
 echo "</table>";
 ?>
+
+<!--+ DC - 23/05/2018 - Chart.js - include script/set css charts styles -->
+<script type="text/javascript" src="../../js/chartjs/2.7.2/Chart.bundle.min.js"></script>
+<script>
+window.onload = function() {
+  createChartJS();
+}
+</script>
+
+<style>
+.chart {
+  width: 100%;
+  min-height: 600px;
+  border: 0px solid #d7d7d7;
+  padding: 3px;
+}
+.row {
+  margin:0 !important;
+}
+</style>
+<!--- DC - 23/05/2018 - Chart.js - include script/set css charts styles -->
+
+<!--+ DC - 23/05/2018 - Chart.js - render charts -->
+<script>
+
+function createChartJS() {
+
+var tipoAV="";
+<?php
+if( $form['acqven']==0 ) { ?>
+	tipoAV="Vendite";
+<?php
+}
+else { ?>
+	tipoAV="Acquisti";
+<?php
+}
+?>
+
+var titleChart=tipoAV+" per Articolo";
+//alert(titleChart);
+
+var tipoORD="";
+var tipoDato="";
+<?php
+if( $form['ordine']==0 ) { ?>
+	tipoORD="Categoria merceologica";
+	tipoDato="Quantità";
+<?php
+}
+elseif( $form['ordine']==1 ) { ?>
+	tipoORD="Quantità";
+	tipoDato="Quantità";
+<?php
+}
+else { ?>
+	tipoORD="Valore";
+	tipoDato="Valore";
+<?php
+}
+?>
+
+var Anno='<?php echo $form['annimp'] ?>';
+
+var subtitleChart="Anno "+Anno+" ordinato per "+tipoORD;
+//alert(subtitleChart);
+
+var titleExt=titleChart+' - '+subtitleChart;
+
+// set css styles before render charts
+document.getElementById("chart_horizontal_bar_div").style.border = '1px solid #ccc';
+document.getElementById("chartsArea").style.display = 'block';
+
+var chartLabels=[];
+
+// Global Options
+Chart.defaults.global.defaultFontFamily = 'sans-serif,Arial,Roboto,Courier New';
+Chart.defaults.global.defaultFontSize = 14;
+Chart.defaults.global.defaultFontColor = '#999';
+
+// Horizontal Bar Chart
+// Populate bar chart datasets (sold/cost)
+var numOfValuesInDataset=0;
+var barChartData=[];
+		
+<?php
+foreach ($castelletto_articoli as $key=>$value) {
+?>
+	numOfValuesInDataset++;
+	//echo . " / ".$value['descri']. " / ".$value['unimis']. " / ".$value['quanti']. " / ".$value['valore']." <br>";
+	var dato=0;
+	var datoQV="";
+	if (tipoORD == "Valore") {
+		dato=<?php echo $value['valore'] ?>;
+		datoQV='<?php echo $value['descri'] ?>'+' - Valore: '+'<?php echo $value['valore'] ?>';
+		datoL='<?php echo $key.' - '.$value['descri'] ?>';
+	} else {
+		dato=<?php echo $value['quanti'] ?>;
+		datoQV='<?php echo $value['descri'] ?>'+' - Q.tà: '+'<?php echo $value['quanti'] ?>'+' '+'<?php echo $value['unimis'] ?>';
+		datoL='<?php echo $key.' - '.$value['descri'] ?>'+' '+'<?php echo $value['unimis'] ?>';
+	}
+	chartLabels.push(datoL);
+	barChartData.push(dato);
+<?php
+}
+?>
+
+// dynamically height for bar chart// set inner height to 40 pixels per row
+var chartAreaHeight = numOfValuesInDataset * 30;
+// add padding to outer height to accomodate title, axis labels, etc
+var chartHeight = chartAreaHeight + 80;
+
+var rightHeight=chartHeight + "px";
+document.getElementById("chart_horizontal_bar_div").style.height = rightHeight;
+	  
+// Get the 2d context for horizontal bar chart container (canvas)
+let myChartHorizontalBar = document.getElementById('myChartHorizontalBar').getContext('2d');
+
+// Create the horizontal bar chart
+let chartHorizontalBar = new Chart(myChartHorizontalBar, {
+  type:'horizontalBar', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+  data:{
+	labels:chartLabels,
+	datasets:[{
+	  label:tipoDato, //not yet translated
+	  data:barChartData,
+	  backgroundColor:'rgba(66, 133, 244, 1)',
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:1,
+	  hoverBorderColor:'#777',
+	}]
+  },
+  options:{
+	responsive:true,
+	maintainAspectRatio:false,
+	scales: {
+		yAxes: [{
+			/*ticks: {
+				beginAtZero:true
+			},*/
+			gridLines: {
+				display: false
+			}
+		}],
+		xAxes: [{
+			ticks: {
+				beginAtZero:true
+			},
+			gridLines: {
+				display: true,
+				color: "rgba(192,192,192,1)"
+			}
+		}]
+	},
+	title:{
+	  display:true,
+	  text:titleExt, //not yet translated
+	  fontSize:14
+	},
+	legend:{
+	  display:false,
+	  maxWidth:100,
+	  position:'right',
+	  labels:{
+		fontColor:'#000',
+		usePointStyle: true
+	  }
+	},
+	layout:{
+	  padding:{
+		left:0,
+		right:0,
+		bottom:0,
+		top:0
+	  }
+	},
+	/*tooltips:{
+	  enabled:true
+	}*/
+
+	tooltips: {
+				callbacks: {
+					
+					title: function(tooltipItem, data) {
+						return '';
+					},
+					
+					label: function(tooltipItem, data) {
+						var label = data.datasets[tooltipItem.datasetIndex].label || '';
+
+						if (label) {
+							label += ': ' + data['datasets'][0]['data'][tooltipItem['index']];
+						}
+						//label += Math.round(tooltipItem.yLabel * 100) / 100;
+						if(data.datasets[tooltipItem.datasetIndex].label=='Valore') {
+							label += ' €';
+						} else {
+							label += '';
+						}
+						return label;
+					}
+				}
+			  }
+    }
+});
+}
+
+window.addEventListener('resize', function () {
+		createChartJS();
+}/*, false*/);
+
+</script>
+<!--- DC - 23/05/2018 - Chart.js - render charts -->
+
+<!--+ DC - 23/05/2018 - Chart.js - html -->
+<br/>
+
+<div class="row">
+  <!-- Titolo aggiuntivo (opzioneale, per ora disattivato)
+  <div class="col-md-12 text-center">
+    <h3>Rappresentazione grafica dati estrapolati</h3>
+  </div>
+  //-->
+  <div class="col-md-4 col-md-offset-4">
+  </div>
+  <div class="clearfix"></div>
+  <div id="chartsArea" style="display:none">
+	<div id="chart_horizontal_bar_div" class="col-md-12">
+		<canvas id="myChartHorizontalBar" style="position: relative;" class="chart"></canvas>
+	</div>
+  </div>
+</div>
+<!--- DC - 23/05/2018 - Chart.js - html -->
+
 <?php
 require("../../library/include/footer.php");
 ?>

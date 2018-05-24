@@ -22,6 +22,11 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+
+//*+ DC - 23/05/2018
+// - Rappresentazione dei dati tramite grafici creati con libreria OPEN SOURCE Chart.js
+//*- DC - 23/05/2018
+
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
@@ -231,18 +236,18 @@ if (isset($resultFatturato)) {
    $totFatturato = 0;
    $totCosti = 0;
    
-   //*+ DC - 14/03/2018
+   //*+ DC - 21/05/2018
    // array da usare per grafici
-   $emparray = array();
-   //*- DC - 14/03/2018
+   $CJSarray = array();
+   //*- DC - 21/05/2018
 	  
    while ($mv = gaz_dbi_fetch_array($resultFatturato)) {
       $nFatturato = $mv['imp_ven'];
       if ($nFatturato > 0) {
 
-		 //*+ DC - 14/03/2018
-		 $emparray[] = $mv;
-		 //*- DC - 14/03/2018
+		 //*+ DC - 23/05/2018
+		 $CJSarray[] = $mv;
+		 //*- DC - 23/05/2018
 		 
          $nCosti = $mv['imp_acq'];
          $margine = ($nFatturato - $nCosti) * 100 / $nFatturato;
@@ -273,179 +278,265 @@ if (isset($resultFatturato)) {
 </table>
 </form>
 
-<!--+ DC - 14/03/2018 -->
-<!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
-<!-- Lo script che segue è utile quando i dati vengono caricati con AJAX -->
-<!--script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script-->
-
-<br/>
-
-<script type="text/javascript">
-      
-    // Load the Visualization API for corechart/piechart/bar package.
-    google.charts.load('current', {'packages':['corechart']});
-	google.charts.load('current', {'packages':['bar']});
-	
-	// Set a callback to run when the Google Visualization API is loaded.
-    google.charts.setOnLoadCallback(drawChart);
-      
-	function drawChart(data) {
-    /*var jsonData = $.ajax({
-          url: "getData.php",
-          dataType: "json",
-          async: false
-          }).responseText;*/ // OK con getData e file_get_contents
-          
-	// Create our data table out of JSON data loaded from server.
-    //var data = new google.visualization.DataTable(jsonData); // OK con getData e file_get_contents
-      
-	//var data = new google.visualization.DataTable(<?php $jsonData ?>); // non va bene sullo SQL puro restiuito e trasformato in JSON
-
-	// -----------------------------
-	// Add rows + data at the same time
-	// -----------------------------
-	// Pie Chart Margine %
-	var data = new google.visualization.DataTable();
-
-	// Declare columns
-	data.addColumn('string', 'Cliente');
-	data.addColumn('number', 'Margine');
-	// Add data.
-	<?php
-	if( $emparray ) {
-		foreach ($emparray as $mvf)	{
-			$margine = ($mvf[2] - $mvf[3]) * 100 / $mvf[2];
-	?>
-		data.addRows([
-					 ['<?php echo $mvf[1]?>', {v:<?php echo $margine?>}]
-					 ]);
-	<?php
-		}
-	}
-	?>
-
-	var options = {
-					title: 'MARGINE in % tra Fatturato/Costo per Cliente',
-					titleTextStyle: { color: '#757575',
-									  fontName: 'Roboto',
-									  fontSize: 14,
-									  bold: false,
-									},
-					legend: {/*position: 'right',*/ textStyle: {color: '#757575', fontSize: 12}, alignment: 'center', /*position: 'labeled'*/},
-					fontSize: 12,
-					fontName: 'Roboto',
-					/*fontSmoothing: 'antialiased',*/
-					is3D: true,
-					pieStartAngle: 7,
-					pieResidueSliceLabel: 'Altro < 3%',
-					sliceVisibilityThreshold: .03,
-					pieSliceText: 'value',
-					pieSliceTextStyle: {
-										 color: 'black',
-										 bold: 'true',
-									   },
-					tooltip: {showColorCode: true},
-					/*width: $('.cols_chart').width(),
-					height: $('.cols_chart').width()*/
-				  };
-	
-	// Instantiate and draw our chart, passing in some options.
-    var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
-    chart.draw(data, options); //, {width: 400, height: 240}
-	  
-	// -----------------------------
-	// Add rows + data at the same time
-	// -----------------------------
-	// Bar Chart Fatturato/Costi/Margine %
-	// Declare series
-	var dataBars = new google.visualization.DataTable();
-
-	// Add legends with data type
-	dataBars.addColumn('string', 'Cliente');
-	dataBars.addColumn('number', 'Fatturato');
-	dataBars.addColumn('number', 'Costi');
-	dataBars.addColumn('number', 'Margine %');
-
-	// Add data.
-
-	<?php
-	if( $emparray ) {
-		foreach ($emparray as $mvf)	{
-			$margine = ($mvf[2] - $mvf[3]) * 100 / $mvf[2];
-	?>
-		dataBars.addRow(['<?php echo $mvf[1]?>', <?php echo $mvf[2]?>, <?php echo $mvf[3]?>, <?php echo $margine?>]);
-	<?php
-		}
-	}
-	?>
-
-	var bar_options = {
-						chart: {
-								 title: 'Vendite per cliente',
-								 subtitle: 'Fatturato, Costi e Margine'
-							   },
-						legend: { position: 'right', maxLines: 2 },
-						axes: {
-								x: {
-									 0: {side: 'bottom'}
-								   }
-							  },
-						bars: 'horizontal',
-						/*width: $('.cols_chart').width(),
-						height: $('.cols_chart').width()*/
-					  };
-	  
-		// Instantiate and draw our chart, passing in some options.
-		var bar_chart = new google.charts.Bar(document.getElementById('bar_chart_div'));
-		bar_chart.draw(dataBars, bar_options);
-	}
-	  
-	window.addEventListener('resize', function () {
-			drawChart();
-    }/*, false*/);
+<!--+ DC - 23/05/2018 - Chart.js - include script/set css charts styles -->
+<script type="text/javascript" src="../../js/chartjs/2.7.2/Chart.bundle.min.js"></script>
+<script>
+window.onload = function() {
+  createChartJS();
+}
 </script>
-  
+
 <style>
 .chart {
-  width: 100%; 
-  min-height: auto; 450px;
-  border: 1px solid #ccc;
+  width: 100%;
+  min-height: 600px;
+  border: 0px solid #d7d7d7;
   padding: 3px;
 }
 .row {
   margin:0 !important;
 }
 </style>
+<!--- DC - 23/05/2018 - Chart.js - include script/set css charts styles -->
 
-<!--+ not used -->
-<div id="chart_area" style="width:100%">
-	<!--Div that will hold the pie chart-->
-	<column cols="6" class="cols_chart">
-	<div id="pie_chart_divx" style="/*text-align: -webkit-center; width:35%; border: 1px solid #ccc; padding: 3px; float:right*/"></div>
-    <!--Div that will hold the bar chart-->
-    <div id="bar_chart_divx" style="/*text-align: -webkit-center; width:65%; border: 1px solid #ccc; padding: 3px;*/"></div>
-	</column>
-</div>
-<!--- not used -->
+<!--+ DC - 23/05/2018 - Chart.js - render charts -->
+<script>
+
+var pieChartData=[]; // global scope for retrieve length property
+
+function createChartJS() {
+
+// set css styles before render charts
+document.getElementById("chart_pie_div").style.border = '1px solid #ccc';
+document.getElementById("chart_horizontal_bar_div").style.border = '1px solid #ccc';
+document.getElementById("chartsArea").style.display = 'block';
+
+var chartLabels=[];
+var chartPieSliceColors=[];
+
+// Global Options
+Chart.defaults.global.defaultFontFamily = 'sans-serif,Arial,Roboto,Courier New';
+Chart.defaults.global.defaultFontSize = 14;
+Chart.defaults.global.defaultFontColor = '#999';
+
+// Pie Chart
+// Populate pie chart dataset/labels
+var numOfValuesInDataset=0;
+<?php
+if( $CJSarray ) {
+	foreach ($CJSarray as $mvf)	{
+		$margine = ($mvf[2] > 0 ? ($mvf[2] - $mvf[3]) * 100 / $mvf[2] : 0);
+?>
+	numOfValuesInDataset++;
+	chartLabels.push('<?php echo $mvf[1]?>');
+	pieChartData.push(parseFloat(<?php echo $margine?>).toFixed(2));
+<?php
+	}
+}
+?>
+// assign random color for each pie slice
+for(iColors=1;iColors<=chartLabels.length;iColors++) {
+	chartPieSliceColors.push(dynamicColors());
+}
+
+// Get the 2d context for pie chart container (canvas)
+let myChartPie = document.getElementById('myChartPie').getContext('2d');
+
+// Create the pie chart
+let chartPie = new Chart(myChartPie, {
+  type:'doughnut', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+  data:{
+	labels:chartLabels,
+	datasets:[{
+	  data:pieChartData,
+	  backgroundColor:chartPieSliceColors,
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:2,
+	  hoverBorderColor:'#fff',
+	  pointStyle: 'rectRot',
+	}]
+  },
+  options:{
+	cutoutPercentage:30,
+	rotation:-0.35*3.14,
+	responsive:true,
+	maintainAspectRatio:false,
+	title:{
+	  display:true,
+	  text:'MARGINE in % tra Fatturato/Costo per Cliente', //not yet translated
+	  fontSize:14
+	},
+	legend:{
+	  display:true,
+	  maxWidth:100,
+	  position:'bottom',
+	  labels:{
+		fontColor:'#000',
+		usePointStyle: true
+	  }
+	},
+	layout:{
+	  padding:{
+		left:0,
+		right:0,
+		bottom:0,
+		top:0
+	  }
+	},
+	tooltips:{
+	  enabled:true
+	}
+  }
+});
+
+// Horizontal Bar Chart
+// Populate bar chart datasets (sold/cost)
+var barChartDataCost=[];
+var barChartDataSold=[];
+
+<?php
+if( $CJSarray ) {
+	foreach ($CJSarray as $mvf)	{
+?>
+	barChartDataSold.push(parseFloat(<?php echo $mvf[2]?>).toFixed(2));
+	barChartDataCost.push(parseFloat(<?php echo $mvf[3]?>).toFixed(2));
+<?php
+	}
+}
+?>
+
+// dynamically height for bar chart
+// set inner height to 40 pixels per row
+var chartAreaHeight = numOfValuesInDataset * 40;
+// add padding to outer height to accomodate title, axis labels, etc
+var chartHeight = chartAreaHeight + 80;
+
+var rightHeight=chartHeight + "px";
+//document.getElementById("chart_horizontal_bar_div").style.height = rightHeight; // ? con poche barre, verificare ?
+	  
+// Get the 2d context for pie chart container (canvas)
+let myChartHorizontalBar = document.getElementById('myChartHorizontalBar').getContext('2d');
+
+// Create the horizontal bar chart
+let chartHorizontalBar = new Chart(myChartHorizontalBar, {
+  type:'horizontalBar', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+  data:{
+	labels:chartLabels,
+	datasets:[{
+	  label:'Fatturato', //not yet translated
+	  data:barChartDataSold,
+	  backgroundColor:'rgba(66, 133, 244, 1)',
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:1,
+	  hoverBorderColor:'#777',
+	}, {
+	  label:'Costi', //not yet translated
+	  data:barChartDataCost,
+	  backgroundColor:'rgba(186, 58, 47, 1)',
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:1,
+	  hoverBorderColor:'#777',
+	}, {
+	  label:'Margine %', //not yet translated
+	  data:pieChartData,
+	  backgroundColor:'rgba(244, 180, 0, 1)',
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:1,
+	  hoverBorderColor:'#777',
+	}]
+  },
+  options:{
+	responsive:true,
+	maintainAspectRatio:false,
+	scales: {
+		yAxes: [{
+			/*ticks: {
+				beginAtZero:true
+			},*/
+			gridLines: {
+				display: false
+			}
+		}],
+		xAxes: [{
+			ticks: {
+				beginAtZero:true
+			},
+			gridLines: {
+				display: true,
+				color: "rgba(192,192,192,1)"
+			}
+		}]
+	},
+	title:{
+	  display:true,
+	  text:'Vendite per cliente', //not yet translated
+	  fontSize:14
+	},
+	legend:{
+	  display:true,
+	  maxWidth:100,
+	  position:'right',
+	  labels:{
+		fontColor:'#000',
+		usePointStyle: true
+	  }
+	},
+	layout:{
+	  padding:{
+		left:0,
+		right:0,
+		bottom:0,
+		top:0
+	  }
+	},
+	tooltips:{
+	  enabled:true
+	}
+  }
+});
+}
+
+function dynamicColors() {
+  var r = Math.floor(Math.random() * 255);
+  var g = Math.floor(Math.random() * 255);
+  var b = Math.floor(Math.random() * 255);
+  return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+window.addEventListener('resize', function () {
+		pieChartData=[];createChartJS();
+}/*, false*/);
+
+</script>
+<!--- DC - 23/05/2018 - Chart.js - render charts -->
+
+<!--+ DC - 23/05/2018 - Chart.js - html -->
+<br/>
 
 <div class="row">
   <!-- Titolo aggiuntivo (opzioneale, per ora disattivato)
   <div class="col-md-12 text-center">
     <h3>Rappresentazione grafica dati estrapolati</h3>
   </div>
-  -->
+  //-->
   <div class="col-md-4 col-md-offset-4">
-    <!--hr /-->
   </div>
   <div class="clearfix"></div>
-  <div class="col-md-4">
-    <div id="pie_chart_div" class="chart"></div>
-  </div>
-  <div class="col-md-8">
-    <div id="bar_chart_div" class="chart"></div>
+  <div id="chartsArea" style="display:none">
+	<div id="chart_pie_div" class="col-md-4">
+		<canvas id="myChartPie" class="chart"></canvas>
+	</div>
+	<!--div id="chart_hor_bar_div" style="position: relative;" class="col-md-8"-->
+	<div id="chart_horizontal_bar_div" class="col-md-8">
+		<canvas id="myChartHorizontalBar" style="position: relative;" class="chart"></canvas>
+	</div>
   </div>
 </div>
-<!--- DC - 14/03/2018 -->
+<!--- DC - 23/05/2018 - Chart.js - html -->
 
 <?php
 require("../../library/include/footer.php");

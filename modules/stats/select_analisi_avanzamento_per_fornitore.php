@@ -23,15 +23,16 @@
   --------------------------------------------------------------------------
  */
 
-//*+ DC - 19/04/2018
+//*+ DC - 23/05/2018
 // Nuova analisi statistica:
-// Viene calcolato l'avanzamento delle vendite (in %) rispetto all'acquistato raggruppato per fornitore abituale presente su articolo
-// L'analisi parte dai movimenti di magazzino (movmag) ed estrae per periodo (distinto tra acquistato e venduto) il totale acquistato/venduto
-// I dati vengono raggruppati per fornitore impostato su anagrafica articolo
-// Risulta quindi indispensabile la corretta imputazione del codice fornitore sull'anagrafica articolo
-// Questa analisi mi fa capire tra i fornitori che tratto quelli che sono più remunerativi nei periodi indicati dandomi la possibilità di
-// valutare quali fornitori tenere e quali escludere per il rifornimento di merce (settore abbigliamento al dettaglio)
-//*- DC - 19/04/2018
+// - Viene calcolato l'avanzamento delle vendite (in %) rispetto all'acquistato raggruppato per fornitore abituale presente su articolo.
+// - L'analisi parte dai movimenti di magazzino (movmag) ed estrae per periodo (distinto tra acquistato e venduto) il totale acquistato/venduto.
+// - I dati vengono raggruppati per fornitore impostato su anagrafica articolo.
+// - Risulta quindi indispensabile la corretta imputazione del codice fornitore sull'anagrafica articolo.
+// - Questa analisi mi fa capire tra i fornitori che tratto quelli che sono più remunerativi nei periodi indicati dandomi la possibilità di
+//   valutare quali fornitori tenere e quali escludere per il rifornimento di merce (settore abbigliamento al dettaglio).
+// - Rappresentazione dei dati tramite grafici creati con libreria OPEN SOURCE Chart.js
+//*- DC - 23/05/2018
 
 require("../../library/include/datlib.inc.php");
 
@@ -42,7 +43,7 @@ $msg = ''; // anche se non sono previste situazioni di errori da gestire (lascio
 if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $msg = '';
    $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-   
+
    // Data inizio / fine per vendite
    if (isset($_POST['datini'])) {
       $form['gi'] = substr($_POST['datini'], 6, 2);
@@ -62,7 +63,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['mf'] = date("m");
       $form['af'] = date("Y");
    }
-   
+
    // Data inizio / fine per acquisti
    if (isset($_POST['datiniA'])) {
       $form['giA'] = substr($_POST['datiniA'], 6, 2);
@@ -82,7 +83,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
       $form['mfA'] = date("m");
       $form['afA'] = date("Y");
    }
-   
+
    unset($resultAnalisi);
    $form['hidden_req'] = '';
 } else { // le richieste successive
@@ -101,7 +102,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
    $form['gfA'] = intval($_POST['gfA']);
    $form['mfA'] = intval($_POST['mfA']);
    $form['afA'] = intval($_POST['afA']);
-   
+
    $form['hidden_req'] = $_POST['hidden_req'];
 }
 
@@ -115,27 +116,27 @@ if (isset($_POST['preview'])) {
 	  // Data inizio / fine per acquisti
       $datiniA = sprintf("%04d%02d%02d", $form['aiA'], $form['miA'], $form['giA']);
       $datfinA = sprintf("%04d%02d%02d", $form['afA'], $form['mfA'], $form['gfA']);
-	  
-	  $what = "fornitori.codice as codice_fornitore, dati_fornitori.ragso1 as nome_fornitore, 
+
+	  $what = "fornitori.codice as codice_fornitore, dati_fornitori.ragso1 as nome_fornitore,
 sum(CASE
-                WHEN (movmag.datreg between '$datini' and '$datfin' and movmag.tipdoc='FAI') THEN movmag.quanti*movmag.prezzo*(1-movmag.scorig/100) 
-		        WHEN (movmag.datreg between '$datini' and '$datfin' and movmag.tipdoc='FNC') THEN (-1)*movmag.quanti*movmag.prezzo*(1-movmag.scorig/100) 
+                WHEN (movmag.datreg between '$datini' and '$datfin' and movmag.tipdoc='FAI') THEN movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
+		        WHEN (movmag.datreg between '$datini' and '$datfin' and movmag.tipdoc='FNC') THEN (-1)*movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
 				ELSE 0 END) as totValVen,
 sum(CASE
-                WHEN (movmag.datreg between '$datiniA' and '$datfinA' and movmag.tipdoc='AFA') THEN movmag.quanti*movmag.prezzo*(1-movmag.scorig/100) 
+                WHEN (movmag.datreg between '$datiniA' and '$datfinA' and movmag.tipdoc='AFA') THEN movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
 		        WHEN (movmag.datreg between '$datiniA' and '$datfinA' and movmag.tipdoc='AFC') THEN (-1)*movmag.quanti*movmag.prezzo*(1-movmag.scorig/100)
 				ELSE 0 END) as totValAcq";
-      
+
 	  $tab_movmag = $gTables['movmag'];
       $tab_artico = $gTables['artico'];
       $tab_anagra = $gTables['anagra'];
       $tab_clfoco = $gTables['clfoco'];
-      
-	  $table = "$tab_movmag movmag 
-left join $tab_artico artico on artico.codice=movmag.artico 
-left join $tab_clfoco fornitori on artico.clfoco=fornitori.codice 
+
+	  $table = "$tab_movmag movmag
+left join $tab_artico artico on artico.codice=movmag.artico
+left join $tab_clfoco fornitori on artico.clfoco=fornitori.codice
 left join $tab_anagra dati_fornitori on fornitori.id_anagra=dati_fornitori.id";
-      
+
 	  $where = "artico.clfoco>0 and movmag.quanti<>0 ";
       $order = "nome_fornitore, codice_fornitore";
       $group = "fornitori.codice"; // artico.clfoco
@@ -309,16 +310,16 @@ if (isset($resultAnalisi)) {
    $linkHeaders->output();
    $totFatturato = 0;
    $totCosti = 0;
-   
+
    // array da usare per grafici
-   $GCarray = array();
-	  
+   $CJSarray = array();
+
    while ($mv = gaz_dbi_fetch_array($resultAnalisi)) {
       $nAcquistato = $mv['totValAcq'];
       if ($nAcquistato > 0) {
 
-		 $GCarray[] = $mv;
-		
+		 $CJSarray[] = $mv;
+
          $nVenduto = $mv['totValVen'];
          $avanzamento = ($nVenduto*100) / $nAcquistato;
          $totFatturato+=$nVenduto;
@@ -332,9 +333,9 @@ if (isset($resultAnalisi)) {
          echo "</tr>";
       }
    }
-   
+
    $avanzamento = ($totCosti > 0 ? ($totFatturato*100) / $totCosti : 0);
-   
+
    echo "<tr>";
    echo "<td class=\"FacetFieldCaptionTD\"> &nbsp;</td>";
    echo "<td align=\"left\" class=\"FacetDataTD\"><B>" . $script_transl['totale'] . "</B> &nbsp;</td>";
@@ -350,181 +351,265 @@ if (isset($resultAnalisi)) {
 </table>
 </form>
 
-<!--+ Google Chart JS -->
-<!-- <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script> -->
-<!-- Lo script che segue è utile quando i dati vengono caricati con AJAX -->
-<!--script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script-->
-<!--- Google Chart JS -->
-
-<br/>
-
-<script type="text/javascript">
-      
-    // Load the Visualization API for corechart/piechart/bar package.
-    google.charts.load('current', {'packages':['corechart']});
-	google.charts.load('current', {'packages':['bar']});
-	
-	// Set a callback to run when the Google Visualization API is loaded.
-    google.charts.setOnLoadCallback(drawChart);
-      
-	function drawChart(data) {
-    /*var jsonData = $.ajax({
-          url: "getData.php",
-          dataType: "json",
-          async: false
-          }).responseText;*/ // OK con getData e file_get_contents
-          
-	// Create our data table out of JSON data loaded from server.
-    //var data = new google.visualization.DataTable(jsonData); // OK con getData e file_get_contents
-      
-	//var data = new google.visualization.DataTable(<?php $jsonData ?>); // non va bene sullo SQL puro restiuito e trasformato in JSON
-
-	// -----------------------------
-	// Add rows + data at the same time
-	// -----------------------------
-	// Pie Chart Avanzamento %
-	var data = new google.visualization.DataTable();
-
-	// Declare columns
-	data.addColumn('string', 'Fornitore');
-	data.addColumn('number', 'Avanzamento');
-	// Add data.
-	<?php
-	if( $GCarray ) {
-		foreach ($GCarray as $mvf)	{
-			$avanzamento = ($mvf[3] > 0 ? ($mvf[2]*100) / $mvf[3] : 0);
-	?>
-		data.addRows([
-					 ['<?php echo $mvf[1]?>', {v:<?php echo $avanzamento?>}]
-					 ]);
-	<?php
-		}
-	}
-	?>
-
-	var options = {
-					title: 'Avanzamento in % del Venduto su Acquistato (reale) per Fornitore',
-					titleTextStyle: { color: '#757575',
-									  fontName: 'Roboto',
-									  fontSize: 14,
-									  bold: false,
-									},
-					legend: {/*position: 'right',*/ textStyle: {color: '#757575', fontSize: 12}, alignment: 'center', /*position: 'labeled'*/},
-					fontSize: 12,
-					fontName: 'Roboto',
-					/*fontSmoothing: 'antialiased',*/
-					is3D: true,
-					pieStartAngle: 7,
-					pieResidueSliceLabel: 'Altro < 3%',
-					sliceVisibilityThreshold: .03,
-					pieSliceText: 'value',
-					pieSliceTextStyle: {
-										 color: 'black',
-										 bold: 'true',
-									   },
-					tooltip: {showColorCode: true},
-					/*width: $('.cols_chart').width(),
-					height: $('.cols_chart').width()*/
-				  };
-	
-	// Instantiate and draw our chart, passing in some options.
-    var chart = new google.visualization.PieChart(document.getElementById('pie_chart_div'));
-    chart.draw(data, options); //, {width: 400, height: 240}
-	  
-	// -----------------------------
-	// Add rows + data at the same time
-	// -----------------------------
-	// Bar Chart Acquistato/Venduto/Avanzamento %
-	// Declare series
-	var dataBars = new google.visualization.DataTable();
-
-	// Add legends with data type
-	dataBars.addColumn('string', 'Fornitore');
-	dataBars.addColumn('number', 'Acquistato');
-	dataBars.addColumn('number', 'Venduto');
-	dataBars.addColumn('number', 'Avanzamento %');
-
-	// Add data.
-
-	<?php
-	if( $GCarray ) {
-		foreach ($GCarray as $mvf)	{
-			$avanzamento = ($mvf[3] > 0 ? ($mvf[2]*100) / $mvf[3] : 0);
-	?>
-		dataBars.addRow(['<?php echo $mvf[1]?>', <?php echo $mvf[3]?>, <?php echo $mvf[2]?>, <?php echo $avanzamento?>]);
-	<?php
-		}
-	}
-	?>
-
-	var bar_options = {
-						chart: {
-								 title: 'Avanzamento venduto su acquistato per fornitore',
-								 subtitle: 'Acquistato, Venduto ed Avanzamento (reali)'
-							   },
-						legend: { position: 'right', maxLines: 2 },
-						axes: {
-								x: {
-									 0: {side: 'bottom'}
-								   }
-							  },
-						bars: 'horizontal',
-						/*width: $('.cols_chart').width(),
-						height: $('.cols_chart').width()*/
-					  };
-	  
-		// Instantiate and draw our chart, passing in some options.
-		var bar_chart = new google.charts.Bar(document.getElementById('bar_chart_div'));
-		bar_chart.draw(dataBars, bar_options);
-	}
-	  
-	window.addEventListener('resize', function () {
-			drawChart();
-    }/*, false*/);
+<!--+ DC - 23/05/2018 - Chart.js - include script/set css charts styles -->
+<script type="text/javascript" src="../../js/chartjs/2.7.2/Chart.bundle.min.js"></script>
+<script>
+window.onload = function() {
+  createChartJS();
+}
 </script>
 
 <style>
 .chart {
-  width: 100%; 
-  min-height: 450px;
-  border: 1px solid #ccc;
+  width: 100%;
+  min-height: 600px;
+  border: 0px solid #d7d7d7;
   padding: 3px;
 }
 .row {
   margin:0 !important;
 }
 </style>
-  
-<!--+ not used -->
-<div id="chart_area" style="width:100%">
-	<!--Div that will hold the pie chart-->
-	<column cols="6" class="cols_chart">
-	<div id="pie_chart_divx" style="/*text-align: -webkit-center; width:35%; border: 1px solid #ccc; padding: 3px; float:right*/"></div>
-    <!--Div that will hold the bar chart-->
-    <div id="bar_chart_divx" style="/*text-align: -webkit-center; width:65%; border: 1px solid #ccc; padding: 3px;*/"></div>
-	</column>
-	<!--text-align: -webkit-center;
-    display: inline;-->
-</div>
-<!--- not used -->
+<!--- DC - 23/05/2018 - Chart.js - include script/set css charts styles -->
+
+<!--+ DC - 23/05/2018 - Chart.js - render charts -->
+<script>
+
+var pieChartData=[]; // global scope for retrieve length property
+
+function createChartJS() {
+
+// set css styles before render charts
+document.getElementById("chart_pie_div").style.border = '1px solid #ccc';
+document.getElementById("chart_horizontal_bar_div").style.border = '1px solid #ccc';
+document.getElementById("chartsArea").style.display = 'block';
+
+var chartLabels=[];
+var chartPieSliceColors=[];
+
+// Global Options
+Chart.defaults.global.defaultFontFamily = 'sans-serif,Arial,Roboto,Courier New';
+Chart.defaults.global.defaultFontSize = 14;
+Chart.defaults.global.defaultFontColor = '#999';
+
+// Pie Chart
+// Populate pie chart dataset/labels
+var numOfValuesInDataset=0;
+<?php
+if( $CJSarray ) {
+	foreach ($CJSarray as $mvf)	{
+		$avanzamento = ($mvf[3] > 0 ? ($mvf[2]*100) / $mvf[3] : 0);
+?>
+	numOfValuesInDataset++;
+	chartLabels.push('<?php echo $mvf[1]?>');
+	pieChartData.push(parseFloat(<?php echo $avanzamento?>).toFixed(2));
+<?php
+	}
+}
+?>
+// assign random color for each pie slice
+for(iColors=1;iColors<=chartLabels.length;iColors++) {
+	chartPieSliceColors.push(dynamicColors());
+}
+
+// Get the 2d context for pie chart container (canvas)
+let myChartPie = document.getElementById('myChartPie').getContext('2d');
+
+// Create the pie chart
+let chartPie = new Chart(myChartPie, {
+  type:'doughnut', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+  data:{
+	labels:chartLabels,
+	datasets:[{
+	  data:pieChartData,
+	  backgroundColor:chartPieSliceColors,
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:2,
+	  hoverBorderColor:'#fff',
+	  pointStyle: 'rectRot',
+	}]
+  },
+  options:{
+	cutoutPercentage:30,
+	rotation:-0.35*3.14,
+	responsive:true,
+	maintainAspectRatio:false,
+	title:{
+	  display:true,
+	  text:'Avanzamento in % del Venduto su Acquistato (reale) per Fornitore', //not yet translated
+	  fontSize:14
+	},
+	legend:{
+	  display:true,
+	  maxWidth:100,
+	  position:'bottom',
+	  labels:{
+		fontColor:'#000',
+		usePointStyle: true
+	  }
+	},
+	layout:{
+	  padding:{
+		left:0,
+		right:0,
+		bottom:0,
+		top:0
+	  }
+	},
+	tooltips:{
+	  enabled:true
+	}
+  }
+});
+
+// Horizontal Bar Chart
+// Populate bar chart datasets (purchased/sold)
+var barChartDataPurchased=[];
+var barChartDataSold=[];
+
+<?php
+if( $CJSarray ) {
+	foreach ($CJSarray as $mvf)	{
+?>
+	barChartDataPurchased.push(parseFloat(<?php echo $mvf[3]?>).toFixed(2));
+	barChartDataSold.push(parseFloat(<?php echo $mvf[2]?>).toFixed(2));
+<?php
+	}
+}
+?>
+
+// dynamically height for bar chart
+// set inner height to 40 pixels per row
+var chartAreaHeight = numOfValuesInDataset * 40;
+// add padding to outer height to accomodate title, axis labels, etc
+var chartHeight = chartAreaHeight + 80;
+
+var rightHeight=chartHeight + "px";
+document.getElementById("chart_horizontal_bar_div").style.height = rightHeight;
+	  
+// Get the 2d context for pie chart container (canvas)
+let myChartHorizontalBar = document.getElementById('myChartHorizontalBar').getContext('2d');
+
+// Create the horizontal bar chart
+let chartHorizontalBar = new Chart(myChartHorizontalBar, {
+  type:'horizontalBar', // bar, horizontalBar, pie, line, doughnut, radar, polarArea
+  data:{
+	labels:chartLabels,
+	datasets:[{
+	  label:'Acquistato', //not yet translated
+	  data:barChartDataPurchased,
+	  backgroundColor:'rgba(66, 133, 244, 1)',
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:1,
+	  hoverBorderColor:'#777',
+	}, {
+	  label:'Venduto', //not yet translated
+	  data:barChartDataSold,
+	  backgroundColor:'rgba(186, 58, 47, 1)',
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:1,
+	  hoverBorderColor:'#777',
+	}, {
+	  label:'Avanzamento %', //not yet translated
+	  data:pieChartData,
+	  backgroundColor:'rgba(244, 180, 0, 1)',
+	  borderWidth:0,
+	  borderColor:'#ccc',
+	  hoverBorderWidth:1,
+	  hoverBorderColor:'#777',
+	}]
+  },
+  options:{
+	responsive:true,
+	maintainAspectRatio:false,
+	scales: {
+		yAxes: [{
+			/*ticks: {
+				beginAtZero:true
+			},*/
+			gridLines: {
+				display: false
+			}
+		}],
+		xAxes: [{
+			ticks: {
+				beginAtZero:true
+			},
+			gridLines: {
+				display: true,
+				color: "rgba(192,192,192,1)"
+			}
+		}]
+	},
+	title:{
+	  display:true,
+	  text:'Avanzamento venduto su acquistato per fornitore', //not yet translated
+	  fontSize:14
+	},
+	legend:{
+	  display:true,
+	  maxWidth:100,
+	  position:'right',
+	  labels:{
+		fontColor:'#000',
+		usePointStyle: true
+	  }
+	},
+	layout:{
+	  padding:{
+		left:0,
+		right:0,
+		bottom:0,
+		top:0
+	  }
+	},
+	tooltips:{
+	  enabled:true
+	}
+  }
+});
+}
+
+function dynamicColors() {
+  var r = Math.floor(Math.random() * 255);
+  var g = Math.floor(Math.random() * 255);
+  var b = Math.floor(Math.random() * 255);
+  return "rgb(" + r + "," + g + "," + b + ")";
+}
+
+window.addEventListener('resize', function () {
+		pieChartData=[];createChartJS();
+}/*, false*/);
+
+</script>
+<!--- DC - 23/05/2018 - Chart.js - render charts -->
+
+<!--+ DC - 23/05/2018 - Chart.js - html -->
+<br/>
 
 <div class="row">
   <!-- Titolo aggiuntivo (opzioneale, per ora disattivato)
   <div class="col-md-12 text-center">
     <h3>Rappresentazione grafica dati estrapolati</h3>
   </div>
-  -->
+  //-->
   <div class="col-md-4 col-md-offset-4">
-    <!--hr /-->
   </div>
   <div class="clearfix"></div>
-  <div class="col-md-4">
-    <div id="pie_chart_div" class="chart"></div>
-  </div>
-  <div class="col-md-8">
-    <div id="bar_chart_div" class="chart"></div>
+  <div id="chartsArea" style="display:none">
+	<div id="chart_pie_div" class="col-md-4">
+		<canvas id="myChartPie" class="chart"></canvas>
+	</div>
+	<!--div id="chart_hor_bar_div" style="position: relative;" class="col-md-8"-->
+	<div id="chart_horizontal_bar_div" class="col-md-8">
+		<canvas id="myChartHorizontalBar" style="position: relative;" class="chart"></canvas>
+	</div>
   </div>
 </div>
+<!--- DC - 23/05/2018 - Chart.js - html -->
 
 <?php
 require("../../library/include/footer.php");
