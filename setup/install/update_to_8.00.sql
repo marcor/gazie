@@ -12,3 +12,7 @@ ALTER TABLE `gaz_anagra` ADD COLUMN `codfis_aes` TINYTEXT NOT NULL AFTER `codfis
 ALTER TABLE `gaz_anagra` ADD COLUMN `pariva_aes` TINYTEXT NOT NULL AFTER `pariva`;
 ALTER TABLE `gaz_anagra` ADD COLUMN `e_mail_aes` TINYTEXT NOT NULL AFTER `e_mail`;
 ALTER TABLE `gaz_anagra` ADD COLUMN `pec_email_aes` TINYTEXT NOT NULL AFTER `pec_email`;
+UPDATE `gaz_config` SET `cvalue` = '111' WHERE `id` =2;
+-- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
+ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_resp` TINYINT(1) NOT NULL AFTER `print_map`;
+-- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

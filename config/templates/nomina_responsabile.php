@@ -22,14 +22,28 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-require('template.php');
+require('../../config/templates/template.php'); //attingo sempre dal set standard, quelli personalizzati potrebbero creare problemi di impaginazione
+
 
 class NominaResponsabile extends Template
 {
     function setTesDoc()
     {
         $this->tesdoc = $this->docVars->tesdoc;
-        $this->user = gaz_dbi_get_row($this->docVars->gTables['admin'], "user_id", $this->docVars->tesdoc['clfoco']);
+        if ($this->docVars->client['sexper'] == 'F'){
+           $this->descriResponsabile = 'la Signora';
+        } elseif ($this->docVars->client['sexper'] == 'M'){
+           $this->descriResponsabile = 'il Signor';
+        } else {
+           $this->descriResponsabile = 'la Spettabile';
+        }
+		if ($this->docVars->tesdoc['clfoco']<=100000000) {
+			// non è un partner commerciale ma un responsabile interno (con diritti di amministrazione di gazie)
+			$this->user = gaz_dbi_get_row($this->docVars->gTables['admin'], "user_id", $this->docVars->tesdoc['clfoco']);
+			$this->cliente1 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
+			$this->pers_title='per il/la Sig.r/a';
+			$this->descriResponsabile = 'il/la Signor/a';
+		}
 		$this->intesta1 = $this->docVars->intesta1;
         $this->intesta1bis = $this->docVars->intesta1bis;
         $this->intesta2 = $this->docVars->intesta2;
@@ -37,7 +51,6 @@ class NominaResponsabile extends Template
         $this->intesta4 = $this->docVars->intesta4;
         $this->colore = $this->docVars->colore;
         $this->tipdoc = 'NOMINA A RESPONSABILE DEL TRATTAMENTO DEI DATI PERSONALI';
-        $this->cliente1 = $this->user['user_firstname'].' '.$this->user['user_lastname'];
 		$this->luogo = $this->docVars->azienda['citspe'].' ('.$this->docVars->azienda['prospe'].'), lì '.strftime('%d %B %Y');
 		$this->pec = $this->docVars->azienda['pec'];
         if ($this->docVars->intesta5 == 'F'){
@@ -51,7 +64,6 @@ class NominaResponsabile extends Template
         $this->mese = substr($this->tesdoc['datemi'],5,2);
         $this->anno = substr($this->tesdoc['datemi'],0,4);
 		$this->clientSedeLegale =''; // la sede legale verrà stampata al posto della destinazione
-		$this->pers_title='per il Sig.';
     }
 
     function newPage() {
@@ -91,11 +103,11 @@ class NominaResponsabile extends Template
 		<li>Il Responsabile effettua il trattamento attenendosi alle istruzioni impartite dal Titolare il quale, anche tramite verifiche periodiche, vigila sulla puntuale osservanza delle disposizioni di cui al comma 2 e delle proprie istruzioni.</li>
 	</ol>
 </ul>
-<p><b>ritenuto che il/la signor/a {$this->cliente1}</b>, per l’ambito di attribuzioni, funzioni e competenze conferite, abbia i requisiti di esperienza, capacità ed affidabilità idonei a garantire il pieno rispetto delle vigenti disposizioni in materia di trattamento dei dati, ivi compreso il profilo relativo alla sicurezza;<br>
+<p><b>ritenuto che {$this->descriResponsabile} {$this->cliente1}</b>, per l’ambito di attribuzioni, funzioni e competenze conferite, abbia i requisiti di esperienza, capacità ed affidabilità idonei a garantire il pieno rispetto delle vigenti disposizioni in materia di trattamento dei dati, ivi compreso il profilo relativo alla sicurezza;<br>
 <b>ciò premesso;</b>
 </p>";
     $nomina = "
-<p><b>Il/la signor/a {$this->cliente1}</b>, in qualità di Responsabile del trattamento dei dati effettuato presso {$ucDescAzienda} <b>{$this->intesta1} {$this->intesta1bis}</b> con strumenti elettronici o comunque automatizzati o con strumenti diversi, per l’ambito di attribuzioni, competenze e funzioni assegnate.<br>
+<p><b>{$this->descriResponsabile} {$this->cliente1}</b>, in qualità di Responsabile del trattamento dei dati effettuato presso {$ucDescAzienda} <b>{$this->intesta1} {$this->intesta1bis}</b> con strumenti elettronici o comunque automatizzati o con strumenti diversi, per l’ambito di attribuzioni, competenze e funzioni assegnate.<br>
 In qualità di Responsabile del trattamento dei dati, ha il compito e la responsabilità di adempiere a tutto quanto necessario per il rispetto delle disposizioni vigenti in materia e di osservare scrupolosamente quanto in essa previsto, nonché le seguenti istruzioni impartite dal Titolare.<br>
 <b>Il Responsabile del Trattamento si impegna, entro e non oltre 30 gg. dalla data di sottoscrizione ed accettazione della presente nomina, ad impartire per iscritto ai propri collaboratori incaricati del trattamento, istruzioni in merito alle operazioni di trattamento dei dati personali ed a vigilare sulla loro puntuale applicazione.</b></p>
 ";
@@ -310,7 +322,7 @@ $note7 = "<p><sup>(9)</sup><b>Art.37 - Notificazione del trattamento</b></p>
 <li>in merito agli <b>Incaricati</b>, il RESPONSABILE deve:
 	<ul>
 		<li>individuare, tra i propri collaboratori, designandoli per iscritto, gli Incaricati del trattamento<sup>(11)</sup>;</li>
-		<li>recepire le istruzioni cui devono attenersi gli Incaricati nel trattamento dei dati impartite dal Titolare, assicurandosi che vengano materialmente consegnate agli stessi o siano già in loro possesso, unitamente al <b>“Regolamento per l’utilizzo e la gestione delle risorse strumentali informatiche e telematiche aziendali”</b> in allegato</li>
+		<li>recepire le istruzioni cui devono attenersi gli Incaricati nel trattamento dei dati impartite dal Titolare, assicurandosi che vengano materialmente consegnate agli stessi o siano già in loro possesso, unitamente al <b>“Regolamento per l’utilizzo e la gestione delle risorse strumentali informatiche e telematiche aziendali”</b> in allegato;</li>
 		<li><b>adoperarsi</b> al fine di rendere effettive le suddette istruzioni cui devono attenersi gli incaricati del trattamento, curando in particolare il profilo della riservatezza, della sicurezza di accesso e della integrità dei dati e l’osservanza da parte degli Incaricati, nel compimento delle operazioni di trattamento, dei principi di carattere generale che informano la vigente disciplina in materia;</li>
 		<li>stabilire le modalità di <b>accesso</b> ai dati e l’organizzazione del lavoro degli Incaricati, avendo cura di adottare preventivamente le misure organizzative idonee e impartire le necessarie istruzioni ai fini del <b>riscontro</b> di eventuali richieste di esecuzione dei diritti di cui all’art. 7;</li>
 		<li>comunicare periodicamente, al Responsabile dei Sistemi Informativi Aziendali, l’elenco nominativo aggiornato degli Incaricati al trattamento con relativi profili autorizzativi per l’accesso alle banche dati di pertinenza;</li>
@@ -515,7 +527,7 @@ $note8 = "<p><sup>(11)</sup><b>Art.30 - Incaricati del trattamento</b></p>
         $this->Cell(30);
         $this->Cell(92,4,'','B',1);
         $this->SetFont('courier','',7);
-        $this->Cell(62,4,$this->intesta1.' '.$this->intesta1bis);
+        $this->Cell(62,4,$this->intesta1);
         $this->Cell(30);
         $this->Cell(92,4,$this->cliente1);
     }

@@ -322,6 +322,11 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['sexper'] . "*</td><t
 $gForm->variousSelect('sexper', $script_transl['sexper_value'], $form['sexper']);
 echo "\t </td>\n";
 echo "</tr>\n";
+echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['external_resp'] . "</td><td class=\"FacetDataTD\" colspan=\"2\">\n";
+$gForm->variousSelect('external_resp', $script_transl['external_resp_value'], $form['external_resp'], 'FacetSelect', false);
+echo "\t </td>\n";
+echo "</tr>\n";
 /** ENRICO FEDELE */
 /* Cambiato l'ordine dei campi per renderlo pi� coerente con l'autocompletamento (prima il campo comune che ha la funzione attiva) */
 echo "<tr>\n";

@@ -151,6 +151,14 @@ $recordnav -> output();
 </tr>
 <?php
 while ($a_row = gaz_dbi_fetch_array($result)) {
+	// NOMINA A RESPONSABILE ESTERNO AL TRATTAMENTO DEI DATI?
+	$regol_lnk='';
+	if ($a_row["external_resp"]>0) {
+		$regol_lnk='<a title="Stampa la Nomina a RESPONSABILE ESTERNO al trattamento dati personali" class="btn btn-xs btn-default btn-warning" href="stampa_nomina.php?id=' . $a_row["codice"] . '" target="_blank"><i class="glyphicon glyphicon-eye-close"></i></a> ';
+	} else {
+		$regol_lnk="<a class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=".$a_row["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a>";
+	}
+	
     echo "<tr class=\"FacetDataTD\">";
 	 //colonna codice
     echo "<td><a class=\"btn btn-xs btn-default\" href=\"admin_fornit.php?codice=".substr($a_row["codice"],3)."&Update\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".substr($a_row["codice"],3)."</a></td>";
@@ -197,7 +205,8 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     } else {
         echo "<td class=\"FacetDataTDred\" align=\"center\"> * NO * </td>";
     }
-    echo "<td title=\"stampa informativa sulla privacy\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=".$a_row["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a></td>";
+    echo "<td title=\"stampa informativa sulla privacy\" align=\"center\">".
+	$regol_lnk."</td>";
     echo "<td title=\"Effettua un pagamento a ".$a_row["ragso1"]."\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" href=\"supplier_payment.php?partner=".$a_row["codice"]."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
     echo "<td title=\"Visualizza e stampa il partitario\" align=\"center\"><a class=\"btn btn-xs btn-default\" href=\"../contab/select_partit.php?id=".$a_row["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;<i class=\"glyphicon glyphicon-print\"></a></td>";
     echo "<td title=\"Cancella\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_fornit.php?codice=".substr($a_row["codice"],3)."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";

@@ -64,6 +64,8 @@ $strScript = array("admin_fornit.php" =>
         'ragso1_placeholder' => "opp. nome cognome legale rappresentante",
         'ragso2' => "Nombre de la empresa 1",
         'sedleg' => "Domicilio legal",
+        'external_resp' => 'Responsabile Esterno Trattamento Dati',
+        'external_resp_value' => array(1 => 'Si', 0 => 'No'),
         'luonas' => 'Birthplace',
         'datnas' => 'Date of birth',
         'pronas' => 'Province of birth',
