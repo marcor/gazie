@@ -55,7 +55,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
                $_FILES['userfile']['type'] == "image/gif" ||
                $_FILES['userfile']['type'] == "image/x-gif"))
               $msg .= '8+';
-              // controllo che il file non sia pi&ugrave; grande di 300kb
+              // controllo che il file non sia più; grande di 300kb
           if ( $_FILES['userfile']['size'] > 307200)
               $msg .= '9+';
        }
@@ -69,6 +69,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
        if (empty($form['descri'])){  //descrizione vuota
              $msg .= "7+";
        }
+	   if (empty($form['ricarico'])){  //dimensione vuota
+             $msg .= "10+";
+       }
        if ($msg == "") {// nessun errore
           // preparo la stringa dell'immagine
           if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
@@ -80,7 +83,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           if ($toDo == 'update') { // e' una modifica
             gaz_dbi_table_update('campi',$form["codice"],$form);
           } else { // e' un'inserimento
-            gaz_dbi_table_insert('campi',$form);
+            $form['giorno_deca']='0000-00-00 00:00:00';gaz_dbi_table_insert('campi',$form);
           }
           header("Location: ".$_POST['ritorno']);
           exit;
@@ -94,6 +97,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['web_url'] = $campi['web_url'];
     $form['annota'] = $campi['annota'];
     $form['ricarico'] = str_replace('.', ',',$campi["ricarico"]);
+	$form['giorno_deca'] =$campi['giorno_deca'];
+	$form['cod_prod_us'] =$campi['cod_prod_us'];
+	$form['id_mov'] =$campi['id_mov'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
     $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['campi'], 1 ,'codice desc',0,1);
@@ -103,6 +109,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ricarico'] = 0;
     $form['web_url']='';
     $form['annota'] = '';
+	$form['giorno_deca'] ='0000-00-00 00:00:00';
+	$form['cod_prod_us'] ='';
+	$form['id_mov'] ='';
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();

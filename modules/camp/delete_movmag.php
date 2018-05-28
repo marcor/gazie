@@ -29,11 +29,52 @@ $admin_aziend = checkAdmin();
 
 if (isset($_POST['Delete'])) {
     $upd_mm = new magazzForm;
-    $form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', intval($_POST['id_mov']));
+    $form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', intval($_POST['id_mov']));$id_mov=$form['id_mov'];$clfoco=$form['clfoco'];// Antonio Germani questo è il numero dell'id_mov che cancellerò >> $form['id_mov'] e il numero del campo di coltivazione eventualmente associato >> $form['clfoco']
+	
+	echo "ID movimento: ",$id_mov,"  Codice campo: ",$clfoco," <br>";
+	if ($clfoco>0) {
+	$form2 = gaz_dbi_get_row($gTables['campi'], 'codice', intval($clfoco));
+	if (intval($form2['id_mov'])==intval($id_mov)){
+		echo "da azzerare",$form2['id_mov'],$form2['giorno_deca'],$form2['cod_prod_us'],"<br>";
+// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione
+$n=0;$array=array();
+		$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE clfoco ='". $clfoco."'";
+		$result = gaz_dbi_query($query);
+		while($row = $result->fetch_assoc()) {
+// cerco i giorni di sospensione del prodotto interessato ad ogni movimento
+			$n=$n+1;$artico= $row['artico'];
+			$form3 =gaz_dbi_get_row($gTables['artico'], 'codice', $artico);
+			$temp_sosp = $form3['peso_specifico'];echo " tempo sospensione: ",$temp_sosp;
+// creo un array con tempo di sospensione + codice articolo + movimento magazzino
+					$temp_deca=(intval($temp_sosp)*86400)+strtotime($row["datdoc"]);
+				$array[$n]= array('temp_deca'=>$temp_deca,'datdoc'=>$row["datdoc"],'artico'=>$artico, 'id_mov'=>$row["id_mov"]);
+			
+// ordino l'array per tempo di sospensione
+		
+        echo $n," id: ". $row["id_mov"]. " - Name: ". $row["datdoc"]. " " . $row["artico"] . "<br>";
+		}
+		echo "----------- Array non ordinato <br>";
+		print_r ($array);
+		echo "<br> ----------------- Array ordinato <br>";
+		rsort ($array);
+		print_r ($array);
+		
+			if (isset ($array[1]['temp_deca'])) {	$dt=date('Y/m/d', $array[1]['temp_deca']);
+		// aggiorno la tabella del campo di coltivazione
+			$query="UPDATE " . $gTables['campi'] . " SET giorno_deca = '" . $dt .  "' , cod_prod_us = '"  .$array[1]['artico']. "' , id_mov = '"  .$array[1]['id_mov'].  "' WHERE codice ='". intval($clfoco)."'";
+			gaz_dbi_query ($query) ;
+			}	
+			else {$query="UPDATE " . $gTables['campi'] . " SET giorno_deca = '" . "" .  "' , cod_prod_us = '"  ."". "' , id_mov = '"  ."".  "' WHERE codice ='". intval($clfoco)."'";
+			gaz_dbi_query ($query) ;
+			}
+	}
+	}
+	
     $upd_mm->uploadMag('DEL', $form['tipdoc'], '', '', '', '', '', '', '', '', '', '', $form['id_mov'], $admin_aziend['stock_eval_method']);
     if ($form['id_rif'] > 0) {  //se il movimento di magazzino � stato generato da un rigo di documento lo azzero
         gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $form['id_rif'], 'id_mag', 0);
     }
+	
     header("Location: report_movmag.php");
     exit;
 } else {
@@ -63,12 +104,8 @@ print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl["partner"] . "</
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">" . $form["datdoc"] . "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">" . $form["artico"] . "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\">" . $form["quanti"] . "</td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\">" . $form["prezzo"] . "</td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[14] . "</td><td class=\"FacetDataTD\">" . $form["scorig"] . "</td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[10] . "</td><td class=\"FacetDataTD\">" . $form["scochi"] . "</td></tr>\n";
-$valore = CalcolaImportoRigo($form['quanti'], $form['prezzo'], $form['scorig']);
-$valore = CalcolaImportoRigo(1, $valore, $form['scochi']);
-print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl["amount"] . "</td><td class=\"FacetDataTD\">" . gaz_format_number($valore) . "</td></tr>\n";
+
+
 print "<td colspan=\"2\" align=\"right\"><input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\"><input type=\"submit\" name=\"Delete\" value=\"" . strtoupper($script_transl['delete']) . "!\"></td></tr>";
 ?>
 </table>

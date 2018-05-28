@@ -539,7 +539,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-                <div class="row">
+<!-- Antonio Germani non serve per Quaderno di campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="uniacq" class="col-sm-4 control-label"><?php echo $script_transl['uniacq']; ?></label>
@@ -547,18 +547,20 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
+ <!-- Antonio Germani il peso specifico diventa il TEMPO DI SOSPENSIONE -->
+               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['peso_specifico']; ?></label>
+                            <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['tempo_sospensione']; ?></label>
                             <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
+ <!-- Antonio Germani il volume specifico diventa la DOSE AD ETTARO  -->
+				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['volume_specifico']; ?></label>
+                            <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['dose_ha']; ?></label>
                             <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['volume_specifico']; ?>" name="volume_specifico" maxlength="13" />
                         </div>
                     </div>
