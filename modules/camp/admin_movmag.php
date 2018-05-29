@@ -194,9 +194,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 	 // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
 	 $mv = $gForm->getStockValue(false, $form['artico']);
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
+		if (isset($_POST['Update'])) {
+			$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+			// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
+			$print_magval=$print_magval+$qta['quanti'];}
 		if ($form["operat"] == -1 and ($print_magval-$form['quanti']<0)) { //Antonio Germani quantità insufficiente
 			$msg .= "23+";
 			}
+			
 //Antonio Germani prendo e metto la data di fine sospensione del campo di coltivazione selezionato in $fine_sosp 
 		$clfoco=$form['clfoco'];//campo di coltivazione inserito nel form
 		$query="SELECT ".'giorno_deca'.",".'ricarico'." FROM ".$gTables['campi']. " WHERE codice ='". $clfoco."'";
@@ -208,7 +213,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			// Antonio Germani Controllo se la quantità è giusta rapportata al campo di coltivazione
 			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 			$dose=$item["volume_specifico"];// prendo la dose
-			if ($form['quanti'] > $dose*$dim_campo && $form["operat"]==-1 && $dim_campo>0) {
+			if ($dose>0 && $form['quanti'] > $dose*$dim_campo && $form["operat"]==-1 && $dim_campo>0) {
 				$msg .="25+"; // errore dose eccessiva
 			}
 						
@@ -496,8 +501,12 @@ if ($form['artico'] == '') {
 	// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 	 $mv = $gForm->getStockValue(false, $item['codice']);
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
+		if (isset($_POST['Update'])) {
+			$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+			// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
+			$print_magval=$print_magval+$qta['quanti'];}
 	 
-    echo "<input type=\"submit\" value=\"" . substr($item['descri'], 0, 30) . "\" name=\"newitem\" title=\"" . ucfirst($script_transl['update']) . "!\">\n ";echo "dose: ",$dose," ",$print_unimis,"/ha";
+    echo "<input type=\"submit\" value=\"" . substr($item['descri'], 0, 30) . "\" name=\"newitem\" title=\"" . ucfirst($script_transl['update']) . "!\">\n ";if ($dose>0) {echo "dose: ",$dose," ",$print_unimis,"/ha";}
     echo "\t<input type=\"hidden\" name=\"artico\" value=\"" . $form['artico'] . "\">\n";
     echo "\t<input type=\"hidden\" name=\"search_item\" value=\"" . $form['search_item'] . "\">\n";
 }
