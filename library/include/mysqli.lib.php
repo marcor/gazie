@@ -526,6 +526,113 @@ function gaz_dbi_table_update($table, $id, $newValue) {
         die("Error gaz_dbi_table_update:<b> $query </b>" . mysqli_error($link));
 }
 
+function gaz_dbi_insert_anagra($value) {
+    /*
+     * $value - array associativo del tipo nome_colonna=>valore con i valori da inserire
+     */
+    global $link, $gTables;
+    $first = true;
+    $auto_increment = false;
+    $colName = '';
+    $colValue = '';
+    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra']);
+    $rs_auto_increment = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra']);
+    while ($ai = mysqli_fetch_assoc($rs_auto_increment)) {
+        if ($ai['Extra'] == 'auto_increment') {
+            $auto_increment = $ai['Field'];
+        }
+    }
+    $field_meta = gaz_dbi_get_fields_meta($field_results);
+    for ($j = 0; $j < $field_meta['num']; $j++) {
+        if ($field_meta['data'][$j]->name != $auto_increment) {  // il campo auto increment non dev'essere passato
+            $colName .= ($first ? '`' . $field_meta['data'][$j]->name . '`' : ', `' . $field_meta['data'][$j]->name . '`');
+            $colValue .= ($first ? " " : ", ");
+            $first = false;
+            if (isset($value[$field_meta['data'][$j]->name])) {
+                if ($field_meta['data'][$j]->blob && !empty($value[$field_meta['data'][$j]->name])) {
+                    $colValue .= '0x' . bin2hex($value[$field_meta['data'][$j]->name]);
+                } elseif ($field_meta['data'][$j]->numeric) { // NUMERICO
+                    $colValue .= floatval($value[$field_meta['data'][$j]->name]);
+                } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
+                    if (empty($value[$field_meta['data'][$j]->name])) {
+                        $colValue .= "NULL";
+                    } else {
+                        $colValue .= "'" . $value[$field_meta['data'][$j]->name] . "'";
+                    }
+                } else {
+                    $elem = addslashes($value[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
+                    $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
+                    $colValue .= "'" . $elem . "'";
+                }
+            } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
+                $colValue .= "'" . $_SESSION["user_name"] . "'";
+            } elseif ($field_meta['data'][$j]->name == 'last_modified') {
+                $colValue .= "'" . date("Y-m-d H:i:s") . "'";
+            } else {
+                if ($field_meta['data'][$j]->numeric) {
+                    $colValue .= 0;
+                } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
+                    $colValue .= "NULL";
+                } else {
+                    $colValue .= "''";
+                }
+            }
+        }
+    }
+    $query = "INSERT INTO " . $gTables['anagra'] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
+    $result = mysqli_query($link, $query);
+    if (!$result)
+        die("Error gaz_dbi_table_insert:<b> $query </b> " . mysqli_error($link));
+}
+
+function gaz_dbi_update_anagra($id, $newValue) {
+    /*
+     * $id - stringa con il valore del campo "codice" da aggiornare o array(0=>nome,1=>valore,2=>nuovo_valore)
+     * $newValue - array associativo del tipo nome_colonna=>valore con i valori da inserire
+     */
+    global $link, $gTables;
+    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra']);
+    $field_meta = gaz_dbi_get_fields_meta($field_results);
+    $query = "UPDATE " . $gTables['anagra'] . ' SET ';
+    $first = true;
+    $quote_id = "'";
+    for ($j = 0; $j < $field_meta['num']; $j++) {
+        if (isset($newValue[$field_meta['data'][$j]->name])) {
+            $query .= ($first ? '`' . $field_meta['data'][$j]->name . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . '`' . " = ");
+            $first = false;
+            if ($field_meta['data'][$j]->blob && !empty($newValue[$field_meta['data'][$j]->name])) {
+                $query .= '0x' . bin2hex($newValue[$field_meta['data'][$j]->name]);
+            } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
+                $query .= floatval($newValue[$field_meta['data'][$j]->name]);
+            } else {
+                $elem = addslashes($newValue[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
+                $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
+                $query .= "'" . $elem . "'";
+            }
+            //per superare lo STRICT_MODE del server non metto gli apici ai numerici
+            if ((is_array($id) && $field_meta['data'][$j]->name == $id[0] && $field_meta['data'][$j]->numeric) || (is_string($id) && $field_meta['data'][$j]->name == 'codice' && $field_meta['data'][$j]->numeric)) {
+                $quote_id = '';
+            }
+        } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
+            $query .= ", adminid = '" . $_SESSION["user_name"] . "'";
+        }
+    }
+    //   se in $id c'è un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
+    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
+    if (is_array($id)) {
+        if (isset($id[2])) {
+            $query .= ", $id[0] = $quote_id$id[2]$quote_id";
+        }
+        $query .= " WHERE $id[0] = $quote_id$id[1]$quote_id";
+    } else { //altrimenti uso "codice"
+        $query .= " WHERE codice = $quote_id$id$quote_id";
+    }
+    //msgDebug($query);
+    $result = mysqli_query($link, $query);
+    if (!$result)
+        die("Error gaz_dbi_table_update:<b> $query </b>" . mysqli_error($link));
+}
+
 function tableInsert($table, $columns, $newValue) {
     global $link, $gTables;
     $first = True;

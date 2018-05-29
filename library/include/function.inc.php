@@ -617,7 +617,7 @@ class Anagrafica {
     function updatePartners($codice, $newValue) {
         $newValue['descri'] = $newValue['ragso1'] . ' ' . $newValue['ragso2'];
         gaz_dbi_table_update('clfoco', $codice, $newValue);
-        gaz_dbi_table_update('anagra', array('id', $newValue['id_anagra']), $newValue);
+        gaz_dbi_update_anagra(array('id', $newValue['id_anagra']), $newValue);
     }
 
     function anagra_to_clfoco($v, $m, $payment=1) {
@@ -647,7 +647,7 @@ class Anagrafica {
         if (isset($v['ragso2'])) {
             $v['descri'] .= $v['ragso2'];
         }
-        gaz_dbi_table_insert('anagra', $v);
+        gaz_dbi_insert_anagra($v);
         $v['id_anagra'] = gaz_dbi_last_id();
         gaz_dbi_table_insert('clfoco', $v);
     }
