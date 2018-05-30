@@ -52,7 +52,8 @@ $strScript = array("admin_fornit.php" =>
             'You must choose your payment method',
             'The supplier code is already there, try the entry with the one proposed (plus 1)',
             'The date of birth is wrong',
-            'Email address formally wrong'
+            'Email address formally wrong',
+			'Non è stato descritto il servizio esternalizzato'
         ),
         'link_anagra' => ' Click below to enter the existing registry on the your chart of accounts',
         'codice' => "Code ",
@@ -62,6 +63,7 @@ $strScript = array("admin_fornit.php" =>
         'sedleg' => "Registered Office",
         'external_resp' => 'Responsabile Esterno Trattamento Dati',
         'external_resp_value' => array(1 => 'Si', 0 => 'No'),
+        'external_service_descri' => 'Descrizione del servizio esternalizzato',
         'luonas' => 'Birthplace',
         'datnas' => 'Date of birth',
         'pronas' => 'Province of birth',

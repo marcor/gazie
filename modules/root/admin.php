@@ -207,7 +207,7 @@ if ($t > 4 && $t <= 13) {
                         <?php echo $script_transl['access'] . $admin_aziend['Access'] . $script_transl['pass'] . gaz_format_date($admin_aziend['datpas']) ?> 
                     </p>    
                     <div>
-						<a class="btn btn-primary" href="../config/print_privacy_regol.php" class="button">LEGGI "IL REGOLAMENTO UTILIZZO RISORSE INFORMATICHE"</a> 
+						<a class="btn btn-primary" href="../config/print_privacy_regol.php" class="button"> <?php echo $script_transl['user_regol'];?></a> 
 					</div>
                 </div>
             </div>

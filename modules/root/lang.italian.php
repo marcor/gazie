@@ -47,6 +47,7 @@ $strScript = array("admin.php" =>
         'proj' => "Progetto di: ",
         'devel' => "Sviluppo, documentazione, segnalazione errori: ",
         'change_usr' => "Modifica i tuoi dati",
+        'user_regol' => 'LEGGI IL "REGOLAMENTO UTILIZZO RISORSE INFORMATICHE"',
         'auth' => "Sito dell'autore",
         'strBottom' => array(
             array('href' => "http://www.kernel.org/",

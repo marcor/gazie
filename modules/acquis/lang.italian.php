@@ -55,7 +55,8 @@ $strScript = array("admin_fornit.php" =>
             '&Egrave; necessario scegliere la modalit&agrave; di pagamento',
             'Il codice del fornitore &egrave; gi&agrave; esistente, riprova l\'inserimento con quello proposto (aumentato di 1)',
             'La data di nascita &egrave; sbagliata',
-            'Indirizzo email formalmente sbagliato'
+            'Indirizzo email formalmente sbagliato',
+			'Non è stato descritto il servizio esternalizzato'
         ),
         'link_anagra' => ' Clicca sotto per inserire l\'anagrafica esistente sul piano dei conti',
         'codice' => "Codice ",
@@ -65,6 +66,7 @@ $strScript = array("admin_fornit.php" =>
         'sedleg' => "Sede legale",
         'external_resp' => 'Responsabile Esterno Trattamento Dati',
         'external_resp_value' => array(1 => 'Si', 0 => 'No'),
+        'external_service_descri' => 'Descrizione del servizio esternalizzato',
         'luonas' => 'Luogo di nascita',
         'datnas' => 'Data di Nascita',
         'pronas' => 'Provincia di nascita',

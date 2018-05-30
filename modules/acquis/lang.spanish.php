@@ -56,7 +56,8 @@ $strScript = array("admin_fornit.php" =>
             'Usted debe elegir la forma pago',
             'El c&oacute;digo de proveedor ya est&aacute; ah&iacute;, intentar la entrada con la que se propone (m&aacute;s 1)',
             'The date of birth is wrong',
-            'Email formalmente mal la dirección'
+            'Email formalmente mal la dirección',
+			'Non è stato descritto il servizio esternalizzato'
         ),
         'link_anagra' => ' Haga clic a continuaci&oacute;n para introducir sus datos personales en la tabla existente de cuentas',
         'codice' => "Codigo ",
@@ -66,6 +67,7 @@ $strScript = array("admin_fornit.php" =>
         'sedleg' => "Domicilio legal",
         'external_resp' => 'Responsabile Esterno Trattamento Dati',
         'external_resp_value' => array(1 => 'Si', 0 => 'No'),
+        'external_service_descri' => 'Descrizione del servizio esternalizzato',
         'luonas' => 'Birthplace',
         'datnas' => 'Date of birth',
         'pronas' => 'Province of birth',

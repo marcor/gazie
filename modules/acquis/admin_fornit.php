@@ -152,6 +152,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                 $msg .= "14+";
             }
         }
+        if (empty(trim($form['external_service_descri'])) && $form['external_resp'] > 0) {
+            $msg .= "21+";
+        }
         $uts_datnas = mktime(0, 0, 0, $form['datnas_M'], $form['datnas_D'], $form['datnas_Y']);
         if (!checkdate($form['datnas_M'], $form['datnas_D'], $form['datnas_Y']) && ($admin_aziend['country'] != $form['country'] )) {
             $msg .= "19+";
@@ -162,11 +165,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
             $msg .= "20+";
         }
+        if (!filter_var($form['e_mail'], FILTER_VALIDATE_EMAIL) && !empty($form['e_mail'])) {
+            $msg .= "20+";
+        }
 
         if (empty($msg)) { // nessun errore
             $form['codice'] = $real_code;
             $form['datnas'] = date("Ymd", $uts_datnas);
-            if ($toDo == 'insert') {
+           if ($toDo == 'insert') {
                 if ($form['id_anagra'] > 0) {
                     gaz_dbi_table_insert('clfoco', $form);
                 } else {
@@ -327,6 +333,12 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['external_resp'] . "<
 $gForm->variousSelect('external_resp', $script_transl['external_resp_value'], $form['external_resp'], 'FacetSelect', false);
 echo "\t </td>\n";
 echo "</tr>\n";
+echo "<tr>\n";
+echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['external_service_descri'] . " </td>\n";
+echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+      <textarea name=\"external_service_descri\" rows=\"2\" cols=\"50\" class=\"FacetInput\">" . $form["external_service_descri"] . "</textarea></td>\n";
+echo "</tr>\n";
+
 /** ENRICO FEDELE */
 /* Cambiato l'ordine dei campi per renderlo pi� coerente con l'autocompletamento (prima il campo comune che ha la funzione attiva) */
 echo "<tr>\n";
@@ -474,8 +486,6 @@ $select_agente->addSelected($form["id_agente"]);
 $select_agente->output();
 echo "</td>\n";
 echo "</tr>\n";
-
-
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">" . $script_transl['destin'] . " </td>\n";
 echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
