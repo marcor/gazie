@@ -95,22 +95,22 @@ $title = array('luogo_data'=>$luogo_data,
                'hile'=>array(array('lun' => 16,'nam'=>$script_transl['header'][0]),
                              array('lun' => 30,'nam'=>$script_transl['header'][1]),
                              array('lun' => 100,'nam'=>$script_transl['header'][2]),
-                             array('lun' => 17,'nam'=>$script_transl['header'][3]),
+                            // array('lun' => 17,'nam'=>$script_transl['header'][3]),
                              array('lun' => 8,'nam'=>$script_transl['header'][4]),
                              array('lun' => 17,'nam'=>$script_transl['header'][5]),
-                             array('lun' => 17,'nam'=>$script_transl['header'][6]),
-                             array('lun' => 17,'nam'=>$script_transl['header'][7]),
-                             array('lun' => 20,'nam'=>$script_transl['header'][8]),
-                             array('lun' => 20,'nam'=>$script_transl['header'][9])
+                            // array('lun' => 17,'nam'=>$script_transl['header'][6]),
+                            // array('lun' => 17,'nam'=>$script_transl['header'][7]),
+                             array('lun' => 20,'nam'=>$script_transl['header'][8])     //,
+                            // array('lun' => 20,'nam'=>$script_transl['header'][9])
                             )
               );
-$aRiportare = array('top'=>array(array('lun' => 222,'nam'=>$script_transl['top']),
+$aRiportare = array('top'=>array(array('lun' => 171,'nam'=>$script_transl['top']),
                            array('lun' => 20,'nam'=>''),
-                           array('lun' => 20,'nam'=>'')
+                          // array('lun' => 20,'nam'=>'')
                            ),
-                    'bot'=>array(array('lun' => 222,'nam'=>$script_transl['bot']),
+                    'bot'=>array(array('lun' => 171,'nam'=>$script_transl['bot']),
                            array('lun' => 20,'nam'=>''),
-                           array('lun' => 20,'nam'=>'')
+                         //  array('lun' => 20,'nam'=>'')
                            )
                     );
 $pdf = new Report_template();
@@ -123,8 +123,8 @@ $ctrlArtico = "";
 $ctrl_id=0;
 $mval['q_g']=0;
 $mval['q_g']=0;
-$mval['v_g']=0;
-$mval['v_g']=0;
+//$mval['v_g']=0;
+//$mval['v_g']=0;
 while ($mv = gaz_dbi_fetch_array($result)) {
       $pdf->setRiporti($aRiportare);
       if ($ctrlArtico != $mv['artico']) {
@@ -134,7 +134,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
                    $pdf->SetFont('helvetica','B',8);
                    $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].strftime("%d-%m-%Y",$utsrf).' : ',1,0,'R');
                    $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
-                   $pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
+                   //$pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
                    $pdf->SetFont('helvetica','',7);
          }
          $aRiportare['top'][1]['nam'] = 0;
@@ -162,13 +162,13 @@ while ($mv = gaz_dbi_fetch_array($result)) {
       foreach ($magval as $mval) {
          $aRiportare['top'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
          $aRiportare['bot'][1]['nam'] = gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']);
-         $aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
-         $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
+         //$aRiportare['top'][2]['nam'] = gaz_format_number($mval['v_g']);
+        // $aRiportare['bot'][2]['nam'] = gaz_format_number($mval['v_g']);
          if ($ctrl_id <> $mv['id_mov']) {
               $pdf->Cell(16,4,gaz_format_date($mv['datreg']),'LTR',0,'C');
               $pdf->Cell(30,4,$mv['caumag'].'-'.substr($mv['descri'],0,17),'TR');
               $pdf->Cell(100,4,substr($mv['desdoc'].' '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,80),'TR');
-              $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');
+             /* $pdf->Cell(17,4,number_format($mv['prezzo'],$admin_aziend['decimal_price'],',',' '),'TR',0,'R');*/
               $pdf->Cell(8,4,$mv['unimis'],'TR',0,'C');
          } else {
               $pdf->Cell(16,4,'','LR');
@@ -178,15 +178,15 @@ while ($mv = gaz_dbi_fetch_array($result)) {
               $pdf->Cell(8,4,'','R');
          }
          $pdf->Cell(17,4,gaz_format_quantity($mval['q']*$mv['operat'],1,$admin_aziend['decimal_quantity']),1,0,'R');
-         if ($mv['operat']==1) {
+       /*  if ($mv['operat']==1) {
              $pdf->Cell(17,4,number_format($mval['v'],$admin_aziend['decimal_price'],',',''),1,0,'R');
              $pdf->Cell(17,4,'',1);
          } else {
              $pdf->Cell(17,4,'',1);
              $pdf->Cell(17,4,number_format($mval['v'],$admin_aziend['decimal_price'],',',''),1,0,'R');
-         }
-         $pdf->Cell(20,4,gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']),1,0,'R');
-         $pdf->Cell(20,4,gaz_format_number($mval['v_g']),1,1,'R');
+         }*/
+         $pdf->Cell(20,4,gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity']),1,1,'R');
+         /*$pdf->Cell(10,4,gaz_format_number($mval['v_g']),1,1,'R');*/
          $ctrl_id = $mv['id_mov'];
       }
       $ctrlArtico = $mv['artico'];
@@ -194,7 +194,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 $pdf->SetFont('helvetica','B',8);
 $pdf->Cell($aRiportare['top'][0]['lun'],4,$script_transl['tot'].strftime("%d-%m-%Y",$utsrf).' : ',1,0,'R');
 $pdf->Cell($aRiportare['top'][1]['lun'],4,$aRiportare['top'][1]['nam'],1,0,'R');
-$pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
+//$pdf->Cell($aRiportare['top'][2]['lun'],4,$aRiportare['top'][2]['nam'],1,0,'R');
 $pdf->SetFont('helvetica','',7);
 $pdf->setRiporti('');
 $pdf->Output();

@@ -280,9 +280,8 @@ $strScript = array("browse_document.php" =>
         'art_fin' => 'Articolo fine ',
         'date_fin' => 'Data registrazione fine ',
         'header' => array('Data' => '', 'Causale' => '', 'Descrizione<br \>documento' => '',
-            'Prezzo' => '', 'UM' => '', 'Quantit&agrave;' => '',
-            '<br \>carico' => '', '<br \> scarico' => '',
-            'Quantit&agrave;<br \>giacenza' => '', 'Valore<br \>giacenza' => ''
+             'UM' => '', 'Quantit&agrave;<br \> movimento' => '',
+             'Quantit&agrave;<br \>giacenza' => ''
         ),
         'tot' => 'Consistenza'
     ),
