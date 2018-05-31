@@ -149,5 +149,14 @@ CREATE TABLE `gaz_XXXregistro_trattamento_dati` (
 	`last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (`revision`)
 ) COMMENT='Registro dei trattamenti (ex art.30 Regolamento UE 2016/679 - GDPR)' ENGINE=MyISAM;
-
+ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `type_mov` INT(1) NOT NULL DEFAULT '0' COMMENT 'Quaderno di campagna: 1=si 0=no  ' AFTER `caumag`;
+ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `campo_coltivazione` INT(3) NOT NULL DEFAULT '0' COMMENT 'Ref.alla colonna codice della tabella gaz_001campi' AFTER `scorig`;
+ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `avversita` VARCHAR(50) NOT NULL COMMENT 'Utilizzato su quaderno di campagna' AFTER `campo_coltivazione`;
+ALTER TABLE `gaz_XXXartico`	ADD COLUMN `codice_fornitore` VARCHAR(50) NOT NULL AFTER `descri`;
+ALTER TABLE `gaz_XXXartico`	ADD COLUMN `dose_massima` DECIMAL(8,3) NOT NULL DEFAULT '0' COMMENT 'Utilizzato in quaderno di campagna' AFTER `volume_specifico`;
+ALTER TABLE `gaz_XXXartico`	ADD COLUMN `rame_metallico` DECIMAL(8,3) NOT NULL DEFAULT '0' COMMENT 'Utilizzato in quaderno di campagna' AFTER `dose_massima`;
+ALTER TABLE `gaz_XXXartico`	ADD COLUMN `tempo_sospensione` INT(2) NOT NULL DEFAULT '0' COMMENT 'Utilizzato in quaderno di campagna' AFTER `rame_metallico`;
+ALTER TABLE `gaz_XXXartico`	ADD COLUMN `ordinabile` INT(1) NOT NULL DEFAULT '0' AFTER `codice_fornitore`, ADD COLUMN `modificabile` INT(1) NOT NULL DEFAULT '0' AFTER `ordinabile`;
+ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `codice_fornitore` VARCHAR(50) NOT NULL AFTER `codart`;
+ALTER TABLE `gaz_XXXcampi`	ADD COLUMN `giorno_decadimento` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `ricarico`, ADD COLUMN `codice_prodotto_usato` VARCHAR(15) NOT NULL AFTER `giorno_decadimento`, ADD COLUMN `id_mov` INT(9) NULL DEFAULT '0' AFTER `codice_prodotto_usato`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
