@@ -403,6 +403,8 @@ $strScript = array("browse_document.php" =>
         'web_multiplier' => 'Moltiplicatore prezzo web',
         'web_public' => 'Pubblica sul sito web',
         'web_public_value' => array(0 => 'No', 1 => 'Si'),
+		'ordinabile_value' => array( '*' => '----','S' => 'Ordinare','N'=> 'Non ordinare'),
+		'movimentabile_value' => array ( '*' => '----','S' => 'Si','N'=>'No','E' => 'Esaurito'),
         'depli_public' => 'Pubblica sul catalogo',
         'depli_public_value' => array(0 => 'No', 1 => 'Si'),
         'web_url' => 'Web url<br />(es: http://site.com/item.html)',
@@ -410,6 +412,9 @@ $strScript = array("browse_document.php" =>
         'iterate_invitation' => 'INSERISCI UN ALTRO ARTICOLO DI MAGAZZINO',
         'browse_for_file' => 'Sfoglia',
         'id_anagra' => 'Fornitore',
+		'codice_fornitore' => 'Codice del fornitore',
+		'movimentabile' => 'Articolo Movimentabile',
+		'ordinabile' => 'Articolo ordinabile',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'

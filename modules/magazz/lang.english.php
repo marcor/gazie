@@ -408,6 +408,8 @@ $strScript = array("browse_document.php" =>
         'web_price' => 'Selling price on the website',
         'web_multiplier' => 'Web price multiplier',
         'web_public' => 'Public website',
+		'ordinabile_value' => array( '*' => '----','S' => 'Order','N'=> 'Not order'),
+		'movimentabile_value' => array ( '*' => '----','S' => 'Yes','N'=>'No','E' => 'Sold out'),
         'depli_public' => 'Public on depliant',
         'depli_public_value' => array(0 => 'No', 1 => 'Yes'),
         'web_public_value' => array(0 => 'No', 1 => 'Yes'),
@@ -416,6 +418,9 @@ $strScript = array("browse_document.php" =>
         'iterate_invitation' => 'INSERT ANOTHER ITEM IN STOCK!',
         'browse_for_file' => 'Browse',
         'id_anagra' => 'Supplier',
+		'codice_fornitore' => 'Soud code',
+		'movimentabile' => 'Movable item',
+		'ordinabile' => 'Orderable item',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'

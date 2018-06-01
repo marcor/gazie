@@ -23,6 +23,33 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+
+// m1 Modificato a mano
+ function serchCOD()
+   {
+    $max_codice = gaz_dbi_query("select max(codice) from gaz_001artico;");
+    $max_cod = gaz_dbi_fetch_array($max_codice);
+    return ++$max_cod[0];
+   }
+ function Barcode($EAN)
+   { 
+    $dispari = substr($EAN,1,1)+substr($EAN,3,1)+substr($EAN,5,1)+substr($EAN,7,1)+substr($EAN,9,1)+substr($EAN,11,1);
+    $dispari = $dispari * 3;
+    $pari = substr($EAN,0,1)+substr($EAN,2,1)+substr($EAN,4,1)+substr($EAN,6,1)+substr($EAN,8,1)+substr($EAN,10,1);
+    $totale = $pari + $dispari;
+    while ($totale > 10) $totale = $totale - 10;
+    return (substr($EAN,0,12).(10 - $totale));
+   }
+  
+  function serchEAN()
+   {
+    $max_barcode = gaz_dbi_query("select max(barcode) from gaz_001artico where barcode like '3333333%';");
+    $max_barcode = gaz_dbi_fetch_array($max_barcode);
+	if ($max_barcode[0] == null) $max_barcode[0] ='3333333000000';
+    return Barcode($max_barcode[0]+10);
+   }
+// m1 fine Modificato a mano   
+
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
@@ -332,7 +359,8 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['codice']; ?>" name="codice" maxlength="15" />
+                            <input class="col-sm-4" type="text" value="<?php echo ((isset($_POST['cod']))? serchCOD():$form["codice"]); ?>" name="codice" maxlength="15" />
+							&nbsp;<input type="submit" name="cod" value="Genera codice" <?php  echo ($toDo == 'update')?'disabled':'';?>></td> <!-- M1 modificato a mano -->
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -368,8 +396,9 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="barcode" class="col-sm-4 control-label"><?php echo $script_transl['barcode']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['barcode']; ?>" name="barcode" maxlength="13" />
-                        </div>
+                            <input class="col-sm-4" type="text" value="<?php echo (isset($_POST['EAN']))? serchEAN():$form["barcode"]; ?>" name="barcode" maxlength="13" />
+                        &nbsp;<input type="submit" name="EAN" value="Genera EAN13">
+						</div>
                     </div>
                 </div><!-- chiude row  -->
                 <div class="row">
@@ -694,6 +723,42 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+				
+		<!-- MODIFICA A MANO  -->
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="codice_fornitore" class="col-sm-4 control-label"><?php echo $script_transl['codice_fornitore']; ?></label>
+                        	<input class="col-sm-4" type="text"  value="<?php echo $form['codice_fornitore']; ?>" name="codice_fornitore" maxlength="24" size="24" />
+							
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->				
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="ordinabile" class="col-sm-4 control-label"><?php echo $script_transl['ordinabile']; ?></label>
+	    <?php
+    $gForm->variousSelect('ordinabile', $script_transl['ordinabile_value'], $form['ordinabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+    ?>						
+                         </div>
+                    </div>
+                </div><!-- chiude row  -->	
+				
+                <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="movimentabile" class="col-sm-4 control-label"><?php echo $script_transl['movimentabile']; ?></label>
+	    <?php
+    $gForm->variousSelect('movimentabile', $script_transl['movimentabile_value'], $form['movimentabile'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+    ?>						
+                         </div>
+                    </div>
+                </div><!-- chiude row  -->					
+				
+				
+        <!-- Fine modfica a mano -->				
+				
                 <div class="col-sm-12">
     <?php
     /** ENRICO FEDELE */
