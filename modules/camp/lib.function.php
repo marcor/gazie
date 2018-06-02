@@ -387,6 +387,7 @@ class magazzForm extends GAzieForm {
             $desdoc = $data_from_admin_mov['desdoc'];
         }
         $row_movmag = array('caumag' => $caumag,
+			'type_mov' => $type_mov,
             'operat' => $operat,
             'datreg' => $datreg,
             'tipdoc' => $tipdoc,
@@ -399,7 +400,10 @@ class magazzForm extends GAzieForm {
             'quanti' => $quantita,
             'prezzo' => $prezzo,
             'scorig' => $sconto_rigo,
+			'campo_coltivazione' => $campo_coltivazione,
+			'avversita' => $avversita,
             'id_lotmag'=>$id_lotmag);
+			
         if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento
             movmagInsert($row_movmag);
             $ultimo_id_mm = gaz_dbi_last_id(); //id del rigo movimento magazzino

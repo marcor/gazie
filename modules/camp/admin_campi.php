@@ -83,7 +83,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           if ($toDo == 'update') { // e' una modifica
             gaz_dbi_table_update('campi',$form["codice"],$form);
           } else { // e' un'inserimento
-            $form['giorno_deca']='0000-00-00 00:00:00';gaz_dbi_table_insert('campi',$form);
+            $form['giorno_decadimento']='0000-00-00 00:00:00';gaz_dbi_table_insert('campi',$form);
           }
           header("Location: ".$_POST['ritorno']);
           exit;
@@ -97,8 +97,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['web_url'] = $campi['web_url'];
     $form['annota'] = $campi['annota'];
     $form['ricarico'] = str_replace('.', ',',$campi["ricarico"]);
-	$form['giorno_deca'] =$campi['giorno_deca'];
-	$form['cod_prod_us'] =$campi['cod_prod_us'];
+	$form['giorno_decadimento'] =$campi['giorno_decadimento'];
+	$form['codice_prodotto_usato'] =$campi['codice_prodotto_usato'];
 	$form['id_mov'] =$campi['id_mov'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -109,8 +109,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['ricarico'] = 0;
     $form['web_url']='';
     $form['annota'] = '';
-	$form['giorno_deca'] ='0000-00-00 00:00:00';
-	$form['cod_prod_us'] ='';
+	$form['giorno_decadimento'] ='0000-00-00 00:00:00';
+	$form['codice_prodotto_usato'] ='';
 	$form['id_mov'] ='';
 }
 require("../../library/include/header.php");

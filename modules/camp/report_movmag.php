@@ -51,7 +51,7 @@ if (isset($_GET['all'])) {
 	
 	if (isset($_GET['campo']) && !empty($_GET['campo'])) {
 		$articolo = $_GET['campo'];
-		$implode[] = "clfoco LIKE '%".$_GET['campo']."%'";
+		$implode[] = "campo_coltivazione LIKE '%".$_GET['campo']."%'";
 	}
 		
 	if (isset($_GET['articolo']) && !empty($_GET['articolo'])) {
@@ -103,8 +103,8 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 
 <?php
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-         LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".clfoco = ".$gTables['campi'].".codice)
-         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)"; // Antonio Germani ho scambiato la tabella clfoco con cambi
+         LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campi'].".codice)
+         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)"; // Antonio Germani ho scambiato la tabella clfoco con campi
 		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
@@ -161,11 +161,11 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 	
 	// Antonio Germani inserico colonna campi di coltivazione, superficie, coltura
 	
-	 echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["clfoco"]." &nbsp;</td>\n";
+	 echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["campo_coltivazione"]." &nbsp;</td>\n";
 	
 $colonna="0";
 while($b_row = $res->fetch_assoc()) {
-	if ($a_row["clfoco"]==$b_row["codice"]) { 
+	if ($a_row["campo_coltivazione"]==$b_row["codice"]) { 
 	echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$b_row["ricarico"])." &nbsp;</td>\n";
 	 echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row["annota"]." &nbsp;</td>\n";
 	 $colonna="1";
@@ -188,7 +188,7 @@ while ($unirow = gaz_dbi_fetch_array($unires)) {
 	
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["artico"]." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$unimis."</td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["scochi"]." </td>\n";
+    echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["avversita"]." </td>\n";
 	echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["adminid"]." </td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
     echo "</tr>\n";

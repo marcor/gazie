@@ -41,12 +41,12 @@ function getMovements($date_ini,$date_fin)
         $where="datreg BETWEEN $date_ini AND $date_fin";
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
-			  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
+			  $gTables['campo_coltivazione'].".codice, ".$gTables['campo_coltivazione'].".descri AS ragsoc, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-				LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
+				LEFT JOIN ".$gTables['campo_coltivazione']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campo_coltivazione'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
-        $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, clfoco ASC, operat DESC, id_mov ASC');
+        $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, campo_coltivazione ASC, operat DESC, id_mov ASC');
         while ($r = gaz_dbi_fetch_array($rs)) {
             $m[] = $r;
         }
@@ -109,7 +109,7 @@ if (sizeof($result) > 0) {
       $pdf->Cell(17,6,$datadoc,1,0,'C');
       $pdf->Cell(35,6,$row['descri'],1, 0, 'l', 0, '', 1);
 	  $pdf->Cell(30,6,$row['desdoc'],1, 0, 'l', 0, '', 1);
-	  $pdf->Cell(12,6,substr($row['clfoco'],0,3),1);
+	  $pdf->Cell(12,6,substr($row['campo_coltivazione'],0,3),1);
 // Antonio Germani carico la tabella campi
 $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 // fine carico tabella campi			
@@ -117,7 +117,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
             
 			$colonna="0";
 	while($b_row = $res->fetch_assoc()) { 
-	if ($row['clfoco']==$b_row["codice"]) { 
+	if ($row['campo_coltivazione']==$b_row["codice"]) { 
 	$pdf->Cell(10,6,str_replace('.', ',',$b_row["ricarico"]),1);
 	 $pdf->Cell(38,6,substr($b_row["annota"],0,40),1);
 	 $colonna="1";
@@ -136,7 +136,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 	  $pdf->Cell(10,6,$row['unimis'],1,0,'C');
       $pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
       
-      $pdf->Cell(30,6,$row['scochi'],1, 0, 'l', 0, '', 1);
+      $pdf->Cell(30,6,$row['avversita'],1, 0, 'l', 0, '', 1);
 /* Antonio Germani - trasformo nome utente login in cognome e nome e lo stampo */	  
 $res2 = gaz_dbi_dyn_query ('*', $gTables['admin']);	
  $colonna="0";

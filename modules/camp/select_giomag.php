@@ -196,10 +196,10 @@ if (isset($_POST['preview']) and $msg=='') {
 $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 // fine carico tabella campi			
 	// Antonio Germani Inserisco campo, superficie e coltura		
-            echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['clfoco']." &nbsp;</td>";
+            echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." &nbsp;</td>";
 			$colonna="0";
 	while($b_row = $res->fetch_assoc()) { 
-	if ($mv['clfoco']==$b_row["codice"]) { 
+	if ($mv['campo_coltivazione']==$b_row["codice"]) { 
 	echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row["ricarico"]." &nbsp;</td>\n";
 	 echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row["annota"]." &nbsp;</td>\n";
 	 $colonna="1";
@@ -214,7 +214,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 			
             echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
             echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
-            echo "<td class=\"FacetDataTD\" align=\"right\">".$mv["scochi"]." </td>\n";
+            echo "<td class=\"FacetDataTD\" align=\"right\">".$mv["avversita"]." </td>\n";
 			echo "<td class=\"FacetDataTD\" align=\"right\">".$mv["adminid"]." </td>\n";
             echo "</tr>\n";
             $ctr_mv = $mv['artico'];

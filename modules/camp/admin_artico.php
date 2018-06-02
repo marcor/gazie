@@ -551,8 +551,8 @@ if ($modal_ok_insert === true) {
                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="peso_specifico" class="col-sm-4 control-label"><?php echo $script_transl['tempo_sospensione']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['peso_specifico']; ?>" name="peso_specifico" maxlength="13" />
+                            <label for="tempo_sospensione" class="col-sm-4 control-label"><?php echo $script_transl['tempo_sospensione']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['tempo_sospensione']; ?>" name="tempo_sospensione" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -560,8 +560,8 @@ if ($modal_ok_insert === true) {
 				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="volume_specifico" class="col-sm-4 control-label"><?php echo $script_transl['dose_ha']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['volume_specifico']; ?>" name="volume_specifico" maxlength="13" />
+                            <label for="dose_massima" class="col-sm-4 control-label"><?php echo $script_transl['dose_ha']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['dose_massima']; ?>" name="dose_massima" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
