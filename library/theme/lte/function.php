@@ -58,15 +58,19 @@ function submenu($array, $index, $sub="") {
     if(!is_array($array)) { return ;}
     $numsub = 0;
     foreach($array as $i => $mnu) {
-        if(!is_array($mnu)) {continue;}      
-	$submnu = '';
-	if ($numsub === 0) {
+        if(!is_array($mnu)) {continue;}
+    $submnu = '';
+    if ($numsub === 0) {
             echo "<ul class=\"treeview-menu\">";
         }       
 	if (count($mnu)>6) {            
             if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
             echo "<li>";
-            $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
+            if ( $mnu["name"]!="Documentazione") {
+                $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
+            } else {
+                $sub = '<a href="'. $mnu["link"] .'">'.$submnu.stripslashes($mnu["name"]);
+            }
             echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". substr($submnu.stripslashes($mnu["name"]),0,23);
             echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
             echo "  </a>";                    

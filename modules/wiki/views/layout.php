@@ -49,13 +49,14 @@ function e($dirty) {
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">
                             <?php if (ENABLE_EDITING): ?>
-                                <li ><input type="submit" class="btn btn-primary btn-sm" id="submit-edits" value="Salva cambiamenti"></li>
+                                <!--<li ><input type="submit" class="btn btn-primary btn-sm" id="submit-edits" value="Salva cambiamenti"></li>-->
                             <?php endif ?>
-                            <li ><a href="javascript:;" id="toggle"><i class="fas fa-edit"></i> Modifica</a></li>
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-wrench"></i> Gestione<span class="caret"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="filemanager\fm.php"><i class="fas fa-folder-open"></i> Cartelle</a></li>
+                                    <li ><a href="javascript:;" id="toggle"><i class="fas fa-edit"></i> Modifica pagina</a></li>
+                                    <li><a href="filemanager\fm.php"><i class="fas fa-folder-open"></i> Gestione cartelle</a></li>
+                                    <li><a href="..\..\index.php"><i class="fas fa-home"></i> Torna a GAzie</a></li>
                                 </ul>
                             </li>
                         </ul>
@@ -68,7 +69,7 @@ function e($dirty) {
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-xs-12 col-md-3">
-                                    <div id="sidebar">
+                                    <div id="sidebar" class="no-print">
                                         <div class="inner">
                                             <h2><span><?php echo 'Documentazione'; ?></span></h2>
                                             <?php include('tree.php') ?>

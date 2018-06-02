@@ -257,3 +257,10 @@ form {
     font-weight: bold;
     color: #333;
 }
+@media print
+{    
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}

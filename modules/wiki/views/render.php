@@ -67,7 +67,7 @@
 
             <?php if (ENABLE_EDITING): ?>
                 <div class="form-actions">
-                    <input type="submit" class="btn btn-warning btn-sm" id="submit-edits" value="Save Changes">
+                    <input type="submit" class="btn btn-warning btn-sm" id="submit-edits" value="Salva i cambiamenti">
                 </div>
             <?php endif ?>
         </form>
