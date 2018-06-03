@@ -69,6 +69,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     //recupero il movimento
     $result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
     $form['id_mov'] = $result['id_mov'];
+	$form['type_mov'] = $result['type_mov'];
     $form['id_rif'] = $result['id_rif'];
     $form['caumag'] = $result['caumag'];
     $form['operat'] = $result['operat'];
@@ -99,6 +100,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     //ricarico i registri per il form facendo gli eventuali parsing
     $form['id_mov'] = intval($_POST['id_mov']);
+	//$form['type_mov'] = intval ($_POST['type_mov']);
     $form['id_rif'] = intval($_POST['id_rif']);
     $form['caumag'] = intval($_POST['caumag']);
     $form['operat'] = intval($_POST['operat']);
@@ -178,6 +180,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($form['quanti'] == 0) {  //la quantit� � zero
             $msg .= "19+";
         }
+		if (intval($_GET['id_mov'])>0){
+		$result = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+		if ($result['type_mov']<>0){ //Antonio Germani è un movimento che va gestito esclusivamente con il modulo Camp
+			$msg .="20+";
+		}
+		}
+	
         if (empty($msg)) { // nessun errore
             $upd_mm = new magazzForm;
             //formatto le date
@@ -390,6 +399,7 @@ for ($counter = 1; $counter <= 31; $counter++) {
     echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 echo "\t </select>\n";
+
 echo "\t <select name=\"mesdoc\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 12; $counter++) {
     $selected = "";

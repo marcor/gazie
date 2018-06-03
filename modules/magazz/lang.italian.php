@@ -92,6 +92,7 @@ $strScript = array("browse_document.php" =>
         "La data del documento &egrave; successiva a quella di registazione!",
         "Non &egrave; stato selezionato l'articolo!",
         "La quantit&agrave; non pu&ograve; essere uguale a zero!",
+		"Questo movimento può essere modificato esclusivamente dal modulo Registro di campagna!",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
