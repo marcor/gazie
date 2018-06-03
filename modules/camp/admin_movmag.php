@@ -77,7 +77,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['mesreg'] = substr($result['datreg'], 5, 2);
     $form['annreg'] = substr($result['datreg'], 0, 4);
     $form['campo_coltivazione'] = $result['campo_coltivazione']; //campo di coltivazione
-	$form['clfoco'] = $result[clfoco];
+	$form['clfoco'] = "";
 	$form['adminid'] = $result['adminid'];
     if (!empty($form['caumag'])) { //controllo quale partner prevede la causale
         $rs_causal = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
@@ -103,13 +103,15 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     //ricarico i registri per il form facendo gli eventuali parsing
     $form['id_mov'] = intval($_POST['id_mov']);
-	$form['type_mov'] = intval($_POST['type_mov']);
+	$form['type_mov'] = 1;
     $form['id_rif'] = intval($_POST['id_rif']);
     $form['caumag'] = intval($_POST['caumag']);
     $form['operat'] = intval($_POST['operat']);
     $form['gioreg'] = intval($_POST['gioreg']);
     $form['mesreg'] = intval($_POST['mesreg']);
     $form['annreg'] = intval($_POST['annreg']);
+	$form['clfoco'] = "";
+    $form['clorfo'] = ""; //cliente, fornitore o entrambi
     $form['campo_coltivazione'] = intval($_POST['campo_coltivazione']); //campo di coltivazione
 	$form['adminid'] = "Utente connesso";
 //$form['clorfo'] = $_POST['clorfo']; //era cliente, fornitore -> adesso non serve per Q.d.c.
@@ -118,6 +120,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['giodoc'] = intval($_POST['giodoc']);
     $form['mesdoc'] = intval($_POST['mesdoc']);
     $form['anndoc'] = intval($_POST['anndoc']);
+	$form['scochi'] = "";
     $form['avversita'] = substr($_POST['avversita'],0,50);
     $form['artico'] = $_POST['artico'];
     $form['quanti'] = gaz_format_quantity($_POST['quanti'], 0, $admin_aziend['decimal_quantity']);

@@ -104,7 +104,7 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 <?php
 $table = $gTables['movmag']." LEFT JOIN ".$gTables['caumag']." on (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
          LEFT JOIN ".$gTables['campi']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campi'].".codice)
-         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)"; // Antonio Germani ho scambiato la tabella clfoco con campi
+         LEFT JOIN ".$gTables['rigdoc']." ON (".$gTables['movmag'].".id_rif = ".$gTables['rigdoc'].".id_rig)";  
 		 $result = gaz_dbi_dyn_query ($gTables['movmag'].".*, ".$gTables['caumag'].".descri AS descau, ".$gTables['rigdoc'].".id_tes AS testata", $table, $where, $orderby, $limit, $passo);
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_mov = array  (
@@ -138,6 +138,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $title =  $partner['ragso1']." ".$partner['ragso2'];
     $valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
     $valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
+	if ($a_row['type_mov']==1){  // se è un movimento di campagna 
     echo "<tr>\n";
     echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
 	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
@@ -196,7 +197,8 @@ while ($unirow = gaz_dbi_fetch_array($unires)) {
 	/* Incremento il totale */
 	$tot_movimenti += $valore;
 	/** ENRICO FEDELE */
-}
+	} // end se è un movimento di campagna
+} // end wile
 	/** ENRICO FEDELE */
 	/* Stampo il totale */
 	//if($tot_movimenti!=0) {	//	Inizialmente avevo pensato di stampare il totale solo se diverso da zero, ma la cosa risulta fuorviante in alcuni casi

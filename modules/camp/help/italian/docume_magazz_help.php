@@ -1,5 +1,5 @@
 <div class="panel panel-default panel-body panel-help">
-<h3>Men&ugrave; Registro di campagna</h3>
+<h3>Registro/Quaderno di campagna</h3>
 <p>Qui si raccolgono le
 funzioni relative alla gestione di un Quaderno di campagna ai sensi delD.Lgs 150/2012, DPR 55/2012 e DPR 290/2001,
 incluse le stampe periodiche.</p>
@@ -11,19 +11,16 @@ merceologiche</strong>, <strong>Movimenti</strong>,
 <strong>Causali</strong>, tralasciando le voci di men&ugrave; ulteriori
 che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 </div>
+<div> <p> Questo Registro di campagna è stato realizzato da un'idea di Antonio Germani (Massignano AP, www.lacasettabio.it), rielaborando, adattando, e modificando il modulo magazzino di Gazie. </p></br>
+</div>
 
 <ul class="nav nav-tabs">
    <li class="active"><a data-toggle="tab" href="#Articoli">Merci/servizi</a></li>
    <li ><a data-toggle="tab" href="#CatMerc">Categorie Merceologiche</a></li>
-<!--inizio modifica FP 15/10/2015-->
-   <li ><a data-toggle="tab" href="#RagStat">Raggruppamenti Statistici</a></li>
-<!--fine modifica FP-->
+
    <li ><a data-toggle="tab" href="#Movimenti">Movimenti</a></li>
    <li ><a data-toggle="tab" href="#Causali">Causali</a></li>
-   <li ><a data-toggle="tab" href="#Listini">Listini</a></li>
-   <li ><a data-toggle="tab" href="#Prezzi">Modifica Prezzi</a></li>
-   <li ><a data-toggle="tab" href="#Catalogo">Catalogo</a></li>
-   <li ><a data-toggle="tab" href="#Statistiche">Statistiche</a></li>
+   
    <li ><a data-toggle="tab" href="#Campi">Campi di coltivazione</a></li>
 </ul>
 
@@ -48,19 +45,6 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		principale di questo men&ugrave;.</p>
 	</div>
 
-    <!--inizio modifica FP 15/10/2015-->
-	<div id="RagStat" class="tab-pane fade in">
-		<p class="help-text">Gli articoli di magazzino sono raggruppati in raggruppamenti statistici, a cui
-		si accede da questa voce di men&ugrave;. Se non si intende suddividere
-		gli articoli in gruppi, &egrave; comunque necessario definire almeno
-		un raggruppamento generico.</p>
-
-		<p class="help-text">Per inserire un nuovo raggruppamento si deve scegliere la voce
-		<menuitem>Nuovo raggruppamento statistico</menuitem>, mentre per accedere
-		ai raggruppamenti gi&agrave; esistenti, si deve selezionare la voce
-		principale di questo men&ugrave;.</p>
-	</div>
-<!--fine modifica FP-->
 	<div id="Movimenti" class="tab-pane fade in">
 		<p class="help-text">Da qui &egrave; possibile intervenire nei movimenti del Quaderno di campagna
 		(scritture di carico e scarico). Per inserire un nuovo movimento si
@@ -83,19 +67,7 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		<strong>Genera movimenti di magazzino</strong> per ottenere queste
 		registrazioni.</p> -->
 
-		<p class="help-text">Esempi: <br>- <a target="_blank" title="guarda il video"
-		href="http://www.youtube.com/watch?v=qnypB8B8nH4">carico per
-		acquisto</a><br>
-		- <a target="_blank" title="guarda il video"
-		href="http://www.youtube.com/watch?v=Wm9Ix2IboiI">scarico per
-		vendita</a><br>- <a target="_blank" title="guarda il video"
-		href="http://www.youtube.com/watch?v=GIpPRKImO34">carico per
-		acquisto</a><br>- <a target="_blank" title="guarda il video"
-		href="http://www.youtube.com/watch?v=fyvXMJuCl-g">scarico per
-		vendita</a><br>- <a target="_blank" title="guarda il video"
-		href="http://www.youtube.com/watch?v=kyV8HJ6cDAE">scarico per
-		vendita</a><br>- <a target="_blank" title="guarda il video"
-		href="http://www.youtube.com/watch?v=vc5kDenlgHo">stampa del Quaderno di campagna</a></p>
+		<p class="help-text">Esempi: <br>- ... da fare ...</p>
 	</div>
 
 	<div id="Causali" class="tab-pane fade in">
@@ -106,41 +78,10 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		tuttavia, si possono creare altre causali, in base alla propria
 		convenienza.</p>
 
-		<p class="help-text">Per inserire una nuova cusale si deve scegliere la voce
+		<p class="help-text">Per inserire una nuova causale si deve scegliere la voce
 		<menuitem>Nuova causale di magazzino</menuitem>, mentre per accedere
 		alle causali gi&agrave; esistenti, si deve selezionare la voce
 		principale di questo men&ugrave;.</p>
-	</div>
-
-	<div id="Listini" class="tab-pane fade in">
-		<p class="help-text">Da qui si ottiene la stampa del listino di vendita, dove viene
-		comunque richiesto di selezionare quale listino evidenziare. Sono
-		disponibili quattro prezzi di vendita alternativi, ma eventualmente,
-		se l'informazione risulta disponibile, &egrave; possibile anche
-		stampare il prezzo dell'ultimo acquisto.</p>
-	</div>
-
-    <div id="Prezzi" class="tab-pane fade in">
-		<p class="help-text">Quando si deve procedere alla modifica sistematica dei prezzi di
-		listino di vendita degli articoli, attraverso questa funzione è
-		possibile attribuire un incremento fisso o percentuale, rispetto al
-		prezzo unitario annotato in precedenza. Si osservi che se il
-		cambiamento riguarda uno solo o pochi articoli, conviene intervenire
-		per questo tipo di modifica direttamente nell'elenco degli
-		articoli.</p>
-	</div>
-
-	<div id="Catalogo" class="tab-pane fade in">
-		<p class="help-text">Da qui &egrave; possibile ottenere la stampa di un catalogo degli
-		articoli di magazzino, scegliendo uno dei prezzi di listino di vendita
-		disponibili.</p>
-
-	</div>
-
-    <div id="Statistiche" class="tab-pane fade in">
-		<p class="help-text">Da qui &egrave; possibile ottenere un grafico con l'entit&agrave;
-		degli scarichi per vendita, o dei carichi per acquisto, suddiviso
-		per articolo.</p>
 	</div>
 	
 	<div id="Campi" class="tab-pane fade in">
