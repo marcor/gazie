@@ -994,8 +994,8 @@ maniglia.form.submit();
                     'value' => '<input type="number" step="any" class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" maxlength="11" size="4" onchange="this.form.submit();" />'
                 ),
                 array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
-                    'value' => '<input type="hidden" ID="prezzo_'.$k.'" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" size="4" onchange="this.form.submit()" />'. // Modificato a mano
-                               '<input type="number" ID="prezzo_iva_'.$k.'" step="any" name="prezzo_con_iva" value="'.$prelisiva.'" maxlength="15" size="4" onchange="cambiaimporto(this,'.$k.','.count($form['rows']).','.$v['pervat'].');" />'  // Modificato a mano
+                    'value' => '<input type='.(($_GET['Prezzo_IVA'] == 'S')?"hidden":"number").' ID="prezzo_'.$k.'" step="any" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" maxlength="15" size="4" onchange="this.form.submit()" />'. // Modificato a mano
+                               '<input type='.(($_GET['Prezzo_IVA'] == 'S')?"number":"hidden").' ID="prezzo_iva_'.$k.'" step="any" name="prezzo_con_iva" value="'.$prelisiva.'" maxlength="15" size="4" onchange="cambiaimporto(this,'.$k.','.count($form['rows']).','.$v['pervat'].');" />'  // Modificato a mano
 					),
                 array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
                     'value' => '<input type="number" step="0.01" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="2" onchange="this.form.submit()" />'),
@@ -1268,6 +1268,56 @@ maniglia.form.submit();
 <!-- //M1 Modificato a mano fine --> 
 <script type="text/javascript">
 if (this.document.tesdoc.cosear.value == '') this.document.tesdoc.cosear.focus();
+
+//this.document.body.onkeypress = function (e = event,myfiled = this)
+
+
+this.document.body.onkeyup = function (event)
+{ 
+  var e = event;
+  
+  var kC  = (window.event) ?    // MSIE or Firefox?
+                 event.keyCode : e.keyCode;
+  var f1 = (window.event) ?   
+                112 : e.DOM_VK_F1 // MSIE : Firefox
+  var f2 = (window.event) ?   
+                113 : e.DOM_VK_F2 // MSIE : Firefox
+  var f4 = (window.event) ?   
+                115 : e.DOM_VK_F4 // MSIE : Firefox              
+  var f8 = (window.event) ?   
+                119 : e.DOM_VK_F8 // MSIE : Firefox
+  var f10 = (window.event) ?
+                121 : e.DOM_VK_F10 // MSIE : Firefox  
+
+  if((kC==f1) || (kC==f2)) 
+         { 
+	       e.preventDefault(); //Cancella l'evento per non farlo propagare
+           document.getElementById('conf_rig').click();
+          }  
+          
+  if(kC==f4)
+         {  
+	       codice = document.tesdoc.in_codart.value;
+           
+           if (codice == '') opzione = '?Insert';
+             else opzione = '?codice='+codice+'&Update';
+             
+           window.open('../../modules/magazz/admin_artico.php'+opzione);
+          
+           e.preventDefault();
+          }
+         
+  if(kC==f8)
+         {
+		   e.preventDefault(); //Cancella l'evento per non farlo propagare
+           document.tesdoc.ins.click();
+         }        
+		 
+  if(kC==f10) {	  
+    window.open('../../modules/vendit/admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=<?php echo $_GET['Prezzo_IVA'] ?>'); }
+
+} 
+
 </script>
 <!-- //M1 Modificato a mano fine --> 
 
