@@ -23,15 +23,9 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-/*
- --------------------------------------------------------------------------
-
-	Spanish Translation by Dante Becerra Lagos softenglish@gmail.com
-
-*/
 $transl['wiki'] = array( 'name' => "Wiki",
                            'title' => "Documentazione GAzie",
                            'm2' => array( 1 => array("Documentazione","Documentazione") ),
-                           'm3' => array( 1 => array("","") )
+                           'm3' => array( 1 => array("Howto","Howto") )
                         );
 ?>

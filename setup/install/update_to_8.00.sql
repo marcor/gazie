@@ -159,4 +159,5 @@ ALTER TABLE `gaz_XXXartico`	ADD COLUMN `tempo_sospensione` INT(2) NOT NULL DEFAU
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `ordinabile` VARCHAR(1) NOT NULL AFTER `codice_fornitore`, ADD COLUMN `movimentabile`  VARCHAR(1) NOT NULL AFTER `ordinabile`;
 ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `codice_fornitore` VARCHAR(50) NOT NULL AFTER `codart`;
 ALTER TABLE `gaz_XXXcampi`	ADD COLUMN `giorno_decadimento` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `ricarico`, ADD COLUMN `codice_prodotto_usato` VARCHAR(15) NOT NULL AFTER `giorno_decadimento`, ADD COLUMN `id_mov` INT(9) NULL DEFAULT '0' AFTER `codice_prodotto_usato`;
+DELETE FROM `gaz_admin_module` WHERE  `moduleid`=14;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

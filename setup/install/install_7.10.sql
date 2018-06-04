@@ -1106,7 +1106,7 @@ CREATE TABLE `gaz_admin_module` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 LOCK TABLES `gaz_admin_module` WRITE;
-INSERT INTO `gaz_admin_module` ( `adminid`,`company_id`,`moduleid`,`access`) VALUES ('amministratore', 1, 1, 3),('amministratore', 1, 2, 3),('amministratore', 1, 3, 3),('amministratore', 1, 4, 3),('amministratore', 1, 5, 3),('amministratore', 1, 6, 3),('amministratore', 1, 7, 3),('amministratore', 1, 8, 3),('amministratore', 1, 10, 3),('amministratore', 1, 11, 0),('amministratore', 1, 12, 3),('amministratore', 1, 13, 3),('amministratore', 1, 14, 3);
+INSERT INTO `gaz_admin_module` ( `adminid`,`company_id`,`moduleid`,`access`) VALUES ('amministratore', 1, 1, 3),('amministratore', 1, 2, 3),('amministratore', 1, 3, 3),('amministratore', 1, 4, 3),('amministratore', 1, 5, 3),('amministratore', 1, 6, 3),('amministratore', 1, 7, 3),('amministratore', 1, 8, 3),('amministratore', 1, 10, 3),('amministratore', 1, 11, 0),('amministratore', 1, 12, 3),('amministratore', 1, 13, 3);
 UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `gaz_anagra`;
@@ -1466,7 +1466,7 @@ CREATE TABLE `gaz_module` (
 ) ENGINE=MyISAM AUTO_INCREMENT=15 DEFAULT CHARSET=utf8;
 
 LOCK TABLES `gaz_module` WRITE;
-INSERT INTO `gaz_module` ( `id`,`name`,`link`,`icon`,`class`,`access`,`weight`) VALUES (1, 'root', 'admin.php', 'root.png', '', 0, 99),(2, 'vendit', 'docume_vendit.php', 'vendit.png', '', 0, 2),(3, 'acquis', 'docume_acquis.php', 'acquis.png', '', 0, 3),(4, 'contab', 'docume_contab.php', 'contab.png', '', 0, 4),(5, 'magazz', 'docume_magazz.php', 'magazz.png', '', 0, 5),(6, 'finann', 'docume_finean.php', 'finann.png', '', 0, 6),(7, 'config', 'docume_config.php', 'config.png', '', 0, 7),(8, 'inform', 'docume_inform.php', 'inform.png', '', 0, 8),(9, 'martel', 'docume_martel.php', 'martel.png', '', 0, 9),(10, 'gazpme', 'docume_gazpme.php', 'gazpme.png', '', 0, 10),(11, 'gazpma', 'docume_gazpma.php', 'gazpma.png', '', 0, 11),(12, 'humres', 'docume_humres.php', 'humres.png', '', 0, 12),(13, 'suppor', 'docume_suppor.php', 'suppor.png', '', 0, 13),(14, 'wiki', 'docume_wiki.php', 'wiki.png', '', 0, 15);
+INSERT INTO `gaz_module` ( `id`,`name`,`link`,`icon`,`class`,`access`,`weight`) VALUES (1, 'root', 'admin.php', 'root.png', '', 0, 99),(2, 'vendit', 'docume_vendit.php', 'vendit.png', '', 0, 2),(3, 'acquis', 'docume_acquis.php', 'acquis.png', '', 0, 3),(4, 'contab', 'docume_contab.php', 'contab.png', '', 0, 4),(5, 'magazz', 'docume_magazz.php', 'magazz.png', '', 0, 5),(6, 'finann', 'docume_finean.php', 'finann.png', '', 0, 6),(7, 'config', 'docume_config.php', 'config.png', '', 0, 7),(8, 'inform', 'docume_inform.php', 'inform.png', '', 0, 8),(12, 'humres', 'docume_humres.php', 'humres.png', '', 0, 12),(13, 'suppor', 'docume_suppor.php', 'suppor.png', '', 0, 13),(14, 'wiki', 'docume_wiki.php', 'wiki.png', '', 0, 15);
 UNLOCK TABLES;
 
 DROP TABLE IF EXISTS `gaz_municipalities`;

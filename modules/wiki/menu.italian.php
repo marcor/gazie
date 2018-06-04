@@ -25,6 +25,6 @@
 $transl['wiki'] = array( 'name' => "Wiki",
                            'title' => "Documentazione GAzie",
                            'm2' => array( 1 => array("Documentazione","Documentazione") ),
-                           'm3' => array( 1 => array("","") )
+                           'm3' => array( 1 => array("Come utilizzare la wiki","Come utilizzare la wiki") )
                         );
 ?>
