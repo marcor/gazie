@@ -229,14 +229,7 @@ table.selectTable td {
 #admin_p_logout {
     margin-top: 20px;
 }
-#admin_footer {
-    margin-top: 1%;
-    position: relative;
-    bottom: 0px;
-    z-index: -1;
-}
-#admin_footer:hover {
-}
+
 .navbar {
     border-top: 0px;
     border-bottom: 1px solid #000000;

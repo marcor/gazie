@@ -210,14 +210,7 @@ table.selectTable td {
 #admin_p_logout {
 	margin-top: 20px;
 }
-#admin_footer {
-	margin-top: 1%;
-	position: relative;
-	bottom: 0px;
-	z-index: -1;
-}
-#admin_footer:hover {
-}
+
 .nav>li>a:hover, .nav>li>a:focus {
 /*	background-color: #aae2a8;*/
 

@@ -210,11 +210,12 @@ table.selectTable td {
 }
 #admin_p_logout {
 }
-#admin_footer {
+
+.admin_footer {
 	opacity: 0.5;
 	filter: alpha(opacity=50);
 }
-#admin_footer:hover {
+.admin_footer:hover {
 	opacity: 1;
 	filter: alpha(opacity=100);
 }
