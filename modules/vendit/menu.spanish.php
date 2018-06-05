@@ -89,7 +89,8 @@ $transl['vendit'] = array('name' => "Ventas",
         45 => array("Vendita bene ammortizzabile (su libro cespiti)", "Alienazione bene ammortizzabile"),
         46 => array("Visualizza Ordini settimanali del giorno", "Ordini settimanali del giorno"),
         47 => array("Nuovo ordine settimanale del giorno", "Inserisci ordine settimanale del giorno"),
-        48 => array("Evadi ordini settimanali del giorno", "Evadi ordini settimanali del giorno")
+        48 => array("Evadi ordini settimanali del giorno", "Evadi ordini settimanali del giorno"),
+        49 => array("Emetti scontrino prezzi IVA inclusa", "Scontrini prezzi IVA incl.")
     )
 );
 ?>

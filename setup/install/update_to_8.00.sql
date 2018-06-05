@@ -12,7 +12,7 @@ ALTER TABLE `gaz_anagra` ADD COLUMN `codfis_aes` TINYTEXT NOT NULL AFTER `codfis
 ALTER TABLE `gaz_anagra` ADD COLUMN `pariva_aes` TINYTEXT NOT NULL AFTER `pariva`;
 ALTER TABLE `gaz_anagra` ADD COLUMN `e_mail_aes` TINYTEXT NOT NULL AFTER `e_mail`;
 ALTER TABLE `gaz_anagra` ADD COLUMN `pec_email_aes` TINYTEXT NOT NULL AFTER `pec_email`;
-UPDATE `gaz_config` SET `cvalue` = '111' WHERE `id` =2;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=S', '', '', 49, '', 6  FROM `gaz_menu_script`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_resp` TINYINT(1) NOT NULL AFTER `print_map`;
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_service_descri` VARCHAR(100) NOT NULL COMMENT 'Descrizione del servizio esternalizzato, verrà riportato sulla nomina a responsabile esterno del trattamento dei dati' AFTER `external_resp`;
