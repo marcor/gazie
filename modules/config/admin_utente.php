@@ -288,6 +288,7 @@ $script_transl = HeadMain(0, array('capslockstate/src/jquery.capslockstate'));
 <script type="text/javascript">
 $(document).ready(function () {
 	/* Bind to capslockstate events and update display based on state  */
+	/*
 	$(window).bind("capsOn", function (event) {
 		if ($("#login-password:focus").length > 0) {
 			$("tr td #capsWarning").show();
@@ -304,11 +305,12 @@ $(document).ready(function () {
 			$("tr td #capsWarning").show();
 		}
 	});
+	*/
 	/* 
-		* Initialize the capslockstate plugin.
-		* Monitoring is happening at the window level.
-		*/
-	$(window).capslockstate();
+	 * Initialize the capslockstate plugin.
+	 * Monitoring is happening at the window level.
+	 */
+	//$(window).capslockstate();
 
 });
 </script>
@@ -447,11 +449,11 @@ if ($toDo == 'insert') {
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_new']; ?> </td>
-<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="login-password" name="user_password_new" value="<?php print $form["user_password_new"]; ?>" maxlength="40" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="user_password_new" name="user_password_new" value="<?php print $form["user_password_new"]; ?>" maxlength="40" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_password_ver']; ?></td>
-<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="login-password" name="user_password_ver" value="<?php print $form["user_password_ver"]; ?>" maxlength="40" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
+<td colspan="2" class="FacetDataTD"><input title="Conferma Password" type="password" id="user_password_ver" name="user_password_ver" value="<?php print $form["user_password_ver"]; ?>" maxlength="40" size="20" class="FacetInput" id="cpass" /><div class="FacetDataTDred" id="cmsg"></div>&nbsp;</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['user_active']; ?></td>
