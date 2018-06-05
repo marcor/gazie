@@ -46,6 +46,24 @@ function getFAIseziva($tipdoc) {
             case "3":
                 $si = 3;
                 break;
+            case "4":
+                $si = 4;
+                break;
+            case "5":
+                $si = 5;
+                break;
+            case "6":
+                $si = 6;
+                break;
+            case "7":
+                $si = 7;
+                break;
+            case "8":
+                $si = 8;
+                break;
+            case "9":
+                $si = 9;
+                break;
             case "R":
                 $si = substr($auxil, 0, 1);
                 break;
@@ -1509,7 +1527,7 @@ $script_transl = HeadMain(0, array(/* 'tiny_mce/tiny_mce', */
     }
 </script>
 <?php
-echo '<form method="POST" name="docven" >';
+echo '<form method="POST" name="docven">';
 $gForm = new venditForm();
 echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . $form['id_tes'] . '" name="id_tes" />
@@ -1521,6 +1539,7 @@ echo '	<input type="hidden" value="" name="' . ucfirst($toDo) . '" />
 	<input type="hidden" value="' . $form['numdoc'] . '" name="numdoc" />
 	<input type="hidden" value="' . $form['numfat'] . '" name="numfat" />
 	<input type="hidden" value="' . $form['datfat'] . '" name="datfat" />
+	<input type="hidden" value="' . (isset($_POST['last_focus']) ? $_POST['last_focus'] : "") . '" name="last_focus" />
 	<input type="hidden" value="' . $form['data_ordine'] . '" name="data_ordine" />';
 if ($form['id_tes'] > 0) { // �� una modifica
     $title = ucfirst($script_transl[$toDo] . $script_transl['doc_name'][$form['tipdoc']]) . " n." . $form['numdoc'];
@@ -1943,17 +1962,18 @@ foreach ($form['rows'] as $k => $v) {
                 echo '</div>'
                 . "</div>\n";
             }
+
             echo '</td>
 					<td>
 						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
 					</td>
 					<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" id="righi_' . $k . '_quanti" onchange="document.docven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
 					</td>
 					<td>
-						<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" align="right" maxlength="11" size="7" onchange="this.form.submit()" />
+						<input type="text" name="rows[' . $k . '][prelis]" value="' . $v['prelis'] . '" align="right" maxlength="11" size="7" onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=\'righi_' . $k . '_sconto\'; this.form.submit()" />
 					</td>
-					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="1" onchange="this.form.submit();" /></td>
+					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="1" id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
 					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" size="1" /></td>
 					<td class="text-right">
 						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
@@ -1965,10 +1985,8 @@ foreach ($form['rows'] as $k => $v) {
 							' . $v['pervat'] . '%
 						</span>
 					</td>
-					<td class="text-right">
-						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
+					<td class="text-right codricTooltip" title="Contropartita">
 							' . $v['codric'] . '
-						</span>
 					</td>';
             $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
@@ -1992,13 +2010,13 @@ foreach ($form['rows'] as $k => $v) {
 					<td><input type="hidden" name="rows[' . $k . '][provvigione]" value="" /></td>
 					<td></td>
 					<td class="text-right">
-						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7" onchange="this.form.submit()" />
+						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7" onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" />
 					</td>
 					<td class="text-right">
 						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">' . $v['pervat'] . '%
 						</span>
 					</td>
-					<td class="text-right">
+					<td class="text-right codricTooltip" title="Contropartita">
 						<span class="gazie-tooltip" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
 							' . $v['codric'] . '
 						</span>
@@ -2421,6 +2439,61 @@ echo '</table>';
     });
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
+<div class="modal" id="vat-price" title="IMPORTO IVA COMPRESA">
+	<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" size="7" onkeyup="vatPriceCalc();" />
+	<br /><br />
+	<!--select id="codvat" name="cat_codvat" class="FacetSelect"></select-->
+	<input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" size="4" disabled="disabled" />
+	<br /><br />
+	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" size="7" disabled="disabled" />
+</div>
+<script type="text/javascript">
+	function vatPrice(row,pervat) {
+		var prelis = $("[name='rows["+row+"][prelis]']").val();
+		var prevat = Math.round(parseFloat(prelis)*(1+parseFloat(pervat)/100),4);
+		$("#cat_prevat").val(prevat);
+		$("#cat_pervat").val(pervat);
+		$("#cat_prelis").val(prelis);
+		$("#vat-price").dialog({
+			modal: true,
+			buttons: {
+				Ok: function() {
+					$("[name='rows["+row+"][prelis]']").val($("#cat_prelis").val());
+					document.docven.last_focus.value="righi_" + row + "_sconto";
+					$("[name='rows["+row+"][prelis]']").parents("form:first").submit();
+					$(this).dialog("close");
+				}
+			}
+		});
+	};
+	function vatPriceCalc() {
+		var prevat = $("#cat_prevat").val();
+		var pervat = $("#cat_pervat").val();
+		if (prevat!="" && pervat!="") {
+			var prelis = parseFloat(prevat)/(1+parseFloat(pervat)/100)
+			$("#cat_prelis").val(prelis.toFixed(2));
+		} else {
+			$("#cat_prelis").val("0");
+		}
+	}
+</script>
+<script language="JavaScript">
+var last_focus_value;
+var last_focus;
+last_focus_value = document.docven.last_focus.value;
+if (last_focus_value != "") {
+    last_focus = document.getElementById(last_focus_value);
+    if (last_focus != undefined) {
+        last_focus.focus();
+}
+}
+last_focus_value = "";
+
+$( document ).ready(function() {
+	$(".codricTooltip").each(function(index){$(this).attr('title', $("#in_codric option[value='"+$( this ).text().trim()+"']").text());});
+});
+
+</script>
 <?php
 require("../../library/include/footer.php");
 ?>

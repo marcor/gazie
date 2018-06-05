@@ -53,16 +53,18 @@ $(window).load(function () {
 
 /* Restringe automaticamente il testo del menu sui dispay piccoli e toglie l'header */
 function resizeNavbarText() {
-    var w = $(window).width() / 5;
-    var lwr = $('#l-wrapper').width();
-    var up = $('#user-position').position();
-    var n = up.left / 5;
-    if (w < n) {
-        $('#l-wrapper').delay(150).animate({'margin-left': '-' + lwr + '0px'});
-        $('.navbar-nav > li > a').delay(150).css({'font-size': '0.75em'});
-    } else {
-        $('.navbar-nav > li > a').delay(150).css({'font-size': '1em'});
-        $('#l-wrapper').delay(150).css({'margin-left': '0px'});
+	if ($('#user-position').length) {
+		var w = $(window).width() / 5;
+		var lwr = $('#l-wrapper').width();
+		var up = $('#user-position').position();
+		var n = up.left / 5;
+		if (w < n) {
+			$('#l-wrapper').delay(150).animate({'margin-left': '-' + lwr + '0px'});
+			$('.navbar-nav > li > a').delay(150).css({'font-size': '0.75em'});
+		} else {
+			$('.navbar-nav > li > a').delay(150).css({'font-size': '1em'});
+			$('#l-wrapper').delay(150).css({'margin-left': '0px'});
+		}
     }
 }
 
