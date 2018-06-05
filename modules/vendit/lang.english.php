@@ -448,6 +448,10 @@ $strScript = array("admin_client.php" =>
         'err_date' => 'Date of last invoice<br />prior to the selected',
         'ref' => 'From contract concluded in date '
     ),
+    "admin_scontr_fast" =>
+    array('ins_this' => 'Emetti scontrino con PREZZI IVA INCLUSA',
+        'upd_this' => 'Modifica scontrino con PREZZI IVA INCLUSA n.',
+	),
     "admin_scontr.php" =>
     array('title' => 'Menage tax receivable',
         'ins_this' => 'issue a new tax receivable on : ',

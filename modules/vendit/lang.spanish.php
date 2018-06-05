@@ -451,6 +451,10 @@ $strScript = array("admin_client.php" =>
         'err_date' => 'Fecha de ultima factura<br />anterior a la seleccionada',
         'ref' => 'Desde contrato concluido en fecha '
     ),
+    "admin_scontr_fast" =>
+    array('ins_this' => 'Emetti scontrino con PREZZI IVA INCLUSA',
+        'upd_this' => 'Modifica scontrino con PREZZI IVA INCLUSA n.',
+	),
     "admin_scontr.php" =>
     array('title' => 'Administrar impuesto recibible',
         'ins_this' => 'emitir un nuevo impuesto recibible en : ',

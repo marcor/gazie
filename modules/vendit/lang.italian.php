@@ -664,6 +664,10 @@ $strScript = array("admin_client.php" =>
         'anony' => 'Anonimo',
         'importo' => 'Importo'
     ),
+    "admin_scontr_fast" =>
+    array('ins_this' => 'Emetti scontrino con PREZZI IVA INCLUSA',
+        'upd_this' => 'Modifica scontrino con PREZZI IVA INCLUSA n.',
+	),
     "admin_scontr.php" =>
     array('title' => 'Gestione degli scontrini',
         'ins_this' => 'Emetti un nuovo scontrino fiscale a ',

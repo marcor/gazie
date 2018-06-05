@@ -728,7 +728,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 }
 
 require("../../library/include/header.php");
-$script_transl = HeadMain(0, array('custom/autocomplete'));
+require("./lang." . $admin_aziend['lang'] . ".php");
+$transl_base = HeadMain('', array('custom/autocomplete'),'admin_scontr');
+$script_transl= array_merge($transl_base,$strScript['admin_scontr_fast']);
 ?>
 <script type="text/javascript">
     $(function () {
