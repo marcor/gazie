@@ -716,20 +716,33 @@ class selectPartner extends SelectBox {
         global $gTables;
         $this->gTables = $gTables;
         $this->name = $name;
-        $this->what = "a.id AS id,pariva,codfis,a.citspe AS citta, ragso1 AS ragsoc,
-                     (SELECT " . $this->gTables['clfoco'] . ".codice FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra LIMIT 1) AS codice,
-                     (SELECT " . $this->gTables['clfoco'] . ".status FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra LIMIT 1) AS status, 0 AS codpart ";
+		$this->what = array(
+			"a.id" => "id",
+			"pariva" => "pariva",
+			"codfis" => "codfis",
+			"a.citspe" => "citta",
+			"ragso1" => "ragsoc",
+			"(SELECT " . $this->gTables['clfoco'] . ".codice FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra LIMIT 1)" => "codice",
+			"(SELECT " . $this->gTables['clfoco'] . ".status FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra LIMIT 1)" => "status",
+			"0" => "codpart",
+		);
     }
 
     function setWhat($m) {
-        $this->what = "a.id AS id,pariva,codfis,a.citspe AS citta, ragso1 AS ragsoc,
-                     (SELECT " . $this->gTables['clfoco'] . ".codice FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra AND " . $this->gTables['clfoco'] . ".codice BETWEEN " . $m . "000001 AND " . $m . "999999 LIMIT 1) AS codpart ,
-                     (SELECT " . $this->gTables['clfoco'] . ".codice FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra LIMIT 1) AS codice,
-                     (SELECT " . $this->gTables['clfoco'] . ".status FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra LIMIT 1) AS status ";
+		$this->what = array(
+			"a.id" => "id",
+			"pariva" => "pariva",
+			"codfis" => "codfis",
+			"a.citspe" => "citta",
+			"ragso1" => "ragsoc",
+			"(SELECT " . $this->gTables['clfoco'] . ".codice FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra AND " . $this->gTables['clfoco'] . ".codice BETWEEN " . $m . "000001 AND " . $m . "999999 LIMIT 1)" => "codpart",
+			"(SELECT " . $this->gTables['clfoco'] . ".codice FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra LIMIT 1)" => "codice",
+			"(SELECT " . $this->gTables['clfoco'] . ".status FROM " . $this->gTables['clfoco'] . " WHERE a.id=" . $this->gTables['clfoco'] . ".id_anagra LIMIT 1)" => "status",
+		);
     }
 
-    function queryAnagra($where = 1) {
-        $rs = gaz_dbi_dyn_query($this->what, $this->gTables['anagra'] . ' AS a', $where, "a.ragso1 ASC");
+    function queryAnagra($where) {
+        $rs = gaz_dbi_query_anagra($this->what, $this->gTables['anagra'] . ' AS a', $where, array("a.ragso1" => "ASC"));
         $anagrafiche = array();
         while ($r = gaz_dbi_fetch_array($rs)) {
             $anagrafiche[] = $r;
@@ -753,12 +766,12 @@ class selectPartner extends SelectBox {
         $put_anagra = '';
         $tabula = " tabindex=\"1\" ";
         if (strlen($cerca) >= 2) {
-            if (is_numeric($cerca)) {                      //ricerca per partita iva
-                $partners = $this->queryAnagra(" pariva = " . intval($cerca));
+            if (is_numeric($cerca)) {                       //ricerca per partita iva
+                $partners = $this->queryAnagra(array("pariva" => '=' . intval($cerca)));
             } elseif (is_numeric(substr($cerca, 6, 2))) {   //ricerca per codice fiscale
-                $partners = $this->queryAnagra(" a.codfis LIKE '%" . addslashes($cerca) . "%'");
-            } else {                                      //ricerca per ragione sociale
-                $partners = $this->queryAnagra(" a.ragso1 LIKE '" . addslashes($cerca) . "%'");
+                $partners = $this->queryAnagra(array("codfis" => " LIKE '%" . addslashes($cerca) . "%'"));
+            } else {                                        //ricerca per ragione sociale
+                $partners = $this->queryAnagra(array("a.ragso1" => " LIKE '" . addslashes($cerca) . "%'"));
             }
             $numclfoco = sizeof($partners);
             if ($numclfoco > 0) {
@@ -833,21 +846,21 @@ class selectPartner extends SelectBox {
                 if ($m > 100) { //ho da ricercare nell'ambito di un mastro
                     $this->setWhat($m);
                 }
-                if (is_numeric($strSearch)) {                      //ricerca per partita iva
-                    $partner = $this->queryAnagra(" pariva = " . intval($strSearch));
+                if (is_numeric($strSearch)) {                //ricerca per partita iva
+                    $partner = $this->queryAnagra(array("pariva" => "=" . intval($strSearch)));
                 } elseif (substr($strSearch, 0, 1) == '@') { //ricerca conoscendo il codice cliente
                     $temp_agrafica = new Anagrafica();
                     $codicetemp = intval($m * 1000000 + substr($strSearch, 1));
                     $last = $temp_agrafica->getPartner($codicetemp);
                     $codicecer = $last['id_anagra'];
-                    $partner = $this->queryAnagra(" a.id = " . intval($codicecer));
+                    $partner = $this->queryAnagra(array("a.id" => "=" . intval($codicecer)));
                     //echo "---".$m."-".$codicetemp."-".$codicecer; //debug
                 } elseif (substr($strSearch, 0, 1) == '#') { //ricerca conoscendo il codice univoco ufficio
-                    $partner = $this->queryAnagra(" a.fe_cod_univoco LIKE '%" . addslashes(substr($strSearch, 1)) . "%'");
+                    $partner = $this->queryAnagra(array("a.fe_cod_univoco" => " LIKE '%" . addslashes(substr($strSearch, 1)) . "%'"));
                 } elseif ( preg_match('/^[a-z]{6}[0-9]{2}[a-z][0-9]{2}[a-z][0-9]{3}[a-z]$/i', $strSearch)) {   //ricerca per codice fiscale
-                    $partner = $this->queryAnagra(" a.codfis LIKE '%" . addslashes($strSearch) . "%'");
-                } else {                                      //ricerca per ragione sociale
-                    $partner = $this->queryAnagra(" a.ragso1 LIKE '" . addslashes($strSearch) . "%'");
+                    $partner = $this->queryAnagra(array("a.codfis" => " LIKE '%" . addslashes($strSearch) . "%'"));
+                } else {                                     //ricerca per ragione sociale
+                    $partner = $this->queryAnagra(array("a.ragso1" => " LIKE '" . addslashes($strSearch) . "%'"));
                 }
                 if (count($partner) > 0) {
                     echo "\t<select name=\"$name\" $tab1 class=\"FacetSelect\" onchange=\"if(typeof(this.form.hidden_req)!=='undefined'){this.form.hidden_req.value='$name';} this.form.submit();\">\n";
@@ -911,7 +924,7 @@ class selectPartner extends SelectBox {
         }
     }
 
-    function selectAnagra($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $tab = false, $where = 1) {
+    function selectAnagra($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $tab = false) {
         global $gTables;
         $tab1 = '';
         $tab2 = '';
@@ -928,12 +941,12 @@ class selectPartner extends SelectBox {
             echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
         } else {
             if (strlen($strSearch) >= 2) { //sto ricercando un nuovo partner
-                if (is_numeric($strSearch)) {                      //ricerca per partita iva
-                    $partner = $this->queryAnagra(" pariva = " . intval($strSearch) . " and $where");
+                if (is_numeric($strSearch)) {                       //ricerca per partita iva
+                    $partner = $this->queryAnagra(array("pariva" => "=" . intval($strSearch)));
                 } elseif (is_numeric(substr($strSearch, 6, 2))) {   //ricerca per codice fiscale
-                    $partner = $this->queryAnagra(" a.codfis LIKE '%" . addslashes($strSearch) . "%' and $where");
-                } else {                                      //ricerca per ragione sociale
-                    $partner = $this->queryAnagra(" a.ragso1 LIKE '" . addslashes($strSearch) . "%' and $where");
+                    $partner = $this->queryAnagra(array("a.codfis" => " LIKE '%" . addslashes($strSearch) . "%'"));
+                } else {                                            //ricerca per ragione sociale
+                    $partner = $this->queryAnagra(array("a.ragso1" => " LIKE '" . addslashes($strSearch) . "%'"));
                 }
                 if (count($partner) > 0) {
                     echo "\t<select name=\"$name\" $tab1 class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='$name'; this.form.submit();\">\n";

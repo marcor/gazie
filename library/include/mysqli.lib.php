@@ -278,10 +278,26 @@ function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit =
     return $result;
 }
 
+// funzione array_is_assoc
+function array_is_assoc(array $a) {
+    $i = 0;
+    foreach ($a as $k => $v) {
+        if ($k !== $i++) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // funzione gaz_aes_field_anagra
 function gaz_aes_field_anagra($field) {
 	$aes_field = '';
-	switch ($field) {
+	$field_name = $field;
+	$field_name_point = strrpos($field_name, '.');
+	if ($field_name_point !== false) {
+		$field_name = substr($field_name, $field_name_point+1, strlen($field_name)-$field_name_point);
+	}
+	switch ($field_name) {
 		case 'ragso1':
 		case 'ragso2':
 		case 'indspe':
@@ -294,8 +310,8 @@ function gaz_aes_field_anagra($field) {
 		case 'pariva':
 		case 'e_mail':
 		case 'pec_email':
-			//$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field."_aes" . "), UNHEX('$_SESSION['aes_key']')) USING utf8) AS $field";
-			$aes_field .= $field;
+			//$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field . "_aes), UNHEX('" . $_SESSION['aes_key'] . "')) USING utf8)";
+			/**/$aes_field .= $field;
 			break;
 		default:
 			$aes_field .= $field;
@@ -308,8 +324,14 @@ function gaz_aes_field_anagra($field) {
 function gaz_dbi_query_anagra($select, $tabella, $where, $orderby, $limit = 0, $passo = 2000000, $groupby = '') {
     global $link, $session;
 	$select_fields = '';
-	foreach ($select as $field) {
-		$select_fields .= ((empty($select_fields)) ? "" : ",") . gaz_aes_field_anagra($field) . (($field=='*' || strpos($field, '.')!==false || strpos($field, 'AES_DECRYPT')===false) ? "" : " AS $field ");
+	$select_is_assoc = array_is_assoc($select);
+	foreach ($select as $field_name=>$field_alias) {
+		$field = ($select_is_assoc) ? $field_name : $field_alias;
+		$field_alias_point = strrpos($field_alias, '.');
+		if ($field_alias_point !== false) {
+			$field_alias = substr($field_alias, $field_alias_point+1, strlen($field_alias)-$field_alias_point);
+		}
+		$select_fields .= ((empty($select_fields)) ? "" : ", ") . gaz_aes_field_anagra($field) . (($field=='*' || empty($field_alias)) ? "" : " AS $field_alias");
 	}
     $query = "SELECT " . $select_fields . " FROM " . $tabella;
     if (count($where)) {
@@ -330,8 +352,8 @@ function gaz_dbi_query_anagra($select, $tabella, $where, $orderby, $limit = 0, $
 		}
     }
     $query .= " LIMIT " . $limit . ", " . $passo;
-    /**/echo $query."<br>";
-    /**/msgDebug($query);
+    //echo $query."<br>";
+    //msgDebug($query);
 
     $result = mysqli_query($link, $query);
     if (!$result)
