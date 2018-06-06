@@ -25,7 +25,7 @@
  */
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
-$strScript["admin_scontr_fast.php"] =& $strScript["admin_scontr.php"]; //Questo è un puntatore che punta allo stesso Array di admin_scontr.php
+//$strScript["admin_scontr_fast.php"] =& $strScript["admin_scontr.php"]; //Questo è un puntatore che punta allo stesso Array di admin_scontr.php
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $anagrafica = new Anagrafica();
@@ -1110,7 +1110,7 @@ maniglia.form.submit();
                     <div class="col-sm-6 col-md-2 col-lg-2">
                         <div class="form-group text-center">
                             <button type="submit" ID="conf_rig" tabindex=7 class="btn btn-default btn-sm col-sm-12" name="in_submit" title="<?php echo $script_transl['submit'] . $script_transl['thisrow']; ?>"> <!-- Modificato a mano -->
-                                <?php echo $script_transl['conf_row']; ?>&nbsp;<i class="glyphicon glyphicon-ok"></i>
+                                <?php echo $script_transl['conf_row']; ?>&nbsp;(F2)&nbsp;<i class="glyphicon glyphicon-ok"></i>
                             </button>
                         </div> 
                     </div>
@@ -1222,7 +1222,7 @@ maniglia.form.submit();
                                     echo $script_transl['send_ecr'] . ' ' . $ecr['descri'];
                                 } else {
                                     echo $script_transl['update'];
-                                } ?>" />
+                                } ?> (F8)" />
                             </td>
                         </tr>
                     </tbody>
