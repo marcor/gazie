@@ -194,8 +194,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $form['rows'][$i]['quanti'] = 1;
             }
-            $form['rows'][$i]['identifier'] = filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
-            $form['rows'][$i]['expiry'] = filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
+            $form['rows'][$i]['identifier'] = (empty($_POST['rows'][$i]['identifier'])) ? '' : filter_var($_POST['rows'][$i]['identifier'], FILTER_SANITIZE_STRING);
+            $form['rows'][$i]['expiry'] = (empty($_POST['rows'][$i]['expiry'])) ? '' : filter_var($_POST['rows'][$i]['expiry'], FILTER_SANITIZE_STRING);
             $form['rows'][$i]['filename'] = filter_var($_POST['rows'][$i]['filename'], FILTER_SANITIZE_STRING);
             if (!empty($_FILES['docfile_' . $i]['name'])) {
                 $move = false;
@@ -338,6 +338,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $msg .= "45+";
                 }
             }
+			if (!empty($form["clfoco"])) {
+				if (!preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
+					//controllo se ci sono altri documenti con lo stesso numero fornitore
+					$rs_stesso_numero = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and tipdoc like '" . substr($form['tipdoc'], 0, 1) . "%' and clfoco = " . $form['clfoco'] . " and numfat = '" . $form['numfat'] . "'", "protoc desc, datfat desc, datemi desc", 0, 1);
+					$stesso_numero = gaz_dbi_fetch_array($rs_stesso_numero);
+					if ($stesso_numero) {
+						$msg .= "58+";
+					}
+				}
+			}
         }
 // --- fine controllo coerenza date-numeri
         if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi']))
@@ -1246,6 +1256,7 @@ echo "<input type=\"hidden\" value=\"{$form['change_pag']}\" name=\"change_pag\"
 echo "<input type=\"hidden\" value=\"{$form['protoc']}\" name=\"protoc\">\n";
 echo "<input type=\"hidden\" value=\"{$form['numdoc']}\" name=\"numdoc\">\n";
 echo "<input type=\"hidden\" value=\"{$form['datfat']}\" name=\"datfat\">\n";
+echo "<input type=\"hidden\" value=\"". (isset($_POST['last_focus']) ? $_POST['last_focus'] : '') ."\" name=\"last_focus\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title ";
 $select_fornitore = new selectPartner("clfoco");
 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
@@ -1333,7 +1344,7 @@ if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (no
     echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">\n";
     echo "<input type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">\n";
     echo "<input type=\"text\" id=\"datepicker\" class=\"hasDatepicker\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">\n";
-    echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','" . $form['mestra'] . "/" . $form['giotra'] . "/" . $form['anntra'] . "'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
+    echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','document.docacq.mestra.value+'/'+document.docacq.giotra.value+'/'+document.docacq.anntra.value'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
     //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></a>";
     echo '<i class="glyphicon glyphicon-calendar"></i></a>';
     echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
@@ -1537,17 +1548,17 @@ foreach ($form['rows'] as $key => $value) {
 						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" size="1" />
 				  	</td>
 				  	<td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.submit();" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" size="4" id="rows_' . $key . '_quanti" onchange="document.docacq.last_focus.value=\'rows_' . $key . '_prelis\'; this.form.submit();" />
 				  	</td>';
             echo '	<td>
-						<input type="text" name="rows[' . $key . '][prelis]" value="' . $value['prelis'] . '" align="right" maxlength="11" size="7" onchange="this.form.submit();" />
+						<input type="text" name="rows[' . $key . '][prelis]" value="' . $value['prelis'] . '" align="right" maxlength="11" size="7" id="rows_' . $key . '_prelis" onchange="document.docacq.last_focus.value=\'rows_' . $key . '_sconto\'; this.form.submit();" />
 					</td>
 					<td>
-						<input type="text" name="rows[' . $key . '][sconto]" value="' . number_format((!empty($value['sconto'])) ? $value['sconto'] : 0, 2, '.', '') . '" maxlength="4" size="1" onchange="this.form.submit();" />
+						<input type="text" name="rows[' . $key . '][sconto]" value="' . number_format((!empty($value['sconto'])) ? $value['sconto'] : 0, 2, '.', '') . '" maxlength="4" size="1" id="rows_' . $key . '_sconto" onchange="document.docacq.last_focus.value=this.id; this.form.submit();" />
 					</td>
 				  	<td align="right">' . gaz_format_number($imprig) . '</td>
 					<td>' . $value['pervat'] . '%</td>
-					<td>' . $value['codric'] . '</td>';
+					<td class="codricTooltip" title="Contropartita">' . $value['codric'] . '</td>';
 
             $last_row[] = array_unshift($last_row, '' . $value['codart'] . ', ' . $value['descri'] . ', ' . $value['quanti'] . $value['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($value['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($value['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $value['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $value['codric']);
             break;
@@ -1555,7 +1566,7 @@ foreach ($form['rows'] as $key => $value) {
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" />
 				  	</td>
-				  	<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
+				  	<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" /></td>
 					<td>
 						<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\"></i>
@@ -1566,10 +1577,10 @@ foreach ($form['rows'] as $key => $value) {
 					<td><input type=\"hidden\" name=\"rows[{$key}][sconto]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[{$key}][identifier]\" value=\"\" /><input type=\"hidden\" name=\"rows[{$key}][expiry]\" value=\"\" /></td>
 					<td align=\"right\">
-						<input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" />
+						<input type=\"text\" name=\"rows[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" id=\"rows_".$key."_prelis\" onchange=\"document.docacq.last_focus.value=this.id; this.form.submit()\" />
 					</td>
 					<td>{$value['pervat']}%</td>
-					<td>" . $value['codric'] . "</td>\n";
+					<td class=\"codricTooltip\" title=\"Contropartita\">" . $value['codric'] . "</td>\n";
             $last_row[] = array_unshift($last_row, 'forfait');
             break;
         case "2":
@@ -1577,7 +1588,7 @@ foreach ($form['rows'] as $key => $value) {
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" />
 					</td>
 					<td>
-						<input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" />
+						<input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
 					</td>
 					<td>
 						<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
@@ -1597,7 +1608,7 @@ foreach ($form['rows'] as $key => $value) {
             echo "	<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\">
 						<input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* var.tot.fattura *\" />
 					</td>
-					<td><input type=\"text\"   name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\"></td>
+					<td><input type=\"text\" name=\"rows[{$key}][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\"></td>
 					<td>
 						<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
 							<i class=\"glyphicon glyphicon-arrow-up\"></i>
@@ -1901,6 +1912,24 @@ echo '</table>';
     });
 </script>
 <!-- ENRICO FEDELE - FINE FINESTRA MODALE -->
+<script type="text/javascript">
+
+var last_focus_value;
+var last_focus;
+last_focus_value = document.docacq.last_focus.value;
+if (last_focus_value != "") {
+    last_focus = document.getElementById(last_focus_value);
+    if (last_focus != undefined) {
+        last_focus.focus();
+}
+}
+last_focus_value = "";
+
+$( document ).ready(function() {
+	$(".codricTooltip").each(function(index){$(this).attr('title', $("#in_codric option[value='"+$( this ).text().trim()+"']").text());});
+});
+
+</script>
 <?php
 require("../../library/include/footer.php");
 ?>

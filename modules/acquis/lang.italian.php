@@ -45,7 +45,7 @@ $strScript = array("admin_fornit.php" =>
             'L\'IBAN e la nazione sono diversi',
             'Codice fiscale sbagliato per una persona fisica',
             'La partita IVA &egrave; formalmente errata!',
-            'Esiste gi&agrave un fornitore con la stessa Partita IVA',
+            'Esiste gi&agrave; un fornitore con la stessa Partita IVA',
             'Il codice fiscale &egrave; formalmente errato',
             'Esiste gi&agrave; un fornitore con lo stesso Codice Fiscale',
             'C.F. mancante! In automatico &egrave; stato<br />impostato con lo stesso valore della Partita IVA!',
@@ -227,6 +227,7 @@ $strScript = array("admin_fornit.php" =>
         "Non &egrave; stato inserito il numero del documento!",
         "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
         "L'articolo di magazzino ha una matricola/numero di serie pertanto la quantità è stata forzata ad 1",
+        "Risulta un documento gi&agrave; registrato con questo numero fattura per questo fornitore",
         /** ENRICO FEDELE */
         "add_article" => "Aggiungi un nuovo articolo",
         'art_code' => 'Codice articolo',
