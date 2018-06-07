@@ -276,7 +276,7 @@ switch ($admin_aziend['fatimm']) {
                     &nbsp;
                 </td>
                 <td class="FacetFieldCaptionTD">
-                    <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+                    <input type="submit" class="btn btn-sm btn-default btn-50" name="search" value="Cerca" tabindex="1">
                 </td>
                 <td class="FacetFieldCaptionTD">
                     <input type="submit" class="btn btn-sm btn-default btn-50" name="all" value="Tutti" onClick="confirTutti();

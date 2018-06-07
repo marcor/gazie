@@ -109,7 +109,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $msg .= "17+";
         }
         $anagrafica = new Anagrafica();
-        if (!($form['pariva'] == "") && !($form['pariva'] == "00000000000")) {
+        if (!($form['pariva'] == "") && !($form['pariva'] == '00000000000')) {
             $partner_with_same_pi = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND pariva = '" . $form['pariva'] . "'", "pariva DESC", 0, 1);
             if ($partner_with_same_pi) {
                 if ($partner_with_same_pi[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
@@ -128,7 +128,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (!empty($r_cf)) {
             $msg .= "11+";
         }
-        if (!($form['codfis'] == "") && !($form['codfis'] == "00000000000")) {
+        if (!($form['codfis'] == "") && !($form['codfis'] == '00000000000')) {
             $partner_with_same_cf = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
             if ($partner_with_same_cf) { // c'� gi� un cliente sul piano dei conti
                 if ($partner_with_same_cf[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )

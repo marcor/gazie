@@ -1986,7 +1986,7 @@ foreach ($form['rows'] as $k => $v) {
 						</span>
 					</td>
 					<td class="text-right codricTooltip" title="Contropartita">
-							' . $v['codric'] . '
+						' . $v['codric'] . '
 					</td>';
             $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
@@ -2017,9 +2017,7 @@ foreach ($form['rows'] as $k => $v) {
 						</span>
 					</td>
 					<td class="text-right codricTooltip" title="Contropartita">
-						<span class="gazie-tooltip" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
-							' . $v['codric'] . '
-						</span>
+						' . $v['codric'] . '
 					</td>';
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
