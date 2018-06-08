@@ -242,7 +242,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 
 			// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha
 			
-				if ($rame_met_annuo+($rame_metallo* $form['quanti'])> (6 * $dim_campo)) {
+				if (($campo_coltivazione>0)&&($dim_campo>0)&&($rame_met_annuo+($rame_metallo* $form['quanti'])> (6 * $dim_campo))) {
 					$msg .="26+";echo "CONTROLLO rame metallo: <br> Rame metallo anno già usato: ",$rame_met_annuo," Rame metallo che si tenta di usare: ",($rame_metallo* $form['quanti']), " Limite annuo di legge per questo campo: ", (6 * $dim_campo);}	// errore superato il limite di rame metallo ad ettaro		
 			
 			
