@@ -41,10 +41,10 @@ function getMovements($date_ini,$date_fin)
         $where="datreg BETWEEN $date_ini AND $date_fin";
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
-			  $gTables['campo_coltivazione'].".codice, ".$gTables['campo_coltivazione'].".descri AS ragsoc, ".
+			  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
-				LEFT JOIN ".$gTables['campo_coltivazione']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['campo_coltivazione'].".codice)
+				LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['clfoco'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
         $rs=gaz_dbi_dyn_query ($what,$table,$where, 'datreg ASC, tipdoc ASC, campo_coltivazione ASC, operat DESC, id_mov ASC');
         while ($r = gaz_dbi_fetch_array($rs)) {
@@ -103,6 +103,7 @@ $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',9);
 if (sizeof($result) > 0) {
   while (list($key, $row) = each($result)) {
+	  if ($row['type_mov']==1){
       $datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
       $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
       $movQuanti = $row['quanti']*$row['operat'];
@@ -151,7 +152,7 @@ $res2 = gaz_dbi_dyn_query ('*', $gTables['admin']);
 	} 
 /* Antonio Germani FINE trasformo nome utente login in cognome e nome */	  
       
-      
+	  } 
   }
 }
 $pdf->Output();

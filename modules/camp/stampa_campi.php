@@ -52,7 +52,7 @@ $title = array('luogo_data'=>$luogo_data,
 							array('lun' => 50,'nam'=>'Descrizione campo'),
                              array('lun' => 50,'nam'=>'Dimensione in ha'),
                              array('lun' => 50,'nam'=>'Coltura in atto'),
-                             array('lun' => 50,'nam'=>'Immagine')                             
+                             array('lun' => 80,'nam'=>'Immagine')                             
                             )
               );
 // Antonio Germani carico la tabella campi
@@ -67,16 +67,20 @@ $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',7);
 $pdf->setJPEGQuality(15);
-if (sizeof($res) > 0) {
+$n="";
+if (sizeof($res) > 0) { 
   while ($b_row = $res->fetch_assoc()) {
-      
+	  if ($n>0){// evita la pagina bianca alla fine del ciclo while
+      $pdf->AddPage(); // manda alla pagina successiva
+	  }$n=1;
       $pdf->Cell(15,3,$b_row['codice'],1);
       $pdf->Cell(50,3,$b_row['descri'],1);
 	  $pdf->Cell(50,3,str_replace('.', ',',$b_row["ricarico"]),1);
 	  $pdf->Cell(50,3,substr($b_row["annota"],0,50),1);
 		      
       $pdf->Image('@'.$b_row['image'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
-      $pdf->AddPage();
+     
+	  
       
   }
 }

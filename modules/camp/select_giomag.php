@@ -185,6 +185,7 @@ if (isset($_POST['preview']) and $msg=='') {
 		
 		
         while (list($key, $mv) = each($m)) {
+			if ($mv['type_mov']==1){
             $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
             $datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
             $movQuanti = $mv['quanti']*$mv['operat'];
@@ -218,7 +219,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 			echo "<td class=\"FacetDataTD\" align=\"right\">".$mv["adminid"]." </td>\n";
             echo "</tr>\n";
             $ctr_mv = $mv['artico'];
-			
+			}
          }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
          echo '<td colspan="7" align="right"><input type="submit" name="print" value="';

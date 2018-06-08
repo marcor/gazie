@@ -114,6 +114,7 @@ $strScript = array("browse_document.php" =>
 		"Giacenza di magazzino insufficiente",
 		"Non è possibile raccogliere. Tempo di sospensione insufficiente.",
 		"Stai impiegando una quantità di prodotto superiore a quella ammessa!",
+		"Stai superando il limite di rame metallo ammesso su questo campo di coltivazione!",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
@@ -196,7 +197,7 @@ $strScript = array("browse_document.php" =>
     array(0 => 'Stampa Quaderno di campagna',
         'title' => 'Selezione per la visualizzazione e/o la stampa del quaderno di campagna',
         'errors' => array('La data  non &egrave; corretta!',
-            'La data di inizio dei movimenti contabili da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
+            'La data di inizio dei movimenti da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
             'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
         ),
         'date' => 'Data di stampa ',
@@ -204,6 +205,20 @@ $strScript = array("browse_document.php" =>
         'date_fin' => 'Data registrazione fine ',
         'header' => array('Data' => '', 'Causale' => '', 'Annotazioni' => '',
             'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Avversit&agrave;' => '','Operatore' => ''
+        )
+    ),
+	"select_dichiar_rame.php" =>
+    array(0 => 'Dichiarazione rame metallo',
+        'title' => 'Selezione per la visualizzazione e/o la stampa della dichiarazione rame metallo',
+        'errors' => array('La data  non &egrave; corretta!',
+            'La data di inizio dei movimenti da stampare non pu&ograve; essere successiva alla data dell\'ultimo !',
+            'La data di stampa non pu&ograve; essere precedente a quella dell\'ultimo movimento!'
+        ),
+        'date' => 'Data di stampa ',
+        'date_ini' => 'Data inizio dichiarazione  ',
+        'date_fin' => 'Data fine dichiarazione ',
+        'header' => array('Data' => '', 'Causale' => '', 'Annotazioni' => '',
+            'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Avversit&agrave;' => '','Rame metallo usato' => ''
         )
     ),
 	 "select_invmag.php" =>
@@ -403,6 +418,7 @@ $strScript = array("browse_document.php" =>
             'valcod' => 'Inserire un codice valido',
             'descri' => 'Inserire una descrizione',
             'unimis' => 'Inserire l\'unit&agrave; di misura',
+			'unimis2' => 'Questo prodotto contiene rame metallo e quindi l\'unit&agrave; di misura può essere solo Kg o l',
             'aliiva' => 'Inserire l\'aliquota I.V.A.',
             'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda'
         ),
@@ -458,6 +474,7 @@ $strScript = array("browse_document.php" =>
         'iterate_invitation' => 'INSERISCI UN ALTRO ARTICOLO DI MAGAZZINO',
         'browse_for_file' => 'Sfoglia',
         'id_anagra' => 'Fornitore',
+		'rame_metallico' => "Rame metallo Kg/1Kg",
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 1 carattere!',
             'Cambia fornitore'

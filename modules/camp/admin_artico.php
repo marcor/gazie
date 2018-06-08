@@ -124,6 +124,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (empty($form["unimis"])) {
             $msg['err'][] = 'unimis';
         }
+		if ($form['rame_metallico']>0 && $form["unimis"]<>"Kg"){
+			if ($form['rame_metallico']>0 && $form["unimis"]<>"l"){
+			$msg['err'][]= 'unimis2';}			
+		} 
+		
        /* Antonio Germani l'aliquota IVA non è obbligatoria perché non serve nel quaderno di campagna
 	   if (empty($form["aliiva"])) {
             $msg['err'][] = 'aliiva';
@@ -547,7 +552,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
- <!-- Antonio Germani il peso specifico diventa il TEMPO DI SOSPENSIONE -->
+ <!-- Antonio Germani  il TEMPO DI SOSPENSIONE -->
                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -556,7 +561,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
- <!-- Antonio Germani il volume specifico diventa la DOSE AD ETTARO  -->
+ <!-- Antonio Germani  la DOSE AD ETTARO  -->
 				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -565,6 +570,15 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+	 <!-- Antonio Germani  il RAME METALLO  -->
+				<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="rame_metallico" class="col-sm-4 control-label"><?php echo $script_transl['rame_metallico']; ?></label>
+                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['rame_metallico']; ?>" name="rame_metallico" maxlength="13" />
+                        </div>
+                    </div>
+                </div><!-- chiude row  -->			
  <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">

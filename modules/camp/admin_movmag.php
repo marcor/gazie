@@ -195,8 +195,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($form['quanti'] == 0) {  //la quantità è zero
             $msg .= "19+";
         }
-		
-		
+				
 		
 	 // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
 	 $mv = $gForm->getStockValue(false, $form['artico']);
@@ -212,19 +211,47 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 //Antonio Germani prendo e metto la data di fine sospensione del campo di coltivazione selezionato in $fine_sosp 
 		$campo_coltivazione=$form['campo_coltivazione'];//campo di coltivazione inserito nel form
 		$query="SELECT ".'giorno_decadimento'.",".'ricarico'." FROM ".$gTables['campi']. " WHERE codice ='". $campo_coltivazione."'";
-		$result = gaz_dbi_query($query);
+			$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 			$fine_sosp=$row['giorno_decadimento']; $fine_sosp=strtotime($fine_sosp);
-			$dim_campo=$row["ricarico"];// prendo pure la dimensione del campo e la metto in $dim_campo
+			$dim_campo=$row['ricarico'];// prendo pure la dimensione del campo e la metto in $dim_campo
 			}
 			// Antonio Germani Controllo se la quantità è giusta rapportata al campo di coltivazione
 			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
-			$dose=$item["dose_massima"];// prendo la dose
+			$dose=$item['dose_massima'];// prendo la dose
+			$rame_metallo=$item['rame_metallico'];// già che ci sono, prendo anche il rame metallo del prodotto oggetto del movimento, che mi servirà per il prossimo controllo
 			if ($dose>0 && $form['quanti'] > $dose*$dim_campo && $form["operat"]==-1 && $dim_campo>0) {
 				$msg .="25+"; // errore dose eccessiva
 			}
+			
+// Antonio Germani Calcolo quanto rame metallo è stato usato nell'anno di esecuzione di questo movimento
+			If ($campo_coltivazione>0){ // se il prodotto va in un campo di coltivazione
+				if ($rame_metallo>0){ //se questo prodotto contiene rame metallo
+					$query="SELECT ".'artico'. ",".'datdoc'.",".'quanti'." FROM ".$gTables['movmag']. " WHERE datdoc >'". $form['anndoc'] ."' AND ".'campo_coltivazione'." = '".$campo_coltivazione."'"; // prendo solo le righe dell'anno di esecuzione del trattamento e degli anni successivi con il campo di coltivazione selezionato nel form
+				}
+			$result = gaz_dbi_query($query); $rame_met_annuo="";
+						while ($row = $result->fetch_assoc()) {
+							if (substr($row['datdoc'],0,4) == $form['anndoc']){ // elimino dal conteggio gli eventuali anni successivi
+							$item = gaz_dbi_get_row($gTables['artico'], "codice", $row['artico']);
+							if ($item['rame_metallico']>0){$rame_met_annuo=$rame_met_annuo+$item['rame_metallico']*$row['quanti'];}
+							}
+						}
 						
-/* Antonio Germani creo la data d I ATTUAZIONE DELL'OPERAZIONE selezionata che poi confronterò con quella di sospensione del campo */
+			}
+// fine calcolo rame
+
+			// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha
+			
+				if ($rame_met_annuo+($rame_metallo* $form['quanti'])> (6 * $dim_campo)) {
+					$msg .="26+";echo "CONTROLLO rame metallo: <br> Rame metallo anno già usato: ",$rame_met_annuo," Rame metallo che si tenta di usare: ",($rame_metallo* $form['quanti']), " Limite annuo di legge per questo campo: ", (6 * $dim_campo);}	// errore superato il limite di rame metallo ad ettaro		
+			
+			
+
+
+
+
+						
+// Antonio Germani creo la data d I ATTUAZIONE DELL'OPERAZIONE selezionata che poi confronterò con quella di sospensione del campo 
 		$dt=substr("0".$form['giodoc'],-2)."-".substr("0".$form['mesdoc'],-2)."-".$form['anndoc']; $dt=strtotime($dt); 			
 // controllo se è ammesso il raccolto sul campo di coltivazione selezionato $msg .=24+ errore tempo di sospensione
 		If ($form['campo_coltivazione']>0 && $form["operat"]==1 && intval($dt)<intval($fine_sosp)){
