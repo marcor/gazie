@@ -408,6 +408,18 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+				 <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+						<label for="classif_amb" class="col-sm-4 control-label"><?php echo $script_transl['classif_amb']; ?></label>
+					<?php
+					$gForm->variousSelect('classif_amb', $script_transl['classif_amb_value'], $form['classif_amb'], "col-sm-8", false, '', false, 'style="max-width: 200px;"');
+					?>
+                       </div>
+                   </div>
+               </div><!-- chiude row  -->
+				
+				
 <!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
