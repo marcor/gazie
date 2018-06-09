@@ -558,6 +558,18 @@ $strScript = array("admin_fornit.php" =>
     "report_acqddt.php" =>
     array('title' => 'Documenti di trasporto ricevuti da fornitori ',
     ),
+	"prop_ordine.php" =>
+	array('title' => 'Propone un ordine a fornitore calcolato sul venduto',
+	      'mesg' => array('',
+		                  'Inserire almeno 1 carattere!',
+						  '',
+        ),
+		'includi' => 'Includi tutti',
+		'fornitore' => 'Fornitore :',
+		'giorni_app' => 'Giorni di approvvigionamento',
+		'calcola_giorni' => 'Calcola sulle vendite degli ultimi',
+		'giorni' => 'giorni',
+	),
     "bank_receipts_payment.php" =>
     array('title' => 'Registra disposizione di pagamenti',
         'err' => array(
