@@ -394,7 +394,14 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?></label>
-                            <input class="col-sm-2" type="text" value="<?php echo $form['unimis']; ?>" name="unimis" maxlength="3" />
+                         <!--   <input class="col-sm-2" type="text" value="<?php echo $form['unimis']; ?>" name="unimis" maxlength="3" /> -->
+						 <select name="unimis" size="1">
+
+							<option <?php if($form['unimis'] == 'Kg'){echo("selected");}?>>Kg</option>
+							<option <?php if($form['unimis'] == 'l'){echo("selected");}?>>l</option>
+							<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
+						</select>
+
                         </div>
                     </div>
                 </div><!-- chiude row  -->
