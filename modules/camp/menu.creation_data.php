@@ -46,7 +46,8 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
                                                     array('translate_key'=>8,'link'=>"admin_caumag.php?Insert",'weight'=>1)
                                                     ),
 											5=>array(
-                                                    array('translate_key'=>9,'link'=>"admin_campi.php?Insert",'weight'=>1)
+                                                    array('translate_key'=>9,'link'=>"admin_campi.php?Insert",'weight'=>1),
+                                                    array('translate_key'=>10,'link'=>"select_dichiar_rame.php",'weight'=>5)
                                                     )
                                             )
                                )
