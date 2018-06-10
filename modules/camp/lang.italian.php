@@ -52,7 +52,8 @@ $strScript = array("browse_document.php" =>
         'retention_tax' => 'Ritenuta',
         'payroll_tax' => 'Cassa Prev.',
         'barcode' => 'Cod.Barre',
-        'clone' => 'Duplica'
+        'clone' => 'Duplica',
+		'class' => 'Classe'
     ),
     "report_statis.php" =>
     array("statistica ",
@@ -204,7 +205,7 @@ $strScript = array("browse_document.php" =>
         'date_ini' => 'Data registrazione inizio  ',
         'date_fin' => 'Data registrazione fine ',
         'header' => array('Data' => '', 'Causale' => '', 'Annotazioni' => '',
-            'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Avversit&agrave;' => '','Operatore' => ''
+            'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 'Classe' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Avversit&agrave;' => '','Operatore' => ''
         )
     ),
 	"select_dichiar_rame.php" =>

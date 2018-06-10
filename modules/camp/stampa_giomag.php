@@ -42,7 +42,7 @@ function getMovements($date_ini,$date_fin)
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
 			  $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
-              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer ";
+              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".classif_amb ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
 				LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".campo_coltivazione = ".$gTables['clfoco'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
@@ -86,8 +86,9 @@ $title = array('luogo_data'=>$luogo_data,
                              array('lun' => 12,'nam'=>'Campo'),
                              array('lun' => 10,'nam'=>'ha'),
                              array('lun' => 38,'nam'=>'Coltura'),
-							 array('lun' => 72,'nam'=>'Prodotto'),
-                             array('lun' => 10,'nam'=>'U.M.'),
+							 array('lun' => 69,'nam'=>'Prodotto'),
+							 array('lun' => 6,'nam'=>'Cl.'),
+                             array('lun' => 8,'nam'=>'U.M.'),
                              array('lun' => 12,'nam'=>'Q.tà'),
 							 array('lun' => 30,'nam'=>'Avversità'),
 							 array('lun' => 18,'nam'=>'Operat.')
@@ -97,6 +98,7 @@ $title = array('luogo_data'=>$luogo_data,
 $pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 $pdf->setVars($admin_aziend,$title);
 $pdf->SetTopMargin(42);
+$pdf->SetleftMargin(6);
 $pdf->SetFooterMargin(20);
 $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
@@ -133,8 +135,13 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 	  
 	  
 	  
-      $pdf->Cell(72,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
-	  $pdf->Cell(10,6,$row['unimis'],1,0,'C');
+      $pdf->Cell(69,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
+	  If ($row['classif_amb']==0){$pdf->Cell(6,6,"Nc",1);}
+	  If ($row['classif_amb']==1){$pdf->Cell(6,6,"Xi",1);}
+	  If ($row['classif_amb']==2){$pdf->Cell(6,6,"Xn",1);}
+	  If ($row['classif_amb']==3){$pdf->Cell(6,6,"T",1);}
+	  If ($row['classif_amb']==4){$pdf->Cell(6,6,"T+",1);}
+	  $pdf->Cell(8,6,$row['unimis'],1,0,'C');
       $pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
       
       $pdf->Cell(30,6,$row['avversita'],1, 0, 'l', 0, '', 1);

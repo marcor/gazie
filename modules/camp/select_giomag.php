@@ -34,7 +34,7 @@ function getMovements($date_ini,$date_fin)
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
               $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
-              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer ";
+              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".classif_amb ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
                LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
@@ -211,12 +211,16 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 		echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n"; 
 	 }
 // fine inserisco campo, superficie, coltura
-			echo "<td class=\"FacetDataTD\" align=\"center\">".$mv["artico"]." &nbsp;</td>\n";
-			
-            echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv["quanti"],1,$admin_aziend['decimal_quantity'])."</td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";
+			If ($mv['classif_amb']==0) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_0.gif\" alt=\"Mia Immagine\" width=\"50 px\">" ." &nbsp;</td>\n";}
+			If ($mv['classif_amb']==1) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_1.gif\" alt=\"Mia Immagine\" width=\"50 px\">" ." &nbsp;</td>\n";}
+			If ($mv['classif_amb']==2) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_2.gif\" alt=\"Mia Immagine\" width=\"50 px\">" ." &nbsp;</td>\n";}
+			If ($mv['classif_amb']==3) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_3.gif\" alt=\"Mia Immagine\" width=\"50 px\">" ." &nbsp;</td>\n";}
+			If ($mv['classif_amb']==4) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_0.gif\" alt=\"Mia Immagine\" width=\"50 px\">" ." &nbsp;</td>\n";}
+            echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
             echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
-            echo "<td class=\"FacetDataTD\" align=\"right\">".$mv["avversita"]." </td>\n";
-			echo "<td class=\"FacetDataTD\" align=\"right\">".$mv["adminid"]." </td>\n";
+            echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['avversita']." </td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['adminid']." </td>\n";
             echo "</tr>\n";
             $ctr_mv = $mv['artico'];
 			}

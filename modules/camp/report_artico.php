@@ -135,6 +135,9 @@ $gForm = new magazzForm();
                                 <?php echo $script_transl["descri"]; ?>
                             </a>
                         </th>
+						<th class="text-center">                            
+                                <?php echo $script_transl["class"]; ?>                           
+                        </th>
                         <th>
                             <a href="#" class="orby" data-order="good_or_service">
                                 <?php echo $script_transl["good_or_service"]; ?>

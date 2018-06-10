@@ -95,6 +95,23 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             <td data-title="<?php echo $script_transl["descri"]; ?>">
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["codice"]; ?>" data-label="<?php echo $row['annota']; ?>"><?php echo $row["descri"]; ?></span>
             </td>
+			<td data-title="">
+			<?php if ($row["classif_amb"]==0){?>
+			<img src="../camp/media/classe_0.gif" alt="Mia Immagine" width="50 px">
+			<?php echo "Nc"; }?>
+			<?php if ($row["classif_amb"]==1){?>
+			<img src="../camp/media/classe_1.gif" alt="Mia Immagine" width="50 px">
+			<?php echo "Xi"; }?>
+			<?php if ($row["classif_amb"]==2){?>
+			<img src="../camp/media/classe_2.gif" alt="Mia Immagine" width="50 px">
+			<?php echo "Xn"; }?>
+			<?php if ($row["classif_amb"]==3){?>
+			<img src="../camp/media/classe_3.gif" alt="Mia Immagine" width="50 px">
+			<?php echo "T"; }?>
+			<?php if ($row["classif_amb"]==4){?>
+			<img src="../camp/media/classe_4.gif" alt="Mia Immagine" width="50 px">
+			<?php echo "T+"; }?>
+            </td>
             <td data-title="<?php echo $script_transl["good_or_service"]; ?>" class="text-center">
                 <?php echo $ldoc; ?> &nbsp;   <i class="glyphicon glyphicon-<?php echo $gooser_i; ?>"></i> 
             </td>
