@@ -97,19 +97,19 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             </td>
 			<td data-title="">
 			<?php if ($row["classif_amb"]==0){?>
-			<img src="../camp/media/classe_0.gif" alt="Mia Immagine" width="50 px">
+			<img src="../camp/media/classe_0.gif" alt="Non classificato" width="50 px">
 			<?php echo "Nc"; }?>
 			<?php if ($row["classif_amb"]==1){?>
-			<img src="../camp/media/classe_1.gif" alt="Mia Immagine" width="50 px">
+			<img src="../camp/media/classe_1.gif" alt="Irritante" width="50 px">
 			<?php echo "Xi"; }?>
 			<?php if ($row["classif_amb"]==2){?>
-			<img src="../camp/media/classe_2.gif" alt="Mia Immagine" width="50 px">
+			<img src="../camp/media/classe_2.gif" alt="Nocivo" width="50 px">
 			<?php echo "Xn"; }?>
 			<?php if ($row["classif_amb"]==3){?>
-			<img src="../camp/media/classe_3.gif" alt="Mia Immagine" width="50 px">
+			<img src="../camp/media/classe_3.gif" alt="Tossico" width="50 px">
 			<?php echo "T"; }?>
 			<?php if ($row["classif_amb"]==4){?>
-			<img src="../camp/media/classe_4.gif" alt="Mia Immagine" width="50 px">
+			<img src="../camp/media/classe_4.gif" alt="Molto tossico" width="50 px">
 			<?php echo "T+"; }?>
             </td>
             <td data-title="<?php echo $script_transl["good_or_service"]; ?>" class="text-center">
