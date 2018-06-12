@@ -6,5 +6,4 @@ DELETE FROM `gaz_menu_script` WHERE  `link` LIKE 'select_an%';
 DELETE FROM `gaz_menu_script` WHERE  `link` LIKE 'select_esportazione%';
 DELETE FROM `gaz_menu_module` WHERE  `link` LIKE '%report_statis.php%';
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
-INSERT INTO `gaz_admin_module` (`adminid`, `company_id`, `moduleid`, `access`) SELECT user_name,(CONVERT('XXX',UNSIGNED INTEGER)),(SELECT MAX(id) FROM `gaz_module`),3 FROM `gaz_admin` WHERE 1;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

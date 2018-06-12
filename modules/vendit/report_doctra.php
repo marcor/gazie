@@ -300,7 +300,7 @@ function confirMail(link){
                             echo "<td class=\"alert alert-danger\"  align=\"center\">" . gaz_format_date($r["datemi"]) . " &nbsp;</td>";
                             ?>
                             <td  class="alert alert-danger" >
-                                <a href="report_client.php?auxil=<?php echo htmlspecialchars($anagra["ragso1"]); ?>&search=Cerca">
+                                <a href="../acquis/report_fornit.php?auxil=<?php echo htmlspecialchars($anagra["ragso1"]); ?>&search=Cerca">
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>
                             </td>
