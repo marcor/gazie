@@ -279,7 +279,6 @@ function confirMail(link){
                                 echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $r['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a>\n";
                             }
                             echo "</td>\n";
-//           echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"duplicate_docven.php?id_tes=" . $r['id_tes'] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
                             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"admin_docven.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
                             echo "</td>";
 
@@ -304,7 +303,7 @@ function confirMail(link){
                                     <?php echo $anagra["ragso1"]; ?>
                                 </a>
                             </td>
-                            <td>
+                            <td class="alert alert-danger">
                                 <?php echo "<a href=\"admin_destinazioni.php?codice=".$destina["codice"]."&Update\">".$destina["unita_locale1"]."</a>"; ?>
                             </td>
                             <?php
@@ -312,7 +311,7 @@ function confirMail(link){
 
                             $urlPrintDoc = "../acquis/stampa_docacq.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
-                            echo "<td align=\"center\">";
+                            echo "<td class=\"alert alert-danger\" align=\"center\">";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintEtichette\" target=\"_blank\"><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
                             echo "</td>\n";
@@ -326,14 +325,18 @@ function confirMail(link){
                                 echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="../acquis/admin_fornit.php?codice=' . substr($clfoco["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
                             echo "</td>\n";
-
-                            echo "<td class=\"alert alert-danger\"  align=\"center\"></td>";
-                            echo "<td class=\"alert alert-danger\"  align=\"center\"></td>";
+                            echo "<td  class=\"alert alert-danger\"></td>";
+							if ($r['tipdoc']=='DDL'){ // i ddt per lavorazioni ricorrenti possono essere duplicati
+								echo "<td align=\"center\" class=\"alert alert-danger\"><a class=\"btn btn-xs btn-default btn-duplica\" href=\"../acquis/admin_docacq.php?Duplicate&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-duplicate\"></i></a>";
+								echo "</td>";
+							} else {
+								echo "<td></td>";
+							}
                             if ($ultimoddt == $r["numdoc"] and $r['numfat'] == 0)
                             // Colonna Elimina
                                 echo "<td class=\"alert alert-danger\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docven.php?id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                             else
-                                echo "<td class=\"alert alert-danger\" align=\"center\"></td>";
+                                echo "<td></td>";
                             echo "</tr>\n";
                             break;
                         case "FAD":

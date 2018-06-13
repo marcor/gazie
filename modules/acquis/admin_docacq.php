@@ -945,7 +945,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         array_splice($form['rows'], $delri, 1);
         $i--;
     }
-} elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
+} elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update'])) or ( isset($_GET['Duplicate']))) { //se e' il primo accesso per UPDATE
     $tesdoc = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", intval($_GET['id_tes']));
     $anagrafica = new Anagrafica();
     $fornitore = $anagrafica->getPartner($tesdoc['clfoco']);
@@ -1076,23 +1076,42 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$i]['gooser'] = $articolo['good_or_service'];
         $form['rows'][$i]['lot_or_serial'] = $articolo['lot_or_serial'];
-        // recupero eventuale movimento di tracciabilità 
-        $lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id_rigdoc', $row['id_rig']);
-        // recupero il filename dal filesystem e lo sposto sul tmp 
         $form['rows'][$i]['filename'] = '';
-        $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
-        while (false !== ($filename = readdir($dh))) {
-            $fd = pathinfo($filename);
-            $r = explode('_', $fd['filename']);
-            if ($r[0] == 'lotmag' && $r[1] == $lotmag['id']) {
-                // riassegno il nome file 
-                $form['rows'][$i]['filename'] = $fd['basename'];
-            }
-        }
-        $form['rows'][$i]['identifier'] = $lotmag['identifier'];
-        $form['rows'][$i]['expiry'] = gaz_format_date($lotmag['expiry']);
+        $form['rows'][$i]['identifier'] = '';
+        $form['rows'][$i]['expiry'] = '';
         $form['rows'][$i]['status'] = "UPDATE";
+        // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
+		if (!isset($_GET['Duplicate'])) {
+			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id_rigdoc', $row['id_rig']);
+			// recupero il filename dal filesystem e lo sposto sul tmp 
+			$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+			while (false !== ($filename = readdir($dh))) {
+				$fd = pathinfo($filename);
+				$r = explode('_', $fd['filename']);
+				if ($r[0] == 'lotmag' && $r[1] == $lotmag['id']) {
+					// riassegno il nome file 
+					$form['rows'][$i]['filename'] = $fd['basename'];
+				}
+			}
+			$form['rows'][$i]['identifier'] = $lotmag['identifier'];
+			$form['rows'][$i]['expiry'] = gaz_format_date($lotmag['expiry']);
+		} else {
+			$form['rows'][$i]['status'] = "Insert";
+			$form['rows'][$i]['id_mag'] = 0;
+		}
         $i++;
+    }
+    if (isset($_GET['Duplicate'])) {  // duplicate: devo reinizializzare i campi come per la insert
+        $form['id_doc_ritorno'] = 0;
+        $form['id_tes'] = "";
+        $form['gioemi'] = date("d");
+        $form['mesemi'] = date("m");
+        $form['annemi'] = date("Y");
+        $form['giotra'] = date("d");
+        $form['mestra'] = date("m");
+        $form['anntra'] = date("Y");
+        $form['oratra'] = date("H");
+        $form['mintra'] = date("i");
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['tipdoc'] = $_GET['tipdoc'];
