@@ -12,6 +12,9 @@ ALTER TABLE `gaz_anagra` ADD COLUMN `codfis_aes` TINYTEXT NOT NULL AFTER `codfis
 ALTER TABLE `gaz_anagra` ADD COLUMN `pariva_aes` TINYTEXT NOT NULL AFTER `pariva`;
 ALTER TABLE `gaz_anagra` ADD COLUMN `e_mail_aes` TINYTEXT NOT NULL AFTER `e_mail`;
 ALTER TABLE `gaz_anagra` ADD COLUMN `pec_email_aes` TINYTEXT NOT NULL AFTER `pec_email`;
+ALTER TABLE `gaz_anagra` ADD `latitude_aes` TINYTEXT NOT NULL AFTER `latitude`;
+ALTER TABLE `gaz_anagra` ADD `longitude_aes` TINYTEXT NOT NULL AFTER `longitude`;
+ALTER TABLE `gaz_anagra` ADD `fatt_email_aes` TINYTEXT NOT NULL AFTER `fatt_email`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=S', '', '', 49, '', 6  FROM `gaz_menu_script`;
 DELETE FROM `gaz_admin_module` WHERE  `moduleid`=14;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)

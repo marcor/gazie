@@ -38,9 +38,10 @@ $linkHeaders->output();
 $result = gaz_dbi_dyn_query ('*', $gTables['paymov'], 1, 'id DESC');
 while ($a_row = gaz_dbi_fetch_array($result))
     {
-    // faccio una subquery che è più veloce di JOIN per ricavare l'id_tes
+    // faccio una subquery che sembra essere più veloce di LEFT JOIN per ricavare l'id_tes
     $rigmoc = gaz_dbi_get_row($gTables['rigmoc'],'id_rig = '.$a_row["id_rigmoc_pay"].' OR id_rig',$a_row["id_rigmoc_doc"]);
     $tesmov = gaz_dbi_get_row($gTables['tesmov'],'id_tes',$rigmoc['id_tes']);
+	if (substr($rigmoc['codcon'],0,3)==$admin_aziend['mascli']){ // stampo solo le partite relative ai clienti
     echo "<tr class=\"FacetDataTD\">";
     echo "<td>".$a_row["id"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["id_tesdoc_ref"]."</td>";
@@ -57,6 +58,7 @@ while ($a_row = gaz_dbi_fetch_array($result))
     echo "<td align=\"right\">".$a_row["amount"]." &nbsp;</td>";
     echo "<td align=\"center\">".gaz_format_date($a_row["expiry"])." &nbsp;</td>";
     echo "</tr>";
+	}
     }
 ?>
 </table>
