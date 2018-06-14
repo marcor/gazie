@@ -47,6 +47,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         // Imposto totale valore giacenza by DF
 
         while ($r = gaz_dbi_fetch_array($result)) {
+			if ($r['mostra_qdc']==1){ // Antonio Germani esclude l'articolo dall'inventario se non è specifico per il Qdc
+			
             $mv = $gForm->getStockValue(false, $r['codice'], $date, null, $admin_aziend['decimal_price']);
             $magval = array_pop($mv);
             $form['a'][$r['codice']]['i_d'] = $r['descri'];
@@ -73,14 +75,18 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
 
             // Calcolo totale valore giacenza by DF
             $tot_val_giac += $magval['v_g'];
+			}
         }
     }
 } else { //nelle  successive entrate
+
+
     $tot_val_giac = 0;
     if (isset($_POST['Return'])) {
         header("Location: " . $_POST['ritorno']);
         exit;
     }
+	
     $form['date_Y'] = intval($_POST['date_Y']);
     $form['date_M'] = intval($_POST['date_M']);
     $form['date_D'] = intval($_POST['date_D']);
@@ -98,6 +104,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             // Imposto totale valore giacenza by DF
 
             while ($r = gaz_dbi_fetch_array($result)) {
+				if ($r['mostra_qdc']==1){ // Antonio Germani esclude l'articolo dall'inventario se non è specifico per il Qdc
                 if ($r['catmer'] <> $ctrl_cm) {
                     gaz_set_time_limit(30);
                     $ctrl_cm = $r['catmer'];
@@ -127,6 +134,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 }
                 // Calcolo totale valore giacenza by DF
                 $tot_val_giac += $magval['v_g'];
+				}	
             }
         }
     } elseif (isset($_POST['preview']) || isset($_POST['insert'])) {  //in caso di conferma
@@ -213,6 +221,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             exit;
         }
     }
+
 }
 require("../../library/include/header.php");
 require("./lang." . $admin_aziend['lang'] . ".php");

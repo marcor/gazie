@@ -51,6 +51,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $ob = filter_input(INPUT_POST, 'orderby');
     $so = filter_input(INPUT_POST, 'sort');
     $ca = filter_input(INPUT_POST, 'codart');
+	$mt = intval($_POST['mostra_tutto']);
     if (empty($ca)) {
         $where = '1';
     } else {
@@ -60,6 +61,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $gForm = new magazzForm();
     $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $ob . ' ' . $so, $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
+			if ($row['mostra_qdc']==1 or $mt==1){ // Antonio Germani seleziona quali prodotti mostrare
         $lastdoc = getLastDoc($row["codice"]);
         $mv = $gForm->getStockValue(false, $row['codice']);
         $magval = array_pop($mv);
@@ -88,6 +90,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 			 if ($row["catmer"]==$row2["codice"]){$descatmer=$row2["descri"];}
 			 }
         ?>
+		
         <tr>              
             <td data-title="<?php echo $script_transl["codice"]; ?>">
                 <a class="btn btn-xs btn-default" href="../camp/admin_artico.php?Update&codice=<?php echo $row['codice']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['codice']; ?></a>
@@ -138,6 +141,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             </td>
         </tr>  
         <?php
+			}
     }
     exit();
 }

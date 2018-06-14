@@ -36,6 +36,23 @@ if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordin
     $cs = '';
     $ca = '';
 }
+
+if (isset ($_POST['mostra_tutto'])) {
+	$mt=1;
+	$rn = '0';
+    $ob = 'descri';
+    $so = 'ASC';
+    $cs = '';
+    $ca = ''; 
+	} else {
+	$mt=0;
+	$rn = '0';
+    $ob = 'descri';
+    $so = 'ASC';
+    $cs = '';
+    $ca = ''; 
+}
+	
 require("../../library/include/header.php");
 ?>
 <script type="text/javascript">
@@ -54,6 +71,7 @@ require("../../library/include/header.php");
         var ob = $("#order_by").val();
         var so = $("#sort").val();
         var ca = '<?php echo $cs ?>';
+		var mt = '<?php echo $mt ?>';
         $.ajax({
             type: 'post',
             url: 'report_artico_scroll.php',
@@ -61,7 +79,8 @@ require("../../library/include/header.php");
                 rowno: rn,
                 orderby: ob,
                 sort: so,
-                codart: ca
+                codart: ca,
+				mostra_tutto: mt
             },
             beforeSend: function () {
                 $('#loader-icon').show();
@@ -120,7 +139,26 @@ $gForm = new magazzForm();
             ?>
         </div>
     </div>
-    <div class="panel panel-default">
+	 <div class="panel panel-info col-lg-6">
+		<?php if ($mt==0){ ?>
+			<label for="codice" class="col-lg-6 control-label"><?php echo "Elenco con solo articoli agricoli"; ?></label>
+			<div> 
+			<button type="submit" name="mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
+		 
+		<?php } else { ?>
+<label for="codice" class="col-lg-6 control-label"><?php echo "Elenco anche con articoli non agricoli"; ?></label>
+	<div> 
+	<button type="submit" name="no_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
+		
+<?php } ?>
+<i class="glyphicon glyphicon-repeat">
+		
+		</i></button>
+	</div>
+	</div>
+	</div>
+    
+	<div class="panel panel-default">
         <div id="gaz-responsive-table"  class="container-fluid">
             <table class="table table-responsive table-striped table-condensed cf">
                 <thead>

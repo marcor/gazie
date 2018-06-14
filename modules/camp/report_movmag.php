@@ -138,7 +138,15 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
     $title =  $partner['ragso1']." ".$partner['ragso2'];
     $valore = CalcolaImportoRigo($a_row['quanti'], $a_row['prezzo'], $a_row['scorig']) ;
     $valore = CalcolaImportoRigo(1, $valore, $a_row['scochi']) ;
-	if ($a_row['type_mov']==1){  // se è un movimento di campagna 
+// antonio Germani acquisisco unità di misura e mostra_qdc dall'articolo	
+	$unires= gaz_dbi_dyn_query("*", $gTables['artico']);
+		while ($unirow = gaz_dbi_fetch_array($unires)) {    
+			if ($a_row["artico"] == $unirow['codice']) {
+			$unimis = $unirow['unimis'];$mostra_qdc=$unirow['mostra_qdc'];
+			}
+		}
+// fine acquisisco
+	if ($a_row['type_mov']==1 or $mostra_qdc==1 ){  // se è un movimento di campagna oppure è un articolo da mostrare nel quaderno di campagna
     echo "<tr>\n";
     echo "<td class=\"FacetDataTD\"><a class=\"btn btn-xs btn-default\" href=\"admin_movmag.php?id_mov=".$a_row["id_mov"]."&Update\" title=\"".ucfirst($script_transl['update'])."!\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;".$a_row["id_mov"]."</a> &nbsp</td>";
 	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
@@ -177,7 +185,7 @@ while($b_row = $res->fetch_assoc()) {
 		echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n"; 
 	 }
 	// fine inserisco colonna campi di coltivazione
-/* Antonio germani reperisco unità di misura dell'articolo */
+/* Antonio germani reperisco unità di misura dell'articolo 
 $unires= gaz_dbi_dyn_query("*", $gTables['artico']);
 while ($unirow = gaz_dbi_fetch_array($unires)) {
     

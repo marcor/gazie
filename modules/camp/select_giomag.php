@@ -34,7 +34,7 @@ function getMovements($date_ini,$date_fin)
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
               $gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
-              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".classif_amb ";
+              $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".mostra_qdc, ".$gTables['artico'].".classif_amb ";
         $table=$gTables['movmag']." LEFT JOIN ".$gTables['caumag']." ON (".$gTables['movmag'].".caumag = ".$gTables['caumag'].".codice)
                LEFT JOIN ".$gTables['clfoco']." ON (".$gTables['movmag'].".clfoco = ".$gTables['clfoco'].".codice)
                LEFT JOIN ".$gTables['artico']." ON (".$gTables['movmag'].".artico = ".$gTables['artico'].".codice)";
@@ -185,7 +185,7 @@ if (isset($_POST['preview']) and $msg=='') {
 		
 		
         while (list($key, $mv) = each($m)) {
-			if ($mv['type_mov']==1){
+			if ($mv['type_mov']==1 or $mv['mostra_qdc']==1){ // se è un movimento di campagna oppure è un articolo da mostrare nel quaderno di campagna
             $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
             $datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
             $movQuanti = $mv['quanti']*$mv['operat'];

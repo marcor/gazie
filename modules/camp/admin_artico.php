@@ -123,7 +123,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         if (empty($form["unimis"])) {
             $msg['err'][] = 'unimis';
-        }
+        } else $form['uniacq']=$form['unimis'];
 		if ($form['rame_metallico']>0 && $form["unimis"]<>"Kg"){
 			if ($form['rame_metallico']>0 && $form["unimis"]<>"l"){
 			$msg['err'][]= 'unimis2';}			
@@ -405,6 +405,17 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+				<?php if ($toDo == "insert") {$form['mostra_qdc']=1;}  ?> <!-- se inserito da qdc deve essere di default un articolo del qdc  -->
+				 <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+						<label for="mostra_qdc" class="col-sm-4 control-label"><?php echo $script_transl['mostra_qdc']; ?></label>
+							<input type="radio" name="mostra_qdc" value="1" <?php if ($form['mostra_qdc']==1){echo "checked";}?> > Sì <br>
+							<input type="radio" name="mostra_qdc" value="0" <?php if ($form['mostra_qdc']==0){echo "checked";}?> > No  **AVVISO**: selezionando No si escluderà definitivamente questo articolo dal quaderno di campagna!!!										
+                       </div>
+                   </div>
+               </div><!-- chiude row  -->				
+				
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -570,7 +581,7 @@ if ($modal_ok_insert === true) {
                             <input class="col-sm-2" type="text" value="<?php echo $form['uniacq']; ?>" name="uniacq" maxlength="3" />
                         </div>
                     </div>
-                </div><!-- chiude row  -->
+                </div><!-- chiude row  --> 
  <!-- Antonio Germani  il TEMPO DI SOSPENSIONE -->
                <div class="row">
                     <div class="col-md-12">

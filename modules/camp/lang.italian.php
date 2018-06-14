@@ -458,6 +458,7 @@ $strScript = array("browse_document.php" =>
         'uniacq' => 'Unit&agrave; di misura acquisti',
         'tempo_sospensione' => 'Tempo di sospensione in gg',
         'dose_ha' => 'Dose massima unità di misura ad ha',
+		'mostra_qdc' => 'Articolo da mostrare nel quaderno di campagna',
 		'classif_amb' => 'Classificazione ambientale',
 		'classif_amb_value' => array(0=>'non classificato',1=>'irritante',2=>'nocivo',3=>'tossico',4=>'molto tossico'),
         'peso_specifico' => 'Peso specifico/Moltiplicatore',

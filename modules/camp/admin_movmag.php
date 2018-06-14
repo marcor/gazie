@@ -515,11 +515,24 @@ echo "\t </select></td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td>";
 /* Antonio Germani -  avversità */
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['avversita'] . "\" maxlength=\"50\" size=\"35\" name=\"avversita\"></td></tr>";
+
+/* Antonio Germani - prova ricerca automatica
+$form['in_codart']="";$form['cosear']="";
+echo "<tr><td class=\"FacetColumnTD\">$script_transl[7]: ";
+$select_artico = new selectartico("in_codart");
+$select_artico->addSelected($form['in_codart']);
+
+$select_artico->output($form['cosear']);
+echo "</td> </tr>";
+*/ 
+
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
 $print_unimis = "";
 $ric_mastro = substr($form['artico'], 0, 3);
+
 echo "\t<input type=\"hidden\" name=\"artico\" value=\"" . $form['artico'] . "\">\n";
+ 
 if ($form['artico'] == '') {
     if (strlen($form['search_item']) >= 1) {
         $result = gaz_dbi_dyn_query("*", $gTables['artico'], "codice like '" . $form['search_item'] . "%' ", "descri asc");
@@ -559,7 +572,7 @@ if ($form['artico'] == '') {
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
 		if (isset($_POST['Update'])) {
 			$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-			// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
+			// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 			$print_magval=$print_magval+$qta['quanti'];}
 	 
     echo "<input type=\"submit\" value=\"" . substr($item['descri'], 0, 30) . "\" name=\"newitem\" title=\"" . ucfirst($script_transl['update']) . "!\">\n ";if ($dose>0) {echo "dose: ",$dose," ",$print_unimis,"/ha";}
