@@ -165,4 +165,5 @@ ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `codice_fornitore` VARCHAR(50) NOT NULL A
 ALTER TABLE `gaz_XXXcampi`	ADD COLUMN `giorno_decadimento` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP AFTER `ricarico`, ADD COLUMN `codice_prodotto_usato` VARCHAR(15) NOT NULL AFTER `giorno_decadimento`, ADD COLUMN `id_mov` INT(9) NULL DEFAULT '0' AFTER `codice_prodotto_usato`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `classif_amb` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Classificazione ambientale come da art.16  comma 2 del D.Lgs 150/2012 (Utilizzato in quaderno di campagna)' AFTER `uniacq`;
 ALTER TABLE `gaz_XXXartico` ADD COLUMN `mostra_qdc` TINYINT(1) NOT NULL DEFAULT '0' COMMENT 'Mostra nei movimenti del quaderno di campagna: 1=si , 0=no' AFTER `classif_amb`;
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Permetti caratteri speciali su codici articoli (0=No, 1=Si)', 'codart_special_char', '0');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
