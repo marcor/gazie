@@ -45,7 +45,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     }
 
     if ($form['hidden_req'] == 'toggle') { // e' stato accettato il link ad una anagrafica esistente
-        $rs_a = gaz_dbi_get_row($gTables['anagra'], 'id', $form['id_anagra']);
+        $rs_a = gaz_dbi_get_anagra($gTables['anagra'], 'id', $form['id_anagra']);
         $form = array_merge($form, $rs_a);
     }
 
@@ -110,7 +110,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         $anagrafica = new Anagrafica();
         if (!($form['pariva'] == "") && !($form['pariva'] == '00000000000')) {
-            $partner_with_same_pi = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND pariva = '" . $form['pariva'] . "'", "pariva DESC", 0, 1);
+            $partner_with_same_pi = $anagrafica->queryPartnersAes(array('fe_cod_univoco'), array("codice" => " <> " . $real_code, "codice" => " BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "pariva" => " = '" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
             if ($partner_with_same_pi) {
                 if ($partner_with_same_pi[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
                     $msg .= "10+";
@@ -129,7 +129,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $msg .= "11+";
         }
         if (!($form['codfis'] == "") && !($form['codfis'] == '00000000000')) {
-            $partner_with_same_cf = $anagrafica->queryPartners('*', "codice <> " . $real_code . " AND codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999 AND codfis = '" . $form['codfis'] . "'", "codfis DESC", 0, 1);
+            $partner_with_same_cf = $anagrafica->queryPartnersAes(array('fe_cod_univoco'), array("codice" => " <> " . $real_code, "codice" => " BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codfis" => " = '" . $form['codfis'] . "'"), array("codfis" => "DESC"), 0, 1);
             if ($partner_with_same_cf) { // c'� gi� un cliente sul piano dei conti
                 if ($partner_with_same_cf[0]['fe_cod_univoco'] == $form['fe_cod_univoco']) { // c'� gi� un cliente sul piano dei conti ed � anche lo stesso ufficio ( amministrativo della PA )
                     $msg .= "12+";
@@ -202,8 +202,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_D'] = substr($form['datnas'], 8, 2);
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $anagrafica = new Anagrafica();
-    $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999", "codice DESC", 0, 1);
-    $form = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
+    $last = $anagrafica->queryPartnersAes(array('codice'), array("codice" => " BETWEEN " . $admin_aziend['mascli'] . "000000 AND " . $admin_aziend['mascli'] . "999999"), array("codice" => "DESC"), 0, 1);
+    $form = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields_anagra());
     $form['codice'] = substr($last[0]['codice'], 3) + 1;
     $toDo = 'insert';
     $form['search']['id_des'] = '';

@@ -561,7 +561,7 @@ class Anagrafica {
     }
 
     function getPartner($idClfoco) {
-        return gaz_dbi_get_row($this->partnerTables, "codice", $idClfoco);
+        return gaz_dbi_get_anagra($this->partnerTables, "codice", $idClfoco);
     }
 
     function getPartnerData($idAnagra, $acc = 1) {
@@ -599,7 +599,7 @@ class Anagrafica {
             $partner[$row['last_modified']] = $row;
         }
         ksort($partner);
-        $r_a = gaz_dbi_get_row($this->gTables['anagra'], 'id', $idAnagra);
+        $r_a = gaz_dbi_get_anagra(array(), 'id', $idAnagra);
         $data = array_merge(array_pop($partner), $r_a);
         unset($data['codice']);
         return $data;
@@ -607,6 +607,15 @@ class Anagrafica {
 
     function queryPartners($select, $where = 1, $orderby = 2, $limit = 0, $passo = 1900000) {
         $result = gaz_dbi_dyn_query($select, $this->partnerTables, $where, $orderby, $limit, $passo);
+        $partners = array();
+        while ($row = gaz_dbi_fetch_array($result)) {
+            $partners[] = $row;
+        }
+        return $partners;
+    }
+
+    function queryPartnersAes($select, $where, $orderby, $limit = 0, $passo = 1900000) {
+        $result = gaz_dbi_query_anagra($select, $this->partnerTables, $where, $orderby, $limit, $passo);
         $partners = array();
         while ($row = gaz_dbi_fetch_array($result)) {
             $partners[] = $row;

@@ -186,7 +186,7 @@ class Login
 		// if database connection opened
 		if ($this->databaseConnection()) {
 			// database query, getting all the info of the selected user
-			$query_user = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name');
+			$query_user = $this->db_connection->prepare('SELECT *, SHA2(CONVERT(AES_DECRYPT(UNHEX(aes_key), UNHEX(SHA2(user_password_hash, 512))) USING utf8), 512) AS aes_key_pass FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_name = :user_name');
 			$query_user->bindValue(':user_name', $user_name, PDO::PARAM_STR);
 			$query_user->execute();
 			// get result row (as an object)
@@ -245,7 +245,7 @@ class Login
 				// cookie looks good, try to select corresponding user
 				if ($this->databaseConnection()) {
 					// get real token from database (and all other data)
-					$sth = $this->db_connection->prepare('SELECT user_id, user_name, user_email, company_id FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_id = :user_id AND user_rememberme_token = :user_rememberme_token AND user_rememberme_token IS NOT NULL');
+					$sth = $this->db_connection->prepare('SELECT user_id, user_name, user_email, company_id, SHA2(CONVERT(AES_DECRYPT(UNHEX(aes_key), UNHEX(SHA2(user_password_hash, 512))) USING utf8), 512) AS aes_key_pass FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_id = :user_id AND user_rememberme_token = :user_rememberme_token AND user_rememberme_token IS NOT NULL');
 					$sth->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 					$sth->bindValue(':user_rememberme_token', $token, PDO::PARAM_STR);
 					$sth->execute();
@@ -286,7 +286,7 @@ class Login
 						$_SESSION['user_email'] = $result_row->user_email;
 						$_SESSION['company_id'] = $result_row->company_id;
 						$_SESSION['user_logged_in'] = 1;
-						//$_SESSION['aes_key'] = '';
+						$_SESSION['aes_key'] = $result_row->aes_key_pass;
 
 						// declare user id, set the login status to true
 						$this->user_id = $result_row->user_id;
@@ -331,7 +331,7 @@ class Login
 				// if user has typed a valid email address, we try to identify him with his user_email
 			} else if ($this->databaseConnection()) {
 				// database query, getting all the info of the selected user
-				$query_user = $this->db_connection->prepare('SELECT * FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_email = :user_email');
+				$query_user = $this->db_connection->prepare('SELECT *, SHA2(CONVERT(AES_DECRYPT(UNHEX(aes_key), UNHEX(SHA2(user_password_hash, 512))) USING utf8), 512) AS aes_key_pass FROM ' . DB_TABLE_PREFIX . '_admin WHERE user_email = :user_email');
 				$query_user->bindValue(':user_email', trim($user_name), PDO::PARAM_STR);
 				$query_user->execute();
 				// get result row (as an object)
@@ -401,7 +401,7 @@ class Login
 				$_SESSION['user_email'] = $result_row->user_email;
 				$_SESSION['company_id'] = $result_row->company_id;
 				$_SESSION['user_logged_in'] = 1;
-				//$_SESSION['aes_key'] = '';
+				$_SESSION['aes_key'] = $result_row->aes_key_pass;
 
 				// declare user id, set the login status to true
 				$this->user_id = $result_row->user_id;

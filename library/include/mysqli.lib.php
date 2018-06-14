@@ -289,6 +289,17 @@ function array_is_assoc(array $a) {
     return false;
 }
 
+// funzione gaz_dbi_fields_anagra
+function gaz_dbi_fields_anagra() {
+    global $gTables;
+	$fields_anagra = array();
+    $rs_fields_anagra = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra'] . " WHERE Field NOT LIKE '%_aes'");
+    while ($rs_field_anagra = mysqli_fetch_assoc($rs_fields_anagra)) {
+        $fields_anagra[] = $rs_field_anagra['Field'];
+    }
+	return $fields_anagra;
+}
+
 // funzione gaz_aes_field_anagra
 function gaz_aes_field_anagra($field) {
 	$aes_field = '';
@@ -300,6 +311,9 @@ function gaz_aes_field_anagra($field) {
 	switch ($field_name) {
 		case 'ragso1':
 		case 'ragso2':
+		case 'sedleg':
+		case 'legrap_pf_nome':
+		case 'legrap_pf_cognome':
 		case 'indspe':
 		case 'latitude':
 		case 'longitude':
@@ -310,7 +324,7 @@ function gaz_aes_field_anagra($field) {
 		case 'pariva':
 		case 'e_mail':
 		case 'pec_email':
-			//$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field . "_aes), UNHEX('" . $_SESSION['aes_key'] . "')) USING utf8)";
+			//$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field . "_aes), '" . $_SESSION['aes_key'] . "') USING utf8)";
 			/**/$aes_field .= $field;
 			break;
 		default:
@@ -318,6 +332,20 @@ function gaz_aes_field_anagra($field) {
 			break;
 	}
 	return $aes_field;
+}
+
+function gaz_dbi_get_anagra($table, $fnm, $fval) {
+    global $link, $gTables;
+	$fields_anagra = gaz_dbi_fields_anagra();
+	$fields = '';
+	foreach ($fields_anagra as $field_anagra) {
+		$fields.= (empty($fields) ? '' : ', ') . gaz_aes_field_anagra($field_anagra) . " AS $field_anagra";
+	}
+
+    $result = mysqli_query($link, "SELECT $fields, " . $gTables['clfoco'] .".* FROM $table WHERE $fnm = '$fval'");
+    if (!$result)
+        die(" Error gaz_dbi_get_anagra: " . mysqli_error($link));
+    return mysqli_fetch_array($result);
 }
 
 // funzione gaz_dbi_query_anagra
@@ -548,6 +576,40 @@ function gaz_dbi_table_update($table, $id, $newValue) {
         die("Error gaz_dbi_table_update:<b> $query </b>" . mysqli_error($link));
 }
 
+// funzione gaz_aes_value_anagra
+function gaz_aes_value_anagra($field, $value) {
+	$aes_value = '';
+	$field_name = $field;
+	$field_name_point = strrpos($field_name, '.');
+	if ($field_name_point !== false) {
+		$field_name = substr($field_name, $field_name_point+1, strlen($field_name)-$field_name_point);
+	}
+	switch ($field_name) {
+		case 'ragso1':
+		case 'ragso2':
+		case 'sedleg':
+		case 'legrap_pf_nome':
+		case 'legrap_pf_cognome':
+		case 'indspe':
+		case 'latitude':
+		case 'longitude':
+		case 'telefo':
+		case 'fax':
+		case 'cell':
+		case 'codfis':
+		case 'pariva':
+		case 'e_mail':
+		case 'pec_email':
+			//$aes_value.= "HEX(AES_ENCRYPT(" . $value . ", '" . $_SESSION['aes_key'] . "'))";
+			/**/$aes_value .= '';
+			break;
+		default:
+			//$aes_value .= $value;
+			break;
+	}
+	return $aes_value;
+}
+
 function gaz_dbi_insert_anagra($value) {
     /*
      * $value - array associativo del tipo nome_colonna=>valore con i valori da inserire
@@ -566,45 +628,57 @@ function gaz_dbi_insert_anagra($value) {
     }
     $field_meta = gaz_dbi_get_fields_meta($field_results);
     for ($j = 0; $j < $field_meta['num']; $j++) {
-        if ($field_meta['data'][$j]->name != $auto_increment) {  // il campo auto increment non dev'essere passato
-            $colName .= ($first ? '`' . $field_meta['data'][$j]->name . '`' : ', `' . $field_meta['data'][$j]->name . '`');
-            $colValue .= ($first ? " " : ", ");
-            $first = false;
+        if ($field_meta['data'][$j]->name != $auto_increment && substr($field_meta['data'][$j]->name, -4) != '_aes') {  // il campo auto increment non dev'essere passato
             if (isset($value[$field_meta['data'][$j]->name])) {
                 if ($field_meta['data'][$j]->blob && !empty($value[$field_meta['data'][$j]->name])) {
-                    $colValue .= '0x' . bin2hex($value[$field_meta['data'][$j]->name]);
+                    $fieldValue = '0x' . bin2hex($value[$field_meta['data'][$j]->name]);
                 } elseif ($field_meta['data'][$j]->numeric) { // NUMERICO
-                    $colValue .= floatval($value[$field_meta['data'][$j]->name]);
+                    $fieldValue = floatval($value[$field_meta['data'][$j]->name]);
                 } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
                     if (empty($value[$field_meta['data'][$j]->name])) {
-                        $colValue .= "NULL";
+                        $fieldValue = "NULL";
                     } else {
-                        $colValue .= "'" . $value[$field_meta['data'][$j]->name] . "'";
+                        $fieldValue = "'" . $value[$field_meta['data'][$j]->name] . "'";
                     }
                 } else {
                     $elem = addslashes($value[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
                     $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
-                    $colValue .= "'" . $elem . "'";
+                    $fieldValue = "'" . $elem . "'";
                 }
             } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
-                $colValue .= "'" . $_SESSION["user_name"] . "'";
+                $fieldValue = "'" . $_SESSION["user_name"] . "'";
             } elseif ($field_meta['data'][$j]->name == 'last_modified') {
-                $colValue .= "'" . date("Y-m-d H:i:s") . "'";
+                $fieldValue = "'" . date("Y-m-d H:i:s") . "'";
             } else {
                 if ($field_meta['data'][$j]->numeric) {
-                    $colValue .= 0;
+                    $fieldValue = 0;
                 } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
-                    $colValue .= "NULL";
+                    $fieldValue = "NULL";
                 } else {
-                    $colValue .= "''";
+                    $fieldValue = "''";
                 }
             }
+            $colName .= ($first ? '`' . $field_meta['data'][$j]->name . '`' : ', `' . $field_meta['data'][$j]->name . '`');
+            $colValue .= ($first ? " " : ", ");
+            $first = false;
+			$colValue .= $fieldValue;
+			$aes_value = gaz_aes_value_anagra($field_meta['data'][$j]->name, $fieldValue);
+			if (!empty($aes_value)) {
+				$colName .= ($first ? '`' . $field_meta['data'][$j]->name . "_aes" . '`' : ", " . '`' . $field_meta['data'][$j]->name . "_aes" . '`');
+				$colValue .= ($first ? " " : ", ");
+				if (!empty($fieldValue) && $fieldValue!='NULL' && $fieldValue!='0') {
+					$colValue .= $aes_value;
+				} else {
+					$colValue .= $fieldValue;
+				}
+			}
         }
     }
     $query = "INSERT INTO " . $gTables['anagra'] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
+    //msgDebug($query);
     $result = mysqli_query($link, $query);
     if (!$result)
-        die("Error gaz_dbi_table_insert:<b> $query </b> " . mysqli_error($link));
+        die("Error gaz_dbi_insert_anagra:<b> $query </b> " . mysqli_error($link));
 }
 
 function gaz_dbi_update_anagra($id, $newValue) {
@@ -619,24 +693,34 @@ function gaz_dbi_update_anagra($id, $newValue) {
     $first = true;
     $quote_id = "'";
     for ($j = 0; $j < $field_meta['num']; $j++) {
-        if (isset($newValue[$field_meta['data'][$j]->name])) {
-            $query .= ($first ? '`' . $field_meta['data'][$j]->name . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . '`' . " = ");
-            $first = false;
+        if (isset($newValue[$field_meta['data'][$j]->name]) && substr($field_meta['data'][$j]->name, -4) != '_aes') {
             if ($field_meta['data'][$j]->blob && !empty($newValue[$field_meta['data'][$j]->name])) {
-                $query .= '0x' . bin2hex($newValue[$field_meta['data'][$j]->name]);
+                $fieldValue = '0x' . bin2hex($newValue[$field_meta['data'][$j]->name]);
             } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
-                $query .= floatval($newValue[$field_meta['data'][$j]->name]);
+                $fieldValue = floatval($newValue[$field_meta['data'][$j]->name]);
             } else {
                 $elem = addslashes($newValue[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
                 $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
-                $query .= "'" . $elem . "'";
+                $fieldValue = "'" . $elem . "'";
             }
             //per superare lo STRICT_MODE del server non metto gli apici ai numerici
             if ((is_array($id) && $field_meta['data'][$j]->name == $id[0] && $field_meta['data'][$j]->numeric) || (is_string($id) && $field_meta['data'][$j]->name == 'codice' && $field_meta['data'][$j]->numeric)) {
                 $quote_id = '';
             }
+			$query .= ($first ? '`' . $field_meta['data'][$j]->name . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . '`' . " = ");
+            $first = false;
+			$query .= $fieldValue;
+			$aes_value = gaz_aes_value_anagra($field_meta['data'][$j]->name, $fieldValue);
+			if (!empty($aes_value)) {
+				$query .= ($first ? '`' . $field_meta['data'][$j]->name . "_aes" . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . "_aes" . '`' . " = ");
+				if (!empty($fieldValue) && $fieldValue!="''" && $fieldValue!='NULL') {
+					$query .= $aes_value;
+				} else {
+					$query .= $fieldValue;
+				}
+			}
         } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
-            $query .= ", adminid = '" . $_SESSION["user_name"] . "'";
+            $query .= ", adminid = '" . $_SESSION['user_name'] . "'";
         }
     }
     //   se in $id c'è un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
@@ -652,7 +736,7 @@ function gaz_dbi_update_anagra($id, $newValue) {
     //msgDebug($query);
     $result = mysqli_query($link, $query);
     if (!$result)
-        die("Error gaz_dbi_table_update:<b> $query </b>" . mysqli_error($link));
+        die("Error gaz_dbi_update_anagra:<b> $query </b>" . mysqli_error($link));
 }
 
 function tableInsert($table, $columns, $newValue) {
