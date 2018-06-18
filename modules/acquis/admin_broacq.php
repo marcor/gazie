@@ -143,6 +143,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         foreach ($_POST['righi'] as $next_row => $value) {
             $form['righi'][$next_row]['descri'] = substr($value['descri'], 0, 100);
             $form['righi'][$next_row]['tiprig'] = intval($value['tiprig']);
+            $form['righi'][$next_row]['codice_fornitore'] = substr($value['codice_fornitore'], 0, 50);	// Aggiunto a Mano 
             $form['righi'][$next_row]['codart'] = substr($value['codart'], 0, 15);
             $form['righi'][$next_row]['pervat'] = preg_replace("/\,/", '.', $value['pervat']);
             $form['righi'][$next_row]['unimis'] = substr($value['unimis'], 0, 3);
@@ -407,6 +408,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['annota'] = $artico['annota'];
                 $form['righi'][$next_row]['pesosp'] = $artico['peso_specifico'];
                 $form['righi'][$next_row]['descri'] = $artico['descri'];
+				$form['righi'][$next_row]['codice_fornitore'] = $artico['codice_fornitore']; //M1 aggiunto a mano
                 $form['righi'][$next_row]['unimis'] = $artico['uniacq'];
                 $form['righi'][$next_row]['codric'] = $form['in_codric'];
                 $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
@@ -577,6 +579,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
         $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $rigo['codart']);
         $form['righi'][$next_row]['descri'] = $rigo['descri'];
+		$form['righi'][$next_row]['codice_fornitore'] = $rigo['codice_fornitore'];//M1 aggiunto a mano
         $form['righi'][$next_row]['tiprig'] = $rigo['tiprig'];
         $form['righi'][$next_row]['codart'] = $rigo['codart'];
         $form['righi'][$next_row]['pervat'] = $rigo['pervat'];
@@ -854,6 +857,7 @@ echo '</table>
 		  <thead>
 			<tr>
 				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
+				<th class="FacetFieldCaptionTD"> Codice Fornitore </th>  <!-- Aggiunto a mano -->
 				<th class="FacetFieldCaptionTD" colspan="2">' . $script_transl[21] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
@@ -929,6 +933,8 @@ foreach ($form['righi'] as $key => $value) {
             /** ENRICO FEDELE */
             /* Tooltip e glyphicon */
             echo '<td>
+					   <input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codice_fornitore'] . '" data-title="' . $value['codice_fornitore'] . '" type="text" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" /></td> <td> <!-- Aggiunto a mano -->
+				
 						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="righi[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
 					  </td>
 					  <td>

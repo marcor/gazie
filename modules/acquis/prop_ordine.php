@@ -156,9 +156,11 @@ function azzera(righe)
     echo "<tr align='center'><td><input type='button' name='resetta' value='Azzera ordine' onclick='azzera(".$righe.")'>";
     echo "<input type='button' name='Ricalcola' value='Ricalcola' onclick='ricalcola(".$righe.")'>";
     echo "<input type='submit' name='ins' value='INSERISCI'></td></tr><tr align='center'><td>(totale righe n.".$righe.")";
-    echo "<input type='hidden' name='righe' value='".$righe."'></td></tr></table></form>";
+    echo "<input type='hidden' name='righe' value='".$righe."'></td></tr></table>";
  }
 ?>
+  <input type="hidden" name="clfo_pas" value="<?php echo $form['id_anagra'];?>">
+  </form
 </form>
 <?php
 require("../../library/include/footer.php");
@@ -178,7 +180,7 @@ else {
 <input type="hidden" value="" name="numfat">
 <input type="hidden" value="" name="datfat">
 <input type="hidden" value="" name="hidden_req" />
-<input type="hidden" name="clfoco" value="">
+<input type="hidden" name="clfoco" value="<?php echo $_POST['clfo_pas'];?>">
 <input type="hidden" name="search[clfoco]" value="">
 <input type="hidden" name="seziva" value="1">
 <input type="hidden" name="gioemi" value="<?php echo date('d');?>"> <!-- giorno -->
@@ -216,7 +218,7 @@ echo'<input type="hidden" value="0" name="righi['.$i.'][tiprig]">';
 echo'<input type="hidden" value="1" name="righi['.$i.'][codvat]">';
 echo'<input type="hidden" value="'.$a_row['aliquo'].'" name="righi['.$i.'][pervat]">';
 echo'<input type="hidden" value="330000004" name="righi['.$i.'][codric]">';
-echo'<input type="hidden" name="righi['.$i.'][codfor]" value="'.$a_row['codice_fornitore'].'" />';
+echo'<input type="hidden" name="righi['.$i.'][codice_fornitore]" value="'.$a_row['codice_fornitore'].'" />';
 echo'<input type="hidden" name="righi['.$i.'][descri]" value="'.$a_row['descri'].'" />';
 echo'<input type="hidden" name="righi['.$i.'][unimis]" value="'.$a_row['uniacq'].'" />';
 echo'<input type="hidden" name="righi['.$i.'][quanti]" value="'.$_POST['acquista'][$k].'" />';

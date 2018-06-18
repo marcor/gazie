@@ -42,14 +42,22 @@ class OrdineFornitore extends Template
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->Ln(4);
         $this->SetFont('helvetica','',9);
-        $this->Cell(25,6,'Codice',1,0,'L',1);
-        $this->Cell(80,6,'Descrizione',1,0,'L',1);
+	    $this->Cell(35,6,'Codice fornitore',1,0,'L',1); //M1 modifocato a mano
+        $this->Cell(22,6,'Codice',1,0,'L',1); //M1 modifocato a mano
+        $this->Cell(68,6,'Descrizione',1,0,'L',1); //M1 Modificato a mano
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
-        $this->Cell(16,6,'Quantità',1,0,'R',1);
-        $this->Cell(18,6,'Prezzo',1,0,'R',1);
+        $this->Cell(14,6,'Quantità',1,0,'R',1); // M1 Modificato a mano
+        $this->Cell(17,6,'Prezzo',1,0,'R',1);// M1 Modificato a mano
         $this->Cell(8, 6,'%Sc.',1,0,'C',1);
-        $this->Cell(20,6,'Importo',1,0,'R',1);
-        $this->Cell(12,6,'%IVA',1,1,'R',1);
+        $this->Cell(15,6,'Importo',1,1,'R',1); //M1 Modificato a mano
+       // $this->Cell(25,6,'Codice',1,0,'L',1);
+       // $this->Cell(80,6,'Descrizione',1,0,'L',1);
+       // $this->Cell(7, 6,'U.m.',1,0,'C',1);
+       // $this->Cell(16,6,'Quantità',1,0,'R',1);
+       // $this->Cell(18,6,'Prezzo',1,0,'R',1);
+       // $this->Cell(8, 6,'%Sc.',1,0,'C',1);
+       // $this->Cell(20,6,'Importo',1,0,'R',1);
+       // $this->Cell(12,6,'%IVA',1,1,'R',1);
     }
 
     function pageHeader()
@@ -73,26 +81,27 @@ class OrdineFornitore extends Template
             }
                 switch($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
+				    $this->Cell(35, 6, $rigo['codice_fornitore'],1,0,'L'); //M1 modificato a mano
+                    $this->Cell(22, 6, $rigo['codart'],1,0,'L'); //Modificato a mano
+                    $this->Cell(68, 6, substr($rigo['descri'],0,40),1,0,'L'); //MOdificato a mano
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                    $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(14, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R'); // Modificato a mano
                     if ($rigo['prelis'] > 0) {
-                       $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
+                       $this->Cell(17, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R'); // Modificato a mano
                     } else {
-                       $this->Cell(18, 6, '',1);
-                    }
+                       $this->Cell(17, 6, '',1); // Modificato a mano
+                    } 
                     if ($rigo['sconto']> 0) {
                        $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
                     } else {
                        $this->Cell(8, 6, '',1);
                     }
                     if ($rigo['importo'] > 0) {
-                       $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
+                       $this->Cell(15, 6, gaz_format_number($rigo['importo']),1,1,'R'); // Modificato a mano
                     } else {
-                       $this->Cell(20, 6, '',1);
+                       $this->Cell(15, 6, '',1,1); // Modificato a mano
                     }
-                    $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
+                    //$this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "1":
                     $this->Cell(25, 6, '','LBR',0,'L');
@@ -102,8 +111,8 @@ class OrdineFornitore extends Template
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "2":
-                    $this->Cell(25,6,'','L');
-                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L');
+                    $this->Cell(47,6,'','L');  // Modificato a mano
+                    $this->Cell(78,6,$rigo['descri'],'LR',0,'L'); // Modificato a mano
                     $this->Cell(81,6,'','R',1);
                     break;
                 case "3":
