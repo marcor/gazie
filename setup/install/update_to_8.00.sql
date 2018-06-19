@@ -17,6 +17,17 @@ ALTER TABLE `gaz_anagra` ADD `longitude_aes` TINYTEXT NOT NULL AFTER `longitude`
 ALTER TABLE `gaz_anagra` ADD `fatt_email_aes` TINYTEXT NOT NULL AFTER `fatt_email`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=S', '', '', 49, '', 6  FROM `gaz_menu_script`;
 DELETE FROM `gaz_admin_module` WHERE  `moduleid`=14;
+CREATE TABLE IF NOT EXISTS `gaz_fitofarmaci` (
+  `NUMERO_REGISTRAZIONE` int(6) NOT NULL,
+  `PRODOTTO` varchar(40) NOT NULL,
+  `IMPRESA` varchar(30) NOT NULL,
+  `SEDE_LEGALE_IMPRESA` varchar(30) NOT NULL,
+  `SCADENZA_AUTORIZZAZIONE` varchar(12) NOT NULL,
+  `INDICAZIONI_DI_PERICOLO` varchar(40) NOT NULL,
+  `DESCRIZIONE_FORMULAZIONE` varchar(30) NOT NULL,
+  `SOSTANZE_ATTIVE` varchar(30) NOT NULL,
+  PRIMARY KEY (`NUMERO_REGISTRAZIONE`)
+)  COMMENT='Viene utilizzato dal modulo Registro di campagna (camp) e serve per contenere la tabella del ministero della salute delle sostanze' ENGINE=MyISAM DEFAULT CHARSET=utf8;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_resp` TINYINT(1) NOT NULL AFTER `print_map`;
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_service_descri` VARCHAR(100) NOT NULL COMMENT 'Descrizione del servizio esternalizzato, verrà riportato sulla nomina a responsabile esterno del trattamento dei dati' AFTER `external_resp`;
@@ -152,7 +163,7 @@ CREATE TABLE `gaz_XXXregistro_trattamento_dati` (
 	`adminid` VARCHAR(20) NOT NULL,
 	`last_modified` TIMESTAMP NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 	PRIMARY KEY (`revision`)
-) COMMENT='Registro dei trattamenti (ex art.30 Regolamento UE 2016/679 - GDPR)' ENGINE=MyISAM;
+) COMMENT='Registro dei trattamenti (ex art.30 Regolamento UE 2016/679 - GDPR)' ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `type_mov` INT(1) NOT NULL DEFAULT '0' COMMENT 'Quaderno di campagna: 1=si 0=no  ' AFTER `caumag`;
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `campo_coltivazione` INT(3) NOT NULL DEFAULT '0' COMMENT 'Ref.alla colonna codice della tabella gaz_001campi' AFTER `scorig`;
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `avversita` VARCHAR(50) NOT NULL COMMENT 'Utilizzato su quaderno di campagna' AFTER `campo_coltivazione`;

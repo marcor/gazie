@@ -38,7 +38,9 @@ $transl['camp'] = array('name' => "Registro di campagna",
                                          6 =>array("Stampa schedari articoli di magazzino","Stampa schedari articoli di magazzino"),
                                          7 =>array("Stampa Quaderno di campagna","Stampa Quaderno di campagna"),	 
                                          8 =>array("Inserisci una nuova causale di magazzino","Nuova causale di magazzino"),
-										 9 =>array("Inserisci un nuovo campo","Nuovo campo di coltivazione")
+										 9 =>array("Inserisci un nuovo campo","Nuovo campo di coltivazione"),
+										 10 =>array("Stampa dichiarazione rame metallo","Dichiarazione rame metallo"),
+										 11 =>array("Update tabella fitofarmaci","Aggiorna tabella fitofarmaci")
 										 
                                       )
                           );
