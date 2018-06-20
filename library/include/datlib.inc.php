@@ -41,7 +41,7 @@ $month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio"
 
 // tabelle comuni alle aziende della stessa gestione
 $tn = array('admin', 'admin_config', 'admin_module', 'anagra', 'aziend', 'classroom', 'config',
-    'country', 'currencies', 'currency_history', 'destina','fitofarmaci', 'languages', 'menu_module', 
+    'country', 'currencies', 'currency_history', 'destina', 'fitofarmaci', 'languages', 'menu_module', 
 	'menu_script', 'menu_usage', 'module', 'municipalities', 'provinces', 'regions',
 	'staff_absence_type', 'staff_work_type', 'students');
 foreach ($tn as $v) {
@@ -80,7 +80,7 @@ $tn = array('aliiva', 'agenti', 'artico', 'assets', 'banapp', 'body_text', 'camp
 	'liquidazioni_iva', 'lotmag', 'movmag', 'pagame', 'paymov', 'portos', 'provvigioni', 'rigbro', 
 	'rigdoc', 'rigmoc', 'rigmoi', 'spediz', 'staff', 'staff_skills', 'staff_worked_hours', 'tesbro',
 	'tesdoc', 'tesmov', 'vettor', 'fae_flux', 'assist',	'ragstat', 'agenti_forn',	'movimenti', 
-	'sconti_articoli', 'sconti_raggruppamenti', 'instal', 'orderman', 'registro_trattamento_dati');
+	'sconti_articoli', 'sconti_raggruppamenti', 'instal', 'orderman');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $id . $v;
 }
