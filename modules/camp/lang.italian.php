@@ -421,7 +421,8 @@ $strScript = array("browse_document.php" =>
             'unimis' => 'Inserire l\'unit&agrave; di misura',
 			'unimis2' => 'Questo prodotto contiene rame metallo e quindi l\'unit&agrave; di misura può essere solo Kg o l',
             'aliiva' => 'Inserire l\'aliquota I.V.A.',
-            'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda'
+            'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
+			'scaduto' =>'Il prodotto non può più essere usato: è scaduta l\'autorizzazione del Ministero'
         ),
         'codice' => "Codice",
         'descri' => "Descrizione",
@@ -459,7 +460,7 @@ $strScript = array("browse_document.php" =>
         'tempo_sospensione' => 'Tempo di sospensione in gg',
         'dose_ha' => 'Dose massima unità di misura ad ha',
 		'mostra_qdc' => 'Articolo da mostrare nel quaderno di campagna',
-		'classif_amb' => 'Classificazione ambientale',
+		'classif_amb' => 'Classificazione tossicologica',
 		'classif_amb_value' => array(0=>'non classificato',1=>'irritante',2=>'nocivo',3=>'tossico',4=>'molto tossico'),
         'peso_specifico' => 'Peso specifico/Moltiplicatore',
         'volume_specifico' => 'Volume specifico',

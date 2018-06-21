@@ -24,7 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$msg = "";$print_magval="";$dose="";$dim_campo="";
+$msg = "";$print_magval="";$dose="";$dim_campo="";$rame_met_annuo="";
 $gForm = new magazzForm(); // Antonio Germani attivo funzione calcolo giacenza di magazzino
 
 if (!isset($_POST['ritorno'])) {
@@ -228,15 +228,15 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			If ($campo_coltivazione>0){ // se il prodotto va in un campo di coltivazione
 				if ($rame_metallo>0){ //se questo prodotto contiene rame metallo
 					$query="SELECT ".'artico'. ",".'datdoc'.",".'quanti'." FROM ".$gTables['movmag']. " WHERE datdoc >'". $form['anndoc'] ."' AND ".'campo_coltivazione'." = '".$campo_coltivazione."'"; // prendo solo le righe dell'anno di esecuzione del trattamento e degli anni successivi con il campo di coltivazione selezionato nel form
-				}
-			$result = gaz_dbi_query($query); $rame_met_annuo="";
+				
+			$result = gaz_dbi_query($query); 
 						while ($row = $result->fetch_assoc()) {
 							if (substr($row['datdoc'],0,4) == $form['anndoc']){ // elimino dal conteggio gli eventuali anni successivi
 							$item = gaz_dbi_get_row($gTables['artico'], "codice", $row['artico']);
 							if ($item['rame_metallico']>0){$rame_met_annuo=$rame_met_annuo+$item['rame_metallico']*$row['quanti'];}
 							}
 						}
-						
+				}		
 			}
 // fine calcolo rame
 

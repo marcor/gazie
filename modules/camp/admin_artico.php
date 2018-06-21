@@ -26,6 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
+$today=	strtotime(date("Y-m-d H:i:s",time()));$presente="";
 /** ENRICO FEDELE */
 /* Inizializzo per aprire in finestra modale */
 $modal = false;
@@ -253,6 +254,33 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['body_text'] = '';
 }
 
+if (isset($_POST['dbministero']) && strlen($form['codice'])>3){
+	 
+		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'." FROM ".$gTables['fitofarmaci']. " WHERE PRODOTTO ='". $form['codice']."'";
+		$result = gaz_dbi_query($query);
+			while ($row = $result->fetch_assoc()) {
+				If (isset($row)) {$presente=1;}
+			$form['descri']=$row['SOSTANZE_ATTIVE']." ".$row['DESCRIZIONE_FORMULAZIONE'];
+			$form['body_text']=$row['SOSTANZE_ATTIVE'];
+			$indper=$row['INDICAZIONI_DI_PERICOLO'];
+			$scadaut=$row['SCADENZA_AUTORIZZAZIONE'];
+			}
+		if ($presente==1) { // se trovato nel database fitofarmaci	
+		// controllo se è scaduta l'autorizzazione
+			if (strtotime(str_replace('/', '-', $scadaut))>0 && $today>strtotime(str_replace('/', '-', $scadaut))) {$msg['err'][] ='scaduto';}
+		// estraggo il simbolo della classe tossicologica
+			//$cltoss = substr($indper,0,4);
+			$cltoss=$indper;
+			if ($cltoss<>"") { $form['classif_amb']=0;
+				if (stripos($cltoss,"IRRITANTE") !== false) {$form['classif_amb']=1;}
+				if (stripos($cltoss,"NOCIVO") !== false) {$form['classif_amb']=2;}
+				if (stripos($cltoss,"TOSSICO") !== false) {$form['classif_amb']=3;}
+				if (stripos($cltoss,"MOLTO TOSSICO") !== false) {$form['classif_amb']=4;}
+			} 
+		}	
+}
+
+
 /** ENRICO FEDELE */
 /* Solo se non sono in finestra modale carico il file di lingua del modulo */
 if ($modal === false) {
@@ -326,14 +354,44 @@ if ($modal_ok_insert === true) {
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
     }
     ?>
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql fitofarmaci	-->
+	<link href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css" rel="stylesheet" type="text/css"/>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.5/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/jquery-ui.min.js"></script>
+  <script>
+	$(document).ready(function() {
+	$("input#autocomplete").autocomplete({
+		source: [<?php
+	$stringa="";
+	$query="SELECT * FROM .".$gTables['fitofarmaci'];
+	$result = gaz_dbi_query($query);
+	while($row = $result->fetch_assoc()){
+		$stringa.="\"".$row['PRODOTTO']."\", ";			
+	}
+	$stringa=substr($stringa,0,-2);
+	echo $stringa;
+	?>],
+		minLength:3		
+	});
+	});
+  </script>
+ <!-- fine autocompletamento --> 
         <div class="panel panel-default gaz-table-form">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-12">
+					<div class="col-sm-12 control-label">
+					<p> Per usufruire del data base del Ministero della salute usare come codice il nome del prodotto, scelto nell'elenco che appare, senza modificarlo! </P>
+					</div>
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['codice']; ?>" name="codice" maxlength="15" />
+                            <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['codice']; ?>" name="codice" maxlength="15" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete -->
                         </div>
+						<div class="col-sm-4 control-label">
+						<button type="submit" class="btn btn-default btn-sm" name="dbministero" title="Conferma!"><i class="glyphicon glyphicon-ok"></i></button>
+						<span> dopo la scelta cliccare su conferma! </span>
+						
+						</div>
                     </div>
                 </div><!-- chiude row  -->
                 <div class="row">
@@ -411,7 +469,7 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
 						<label for="mostra_qdc" class="col-sm-4 control-label"><?php echo $script_transl['mostra_qdc']; ?></label>
 							<input type="radio" name="mostra_qdc" value="1" <?php if ($form['mostra_qdc']==1){echo "checked";}?> > Sì <br>
-							<input type="radio" name="mostra_qdc" value="0" <?php if ($form['mostra_qdc']==0){echo "checked";}?> > No  **AVVISO**: selezionando No si escluderà definitivamente questo articolo dal quaderno di campagna!!!										
+							<input type="radio" name="mostra_qdc" value="0" <?php if ($form['mostra_qdc']==0){echo "checked";}?> > No										
                        </div>
                    </div>
                </div><!-- chiude row  -->				
