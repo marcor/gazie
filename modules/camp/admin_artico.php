@@ -257,6 +257,19 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['body_text'] = '';
 }
 
+// CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
+if (isset($_POST['dbministero'])){
+	$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['fitofarmaci']."'";
+	$result = gaz_dbi_query($query);
+		while ($row = $result->fetch_assoc()) {
+			 $update=strtotime($row['UPDATE_TIME']);
+			}
+	// 1 giorno è 24*60*60=86400 - 30 giorni 30*86400=2592000
+		
+		If (intval($update)+2592000<$today){$msg['err'][]= 'updatedb';}
+}
+
+
 if (isset($_POST['dbministero']) && strlen($form['codice'])>3){
 	 
 		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'." FROM ".$gTables['fitofarmaci']. " WHERE PRODOTTO ='". $form['codice']."'";
@@ -272,7 +285,7 @@ if (isset($_POST['dbministero']) && strlen($form['codice'])>3){
 		// controllo se è scaduta l'autorizzazione
 			if (strtotime(str_replace('/', '-', $scadaut))>0 && $today>strtotime(str_replace('/', '-', $scadaut))) {$msg['err'][] ='scaduto';}
 		// estraggo il simbolo della classe tossicologica
-			//$cltoss = substr($indper,0,4);
+			
 			$cltoss=$indper;
 			if ($cltoss<>"") { $form['classif_amb']=0;
 				if (stripos($cltoss,"IRRITANTE") !== false) {$form['classif_amb']=1;}
@@ -384,7 +397,7 @@ if ($modal_ok_insert === true) {
                 <div class="row">
                     <div class="col-md-12">
 					<div class="col-sm-12 control-label">
-					<p> Per usufruire del data base del Ministero della salute usare come codice il nome del prodotto, scelto nell'elenco che appare, senza modificarlo! </P>
+					<p> Per usufruire del database del Ministero della salute usare come codice il nome del prodotto, scelto nell'elenco che appare, senza modificarlo! </P>
 					</div>
                         <div class="form-group">
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>

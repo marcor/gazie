@@ -214,11 +214,19 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 				$scadaut=$row['SCADENZA_AUTORIZZAZIONE']; $scadaut=strtotime(str_replace('/', '-', $scadaut));
-				}	
-					if ($scadaut>0){
-						if ($scadaut < $today) {$msg .="27+";}
-					}	
-						
+				if ($scadaut>0){if ($scadaut < $today) {$msg .="27+";}}	
+			}	
+					// se è presente nel db fitofarmaci CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
+					If (($result->num_rows)>0){
+						$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['fitofarmaci']."'";
+						$result = gaz_dbi_query($query); 
+							while ($row = $result->fetch_assoc()) {
+							$update=strtotime($row['UPDATE_TIME']);
+							}
+					// 1 giorno è 24*60*60=86400 - 30 giorni 30*86400=2592000		
+					If (intval($update)+2592000<$today){$msg .="28+";;}	
+					}
+											
 //Antonio Germani prendo e metto la data di fine sospensione del campo di coltivazione selezionato in $fine_sosp 
 		$campo_coltivazione=$form['campo_coltivazione'];//campo di coltivazione inserito nel form
 		$query="SELECT ".'giorno_decadimento'.",".'ricarico'." FROM ".$gTables['campi']. " WHERE codice ='". $campo_coltivazione."'";

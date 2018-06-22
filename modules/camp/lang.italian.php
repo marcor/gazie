@@ -117,6 +117,7 @@ $strScript = array("browse_document.php" =>
 		"Stai impiegando una quantità di prodotto superiore a quella ammessa!",
 		"Stai superando il limite di rame metallo ammesso su questo campo di coltivazione!",
 		"Non puoi più utilizzare questo prodotto in quanto ne è scaduta l'autorizzazione",
+		"Il db fitofarmaci non viene aggiornato da oltre 30 giorni. Per effettuarlo: Merci/servizi > Aggiorna tabella fitofarmaci",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
@@ -424,7 +425,8 @@ $strScript = array("browse_document.php" =>
             'aliiva' => 'Inserire l\'aliquota I.V.A.',
 			'catmer' => 'Selezionare una categoria merceologica',
             'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
-			'scaduto' =>'Il prodotto non può più essere usato: è scaduta l\'autorizzazione del Ministero'
+			'scaduto' =>'Il prodotto non può più essere usato: è scaduta l\'autorizzazione del Ministero',
+			'updatedb' =>'Il db fitofarmaci non viene aggiornato da oltre 30 giorni. Per effettuarlo: Merci/servizi > Aggiorna tabella fitofarmaci'
         ),
         'codice' => "Codice",
         'descri' => "Descrizione",
