@@ -88,11 +88,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		$rescatmer = gaz_dbi_dyn_query('*', $gTables['catmer']);
 		 while ($row2 = gaz_dbi_fetch_array($rescatmer)){
 			 if ($row["catmer"]==$row2["codice"]){$descatmer=$row2["descri"];}
-			 }
-			 
-        ?>
-		
-        <tr>      <?php echo "pippo";       ?>
+			 }	 
+        ?>	
+        <tr>      
             <td data-title="<?php echo $script_transl["codice"]; ?>">
                 <a class="btn btn-xs btn-default" href="../camp/admin_artico.php?Update&codice=<?php echo $row['codice']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['codice']; ?></a>
             </td>

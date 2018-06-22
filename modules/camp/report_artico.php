@@ -23,42 +23,32 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
+
 if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordinamento
     $rn = filter_input(INPUT_POST, 'row_no');
     $ob = filter_input(INPUT_POST, 'order_by');
     $so = filter_input(INPUT_POST, 'sort');
     $cs = filter_input(INPUT_POST, 'cosear');
     $ca = filter_input(INPUT_POST, 'codart');
+
 } else {
     $rn = '0';
     $ob = 'descri';
     $so = 'ASC';
     $cs = '';
     $ca = '';
+	
 }
 
-if (isset ($_POST['mostra_tutto'])) {
-	$mt=1;
-	$rn = '0';
-    $ob = 'descri';
-    $so = 'ASC';
-    $cs = '';
-    $ca = ''; 
-	} else {
-	$mt=0;
-	$rn = '0';
-    $ob = 'descri';
-    $so = 'ASC';
-    $cs = '';
-    $ca = ''; 
-}
+if (isset ($_POST['mostra_tutto'])) {$mt=1;}
+ else {$mt=0;}
 	
 require("../../library/include/header.php");
 ?>
 <script type="text/javascript">
     $(window).scroll(function ()
     {
-        if ($(document).height() <= $(window).scrollTop() + $(window).height()) {
+        if ($(document).height() <= $(window).scrollTop() + 1 + $(window).height()) {
             loadmore();
         }
     });
@@ -80,7 +70,7 @@ require("../../library/include/header.php");
                 orderby: ob,
                 sort: so,
                 codart: ca,
-				mostra_tutto: mt
+				mostra: mt
             },
             beforeSend: function () {
                 $('#loader-icon').show();
@@ -127,6 +117,25 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
 $gForm = new magazzForm();
 ?>
+
+<form method="POST" id="form2">	
+ <div class="panel panel-info col-lg-6">	 
+<?php if ($mt==1) {	?>
+	<label for="codice" class="col-lg-5 control-label"><?php echo "Mostro anche articoli non agricoli"; ?></label>
+			<div> 
+			<button type="submit" name="no_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
+<i class="glyphicon glyphicon-refresh" style="color:green">
+<?php } else {?>
+<label for="codice" class="col-lg-5 control-label"><?php echo "Mostro solo articoli agricoli"; ?></label>
+			<div> 
+			<button type="submit" name="mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  >
+<i class="glyphicon glyphicon-refresh" style="color:red">
+<?php } ?>	
+		</i></button>
+	</div>
+	</div>
+</form>	
+
 <form method="POST" id="form">
     <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
     <div class="panel panel-info col-lg-6">
@@ -139,24 +148,7 @@ $gForm = new magazzForm();
             ?>
         </div>
     </div>
-	 <div class="panel panel-info col-lg-6">
-		<?php if ($mt==0){ ?>
-			<label for="codice" class="col-lg-6 control-label"><?php echo "Elenco con solo articoli agricoli"; ?></label>
-			<div> 
-			<button type="submit" name="mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
-		 
-		<?php } else { ?>
-<label for="codice" class="col-lg-6 control-label"><?php echo "Elenco anche con articoli non agricoli"; ?></label>
-	<div> 
-	<button type="submit" name="no_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
-		
-<?php } ?>
-<i class="glyphicon glyphicon-repeat">
-		
-		</i></button>
-	</div>
-	</div>
-	</div>
+
     
 	<div class="panel panel-default">
         <div id="gaz-responsive-table"  class="container-fluid">
