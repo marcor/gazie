@@ -295,6 +295,15 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         $form['status'] = 'GENERATO';
         $form['initra'] = $iniziotrasporto;
         $form['datemi'] = $dataemiss;
+        /** questa porzione di codice, mutuata da admin_docven.php
+         *  è necessaria per mettere il metodo di calcolo dell'iva
+         * che di default va a "ventilazione"
+         */
+        $form['expense_vat'] = $admin_aziend['preeminent_vat'];
+        if ($cliente['aliiva'] > 0) {
+            $form['expense_vat'] = $cliente['aliiva'];
+        }
+        /**/
         tesdocInsert($form);
         //recupero l'id assegnato dall'inserimento
         $last_id = gaz_dbi_last_id();

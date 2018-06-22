@@ -25,61 +25,61 @@
  */
 
 function connectToDB() {
-    global $link, $Host, $Database, $User, $Password;
-    $link = @mysqli_connect($Host, $User, $Password, $Database, $Port) or die("Was not found, << $Database >>  database! <br />
+   global $link, $Host, $Database, $User, $Password;
+   $link = @mysqli_connect($Host, $User, $Password, $Database, $Port) or die("Was not found, << $Database >>  database! <br />
              Could not be installed, try to do so by <a href=\"../../setup/install/install.php\"> clicking HERE! </a><br />
              <br />Non &egrave; stata trovata la base dati di nome << $Database >>! <br />
              Potrebbe non essere stato installata, prova a farlo <a href=\"../../setup/install/install.php\"> cliccando QUI! </a> <br />
              <br />No se ha encontrado, la base de datos << $Database >>  ! <br />
 			No pudo ser instalado, trate de hacerlo haciendo <a href=\"../../setup/install/install.php\">  clic AQU&Iacute;! </a>");
-    mysqli_query($link, "/*!50701 SET SESSION sql_mode='' */");
-    mysqli_set_charset($link, 'utf8');
+   mysqli_query($link, "/*!50701 SET SESSION sql_mode='' */");
+   mysqli_set_charset($link, 'utf8');
 }
 
 function connectIsOk() {
-    global $Host, $User, $Password, $link;
-    $result = True;
-    $link = @mysqli_connect($Host, $User, $Password) or ( $result = False); // In $result l'esito della connessione
-    mysqli_options($link, MYSQLI_INIT_COMMAND, "SET SQL_MODE = ''");
-    return $result;
+   global $Host, $User, $Password, $link;
+   $result = True;
+   $link = @mysqli_connect($Host, $User, $Password) or ( $result = False); // In $result l'esito della connessione
+   mysqli_options($link, MYSQLI_INIT_COMMAND, "SET SQL_MODE = ''");
+   return $result;
 }
 
 function createDatabase($Database) {
-    global $link;
-    mysqli_query($link, "CREATE DATABASE $Database DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;") or die("ERRORE: il database $Database non &egrave; stato creato!");
+   global $link;
+   mysqli_query($link, "CREATE DATABASE $Database DEFAULT CHARACTER SET utf8 COLLATE utf8_unicode_ci;") or die("ERRORE: il database $Database non &egrave; stato creato!");
 }
 
 function databaseIsOk() {
-    global $link, $Database;
-    $result = True;
-    mysqli_select_db($link, $Database) or ( $result = False); // In $result l'esito della selezione
-    // Verifico che il database non sia vuoto (condizione che può invece verificarsi nel caso in cui un amministratore di sistema fornisca db e user senza grant CREATE)
-    if ($tablesResult = mysqli_query($link, "SELECT COUNT(*) AS numTables FROM information_schema.tables WHERE table_schema = '$Database';")) {
-        $numTables = mysqli_fetch_row($tablesResult);
-        if ($numTables[0] == 0) {
-            $result = False;
-        }
-    } else {
-        $result = False;
-    }
-    return $result;
+   global $link, $Database;
+   $result = True;
+   mysqli_select_db($link, $Database) or ( $result = False); // In $result l'esito della selezione
+   // Verifico che il database non sia vuoto (condizione che può invece verificarsi nel caso in cui un amministratore di sistema fornisca db e user senza grant CREATE)
+   if ($tablesResult = mysqli_query($link, "SELECT COUNT(*) AS numTables FROM information_schema.tables WHERE table_schema = '$Database';")) {
+      $numTables = mysqli_fetch_row($tablesResult);
+      if ($numTables[0] == 0) {
+         $result = False;
+      }
+   } else {
+      $result = False;
+   }
+   return $result;
 }
 
 function gaz_dbi_query($query, $ar = false) {
-    global $link;
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die("Error in gaz_dbi_query:" . $query . mysqli_error($link));
-    if ($ar) {
-        return mysqli_affected_rows($link);
-    } else {
-        return $result;
-    }
+   global $link;
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die("Error in gaz_dbi_query:" . $query . mysqli_error($link));
+   if ($ar) {
+      return mysqli_affected_rows($link);
+   } else {
+      return $result;
+   }
 }
 
 function gaz_dbi_fetch_array($resource) {
-    $result = mysqli_fetch_array($resource);
-    return $result;
+   $result = mysqli_fetch_array($resource);
+   return $result;
 }
 
 /** ENRICO FEDELE */
@@ -88,319 +88,360 @@ function gaz_dbi_fetch_array($resource) {
  *  e ci evita di dover creare un array apposito in cui mettere quello che ci interessa
  */
 function gaz_dbi_fetch_assoc($resource) {
-    $result = mysqli_fetch_assoc($resource);
-    return $result;
+   $result = mysqli_fetch_assoc($resource);
+   return $result;
 }
 
 function gaz_dbi_real_escape_string($resource) {
-    global $link;
-    $result = mysqli_real_escape_string($link, $resource);
-    return $result;
+   global $link;
+   $result = mysqli_real_escape_string($link, $resource);
+   return $result;
 }
 
 function gaz_dbi_fetch_row($resource) {
-    $result = mysqli_fetch_row($resource);
-    return $result;
+   $result = mysqli_fetch_row($resource);
+   return $result;
 }
 
 function gaz_dbi_num_rows($resource) {
-    $result = mysqli_num_rows($resource);
-    return $result;
+   $result = mysqli_num_rows($resource);
+   return $result;
 }
 
 function gaz_dbi_fetch_object($resource) {
-    $result = mysqli_fetch_object($resource);
-    return $result;
+   $result = mysqli_fetch_object($resource);
+   return $result;
 }
 
 function gaz_dbi_free_result($result) {
-    mysqli_free_result($result);
+   mysqli_free_result($result);
 }
 
 //uso un metodo simile a quello di phpMyAdmin in sql.php per controllare i tipi di campo
 function gaz_dbi_get_fields_meta($result) {
-    $fields = array();
-    $fields['num'] = mysqli_num_fields($result);
-    for ($i = 0; $i < $fields['num']; $i++) {
-        $data = mysqli_fetch_field($result);
-        switch ($data->type) {
-            // i numerici
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 8:
-            case 9:
-            case 16:
-            case 246: // campi numerici
-                $data->numeric = 1;
-                $data->blob = 0;
-                $data->datetimestamp = 0;
-                break;
-            case 7:
-            case 10:
-            case 11:
-            case 12:
-            case 13: // campi datetimestamp
-                $data->numeric = 0;
-                $data->blob = 0;
-                $data->datetimestamp = 1;
-                break;
-            case 252: // blob
-                $data->numeric = 0;
-                $data->blob = 1;
-                $data->datetimestamp = 0;
-                break;
-            default:
-                $data->blob = 0;
-                $data->numeric = 0;
-                $data->datetimestamp = 0;
-                break;
-        }
-        $fields['data'][] = $data;
-    }
-    return $fields;
+   $fields = array();
+   $fields['num'] = mysqli_num_fields($result);
+   for ($i = 0; $i < $fields['num']; $i++) {
+      $data = mysqli_fetch_field($result);
+      switch ($data->type) {
+         // i numerici
+         case 1:
+         case 2:
+         case 3:
+         case 4:
+         case 5:
+         case 8:
+         case 9:
+         case 16:
+         case 246: // campi numerici
+            $data->numeric = 1;
+            $data->blob = 0;
+            $data->datetimestamp = 0;
+            break;
+         case 7:
+         case 10:
+         case 11:
+         case 12:
+         case 13: // campi datetimestamp
+            $data->numeric = 0;
+            $data->blob = 0;
+            $data->datetimestamp = 1;
+            break;
+         case 252: // blob
+            $data->numeric = 0;
+            $data->blob = 1;
+            $data->datetimestamp = 0;
+            break;
+         default:
+            $data->blob = 0;
+            $data->numeric = 0;
+            $data->datetimestamp = 0;
+            break;
+      }
+      $fields['data'][] = $data;
+   }
+   return $fields;
 }
 
 function gaz_dbi_get_row($table, $fnm, $fval) {
-    global $link;
-    $result = mysqli_query($link, "SELECT * FROM $table WHERE $fnm = '$fval'");
-    if (!$result)
-        die(" Error gaz_dbi_get_row: " . mysqli_error($link));
-    return mysqli_fetch_array($result);
+   global $link;
+   $result = mysqli_query($link, "SELECT * FROM $table WHERE $fnm = '$fval'");
+   if (!$result)
+      die(" Error gaz_dbi_get_row: " . mysqli_error($link));
+   return mysqli_fetch_array($result);
 }
 
 function gaz_dbi_get_single_value($table, $campo, $where) {
-    global $link;
-    $result = mysqli_query($link, "SELECT $campo FROM $table WHERE $where");
-    if (!$result)
-        die(" Error gaz_dbi_get_single_value: " . mysqli_error($link));
-    $ris = mysqli_fetch_array($result, MYSQLI_NUM);
-    $rn = mysqli_num_rows($result);
-    if ($rn == 1) {
-        return $ris[0];
-    } else {
-        return null;
-    }
+   global $link;
+   $result = mysqli_query($link, "SELECT $campo FROM $table WHERE $where");
+   if (!$result)
+      die(" Error gaz_dbi_get_single_value: " . mysqli_error($link));
+   $ris = mysqli_fetch_array($result, MYSQLI_NUM);
+   $rn = mysqli_num_rows($result);
+   if ($rn == 1) {
+      return $ris[0];
+   } else {
+      return null;
+   }
 }
 
 function gaz_dbi_put_row($table, $CampoCond, $ValoreCond, $Campo, $Valore) {
-    global $link;
-    $field_results = gaz_dbi_query("SELECT * FROM " . $table);
-    $field_meta = gaz_dbi_get_fields_meta($field_results);
-    $where = ' WHERE ' . $CampoCond . ' = ';
-    $query = "UPDATE " . $table . ' SET ' . $Campo . ' = ';
-    for ($j = 0; $j < $field_meta['num']; $j++) {
-        if ($field_meta['data'][$j]->name == $Campo) {
-            if ($field_meta['data'][$j]->blob && !empty($Valore)) {
-                $query .= '0x' . bin2hex($Valore);
-            } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
-                $query .= floatval($Valore);
-            } else {
-                $elem = addslashes($Valore); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
-                $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
-                $query .= "'" . $elem . "'";
-            }
-        }
-        if ($field_meta['data'][$j]->name == $CampoCond) {
-            if ($field_meta['data'][$j]->blob && !empty($ValoreCond)) {
-                $where .= '0x' . bin2hex($Valore);
-            } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
-                $where .= floatval($ValoreCond);
-            } else {
-                $elem = addslashes($ValoreCond); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
-                $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
-                $where .= "'" . $elem . "'";
-            }
-        }
-    }
-    $query .= $where . ' LIMIT 1';
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die("Error gaz_dbi_put_row: <b>$query</b>" . mysqli_error($link));
-    return $result;
+   global $link;
+   $field_results = gaz_dbi_query("SELECT * FROM " . $table);
+   $field_meta = gaz_dbi_get_fields_meta($field_results);
+   $where = ' WHERE ' . $CampoCond . ' = ';
+   $query = "UPDATE " . $table . ' SET ' . $Campo . ' = ';
+   for ($j = 0; $j < $field_meta['num']; $j++) {
+      if ($field_meta['data'][$j]->name == $Campo) {
+         if ($field_meta['data'][$j]->blob && !empty($Valore)) {
+            $query .= '0x' . bin2hex($Valore);
+         } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
+            $query .= floatval($Valore);
+         } else {
+            $elem = addslashes($Valore); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
+            $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
+            $query .= "'" . $elem . "'";
+         }
+      }
+      if ($field_meta['data'][$j]->name == $CampoCond) {
+         if ($field_meta['data'][$j]->blob && !empty($ValoreCond)) {
+            $where .= '0x' . bin2hex($Valore);
+         } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
+            $where .= floatval($ValoreCond);
+         } else {
+            $elem = addslashes($ValoreCond); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
+            $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
+            $where .= "'" . $elem . "'";
+         }
+      }
+   }
+   $query .= $where . ' LIMIT 1';
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die("Error gaz_dbi_put_row: <b>$query</b>" . mysqli_error($link));
+   return $result;
 }
 
 function gaz_dbi_put_query($table, $where, $Campo, $Valore) {
-    global $link;
-    $result = mysqli_query($link, "UPDATE $table SET $Campo='$Valore' WHERE $where");
-    if (!$result)
-        die($where . "Error gaz_dbi_put_query: " . mysqli_error($link));
+   global $link;
+   $result = mysqli_query($link, "UPDATE $table SET $Campo='$Valore' WHERE $where");
+   if (!$result)
+      die($where . "Error gaz_dbi_put_query: " . mysqli_error($link));
 }
 
 function gaz_dbi_del_row($table, $fname, $fval) {
-    global $link;
-    $result = mysqli_query($link, "DELETE FROM $table WHERE $fname = '$fval'") or die(" Errore di cancellazione: " . mysqli_error($link));
-    if (!$result)
-        die($where . "Error gaz_dbi_del_row: " . mysqli_error($link));
+   global $link;
+   $result = mysqli_query($link, "DELETE FROM $table WHERE $fname = '$fval'") or die(" Errore di cancellazione: " . mysqli_error($link));
+   if (!$result)
+      die($where . "Error gaz_dbi_del_row: " . mysqli_error($link));
 }
 
 // restituisce l'id dell'ultimo insert
 function gaz_dbi_last_id() {
-    global $link;
-    $num_id = mysqli_insert_id($link);
-    return $num_id;
+   global $link;
+   $num_id = mysqli_insert_id($link);
+   return $num_id;
 }
 
 // restituisce il numero record di una query
 function gaz_dbi_record_count($table, $where) {
-    global $link;
-    $sql = "SELECT * FROM " . $table . (($where != "") ? " WHERE " . $where : "");
-    $result = mysqli_query($link, $sql);
-    $count = mysqli_num_rows($result);
-    return $count;
+   global $link;
+   $sql = "SELECT * FROM " . $table . (($where != "") ? " WHERE " . $where : "");
+   $result = mysqli_query($link, $sql);
+   $count = mysqli_num_rows($result);
+   return $count;
 }
 
 // funzione che compone una query con i parametri: tabella, where, orderby, limit e passo (riga di inizio e n. record)
 function gaz_dbi_dyn_query($select, $tabella, $where = 1, $orderby = 2, $limit = 0, $passo = 2000000, $groupby = '') {
-    global $link, $session;
-    $query = "SELECT " . $select . " FROM " . $tabella;
-    if ($where != '') {
-        $query .= " WHERE $where ";
-    }
+   global $link, $session;
+   $query = "SELECT " . $select . " FROM " . $tabella;
+   if ($where != '') {
+      $query .= " WHERE $where ";
+   }
 
-    if ($groupby != '') {
-        $query .= " GROUP BY $groupby ";
-    }
+   if ($groupby != '') {
+      $query .= " GROUP BY $groupby ";
+   }
 
-    if ($orderby == '2') {
-        $query .= " LIMIT " . $limit . ", " . $passo;
-    } else {
-        $query .= " ORDER BY " . $orderby . " LIMIT " . $limit . ", " . $passo;
-    }
-    //echo $query."<br>";
-    //msgDebug($query);
+   if ($orderby == '2') {
+      $query .= " LIMIT " . $limit . ", " . $passo;
+   } else {
+      $query .= " ORDER BY " . $orderby . " LIMIT " . $limit . ", " . $passo;
+   }
+   //echo $query."<br>";
+   //msgDebug($query);
 
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die(" Errore di gaz_dbi_dyn_query:<strong> " . $query . " </strong> " . mysqli_error($link));
-    return $result;
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die(" Errore di gaz_dbi_dyn_query:<strong> " . $query . " </strong> " . mysqli_error($link));
+   return $result;
 }
 
 // funzione array_is_assoc
 function array_is_assoc(array $a) {
-    $i = 0;
-    foreach ($a as $k => $v) {
-        if ($k !== $i++) {
-            return true;
-        }
-    }
-    return false;
+   $i = 0;
+   foreach ($a as $k => $v) {
+      if ($k !== $i++) {
+         return true;
+      }
+   }
+   return false;
 }
 
 // funzione gaz_dbi_fields_anagra
 function gaz_dbi_fields_anagra() {
-    global $gTables;
-	$fields_anagra = array();
-    $rs_fields_anagra = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra'] . " WHERE Field NOT LIKE '%_aes'");
-    while ($rs_field_anagra = mysqli_fetch_assoc($rs_fields_anagra)) {
-        $fields_anagra[] = $rs_field_anagra['Field'];
-    }
-	return $fields_anagra;
+   global $gTables;
+   $fields_anagra = array();
+   $rs_fields_anagra = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra'] . " WHERE Field NOT LIKE '%_aes'");
+   while ($rs_field_anagra = mysqli_fetch_assoc($rs_fields_anagra)) {
+      $fields_anagra[] = $rs_field_anagra['Field'];
+   }
+   return $fields_anagra;
 }
 
 // funzione gaz_aes_field_anagra
 function gaz_aes_field_anagra($field) {
-	$aes_field = '';
-	$field_name = $field;
-	$field_name_point = strrpos($field_name, '.');
-	if ($field_name_point !== false) {
-		$field_name = substr($field_name, $field_name_point+1, strlen($field_name)-$field_name_point);
-	}
-	switch ($field_name) {
-		case 'ragso1':
-		case 'ragso2':
-		case 'sedleg':
-		case 'legrap_pf_nome':
-		case 'legrap_pf_cognome':
-		case 'indspe':
-		case 'latitude':
-		case 'longitude':
-		case 'telefo':
-		case 'fax':
-		case 'cell':
-		case 'codfis':
-		case 'pariva':
-		case 'e_mail':
-		case 'pec_email':
-			//$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field . "_aes), '" . $_SESSION['aes_key'] . "') USING utf8)";
-			/**/$aes_field .= $field;
-			break;
-		default:
-			$aes_field .= $field;
-			break;
-	}
-	return $aes_field;
+   $aes_field = '';
+   $field_name = $field;
+   $field_name_point = strrpos($field_name, '.');
+   if ($field_name_point !== false) {
+      $field_name = substr($field_name, $field_name_point + 1, strlen($field_name) - $field_name_point);
+   }
+   switch ($field_name) {
+      case 'ragso1':
+      case 'ragso2':
+      case 'sedleg':
+      case 'legrap_pf_nome':
+      case 'legrap_pf_cognome':
+      case 'indspe':
+      case 'latitude':
+      case 'longitude':
+      case 'telefo':
+      case 'fax':
+      case 'cell':
+      case 'codfis':
+      case 'pariva':
+      case 'e_mail':
+      case 'pec_email':
+         //$aes_field.= "CONVERT(AES_DECRYPT(UNHEX(" . $field . "_aes), '" . $_SESSION['aes_key'] . "') USING utf8)";
+         /**/$aes_field .= $field;
+         break;
+      default:
+         $aes_field .= $field;
+         break;
+   }
+   return $aes_field;
 }
 
 function gaz_dbi_get_anagra($table, $fnm, $fval) {
-    global $link, $gTables;
-	$fields_anagra = gaz_dbi_fields_anagra();
-	$fields = '';
-	foreach ($fields_anagra as $field_anagra) {
-		$fields.= (empty($fields) ? '' : ', ') . gaz_aes_field_anagra($field_anagra) . " AS $field_anagra";
-	}
-
-    $result = mysqli_query($link, "SELECT $fields, " . $gTables['clfoco'] .".* FROM $table WHERE $fnm = '$fval'");
-    if (!$result)
-        die(" Error gaz_dbi_get_anagra: " . mysqli_error($link));
-    return mysqli_fetch_array($result);
+   global $link, $gTables;
+   $fields_anagra = gaz_dbi_fields_anagra();
+   $fields = '';
+   foreach ($fields_anagra as $field_anagra) {
+      if ($field_anagra == 'fatt_email') {
+         /* devo gestire un'ambiguità nella query indicando 
+          * da quale tabella prendere il campo fatt_email
+          */
+         $fields .= (empty($fields) ? '' : ', ') . $gTables['anagra'] . "." . gaz_aes_field_anagra($field_anagra) . " AS $field_anagra";
+      } else {
+         $fields .= (empty($fields) ? '' : ', ') . gaz_aes_field_anagra($field_anagra) . " AS $field_anagra";
+      }
+   }
+   $query = "SELECT $fields, " . $gTables['clfoco'] . ".* FROM $table WHERE $fnm = '$fval'";
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die(" Error gaz_dbi_get_anagra: " . mysqli_error($link));
+   return mysqli_fetch_array($result);
 }
 
 // funzione gaz_dbi_query_anagra
 function gaz_dbi_query_anagra($select, $tabella, $where, $orderby, $limit = 0, $passo = 2000000, $groupby = '') {
-    global $link, $session;
-	$select_fields = '';
-	$select_is_assoc = array_is_assoc($select);
-	foreach ($select as $field_name=>$field_alias) {
-		$field = ($select_is_assoc) ? $field_name : $field_alias;
-		$field_alias_point = strrpos($field_alias, '.');
-		if ($field_alias_point !== false) {
-			$field_alias = substr($field_alias, $field_alias_point+1, strlen($field_alias)-$field_alias_point);
-		}
-		$select_fields .= ((empty($select_fields)) ? "" : ", ") . gaz_aes_field_anagra($field) . (($field=='*' || empty($field_alias)) ? "" : " AS $field_alias");
-	}
-    $query = "SELECT " . $select_fields . " FROM " . $tabella;
-    if (count($where)) {
-        $query .= " WHERE 1 ";
-		foreach ($where as $condition_field=>$condition_compare) {
-			$query .= " AND " . gaz_aes_field_anagra($condition_field) . $condition_compare;
-		}
-    }
+   global $link, $session;
+   $select_fields = '';
+   $select_is_assoc = array_is_assoc($select);
+   foreach ($select as $field_name => $field_alias) {
+      $field = ($select_is_assoc) ? $field_name : $field_alias;
+      $field_alias_point = strrpos($field_alias, '.');
+      if ($field_alias_point !== false) {
+         $field_alias = substr($field_alias, $field_alias_point + 1, strlen($field_alias) - $field_alias_point);
+      }
+      $select_fields .= ((empty($select_fields)) ? "" : ", ") . gaz_aes_field_anagra($field) . (($field == '*' || empty($field_alias)) ? "" : " AS $field_alias");
+   }
+   $query = "SELECT " . $select_fields . " FROM " . $tabella;
+   if (count($where)) {
+      $query .= " WHERE 1 ";
+      foreach ($where as $condition_field => $condition_compare) {
+         $query .= " AND " . gaz_aes_field_anagra($condition_field) . $condition_compare;
+      }
+   }
 
-    if ($groupby != '') {
-        $query .= " GROUP BY $groupby ";
-    }
+   if ($groupby != '') {
+      $query .= " GROUP BY $groupby ";
+   }
 
-    if (count($orderby)) {
-        $query .= " ORDER BY ";
-		foreach ($orderby as $order_field=>$order_value) {
-			$query .= gaz_aes_field_anagra($order_field) . " " . $order_value . " ";
-		}
-    }
-    $query .= " LIMIT " . $limit . ", " . $passo;
-    //echo $query."<br>";
-    //msgDebug($query);
+   if (count($orderby)) {
+      $query .= " ORDER BY ";
+      foreach ($orderby as $order_field => $order_value) {
+         $query .= gaz_aes_field_anagra($order_field) . " " . $order_value . " ";
+      }
+   }
+   $query .= " LIMIT " . $limit . ", " . $passo;
+   //echo $query."<br>";
+   //msgDebug($query);
 
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die(" Errore di gaz_dbi_dyn_query:<strong> " . $query . " </strong> " . mysqli_error($link));
-    return $result;
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die(" Errore di gaz_dbi_dyn_query:<strong> " . $query . " </strong> " . mysqli_error($link));
+   return $result;
 }
 
 function gaz_dbi_fields($table) {
-    /*
-     * $table - il nome della tabella all'interno dell'array $gTables
-     * questa funzione genera un array(chiave=>valore) contenente tutte le chiavi
-     * della tabella richiesta a valori nulli o 0 a secondo del tipo
-     */
-    global $link, $gTables;
-    $acc = array();
-    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
-    $field_meta = gaz_dbi_get_fields_meta($field_results);
-    for ($j = 0; $j < $field_meta['num']; $j++) {
-        switch ($field_meta['data'][$j]->type) {
+   /*
+    * $table - il nome della tabella all'interno dell'array $gTables
+    * questa funzione genera un array(chiave=>valore) contenente tutte le chiavi
+    * della tabella richiesta a valori nulli o 0 a secondo del tipo
+    */
+   global $link, $gTables;
+   $acc = array();
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
+   $field_meta = gaz_dbi_get_fields_meta($field_results);
+   for ($j = 0; $j < $field_meta['num']; $j++) {
+      switch ($field_meta['data'][$j]->type) {
+         // i numerici
+         case 1:
+         case 2:
+         case 3:
+         case 4:
+         case 5:
+         case 8:
+         case 9:
+         case 16:
+         case 246:
+            $acc[$field_meta['data'][$j]->name] = 0;
+            break;
+         default:
+            $acc[$field_meta['data'][$j]->name] = '';
+            break;
+      }
+   }
+   return $acc;
+}
+
+function gaz_dbi_parse_post($table) {
+   /*
+    * $table - il nome della tabella all'interno dell'array $gTables
+    * questa funzione genera un array(chiave=>valore) contenente le sole chiavi
+    * omonime presenti in $_POST e con i valori parsati in base al tipo di colonna
+    */
+   global $link, $gTables;
+   $acc = array();
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
+   $field_meta = gaz_dbi_get_fields_meta($field_results);
+   for ($j = 0; $j < $field_meta['num']; $j++) {
+      $nomeCampo = $field_meta['data'][$j]->name;
+      if (isset($_POST[$nomeCampo])) {
+         switch ($field_meta['data'][$j]->type) {
             // i numerici
             case 1:
             case 2:
@@ -411,546 +452,512 @@ function gaz_dbi_fields($table) {
             case 9:
             case 16:
             case 246:
-                $acc[$field_meta['data'][$j]->name] = 0;
-                break;
+               $acc[$field_meta['data'][$j]->name] = floatval(preg_replace("/\,/", '.', $_POST[$field_meta['data'][$j]->name]));
+               break;
+            case 7:
+            case 10:
+            case 11:
+            case 12:
+            case 13: // campi datetimestamp
+               $acc[$field_meta['data'][$j]->name] = substr($_POST[$field_meta['data'][$j]->name], 0, 20);
+               break;
+            // i binari non li considero
+            case 252:
+               break;
+            // gli altri eventualmente li tronco
             default:
-                $acc[$field_meta['data'][$j]->name] = '';
-                break;
-        }
-    }
-    return $acc;
-}
-
-function gaz_dbi_parse_post($table) {
-    /*
-     * $table - il nome della tabella all'interno dell'array $gTables
-     * questa funzione genera un array(chiave=>valore) contenente le sole chiavi
-     * omonime presenti in $_POST e con i valori parsati in base al tipo di colonna
-     */
-    global $link, $gTables;
-    $acc = array();
-    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
-    $field_meta = gaz_dbi_get_fields_meta($field_results);
-    for ($j = 0; $j < $field_meta['num']; $j++) {
-        $nomeCampo = $field_meta['data'][$j]->name;
-        if (isset($_POST[$nomeCampo])) {
-            switch ($field_meta['data'][$j]->type) {
-                // i numerici
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                case 5:
-                case 8:
-                case 9:
-                case 16:
-                case 246:
-                    $acc[$field_meta['data'][$j]->name] = floatval(preg_replace("/\,/", '.', $_POST[$field_meta['data'][$j]->name]));
-                    break;
-                case 7:
-                case 10:
-                case 11:
-                case 12:
-                case 13: // campi datetimestamp
-                    $acc[$field_meta['data'][$j]->name] = substr($_POST[$field_meta['data'][$j]->name], 0, 20);
-                    break;
-                // i binari non li considero
-                case 252:
-                    break;
-                // gli altri eventualmente li tronco
-                default:
-                    $acc[$field_meta['data'][$j]->name] = substr($_POST[$field_meta['data'][$j]->name], 0, $field_meta['data'][$j]->length);
-                    break;
-            }
-        }
-    }
-    return $acc;
+               $acc[$field_meta['data'][$j]->name] = substr($_POST[$field_meta['data'][$j]->name], 0, $field_meta['data'][$j]->length);
+               break;
+         }
+      }
+   }
+   return $acc;
 }
 
 function gaz_dbi_table_insert($table, $value) {
-    /*
-     * $table - il nome della tabella all'interno dell'array $gTables
-     * $value - array associativo del tipo nome_colonna=>valore con i valori da inserire
-     */
-    global $link, $gTables;
-    $first = true;
-    $auto_increment = false;
-    $colName = '';
-    $colValue = '';
-    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
-    $rs_auto_increment = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables[$table]);
-    while ($ai = mysqli_fetch_assoc($rs_auto_increment)) {
-        if ($ai['Extra'] == 'auto_increment') {
-            $auto_increment = $ai['Field'];
-        }
-    }
-    $field_meta = gaz_dbi_get_fields_meta($field_results);
-    for ($j = 0; $j < $field_meta['num']; $j++) {
-        if ($field_meta['data'][$j]->name != $auto_increment) {  // il campo auto increment non dev'essere passato
-            $colName .= ($first ? '`' . $field_meta['data'][$j]->name . '`' : ', `' . $field_meta['data'][$j]->name . '`');
-            $colValue .= ($first ? " " : ", ");
-            $first = false;
-            if (isset($value[$field_meta['data'][$j]->name])) {
-                if ($field_meta['data'][$j]->blob && !empty($value[$field_meta['data'][$j]->name])) {
-                    $colValue .= '0x' . bin2hex($value[$field_meta['data'][$j]->name]);
-                } elseif ($field_meta['data'][$j]->numeric) { // NUMERICO
-                    $colValue .= floatval($value[$field_meta['data'][$j]->name]);
-                } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
-                    if (empty($value[$field_meta['data'][$j]->name])) {
-                        $colValue .= "NULL";
-                    } else {
-                        $colValue .= "'" . $value[$field_meta['data'][$j]->name] . "'";
-                    }
-                } else {
-                    $elem = addslashes($value[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
-                    $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
-                    $colValue .= "'" . $elem . "'";
-                }
-            } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
-                $colValue .= "'" . $_SESSION["user_name"] . "'";
-            } elseif ($field_meta['data'][$j]->name == 'last_modified') {
-                $colValue .= "'" . date("Y-m-d H:i:s") . "'";
+   /*
+    * $table - il nome della tabella all'interno dell'array $gTables
+    * $value - array associativo del tipo nome_colonna=>valore con i valori da inserire
+    */
+   global $link, $gTables;
+   $first = true;
+   $auto_increment = false;
+   $colName = '';
+   $colValue = '';
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
+   $rs_auto_increment = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables[$table]);
+   while ($ai = mysqli_fetch_assoc($rs_auto_increment)) {
+      if ($ai['Extra'] == 'auto_increment') {
+         $auto_increment = $ai['Field'];
+      }
+   }
+   $field_meta = gaz_dbi_get_fields_meta($field_results);
+   for ($j = 0; $j < $field_meta['num']; $j++) {
+      if ($field_meta['data'][$j]->name != $auto_increment) {  // il campo auto increment non dev'essere passato
+         $colName .= ($first ? '`' . $field_meta['data'][$j]->name . '`' : ', `' . $field_meta['data'][$j]->name . '`');
+         $colValue .= ($first ? " " : ", ");
+         $first = false;
+         if (isset($value[$field_meta['data'][$j]->name])) {
+            if ($field_meta['data'][$j]->blob && !empty($value[$field_meta['data'][$j]->name])) {
+               $colValue .= '0x' . bin2hex($value[$field_meta['data'][$j]->name]);
+            } elseif ($field_meta['data'][$j]->numeric) { // NUMERICO
+               $colValue .= floatval($value[$field_meta['data'][$j]->name]);
+            } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
+               if (empty($value[$field_meta['data'][$j]->name])) {
+                  $colValue .= "NULL";
+               } else {
+                  $colValue .= "'" . $value[$field_meta['data'][$j]->name] . "'";
+               }
             } else {
-                if ($field_meta['data'][$j]->numeric) {
-                    $colValue .= 0;
-                } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
-                    $colValue .= "NULL";
-                } else {
-                    $colValue .= "''";
-                }
+               $elem = addslashes($value[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
+               $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
+               $colValue .= "'" . $elem . "'";
             }
-        }
-    }
-    $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die("Error gaz_dbi_table_insert:<b> $query </b> " . mysqli_error($link));
+         } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
+            $colValue .= "'" . $_SESSION["user_name"] . "'";
+         } elseif ($field_meta['data'][$j]->name == 'last_modified') {
+            $colValue .= "'" . date("Y-m-d H:i:s") . "'";
+         } else {
+            if ($field_meta['data'][$j]->numeric) {
+               $colValue .= 0;
+            } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
+               $colValue .= "NULL";
+            } else {
+               $colValue .= "''";
+            }
+         }
+      }
+   }
+   $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die("Error gaz_dbi_table_insert:<b> $query </b> " . mysqli_error($link));
 }
 
 function gaz_dbi_table_update($table, $id, $newValue) {
-    /*
-     * $table - il nome della tabella all'interno dell'array $gTables
-     * $id - stringa con il valore del campo "codice" da aggiornare o array(0=>nome,1=>valore,2=>nuovo_valore)
-     * $newValue - array associativo del tipo nome_colonna=>valore con i valori da inserire
-     */
-    global $link, $gTables;
-    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
-    $field_meta = gaz_dbi_get_fields_meta($field_results);
-    $query = "UPDATE " . $gTables[$table] . ' SET ';
-    $first = true;
-    $quote_id = "'";
-    for ($j = 0; $j < $field_meta['num']; $j++) {
-        if (isset($newValue[$field_meta['data'][$j]->name])) {
-            $query .= ($first ? '`' . $field_meta['data'][$j]->name . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . '`' . " = ");
-            $first = false;
-            if ($field_meta['data'][$j]->blob && !empty($newValue[$field_meta['data'][$j]->name])) {
-                $query .= '0x' . bin2hex($newValue[$field_meta['data'][$j]->name]);
-            } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
-                $query .= floatval($newValue[$field_meta['data'][$j]->name]);
-            } else {
-                $elem = addslashes($newValue[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
-                $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
-                $query .= "'" . $elem . "'";
-            }
-            //per superare lo STRICT_MODE del server non metto gli apici ai numerici
-            if ((is_array($id) && $field_meta['data'][$j]->name == $id[0] && $field_meta['data'][$j]->numeric) || (is_string($id) && $field_meta['data'][$j]->name == 'codice' && $field_meta['data'][$j]->numeric)) {
-                $quote_id = '';
-            }
-        } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
-            $query .= ", adminid = '" . $_SESSION["user_name"] . "'";
-        }
-    }
-    //   se in $id c'è un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
-    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
-    if (is_array($id)) {
-        if (isset($id[2])) {
-            $query .= ", $id[0] = $quote_id$id[2]$quote_id";
-        }
-        $query .= " WHERE $id[0] = $quote_id$id[1]$quote_id";
-    } else { //altrimenti uso "codice"
-        $query .= " WHERE codice = $quote_id$id$quote_id";
-    }
-    //msgDebug($query);
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die("Error gaz_dbi_table_update:<b> $query </b>" . mysqli_error($link));
+   /*
+    * $table - il nome della tabella all'interno dell'array $gTables
+    * $id - stringa con il valore del campo "codice" da aggiornare o array(0=>nome,1=>valore,2=>nuovo_valore)
+    * $newValue - array associativo del tipo nome_colonna=>valore con i valori da inserire
+    */
+   global $link, $gTables;
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables[$table]);
+   $field_meta = gaz_dbi_get_fields_meta($field_results);
+   $query = "UPDATE " . $gTables[$table] . ' SET ';
+   $first = true;
+   $quote_id = "'";
+   for ($j = 0; $j < $field_meta['num']; $j++) {
+      if (isset($newValue[$field_meta['data'][$j]->name])) {
+         $query .= ($first ? '`' . $field_meta['data'][$j]->name . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . '`' . " = ");
+         $first = false;
+         if ($field_meta['data'][$j]->blob && !empty($newValue[$field_meta['data'][$j]->name])) {
+            $query .= '0x' . bin2hex($newValue[$field_meta['data'][$j]->name]);
+         } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
+            $query .= floatval($newValue[$field_meta['data'][$j]->name]);
+         } else {
+            $elem = addslashes($newValue[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
+            $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
+            $query .= "'" . $elem . "'";
+         }
+         //per superare lo STRICT_MODE del server non metto gli apici ai numerici
+         if ((is_array($id) && $field_meta['data'][$j]->name == $id[0] && $field_meta['data'][$j]->numeric) || (is_string($id) && $field_meta['data'][$j]->name == 'codice' && $field_meta['data'][$j]->numeric)) {
+            $quote_id = '';
+         }
+      } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
+         $query .= ", adminid = '" . $_SESSION["user_name"] . "'";
+      }
+   }
+   //   se in $id c'è un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
+   //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
+   if (is_array($id)) {
+      if (isset($id[2])) {
+         $query .= ", $id[0] = $quote_id$id[2]$quote_id";
+      }
+      $query .= " WHERE $id[0] = $quote_id$id[1]$quote_id";
+   } else { //altrimenti uso "codice"
+      $query .= " WHERE codice = $quote_id$id$quote_id";
+   }
+   //msgDebug($query);
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die("Error gaz_dbi_table_update:<b> $query </b>" . mysqli_error($link));
 }
 
 // funzione gaz_aes_value_anagra
 function gaz_aes_value_anagra($field, $value) {
-	$aes_value = '';
-	$field_name = $field;
-	$field_name_point = strrpos($field_name, '.');
-	if ($field_name_point !== false) {
-		$field_name = substr($field_name, $field_name_point+1, strlen($field_name)-$field_name_point);
-	}
-	switch ($field_name) {
-		case 'ragso1':
-		case 'ragso2':
-		case 'sedleg':
-		case 'legrap_pf_nome':
-		case 'legrap_pf_cognome':
-		case 'indspe':
-		case 'latitude':
-		case 'longitude':
-		case 'telefo':
-		case 'fax':
-		case 'cell':
-		case 'codfis':
-		case 'pariva':
-		case 'e_mail':
-		case 'pec_email':
-			//$aes_value.= "HEX(AES_ENCRYPT(" . $value . ", '" . $_SESSION['aes_key'] . "'))";
-			/**/$aes_value .= '';
-			break;
-		default:
-			//$aes_value .= $value;
-			break;
-	}
-	return $aes_value;
+   $aes_value = '';
+   $field_name = $field;
+   $field_name_point = strrpos($field_name, '.');
+   if ($field_name_point !== false) {
+      $field_name = substr($field_name, $field_name_point + 1, strlen($field_name) - $field_name_point);
+   }
+   switch ($field_name) {
+      case 'ragso1':
+      case 'ragso2':
+      case 'sedleg':
+      case 'legrap_pf_nome':
+      case 'legrap_pf_cognome':
+      case 'indspe':
+      case 'latitude':
+      case 'longitude':
+      case 'telefo':
+      case 'fax':
+      case 'cell':
+      case 'codfis':
+      case 'pariva':
+      case 'e_mail':
+      case 'pec_email':
+         //$aes_value.= "HEX(AES_ENCRYPT(" . $value . ", '" . $_SESSION['aes_key'] . "'))";
+         /**/$aes_value .= '';
+         break;
+      default:
+         //$aes_value .= $value;
+         break;
+   }
+   return $aes_value;
 }
 
 function gaz_dbi_insert_anagra($value) {
-    /*
-     * $value - array associativo del tipo nome_colonna=>valore con i valori da inserire
-     */
-    global $link, $gTables;
-    $first = true;
-    $auto_increment = false;
-    $colName = '';
-    $colValue = '';
-    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra']);
-    $rs_auto_increment = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra']);
-    while ($ai = mysqli_fetch_assoc($rs_auto_increment)) {
-        if ($ai['Extra'] == 'auto_increment') {
-            $auto_increment = $ai['Field'];
-        }
-    }
-    $field_meta = gaz_dbi_get_fields_meta($field_results);
-    for ($j = 0; $j < $field_meta['num']; $j++) {
-        if ($field_meta['data'][$j]->name != $auto_increment && substr($field_meta['data'][$j]->name, -4) != '_aes') {  // il campo auto increment non dev'essere passato
-            if (isset($value[$field_meta['data'][$j]->name])) {
-                if ($field_meta['data'][$j]->blob && !empty($value[$field_meta['data'][$j]->name])) {
-                    $fieldValue = '0x' . bin2hex($value[$field_meta['data'][$j]->name]);
-                } elseif ($field_meta['data'][$j]->numeric) { // NUMERICO
-                    $fieldValue = floatval($value[$field_meta['data'][$j]->name]);
-                } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
-                    if (empty($value[$field_meta['data'][$j]->name])) {
-                        $fieldValue = "NULL";
-                    } else {
-                        $fieldValue = "'" . $value[$field_meta['data'][$j]->name] . "'";
-                    }
-                } else {
-                    $elem = addslashes($value[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
-                    $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
-                    $fieldValue = "'" . $elem . "'";
-                }
-            } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
-                $fieldValue = "'" . $_SESSION["user_name"] . "'";
-            } elseif ($field_meta['data'][$j]->name == 'last_modified') {
-                $fieldValue = "'" . date("Y-m-d H:i:s") . "'";
+   /*
+    * $value - array associativo del tipo nome_colonna=>valore con i valori da inserire
+    */
+   global $link, $gTables;
+   $first = true;
+   $auto_increment = false;
+   $colName = '';
+   $colValue = '';
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra']);
+   $rs_auto_increment = gaz_dbi_query("SHOW COLUMNS FROM " . $gTables['anagra']);
+   while ($ai = mysqli_fetch_assoc($rs_auto_increment)) {
+      if ($ai['Extra'] == 'auto_increment') {
+         $auto_increment = $ai['Field'];
+      }
+   }
+   $field_meta = gaz_dbi_get_fields_meta($field_results);
+   for ($j = 0; $j < $field_meta['num']; $j++) {
+      if ($field_meta['data'][$j]->name != $auto_increment && substr($field_meta['data'][$j]->name, -4) != '_aes') {  // il campo auto increment non dev'essere passato
+         if (isset($value[$field_meta['data'][$j]->name])) {
+            if ($field_meta['data'][$j]->blob && !empty($value[$field_meta['data'][$j]->name])) {
+               $fieldValue = '0x' . bin2hex($value[$field_meta['data'][$j]->name]);
+            } elseif ($field_meta['data'][$j]->numeric) { // NUMERICO
+               $fieldValue = floatval($value[$field_meta['data'][$j]->name]);
+            } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
+               if (empty($value[$field_meta['data'][$j]->name])) {
+                  $fieldValue = "NULL";
+               } else {
+                  $fieldValue = "'" . $value[$field_meta['data'][$j]->name] . "'";
+               }
             } else {
-                if ($field_meta['data'][$j]->numeric) {
-                    $fieldValue = 0;
-                } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
-                    $fieldValue = "NULL";
-                } else {
-                    $fieldValue = "''";
-                }
+               $elem = addslashes($value[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
+               $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
+               $fieldValue = "'" . $elem . "'";
             }
-            $colName .= ($first ? '`' . $field_meta['data'][$j]->name . '`' : ', `' . $field_meta['data'][$j]->name . '`');
+         } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
+            $fieldValue = "'" . $_SESSION["user_name"] . "'";
+         } elseif ($field_meta['data'][$j]->name == 'last_modified') {
+            $fieldValue = "'" . date("Y-m-d H:i:s") . "'";
+         } else {
+            if ($field_meta['data'][$j]->numeric) {
+               $fieldValue = 0;
+            } elseif ($field_meta['data'][$j]->datetimestamp) { // date datetime o timestamp
+               $fieldValue = "NULL";
+            } else {
+               $fieldValue = "''";
+            }
+         }
+         $colName .= ($first ? '`' . $field_meta['data'][$j]->name . '`' : ', `' . $field_meta['data'][$j]->name . '`');
+         $colValue .= ($first ? " " : ", ");
+         $first = false;
+         $colValue .= $fieldValue;
+         $aes_value = gaz_aes_value_anagra($field_meta['data'][$j]->name, $fieldValue);
+         if (!empty($aes_value)) {
+            $colName .= ($first ? '`' . $field_meta['data'][$j]->name . "_aes" . '`' : ", " . '`' . $field_meta['data'][$j]->name . "_aes" . '`');
             $colValue .= ($first ? " " : ", ");
-            $first = false;
-			$colValue .= $fieldValue;
-			$aes_value = gaz_aes_value_anagra($field_meta['data'][$j]->name, $fieldValue);
-			if (!empty($aes_value)) {
-				$colName .= ($first ? '`' . $field_meta['data'][$j]->name . "_aes" . '`' : ", " . '`' . $field_meta['data'][$j]->name . "_aes" . '`');
-				$colValue .= ($first ? " " : ", ");
-				if (!empty($fieldValue) && $fieldValue!='NULL' && $fieldValue!='0') {
-					$colValue .= $aes_value;
-				} else {
-					$colValue .= $fieldValue;
-				}
-			}
-        }
-    }
-    $query = "INSERT INTO " . $gTables['anagra'] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
-    //msgDebug($query);
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die("Error gaz_dbi_insert_anagra:<b> $query </b> " . mysqli_error($link));
+            if (!empty($fieldValue) && $fieldValue != 'NULL' && $fieldValue != '0') {
+               $colValue .= $aes_value;
+            } else {
+               $colValue .= $fieldValue;
+            }
+         }
+      }
+   }
+   $query = "INSERT INTO " . $gTables['anagra'] . " ( " . $colName . " ) VALUES ( " . $colValue . ");";
+   //msgDebug($query);
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die("Error gaz_dbi_insert_anagra:<b> $query </b> " . mysqli_error($link));
 }
 
 function gaz_dbi_update_anagra($id, $newValue) {
-    /*
-     * $id - stringa con il valore del campo "codice" da aggiornare o array(0=>nome,1=>valore,2=>nuovo_valore)
-     * $newValue - array associativo del tipo nome_colonna=>valore con i valori da inserire
-     */
-    global $link, $gTables;
-    $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra']);
-    $field_meta = gaz_dbi_get_fields_meta($field_results);
-    $query = "UPDATE " . $gTables['anagra'] . ' SET ';
-    $first = true;
-    $quote_id = "'";
-    for ($j = 0; $j < $field_meta['num']; $j++) {
-        if (isset($newValue[$field_meta['data'][$j]->name]) && substr($field_meta['data'][$j]->name, -4) != '_aes') {
-            if ($field_meta['data'][$j]->blob && !empty($newValue[$field_meta['data'][$j]->name])) {
-                $fieldValue = '0x' . bin2hex($newValue[$field_meta['data'][$j]->name]);
-            } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
-                $fieldValue = floatval($newValue[$field_meta['data'][$j]->name]);
+   /*
+    * $id - stringa con il valore del campo "codice" da aggiornare o array(0=>nome,1=>valore,2=>nuovo_valore)
+    * $newValue - array associativo del tipo nome_colonna=>valore con i valori da inserire
+    */
+   global $link, $gTables;
+   $field_results = gaz_dbi_query("SELECT * FROM " . $gTables['anagra']);
+   $field_meta = gaz_dbi_get_fields_meta($field_results);
+   $query = "UPDATE " . $gTables['anagra'] . ' SET ';
+   $first = true;
+   $quote_id = "'";
+   for ($j = 0; $j < $field_meta['num']; $j++) {
+      if (isset($newValue[$field_meta['data'][$j]->name]) && substr($field_meta['data'][$j]->name, -4) != '_aes') {
+         if ($field_meta['data'][$j]->blob && !empty($newValue[$field_meta['data'][$j]->name])) {
+            $fieldValue = '0x' . bin2hex($newValue[$field_meta['data'][$j]->name]);
+         } elseif ($field_meta['data'][$j]->numeric && $field_meta['data'][$j]->type != 'timestamp') {
+            $fieldValue = floatval($newValue[$field_meta['data'][$j]->name]);
+         } else {
+            $elem = addslashes($newValue[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
+            $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
+            $fieldValue = "'" . $elem . "'";
+         }
+         //per superare lo STRICT_MODE del server non metto gli apici ai numerici
+         if ((is_array($id) && $field_meta['data'][$j]->name == $id[0] && $field_meta['data'][$j]->numeric) || (is_string($id) && $field_meta['data'][$j]->name == 'codice' && $field_meta['data'][$j]->numeric)) {
+            $quote_id = '';
+         }
+         $query .= ($first ? '`' . $field_meta['data'][$j]->name . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . '`' . " = ");
+         $first = false;
+         $query .= $fieldValue;
+         $aes_value = gaz_aes_value_anagra($field_meta['data'][$j]->name, $fieldValue);
+         if (!empty($aes_value)) {
+            $query .= ($first ? '`' . $field_meta['data'][$j]->name . "_aes" . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . "_aes" . '`' . " = ");
+            if (!empty($fieldValue) && $fieldValue != "''" && $fieldValue != 'NULL') {
+               $query .= $aes_value;
             } else {
-                $elem = addslashes($newValue[$field_meta['data'][$j]->name]); // risolve il classico problema dei caratteri speciali per inserimenti in SQL
-                $elem = preg_replace("/\\\'/", "''", $elem); //cambia lo backslash+singlequote con 2 singlequote come fa phpmyadmin.
-                $fieldValue = "'" . $elem . "'";
+               $query .= $fieldValue;
             }
-            //per superare lo STRICT_MODE del server non metto gli apici ai numerici
-            if ((is_array($id) && $field_meta['data'][$j]->name == $id[0] && $field_meta['data'][$j]->numeric) || (is_string($id) && $field_meta['data'][$j]->name == 'codice' && $field_meta['data'][$j]->numeric)) {
-                $quote_id = '';
-            }
-			$query .= ($first ? '`' . $field_meta['data'][$j]->name . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . '`' . " = ");
-            $first = false;
-			$query .= $fieldValue;
-			$aes_value = gaz_aes_value_anagra($field_meta['data'][$j]->name, $fieldValue);
-			if (!empty($aes_value)) {
-				$query .= ($first ? '`' . $field_meta['data'][$j]->name . "_aes" . '`' . " = " : ", " . '`' . $field_meta['data'][$j]->name . "_aes" . '`' . " = ");
-				if (!empty($fieldValue) && $fieldValue!="''" && $fieldValue!='NULL') {
-					$query .= $aes_value;
-				} else {
-					$query .= $fieldValue;
-				}
-			}
-        } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
-            $query .= ", adminid = '" . $_SESSION['user_name'] . "'";
-        }
-    }
-    //   se in $id c'è un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
-    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
-    if (is_array($id)) {
-        if (isset($id[2])) {
-            $query .= ", $id[0] = $quote_id$id[2]$quote_id";
-        }
-        $query .= " WHERE $id[0] = $quote_id$id[1]$quote_id";
-    } else { //altrimenti uso "codice"
-        $query .= " WHERE codice = $quote_id$id$quote_id";
-    }
-    //msgDebug($query);
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die("Error gaz_dbi_update_anagra:<b> $query </b>" . mysqli_error($link));
+         }
+      } elseif ($field_meta['data'][$j]->name == 'adminid') { //l'adminid non lo si deve passare
+         $query .= ", adminid = '" . $_SESSION['user_name'] . "'";
+      }
+   }
+   //   se in $id c'è un array uso il nome del campo presente all'index [0] ed il valore dell'index [1],
+   //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
+   if (is_array($id)) {
+      if (isset($id[2])) {
+         $query .= ", $id[0] = $quote_id$id[2]$quote_id";
+      }
+      $query .= " WHERE $id[0] = $quote_id$id[1]$quote_id";
+   } else { //altrimenti uso "codice"
+      $query .= " WHERE codice = $quote_id$id$quote_id";
+   }
+   //msgDebug($query);
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die("Error gaz_dbi_update_anagra:<b> $query </b>" . mysqli_error($link));
 }
 
 function tableInsert($table, $columns, $newValue) {
-    global $link, $gTables;
-    $first = True;
-    $colName = "";
-    $colValue = "";
-	foreach ($columns AS $key => $field) {
-        $colName .= ($first ? $field : ',' . $field);
-        $colValue .= ($first ? " '" : ", '");
-        $first = False;
-        $colValue .= (isset($newValue[$field]) ? addslashes($newValue[$field]) : '') . "'";
-    }
-    $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ")";
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die("Error tableUpdate: " . mysqli_error($link));
-    return mysqli_insert_id($link);
+   global $link, $gTables;
+   $first = True;
+   $colName = "";
+   $colValue = "";
+   foreach ($columns AS $key => $field) {
+      $colName .= ($first ? $field : ',' . $field);
+      $colValue .= ($first ? " '" : ", '");
+      $first = False;
+      $colValue .= (isset($newValue[$field]) ? addslashes($newValue[$field]) : '') . "'";
+   }
+   $query = "INSERT INTO " . $gTables[$table] . " ( " . $colName . " ) VALUES ( " . $colValue . ")";
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die("Error tableUpdate: " . mysqli_error($link));
+   return mysqli_insert_id($link);
 }
 
 function tableUpdate($table, $columns, $codice, $newValue) {
-    global $link, $gTables;
-    $first = True;
-    $query = "UPDATE " . $gTables[$table] . ' SET';
-	foreach ($columns AS $key => $field) {
-        $query .= ($first ? " $field = '" : ", $field = '");
-        $first = False;
-        $query .= (isset($newValue[$field]) ? addslashes($newValue[$field]) : '') . "'";
-    }
-    //   se in $codice c'è un array uso il nome del campo presente all'index [0],
-    //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
-    if (is_array($codice)) {
-        if (isset($codice[2])) {
-            $query .= ", $codice[0] = '$codice[2]'";
-        }
-        $query .= " WHERE $codice[0] = '$codice[1]'";
-    } else { //altrimenti uso "codice"
-        $query .= " WHERE codice = '$codice'";
-    }
-    //msgDebug($query);
-    $result = mysqli_query($link, $query);
-    if (!$result)
-        die("Error tableUpdate: " . mysqli_error($link));
+   global $link, $gTables;
+   $first = True;
+   $query = "UPDATE " . $gTables[$table] . ' SET';
+   foreach ($columns AS $key => $field) {
+      $query .= ($first ? " $field = '" : ", $field = '");
+      $first = False;
+      $query .= (isset($newValue[$field]) ? addslashes($newValue[$field]) : '') . "'";
+   }
+   //   se in $codice c'è un array uso il nome del campo presente all'index [0],
+   //   eventualmente anche l'index [2] per il nuovo valore del codice che quindi verrà modificato
+   if (is_array($codice)) {
+      if (isset($codice[2])) {
+         $query .= ", $codice[0] = '$codice[2]'";
+      }
+      $query .= " WHERE $codice[0] = '$codice[1]'";
+   } else { //altrimenti uso "codice"
+      $query .= " WHERE codice = '$codice'";
+   }
+   //msgDebug($query);
+   $result = mysqli_query($link, $query);
+   if (!$result)
+      die("Error tableUpdate: " . mysqli_error($link));
 }
 
 function mergeTable($table1, $campi1, $table2, $campi2, $campomerge, $where) {
-    global $link;
-    $result = mysqli_query($link, "SELECT $campi1 FROM $table1 LEFT JOIN $table2 ON $table1.$campomerge = $table2.$campomerge WHERE $where");
-    if (!$result)
-        die(" Error mergeTable: " . mysqli_error($link));
-    return $result;
+   global $link;
+   $result = mysqli_query($link, "SELECT $campi1 FROM $table1 LEFT JOIN $table2 ON $table1.$campomerge = $table2.$campomerge WHERE $where");
+   if (!$result)
+      die(" Error mergeTable: " . mysqli_error($link));
+   return $result;
 }
 
 function rigmoiInsert($newValue) {
-    $table = 'rigmoi';
-    $columns = array('id_rig', 'id_tes', 'tipiva', 'reverse_charge_idtes', 'operation_type', 'codiva', 'periva', 'imponi', 'impost');
-    tableInsert($table, $columns, $newValue);
+   $table = 'rigmoi';
+   $columns = array('id_rig', 'id_tes', 'tipiva', 'reverse_charge_idtes', 'operation_type', 'codiva', 'periva', 'imponi', 'impost');
+   tableInsert($table, $columns, $newValue);
 }
 
 function rigmocInsert($newValue) {
-    $table = 'rigmoc';
-    $columns = array('id_rig', 'id_tes', 'darave', 'codcon', 'import');
-    $last_id = tableInsert($table, $columns, $newValue);
-    return $last_id;
+   $table = 'rigmoc';
+   $columns = array('id_rig', 'id_tes', 'darave', 'codcon', 'import');
+   $last_id = tableInsert($table, $columns, $newValue);
+   return $last_id;
 }
 
 function paymovInsert($newValue) {
-    $table = 'paymov';
-    $columns = array('id', 'id_tesdoc_ref', 'id_rigmoc_pay', 'id_rigmoc_doc', 'amount', 'expiry');
-    tableInsert($table, $columns, $newValue);
+   $table = 'paymov';
+   $columns = array('id', 'id_tesdoc_ref', 'id_rigmoc_pay', 'id_rigmoc_doc', 'amount', 'expiry');
+   tableInsert($table, $columns, $newValue);
 }
 
 function paymovUpdate($id, $newValue) {
-    $table = 'paymov';
-    $columns = array('id', 'id_tesdoc_ref', 'id_rigmoc_pay', 'id_rigmoc_doc', 'amount', 'expiry');
-    tableUpdate($table, $columns, $id, $newValue);
+   $table = 'paymov';
+   $columns = array('id', 'id_tesdoc_ref', 'id_rigmoc_pay', 'id_rigmoc_doc', 'amount', 'expiry');
+   tableUpdate($table, $columns, $id, $newValue);
 }
 
 function rigbroInsert($newValue) {
-    $table = 'rigbro';
-    $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'status');
-    tableInsert($table, $columns, $newValue);
+   $table = 'rigbro';
+   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'status');
+   tableInsert($table, $columns, $newValue);
 }
 
 function rigbroUpdate($codice, $newValue) {
-    $table = 'rigbro';
-    $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'status');
-    tableUpdate($table, $columns, $codice, $newValue);
+   $table = 'rigbro';
+   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'status');
+   tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function rigdocInsert($newValue) {
-    $table = 'rigdoc';
-    $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
-    tableInsert($table, $columns, $newValue);
+   $table = 'rigdoc';
+   $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
+   tableInsert($table, $columns, $newValue);
 }
 
 function rigdocUpdate($codice, $newValue) {
-    $table = 'rigdoc';
-    $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
-    tableUpdate($table, $columns, $codice, $newValue);
+   $table = 'rigdoc';
+   $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
+   tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesbroInsert($newValue) {
-    $table = 'tesbro';
-    $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
-        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
-        'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
-        'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
-    tableInsert($table, $columns, $newValue);
+   $table = 'tesbro';
+   $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
+       'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+       'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
+       'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableInsert($table, $columns, $newValue);
 }
 
 function tesbroUpdate($codice, $newValue) {
-    $table = 'tesbro';
-    $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
-        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
-        'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
-        'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
-    tableUpdate($table, $columns, $codice, $newValue);
+   $table = 'tesbro';
+   $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
+       'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+       'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
+       'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesdocInsert($newValue) {
-    $table = 'tesdoc';
-    $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
-        'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
-        'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
-        'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
-        /** inizio modifica FP 19/10/2015 */
-        'ragbol', 'data_ordine'
-            /** fine modifica FP */            );
-    $newValue['adminid'] = $_SESSION["user_name"];
-    tableInsert($table, $columns, $newValue);
+   $table = 'tesdoc';
+   $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
+       'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
+       'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
+       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
+       /** inizio modifica FP 19/10/2015 */
+       'ragbol', 'data_ordine'
+           /** fine modifica FP */           );
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableInsert($table, $columns, $newValue);
 }
 
 function tesdocUpdate($codice, $newValue) {
-    $table = 'tesdoc';
-    $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
-        'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
-        'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
-        'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
-        /** inizio modifica FP 19/10/2015 */
-        'ragbol', 'data_ordine'
-            /** fine modifica FP */
-    );
-    $newValue['adminid'] = $_SESSION["user_name"];
-    tableUpdate($table, $columns, $codice, $newValue);
+   $table = 'tesdoc';
+   $columns = array('seziva', 'tipdoc', 'ddt_type', 'id_doc_ritorno', 'template', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat', 'clfoco', 'pagame', 'banapp', 'vettor', 'listin',
+       'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar', 'round_stamp', 'cauven', 'caucon', 'caumag',
+       'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight', 'units', 'volume', 'initra', 'geneff',
+       'taxstamp', 'virtual_taxstamp', 'id_contract', 'id_con', 'status', 'adminid',
+       /** inizio modifica FP 19/10/2015 */
+       'ragbol', 'data_ordine'
+           /** fine modifica FP */
+   );
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesmovUpdate($codice, $newValue) {
-    $table = 'tesmov';
-    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
-    tableUpdate($table, $columns, $codice, $newValue);
+   $table = 'tesmov';
+   $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableUpdate($table, $columns, $codice, $newValue);
 }
 
 function tesmovInsert($newValue) {
-    $table = 'tesmov';
-    $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
-    $last_id = tableInsert($table, $columns, $newValue);
-    return $last_id;
+   $table = 'tesmov';
+   $columns = array('caucon', 'descri', 'datreg', 'seziva', 'id_doc', 'protoc', 'numdoc', 'datdoc', 'clfoco', 'regiva', 'operat', 'libgio', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   $last_id = tableInsert($table, $columns, $newValue);
+   return $last_id;
 }
 
 function movmagInsert($newValue) {
-    $table = 'movmag';
-    $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
-    tableInsert($table, $columns, $newValue);
+   $table = 'movmag';
+   $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableInsert($table, $columns, $newValue);
 }
 
 function movmagUpdate($codice, $newValue) {
-    $table = 'movmag';
-    $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
-    $newValue['adminid'] = $_SESSION["user_name"];
-    tableUpdate($table, $columns, $codice, $newValue);
+   $table = 'movmag';
+   $columns = array('caumag', 'operat', 'datreg', 'tipdoc', 'desdoc', 'datdoc', 'clfoco', 'scochi', 'id_rif', 'artico', 'id_lotmag', 'quanti', 'prezzo', 'scorig', 'status', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableUpdate($table, $columns, $codice, $newValue);
 }
 
 //===============================================================
 // Gestione Access Rights
 //===============================================================
 function updateAccessRights($adminid, $moduleid, $access, $company_id = 1) {
-    global $gTables, $link;
+   global $gTables, $link;
 
-    $result = mysqli_query($link, "SELECT * FROM " . $gTables['admin_module'] . " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id);
-    if (gaz_dbi_num_rows($result) < 1) {
-        $query = "INSERT INTO " . $gTables['admin_module'] .
-                " (adminid, company_id, moduleid, access) VALUES ('" . $adminid . "',$company_id,$moduleid,$access)";
-    } else {
-        $query = "UPDATE " . $gTables['admin_module'] .
-                " SET access=" . $access .
-                " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id;
-    }
-    $result = mysqli_query($link, $query) or die("Errore di updateAccessRights " . mysqli_error($link));
+   $result = mysqli_query($link, "SELECT * FROM " . $gTables['admin_module'] . " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id);
+   if (gaz_dbi_num_rows($result) < 1) {
+      $query = "INSERT INTO " . $gTables['admin_module'] .
+              " (adminid, company_id, moduleid, access) VALUES ('" . $adminid . "',$company_id,$moduleid,$access)";
+   } else {
+      $query = "UPDATE " . $gTables['admin_module'] .
+              " SET access=" . $access .
+              " WHERE adminid='" . $adminid . "' AND moduleid=" . $moduleid . ' AND company_id=' . $company_id;
+   }
+   $result = mysqli_query($link, $query) or die("Errore di updateAccessRights " . mysqli_error($link));
 }
 
 function getAccessRights($userid = '', $company_id = 1) {
-    global $gTables, $link;
-    $query_co = " AND am.company_id='" . $company_id . "'";
-    $ck_co = gaz_dbi_fields('admin_module');
-    if (!array_key_exists('company_id', $ck_co)) {
-        $query_co = '';
-    };
-    if ($userid == '') {
-        $query = 'SELECT  module.name,
+   global $gTables, $link;
+   $query_co = " AND am.company_id='" . $company_id . "'";
+   $ck_co = gaz_dbi_fields('admin_module');
+   if (!array_key_exists('company_id', $ck_co)) {
+      $query_co = '';
+   };
+   if ($userid == '') {
+      $query = 'SELECT  module.name,
 	  					module.link,
 						module.id AS m1_id,
 						module.access,
 						module.weight 
 				FROM  ' . $gTables['module'] . ' AS module 
 				ORDER BY weight';
-    } else {
-        /* LA: 17-02-2008  */
-        $query = 'SELECT am.adminid, 
+   } else {
+      /* LA: 17-02-2008  */
+      $query = 'SELECT am.adminid, 
 	  				   am.access, 
 					   m1.id AS m1_id, 
 					   m1.name,
@@ -983,37 +990,37 @@ function getAccessRights($userid = '', $company_id = 1) {
 						 m2.weight,
 						 m2_id,
 						 m3.weight';
-    }
-    $result = mysqli_query($link, $query) or die("Query failed getAccessRights " . mysqli_error($link));
-    return $result;
+   }
+   $result = mysqli_query($link, $query) or die("Query failed getAccessRights " . mysqli_error($link));
+   return $result;
 }
 
 function checkAccessRights($adminid, $module, $company_id = 0) {
-    global $gTables, $link;
-    $ck_co = gaz_dbi_fields('admin_module');
-    if ($company_id == 0 || (!array_key_exists('company_id', $ck_co))) {  // vengo da una vecchia versione (<4.0.12)
-        $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
-                ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
-                " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "'";
-    } else {   //nuove versione >= 4.0.12
-        $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
-                ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
-                " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.company_id = $company_id ";
-    }
-    $result = mysqli_query($link, $query) or die('Errore in query: ' . $query . ' Errore checkAccessRights ' . mysqli_error($link));
-    if (gaz_dbi_num_rows($result) < 1) {
-        return 0;
-    }
-    $row = gaz_dbi_fetch_array($result);
-    return $row['access'];
+   global $gTables, $link;
+   $ck_co = gaz_dbi_fields('admin_module');
+   if ($company_id == 0 || (!array_key_exists('company_id', $ck_co))) {  // vengo da una vecchia versione (<4.0.12)
+      $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
+              ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
+              " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "'";
+   } else {   //nuove versione >= 4.0.12
+      $query = 'SELECT am.access FROM ' . $gTables['admin_module'] . ' AS am' .
+              ' LEFT JOIN ' . $gTables['module'] . ' AS module ON module.id=am.moduleid' .
+              " WHERE am.adminid='" . $adminid . "' AND module.name='" . $module . "' AND am.company_id = $company_id ";
+   }
+   $result = mysqli_query($link, $query) or die('Errore in query: ' . $query . ' Errore checkAccessRights ' . mysqli_error($link));
+   if (gaz_dbi_num_rows($result) < 1) {
+      return 0;
+   }
+   $row = gaz_dbi_fetch_array($result);
+   return $row['access'];
 }
 
 function gaz_dbi_fetch_all($resource) {
-    $result = array();
-    while ($row = mysqli_fetch_assoc($resource)) {
-        $result[] = $row;
-    }
-    return $result;
+   $result = array();
+   while ($row = mysqli_fetch_assoc($resource)) {
+      $result[] = $row;
+   }
+   return $result;
 }
 
 ?>
