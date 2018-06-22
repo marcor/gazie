@@ -129,7 +129,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 			if ($form['rame_metallico']>0 && $form["unimis"]<>"l"){
 			$msg['err'][]= 'unimis2';}			
 		} 
-		
+		 Antonio Germani controllo che sia stata inserita una categoria merceologica
+	   if (empty($form["catmer"])) {
+            $msg['err'][] = 'catmer';
+        }
        /* Antonio Germani l'aliquota IVA non è obbligatoria perché non serve nel quaderno di campagna
 	   if (empty($form["aliiva"])) {
             $msg['err'][] = 'aliiva';

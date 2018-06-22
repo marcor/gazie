@@ -24,7 +24,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$msg = "";$print_magval="";$dose="";$dim_campo="";$rame_met_annuo="";
+$msg = "";$print_magval="";$dose="";$dim_campo="";$rame_met_annuo="";$scadaut="";
+$today=	strtotime(date("Y-m-d H:i:s",time()));
 $gForm = new magazzForm(); // Antonio Germani attivo funzione calcolo giacenza di magazzino
 
 if (!isset($_POST['ritorno'])) {
@@ -208,6 +209,16 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$msg .= "23+";
 			}
 			
+	//Antonio Germani controllo se il prodotto è presente nel database fitofarmaci ed eventualmente se è scaduta l'autorizzazione		
+		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'." FROM ".$gTables['fitofarmaci']. " WHERE PRODOTTO ='". $form['artico']."'";
+			$result = gaz_dbi_query($query);
+			while ($row = $result->fetch_assoc()) {
+				$scadaut=$row['SCADENZA_AUTORIZZAZIONE']; $scadaut=strtotime(str_replace('/', '-', $scadaut));
+				}	
+					if ($scadaut>0){
+						if ($scadaut < $today) {$msg .="27+";}
+					}	
+						
 //Antonio Germani prendo e metto la data di fine sospensione del campo di coltivazione selezionato in $fine_sosp 
 		$campo_coltivazione=$form['campo_coltivazione'];//campo di coltivazione inserito nel form
 		$query="SELECT ".'giorno_decadimento'.",".'ricarico'." FROM ".$gTables['campi']. " WHERE codice ='". $campo_coltivazione."'";
