@@ -258,7 +258,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 }
 
 // CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
-if (isset($_POST['dbministero'])){
+if (isset($_POST['codice'])){
 	$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['fitofarmaci']."'";
 	$result = gaz_dbi_query($query);
 		while ($row = $result->fetch_assoc()) {
@@ -270,7 +270,7 @@ if (isset($_POST['dbministero'])){
 }
 
 
-if (isset($_POST['dbministero']) && strlen($form['codice'])>3){
+if (isset($_POST['codice']) && strlen($form['codice'])>3){
 	 
 		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'." FROM ".$gTables['fitofarmaci']. " WHERE PRODOTTO ='". $form['codice']."'";
 		$result = gaz_dbi_query($query);
@@ -387,7 +387,15 @@ if ($modal_ok_insert === true) {
 	$stringa=substr($stringa,0,-2);
 	echo $stringa;
 	?>],
-		minLength:3		
+		minLength:3,
+	select: function(event, ui) {
+        //assign value back to the form element
+        if(ui.item){
+            $(event.target).val(ui.item.value);
+        }
+        //submit the form
+        $(event.target.form).submit();
+    }
 	});
 	});
   </script>
@@ -403,11 +411,12 @@ if ($modal_ok_insert === true) {
                             <label for="codice" class="col-sm-4 control-label"><?php echo $script_transl['codice']; ?></label>
                             <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['codice']; ?>" name="codice" maxlength="15" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete -->
                         </div>
+						<!-- Antonio Germani ho inserito il submit nello script autocompletamento
 						<div class="col-sm-4 control-label">
 						<button type="submit" class="btn btn-default btn-sm" name="dbministero" title="Conferma!"><i class="glyphicon glyphicon-ok"></i></button>
 						<span> dopo la scelta cliccare su conferma! </span>
-						
 						</div>
+						-->
                     </div>
                 </div><!-- chiude row  -->
                 <div class="row">
