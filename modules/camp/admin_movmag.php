@@ -53,6 +53,12 @@ function getItemPrice($item, $partner = 0) {
     return CalcolaImportoRigo(1, $price, $sconto, $admin_aziend['decimal_price']);
 }
 */
+// Antonio Germani questo serve per la nuova ricerca articolo
+if (isset($_POST['artico'])){
+$form['artico'] = $_POST['artico'];
+}
+
+
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
     if (!isset($_GET['id_mov'])) {
         header("Location: " . $_POST['ritorno']);
@@ -129,13 +135,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
    $form['scorig'] = 0;
     $form['status'] = substr($_POST['status'], 0, 10);
 // Antonio Germani tolto non serve $form['search_partner'] = $_POST['search_partner'];
-    $form['search_item'] = $_POST['search_item'];
+  //  $form['search_item'] = $_POST['search_item'];
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
     /** ENRICO FEDELE */
     /* Con button non funziona _x */
     //if (isset($_POST['inscau_x'])) {
     /** ENRICO FEDELE */
-    if (isset($_POST['inscau'])) {          
+    if (isset($_POST['caumag'])) {          
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['operat'] = $causa['operat'];
 		
@@ -167,11 +173,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     }
 	Fine non serve */
 	
-    if (isset($_POST['newitem'])) {
-        $result = gaz_dbi_get_row($gTables['artico'], "codice", $_POST['artico']);
-        $form['search_item'] = substr($result['codice'], 0, 4);
-        $form['artico'] = "";
-    }
+
     if (isset($_POST['Return'])) {
         header("Location: " . $_POST['ritorno']);
         exit;
@@ -264,11 +266,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 				if (($campo_coltivazione>0)&&($dim_campo>0)&&($rame_met_annuo+($rame_metallo* $form['quanti'])> (6 * $dim_campo))) {
 					$msg .="26+";echo "CONTROLLO rame metallo: <br> Rame metallo anno già usato: ",$rame_met_annuo," Rame metallo che si tenta di usare: ",($rame_metallo* $form['quanti']), " Limite annuo di legge per questo campo: ", (6 * $dim_campo);}	// errore superato il limite di rame metallo ad ettaro		
 			
-			
-
-
-
-
 						
 // Antonio Germani creo la data d I ATTUAZIONE DELL'OPERAZIONE selezionata che poi confronterò con quella di sospensione del campo 
 		$dt=substr("0".$form['giodoc'],-2)."-".substr("0".$form['mesdoc'],-2)."-".$form['anndoc']; $dt=strtotime($dt); 			
@@ -351,7 +348,7 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
             exit;
         }
     }
-} elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
+} elseif (!isset($_POST['Insert'])) {//se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     //registri per il form della testata
     $form['id_mov'] = 0;
@@ -381,6 +378,34 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
     $form['search_item'] = "";
     $form['id_rif'] = 0;
 }
+If (isset($_POST['cancel'])){$form['hidden_req'] = '';
+    //registri per il form della testata
+    $form['id_mov'] = 0;
+	$form['type_mov'] = 1;
+    $form['gioreg'] = date("d");
+    $form['mesreg'] = date("m");
+    $form['annreg'] = date("Y");
+    $form['caumag'] = "";
+    $form['operat'] = 0;
+    $form['campo_coltivazione'] = ""; //campo di coltivazione
+	$form['clfoco'] = "";
+    $form['clorfo'] = 0;
+	$form['adminid'] = "Utente connesso";
+    $form['tipdoc'] = "";
+    $form['desdoc'] = "";
+    $form['giodoc'] = date("d");
+    $form['mesdoc'] = date("m");
+    $form['anndoc'] = date("Y");
+    $form['scochi'] = "";
+	$form['avversita'] = "";
+    $form['artico'] = "";
+    $form['quanti'] = 0;
+    $form['prezzo'] = 0;
+    $form['scorig'] = 0;
+    $form['status'] = "";
+    $form['search_partner'] = "";
+    $form['search_item'] = "";
+    $form['id_rif'] = 0;}
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -421,6 +446,7 @@ echo "<input type=\"hidden\" name=\"id_mov\" value=\"" . $form['id_mov'] . "\">\
 echo "<input type=\"hidden\" name=\"id_rif\" value=\"" . $form['id_rif'] . "\">\n";
 echo "<input type=\"hidden\" name=\"tipdoc\" value=\"" . $form['tipdoc'] . "\">\n";
 echo "<input type=\"hidden\" name=\"status\" value=\"" . $form['status'] . "\">\n";
+
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
 
 echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
@@ -464,7 +490,7 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 }
 echo "\t </select></td>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
-echo "<select name=\"caumag\" class=\"FacetSelect\">\n";
+echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 echo "<option value=\"\">-------------</option>\n";
 $result = gaz_dbi_dyn_query("*", $gTables['caumag'], " 1 ", "codice desc, descri asc");
 while ($row = gaz_dbi_fetch_array($result)) {
@@ -474,16 +500,14 @@ while ($row = gaz_dbi_fetch_array($result)) {
     }
     echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
 }
-echo '  </select>&nbsp;<button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['submit'] . '!"><i class="glyphicon glyphicon-ok"></i></button>
-		</td>
-	   </tr>';
+echo '  </select>&nbsp;</td></tr>';
 
     $unimis = "unimis";
 
  /*antonio Germani campo coltivazione  */
  
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "</td><td class=\"FacetDataTD\">\n";
-echo "<select name=\"campo_coltivazione\" class=\"FacetSelect\">\n";
+echo "<select name=\"campo_coltivazione\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 echo "<option value=\"\">-------------</option>\n";
 $result = gaz_dbi_dyn_query("*", $gTables['campi']);
 while ($row = gaz_dbi_fetch_array($result)) {
@@ -498,7 +522,7 @@ echo "</select>&nbsp;";
 $item = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
 echo "Superficie: ",$item["ricarico"]," ha";
 
-echo '  <button type="submit" class="btn btn-default btn-sm" name="inscau" title="' . $script_transl['refresh'] . '!"><i class="glyphicon glyphicon-refresh"></i></button>  ';
+
 
 
  /* Antonio Germani qui si seleziona la data di attuazione */      	
@@ -535,51 +559,49 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td cl
 /* Antonio Germani -  avversità */
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['avversita'] . "\" maxlength=\"50\" size=\"35\" name=\"avversita\"></td></tr>";
 
-/* Antonio Germani - prova ricerca automatica
-$form['in_codart']="";$form['cosear']="";
-echo "<tr><td class=\"FacetColumnTD\">$script_transl[7]: ";
-$select_artico = new selectartico("in_codart");
-$select_artico->addSelected($form['in_codart']);
+/* Antonio Germani - prova ricerca automatica con autocompletamento */ 
+?>
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql artico	-->	
+  <script>
+	$(document).ready(function() {
+	$("input#autocomplete").autocomplete({
+		source: [<?php
+	$stringa="";
+	$query="SELECT * FROM .".$gTables['artico'];
+	$result = gaz_dbi_query($query);
+	while($row = $result->fetch_assoc()){
+		$stringa.="\"".$row['codice']."\", ";			
+	}
+	$stringa=substr($stringa,0,-2);
+	echo $stringa;
+	?>],
+		minLength:2,
+	select: function(event, ui) {
+        //assign value back to the form element
+        if(ui.item){
+            $(event.target).val(ui.item.value);
+        }
+        //submit the form
+        $(event.target.form).submit();
+    }
+	});
+	});
+  </script>
+ <!-- fine autocompletamento --> 
 
-$select_artico->output($form['cosear']);
-echo "</td> </tr>";
-*/ 
+
+ <?php
+/* fine prova ricerca automatica con autocompletamento */
+
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
 $print_unimis = "";
 $ric_mastro = substr($form['artico'], 0, 3);
-
-echo "\t<input type=\"hidden\" name=\"artico\" value=\"" . $form['artico'] . "\">\n";
- 
+?>
+                            <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['artico'] ?>" name="artico" maxlength="15" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete -->
+ <?php
 if ($form['artico'] == '') {
-    if (strlen($form['search_item']) >= 1) {
-        $result = gaz_dbi_dyn_query("*", $gTables['artico'], "codice like '" . $form['search_item'] . "%' ", "descri asc");
-        if (gaz_dbi_num_rows($result) > 0) {
-            echo "\t<select name=\"artico\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='new_price'; this.form.submit();\">\n";
-            echo "<option value=\"\"> -------- </option>";
-            while ($row = gaz_dbi_fetch_array($result)) {
-                $selected = "";
-                if ($row["codice"] == $form['artico']) {
-                    $selected = "selected";
-                }
-                echo "\t\t <option value=\"" . $row["codice"] . "\" $selected >" . $row["descri"] . "&nbsp;</option>\n";
-				
-            }
-            echo "\t </select>\n";
-        } else {
-            $messaggio = ucfirst($script_transl['notfound']) . " !";
-        }
-    } else {
-        $messaggio = ucfirst($script_transl['minins']) . " 1 " . $script_transl['charat'] . "!";
-    }
-    echo "\t<input type=\"text\" name=\"search_item\" accesskey=\"e\" value=\"" . $form['search_item'] . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
-    echo $messaggio;
-    // echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\"></td>\n";
-    /** ENRICO FEDELE */
-    /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-    echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button></td>';
-    /** ENRICO FEDELE */
 } else {
 	
 	
@@ -594,9 +616,11 @@ if ($form['artico'] == '') {
 			// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 			$print_magval=$print_magval+$qta['quanti'];}
 	 
-    echo "<input type=\"submit\" value=\"" . substr($item['descri'], 0, 30) . "\" name=\"newitem\" title=\"" . ucfirst($script_transl['update']) . "!\">\n ";if ($dose>0) {echo "dose: ",$dose," ",$print_unimis,"/ha";}
-    echo "\t<input type=\"hidden\" name=\"artico\" value=\"" . $form['artico'] . "\">\n";
-    echo "\t<input type=\"hidden\" name=\"search_item\" value=\"" . $form['search_item'] . "\">\n";
+    echo " ",substr($item['descri'], 0, 20)," ";
+	
+	if ($dose>0) {echo "dose: ",$dose," ",$print_unimis,"/ha";}
+    
+    
 }
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis". ' ',$script_transl[22],' '."$print_magval".' '."$print_unimis</td></tr>\n";
 /* Antonio Germani sospendo il prezzo e lo sconto che nel quaderno di campagna non servono
@@ -620,7 +644,7 @@ for ($counter = -1; $counter <= 1; $counter++) {
 /*ANtonio Germani - visualizzo l'operatore */
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[21]."</td><td class=\"FacetDataTD\">".$form["adminid"]."</td>\n"; 
 /* fine visualizzo l'operatore */
-echo "</select></td></tr><tr><td colspan=\"3\"><input type=\"reset\" name=\"Cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
+echo "</select></td></tr><tr><td colspan=\"3\"><input type=\"submit\" name=\"cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
 
 echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
 echo "</td><td align=\"right\">\n";
