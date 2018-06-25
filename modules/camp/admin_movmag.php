@@ -505,7 +505,6 @@ echo '  </select>&nbsp;</td></tr>';
     $unimis = "unimis";
 
  /*antonio Germani campo coltivazione  */
- 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"campo_coltivazione\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 echo "<option value=\"\">-------------</option>\n";
@@ -521,10 +520,6 @@ echo "</select>&nbsp;";
 // prendo la dimesione del campo
 $item = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
 echo "Superficie: ",$item["ricarico"]," ha";
-
-
-
-
  /* Antonio Germani qui si seleziona la data di attuazione */      	
 echo "</td><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"giodoc\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -558,8 +553,7 @@ echo "\t </select></td></tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td>";
 /* Antonio Germani -  avversità */
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['avversita'] . "\" maxlength=\"50\" size=\"35\" name=\"avversita\"></td></tr>";
-
-/* Antonio Germani - prova ricerca automatica con autocompletamento */ 
+ 
 ?>
 <!-- Antonio Germani inizio script autocompletamento dalla tabella mysql artico	-->	
   <script>
@@ -588,12 +582,7 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class
 	});
   </script>
  <!-- fine autocompletamento --> 
-
-
  <?php
-/* fine prova ricerca automatica con autocompletamento */
-
-
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
 $print_unimis = "";
