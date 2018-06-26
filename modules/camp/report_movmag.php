@@ -24,7 +24,7 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-$msg = "";
+$msg = "";$mostra_qdc="";
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 require("lang.".$admin_aziend['lang'].".php");
