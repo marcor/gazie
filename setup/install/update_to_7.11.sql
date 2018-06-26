@@ -15,6 +15,7 @@ ALTER TABLE `gaz_anagra` ADD COLUMN `pec_email_aes` TINYTEXT NOT NULL AFTER `pec
 ALTER TABLE `gaz_anagra` ADD `latitude_aes` TINYTEXT NOT NULL AFTER `latitude`;
 ALTER TABLE `gaz_anagra` ADD `longitude_aes` TINYTEXT NOT NULL AFTER `longitude`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=S', '', '', 49, '', 6  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_broacq.php'), 'prop_ordine.php', '', '', 18, '', 3  FROM `gaz_menu_script`;
 DELETE FROM `gaz_admin_module` WHERE  `moduleid`=14;
 CREATE TABLE IF NOT EXISTS `gaz_fitofarmaci` (
   `NUMERO_REGISTRAZIONE` int(6) NOT NULL,

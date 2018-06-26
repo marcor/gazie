@@ -51,7 +51,8 @@ $transl['acquis'] = array('name' => "Purchases",
         14 => array("Inserimento nuovo agente di fornitori", "Nuovo agente"),
         15 => array("Print customers list", "Customers list"),
         16 => array("Purchase depreciable asset", "Purchase depreciable asset"),
-        17 => array("Pagamento RiBa fornitori", "Paga RiBa a fornitori")
+        17 => array("Pagamento RiBa fornitori", "Paga RiBa a fornitori"),
+		18 => array("Automatic vendor order", "Automatic vendor order")
     )
 );
 ?>
