@@ -201,7 +201,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 			$colonna="0";
 	while($b_row = $res->fetch_assoc()) { 
 	if ($mv['campo_coltivazione']==$b_row["codice"]) { 
-	echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row["ricarico"]." &nbsp;</td>\n";
+	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($b_row["ricarico"],1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n";
 	 echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row["annota"]." &nbsp;</td>\n";
 	 $colonna="1";
 		} 

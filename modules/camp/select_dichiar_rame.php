@@ -205,7 +205,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 			$colonna="0";
 	while($b_row = $res->fetch_assoc()) { 
 	if ($mv['campo_coltivazione']==$b_row['codice']) { 
-	echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row['ricarico']." &nbsp;</td>\n"; $dim_campo=$b_row['ricarico'];
+	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($b_row['ricarico'],1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n"; $dim_campo=$b_row['ricarico'];
 	 echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row['annota']." &nbsp;</td>\n";
 	 $colonna="1";
 	 
@@ -222,7 +222,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
             echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
             echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
             echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['avversita']." </td>\n";
-			echo "<td class=\"FacetDataTD\" align=\"right\">"."Kg ".$mv['quanti']*$mv['rame_metallico']." </td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"right\">"."Kg ".gaz_format_quantity(($mv['quanti']*$mv['rame_metallico']),1,$admin_aziend['decimal_quantity'])." </td>\n";
             echo "</tr>\n";
             $ctr_mv = $mv['artico'];
   } }	

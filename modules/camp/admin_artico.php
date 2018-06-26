@@ -619,7 +619,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="esiste" class="col-sm-4 control-label"><?php echo $script_transl['esiste']; ?></label>
-                            <div class="col-sm-2"><?php echo $magval['q_g']; ?></div>
+                            <div class="col-sm-2"><?php echo gaz_format_quantity($magval['q_g'],1,$admin_aziend['decimal_quantity']); ?></div>
                         </div>
                     </div>
                 </div><!-- chiude row  -->

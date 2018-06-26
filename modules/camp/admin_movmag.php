@@ -156,9 +156,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
             $form['tipdoc'] = "";
             $form['desdoc'] = "";
-            $form['giodoc'] = "";
-            $form['mesdoc'] = "";
-            $form['anndoc'] = "";
+			$form['giodoc'] = date("d");
+			$form['mesdoc'] = date("m");
+			$form['anndoc'] = date("Y");
             $form['scochi'] = "";
             $form['id_rif'] = 0;
         }
@@ -183,7 +183,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         $form['hidden_req'] = '';
     } */
     if (!empty($_POST['Insert'])) {   // Se viene inviata la richiesta di conferma totale ...
-        $utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
+	    $utsreg = mktime(0, 0, 0, $form['mesreg'], $form['gioreg'], $form['annreg']);
         $utsdoc = mktime(0, 0, 0, $form['mesdoc'], $form['giodoc'], $form['anndoc']);
         if (!checkdate($form['mesreg'], $form['gioreg'], $form['annreg']))
             $msg .= "16+";
@@ -519,7 +519,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 echo "</select>&nbsp;";
 // prendo la dimesione del campo
 $item = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
-echo "Superficie: ",$item["ricarico"]," ha";
+echo "Superficie: ",gaz_format_quantity($item["ricarico"],1,$admin_aziend['decimal_quantity'])," ha";
  /* Antonio Germani qui si seleziona la data di attuazione */      	
 echo "</td><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"giodoc\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -607,11 +607,11 @@ if ($form['artico'] == '') {
 	 
     echo " ",substr($item['descri'], 0, 20)," ";
 	
-	if ($dose>0) {echo "dose: ",$dose," ",$print_unimis,"/ha";}
+	if ($dose>0) {echo "dose: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
     
     
 }
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis". ' ',$script_transl[22],' '."$print_magval".' '."$print_unimis</td></tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis". ' ',$script_transl[22],' '.gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']).' '."$print_unimis</td></tr>\n";
 /* Antonio Germani sospendo il prezzo e lo sconto che nel quaderno di campagna non servono
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";
