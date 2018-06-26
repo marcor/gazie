@@ -560,9 +560,9 @@ $strScript = array("admin_fornit.php" =>
     ),
 	"prop_ordine.php" =>
 	array('title' => 'Propone un ordine a fornitore calcolato sul venduto',
-	      'mesg' => array('',
-		                  'Inserire almeno 1 carattere!',
-						  '',
+	      'mesg' => array('La ricerca non ha dato risultati!',
+		                  'Inserire almeno 2 caratteri!',
+						  'Cambia fornitore',
         ),
 		'includi' => 'Includi tutti',
 		'fornitore' => 'Fornitore :',

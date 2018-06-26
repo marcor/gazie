@@ -380,6 +380,18 @@ $strScript = array("admin_fornit.php" =>
 		'transfer_fees_acc'=>'Conto spese bonifico',
 		'transfer_fees'=>'Addebito per bonifico'
     ),
+	"prop_ordine.php" =>
+	array('title' => 'Propone un ordine a fornitore calcolato sul venduto',
+	      'mesg' => array('La ricerca non ha dato risultati!',
+		                  'Inserire almeno 2 caratteri!',
+						  'Cambia fornitore',
+        ),
+		'includi' => 'Includi tutti',
+		'fornitore' => 'Fornitore :',
+		'giorni_app' => 'Giorni di approvvigionamento',
+		'calcola_giorni' => 'Calcola sulle vendite degli ultimi',
+		'giorni' => 'giorni',
+	),
     "bank_receipts_payment.php" =>
     array('title' => 'Registra disposizione di pagamenti',
         'err' => array(
