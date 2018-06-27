@@ -24,7 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$msg = "";$print_magval="";$dose="";$dim_campo="";$rame_met_annuo="";$scadaut="";
+$msg = "";$print_magval="";$dose="";$dim_campo="";$rame_met_annuo="";$scadaut="";$scorta="";
 $today=	strtotime(date("Y-m-d H:i:s",time()));
 $gForm = new magazzForm(); // Antonio Germani attivo funzione calcolo giacenza di magazzino
 
@@ -597,6 +597,7 @@ if ($form['artico'] == '') {
     $item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
     $print_unimis = $item[$unimis];
 	$dose=$item['dose_massima'];// prendo anche la dose
+	$scorta=$item['scorta'];// prendo la scorta minima
 	// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 	 $mv = $gForm->getStockValue(false, $item['codice']);
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
@@ -611,7 +612,15 @@ if ($form['artico'] == '') {
     
     
 }
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis". ' ',$script_transl[22],' '.gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']).' '."$print_unimis</td></tr>\n";
+
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis". ' ',$script_transl[22],' '.gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']).' '.$print_unimis."&nbsp;&nbsp;";
+if ($print_magval<$scorta) {
+	
+	echo "<a href=\"../../modules/acquis/prop_ordine.php\" type=\"button\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\">
+  <span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span> 
+</a>";
+}
+echo "</td></tr>\n";
 /* Antonio Germani sospendo il prezzo e lo sconto che nel quaderno di campagna non servono
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";
