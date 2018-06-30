@@ -118,10 +118,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['mesreg'] = intval($_POST['mesreg']);
     $form['annreg'] = intval($_POST['annreg']);
 	$form['clfoco'] = "";
-    $form['clorfo'] = ""; //cliente, fornitore o entrambi
+    $form['clorfo'] = ""; 
     $form['campo_coltivazione'] = intval($_POST['campo_coltivazione']); //campo di coltivazione
 	$form['adminid'] = "Utente connesso";
-//$form['clorfo'] = $_POST['clorfo']; //era cliente, fornitore -> adesso non serve per Q.d.c.
+//$form['clorfo'] = $_POST['clorfo']; //adesso non serve per Q.d.c.
     $form['tipdoc'] = intval($_POST['tipdoc']);
     $form['desdoc'] = substr($_POST['desdoc'], 0, 50);
     $form['giodoc'] = intval($_POST['giodoc']);
@@ -378,6 +378,40 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
     $form['search_item'] = "";
     $form['id_rif'] = 0;
 }
+
+if (isset($_POST['acquis'])){ //compilazione ordine a fornitore
+$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+    $scorta=$item['scorta'];// prendo la scorta minima
+	$fornitore=$item['clfoco'];//prendo codice clfoco per codice fornitore per ordine a fornitore
+		if (isset($fornitore)) {?>
+			<form action="../../modules/acquis/admin_broacq.php?tipdoc=AOR" method="post" name="docacq">  
+			<input type="hidden" name="Insert" value="insert">
+			<input type="hidden" value="AOR" name="tipdoc">
+			<input type="hidden" name="clfoco" value="<?php echo $fornitore;?>"> <!-- questo è il fornitore che devo prendere dalla tabella atico, colonna clfoco se è zero devo bloccare perché non è stato inserito il fornitore nell'articolo -->
+			<input type="hidden" name="search[clfoco]" value="<?php echo $fornitore;?>">
+			<input type="hidden" name="gioemi" value="<?php echo date('d');?>"> <!-- giorno -->
+			<input type="hidden" name="mesemi" value="<?php echo date('m');?>"> <!-- mese -->
+			<input type="hidden" name="annemi" value="<?php echo date('Y');?>"><!-- anno -->
+			<input type="hidden" value="INSERT" name="in_status">
+			<input type="hidden" name="in_codart" value="<?php echo $form['artico'];?>">
+			<input type="hidden" name="cosear" value="<?php echo $form['artico'];?>">
+			<input type="hidden" value="<?php echo $scorta;?>"  name="in_quanti"> 
+			<input type="hidden" name="in_codric" value="330000004">
+			<input type="hidden" value="<?php echo $form['artico'];?>" name="codart">
+				<script type="text/javascript" >
+					document.forms["docacq"].submit(); 
+				</script>
+			</form>
+<?php
+	} else {?>
+		<div class="alert alert-warning alert-dismissible">
+			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+			<strong>Warning!</strong> Non è possibile riordinare; nel prodotto non è inserito il fornitore!
+		</div>
+<?php		
+		}
+}
+
 If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     //registri per il form della testata
     $form['id_mov'] = 0;
@@ -405,7 +439,9 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     $form['status'] = "";
     $form['search_partner'] = "";
     $form['search_item'] = "";
-    $form['id_rif'] = 0;}
+    $form['id_rif'] = 0;
+	$fornitore="";
+	}
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -598,6 +634,10 @@ if ($form['artico'] == '') {
     $print_unimis = $item[$unimis];
 	$dose=$item['dose_massima'];// prendo anche la dose
 	$scorta=$item['scorta'];// prendo la scorta minima
+	$descri=$item['descri'];//prendo descrizione articolo
+	$fornitore=$item['clfoco'];//prendo codice clfoco per codice fornitore per eventuale ordine a fornitore
+	$preacq=$item['preacq'];//prendo prezzo di acquisto per eventuale ordine a fornitore
+	$aliiva=$item['aliiva'];//prendo aliquota IVA per eventuale ordine a fornitore
 	// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 	 $mv = $gForm->getStockValue(false, $item['codice']);
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
@@ -614,11 +654,8 @@ if ($form['artico'] == '') {
 }
 
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis". ' ',$script_transl[22],' '.gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']).' '.$print_unimis."&nbsp;&nbsp;";
-if ($print_magval<$scorta) {
-	
-	echo "<a href=\"../../modules/acquis/prop_ordine.php\" type=\"button\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\">
-  <span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span> 
-</a>";
+	if ($print_magval<$scorta) {
+		echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 }
 echo "</td></tr>\n";
 /* Antonio Germani sospendo il prezzo e lo sconto che nel quaderno di campagna non servono
