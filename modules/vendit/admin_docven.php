@@ -1913,6 +1913,12 @@ foreach ($form['rows'] as $k => $v) {
                 //$scorta_col = 'FacetDataTDsmall';
                 $btn_class = 'btn-success';
             }
+            if ($imprig < 0.00001) {
+                $imprig_class = 'danger';
+            } else {
+                //$scorta_col = 'FacetDataTDsmall';
+                $imprig_class = 'default';
+            }
             /* Peso */
             $peso = 0;
             if ($v['pesosp'] <> 0) {
@@ -1975,8 +1981,8 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td><input type="text" name="rows[' . $k . '][sconto]" value="' . $v['sconto'] . '" maxlength="4" size="1" id="righi_' . $k . '_sconto" onchange="document.docven.last_focus.value=this.id; this.form.submit();" /></td>
 					<td><input type="text" name="rows[' . $k . '][provvigione]" value="' . $v['provvigione'] . '" maxlength="6" size="1" /></td>
-					<td class="text-right">
-						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
+					<td class="text-right '.$imprig_class.'">
+						<span class="gazie-tooltip text-right text-'.$imprig_class.'" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">
 							' . gaz_format_number($imprig) . '
 						</span>
 					</td>
