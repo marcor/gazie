@@ -1,5 +1,4 @@
 <?php
-
 /*
   --------------------------------------------------------------------------
   GAzie - Gestione Azienda
@@ -23,11 +22,19 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
-$transl['orderman'] = array('name' => "Produzioni",
-    'title' => "Gestione delle produzioni",
-    'm2' => array(1 => array("Lista delle produzioni", "Lista delle produzioni")
-    ),
-    'm3' => array(1 => array("Nuova produzione", "Nuova produzione")
-    )
-);
+require("../../library/include/datlib.inc.php");
+$admin_aziend = checkAdmin();
+
+if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
+    $toDo = 'update';
+} else {
+    $toDo = 'insert';
+}
+
+if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il primo accesso
+} elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
+}
+require("../../library/include/header.php");
+$script_transl = HeadMain();
+require("../../library/include/footer.php");
 ?>
