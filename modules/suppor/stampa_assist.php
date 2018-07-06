@@ -61,7 +61,7 @@ $html="";
 if ( $row['stato']=='aperto') {
 $pdf->AddPage('P',$config->getValue('page_format'));
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
-$html .= "<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">";
+$html .= "<span style=\"font-family: arial,helvetica,sans-serif; font-size:12px;\">";
 $html .= "Nome Tecnico : <b>".$row["tecnico"]."</b><br/>";
 $html .= "Cliente : <b>". $row["codice"] ." - ". $row["ragso1"]."</b><br>";
 if ( $row["telefo"] ) $html .= "Telefono : <b>".$row["telefo"]."</b><br>";
@@ -71,7 +71,7 @@ $html .= "</span>";
 
 $html .= "
 	<p>
-					<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">Il cliente consegna al centro assistenza il seguente materiale :<br />
+					<span style=\"font-family: arial,helvetica,sans-serif; font-size:12px;\">Il cliente consegna al centro assistenza il seguente materiale :<br />
 					<strong>".$row["oggetto"]."</strong><br />
 					<br />
 					dichiarando i seguenti difetti, malfunzionamento o lavori da effettuare :<br />
@@ -84,17 +84,17 @@ if ( $row["info_agg"] ) {
 $html .= "</span>
     </p>
 				<p style=\"text-align: justify;\">
-					<span style=\"font-size:28px;\"><span style=\"font-family: arial,helvetica,sans-serif;\"><strong>Condizioni e termini per la presa in carico e ritiro del prodotto :</strong></span></span><br />
+					<span style=\"font-size:12px;\"><span style=\"font-family: arial,helvetica,sans-serif;\"><strong>Condizioni e termini per la presa in carico e ritiro del prodotto :</strong></span></span><br />
 					&nbsp;</p>
 				<ol>
 					<li style=\"text-align: justify;\">
-						<span style=\"font-size:28px;\"><span style=\"font-family: arial,helvetica,sans-serif;\">L&#39;intervento se in garanzia, copre esclusivamente i difetti di conformit&agrave; del prodotto acquistato presso il laboratorio, ai sensi della legge. Non sono coperti da garanziai prodotti che presentino chiari segni di manomissione o guasti causati da un&#39;uso improprio del prodotto o da agenti esterni non riconducibili a vizi e/o difetti di fabbricazione. In tal caso il laboratorio non sar&agrave;, pertanto, tenuto ad effettuare gratuitamente le riparazioni necessarie, ma potr&agrave; effettuarle, su richiesta del cliente a pagamento e secondo il preventivo che verr&agrave; fornito.</span></span><br />
+						<span style=\"font-size:12px;\"><span style=\"font-family: arial,helvetica,sans-serif;\">L&#39;intervento se in garanzia, copre esclusivamente i difetti di conformit&agrave; del prodotto acquistato presso il laboratorio, ai sensi della legge. Non sono coperti da garanziai prodotti che presentino chiari segni di manomissione o guasti causati da un&#39;uso improprio del prodotto o da agenti esterni non riconducibili a vizi e/o difetti di fabbricazione. In tal caso il laboratorio non sar&agrave;, pertanto, tenuto ad effettuare gratuitamente le riparazioni necessarie, ma potr&agrave; effettuarle, su richiesta del cliente a pagamento e secondo il preventivo che verr&agrave; fornito.</span></span><br />
 						&nbsp;</li>
 					<li style=\"text-align: justify;\">
-						<span style=\"font-size:28px;\"><span style=\"font-family: arial,helvetica,sans-serif;\">Il cliente dichiara di essere a conoscenza che l&#39;intervento per la riparazione pu&ograve; comportare l&#39;eventuale perdita totale o parziale di programmi e dati in qualunque modo contenuti o registrati nel prodotto consegnato per la riparazione. Il laboratorio non si assume responsabili&agrave; alcuna riguardo a tale perdita, pertanto &egrave; esclusiva cura del cliente assicurarsi di aver effettuato le copie di sicurezza dei dati. A tale proposito si consiglia di richiedere al laboratorio, che provveder&agrave; a titolo oneroso, per l&#39;effettuazione dei backup di tutti i dati. In ogni caso il cliente &egrave; unico ed esclusivo responsabile di dati, informazioni e programmi contenuti o registrati in qualunque modo nel prodotto consegnato al laboratorio con particolare riferimento alla liceit&ugrave; e legittima titolarit&agrave; degli stessi.</span></span><br />
+						<span style=\"font-size:12px;\"><span style=\"font-family: arial,helvetica,sans-serif;\">Il cliente dichiara di essere a conoscenza che l&#39;intervento per la riparazione pu&ograve; comportare l&#39;eventuale perdita totale o parziale di programmi e dati in qualunque modo contenuti o registrati nel prodotto consegnato per la riparazione. Il laboratorio non si assume responsabili&agrave; alcuna riguardo a tale perdita, pertanto &egrave; esclusiva cura del cliente assicurarsi di aver effettuato le copie di sicurezza dei dati. A tale proposito si consiglia di richiedere al laboratorio, che provveder&agrave; a titolo oneroso, per l&#39;effettuazione dei backup di tutti i dati. In ogni caso il cliente &egrave; unico ed esclusivo responsabile di dati, informazioni e programmi contenuti o registrati in qualunque modo nel prodotto consegnato al laboratorio con particolare riferimento alla liceit&ugrave; e legittima titolarit&agrave; degli stessi.</span></span><br />
 						&nbsp;</li>
 					<li style=\"text-align: justify;\">
-						<span style=\"font-size:28px;\"><span style=\"font-family: arial,helvetica,sans-serif;\">Salvo diversi accordi scritti, il cliente &egrave; tenuto a ritirare il prodotto recandosi presso il punto vendita secondo ti tempi indicati dal laboratorio medesimo. Nel caso in cui il cliente non ritiri il prodotto nel termine di 30gg. dalla data di riparazione, il cliente si impegna sin d&#39;ora a corrispondere al laboratorio una somma pari a 5,00 &euro; a titolo di deposito per ogni giorno di permanenza del prodotto presso il laboratorio.</span></span><br />
+						<span style=\"font-size:12px;\"><span style=\"font-family: arial,helvetica,sans-serif;\">Salvo diversi accordi scritti, il cliente &egrave; tenuto a ritirare il prodotto recandosi presso il punto vendita secondo ti tempi indicati dal laboratorio medesimo. Nel caso in cui il cliente non ritiri il prodotto nel termine di 30gg. dalla data di riparazione, il cliente si impegna sin d&#39;ora a corrispondere al laboratorio una somma pari a 5,00 &euro; a titolo di deposito per ogni giorno di permanenza del prodotto presso il laboratorio.</span></span><br />
 					</li>
 				</ol><table><tr><td align=\"center\">Firma cliente</td><td align=\"center\">Firma tecnico</td></tr></table>
 			";
@@ -102,7 +102,7 @@ $html .= "</span>
     $intervento = str_pad($row["id"], 6, '0', STR_PAD_LEFT);
     $pdf->AddPage('P',$config->getValue('page_format'));
     $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
-    $html .= "<span style=\"font-family: arial,helvetica,sans-serif; font-size:28px;\">";
+    $html .= "<span style=\"font-family: arial,helvetica,sans-serif; font-size:12px;\">";
     $html .= <<<END
 <body style="width: 790px;">
 <div style="text-align: center;"> Resoconto di intervento / codice <span
