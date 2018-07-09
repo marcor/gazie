@@ -107,6 +107,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['banapp'] = $_POST['banapp'];
     $form['listin'] = $_POST['listin'];
+    $form['giocon'] = $_POST['giocon'];
+    $form['mescon'] = $_POST['mescon'];
+    $form['anncon'] = $_POST['anncon'];
     $form['spediz'] = $_POST['spediz'];
     $form['portos'] = $_POST['portos'];
     $form['destin'] = '';
@@ -192,7 +195,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
         $sezione = $form['seziva'];
-        $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
+        $datemi = $form['annemi'] . "-" . str_pad($form['mesemi'], 2, "0", STR_PAD_LEFT). "-" .str_pad($form['gioemi'], 2, "0", STR_PAD_LEFT);
+        $initra = $form['anncon'] . "-" . str_pad($form['mescon'], 2, "0", STR_PAD_LEFT). "-" .str_pad($form['giocon'], 2, "0", STR_PAD_LEFT);
         if (!isset($_POST['righi'])) {
             $msg .= "39+";
         }
@@ -216,6 +220,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg .= "44+";
             }
         }
+		// se la data di consegna richiesta non è coerente, la azzera
+		if (($datemi>$initra) || !checkdate($form['mescon'], $form['giocon'], $form['anncon'])) {
+			$initra = 0;
+		}
         // --- fine controllo coerenza date-numeri
         if (!checkdate($form['mesemi'], $form['gioemi'], $form['annemi']))
             $msg .= "46+";
@@ -268,6 +276,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['id_contract'] = $old_head['id_contract'];
                 $form['id_con'] = $old_head['id_con'];
                 $form['datemi'] = $datemi;
+                $form['initra'] = $initra;
                 $codice = array('id_tes', $form['id_tes']);
                 tesbroUpdate($codice, $form);
                 header("Location: " . $form['ritorno']);
@@ -293,12 +302,17 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 } else {
                     $form['numdoc'] = 1;
                 }
+				// Se la data consegna richiesta è minore della data dell'ordine, la azzera
+				if ($datemi>$initra) {
+					$initra = 0;
+				}
                 //inserisco la testata
                 $form['protoc'] = 0;
                 $form['numfat'] = 0;
                 $form['datfat'] = 0;
                 $form['status'] = 'GENERATO';
                 $form['datemi'] = $datemi;
+                $form['initra'] = $initra;
                 tesbroInsert($form);
                 //recupero l'id assegnato dall'inserimento
                 $ultimo_id = gaz_dbi_last_id();
@@ -562,6 +576,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
     $form['banapp'] = $tesbro['banapp'];
     $form['listin'] = $tesbro['listin'];
+	$form['giocon'] = substr($tesbro['initra'], 8, 2);
+	$form['mescon'] = substr($tesbro['initra'], 5, 2);
+	$form['anncon'] = substr($tesbro['initra'], 0, 4);
+	if ($form['anncon'] == 0) {
+		$form['anncon']=$form['annemi'];
+	}	
     $form['spediz'] = $tesbro['spediz'];
     $form['portos'] = $tesbro['portos'];
     $form['destin'] = $tesbro['destin'];
@@ -637,6 +657,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['change_pag'] = "";
     $form['banapp'] = "";
     $form['listin'] = "";
+    $form['giocon'] = date("d");
+    $form['mescon'] = date("m");
+    $form['anncon'] = date("Y");
     $form['destin'] = "";
     $form['id_des'] = "";
     $form['spediz'] = "";
@@ -776,6 +799,38 @@ $select_banapp = new selectbanapp("banapp");
 $select_banapp->addSelected($form["banapp"]);
 $select_banapp->output();
 echo "</td></tr>\n";
+// Modifica di Giorgio Zanella per gestire la data di consegna richiesta su ordine fornitore
+echo "<tr><td colspan=\"3\" class=\"FacetFieldCaptionTD\">Data di consegna richiesta</td>\n";
+echo "<td colspan=\"3\" class=\"FacetDataTD\">\n";
+// select del giorno
+echo "\t <select name=\"giocon\" class=\"FacetSelect\" >\n";
+for ($counter = 1; $counter <= 31; $counter++) {
+    $selected = "";
+    if ($counter == $form['giocon'])
+        $selected = "selected";
+    echo "\t\t <option value=\"$counter\" $selected >$counter</option>\n";
+}
+echo "\t </select>\n";
+// select del mese
+echo "\t <select name=\"mescon\" class=\"FacetSelect\" >\n";
+for ($counter = 1; $counter <= 12; $counter++) {
+    $selected = "";
+    if ($counter == $form['mescon'])
+        $selected = "selected";
+    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+    echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+}
+echo "\t </select>\n";
+// select del anno
+echo "\t <select name=\"anncon\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+for ($counter = $form['anncon'] - 10; $counter <= $form['anncon'] + 10; $counter++) {
+    $selected = "";
+    if ($counter == $form['anncon'])
+        $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+echo "</td></tr>\n";
+// fine modifiche
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";

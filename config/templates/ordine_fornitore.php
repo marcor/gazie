@@ -36,6 +36,15 @@ class OrdineFornitore extends Template
         $this->sconto = $this->tesdoc['sconto'];
         $this->trasporto = $this->tesdoc['traspo'];
         $this->tipdoc = 'Ordine a fornitore n.'.$this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+		if ($this->tesdoc['initra']>0) {
+			$this->giorno = substr($this->tesdoc['initra'],8,2);
+			$this->mese = substr($this->tesdoc['initra'],5,2);
+			$this->anno = substr($this->tesdoc['initra'],0,4);
+			$this->nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['initra'],5,2),1,0)));
+			$this->consegna = 'Consegna richiesta per il giorno '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+		} else {
+			$this->consegna = '';
+		}
     }
     function newPage() {
         $this->AddPage();
@@ -135,7 +144,11 @@ class OrdineFornitore extends Template
     {
         $y = $this->GetY();
         $this->Rect(10,$y,186,208-$y); //questa marca le linee dx e sx del documento
-        $this->SetFont('helvetica','',12);
+		if ($this->consegna <> '') {
+			$this->SetFont('helvetica','',12);
+			$this->Cell(186,8,$this->consegna,'BT',1,'C',1);
+		}
+        $this->SetFont('helvetica','I',11);
         $this->Cell(186,8,'Ogni modifica ai dati soprariportati dev\'essere preventivamente autorizzata.','T',1);
         //stampo il castelletto
         $this->SetFont('helvetica', '', 9);
