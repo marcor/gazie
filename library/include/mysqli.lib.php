@@ -836,13 +836,13 @@ function rigbroUpdate($codice, $newValue) {
 
 function rigdocInsert($newValue) {
    $table = 'rigdoc';
-   $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
+   $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'quanti2', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
    tableInsert($table, $columns, $newValue);
 }
 
 function rigdocUpdate($codice, $newValue) {
    $table = 'rigdoc';
-   $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
+   $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'quanti2', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
    tableUpdate($table, $columns, $codice, $newValue);
 }
 

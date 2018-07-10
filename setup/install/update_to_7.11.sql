@@ -165,5 +165,5 @@ INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Perme
 ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Ref. alla tabella gaz_001orderman (produzioni-contabilità industriale) ' DEFAULT '0' AFTER `id_mag`;
 ALTER TABLE `gaz_XXXrigmoc`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Ref. alla tabella gaz_001orderman (produzioni-contabilità industriale) ' DEFAULT '0' AFTER `import`;
 ALTER TABLE `gaz_001movmag`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Ref. alla tabella gaz_001orderman (produzioni-contabilità industriale) ' AFTER `id_lotmag`;
-
+ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `quanti2` DECIMAL(12,3) NULL DEFAULT NULL AFTER `quanti`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

@@ -134,7 +134,11 @@ function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=9999
            while ($r = gaz_dbi_fetch_array($rs_rig)) {
               if ($r['tiprig'] <= 1) {//ma solo se del tipo normale o forfait
                  //calcolo importo rigo
-                 $importo = CalcolaImportoRigo($r['quanti'],$r['prelis'],array($r['sconto'],$tes['sconto']));
+                 if ( !$enable_quanti2 ) {
+                    $importo = CalcolaImportoRigo($r['quanti'],$r['prelis'],array($r['sconto'],$tes['sconto']));
+                 } else {
+                    $importo = CalcolaImportoRigo($r['quanti2'],$r['prelis'],array($r['sconto'],$tes['sconto']));
+                 }
                  if ($r['tiprig'] == 1) {
                     $importo = CalcolaImportoRigo(1,$r['prelis'], $tes['sconto']);
                  }

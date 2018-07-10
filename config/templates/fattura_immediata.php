@@ -58,8 +58,9 @@ class FatturaImmediata extends Template_con_scheda
         $this->Cell(80,6,'Descrizione',1,0,'L',1);
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
         $this->Cell(16,6,'Quantità',1,0,'R',1);
-        $this->Cell(18,6,'Prezzo',1,0,'R',1);
-        $this->Cell(8, 6,'%Sc.',1,0,'C',1);
+        $this->Cell(18,6,'Kg.',1,0,'R',1);
+        $this->Cell(20,6,'Prezzo',1,0,'R',1);
+        $this->Cell(6, 6,'%Sc.',1,0,'C',1);
         $this->Cell(20,6,'Importo',1,0,'R',1);
         $this->Cell(12,6,'%IVA',1,1,'R',1);
     }
@@ -90,11 +91,12 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',','.'),1,0,'R');
+                    $this->Cell(18, 6, gaz_format_quantity($rigo['quanti2'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(20, 6, number_format($rigo['prelis'],$this->decimal_price,',','.'),1,0,'R');
                     if ($rigo['sconto']>0) {
-                       $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
+                       $this->Cell(6, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
                     } else {
-                       $this->Cell(8, 6, '',1,0,'C');
+                       $this->Cell(6, 6, '',1,0,'C');
                     }
                     $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
@@ -216,7 +218,7 @@ class FatturaImmediata extends Template_con_scheda
         $impbol = $this->docVars->impbol;
         $totriport = $this->docVars->totriport;
         $ritenuta = $this->docVars->tot_ritenute;
-	$taxstamp=$this->docVars->taxstamp;
+	    $taxstamp=$this->docVars->taxstamp;
         if ($this->virtual_taxstamp == 0 || $this->virtual_taxstamp == 3) { // azzero i bolli in caso di non addebito al cliente
             $taxstamp=0;
         }

@@ -66,7 +66,9 @@ function submenu($array, $index, $sub="") {
 	if (count($mnu)>6) {            
             if ( $admin_aziend["Abilit"]>=$mnu["m2_ackey"] ) {
             echo "<li>";
-            if ( $mnu["name"]!="Documentazione") {
+            if ( $mnu["name"]=="Azienda") {
+                $sub = '<a href="'. $mnu["link"] .'">Modifica '.$submnu.stripslashes($mnu["name"]);
+            } else if ( $mnu["name"]!="Documentazione") {
                 $sub = '<a href="'. $mnu["link"] .'">Lista '.$submnu.stripslashes($mnu["name"]);
             } else {
                 $sub = '<a href="'. $mnu["link"] .'">'.$submnu.stripslashes($mnu["name"]);
