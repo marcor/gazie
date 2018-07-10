@@ -67,14 +67,14 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
     /** ENRICO FEDELE */
     switch ($opt) {
         case 'product':
-            $fields = array("codice", "descri", "barcode"); //	Sono i campi sui quali effettuare la ricerca
+            $fields = array("codice", "descri", "barcode","codice_fornitore"); //	Sono i campi sui quali effettuare la ricerca
             foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
             }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode) AS label, codice AS value", $gTables['artico'], $like, "catmer, codice");
+            $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode,' - ',codice_fornitore) AS label, codice AS value, movimentabile", $gTables['artico'], $like, "catmer, codice");
             break;
         case 'municipalities':
             $fields = array("name"); //	Sono i campi sui quali effettuare la ricerca
@@ -84,7 +84,7 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
             }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id, CONCAT(id,' - ',name) AS label, id AS value", $gTables['municipalities'], $like, "name");
+            $result = gaz_dbi_dyn_query("id, CONCAT(id,' - ',name) AS label, id AS value, 'S' AS movimentabile ", $gTables['municipalities'], $like, "name");
             break;
         case 'location':
             foreach ($parts as $id => $part) {
@@ -95,7 +95,7 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
 							" . $gTables['municipalities'] . ".postal_code AS id,
 							" . $gTables['provinces'] . ".abbreviation AS prospe, 
 							" . $gTables['country'] . ".name AS nation, 
-							" . $gTables['country'] . ".iso AS country, 
+							" . $gTables['country'] . ".iso AS country, 'S' AS movimentabile,
 							CONCAT(" . $gTables['municipalities'] . ".postal_code, ' ', " . $gTables['municipalities'] . ".name, ' (', " . $gTables['provinces'] . ".abbreviation, ') ', " . $gTables['regions'] . ".name, ' ', " . $gTables['country'] . ".name) AS label ", $gTables['municipalities'] . " 
 							LEFT JOIN " . $gTables['provinces'] . " ON 
 							" . $gTables['municipalities'] . ".id_province = " . $gTables['provinces'] . ".id
@@ -112,17 +112,37 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
             }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("id, CONCAT(ragso1,' ',ragso2) AS label, ragso1 AS value", $gTables['anagra'], $like, 'ragso1');
+            $result = gaz_dbi_dyn_query("id, CONCAT(ragso1,' ',ragso2) AS label, ragso1 AS value, 'S' AS movimentabile ", $gTables['anagra'], $like, 'ragso1');
     }
-    while ($row = gaz_dbi_fetch_assoc($result)) {
+    while ($row = gaz_dbi_fetch_assoc($result)) { 
         $return_arr[] = $row;
     }
+	$return_arr = apply_evidenze($return_arr);
     if ($term != '%%') { //	E' indispensabile, altrimenti si possono generare warning che non fanno funzionare l'autocompletamento
         $return_arr = apply_highlight($return_arr, str_replace("%", '', $parts));
     }
     echo json_encode($return_arr);
 } else {
     return;
+}
+
+//** Santarella Benedetto*/
+/**
+ * Funzione per evidenziare gli articoli segnati in esaurimento
+ * @param string $evidenza: array su cui mettere in evidenza gli articoli esauriti o non movimentabili
+ *
+ */
+ 
+function apply_evidenze($evidenza) 
+{
+	$rows = count($evidenza);
+
+    for ($row = 0; $row < $rows; $row++) {
+					if ($evidenza[$row]["movimentabile"] == 'E') $evidenza[$row]["label"] = '<mark style="background-color:red">' . $evidenza[$row]["label"] . '</mark>';
+				//	if ($evidenza[$row]["movimentabile"] == 'N')  - da completare - bisogna disabilitare gli articoli non movimentabili
+	}
+
+	return $evidenza;
 }
 
 /** ENRICO FEDELE */
@@ -233,6 +253,7 @@ function apply_highlight($a_json, $parts) {
                 $label_highlight .= $no_highlight;
             }
             $a_json[$row]["label"] = $label_highlight;
+			
         }
     }
     return $a_json;
