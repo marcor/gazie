@@ -162,6 +162,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_prelis'] = $_POST['in_prelis'];
     $form['in_sconto'] = $_POST['in_sconto'];
     $form['in_quanti'] = gaz_format_quantity($_POST['in_quanti'], 0, $admin_aziend['decimal_quantity']);
+    $form['in_quanti2'] = gaz_format_quantity($_POST['in_quanti2'], 0, $admin_aziend['decimal_quantity']);
     $form['in_codvat'] = $_POST['in_codvat'];
     $form['in_codric'] = $_POST['in_codric'];
     $form['in_provvigione'] = $_POST['in_provvigione'];
@@ -189,6 +190,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['prelis'] = number_format(floatval(preg_replace("/\,/", '.', $v['prelis'])), $admin_aziend['decimal_price'], '.', '');
             $form['rows'][$next_row]['sconto'] = floatval(preg_replace("/\,/", '.', $v['sconto']));
             $form['rows'][$next_row]['quanti'] = gaz_format_quantity($v['quanti'], 0, $admin_aziend['decimal_quantity']);
+            $form['rows'][$next_row]['quanti2'] = gaz_format_quantity($v['quanti2'], 0, $admin_aziend['decimal_quantity']);
             $form['rows'][$next_row]['codvat'] = intval($v['codvat']);
             $form['rows'][$next_row]['codric'] = intval($v['codric']);
             if (isset($v['provvigione'])) {
@@ -221,6 +223,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_prelis'] = $form['rows'][$k_row]['prelis'];
                     $form['in_sconto'] = $form['rows'][$k_row]['sconto'];
                     $form['in_quanti'] = $form['rows'][$k_row]['quanti'];
+                    $form['in_quanti2'] = $form['rows'][$k_row]['quanti2'];
                     //$form['in_codvat'] = $form['rows'][$k_row]['codvat'];
                     $form['in_codric'] = $form['rows'][$k_row]['codric'];
                     $form['in_provvigione'] = $form['rows'][$k_row]['provvigione'];
@@ -578,6 +581,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$old_key]['status'] = "UPDATE";
             $form['rows'][$old_key]['unimis'] = $form['in_unimis'];
             $form['rows'][$old_key]['quanti'] = $form['in_quanti'];
+            $form['rows'][$old_key]['quanti2'] = $form['in_quanti']*$artico['peso_specifico'];;
             $form['rows'][$old_key]['codart'] = $form['in_codart'];
             $form['rows'][$old_key]['codric'] = $form['in_codric'];
             $form['rows'][$old_key]['ritenuta'] = $form['in_ritenuta'];
@@ -626,6 +630,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['pesosp'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
+                $form['rows'][$old_key]['quanti2'] = 0;
                 $form['rows'][$old_key]['prelis'] = 0;
                 $form['rows'][$old_key]['codric'] = 0;
                 $form['rows'][$old_key]['sconto'] = 0;
@@ -637,10 +642,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
+                $form['rows'][$old_key]['quanti2'] = 0;
                 $form['rows'][$old_key]['sconto'] = 0;
             } elseif ($form['in_tiprig'] == 3) {   //var.tot.fatt.
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['quanti'] = "";
+                $form['rows'][$old_key]['quanti2'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['sconto'] = 0;
             } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //rigo fattura elettronica
@@ -650,6 +657,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['gooser'] = 0;
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['quanti'] = 0;
+                $form['rows'][$old_key]['quanti2'] = 0;
                 $form['rows'][$old_key]['prelis'] = 0;
                 $form['rows'][$old_key]['codric'] = 0;
                 $form['rows'][$old_key]['sconto'] = 0;
@@ -675,6 +683,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];
+                $form['rows'][$next_row]['quanti2'] = $form['in_quanti2'];
                 $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
                 /** inizio modifica FP 09/10/2015
                  * se non ho inserito uno sconto nella maschera prendo quello standard registrato nell'articolo
@@ -741,6 +750,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['unimis'] = "";
                 $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['quanti2'] = 0;
                 $form['rows'][$next_row]['prelis'] = 0;
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['sconto'] = 0;
@@ -761,6 +771,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['unimis'] = "";
                 $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['quanti2'] = 0;
                 $form['rows'][$next_row]['prelis'] = 0;
                 $form['rows'][$next_row]['codric'] = 0;
                 $form['rows'][$next_row]['sconto'] = 0;
@@ -774,6 +785,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['unimis'] = "";
                 $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['quanti2'] = 0;
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['sconto'] = 0;
@@ -789,6 +801,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['unimis'] = "";
                 $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['quanti2'] = 0;
                 $form['rows'][$next_row]['prelis'] = 0;
                 $form['rows'][$next_row]['codric'] = 0;
                 $form['rows'][$next_row]['sconto'] = 0;
@@ -803,6 +816,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['gooser'] = 0;
                 $form['rows'][$next_row]['unimis'] = "";
                 $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['quanti2'] = 0;
                 $form['rows'][$next_row]['prelis'] = 0;
                 $form['rows'][$next_row]['codric'] = 0;
                 $form['rows'][$next_row]['sconto'] = 0;
@@ -824,6 +838,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_sconto'] = '#';
         /* fine modifica FP */
         $form['in_quanti'] = 0;
+        $form['in_quanti2'] = 0;
         $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
         $form['in_id_mag'] = 0;
         $form['in_annota'] = "";
@@ -906,6 +921,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_sconto'] = '#';
     /* fine modifica FP */
     $form['in_quanti'] = 0;
+    $form['in_quanti2'] = 0;
     $form['in_codvat'] = 0;
     $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
     $form['in_id_mag'] = 0;
@@ -997,6 +1013,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['prelis'] = number_format($rigo['prelis'], $admin_aziend['decimal_price'], '.', '');
         $form['rows'][$next_row]['sconto'] = $rigo['sconto'];
         $form['rows'][$next_row]['quanti'] = gaz_format_quantity($rigo['quanti'], 0, $admin_aziend['decimal_quantity']);
+        $form['rows'][$next_row]['quanti2'] = gaz_format_quantity($rigo['quanti2'], 0, $admin_aziend['decimal_quantity']);
         $form['rows'][$next_row]['codvat'] = $rigo['codvat'];
         $form['rows'][$next_row]['codric'] = $rigo['codric'];
         $form['rows'][$next_row]['provvigione'] = $rigo['provvigione'];
@@ -1046,6 +1063,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_sconto'] = '#';
     /* fine modifica FP */
     $form['in_quanti'] = 0;
+    $form['in_quanti2'] = 0;
     $form['in_codvat'] = 0;
     $form['in_codric'] = substr($admin_aziend['impven'], 0, 3);
     $form['in_provvigione'] = 0;
@@ -1383,6 +1401,7 @@ $select_artico->output($form['cosear']);
   echo '			</select> */
 /** ENRICO FEDELE */
 /* glyph-icon */
+echo "<input type=\"hidden\" value=\"" . $form['in_quanti2'] . "\" maxlength=\"11\" name=\"in_quanti2\">";
 echo '			</td>
 			<td class="FacetColumnTD">
 				' . $script_transl[16] . ':&nbsp;<input type="text" value="' . $form['in_quanti'] . '" maxlength="11" size="7" name="in_quanti" tabindex="5" accesskey="q" />
@@ -1417,8 +1436,11 @@ echo '		</td>
 				<td class="FacetFieldCaptionTD">' . $script_transl[20] . '</td>
 				<td class="FacetFieldCaptionTD" colspan="2">' . $script_transl[21] . '</td>
 				<td class="FacetFieldCaptionTD">' . $script_transl[22] . '</td>
-				<td class="FacetFieldCaptionTD">' . $script_transl[16] . '</td>
-				<td class="FacetFieldCaptionTD">' . $script_transl[23] . '</td>
+                <td class="FacetFieldCaptionTD">' . $script_transl[16] . '</td>';
+                if (getCalcTotVal()) {
+                    echo '<td class="FacetFieldCaptionTD"> Kg. </td>';
+                }
+                echo '<td class="FacetFieldCaptionTD">' . $script_transl[23] . '</td>
 				<td class="FacetFieldCaptionTD">%' . substr($script_transl[24], 0, 2) . '.</td>
 				<td class="FacetFieldCaptionTD">%' . substr($script_transl[56], 0, 5) . '.</td>
 				<td class="FacetFieldCaptionTD text-right">' . $script_transl[25] . '</td>
@@ -1440,8 +1462,13 @@ foreach ($form['rows'] as $k => $v) {
     //creo il castelletto IVA
     $imprig = 0;
     if ($v['tiprig'] <= 1) {
-        $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
-        $v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));
+        if ( !getCalcTotVal() ) {
+            $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
+            $v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));
+        } else {
+            $imprig = CalcolaImportoRigo($v['quanti2'], $v['prelis'], $v['sconto']);
+            $v_for_castle = CalcolaImportoRigo($v['quanti2'], $v['prelis'], array($v['sconto'], $form['sconto']));
+        }        
         if ($v['tiprig'] == 1) {//ma se del tipo forfait
             $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
             $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
@@ -1464,6 +1491,7 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['codvat'] . "\" name=\"rows[$k][codvat]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['pervat'] . "\" name=\"rows[$k][pervat]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['tipiva'] . "\" name=\"rows[$k][tipiva]\">\n";
+    echo "<input type=\"hidden\" value=\"" . $v['quanti2'] . "\" name=\"rows[$k][quanti2]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['ritenuta'] . "\" name=\"rows[$k][ritenuta]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['codric'] . "\" name=\"rows[$k][codric]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
@@ -1499,13 +1527,17 @@ foreach ($form['rows'] as $k => $v) {
 				<td>
 		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
 			   	</td>
-
-				<td>
+			    <td>
 					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
 				</td>
 				<td>
 					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
-				</td>';
+                </td>';
+                if (getCalcTotVal()) {
+                    echo '<td>
+					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti2]" value="' . $v['quanti2'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+				    </td>';
+                }
             echo "<td><input type=\"text\" name=\"rows[$k][prelis]\" value=\"" . $v['prelis'] . "\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"rows[$k][sconto]\" value=\"" . $v['sconto'] . "\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
             echo "<td><input type=\"text\" name=\"rows[$k][provvigione]\" value=\"" . $v['provvigione'] . "\" maxlength=\"6\" size=\"1\" /></td>\n";
@@ -1532,7 +1564,8 @@ foreach ($form['rows'] as $k => $v) {
 						<input type="hidden" name="rows[' . $k . '][unimis]" value="" />
 					</td>
 					<td>
-						<input type="hidden" name="rows[' . $k . '][quanti]" value="" />
+                        <input type="hidden" name="rows[' . $k . '][quanti]" value="" />
+                        <input type="hidden" name="rows[' . $k . '][quanti2]" value="" />
 					</td>
 					<td>
 						<input type="hidden" name="rows[' . $k . '][sconto]" value="" />
@@ -1562,6 +1595,7 @@ foreach ($form['rows'] as $k => $v) {
 			</td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"rows[$k][quanti2]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>\n";
             echo "<td></td>\n";
@@ -1583,7 +1617,8 @@ foreach ($form['rows'] as $k => $v) {
 					</button>
 				</td>
 				<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-				<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+                <td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+                <td><input type=\"hidden\" name=\"rows[$k][quanti2]\" value=\"\" /></td>
 				<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
 				<td></td>
 				<td></td>
@@ -1612,7 +1647,8 @@ foreach ($form['rows'] as $k => $v) {
 				</td>
 				<input type="hidden" value="" name="rows[' . $k . '][descri]" />
 				<input type="hidden" value="" name="rows[' . $k . '][unimis]" />
-				<input type="hidden" value="" name="rows[' . $k . '][quanti]" />
+                <input type="hidden" value="" name="rows[' . $k . '][quanti]" />
+                <input type="hidden" value="" name="rows[' . $k . '][quanti2]" />
 				<input type="hidden" value="" name="rows[' . $k . '][prelis]" />
 				<input type="hidden" value="" name="rows[' . $k . '][sconto]" />
 				<input type="hidden" value="" name="rows[' . $k . '][provvigione]" />';
@@ -1632,7 +1668,8 @@ foreach ($form['rows'] as $k => $v) {
 						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
 					</td>
 					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+                    <td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+                    <td><input type=\"hidden\" name=\"rows[$k][quanti2]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>
@@ -1655,7 +1692,8 @@ foreach ($form['rows'] as $k => $v) {
 						<input type=\"text\"   name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"100\" size=\"50\" />
 					</td>
 					<td><input type=\"hidden\" name=\"rows[$k][unimis]\" value=\"\" /></td>
-					<td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+                    <td><input type=\"hidden\" name=\"rows[$k][quanti]\" value=\"\" /></td>
+                    <td><input type=\"hidden\" name=\"rows[$k][quanti2]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" /></td>
 					<td><input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" /></td>

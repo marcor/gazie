@@ -1964,6 +1964,8 @@ foreach ($form['rows'] as $k => $v) {
             if ($v['pesosp'] <> 0) {
                 $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
                 $peso2 = gaz_format_number($v['pesosp']);
+            } else {
+                $peso2 = 0;
             }
 
             echo '	<td>

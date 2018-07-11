@@ -121,6 +121,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
+            $form['righi'][$_POST['num_rigo']]['quanti2'] = $rigo['quanti2'];
             $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
             $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
             $form['righi'][$_POST['num_rigo']]['pervat'] = $rigo['pervat'];
@@ -218,6 +219,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
                 $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
                 $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
                 $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
+                $form['righi'][$_POST['num_rigo']]['quanti2'] = $rigo['quanti2'];
                 $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
                 $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
                 $form['righi'][$_POST['num_rigo']]['pervat'] = $rigo['pervat'];
@@ -505,7 +507,11 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         foreach ($form['righi'] as $i => $v) {
             if ($v['tiprig'] <= 1) {    // se del tipo normale o forfait
                 if ($v['tiprig'] == 0) { // tipo normale
-                    $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
+                    if ( !getCalcTotVal() ) {
+                        $tot_row = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
+                    } else {
+                        $tot_row = CalcolaImportoRigo($v['quanti2'], $v['prelis'], array($v['sconto'], $form['sconto'], -$v['pervat']));
+                    }
                 } else {                 // tipo forfait
                     $tot_row = CalcolaImportoRigo(1, $v['prelis'], -$v['pervat']);
                     $v['quanti'] = 1;
@@ -890,8 +896,11 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "<tr class=\"FacetFieldCaptionTD\"><th> " . $script_transl['codart'] . "</th>
    <th> " . $script_transl['descri'] . "</th>
    <th align=\"center\"> " . $script_transl['unimis'] . "</th>
-   <th align=\"right\"> " . $script_transl['quanti'] . "</th>
-   <th align=\"right\"> " . $script_transl['prezzo'] . "</th>
+   <th align=\"right\"> " . $script_transl['quanti'] . "</th>";
+   if ( getCalcTotVal() ) {
+        echo "<th align=\"right\"> Kg. </th>";
+   }
+   echo "<th align=\"right\"> " . $script_transl['prezzo'] . "</th>
    <th align=\"right\"> " . $script_transl['sconto'] . "</th>
    <th align=\"right\"> " . $script_transl['provvigione'] . "</th>
    <th align=\"right\"> " . $script_transl['amount'] . "</th>
@@ -908,7 +917,11 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                 //calcolo importo rigo
                 switch ($v['tiprig']) {
                     case "0":
-                        $imprig = CalcolaImportoRigo($form['righi'][$k]['quanti'], $form['righi'][$k]['prelis'], $form['righi'][$k]['sconto']);
+                        if ( !getCalcTotVal() ) {
+                            $imprig = CalcolaImportoRigo($form['righi'][$k]['quanti'], $form['righi'][$k]['prelis'], $form['righi'][$k]['sconto']);
+                        } else {
+                            $imprig = CalcolaImportoRigo($form['righi'][$k]['quanti2'], $form['righi'][$k]['prelis'], $form['righi'][$k]['sconto']);
+                        }
                         if ($v['id_doc'] == 0) {
                             $checkin = ' checked';
                             $total_order += $imprig;
@@ -952,12 +965,14 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                 echo "<td>" . $v['codart'] . "</td>\n";
                 echo "<td>" . $v['descri'] . "</td>\n";
                 if ($v['tiprig'] <= 10 || $v['tiprig'] >= 14) {
-                    $fields = array_merge($fields, array('unimis', 'quanti',
+                    $fields = array_merge($fields, array('unimis', 'quanti', 'quanti2', 
                         'prelis', 'provvigione', 'sconto'
                             )
                     );
                     echo "<td align=\"center\">" . $v['unimis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['quanti'] . "</td>\n";
+                    if( getCalcTotVal() ) 
+                        echo "<td align=\"right\">" . $v['quanti2'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['prelis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['provvigione'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['sconto'] . "</td>\n";
@@ -967,6 +982,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                     echo "<td></td>";
                     echo "<td></td>";
                     echo "<td></td>";
+                    if( getCalcTotVal() )
+                        echo "<td></td>";
                     echo "<td></td>";
                     echo "<td></td>";
                     echo "<td></td>";
@@ -997,6 +1014,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "</td>";
             echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl['taxable'] . " " . $admin_aziend['html_symbol'] . " &nbsp;\n";
             echo "<input type=\"text\"  style=\"text-align:right;\" value=\"" . number_format(($total_order - $total_order * $form['sconto'] / 100 + $form['traspo']), 2, '.', '') . "\" name=\"total\" size=\"8\" readonly />\n";
+            if ( getCalcTotVal() )
+                echo "</td><td>";
             echo "</td></tr>";
             if (!empty($alert_sezione))
                 echo "<tr><td colspan=\"3\"></td><td colspan=\"2\" class=\"FacetDataTDred\">$alert_sezione </td></tr>";
