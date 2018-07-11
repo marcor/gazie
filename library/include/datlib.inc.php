@@ -86,7 +86,6 @@ foreach ($tn as $v) {
 }
 
 // controllo se è abilitata la funzionalità per il calcolo totale alternativo
-$enable_quanti2 = gaz_dbi_get_row($gTables['company_config'], 'var', 'calc_quanti2');
-$enable_quanti2 = $enable_quanti2["val"];
-
+/*$enable_quanti = gaz_dbi_get_row($gTables['company_config'], 'var', 'calc_quanti2');
+$enable_quanti2 = $enable_quanti["val"];*/
 ?>
