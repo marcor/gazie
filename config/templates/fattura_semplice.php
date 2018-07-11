@@ -61,14 +61,12 @@ class FatturaSemplice extends Template {
     }
 
     function newPage() {
-        global $enable_quanti2;
-
         $this->AddPage();
         $this->SetFont('helvetica', '', 9);
         $this->Cell(25, 6, 'Codice', 1, 0, 'C', 1);
         $this->Cell(80, 6, 'Descrizione', 1, 0, 'C', 1);
         $this->Cell(7, 6, 'U.m.', 1, 0, 'C', 1);
-        if ( $enable_quanti2 ) {
+        if ( getCalcTotVal() ) {
             $this->Cell(7, 6, 'Qtà', 1, 0, 'C', 1);
             $this->Cell(9, 6, 'Kg.', 1, 0, 'C', 1);
         } else {
@@ -105,7 +103,6 @@ class FatturaSemplice extends Template {
     }
 
     function body() {
-        global $enable_quanti2;
         $lines = $this->docVars->getRigo();
 		foreach ($lines AS $key => $rigo) {
             if (($this->GetY() >= 166 && $this->docVars->taxstamp >= 0.01 ) || $this->GetY() >= 195) { // mi serve per poter stampare la casella del bollo
@@ -123,7 +120,7 @@ class FatturaSemplice extends Template {
                     $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);
                     $this->Cell(7, 5, $rigo['unimis'], 1, 0, 'C');
                     
-                    if ( $enable_quanti2) {
+                    if ( getCalcTotVal()) {
                         $this->Cell(7, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');
                         $this->Cell(9, 5, gaz_format_quantity($rigo['quanti2'], 1, $this->decimal_quantity), 1, 0, 'R');
                         $this->Cell(18, 5, number_format($rigo['prelis'], $this->decimal_price, ',', ''), 1, 0, 'R');

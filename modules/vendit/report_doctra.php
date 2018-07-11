@@ -400,7 +400,7 @@ function confirMail(link){
                 }
             }
             ?>
-            <tr><th class="FacetFieldCaptionTD" colspan="11"></th></tr>
+            <tr><th class="FacetFieldCaptionTD" colspan="12"></th></tr>
         </table>
     </div>
 </form>

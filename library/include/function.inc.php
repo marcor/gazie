@@ -51,6 +51,14 @@ $mod_uri = '/' . $module . '/' . $script_uri;
 //stati per le assistenze periodiche
 $per_stato = array("Aperto", "Avvisare", "Effettuare", "Fatturare", "Chiuso");
 
+function getCalcTotVal()
+{
+    global $gTables;
+    // controllo se è abilitata la funzionalità per il calcolo totale alternativo
+    $enable_quanti = gaz_dbi_get_row($gTables['company_config'], 'var', 'calc_quanti2');
+    return $enable_quanti["val"];
+}
+
 //funzione che estrae i valori tra i tag html di una stringa
 function getTextBetweenTags($tag, $html, $strict = 0) {
     $dom = new domDocument;

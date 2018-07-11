@@ -1015,7 +1015,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $ptd = gaz_dbi_get_row($gTables['company_config'], 'var', 'payroll_tax_descri');
                     $nr = $next_row + 1;
                     // calcolo l'importo del contributo
-                    if ( !$enable_quanti2 ) {
+                    if ( !getCalcTotVal() ) {
                         // il totale viene calcolato sulla prima quantità
                         $imp_contrib = round(CalcolaImportoRigo($form['rows'][$next_row]['quanti'], $form['rows'][$next_row]['prelis'], $form['rows'][$next_row]['sconto']) / 100 * $admin_aziend['payroll_tax'], 2);
                     } else {
@@ -1864,7 +1864,7 @@ echo '<table id="products-list" class="Tlarge table table-bordered table-condens
 				<th class="FacetFieldCaptionTD">' . $script_transl[21] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
                 <th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>';
-            if ( $enable_quanti2 ) {
+            if ( getCalcTotVal() ) {
                 echo '<th class="FacetFieldCaptionTD"> Kg. </th>';
             }
             echo '
@@ -1889,7 +1889,7 @@ foreach ($form['rows'] as $k => $v) {
     //creo il castelletto IVA
     $imprig = 0;
     if ($v['tiprig'] <= 1) {
-        if ( !$enable_quanti2 ) {
+        if ( !getCalcTotVal() ) {
             $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
             $v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));
         } else {
@@ -2017,9 +2017,9 @@ foreach ($form['rows'] as $k => $v) {
 					<td>
 						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" id="righi_' . $k . '_quanti" onchange="document.docven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
                     </td>';
-            if ( $enable_quanti2 ) {
+            if ( getCalcTotVal() ) {
                 echo ' <td>
-						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso2 . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti2]" value="' . $v['quanti2'] . '" align="right" maxlength="11" size="4" id="righi_' . $k . '_quanti2" onchange="document.docven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso2 . '" data-title="peso unitario" type="text" name="rows[' . $k . '][quanti2]" value="' . $v['quanti2'] . '" align="right" maxlength="11" size="4" id="righi_' . $k . '_quanti2" onchange="document.docven.last_focus.value=\'righi_' . $k . '_prelis\'; this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
                     </td>';
             }
             echo '<td>

@@ -234,7 +234,6 @@ class DocContabVars {
     }
 
     function getRigo() {
-        global $enable_quanti2;
         $from = $this->gTables[$this->tableName] . ' AS rows
                  LEFT JOIN ' . $this->gTables['aliiva'] . ' AS vat
                  ON rows.codvat=vat.codice';
@@ -248,7 +247,7 @@ class DocContabVars {
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 90) {
-                if ( !$enable_quanti2 ) {
+                if ( !getCalcTotVal() ) {
                     $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
                     $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
                 } else {

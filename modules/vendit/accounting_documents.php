@@ -50,7 +50,7 @@ function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
 }
 
 function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $protoc = 999999999) {
-    global $gTables, $admin_aziend, $enable_quanti2;
+    global $gTables, $admin_aziend;
     $calc = new Compute;
     $type = substr($type, 0, 1);
     if ($date) {
@@ -145,7 +145,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         while ($r = gaz_dbi_fetch_array($rs_rig)) {
             if ($r['tiprig'] <= 1 || $r['tiprig'] == 90) { //ma solo se del tipo normale, forfait, vendita cespite
                 //calcolo importo rigo
-                if ( !$enable_quanti2 ) {
+                if ( !getCalcTotVal() ) {
                     $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
                 } else {
                     $importo = CalcolaImportoRigo($r['quanti2'], $r['prelis'], array($r['sconto'], $tes['sconto']));

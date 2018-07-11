@@ -52,7 +52,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['virtual_stamp_auth_date'] = substr($_POST['virtual_stamp_auth_date'], 0, 10);
     $form['intermediary_code'] = intval($_POST['intermediary_code']);
     $form['intermediary_descr'] = substr($_POST['intermediary_descr'], 0, 50);
-    $form['calc_quanti2'] = $_POST['calc_quanti2'];
     $form['amm_min'] = filter_input(INPUT_POST, 'amm_min');
     if (isset($_POST['Submit'])) { // conferma tutto
         require("../../library/include/check.inc.php");
@@ -158,7 +157,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     gaz_dbi_put_row($gTables['config'], 'variable', 'intermediary', 'cvalue', 0);
                 }
             }
-            gaz_dbi_put_row($gTables['company_config'], 'var', 'calc_quanti2', 'val', $form['calc_quanti2']);
             header("Location: docume_config.php");
             exit;
         }
@@ -180,8 +178,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['intermediary_descr'] = '';
     }
-    $quanti2 = gaz_dbi_get_row($gTables['company_config'], 'var', 'calc_quanti2');
-    $form['calc_quanti2'] = $quanti2['val'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form = gaz_dbi_fields('aziend');
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -203,7 +199,6 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     } else {
         $form['intermediary_descr'] = '';
     }
-    $form['calc_quanti2'] = "0";
 }
 
 require("../../library/include/header.php");
@@ -1128,26 +1123,6 @@ if (count($msg['err']) > 0) { // ho un errore
                     <div class="form-group">
                         <label for="interessi" class="col-sm-4 control-label"><?php echo $script_transl['interessi']; ?></label>
                         <input class="col-sm-2" step="0.01" type="number" value="<?php echo $form['interessi']; ?>" name="interessi"  />
-                    </div>
-                </div>
-            </div><!-- chiude row  -->
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="form-group">
-                        <label for="calc_quanti2" class="col-sm-4 control-label"><?php echo $script_transl['calc_quanti2']; ?></label>
-                        <div class="col-sm-8">
-                            <?php
-                            if ($form['calc_quanti2'] == "0") {
-                                echo '<input type="radio" value="1" name="calc_quanti2">' 
-                                . $script_transl['yes'] . ' - ' . $script_transl['no'] . 
-                                '<input type="radio" checked value="0" name="calc_quanti2">';
-                            } else {
-                                echo '<input type="radio" value="1" checked name="calc_quanti2">' 
-                                . $script_transl['yes'] . ' - ' . $script_transl['no'] . 
-                                '<input type="radio" value="0" name="calc_quanti2">';
-                            }
-                            ?>
-                        </div>
                     </div>
                 </div>
             </div><!-- chiude row  -->
