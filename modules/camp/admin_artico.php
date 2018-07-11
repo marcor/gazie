@@ -26,7 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
-$today=	strtotime(date("Y-m-d H:i:s",time()));$presente="";
+$today=	strtotime(date("Y-m-d H:i:s",time()));$presente="";$largeimg="";
 /** ENRICO FEDELE */
 /* Inizializzo per aprire in finestra modale */
 $modal = false;
@@ -113,8 +113,27 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
                     $_FILES['userfile']['type'] == "image/x-gif"))
                 $msg['err'][] = 'filmim';
             // controllo che il file non sia piu' grande di circa 64kb
-            if ($_FILES['userfile']['size'] > 65530)
-                $msg['err'][] = 'filsiz';
+            if ($_FILES['userfile']['size'] > 65530){
+				 //$msg['err'][] = 'filsiz';
+				 //Antonio Germani anziche segnalare errore ridimensiono l'immagine
+				                          $fp      = fopen($_FILES['userfile']['tmp_name'], 'r+');
+                                          $content = fread($fp, filesize($_FILES['userfile']['tmp_name'])); //reads $fp, to end of file length                                       
+                                          fclose($fp);
+                                          // get originalsize of image
+                                          $im = imagecreatefromstring($content);
+                                          $width = imagesx($im);
+                                          $height = imagesy($im);             
+                                          // Set thumbnail-height to 180 pixels                                    
+                                          $imgh = 180;                                          
+                                          // calculate thumbnail-height from given width to maintain aspect ratio
+                                          $imgw = $width / $height * $imgh;                                          
+                                          // create new image using thumbnail-size
+                                          $thumb=imagecreatetruecolor($imgw,$imgh);               
+                                          // copy original image to thumbnail
+                                          imagecopyresampled($thumb,$im,0,0,0,0,$imgw,$imgh,ImageSX($im),ImageSY($im));    //makes thumb
+										imagejpeg($thumb, "resized.jpg", 80);  //imagejpeg($resampled, $fileName, $quality);
+				// fine ridimensionamento immagine
+			}	           
         }
         if (empty($form["codice"])) {
             $msg['err'][] = 'valcod';
@@ -143,7 +162,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
-                $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
+             If ($largeimg==0){$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);}
+			 else {$form['image'] = file_get_contents("resized.jpg");}
             } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
                 $oldimage = gaz_dbi_get_row($gTables['artico'], 'codice', $form['ref_code']);
                 $form['image'] = $oldimage['image'];
@@ -463,10 +483,15 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+				
+				
+				
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico&value=<?php echo $form['codice']; ?>" width="100" >*</label>
+							
+
                             <div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
                         </div>
                     </div>
