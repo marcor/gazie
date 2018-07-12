@@ -116,22 +116,26 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             if ($_FILES['userfile']['size'] > 65530){
 				 //$msg['err'][] = 'filsiz';
 				 //Antonio Germani anziche segnalare errore ridimensiono l'immagine
-				                          $fp      = fopen($_FILES['userfile']['tmp_name'], 'r+');
-                                          $content = fread($fp, filesize($_FILES['userfile']['tmp_name'])); //reads $fp, to end of file length                                       
-                                          fclose($fp);
-                                          // get originalsize of image
-                                          $im = imagecreatefromstring($content);
-                                          $width = imagesx($im);
-                                          $height = imagesy($im);             
-                                          // Set thumbnail-height to 180 pixels                                    
-                                          $imgh = 180;                                          
-                                          // calculate thumbnail-height from given width to maintain aspect ratio
-                                          $imgw = $width / $height * $imgh;                                          
-                                          // create new image using thumbnail-size
-                                          $thumb=imagecreatetruecolor($imgw,$imgh);               
-                                          // copy original image to thumbnail
-                                          imagecopyresampled($thumb,$im,0,0,0,0,$imgw,$imgh,ImageSX($im),ImageSY($im));    //makes thumb
-										imagejpeg($thumb, "resized.jpg", 80);  //imagejpeg($resampled, $fileName, $quality);
+							$maxDim = 80;
+							$file_name = $_FILES['userfile']['tmp_name'];
+							list($width, $height, $type, $attr) = getimagesize( $file_name );
+							if ( $width > $maxDim || $height > $maxDim ) {
+								$target_filename = $file_name;
+								$ratio = $width/$height;
+									if( $ratio > 1) {
+										$new_width = $maxDim;
+										$new_height = $maxDim/$ratio;
+									} else {
+											$new_width = $maxDim*$ratio;
+											$new_height = $maxDim;
+										}
+							$src = imagecreatefromstring( file_get_contents( $file_name ) );
+							$dst = imagecreatetruecolor( $new_width, $new_height );
+							imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+							imagedestroy( $src );
+							imagepng( $dst, $target_filename); // adjust format as needed
+							imagedestroy( $dst );
+							}
 				// fine ridimensionamento immagine
 			}	           
         }
@@ -163,7 +167,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
              If ($largeimg==0){$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);}
-			 else {$form['image'] = file_get_contents("resized.jpg");}
+			 else {$form['image'] = file_get_contents($target_filename);}
             } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
                 $oldimage = gaz_dbi_get_row($gTables['artico'], 'codice', $form['ref_code']);
                 $form['image'] = $oldimage['image'];
@@ -489,8 +493,7 @@ if ($modal_ok_insert === true) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico&value=<?php echo $form['codice']; ?>" width="100" >*</label>
-							
+                            <label for="image" class="col-sm-4 control-label"><img src="../root/view.php?table=artico&value=<?php echo $form['codice']; ?>" width="100" >*</label>					
 
                             <div class="col-sm-8"><?php echo $script_transl['image']; ?><input type="file" name="userfile" /></div>
                         </div>
