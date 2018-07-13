@@ -44,8 +44,13 @@ if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Retur
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Germani se non e' il primo accesso
 $form=gaz_dbi_parse_post('orderman');
 $form['description'] = $_POST['description'];
+$form['gioinp'] = $_POST['gioinp'];
+$form['mesinp'] = $_POST['mesinp'];
+$form['anninp'] = $_POST['anninp'];
+$form['day_of_validity'] = $_POST['day_of_validity'];
 
     // Se viene inviata la richiesta di conferma totale ...
+	$form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
     if (isset($_POST['ins'])) {
        
        
@@ -53,11 +58,20 @@ $form['description'] = $_POST['description'];
              $msg .= "4+";
        } 
        if ($msg == "") {// nessun errore
-          
+ // Antonio Germani  qui si scrive il database       
           if ($toDo == 'update') { // e' una modifica
             gaz_dbi_table_update('orderman',$form["id"],$form);
           } else { // e' un'inserimento
+		  gaz_dbi_table_insert('tesbro',$form);
+		  $query="SHOW TABLE STATUS LIKE '".$gTables['tesbro']."'"; // vedo dove lo ha scritto
+				$result = gaz_dbi_query($query);
+				$row = $result->fetch_assoc();
+				$id_movmag = $row['Auto_increment'];
+				// siccome ha già registrato il movimento di magazzino devo togliere 1
+				$form[id_tesbro]=$id_movmag-1;
             gaz_dbi_table_insert('orderman',$form);
+			
+			
           }
           header("Location: ".$_POST['ritorno']);
           exit;
@@ -68,6 +82,9 @@ $form['description'] = $_POST['description'];
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
 echo "PASSATO primo accesso UPDATE";die;
 /*DA FARE <<<<<<<<<<<*/
+ $form['gioinp'] = substr($result['datemi'], 8, 2);
+ $form['mesinp'] = substr($result['datemi'], 5, 2);
+ $form['anninp'] = substr($result['datemi'], 0, 4);
 
 } else { //se e' il primo accesso per INSERT
     
@@ -76,7 +93,10 @@ echo "PASSATO primo accesso UPDATE";die;
     $form['description']='';
     $form['id_tesbro']='';
 	$form['add_info']='';
-	
+	$form['gioinp'] = date("d");
+    $form['mesinp'] = date("m");
+    $form['anninp'] = date("Y");
+	$form['day_of_validity']='';
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -117,6 +137,36 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 </tr>
 <?php
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[3]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"add_info\" value=\"".$form['add_info']."\" maxlength=\"80\" size=\"80\" /></td></tr>\n";
+// data inizio produzione
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[5] . "</td><td class=\"FacetDataTD\">\n";
+echo "\t <select name=\"gioinp\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+for ($counter = 1; $counter <= 31; $counter++) {
+    $selected = "";
+    if ($counter == $form['gioinp'])
+        $selected = "selected";
+    echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+echo "\t </select>\n";
+echo "\t <select name=\"mesinp\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+for ($counter = 1; $counter <= 12; $counter++) {
+    $selected = "";
+    if ($counter == $form['mesinp'])
+        $selected = "selected";
+    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+    echo "\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+}
+echo "\t </select>\n";
+echo "\t <select name=\"anninp\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
+    $selected = "";
+    if ($counter == $form['anninp'])
+        $selected = "selected";
+    echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+echo "\t </select></td>\n";
+// end data inizio produzione
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\" size=\"3\" value=\"".$form['day_of_validity']."\"  /></td></tr>\n";
+
 print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
 print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
 print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
