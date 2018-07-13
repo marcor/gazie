@@ -134,11 +134,7 @@ function getDocumentsAcconts($type='___',$vat_section=1,$date=false,$protoc=9999
            while ($r = gaz_dbi_fetch_array($rs_rig)) {
               if ($r['tiprig'] <= 1) {//ma solo se del tipo normale o forfait
                  //calcolo importo rigo
-                 if ( !getCalcTotVal() ) {
-                    $importo = CalcolaImportoRigo($r['quanti'],$r['prelis'],array($r['sconto'],$tes['sconto']));
-                 } else {
-                    $importo = CalcolaImportoRigo($r['quanti2'],$r['prelis'],array($r['sconto'],$tes['sconto']));
-                 }
+                 $importo = CalcolaImportoRigo($r['quanti'],$r['prelis'],array($r['sconto'],$tes['sconto']));
                  if ($r['tiprig'] == 1) {
                     $importo = CalcolaImportoRigo(1,$r['prelis'], $tes['sconto']);
                  }
@@ -418,7 +414,7 @@ if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td><td  class=\"FacetDataTD\">\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td>\n";
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
 echo "</tr>\n";
 echo "<tr>\n";
@@ -489,9 +485,11 @@ if (isset($_POST['preview'])) {
       echo "\t </td>\n";
       echo "\t </tr>\n";
    }
+   echo "</table>";
 }
 ?>
 </form>
+
 <?php
 require("../../library/include/footer.php");
 ?>
