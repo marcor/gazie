@@ -31,7 +31,12 @@ $strScript =
         'upd_this' => 'Aggiorna la produzione',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!'),
-        'errors' => array()
+        'errors' => array(),
+		"ID ",
+		"Tipo di produzione",
+		"Descrizione",
+		"Informazioni supplementari",
+		"Descrizione vuota"
 		),
 	array("orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',
