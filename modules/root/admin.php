@@ -241,13 +241,16 @@ if ($t > 4 && $t <= 13) {
                                     $m = $scdl->getScheduleEntries("0", $admin_aziend['mascli'], true);
                                     if (sizeof($scdl->Entries) > 0) {
 										foreach ($scdl->Entries AS $key => $mv) {
+                                            $paymov = $mv["id_tesdoc_ref"];
+                                            $scdl->getStatus($paymov);
+                                            $r = $scdl->Status;
                                             $status_descr = '';
                                             if ($mv['expiry'] <= date("Y-m-d")) {
                                                 $stato_partita = "warning";
                                             } else {
                                                 $stato_partita = "";
                                             }
-                                            if ($mv["amount"] >= 0.01) {
+                                            if ($mv["amount"] >= 0.01 && $r['sta']<>1) {
                                                 echo "<tr class='odd " . $stato_partita . "' role='row'>";
                                                 echo "<td>" . $mv["ragsoc"] . "</td>";
                                                 echo "<td align='right'>" . gaz_format_number($mv["amount"]) . "</td>";
@@ -294,12 +297,15 @@ if ($t > 4 && $t <= 13) {
                                     $m = $scdl->getScheduleEntries("0", $admin_aziend['masfor'], true);
                                     if (sizeof($scdl->Entries) > 0) {
 										foreach ($scdl->Entries AS $key => $mv) {
+                                            $paymov = $mv["id_tesdoc_ref"];
+                                            $scdl->getStatus($paymov);
+                                            $r = $scdl->Status;
                                             if ($mv['expiry'] <= date("Y-m-d")) {
                                                 $stato_partita = "warning";
                                             } else {
                                                 $stato_partita = "";
                                             }
-                                            if ($mv["amount"] >= 0.01) {
+                                            if ($mv["amount"] >= 0.01 && $r['sta']<>1) {
                                                 echo "<tr class='odd " . $stato_partita . "' role='row'>";
                                                 echo "<td>" . $mv["ragsoc"] . "</td>";
                                                 echo "<td align='right'>" . gaz_format_number($mv["amount"]) . "</td>";
