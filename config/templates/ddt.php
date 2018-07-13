@@ -65,7 +65,8 @@ class DDT extends Template_con_scheda
         $this->Cell(30,6,'Codice',1,0,'L',1);
         $this->Cell(82,6,'Descrizione',1,0,'L',1);
         $this->Cell(10,6,'U.m.',1,0,'L',1);
-        if ( getCalcTotVal() ) {
+        $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
+        if ( getCalcTotVal() && !$tipodoc="A" ) {
             $this->Cell(15,6,'Quantità',1,0,'R',1);
             $this->Cell(15,6,'Kg.',1,0,'R',1);
         } else {
@@ -101,7 +102,8 @@ class DDT extends Template_con_scheda
                     $this->Cell(30,6,$rigo['codart'],1,0,'L');
                     $this->Cell(82,6,$rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(10,6,$rigo['unimis'],1,0,'L');
-                    if ( getCalcTotVal() ) {
+                    $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
+                    if ( getCalcTotVal() && !$tipodoc=="A") {
                         $this->Cell(15,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                         $this->Cell(15,6,gaz_format_quantity($rigo['quanti2'],1,$this->decimal_quantity),1,0,'R');
                     } else {

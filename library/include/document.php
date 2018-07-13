@@ -88,7 +88,7 @@ class DocContabVars {
         if ($this->client['country'] != 'IT') {
             $this->cliente4b = strtoupper($country['istat_name']);
         } else {
-            $this->cliente4b = '';
+            $this->cliente4b = 'Italy';
         }
         if (!empty($this->client['pariva'])) {
             $this->cliente5 = 'P.I. ' . $this->client['pariva'] . ' ';
@@ -247,7 +247,8 @@ class DocContabVars {
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 90) {
-                if ( !getCalcTotVal() ) {
+                $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
+                if ( !getCalcTotVal() || $tipodoc=="A" ) {
                     $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
                     $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
                 } else {
@@ -349,7 +350,8 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		'NominaIncaricatoInterno'=>'nomina_incaricato_interno',
 		'RegolamentoPrivacy'=>'privacy_regol',
         'DDT' => 'ddt',
-        'Etichette' => 'etichette'
+        'Etichette' => 'etichette',
+        'Cmr' => 'cmr'
     );
 
     $config = new Config;
