@@ -139,12 +139,12 @@ if ($scriptname != $prev_script && $scriptname != 'admin.php') { // aggiorno le 
                     <div class="navbar-custom-menu">
                         <ul class="nav navbar-nav">     
                             <?php
-                            /*if ($module == "finann")
+                            if ($module == "finann")
                                 $fileDocs = "finean";
                             else
-                                $fileDocs = $module;*/
-                            //echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $fileDocs . ".php\"><i class=\"fa fa-question\"></i></a></li>";
-                            echo "<li><a href=\"../../modules/wiki/\"><i class=\"fa fa-question\"></i></a></li>";
+                                $fileDocs = $module;
+                            echo "<li><a target=\"_new\" href=\"../../modules/" . $module . "/docume_" . $fileDocs . ".php\"><i class=\"fa fa-question\"></i></a></li>";
+                            //echo "<li><a href=\"../../modules/wiki/\"><i class=\"fa fa-question\"></i></a></li>";
                             ?>
                             <!-- Messages: style can be found in dropdown.less-->
                             <li class="dropdown messages-menu">

@@ -73,7 +73,7 @@ function submenu($array, $index, $sub="") {
             } else {
                 $sub = '<a href="'. $mnu["link"] .'">'.$submnu.stripslashes($mnu["name"]);
             }
-            echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". substr($submnu.stripslashes($mnu["name"]),0,23);
+            echo "  <a href=\"#\" hint=\"".$submnu.stripslashes($mnu["name"])."\">". $submnu.stripslashes($mnu["name"]);
             echo "      <i class=\"fa fa-angle-left pull-right\"></i>";
             echo "  </a>";                    
             submenu($mnu, 1, $sub);
@@ -88,7 +88,7 @@ function submenu($array, $index, $sub="") {
                         $sub="";
                     }
                     echo "<li >";
-                    echo "  <a href=\"". $mnu['link'] ."\">". substr($submnu.stripslashes($mnu['name']),0,23) ."</a>";
+                    echo "  <a href=\"". $mnu['link'] ."\">". $submnu.stripslashes($mnu['name']) ."</a>";
                     echo "</li>";
                 }
             }
@@ -99,7 +99,7 @@ function submenu($array, $index, $sub="") {
                         $sub="";
                     }
                     echo "<li >";
-                    echo "  <a href=\"". $mnu['link'] ."\">". substr($submnu.stripslashes($mnu['name']),0,23) ."</a>";
+                    echo "  <a href=\"". $mnu['link'] ."\">". $submnu.stripslashes($mnu['name']) ."</a>";
                     echo "</li>";
                 }
             }
@@ -225,7 +225,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 
     
     $i = 0;
-    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400", "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500" );   
+    $colors = array ( "#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500", "#EEEE00", "#B7B7B7", "#20B2AA", "#00FF7F", "#FFDAB9", "#006400", "#d3f5c6", "#673723", "#6b0490", "#1527cc", "#0cacd8" );             //"#00CD66", "#DC143C", "#20B2AA", "#FAFAD2", "#CD8500" );   
     $icons = array ("fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle","fa fa-circle");
     foreach ($menuArray as $link) {
 /*        if ( $i==0 ) {

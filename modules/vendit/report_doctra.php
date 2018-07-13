@@ -252,9 +252,13 @@ function confirMail(link){
 
                             $urlPrintDoc = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=DDT";
                             $urlPrintEtichette = "stampa_docven.php?id_tes=" . $r["id_tes"] . "&template=Etichette";
+                            $urlPrintCmr = "stampa_docven.php?id_tes=" . $r["id_tes"]."&template=Cmr";
                             echo "<td align=\"center\">";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintDoc\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\" title=\"Stampa documento\"></i></a>";
                             echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintEtichette\" target=\"_blank\"><i class=\"glyphicon glyphicon-tag\" title=\"Stampa etichetta\"></i></a>";
+                            if ( $anagra['country']!="IT") {
+                                echo "<a class=\"btn btn-xs btn-default\" href=\"$urlPrintCmr\" target=\"_blank\"><i class=\"glyphicon glyphicon-plane\" title=\"Stampa modulo CMR\"></i></a>";
+                            }
                             echo "</td>\n";
 
                             // Colonna "Mail"
