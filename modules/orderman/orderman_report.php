@@ -85,6 +85,8 @@ $recordnav -> output();
 							"Descrizione" => "description",
 							"Tipo lavorazione"  => "order_type",
 							"Informazioni aggiuntive" => "add_info",
+							"Inizio produzione" => "datemi",
+							"Durata in giorni" => "day_of_validity",
 							"Cancella"    => ""
 							);
 	$linkHeaders = new linkHeaders($headers_orderman);
@@ -97,17 +99,20 @@ $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
 ?>		<tr class="FacetDataTD">
 			<td>
-				<a class="btn btn-xs btn-success btn-block" href="admin_orderman.php?Update&codice=<?php echo $a_row["id"]; ?>">
-					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["id"];?>
+				<a class="btn btn-xs btn-success btn-block" href="admin_orderman.php?Update&codice=<?php echo $a_row['id']; ?>">
+					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row['id'];?>
 				</a>
 			</td>
 			<td>
-				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['id']; ?>" data-title="<?php echo $a_row['add_info']; ?>"><?php echo $a_row["description"]; ?></span>
+				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['id']; ?>" data-title="<?php echo $a_row['add_info']; ?>"><?php echo $a_row['description']; ?></span>
 			</td>
-			<td align="center"><?php echo $a_row["order_type"];?></td>
-			<td align="center"><?php echo $a_row["add_info"];?></td>
+			<td align="center"><?php echo $a_row['order_type'];?></td>
+			<td align="center"><?php echo $a_row['add_info'];?></td>
+			<?php $b_row = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $a_row['id_tesbro']);?>
+			<td align="center"><?php echo $b_row['datemi'];?></td>
+			<td align="center"><?php echo $b_row['day_of_validity'];?></td>
 			<td align="center">
-				<a class="btn btn-xs btn-default btn-elimina" href="delete_orderman.php?codice=<?php echo $a_row["id"]; ?>">
+				<a class="btn btn-xs btn-default btn-elimina" href="delete_orderman.php?id=<?php echo $a_row['id']; ?>&id_tesbro=<?php echo $a_row['id_tesbro']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
 				</a>
 			</td>
