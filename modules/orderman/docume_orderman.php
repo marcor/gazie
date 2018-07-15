@@ -28,7 +28,16 @@ $admin_aziend=checkAdmin();
 
 require("../../library/include/header.php");
 $script_transl=HeadMain();
+// Se esiste, viene incluso il file "help/italian/docume_magazz_help.php",
+// o l'equivalente di un altro linguaggio.
+//
+echo '<div class="help">';
+if (file_exists("help/".$admin_aziend['lang']."/docume_orderman_help.php")) {
+    include("help/".$admin_aziend['lang']."/docume_orderman_help.php");
+}
+
 ?>
+</div>
 </table>
 <?php
 require("../../library/include/footer.php");
