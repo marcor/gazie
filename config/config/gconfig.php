@@ -131,5 +131,6 @@ $update_URI_files = "http://sourceforge.net/projects/gazie";
 // url per comunicare (ping) il mio nuovo IP DINAMICO  all'hosting di appoggio
 define('SET_DYNAMIC_IP',''); 
 
+// abilita il debug delle variabili nel footer della pagina (impostare true/false)
 $debug_active = false;
 ?>

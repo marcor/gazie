@@ -2,7 +2,21 @@
  * Skin: Blue
  * ----------
  */
-.skin-blue .main-header .navbar {
+
+ table{
+  border-collapse: collapse;
+  border-spacing: 0;
+  border:2px solid #aae2a8;
+}
+
+th{
+  border:2px solid #888888;
+}
+
+td{
+  border:1px solid #888888;
+}
+ .skin-blue .main-header .navbar {
   background-color:  #aae2a8;
 }
 .skin-blue .main-header .navbar .nav > li > a {

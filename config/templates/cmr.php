@@ -62,41 +62,27 @@ class Cmr extends Template {
    }
 
    function body() {
-      // set document information
       $this->SetCreator(PDF_CREATOR);
-      /*$this->SetAuthor('Nicola Asuni');
-      $this->SetTitle('TCPDF Example 051');
-      $this->SetSubject('TCPDF Tutorial');
-      $this->SetKeywords('TCPDF, PDF, example, test, guide');*/
-
       // set header and footer fonts
       $this->setHeaderFont(Array(PDF_FONT_NAME_MAIN, '', PDF_FONT_SIZE_MAIN));
-
       // set default monospaced font
       $this->SetDefaultMonospacedFont(PDF_FONT_MONOSPACED);
-
       // set margins
       $this->SetMargins(PDF_MARGIN_LEFT, PDF_MARGIN_TOP, PDF_MARGIN_RIGHT);
       $this->SetHeaderMargin(0);
       $this->SetFooterMargin(0);
-
       // remove default footer
       $this->setPrintFooter(false);
-
       // set auto page breaks
       $this->SetAutoPageBreak(TRUE, PDF_MARGIN_BOTTOM);
-
       // set image scale factor
       $this->setImageScale(PDF_IMAGE_SCALE_RATIO);
-
       // set font
-      $this->SetFont('times', '', 10);
-
+      $this->SetFont('times', '', 12);
       // add a page
       $this->addPage();
 
       $offsetX = 6;
-
       $this->SetY(20);
       $this->SetX($offsetX);
       $this->Cell(70, 0, $this->intesta1.' '.$this->intesta1bis, 0, 1, 'L', 0, '', 1);
@@ -105,6 +91,7 @@ class Cmr extends Template {
       $this->SetX($offsetX);
       $this->Cell(70, 0, 'Italy', 0, 1, 'L', 0, '', 1);
 
+      $this->SetFont('times', '', 10);
       $this->SetY(53);
       $this->SetX($offsetX);
       $this->Cell(70, 0, $this->cliente1.' '.$this->cliente2, 0, 1, 'L', 0, '', 1);
@@ -113,29 +100,37 @@ class Cmr extends Template {
       $this->SetX($offsetX);
       $this->Cell(70, 0, $this->cliente4b, 0, 1, 'L', 0, '', 1);
 
+      $this->SetY(77);
+      $this->SetX($offsetX);
+      $this->Cell(70, 0, $this->intesta2, 0, 1, 'L', 0, '', 1);
+      $this->SetX($offsetX);
+      $this->Cell(70, 0, 'Italy', 0, 1, 'L', 0, '', 1);
+
+      $this->SetFont('times', '', 10);
+      $this->SetY(99);
+      $this->SetX($offsetX);
+      $this->Cell(70, 0, $this->cliente3.' - '.$this->cliente4 , 0, 1, 'L', 0, '', 1);
+      $this->SetX($offsetX);
+      $this->Cell(70, 0, $this->cliente4b , 0, 1, 'L', 0, '', 1);
+
+      $this->SetY(53);
+      $this->SetX(96);
+      $this->Cell(110,0,$this->docVars->vettor['ragione_sociale'],0,1,'L',0,'',1);
+      $this->SetX(96);
+      $this->Cell(110,0,$this->docVars->vettor['indirizzo'].' '.$this->docVars->vettor['citta'].' ('.$this->docVars->vettor['provincia'].')',0,1,'L',0,'',1);
+      $this->SetX(96);
+      $this->Cell(110,0,'',0,1,'L',0,'',1);
 
 
 
-      // Print a text
-      /*$html = '<span style="background-color:yellow;color:blue;">&nbsp;PAGE 1&nbsp;</span>
-      <p stroke="0.2" fill="true" strokecolor="yellow" color="blue" style="font-family:helvetica;font-weight:bold;font-size:26pt;">'.$this->intesta1.'</p>';
-      $this->writeHTML($html, true, false, true, false, '');*/
    }
 
    function pageFooter() {
-//      $rigaFooter = 20;
-//      $this->SetY($rigaFooter);
-//      $this->Cell(62, 6, 'Piede', 'LTR', 0, 'C', 1);
+
    }
 
    function Footer() {
-//Document footer
-      $this->SetY(-15);
-//      $tmp=$this->GetY();
-      $this->SetFont('helvetica', '', 8);
-      $this->Cell(130, 4, "----------------------------------------------", 0, 1, 'L');
-      $this->Cell(130, 4, $this->intesta1, 0, 1, 'L');
-      $this->Cell(130, 4, $this->intesta2 . " " . $this->intesta3/* ." ".$this->intesta4 */, 0, 1, 'L');
+
    }
 
    function Header() {
