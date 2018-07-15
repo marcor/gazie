@@ -108,8 +108,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			</td>
 			<td align="center"><?php echo $a_row['order_type'];?></td>
 			<td align="center"><?php echo $a_row['add_info'];?></td>
+			<!-- Antonio Germani Vado a leggere la tabella tesbro connessa alla produzione -->
 			<?php $b_row = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $a_row['id_tesbro']);?>
-			<td align="center"><?php echo $b_row['datemi'];?></td>
+			<td align="center"><?php echo gaz_format_date($b_row['datemi']);?></td>
 			<td align="center"><?php echo $b_row['day_of_validity'];?></td>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina" href="delete_orderman.php?id=<?php echo $a_row['id']; ?>&id_tesbro=<?php echo $a_row['id_tesbro']; ?>">

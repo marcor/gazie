@@ -44,10 +44,12 @@ if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Retur
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Germani se non e' il primo accesso
 $form=gaz_dbi_parse_post('orderman');
 $form['description'] = $_POST['description'];
+$form['id_tesbro']= $_POST['id_tesbro'];
 $form['gioinp'] = $_POST['gioinp'];
 $form['mesinp'] = $_POST['mesinp'];
 $form['anninp'] = $_POST['anninp'];
 $form['day_of_validity'] = $_POST['day_of_validity'];
+
 
     // Se viene inviata la richiesta di conferma totale ...
 	$form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
@@ -59,16 +61,19 @@ $form['day_of_validity'] = $_POST['day_of_validity'];
        } 
        if ($msg == "") {// nessun errore
  // Antonio Germani  qui si scrive il database       
-          if ($toDo == 'update') { // e' una modifica
-            gaz_dbi_table_update('orderman',$form["id"],$form);
+          if ($toDo == 'update') { // Antonio Germani e' una modifica quindi aggiorno orderman e tesbro
+            $query="UPDATE ".$gTables['orderman']." SET ".'order_type'." = '".$form['order_type']."', ".'description'." = '".$form['description']."', ".'add_info'." = '".$form['add_info']."' WHERE id = '".$form['id']."'";
+		 	   $res = gaz_dbi_query($query);
+			$query="UPDATE ".$gTables['tesbro']." SET ".'datemi'." = '".$form['datemi']."', ".'day_of_validity'." = '".$form['day_of_validity']."' WHERE id_tes = '".$form['id_tesbro']."'";
+			  $res = gaz_dbi_query($query);    
           } else { // e' un'inserimento
 		  gaz_dbi_table_insert('tesbro',$form);
 		  $query="SHOW TABLE STATUS LIKE '".$gTables['tesbro']."'"; // vedo dove lo ha scritto
 				$result = gaz_dbi_query($query);
 				$row = $result->fetch_assoc();
 				$id_movmag = $row['Auto_increment'];
-				// siccome ha già registrato il movimento di magazzino devo togliere 1
-				$form[id_tesbro]=$id_movmag-1;
+				// siccome ha già registrato la produzione devo togliere 1
+				$form[id_tesbro]=$id_movmag-1; //Antonio Germani connetto tesbro a orderman
             gaz_dbi_table_insert('orderman',$form);
 			
 			
@@ -80,11 +85,22 @@ $form['day_of_validity'] = $_POST['day_of_validity'];
 
 
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
-echo "PASSATO primo accesso UPDATE";die;
+
 /*DA FARE <<<<<<<<<<<*/
- $form['gioinp'] = substr($result['datemi'], 8, 2);
- $form['mesinp'] = substr($result['datemi'], 5, 2);
- $form['anninp'] = substr($result['datemi'], 0, 4);
+$result = gaz_dbi_get_row($gTables['orderman'],"id",$_GET['codice']);
+
+ $form['ritorno'] = $_POST['ritorno'];
+ $form['id']=$_GET['codice'];
+    $form['order_type']=$result['order_type'];
+    $form['description']=$result['description'];
+    $form['id_tesbro']=$result['id_tesbro'];
+	$form['add_info']=$result['add_info'];
+	$result2 = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$result['id_tesbro']);
+ $form['gioinp'] = substr($result2['datemi'], 8, 2);
+ $form['mesinp'] = substr($result2['datemi'], 5, 2);
+ $form['anninp'] = substr($result2['datemi'], 0, 4);	
+	$form['datemi']=$result2['datemi'];
+	$form['day_of_validity']=$result2['day_of_validity'];
 
 } else { //se e' il primo accesso per INSERT
     
@@ -108,6 +124,7 @@ if ($toDo == 'update') {
 
 print "<form method=\"POST\" enctype=\"multipart/form-data\">\n";
 print "<input type=\"hidden\" name=\"".ucfirst($toDo)."\" value=\"\">\n";
+print "<input type=\"hidden\" name=\"id_tesbro\" value=\"".$form['id_tesbro']."\">\n";
 print "<input type=\"hidden\" value=\"".$_POST['ritorno']."\" name=\"ritorno\">\n";
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";

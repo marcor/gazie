@@ -23,7 +23,7 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-
+// Antonio Germani cancellazione di una produzione: questa cancellazione agisce anche sulla tabella tesbro a cui la produzione è direttamente connessa
 $admin_aziend=checkAdmin();
 $message = "Sei sicuro di voler rimuovere ?";
 $titolo="Cancella la Produzione";
@@ -38,7 +38,7 @@ if (isset($_POST['Delete']))
 
 if (isset($_POST['Return']))
         {
-        header("Location: report_orderman.php");
+        header("Location: orderman_report.php");
         exit;
         }
 
