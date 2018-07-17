@@ -200,6 +200,10 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $partner = $partnersel;
                     $loadCosRic = substr($form['conto_rc' . $i], 0, 1);
                     $form['cod_partner'] = '';
+                    // prpongo l'eventuale aliquota IVA diversa associata al partner
+                    if ($partner['aliiva'] >= 1 ) {
+                        $form['insert_codiva'] = $partner['aliiva'];
+                    }
                     // ricarico pure l'eventuale riferimento al tipo di operazione ma solo se vuoto
                     if ($form['operation_type'] == '') {
                         $form['operation_type'] = $partner['operation_type'];
