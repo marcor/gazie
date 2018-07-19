@@ -25,6 +25,13 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();$msg="";
 
+if (isset ($_GET['popup'])){ //controllo se proviene da una richiesta apertura popup
+		$popup=$_GET['popup'];
+	}
+	else {
+		$popup="";
+	}
+
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
     $toDo = 'update';
 } else {
@@ -73,12 +80,18 @@ $form['day_of_validity'] = $_POST['day_of_validity'];
 				$row = $result->fetch_assoc();
 				$id_movmag = $row['Auto_increment'];
 				// siccome ha già registrato la produzione devo togliere 1
-				$form[id_tesbro]=$id_movmag-1; //Antonio Germani connetto tesbro a orderman
+				$form['id_tesbro']=$id_movmag-1; //Antonio Germani connetto tesbro a orderman
             gaz_dbi_table_insert('orderman',$form);
 			
 			
           }
-          header("Location: ".$_POST['ritorno']);
+		  if($popup==1){
+		  echo "<script> 
+        window.opener.location.reload(true);
+        window.close();</script>";
+		
+		  }else {
+          header("Location: ".$_POST['ritorno']);}
           exit;
        }
   }
@@ -183,10 +196,16 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 echo "\t </select></td>\n";
 // end data inizio produzione
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\" size=\"3\" value=\"".$form['day_of_validity']."\"  /></td></tr>\n";
-
-print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
-print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
-print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
+	
+		print "</select></td></tr>";
+	if ($popup<>1){
+		print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
+		print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
+		print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
+	} 
+	else {
+		print "<tr><td>";
+	}
 if ($toDo == 'update') {
    print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['update']).'!"></td></tr><tr></tr>';
 } else {

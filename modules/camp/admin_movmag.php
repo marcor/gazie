@@ -57,6 +57,13 @@ function getItemPrice($item, $partner = 0) {
 if (isset($_POST['artico'])){
 $form['artico'] = $_POST['artico'];
 }
+// Antonio Germani questo serve per la nuova ricerca produzione
+if (isset($_POST['description'])){ echo "pippo",$_POST['description'];
+$form['description']=$_POST['description'];
+	if (intval ($form['description']) == 0 && strlen ($form['description']) > 0) {
+		$msg .= "30+";
+	}
+}
 
 
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
@@ -86,6 +93,13 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['campo_coltivazione'] = $result['campo_coltivazione']; //campo di coltivazione
 	$form['clfoco'] = "";
 	$form['adminid'] = $result['adminid'];
+	$form['id_orderman'] = intval ($result['id_orderman']);
+	$resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
+		If ($form['id_orderman']>0) {
+			$form['description'] = $form['id_orderman']." ".$resultorderman['description'];
+		} else {
+			$form['description']="";
+		}
     if (!empty($form['caumag'])) { //controllo quale partner prevede la causale
         $rs_causal = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['clorfo'] = $rs_causal['clifor']; //cliente, fornitore o entrambi
@@ -106,6 +120,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['status'] = $result['status'];
     $form['search_partner'] = "";
     $form['search_item'] = "";
+	
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //se non e' il primo accesso
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     //ricarico i registri per il form facendo gli eventuali parsing
@@ -134,6 +149,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
    $form['prezzo'] = 0;
    $form['scorig'] = 0;
     $form['status'] = substr($_POST['status'], 0, 10);
+	$form['id_orderman'] = intval ($_POST['description']);
 // Antonio Germani tolto non serve $form['search_partner'] = $_POST['search_partner'];
   //  $form['search_item'] = $_POST['search_item'];
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
@@ -302,7 +318,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			}
 		
 		
-		$query="UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 .  "' , campo_coltivazione = '"  .$form['campo_coltivazione']. "' , avversita = '"  .$form['avversita'].  "' WHERE id_mov ='". $id_movmag."'";
+		$query="UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 .  "' , campo_coltivazione = '"  .$form['campo_coltivazione']. "' , avversita = '"  .$form['avversita']. "' , id_orderman = '"  .$form['id_orderman']. "' WHERE id_mov ='". $id_movmag."'"; 
 			gaz_dbi_query ($query) ;
 				
 				
@@ -377,6 +393,8 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
     $form['search_partner'] = "";
     $form['search_item'] = "";
     $form['id_rif'] = 0;
+	$form['description']="";
+	$form['id_orderman']= 0;
 }
 
 if (isset($_POST['acquis'])){ //compilazione ordine a fornitore
@@ -440,6 +458,8 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     $form['search_partner'] = "";
     $form['search_item'] = "";
     $form['id_rif'] = 0;
+	$form['description']="";
+	$form['id_orderman']=0;
 	$fornitore="";
 	}
 
@@ -499,6 +519,52 @@ if (!empty($msg)) {
     }
     echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
+
+?>
+<!-- inizio inserisci produzione  -->
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql orderman	-->	
+  <script>
+	$(document).ready(function() {
+	$("input#autocomplete2").autocomplete({
+		source: [<?php
+	$stringa="";$cod="";
+	$query="SELECT * FROM .".$gTables['orderman'];
+	$res = gaz_dbi_query($query);
+	while($row = $res->fetch_assoc()){
+		$itemtesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $row['id_tesbro']);
+		$stringa.="\"".$row['id']." ".$row['description']." ".gaz_format_date($itemtesbro['datemi'])."\", ";			
+	}
+	$stringa=substr($stringa,0,-2).$cod;
+	echo $stringa;
+	?>],
+		minLength:2,
+	select: function(event, ui) {
+        //assign value back to the form element
+        if(ui.item){
+            $(event.target).val(ui.item.value);
+        }
+        //submit the form
+        $(event.target.form).submit();
+    }
+	});
+	});
+  </script>
+ <!-- fine autocompletamento -->
+ <?php
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td colspan=\"3\" class=\"FacetDataTD\"\n>";
+?>
+      <input class="col-sm-5" id="autocomplete2" type="text" value="<?php echo $form['description'] ?>" name="description" maxlength="30" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete2 -->	  
+<script>
+  var stile = "top=10, left=10, width=600, height=800 status=no, menubar=no, toolbar=no scrollbar=no";
+     function Popup(apri) {
+        window.open(apri, "", stile);
+     }
+</script>
+<a href="javascript:Popup('../../modules/orderman/admin_orderman.php?Insert&popup=1')"> Crea nuova produzione <i class="glyphicon glyphicon-plus-sign" style="color:green" ></i></a>	  
+</td></tr>
+<?php	
+/* fine inserisci produzione  */
+
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
@@ -624,7 +690,7 @@ $messaggio = "";
 $print_unimis = "";
 $ric_mastro = substr($form['artico'], 0, 3);
 ?>
-                            <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['artico'] ?>" name="artico" maxlength="15" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete -->
+             <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['artico'] ?>" name="artico" maxlength="15" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete -->
  <?php
 if ($form['artico'] == '') {
 } else {
@@ -635,9 +701,7 @@ if ($form['artico'] == '') {
 	$dose=$item['dose_massima'];// prendo anche la dose
 	$scorta=$item['scorta'];// prendo la scorta minima
 	$descri=$item['descri'];//prendo descrizione articolo
-	$fornitore=$item['clfoco'];//prendo codice clfoco per codice fornitore per eventuale ordine a fornitore
-	$preacq=$item['preacq'];//prendo prezzo di acquisto per eventuale ordine a fornitore
-	$aliiva=$item['aliiva'];//prendo aliquota IVA per eventuale ordine a fornitore
+	
 	// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 	 $mv = $gForm->getStockValue(false, $item['codice']);
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
@@ -658,6 +722,7 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class
 		echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 }
 echo "</td></tr>\n";
+
 /* Antonio Germani sospendo il prezzo e lo sconto che nel quaderno di campagna non servono
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "</td>\n";

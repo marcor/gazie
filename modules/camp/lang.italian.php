@@ -118,6 +118,8 @@ $strScript = array("browse_document.php" =>
 		"Stai superando il limite di rame metallo ammesso su questo campo di coltivazione!",
 		"Non puoi più utilizzare questo prodotto in quanto ne è scaduta l'autorizzazione",
 		"Il db fitofarmaci non viene aggiornato da oltre 30 giorni. Per effettuarlo: Merci/servizi > Aggiorna tabella fitofarmaci",
+		"Produzione",
+		"Hai impostato una produzione che non esiste. Devi prima creare una nuova produzione e poi selezionarla dal menù a tendina che appare.",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
