@@ -50,8 +50,6 @@ function getItemPrice($item, $partner = 0) {
         $sconto = 0;
         $price = $artico["preve1"];
     }
-	
-	echo "passata funzione"	;die;
     return CalcolaImportoRigo(1, $price, $sconto, $admin_aziend['decimal_price']);
 }
 
@@ -669,13 +667,6 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 echo "\t </select></td></tr>\n"; 
 /* fine qui si seleziona la data di attuazione */
 
-
-
-
-
-
-
-
 /** ENRICO FEDELE */
 // antonio Germani echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "&hArr;" . $script_transl[4] . "</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
@@ -734,8 +725,6 @@ if (substr($form["clfoco"], 0, 3) == $admin_aziend['masfor']) {
     $unimis = "unimis";
 }
 
-
-
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td>";
 /* Antonio Germani -  avversità */
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['avversita'] . "\" maxlength=\"50\" size=\"35\" name=\"avversita\"></td></tr>";
@@ -773,7 +762,7 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class
  echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td>";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[10] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scochi'] . "\" maxlength=\"5\" size=\"5\" name=\"scochi\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %</td></tr>";
 */
-//però devo metterlo come nascosto altrimenti mi segnala un warning su 'sochi'
+//però devo metterlo come nascosto altrimenti mi segnala un warning su 'scochi'
 echo "<input type=\"hidden\" name=\"scochi\" value=\"" . $form['scochi'] . "\">\n";
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
@@ -793,29 +782,33 @@ if ($form['artico'] == '') {
 	$scorta=$item['scorta'];// prendo la scorta minima
 	$descri=$item['descri'];//prendo descrizione articolo
 	$form['prezzo']=$item['preacq'];
-		
-	// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
-	 $mv = $gForm->getStockValue(false, $item['codice']);
-        $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
-		if (isset($_POST['Update'])) {
-			$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-			// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
-			$print_magval=$print_magval+$qta['quanti'];}
-	 
-    echo " ",substr($item['descri'], 0, 20)," ";
+	$service=intval($item['good_or_service']);
+	 	If ($service == 0) { //Antonio Germani se è un articolo con magazzino
+			// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
+			$mv = $gForm->getStockValue(false, $item['codice']);
+			$magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
+				if (isset($_POST['Update'])) {
+				$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
+				// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
+				$print_magval=$print_magval+$qta['quanti'];
+				}	 
+			echo " ",substr($item['descri'], 0, 20)," ";
 	
-	if ($dose>0) {echo "dose: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
-    
+			if ($dose>0) {echo "dose: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
+		}
     
 }
 
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis". ' ',$script_transl[22],' '.gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']).' '.$print_unimis."&nbsp;&nbsp;";
-	if ($print_magval<$scorta) {
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis";
+	if ($service == 0) { //Antonio Germani se è un articolo con magazzino
+		echo " ".$script_transl[22]." ".gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity'])." ".$print_unimis."&nbsp;&nbsp;";
+	}
+	if ($print_magval<$scorta and $service ==0 ) {
 		echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 }
 echo "</td></tr>\n";
 
-/* Antonio Germani riattivo il prezzo e lo sconto che nel quaderno di campagna non servono */
+/* Antonio Germani riattivo il prezzo e lo sconto che nel quaderno di campagna servono */
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" colspan=\"3\">"."<input type=\"text\" value=\"" . $importo_totale . "\" name=\"total\" size=\"20\" readonly />" . "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[31] . "<input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[14] . "&nbsp;" . "<input type=\"text\" value=\"" . $form['scorig'] . "\" maxlength=\"4\" size=\"4\" name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %" . "&nbsp;&nbsp;&nbsp;" . "</td></tr>\n";
 

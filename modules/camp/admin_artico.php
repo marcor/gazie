@@ -26,9 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
-$today=	strtotime(date("Y-m-d H:i:s",time()));
-presente="";
-$largeimg=0;
+$today=	strtotime(date("Y-m-d H:i:s",time()));$presente="";$largeimg="";
 /** ENRICO FEDELE */
 /* Inizializzo per aprire in finestra modale */
 $modal = false;
@@ -50,17 +48,20 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
-    /*Antonio Germani non serve per quaderno di campagna / i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali
+    // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali 
+	
     $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
+	/*Antonio Germani non serve per quaderno di campagna
     $form["preve1"] = number_format($form['preve1'], $admin_aziend['decimal_price'], '.', '');
     $form["preve2"] = number_format($form['preve2'], $admin_aziend['decimal_price'], '.', '');
     $form["preve3"] = number_format($form['preve3'], $admin_aziend['decimal_price'], '.', '');
     $form["preve4"] = number_format($form['preve4'], $admin_aziend['decimal_price'], '.', '');
     $form["web_price"] = number_format($form['web_price'], $admin_aziend['decimal_price'], '.', '');
+	 */
     $form['rows'] = array();
     /** inizio modifica FP 03/12/2015
      * fornitore
-     */
+    
     $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
@@ -118,27 +119,26 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             if ($_FILES['userfile']['size'] > 65530){
 				 //$msg['err'][] = 'filsiz';
 				 //Antonio Germani anziche segnalare errore ridimensiono l'immagine
-				$maxDim = 400;
-				$file_name = $_FILES['userfile']['tmp_name'];
-				list($width, $height, $type, $attr) = getimagesize( $file_name );
-				if ( $width > $maxDim || $height > $maxDim ) {
-					$target_filename = $file_name;
-					$ratio = $width/$height;
-						if( $ratio > 1) {
-							$new_width = $maxDim;
-							$new_height = $maxDim/$ratio;
-						} else {
-								$new_width = $maxDim*$ratio;
-								$new_height = $maxDim;
-						}
-					$src = imagecreatefromstring( file_get_contents( $file_name ) );
-					$dst = imagecreatetruecolor( $new_width, $new_height );
-					imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
-					imagedestroy( $src );
-					imagepng( $dst, $target_filename); // adjust format as needed
-					imagedestroy( $dst );
-				}
-				$largeimg=1;
+							$maxDim = 80;
+							$file_name = $_FILES['userfile']['tmp_name'];
+							list($width, $height, $type, $attr) = getimagesize( $file_name );
+							if ( $width > $maxDim || $height > $maxDim ) {
+								$target_filename = $file_name;
+								$ratio = $width/$height;
+									if( $ratio > 1) {
+										$new_width = $maxDim;
+										$new_height = $maxDim/$ratio;
+									} else {
+											$new_width = $maxDim*$ratio;
+											$new_height = $maxDim;
+										}
+							$src = imagecreatefromstring( file_get_contents( $file_name ) );
+							$dst = imagecreatetruecolor( $new_width, $new_height );
+							imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+							imagedestroy( $src );
+							imagepng( $dst, $target_filename); // adjust format as needed
+							imagedestroy( $dst );
+							}
 				// fine ridimensionamento immagine
 			}	           
         }
@@ -169,11 +169,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
-             if ($largeimg==0){
-				 $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
-			 } else {
-				 $form['image'] = file_get_contents($target_filename);
-			 }
+             If ($largeimg==0){$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);}
+			 else {$form['image'] = file_get_contents($target_filename);}
             } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
                 $oldimage = gaz_dbi_get_row($gTables['artico'], 'codice', $form['ref_code']);
                 $form['image'] = $oldimage['image'];
@@ -563,7 +560,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
+				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="preacq" class="col-sm-4 control-label"><?php echo $script_transl['preacq']; ?></label>
