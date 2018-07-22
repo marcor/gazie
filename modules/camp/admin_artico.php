@@ -26,7 +26,9 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $modal_ok_insert = false;
-$today=	strtotime(date("Y-m-d H:i:s",time()));$presente="";$largeimg="";
+$today=	strtotime(date("Y-m-d H:i:s",time())); 
+$presente=""; 
+$largeimg=0;
 /** ENRICO FEDELE */
 /* Inizializzo per aprire in finestra modale */
 $modal = false;
@@ -132,13 +134,14 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 											$new_width = $maxDim*$ratio;
 											$new_height = $maxDim;
 										}
-							$src = imagecreatefromstring( file_get_contents( $file_name ) );
-							$dst = imagecreatetruecolor( $new_width, $new_height );
-							imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
-							imagedestroy( $src );
-							imagepng( $dst, $target_filename); // adjust format as needed
-							imagedestroy( $dst );
+								$src = imagecreatefromstring( file_get_contents( $file_name ) );
+								$dst = imagecreatetruecolor( $new_width, $new_height );
+								imagecopyresampled( $dst, $src, 0, 0, 0, 0, $new_width, $new_height, $width, $height );
+								imagedestroy( $src );
+								imagepng( $dst, $target_filename); // adjust format as needed
+								imagedestroy( $dst );
 							}
+			$largeimg=1;				
 				// fine ridimensionamento immagine
 			}	           
         }
@@ -169,8 +172,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         }
         if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
-             If ($largeimg==0){$form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);}
-			 else {$form['image'] = file_get_contents($target_filename);}
+				If ($largeimg==0){
+				 $form['image'] = file_get_contents($_FILES['userfile']['tmp_name']);
+				} else {
+					$form['image'] = file_get_contents($target_filename);
+				}
             } elseif ($toDo == 'update') { // altrimenti riprendo la vecchia ma solo se è una modifica
                 $oldimage = gaz_dbi_get_row($gTables['artico'], 'codice', $form['ref_code']);
                 $form['image'] = $oldimage['image'];

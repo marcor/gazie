@@ -63,8 +63,12 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     while ($row = gaz_dbi_fetch_array($result)) {
 			if ($row['mostra_qdc']==1 or $mt==1){ // Antonio Germani seleziona quali prodotti mostrare
         $lastdoc = getLastDoc($row["codice"]);
-        $mv = $gForm->getStockValue(false, $row['codice']);
-        $magval = array_pop($mv);
+		if ($row['good_or_service']==0){
+			$mv = $gForm->getStockValue(false, $row['codice']);
+			$magval = array_pop($mv);
+		} else {
+			$magval=0;
+		}	
         $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $row["aliiva"]);
         $ldoc = '';
         if ($lastdoc) {

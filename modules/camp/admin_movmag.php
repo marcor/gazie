@@ -24,7 +24,7 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-$msg = "";$print_magval="";$dose="";$dim_campo="";$rame_met_annuo="";$scadaut="";$scorta="";
+$msg = "";$print_magval="";$dose="";$dim_campo="";$rame_met_annuo="";$scadaut="";$scorta="";$service="";
 $today=	strtotime(date("Y-m-d H:i:s",time()));
 $gForm = new magazzForm(); // Antonio Germani attivo funzione calcolo giacenza di magazzino
 
