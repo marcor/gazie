@@ -63,7 +63,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['rows'] = array();
     /** inizio modifica FP 03/12/2015
      * fornitore
-    
+    */
     $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
@@ -288,6 +288,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** fine modifica FP */
     // eventuale descrizione amplia
     $form['body_text'] = '';
+	$form['unimis']= '';
 }
 
 // CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
@@ -385,9 +386,14 @@ if ($modal_ok_insert === true) {
     echo '<div class=" text-center"><button class="btn btn-lg btn-default" type="submit" name="none">' . $script_transl['iterate_invitation'] . '</button></div>';
 } else {
     $gForm = new magazzForm();
-    $mv = $gForm->getStockValue(false, $form['codice']);
-    $magval = array_pop($mv);
-
+	if ($form['good_or_service']==0) {
+		$mv = $gForm->getStockValue(false, $form['codice']);
+		$magval = array_pop($mv);
+	} else {
+		$magval['q_g']=0;
+		$magval['v_g']=0;
+	}
+	
     /** ENRICO FEDELE */
     /* Se sono in finestra modale, non visualizzo questo titolo */
     $changesubmit = '';
@@ -463,7 +469,7 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="good_or_service" class="col-sm-4 control-label"><?php echo $script_transl['good_or_service']; ?>*</label>
     <?php
-    $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
+    $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'onchange="this.form.submit()"; style="max-width: 200px;"');
     ?>
                         </div>
                     </div>
@@ -508,18 +514,25 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+				
               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="unimis" class="col-sm-4 control-label"><?php echo $script_transl['unimis']; ?></label>
                          <!--   <input class="col-sm-2" type="text" value="<?php echo $form['unimis']; ?>" name="unimis" maxlength="3" /> -->
-						 <select name="unimis" size="1">
-
-							<option <?php if($form['unimis'] == 'Kg'){echo("selected");}?>>Kg</option>
-							<option <?php if($form['unimis'] == 'l'){echo("selected");}?>>l</option>
-							<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
-						</select>
-
+						 <?php if ($form['good_or_service']==0){?>
+								<select name="unimis" size="1">
+									<option <?php if($form['unimis'] == 'Kg'){echo("selected");}?>>Kg</option>
+									<option <?php if($form['unimis'] == 'l'){echo("selected");}?>>l</option>
+									<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
+								</select>
+						 <?php } else { ?>
+							 <select name="unimis" size="1">
+									<option <?php if($form['unimis'] == 'h'){echo("selected");}?>>h</option>
+									<option <?php if($form['unimis'] == 'gg'){echo("selected");}?>>gg</option>
+									<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
+								</select>
+						<?php } ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -795,8 +808,11 @@ if ($modal_ok_insert === true) {
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>
     <?php
+	
     $select_id_anagra = new selectPartner("id_anagra");
-    $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra', $script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
+    $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra',
+	$script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
+	
     ?>
                         </div>
                     </div>

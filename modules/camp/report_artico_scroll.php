@@ -66,9 +66,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		if ($row['good_or_service']==0){
 			$mv = $gForm->getStockValue(false, $row['codice']);
 			$magval = array_pop($mv);
-		} else {
-			$magval=0;
-		}	
+		} 	else {
+			$magval['q_g'] = 0;
+		}
         $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $row["aliiva"]);
         $ldoc = '';
         if ($lastdoc) {
