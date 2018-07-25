@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `gaz_fitofarmaci` (
   `SOSTANZE_ATTIVE` varchar(30) NOT NULL,
   PRIMARY KEY (`NUMERO_REGISTRAZIONE`)
 )  COMMENT='Viene utilizzato dal modulo Registro di campagna (camp) e serve per contenere la tabella del ministero della salute delle sostanze' ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO `gaz_menu_script` ( `id`, `id_menu`, `link`, `translate_key`, `weight`) SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_movmag.php' AND `id_module`> 6), 'calc_prod.php', 12, 15  FROM `gaz_menu_script` WHERE EXISTS (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_movmag.php' AND `id_module`> 6) 	LIMIT 1;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_resp` TINYINT(1) NOT NULL AFTER `print_map`;
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_service_descri` VARCHAR(100) NOT NULL COMMENT 'Descrizione del servizio esternalizzato, verrà riportato sulla nomina a responsabile esterno del trattamento dei dati' AFTER `external_resp`;
