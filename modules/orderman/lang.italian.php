@@ -38,7 +38,8 @@ $strScript =
 		"Informazioni supplementari",
 		"Descrizione vuota",
 		"Data inizio produzione",
-		"Durata produzione in giorni"
+		"Durata produzione in giorni",
+		"Luogo di produzione"
 		),
 	array("orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',

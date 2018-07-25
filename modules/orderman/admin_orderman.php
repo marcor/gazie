@@ -56,6 +56,7 @@ $form['gioinp'] = $_POST['gioinp'];
 $form['mesinp'] = $_POST['mesinp'];
 $form['anninp'] = $_POST['anninp'];
 $form['day_of_validity'] = $_POST['day_of_validity'];
+$form["campo_impianto"] = $_POST["campo_impianto"];
 
 
     // Se viene inviata la richiesta di conferma totale ...
@@ -69,7 +70,7 @@ $form['day_of_validity'] = $_POST['day_of_validity'];
        if ($msg == "") {// nessun errore
  // Antonio Germani  qui si scrive il database       
           if ($toDo == 'update') { // Antonio Germani e' una modifica quindi aggiorno orderman e tesbro
-            $query="UPDATE ".$gTables['orderman']." SET ".'order_type'." = '".$form['order_type']."', ".'description'." = '".$form['description']."', ".'add_info'." = '".$form['add_info']."' WHERE id = '".$form['id']."'";
+            $query="UPDATE ".$gTables['orderman']." SET ".'order_type'." = '".$form['order_type']."', ".'description'." = '".$form['description']."', ".'campo_impianto'." = '".$form["campo_impianto"]."', ".'add_info'." = '".$form['add_info']."' WHERE id = '".$form['id']."'";
 		 	   $res = gaz_dbi_query($query);
 			$query="UPDATE ".$gTables['tesbro']." SET ".'datemi'." = '".$form['datemi']."', ".'day_of_validity'." = '".$form['day_of_validity']."' WHERE id_tes = '".$form['id_tesbro']."'";
 			  $res = gaz_dbi_query($query);    
@@ -99,33 +100,33 @@ $form['day_of_validity'] = $_POST['day_of_validity'];
 
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
 
-/*DA FARE <<<<<<<<<<<*/
 $result = gaz_dbi_get_row($gTables['orderman'],"id",$_GET['codice']);
-
- $form['ritorno'] = $_POST['ritorno'];
- $form['id']=$_GET['codice'];
+	$form['ritorno'] = $_POST['ritorno'];
+	$form['id']=$_GET['codice'];
     $form['order_type']=$result['order_type'];
     $form['description']=$result['description'];
     $form['id_tesbro']=$result['id_tesbro'];
 	$form['add_info']=$result['add_info'];
 	$result2 = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$result['id_tesbro']);
- $form['gioinp'] = substr($result2['datemi'], 8, 2);
- $form['mesinp'] = substr($result2['datemi'], 5, 2);
- $form['anninp'] = substr($result2['datemi'], 0, 4);	
+	$form['gioinp'] = substr($result2['datemi'], 8, 2);
+	$form['mesinp'] = substr($result2['datemi'], 5, 2);
+	$form['anninp'] = substr($result2['datemi'], 0, 4);	
 	$form['datemi']=$result2['datemi'];
 	$form['day_of_validity']=$result2['day_of_validity'];
+	$form["campo_impianto"]=$result['campo_impianto'];
 
 } else { //se e' il primo accesso per INSERT
     
 	$form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $form['order_type']='';
-    $form['description']='';
-    $form['id_tesbro']='';
-	$form['add_info']='';
+    $form['order_type']="";
+    $form['description']="";
+    $form['id_tesbro']="";
+	$form['add_info']="";
 	$form['gioinp'] = date("d");
     $form['mesinp'] = date("m");
     $form['anninp'] = date("Y");
-	$form['day_of_validity']='';
+	$form['day_of_validity']="";
+	$form["campo_impianto"] ="";
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
@@ -196,8 +197,21 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 echo "\t </select></td>\n";
 // end data inizio produzione
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\"><input type=\"number\" name=\"day_of_validity\" min=\"0\" maxlength=\"3\" step=\"any\" size=\"3\" value=\"".$form['day_of_validity']."\"  /></td></tr>\n";
-	
 		print "</select></td></tr>";
+/*antonio Germani campo impianto  */
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
+echo "<select name=\"campo_impianto\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+echo "<option value=\"\">-------------</option>\n";
+$result = gaz_dbi_dyn_query("*", $gTables['campi']);
+while ($row = gaz_dbi_fetch_array($result)) {
+    $selected = "";
+    if ($form["campo_impianto"] == $row['codice']) {
+        $selected = " selected ";
+    }
+    echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
+} 
+echo "</select>&nbsp;";	
+	
 	if ($popup<>1){
 		print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
 		print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
