@@ -215,8 +215,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		if ($form['quanti'] == 0) {  //la quantità è zero
             $msg .= "19+";
         }
-				
-		
+					
 	 // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
 	 $mv = $gForm->getStockValue(false, $form['artico']);
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
@@ -566,9 +565,6 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td col
 <?php	
 /* fine inserisci produzione  */
 
-
-
-
 /*antonio Germani campo coltivazione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"campo_coltivazione\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -609,10 +605,6 @@ for ($counter = -1; $counter <= 1; $counter++) {
 }
 echo "</td></tr>";
 
-
-
-
-
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
@@ -639,10 +631,6 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
     echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 echo "\t </select></td>\n";
-
-
-
-
 
  /* Antonio Germani qui si seleziona la data di attuazione */      	
 echo "</td><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">\n";
@@ -687,7 +675,6 @@ if ($form['clorfo'] < 0) { // cliente
 }
 if ($form['clfoco'] == 0) {
     if (strlen($form['search_partner']) >= 2) {
-
         $anagrafica = new Anagrafica();
         $partner = $anagrafica->queryPartners("*", $rs_partner . " and ragso1 like '" . addslashes($form['search_partner']) . "%'", "codice asc, ragso1 asc");
         if (sizeof($partner) > 0) {
@@ -798,14 +785,10 @@ if ($form['artico'] == "") {
 				// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 				$print_magval=$print_magval+$qta['quanti'];
 				}	 
-			echo " ",substr($itemart['descri'], 0, 20)," ";
-	
+			echo " ",substr($itemart['descri'], 0, 20)," ";	
 			if ($dose>0) {echo "dose: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
-		}
-    
+		}  
 }
-// echo "artico=",$form['artico'];print_r ($itemart); if ($form['artico']<>"" && !isset($itemart)) {$msg .= "18+"; echo"errore dopo autocomplete";}
-
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis";
 	if ($service == 0) { //Antonio Germani se è un articolo con magazzino
 		echo " ".$script_transl[22]." ".gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity'])." ".$print_unimis."&nbsp;&nbsp;";
@@ -816,9 +799,7 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class
 echo "</td></tr>\n";
 
 /* Antonio Germani riattivo il prezzo e lo sconto che nel quaderno di campagna servono */
-
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[13] . "</td><td class=\"FacetDataTD\" colspan=\"3\">"."<input type=\"text\" value=\"" . $importo_totale . "\" name=\"total\" size=\"20\" readonly />" . "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[31] . "<input type=\"text\" value=\"" . $form['prezzo'] . "\" maxlength=\"12\" size=\"12\" name=\"prezzo\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> " . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[14] . "&nbsp;" . "<input type=\"text\" value=\"" . $form['scorig'] . "\" maxlength=\"4\" size=\"4\" name=\"scorig\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> %" . "&nbsp;&nbsp;&nbsp;" . "</td></tr>\n";
-
 /* fine riattivo prezzo e sconto */
 
 /*ANtonio Germani - visualizzo l'operatore */
