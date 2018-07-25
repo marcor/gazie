@@ -56,8 +56,9 @@ function getItemPrice($item, $partner = 0) {
 // Antonio Germani questo serve per la nuova ricerca articolo
 if (isset($_POST['artico'])){
 $form['artico'] = $_POST['artico'];
-
-}
+$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+if ($form['artico']<>"" && !isset($itemart)) {$msg .= "18+";}
+	}
 // Antonio Germani questo serve per la nuova ricerca produzione
 if (isset($_POST['description'])){
 $form['description']=$_POST['description'];
@@ -146,7 +147,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['avversita'] = substr($_POST['avversita'],0,50);
     $form['artico'] = $_POST['artico'];
     $form['quanti'] = gaz_format_quantity($_POST['quanti'], 0, $admin_aziend['decimal_quantity']);
-   $form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
+	if (strlen ($_POST['prezzo'])>0) {
+		$form['prezzo'] = number_format(preg_replace("/\,/", '.', $_POST['prezzo']), $admin_aziend['decimal_price'], '.', '');
+	} else {
+		$form['prezzo']="";
+	}
    $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
     $form['status'] = substr($_POST['status'], 0, 10);
 	$form['id_orderman'] = intval ($_POST['description']);
@@ -206,7 +211,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
         if (empty($form['artico'])) {  //manca l'articolo
             $msg .= "18+";
         }
-        if ($form['quanti'] == 0) {  //la quantità è zero
+		
+		if ($form['quanti'] == 0) {  //la quantità è zero
             $msg .= "19+";
         }
 				
@@ -770,34 +776,35 @@ $messaggio = "";
 $print_unimis = "";
 $ric_mastro = substr($form['artico'], 0, 3);
 ?>
-             <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['artico'] ?>" name="artico" maxlength="15" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete -->
- <?php
-if ($form['artico'] == '') {
-} else {
-	
-	
-    $item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
-    $print_unimis = $item[$unimis];
-	$dose=$item['dose_massima'];// prendo anche la dose
-	$scorta=$item['scorta'];// prendo la scorta minima
-	$descri=$item['descri'];//prendo descrizione articolo
-	$form['prezzo']=$item['preacq'];
-	$service=intval($item['good_or_service']);
+             <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['artico'] ?>" name="artico" maxlength="15" /> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete -->
+ <?php 
+if ($form['artico'] == "") {
+} else {	
+    $itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+	$print_unimis = $itemart['unimis'];
+	$dose=$itemart['dose_massima'];// prendo anche la dose
+	$scorta=$itemart['scorta'];// prendo la scorta minima
+	$descri=$itemart['descri'];//prendo descrizione articolo
+	if (isset($_POST['Insert'])) {
+        $form['prezzo']=$itemart['preacq'];
+    }
+	$service=intval($itemart['good_or_service']);
 	 	If ($service == 0) { //Antonio Germani se è un articolo con magazzino
 			// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
-			$mv = $gForm->getStockValue(false, $item['codice']);
+			$mv = $gForm->getStockValue(false, $itemart['codice']);
 			$magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
 				if (isset($_POST['Update'])) {
 				$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 				// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 				$print_magval=$print_magval+$qta['quanti'];
 				}	 
-			echo " ",substr($item['descri'], 0, 20)," ";
+			echo " ",substr($itemart['descri'], 0, 20)," ";
 	
 			if ($dose>0) {echo "dose: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
 		}
     
 }
+// echo "artico=",$form['artico'];print_r ($itemart); if ($form['artico']<>"" && !isset($itemart)) {$msg .= "18+"; echo"errore dopo autocomplete";}
 
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['quanti'] . "\" maxlength=\"10\" size=\"10\" name=\"quanti\" onChange=\"this.form.total.value=CalcolaImportoRigo();\"> $print_unimis";
 	if ($service == 0) { //Antonio Germani se è un articolo con magazzino

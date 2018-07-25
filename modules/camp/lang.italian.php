@@ -107,7 +107,7 @@ $strScript = array("browse_document.php" =>
         "La data del documento non &egrave; corretta!",
         "La data di registrazione non &egrave; corretta!",
         "La data del documento &egrave; successiva a quella di registazione!",
-        "Non &egrave; stato selezionato l'articolo!",
+        "Articolo non presente o sconosciuto! Selezionare l'articolo fra quelli presenti nell'elenco a tendina.",
         "La quantit&agrave; non pu&ograve; essere uguale a zero!",
 		"Avversità riscontrata",
 		"Operatore",
