@@ -42,6 +42,7 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
                                                     array('translate_key'=>5,'link'=>"admin_movmag.php?Insert",'weight'=>1),
                                                     array('translate_key'=>6,'link'=>"select_schart.php",'weight'=>5),
                                                     array('translate_key'=>7,'link'=>"select_giomag.php",'weight'=>10)
+													array('translate_key'=>12,'link'=>"calc_prod.php",'weight'=>15)
                                                     ),
 											4=>array(
                                                     array('translate_key'=>8,'link'=>"admin_caumag.php?Insert",'weight'=>1)
