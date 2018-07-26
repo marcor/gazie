@@ -169,4 +169,6 @@ ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `quanti2` DECIMAL(12,3) NULL DEFAULT NULL
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Calcola il totale su campo quantità aggiuntivo (0=No, 1=Si)', 'calc_quanti2', '0');
 ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `quanti2` DECIMAL(12,3) NULL DEFAULT NULL AFTER `quanti`;
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `campo_impianto` INT(3) NOT NULL COMMENT 'Se valorizzata questa referenza assegna l\'ordine/commessa/produzione ad un impianto specifico, ovvero al campo del modulo camp (se azienda agricola)' AFTER `id_tesbro`;
+ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `fattura_elettronica_original_name` VARCHAR(100) NULL DEFAULT NULL AFTER `id_con`,	ADD COLUMN `fattura_elettronica_original_content` MEDIUMBLOB NULL DEFAULT NULL AFTER `fattura_elettronica_original_name`;
+
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
