@@ -241,6 +241,12 @@ $strScript = array("browse_document.php" =>
             'Causale movimento' => '', 'Valore totale' => '', 'UM' => '', 'Quantit&agrave;' => ''
         )
     ),
+	"calc_prod.php"=>
+	array("Produzione",
+		"Calcolo della produzione: ",
+		"iniziata il ",
+		"nel campo di coltivazione "
+	),
     "recalc_exist_value.php" =>
     array("Rivalutazione esistenza articoli da movimenti di magazzino",
         "Anno di riferimento",

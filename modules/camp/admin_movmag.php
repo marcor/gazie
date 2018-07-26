@@ -528,7 +528,7 @@ if (!empty($msg)) {
 	$("input#autocomplete2").autocomplete({
 		source: [<?php
 	$stringa="";$cod="";
-	$query="SELECT * FROM .".$gTables['orderman'];
+	$query="SELECT * FROM ".$gTables['orderman'];
 	$res = gaz_dbi_query($query);
 	while($row = $res->fetch_assoc()){
 		$itemtesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $row['id_tesbro']);
@@ -729,7 +729,7 @@ echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class
 	$("input#autocomplete").autocomplete({
 		source: [<?php
 	$stringa="";
-	$query="SELECT * FROM .".$gTables['artico'];
+	$query="SELECT * FROM ".$gTables['artico'];
 	$result = gaz_dbi_query($query);
 	while($row = $result->fetch_assoc()){
 		$stringa.="\"".$row['codice']."\", ";			
