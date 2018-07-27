@@ -160,7 +160,6 @@ function azzera(righe)
  }
 ?>
   <input type="hidden" name="clfo_pas" value="<?php echo $form['id_anagra'];?>">
-  </form
 </form>
 <?php
 require("../../library/include/footer.php");
