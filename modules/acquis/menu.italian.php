@@ -52,7 +52,8 @@ $transl['acquis'] = array('name' => "Acquisti",
         15 => array("Stampa lista fornitori", "Lista fornitori"),
         16 => array("Acquistato bene ammortizzabile", "Acquisto bene ammortizzabile"),
         17 => array("Pagamento RiBa fornitori", "Registra disposizione pagamenti"),
-		18 => array("Ordine automatico fornitore", "Ordine automatico fornitore")
+		18 => array("Ordine automatico fornitore", "Ordine automatico fornitore"),
+		19 => array("Acquisisci fattura elettronica", "Acquisisci fattura elettronica")
     )
 );
 ?>

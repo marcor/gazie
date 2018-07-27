@@ -1,6 +1,11 @@
 UPDATE `gaz_config` SET `cvalue` = '110' WHERE `id` =2;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=S', '', '', 49, '', 6  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_broacq.php'), 'prop_ordine.php', '', '', 18, '', 3  FROM `gaz_menu_script`;
+UPDATE `gaz_menu_script` SET `weight`='5' WHERE  `link`='admin_docacq.php?Insert&tipdoc=AFA';
+UPDATE `gaz_menu_script` SET `weight`='10' WHERE  `link`='admin_docacq.php?Insert&tipdoc=AFC';
+UPDATE `gaz_menu_script` SET `weight`='15' WHERE  `link`='accounting_documents.php?type=A';
+UPDATE `gaz_menu_script` SET `weight`='20' WHERE  `link`='admin_assets.php?Insert';
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_docacq.php'), 'acquire_invoice.php', '', '', 19, '', 1  FROM `gaz_menu_script`;
 DELETE FROM `gaz_admin_module` WHERE  `moduleid`=14;
 CREATE TABLE IF NOT EXISTS `gaz_fitofarmaci` (
   `NUMERO_REGISTRAZIONE` int(6) NOT NULL,
