@@ -153,7 +153,7 @@ $recordnav -> output();
 while ($a_row = gaz_dbi_fetch_array($result)) {
 	// NOMINA A RESPONSABILE ESTERNO AL TRATTAMENTO DEI DATI?
 	$regol_lnk='';
-	if ($a_row["external_resp"]>0) {
+	if (isset ($a_row["external_resp"]) && $a_row["external_resp"]>0) {
 		$regol_lnk='<a title="Stampa la Nomina a RESPONSABILE ESTERNO al trattamento dati personali" class="btn btn-xs btn-default btn-warning" href="stampa_nomina.php?id=' . $a_row["codice"] . '" target="_blank"><i class="glyphicon glyphicon-eye-close"></i></a> ';
 	} else {
 		$regol_lnk="<a class=\"btn btn-xs btn-default\" href=\"stampa_privacy.php?codice=".$a_row["codice"]."\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a>";
