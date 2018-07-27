@@ -593,5 +593,12 @@ $strScript = array("admin_fornit.php" =>
         'confirm_entry' => 'Conferma la registrazione dei pagamenti selezionati',
         'upd_entry'=> 'Modifica il movimento contabile generato da questo documento'
     ),
+    "acquire_invoice.php" =>
+    array('title' => 'Acquisizione file fattura elettronica da fornitore',
+        'err' => array(
+            'filmim' => 'Il file dev\'essere nel formato XML o P7M',
+        ),
+        'xxxxxx' => "Codice"
+	)
 );
 ?>

@@ -24,15 +24,8 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
+$msg = array('err' => array(), 'war' => array());
 
-/**
- * stripP7MData
- *
- * removes the PKCS#7 header and the signature info footer from a digitally-signed .xml.p7m file using CAdES format.
- *
- * @param ($string, string) the CAdES .xml.p7m file content (in string format).
- * @return (string) an arguably-valid XML string with the .p7m header and footer stripped away.
- */
 function removeSignature($string) {
     $string = substr($string, strpos($string, '<?xml '));
     preg_match_all('/<\/.+?>/', $string, $matches, PREG_OFFSET_CAPTURE);
@@ -45,10 +38,51 @@ function removeSignature($string) {
 	return preg_replace ('/[\x{0004}\x{0082}\x{0003}\x{00AA}]+/', '', $string);
 }
 
-$p7mContent=file_get_contents('myxml.p7m');
-$xmlContent = removeSignature($p7mContent);
-print_r($xmlContent);
-$fp = fopen('my.xml', 'w');
-fwrite($fp, $xmlContent);
-fclose($fp);
+
+if (isset($_POST['Submit'])) { // conferma tutto
+    if (!empty($_FILES['userfile']['name'])) {
+        if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml")) {
+				$msg['err'][] = 'filmim';
+		} else {
+		$file_name = $_FILES['userfile']['tmp_name'];
+		$p7mContent=file_get_contents($file_name);
+		$invoiceContent = removeSignature($p7mContent);
+		$doc = new DOMDocument;
+		$doc->preserveWhiteSpace = false;
+		$doc->formatOutput = true;
+		$doc->loadXML($invoiceContent);
+		echo $doc->save('my.xml');
+		}
+    }
+	exit;
+}
+
+
+
+require("../../library/include/header.php");
+$script_transl = HeadMain();
+?>
+<form method="POST" name="form" enctype="multipart/form-data" id="add-product">
+<?php
+$gForm = new acquisForm();
+if (count($msg['err']) > 0) { // ho un errore
+    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+}
+?>
+   <div class="panel panel-default gaz-table-form">
+       <div class="container-fluid">
+           <div class="row">
+               <div class="col-md-12">
+                   <div class="form-group">
+                       <label for="image" class="col-sm-4 control-label">Seleziona il file xml o p7m</label>
+                       <div class="col-sm-8">File: <input type="file" name="userfile" /></div>
+                   </div>
+               </div>
+           </div><!-- chiude row  -->
+			<div class="col-sm-12 text-right"><input name="Submit" type="submit" class="btn btn-warning" value="ACQUISISCI!" /></div>		   
+	</div> <!-- chiude container -->
+</div><!-- chiude panel -->
+</form>
+<?php 
+require("../../library/include/footer.php");
 ?>
