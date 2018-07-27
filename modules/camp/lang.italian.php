@@ -156,6 +156,7 @@ $strScript = array("browse_document.php" =>
         "Il file immagine dev'essere nel formato PNG",
         "L'immagine non dev'essere pi&ugrave; grande di 300 kb",
 		"La dimensione &egrave; vuota!",
+		"ATTENZIONE: non puoi eliminare questo campo perché ci sono dei movimenti attivi. Elimina prima tutti i movimenti di questo campo.",
         'web_url' => 'Mappa di Google<br />(es: https://goo.gl/maps/YajAcRexvDp)'
     ),
     "admin_ragstat.php" =>
