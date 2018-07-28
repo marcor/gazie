@@ -51,6 +51,12 @@ if (isset($_POST['Submit'])) { // conferma tutto
 		$doc->preserveWhiteSpace = false;
 		$doc->formatOutput = true;
 		$doc->loadXML($invoiceContent);
+		$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
+		$name_file = $nf->textContent;
+		$att = $doc->getElementsByTagName('Attachment')->item(0);
+		$base64 = $att->textContent;
+		$bin = base64_decode($base64);
+		file_put_contents($name_file, $bin);
 		echo $doc->save('my.xml');
 		}
     }
