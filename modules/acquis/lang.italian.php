@@ -228,6 +228,7 @@ $strScript = array("admin_fornit.php" =>
         "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
         "L'articolo di magazzino ha una matricola/numero di serie pertanto la quantità è stata forzata ad 1",
         "Risulta un documento gi&agrave; registrato con questo numero fattura per questo fornitore",
+		"Non esiste la cartella ID azienda nel percorso data/files!",
         /** ENRICO FEDELE */
         "add_article" => "Aggiungi un nuovo articolo",
         'art_code' => 'Codice articolo',

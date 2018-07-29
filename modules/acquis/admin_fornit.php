@@ -199,6 +199,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['datnas_Y'] = substr($form['datnas'], 0, 4);
     $form['datnas_M'] = substr($form['datnas'], 5, 2);
     $form['datnas_D'] = substr($form['datnas'], 8, 2);
+	$form['external_resp']=$form['external_resp'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $anagrafica = new Anagrafica();
     $last = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999", "codice DESC", 0, 1);

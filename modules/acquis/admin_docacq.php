@@ -1081,6 +1081,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$i]['expiry'] = '';
         $form['rows'][$i]['status'] = "UPDATE";
         // recupero eventuale movimento di tracciabilità ma solo se non è stata richiesta una duplicazione (di un ddt c/lavorazione)
+		If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {
 		if (!isset($_GET['Duplicate'])) {
 			$lotmag = gaz_dbi_get_row($gTables['lotmag'], 'id_rigdoc', $row['id_rig']);
 			// recupero il filename dal filesystem e lo sposto sul tmp 
@@ -1098,6 +1099,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		} else {
 			$form['rows'][$i]['status'] = "Insert";
 			$form['rows'][$i]['id_mag'] = 0;
+		}
+		} else {
+			$msg .= "59+";
 		}
         $i++;
     }
