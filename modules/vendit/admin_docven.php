@@ -2339,9 +2339,12 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
 						<td class=\"FacetFieldCaptionTD\">$script_transl[10]</td>\n";
     if ($form['id_des_same_company'] > 0) { //  è una destinazione legata all'anagrafica
         echo "<td class=\"FacetDataTD\">\n";
-        $gForm->selectFromDB('destina', 'id_des_same_company', 'codice', $form['id_des_same_company'], 'codice', true, '-', 'unita_locale1', '', 'FacetSelect', null, '', "id_anagra = '" . $cliente['id_anagra'] . "'");
-        echo "	<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
-                <input type=\"hidden\" name=\"destin\" value=\"" . $form['destin'] . "\" /></td>\n";
+//        $gForm->selectFromDB('destina', 'id_des_same_company', 'codice', $form['id_des_same_company'], 'codice', true, '-', 'unita_locale1', '', 'FacetSelect', null, '', "id_anagra = '" . $cliente['id_anagra'] . "'");
+        echo selectDestinazione($cliente['id_anagra']);
+        echo "	<textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
+						</td>
+						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
+						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
     } elseif ($form['id_des'] > 0) { // la destinazione è un'altra anagrafica
         echo "<td class=\"FacetDataTD\">\n";
         $select_id_des = new selectPartner('id_des');

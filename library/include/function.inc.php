@@ -370,12 +370,17 @@ function message_fatal_error($text) {
 /**
  * crea la select per le destinazioni
  */
-function selectDestinazione($rs_destinazioni) {
+function selectDestinazione($idAnagrafe) {
+   global $gTables;
     $retVal = "";
-    if (count($rs_destinazioni) > 0) {
-        $retVal = $retVal . "<select name=\"destina\" class=\"FacetSelect\" onchange=\"cambiaDestinazione(this)\">\n";
+    
+    $rs_query_destinazioni = gaz_dbi_dyn_query("*", $gTables['destina'], "id_anagra='$idAnagrafe'");
+    $array_destinazioni = gaz_dbi_fetch_all($rs_query_destinazioni);
+    
+    if (count($array_destinazioni) > 0) {
+        $retVal = $retVal . "<select name=\"id_des_same_company\" class=\"FacetSelect\" width=\"300\" style=\"width: 300px\" onchange=\"cambiaDestinazione(this)\">\n";
         $retVal = $retVal . "<option value=\"\" selected>-------</option>\n";
-        foreach ($rs_destinazioni as $dest) {
+        foreach ($array_destinazioni as $dest) {
             $destinazione = //getStringaNonVuota($dest['codice'], "-")
                     getStringaNonVuota($dest['unita_locale1'], "\n")
                     . getStringaNonVuota($dest['unita_locale2'], "\n")
