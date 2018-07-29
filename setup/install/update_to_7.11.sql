@@ -171,8 +171,10 @@ ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Re
 ALTER TABLE `gaz_XXXrigmoc`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Ref. alla tabella gaz_001orderman (produzioni-contabilità industriale) ' DEFAULT '0' AFTER `import`;
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Ref. alla tabella gaz_001orderman (produzioni-contabilità industriale) ' AFTER `id_lotmag`;
 ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `quanti2` DECIMAL(12,3) NULL DEFAULT NULL AFTER `quanti`;
+ALTER TABLE `gaz_XXXrigdoc` ADD `unimis2` char(3) COLLATE 'utf8_general_ci' NULL DEFAULT '' AFTER `quanti`;
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Calcola il totale su campo quantità aggiuntivo (0=No, 1=Si)', 'calc_quanti2', '0');
 ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `quanti2` DECIMAL(12,3) NULL DEFAULT NULL AFTER `quanti`;
+ALTER TABLE `gaz_XXXrigbro` ADD `unimis2` char(3) COLLATE 'utf8_general_ci' NOT NULL DEFAULT '' AFTER `quanti`;
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `campo_impianto` INT(3) NOT NULL COMMENT 'Se valorizzata questa referenza assegna l\'ordine/commessa/produzione ad un impianto specifico, ovvero al campo del modulo camp (se azienda agricola)' AFTER `id_tesbro`;
 ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `fattura_elettronica_original_name` VARCHAR(100) NULL DEFAULT NULL AFTER `id_con`,	ADD COLUMN `fattura_elettronica_original_content` MEDIUMBLOB NULL DEFAULT NULL AFTER `fattura_elettronica_original_name`;
 

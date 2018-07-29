@@ -101,12 +101,12 @@ class DDT extends Template_con_scheda
                 if ($rigo['tiprig'] < 2) {
                     $this->Cell(30,6,$rigo['codart'],1,0,'L');
                     $this->Cell(82,6,$rigo['descri'],1,0,'L',0,'',1);
-                    $this->Cell(10,6,$rigo['unimis'],1,0,'L');
                     $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-                    if ( getCalcTotVal() && !$tipodoc=="A") {
-                        $this->Cell(15,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                        $this->Cell(15,6,gaz_format_quantity($rigo['quanti2'],1,$this->decimal_quantity),1,0,'R');
+                    if ( getCalcTotVal() ) {
+                        $this->Cell(10,6,$rigo['unimis2'],1,0,'L');
+                        $this->Cell(30,6,gaz_format_quantity($rigo['quanti2'],1,$this->decimal_quantity),1,0,'R');
                     } else {
+                        $this->Cell(10,6,$rigo['unimis'],1,0,'L');
                         $this->Cell(30,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     }
                     if ($this->docVars->client['stapre'] == 'S' && floatval($rigo['prelis']) >= 0.00001 ) {

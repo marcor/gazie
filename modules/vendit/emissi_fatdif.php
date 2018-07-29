@@ -439,7 +439,11 @@ if (isset($invoices['data'])) {
                 // recupero i righi
                 $rs_row = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $kr, "id_rig asc");
                 while ($row = gaz_dbi_fetch_array($rs_row)) {
-                    $row_amount = CalcolaImportoRigo($row['quanti'], $row['prelis'], $row['sconto']);
+                    if ( getCalcTotVal() ) {
+                        $row_amount = CalcolaImportoRigo($row['quanti2'], $row['prelis'], $row['sconto']);
+                    } else {
+                        $row_amount = CalcolaImportoRigo($row['quanti'], $row['prelis'], $row['sconto']);
+                    }
                     if ($row['tiprig'] == 1) {
                         $row_amount = CalcolaImportoRigo(1, $row['prelis'], 0);
                     }
