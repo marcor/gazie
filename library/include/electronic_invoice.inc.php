@@ -262,7 +262,7 @@ class invoiceXMLvars {
                 }
             } elseif ($rigo['tiprig'] == 2) { // descrittivo
                 // faccio prima il parsing XML e poi il push su un array ancora da indicizzare (0)
-                $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'], ENT_XML1);
+                $righiDescrittivi[0][] = htmlspecialchars($rigo['descri'], ENT_XML1 | ENT_QUOTES, 'UTF-8', true);
             } elseif ($rigo['tiprig'] == 6 || $rigo['tiprig'] == 8) {
                 $body_text = gaz_dbi_get_row($this->gTables['body_text'], "id_body", $rigo['id_body_text']);
                 $dom->loadHTML($body_text['body_text']);
@@ -415,6 +415,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
 	$domDoc->preserveWhiteSpace = false;
 	$domDoc->formatOutput = true;
     $ctrl_doc = 0;
+    $ctrl_fat = 0;
     $n_linea = 1;
     // definisco le variabili dei totali 
     $XMLvars->totimp_body = 0;
@@ -426,25 +427,27 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
 
     while ($tesdoc = gaz_dbi_fetch_array($testata)) {
         $XMLvars->setXMLvars($gTables, $tesdoc, $tesdoc['id_tes'], $rows, false);
-        // stabilisco quale template dovrò usare
         $cod_destinatario=trim($XMLvars->client['fe_cod_univoco']); // elemento 1.1.4
+		if ($ctrl_fat <>$XMLvars->tesdoc['numfat']) {
+			// stabilisco quale template dovrò usare ad ogni cambio di fattura
+			if ($XMLvars->docYear <= 2016) { // FAttura Elettronica PA fino al 2016
+				$domDoc->load("../../library/include/template_fae.xml");
+				$XMLvars->FormatoTrasmissione='FPA';
+			} elseif (strlen($cod_destinatario)<=0 || strlen($cod_destinatario)>=7) { // FAttura Elettronica Privati
+				$domDoc->load("../../library/include/template_fae_FPR12.xml");
+				$XMLvars->FormatoTrasmissione='FPR';
+			} else { // FAttura Elettronica PA a partire dal 2017
+				$domDoc->load("../../library/include/template_fae_FPA12.xml");
+				$XMLvars->FormatoTrasmissione='FPA';
+			}
+			$xpath = new DOMXPath($domDoc);
+		}
         // controllo se ho un ufficio diverso da quello di base
         if (isset($tesdoc['id_des_same_company']) && $tesdoc['id_des_same_company'] > 0) {
             $dest = gaz_dbi_get_row($gTables['destina'], 'codice', $tesdoc['id_des_same_company']);
             $cod_destinatario=trim($dest['fe_cod_ufficio']); // elemento 1.1.4
             $XMLvars->client['fe_cod_univoco']=$cod_destinatario;
         }
-        if ($XMLvars->docYear <= 2016) { // FAttura Elettronica PA fino al 2016
-            $domDoc->load("../../library/include/template_fae.xml");
-            $XMLvars->FormatoTrasmissione='FPA';
-        } elseif (strlen($cod_destinatario)<=0 || strlen($cod_destinatario)>=7) { // FAttura Elettronica Privati
-            $domDoc->load("../../library/include/template_fae_FPR12.xml");
-            $XMLvars->FormatoTrasmissione='FPR';
-        } else { // FAttura Elettronica PA a partire dal 2017
-            $domDoc->load("../../library/include/template_fae_FPA12.xml");
-            $XMLvars->FormatoTrasmissione='FPA';
-        }
-        $xpath = new DOMXPath($domDoc);
         if ($ctrl_doc == 0) {
             $id_progressivo = substr($XMLvars->docRelDate, 2, 2) . $XMLvars->seziva . str_pad($XMLvars->protoc, 7, '0', STR_PAD_LEFT);
             //per il momento sono singole chiamate xpath a regime e' possibile usare un array associativo da passare ad una funzione
@@ -590,11 +593,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['country']));
             $results->appendChild($attrVal);
-
-
-            $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
-            //$attrVal = $domDoc->createTextNode('IT');	   
-            //$results->appendChild($attrVal);
         } elseif ($ctrl_doc <> $XMLvars->docRelNum) { // quando cambia il DdT
             /*
               in caso di necessità qui potrò aggiungere linee di codice
@@ -609,6 +607,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
             $nl = false;
             switch ($rigo['tiprig']) {
                 case "0":       // normale
+					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
                     $el->appendChild($el1);
@@ -621,7 +620,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
                             }
                         }
                     }
-                    $el1 = $domDoc->createElement("Descrizione", $rigo['descri']);
+                    $el1 = $domDoc->createElement("Descrizione",  substr($rigo['descri'], -1000));
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("Quantita", number_format($rigo['quanti'], 2, '.', ''));
                     $el->appendChild($el1);
@@ -668,16 +667,26 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
                             $el1->appendChild($el2);
                         }
                     }
-                    $results->appendChild($el);
+                    $benserv->appendChild($el);
                     $nl = true;
                     break;
 
                 case "1":
                 case "T":       // forfait o trasporto
+					$benserv = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
                     $el = $domDoc->createElement("DettaglioLinee", "");
                     $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
                     $el->appendChild($el1);
-                    $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], 0, 100));
+                    if (isset($rigo['descrittivi'])) {
+                        // se ho dei righi descrittivi associati li posso aggiungere fino a che la lunghezza non superi 1000 caratteri quindi ne posso aggiungere al massimo 15*60
+                        foreach ($rigo['descrittivi'] as $k => $v) {
+                            if ($k < 16) {
+                                $rigo['descri'] .= $v; // ogni $v è lungo al massimo 60 caratteri
+                                unset($rigo['descrittivi'][$k]); // lo tolgo in modo da mettere un eventuale accesso sotto
+                            }
+                        }
+                    }
+                    $el1 = $domDoc->createElement("Descrizione", substr($rigo['descri'], -1000));
                     $el->appendChild($el1);
                     $el1 = $domDoc->createElement("PrezzoUnitario", number_format($rigo['importo'], 2, '.', ''));
                     $el->appendChild($el1);
@@ -693,7 +702,17 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
                         $el1 = $domDoc->createElement("Natura", $rigo['natura']);
                         $el->appendChild($el1);
                     }
-                    $results->appendChild($el);
+                    if (isset($rigo['descrittivi']) && count($rigo['descrittivi']) > 0) {
+                        foreach ($rigo['descrittivi'] as $k => $v) {
+                            $el1 = $domDoc->createElement("AltriDatiGestionali", '');
+                            $el->appendChild($el1);
+                            $el2 = $domDoc->createElement("TipoDato", 'txt' . $k);
+                            $el1->appendChild($el2);
+                            $el2 = $domDoc->createElement("RiferimentoTesto", $v);
+                            $el1->appendChild($el2);
+                        }
+                    }
+                    $benserv->appendChild($el);
                     $nl = true;
                     break;
                 case "2":       // descrittivo
@@ -723,8 +742,9 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
             if ($rigo['ritenuta'] > 0) {
                 /* 		 */
             }
-            // se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
+				// se c'è un ddt di origine ogni rigo deve avere il suo riferimento in <DatiDDT>
             if ($XMLvars->ddt_data && $nl) {
+
                 $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
                 $el_ddt = $domDoc->createElement("DatiDDT", "");
                 $el1 = $domDoc->createElement("NumeroDDT", $XMLvars->tesdoc['numdoc']);
@@ -734,13 +754,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
                 $el1 = $domDoc->createElement("RiferimentoNumeroLinea", $n_linea);
                 $el_ddt->appendChild($el1);
                 $results->appendChild($el_ddt);
-                $results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
             }
             if ($nl) {
                 $n_linea++;
             }
         }
         $ctrl_doc = $XMLvars->tesdoc['numdoc'];
+        $ctrl_fat = $XMLvars->tesdoc['numfat'];
     }
     // aggiungo le eventuali spese di incasso ma queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
     if ($XMLvars->tesdoc['speban'] >= 0.01) {
