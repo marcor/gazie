@@ -162,10 +162,10 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	   if (empty($form["catmer"])) {
             $msg['err'][] = 'catmer';
         }
-       /* Antonio Germani l'aliquota IVA non è obbligatoria perché non serve nel quaderno di campagna
+     
 	   if (empty($form["aliiva"])) {
             $msg['err'][] = 'aliiva';
-        }*/
+        }
         // per poter avere la tracciabilità è necessario attivare la contabità di magazzino in configurazione azienda
         if ($form["lot_or_serial"] > 0 && $admin_aziend['conmag'] <= 1) {
             $msg['err'][] = 'lotmag';
@@ -635,7 +635,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
+					<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="aliiva" class="col-sm-4 control-label"><?php echo $script_transl['aliiva']; ?></label>
