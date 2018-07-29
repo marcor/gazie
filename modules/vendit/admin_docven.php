@@ -680,8 +680,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['id_des'] = $cliente['id_des'];
         $id_des = $anagrafica->getPartner($form['id_des']);
         $form['search']['id_des'] = substr($id_des['ragso1'], 0, 10);
-        $des_same = gaz_dbi_get_row($gTables['destina'], "id_anagra", $cliente['id_anagra']);
-        $form['id_des_same_company'] = $des_same['codice'];
+//        $des_same = gaz_dbi_get_row($gTables['destina'], "id_anagra", $cliente['id_anagra']);
+//        $form['id_des_same_company'] = $des_same['codice'];
         $form['in_codvat'] = $cliente['aliiva'];
         if ($cliente['cosric'] >= 100000000) {
             $form['in_codric'] = $cliente['cosric'];
@@ -2337,11 +2337,14 @@ if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == '
     echo "				\t</select>
 						</td>
 						<td class=\"FacetFieldCaptionTD\">$script_transl[10]</td>\n";
-    if ($form['id_des_same_company'] > 0) { //  è una destinazione legata all'anagrafica
+//    if ($form['id_des_same_company'] > 0) { //  è una destinazione legata all'anagrafica
+    $tmpIdAnagra=(isset($cliente['id_anagra']) ? $cliente['id_anagra'] : "");
+    if (!empty($tmpIdAnagra) && gaz_dbi_record_count($gTables['destina'], "id_anagra=$tmpIdAnagra") > 0) { //  è una destinazione legata all'anagrafica
+       
         echo "<td class=\"FacetDataTD\">\n";
-//        $gForm->selectFromDB('destina', 'id_des_same_company', 'codice', $form['id_des_same_company'], 'codice', true, '-', 'unita_locale1', '', 'FacetSelect', null, '', "id_anagra = '" . $cliente['id_anagra'] . "'");
-        echo selectDestinazione($cliente['id_anagra']);
-        echo "	<textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
+        $gForm->selectFromDB('destina', 'id_des_same_company', 'codice', $form['id_des_same_company'], 'codice', true, '-', 'unita_locale1', '', 'FacetSelect', null, '', "id_anagra = '" . $cliente['id_anagra'] . "'");
+//        echo selectDestinazione($cliente['id_anagra']);
+        echo "	<br/><textarea rows=\"1\" cols=\"30\" name=\"destin\" class=\"FacetInput\">" . $form["destin"] . "</textarea>
 						</td>
 						<input type=\"hidden\" name=\"id_des\" value=\"" . $form['id_des'] . "\">
 						<input type=\"hidden\" name=\"search[id_des]\" value=\"" . $form['search']['id_des'] . "\">\n";
