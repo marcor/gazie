@@ -177,5 +177,11 @@ ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `quanti2` DECIMAL(12,3) NULL DEFAULT NULL
 ALTER TABLE `gaz_XXXrigbro` ADD `unimis2` char(3) COLLATE 'utf8_general_ci' NOT NULL DEFAULT '' AFTER `quanti`;
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `campo_impianto` INT(3) NOT NULL COMMENT 'Se valorizzata questa referenza assegna l\'ordine/commessa/produzione ad un impianto specifico, ovvero al campo del modulo camp (se azienda agricola)' AFTER `id_tesbro`;
 ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `fattura_elettronica_original_name` VARCHAR(100) NULL DEFAULT NULL AFTER `id_con`,	ADD COLUMN `fattura_elettronica_original_content` MEDIUMBLOB NULL DEFAULT NULL AFTER `fattura_elettronica_original_name`;
-
+CREATE TABLE `gaz_XXXdistinta_base` ( `id` INT(9) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
+	`codice_composizione` VARCHAR(15) NOT NULL COMMENT 'è il codice dell\'articolo composito',
+	`codice_artico_base` VARCHAR(15) NOT NULL COMMENT 'codice dell\'articolo base',
+	`quantita_artico_base` DECIMAL(14,5) NOT NULL DEFAULT '0.00000' COMMENT 'quantità di articoli base necessari per costituire l\'articolo composito',
+	PRIMARY KEY (`id`)
+)
+COMMENT='Tabella per creare gli "articoli compositi" (distinta base). Un articolo è composito quando è presente in almeno una di queste righe e qundi fa riferimento ad almeno un altro articolo di magazzino. Questi righi si potranno aggiungere tramite lo script admin_artico,  alla fine con il bottone "aggiungi articolo di base" ed immettendo la sola quantità, l\'unità di misura ed il prezzo per i documenti di vendita  saranno quelli di sempre ma presi dall\'articolo composito, molto facile perchè resterà tutto come prima, mentre la contabilità di magazzino verrà aggiornata tenendo conto di questi righi e non dell\'articolo composito.' ENGINE=MyISAM;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
