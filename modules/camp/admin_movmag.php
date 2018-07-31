@@ -155,6 +155,10 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
    $form['scorig'] = floatval(preg_replace("/\,/", '.', $_POST['scorig']));
     $form['status'] = substr($_POST['status'], 0, 10);
 	$form['id_orderman'] = intval ($_POST['description']);
+	if (intval ($form['id_orderman'])>0) { //se è presente una produzione, carico il campo di coltivazione ad essa collegato
+		$rs_orderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
+		$form['campo_coltivazione']=$rs_orderman['campo_impianto'];
+	}
 	$form['search_partner'] = "";
   //  $form['search_item'] = $_POST['search_item'];
     // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
