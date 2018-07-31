@@ -226,9 +226,12 @@ $strScript = array("admin_fornit.php" =>
         "La data del documento da registrare non &egrave; corretta!",
         "Non &egrave; stato inserito il numero del documento!",
         "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
-        "L'articolo di magazzino ha una matricola/numero di serie pertanto la quantità è stata forzata ad 1",
+        "L'articolo di magazzino ha una matricola/numero di serie pertanto la quantità &egrave stata forzata ad 1",
         "Risulta un documento gi&agrave; registrato con questo numero fattura per questo fornitore",
 		"Non esiste la cartella ID azienda nel percorso data/files!",
+		"Nulla da variare, il prezzo dell'articolo &egrave lo stesso",
+		"Modificare il prezzo nella scheda dell'articolo di",
+		"Articolo non inserito: impossibile modificare!",
         /** ENRICO FEDELE */
         "add_article" => "Aggiungi un nuovo articolo",
         'art_code' => 'Codice articolo',

@@ -914,6 +914,25 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         ksort($form['rows']);
         unset($updated_row);
     }
+	
+//Antonio Germani - Se viene richiesto di aggiornare il prezzo delll'articolo sulla tabella artico
+	if (isset($_POST['updateprice'])){
+		$updri = key($_POST['updateprice']);
+		If ($form['rows'][$updri]['codart']==""){
+			$msg .= "62+";
+			} else {		
+		$artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$updri]['codart']);
+		If ($artico['preacq']==$form['rows'][$updri]['prelis']){
+			$msg .= "60+";
+		} else {
+			$query="UPDATE " . $gTables['artico'] . " SET preacq = '" . $form['rows'][$updri]['prelis'] . "' WHERE codice ='". $form['rows'][$updri]['codart']."'";
+			gaz_dbi_query ($query) ;
+			}
+			}
+		unset ($_POST['updateprice']);
+	}
+// Fine modifica prezzo su artico
+
 // Se viene inviata la richiesta elimina il rigo corrispondente
     if (isset($_POST['del'])) {
         $delri = key($_POST['del']);
@@ -1673,7 +1692,8 @@ foreach ($form['rows'] as $key => $value) {
     /** ENRICO FEDELE */
     /* glyph icon */
     echo '  <td class="FacetColumnTD" align="right">
-			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $key . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
+			  <button type="submit" class="btn btn-default btn-sm" name="del[' . $key .']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '!"><i class="glyphicon glyphicon-remove"></i></button>
+			  <button onclick="return confirm('."'".$script_transl['update']."? '".')" type="submit" class="btn btn-default btn-sm" name="updateprice[' . $key . ']" title="' . $script_transl[61] . $script_transl['thisrow'] . '!"><i class="glyphicon glyphicon-share"></i></button>
 			</td>
 		  </tr>';
     /** ENRICO FEDELE */
