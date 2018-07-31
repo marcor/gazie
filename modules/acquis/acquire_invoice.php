@@ -25,6 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
+$preview=false;
 
 function removeSignature($string) {
     $string = substr($string, strpos($string, '<?xml '));
@@ -44,53 +45,111 @@ if (isset($_POST['Submit'])) { // conferma tutto
         if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml")) {
 				$msg['err'][] = 'filmim';
 		} else {
-		$file_name = $_FILES['userfile']['tmp_name'];
-		$p7mContent=file_get_contents($file_name);
-		$invoiceContent = removeSignature($p7mContent);
-		$doc = new DOMDocument;
-		$doc->preserveWhiteSpace = false;
-		$doc->formatOutput = true;
-		$doc->loadXML(utf8_encode($invoiceContent));
-		$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
-		if ($nf){
-			$name_file = $nf->textContent;
-			$att = $doc->getElementsByTagName('Attachment')->item(0);
-			$base64 = $att->textContent;
-			$bin = base64_decode($base64);
-			file_put_contents($name_file, $bin);
-		}
-		echo $doc->save('my.xml');
+			$preview=true;
 		}
     }
-	exit;
 }
-
-
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-?>
-<form method="POST" name="form" enctype="multipart/form-data" id="add-product">
-<?php
 $gForm = new acquisForm();
+?>
+<form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
+<?php
+if ($preview) {
+			// acquisizione e pulizia file xml o p7m
+			$file_name = $_FILES['userfile']['tmp_name'];
+			$p7mContent=file_get_contents($file_name);
+			$invoiceContent = removeSignature($p7mContent);
+			$doc = new DOMDocument;
+			$doc->preserveWhiteSpace = false;
+			$doc->formatOutput = true;
+			$doc->loadXML(utf8_encode($invoiceContent));
+			// FINE: file messo in stringa
+			
+			// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
+?>    
+	<div class="panel panel-info">
+        <div class="tab-content form-horizontal">
+        <div id="insrow1" class="tab-pane fade in active bg-info">
+            <div class="row">
+                <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['preview_text']; ?>
+                </div>                    
+            </div> <!-- chiude row  -->
+<?php			
+			$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
+			foreach ($DettaglioLinee as $item) {
+				$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+            ?>
+            <div class="row">
+                <div class="col-sm-6 col-md-12 col-lg-12">
+                    <div class="form-group">
+                        <label for="address" class="col-sm-8 control-label"><?php echo $nl; ?></label>
+                        <div class="col-sm-4"><?php echo $item->getElementsByTagName('Descrizione')->item(0)->nodeValue ; ?></div>                
+                    </div>
+                    <div class="form-group">
+                        <label for="datemi" class="col-sm-8 control-label"><?php echo ''; ?></label>
+                        <div class="col-sm-4">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address" class="col-sm-8 control-label"><?php echo ''; ?></label>
+                        <div class="col-sm-4"><?php echo ''; ?></div>                
+                    </div>
+                    <div class="form-group">
+                        <label for="datemi" class="col-sm-8 control-label"><?php echo ''; ?></label>
+                        <div class="col-sm-4">
+                        </div>
+                    </div>
+                </div>                    
+            </div> <!-- chiude row  -->
+<?php			
+			}
+
+?>
+		</div> <!-- chiude tab-pane -->
+		</div> <!-- chiude tab-content -->
+	</div><!-- chiude panel -->
+</form>
+<?php			
+			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
+			$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
+			if ($nf){
+				$name_file = $nf->textContent;
+				$att = $doc->getElementsByTagName('Attachment')->item(0);
+				$base64 = $att->textContent;
+				$bin = base64_decode($base64);
+				file_put_contents($name_file, $bin);
+			}
+			// visualizzo la fattura fattura elettronica in calce
+			$xslDoc = new DOMDocument();
+			$xslDoc->load("fatturaordinaria_v1.2.1.xsl");
+			$xslt = new XSLTProcessor();
+			$xslt->importStylesheet($xslDoc);
+			require("../../library/include/footer.php");
+			echo $xslt->transformToXML($doc);
+} else { // all'inizio chiedo l'upload di un file xml o p7m 
+
 if (count($msg['err']) > 0) { // ho un errore
     $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
 }
 ?>
-   <div class="panel panel-default gaz-table-form">
-       <div class="container-fluid">
-           <div class="row">
-               <div class="col-md-12">
-                   <div class="form-group">
-                       <label for="image" class="col-sm-4 control-label">Seleziona il file xml o p7m</label>
-                       <div class="col-sm-8">File: <input type="file" name="userfile" /></div>
-                   </div>
+<div class="panel panel-default gaz-table-form">
+	<div class="container-fluid">
+       <div class="row">
+           <div class="col-md-12">
+               <div class="form-group">
+                   <label for="image" class="col-sm-4 control-label">Seleziona il file xml o p7m</label>
+                   <div class="col-sm-8">File: <input type="file" accept=".xml,.p7m" name="userfile" />
+				   </div>
                </div>
-           </div><!-- chiude row  -->
-			<div class="col-sm-12 text-right"><input name="Submit" type="submit" class="btn btn-warning" value="ACQUISISCI!" /></div>		   
+           </div>
+       </div><!-- chiude row  -->
+	   <div class="col-sm-12 text-right"><input name="Submit" type="submit" class="btn btn-warning" value="ACQUISISCI!" />
+	   </div>		   
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
-</form>
-<?php 
-require("../../library/include/footer.php");
+<?php
+	require("../../library/include/footer.php");
+}
 ?>
