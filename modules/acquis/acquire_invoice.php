@@ -115,28 +115,20 @@ if ($preview) {
                 </div>                    
             </div> <!-- chiude row  -->
 <?php			
-			$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
-			foreach ($DettaglioLinee as $item) {
-				$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+			foreach ($form['rows'] as $k => $v) {
             ?>
             <div class="row">
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo $nl.' - ';
-						if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
-							echo trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.
-								 trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
-						} else {
-							echo $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue;
-						}?>
+                        <label class="col-sm-5 control-label"><?php echo $k.' - '. $v['codart']; ?>
 						</label>
-                        <div class="col-sm-7"><?php echo $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; ?></div>
+                        <div class="col-sm-7"><?php echo $v['descri']; ?></div>
 					</div>
                 </div>
                 <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo $item->getElementsByTagName('UnitaMisura')->item(0); ?></label>
-                        <div class="col-sm-9"><?php echo $item->getElementsByTagName('Quantita')->item(0); ?>
+                        <label class="col-sm-3 control-label"><?php echo $v['unimis']; ?></label>
+                        <div class="col-sm-9"><?php echo $v['quanti']; ?>
                         </div>
                     </div>
                 </div>
