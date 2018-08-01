@@ -46,6 +46,54 @@ if (isset($_POST['Submit'])) { // conferma tutto
 				$msg['err'][] = 'filmim';
 		} else {
 			$preview=true;
+			// INIZIO acquisizione e pulizia file xml o p7m
+			$file_name = $_FILES['userfile']['tmp_name'];
+			$p7mContent=file_get_contents($file_name);
+			$invoiceContent = removeSignature($p7mContent);
+			$doc = new DOMDocument;
+			$doc->preserveWhiteSpace = false;
+			$doc->formatOutput = true;
+			$doc->loadXML(utf8_encode($invoiceContent));
+			$xpath = new DOMXpath($doc);
+			// FINE acquisizione
+			$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+			// controllo se ho il fornitore in archivio
+			$anagrafica = new Anagrafica();
+            $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
+            if ($partner_with_same_pi) { // se non ho già un fornitore sul piano dei conti
+				print 'Fornitore esistente: '.$partner_with_same_pi[0]['ragso1'].' '.$partner_with_same_pi[0]['ragso2'];
+            } else { // provo a vedere nelle anagrafiche
+                $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
+                $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
+                if ($anagra_with_same_pi) { // c'è già un'anagrafica con la stessa PI non serve reinserirlo ma dovrò metterlo sul piano dei conti
+					print 'Nuovo fornitore anagrafica esistente';
+                } else { // non c'è nemmeno nelle anagrafiche allora attingerò i dati da questa fattura
+					print 'Nuovo fornitore e nuova anagrafica';
+					
+				}
+            }
+			// INIZIO creazione array dei righi con la stessa nomenclatura usata in admin_docacq.php
+			$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
+			$form['rows'] = array();
+			foreach ($DettaglioLinee as $item) {
+				$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+				if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
+					$form['rows'][$nl]['codart'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
+				} else {
+					$form['rows'][$nl]['codart'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
+				}
+				$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
+				if ($item->getElementsByTagName("Quantita")->length >= 1) {
+					$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
+					$form['rows'][$nl]['tiprig'] = 0;
+				} else {
+					$form['rows'][$nl]['quanti'] = 0;
+					$form['rows'][$nl]['tiprig'] = 1;
+				}
+				$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
+				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue; 
+				$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;;
+			}			
 		}
     }
 }
@@ -57,16 +105,6 @@ $gForm = new acquisForm();
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
 <?php
 if ($preview) {
-			// acquisizione e pulizia file xml o p7m
-			$file_name = $_FILES['userfile']['tmp_name'];
-			$p7mContent=file_get_contents($file_name);
-			$invoiceContent = removeSignature($p7mContent);
-			$doc = new DOMDocument;
-			$doc->preserveWhiteSpace = false;
-			$doc->formatOutput = true;
-			$doc->loadXML(utf8_encode($invoiceContent));
-			// FINE: file messo in stringa
-			
 			// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
 ?>    
 	<div class="panel panel-info">
@@ -82,23 +120,36 @@ if ($preview) {
 				$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
             ?>
             <div class="row">
-                <div class="col-sm-6 col-md-12 col-lg-12">
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="address" class="col-sm-8 control-label"><?php echo $nl; ?></label>
-                        <div class="col-sm-4"><?php echo $item->getElementsByTagName('Descrizione')->item(0)->nodeValue ; ?></div>                
-                    </div>
+                        <label class="col-sm-5 control-label"><?php echo $nl.' - ';
+						if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
+							echo trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.
+								 trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
+						} else {
+							echo $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue;
+						}?>
+						</label>
+                        <div class="col-sm-7"><?php echo $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; ?></div>
+					</div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="datemi" class="col-sm-8 control-label"><?php echo ''; ?></label>
-                        <div class="col-sm-4">
+                        <label class="col-sm-3 control-label"><?php echo $item->getElementsByTagName('UnitaMisura')->item(0); ?></label>
+                        <div class="col-sm-9"><?php echo $item->getElementsByTagName('Quantita')->item(0); ?>
                         </div>
                     </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="address" class="col-sm-8 control-label"><?php echo ''; ?></label>
-                        <div class="col-sm-4"><?php echo ''; ?></div>                
+                        <label class="col-sm-6 control-label"><?php  ?></label>
+                        <div class="col-sm-6"><?php ?></div>                
                     </div>
+                </div>
+                <div class="col-sm-6 col-md-3 col-lg-3">
                     <div class="form-group">
-                        <label for="datemi" class="col-sm-8 control-label"><?php echo ''; ?></label>
-                        <div class="col-sm-4">
+                        <label class="col-sm-6 control-label"><?php echo ''; ?></label>
+                        <div class="col-sm-6">
                         </div>
                     </div>
                 </div>                    
