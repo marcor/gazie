@@ -117,7 +117,7 @@ while($row = $res->fetch_assoc()){
 	$costo_produzione=$costo_produzione+$imp_riga;
 	}
 }
-echo "<tr><td colspan=\"2\" class=\"FacetDataTD\" align=\"right\">"."Costo totale della produzione € ". gaz_format_number($costo_produzione)."</td></tr>";
+echo "<tr><td colspan=\"2\" class=\"FacetDataTD\" align=\"right\">".$script_transl[4] . " ". gaz_format_number($costo_produzione) . " " . $admin_aziend['symbol'] ."</td></tr>";
 }
 ?>
 <tr>

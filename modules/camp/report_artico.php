@@ -117,27 +117,28 @@ require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('custom/autocomplete'));
 $gForm = new magazzForm();
 ?>
-
+<div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
 <form method="POST" id="form2">	
  <div class="panel panel-info col-lg-6">	 
 <?php if ($mt==1) {	?>
-	<label for="codice" class="col-lg-5 control-label"><?php echo "Mostro anche articoli non agricoli"; ?></label>
-			<div> 
+	<label for="codice" ><?php echo "Sto mostrando anche articoli non agricoli"; ?></label>
+			 
 			<button type="submit" name="no_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
 <i class="glyphicon glyphicon-refresh" style="color:green">
 <?php } else {?>
-<label for="codice" class="col-lg-5 control-label"><?php echo "Mostro solo articoli agricoli"; ?></label>
-			<div> 
+<label for="codice" ><?php echo "Sto mostrando solo articoli agricoli"; ?></label>
+			 
 			<button type="submit" name="mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  >
 <i class="glyphicon glyphicon-refresh" style="color:red">
 <?php } ?>	
 		</i></button>
-	</div>
-	</div>
+	
+	
+</div>
 </form>	
 
 <form method="POST" id="form">
-    <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
+    
     <div class="panel panel-info col-lg-6">
         <div class="container-fluid">
             <label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>

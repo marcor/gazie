@@ -246,7 +246,8 @@ $strScript = array("browse_document.php" =>
 	array("Produzione",
 		"Calcolo della produzione: ",
 		"iniziata il ",
-		"nel campo di coltivazione "
+		"nel campo di coltivazione ",
+		"Costo totale della produzione (IVA esclusa)"
 	),
     "recalc_exist_value.php" =>
     array("Rivalutazione esistenza articoli da movimenti di magazzino",
@@ -450,7 +451,7 @@ $strScript = array("browse_document.php" =>
         'unimis' => "Unit&agrave; di misura",
         'catmer' => "Categoria merceologica",
         'ragstat' => "Raggruppamento statistico",
-        'preacq' => 'Prezzo d\'acquisto',
+        'preacq' => 'Prezzo d\'acquisto (imponibile)',
         'preve1' => 'Prezzo di vendita listino 1',
         'preve2' => 'Prezzo di vendita listino 2',
         'preve3' => 'Prezzo di vendita listino 3',
@@ -473,7 +474,7 @@ $strScript = array("browse_document.php" =>
         'uniacq' => 'Unit&agrave; di misura acquisti',
         'tempo_sospensione' => 'Tempo di sospensione in gg',
         'dose_ha' => 'Dose massima unità di misura ad ha',
-		'mostra_qdc' => 'Articolo da mostrare nel quaderno di campagna',
+		'mostra_qdc' => 'Mostrare nel quaderno di campagna',
 		'classif_amb' => 'Classificazione tossicologica',
 		'classif_amb_value' => array(0=>'non classificato',1=>'irritante',2=>'nocivo',3=>'tossico',4=>'molto tossico'),
         'peso_specifico' => 'Peso specifico/Moltiplicatore',
