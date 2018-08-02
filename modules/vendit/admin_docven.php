@@ -809,7 +809,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$old_key]['id_lotmag'] = $lm->divided[$form['in_id_mag']]['id_lotmag'];
                 }
                 $form['rows'][$old_key]['unimis'] = $artico['unimis'];
-                $form['rows'][$old_key]['unimis2'] = $artico['unimis2'];
+                $form['rows'][$old_key]['unimis2'] =''; //unimis2 non c'è in artico
                 $form['rows'][$old_key]['descri'] = $artico['descri'];
                 if ($form['listin'] == 2) {
                     $form['rows'][$old_key]['prelis'] = number_format($artico['preve2'], $admin_aziend['decimal_price'], '.', '');
@@ -924,7 +924,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['lot_or_serial'] = $artico['lot_or_serial'];
                 $form['rows'][$next_row]['descri'] = $artico['descri'];
                 $form['rows'][$next_row]['unimis'] = $artico['unimis'];
-                $form['rows'][$next_row]['unimis2'] = $artico['unimis2'];
+                $form['rows'][$next_row]['unimis2'] = ''; //unimis2 non c'è in artico
                 $form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
                 $form['rows'][$next_row]['codric'] = $form['in_codric'];
                 $form['rows'][$next_row]['quanti'] = $form['in_quanti'];

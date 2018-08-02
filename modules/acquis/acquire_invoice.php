@@ -43,8 +43,9 @@ function removeSignature($string) {
 if (isset($_POST['Submit'])) { // conferma tutto
     if (!empty($_FILES['userfile']['name'])) {
         if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml")) {
-				$msg['err'][] = 'filmim';
+			$msg['err'][] = 'filmim';
 		} else {
+			$form['rows'] = array();
 			$preview=true;
 			// INIZIO acquisizione e pulizia file xml o p7m
 			$file_name = $_FILES['userfile']['tmp_name'];
@@ -54,45 +55,54 @@ if (isset($_POST['Submit'])) { // conferma tutto
 			$doc->preserveWhiteSpace = false;
 			$doc->formatOutput = true;
 			$doc->loadXML(utf8_encode($invoiceContent));
-			$xpath = new DOMXpath($doc);
-			// FINE acquisizione
-			$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
-			// controllo se ho il fornitore in archivio
-			$anagrafica = new Anagrafica();
-            $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
-            if ($partner_with_same_pi) { // se non ho già un fornitore sul piano dei conti
-				print 'Fornitore esistente: '.$partner_with_same_pi[0]['ragso1'].' '.$partner_with_same_pi[0]['ragso2'];
-            } else { // provo a vedere nelle anagrafiche
-                $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
-                $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
-                if ($anagra_with_same_pi) { // c'è già un'anagrafica con la stessa PI non serve reinserirlo ma dovrò metterlo sul piano dei conti
-					print 'Nuovo fornitore anagrafica esistente';
-                } else { // non c'è nemmeno nelle anagrafiche allora attingerò i dati da questa fattura
-					print 'Nuovo fornitore e nuova anagrafica';
-					
+			$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
+			libxml_clear_errors();
+			if (empty($val)){
+				if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length >= 1) { // se esiste questo nodo è una fattura elettronica
+					$xpath = new DOMXpath($doc);
+					// FINE acquisizione
+					$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+					// controllo se ho il fornitore in archivio
+					$anagrafica = new Anagrafica();
+                    $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
+                    if ($partner_with_same_pi) { // se non ho già un fornitore sul piano dei conti
+						print 'Fornitore esistente: '.$partner_with_same_pi[0]['ragso1'].' '.$partner_with_same_pi[0]['ragso2'];
+                    } else { // provo a vedere nelle anagrafiche
+                        $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
+                        $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
+                        if ($anagra_with_same_pi) { // c'è già un'anagrafica con la stessa PI non serve reinserirlo ma dovrò metterlo sul piano dei conti
+							print 'Nuovo fornitore anagrafica esistente';
+                        } else { // non c'è nemmeno nelle anagrafiche allora attingerò i dati da questa fattura
+							print 'Nuovo fornitore e nuova anagrafica';
+							
+						}
+                    }
+					// INIZIO creazione array dei righi con la stessa nomenclatura usata in admin_docacq.php
+					$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
+					foreach ($DettaglioLinee as $item) {
+						$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+						if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
+							$form['rows'][$nl]['codart'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
+						} else {
+							$form['rows'][$nl]['codart'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
+						}
+						$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
+						if ($item->getElementsByTagName("Quantita")->length >= 1) {
+							$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
+							$form['rows'][$nl]['tiprig'] = 0;
+						} else {
+							$form['rows'][$nl]['quanti'] = 0;
+							$form['rows'][$nl]['tiprig'] = 1;
+						}
+						$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
+						$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue; 
+						$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;;
+					}
+				} else { // non esiste il nodo <FatturaElettronicaHeader>
+					$msg['err'][] = 'invalid_fae';
 				}
-            }
-			// INIZIO creazione array dei righi con la stessa nomenclatura usata in admin_docacq.php
-			$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
-			$form['rows'] = array();
-			foreach ($DettaglioLinee as $item) {
-				$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
-				if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
-					$form['rows'][$nl]['codart'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
-				} else {
-					$form['rows'][$nl]['codart'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
-				}
-				$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
-				if ($item->getElementsByTagName("Quantita")->length >= 1) {
-					$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
-					$form['rows'][$nl]['tiprig'] = 0;
-				} else {
-					$form['rows'][$nl]['quanti'] = 0;
-					$form['rows'][$nl]['tiprig'] = 1;
-				}
-				$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
-				$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue; 
-				$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;;
+			} else {
+				$msg['err'][] = 'invalid_xml';
 			}			
 		}
     }
@@ -106,7 +116,14 @@ $gForm = new acquisForm();
 <?php
 if ($preview) {
 			// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
-?>    
+            if (count($msg['err']) > 0) { // ho un errore
+                $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
+            }
+            if (count($msg['war']) > 0) { // ho un alert
+                $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
+            }
+	if (count($msg['err'])==0){
+ ?>    
 	<div class="panel panel-info">
         <div class="tab-content form-horizontal">
         <div id="insrow1" class="tab-pane fade in active bg-info">
@@ -155,27 +172,24 @@ if ($preview) {
 	</div><!-- chiude panel -->
 </form>
 <?php			
-			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
-			$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
-			if ($nf){
-				$name_file = $nf->textContent;
-				$att = $doc->getElementsByTagName('Attachment')->item(0);
-				$base64 = $att->textContent;
-				$bin = base64_decode($base64);
-				file_put_contents($name_file, $bin);
-			}
-			// visualizzo la fattura fattura elettronica in calce
-			$xslDoc = new DOMDocument();
-			$xslDoc->load("fatturaordinaria_v1.2.1.xsl");
-			$xslt = new XSLTProcessor();
-			$xslt->importStylesheet($xslDoc);
-			require("../../library/include/footer.php");
-			echo $xslt->transformToXML($doc);
+	}
+	// ricavo l'allegato, e se presente metterò un bottone per permettere il download
+	$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
+	if ($nf){
+		$name_file = $nf->textContent;
+		$att = $doc->getElementsByTagName('Attachment')->item(0);
+		$base64 = $att->textContent;
+		$bin = base64_decode($base64);
+		file_put_contents($name_file, $bin);
+	}
+	// visualizzo la fattura fattura elettronica in calce
+	$xslDoc = new DOMDocument();
+	$xslDoc->load("fatturaordinaria_v1.2.1.xsl");
+	$xslt = new XSLTProcessor();
+	$xslt->importStylesheet($xslDoc);
+	require("../../library/include/footer.php");
+	echo $xslt->transformToXML($doc);
 } else { // all'inizio chiedo l'upload di un file xml o p7m 
-
-if (count($msg['err']) > 0) { // ho un errore
-    $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
-}
 ?>
 <div class="panel panel-default gaz-table-form">
 	<div class="container-fluid">

@@ -500,11 +500,11 @@ $strScript = array("admin_fornit.php" =>
     array('title' => 'Acquisizione file fattura elettronica da fornitore',
         'err' => array(
             'filmim' => 'Il file dev\'essere nel formato XML o P7M',
+            'invalid_xml' => 'Il contenuto del file non è un XML valido',
+            'invalid_fae' => 'Il contenuto del file XML non sembra essere una fattura elettronica',
         ),
-        'preview_text' => "La fattura elettronica che stai per acquisire è visibile in fondo.<br> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, ma ti invitiamo a controllare ed eventualmente ad apportare le modifiche opportune per contabilizzare in maniera corretta",
+        'preview_text' => "La fattura elettronica che stai per acquisire è visibile in fondo.<br> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune per contabilizzarla in maniera corretta",
 		'Descrizione'=>"Descrizione",
-		
-		
 	)
 );
 ?>
