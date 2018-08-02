@@ -498,10 +498,16 @@ $strScript = array("admin_fornit.php" =>
     ),
     "acquire_invoice.php" =>
     array('title' => 'Acquisizione file fattura elettronica da fornitore',
+        'war' => array(
+            'ok_suppl' => 'Il fornitore è già in archivio',
+            'no_suppl' => 'Ho già questa anagrafica ma è un nuovo fornitore',
+            'no_anagr' => "Di questo nuovo fornitore non ho l'anagrafica"
+        ),
         'err' => array(
             'filmim' => 'Il file dev\'essere nel formato XML o P7M',
             'invalid_xml' => 'Il contenuto del file non è un XML valido',
             'invalid_fae' => 'Il contenuto del file XML non sembra essere una fattura elettronica',
+            'not_mine' => 'La fattura non è stata rilasciata nei confronti di questa azienda',
         ),
         'preview_text' => "La fattura elettronica che stai per acquisire è visibile in fondo.<br> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune per contabilizzarla in maniera corretta",
 		'Descrizione'=>"Descrizione",

@@ -55,56 +55,65 @@ if (isset($_POST['Submit'])) { // conferma tutto
 			$doc->preserveWhiteSpace = false;
 			$doc->formatOutput = true;
 			$doc->loadXML(utf8_encode($invoiceContent));
+			$xpath = new DOMXpath($doc);
+			
+			// INIZIO CONTROLLI CORRETTEZZA FILE
 			$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
 			libxml_clear_errors();
 			if (empty($val)){
-				if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length >= 1) { // se esiste questo nodo è una fattura elettronica
-					$xpath = new DOMXpath($doc);
-					// FINE acquisizione
-					$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
+				if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length < 1) { // non esiste il nodo <FatturaElettronicaHeader>
+					$msg['err'][] = 'invalid_fae';
+				} else if (@$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] ) { // la partita IVA del cliente non coincide con la mia 
+				$msg['err'][] = 'not_mine';
+				} else {
 					// controllo se ho il fornitore in archivio
+					$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
 					$anagrafica = new Anagrafica();
                     $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
                     if ($partner_with_same_pi) { // se non ho già un fornitore sul piano dei conti
-						print 'Fornitore esistente: '.$partner_with_same_pi[0]['ragso1'].' '.$partner_with_same_pi[0]['ragso2'];
+						// $msg['war'][] = 'ok_suppl'; il fornitore è già in archivio, non allerto
                     } else { // provo a vedere nelle anagrafiche
                         $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
                         $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
                         if ($anagra_with_same_pi) { // c'è già un'anagrafica con la stessa PI non serve reinserirlo ma dovrò metterlo sul piano dei conti
-							print 'Nuovo fornitore anagrafica esistente';
+							$msg['war'][] = 'no_suppl';
                         } else { // non c'è nemmeno nelle anagrafiche allora attingerò i dati da questa fattura
-							print 'Nuovo fornitore e nuova anagrafica';
+							$msg['war'][] = 'no_anagr';
 							
 						}
                     }
-					// INIZIO creazione array dei righi con la stessa nomenclatura usata in admin_docacq.php
-					$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
-					foreach ($DettaglioLinee as $item) {
-						$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
-						if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
-							$form['rows'][$nl]['codart'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
-						} else {
-							$form['rows'][$nl]['codart'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
-						}
-						$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
-						if ($item->getElementsByTagName("Quantita")->length >= 1) {
-							$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
-							$form['rows'][$nl]['tiprig'] = 0;
-						} else {
-							$form['rows'][$nl]['quanti'] = 0;
-							$form['rows'][$nl]['tiprig'] = 1;
-						}
-						$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
-						$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue; 
-						$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;;
-					}
-				} else { // non esiste il nodo <FatturaElettronicaHeader>
-					$msg['err'][] = 'invalid_fae';
 				}
 			} else {
 				$msg['err'][] = 'invalid_xml';
-			}			
-		}
+			}
+			// FINE CONTROLLI
+
+			if (count($msg['err'])==0){ // non ho errori
+				// INIZIO creazione array dei righi con la stessa nomenclatura usata in admin_docacq.php
+				$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
+				foreach ($DettaglioLinee as $item) {
+					$nl=$item->getElementsByTagName('NumeroLinea')->item(0)->nodeValue;
+					if ($item->getElementsByTagName("CodiceTipo")->length >= 1) {
+						$form['rows'][$nl]['codart'] = trim($item->getElementsByTagName('CodiceTipo')->item(0)->nodeValue).'_'.trim($item->getElementsByTagName('CodiceValore')->item(0)->nodeValue); 
+					} else {
+						$form['rows'][$nl]['codart'] = ($item->getElementsByTagName("CodiceArticolo")->length >= 1 ? $item->getElementsByTagName('CodiceArticolo')->item(0)->nodeValue : '' );
+					}
+					$form['rows'][$nl]['descri'] = $item->getElementsByTagName('Descrizione')->item(0)->nodeValue; 
+					if ($item->getElementsByTagName("Quantita")->length >= 1) {
+						$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
+						$form['rows'][$nl]['tiprig'] = 0;
+					} else {
+						$form['rows'][$nl]['quanti'] = 0;
+						$form['rows'][$nl]['tiprig'] = 1;
+					}
+					$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
+					$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue; 
+					$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;;
+				}
+			
+			}
+
+			}
     }
 }
 
