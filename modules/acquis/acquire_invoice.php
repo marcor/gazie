@@ -89,6 +89,7 @@ if (isset($_POST['Submit'])) { // conferma tutto
 			// FINE CONTROLLI
 
 			if (count($msg['err'])==0){ // non ho errori
+			
 				// INIZIO creazione array dei righi con la stessa nomenclatura usata in admin_docacq.php
 				$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
 				foreach ($DettaglioLinee as $item) {
@@ -103,11 +104,16 @@ if (isset($_POST['Submit'])) { // conferma tutto
 						$form['rows'][$nl]['quanti'] = $item->getElementsByTagName('Quantita')->item(0)->nodeValue; 
 						$form['rows'][$nl]['tiprig'] = 0;
 					} else {
-						$form['rows'][$nl]['quanti'] = 0;
+						$form['rows'][$nl]['quanti'] = '';
 						$form['rows'][$nl]['tiprig'] = 1;
 					}
 					$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
 					$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue; 
+					if ($item->getElementsByTagName("Tipo")->length >= 1) { // ho uno sconto/maggiorazione
+						$form['rows'][$nl]['sconto'] = ($item->getElementsByTagName('Percentuale')->item(0)->nodeValue == 'S' ? -$item->getElementsByTagName('Percentuale')->item(0)->nodeValue : $item->getElementsByTagName('Percentuale')->item(0)->nodeValue); 
+					} else {
+						$form['rows'][$nl]['sconto'] = '';
+					}
 					$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;;
 				}
 			
@@ -133,52 +139,37 @@ if ($preview) {
             }
 	if (count($msg['err'])==0){
  ?>    
-	<div class="panel panel-info">
-        <div class="tab-content form-horizontal">
-        <div id="insrow1" class="tab-pane fade in active bg-info">
             <div class="row">
                 <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['preview_text']; ?>
                 </div>                    
             </div> <!-- chiude row  -->
 <?php			
 			foreach ($form['rows'] as $k => $v) {
-            ?>
-            <div class="row">
-                <div class="col-sm-6 col-md-3 col-lg-3">
-                    <div class="form-group">
-                        <label class="col-sm-5 control-label"><?php echo $k.' - '. $v['codart']; ?>
-						</label>
-                        <div class="col-sm-7"><?php echo $v['descri']; ?></div>
-					</div>
-                </div>
-                <div class="col-sm-6 col-md-3 col-lg-3">
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label"><?php echo $v['unimis']; ?></label>
-                        <div class="col-sm-9"><?php echo $v['quanti']; ?>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3 col-lg-3">
-                    <div class="form-group">
-                        <label class="col-sm-6 control-label"><?php  ?></label>
-                        <div class="col-sm-6"><?php ?></div>                
-                    </div>
-                </div>
-                <div class="col-sm-6 col-md-3 col-lg-3">
-                    <div class="form-group">
-                        <label class="col-sm-6 control-label"><?php echo ''; ?></label>
-                        <div class="col-sm-6">
-                        </div>
-                    </div>
-                </div>                    
-            </div> <!-- chiude row  -->
-<?php			
+				$k--;
+                // creo l'array da passare alla funzione per la creazione della tabella responsive
+                $resprow[$k] = array(
+                    array('head' => $script_transl["nrow"], 'class' => '',
+                        'value' => $k),
+                    array('head' => $script_transl["codart"], 'class' => '',
+                        'value' => $v['codart']),
+                    array('head' => $script_transl["descri"], 'class' => '',
+                        'value' => $v['descri']),
+                    array('head' => $script_transl["unimis"], 'class' => '',
+                        'value' => $v['unimis']),
+                    array('head' => $script_transl["quanti"], 'class' => 'text-right numeric',
+                        'value' => $v['quanti']),
+                    array('head' => $script_transl["prezzo"], 'class' => 'text-right numeric',
+                        'value' => $v['prelis']),
+                    array('head' => $script_transl["sconto"], 'class' => 'text-right numeric',
+                        'value' => $v['sconto']),
+                    array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
+						'value' => '', 'type' => ''),
+                    array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
+						'value' => $v['pervat'], 'type' => '')
+                );
 			}
-
+			$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
 ?>
-		</div> <!-- chiude tab-pane -->
-		</div> <!-- chiude tab-content -->
-	</div><!-- chiude panel -->
 </form>
 <?php			
 	}
@@ -193,7 +184,7 @@ if ($preview) {
 	}
 	// visualizzo la fattura fattura elettronica in calce
 	$xslDoc = new DOMDocument();
-	$xslDoc->load("fatturaordinaria_v1.2.1.xsl");
+	$xslDoc->load("../../library/include/fatturaordinaria_v1.2.1.xsl");
 	$xslt = new XSLTProcessor();
 	$xslt->importStylesheet($xslDoc);
 	require("../../library/include/footer.php");
@@ -211,7 +202,7 @@ if ($preview) {
                </div>
            </div>
        </div><!-- chiude row  -->
-	   <div class="col-sm-12 text-right"><input name="Submit" type="submit" class="btn btn-warning" value="ACQUISISCI!" />
+	   <div class="col-sm-12 text-right"><input name="Submit" type="submit" class="btn btn-warning" value="<?php echo $script_transl['btn_acquire']; ?>" />
 	   </div>		   
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->

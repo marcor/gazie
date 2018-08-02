@@ -498,6 +498,7 @@ $strScript = array("admin_fornit.php" =>
     ),
     "acquire_invoice.php" =>
     array('title' => 'Acquisizione file fattura elettronica da fornitore',
+		'btn_acquire'=>'ACQUISISCI!',
         'war' => array(
             'ok_suppl' => 'Il fornitore è già in archivio',
             'no_suppl' => 'Ho già questa anagrafica ma è un nuovo fornitore',
@@ -510,7 +511,18 @@ $strScript = array("admin_fornit.php" =>
             'not_mine' => 'La fattura non è stata rilasciata nei confronti di questa azienda',
         ),
         'preview_text' => "La fattura elettronica che stai per acquisire è visibile in fondo.<br> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune per contabilizzarla in maniera corretta",
-		'Descrizione'=>"Descrizione",
+        'nrow' => 'Rigo',
+        'codart' => 'Codice',
+        'descri' => 'Descrizione',
+        'unimis' => 'U.M.',
+        'quanti' => 'Quantità ',
+        'prezzo' => 'Prezzo',
+        'amount' => 'Importo',
+        'sconto' => 'Sconto',
+        'taxable' => 'Imponibile',
+        'tax' => 'I.V.A.',
+        'operation_type' => 'Tipo oper.',
+        'conto' => 'Conto',
 	)
 );
 ?>
