@@ -76,6 +76,7 @@ $strCommon = array('cancel' => " Annulla ",
     'mail_alert2' => 'con allegato il seguente documento:',
     'duplicate' => 'Duplica',
     'browse_for_file' => 'Sfoglia',
-	'refresh' => ' AGGIORNA '
+	'refresh' => ' AGGIORNA ',
+	'add' => 'Aggiungi movimento'
 );
 ?>

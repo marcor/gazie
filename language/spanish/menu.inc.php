@@ -80,6 +80,8 @@ $strCommon = array('cancel' => " Cancelar ",
     'mail_alert1' => 'Send email to address: ',
     'mail_alert2' => 'with the following document as attachment:',
     'duplicate' => 'Duplica',
-    'browse_for_file' => 'Browse'
+    'browse_for_file' => 'Browse',
+	'refresh' => ' ACTUALIZACIONES ',
+	'add' => 'Añadir movimiento'
 );
 ?>
