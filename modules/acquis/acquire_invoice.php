@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
-$preview=false;
+$preview = false;
 
 function removeSignature($string) {
     $string = substr($string, strpos($string, '<?xml '));
@@ -39,17 +39,30 @@ function removeSignature($string) {
 	return preg_replace ('/[\x{0004}\x{0082}\x{0003}\x{00AA}]+/', '', $string);
 }
 
+if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
+	$form['fattura_elettronica_original_name'] = '';
+} else { // accessi successivi  
+	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
+}
 
 if (isset($_POST['Submit'])) { // conferma tutto
     if (!empty($_FILES['userfile']['name'])) {
         if (!( $_FILES['userfile']['type'] == "application/pkcs7-mime" || $_FILES['userfile']['type'] == "text/xml")) {
 			$msg['err'][] = 'filmim';
 		} else {
+            if (file_exists('../../data/files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { 
+				$form['fattura_elettronica_original_name'] = $_FILES['userfile']['name'];
+				$msg['war'][] = 'file_exists';
+			} else if (move_uploaded_file($_FILES['userfile']['tmp_name'], '../../data/files/' . $admin_aziend['codice'] . '/' . $_FILES['userfile']['name'])) { // nessun errore
+				$form['fattura_elettronica_original_name'] = $_FILES['userfile']['name'];
+			} else { // no upload
+				$msg['err'][] = 'no_upload';
+			}
 			$form['rows'] = array();
-			$preview=true;
+			$preview = true;
 			// INIZIO acquisizione e pulizia file xml o p7m
-			$file_name = $_FILES['userfile']['tmp_name'];
-			$p7mContent=file_get_contents($file_name);
+			$file_name = '../../data/files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
+			$p7mContent = file_get_contents($file_name);
 			$invoiceContent = removeSignature($p7mContent);
 			$doc = new DOMDocument;
 			$doc->preserveWhiteSpace = false;
@@ -60,7 +73,7 @@ if (isset($_POST['Submit'])) { // conferma tutto
 			// INIZIO CONTROLLI CORRETTEZZA FILE
 			$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
 			libxml_clear_errors();
-			if (empty($val)){
+			if (empty($val_err)){
 				if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length < 1) { // non esiste il nodo <FatturaElettronicaHeader>
 					$msg['err'][] = 'invalid_fae';
 				} else if (@$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] ) { // la partita IVA del cliente non coincide con la mia 
@@ -128,6 +141,7 @@ $script_transl = HeadMain();
 $gForm = new acquisForm();
 ?>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
+    <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
 <?php
 if ($preview) {
 			// INIZIO form che permetterà all'utente di interagire per (es.) imputare i vari costi al piano dei conti (contabilità) ed anche le eventuali merci al magazzino
@@ -149,7 +163,7 @@ if ($preview) {
                 // creo l'array da passare alla funzione per la creazione della tabella responsive
                 $resprow[$k] = array(
                     array('head' => $script_transl["nrow"], 'class' => '',
-                        'value' => $k),
+                        'value' => $k+1),
                     array('head' => $script_transl["codart"], 'class' => '',
                         'value' => $v['codart']),
                     array('head' => $script_transl["descri"], 'class' => '',
