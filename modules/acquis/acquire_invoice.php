@@ -146,7 +146,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 				} else {
 					$form['rows'][$nl]['sconto'] = '';
 				}
-				$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;;
+				$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
+				$form['contor_'.$nl] = '';
 			}
 			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 			$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
@@ -184,6 +185,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
         </div> <!-- chiude row  -->
 <?php		
 		foreach ($form['rows'] as $k => $v) {
+            $contor_dropdown = $gForm->selectAccount('contor_'.$k, $form['contor_'.$k], array('sub',1,3), '', false, "col-sm-8 small",'style="max-width: 350px;"', false, true);
 			$k--;
             // creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
@@ -204,11 +206,13 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
 					'value' => '', 'type' => ''),
                 array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
-					'value' => $v['pervat'], 'type' => '')
+					'value' => $v['pervat'], 'type' => ''),
+                array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
+					'value' => $contor_dropdown, 'type' => '')
             );
 		}
 		$gForm->gazResponsiveTable($resprow, 'gaz-responsive-table');
-?>	   <div class="col-sm-6 text-right">
+?>	   <div class="col-sm-6">
 <?php			
 		if ($nf){
 ?>		

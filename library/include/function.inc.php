@@ -1544,8 +1544,9 @@ class GAzieForm {
         echo "\t </select>\n";
     }
 
-    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 350px;"', $mas_only = true) {
+    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 350px;"', $mas_only = true, $no_echo=false) {
         global $gTables, $admin_aziend;
+		$acc='';
         $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
             6 => "gaz-transitori", 7 => "gaz-transitori", 8 => "gaz-transitori", 9 => "gaz-transitori");
         if (!empty($val_hiddenReq)) {
@@ -1581,8 +1582,8 @@ class GAzieForm {
         } else {
             $where = "codice BETWEEN " . $type . "00000001 AND " . $type . "99999999 AND codice NOT LIKE '" . $admin_aziend['mascli'] . "%' AND codice NOT LIKE '" . $admin_aziend['masfor'] . "%' AND codice NOT LIKE '%000000'";
         }
-        echo "<select id=\"$name\" name=\"$name\" class=\"$class\" $opt>\n";
-        echo "\t<option value=\"0\"> ---------- </option>\n";
+        $acc .= "<select id=\"$name\" name=\"$name\" class=\"$class\" $opt>\n";
+        $acc .= "\t<option value=\"0\"> ---------- </option>\n";
         $result = gaz_dbi_dyn_query("codice,descri", $gTables['clfoco'], $where, "codice ASC");
         while ($r = gaz_dbi_fetch_array($result)) {
             $selected = '';
@@ -1595,9 +1596,14 @@ class GAzieForm {
             if ($val == $v) {
                 $selected .= " selected ";
             }
-            echo "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["codice"] . "-" . $r['descri'] . "</option>\n";
+            $acc .= "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["codice"] . "-" . $r['descri'] . "</option>\n";
         }
-        echo "</select>\n";
+        $acc .= "</select>\n";
+		if ($no_echo){
+			return $acc;
+		} else {
+			echo $acc;
+		}
     }
 
     function selTypeRow($name, $val, $class = 'FacetDataTDsmall') {
