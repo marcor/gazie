@@ -277,7 +277,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
 			$dose=$item['dose_massima'];// prendo la dose
 			$rame_metallo=$item['rame_metallico'];// già che ci sono, prendo anche il rame metallo del prodotto oggetto del movimento, che mi servirà per il prossimo controllo
-			if ($dose>0 && $form['artico'][$form['mov']] > $dose*$dim_campo && $form["operat"]==-1 && $dim_campo>0) {
+			if ($dose>0 && $form['quanti'][$form['mov']] > $dose*$dim_campo && $form["operat"]==-1 && $dim_campo>0) {
 				$msg .="25+"; // errore dose eccessiva
 			}
 			
