@@ -74,11 +74,17 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 		$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
 		if ($tesdoc){ // c'è anche sul database, è una modifica
 			$toDo = 'update';
+			$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
 		} else { // non c'è sul database
 			$toDo = 'insert';
 			$msg['war'][] = 'no_db';			
+			$form['datreg'] = date("d/m/Y");
 		}
+
+		// devinisco l'array del form 
+		$form['cod_partner'] = 0;
 		$form['rows'] = array();
+
 		// INIZIO acquisizione e pulizia file xml o p7m
 		$file_name = '../../data/files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
 		$p7mContent = file_get_contents($file_name);
@@ -102,9 +108,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 				$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
 				$anagrafica = new Anagrafica();
                 $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
-                if ($partner_with_same_pi) { // se non ho già un fornitore sul piano dei conti
-					// $msg['war'][] = 'ok_suppl'; il fornitore è già in archivio, non allerto
-                } else { // provo a vedere nelle anagrafiche
+                if ($partner_with_same_pi) { // ho già il fornitore sul piano dei conti
+					$form['cod_partner'] = $partner_with_same_pi[0]['codice'];
+                } else { // se non ho già un fornitore sul piano dei conti provo a vedere nelle anagrafiche
                     $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
                     $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
                     if ($anagra_with_same_pi) { // c'è già un'anagrafica con la stessa PI non serve reinserirlo ma dovrò metterlo sul piano dei conti
@@ -120,8 +126,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 		}
 		// FINE CONTROLLI
 
-		if (count($msg['err'])==0){ // non ho errori
-		
+		if (count($msg['err'])==0) { // non ho errori
 			// INIZIO creazione array dei righi con la stessa nomenclatura usata in admin_docacq.php
 			$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
 			foreach ($DettaglioLinee as $item) {
@@ -147,7 +152,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 					$form['rows'][$nl]['sconto'] = '';
 				}
 				$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
-				$form['contor_'.$nl] = '';
+				$post_nl = $nl-1;
+				if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
+					$form['contor_'.$post_nl] = intval($_POST['contor_'.$post_nl]);
+					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
+				} else { // al primo accesso dopo l'upload del file propongo dei costi e delle aliquote in base a quanto trovato sul database 
+					$form['contor_'.$post_nl] = '';
+					$form['codvat_'.$post_nl] = '';
+				}
 			}
 			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
 			$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
@@ -166,6 +178,14 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 $gForm = new acquisForm();
 ?>
+<script type="text/javascript">
+    $(function () {
+        $("#datreg").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
+        $("#datreg").change(function () {
+            this.form.submit();
+        });
+    });
+</script>
 <form method="POST" name="form" enctype="multipart/form-data" id="add-invoice">
     <input type="hidden" name="fattura_elettronica_original_name" value="<?php echo $form['fattura_elettronica_original_name']; ?>">
 <?php
@@ -183,10 +203,18 @@ if ($toDo=='insert' || $toDo=='update' ) {
             <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['preview_text']; ?>
             </div>                    
         </div> <!-- chiude row  -->
+                <div class="col-sm-12 col-md-12 col-lg-12">
+                    <div class="form-group">
+                        <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?></label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
+                        </div>
+                    </div>
+                </div>                    
 <?php		
 		foreach ($form['rows'] as $k => $v) {
-            $contor_dropdown = $gForm->selectAccount('contor_'.$k, $form['contor_'.$k], array('sub',1,3), '', false, "col-sm-8 small",'style="max-width: 350px;"', false, true);
 			$k--;
+            $contor_dropdown = $gForm->selectAccount('contor_'.$k, $form['contor_'.$k], array('sub',1,3), '', false, "col-sm-8 small",'style="max-width: 350px;"', false, true);
             // creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
@@ -206,6 +234,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
 					'value' => '', 'type' => ''),
                 array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
+					'value' => '<input type="number"  name="codvat_' . $k .'" value="" />', 'type' => ''),
+                array('head' => '%', 'class' => 'text-center numeric', 
 					'value' => $v['pervat'], 'type' => ''),
                 array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
 					'value' => $contor_dropdown, 'type' => '')

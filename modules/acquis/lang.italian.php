@@ -514,6 +514,7 @@ $strScript = array("admin_fornit.php" =>
             'no_upload' => 'File non inviato',
         ),
         'preview_text' => "La fattura elettronica che stai per acquisire è visibile in fondo.<br> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune per contabilizzarla in maniera corretta",
+        'datreg' => 'Data Registrazione',
         'nrow' => 'Rigo',
         'codart' => 'Codice',
         'descri' => 'Descrizione',
