@@ -426,7 +426,7 @@ if (isset($_POST['Add_mov'])){
 		$form['prezzo'][$m] = $_POST['prezzo'.$m];
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 	}
-	$form['nmov']=$form['nmov']+1;echo "POST Add_mov - nmov=",$form['nmov'];
+	$form['nmov']=$form['nmov']+1;
 	$form['artico'][$form['nmov']] = "";
 	$form['quanti'][$form['nmov']] = "";
 	$form['prezzo'][$form['nmov']] = 0;
@@ -442,7 +442,7 @@ if (isset($_POST['Del_mov'])) {
 }
 
 if (isset($_POST['acquis'])){ //compilazione ordine a fornitore
-$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
     $scorta=$item['scorta'];// prendo la scorta minima
 	$fornitore=$item['clfoco'];//prendo codice clfoco per codice fornitore per ordine a fornitore
 		if (isset($fornitore)) {?>
@@ -455,11 +455,11 @@ $item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 			<input type="hidden" name="mesemi" value="<?php echo date('m');?>"> <!-- mese -->
 			<input type="hidden" name="annemi" value="<?php echo date('Y');?>"><!-- anno -->
 			<input type="hidden" value="INSERT" name="in_status">
-			<input type="hidden" name="in_codart" value="<?php echo $form['artico'];?>">
-			<input type="hidden" name="cosear" value="<?php echo $form['artico'];?>">
+			<input type="hidden" name="in_codart" value="<?php echo $form['artico'][$form['mov']];?>">
+			<input type="hidden" name="cosear" value="<?php echo $form['artico'][$form['mov']];?>">
 			<input type="hidden" value="<?php echo $scorta;?>"  name="in_quanti"> 
 			<input type="hidden" name="in_codric" value="330000004">
-			<input type="hidden" value="<?php echo $form['artico'];?>" name="codart">
+			<input type="hidden" value="<?php echo $form['artico'][$form['mov']];?>" name="codart">
 				<script type="text/javascript" >
 					document.forms["docacq"].submit(); 
 				</script>
@@ -468,7 +468,7 @@ $item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 	} else {?>
 		<div class="alert alert-warning alert-dismissible">
 			<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-			<strong>Warning!</strong> Non è possibile riordinare; nel prodotto non è inserito il fornitore!
+			<strong>Warning!</strong> Non è possibile riordinare; il prodotto non è ordinabile o non è inserito il fornitore!
 		</div>
 <?php		
 		}
@@ -840,6 +840,7 @@ $importo_totale=($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.'
 <tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?></td><td class="FacetDataTD" colspan="3"><input type="text" value="<?php echo number_format ($importo_totale,$admin_aziend['decimal_price'], ',', ''); ?>" name="total" size="20" readonly /><?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;". $script_transl[31]; ?>
 <input type="text" value="<?php echo number_format ($form['prezzo'][$form['mov']],$admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" size="12" name="prezzo<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " ".$admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[14] . "&nbsp;"; ?>
 <input type="text" value="<?php echo $form['scorig'][$form['mov']];?>" maxlength="4" size="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " %" . "&nbsp;&nbsp;&nbsp;"; ?></td></tr>
+<tr><td style="font-size:5pt;" colspan="4"><?php echo $form['mov']+1; ?></td></tr>
  <?php
 /* fine riattivo prezzo e sconto */
 
