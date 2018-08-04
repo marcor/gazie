@@ -65,13 +65,8 @@ class DDT extends Template_con_scheda
         $this->Cell(30,6,'Codice',1,0,'L',1);
         $this->Cell(82,6,'Descrizione',1,0,'L',1);
         $this->Cell(10,6,'U.m.',1,0,'L',1);
-        $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-        if ( getCalcTotVal() && !$tipodoc="A" ) {
-            $this->Cell(15,6,'Quantità',1,0,'R',1);
-            $this->Cell(15,6,'Kg.',1,0,'R',1);
-        } else {
-            $this->Cell(30,6,'Quantità',1,0,'R',1);
-        }
+        //$tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
+        $this->Cell(30,6,'Quantità',1,0,'R',1);
         $this->Cell(25,6,'Prezzo',1,0,'R',1);
         $this->Cell(10,6,'%Sc.',1,1,'R',1);
     }
@@ -102,13 +97,8 @@ class DDT extends Template_con_scheda
                     $this->Cell(30,6,$rigo['codart'],1,0,'L');
                     $this->Cell(82,6,$rigo['descri'],1,0,'L',0,'',1);
                     $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-                    if ( getCalcTotVal() ) {
-                        $this->Cell(10,6,$rigo['unimis2'],1,0,'L');
-                        $this->Cell(30,6,gaz_format_quantity($rigo['quanti2'],1,$this->decimal_quantity),1,0,'R');
-                    } else {
-                        $this->Cell(10,6,$rigo['unimis'],1,0,'L');
-                        $this->Cell(30,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    }
+                    $this->Cell(10,6,$rigo['unimis'],1,0,'L');
+                    $this->Cell(30,6,gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if ($this->docVars->client['stapre'] == 'S' && floatval($rigo['prelis']) >= 0.00001 ) {
                         $this->Cell(25,6,number_format($rigo['prelis'],$this->decimal_price,',',''),'TB',0,'R');
                         $this->Cell(10,6,$rigo['sconto'],1,1,'R');

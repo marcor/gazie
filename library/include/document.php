@@ -248,13 +248,8 @@ class DocContabVars {
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
             if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 90) {
                 $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-                if ( !getCalcTotVal() || $tipodoc=="A" ) {
-                    $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
-                    $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
-                } else {
-                    $rigo['importo'] = CalcolaImportoRigo($rigo['quanti2'], $rigo['prelis'], $rigo['sconto']);
-                    $v_for_castle = CalcolaImportoRigo($rigo['quanti2'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
-                }              
+                $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
+                $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
                 if ($rigo['tiprig'] == 1) {
                     $rigo['importo'] = CalcolaImportoRigo(1, $rigo['prelis'], 0);
                     $v_for_castle = CalcolaImportoRigo(1, $rigo['prelis'], $this->tesdoc['sconto']);

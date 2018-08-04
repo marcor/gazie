@@ -74,14 +74,8 @@ class OrdineCliente extends Template
                 case "0":
                     $this->Cell(25, 6, $rigo['codart'],1,0,'L');
                     $this->Cell(80, 6, $rigo['descri'],1,0,'L');
-                    
-                    if ( !getCalcTotVal() ) {
-                        $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
-                        $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
-                    } else {
-                        $this->Cell(7,  6, $rigo['unimis2'],1,0,'C');
-                        $this->Cell(16, 6, gaz_format_quantity($rigo['quanti2'],1,$this->decimal_quantity),1,0,'R');
-                    }
+                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
+                    $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
                     if ($rigo['sconto']>0) {
                        $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');

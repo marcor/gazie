@@ -197,7 +197,6 @@ $strScript = array(
         'preeminent_vat' => 'Aliquota IVA spese (preminente)',
         'interessi' => 'Interessi su IVA Trimestrale',
         'amm_min' => 'Tabella Ammortamenti Ministeriali',
-        'calc_quanti2' => 'Calcola totale su campo quantità aggiuntivo',
     ),
     "report_aziend.php" =>
     array('title' => 'Lista delle aziende installate',

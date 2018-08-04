@@ -145,11 +145,7 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
         while ($r = gaz_dbi_fetch_array($rs_rig)) {
             if ($r['tiprig'] <= 1 || $r['tiprig'] == 90) { //ma solo se del tipo normale, forfait, vendita cespite
                 //calcolo importo rigo
-                if ( !getCalcTotVal() ) {
-                    $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
-                } else {
-                    $importo = CalcolaImportoRigo($r['quanti2'], $r['prelis'], array($r['sconto'], $tes['sconto']));
-                }
+                $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
                 if ($r['tiprig'] == 1 || $r['tiprig'] == 90) { // se di tipo forfait o vendita cespite 
                     $importo = CalcolaImportoRigo(1, $r['prelis'], $tes['sconto']);
                 }

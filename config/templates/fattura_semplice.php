@@ -113,13 +113,8 @@ class FatturaSemplice extends Template {
                 case "0":
                     $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L');
                     $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);                  
-                    if ( getCalcTotVal()) {
-                        $this->Cell(7, 5, $rigo['unimis2'], 1, 0, 'C');
-                        $this->Cell(16, 5, gaz_format_quantity($rigo['quanti2'], 1, $this->decimal_quantity), 1, 0, 'R');
-                    } else {
-                        $this->Cell(7, 5, $rigo['unimis'], 1, 0, 'C');
-                        $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');                      
-                    }
+                    $this->Cell(7, 5, $rigo['unimis'], 1, 0, 'C');
+                    $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');                      
                     $this->Cell(18, 5, number_format($rigo['prelis'], $this->decimal_price, ',', ''), 1, 0, 'R');
                     if ($rigo['sconto'] > 0) {
                         $this->Cell(8, 5, number_format($rigo['sconto'], 1, ',', ''), 1, 0, 'C');
