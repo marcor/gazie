@@ -26,16 +26,16 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 
-function removeSignature($string) {
+function removeSignature($string, $filename) {
     $string = substr($string, strpos($string, '<?xml '));
     preg_match_all('/<\/.+?>/', $string, $matches, PREG_OFFSET_CAPTURE);
     $lastMatch = end($matches[0]);
 	// trovo l'ultimo carattere del tag di chiusura per eliminare la coda
 	$f_end = $lastMatch[1]+strlen($lastMatch[0]);
     $string = substr($string, 0, $f_end);
-	// elimino le sequenze di caratteri aggiunti dalla firma (per il momento ho provato solo con una fattura dell'ENI)
-	$string = preg_replace ('/[\x{0004}\x{0082}\x{0004}\x{0000}]+/', '', $string);
-	return preg_replace ('/[\x{0004}\x{0082}\x{0003}\x{00AA}]+/', '', $string);
+	// elimino le sequenze di caratteri aggiunti dalla firma (ancora da testare approfonditamente)
+	$string = preg_replace ('/[\x{0004}]{1}[\x{0082}]{1}[\x{0002}\x{0003}\x{0004}]{1}[\s\S]{1}/i', '', $string);
+	return preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
 }
 
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
@@ -60,11 +60,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 		}
 	} else if (isset($_POST['Download'])) {
 		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
-		$fp = fopen($name, 'rb');
-		header("Content-Type: application/octet-stream");
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/octet-stream');
 		header('Content-Disposition: attachment;  filename="'.$name.'"');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
 		header("Content-Length: " . filesize('../../data/files/tmp/'.$name));
-		fpassthru($fp);
+		readfile('../../data/files/tmp/'.$name);
 		exit;
 	}
 	if (empty($form['fattura_elettronica_original_name'])) {  // non ho ancora fatto l'upload del file
@@ -88,7 +91,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 		// INIZIO acquisizione e pulizia file xml o p7m
 		$file_name = '../../data/files/' . $admin_aziend['codice'] . '/' . $form['fattura_elettronica_original_name'];
 		$p7mContent = file_get_contents($file_name);
-		$invoiceContent = removeSignature($p7mContent);
+		$invoiceContent = removeSignature($p7mContent,$file_name);
 		$doc = new DOMDocument;
 		$doc->preserveWhiteSpace = false;
 		$doc->formatOutput = true;
