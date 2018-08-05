@@ -121,6 +121,7 @@ $strScript = array("browse_document.php" =>
 		"Produzione",
 		"Hai impostato una produzione che non esiste. Devi prima creare una nuova produzione e poi selezionarla dal menù a tendina che appare.",
 		"Prezzo articolo ",
+		"Operaio",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',

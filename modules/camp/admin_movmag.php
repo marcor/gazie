@@ -62,6 +62,11 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 		$form['quanti'][$m] = $_POST['quanti'.$m];
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['prezzo'][$m] = $_POST['prezzo'.$m];
+		if (isset ($_POST['staff'.$m])){
+			$form['staff'][$m] = $_POST['staff'.$m];
+		} else {
+			$form['staff'][$m]="";
+		}
 	}
 $itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
 if ($form['artico'][$form['mov']]<>"" && !isset($itemart)) {$msg .= "18+";}
@@ -102,7 +107,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['mesreg'] = substr($result['datreg'], 5, 2);
     $form['annreg'] = substr($result['datreg'], 0, 4);
     $form['campo_coltivazione'] = $result['campo_coltivazione']; //campo di coltivazione
-	$form['clfoco'] = "";
+	$form['clfoco'] = $result['clfoco'];
 	$form['adminid'] = $result['adminid'];
 	$form['id_orderman'] = intval ($result['id_orderman']);
 	$resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
@@ -154,7 +159,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['anndoc'] = intval($_POST['anndoc']);
 	$form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
     $form['avversita'] = substr($_POST['avversita'],0,50);
-    
+	    
     $form['quanti'][$form['mov']] = gaz_format_quantity($_POST['quanti'.$form['mov']], 0, $admin_aziend['decimal_quantity']);
 	if ((isset($_POST['prezzo'.$form['mov']])>0) && (strlen ($_POST['prezzo'.$form['mov']])>0)) {
 		$form['prezzo'][$form['mov']] = number_format(preg_replace("/\,/", '.', $_POST['prezzo'.$form['mov']]), $admin_aziend['decimal_price'], '.', '');
@@ -311,7 +316,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$msg .="24+";	
 			
 		}
-//  >>>>>>>>> INIZIO salvataggio su database §§§§§§§§§§§§§§§§§§§	
+//  §§§§§§§§§§§§§§§§ INIZIO salvataggio su database §§§§§§§§§§§§§§§§§§§	
         if (empty($msg)) { // nessun errore  
   echo " prima di salvare nmov:",$form['nmov']," mov:",$form['mov'];          $upd_mm = new magazzForm;
             //formatto le date
@@ -383,7 +388,7 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
             exit;
         }
     } 
-// <<<<<<<<<<<<<<<  FINE salvataggio su database §§§§§§§§§§§§§§§§§§§
+// §§§§§§§§§§§§§§§§§§§§  FINE salvataggio su database §§§§§§§§§§§§§§§§§§§
 } elseif (!isset($_POST['Insert'])) {//se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     //registri per il form della testata
@@ -417,6 +422,7 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
 	$form['description']="";
 	$form['id_orderman']= 0;
 	$form['nmov']=0;
+	$form['staff'][$form['mov']]="";
 }
 // Antonio Germani questo serve per aggiungere o togliere un movimento
 if (isset($_POST['Add_mov'])){ 
@@ -426,12 +432,14 @@ if (isset($_POST['Add_mov'])){
 		$form['quanti'][$m] = $_POST['quanti'.$m];
 		$form['prezzo'][$m] = $_POST['prezzo'.$m];
 		$form['scorig'][$m] = $_POST['scorig'.$m];
+		$form['staff'][$m]=intval($_POST['staff'.$m]);
 	}
 	$form['nmov']=$form['nmov']+1;
 	$form['artico'][$form['nmov']] = "";
 	$form['quanti'][$form['nmov']] = "";
 	$form['prezzo'][$form['nmov']] = 0;
 	$form['scorig'][$form['nmov']] = 0;
+	$form['staff'][$form['nmov']]= "";
 	
 } 
 if (isset($_POST['Del_mov'])) {
@@ -495,18 +503,20 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     $form['anndoc'] = date("Y");
     $form['scochi'] = 0;
 	$form['avversita'] = "";
-    $form['artico'] = "";
+	$form['nmov']= 0;
+	$form['mov']=0;
     $form['artico'][$form['mov']] = "";
     $form['prezzo'][$form['mov']] = 0;
     $form['scorig'][$form['mov']] = 0;
 	$form['quanti'][$form['mov']] = 0;
+	$form['staff'][$form['mov']]="";
     $form['status'] = "";
     $form['search_partner'] = "";
     $form['search_item'] = "";
     $form['id_rif'] = 0;
 	$form['description']="";
 	$form['id_orderman']=0;
-	$fornitore="";
+	$fornitore="";	
 	}
 
 require("../../library/include/header.php");
@@ -590,7 +600,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td col
 <?php	
 /* fine inserisci produzione  */
 
-/*antonio Germani campo coltivazione  */
+/*Antonio Germani campo coltivazione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"campo_coltivazione\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 echo "<option value=\"\">-------------</option>\n";
@@ -824,17 +834,38 @@ if ($form['artico'][$form['mov']] == "") {
 }
 ?>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl[12]; ?></td>
-<td class="FacetDataTD" ><input type="text" value="<?php echo $form['quanti'][$form['mov']];?>" maxlength="10" size="10" name="quanti<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo $print_unimis;?>
+<td class="FacetDataTD" ><input type="text" value="<?php echo $form['quanti'][$form['mov']];?>" maxlength="10" size="10" name="quanti<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo "&nbsp;".$print_unimis;?>
 <?php
 	if ($service == 0) { //Antonio Germani se è un articolo con magazzino
 		echo " ".$script_transl[22]." ".gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity'])." ".$print_unimis."&nbsp;&nbsp;";
+	
+		if ($print_magval<$scorta and $service ==0 ) {
+			echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
+		}
+	} else {
+/*Antonio Germani se l'unità di misura è oraria attivare Operaio */
+			if ($print_unimis == "h"){
+				echo "&nbsp;&nbsp;" .$script_transl[32]. "&nbsp;";
+				?>				
+				<select name="staff<?php echo $form['mov'] ?>" class="FacetSelect" onchange="this.form.submit()">
+				<?php
+				echo "<option value=\"\">-------------</option>\n";
+				$result = gaz_dbi_dyn_query("*", $gTables['staff']);
+				while ($row = gaz_dbi_fetch_array($result)) {
+					$selected = "";
+					if ($form['staff'][$form['mov']] == $row['id_staff']) {
+						$selected = " selected ";
+					}
+					$anagra = gaz_dbi_get_row($gTables['clfoco'], "codice", $row['id_clfoco']);
+					echo "<option value=\"" . $row['id_staff'] . "\"" . $selected . ">" . $row['id_staff'] . " - " . $anagra['descri'] . "</option>\n";
+				}
+			}
 	}
-	if ($print_magval<$scorta and $service ==0 ) {
-		echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
-}
-$print_magval=""; $scorta=""; $dose=""; // le azzero perché altrimenti me le ritrovo nell'eventuale movimento/riga successivo
+echo "</select>&nbsp;";
+// prendo qualcosa dell'operaio ??? se serve ???
+//$nome = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
 echo "</td></tr>\n";
-
+$print_magval=""; $scorta=""; $dose=""; // le azzero perché altrimenti me le ritrovo nell'eventuale movimento/riga successivo
 /* Antonio Germani riattivo il prezzo e lo sconto che nel quaderno di campagna servono */
 $importo_totale=($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.', $form['quanti'][$form['mov']])))-((($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.', $form['quanti'][$form['mov']])))*$form['scorig'][$form['mov']])/100);
 ?>

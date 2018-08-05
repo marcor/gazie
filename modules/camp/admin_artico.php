@@ -529,7 +529,6 @@ if ($modal_ok_insert === true) {
 						 <?php } else { ?>
 							 <select name="unimis" size="1">
 									<option <?php if($form['unimis'] == 'h'){echo("selected");}?>>h</option>
-									<option <?php if($form['unimis'] == 'gg'){echo("selected");}?>>gg</option>
 									<option <?php if($form['unimis'] == 'n'){echo("selected");}?>>n</option>
 								</select>
 						<?php } ?>
