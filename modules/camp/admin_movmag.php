@@ -238,12 +238,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		}			
 	 // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
 	 $mv = $gForm->getStockValue(false, $form['artico'][$form['mov']]);
-        $magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
+        $magval = array_pop($mv); $print_magval=floatval($magval['q_g']); 
 		if (isset($_POST['Update'])) {
 			$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 			// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 			$print_magval=$print_magval+$qta['quanti'];}
-		if ($form["operat"] == -1 and ($print_magval-$form['artico'][$form['mov']]<0)) { //Antonio Germani quantità insufficiente
+		if ($form["operat"] == -1 and ($print_magval-$form['quanti'][$form['mov']]<0)) { //Antonio Germani quantità insufficiente
 			$msg .= "23+";
 			}
 			
@@ -276,7 +276,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			// Antonio Germani Controllo se la quantità è giusta rapportata al campo di coltivazione
 			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
 			$dose=$item['dose_massima'];// prendo la dose
-			$rame_metallo=$item['rame_metallico'];// già che ci sono, prendo anche il rame metallo del prodotto oggetto del movimento, che mi servirà per il prossimo controllo
+			$rame_metallo=$item['rame_metallico'];// già che ci sono, prendo anche il rame metallo del prodotto oggetto del movimento, che mi servirà per il prossimo controllo	
 			if ($dose>0 && $form['quanti'][$form['mov']] > $dose*$dim_campo && $form["operat"]==-1 && $dim_campo>0) {
 				$msg .="25+"; // errore dose eccessiva
 			}
@@ -297,7 +297,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			}
 // fine calcolo rame
 
-			// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha
+		// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha di rame metallo
 			
 				if (($campo_coltivazione>0)&&($dim_campo>0)&&($rame_met_annuo+($rame_metallo* $form['artico'][$form['mov']])> (6 * $dim_campo))) {
 					$msg .="26+";echo "CONTROLLO rame metallo: <br> Rame metallo anno già usato: ",$rame_met_annuo," Rame metallo che si tenta di usare: ",($rame_metallo* $form['artico'][$form['mov']]), " Limite annuo di legge per questo campo: ", (6 * $dim_campo);}	// errore superato il limite di rame metallo ad ettaro		
@@ -311,8 +311,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			$msg .="24+";	
 			
 		}
-			
-        if (empty($msg)) { // nessun errore  >>>>>>>>> INIZIO salvataggio su database
+//  >>>>>>>>> INIZIO salvataggio su database §§§§§§§§§§§§§§§§§§§	
+        if (empty($msg)) { // nessun errore  
   echo " prima di salvare nmov:",$form['nmov']," mov:",$form['mov'];          $upd_mm = new magazzForm;
             //formatto le date
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
@@ -382,7 +382,8 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
             header("Location:report_movmag.php");
             exit;
         }
-    } // FINE salvataggio su database
+    } 
+// <<<<<<<<<<<<<<<  FINE salvataggio su database §§§§§§§§§§§§§§§§§§§
 } elseif (!isset($_POST['Insert'])) {//se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     //registri per il form della testata
@@ -812,7 +813,7 @@ if ($form['artico'][$form['mov']] == "") {
 			// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 			$mv = $gForm->getStockValue(false, $itemart['codice']);
 			$magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
-				if (isset($_POST['Update'])) {
+				if (isset($_POST['Update'])) { // se è update
 				$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 				// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 				$print_magval=$print_magval+$qta['quanti'];
