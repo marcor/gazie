@@ -1463,8 +1463,9 @@ class GAzieForm {
         echo "</select>\n";
     }
 
-    function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false) {
+    function selectFromDB($table, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false) {
         global $gTables;
+		$acc='';
         $refresh = '';
         if (!$order) {
             $order = $key;
@@ -1477,9 +1478,9 @@ class GAzieForm {
         if (!empty($val_hiddenReq)) {
             $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
         }
-        echo "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style>\n";
+        $acc .= "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style>\n";
         if ($empty) {
-            echo "\t\t <option value=\"\"></option>\n";
+            $acc .= "\t\t <option value=\"\"></option>\n";
         }
         $result = gaz_dbi_query($query);
         while ($r = gaz_dbi_fetch_array($result)) {
@@ -1487,21 +1488,26 @@ class GAzieForm {
             if ($r[$key] == $val) {
                 $selected = "selected";
             }
-            echo "\t\t <option value=\"" . $r[$key] . "\" $selected >";
+            $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
             if (empty($key2)) {
-                echo substr($r[$key], 0, 43) . "</option>\n";
+                $acc .= substr($r[$key], 0, 43) . "</option>\n";
             } else {
-                echo substr($r[$key], 0, 28) . $bridge . substr($r[$key2], 0, 35) . "</option>\n";
+                $acc .= substr($r[$key], 0, 28) . $bridge . substr($r[$key2], 0, 35) . "</option>\n";
             }
         }
         if ($addOption) {
-            echo "\t\t <option value=\"" . $addOption['value'] . "\"";
+            $acc .= "\t\t <option value=\"" . $addOption['value'] . "\"";
             if ($addOption['value'] == $val) {
-                echo " selected ";
+                $acc .= " selected ";
             }
-            echo ">" . $addOption['descri'] . "</option>\n";
+            $acc .= ">" . $addOption['descri'] . "</option>\n";
         }
-        echo "\t </select>\n";
+        $acc .= "\t </select>\n";
+		if ($echo){
+			return $acc;
+		} else {
+			echo $acc;
+		}
     }
 
     // funzione per la generazione di una select box da file XML
@@ -1536,7 +1542,7 @@ class GAzieForm {
         echo "\t </select>\n";
     }
 
-    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 350px;"', $mas_only = true, $no_echo=false) {
+    function selectAccount($name, $val, $type = 1, $val_hiddenReq = '', $tabidx = false, $class = 'FacetSelect', $opt = 'style="max-width: 350px;"', $mas_only = true, $echo=false) {
         global $gTables, $admin_aziend;
 		$acc='';
         $bg_class = Array(1 => "gaz-attivo", 2 => "gaz-passivo", 3 => "gaz-costi", 4 => "gaz-ricavi", 5 => "gaz-transitori",
@@ -1591,7 +1597,7 @@ class GAzieForm {
             $acc .= "\t<option value=\"" . $v . "\"" . $selected . ">" . $r["codice"] . "-" . $r['descri'] . "</option>\n";
         }
         $acc .= "</select>\n";
-		if ($no_echo){
+		if ($echo){
 			return $acc;
 		} else {
 			echo $acc;

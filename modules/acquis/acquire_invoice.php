@@ -38,6 +38,7 @@ function removeSignature($string, $filename) {
 	return preg_replace ('/[\x{0004}]{1}[\x{0081}]{1}[\s\S]{1}/i', '', $string);
 }
 
+
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 	$toDo = 'upload';
 	$form['fattura_elettronica_original_name'] = '';
@@ -72,7 +73,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 	}
 	if (empty($form['fattura_elettronica_original_name'])) {  // non ho ancora fatto l'upload del file
 		$toDo = 'upload';
-	} else { // l'upload è stato fatto 
+	} else { // l'upload è stato fatto
 		// controllo se il file è stato anche registrato sul database
 		$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
 		if ($tesdoc){ // c'è anche sul database, è una modifica
@@ -84,8 +85,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 			$form['datreg'] = date("d/m/Y");
 		}
 
-		// devinisco l'array del form 
-		$form['cod_partner'] = 0;
+		// definisco l'array del form 
+		$form['partner_cod'] = 0;
 		$form['rows'] = array();
 
 		// INIZIO acquisizione e pulizia file xml o p7m
@@ -108,11 +109,19 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 			$msg['err'][] = 'not_mine';
 			} else {
 				// controllo se ho il fornitore in archivio
+				$form['partner_cost']=$admin_aziend['impacq']; 
+				$form['partner_vat']=$admin_aziend['preeminent_vat']; 
+				$form['partner_pag']=1; 
 				$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
 				$anagrafica = new Anagrafica();
                 $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
                 if ($partner_with_same_pi) { // ho già il fornitore sul piano dei conti
-					$form['cod_partner'] = $partner_with_same_pi[0]['codice'];
+					$form['partner_cost'] = $partner_with_same_pi[0]['cosric']; // costo legato al fornitore 
+					$form['partner_cod'] = $partner_with_same_pi[0]['codice'];
+					$form['partner_pag'] = $partner_with_same_pi[0]['codpag']; // condizione di pagamento
+					if ( $partner_with_same_pi[0]['aliiva'] > 0 ){
+						$form['partner_vat'] = $partner_with_same_pi[0]['aliiva']; 
+					}
                 } else { // se non ho già un fornitore sul piano dei conti provo a vedere nelle anagrafiche
                     $rs_anagra_with_same_pi = gaz_dbi_query_anagra(array("*"), $gTables['anagra'], array("pariva" => "='" . $form['pariva'] . "'"), array("pariva" => "DESC"), 0, 1);
                     $anagra_with_same_pi = gaz_dbi_fetch_array($rs_anagra_with_same_pi);
@@ -160,8 +169,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 					$form['contor_'.$post_nl] = intval($_POST['contor_'.$post_nl]);
 					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
 				} else { // al primo accesso dopo l'upload del file propongo dei costi e delle aliquote in base a quanto trovato sul database 
-					$form['contor_'.$post_nl] = '';
-					$form['codvat_'.$post_nl] = '';
+					$form['contor_'.$post_nl] = $form['partner_cost'];
+					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
+					// analizzo le possibilità 
+					if ( $expect_vat['aliquo'] == $form['rows'][$nl]['pervat']) { // coincide con le aspettative
+						$form['codvat_'.$post_nl] = $expect_vat['codice'];
+					} else { // non è quella che mi aspettavo allora provo a trovarne una tra quelle con la stessa aliquota
+						$form['codvat_'.$post_nl] = 'non trovata';
+					}
 				}
 			}
 			// ricavo l'allegato, e se presente metterò un bottone per permettere il download
@@ -218,7 +233,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		foreach ($form['rows'] as $k => $v) {
 			$k--;
             $contor_dropdown = $gForm->selectAccount('contor_'.$k, $form['contor_'.$k], array('sub',1,3), '', false, "col-sm-8 small",'style="max-width: 350px;"', false, true);
-            // creo l'array da passare alla funzione per la creazione della tabella responsive
+			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-8 small', null, '', false, true);            
+			// creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
                     'value' => $k+1),
@@ -237,7 +253,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
                 array('head' => $script_transl["amount"], 'class' => 'text-right numeric', 
 					'value' => '', 'type' => ''),
                 array('head' => $script_transl["tax"], 'class' => 'text-center numeric', 
-					'value' => '<input type="number"  name="codvat_' . $k .'" value="" />', 'type' => ''),
+					'value' => $codvat_dropdown, 'type' => ''),
                 array('head' => '%', 'class' => 'text-center numeric', 
 					'value' => $v['pervat'], 'type' => ''),
                 array('head' => $script_transl["conto"], 'class' => 'text-center numeric', 
