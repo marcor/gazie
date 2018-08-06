@@ -111,14 +111,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 				// controllo se ho il fornitore in archivio
 				$form['partner_cost']=$admin_aziend['impacq']; 
 				$form['partner_vat']=$admin_aziend['preeminent_vat']; 
-				$form['partner_pag']=1; 
+				$form['pagame']=1; 
 				$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
 				$anagrafica = new Anagrafica();
                 $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
                 if ($partner_with_same_pi) { // ho già il fornitore sul piano dei conti
 					$form['partner_cost'] = $partner_with_same_pi[0]['cosric']; // costo legato al fornitore 
 					$form['partner_cod'] = $partner_with_same_pi[0]['codice'];
-					$form['partner_pag'] = $partner_with_same_pi[0]['codpag']; // condizione di pagamento
+					$form['pagame'] = $partner_with_same_pi[0]['codpag']; // condizione di pagamento
 					if ( $partner_with_same_pi[0]['aliiva'] > 0 ){
 						$form['partner_vat'] = $partner_with_same_pi[0]['aliiva']; 
 					}
@@ -168,6 +168,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 				if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 					$form['contor_'.$post_nl] = intval($_POST['contor_'.$post_nl]);
 					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
+					$form['pagame'] = intval($_POST['pagame']);
 				} else { // al primo accesso dopo l'upload del file propongo dei costi e delle aliquote in base a quanto trovato sul database 
 					$form['contor_'.$post_nl] = $form['partner_cost'];
 					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
@@ -217,23 +218,43 @@ if ($toDo=='insert' || $toDo=='update' ) {
     }
 	if (count($msg['err'])==0){
  ?>    
+<div class="panel panel-default">
+    <div class="panel-heading">
         <div class="row">
             <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['preview_text']; ?>
             </div>                    
         </div> <!-- chiude row  -->
-                <div class="col-sm-12 col-md-12 col-lg-12">
-                    <div class="form-group">
-                        <label for="datreg" class="col-sm-4 control-label"><?php echo $script_transl['datreg']; ?></label>
-                        <div class="col-sm-8">
-                            <input type="text" class="form-control" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
-                        </div>
+    </div>                    
+    <div class="panel-body">
+        <div class="row">
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <div class="form-group">
+                    <label for="datreg" class="col-sm-6 control-label"><?php echo $script_transl['datreg']; ?></label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="datreg" name="datreg" value="<?php echo $form['datreg']; ?>">
                     </div>
-                </div>                    
+                </div>
+            </div>                    
+            <div class="col-sm-12 col-md-6 col-lg-6">
+                <div class="form-group">
+                    <label for="pagame" class="col-sm-4 control-label" ><?php echo $script_transl['pagame']; ?></label>
+                    <div>
+                        <?php
+                        $select_pagame = new selectpagame("pagame");
+                        $select_pagame->addSelected($form["pagame"]);
+                        $select_pagame->output(false, "col-sm-8 small");
+                        ?>                
+                    </div>
+                </div>
+            </div>                    
+        </div> <!-- chiude row  -->
+    </div>
+</div>                    
 <?php		
 		foreach ($form['rows'] as $k => $v) {
 			$k--;
             $contor_dropdown = $gForm->selectAccount('contor_'.$k, $form['contor_'.$k], array('sub',1,3), '', false, "col-sm-8 small",'style="max-width: 350px;"', false, true);
-			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-8 small', null, '', false, true);            
+			$codvat_dropdown = $gForm->selectFromDB('aliiva', 'codvat_'.$k, 'codice', $form['codvat_'.$k], 'aliquo', true, '-', 'descri', '', 'col-sm-8 small', null, 'style="max-width: 350px;"', false, true);            
 			// creo l'array da passare alla funzione per la creazione della tabella responsive
             $resprow[$k] = array(
                 array('head' => $script_transl["nrow"], 'class' => '',
