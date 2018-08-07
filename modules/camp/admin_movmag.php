@@ -62,6 +62,7 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 		$form['quanti'][$m] = $_POST['quanti'.$m];
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['prezzo'][$m] = $_POST['prezzo'.$m];
+		$form['clfoco'][$m] = $_POST['clfoco'.$m];
 		if (isset ($_POST['staff'.$m])){
 			$form['staff'][$m] = $_POST['staff'.$m];
 		} else {
@@ -107,7 +108,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['mesreg'] = substr($result['datreg'], 5, 2);
     $form['annreg'] = substr($result['datreg'], 0, 4);
     $form['campo_coltivazione'] = $result['campo_coltivazione']; //campo di coltivazione
-	$form['clfoco'] = $result['clfoco'];
+	$form['clfoco'][$form['mov']] = $result['clfoco'];
+	$result2 = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $result['clfoco']);
+	$form['staff'][$form['mov']]=$result2['id_staff'];
 	$form['adminid'] = $result['adminid'];
 	$form['id_orderman'] = intval ($result['id_orderman']);
 	$resultorderman = gaz_dbi_get_row($gTables['orderman'], "id", $form['id_orderman']);
@@ -116,12 +119,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		} else {
 			$form['description']="";
 		}
-    if (!empty($form['caumag'])) { //controllo quale partner prevede la causale
+  /*  if (!empty($form['caumag'])) { //controllo quale partner prevede la causale
         $rs_causal = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['clorfo'] = $rs_causal['clifor']; //cliente, fornitore o entrambi
     } else {
         $form['clorfo'] = 0; // entrambi
-    }
+    }*/
     $form['tipdoc'] = $result['tipdoc'];
     $form['desdoc'] = $result['desdoc'];
     $form['avversita'] = $result['avversita'];
@@ -133,6 +136,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['quanti'][$form['mov']] = gaz_format_quantity($result['quanti'], 0, $admin_aziend['decimal_quantity']);
     $form['prezzo'][$form['mov']] = number_format($result['prezzo'], $admin_aziend['decimal_price'], '.', '');
     $form['scorig'][$form['mov']] = $result['scorig'];
+	$form['clfoco'][$form['mov']]= $result['clfoco'];
     $form['status'] = $result['status'];
     $form['search_partner'] = ""; //Antonio Germani
     $form['search_item'] = "";
@@ -148,8 +152,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['gioreg'] = intval($_POST['gioreg']);
     $form['mesreg'] = intval($_POST['mesreg']);
     $form['annreg'] = intval($_POST['annreg']);
-	$form['clfoco'] = intval($_POST['clfoco']);
-    $form['clorfo'] = intval($_POST['clorfo']); //cliente, fornitore o entrambi 
+	
     $form['campo_coltivazione'] = intval($_POST['campo_coltivazione']); //campo di coltivazione
 	$form['adminid'] = "Utente connesso";
     $form['tipdoc'] = intval($_POST['tipdoc']);
@@ -188,12 +191,12 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     if (isset($_POST['caumag'])) {          
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['operat'] = $causa['operat'];
-        $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
-        if (($causa['clifor'] < 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['mascli'])) {
-            $form['clfoco'] = 0;
+     /*   $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
+        if (($causa['clifor'] < 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 and substr($form['clfoco'][$form['mov']], 0, 3) == $admin_aziend['mascli'])) {
+            $form['clfoco'][$form['mov']]=0;
             $form['search_partner'] = "";
         }
-				
+		*/		
         if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
             $form['tipdoc'] = "";
             $form['desdoc'] = "";
@@ -242,6 +245,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 			}
 		}			
 	 // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
+If ($itemart['good_or_service'] ==0) { // se non è un servizio
 	 $mv = $gForm->getStockValue(false, $form['artico'][$form['mov']]);
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']); 
 		if (isset($_POST['Update'])) {
@@ -251,7 +255,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		if ($form["operat"] == -1 and ($print_magval-$form['quanti'][$form['mov']]<0)) { //Antonio Germani quantità insufficiente
 			$msg .= "23+";
 			}
-			
+}
+
 	//Antonio Germani controllo se il prodotto è presente nel database fitofarmaci ed eventualmente se è scaduta l'autorizzazione		
 		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'." FROM ".$gTables['fitofarmaci']. " WHERE PRODOTTO ='". $form['artico'][$form['mov']]."'";
 			$result = gaz_dbi_query($query);
@@ -318,7 +323,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		}
 //  §§§§§§§§§§§§§§§§ INIZIO salvataggio su database §§§§§§§§§§§§§§§§§§§	
         if (empty($msg)) { // nessun errore  
-  echo " prima di salvare nmov:",$form['nmov']," mov:",$form['mov'];          $upd_mm = new magazzForm;
+			$upd_mm = new magazzForm;
             //formatto le date
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
             $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
@@ -327,7 +332,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){
             if (!empty($form['artico'][$form['mov']])) {
                 $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'], 0, // numdoc � in desdoc
                         0, // seziva � in desdoc 
-                        $form['datdoc'], $form['clfoco'], $form['scochi'], $form['caumag'], $form['artico'][$form['mov']], $form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
+                        $form['datdoc'], $form['clfoco'][$form['mov']], $form['scochi'], $form['caumag'], $form['artico'][$form['mov']], $form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
                 );
 		//Antonio Germani Non riesco a capire come funziona la funzione qui sopra; ho perso troppo tempo!!!!
 		// risolvo in questa maniera per far scrivere i nuovi campi di movmag, specifici del quaderno di campagna
@@ -382,6 +387,34 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
 	}
 // fine gestione giorno di sospensione tabella campi 
 
+// INIZIO gestione registrazione database operai
+    
+	$id_worker=$form['staff'][$form['mov']]; //identificativo operaio
+	
+	$work_day= $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc']; echo "workday: ",$work_day; // giorno lavorato
+	$hours_normal=$form['quanti'][$form['mov']]; //ore lavorate normali
+	$id_orderman=$form['id_orderman'];
+	$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
+	If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate e le aggiungo quelle odierne
+		$hours_normal= $r['hours_normal']+$hours_normal;
+	}
+// inizio a salvare su database	
+				
+				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker );
+				if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
+				    $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$id_worker.", id_orderman = '".$id_orderman."', work_day = '".$work_day."', hours_normal = '".$hours_normal."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
+					gaz_dbi_query($query);
+				} else { // altrimenti faccio l'INSERT
+				$v=array();
+					$v['id_staff']=$id_worker;
+					$v['work_day']=$work_day;
+					$v['hours_normal']=$hours_normal;
+					$v['id_orderman']=$id_orderman;
+					gaz_dbi_table_insert('staff_worked_hours', $v);
+				}
+		
+// FINE gestione registrazione database operai 
+
             }
 		} //fine ciclo for mov
             header("Location:report_movmag.php");
@@ -400,8 +433,7 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
     $form['caumag'] = "";
     $form['operat'] = 0;
     $form['campo_coltivazione'] = ""; //campo di coltivazione
-	$form['clfoco'] = 0;
-    $form['clorfo'] = 0;
+    
 	$form['adminid'] = "Utente connesso";
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
@@ -415,6 +447,7 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
     $form['quanti'][$form['mov']] = "";
     $form['prezzo'][$form['mov']] = 0;
     $form['scorig'][$form['mov']] = 0;
+	$form['clfoco'][$form['mov']]= 0;
     $form['status'] = "";
     $form['search_partner'] = "";
     $form['search_item'] = "";
@@ -433,6 +466,7 @@ if (isset($_POST['Add_mov'])){
 		$form['prezzo'][$m] = $_POST['prezzo'.$m];
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['staff'][$m]=intval($_POST['staff'.$m]);
+		$form['clfoco'][$m]= $_POST['clfoco'.$m];
 	}
 	$form['nmov']=$form['nmov']+1;
 	$form['artico'][$form['nmov']] = "";
@@ -440,6 +474,7 @@ if (isset($_POST['Add_mov'])){
 	$form['prezzo'][$form['nmov']] = 0;
 	$form['scorig'][$form['nmov']] = 0;
 	$form['staff'][$form['nmov']]= "";
+	$form['clfoco'][$form['nmov']]= 0;
 	
 } 
 if (isset($_POST['Del_mov'])) {
@@ -493,8 +528,7 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     $form['caumag'] = "";
     $form['operat'] = 0;
     $form['campo_coltivazione'] = ""; //campo di coltivazione
-	$form['clfoco'] = "";
-    $form['clorfo'] = 0;
+    
 	$form['adminid'] = "Utente connesso";
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
@@ -510,6 +544,7 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     $form['scorig'][$form['mov']] = 0;
 	$form['quanti'][$form['mov']] = 0;
 	$form['staff'][$form['mov']]="";
+	$form['clfoco'][$form['mov']]="";
     $form['status'] = "";
     $form['search_partner'] = "";
     $form['search_item'] = "";
@@ -696,11 +731,11 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 echo "\t </select></td></tr>\n"; 
 /* fine qui si seleziona la data di attuazione */
 
-/** ENRICO FEDELE */
+/** ENRICO FEDELE 
 // antonio Germani echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "&hArr;" . $script_transl[4] . "</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
-$ric_mastro = substr($form['clfoco'], 0, 3);
-echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"" . $form['clfoco'] . "\">\n";
+$ric_mastro = substr($form['clfoco'][$form['mov']], 0, 3);
+echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"" . $form['clfoco'][$form['mov']] . "\">\n";
 echo "\t<input type=\"hidden\" name=\"clorfo\" value=\"" . $form['clorfo'] . "\">\n";
 $rs_partner = "(codice between " . $admin_aziend['mascli'] . "000001 and " . $admin_aziend['mascli'] . "999999 or codice between " . $admin_aziend['masfor'] . "000001 and " . $admin_aziend['masfor'] . "999999 )";
 if ($form['clorfo'] < 0) { // cliente
@@ -708,7 +743,7 @@ if ($form['clorfo'] < 0) { // cliente
 } elseif ($form['clorfo'] > 0) {// fornitore
     $rs_partner = "(codice between " . $admin_aziend['masfor'] . "000001 and " . $admin_aziend['masfor'] . "999999 )";
 }
-if ($form['clfoco'] == 0) {
+if ($form['clfoco'][$form['mov']] == 0) {
     if (strlen($form['search_partner']) >= 2) {
         $anagrafica = new Anagrafica();
         $partner = $anagrafica->queryPartners("*", $rs_partner . " and ragso1 like '" . addslashes($form['search_partner']) . "%'", "codice asc, ragso1 asc");
@@ -718,7 +753,7 @@ if ($form['clfoco'] == 0) {
             echo "<option value=\"000000000\"> ---------- </option>";
 			foreach ($partner AS $key => $row) {
                 $selected = "";
-                if ($row["codice"] == $form['clfoco']) {
+                if ($row["codice"] == $form['clfoco'][$form['mov']]) {
                     $selected = "selected";
                 }
                 if (substr($row["codice"], 0, 3) == $admin_aziend['masfor']) {
@@ -739,7 +774,7 @@ if ($form['clfoco'] == 0) {
     /** ENRICO FEDELE */
     /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
    //Antonio Germani echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button>';
-    /** ENRICO FEDELE */
+    /** ENRICO FEDELE 
 } else {
     $anagrafica = new Anagrafica();
     $partner = $anagrafica->getPartner($form['clfoco']);
@@ -747,12 +782,12 @@ if ($form['clfoco'] == 0) {
     //Antonio Germani  echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"" . $form['clfoco'] . "\">\n";
     //Antonio Germani  echo "\t<input type=\"hidden\" name=\"search_partner\" value=\"" . $form['search_partner'] . "\">\n";
 }
-if (substr($form["clfoco"], 0, 3) == $admin_aziend['masfor']) {
+if (substr($form['clfoco'][$form['mov']], 0, 3) == $admin_aziend['masfor']) {
     $unimis = "uniacq";
 } else {
     $unimis = "unimis";
 }
-
+*/
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td>";
 /* Antonio Germani -  avversità */
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['avversita'] . "\" maxlength=\"50\" size=\"35\" name=\"avversita\"></td></tr>";
@@ -842,6 +877,9 @@ if ($form['artico'][$form['mov']] == "") {
 		if ($print_magval<$scorta and $service ==0 ) {
 			echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 		}
+		?>
+	<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">
+<?php	
 	} else {
 /*Antonio Germani se l'unità di misura è oraria attivare Operaio */
 			if ($print_unimis == "h"){
@@ -852,18 +890,21 @@ if ($form['artico'][$form['mov']] == "") {
 				echo "<option value=\"\">-------------</option>\n";
 				$result = gaz_dbi_dyn_query("*", $gTables['staff']);
 				while ($row = gaz_dbi_fetch_array($result)) {
-					$selected = "";
+					$selected = ""; 
 					if ($form['staff'][$form['mov']] == $row['id_staff']) {
 						$selected = " selected ";
 					}
-					$anagra = gaz_dbi_get_row($gTables['clfoco'], "codice", $row['id_clfoco']);
-					echo "<option value=\"" . $row['id_staff'] . "\"" . $selected . ">" . $row['id_staff'] . " - " . $anagra['descri'] . "</option>\n";
+					$anagra = gaz_dbi_get_row($gTables['clfoco'], "codice", $row['id_clfoco']); 
+					echo "<option value=\"" . $row['id_staff'] . "\"" . $selected . ">" . $row['id_staff'] . " - " . $anagra['descri'] . "</option>\n"; $form['clfoco'][$form['mov']]=$row['id_clfoco'];
 				}
+				
 			}
+			$itm = gaz_dbi_get_row($gTables['staff'], "id_staff", $form['staff'][$form['mov']]);
+			?>
+			<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php echo $itm['id_clfoco'];?>">
+			<?php
 	}
-echo "</select>&nbsp;";
-// prendo qualcosa dell'operaio ??? se serve ???
-//$nome = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
+echo "</select>&nbsp;"; 
 echo "</td></tr>\n";
 $print_magval=""; $scorta=""; $dose=""; // le azzero perché altrimenti me le ritrovo nell'eventuale movimento/riga successivo
 /* Antonio Germani riattivo il prezzo e lo sconto che nel quaderno di campagna servono */
