@@ -109,6 +109,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['annreg'] = substr($result['datreg'], 0, 4);
     $form['campo_coltivazione'] = $result['campo_coltivazione']; //campo di coltivazione
 	$form['clfoco'][$form['mov']] = $result['clfoco'];
+	$form['clfocoin'] = $result['clfoco'];
 	$result2 = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $result['clfoco']);
 	$form['staff'][$form['mov']]=$result2['id_staff'];
 	$form['adminid'] = $result['adminid'];
@@ -134,6 +135,8 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['anndoc'] = substr($result['datdoc'], 0, 4);
     $form['artico'][$form['mov']] = $result['artico'];
     $form['quanti'][$form['mov']] = gaz_format_quantity($result['quanti'], 0, $admin_aziend['decimal_quantity']);
+	$form['quantiin']=$result['quanti'];
+	$form['datdocin']=$result['datdoc'];
     $form['prezzo'][$form['mov']] = number_format($result['prezzo'], $admin_aziend['decimal_price'], '.', '');
     $form['scorig'][$form['mov']] = $result['scorig'];
 	$form['clfoco'][$form['mov']]= $result['clfoco'];
@@ -152,7 +155,9 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['gioreg'] = intval($_POST['gioreg']);
     $form['mesreg'] = intval($_POST['mesreg']);
     $form['annreg'] = intval($_POST['annreg']);
-	
+	$form['clfocoin'] = $_POST['clfocoin'];
+	$form['quantiin'] = $_POST['quantiin'];
+	$form['datdocin'] = $_POST['datdocin'];
     $form['campo_coltivazione'] = intval($_POST['campo_coltivazione']); //campo di coltivazione
 	$form['adminid'] = "Utente connesso";
     $form['tipdoc'] = intval($_POST['tipdoc']);
@@ -321,7 +326,7 @@ If ($itemart['good_or_service'] ==0) { // se non è un servizio
 			$msg .="24+";	
 			
 		}
-//  §§§§§§§§§§§§§§§§ INIZIO salvataggio su database §§§§§§§§§§§§§§§§§§§	
+//  §§§§§§§§§§§§§§§§ INIZIO salvataggio sui database §§§§§§§§§§§§§§§§§§§	
         if (empty($msg)) { // nessun errore  
 			$upd_mm = new magazzForm;
             //formatto le date
@@ -390,15 +395,92 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
 // INIZIO gestione registrazione database operai
     
 	$id_worker=$form['staff'][$form['mov']]; //identificativo operaio
-	
-	$work_day= $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc']; echo "workday: ",$work_day; // giorno lavorato
-	$hours_normal=$form['quanti'][$form['mov']]; //ore lavorate normali
+	$form['datdocin']; // questa è la data documento iniziale
+	$work_day= $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc']; // giorno lavorato
+	$hours_form=$form['quanti'][$form['mov']]; //ore lavorate normali del form
 	$id_orderman=$form['id_orderman'];
+	
+// controllo se è una variazione movimento e se è stato cambiato l'operaio
+	$res2 = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfocoin']);
+	If ($toDo == "update" && $res2['id_staff']<> $id_worker) { // se è stato cambiato l'operaio
+		If (strtotime($work_day) == strtotime($form['datdocin'])) {  // se non è stata cambiata la data documento
+			
+// all'operaio iniziale, cioè quello che è stato sostituito, devo togliere le ore
+		$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $res2['id_staff']."' AND work_day ='".$work_day);
+			If (isset($rin)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate e tolgo quelle odierne
+				$hours_normal= $rin['hours_normal']-$form['quantiin']; // e faccio l'UPDATE - NON tocco id_orderman ma ATTENZIONE
+// la gestione della tabella "staff_worked_hours" sarebbe da rivedere perché non contempla che un operaio possa lavorare a più produzioni (id_orderman) nello stesso giorno !!!
+				$query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$res2['id_staff'].", work_day = '".$work_day."', hours_normal = '".$hours_normal."' WHERE id_staff = '".$res2['id_staff']."' AND work_day = '".$work_day."'";
+				gaz_dbi_query($query);
+			}
+// al nuovo operaio devo aggiungere le ore lavorate
+			$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
+	If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate 
+		$ore_lavorate = $r['hours_normal'];
+	} else {
+		$ore_lavorate = 0;
+	}	
+		$hours_normal = $ore_lavorate + $hours_form;
+// salvo ore su operaio attuale					
+				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker );
+				if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
+				    $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$id_worker.", id_orderman = '".$id_orderman."', work_day = '".$work_day."', hours_normal = '".$hours_normal."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
+					gaz_dbi_query($query);
+				} else { // altrimenti faccio l'INSERT
+				$v=array();
+					$v['id_staff']=$id_worker;
+					$v['work_day']=$work_day;
+					$v['hours_normal']=$hours_normal;
+					$v['id_orderman']=$id_orderman;
+					gaz_dbi_table_insert('staff_worked_hours', $v);
+				}				
+			
+		} else { // se è stata cambiata la data documento (giorno lavorato)
+// all'operaio iniziale, cioè quello che è stato sostituito, devo togliere le ore nel giorno iniziale
+		$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $res2['id_staff']."' AND work_day ='".$form['datdocin']);
+			If (isset($rin)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate e tolgo quelle odierne
+				$hours_normal= $rin['hours_normal']-$form['quantiin']; // e faccio l'UPDATE - NON tocco id_orderman 
+				$query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$res2['id_staff'].", work_day = '".$form['datdocin']."', hours_normal = '".$hours_normal."' WHERE id_staff = '".$res2['id_staff']."' AND work_day = '".$form['datdocin']."'";
+				gaz_dbi_query($query);
+			}
+			
+// al nuovo operaio devo aggiungere le ore lavorate nel giorno del documento
+$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
+	If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate 
+		$ore_lavorate = $r['hours_normal'];
+	} else {
+		$ore_lavorate = 0;
+	}	
+		$hours_normal = $ore_lavorate + $hours_form;
+// salvo ore su operaio attuale					
+				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker );
+				if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
+				    $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$id_worker.", id_orderman = '".$id_orderman."', work_day = '".$work_day."', hours_normal = '".$hours_normal."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
+					gaz_dbi_query($query);
+				} else { // altrimenti faccio l'INSERT
+				$v=array();
+					$v['id_staff']=$id_worker;
+					$v['work_day']=$work_day;
+					$v['hours_normal']=$hours_normal;
+					$v['id_orderman']=$id_orderman;
+					gaz_dbi_table_insert('staff_worked_hours', $v);
+				}
+			
+		}
+	} else {
+// se non è stato cambiato l'operaio o non è update
 	$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
-	If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate e le aggiungo quelle odierne
-		$hours_normal= $r['hours_normal']+$hours_normal;
+	If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate 
+		$ore_lavorate = $r['hours_normal'];
+	} else {
+		$ore_lavorate = 0;
 	}
-// inizio a salvare su database	
+	If ($toDo == "update") {
+		$hours_normal = $ore_lavorate - $form['quantiin'] + $hours_form;
+	} else {
+		$hours_normal = $ore_lavorate + $hours_form;
+	}
+// salvo ore su operaio attuale	
 				
 				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker );
 				if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
@@ -412,7 +494,7 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
 					$v['id_orderman']=$id_orderman;
 					gaz_dbi_table_insert('staff_worked_hours', $v);
 				}
-		
+	}
 // FINE gestione registrazione database operai 
 
             }
@@ -421,7 +503,7 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
             exit;
         }
     } 
-// §§§§§§§§§§§§§§§§§§§§  FINE salvataggio su database §§§§§§§§§§§§§§§§§§§
+// §§§§§§§§§§§§§§§§§§§§  FINE salvataggio sui database §§§§§§§§§§§§§§§§§§§
 } elseif (!isset($_POST['Insert'])) {//se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     //registri per il form della testata
@@ -433,7 +515,9 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
     $form['caumag'] = "";
     $form['operat'] = 0;
     $form['campo_coltivazione'] = ""; //campo di coltivazione
-    
+    $form['clfocoin'] = 0;
+	$form['quantiin'] = "";
+	$form['datdocin'] = "";
 	$form['adminid'] = "Utente connesso";
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
@@ -544,7 +628,10 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     $form['scorig'][$form['mov']] = 0;
 	$form['quanti'][$form['mov']] = 0;
 	$form['staff'][$form['mov']]="";
-	$form['clfoco'][$form['mov']]="";
+	$form['clfoco'][$form['mov']]=0;
+	$form['clfocoin'] = "";
+	$form['quantiin'] = "";
+	$form['datdocin'] = "";
     $form['status'] = "";
     $form['search_partner'] = "";
     $form['search_item'] = "";
@@ -572,6 +659,9 @@ echo "<input type=\"hidden\" name=\"nmov\" value=\"" . $form['nmov'] . "\">\n";
 echo "<input type=\"hidden\" name=\"id_rif\" value=\"" . $form['id_rif'] . "\">\n";
 echo "<input type=\"hidden\" name=\"tipdoc\" value=\"" . $form['tipdoc'] . "\">\n";
 echo "<input type=\"hidden\" name=\"status\" value=\"" . $form['status'] . "\">\n";
+echo "<input type=\"text\" name=\"clfocoin\" value=\"" . $form['clfocoin'] . "\">\n";
+echo "<input type=\"text\" name=\"quantiin\" value=\"" . $form['quantiin'] . "\">\n";
+echo "<input type=\"text\" name=\"datdocin\" value=\"" . $form['datdocin'] . "\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
 $importo_rigo = CalcolaImportoRigo($form['artico'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
 $importo_totale = CalcolaImportoRigo(1, $importo_rigo, $form['scochi']);
