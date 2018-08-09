@@ -179,4 +179,5 @@ CREATE TABLE `gaz_XXXdistinta_base` ( `id` INT(9) UNSIGNED ZEROFILL NOT NULL AUT
 	PRIMARY KEY (`id`)
 )
 COMMENT='Tabella per creare gli "articoli compositi" (distinta base). Un articolo è composito quando è presente in almeno una di queste righe e qundi fa riferimento ad almeno un altro articolo di magazzino. Questi righi si potranno aggiungere tramite lo script admin_artico,  alla fine con il bottone "aggiungi articolo di base" ed immettendo la sola quantità, l\'unità di misura ed il prezzo per i documenti di vendita  saranno quelli di sempre ma presi dall\'articolo composito, molto facile perchè resterà tutto come prima, mentre la contabilità di magazzino verrà aggiornata tenendo conto di questi righi e non dell\'articolo composito.' ENGINE=MyISAM;
+UPDATE `gaz_XXXtesdoc` SET `template` = 'FatturaSemplice' WHERE `tipdoc` = 'FNC';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)

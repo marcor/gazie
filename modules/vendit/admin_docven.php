@@ -133,6 +133,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['tipdoc'] = $_POST['tipdoc'];
     $form['id_doc_ritorno'] = intval($_POST['id_doc_ritorno']);
     $form['template'] = $_POST['template'];
+	if (substr($_POST['tipdoc'],0,2) == 'FN') { // forzo i template delle note credito e debito su fattura semplice
+        $form['template'] = "FatturaSemplice";
+    }
     $form['gioemi'] = $_POST['gioemi'];
     $form['mesemi'] = $_POST['mesemi'];
     $form['annemi'] = $_POST['annemi'];

@@ -106,7 +106,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 			if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length < 1) { // non esiste il nodo <FatturaElettronicaHeader>
 				$msg['err'][] = 'invalid_fae';
 			} else if (@$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] ) { // la partita IVA del cliente non coincide con la mia 
-			$msg['err'][] = 'not_mine';
+				$msg['err'][] = 'not_mine';
 			} else {
 				// controllo se ho il fornitore in archivio
 				$form['partner_cost']=$admin_aziend['impacq']; 
@@ -188,6 +188,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 				$base64 = $att->textContent;
 				$bin = base64_decode($base64);
 				file_put_contents('../../data/files/tmp/'.$name_file, $bin);
+			}
+			if (isset($_POST['insert'])) {
 			}
 		}
 	}
