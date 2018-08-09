@@ -28,10 +28,24 @@ $admin_aziend = checkAdmin();
 
 
 if (isset($_POST['Delete'])) {
+	
     $upd_mm = new magazzForm;
     $form = gaz_dbi_get_row($gTables['movmag'], 'id_mov', intval($_POST['id_mov']));$id_mov=$form['id_mov'];$campo_coltivazione=$form['campo_coltivazione'];// Antonio Germani questo è il numero dell'id_mov che cancellerò >> $form['id_mov'] e il numero del campo di coltivazione eventualmente associato >> $form['campo_coltivazione']
 	
-	echo "ID movimento: ",$id_mov,"  Codice campo: ",$campo_coltivazione," <br>";
+// inizio cancellazione ore operaio	
+// controllo se clfoco è un operaio e ne prendo l'id_staff
+	$res = gaz_dbi_get_row($gTables['staff'], "id_clfoco", $form['clfoco']);
+		If (isset ($res)) { // se c'è nello staff, cioè è un operaio			
+			$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $res['id_staff']."' AND work_day ='".$form['datdoc']);
+			If (isset($rin)) { // se esiste il giorno dell'operaio prendo le ore normali lavorate e gli sottraggo quelle del movimento da cancellare
+				$hours_normal=$rin['hours_normal']-$form['quanti'];
+				// ne aggiorno il database
+				$query = "UPDATE ". $gTables['staff_worked_hours']." SET hours_normal ='".$hours_normal."' WHERE id_staff = '".$res['id_staff']."' AND work_day = '".$form['datdoc']."'";
+				gaz_dbi_query($query);
+			}	
+		} 
+// fine cancellazione ore operaio		
+			
 	if ($campo_coltivazione>0) {
 	$form2 = gaz_dbi_get_row($gTables['campi'], 'codice', intval($campo_coltivazione));
 	if (intval($form2['id_mov'])==intval($id_mov)){
@@ -100,7 +114,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">n. ID </td><td class=\"FacetDataTD\
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">" . $form["datreg"] . "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">" . $causal["descri"] . "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl["operat"] . "</td><td class=\"FacetDataTD\">" . $script_transl["operat_value"][$form["operat"]] . "</td></tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl["partner"] . "</td><td class=\"FacetDataTD\">" . $partner . "</td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[32] . "</td><td class=\"FacetDataTD\">" . $partner . "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">" . $form["datdoc"] . "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">" . $form["artico"] . "</td></tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[12] . "</td><td class=\"FacetDataTD\">" . $form["quanti"] . "</td></tr>\n";
