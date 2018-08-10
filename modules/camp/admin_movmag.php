@@ -196,12 +196,11 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     if (isset($_POST['caumag'])) {          
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['operat'] = $causa['operat'];
-     /*   $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
+        $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
         if (($causa['clifor'] < 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 and substr($form['clfoco'][$form['mov']], 0, 3) == $admin_aziend['mascli'])) {
             $form['clfoco'][$form['mov']]=0;
             $form['search_partner'] = "";
-        }
-		*/		
+        }		
         if ($causa['insdoc'] == 0) {//se la nuova causale non prevede i dati del documento
             $form['tipdoc'] = "";
             $form['desdoc'] = "";
@@ -211,7 +210,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
             $form['scochi'] = "";
             $form['id_rif'] = 0;
         }
-    }
+    } 
 	
     if (isset($_POST['newpartner'])) {
         $anagrafica = new Anagrafica();
@@ -393,7 +392,7 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
 // fine gestione giorno di sospensione tabella campi 
 
 // INIZIO gestione registrazione database operai
-    
+If (intval($form['staff'][$form['mov']])>0){
 	$id_worker=$form['staff'][$form['mov']]; //identificativo operaio
 	$form['datdocin']; // questa è la data documento iniziale
 	$work_day= $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc']; // giorno lavorato
@@ -468,7 +467,49 @@ $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' 
 			
 		}
 	} else {
-// se non è stato cambiato l'operaio o non è update
+		
+		If ($toDo == "update" && $res2['id_staff'] == $id_worker) { // se è update e NON è stato cambiato l'operaio
+			If (strtotime($work_day) <> strtotime($form['datdocin'])) { // se è stata cambiata la data 
+			// devo togliere le ore al giorno iniziale e metterle su nel giorno del documento
+				// tolgo le ore al giorno iniziale
+				$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$form['datdocin']);
+					If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
+						$hours_normal= $rin['hours_normal']-$form['quantiin'];
+						$query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '".$hours_normal."' WHERE id_staff = '".$id_worker."' AND work_day = '".$form['datdocin']."'";
+						gaz_dbi_query($query);
+					}
+				// metto le ore del form nella data del form
+					
+				$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
+				
+					If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
+						$hours_normal= $rin['hours_normal']+$hours_form;
+						$query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '".$hours_normal."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
+						gaz_dbi_query($query);
+					} else { // altrimenti faccio l'INSERT
+				$v=array();
+					$v['id_staff']=$id_worker;
+					$v['work_day']=$work_day;
+					$v['hours_normal']=$hours_form;
+					$v['id_orderman']=$id_orderman;
+					gaz_dbi_table_insert('staff_worked_hours', $v);
+				}		
+			
+			} else { //se NON è stata cambiata la data
+			// modifico le ore nello stesso giorno del del documento
+			$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
+				If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
+					$hours_normal= $rin['hours_normal']-$form['quantiin']+$hours_form;
+					$query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '".$hours_normal."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
+					gaz_dbi_query($query);
+				}			
+			}
+		}	
+		
+	}
+
+
+If ($toDo <> "update") { // se non è un update
 	$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
 	If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate 
 		$ore_lavorate = $r['hours_normal'];
@@ -495,6 +536,7 @@ $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' 
 					gaz_dbi_table_insert('staff_worked_hours', $v);
 				}
 	}
+}
 // FINE gestione registrazione database operai 
 
             }
@@ -969,6 +1011,7 @@ if ($form['artico'][$form['mov']] == "") {
 		}
 		?>
 	<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">
+	<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']];?>">
 <?php	
 	} else {
 /*Antonio Germani se l'unità di misura è oraria attivare Operaio */
