@@ -485,10 +485,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
             $results->appendChild($attrVal);
 
 			if ($XMLvars->FormatoTrasmissione == "FPA") {
-			//nodo 1.1.4
-            $results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
-            $attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
-            $results->appendChild($attrVal);
+				//nodo 1.1.4
+				$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
+				$attrVal = $domDoc->createTextNode(trim($XMLvars->client['fe_cod_univoco']));
+				$results->appendChild($attrVal);
 			} else {
 				if (strlen($cod_destinatario) == "0") {
 					$results = $xpath->query("//FatturaElettronicaHeader/DatiTrasmissione/CodiceDestinatario")->item(0);
@@ -762,12 +762,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
         $ctrl_doc = $XMLvars->tesdoc['numdoc'];
         $ctrl_fat = $XMLvars->tesdoc['numfat'];
     }
-    // aggiungo le eventuali spese di incasso ma queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
+    // alla fine del ciclo aggiungo le eventuali spese di incasso ma queste essendo cumulative per diversi eventuali DdT non hanno un riferimento 
     if ($XMLvars->tesdoc['speban'] >= 0.01) {
+		$results = $xpath->query("//FatturaElettronicaBody/DatiBeniServizi")->item(0);
         $el = $domDoc->createElement("DettaglioLinee", "");
         $el1 = $domDoc->createElement("NumeroLinea", $n_linea);
         $el->appendChild($el1);
-        $el1 = $domDoc->createElement("Descrizione", 'SPESE INCASSO ' . $XMLvars->pagame['numrat'] . ' EFFETTI');
+        $el1 = $domDoc->createElement("Descrizione", 'SPESE INCASSO N.' . $XMLvars->pagame['numrat']);
         $el->appendChild($el1);
         $el1 = $domDoc->createElement("PrezzoUnitario", number_format($XMLvars->tesdoc['speban'], 2, '.', ''));
         $el->appendChild($el1);
@@ -776,15 +777,6 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
         $el1 = $domDoc->createElement("AliquotaIVA", number_format($XMLvars->expense_pervat['aliquo'], 2, '.', ''));
         $el->appendChild($el1);
         $results->appendChild($el);
-        $results = $xpath->query("//FatturaElettronicaBody/DatiGenerali")->item(0);
-        $el_ddt = $domDoc->createElement("DatiDDT", "");
-        $el1 = $domDoc->createElement("NumeroDDT", $XMLvars->tesdoc['numdoc']);
-        $el_ddt->appendChild($el1);
-        $el1 = $domDoc->createElement("DataDDT", $XMLvars->tesdoc['datemi']);
-        $el_ddt->appendChild($el1);
-        $el1 = $domDoc->createElement("RiferimentoNumeroLinea", $n_linea--);
-        $el_ddt->appendChild($el1);
-        $results->appendChild($el_ddt);
         $n_linea++;
     }
 
