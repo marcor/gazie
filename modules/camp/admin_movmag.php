@@ -470,7 +470,7 @@ $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' 
 		
 		If ($toDo == "update" && $res2['id_staff'] == $id_worker) { // se è update e NON è stato cambiato l'operaio
 			If (strtotime($work_day) <> strtotime($form['datdocin'])) { // se è stata cambiata la data 
-			// devo togliere le ore al giorno iniziale e metterle su nel giorno del documento
+			// devo togliere le ore al giorno iniziale e metterle nel giorno del documento
 				// tolgo le ore al giorno iniziale
 				$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$form['datdocin']);
 					If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
@@ -478,7 +478,7 @@ $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' 
 						$query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '".$hours_normal."' WHERE id_staff = '".$id_worker."' AND work_day = '".$form['datdocin']."'";
 						gaz_dbi_query($query);
 					}
-				// metto le ore del form nella data del form
+				// metto le ore del form nel giorno del documento
 					
 				$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
 				
@@ -496,7 +496,7 @@ $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' 
 				}		
 			
 			} else { //se NON è stata cambiata la data
-			// modifico le ore nello stesso giorno del del documento
+			// modifico le ore nello stesso giorno del documento
 			$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
 				If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore
 					$hours_normal= $rin['hours_normal']-$form['quantiin']+$hours_form;
@@ -507,7 +507,6 @@ $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' 
 		}	
 		
 	}
-
 
 If ($toDo <> "update") { // se non è un update
 	$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
@@ -521,8 +520,7 @@ If ($toDo <> "update") { // se non è un update
 	} else {
 		$hours_normal = $ore_lavorate + $hours_form;
 	}
-// salvo ore su operaio attuale	
-				
+// salvo ore su operaio attuale					
 				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker );
 				if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
 				    $query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$id_worker.", id_orderman = '".$id_orderman."', work_day = '".$work_day."', hours_normal = '".$hours_normal."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
