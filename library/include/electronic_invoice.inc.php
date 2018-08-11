@@ -590,6 +590,10 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
             $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['citspe']));
             $results->appendChild($attrVal);
 
+            $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0);
+            $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['prospe']));
+            $results->appendChild($attrVal);
+
             $results = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0);
             $attrVal = $domDoc->createTextNode(trim($XMLvars->azienda['country']));
             $results->appendChild($attrVal);

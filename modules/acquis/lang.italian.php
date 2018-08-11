@@ -512,6 +512,7 @@ $strScript = array("admin_fornit.php" =>
             'invalid_fae' => 'Il contenuto del file XML non sembra essere una fattura elettronica',
             'not_mine' => 'La fattura non è stata rilasciata nei confronti di questa azienda',
             'no_upload' => 'File non inviato',
+            'no_pagame' => 'Non hai selezionato la modalità di pagamento',
         ),
         'preview_text' => "La fattura elettronica che stai per acquisire è visibile in fondo.<br> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune per contabilizzarla in maniera corretta",
         'datreg' => 'Data Registrazione',

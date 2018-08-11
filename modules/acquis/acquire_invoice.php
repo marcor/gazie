@@ -43,9 +43,9 @@ function getLastProtocol($type, $year, $sezione) {
 	*	controllando sia l'archivio documenti che il registro IVA acquisti 
 	*/
 	global $gTables;                      
-    $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = $year AND tipdoc LIKE '" . substr($type, 0, 2) . "_' AND seziva = $sezione", "protoc DESC", 0, 1);
+    $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = ".$year." AND tipdoc LIKE '" . substr($type, 0, 2) . "_' AND seziva = $sezione", "protoc DESC", 0, 1);
     $ultimo_tesdoc = gaz_dbi_fetch_array($rs_ultimo_tesdoc);
-    $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = $year AND regiva = 6 AND seziva = $sezione", "protoc DESC", 0, 1);
+    $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".$year." AND regiva = 6 AND seziva = $sezione", "protoc DESC", 0, 1);
     $ultimo_tesmov = gaz_dbi_fetch_array($rs_ultimo_tesmov);
     $lastProtocol = 0;
     if ($ultimo_tesdoc) {
@@ -78,6 +78,11 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 					$msg['err'][] = 'no_upload';
 				}
 			}
+		}
+	} else if (isset($_POST['Submit_form'])) { // ho  confermato l'inserimento
+		$form['pagame'] = intval($_POST['pagame']);
+        if ($form['pagame'] <= 0 ) {  // ma non ho selezionato il pagamento
+			$msg['err'][] = 'no_pagame';
 		}
 	} else if (isset($_POST['Download'])) {
 		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
@@ -134,7 +139,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 				// controllo se ho il fornitore in archivio
 				$form['partner_cost']=$admin_aziend['impacq']; 
 				$form['partner_vat']=$admin_aziend['preeminent_vat']; 
-				$form['pagame']=0; 
 				$form['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
 				$anagrafica = new Anagrafica();
                 $partner_with_same_pi = $anagrafica->queryPartners('*', "codice BETWEEN " . $admin_aziend['masfor'] . "000000 AND " . $admin_aziend['masfor'] . "999999 AND pariva = '" . $form['pariva']. "'", "pariva DESC", 0, 1);
@@ -161,6 +165,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 		}
 		// FINE CONTROLLI
 
+
 		if (count($msg['err'])==0) { // non ho errori
 			if (isset($_POST['Submit_form'])) { // confermo le scelte sul form, inserisco i dati sul db
 				echo 'Preparo l\'inserimento sul db<br>';
@@ -169,11 +174,19 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 					$form['clfoco'] = $anagrafica->anagra_to_clfoco($new_clfoco, $admin_aziend['masfor'], $form['pagame']);
                 } else if (!$anagra_with_same_pi && !$partner_with_same_pi) { // non ho nulla: devo inserire tutto (anagrafica e fornitore) basandomi sul pagamento e sui conti di costo scelti dall'utente
 					$new_partner = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
+					$new_partner['codpag'] = $form['pagame'];
+					$new_partner['sexper'] = 'G';
 					// setto le colonne in base ai dati di questa fattura elettronica
-					$new_partner['country'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdPaese")->item(0)->nodeValue;
 					$new_partner['pariva'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue;
 					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)){
 						$new_partner['codfis'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
+						// ho un codice fiscale posso vedere se è una persona fisica e di quale sesso
+						preg_match('/^[a-z]{6}[0-9]{2}[a-z]([0-9]{2})[a-z][0-9]{3}[a-z]$/i',trim($new_partner['codfis']),$match);
+						if (count($match)>1 && $match[1] > 40 ){  // è un codice fiscale femminile
+							$new_partner['sexper'] = 'F';
+						} else { // maschio
+							$new_partner['sexper'] = 'M';
+						}
 					}
 					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)){
 						$new_partner['legrap_pf_nome'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)->nodeValue;
@@ -195,9 +208,24 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 							$new_partner['ragso1'] = $new_partner['descri'];							
 						}
 					}
+					$new_partner['indspe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Indirizzo")->item(0)->nodeValue;
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/NumeroCivico")->item(0)){
+						$new_partner['indspe'] .= ', '.$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/NumeroCivico")->item(0)->nodeValue;
+					}
+					$new_partner['capspe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/CAP")->item(0)->nodeValue;
+					$new_partner['citspe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Comune")->item(0)->nodeValue;
+					if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0)){
+						$new_partner['prospe'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Provincia")->item(0)->nodeValue;
+					}
+					$new_partner['country'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/Sede/Nazione")->item(0)->nodeValue;
+					// trovo l'ultimo codice disponibile sul piano dei conti
+					$rs_last_partner = gaz_dbi_dyn_query("*", $gTables['clfoco'], 'codice BETWEEN ' . $admin_aziend['masfor'] . '000001 AND ' . $admin_aziend['masfor'] . '999999', "codice DESC", 0, 1);
+					$last_partner = gaz_dbi_fetch_array($rs_last_partner);
+					$new_partner['codice'] =$last_partner['codice']+1;
+					// inserisco il partner
 					$anagrafica->insertPartner($new_partner);
+					$form['clfoco']=$new_partner['codice'];
 				}
-				$form['codpag'] = intval($_POST['pagame']);
 				$form['tipdoc'] = 'AFA'; 
 				$form['seziva'] = 1; 
 				$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva']);
@@ -208,6 +236,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
                 //recupero l'id assegnato dall'inserimento
                 $ultimo_id = gaz_dbi_last_id();
 				exit;
+			} else { // non ho confermato, sono alla prima entrata dopo l'upload del file
+				$form['pagame']=0;
 			}
 			// INIZIO creazione array dei righi con la stessa nomenclatura usata in admin_docacq.php
 			$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
@@ -238,7 +268,6 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso
 				if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 					$form['contor_'.$post_nl] = intval($_POST['contor_'.$post_nl]);
 					$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
-					$form['pagame'] = intval($_POST['pagame']);
 				} else { // al primo accesso dopo l'upload del file propongo dei costi e delle aliquote in base a quanto trovato sul database 
 					$form['contor_'.$post_nl] = $form['partner_cost'];
 					$expect_vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $form['partner_vat']);
