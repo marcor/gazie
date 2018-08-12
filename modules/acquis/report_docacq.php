@@ -191,7 +191,7 @@ $script_transl = HeadMain();
 // creo l'array (header => campi) per l'ordinamento dei record
             $headers_tesdoc = array(
                 "Prot." => "protoc",
-                "Dat.Reg." => "datemi",
+                "Dat.Reg." => "datreg",
                 "Tipo" => "tipdoc",
                 "Numero" => "numfat",
                 "Data" => "datfat",
@@ -214,44 +214,44 @@ $script_transl = HeadMain();
     	//echo $where." ".$year." ".$ragso1;    
 		$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
         $ctrlprotoc = "";
-        while ($a_row = gaz_dbi_fetch_array($result)) {
-            $y = substr($a_row['datfat'], 0, 4);
-            if ($a_row["tipdoc"] == 'AFA') {
+        while ($row = gaz_dbi_fetch_array($result)) {
+            $y = substr($row['datfat'], 0, 4);
+            if ($row["tipdoc"] == 'AFA') {
                 $tipodoc = "Fattura";
-                $modulo = "stampa_docacq.php?id_tes=" . $a_row['id_tes'];
-                $modifi = "admin_docacq.php?Update&id_tes=" . $a_row['id_tes'];
-            } elseif ($a_row["tipdoc"] == 'AFC') {
+                $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
+                $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
+            } elseif ($row["tipdoc"] == 'AFC') {
                 $tipodoc = "Nota Credito";
-                $modulo = "stampa_docacq.php?id_tes=" . $a_row['id_tes'];
-                $modifi = "admin_docacq.php?Update&id_tes=" . $a_row['id_tes'];
+                $modulo = "stampa_docacq.php?id_tes=" . $row['id_tes'];
+                $modifi = "admin_docacq.php?Update&id_tes=" . $row['id_tes'];
             }
 
-            if ($a_row["protoc"] <> $ctrlprotoc) {
+            if ($row["protoc"] <> $ctrlprotoc) {
                 print "<tr class=\"FacetDataTD\">";
                 if (!empty($modifi)) {
-                    print "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $a_row["protoc"] . "</td>";
+                    print "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"" . $modifi . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $row["protoc"] . "</td>";
                 } else {
-                    print "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $a_row["protoc"] . " &nbsp;</button></td>";
+                    print "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
                 }
-                print "<td>" . $a_row["datemi"] . " &nbsp;</td>";
+                print "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
                 print "<td>" . $tipodoc . " &nbsp;</td>";
-                print "<td>" . $a_row["numfat"] . " &nbsp;</td>";
-                print "<td>" . $a_row["datfat"] . " &nbsp;</td>";
-                print "<td>" . $a_row["ragso1"] . "&nbsp;</td>";
-                if ($a_row["id_con"] > 0) {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $a_row["id_con"] . "&Update\">Cont. n." . $a_row["id_con"] . "</a></td>";
+                print "<td>" . $row["numfat"] . " &nbsp;</td>";
+                print "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
+                print "<td>" . $row["ragso1"] . "&nbsp;</td>";
+                if ($row["id_con"] > 0) {
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-default\" href=\"../contab/admin_movcon.php?id_tes=" . $row["id_con"] . "&Update\">Cont. n." . $row["id_con"] . "</a></td>";
                 } else {
-                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $a_row["protoc"] . "\">Contabilizza</a></td>";
+                    echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a></td>";
                 }
                 print "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-                if ($lt_doc[$y] == $a_row['protoc']) {
-                    print "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $a_row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
+                if ($lt_doc[$y] == $row['protoc']) {
+                    print "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
                 } else {
                     print "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
                 }
                 print "</tr>\n";
             }
-            $ctrlprotoc = $a_row["protoc"];
+            $ctrlprotoc = $row["protoc"];
         }
         ?>
 </form>

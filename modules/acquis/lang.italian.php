@@ -503,13 +503,13 @@ $strScript = array("admin_fornit.php" =>
             'ok_suppl' => 'Il fornitore è già in archivio',
             'no_suppl' => 'Ho già questa anagrafica ma è un nuovo fornitore',
             'no_anagr' => "Di questo nuovo fornitore non ho l'anagrafica, utilizzerò questi dati per crearla",
-            'no_db' => "Di questo file è stato fatto solo l'upload ma non è stata confermata la registrazione",
-            'file_exists' => 'Un file con questo nome è stato già stato acquisito',
+            'no_db' => "Di questo file è stato fatto solo l'upload ma non è stata confermata la registrazione"
         ),
         'err' => array(
             'filmim' => 'Il file dev\'essere nel formato XML o P7M',
             'invalid_xml' => 'Il contenuto del file non è un XML valido',
             'invalid_fae' => 'Il contenuto del file XML non sembra essere una fattura elettronica',
+            'file_exists' => 'Un file con questo nome è stato già stato acquisito',
             'not_mine' => 'La fattura non è stata rilasciata nei confronti di questa azienda',
             'no_upload' => 'File non inviato',
             'no_pagame' => 'Non hai selezionato la modalità di pagamento',

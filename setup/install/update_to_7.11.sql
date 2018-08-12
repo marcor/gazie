@@ -180,4 +180,12 @@ CREATE TABLE `gaz_XXXdistinta_base` ( `id` INT(9) UNSIGNED ZEROFILL NOT NULL AUT
 )
 COMMENT='Tabella per creare gli "articoli compositi" (distinta base). Un articolo è composito quando è presente in almeno una di queste righe e qundi fa riferimento ad almeno un altro articolo di magazzino. Questi righi si potranno aggiungere tramite lo script admin_artico,  alla fine con il bottone "aggiungi articolo di base" ed immettendo la sola quantità, l\'unità di misura ed il prezzo per i documenti di vendita  saranno quelli di sempre ma presi dall\'articolo composito, molto facile perchè resterà tutto come prima, mentre la contabilità di magazzino verrà aggiornata tenendo conto di questi righi e non dell\'articolo composito.' ENGINE=MyISAM;
 UPDATE `gaz_XXXtesdoc` SET `template` = 'FatturaSemplice' WHERE `tipdoc` = 'FNC';
+ALTER TABLE `gaz_XXXrigdoc`	CHANGE COLUMN `descri` `descri` VARCHAR(1000) NOT NULL COMMENT '1000 caratteri per uniformarsi al tracciato della fattura elettronica' AFTER `codart`;
+ALTER TABLE `gaz_XXXrigbro`	CHANGE COLUMN `descri` `descri` VARCHAR(1000) NOT NULL COMMENT '1000 caratteri per uniformarsi al tracciato della fattura elettronica' AFTER `codice_fornitore`;
+ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `datreg` DATE NULL DEFAULT NULL COMMENT 'Data in cui si vuole venga registrata in contabilità (prima per le fatture d\'acquisto si usava impropriamente datemi)' AFTER `id_con`;
+UPDATE `gaz_XXXtesdoc` SET `datreg`=`datemi` WHERE `tipdoc` LIKE 'A__';
+UPDATE `gaz_XXXtesdoc` SET `datemi`=FALSE WHERE `tipdoc` LIKE 'A__';
+UPDATE `gaz_XXXtesdoc` SET `datemi`=FALSE WHERE `datemi` <= '2004-01-27';
+UPDATE `gaz_XXXtesdoc` SET `data_ordine`=FALSE WHERE `data_ordine` <= '2004-01-27';
+UPDATE `gaz_XXXtesdoc` SET `datfat`=FALSE WHERE `datfat` <= '2004-01-27';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
