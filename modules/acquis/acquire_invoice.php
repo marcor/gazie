@@ -26,8 +26,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = array('err' => array(), 'war' => array());
 $toDo = 'upload';
-$f_ex=false;
-
+$f_ex=false; // visualizza file
 function removeSignature($string, $filename) {
     $string = substr($string, strpos($string, '<?xml '));
     preg_match_all('/<\/.+?>/', $string, $matches, PREG_OFFSET_CAPTURE);
@@ -130,7 +129,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$anagra_with_same_pi = false; // sarà true se è una anagrafica esistente ma non è un fornitore sul piano dei conti 
 		
  	
-	if (count($msg['err'])==0) { // non ho errori, ne faccio altri sul file
+	if ($f_ex) { // non ho errori relativi di file, ne faccio altri controlli sul contenuto del file
 		
 		// INIZIO CONTROLLI CORRETTEZZA FILE
 		$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
@@ -138,6 +137,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 		if (empty($val_err)){
 			if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length < 1) { // non esiste il nodo <FatturaElettronicaHeader>
 				$msg['err'][] = 'invalid_fae';
+				$f_ex=false; // non è visualizzabile
 			} else if (@$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] ) { // la partita IVA del cliente non coincide con la mia 
 				$msg['err'][] = 'not_mine';
 			} else {
@@ -169,13 +169,13 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 		} else {
 			$msg['err'][] = 'invalid_xml';
+			$f_ex=false; // non è visualizzabile
 		}
 		// FINE CONTROLLI SU FILE
 
 	}
 
-
-	if (count($msg['err'])==0) { // non ho errori
+	if ($f_ex) { // non ho errori  vincolanti sul file posso proporre la visualizzazione
 		// INIZIO creazione array dei righi con la stessa nomenclatura usata sulla tabella rigdoc
 		$DettaglioLinee = $doc->getElementsByTagName('DettaglioLinee');
 		foreach ($DettaglioLinee as $item) {
@@ -229,8 +229,8 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			$bin = base64_decode($base64);
 			file_put_contents('../../data/files/tmp/'.$name_file, $bin);
 		}
-		
-		if (isset($_POST['Submit_form'])) { // confermo le scelte sul form, inserisco i dati sul db
+
+		if (isset($_POST['Submit_form']) && count($msg['err'])==0) { // confermo le scelte sul form, inserisco i dati sul db ma solo se non ho errori
 			if (!$anagra_with_same_pi && !$partner_with_same_pi) { // non ho nulla: devo inserire tutto (anagrafica e fornitore) basandomi sul pagamento e sui conti di costo scelti dall'utente
 				$new_partner = array_merge(gaz_dbi_fields('clfoco'), gaz_dbi_fields('anagra'));
 				$new_partner['codpag'] = $form['pagame'];
@@ -296,6 +296,9 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				// inserisco il partner
 				$anagrafica->insertPartner($new_partner);
 				$form['clfoco']=$new_partner['codice'];
+			} else if ($anagra_with_same_pi) { // devo inserire il fornitore, ho già l'anagrafica 
+				$anagra_with_same_pi['id_anagra']=$anagra_with_same_pi['id'];
+                $form['clfoco'] = $anagrafica->anagra_to_clfoco($anagra_with_same_pi, $admin_aziend['masfor'], $form['pagame']);
 			}
 			$form['tipdoc'] = 'AFA'; 
 			$form['seziva'] = 1; 
@@ -348,12 +351,12 @@ $gForm = new acquisForm();
         $gForm->gazHeadMessage($msg['war'], $script_transl['war'], 'war');
     }
 if ($toDo=='insert' || $toDo=='update' ) {
-	if (count($msg['err'])==0){
+	if ($f_ex){
  ?>    
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['preview_text']; ?>
+            <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['head_text1']. $form['fattura_elettronica_original_name'] .$script_transl['head_text2']; ?>
             </div>                    
         </div> <!-- chiude row  -->
     </div>                    
@@ -429,7 +432,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 </form>
 <?php			
 	}
-	if ($f_ex) {	// visualizzo la fattura fattura elettronica in calce
+	if ($f_ex) {	// visualizzo la fattura elettronica in calce
 		$xslDoc = new DOMDocument();
 		$xslDoc->load("../../library/include/fatturaordinaria_v1.2.1.xsl");
 		$xslt = new XSLTProcessor();
