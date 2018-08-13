@@ -44,26 +44,28 @@ function getLastProtocol($type, $year, $sezione) {
 	*	controllando sia l'archivio documenti che il registro IVA acquisti 
 	*/
 	global $gTables;                      
-    $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datfat) = ".$year." AND tipdoc LIKE '" . substr($type, 0, 2) . "_' AND seziva = $sezione", "protoc DESC", 0, 1);
+    $rs_ultimo_tesdoc = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = ".$year." AND tipdoc LIKE '" . substr($type, 0, 2) . "_' AND seziva = ".$sezione, "protoc DESC", 0, 1);
     $ultimo_tesdoc = gaz_dbi_fetch_array($rs_ultimo_tesdoc);
-    $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".$year." AND regiva = 6 AND seziva = $sezione", "protoc DESC", 0, 1);
+    $rs_ultimo_tesmov = gaz_dbi_dyn_query("*", $gTables['tesmov'], "YEAR(datreg) = ".$year." AND regiva = 6 AND seziva = ".$sezione, "protoc DESC", 0, 1);
     $ultimo_tesmov = gaz_dbi_fetch_array($rs_ultimo_tesmov);
     $lastProtocol = 0;
+    $lastDatreg = date("Y-m-d");
     if ($ultimo_tesdoc) {
         $lastProtocol = $ultimo_tesdoc['protoc'];
+        $lastDatreg = $ultimo_tesdoc['datreg'];
     }
     if ($ultimo_tesmov) {
         if ($ultimo_tesmov['protoc'] > $lastProtocol) {
             $lastProtocol = $ultimo_tesmov['protoc'];
+            $lastDatreg = $ultimo_tesmov['datreg'];
         }
     }
-    return $lastProtocol + 1;
+    return array('last_protoc'=>$lastProtocol + 1,'last_datreg'=>$lastDatreg);
 }
 
 if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso nessun upload
 	$form['fattura_elettronica_original_name'] = '';
 } else { // accessi successivi  
-
 	$form['fattura_elettronica_original_name'] = filter_var($_POST['fattura_elettronica_original_name'], FILTER_SANITIZE_STRING);
 	if (!isset($_POST['datreg'])){
 		$form['datreg'] = date("d/m/Y");
@@ -129,7 +131,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$anagra_with_same_pi = false; // sarà true se è una anagrafica esistente ma non è un fornitore sul piano dei conti 
 		
  	
-	if ($f_ex) { // non ho errori relativi di file, ne faccio altri controlli sul contenuto del file
+	if ($f_ex) { // non ho errori di file, ne faccio altri controlli sul contenuto del file
 		
 		// INIZIO CONTROLLI CORRETTEZZA FILE
 		$val_err = libxml_get_errors(); // se l'xml è valido restituisce 1
@@ -205,7 +207,22 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			if (empty($_FILES['userfile']['name'])) { // l'upload del file è già avvenuto e sono nei refresh successivi quindi riprendo i valori scelti e postati dall'utente
 				$form['codric_'.$post_nl] = intval($_POST['codric_'.$post_nl]);
 				$form['codvat_'.$post_nl] = intval($_POST['codvat_'.$post_nl]);
-			} else { // al primo accesso dopo l'upload del file propongo dei costi e delle aliquote in base a quanto trovato sul database 
+			} else { 
+				/* al primo accesso dopo l'upload del file propongo:
+				   - la prima data di registrazione utile considerando quella di questa fattura e l'ultima registrazione
+				   - i costi sulle linee (righe) in base al fornitore
+				   - le aliquote IVA in base a quanto trovato sul database e sul riepilogo del tracciato 
+				*/
+				$df = $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
+				// trovo l'ultima data di registrazione
+				$lr=getLastProtocol('AF_',substr($df,0,4),1)['last_datreg'];
+				$lrt = strtotime($lr);
+				$dft = strtotime($df);
+				if ($lrt<=$dft) { // se l'ultima registrazione è precedente alla fattura propongo la data della fattura
+					$form['datreg']	= gaz_format_date($df, false, false);			
+				} else {
+					$form['datreg']	= gaz_format_date($lr, false, false);
+				}
 				$form['codric_'.$post_nl] = $form['partner_cost'];
 				if (preg_match('/TRASP/i',strtoupper($form['rows'][$nl]['descri']))) { // se sulla descrizione ho un trasporto lo propongo come costo d'acquisto
 					$form['codric_'.$post_nl] = $admin_aziend['cost_tra'];
@@ -302,7 +319,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			$form['tipdoc'] = 'AFA'; 
 			$form['seziva'] = 1; 
-			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva']);
+			$form['protoc']=getLastProtocol($form['tipdoc'],substr($form['datreg'],-4),$form['seziva'])['last_protoc'];
 			$form['numfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Numero")->item(0)->nodeValue;
 			$form['datfat']= $xpath->query("//FatturaElettronicaBody/DatiGenerali/DatiGeneraliDocumento/Data")->item(0)->nodeValue;
 			$form['fattura_elettronica_original_content'] = utf8_encode($invoiceContent);
@@ -356,7 +373,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 <div class="panel panel-default">
     <div class="panel-heading">
         <div class="row">
-            <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['head_text1']. $form['fattura_elettronica_original_name'] .$script_transl['head_text2']; ?>
+            <div class="col-sm-12 col-md-12 col-lg-12"><?php echo $script_transl['head_text1']. '<span class="label label-success">'.$form['fattura_elettronica_original_name'] .'</span>'.$script_transl['head_text2']; ?>
             </div>                    
         </div> <!-- chiude row  -->
     </div>                    
@@ -396,7 +413,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
                     'value' => $k+1),
                 array('head' => $script_transl["codart"], 'class' => '',
                     'value' => $v['codart']),
-                array('head' => $script_transl["descri"], 'class' => '',
+                array('head' => $script_transl["descri"], 'class' => 'col-sm-12 col-md-3 col-lg-3',
                     'value' => $v['descri']),
                 array('head' => $script_transl["unimis"], 'class' => '',
                     'value' => $v['unimis']),
