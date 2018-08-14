@@ -192,7 +192,7 @@ $script_transl = HeadMain();
             $headers_tesdoc = array(
                 "Prot." => "protoc",
                 "Dat.Reg." => "datreg",
-                "Tipo" => "tipdoc",
+                "Documento" => "tipdoc",
                 "Numero" => "numfat",
                 "Data" => "datfat",
                 "Fornitore" => "ragso1",
@@ -234,8 +234,12 @@ $script_transl = HeadMain();
                     print "<td><button class=\"btn btn-xs btn-default btn-edit disabled\">" . $row["protoc"] . " &nbsp;</button></td>";
                 }
                 print "<td>" . gaz_format_date($row["datreg"]) . " &nbsp;</td>";
-                print "<td>" . $tipodoc . " &nbsp;</td>";
-                print "<td>" . $row["numfat"] . " &nbsp;</td>";
+                if (empty($row["fattura_elettronica_original_name"])) {
+					print '<td>'.$tipodoc."</td>\n";
+                } else {
+					print '<td><a class="btn btn-xs btn-default btn-xml" target="_blank" href="view_fae.php?id_tes=' . $row["id_tes"] . '">'.$tipodoc.' '.$row["fattura_elettronica_original_name"]."</a></td>";
+				}
+				print "<td>" . $row["numfat"] . " &nbsp;</td>";
                 print "<td>" . gaz_format_date($row["datfat"]) . " &nbsp;</td>";
                 print "<td>" . $row["ragso1"] . "&nbsp;</td>";
                 if ($row["id_con"] > 0) {
