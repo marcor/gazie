@@ -26,6 +26,19 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 
+if (isset($_POST['Download'])) { // è stato richiesto il download dell'allegato
+		$name = filter_var($_POST['Download'], FILTER_SANITIZE_STRING);
+		header('Content-Description: File Transfer');
+		header('Content-Type: application/octet-stream');
+		header('Content-Disposition: attachment;  filename="'.$name.'"');
+		header('Expires: 0');
+		header('Cache-Control: must-revalidate');
+		header('Pragma: public');
+		header("Content-Length: " . filesize('../../data/files/tmp/'.$name));
+		readfile('../../data/files/tmp/'.$name);
+		exit;
+}
+
 if (isset($_GET['id_tes'])){
     $id=intval($_GET['id_tes']);
     $fat = gaz_dbi_get_row($gTables['tesdoc'],'id_tes',$id);
@@ -33,6 +46,16 @@ if (isset($_GET['id_tes'])){
 	$doc->preserveWhiteSpace = false;
 	$doc->formatOutput = true;
  	$doc->loadXML($fat['fattura_elettronica_original_content']);
+	// ricavo l'allegato, e se presente metterò un bottone per permettere il download
+	$nf = $doc->getElementsByTagName('NomeAttachment')->item(0);
+	if ($nf){
+		$name_file = $nf->textContent;
+		$att = $doc->getElementsByTagName('Attachment')->item(0);
+		$base64 = $att->textContent;
+		$bin = base64_decode($base64);
+		file_put_contents('../../data/files/tmp/'.$name_file, $bin);
+		echo '<form method="POST"><div class="col-sm-6"> Allegato: <input name="Download" type="submit" class="btn btn-default" value="'.$name_file.'" /></div></form>';
+	}
 	$xpath = new DOMXpath($doc);
 	$xslDoc = new DOMDocument();
 	$xslDoc->load("../../library/include/fatturaordinaria_v1.2.1.xsl");

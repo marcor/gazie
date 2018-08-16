@@ -248,7 +248,9 @@ $strScript = array("admin_fornit.php" =>
         'units' => 'N.Colli',
         'volume' => 'Volume',
         'net_weight' => 'Peso netto',
-        'gross_weight' => 'Peso lordo'
+        'gross_weight' => 'Peso lordo',
+        'datreg' => 'Data registrazione contabile',
+        'datfat' => 'Data della fattura'
     ),
     "admin_assets.php" =>
     array('title' => 'Acquisto bene ammmortizzabile da fornitore',

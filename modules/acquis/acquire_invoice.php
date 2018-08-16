@@ -107,7 +107,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 	$tesdoc = gaz_dbi_get_row($gTables['tesdoc'], 'fattura_elettronica_original_name', $form["fattura_elettronica_original_name"]);
 	if ($tesdoc && 	!empty($form['fattura_elettronica_original_name'])) { // c'è anche sul database, è una modifica
 		$toDo = 'update';
-		$form['datreg'] = gaz_format_date($tesdoc['datfat'], false, false);
+		$form['datreg'] = gaz_format_date($tesdoc['datreg'], false, false);
 		$msg['err'][] = 'file_exists';
 	} elseif (!empty($form['fattura_elettronica_original_name'])) { // non c'è sul database è un inserimento
 		$toDo = 'insert';
