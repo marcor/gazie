@@ -85,7 +85,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['protoc'] = intval($_POST['protoc']);
     $form['numdoc'] = $_POST['numdoc'];
     $form['numfat'] = $_POST['numfat'];
-    $form['datfat'] = $_POST['datfat'];
     $form['clfoco'] = $_POST['clfoco'];
 //tutti i controlli su  tipo di pagamento e rate
     $form['speban'] = $_POST['speban'];
@@ -273,10 +272,16 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     }
 // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
+		// se sto registrando una fattura o una nota credito da fornitore riempio la colonna datemi con lo stesso valore di datreg (retrocompatibilità)
+		if (substr($form['tipdoc'], 0, 2) == 'AF') {
+			 $form['annemi']=substr($form['datreg'],6,4);
+			 $form['mesemi']=substr($form['datreg'],3,2);
+			 $form['gioemi']=substr($form['datreg'],0,2);
+		}
         $sezione = $form['seziva'];
         $datemi = $form['annemi'] . "-" . $form['mesemi'] . "-" . $form['gioemi'];
         $utsemi = mktime(0, 0, 0, $form['mesemi'], $form['gioemi'], $form['annemi']);
-        $utsreg = mktime(0, 0, 0, substr($form['datreg'],3,2), substr($form['datreg'],0,2), substr($form['datreg'],6,4));
+        $utsreg = mktime(0, 0, 0, substr($form['datreg'],3,2), substr($form['datreg'],0,2), substr($form['datreg'],6,4) );
         $initra = $form['anntra'] . "-" . $form['mestra'] . "-" . $form['giotra'];
         $utstra = mktime(0, 0, 0, $form['mestra'], $form['giotra'], $form['anntra']);
         if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT vs Fattura differita
@@ -287,11 +292,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $msg .= "37+";
             }
         } else {
-            if ($utstra > $utsemi) {
+			$utsfat = mktime(0, 0, 0, substr($form['datfat'],3,2), substr($form['datfat'],0,2), substr($form['datfat'],6,4));
+            if ($utsfat > $utsreg) {
                 $msg .= "53+";
-            }
-            if (!checkdate($form['mestra'], $form['giotra'], $form['anntra'])) {
-                $msg .= "54+";
             }
             if (empty($form['numfat'])) {
                 $msg .= "55+";
@@ -337,9 +340,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             } else { //se sono altri documenti AFA AFC
                 $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 1) . "%' and seziva = ".$sezione, "protoc desc, datreg desc, datfat desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
-                $utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datreg'], 3, 2), substr($ultimo_tipo['datreg'], 0, 2), substr($ultimo_tipo['datreg'], 6, 4));
-                if ($ultimo_tipo and ( $utsUltimoProtocollo > $utsreg)) {
-                    $msg .= "45+";
+				if ($ultimo_tipo){
+					$utsUltimoProtocollo = mktime(0, 0, 0, substr($ultimo_tipo['datreg'], 5, 2), substr($ultimo_tipo['datreg'], 8, 2), substr($ultimo_tipo['datreg'], 0, 4));
+					if ($utsUltimoProtocollo > $utsreg) {
+						$msg .= "45+";
+					}
                 }
             }
 			if (!empty($form["clfoco"])) {
@@ -494,10 +499,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 //modifico la testata con i nuovi dati...
                 $old_head = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $form['id_tes']);
                 if (substr($form['tipdoc'], 0, 2) == 'DD') { //se è un DDT non fatturato
-                    $form['datfat'] = '';
                     $form['numfat'] = 0;
-                } else {
-                    $form['datfat'] = $initra;
                 }
                 $form['geneff'] = $old_head['geneff'];
                 $form['id_contract'] = $old_head['id_contract'];
@@ -547,11 +549,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if (substr($form['tipdoc'], 0, 2) == 'DD') {  //ma se e' un ddt a fornitore il protocollo è 0 così come il numero e data fattura
                     $form['protoc'] = 0;
                     $form['numfat'] = 0;
-                    $form['datfat'] = 0;
                 } else { //in tutti gli altri casi si deve prendere quanto inserito nel form
-                    $form['datfat'] = $initra;
                     $form['protoc'] = getProtocol($form['tipdoc'], $form['annemi'], $sezione);
-                    $form['numdoc'] = $form['numfat'];
                 }
 //inserisco la testata
                 $form['status'] = '';
@@ -1037,7 +1036,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['protoc'] = $tesdoc['protoc'];
     $form['numdoc'] = $tesdoc['numdoc'];
     $form['numfat'] = $tesdoc['numfat'];
-    $form['datfat'] = $tesdoc['datfat'];
     $form['clfoco'] = $tesdoc['clfoco'];
     $form['pagame'] = $tesdoc['pagame'];
     $form['change_pag'] = $tesdoc['pagame'];
@@ -1149,7 +1147,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['hidden_req'] = '';
     $form['id_tes'] = "";
 	$form['datreg'] = date("d/m/Y");
-	$form['datfat'] = date("d/m/Y");
+	$form['datfat'] = date('d/m/Y', strtotime(' +1 day'));
     $form['gioemi'] = date("d");
     $form['mesemi'] = date("m");
     $form['annemi'] = date("Y");
@@ -1200,7 +1198,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['protoc'] = "";
     $form['numdoc'] = "";
     $form['numfat'] = "";
-    $form['datfat'] = "";
     $form['clfoco'] = "";
     $form['pagame'] = "";
     $form['change_pag'] = "";
@@ -1248,6 +1245,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['id_pro'] = 0;
     $form['sconto'] = 0;
     $fornitore['indspe'] = "";
+    $fornitore['citspe'] = "";
 }
 require("../../library/include/header.php");
 /** Mi pare che jquery in questa pagina venga caricato per la seconda volta
@@ -1318,13 +1316,34 @@ echo "<input type=\"hidden\" value=\"{$form['ritorno']}\" name=\"ritorno\">\n";
 echo "<input type=\"hidden\" value=\"{$form['change_pag']}\" name=\"change_pag\">\n";
 echo "<input type=\"hidden\" value=\"{$form['protoc']}\" name=\"protoc\">\n";
 echo "<input type=\"hidden\" value=\"{$form['numdoc']}\" name=\"numdoc\">\n";
-echo "<input type=\"hidden\" value=\"{$form['datfat']}\" name=\"datfat\">\n";
 echo "<input type=\"hidden\" value=\"". (isset($_POST['last_focus']) ? $_POST['last_focus'] : '') ."\" name=\"last_focus\">\n";
 echo '<div class="FacetFormHeaderFont text-center">'.$title;
 $select_fornitore = new selectPartner("clfoco");
 $select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
 echo '</div>';
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
+echo "<tr>\n";
+if (substr($form['tipdoc'], 0, 2) == 'AF') { // ricevuta fattura o nota credito da fornitore 
+    echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl[0][$form['tipdoc']] . " " . $script_transl[52] . " </td>\n";
+    echo '<td><input type="text" name="numfat" value="' . $form['numfat'] . '" maxlength="20" size="20"></td>';
+    echo '<td class="FacetFieldCaptionTD">'.$script_transl['of_the'].'<input type="text" id="datfat" name="datfat" value="'.$form['datfat'].'">';
+	echo '</td><td colspan="2" class="FacetFieldCaptionTD" > '.$script_transl['datreg'].' <input type="text" id="datreg" name="datreg" value="'.$form['datreg'].'">';
+    echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['imball'] . "\" name=\"imball\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['id_des_same_company'] . "\" name=\"id_des_same_company\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['destin'] . "\" name=\"destin\">\n";
+    echo '<input type="hidden" value="' . $form['giotra'] . '" name="giotra">';
+    echo '<input type="hidden" value="' . $form['mestra'] . '" name="mestra">';
+    echo '<input type="hidden" value="' . $form['anntra'] . '" name="anntra">';
+} else {
+    echo '<input type="hidden" value="' . $form['datreg'] . '" name="datreg">';
+    echo '<input type="hidden" value="' . $form['datfat'] . '" name="datfat">';
+    echo '<input type="hidden" value="' . $form['numfat'] . '" name="numfat">';
+}
+
+echo "</td></tr>\n";
+
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"seziva\" class=\"FacetSelect\">\n";
 for ($counter = 1; $counter <= 9; $counter++) {
@@ -1351,35 +1370,43 @@ if (!empty($msg)) {
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td>" . $fornitore['indspe'] . "<br />";
     echo "</td>\n";
 }
-echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\">\n";
-// select del giorno
-echo "\t <select name=\"gioemi\" class=\"FacetSelect\" >\n";
-for ($counter = 1; $counter <= 31; $counter++) {
-    $selected = "";
-    if ($counter == $form['gioemi'])
-        $selected = "selected";
-    echo "\t\t <option value=\"$counter\" $selected >$counter</option>\n";
-}
-echo "\t </select>\n";
-// select del mese
-echo "\t <select name=\"mesemi\" class=\"FacetSelect\" >\n";
-for ($counter = 1; $counter <= 12; $counter++) {
-    $selected = "";
-    if ($counter == $form['mesemi'])
-        $selected = "selected";
-    $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
-    echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
-}
-echo "\t </select>\n";
-// select del anno
-echo "\t <select name=\"annemi\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-for ($counter = $form['annemi'] - 10; $counter <= $form['annemi'] + 10; $counter++) {
-    $selected = "";
+if (substr($form['tipdoc'], 0, 2) == 'AF') { // nascondo la data emissione sulle fattura o nota credito da fornitore (ho datffat)
+    echo '<td colspan="2">'. $fornitore['citspe'] .'<input type="hidden" value="' . $form['gioemi'] . '" name="gioemi">';
+    echo '<input type="hidden" value="' . $form['mesemi'] . '" name="mesemi">';
+    echo '<input type="hidden" value="' . $form['annemi'] . '" name="annemi">';
+    echo "</td>\n";
+} else { // documenti i trasporto metto la data emissione
+    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td><td class=\"FacetDataTD\">\n";
+    // select del giorno
+    echo "\t <select name=\"gioemi\" class=\"FacetSelect\" >\n";
+	for ($counter = 1; $counter <= 31; $counter++) {
+        $selected = "";
+        if ($counter == $form['gioemi'])
+            $selected = "selected";
+        echo "\t\t <option value=\"$counter\" $selected >$counter</option>\n";
+    }
+    echo "\t </select>\n";
+    // select del mese
+    echo "\t <select name=\"mesemi\" class=\"FacetSelect\" >\n";
+    for ($counter = 1; $counter <= 12; $counter++) {
+        $selected = "";
+        if ($counter == $form['mesemi'])
+	        $selected = "selected";
+        $nome_mese = ucwords(strftime("%B", mktime(0, 0, 0, $counter, 1, 0)));
+        echo "\t\t <option value=\"$counter\"  $selected >$nome_mese</option>\n";
+    }
+    echo "\t </select>\n";
+    // select del anno
+    echo "\t <select name=\"annemi\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+    for ($counter = $form['annemi'] - 10; $counter <= $form['annemi'] + 10; $counter++) {
+        $selected = "";
     if ($counter == $form['annemi'])
         $selected = "selected";
     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+	}
+	echo "\t </select></td>";
 }
-echo "\t </select></td></tr>\n";
+echo "</tr>\n";
 echo "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[7]</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"listin\" class=\"FacetSelect\">\n";
 for ($lis = 1; $lis <= 3; $lis++) {
@@ -1399,24 +1426,7 @@ $select_banapp = new selectbanapp("banapp");
 $select_banapp->addSelected($form["banapp"]);
 $select_banapp->output();
 echo "</td></tr>\n";
-echo "<tr>\n";
-if (substr($form['tipdoc'], 0, 2) == 'AF') { // ricevuta fattura o nota credito da fornitore 
-    echo "<td colspan=\"2\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl[0][$form['tipdoc']] . " " . $script_transl[52] . " </td>\n";
-    echo '<td><input type="text" name="numfat" value="' . $form['numfat'] . '" maxlength="20" size="20"></td>';
-    echo '<td class="FacetFieldCaptionTD">'.$script_transl['of_the'].'<input type="text" id="datfat" name="datfat" value="'.$form['datfat'].'">';
-	echo '</td><td colspan="2" class="FacetFieldCaptionTD" > '.$script_transl['datreg'].' <input type="text" id="datreg" name="datreg" value="'.$form['datreg'].'">';
-    echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['imball'] . "\" name=\"imball\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['id_des_same_company'] . "\" name=\"id_des_same_company\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['destin'] . "\" name=\"destin\">\n";
-} else {
-    echo '<input type="hidden" value="' . $form['datreg'] . '" name="datreg">';
-    echo '<input type="hidden" value="' . $form['datfat'] . '" name="datfat">';
-    echo '<input type="hidden" value="' . $form['numfat'] . '" name="numfat">';
-}
-
-echo "</td></tr></table>\n";
+echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
 echo "<input type=\"hidden\" value=\"{$form['in_descri']}\" name=\"in_descri\" />\n";

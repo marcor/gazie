@@ -38,31 +38,36 @@ if (!isset($_POST['ritorno'])) {
 if (!isset($_GET['id_tes'])) {
     header("Location: ".$_POST['ritorno']);
     exit;
+} else {
+    $form = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", intval($_GET['id_tes']));
 }
 
+
 if (isset($_POST['Delete'])) {
-    $testata = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $_GET['id_tes']);
-    if  (substr($testata['tipdoc'],0,2) == 'DD'){
-        $where = "tipdoc LIKE 'DD_' AND seziva = '".$testata['seziva']."' AND numfat = 0" ;
-    } elseif  (substr($testata['tipdoc'],0,2) == 'AF'){
-        $where = "tipdoc LIKE 'AF_'";
-    } elseif  (substr($testata['tipdoc'],0,2) == 'AD'){
+    if  (substr($form['tipdoc'],0,2) == 'DD') {
+        $where = "tipdoc LIKE 'DD_' AND seziva = ".$form['seziva']." AND numfat = 0" ;
+		$order='numdoc DESC';
+    } elseif  (substr($form['tipdoc'],0,2) == 'AF'){ // fattura o nota credito fornitore
+        $where = "tipdoc LIKE 'AF_' AND seziva = ".$form['seziva']." AND YEAR(datreg) = '".substr($form['datreg'],0,4)."'";
+		$order='protoc DESC';
+    } elseif  (substr($form['tipdoc'],0,2) == 'AD'){
         $where = "tipdoc LIKE 'AD_'";
-    }
-    $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,"id_tes DESC",0,1);
+		$order='id_tes DESC';
+	}
+    $rs_ultimo_documento = gaz_dbi_dyn_query("*", $gTables['tesdoc'], $where,$order,0,1);
     $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
     // ricavo il progressivo annuo, ma se e' il primo documento dell'anno, resetto il contatore
-    if ($ultimo_documento and $ultimo_documento['id_tes'] == $testata['id_tes']) {
+    if ($ultimo_documento and $ultimo_documento['id_tes'] == $form['id_tes']) {
            //allora procedo all'eliminazione della testata e dei righi...
-           gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $testata['id_tes']);
-           gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $testata['id_con']);
-           gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $testata['id_con']);
-           gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $testata['id_con']);
-           $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$testata['id_tes']."'","id_tes desc");
+           gaz_dbi_del_row($gTables['tesdoc'], "id_tes", $form['id_tes']);
+           gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $form['id_con']);
+           gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $form['id_con']);
+           gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $form['id_con']);
+           $rs_righidel = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = '".$form['id_tes']."'","id_tes desc");
            while ($a_row = gaz_dbi_fetch_array($rs_righidel)) {
                   gaz_dbi_del_row($gTables['rigdoc'], "id_rig", $a_row['id_rig']);
                   if (intval($a_row['id_mag']) > 0){  //se c'� stato un movimento di magazzino lo azzero
-                     $upd_mm->uploadMag('DEL',$testata['tipdoc'],'','','','','','','','','','',$a_row['id_mag'],$admin_aziend['stock_eval_method']);
+                     $upd_mm->uploadMag('DEL',$form['tipdoc'],'','','','','','','','','','',$a_row['id_mag'],$admin_aziend['stock_eval_method']);
                   }
            }
            header("Location: ".$_POST['ritorno']);
@@ -76,9 +81,8 @@ if (isset($_POST['Return'])) {
     header("Location: report_ddtacq.php");
     exit;
 }
-$form = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $_GET['id_tes']);
 $anagrafica = new Anagrafica();
-$cliente = $anagrafica->getPartner($form['clfoco']);
+$fornitore = $anagrafica->getPartner($form['clfoco']);
 $titolo="Eliminazione Documento d'Acquisto";
 require("../../library/include/header.php");
 $script_transl=HeadMain();
@@ -103,25 +107,36 @@ echo '<div class="alert alert-danger text-center" role="alert">' . $script_trans
   <!-- END Error -->
   <tr>
   <tr>
-    <td class="FacetFieldCaptionTD">ID del Documento &nbsp;</td>
-    <td class="FacetDataTD"><?php print $form["id_tes"] ?>&nbsp;</td>
+    <td class="FacetFieldCaptionTD">ID &nbsp;</td>
+    <td class="FacetDataTD"><?php print $form["id_tes"]; ?>&nbsp;</td>
   </tr>
   <tr>
-    <td class="FacetFieldCaptionTD">Numero del documento &nbsp;</td>
-    <td class="FacetDataTD"><?php print $form["numdoc"] ?>&nbsp;</td>
+    <td class="FacetFieldCaptionTD">Fornitore &nbsp;</td>
+    <td class="FacetDataTD"><?php print $fornitore["ragso1"]; ?>&nbsp;</td>
+  </tr>
+<?php if ($form['numfat']>0){ ?>
+  <tr>
+    <td class="FacetFieldCaptionTD">Numero fattura&nbsp;</td>
+    <td class="FacetDataTD"><?php print $form["numfat"]; ?>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="FacetFieldCaptionTD">Data fattura &nbsp;</td>
+    <td class="FacetDataTD"><?php print gaz_format_date($form["datfat"]); ?>&nbsp;</td>
+  </tr>
+  <tr>
+    <td class="FacetFieldCaptionTD">Data di Registrazione &nbsp;</td>
+    <td class="FacetDataTD"><?php print gaz_format_date($form["datreg"]); ?>&nbsp;</td>
+  </tr>
+<?php } else { ?>
+  <tr>
+    <td class="FacetFieldCaptionTD">Numero Documento di Trasporto&nbsp;</td>
+    <td class="FacetDataTD"><?php print $form["numfat"] ?>&nbsp;</td>
   </tr>
   <tr>
     <td class="FacetFieldCaptionTD">Data di Emissione &nbsp;</td>
-    <td class="FacetDataTD"><?php print $form["datemi"] ?>&nbsp;</td>
+    <td class="FacetDataTD"><?php print gaz_format_date($form["datemi"]); ?>&nbsp;</td>
   </tr>
-  <tr>
-    <td class="FacetFieldCaptionTD">Cliente &nbsp;</td>
-    <td class="FacetDataTD"><?php print $cliente["ragso1"] ?>&nbsp;</td>
-  </tr>
-  <tr>
-    <td class="FacetFieldCaptionTD">Status &nbsp;</td>
-    <td class="FacetDataTD"><?php print $form["status"] ?>&nbsp;</td>
-  </tr>
+<?php } ?>
     <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;
     <!-- BEGIN Button Return --><input type="submit" name="Return" value="Indietro"><!-- END Button Return -->&nbsp;
     <!-- BEGIN Button Insert --><input type="submit" name="Delete" value="ELIMINA !"><!-- END Button Insert -->&nbsp;

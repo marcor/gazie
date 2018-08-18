@@ -182,7 +182,7 @@ COMMENT='Tabella per creare gli "articoli compositi" (distinta base). Un articol
 UPDATE `gaz_XXXtesdoc` SET `template` = 'FatturaSemplice' WHERE `tipdoc` = 'FNC';
 ALTER TABLE `gaz_XXXrigdoc`	CHANGE COLUMN `descri` `descri` VARCHAR(1000) NOT NULL COMMENT '1000 caratteri per uniformarsi al tracciato della fattura elettronica' AFTER `codart`;
 ALTER TABLE `gaz_XXXrigbro`	CHANGE COLUMN `descri` `descri` VARCHAR(1000) NOT NULL COMMENT '1000 caratteri per uniformarsi al tracciato della fattura elettronica' AFTER `codice_fornitore`;
-ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `datreg` DATE NULL DEFAULT NULL COMMENT 'Data in cui si vuole venga registrata in contabilità (prima per le fatture d\'acquisto si usava impropriamente datemi)' AFTER `id_con`;
+ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `datreg` DATE NULL DEFAULT NULL COMMENT 'Data in cui si vuole venga registrata in contabilità la fattura d\'acquisto (prima veniva messo in impropriamente in datemi)' AFTER `id_con`;
 UPDATE `gaz_XXXtesdoc` SET `datreg`=`datemi` WHERE `tipdoc` LIKE 'AF_';
 UPDATE `gaz_XXXtesdoc` SET `datemi`=FALSE WHERE `tipdoc` LIKE 'AF_';
 UPDATE `gaz_XXXtesdoc` SET `datemi`=FALSE WHERE `datemi` <= '2004-01-27';

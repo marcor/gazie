@@ -296,7 +296,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
                   $newValue=array('caucon'=>$v['tes']['tipdoc'],
                            'descri'=>$script_transl['doc_type_value'][$v['tes']['tipdoc']],
                            'id_doc'=>$v['tes']['id_tes'],
-                           'datreg'=>$v['tes']['datemi'],
+                           'datreg'=>$v['tes']['datreg'],
                            'seziva'=>$v['tes']['seziva'],
                            'protoc'=>$v['tes']['protoc'],
                            'numdoc'=>$v['tes']['numfat'],
@@ -414,9 +414,9 @@ if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">'.$gForm->outputErrors($msg,$script_transl['errors'])."</td></tr>\n";
 }
 echo "<tr>\n";
-echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td>\n";
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['date']."</td>\n\t<td class=\"FacetDataTD\">";
 $gForm->CalendarPopup('this_date',$form['this_date_D'],$form['this_date_M'],$form['this_date_Y'],'FacetSelect',1);
-echo "</tr>\n";
+echo "</td></tr>\n";
 echo "<tr>\n";
 echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['proini']."</td>\n";
 echo "\t<td class=\"FacetDataTD\">".$form['proini']." / ".$form['year_ini']."</td>\n";
