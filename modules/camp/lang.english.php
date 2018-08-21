@@ -379,6 +379,8 @@ $strScript = array("browse_document.php" =>
         'scorta' => 'Minimum stock',
         'riordino' => 'Purchase lot',
         'uniacq' => 'Measurement Unit of purchases',
+		'classif_amb' => 'Classificazione ambientale',
+		'classif_amb_value' => array(0=>'non classificato',1=>'Irritante',2=>'nocivo',3=>'Tossico',4=>'Molto tossico',5=>'Pericoloso ambiente'),
         'peso_specifico' => 'Specific Gravity / Multiplier',
         'volume_specifico' => 'Specific volume',
         'pack_units' => 'Pieces in packaging',

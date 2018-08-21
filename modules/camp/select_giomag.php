@@ -216,7 +216,8 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 			If ($mv['classif_amb']==1) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_1.gif\" alt=\"Irritante\" width=\"50 px\">" ." &nbsp;</td>\n";}
 			If ($mv['classif_amb']==2) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_2.gif\" alt=\"Nocivo\" width=\"50 px\">" ." &nbsp;</td>\n";}
 			If ($mv['classif_amb']==3) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_3.gif\" alt=\"Tossico\" width=\"50 px\">" ." &nbsp;</td>\n";}
-			If ($mv['classif_amb']==4) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_0.gif\" alt=\"Molto tossico\" width=\"50 px\">" ." &nbsp;</td>\n";}
+			If ($mv['classif_amb']==4) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_4.gif\" alt=\"Molto tossico\" width=\"50 px\">" ." &nbsp;</td>\n";}
+			If ($mv['classif_amb']==5) {echo "<td class=\"FacetDataTD\" align=\"center\">". "<img src=\"../camp/media/classe_5.gif\" alt=\"Pericoloso ambiente\" width=\"50 px\">" ." &nbsp;</td>\n";}
             echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
             echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
             echo "<td class=\"FacetDataTD\" align=\"right\">".$mv['avversita']." </td>\n";

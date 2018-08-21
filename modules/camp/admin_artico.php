@@ -326,6 +326,9 @@ if (isset($_POST['codice']) && strlen($form['codice'])>3){
 				if (stripos($cltoss,"NOCIVO") !== false) {$form['classif_amb']=2;}
 				if (stripos($cltoss,"TOSSICO") !== false) {$form['classif_amb']=3;}
 				if (stripos($cltoss,"MOLTO TOSSICO") !== false) {$form['classif_amb']=4;}
+				if ($form['classif_amb']==0) {
+					if (stripos($cltoss,"PERICOLOSO") !== false) {$form['classif_amb']=5;}
+				}
 			} 
 		}	
 }

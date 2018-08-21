@@ -117,6 +117,9 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 			<?php if ($row["classif_amb"]==4){?>
 			<img src="../camp/media/classe_4.gif" alt="Molto tossico" width="50 px">
 			<?php echo "T+"; }?>
+			<?php if ($row["classif_amb"]==5){?>
+			<img src="../camp/media/classe_5.gif" alt="Pericoloso ambiente" width="50 px">
+			<?php echo "T+"; }?>
             </td>
             <td data-title="<?php echo $script_transl["good_or_service"]; ?>" class="text-center">
                 <?php echo $ldoc; ?> &nbsp;   <i class="glyphicon glyphicon-<?php echo $gooser_i; ?>"></i> 

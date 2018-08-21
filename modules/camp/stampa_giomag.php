@@ -141,6 +141,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 	  If ($row['classif_amb']==2){$pdf->Cell(6,6,"Xn",1);}
 	  If ($row['classif_amb']==3){$pdf->Cell(6,6,"T",1);}
 	  If ($row['classif_amb']==4){$pdf->Cell(6,6,"T+",1);}
+	  If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
 	  $pdf->Cell(8,6,$row['unimis'],1,0,'C');
       $pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
       
