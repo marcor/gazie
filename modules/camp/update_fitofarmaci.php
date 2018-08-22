@@ -56,7 +56,7 @@ foreach ($lines as $key => $value)
 $array=utf8_converter($array);
 
 // CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO
-$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['fitofarmaci']."'";
+$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['camp_fitofarmaci']."'";
 $result = gaz_dbi_query($query);
 while ($row = $result->fetch_assoc()) {
 			 $update=strtotime($row['UPDATE_TIME']);
@@ -69,13 +69,13 @@ If (intval($update)+2592000<$today){
 }	
 
 //svuoto la tabella per evitare di lasciare prodotti non più presenti - non so ancora bene come il Ministero aggiorni il suo database	
-$query="TRUNCATE TABLE ".$gTables['fitofarmaci']; 	
+$query="TRUNCATE TABLE ".$gTables['camp_fitofarmaci']; 	
 $result = gaz_dbi_query($query);
 
 //riscrivo la tabella aggiornata
 $dim_array=count($array);
 	for ($i=1; $i<$dim_array; $i++){
-	$query="INSERT INTO ".$gTables['fitofarmaci']." ("."NUMERO_REGISTRAZIONE".", "."PRODOTTO".", "."IMPRESA".", "."SEDE_LEGALE_IMPRESA".", "."SCADENZA_AUTORIZZAZIONE".", "."INDICAZIONI_DI_PERICOLO".", "."DESCRIZIONE_FORMULAZIONE".", "."SOSTANZE_ATTIVE".") VALUES ('".$array[$i][0]."', '".substr(str_replace("'","^",$array[$i][1]),0,40)."', '".substr(str_replace("'","^",$array[$i][2]),0,30)."', '".substr(str_replace("'","^",$array[$i][3]),0,20)." ".substr(str_replace("'","^",$array[$i][5]),0,9)."', '".substr($array[$i][12],0,12)."', '".substr(str_replace("'","^",$array[$i][13]),0,45)."', '".substr(str_replace("'","^",$array[$i][16]),0,30)."', '".substr(str_replace("'","^",$array[$i][17]),0,30)."' ) ON DUPLICATE KEY UPDATE "."NUMERO_REGISTRAZIONE"."="."NUMERO_REGISTRAZIONE";	
+	$query="INSERT INTO ".$gTables['camp_fitofarmaci']." ("."NUMERO_REGISTRAZIONE".", "."PRODOTTO".", "."IMPRESA".", "."SEDE_LEGALE_IMPRESA".", "."SCADENZA_AUTORIZZAZIONE".", "."INDICAZIONI_DI_PERICOLO".", "."DESCRIZIONE_FORMULAZIONE".", "."SOSTANZE_ATTIVE".") VALUES ('".$array[$i][0]."', '".substr(str_replace("'","^",$array[$i][1]),0,40)."', '".substr(str_replace("'","^",$array[$i][2]),0,30)."', '".substr(str_replace("'","^",$array[$i][3]),0,20)." ".substr(str_replace("'","^",$array[$i][5]),0,9)."', '".substr($array[$i][12],0,12)."', '".substr(str_replace("'","^",$array[$i][13]),0,45)."', '".substr(str_replace("'","^",$array[$i][16]),0,30)."', '".substr(str_replace("'","^",$array[$i][17]),0,30)."' ) ON DUPLICATE KEY UPDATE "."NUMERO_REGISTRAZIONE"."="."NUMERO_REGISTRAZIONE";	
 	$result = gaz_dbi_query($query); 
 	}$msg=$msg."Ho aggiornato la nuova tabella con i dati prelevati oggi dal Ministero della salute.<br>";
 	

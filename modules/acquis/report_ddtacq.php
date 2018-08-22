@@ -32,7 +32,6 @@ else
 $where = "(tipdoc = 'DDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
 $all = $where;
 $anno = date("Y");
-$passo = 99999;
 
 if (!isset($_GET['auxil']))
     $_GET['auxil'] = 1;
@@ -80,7 +79,9 @@ if (isset($_GET['flt_ragso1'])) {
         if ($ragso1 != "All") {
             $auxil = $_GET['auxil'] . "&ragso1=" . $ragso1;
             $where .= " and " . $gTables["tesdoc"] . ".clfoco = " . $ragso1;
-        }
+        } else {
+			$passo = 100000;			
+		}
     }
 } else {
     $ragso1 = '';
@@ -91,8 +92,8 @@ if (isset($_GET['all'])) {
     $tipdoc = "";
     $ragso1 = "";
     $protocollo = "";
-
-    $where = "(tipdoc = 'DDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
+	$passo = 100000;
+	$where = "(tipdoc = 'DDL' OR tipdoc LIKE 'DDR' OR tipdoc LIKE 'ADT' ) AND seziva = $sezione";
     $auxil = $_GET['auxil'] . "&all=yes";
 }
 ?>

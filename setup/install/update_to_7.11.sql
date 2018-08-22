@@ -7,17 +7,39 @@ UPDATE `gaz_menu_script` SET `weight`='15' WHERE  `link`='accounting_documents.p
 UPDATE `gaz_menu_script` SET `weight`='20' WHERE  `link`='admin_assets.php?Insert';
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_docacq.php'), 'acquire_invoice.php', '', '', 19, '', 1  FROM `gaz_menu_script`;
 DELETE FROM `gaz_admin_module` WHERE  `moduleid`=14;
-CREATE TABLE IF NOT EXISTS `gaz_fitofarmaci` (
+CREATE TABLE IF NOT EXISTS `gaz_camp_fitofarmaci` (
   `NUMERO_REGISTRAZIONE` int(6) NOT NULL,
   `PRODOTTO` varchar(40) NOT NULL,
   `IMPRESA` varchar(30) NOT NULL,
   `SEDE_LEGALE_IMPRESA` varchar(30) NOT NULL,
   `SCADENZA_AUTORIZZAZIONE` varchar(12) NOT NULL,
-  `INDICAZIONI_DI_PERICOLO` varchar(40) NOT NULL,
+  `INDICAZIONI_DI_PERICOLO` varchar(45) NOT NULL,
   `DESCRIZIONE_FORMULAZIONE` varchar(30) NOT NULL,
   `SOSTANZE_ATTIVE` varchar(30) NOT NULL,
   PRIMARY KEY (`NUMERO_REGISTRAZIONE`)
 )  COMMENT='Viene utilizzato dal modulo Registro di campagna (camp) e serve per contenere la tabella del ministero della salute delle sostanze' ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `gaz_camp_avversita` (
+  `id_avv` int(3) NOT NULL DEFAULT '0',
+  `nome_avv` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `adminid` varchar(30) CHARACTER SET utf8 NOT NULL,
+  `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_avv`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `gaz_camp_colture` (
+  `id_colt` int(3) NOT NULL DEFAULT '0',
+  `nome_colt` varchar(30) NOT NULL,
+  `adminid` varchar(30) NOT NULL,
+  `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id_colt`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE IF NOT EXISTS `gaz_camp_uso_fitofarmaci` (
+  `id` int(4) NOT NULL,
+  `cod_art` varchar(15) NOT NULL,
+  `id_colt` int(3) NOT NULL,
+  `id_avv` int(3) NOT NULL,
+  `dose` decimal(8,3) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_resp` TINYINT(1) NOT NULL AFTER `print_map`;
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_service_descri` VARCHAR(100) NOT NULL COMMENT 'Descrizione del servizio esternalizzato, verrà riportato sulla nomina a responsabile esterno del trattamento dei dati' AFTER `external_resp`;

@@ -293,7 +293,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 
 // CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
 if (isset($_POST['codice'])){
-	$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['fitofarmaci']."'";
+	$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['camp_fitofarmaci']."'";
 	$result = gaz_dbi_query($query);
 		while ($row = $result->fetch_assoc()) {
 			 $update=strtotime($row['UPDATE_TIME']);
@@ -419,7 +419,7 @@ if ($modal_ok_insert === true) {
 	$("input#autocomplete").autocomplete({
 		source: [<?php
 	$stringa="";
-	$query="SELECT * FROM .".$gTables['fitofarmaci'];
+	$query="SELECT * FROM .".$gTables['camp_fitofarmaci'];
 	$result = gaz_dbi_query($query);
 	while($row = $result->fetch_assoc()){
 		$stringa.="\"".$row['PRODOTTO']."\", ";			

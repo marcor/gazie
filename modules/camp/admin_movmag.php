@@ -270,7 +270,7 @@ If ($itemart['good_or_service'] ==0) { // se non è un servizio
 			}	
 					// se è presente nel db fitofarmaci CONTROLLO QUANDO è StATO FATTO L'ULTIMO AGGIORNAMENTO del db fitofarmaci
 					If (($result->num_rows)>0){
-						$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['fitofarmaci']."'";
+						$query="SELECT UPDATE_TIME FROM information_schema.tables WHERE TABLE_SCHEMA = '".$Database."' AND TABLE_NAME = '".$gTables['camp_fitofarmaci']."'";
 						$result = gaz_dbi_query($query); 
 							while ($row = $result->fetch_assoc()) {
 							$update=strtotime($row['UPDATE_TIME']);
