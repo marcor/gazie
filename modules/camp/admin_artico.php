@@ -306,7 +306,7 @@ if (isset($_POST['codice'])){
 
 if (isset($_POST['codice']) && strlen($form['codice'])>3){
 	 
-		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['fitofarmaci']. " WHERE PRODOTTO ='". $form['codice']."'";
+		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['codice']."'";
 		$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 				If (isset($row)) {$presente=1;}

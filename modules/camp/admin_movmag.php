@@ -262,7 +262,7 @@ If ($itemart['good_or_service'] ==0) { // se non è un servizio
 }
 
 	//Antonio Germani controllo se il prodotto è presente nel database fitofarmaci ed eventualmente se è scaduta l'autorizzazione		
-		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'." FROM ".$gTables['fitofarmaci']. " WHERE PRODOTTO ='". $form['artico'][$form['mov']]."'";
+		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['artico'][$form['mov']]."'";
 			$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 				$scadaut=$row['SCADENZA_AUTORIZZAZIONE']; $scadaut=strtotime(str_replace('/', '-', $scadaut));
