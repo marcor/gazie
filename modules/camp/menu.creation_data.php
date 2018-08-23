@@ -27,13 +27,13 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
 								2=>array('link'=>"report_catmer.php",'weight'=>2),
 								3=>array('link'=>"report_movmag.php",'weight'=>3),
 								4=>array('link'=>"report_caumag.php",'weight'=>4),
-								5=>array('link'=>"report_campi.php",'weight'=>5)
+								5=>array('link'=>"report_campi.php",'weight'=>5),
+								6=>array('link'=>"report_fitofarmaci.php",'weight'=>6)
                                ),
                     'm3'=>array('m2'=>array(1=>array(
                                                     array('translate_key'=>1,'link'=>"admin_artico.php?Insert",'weight'=>1),
 													array('translate_key'=>2,'link'=>"inventory_stock.php",'weight'=>5),
-													array('translate_key'=>3,'link'=>"stampa_invmag.php",'weight'=>10),
-													array('translate_key'=>11,'link'=>"update_fitofarmaci.php",'weight'=>15)
+													array('translate_key'=>3,'link'=>"stampa_invmag.php",'weight'=>10)
                                                     ),
 											2=>array(
                                                     array('translate_key'=>4,'link'=>"admin_catmer.php?Insert",'weight'=>1)
@@ -50,6 +50,11 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
 											5=>array(
                                                     array('translate_key'=>9,'link'=>"admin_campi.php?Insert",'weight'=>1),
                                                     array('translate_key'=>10,'link'=>"select_dichiar_rame.php",'weight'=>5)
+                                                    ),
+											6=>array(
+                                                    array('translate_key'=>13,'link'=>"admin_avv.php",'weight'=>1),
+                                                    array('translate_key'=>14,'link'=>"admin_colt.php",'weight'=>5),
+													array('translate_key'=>11,'link'=>"update_fitofarmaci.php",'weight'=>10)
                                                     )
                                             )
                                )
