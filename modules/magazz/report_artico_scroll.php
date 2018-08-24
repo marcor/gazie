@@ -78,11 +78,13 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		<i class="glyphicon glyphicon-file" title="Ultimo certificato e/o documentazione disponibile"></i>
 		</a>';
         }
-        if ($row["good_or_service"] > 0) {
+        if ($row["good_or_service"] == 1) {
             $gooser_i = 'wrench';
-        } else {
+        } else if ($row["good_or_service"] == 0) {
             $gooser_i = 'shopping-cart';
-        }
+        } else if ($row["good_or_service"] == 2) {
+            $gooser_i = 'tasks';
+        } 
         $prt = '';
         if ($row["payroll_tax"] > 0) {
             $prt = floatval($admin_aziend['payroll_tax']) . '%';
@@ -107,6 +109,11 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         <tr>              
             <td data-title="<?php echo $script_transl["codice"]; ?>">
                 <a class="btn btn-xs btn-default" href="../magazz/admin_artico.php?Update&codice=<?php echo $row['codice']; ?>" ><i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $row['codice']; ?></a>
+                <?php
+                    if ( $row["good_or_service"] == 2 ) {
+                        echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Update&codice='.$row['codice'].'" ><i class="glyphicon glyphicon-plus"></i></a>';
+                    }
+                ?>
             </td>
             <td data-title="<?php echo $script_transl["descri"]; ?>">
                 <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["codice"]; ?>" data-label="<?php echo $row['annota']; ?>"><?php echo $row["descri"]; ?></span>
