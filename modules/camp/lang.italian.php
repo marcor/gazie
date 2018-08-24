@@ -38,6 +38,13 @@ $strScript = array("browse_document.php" =>
         'ext' => "Estensione",
         'select' => "Sel.",
         'code' => "Codice"),
+	"admin_coltura.php" =>
+    array(" coltura ",
+        "ID ",
+		"Descrizione coltura ",
+		"Descrizione coltura vuota",
+		"Codice già utilizzato"
+    ),
     "report_artico.php" =>
     array('title' => 'Lista delle merci e dei servizi',
         'codice' => "Codice",
