@@ -36,7 +36,7 @@ function utf8_converter($array)
     return $array;
 }
 
-$admin_aziend=checkAdmin(); $title="Update tabella fitofarmaci";
+$admin_aziend=checkAdmin(); $title="Update tabella fitofarmaci dal database del Ministero della Salute";
 
 require("../../library/include/header.php");
  $script_transl=HeadMain();

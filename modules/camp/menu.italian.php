@@ -41,10 +41,11 @@ $transl['camp'] = array('name' => "Registro di campagna",
                                          8 =>array("Inserisci una nuova causale di magazzino","Nuova causale di magazzino"),
 										 9 =>array("Inserisci un nuovo campo","Nuovo campo di coltivazione"),
 										 10 =>array("Stampa dichiarazione rame metallo","Dichiarazione rame metallo"),
-										 11 =>array("Update tabella fitofarmaci","Aggiorna tabella fitofarmaci"),
+										 11 =>array("Update tabella fitofarmaci","Aggiorna tabella fitofarmaci Ministero Salute"),
 										 12 =>array("Calcolo costo di una produzione","Costo produzione"),
 										 13 =>array("Gestione avversità","Avversità"),
-										 14 =>array("Gestione colture","Colture")
+										 14 =>array("Gestione colture","Colture"),
+										 15 =>array("Gestione uso fitofarmaci","Uso fitofarmaci")
 										 
                                       )
                           );
