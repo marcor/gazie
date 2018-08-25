@@ -259,36 +259,29 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
 </form>
     <div class="content-wrapper">
       <section class="content-header">       
-         <?php
-            global $gTables, $module;
-            $pos="";
-            $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
-            $posizione = array_pop( $posizione );
-            
-            if ( strpos($posizione, "?") ) {
-                $pos = explode ("?", $posizione);
-                if ( is_array($pos) ) $pos = $pos[0];
-            }
-            $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'"', ' id_bread',0,999);
+        <?php
+        global $gTables, $module;
+        $pos="";
+        $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
+        $posizione = array_pop( $posizione );
+        
+        if ( strpos($posizione, "?") ) {
+            $pos = explode ("?", $posizione);
+            if ( is_array($pos) ) $pos = $pos[0];
+        }
+        $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'"', ' id_bread',0,999);
+        if ( gaz_dbi_num_rows($res_pos)>0 ) {             
             $row = gaz_dbi_fetch_array($res_pos);
-        if ( gaz_dbi_num_rows($res_pos)>0 ) {  
-            
-                echo "<h1>";
-                echo "<a href='".$row['link']."'>".$row['titolo']."</a>";
-                echo "</h1>";          
-
-                echo "<ol class='breadcrumb'>";              
-                echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a></li>";
-                while ( $row = gaz_dbi_fetch_array($res_pos) ) {
-                    //echo count($row);
-                    //print_r($row);
-                    //die();             
-                    echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
-                }
-                echo "</ol>";
-
-        } else {
-
+            echo "<h1>";
+            echo "<a href='".$row['link']."'>".$row['titolo']."</a>";
+            echo "</h1>";          
+            echo "<ol class='breadcrumb'>";              
+            echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php'><i class='glyphicon glyphicon-cog'></i></a></li>";
+            while ( $row = gaz_dbi_fetch_array($res_pos) ) {
+                echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
+            }
+            echo "</ol>";
+        } else { 
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
 			if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
             
@@ -300,6 +293,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             $riga = gaz_dbi_fetch_array($result);
             
             if ( $riga["id"]!="" ) {
+                // siamo su una pagina di 2 livello nel menu principale
                 // mostra il titolo se siamo su una pagina di secondo livello
                 echo "<h1>";
                 echo stripslashes($transl[$module]["m2"][$riga["translate_key"]][0]);
@@ -311,15 +305,15 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 //da fare salvare i moduli più usati tramite la stella
                 //echo "<li><a><i class=\"fa fa-star-o\"></i></a>";
                 
-                echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
+                echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php'><i class='glyphicon glyphicon-cog'></i></a></li>";
                 //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
                 while ($r = gaz_dbi_fetch_array($result2)) {
                     if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
                         echo '<li><a href="'.$r["link"].'">'.stripslashes ($transl[$module]["m3"][$r["translate_key"]]["1"]).'</a></li>';
                 }
                 echo "</ol>";
-            } else {
-                // @titolo se siamo sul terzo livello		
+            } else { 
+                // siamo su una pagina di 3 livello nel menu principale
                 $result3    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link="'.$posizione.'"',' id',0,1);
                 if ( $r = gaz_dbi_fetch_array($result3) ) {
                     echo "<h1>";
@@ -329,7 +323,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                     $posizionex = explode ("?",$posizione );
                     $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link like "%'.$posizionex[0].'%" ',' id',0,99);
                     echo "<ol class=\"breadcrumb\">";
-                    echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a></li>";
+                    echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php'><i class='glyphicon glyphicon-cog'></i></a></li>";
                     //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-help\"></i></a></li>";
                     while ($r = gaz_dbi_fetch_array($result4)) {
                         if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
@@ -339,11 +333,9 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 }
             }
         }
-         ?>
-         
-      </section>
+         ?>     
+        </section>
         <section class="content">
-
 <?php
     }
     if (!isset($translated_script)) {
