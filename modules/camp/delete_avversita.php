@@ -26,31 +26,31 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
 $message = "Sei sicuro di voler rimuovere ?";
-$titolo="Cancella la Coltura";
+$titolo="Cancella l' avversità";
 if (isset($_POST['Delete']))
     {
-        $result = gaz_dbi_del_row($gTables['camp_colture'], "id_colt", $_POST['id_colt']);
-        header("Location: admin_colt.php");
+        $result = gaz_dbi_del_row($gTables['camp_avversita'], "id_avv", $_POST['id_avv']);
+        header("Location: admin_avv.php");
         exit;
     }
 
 if (isset($_POST['Return']))
         {
-        header("Location: admin_colt.php");
+        header("Location: admin_avv.php");
         exit;
         }
 
 if (!isset($_POST['Delete']))
     {
-    $id_colt= $_GET['id_colt'];
-    $form = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $id_colt);
+    $id_avv= $_GET['id_avv'];
+    $form = gaz_dbi_get_row($gTables['camp_avversita'], "id_avv", $id_avv);
     }
 
 require("../../library/include/header.php"); HeadMain();
 ?>
 <form method="POST">
-<input type="hidden" name="id_colt" value="<?php print $id_colt?>">
-<div align="center"><font class="FacetFormHeaderFont">Attenzione!!! Eliminazione coltivazione  ID: <?php print $id_colt; ?> </font></div>
+<input type="hidden" name="id_avv" value="<?php print $id_avv?>">
+<div align="center"><font class="FacetFormHeaderFont">Attenzione!!! Eliminazione avversità  ID: <?php print $id_avv; ?> </font></div>
 <table border="0" cellpadding="3" cellspacing="1" class="FacetFormTABLE" align="center">
 <tr>
 <td colspan="2" class="FacetDataTDred">
@@ -64,12 +64,12 @@ if (! $message == "")
 </tr>
 <tr>
 <tr>
-<td class="FacetFieldCaptionTD">ID coltivazione &nbsp;</td>
-<td class="FacetDataTD"> <?php print $form["id_colt"]; ?>&nbsp;</td>
+<td class="FacetFieldCaptionTD">ID avversità &nbsp;</td>
+<td class="FacetDataTD"> <?php print $form["id_avv"]; ?>&nbsp;</td>
 </tr>
 <tr>
-<td class="FacetFieldCaptionTD">Nome coltivazione &nbsp;</td>
-<td class="FacetDataTD"><?php print $form["nome_colt"] ?>&nbsp;</td>
+<td class="FacetFieldCaptionTD">Nome avversità &nbsp;</td>
+<td class="FacetDataTD"><?php print $form["nome_avv"] ?>&nbsp;</td>
 </tr>
 
 <td colspan="2" align="right">Se sei sicuro conferma l'eliminazione &nbsp;

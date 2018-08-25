@@ -22,7 +22,7 @@
     Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
  --------------------------------------------------------------------------
 */
-// ANTONIO GERMANI   >>> aggiungi o modifcica coltura  <<<
+// ANTONIO GERMANI   >>> aggiungi o modifcica avversità  <<<
 
 require("../../library/include/datlib.inc.php");
 
@@ -40,56 +40,56 @@ if (!isset($_POST['ritorno'])) {
     $_POST['ritorno'] = $_SERVER['HTTP_REFERER'];
 }
 
-if ((isset($_GET['Update']) and  !isset($_GET['id_colt'])) or isset($_POST['Return'])) {
+if ((isset($_GET['Update']) and  !isset($_GET['id_avv'])) or isset($_POST['Return'])) {
     header("Location: ".$_POST['ritorno']);
     exit;
 }
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
-    $form=gaz_dbi_parse_post('camp_colture');
+    $form=gaz_dbi_parse_post('camp_avversita');
     // Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
       
        if ($toDo == 'insert') { // controllo se il codice esiste se e' un inserimento 
-          $rs_ctrl = gaz_dbi_get_row($gTables['camp_colture'],'id_colt',$form['id_colt']); 
+          $rs_ctrl = gaz_dbi_get_row($gTables['camp_avversita'],'id_avv',$form['id_avv']); 
           if ($rs_ctrl){
              $msg .= "4+";
           }
        }
-       if (empty($form['nome_colt'])){  //descrizione vuota
+       if (empty($form['nome_avv'])){  //descrizione vuota
              $msg .= "3+";
        }
        if ($msg == "") {// nessun errore        
           
           if ($toDo == 'update') { // e' una modifica
-		  $query="UPDATE " . $gTables['camp_colture'] . " SET nome_colt = '"  .$form['nome_colt']. "' WHERE id_colt ='". $form["id_colt"] ."'"; 
+		  $query="UPDATE " . $gTables['camp_avversita'] . " SET nome_avv = '"  .$form['nome_avv']. "' WHERE id_avv ='". $form["id_avv"] ."'"; 
 			gaz_dbi_query ($query) ;
 		  
           } else { // e' un'inserimento
-            gaz_dbi_table_insert('camp_colture',$form);
+            gaz_dbi_table_insert('camp_avversita',$form);
           }
           header("Location: ".$_POST['ritorno']);
           exit;
        }
   }
 } elseif ((!isset($_POST['Update'])) and (isset($_GET['Update']))) { //se e' il primo accesso per update
-    $camp_colture = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$_GET['id_colt']);
+    $camp_avversita = gaz_dbi_get_row($gTables['camp_avversita'],"id_avv",$_GET['id_avv']);
     $form['ritorno'] = $_POST['ritorno'];
-    $form['id_colt'] = $camp_colture['id_colt'];
-    $form['nome_colt'] = $camp_colture['nome_colt'];
+    $form['id_avv'] = $camp_avversita['id_avv'];
+    $form['nome_avv'] = $camp_avversita['nome_avv'];
     
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $rs_ultimo_id_colt = gaz_dbi_dyn_query("*", $gTables['camp_colture'], 1 ,'id_colt desc',0,1);
-    $ultimo_id_colt = gaz_dbi_fetch_array($rs_ultimo_id_colt);
-    $form['id_colt'] = $ultimo_id_colt['id_colt']+1;
-    $form['nome_colt'] = "";
+    $rs_ultimo_id_avv = gaz_dbi_dyn_query("*", $gTables['camp_avversita'], 1 ,'id_avv desc',0,1);
+    $ultimo_id_avv = gaz_dbi_fetch_array($rs_ultimo_id_avv);
+    $form['id_avv'] = $ultimo_id_avv['id_avv']+1;
+    $form['nome_avv'] = "";
     
 }
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 if ($toDo == "update") {
-   $title = ucwords($script_transl[$toDo].$script_transl[0])." n.".$form['id_colt'];
+   $title = ucwords($script_transl[$toDo].$script_transl[0])." n.".$form['id_avv'];
 } else {
    $title = ucwords($script_transl[$toDo].$script_transl[0]);
 }
@@ -112,16 +112,17 @@ if (!empty($msg)) {
     echo '<tr><td colspan="5" class="FacetDataTDred">'.$message."</td></tr>\n";
 }
 if ($toDo == 'update') {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id_colt\" value=\"".$form['id_colt']."\" />".$form['id_colt']."</td></tr>\n";
+   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"hidden\" name=\"id_avv\" value=\"".$form['id_avv']."\" />".$form['id_avv']."</td></tr>\n";
 } else {
-   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"id_colt\" value=\"".$form['id_colt']."\" maxlength=\"3\" size=\"3\" /></td></tr>\n";
+   print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"id_avv\" value=\"".$form['id_avv']."\" maxlength=\"3\" size=\"3\" /></td></tr>\n";
 }
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"nome_colt\" value=\"".$form['nome_colt']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[2]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"nome_avv\" value=\"".$form['nome_avv']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+
 print "<tr>";
 if ($toDo !== 'update') {
-	print "<td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n</td>";
+print "<td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n</td>";	
 }
-print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
+print "<td class=\"FacetDataTD\" align=\"right\">\n";
 print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";
 if ($toDo == 'update') {
    print '<input type="submit" accesskey="m" name="ins" id="preventDuplicate" onClick="chkSubmit();" value="'.strtoupper($script_transl['update']).'!"></td></tr><tr></tr>';

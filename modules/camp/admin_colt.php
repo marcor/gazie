@@ -77,10 +77,10 @@ $recordnav -> output();
 <?php
 	$result = gaz_dbi_dyn_query ('*', $gTables['camp_colture'], $where, $orderby, $limit, $passo);
 	// creo l'array (header => campi) per l'ordinamento dei record
-	$headers_catmer = array("ID"      => "id_colt",
+	$headers_colt = array("ID"      => "id_colt",
 							"Nome coltura" => "nome_colt"							
 							);
-	$linkHeaders = new linkHeaders($headers_catmer);
+	$linkHeaders = new linkHeaders($headers_colt);
 	$linkHeaders -> output();
 ?>
         	</tr>

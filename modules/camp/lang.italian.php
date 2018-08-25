@@ -45,6 +45,13 @@ $strScript = array("browse_document.php" =>
 		"Descrizione coltura vuota",
 		"Codice già utilizzato"
     ),
+	"admin_avversita.php" =>
+    array(" avversità ",
+        "ID ",
+		"Descrizione avversità ",
+		"Descrizione avversità vuota",
+		"Codice già utilizzato"
+    ),
     "report_artico.php" =>
     array('title' => 'Lista delle merci e dei servizi',
         'codice' => "Codice",
