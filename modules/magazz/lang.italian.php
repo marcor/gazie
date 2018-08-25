@@ -424,7 +424,7 @@ $strScript = array("browse_document.php" =>
         )
     ),
     "admin_artico_compost.php" =>
-    array('title' => 'Gestione degli articoli',
+    array('title' => 'Gestione degli articoli composti',
         'ins_this' => 'Inserimento articolo',
         'upd_this' => 'Modifica l\'articolo ',
         'mod_this' => 'Inserisci e modifica l\'articolo composto : ',
