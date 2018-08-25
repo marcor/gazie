@@ -69,7 +69,7 @@ require("../../modules/root/lang.".$admin_aziend['lang'].".php");
                </form>-->
               <ul class="control-sidebar-menu">
                 <?php
-            $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' click DESC, last_use DESC', 0, 15);
+            $result   = gaz_dbi_dyn_query("*", $gTables['menu_usage'], ' company_id="' . $admin_aziend['company_id'] . '" AND adminid="' . $admin_aziend["user_name"] . '" ', ' click DESC, last_use DESC', 0, 20);
             if (gaz_dbi_num_rows($result) > 0) {
                 while ($r = gaz_dbi_fetch_array($result)) {
                     $rref = explode('-', $r['transl_ref']);

@@ -26,7 +26,14 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
 
-$codice = $_GET['codice'];
+if ( !isset($ritorno) )
+    $ritorno = $_SERVER['HTTP_REFERER'];
+
+if ( !isset($codice) && isset($_GET['codice']) )
+    $codice = $_GET['codice'];
+else 
+    $codice = "";
+
 if ( !isset($_POST['cosear']) ) $form['cosear'] = $codice;
 else $form['cosear'] = $_POST['cosear'];
 
@@ -38,7 +45,7 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
-if ( isset($_GET['Insert']) ) {
+if ( isset($_GET['Insert']) && $codice!="") {
     $form["codice_composizione"] = $codice;
     $form["codice_artico_base"] = $_GET['add'];
     $form["quantita_artico_base"] = "1";
@@ -62,7 +69,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
-if ( $_POST['submit']=="Salva") {
+if ( isset($_POST['submit']) && $_POST['submit']=="Salva") {
     $qta = $_POST['qta'];
     foreach ( $qta as $val => $v ) {
         gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
@@ -72,8 +79,7 @@ if ( $_POST['submit']=="Salva") {
 ?>
 <form method="POST" name="form" enctype="multipart/form-data">
 <?php
-    echo '<input type="hidden" name="ritorno" value="' . $form['ritorno'] . '" />';
-    echo '<input type="hidden" name="ref_code" value="' . $form['ref_code'] . '" />';
+    echo '<input type="hidden" name="ritorno" value="' . $ritorno . '" />';
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
     if (count($msg['err']) > 0) { // ho un errore
         $gForm->gazHeadMessage($msg['err'], $script_transl['err'], 'err');
@@ -162,15 +168,15 @@ if ( $_POST['submit']=="Salva") {
                                 <td data-title="<?php echo $script_transl["codice"]; ?>">
                                     <?php
                                         if ( $row["good_or_service"] != 2 ) {
-                                            echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&add='.$row['codice'].'&codice='.$codice.'" ><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$row['codice'].'</a>';
+                                            echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&add='.$row['codice'].'&codice='.$codice.'" ><i class="glyphicon glyphicon-menu-left"></i>&nbsp;'.$row['codice'].'</a>';
                                         } else {
-                                            echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&codice='.$row['codice'].'" ><i class="glyphicon glyphicon-edit"></i>&nbsp;'.$row['codice'].'</a>';
+                                            echo '<a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?Insert&codice='.$row['codice'].'" ><i class="glyphicon glyphicon-menu-up"></i>&nbsp;'.$row['codice'].'</a>';
                                         }
 
                                     ?>
                                 </td>
                                 <td data-title="<?php echo $script_transl["good_or_service"]; ?>" class="text-center">
-                                    <?php echo $ldoc; ?> &nbsp;   <i class="glyphicon glyphicon-<?php echo $gooser_i; ?>"></i> 
+                                    <?php //echo $ldoc; ?> &nbsp;   <i class="glyphicon glyphicon-<?php echo $gooser_i; ?>"></i> 
                                 </td>
                                 <td data-title="<?php echo $script_transl["descri"]; ?>">
                                     <span class="gazie-tooltip" data-type="product-thumb" data-id="<?php echo $row["codice"]; ?>" data-label="<?php echo $row['annota']; ?>"><?php echo $row["descri"]; ?></span>

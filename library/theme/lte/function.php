@@ -261,9 +261,34 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
       <section class="content-header">       
          <?php
             global $gTables, $module;
+            $pos="";
             $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
             $posizione = array_pop( $posizione );
             
+            if ( strpos($posizione, "?") ) {
+                $pos = explode ("?", $posizione);
+                if ( is_array($pos) ) $pos = $pos[0];
+            }
+            $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'"', ' id_bread',0,999);
+            $row = gaz_dbi_fetch_array($res_pos);
+        if ( gaz_dbi_num_rows($res_pos)>0 ) {  
+            
+                echo "<h1>";
+                echo "<a href='".$row['link']."'>".$row['titolo']."</a>";
+                echo "</h1>";          
+
+                echo "<ol class='breadcrumb'>";              
+                echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a></li>";
+                while ( $row = gaz_dbi_fetch_array($res_pos) ) {
+                    //echo count($row);
+                    //print_r($row);
+                    //die();             
+                    echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
+                }
+                echo "</ol>";
+
+        } else {
+
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
 			if ( strpos($posizione, "VOG")!==false ) $posizione = "report_broven.php?auxil=VOR";
             
@@ -313,6 +338,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                     echo "</ol>";
                 }
             }
+        }
          ?>
          
       </section>

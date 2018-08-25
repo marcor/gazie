@@ -40,6 +40,16 @@ CREATE TABLE IF NOT EXISTS `gaz_camp_uso_fitofarmaci` (
   `dose` decimal(8,3) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+CREATE TABLE `gaz_breadcrumb` (
+	`id_bread` INT(11) NOT NULL AUTO_INCREMENT,
+	`file` VARCHAR(255) NOT NULL DEFAULT '0' COLLATE 'latin1_swedish_ci',
+	`titolo` VARCHAR(255) NOT NULL DEFAULT '0' COLLATE 'latin1_swedish_ci',
+	`link` VARCHAR(255) NOT NULL DEFAULT '0' COLLATE 'latin1_swedish_ci',
+	INDEX `Indice 1` (`id_bread`)
+)
+COLLATE='utf8_general_ci' ENGINE=MyISAM AUTO_INCREMENT=3;
+INSERT INTO `gaz_breadcrumb` (`id_bread`, `file`, `titolo`, `link`) VALUES (1, 'admin_artico_compost.php', 'Gestione articoli composti', '../../modules/magazz/admin_artico_compost.php');
+INSERT INTO `gaz_breadcrumb` (`id_bread`, `file`, `titolo`, `link`) VALUES (2, 'admin_artico_compost.php', 'Gestione merci e servizi', '../../modules/magazz/report_artico.php');
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_resp` TINYINT(1) NOT NULL AFTER `print_map`;
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_service_descri` VARCHAR(100) NOT NULL COMMENT 'Descrizione del servizio esternalizzato, verrà riportato sulla nomina a responsabile esterno del trattamento dei dati' AFTER `external_resp`;

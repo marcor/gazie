@@ -43,7 +43,7 @@ $month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio"
 $tn = array('admin', 'admin_config', 'admin_module', 'anagra', 'aziend', 'classroom', 'config',
     'country', 'currencies', 'currency_history', 'destina', 'camp_avversita', 'camp_colture', 
 	'camp_fitofarmaci', 'camp_uso_fitofarmaci',	'languages', 'menu_module', 'menu_script', 'menu_usage', 
-	'module', 'municipalities', 'provinces', 'regions', 'staff_absence_type', 'staff_work_type', 'students');
+	'module', 'municipalities', 'provinces', 'regions', 'staff_absence_type', 'staff_work_type', 'students', "breadcrumb");
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $v;
 }

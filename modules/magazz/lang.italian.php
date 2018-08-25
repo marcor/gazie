@@ -427,7 +427,7 @@ $strScript = array("browse_document.php" =>
     array('title' => 'Gestione degli articoli composti',
         'ins_this' => 'Inserimento articolo',
         'upd_this' => 'Modifica l\'articolo ',
-        'mod_this' => 'Inserisci e modifica l\'articolo composto : ',
+        'mod_this' => 'Articolo composto : ',
         'err' => array(
             'codice' => 'Il codice articolo &egrave; gi&agrave; esistente',
             'movmag' => 'Si st&agrave; tentando di modificare il codice ad un articolo con dei movimenti di magazzino associati',
