@@ -1,5 +1,24 @@
 <?php
 
+function bc_get_current_path( $posizione ) {
+    $intpos=0;
+    $found=false;
+    foreach ( $posizione as $posizione_modulo ) {
+        if ( $posizione_modulo == "modules" || $found) {
+            $found=true;
+            $intpos++;
+            $pos .= $posizione_modulo.'/';
+        }
+    }
+    $pos = rtrim($pos,"/");
+
+    if ( strpos($pos, "?") ) {
+        $pos = explode ("?", $pos);
+        if ( is_array($pos) ) $pos = $pos[0];
+    }
+    return $pos;
+}
+
 function gettitolo($uri) {
     $part = explode("/",$uri);
     $part = explode(".",$part[2]);
@@ -262,13 +281,10 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
         <?php
         global $gTables, $module;
         $pos="";
-        $posizione = explode( '/',$_SERVER['REQUEST_URI'] );
+        $posizione = explode( '/',$_SERVER['REQUEST_URI'] );     
+        $pos = bc_get_current_path($posizione);
         $posizione = array_pop( $posizione );
-        
-        if ( strpos($posizione, "?") ) {
-            $pos = explode ("?", $posizione);
-            if ( is_array($pos) ) $pos = $pos[0];
-        }
+
         $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'.$pos.'"', ' id_bread',0,999);
         if ( gaz_dbi_num_rows($res_pos)>0 ) {             
             $row = gaz_dbi_fetch_array($res_pos);
@@ -276,7 +292,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "<a href='".$row['link']."'>".$row['titolo']."</a>";
             echo "</h1>";          
             echo "<ol class='breadcrumb'>";              
-            echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php'><i class='glyphicon glyphicon-cog'></i></a></li>";
+            echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
             while ( $row = gaz_dbi_fetch_array($res_pos) ) {
                 echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
             }
@@ -305,7 +321,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                 //da fare salvare i moduli più usati tramite la stella
                 //echo "<li><a><i class=\"fa fa-star-o\"></i></a>";
                 
-                echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php'><i class='glyphicon glyphicon-cog'></i></a></li>";
+                echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
                 //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-question\"></i></a></li>";
                 while ($r = gaz_dbi_fetch_array($result2)) {
                     if ( $admin_aziend["Abilit"]>=$r["accesskey"] )
@@ -323,7 +339,7 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
                     $posizionex = explode ("?",$posizione );
                     $result4    = gaz_dbi_dyn_query("*", $gTables['menu_script'] , ' link like "%'.$posizionex[0].'%" ',' id',0,99);
                     echo "<ol class=\"breadcrumb\">";
-                    echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php'><i class='glyphicon glyphicon-cog'></i></a></li>";
+                    echo "<li><a href=\"../../modules/root/admin.php\"><i class=\"fa fa-home\"></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
                     //echo "<li><a href=\"../../modules/".$module."/docume_".$module.".php\"><i class=\"fa fa-help\"></i></a></li>";
                     while ($r = gaz_dbi_fetch_array($result4)) {
                         if ( $admin_aziend["Abilit"]>=$r["accesskey"] )

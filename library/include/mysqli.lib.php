@@ -577,7 +577,7 @@ function gaz_dbi_table_update($table, $id, $newValue) {
    } else { //altrimenti uso "codice"
       $query .= " WHERE codice = $quote_id$id$quote_id";
    }
-   //msgDebug($query);
+   msgDebug($query);
    $result = mysqli_query($link, $query);
    if (!$result)
       die("Error gaz_dbi_table_update:<b> $query </b>" . mysqli_error($link));

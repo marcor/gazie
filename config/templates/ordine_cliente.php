@@ -106,6 +106,13 @@ class OrdineCliente extends Template
                 case "6":
                     $this->writeHtmlCell(186,6,10,$this->GetY(),$rigo['descri'],1,1);
                     break;
+                case "14":
+                    $this->Cell(25, 6, "",1,0,'L'); //$rigo['codart']
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
+                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
+                    $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    $this->Cell(58, 6, "",1,1,'R');
+                    break;
                 }
        }
     }

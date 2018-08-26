@@ -69,7 +69,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
-if ( isset($_POST['submit']) && $_POST['submit']=="Salva") {
+if ( isset($_POST['submit']) && $_POST['submit']=="Salva" ) {
     $qta = $_POST['qta'];
     foreach ( $qta as $val => $v ) {
         gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
