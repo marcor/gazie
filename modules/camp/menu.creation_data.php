@@ -54,8 +54,8 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
 											6=>array(
                                                     array('translate_key'=>13,'link'=>"admin_avv.php",'weight'=>1),
                                                     array('translate_key'=>14,'link'=>"admin_colt.php",'weight'=>5),
-													array('translate_key'=>15,'link'=>"admin_usofito.php",'weight'=>6),
-													array('translate_key'=>11,'link'=>"update_fitofarmaci.php",'weight'=>10)
+													array('translate_key'=>15,'link'=>"admin_usofito.php",'weight'=>10),
+													array('translate_key'=>11,'link'=>"update_fitofarmaci.php",'weight'=>15)
                                                     )
                                             )
                                )

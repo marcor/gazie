@@ -18,7 +18,8 @@ if ($camp_mod){
 	// aggiungo le 3 nuove voci di menù di 3° livello
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_fitofarmaci.php'), 'admin_avv.php', '', '', 13, '', 1  FROM `gaz_menu_script`");
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_fitofarmaci.php'), 'admin_colt.php', '', '', 14, '', 5  FROM `gaz_menu_script`");
-	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_fitofarmaci.php'), 'update_fitofarmaci.php', '', '', 11, '', 10  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_fitofarmaci.php'), 'admin_usofito.php', '', '', 15, '', 10  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_fitofarmaci.php'), 'update_fitofarmaci.php', '', '', 11, '', 15  FROM `gaz_menu_script`");
 	echo "Ho modificato il menù del modulo <b>Registro di campagna</b>";
 }
 ?>
