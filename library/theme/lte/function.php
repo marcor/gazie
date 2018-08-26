@@ -2,6 +2,7 @@
 
 function bc_get_current_path( $posizione ) {
     $intpos=0;
+    $pos="";
     $found=false;
     foreach ( $posizione as $posizione_modulo ) {
         if ( $posizione_modulo == "modules" || $found) {

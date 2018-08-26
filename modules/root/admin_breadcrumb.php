@@ -26,15 +26,15 @@
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
+if ( isset($_GET['url'])) {
+    $form['file'] = $_GET['url'];
+}
+if ( isset($_POST['submit']) ){
+    $form['title'] = $_POST['title'];
+    $form['link'] = $_POST['link'];
+}
 
-$form['file'] = $_GET['url'];
-$form['title'] = $_POST['title'];
-$form['link'] = $_POST['link'];
-
-require("../../library/include/header.php");
-$script_transl = HeadMain();
-
-if ( $_POST['add'] ) {
+if ( isset($_POST['add']) ) {
     $form['link'] = "../../".$form['file'];
     gaz_dbi_table_insert('breadcrumb',$form);
     header("Location: ../root/admin_breadcrumb.php?url=".$form['file'] );
@@ -52,6 +52,9 @@ if ( isset( $_GET['del']) && $_GET['del']>0 ) {
     gaz_dbi_del_row($gTables['breadcrumb'], 'id_bread', $_GET['del'] );
     header("Location: ../root/admin_breadcrumb.php?url=".$form['file'] );
 }
+
+require("../../library/include/header.php");
+$script_transl = HeadMain();
 
 ?>
 <form method="POST" name="form">
