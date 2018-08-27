@@ -454,7 +454,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 		$xslDoc->load("../../library/include/fatturaordinaria_v1.2.1.xsl");
 		$xslt = new XSLTProcessor();
 		$xslt->importStylesheet($xslDoc);
-		require("../../library/include/footer.php");
+		//require("../../library/include/footer.php");
 		echo $xslt->transformToXML($doc);
 	}
 } else { // all'inizio chiedo l'upload di un file xml o p7m 
@@ -475,7 +475,8 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
 <?php
-	require("../../library/include/footer.php");
+	
 }
+require("../../library/include/footer.php");
 ?>
 
