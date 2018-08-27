@@ -735,6 +735,39 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $mv = $upd_mm->getStockValue(false, $form['in_codart'], $form['annemi'] . '-' . $form['mesemi'] . '-' . $form['gioemi'], $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
                 $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $artico['scorta'];
+
+                if ($artico['good_or_service']==2 ) {
+                    $whe_dis = "codice_composizione = '".$form['in_codart']."'";
+                    $res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
+                    while ($row_dis = gaz_dbi_fetch_array($res_dis)) {
+                        $next_row++;
+                        $result2 = gaz_dbi_dyn_query('*', $gTables['artico'], " codice = '".$row_dis['codice_artico_base']."'", 'codice', 0, PER_PAGE);
+                        $row2 = gaz_dbi_fetch_array($result2);
+                        $form['rows'][$next_row]['lot_or_serial'] = 0;
+                        $form['rows'][$next_row]['id_lotmag'] = 0;
+                        $form['rows'][$next_row]['tiprig'] = 14;
+                        $form['rows'][$next_row]['id_mag'] = "";
+                        $form['rows'][$next_row]['status'] = "INSERT";
+                        $form['rows'][$next_row]['scorta'] = 0;
+                        $form['rows'][$next_row]['codart'] = $row2['codice'];
+                        $form['rows'][$next_row]['descri'] = $row2['descri'];
+                        $form['rows'][$next_row]['unimis'] = $row2['unimis'];
+                        $form['rows'][$next_row]['prelis'] = 0;
+                        $form['rows'][$next_row]['quanti'] = $row_dis['quantita_artico_base'];
+                        $form['rows'][$next_row]['id_doc'] = "";
+                        $form['rows'][$next_row]['quanti'] = 0;
+                        $form['rows'][$next_row]['prelis'] = 0;
+                        $form['rows'][$next_row]['codric'] = 0;
+                        $form['rows'][$next_row]['sconto'] = 0;
+                        $form['rows'][$next_row]['pervat'] = 0;
+                        $form['rows'][$next_row]['tipiva'] = 0;
+                        $form['rows'][$next_row]['ritenuta'] = 0;
+                        $form['rows'][$next_row]['codvat'] = 0;
+                        $form['rows'][$next_row]['annota'] = "";
+                        $form['rows'][$next_row]['pesosp'] = 0;
+                    }
+                }
+
             } elseif ($form['in_tiprig'] == 1) { //rigo forfait
                 $form['rows'][$next_row]['codart'] = "";
                 $form['rows'][$next_row]['annota'] = "";
@@ -1456,6 +1489,7 @@ foreach ($form['rows'] as $k => $v) {
     }
     $descrizione = htmlentities($v['descri'], ENT_QUOTES);
     ;
+
     echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['tiprig'] . "\" name=\"rows[$k][tiprig]\">\n";
@@ -1661,6 +1695,39 @@ foreach ($form['rows'] as $k => $v) {
 					<td></td>
 					<td></td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
+        case "14":
+            if ($v['scorta'] < 0) {
+                //$scorta_col = 'FacetDataTDsmallRed';
+                $btn_class = 'btn-danger';
+            } else {
+                //$scorta_col = 'FacetDataTDsmall';
+                $btn_class = 'btn-default';
+            }
+            echo '	<td>
+					
+			  	</td>
+                                <td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
+					<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
+						<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
+					</button>
+			 	</td>
+				<td>
+		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
+			   	</td>
+			    <td>
+					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
+				</td>
+				<td>
+					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+                </td>';
+            echo "<td></td>\n";
+            echo "<td></td>\n";
+            echo "<td></td>\n";
+            echo "<td class=\"text-right\"></td>\n";
+            echo "<td class=\"text-right\"></td>\n";
+            echo "<td class=\"text-right\"></td>\n";
+            $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
     }
     echo '  <td class="text-right">

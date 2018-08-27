@@ -76,8 +76,8 @@ $script_transl = HeadMain();
     } else {
         echo "<br>no data<br><br>";
     }
+    echo '<input type="submit" class="btn btn-default btn-xs" name="submit" value="save" autofocus>';
     echo '<input type="submit" class="btn btn-default btn-xs" name="add" value="add">';
-    echo '<input type="submit" class="btn btn-default btn-xs" name="submit" value="save">';
     ?>
 </form>
 <?php

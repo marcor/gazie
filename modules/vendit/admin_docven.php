@@ -1044,30 +1044,32 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$nr]['ritenuta'] = 0;
                 }
                 if ($artico['good_or_service']==2 ) {
-                    $where = "codice_composizione = '".$form['in_codart']."'";
-                    $result = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $where, 'id', 0, PER_PAGE);
-                    while ($row = gaz_dbi_fetch_array($result)) {
+                    $whe_dis = "codice_composizione = '".$form['in_codart']."'";
+                    $res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
+                    while ($row = gaz_dbi_fetch_array($res_dis)) {
                         $next_row++;
                         $result2 = gaz_dbi_dyn_query('*', $gTables['artico'], " codice = '".$row['codice_artico_base']."'", 'codice', 0, PER_PAGE);
                         $row2 = gaz_dbi_fetch_array($result2);
                         $form['rows'][$next_row]['lot_or_serial'] = 0;
                         $form['rows'][$next_row]['id_lotmag'] = 0;
                         $form['rows'][$next_row]['tiprig'] = 14;
-                        $form['rows'][$next_row]['descri'] = $form['in_descri'];
-                        $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
+                        $form['rows'][$next_row]['descri'] = "";
+                        $form['rows'][$next_row]['id_mag'] = "";
                         $form['rows'][$next_row]['status'] = "INSERT";
-                        $form['rows'][$next_row]['scorta'] = '';
-                        $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
+                        $form['rows'][$next_row]['scorta'] = 0;
+                        $form['rows'][$next_row]['ritenuta'] = "";
                         $form['rows'][$next_row]['codart'] = $row2['codice'];
                         $form['rows'][$next_row]['descri'] = $row2['descri'];
                         $form['rows'][$next_row]['unimis'] = $row2['unimis'];
-
-                        //$form['rows'][$next_row]['prelis'] = number_format($form['in_prelis'], $admin_aziend['decimal_price'], '.', '');
-                        $form['rows'][$next_row]['codric'] = $form['in_codric'];
+                        $form['rows'][$next_row]['codric'] = "";
                         $form['rows'][$next_row]['quanti'] = $row['quantita_artico_base'];
-                        $form['rows'][$next_row]['sconto'] = $form['in_sconto'];
-                        //echo $artico['good_or_service'];
-                        //die();
+                        $form['rows'][$next_row]['sconto'] = "";
+                        $form['rows'][$next_row]['codvat'] = "";
+                        $form['rows'][$next_row]['pervat'] = "";
+                        $form['rows'][$next_row]['tipiva'] = "";
+                        $form['rows'][$next_row]['annota'] = "";
+                        $form['rows'][$next_row]['pesosp'] = "";
+                        $form['rows'][$next_row]['gooser'] = 0;
                     }
                 }
             } elseif ($form['in_tiprig'] == 1) { //forfait
@@ -2215,7 +2217,7 @@ foreach ($form['rows'] as $k => $v) {
             <td></td>
             <td></td>
             <td></td>\n";
-            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            //$last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "90": //ventita cespite - alienazione bene ammortizzabile
             /*
