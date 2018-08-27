@@ -755,7 +755,6 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['rows'][$next_row]['prelis'] = 0;
                         $form['rows'][$next_row]['quanti'] = $row_dis['quantita_artico_base'];
                         $form['rows'][$next_row]['id_doc'] = "";
-                        $form['rows'][$next_row]['quanti'] = 0;
                         $form['rows'][$next_row]['prelis'] = 0;
                         $form['rows'][$next_row]['codric'] = 0;
                         $form['rows'][$next_row]['sconto'] = 0;

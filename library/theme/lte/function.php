@@ -293,11 +293,11 @@ function HeadMain($idScript = '', $jsArray = '', $alternative_transl = false, $c
             echo "<h1>";
             echo "<a href='".$row['link']."'>".$row['titolo']."</a>";
             echo "</h1>";          
-            echo "<ol class='breadcrumb'>";              
-            echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
+            echo "<ol class='breadcrumb'>";           
             while ( $row = gaz_dbi_fetch_array($res_pos) ) {
                 echo "<li><a href='".$row['link']."'>".$row['titolo']."</a></li>";
             }
+            echo "<li><a href='../../modules/root/admin.php'><i class='fa fa-home'></i></a>&nbsp;<a href='../../modules/root/admin_breadcrumb.php?url=".$pos."'><i class='glyphicon glyphicon-cog'></i></a></li>";
             echo "</ol>";
         } else { 
             if ( $posizione == "report_received.php" ) $posizione = "report_scontr.php";
