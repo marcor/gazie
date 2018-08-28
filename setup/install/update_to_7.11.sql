@@ -189,7 +189,8 @@ CREATE TABLE `gaz_XXXregistro_trattamento_dati` (
 ) COMMENT='Registro dei trattamenti (ex art.30 Regolamento UE 2016/679 - GDPR)' ENGINE=MyISAM DEFAULT CHARSET=utf8;
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `type_mov` INT(1) NOT NULL DEFAULT '0' COMMENT 'Quaderno di campagna: 1=si 0=no  ' AFTER `caumag`;
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `campo_coltivazione` INT(3) NOT NULL DEFAULT '0' COMMENT 'Ref.alla colonna codice della tabella gaz_001campi' AFTER `scorig`;
-ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `avversita` VARCHAR(50) NOT NULL COMMENT 'Utilizzato su quaderno di campagna' AFTER `campo_coltivazione`;
+ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `id_avversita` INT(3) NOT NULL DEFAULT '0' COMMENT 'Utilizzato da quaderno di campagna' AFTER `campo_coltivazione`;
+ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `id_colture` INT(3) NOT NULL DEFAULT '0' COMMENT 'Utilizzato da quaderno di campagna' AFTER `id_avversita`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `codice_fornitore` VARCHAR(50) NOT NULL AFTER `descri`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `dose_massima` DECIMAL(8,3) NOT NULL DEFAULT '0' COMMENT 'Utilizzato in quaderno di campagna' AFTER `volume_specifico`;
 ALTER TABLE `gaz_XXXartico`	ADD COLUMN `rame_metallico` DECIMAL(8,3) NOT NULL DEFAULT '0' COMMENT 'Utilizzato in quaderno di campagna' AFTER `dose_massima`;
@@ -204,6 +205,7 @@ ALTER TABLE `gaz_XXXrigdoc`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Re
 ALTER TABLE `gaz_XXXrigmoc`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Ref. alla tabella gaz_001orderman (produzioni-contabilità industriale) ' DEFAULT '0' AFTER `import`;
 ALTER TABLE `gaz_XXXmovmag`	ADD COLUMN `id_orderman` INT(9) NOT NULL COMMENT 'Ref. alla tabella gaz_001orderman (produzioni-contabilità industriale) ' AFTER `id_lotmag`;
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `campo_impianto` INT(3) NOT NULL COMMENT 'Se valorizzata questa referenza assegna l\'ordine/commessa/produzione ad un impianto specifico, ovvero al campo del modulo camp (se azienda agricola)' AFTER `id_tesbro`;
+ALTER TABLE `gaz_XXXorderman` ADD COLUMN `id_colture` INT(3) NOT NULL COMMENT 'Utilizzato dal modulo camp (Registro di campagna) per riferire la produzione ad una particolare coltura' AFTER `campo_impianto`;
 ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `fattura_elettronica_original_name` VARCHAR(100) NULL DEFAULT NULL AFTER `id_con`,	ADD COLUMN `fattura_elettronica_original_content` MEDIUMBLOB NULL DEFAULT NULL AFTER `fattura_elettronica_original_name`;
 CREATE TABLE `gaz_XXXdistinta_base` ( `id` INT(9) UNSIGNED ZEROFILL NOT NULL AUTO_INCREMENT,
 	`codice_composizione` VARCHAR(15) NOT NULL COMMENT 'è il codice dell\'articolo composito',
