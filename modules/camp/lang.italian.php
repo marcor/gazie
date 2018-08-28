@@ -52,6 +52,18 @@ $strScript = array("browse_document.php" =>
 		"Descrizione avversità vuota",
 		"Codice già utilizzato"
     ),
+	"admin_usofito.php" =>
+    array(" Modalità uso fitofarmaco ",
+        "ID ",
+		"Nome fitofarmaco ",
+		"Coltura",
+		"Avversità",
+		"Dose",
+		"Codice già utilizzato",
+		"Coltura inesistente",
+		"Articolo inesistente",
+		"Avversità inesistente"
+    ),
     "report_artico.php" =>
     array('title' => 'Lista delle merci e dei servizi',
         'codice' => "Codice",

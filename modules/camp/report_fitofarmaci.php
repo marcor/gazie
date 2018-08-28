@@ -38,20 +38,98 @@ if (isset($_GET['auxil'])) {
 }
 if (isset($_GET['all'])) {
    $auxil = "&all=yes";
-   $where = "descri like '%'";
+   $where = "cod_art like '%'";
    $passo = 100000;
 } else {
    if (isset($_GET['auxil'])) {
-      $where = "descri like '".addslashes($_GET['auxil'])."%'";
+      $where = "cod_art like '".addslashes($_GET['auxil'])."%'";
    }
 }
 
 if (!isset($_GET['auxil'])) {
    $auxil = "";
-   $where = "descri like '".addslashes($auxil)."%'";
+   $where = "cod_art like '".addslashes($auxil)."%'";
 }
 
-echo "in costruzione";
+?>
+<div align="center" class="FacetFormHeaderFont">Modalità d'uso dei fitofarmaci</div>
+<?php
+$recordnav = new recordnav($gTables['camp_uso_fitofarmaci'], $where, $limit, $passo);
+$recordnav -> output();
+?>
+<form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+    <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
+    	<thead>
+            <tr>
+                <td></td>
+                <td class="FacetFieldCaptionTD">Nome fitofarmaco:
+                    <input type="text" name="auxil" value="<?php if ($auxil != "&all=yes") echo $auxil; ?>" maxlength="6" size="10" tabindex="1" class="FacetInput" />
+					<input type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value=1;" />
+                
+                    <input type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value=1;" />
+					
+                </td>
+                <td align="center">               
+				<a class="btn btn-xs btn-default" href="admin_usofito.php?insert" title="Aggiungi nuovo uso fitofarmaco">
+					<i class="glyphicon glyphicon-plus-sign"></i> Aggiungi
+				</a>
+			</td>
+            </tr>
+            <tr>
+<?php
+	$result = gaz_dbi_dyn_query ('*', $gTables['camp_uso_fitofarmaci'], $where, $orderby, $limit, $passo);
+	// creo l'array (header => campi) per l'ordinamento dei record
+	$headers_avv = array("ID"      => "id",
+							"Nome fitofarmaco" => "cod_art",	
+							"Coltura" => "id_colt",
+							"Avversità" => "id_avv",
+							"Dose" => "dose"
+							);
+	$linkHeaders = new linkHeaders($headers_avv);
+	$linkHeaders -> output();
+?>
+        	</tr>
+        </thead>
+        <tbody>
+<?php
+while ($a_row = gaz_dbi_fetch_array($result)) {
+?>		<tr class="FacetDataTD">
+			<td>
+				<a class="btn btn-xs btn-success btn-block" title="Modifica" href="admin_usofito.php?Update&id=<?php echo $a_row["id"]; ?>">
+					<i class="glyphicon glyphicon-edit"></i>&nbsp;<?php echo $a_row["id"];?>
+				</a>
+			</td>
+			<td>
+				<span class="gazie-tooltip" data-type="catmer-thumb" data-id="<?php echo $a_row['id']; ?>" data-title="<?php echo $a_row['cod_art']; ?>"><?php echo $a_row["cod_art"]; ?></span>
+			</td>
+			<?php
+			$res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $a_row['cod_art']);$unimis=$res2['uniacq'];
+			$res = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $a_row['id_colt']);
+			?>
+			<td>
+				<span><?php echo $res["nome_colt"]; ?></span>
+			</td>
+			<?php
+			$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avv']);
+			?>
+			<td>
+				<span><?php echo $res["nome_avv"]; ?></span>
+			</td>
+			<td>
+				<span><?php echo number_format ($a_row["dose"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/ha"; ?></span>
+			</td>
+			<td align="center">
+				<a class="btn btn-xs btn-default btn-elimina" title="Elimina" href="delete_fitofarmaci.php?id=<?php echo $a_row["id"]; ?>">
+					<i class="glyphicon glyphicon-remove"></i>
+				</a>				
+			</td>
+		</tr>
+<?php
+}
+?>
+    	</tbody>
+    </table>
+    <?php
 ?>
 
 <?php    
