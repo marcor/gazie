@@ -450,13 +450,21 @@ if ($toDo=='insert' || $toDo=='update' ) {
 </form>
 <?php			
 	}
+	if (substr($_SESSION['theme'],-2)!='te'){ 
+		/* se non ho "lte" come motore di interfaccia allora richiamo subito il footer
+		 * della pagina e poi visualizzo l'xml altrimenti non mi fa il submit del form */
+		require("../../library/include/footer.php");
+	}
 	if ($f_ex) {	// visualizzo la fattura elettronica in calce
 		$xslDoc = new DOMDocument();
 		$xslDoc->load("../../library/include/fatturaordinaria_v1.2.1.xsl");
 		$xslt = new XSLTProcessor();
 		$xslt->importStylesheet($xslDoc);
-		//require("../../library/include/footer.php");
 		echo $xslt->transformToXML($doc);
+	}
+	if (substr($_SESSION['theme'],-3)=='lte'){ 
+		// footer  richiamato alla fine in caso di utilizzo di lte 
+		require("../../library/include/footer.php");
 	}
 } else { // all'inizio chiedo l'upload di un file xml o p7m 
 ?>
@@ -476,8 +484,7 @@ if ($toDo=='insert' || $toDo=='update' ) {
 	</div> <!-- chiude container -->
 </div><!-- chiude panel -->
 <?php
-	
+	require("../../library/include/footer.php");
 }
-require("../../library/include/footer.php");
 ?>
 
