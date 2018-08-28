@@ -717,7 +717,7 @@ if (!empty($msg)) {
         }
         $message .= "<br />";
     }
-    echo '<tr><td colspan="5" class="FacetDataTDred">' . $message . "</td></tr>\n";
+    echo '<tr><td colspan="3" class="FacetDataTDred">' . $message . "</td></tr>\n";
 }
 
 ?>
@@ -751,7 +751,7 @@ if (!empty($msg)) {
   </script>
  <!-- fine autocompletamento -->
  <?php
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td colspan=\"3\" class=\"FacetDataTD\"\n>";
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td colspan=\"1\" class=\"FacetDataTD\"\n>";
 ?>
       <input class="col-sm-5" id="autocomplete2" type="text" value="<?php echo $form['description'] ?>" name="description" maxlength="30" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete2 -->	  
 <script>
@@ -765,7 +765,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td col
 <?php	
 /* fine inserisci produzione  */
 
-/*Antonio Germani campo coltivazione  */
+/*Antonio Germani CAMPO coltivazione  */
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"campo_coltivazione\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 echo "<option value=\"\">-------------</option>\n";
@@ -780,9 +780,9 @@ while ($row = gaz_dbi_fetch_array($result)) {
 echo "</select>&nbsp;";
 // prendo la dimesione del campo
 $item = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
-echo "Superficie: ",gaz_format_quantity($item["ricarico"],1,$admin_aziend['decimal_quantity'])," ha";
-
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
+echo "Superficie: ",gaz_format_quantity($item["ricarico"],1,$admin_aziend['decimal_quantity'])," ha</tr>";
+//   CAUSALE
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 echo "<option value=\"\">-------------</option>\n";
 $result = gaz_dbi_dyn_query("*", $gTables['caumag'], " 1 ", "codice desc, descri asc");
@@ -804,7 +804,7 @@ for ($counter = -1; $counter <= 1; $counter++) {
     echo "<option value=\"$counter\" $selected > " . $strScript["admin_caumag.php"][$counter + 9] . "</option>\n";
 }
 echo "</td></tr>";
-
+// DATA della REGISTRAZIONE
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
@@ -830,10 +830,10 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
         $selected = "selected";
     echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
-echo "\t </select></td>\n";
+echo "\t </select></td></tr>\n";
 
- /* Antonio Germani qui si seleziona la data di attuazione */      	
-echo "</td><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">\n";
+ /* Antonio Germani qui si seleziona la DATA di ATTUAZIONE */      	
+echo "<tr></td><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"giodoc\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
     $selected = "";
@@ -861,66 +861,6 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 echo "\t </select></td></tr>\n"; 
 /* fine qui si seleziona la data di attuazione */
 
-/** ENRICO FEDELE 
-// antonio Germani echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[3] . "&hArr;" . $script_transl[4] . "</td><td class=\"FacetDataTD\">\n";
-$messaggio = "";
-$ric_mastro = substr($form['clfoco'][$form['mov']], 0, 3);
-echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"" . $form['clfoco'][$form['mov']] . "\">\n";
-echo "\t<input type=\"hidden\" name=\"clorfo\" value=\"" . $form['clorfo'] . "\">\n";
-$rs_partner = "(codice between " . $admin_aziend['mascli'] . "000001 and " . $admin_aziend['mascli'] . "999999 or codice between " . $admin_aziend['masfor'] . "000001 and " . $admin_aziend['masfor'] . "999999 )";
-if ($form['clorfo'] < 0) { // cliente
-    $rs_partner = "(codice between " . $admin_aziend['mascli'] . "000001 and " . $admin_aziend['mascli'] . "999999 )";
-} elseif ($form['clorfo'] > 0) {// fornitore
-    $rs_partner = "(codice between " . $admin_aziend['masfor'] . "000001 and " . $admin_aziend['masfor'] . "999999 )";
-}
-if ($form['clfoco'][$form['mov']] == 0) {
-    if (strlen($form['search_partner']) >= 2) {
-        $anagrafica = new Anagrafica();
-        $partner = $anagrafica->queryPartners("*", $rs_partner . " and ragso1 like '" . addslashes($form['search_partner']) . "%'", "codice asc, ragso1 asc");
-        if (sizeof($partner) > 0) {
-            $clifor = $script_transl[5];
-           //Antonio Germani echo "\t<select name=\"clfoco\" class=\"FacetSelect\" onchange=\"this.form.hidden_req.value='new_price'; this.form.submit();\">\n";
-            echo "<option value=\"000000000\"> ---------- </option>";
-			foreach ($partner AS $key => $row) {
-                $selected = "";
-                if ($row["codice"] == $form['clfoco'][$form['mov']]) {
-                    $selected = "selected";
-                }
-                if (substr($row["codice"], 0, 3) == $admin_aziend['masfor']) {
-                    $clifor = $script_transl[6];
-                }
-               //Antonio Germani echo "\t\t <option value=\"" . $row["codice"] . "\" $selected >" . $row["ragso1"] . " " . $row["citspe"] . "&nbsp;($clifor)</option>\n";
-            }
-           //Antonio Germani echo "\t </select>\n";
-        } else {
-           // $messaggio = ucfirst($script_transl['notfound']) . " !";
-        }
-    } else {
-       // $messaggio = ucfirst($script_transl['minins']) . " 2 " . $script_transl['charat'] . "!";
-    }
-    //Antonio Germani echo "\t<input type=\"text\" name=\"search_partner\" accesskey=\"e\" value=\"" . $form['search_partner'] . "\" maxlength=\"15\" size=\"9\" class=\"FacetInput\">\n";
-    echo $messaggio;
-    //echo "\t <input type=\"image\" align=\"middle\" accesskey=\"c\" name=\"search\" src=\"../../library/images/cerbut.gif\">\n";
-    /** ENRICO FEDELE */
-    /* Cambio l'aspetto del pulsante per renderlo bootstrap, con glyphicon */
-   //Antonio Germani echo '&nbsp;<button type="submit" class="btn btn-default btn-sm" name="search" accesskey="c"><i class="glyphicon glyphicon-search"></i></button>';
-    /** ENRICO FEDELE 
-} else {
-    $anagrafica = new Anagrafica();
-    $partner = $anagrafica->getPartner($form['clfoco']);
-    //Antonio Germani  echo "<input type=\"submit\" value=\"" . substr($partner['ragso1'], 0, 30) . "\" name=\"newpartner\" title=\"" . ucfirst($script_transl['update']) . "!\">\n";
-    //Antonio Germani  echo "\t<input type=\"hidden\" name=\"clfoco\" value=\"" . $form['clfoco'] . "\">\n";
-    //Antonio Germani  echo "\t<input type=\"hidden\" name=\"search_partner\" value=\"" . $form['search_partner'] . "\">\n";
-}
-if (substr($form['clfoco'][$form['mov']], 0, 3) == $admin_aziend['masfor']) {
-    $unimis = "uniacq";
-} else {
-    $unimis = "unimis";
-}
-*/
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td>";
-/* Antonio Germani -  avversità */
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['avversita'] . "\" maxlength=\"50\" size=\"35\" name=\"avversita\"></td></tr>";
 ?>
 <!-- Antonio Germani inizio script autocompletamento dalla tabella mysql artico	-->	
   <script>
@@ -997,7 +937,7 @@ if ($form['artico'][$form['mov']] == "") {
 			if ($dose>0) {echo "dose: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
 		}  
 }
-?>
+?></tr><tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl[12]; ?></td>
 <td class="FacetDataTD" ><input type="text" value="<?php echo $form['quanti'][$form['mov']];?>" maxlength="10" size="10" name="quanti<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo "&nbsp;".$print_unimis;?>
 <?php
@@ -1037,11 +977,17 @@ if ($form['artico'][$form['mov']] == "") {
 	}
 echo "</select>&nbsp;"; 
 echo "</td></tr>\n";
+// Annotazione
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td></tr>";
+/* Antonio Germani -  avversità */
+echo "</tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['avversita'] . "\" maxlength=\"50\" size=\"35\" name=\"avversita\"></td></tr>";
+
 $print_magval=""; $scorta=""; $dose=""; // le azzero perché altrimenti me le ritrovo nell'eventuale movimento/riga successivo
 /* Antonio Germani riattivo il prezzo e lo sconto che nel quaderno di campagna servono */
 $importo_totale=($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.', $form['quanti'][$form['mov']])))-((($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.', $form['quanti'][$form['mov']])))*$form['scorig'][$form['mov']])/100);
 ?>
-<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?></td><td class="FacetDataTD" colspan="3"><input type="text" value="<?php echo number_format ($importo_totale,$admin_aziend['decimal_price'], ',', ''); ?>" name="total" size="20" readonly /><?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;". $script_transl[31]; ?>
+<!-- COSTO MOVIMENTO  -->
+<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?></td><td class="FacetDataTD" colspan="1"><input type="text" value="<?php echo number_format ($importo_totale,$admin_aziend['decimal_price'], ',', ''); ?>" name="total" size="20" readonly /><?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;". $script_transl[31]; ?>
 <input type="text" value="<?php echo number_format ($form['prezzo'][$form['mov']],$admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" size="12" name="prezzo<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " ".$admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[14] . "&nbsp;"; ?>
 <input type="text" value="<?php echo $form['scorig'][$form['mov']];?>" maxlength="4" size="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " %" . "&nbsp;&nbsp;&nbsp;"; ?></td></tr>
 <tr><td style="font-size:5pt;" colspan="4"><?php echo $form['mov']+1; ?></td></tr>
@@ -1054,12 +1000,12 @@ $importo_totale=($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.'
 
 
 /*ANtonio Germani - visualizzo l'operatore */
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[21]."</td><td class=\"FacetDataTD\" colspan=\"3\">".$form["adminid"]."</td>\n"; 
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[21]."</td><td class=\"FacetDataTD\" colspan=\"1\">".$form["adminid"]."</td>\n"; 
 /* fine visualizzo l'operatore */
-echo "</select></td></tr><tr><td colspan=\"2\"><input type=\"submit\" name=\"cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
+echo "</select></td></tr><tr><td colspan=\"1\"><input type=\"submit\" name=\"cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
 
 echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
-echo "</td><td align=\"right\">\n";
+echo "</td><td align=\"right\" colspan=\"1\">\n";
 if ($toDo !== 'update') { 
 	If ($form['artico'][$form['mov']] <> "") {
 		echo "<input type=\"submit\" name=\"Add_mov\" value=\"" . $script_transl['add'] . "\">\n";
@@ -1067,7 +1013,6 @@ if ($toDo !== 'update') {
 	If ($form['nmov']>0){
 		echo "<input type=\"submit\" title=\"Togli ultimo movimento\" name=\"Del_mov\" value=\"X\">\n";
 	}
-	echo "</td><td align=\"center\">\n";
 }
 if ($toDo == 'update') {
     echo '<input type="submit" accesskey="m" name="Insert" value="' . strtoupper($script_transl['update']) . '!"></td></tr><tr></tr>';
