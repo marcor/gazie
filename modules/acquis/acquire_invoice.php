@@ -142,6 +142,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 				$f_ex=false; // non è visualizzabile
 			} else if (@$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] ) { // la partita IVA del cliente non coincide con la mia 
 				$msg['err'][] = 'not_mine';
+				$f_ex=false; // non la visualizzo perché non è una mia fattura
 			} else {
 				// controllo se ho il fornitore in archivio
 				$form['partner_cost']=$admin_aziend['impacq']; 
