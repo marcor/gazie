@@ -235,6 +235,7 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
       switch ($_GET['li']) {
          case '0':
             $price = $row['preacq'];
+            $row['unimis'] = $row['uniacq'];
             break;
          case '1':
             $price = $row['preve1'];
@@ -255,8 +256,8 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
       $pdf->SetFillColor($color[0], $color[1], $color[2]);
 
       /* Celle con riempimento */
-      $pdf->Cell(30, 4, $row['codart'], 1, 0, 'L', true);
-      $pdf->Cell(100, 4, $row['desart'], 1, 0, 'L', true);
+      $pdf->Cell(30, 4, $row['codart'], 1, 0, 'L', true, '', 1);
+      $pdf->Cell(100, 4, $row['desart'], 1, 0, 'L', true, '', 1);
       $pdf->Cell(10, 4, $row['unimis'], 1, 0, 'L', true);
       $pdf->Cell(20, 4, number_format($price, $admin_aziend['decimal_price'], ',', '.'), 1, 0, 'R', true);
       $sconto=$row['sconto'];
@@ -267,7 +268,7 @@ if (!isset($_GET['ts']) || $_GET['ts'] == 0) { // vecchio layout di stampa
       $aliquotaIva=$row['aliquo'];
       $importo=$prezzoScontato*(1+$aliquotaIva/100);
       $pdf->Cell(20, 4, number_format($importo, $admin_aziend['decimal_price'], ',', '.'), 1, 0, 'R', true);
-      $pdf->Cell(50, 4, $row['descat'], 1, 1, 'C', true); /* A capo dopo questa cella */
+      $pdf->Cell(50, 4, $row['descat'], 1, 1, 'C', true, '', 1); /* A capo dopo questa cella */
 //      $ctrlcatmer = $row["catmer"];
    }
 }
