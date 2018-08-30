@@ -58,7 +58,7 @@ $User = "root";
 // Parola d'ordine necessaria per accedere alla base di dati
 // in qualità di utente $User.
 //
-$Password = "";
+$Password = "root";
 //
 // Porta sulla quale è in ascolto il database (normalmente 3306 per mysql, 3307 per mariadb)
 $Port = 3306;

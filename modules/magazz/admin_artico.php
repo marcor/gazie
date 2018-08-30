@@ -186,11 +186,11 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $msg['err'][] = 'lotmag';
         }
 		// controllo che non ci siano caratteri speciali sul codice articolo (danno problemi con l'inventario)
-		$pattern = '/[\'\/~`\!@#\$%\^&\*\(\) \+=\{\}\[\]\|;:"\<\>,\.\?\\\]/';
+		/*$pattern = '/[\'\/~`\!@#\$%\^&\*\(\) \+=\{\}\[\]\|;:"\<\>,\.\?\\\]/';
         if (preg_match($pattern, $form["codice"],$match)) {
 			$form["codice"] = str_replace($match,'_',$form["codice"]);
             $msg['err'][] = 'char';
-        }
+        }*/
         if (count($msg['err']) == 0) { // nessun errore
             if ($_FILES['userfile']['size'] > 0) { //se c'e' una nuova immagine nel buffer
 				if ($largeimg==0){

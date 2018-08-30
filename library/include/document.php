@@ -70,7 +70,12 @@ class DocContabVars {
         $this->perbollo = 0;
         $this->iva_bollo = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['taxstamp_vat']);
         $this->client = $anagrafica->getPartner($tesdoc['clfoco']);
-        $this->descri_partner = 'Cliente';
+        if ( $this->client['country']!=="IT" ) {
+            $this->descri_partner = 'Customer';
+        } else {
+            $this->descri_partner = 'Cliente';
+        }
+
         if (substr($tesdoc['clfoco'], 0, 3) == $admin_aziend['masfor']) {
             $this->descri_partner = 'Fornitore';
         }
@@ -177,7 +182,11 @@ class DocContabVars {
                 $this->docRelDate = $this->tesdoc["datemi"];    // Data del documento relativo
         }
         $this->withoutPageGroup = false;
-		$this->pers_title = 'Spett.le';
+        if ( $this->client['country']!=="IT") {
+            $this->pers_title = 'Dear';
+        } else {
+            $this->pers_title = 'Spett.le';
+        }
     }
 
     function initializeTotals() {
