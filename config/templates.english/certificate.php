@@ -35,23 +35,23 @@ class Certificate extends Template {
         if ($this->tesdoc['tipdoc'] == 'FAD' || substr($this->tesdoc['tipdoc'], 0, 2) == 'DD') {
             $this->descridoc = ' D.d.T. n.';
         } elseif ($this->tesdoc['tipdoc'] == 'VCO' && $this->tesdoc['numfat'] > 0) {
-            $this->descridoc = ' Scontrino n.' . $this->tesdoc['numdoc'];
+            $this->descridoc = ' Receipt n.' . $this->tesdoc['numdoc'];
             $this->tesdoc['numdoc'] = $this->tesdoc['numfat'];
-            $this->descridoc .= ' con allegata fattura n.';
+            $this->descridoc .= ' with attached invoice n.';
         } elseif ($this->tesdoc['tipdoc'] == 'VCO') {
-            $this->descridoc = ' Scontrino n.';
-            $this->cliente1 = 'Cliente anonimo';
+            $this->descridoc = ' Receipt n.';
+            $this->cliente1 = 'Anonymous customer';
         } else {
-            $this->descridoc = ' Fattura n.';
+            $this->descridoc = ' Invoice n.';
         }
-        $this->tipdoc = "Documenti, certificati d'origine, dichiarazioni di prestazione";
-        $this->destinazione = array(' I prodotti sono stati venduti con: ', $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno);
+        $this->tipdoc = "Documents, certificates of origin, declarations of performance";
+        $this->destinazione = array(' The products have been sold with: ', $this->descridoc . $this->tesdoc['numdoc'] . '/' . $this->tesdoc['seziva'] . ' del ' . $this->giorno . '-' . $this->mese . '-' . $this->anno);
     }
 
     function newPage() {
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore, 0, 2)), hexdec(substr($this->colore, 2, 2)), hexdec(substr($this->colore, 4, 2)));
-        $this->MultiCell(0, 8, 'Nel ringraziarVi per la fiducia accordataci con il Vostro acquisto alleghiamo alla presente i documenti di origine relativi ai prodotti di seguito elencati:', 0, 'L', 0, 1);
+        $this->MultiCell(0, 8, 'In thanking you for the trust placed in us with your purchase, we attach here the original documents relating to the products listed below:', 0, 'L', 0, 1);
         $this->Ln(6);
         $this->SetFont('helvetica', '', 9);
         $this->Cell(100, 6, 'Codice - Descrizione del materiale', 1, 0, 'L', 1);

@@ -66,15 +66,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     
 }
 
-require("../../library/include/header.php");
-$script_transl = HeadMain();
-
 if ( isset($_POST['submit']) && $_POST['submit']=="Salva" ) {
     $qta = $_POST['qta'];
     foreach ( $qta as $val => $v ) {
         gaz_dbi_table_update ("distinta_base", array ("0"=>"id","1"=>$val), array("quantita_artico_base"=>$v) );
     }
+    header ( 'location: ../magazz/report_artico.php');
 }
+
+require("../../library/include/header.php");
+$script_transl = HeadMain();
+
+
 
 ?>
 <form method="POST" name="form" enctype="multipart/form-data">
@@ -102,7 +105,7 @@ if ( isset($_POST['submit']) && $_POST['submit']=="Salva" ) {
                         $result = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $where, 'id', 0, PER_PAGE);
    
                         //preparo la variabile where per la prossima query
-                        $where = " codice<>'".$codice."'";
+                        $where = " codice<>'".$codice."' and good_or_service<>2";
    
                         if ( gaz_dbi_num_rows($result)==0 ) {
                             echo 'non ci sono articoli';
