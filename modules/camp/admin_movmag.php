@@ -53,6 +53,22 @@ function getItemPrice($item, $partner = 0) {
     return CalcolaImportoRigo(1, $price, $sconto, $admin_aziend['decimal_price']);
 }
 
+// Antonio Germani questo serve per la ricerca avversità
+if (isset($_POST['nome_avv'])){
+	$form['mov']=$_POST['mov'];
+	$form['nmov']=$_POST['nmov'];
+	for ($m = 0; $m <= $form['nmov']; ++$m){
+		$form['nome_avv'][$m] = $_POST['nome_avv'.$m];
+		$form['id_avversita'][$m] = intval ($form['nome_avv'][$m]);
+	}
+}
+	
+// Antonio Germani questo serve per la ricerca colture
+if (isset($_POST['nome_colt'])){
+		$form['nome_colt'] = $_POST['nome_colt'];
+		$form['id_colture'] = intval ($form['nome_colt']);		
+}	
+
 // Antonio Germani questo serve per la nuova ricerca articolo
 if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 	$form['mov']=$_POST['mov'];
@@ -63,6 +79,8 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['prezzo'][$m] = $_POST['prezzo'.$m];
 		$form['clfoco'][$m] = $_POST['clfoco'.$m];
+		$form['nome_avv'][$m] = $_POST['nome_avv'.$m];
+		$form['id_avversita'][$m] = intval ($form['nome_avv'][$m]);
 		if (isset ($_POST['staff'.$m])){
 			$form['staff'][$m] = $_POST['staff'.$m];
 		} else {
@@ -93,7 +111,7 @@ if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
     $toDo = 'insert';
 }
 
-if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo accesso per UPDATE
+if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo accesso per UPDATE
     $form['hidden_req'] = '';
 	$form['mov']=0;
 	$form['nmov']=0;
@@ -128,7 +146,14 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     }*/
     $form['tipdoc'] = $result['tipdoc'];
     $form['desdoc'] = $result['desdoc'];
-    $form['avversita'] = $result['avversita'];
+	$form['id_colt'] = $result['id_colture'];
+	$form['id_avv'] = $result['id_avversita'];
+    $form['id_avversita'][$form['mov']] = $result['id_avversita'];
+	$form['id_colture'] = $result['id_colture'];
+	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colt']);
+	$form['nome_colt'] = $form['id_colt']." - ".$colt['nome_colt'];
+	$avv = gaz_dbi_get_row($gTables['camp_avversita'],"id_avv",$form['id_avv']);
+	$form['nome_avv'][$form['mov']] = $form['id_avv']." - ".$avv['nome_avv'];
 	$form['scochi'] = $result['scochi'];
     $form['giodoc'] = substr($result['datdoc'], 8, 2);
     $form['mesdoc'] = substr($result['datdoc'], 5, 2);
@@ -166,7 +191,6 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
     $form['mesdoc'] = intval($_POST['mesdoc']);
     $form['anndoc'] = intval($_POST['anndoc']);
 	$form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
-    $form['avversita'] = substr($_POST['avversita'],0,50);
 	    
     $form['quanti'][$form['mov']] = gaz_format_quantity($_POST['quanti'.$form['mov']], 0, $admin_aziend['decimal_quantity']);
 	if ((isset($_POST['prezzo'.$form['mov']])>0) && (strlen ($_POST['prezzo'.$form['mov']])>0)) {
@@ -187,12 +211,35 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 		$form['campo_coltivazione']=$rs_orderman['campo_impianto'];
 	}
 	$form['search_partner'] = "";
-  //  $form['search_item'] = $_POST['search_item'];
-    // Se viene inviata la richiesta di conferma della causale la carico con le relative contropartite...
-    /** ENRICO FEDELE */
-    /* Con button non funziona _x */
-    //if (isset($_POST['inscau_x'])) {
-    /** ENRICO FEDELE */
+	
+// Antonio Germani - se è stato inserito un campo di coltivazione si inserisce automaticamente la coltura
+if (isset ($_POST['campo_coltivazione'])and $form['id_colture']==0) {
+	$res = gaz_dbi_get_row($gTables['campi'], "codice", $_POST['campo_coltivazione']);
+		if ($res['id_colture']>0){
+			$form['id_colture']=$res['id_colture'];
+			$res = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $form['id_colture']);
+			$form['nome_colt']=$form['id_colture']." - ".$res['nome_colt'];
+		}
+	}	
+// fine inserimento automatico coltura		
+	
+// Antonio Germani controllo e avviso se è stata cambiata la coltura nel campo di coltivazione
+if (isset($_POST['nome_colt'])){
+			if ($form['campo_coltivazione']>0){ // se c'è un campo di coltivazione
+				$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
+				if ($result['id_colture']<>$form['id_colture']){ // se è stata cambiata la coltura avviso	
+echo "nella tabella: ",$result['id_colture'], " nel form: ",$form['id_colture'];
+					?>
+					<div class="alert alert-warning alert-dismissible">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+					<strong>Warning!</strong> La coltura non è quella presente nel campo di coltivazione. Verrà modificata la coltura nel campo di coltivazione!
+					</div>
+					<?php
+				}
+			}
+}
+// fine controllo e avviso
+
     if (isset($_POST['caumag'])) {          
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
         $form['operat'] = $causa['operat'];
@@ -351,12 +398,12 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){
 				// siccome ha già registrato il movimento di magazzino devo togliere 1
 				$id_movmag=$id_movmag-1;
 			}		
-		$query="UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 .  "' , campo_coltivazione = '"  .$form['campo_coltivazione']. "' , avversita = '"  .$form['avversita']. "' , id_orderman = '"  .$form['id_orderman']. "' WHERE id_mov ='". $id_movmag."'"; 
+		$query="UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 .  "' , campo_coltivazione = '"  .$form['campo_coltivazione']. "' , id_avversita = '"  .$form['id_avversita'][$form['mov']]. "' , id_colture = '"  .$form['id_colture']. "' , id_orderman = '"  .$form['id_orderman']. "' WHERE id_mov ='". $id_movmag."'"; 
 			gaz_dbi_query ($query) ;
 					
 // Antonio Germani - aggiorno la tabella campi se c'è un campo inserito (cioè >0) e se l'operazione è uno scarico (cioè operat<0) e se la data di fine sospensione già presente nel campo è inferiore alla data di sospensione del prodotto appena usato (cioè $fine_sosp<$dt)
 
-//Antonio Germani per prima cosa determino il codice del movimento eventualmente andra nella tabella del campo di coltivazione
+//Antonio Germani per prima cosa determino il codice del movimento che eventualmente andrà nella tabella del campo di coltivazione
 if (!isset($_POST['Update'])){
 // Antonio Germani se è un iserimento vedo quale sarà il prossimo codice del movimento del magazzino che verrà utilizzato !NB il codice è incremental!
 $query="SHOW TABLE STATUS LIKE '".$gTables['movmag']."'"; 
@@ -385,11 +432,21 @@ else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codi
 		if (intval($fine_sosp)<intval($dt)) {
 			$dt=date('Y/m/d', $dt);	
 			$codcamp=$form['campo_coltivazione'];
-			$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt .  "' , codice_prodotto_usato = '"  .$artico. "' , id_mov = '"  .$id_mov.  "' WHERE codice ='". $codcamp."'";
+			$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt .  "' , codice_prodotto_usato = '"  .$artico. "' , id_mov = '"  .$id_mov. "' , id_colture = '"  .$form['id_colture']. "' WHERE codice ='". $codcamp."'";
 			gaz_dbi_query ($query) ;
 		}
 	}
-// fine gestione giorno di sospensione tabella campi 
+// fine gestione giorno di sospensione tabella campi
+
+// aggiornare tabella campi se è stata cambiata la coltura
+if ($form['campo_coltivazione']>0){ // se c'è un campo di coltivazione
+	$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);	
+	if ($result['id_colture']<>$form['id_colture']){ // se è stato cambiato lo aggiorno
+		$query="UPDATE " . $gTables['campi'] . " SET id_colture = '" .$form['id_colture']. "' WHERE codice ='". $form['campo_coltivazione'] ."'";
+			gaz_dbi_query ($query) ;
+	}
+}
+// fine aggiorna campi coltura 
 
 // INIZIO gestione registrazione database operai
 If (intval($form['staff'][$form['mov']])>0){
@@ -463,8 +520,7 @@ $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' 
 					$v['hours_normal']=$hours_normal;
 					$v['id_orderman']=$id_orderman;
 					gaz_dbi_table_insert('staff_worked_hours', $v);
-				}
-			
+				}		
 		}
 	} else {
 		
@@ -544,6 +600,7 @@ If ($toDo <> "update") { // se non è un update
         }
     } 
 // §§§§§§§§§§§§§§§§§§§§  FINE salvataggio sui database §§§§§§§§§§§§§§§§§§§
+
 } elseif (!isset($_POST['Insert'])) {//se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
     //registri per il form della testata
@@ -565,8 +622,11 @@ If ($toDo <> "update") { // se non è un update
     $form['mesdoc'] = date("m");
     $form['anndoc'] = date("Y");
     $form['scochi'] = 0;
-	$form['avversita'] = "";
+	$form['id_colture'] = 0;
+	$form['nome_colt'] = "";
 	$form['mov']=0;
+	$form['nome_avv'][$form['mov']] = "";
+	$form['id_avversita'][$form['mov']] = 0;
     $form['artico'][$form['mov']] = "";
     $form['quanti'][$form['mov']] = "";
     $form['prezzo'][$form['mov']] = 0;
@@ -591,6 +651,8 @@ if (isset($_POST['Add_mov'])){
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['staff'][$m]=intval($_POST['staff'.$m]);
 		$form['clfoco'][$m]= $_POST['clfoco'.$m];
+		$form['nome_avv'][$m] = $_POST['nome_avv'.$m];
+		$form['id_avversita'][$m] = $_POST['id_avversita'.$m];
 	}
 	$form['nmov']=$form['nmov']+1;
 	$form['artico'][$form['nmov']] = "";
@@ -599,6 +661,8 @@ if (isset($_POST['Add_mov'])){
 	$form['scorig'][$form['nmov']] = 0;
 	$form['staff'][$form['nmov']]= "";
 	$form['clfoco'][$form['nmov']]= 0;
+	$form['nome_avv'][$form['nmov']]= "";
+	$form['id_avversita'][$form['nmov']]= 0;
 	
 } 
 if (isset($_POST['Del_mov'])) {
@@ -660,7 +724,8 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     $form['mesdoc'] = date("m");
     $form['anndoc'] = date("Y");
     $form['scochi'] = 0;
-	$form['avversita'] = "";
+	$form['id_avversita'][$form['mov']] = 0;
+	$form['id_colture'] = 0;
 	$form['nmov']= 0;
 	$form['mov']=0;
     $form['artico'][$form['mov']] = "";
@@ -778,9 +843,10 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
 } 
 echo "</select>&nbsp;";
-// prendo la dimesione del campo
+// prendo la dimesione del campo 
 $item = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
 echo "Superficie: ",gaz_format_quantity($item["ricarico"],1,$admin_aziend['decimal_quantity'])," ha</tr>";
+
 //   CAUSALE
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
 echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -804,6 +870,45 @@ for ($counter = -1; $counter <= 1; $counter++) {
     echo "<option value=\"$counter\" $selected > " . $strScript["admin_caumag.php"][$counter + 9] . "</option>\n";
 }
 echo "</td></tr>";
+
+/* Antonio Germani -  COLTURA */
+?>
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_colture	-->	
+  <script>
+	$(document).ready(function() {
+	$("input#autocomplete4").autocomplete({
+		source: [<?php
+	$stringa="";
+	$query="SELECT * FROM ".$gTables['camp_colture'];
+	$result = gaz_dbi_query($query);
+	while($row = $result->fetch_assoc()){
+		$stringa.="\"".$row['id_colt']." - ".$row['nome_colt']."\", ";			
+	}
+	$stringa=substr($stringa,0,-2);
+	echo $stringa;
+	?>],
+		minLength:2,
+	select: function(event, ui) {
+        //assign value back to the form element
+        if(ui.item){
+            $(event.target).val(ui.item.value);
+        }
+        //submit the form
+        $(event.target.form).submit();
+    }
+	});
+	});
+  </script>
+ <!-- fine autocompletamento -->
+ <?php
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[33]."</td><td class=\"FacetDataTD\"\n>";
+?>
+     <input id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" size="50"/>
+	 <input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colture"/>
+	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete4 -->	 
+<?php
+/* fine coltura */
+
 // DATA della REGISTRAZIONE
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -859,7 +964,10 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
     echo "\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
 echo "\t </select></td></tr>\n"; 
-/* fine qui si seleziona la data di attuazione */
+// fine data di attuazione 
+
+// ANNOTAZIONE o DESCRIZIONE DOCUMENTO 
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td></tr>";
 
 ?>
 <!-- Antonio Germani inizio script autocompletamento dalla tabella mysql artico	-->	
@@ -899,7 +1007,6 @@ echo "\t </select></td></tr>\n";
 		 echo "<input type=\"hidden\" name=\"mov\" value=\"" . $form['mov'] . "\">\n";
 		 
  /* Antonio Germani questo non serve al quaderno di campagna
- echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td>";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[10] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scochi'] . "\" maxlength=\"5\" size=\"5\" name=\"scochi\" onChange=\"this.form.submit\"> %</td></tr>";
 */
 //però devo metterlo come nascosto altrimenti mi segnala un warning su 'scochi'
@@ -977,10 +1084,44 @@ if ($form['artico'][$form['mov']] == "") {
 	}
 echo "</select>&nbsp;"; 
 echo "</td></tr>\n";
-// Annotazione
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['desdoc'] . "\" maxlength=\"50\" size=\"35\" name=\"desdoc\"></td></tr>";
-/* Antonio Germani -  avversità */
-echo "</tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[20] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['avversita'] . "\" maxlength=\"50\" size=\"35\" name=\"avversita\"></td></tr>";
+
+/* Antonio Germani -  AVVERSITà */
+?>
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_avversita	-->	
+  <script>
+	$(document).ready(function() {
+	$("input#autocomplete3").autocomplete({
+		source: [<?php
+	$stringa="";
+	$query="SELECT * FROM ".$gTables['camp_avversita'];
+	$result = gaz_dbi_query($query);
+	while($row = $result->fetch_assoc()){
+		$stringa.="\"".$row['id_avv']." - ".$row['nome_avv']."\", ";			
+	}
+	$stringa=substr($stringa,0,-2);
+	echo $stringa;
+	?>],
+		minLength:2,
+	select: function(event, ui) {
+        //assign value back to the form element
+        if(ui.item){
+            $(event.target).val(ui.item.value);
+        }
+        //submit the form
+        $(event.target.form).submit();
+    }
+	});
+	});
+  </script>
+ <!-- fine autocompletamento -->
+ <?php
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[20]."</td><td class=\"FacetDataTD\"\n>";
+?>
+     <input id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov'] ?>" maxlength="50" size="50"/>
+	 <input type="hidden" value="<?php echo intval ($form['nome_avv'][$form['mov']]); ?>" name="id_avversita<?php echo $form['mov'] ?>"/>
+	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->	 
+<?php
+/* fine avversità */
 
 $print_magval=""; $scorta=""; $dose=""; // le azzero perché altrimenti me le ritrovo nell'eventuale movimento/riga successivo
 /* Antonio Germani riattivo il prezzo e lo sconto che nel quaderno di campagna servono */

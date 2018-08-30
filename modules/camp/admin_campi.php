@@ -45,6 +45,8 @@ if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Retur
 
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il primo accesso
     $form=gaz_dbi_parse_post('campi');
+	$form['nome_colt'] = $_POST['nome_colt'];
+	$form['id_colture']= intval ($_POST['nome_colt']);
 	// Se viene inviata la richiesta di conferma totale ...
     if (isset($_POST['ins'])) {
        if (! empty($_FILES['userfile']['name'])) {
@@ -95,6 +97,9 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['codice'] = $campi['codice'];
     $form['descri'] = $campi['descri'];
     $form['web_url'] = $campi['web_url'];
+	$form['id_colture'] = $campi['id_colture'];
+	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colture']);
+	$form['nome_colt'] = $form['id_colture']." - ".$colt['nome_colt'];
     $form['annota'] = $campi['annota'];
     $form['ricarico'] = str_replace('.', ',',$campi["ricarico"]);
 	$form['giorno_decadimento'] =$campi['giorno_decadimento'];
@@ -108,6 +113,8 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
     $form['descri'] = '';
     $form['ricarico'] = 0;
     $form['web_url']='';
+	$form['id_colture']= 0;
+	$form['nome_colt']="";
     $form['annota'] = '';
 	$form['giorno_decadimento'] ='0000-00-00 00:00:00';
 	$form['codice_prodotto_usato'] ='';
@@ -149,11 +156,50 @@ print "<td class=\"FacetDataTD\" align=\"center\">$script_transl[3]<br><input na
 print "</tr>\n";
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[4]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"ricarico\" value=\"".$form['ricarico']."\" maxlength=\"5\" size=\"5\" /></td></tr>\n";
 echo "<tr>\n";
-echo "\t<td class=\"FacetFieldCaptionTD\">".$script_transl['web_url']." </td>\n";
-echo "\t<td colspan=\"2\" class=\"FacetDataTD\">
+echo "<td class=\"FacetFieldCaptionTD\">".$script_transl['web_url']." </td>\n";
+echo "<td colspan=\"2\" class=\"FacetDataTD\">
       <input type=\"text\" name=\"web_url\" value=\"".$form['web_url']."\" maxlength=\"255\" size=\"50\" /></td>\n";
 echo "</tr>\n";
-print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" />\n";
+
+/* Antonio Germani -  COLTURA */
+?>
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_colture	-->	
+  <script>
+	$(document).ready(function() {
+	$("input#autocomplete4").autocomplete({
+		source: [<?php
+	$stringa="";
+	$query="SELECT * FROM ".$gTables['camp_colture'];
+	$result = gaz_dbi_query($query);
+	while($row = $result->fetch_assoc()){
+		$stringa.="\"".$row['id_colt']." - ".$row['nome_colt']."\", ";			
+	}
+	$stringa=substr($stringa,0,-2);
+	echo $stringa;
+	?>],
+		minLength:2,
+	select: function(event, ui) {
+        //assign value back to the form element
+        if(ui.item){
+            $(event.target).val(ui.item.value);
+        }
+        //submit the form
+        $(event.target.form).submit();
+    }
+	});
+	});
+  </script>
+ <!-- fine autocompletamento -->
+ <?php
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[5]."</td><td class=\"FacetDataTD\"\n>";
+?>
+     <input id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" size="50"/>
+	 <input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colture"/>
+	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete4 -->	 
+<?php
+/* fine coltura */
+
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[12]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"annota\" value=\"".$form['annota']."\" maxlength=\"50\" size=\"50\" />\n";
 print "</select></td></tr><tr><td class=\"FacetFieldCaptionTD\"\n";
 print "</td><td class=\"FacetDataTD\" align=\"right\">\n";
 print "<input type=\"submit\" name=\"Return\" value=\"".$script_transl['return']."\">\n";

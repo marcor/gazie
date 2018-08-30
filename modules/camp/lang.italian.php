@@ -148,6 +148,7 @@ $strScript = array("browse_document.php" =>
 		"Hai impostato una produzione che non esiste. Devi prima creare una nuova produzione e poi selezionarla dal menù a tendina che appare.",
 		"Prezzo articolo ",
 		"Operaio",
+		"Coltura",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
@@ -177,13 +178,14 @@ $strScript = array("browse_document.php" =>
         "Descrizione ",
         "Immagine (jpg,png,gif) max 300kb: ",
         "Dimensione in ha ",
-        "Tipo coltura ",
+        "Coltura in atto",
         "codice gi&agrave; esistente!",
         "la descrizione &egrave; vuota!",
         "Il file immagine dev'essere nel formato PNG",
         "L'immagine non dev'essere pi&ugrave; grande di 300 kb",
 		"La dimensione &egrave; vuota!",
 		"ATTENZIONE: non puoi eliminare questo campo perché ci sono dei movimenti attivi. Elimina prima tutti i movimenti di questo campo.",
+		"Note",
         'web_url' => 'Mappa di Google<br />(es: https://goo.gl/maps/YajAcRexvDp)'
     ),
     "admin_ragstat.php" =>

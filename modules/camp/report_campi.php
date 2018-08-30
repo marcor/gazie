@@ -80,7 +80,8 @@ $recordnav -> output();
 	$headers_campi = array("Codice"      => "codice",
 							"Descrizione" => "descri",
 							"Immagine" => "image",
-							"Tipo coltura in atto" => "annota",
+							"Tipo coltura in atto" => "id_colture",
+							"Note" => "annota",
 							"Dimensione in ha" => "ricarico",
 							"Mappa di Google" => "web_url",
 							"Raccolto vietato fino al" =>"giorno_decadimento",
@@ -109,6 +110,11 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"> <img width="100" style="cursor: -moz-zoom-in;" 
 			<?php echo 'src="data:image/jpeg;base64,'.base64_encode( $a_row['image'] ).'"';?>
 			onclick="this.width=500;" ondblclick="this.width=100;" title="titolo" alt="IMG non presente" /></td>
+			<?php
+			$res = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $a_row['id_colture']);
+			
+			?>
+			<td align="center"><?php echo $a_row["id_colture"]." - ".$res['nome_colt'];?></td>
 			<td align="center"><?php echo $a_row["annota"];?></td>
 			<td align="center"><?php echo str_replace('.', ',',$a_row["ricarico"]);?></td>
 			<td align="center"><a  href="javascript:;" onclick="window.open('<?php echo($a_row["web_url"])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">

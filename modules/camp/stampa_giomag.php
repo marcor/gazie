@@ -122,7 +122,8 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 	while($b_row = $res->fetch_assoc()) { 
 	if ($row['campo_coltivazione']==$b_row["codice"]) { 
 	$pdf->Cell(10,6,str_replace('.', ',',$b_row["ricarico"]),1);
-	 $pdf->Cell(38,6,substr($b_row["annota"],0,40),1);
+	$res4 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $b_row['id_colture']);
+	 $pdf->Cell(38,6,substr($res4["nome_colt"],0,40),1);
 	 $colonna="1";
 		} 
 	}
@@ -131,10 +132,7 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 		$pdf->Cell(38,6,"",1);
 	 }
 // fine inserisco superficie, coltura	  
-	  
-	  
-	  
-	  
+	  	  
       $pdf->Cell(69,6,$row['artico'].' - '.$row['desart'], 1, 0, 'l', 0, '', 1);
 	  If ($row['classif_amb']==0){$pdf->Cell(6,6,"Nc",1);}
 	  If ($row['classif_amb']==1){$pdf->Cell(6,6,"Xi",1);}
@@ -144,8 +142,8 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 	  If ($row['classif_amb']==5){$pdf->Cell(6,6,"Pa",1);}
 	  $pdf->Cell(8,6,$row['unimis'],1,0,'C');
       $pdf->Cell(12,6,gaz_format_quantity($row["quanti"],1,$admin_aziend['decimal_quantity']),1);
-      
-      $pdf->Cell(30,6,$row['avversita'],1, 0, 'l', 0, '', 1);
+      $res3 = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $row['id_avversita']);
+      $pdf->Cell(30,6,$res3['nome_avv'],1, 0, 'l', 0, '', 1);
 /* Antonio Germani - trasformo nome utente login in cognome e nome e lo stampo */	  
 $res2 = gaz_dbi_dyn_query ('*', $gTables['admin']);	
  $colonna="0";

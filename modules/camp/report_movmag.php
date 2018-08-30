@@ -176,7 +176,8 @@ $colonna="0";
 while($b_row = $res->fetch_assoc()) {
 	if ($a_row["campo_coltivazione"]==$b_row["codice"]) { 
 	echo "<td class=\"FacetDataTD\" align=\"center\">".str_replace('.', ',',$b_row["ricarico"])." &nbsp;</td>\n";
-	 echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row["annota"]." &nbsp;</td>\n";
+	$res2 = gaz_dbi_get_row($gTables['camp_colture'], 'id_colt', $a_row['id_colture']);
+	 echo "<td class=\"FacetDataTD\" align=\"center\">".$res2["nome_colt"]." &nbsp;</td>\n";
 	 $colonna="1";
 		} 
 	}
@@ -197,7 +198,8 @@ while ($unirow = gaz_dbi_fetch_array($unires)) {
 	
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["artico"]." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$unimis."</td>\n";
-    echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["avversita"]." </td>\n";
+	$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avversita']);
+    echo "<td class=\"FacetDataTD\" align=\"right\">".$res["nome_avv"]." </td>\n";
 	echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["adminid"]." </td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
     echo "</tr>\n";
