@@ -351,7 +351,14 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 
     $config = new Config;
     $configTemplate = new configTemplate;
-    require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
+    // controllo se è utente estero uso il template inglese
+    $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
+    $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
+    if ( $stato['country']!=="IT") {
+        require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '.english/' . $templates[$templateName] . '.php');
+    } else {
+        require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
+    }
     $pdf = new $templateName();
     $ecr = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $_SESSION["user_name"]);
     if (!empty($ecr['driver'])) {
