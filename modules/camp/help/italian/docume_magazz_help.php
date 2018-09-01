@@ -77,5 +77,5 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		<p class="help-text">Da qui &egrave; possibile inserire i campi coltivati specificandone le dimensioni e il tipo di coltivazione in atto. Inoltre &egrave; possibile stampare la dichiarazione di rame metallo utilizzato in ogni singolo campo di coltivazione.</p><br>
 	</div>
 </div>
-<div> <br><p> Questo Registro di campagna è stato realizzato da un'idea di Antonio Germani (Massignano AP, www.lacasettabio.it), rielaborando, adattando, e modificando il modulo magazzino di Gazie. </p></br>
+<div> <br><p> Questo Registro di campagna è stato realizzato da un'idea di Antonio Germani (Massignano AP, www.lacasettabio.it), Utilizzando tutte le potenzialità di GAzie. </p></br>
 </div>

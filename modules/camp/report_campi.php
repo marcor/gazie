@@ -109,7 +109,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 								
 			<td align="center"> <img width="100" style="cursor: -moz-zoom-in;" 
 			<?php echo 'src="data:image/jpeg;base64,'.base64_encode( $a_row['image'] ).'"';?>
-			onclick="this.width=500;" ondblclick="this.width=100;" title="titolo" alt="IMG non presente" /></td>
+			onclick="this.width=500;" ondblclick="this.width=100;" title="<?php echo $a_row["descri"]; ?>" alt="IMG non presente" /></td>
 			<?php
 			$res = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $a_row['id_colture']);
 			
@@ -120,7 +120,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><a  href="javascript:;" onclick="window.open('<?php echo($a_row["web_url"])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 			<i class="glyphicon glyphicon-picture"></i>
 			</a></td>
-			<td align="center"><?php echo $a_row["giorno_decadimento"];?></td>
+			<td align="center"><?php echo gaz_format_date($a_row["giorno_decadimento"]);?></td>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina" href="delete_campi.php?codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
