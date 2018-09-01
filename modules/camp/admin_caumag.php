@@ -84,7 +84,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['operat'] = $caumag['operat'];
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['caumag'], 'codice <= 89', "codice desc", 0, 1); // i codici da 90 a 99 sono riservati
+    $rs_ultimo_codice = gaz_dbi_dyn_query("*", $gTables['caumag'], 1, "codice desc", 0, 1);
     $ultimo_codice = gaz_dbi_fetch_array($rs_ultimo_codice);
     $form['codice'] = $ultimo_codice['codice'] + 1;
     $form['descri'] = "";

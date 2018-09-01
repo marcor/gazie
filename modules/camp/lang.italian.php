@@ -257,7 +257,7 @@ $strScript = array("browse_document.php" =>
         'date_ini' => 'Data inizio dichiarazione  ',
         'date_fin' => 'Data fine dichiarazione ',
         'header' => array('Data' => '', 'Causale' => '', 'Annotazioni' => '',
-            'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Avversit&agrave;' => '','Rame metallo usato' => ''
+            'Campo' => '', 'Superficie' => '', 'Coltura' => '', 'Prodotto' => '', 'Quantit&agrave;' => '', 'UM' => '', 'Rame metallo usato' => ''
         )
     ),
 	 "select_invmag.php" =>

@@ -131,7 +131,9 @@ $pdf->SetFont('helvetica','',9);
      
       $pdf->Cell(30,6,$campi[$i]['totale_rame'],1);
 	  $pdf->Cell(10,6,"Kg",1);
-	  $pdf->Image('@'.$campi[$i]['img_campo'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
+	  if (strlen($campi[$i]['img_campo'])>0){	
+		$pdf->Image('@'.$campi[$i]['img_campo'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
+	  }
 	  if ($i<$c) {
 	   $pdf->AddPage(); 
       }

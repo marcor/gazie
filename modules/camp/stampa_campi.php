@@ -33,18 +33,9 @@ if (!ini_get('safe_mode')){ //se me lo posso permettere...
     gaz_set_time_limit (0);
 }
 
-
-
-
-
-
 $luogo_data=$admin_aziend['citspe'].", lì ";
-
 $now = new DateTime();
  
-
-
-
 require("../../config/templates/report_template_qc.php");
 $title = array('luogo_data'=>$luogo_data,
                'title'=>"SITUAZIONE CAMPI DI COLTIVAZIONE al ".$now->format('d-m-Y'),
@@ -77,11 +68,9 @@ if (sizeof($res) > 0) {
       $pdf->Cell(50,3,$b_row['descri'],1);
 	  $pdf->Cell(50,3,str_replace('.', ',',$b_row["ricarico"]),1);
 	  $pdf->Cell(50,3,substr($b_row["annota"],0,50),1);
-		      
-      $pdf->Image('@'.$b_row['image'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
-     
-	  
-      
+		if (strlen($b_row['image'])>0){		      
+			$pdf->Image('@'.$b_row['image'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
+		}        
   }
 }
 $pdf->Output();
