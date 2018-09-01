@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `gaz_camp_avversita` (
   `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_avv`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO `gaz_camp_avversita` (`id_avv`, `nome_avv`) VALUES (4, 'Minatori fogliari'),(2, 'Afidi'),(3, 'Tripidi'),(1, 'Psille'),(5, 'Antonomo'),(6, 'Tentredine'),(7, 'Metcalfe'),(8, 'Aleurodidi'),(9, 'Cicaline'),(10, 'Cocciniglie'),(11, 'Dorifore'),(12, 'Acari ragnetti'),(13, 'Cimici'),(14, 'Eriofidi'),(15, 'Nottue'),(16, 'Mamestra'),(17, 'Piralide'),(18, 'Cavolaie'),(19, 'Tignole'),(20, 'Margaronie'),(21, 'Carpocapse'),(22, 'Tortricidi'),(23, 'Limacce'),(24, 'Elateridi'),(25, 'Oidio'),(26, 'Botrytis cinerea (muffa grigia'),(27, 'Sclerotinia'),(28, 'Monilia'),(29, 'Pseudomonas (picchiettatura)'),(30, 'Peronospora'),(31, 'Corineo'),(32, 'Fumaggine'),(33, 'Lebbra'),(34, 'Occhio di pavone'),(35, 'Batteriosi'),(36, 'Antracnosi'),(37, 'Alternaria'),(38, 'Ruggine'),(39, 'Mosca olivo dacus oleae'),(40, 'Rogna'),(41, 'Cancrena pedale'),(42, 'Septoriosi'),(43, 'Cladosporiosi'),(44, 'Marciume apicale');
 CREATE TABLE IF NOT EXISTS `gaz_camp_colture` (
   `id_colt` int(3) NOT NULL DEFAULT '0',
   `nome_colt` varchar(30) NOT NULL,
@@ -32,6 +33,7 @@ CREATE TABLE IF NOT EXISTS `gaz_camp_colture` (
   `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_colt`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+INSERT INTO `gaz_camp_colture` (`id_colt`, `nome_colt`) VALUES (4, 'Lattughe'),(1, 'Asparagi'),(2, 'Carote'),(3, 'Broccoli'),(5, 'Pomodori'),(6, 'Peperoni'),(7, 'Melanzane'),(8, 'Cucurbitacee'),(9, 'Carciofi'),(10, 'Cavoli'),(11, 'Patate'),(12, 'Fragole'),(13, 'Fagioli e fagiolini'),(14, 'Actinidia Kiwi'),(15, 'Agrumi'),(16, 'Olivi'),(17, 'Vite uva da vino e tavola'),(18, 'Mele'),(19, 'Pere'),(20, 'Cotogni'),(21, 'Albicocchi'),(22, 'Pesche'),(23, 'Susine'),(24, 'Ciliegie'),(25, 'Girasole'),(26, 'Frumento tenero'),(27, 'Frumento duro'),(28, 'Mais'),(29, 'Barbabietole da zucchero'),(30, 'Soia'),(31, 'Colza'),(32, 'Rape e rapanelli'),(33, 'Noccioli'),(34, 'Mandorli'),(35, 'Fichi'),(36, 'Fave'),(37, 'Farro'),(38, 'Orzo'),(39, 'Riso'),(40, 'Avena'),(41, 'Segale'),(42, 'Sorgo'),(43, 'Miglio'),(44, 'Peperoncini piccanti');
 CREATE TABLE IF NOT EXISTS `gaz_camp_uso_fitofarmaci` (
   `id` int(4) NOT NULL,
   `cod_art` varchar(15) NOT NULL,
