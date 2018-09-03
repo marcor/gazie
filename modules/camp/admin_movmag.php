@@ -62,6 +62,28 @@ if (isset($_POST['nome_avv'])){
 		$form['id_avversita'][$m] = intval ($form['nome_avv'][$m]);
 	}
 }
+
+// se è stato premuto il pulsante di reset coltura	
+	if (isset($_POST['erase'])) {
+		$_POST['id_colture']=0;
+		$_POST['nome_colt']="";
+		$form['id_colture']=0;
+		$form['nome_colt']="";
+	}
+
+// se è stato premuto il pulsante di reset produzione	
+	if (isset($_POST['erase2']) && $_POST['description']<>"") {
+		$_POST['description']="";
+		$_POST['id_colture']=0;
+		$_POST['nome_colt']="";
+		$_POST['campo_coltivazione']="";
+		$form['id_colture']=0;
+		$form['nome_colt']="";
+		$form['description']="";
+		$form['campo_coltivazione']="";
+		
+	}
+	
 	
 // Antonio Germani questo serve per la ricerca colture
 if (isset($_POST['nome_colt'])){
@@ -212,6 +234,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 			$form['nome_colt']=$form['id_colture']." - ".$res['nome_colt'];
 		}
 	}
+	
 	$form['search_partner'] = "";
 	
 // Antonio Germani - se è stato inserito un campo di coltivazione senza produzione, inserisce automaticamente la coltura
@@ -221,9 +244,17 @@ if (isset ($_POST['campo_coltivazione'])&& intval ($form['id_orderman'])<=0) {
 			$form['id_colture']=$res['id_colture'];
 			$res = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $form['id_colture']);
 			$form['nome_colt']=$form['id_colture']." - ".$res['nome_colt'];
-		}
+		} 
 	}	
 
+// Antonio Germani - se è stato inserita una coltivazione la inserisco anche se diversa da quella del campo di coltivazione
+	if ($_POST['nome_colt']>0){ 
+		$form['nome_colt']=$_POST['nome_colt'];
+		$form['id_colture']=intval($form['nome_colt']);
+	}
+	
+	
+	
 // Antonio Germani - controllo se c'è una coltura deve esserci un campo di coltivazione
 if ($form['campo_coltivazione']<1 && $form['id_colture']>0) {
 	$msg .= "35+";
@@ -233,12 +264,13 @@ if ($form['campo_coltivazione']<1 && $form['id_colture']>0) {
 if (isset($_POST['nome_colt'])){
 			if ($form['campo_coltivazione']>0){ // se c'è un campo di coltivazione
 				$result = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
-				if ($result['id_colture']<>$form['id_colture']){ // se è stata cambiata la coltura avviso	
-echo "nella tabella: ",$result['id_colture'], " nel form: ",$form['id_colture'];
+				if ($result['id_colture']<>$form['id_colture']){ // se è stata cambiata la coltura avviso
+					$err = gaz_dbi_get_row($gTables['camp_colture'], "id_colt", $result['id_colture']);				
+
 					?>
 					<div class="alert alert-warning alert-dismissible">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Warning!</strong> La coltura non è quella presente nel campo di coltivazione. Verrà modificata la coltura nel campo di coltivazione!
+					<strong>Warning!</strong> Nel campo di coltivazione è presente la coltura <?php echo $result['id_colture']," - ",$err['nome_colt']; ?> che è diversa da quella inserita. Se si conferma, verrà modificata la coltura nel campo di coltivazione!
 					</div>
 					<?php
 				}
@@ -865,7 +897,9 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td col
         window.open(apri, "", stile);
      }
 </script>
-<a href="javascript:Popup('../../modules/orderman/admin_orderman.php?Insert&popup=1')"> Crea nuova produzione <i class="glyphicon glyphicon-plus-sign" style="color:green" ></i></a>	  
+<button type="submit" name="erase2" title="Reset produzione" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>
+<a href="javascript:Popup('../../modules/orderman/admin_orderman.php?Insert&popup=1')"> Crea nuova produzione <i class="glyphicon glyphicon-plus-sign" style="color:green" ></i></a>
+	  
 </td></tr>
 <?php	
 /* fine inserisci produzione  */
@@ -945,6 +979,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[33]."</td><td cla
 ?>
      <input id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" size="50"/>
 	 <input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colture"/>
+	 <button type="submit" name="erase" title="Reset coltura" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>
 	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete4 -->	 
 <?php
 /* fine coltura */
