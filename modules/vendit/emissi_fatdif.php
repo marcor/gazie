@@ -460,10 +460,13 @@ if (isset($invoices['data'])) {
                         echo "<td class=\"$c\" align=\"right\"></td>";
                         echo "<td class=\"$c\" align=\"right\"></td>";
                     } else {
-                        echo "<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['quanti'], true) . " </td>";
-                        echo "<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['prelis'], true, $admin_aziend['decimal_price']) . " </td>";
-                        echo "<td class=\"$c\" align=\"right\"> " . floatval($row['sconto']) . " </td>";
-                        echo "<td class=\"$c\" align=\"right\"> " . gaz_format_number($row['pervat']) . " </td>";
+						if ($row['tiprig']<=0 && $row['prelis'] <= 0.00000 ) { $c = 'danger';	} // allerto di un possibile errore di importo a zero
+                        echo "<td class=\"$c\" align=\"right\"> ";
+						if ($row['tiprig']==0) {echo gaz_format_quantity($row['quanti'], true);	}
+                        echo "</td>\n<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['prelis'], true, $admin_aziend['decimal_price']) . " </td>";
+                        echo "<td class=\"$c\" align=\"right\"> ";
+						if ($row['sconto']>=0.00001) { echo floatval($row['sconto']);}
+                        echo "</td>\n<td class=\"$c\" align=\"right\"> " . gaz_format_number($row['pervat']) . " </td>";
                         echo "<td class=\"$c\" align=\"right\"> " . gaz_format_number($row_amount) . " </td>";
                     }
                     echo "</tr>\n";
