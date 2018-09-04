@@ -40,6 +40,9 @@ $strScript = array("browse_document.php" =>
         'ext' => "Estensione",
         'select' => "Sel.",
         'code' => "Codice"),
+    "situaz_magazz.php" =>
+    array('title' => 'Situazione magazzino',
+    ),
     "report_artico.php" =>
     array('title' => 'Lista delle merci e dei servizi',
         'codice' => "Codice",
@@ -424,7 +427,7 @@ $strScript = array("browse_document.php" =>
         )
     ),
     "admin_artico_compost.php" =>
-    array('title' => 'Gestione degli articoli composti',
+    array('title' => 'Gestione delle composizioni',
         'ins_this' => 'Inserimento articolo',
         'upd_this' => 'Modifica l\'articolo ',
         'mod_this' => 'Composizione : ',

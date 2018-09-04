@@ -25,6 +25,8 @@
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
+$all="";
+$where ="";
 
 if ( !isset($ritorno) )
     $ritorno = $_SERVER['HTTP_REFERER'];
@@ -77,10 +79,8 @@ if ( isset($_POST['submit']) && $_POST['submit']=="Salva" ) {
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 
-
-
 ?>
-<form method="POST" name="form" enctype="multipart/form-data">
+<form method="GET" name="form" enctype="multipart/form-data">
 <?php
     echo '<input type="hidden" name="ritorno" value="' . $ritorno . '" />';
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
@@ -101,12 +101,15 @@ $script_transl = HeadMain();
                 </div>
                 <div class="box-body">
                     <?php
-                        $where = "codice_composizione = '".$codice."'";
-                        $result = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $where, 'id', 0, PER_PAGE);
+                        $where2 = "codice_composizione = '".$codice."'";
+                        $result = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $where2, 'id', 0, PER_PAGE);
    
                         //preparo la variabile where per la prossima query
-                        $where = " codice<>'".$codice."' and good_or_service<>2";
-   
+                        $where = "codice<>'".$codice."' and good_or_service<>2";
+//gaz_flt_var_assign('codice', 'v');
+gaz_flt_var_assign('descri', 'v');
+gaz_flt_var_assign('good_or_service', 'v');
+
                         if ( gaz_dbi_num_rows($result)==0 ) {
                             echo 'non ci sono articoli';
                         } else {
@@ -135,7 +138,7 @@ $script_transl = HeadMain();
                         </div>
                     </div>
                     <div class="box-footer">
-                        <input type="submit" class="btn btn-primary" name="submit" value="Salva">
+                        <!--<input type="submit" class="btn btn-primary" name="submit" value="Salva">-->
                     </div>        
                 </div>
             </div>
@@ -149,6 +152,26 @@ $script_transl = HeadMain();
                     <div class="box-body">
                         <div class="form-group">
                             <table class="table table-responsive table-striped table-condensed cf">
+                            <tr>
+                                <th class="FacetFieldCaptionTD">
+                                    <?php //gaz_flt_disp_int("codice", "Codice art."); ?>
+                                </th>
+                                <th class="FacetFieldCaptionTD">
+                                    <?php 
+                                    gaz_flt_disp_select("good_or_service", 'good_or_service', $gTables["artico"], $all, 'good_or_service',$transl['good_or_service_value']);
+                                    ?>
+                                </th>
+                                <th class="FacetFieldCaptionTD">
+                                    <?php gaz_flt_disp_int("descri", "Descrizione"); //gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all, $orderby, "ragso1");  ?>
+                                </th>
+                                
+                                <th class="FacetFieldCaptionTD" colspan="1">
+                                    <input class="btn btn-sm btn-default" type="submit" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;" autofocus />
+                                </th>
+                                <th class="FacetFieldCaptionTD" colspan="1">
+                                    <input class="btn btn-sm btn-default" type="submit" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;" />
+                                </th>
+                            </tr>
                             <tr>
                                 <th>Codice</th>
                                 <th>Tipo</th>

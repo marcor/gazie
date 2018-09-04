@@ -51,6 +51,41 @@ $mod_uri = '/' . $module . '/' . $script_uri;
 //stati per le assistenze periodiche
 $per_stato = array("Aperto", "Avvisare", "Effettuare", "Fatturare", "Chiuso");
 
+//sostituisci a partire da destra
+function str_lreplace($search, $replace, $subject)
+{
+    $pos = strrpos($subject, $search);
+    if($pos !== false) {
+        $subject = substr_replace($subject, $replace, $pos, strlen($search));
+    }
+    return $subject;
+}
+
+//controlla se ci sono versioni customizzate
+//checkCustoms($_SERVER['REQUEST_URI']);
+function checkCustoms($posizione) {
+    $intpos=0;
+    $pos="";
+    $found=false;
+    $posizione = explode( '/',$posizione );
+    foreach ( $posizione as $posizione_modulo ) {
+        if ( $posizione_modulo == "modules" || $found) {
+            $found=true;
+            $intpos++;
+            $pos .= $posizione_modulo.'/';
+        }
+    }
+    $pos = rtrim($pos,"/");
+    if ( strpos($pos, "?") ) {
+        $pos = explode ("?", $pos);
+        if ( is_array($pos) ) $pos = $pos[0];
+    }
+    $custom_str = str_lreplace( "/", "/custom_", $pos);
+    if ( file_exists ("../../". $custom_str ) ) {
+        header ( "Location: ../../".$custom_str );
+        die;
+    }
+}
 //funzione che estrae i valori tra i tag html di una stringa
 function getTextBetweenTags($tag, $html, $strict = 0) {
     $dom = new domDocument;
@@ -93,7 +128,7 @@ function gaz_flt_var_assign($flt, $typ, $tab="") {
 // crea una select che permette di filtrare la colonna di una tabella
 // $flt - colonna sulla quale eseguire il filtro
 // 
-// $optval - valore opzionale se diverso dal valore del campo, può essere array (es: stato=0 diventa stato=aperto preso da var)
+// $optval - valore opzionale se diverso dal valore del campo, pu� essere array (es: stato=0 diventa stato=aperto preso da var)
 function gaz_flt_disp_select($flt, $fltdistinct, $tbl, $where, $orderby, $optval = "") {
     ?><select class="form-control input-sm" name="<?php echo $flt; ?>" onchange="this.form.submit()">
     <?php
@@ -223,7 +258,7 @@ function gaz_format_date($date, $from_form = false, $to_form = false) {
             return $uts;
         } elseif ($from_form === 3) { // il valore numerico (confrontabile)
             return date("Ymd", $uts);
-        } elseif ($from_form === 'chk') { // restituisce true o false se la data non è stata formattata bene
+        } elseif ($from_form === 'chk') { // restituisce true o false se la data non � stata formattata bene
             return checkdate($m, $d, $Y);
         } else { // altri restituisco il timestamp 
             return date("Ymd", $uts);
@@ -304,8 +339,8 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
 
 //
 // La funzione table_prefix_ok() serve a determinare se il prefisso
-// delle tabelle è valido, secondo lo schema di Gazie, oppure no.
-// In pratica, si verifica che inizi con la stringa `gaz' e può
+// delle tabelle � valido, secondo lo schema di Gazie, oppure no.
+// In pratica, si verifica che inizi con la stringa `gaz' e pu�
 // continuare con lettere minuscole e cifre numeriche, fino
 // a un massimo di ulteriori nove caratteri
 //
@@ -325,7 +360,7 @@ function table_prefix_ok($table_prefix) {
 // dei nomi delle tabelle non possa contenere il trattino basso.
 //
 // ATTENZIONE: il funzionamento corretto di questa funzione
-//             è ancora da verificare e viene aggiunta solo
+//             � ancora da verificare e viene aggiunta solo
 //             come suggerimento, in abbinamento alla funzione
 //             table_prefix_ok().
 //
@@ -472,12 +507,12 @@ class Config {
         /* in $variabile va sempre il nome della variabile, 
          * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre 
          * viene inserita qualora non esista.  
-         * In caso di inserimento è necessario passare un array in $value mentre in caso di
-         * aggiornamento è sufficiente un valore */
+         * In caso di inserimento � necessario passare un array in $value mentre in caso di
+         * aggiornamento � sufficiente un valore */
         global $gTables;
         $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_STRING);
         $result = gaz_dbi_dyn_query("*", $gTables['config'], "variable='" . $variable . "'");
-        if (gaz_dbi_num_rows($result) >= 1) { // è un aggiornamento
+        if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
             if (is_array($value)) {
                 $row = gaz_dbi_fetch_array($result);
                 $value['cvalue'] = filter_var(substr($value['cvalue'], 0, 100), FILTER_SANITIZE_STRING);
@@ -489,7 +524,7 @@ class Config {
                 $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_STRING);
                 gaz_dbi_put_row($gTables['config'], 'variable', $variable, 'cvalue', $value['cvalue']);
             }
-        } else { // è un inserimento
+        } else { // � un inserimento
             gaz_dbi_table_insert('config', $value);
         }
     }
@@ -514,12 +549,12 @@ class UserConfig {
         /* in $variabile va sempre il nome della variabile, 
          * la tabella viene aggiornata ne caso in cui il nome variabile esiste mentre 
          * viene inserita qualora non esista.  
-         * In caso di inserimento è necessario passare un array in $value mentre in caso di
-         * aggiornamento è sufficiente un valore */
+         * In caso di inserimento � necessario passare un array in $value mentre in caso di
+         * aggiornamento � sufficiente un valore */
         global $gTables, $form;
         $variable = filter_var(substr($variable, 0, 100), FILTER_SANITIZE_STRING);
         $result = gaz_dbi_dyn_query("*", $gTables['admin_config'], "var_name='" . $variable . "'");
-        if (gaz_dbi_num_rows($result) >= 1) { // è un aggiornamento
+        if (gaz_dbi_num_rows($result) >= 1) { // � un aggiornamento
             if (is_array($value)) {
                 $row = gaz_dbi_fetch_array($result);
                 $value['var_value'] = filter_var(substr($value['var_value'], 0, 100), FILTER_SANITIZE_STRING);
@@ -530,7 +565,7 @@ class UserConfig {
                 $this->{$variable} = filter_var(substr($value, 0, 100), FILTER_SANITIZE_STRING);
                 gaz_dbi_put_row($gTables['admin_config'], 'var_name', $variable, 'var_value', $value['var_value']);
             }
-        } else { // è un inserimento
+        } else { // � un inserimento
             gaz_dbi_table_insert('admin_config', $value);
         }
     }
@@ -644,7 +679,7 @@ class Anagrafica {
         }
         $v['descri'] = $v['ragso1'];
         $v['codpag'] = $payment;
-		// inserisco i valori sono quelli statisticamente più utilizzati
+		// inserisco i valori sono quelli statisticamente pi� utilizzati
         $v['speban'] = 'S';
         $v['addbol'] = 'S';
         $v['spefat'] = 'N';
@@ -840,18 +875,18 @@ class selectPartner extends SelectBox {
         }
         if ($val > 100000000) { //vengo da una modifica della precedente select case quindi non serve la ricerca
             $partner = gaz_dbi_get_row($gTables['clfoco'] . ' LEFT JOIN ' . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', "codice", $val);
-            echo "\t<input type=\"submit\" value=\"⇒\" name=\"fantoccio\" disabled>\n";
+            echo "\t<input type=\"submit\" value=\"?\" name=\"fantoccio\" disabled>\n";
             echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
             echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
         } elseif (preg_match("/^id_([0-9]+)$/", $val, $match)) { // e' stato selezionata la sola anagrafica
             $partner = gaz_dbi_get_row($gTables['anagra'], 'id', $match[1]);
-            echo "\t<input type=\"submit\" value=\"⇒\" name=\"fantoccio\" disabled>\n";
+            echo "\t<input type=\"submit\" value=\"?\" name=\"fantoccio\" disabled>\n";
             echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"" . substr($partner['ragso1'], 0, 8) . "\">\n";
             echo "\t<input type=\"submit\" tabindex=\"999\" style=\"background:#FFBBBB\"; value=\"" . $partner['ragso1'] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
         } elseif ($val == $anonimo) { // e' un cliente anonimo
-            echo "\t<input type=\"submit\" value=\"⇒\" name=\"fantoccio\" disabled>\n";
+            echo "\t<input type=\"submit\" value=\"?\" name=\"fantoccio\" disabled>\n";
             echo "\t<input type=\"hidden\" id=\"$name\" name=\"$name\" value=\"$val\">\n";
             echo "\t<input type=\"hidden\" name=\"search[$name]\" value=\"\">\n";
             echo "\t<input type=\"submit\" tabindex=\"999\" value=\"" . $mesg[5] . "\" name=\"change\" onclick=\"this.form.$name.value='0'; this.form.hidden_req.value='change';\" title=\"$mesg[2]\">\n";
@@ -1279,8 +1314,8 @@ class GAzieMail {
             default:
                 break;
         }
-        /* Imposto email a cui rispondere (se è stata impostata nella tabella gaz_xxxcompany_config`)
-         * deve stare prima di $mail->SetFrom perchè altrimenti aggiunge il from al reply
+        /* Imposto email a cui rispondere (se � stata impostata nella tabella gaz_xxxcompany_config`)
+         * deve stare prima di $mail->SetFrom perch� altrimenti aggiunge il from al reply
          */
         if (isset($config_replyTo) && !empty($config_replyTo['val'])) {
             $mittente = $config_replyTo['val'];
@@ -1324,7 +1359,7 @@ class GAzieForm {
         /* In questa funzione si deve passare una striga dove il "+"
           serve a separare i diversi indici di errori e il "-" separa il riferimento
           all'errore es. "fa150-3+" dara' un risultato del genere:
-          ERRORE! -> introdotto un valore negativo ¯fa150
+          ERRORE! -> introdotto un valore negativo �fa150
          */
         global $script_transl;
         $message = '';
@@ -1643,7 +1678,7 @@ class GAzieForm {
     }
 
     function gazResponsiveTable($rows, $id = 'gaz-responsive-table') {
-        /* in $row ci devono essere i righi con un array così formattato:
+        /* in $row ci devono essere i righi con un array cos� formattato:
          * $rows[row][col]=array('title'=>'nome_colonna','value'=>'valore','type'=>'es_input','class'=>'classe_bootstrap',table_id=>'gaz-resposive_table')
          * */
         ?>
@@ -1822,7 +1857,7 @@ class linkHeaders {
 
     function output() {
         global $flag_order, $script_transl, $auxil, $headers;
-        $k = 0; // è l'indice dell'array dei nomi di campo 
+        $k = 0; // � l'indice dell'array dei nomi di campo 
         foreach ($this->headers as $header => $field) {
             $style = 'FacetFieldCaptionTD';
             $align = '';
@@ -1847,7 +1882,7 @@ class linkHeaders {
 function checkAdmin($Livaut = 0) {
     global $gTables, $module, $table_prefix;
     $_SESSION["Abilit"] = false;
-    // Se utente non  loggato lo mandiamo alla pagina di login
+    // Se utente non � loggato lo mandiamo alla pagina di login
     if (!isset($_SESSION["user_name"])) {
         header("Location: ../root/login_user.php?tp=" . $table_prefix);
         exit;
@@ -1912,7 +1947,7 @@ class Compute {
          * 1 - quando non ho l'aliquota IVA allora uso la ventilazione
          * 2 - in presenza di aliquota IVA e quindi devo aggiungere al castelletto */
 
-        if ($vat_rate == 0) {        // METODO VENTILAZIONE (per mantenere la retrocompatibilità)
+        if ($vat_rate == 0) {        // METODO VENTILAZIONE (per mantenere la retrocompatibilit�)
             $total_imp = 0;
             $decalc_imp = 0;
             foreach ($vat_castle as $k => $v) { // attraverso dell'array per calcolare i totali
@@ -1928,7 +1963,7 @@ class Compute {
                     $new_castle[$k]['descriz'] = $vat['descri'];
                     $new_castle[$k]['fae_natura'] = $vat['fae_natura'];
                     $row--;
-                    if ($row == 0) { // è l'ultimo rigo del castelletto
+                    if ($row == 0) { // � l'ultimo rigo del castelletto
                         // aggiungo il resto
                         $new_imp = round($total_imp - $decalc_imp + ($value * ($total_imp - $decalc_imp) / $total_imp), 2);
                     } else {
@@ -1938,11 +1973,11 @@ class Compute {
                     $new_castle[$k]['impcast'] = $new_imp;
                     $new_castle[$k]['imponi'] = $new_imp;
                     $this->total_imp += $new_imp; // aggiungo all'accumulatore del totale
-                    if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // è senza aliquota ed è soggetto a bolli
+                    if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza aliquota ed � soggetto a bolli
                         $this->total_exc_with_duty += $new_imp; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                     }
                     $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
-                    if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment 
+                    if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment 
                         $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
                     }
                     $this->total_vat += $new_castle[$k]['ivacast']; // aggiungo anche l'IVA al totale
@@ -1956,21 +1991,21 @@ class Compute {
                 $new_castle[$k]['tipiva'] = $vat['tipiva'];
                 $new_castle[$k]['descriz'] = $vat['descri'];
                 $new_castle[$k]['fae_natura'] = $vat['fae_natura'];
-                if ($k == $vat_rate) { // SE è la stessa aliquota aggiungo il nuovo valore
+                if ($k == $vat_rate) { // SE � la stessa aliquota aggiungo il nuovo valore
                     $match = true;
                     $new_imp = $v['impcast'] + $value;
                     $new_castle[$k]['impcast'] = $new_imp;
                     $new_castle[$k]['imponi'] = $new_imp;
                     $new_castle[$k]['ivacast'] = round(($new_imp * $vat['aliquo']) / 100, 2);
-                } else { // è una aliquota che non interessa il valore che devo aggiungere 
+                } else { // � una aliquota che non interessa il valore che devo aggiungere 
                     $new_castle[$k]['impcast'] = $v['impcast'];
                     $new_castle[$k]['imponi'] = $v['impcast'];
                     $new_castle[$k]['ivacast'] = round(($v['impcast'] * $vat['aliquo']) / 100, 2);
                 }
-                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // è senza IVA ed è soggetto a bolli
+                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
                     $this->total_exc_with_duty += $new_castle[$k]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
-                if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment 
+                if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment 
                     $this->total_isp += $new_castle[$k]['ivacast']; // aggiungo all'accumulatore 
                 }
                 $this->total_imp += $new_castle[$k]['impcast']; // aggiungo all'accumulatore del totale
@@ -1985,10 +2020,10 @@ class Compute {
                 $new_castle[$vat_rate]['ivacast'] = round(($value * $vat['aliquo']) / 100, 2);
                 $new_castle[$vat_rate]['descriz'] = $vat['descri'];
                 $new_castle[$vat_rate]['fae_natura'] = $vat['fae_natura'];
-                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // è senza IVA ed è soggetto a bolli
+                if ($vat['aliquo'] < 0.01 && $vat['taxstamp'] > 0) { // � senza IVA ed � soggetto a bolli
                     $this->total_exc_with_duty += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore degli esclusi/esenti/non imponibili
                 }
-                if ($vat['tipiva'] == 'T') { // è un'IVA non esigibile per split payment 
+                if ($vat['tipiva'] == 'T') { // � un'IVA non esigibile per split payment 
                     $this->total_isp += $new_castle[$vat_rate]['ivacast']; // aggiungo all'accumulatore 
                 }
                 $this->total_imp += $new_castle[$vat_rate]['impcast']; // aggiungo all'accumulatore del totale
@@ -2029,10 +2064,10 @@ class Schedule {
         /*
          * restituisce in $this->Partners i codici dei clienti o dei fornitori
          * che hanno almeno un movimento nell'archivio dello scadenzario
-         * è un po' lento se si hanno molti righi contabili 
+         * � un po' lento se si hanno molti righi contabili 
          */
         global $gTables;
-        if (!$partner_type) { // se NON mi è stato passato il mastro dei clienti o dei fornitori
+        if (!$partner_type) { // se NON mi � stato passato il mastro dei clienti o dei fornitori
             $partner_where = '1';
         } else {
             $partner_where = $gTables['rigmoc'] . ".codcon  BETWEEN " . $partner_type . "000001 AND " . $partner_type . "999999";
@@ -2168,15 +2203,15 @@ class Schedule {
         $r = gaz_dbi_fetch_array($rs);
         $ex = new DateTime($r['exp']);
         $interval = $date_ctrl->diff($ex);
-        if ($r['diff_paydoc'] >= 0.01) { // la partita è aperta
+        if ($r['diff_paydoc'] >= 0.01) { // la partita � aperta
             $r['sta'] = 0;
-            if ($date_ctrl > $ex) { // ... ed è pure scaduta
+            if ($date_ctrl > $ex) { // ... ed � pure scaduta
                 $r['sta'] = 3;
             }
-        } elseif ($r['diff_paydoc'] == 0.00) { // la partita è chiusa ma...
-            if ($date_ctrl < $ex) { //  se è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
+        } elseif ($r['diff_paydoc'] == 0.00) { // la partita � chiusa ma...
+            if ($date_ctrl < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                 $r['sta'] = 2; // esposta
-            } else { // altrimenti è chiusa completamente
+            } else { // altrimenti � chiusa completamente
                 $r['sta'] = 1;
             }
         } else {
@@ -2221,7 +2256,7 @@ class Schedule {
     /*
      * genera un array ($this->PartnerStatus)con i valori dell'esposizione verso un partner commerciale
      * riferito ad una data, se passata, oppure alla data di sistema
-     * $this->docData verrà valorizzato con i dati relativi al documento di riferimento
+     * $this->docData verr� valorizzato con i dati relativi al documento di riferimento
      * */ {
         global $gTables;
         $this->PartnerStatus = array();
@@ -2260,7 +2295,7 @@ class Schedule {
                 }
                 $acc[$k][] = array('id' => $r['id'], 'op_val' => $r['amount'], 'expiry' => $r['expiry'], 'cl_val' => 0, 'cl_exp' => '', 'expo_day' => 0, 'status' => $s, 'op_id_rig' => $r['id_rig'], 'cl_rig_data' => array());
             } else {                    // ATTRIBUZIONE EVENTUALI CHIUSURE ALLE APERTURE (in ordine di scadenza)
-                if ($date_ctrl < $ex) { //  se è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
+                if ($date_ctrl < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                     $expo = true;
                 }
                 $v = $r['amount'];
@@ -2269,9 +2304,9 @@ class Schedule {
                     if ($diff >= 0.01 && $v > 0.01) { // faccio il push sui dati del rigo
                         $acc[$k][$ko]['cl_rig_data'][] = array('id_rig' => $r['id_rig'], 'descri' => $r['descri'], 'id_tes' => $r['id_tes'], 'import' => $r['import']);
                     }
-                    if ($v <= $diff) { // se c'è capienza
+                    if ($v <= $diff) { // se c'� capienza
                         $acc[$k][$ko]['cl_val'] += $v;
-                        if ($expo) { // è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
+                        if ($expo) { // � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                             $acc[$k][$ko]['expo_day'] = $interval->format('%a');
                             $acc[$k][$ko]['cl_exp'] = $r['expiry'];
                             $expo = false;
@@ -2279,15 +2314,15 @@ class Schedule {
                             $acc[$k][$ko]['cl_exp'] = $r['expiry'];
                         }
                         $v = 0;
-                    } else { // non c'è capienza
+                    } else { // non c'� capienza
                         $acc[$k][$ko]['cl_val'] += $diff;
-                        if ($expo && $diff >= 0.01) { // è un pagamento che avverrà ma non è stato realmente effettuato , che comporta esposizione a rischio
+                        if ($expo && $diff >= 0.01) { // � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                             $acc[$k][$ko]['expo_day'] = $interval->format('%a');
                             $acc[$k][$ko]['cl_exp'] = $r['expiry'];
                         }
                         $v = round($v - $diff, 2);
                     }
-                    if (round($acc[$k][$ko]['op_val'] - $acc[$k][$ko]['cl_val'], 2) < 0.01) { // è chiusa
+                    if (round($acc[$k][$ko]['op_val'] - $acc[$k][$ko]['cl_val'], 2) < 0.01) { // � chiusa
                         $acc[$k][$ko]['status'] = 1;
                     }
                 }
@@ -2302,7 +2337,7 @@ class Schedule {
 
     function updatePaymov($data) {
         global $gTables;
-        if (isset($data['id']) && !empty($data['id'])) { // se c'è l'id vuol dire che è un rigo da aggiornare
+        if (isset($data['id']) && !empty($data['id'])) { // se c'� l'id vuol dire che � un rigo da aggiornare
             paymovUpdate(array('id', $data['id']), $data);
         } elseif (is_numeric($data)) { /* se passo un dato numerico vuol dire che devo eliminare tutti i righi
          * di paymov che fanno riferimento a quell'id_rig */
@@ -2310,7 +2345,7 @@ class Schedule {
             gaz_dbi_del_row($gTables['paymov'], "id_rigmoc_pay", $data);
         } elseif (isset($data['id_del'])) { /* se passo un id da eliminare elimino SOLO quello */
             gaz_dbi_del_row($gTables['paymov'], "id", $data['id_del']);
-        } else {    // altrimenti è un nuovo rigo da inserire
+        } else {    // altrimenti � un nuovo rigo da inserire
             paymovInsert($data);
         }
     }
