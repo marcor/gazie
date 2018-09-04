@@ -1,7 +1,7 @@
 UPDATE `gaz_config` SET `cvalue` = '110' WHERE `id` =2;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_scontr.php'), 'admin_scontr_fast.php?tipdoc=VCO&Insert&Prezzo_IVA=S', '', '', 49, '', 6  FROM `gaz_menu_script`;
 INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_broacq.php'), 'prop_ordine.php', '', '', 18, '', 3  FROM `gaz_menu_script`;
-INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_artico.php'), 'situaz_magazz.php', '', '', 13, '', 5  FROM `gaz_menu_script`;
+INSERT INTO `gaz_menu_script` SELECT MAX(id)+1, (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_artico.php'), 'situaz_magazz.php', '', '', 13, '', 4  FROM `gaz_menu_script`;
 UPDATE `gaz_menu_script` SET `weight`='5' WHERE  `link`='admin_docacq.php?Insert&tipdoc=AFA';
 UPDATE `gaz_menu_script` SET `weight`='10' WHERE  `link`='admin_docacq.php?Insert&tipdoc=AFC';
 UPDATE `gaz_menu_script` SET `weight`='15' WHERE  `link`='accounting_documents.php?type=A';
