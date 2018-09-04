@@ -106,9 +106,9 @@ $script_transl = HeadMain();
    
                         //preparo la variabile where per la prossima query
                         $where = "codice<>'".$codice."' and good_or_service<>2";
-//gaz_flt_var_assign('codice', 'v');
-gaz_flt_var_assign('descri', 'v');
-gaz_flt_var_assign('good_or_service', 'v');
+                        //gaz_flt_var_assign('codice', 'v');
+                        gaz_flt_var_assign('descri', 'v');
+                        gaz_flt_var_assign('good_or_service', 'v');
 
                         if ( gaz_dbi_num_rows($result)==0 ) {
                             echo 'non ci sono articoli';
@@ -143,7 +143,7 @@ gaz_flt_var_assign('good_or_service', 'v');
                 </div>
             </div>
 
-
+            <!--Disegno la lista articoli da inserire-->
             <div class="col-md-6">
                 <div class="box box-success">
                     <div class="box-header with-border">
@@ -152,13 +152,14 @@ gaz_flt_var_assign('good_or_service', 'v');
                     <div class="box-body">
                         <div class="form-group">
                             <table class="table table-responsive table-striped table-condensed cf">
+                            <!-- Visualizzo i filtri articoli -->
                             <tr>
                                 <th class="FacetFieldCaptionTD">
                                     <?php //gaz_flt_disp_int("codice", "Codice art."); ?>
                                 </th>
                                 <th class="FacetFieldCaptionTD">
                                     <?php 
-                                    gaz_flt_disp_select("good_or_service", 'good_or_service', $gTables["artico"], $all, 'good_or_service',$transl['good_or_service_value']);
+                                    gaz_flt_disp_select("good_or_service", 'good_or_service', $gTables["artico"], $all, 'good_or_service',$script_transl['good_or_service_value']);
                                     ?>
                                 </th>
                                 <th class="FacetFieldCaptionTD">

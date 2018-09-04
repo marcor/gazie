@@ -27,8 +27,13 @@ $admin_aziend = checkAdmin();
 $titolo = "Eliminazione articolo";
 $message = "Sei sicuro di voler rimuovere ?";
 $codice = filter_input(INPUT_GET, 'codice');
+
 if (isset($_POST['Delete'])) {
+    //Cancello se presenti gli articoli presenti in distinta base
+    $result = gaz_dbi_del_row($gTables['distinta_base'], "codice_composizione", $codice );
+    //Cancello l'articolo
     $result = gaz_dbi_del_row($gTables['artico'], "codice", filter_input(INPUT_POST, 'codice'));
+    //Ritorno alla pagina articoli
     header("Location: report_artico.php");
     exit;
 } else {
@@ -39,7 +44,6 @@ if (isset($_POST['Return'])) {
     header("Location: report_artico.php");
     exit;
 }
-
 
 require("../../library/include/header.php");
 $script_transl = HeadMain();
