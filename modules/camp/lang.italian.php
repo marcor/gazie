@@ -159,7 +159,7 @@ $strScript = array("browse_document.php" =>
         'amount' => " Valore in ",
     ),
     "report_caumag.php" =>
-    array("causali di magazzino ",
+    array("causali dei movimenti ",
         "Lista delle "
     ),
     "admin_catmer.php" =>

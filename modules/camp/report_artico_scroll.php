@@ -91,7 +91,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		/*Antonio Germani creo array per le categorie merceologiche */
 		$rescatmer = gaz_dbi_dyn_query('*', $gTables['catmer']);
 		 while ($row2 = gaz_dbi_fetch_array($rescatmer)){
-			 if ($row["catmer"]==$row2["codice"]){$descatmer=$row2["descri"];}
+			 if ($row['catmer']==$row2['codice']){$descatmer=$row2['descri'];}
 			 }	 
         ?>	
         <tr>      

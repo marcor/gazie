@@ -1,14 +1,15 @@
 <div class="panel panel-default panel-body panel-help">
-<h3>Registro/Quaderno di campagna</h3>
+<h3 align="center">Registro/Quaderno di campagna</h3>
+<img src="icona-modulo-registro-di-campagna.png" alt="Quaderno di campagna" width="130" align="left" hspace="5px" />
 <p>Qui si raccolgono le
 funzioni relative alla gestione di un Quaderno di campagna ai sensi delD.Lgs 150/2012, DPR 55/2012 e DPR 290/2001,
 incluse le stampe periodiche.</p><p>Il registro di campagna va conservato almeno per i tre anni successivi a quello a cui si riferiscono gli interventi annotati. Il registro dei trattamenti può essere anche compilato dall'utilizzatore dei prodotti fitosanitari diverso dal titolare dell'azienda; in questo caso il titolare deve sottoscriverlo al termine di ogni anno solare. Il titolare dell'azienda deve conservare in modo idoneo, per il periodo di tre anni, le fatture di acquisto dei prodotti fitosanitari, nonché la copia dei moduli di acquisto dei prodotti con classificazione di pericolo, di molto tossici, tossici e nocivi (art.16, comma 4, del D.Lgs 150/2012).</p>
 
-<p>Per accedere agli elenchi dei prodotti, delle categorie
-merceologiche, dei movimenti e delle causali, basta selezionare la voce
+<p>Per accedere all'elenco dei prodotti, delle categorie
+merceologiche, dei movimenti, delle causali e dei campi di coltivazione basta selezionare la voce
 principale relativa: <strong>Merci/servizi</strong>, <strong>Cat.
 merceologiche</strong>, <strong>Movimenti</strong>,
-<strong>Causali</strong>, tralasciando le voci di men&ugrave; ulteriori
+<strong>Causali</strong>, <strong>Campi di coltivazione</strong> tralasciando le voci di men&ugrave; ulteriori
 che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 </div>
 
@@ -20,13 +21,14 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
    <li ><a data-toggle="tab" href="#Causali">Causali</a></li>
    
    <li ><a data-toggle="tab" href="#Campi">Campi di coltivazione</a></li>
+   <li ><a data-toggle="tab" href="#Fitofarmaci">Fitofarmaci</a></li>
 </ul>
 
 <div class="tab-content contenuto-help">
 	<div id="Articoli" class="tab-pane fade in active">	
 		<p class="help-text">Da qui &egrave; possibile intervenire nell'elenco degli articoli
 		di magazzino. Per inserire un nuovo articolo si deve scegliere la voce
-		<strong>Nuovo articolo di magazzino</strong>, mentre per accedere agli
+		<strong>Nuova merce/servizio</strong>, mentre per accedere agli
 		articoli gi&agrave; esistenti, si deve selezionare la voce principale di
 		questo men&ugrave;.</p>
 	</div>
@@ -38,7 +40,7 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		una categoria generica.</p>
 
 		<p class="help-text">Per inserire una nuova categoria si deve scegliere la voce
-		<menuitem>Nuova categoria merceologica</menuitem>, mentre per accedere
+		<strong>Nuova categoria merceologica</strong>, mentre per accedere
 		alle categorie gi&agrave; esistenti, si deve selezionare la voce
 		principale di questo men&ugrave;.</p>
 	</div>
@@ -51,12 +53,10 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 		men&ugrave;.</p>
 
 		<p class="help-text">Dai movimenti inseriti &egrave; possibile ottenere la stampa del
-		Quaderno di campagna attraverso la voce <menuitem>Stampa Quaderno di campagna</menuitem>, mentre per ottenere una stampa dettagliata,
-		articolo per articolo, si deve scegliere la voce <menuitem>Stampa
-		schedari articoli di magazzino.</p>
-
-		
-		<p class="help-text">Esempi: <br>- ... da fare ...</p>
+		Quaderno di campagna attraverso la voce <strong>Stampa Quaderno di campagna</strong>, mentre per ottenere una stampa dettagliata,
+		articolo per articolo, si deve scegliere la voce <strong>Stampa
+		schedari articoli di magazzino</strong>.</p>
+		<p>La voce <strong>Costo produzione</strong> permetterà di conteggiare e visualizzare il costo totale di una specifica produzione agricola.</p>
 	</div>
 
 	<div id="Causali" class="tab-pane fade in">
@@ -76,6 +76,9 @@ che appaiono mentre il puntatore del mouse vi si sposta sopra.</p>
 	<div id="Campi" class="tab-pane fade in">
 		<p class="help-text">Da qui &egrave; possibile inserire i campi coltivati specificandone le dimensioni e il tipo di coltivazione in atto. Inoltre &egrave; possibile stampare la dichiarazione di rame metallo utilizzato in ogni singolo campo di coltivazione.</p><br>
 	</div>
+	<div id="Fitofarmaci" class="tab-pane fade in">
+		<p class="help-text">Da qui &egrave; possibile gestire le tabelle <strong>Avversità</strong> e <strong>Colture</strong>. La compilazione di queste tabelle servirà per la successiva compilazione della tabella <strong>Uso fitofarmaci</strong>. Tale tabella permette di effettuare i controlli delle dosi specifiche per fitofarmaci, colture e avversità.</p><p> Sempre da questo menu sarà possibile aggiornare la tabella <strong>Fitofarmaci</strong> connettendosi al database del Ministero della salute. Questo aggiornamento necessita di connessione ad internet. Tale tabella verrà utilizzata per l'inserimento di un nuovo fitofarmaco nelle merci/servizi e per i dovuti controlli sulle scadenze delle autorizzazioni dei fitofarmaci utilizzati in azienda.</p><br>
+	</div>
 </div>
-<div> <br><p> Questo Registro di campagna è stato realizzato da un'idea di Antonio Germani (Massignano AP, www.lacasettabio.it), Utilizzando tutte le potenzialità di GAzie. </p></br>
+<div> <br><p align="center"> Questo Registro di campagna è stato ideato e creato da Antonio Germani (Massignano AP, www.lacasettabio.it), Utilizzando tutte le potenzialità di GAzie. </p></br>
 </div>

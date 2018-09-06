@@ -97,12 +97,13 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 	$form['nmov']=$_POST['nmov'];
 	for ($m = 0; $m <= $form['nmov']; ++$m){
 		$form['artico'][$m] = $_POST['artico'.$m];
-		$form['quanti'][$m] = $_POST['quanti'.$m];
+		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['prezzo'][$m] = $_POST['prezzo'.$m];
 		$form['clfoco'][$m] = $_POST['clfoco'.$m];
 		$form['nome_avv'][$m] = $_POST['nome_avv'.$m];
 		$form['id_avversita'][$m] = intval ($form['nome_avv'][$m]);
+		$form['operat'][$m]= $_POST['operat'.$m];
 		if (isset ($_POST['staff'.$m])){
 			$form['staff'][$m] = $_POST['staff'.$m];
 		} else {
@@ -143,7 +144,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$form['type_mov'] = $result['type_mov'];
     $form['id_rif'] = $result['id_rif'];
     $form['caumag'] = $result['caumag'];
-    $form['operat'] = $result['operat'];
+    $form['operat'][$form['mov']] = $result['operat'];
     $form['gioreg'] = substr($result['datreg'], 8, 2);
     $form['mesreg'] = substr($result['datreg'], 5, 2);
     $form['annreg'] = substr($result['datreg'], 0, 4);
@@ -193,7 +194,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	$form['type_mov'] = 1;
     $form['id_rif'] = intval($_POST['id_rif']);
     $form['caumag'] = intval($_POST['caumag']);
-    $form['operat'] = intval($_POST['operat']);
+    $form['operat'][$form['mov']] = $_POST['operat'.$form['mov']];
     $form['gioreg'] = intval($_POST['gioreg']);
     $form['mesreg'] = intval($_POST['mesreg']);
     $form['annreg'] = intval($_POST['annreg']);
@@ -253,8 +254,6 @@ if (isset ($_POST['campo_coltivazione'])&& intval ($form['id_orderman'])<=0) {
 		$form['id_colture']=intval($form['nome_colt']);
 	}
 	
-	
-	
 // Antonio Germani - controllo se c'è una coltura deve esserci un campo di coltivazione
 if ($form['campo_coltivazione']<1 && $form['id_colture']>0) {
 	$msg .= "35+";
@@ -280,7 +279,12 @@ if (isset($_POST['nome_colt'])){
 		
     if (isset($_POST['caumag'])) {          
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
-        $form['operat'] = $causa['operat'];
+		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
+		If ($itemart['good_or_service'] == 0) {
+        $form['operat'][$form['mov']] = $causa['operat'];
+		} else {
+			$form['operat'][$form['mov']]=0;
+		}
         $form['clorfo'] = $causa['clifor']; //cliente, fornitore o entrambi
         if (($causa['clifor'] < 0 and substr($form['clfoco'], 0, 3) == $admin_aziend['masfor']) or ( $causa['clifor'] > 0 and substr($form['clfoco'][$form['mov']], 0, 3) == $admin_aziend['mascli'])) {
             $form['clfoco'][$form['mov']]=0;
@@ -323,41 +327,56 @@ if (isset($_POST['nome_colt'])){
         if ($utsdoc > $utsreg) {
             $msg .= "17+";
         }
-		for ($m = 0; $m <= $form['nmov']; ++$m){
-			if (empty($form['artico'][$m])) {  //manca l'articolo
-            $msg .= "18+";
-			}
-		}
-		for ($m = 0; $m <= $form['nmov']; ++$m){
-			if ($form['quanti'][$m] == 0) {  //la quantità è zero
-            $msg .= "19+";
-			}
-		}
-
+		
 // Antonio Germani controllo che, se la causale movimento non opera, non sia inserito un articolo con magazzino
+    // ?? da controllare se deve essere inserita dentro il ciclo controllo righe oppure se lasciato qui ??
 if (!empty($_POST['artico'.$_POST['mov']])) {
 	$service=intval($itemart['good_or_service']);
-	 	If ($service == 0 && $form['operat']==0 && isset($_POST['artico'.$_POST['mov']])) {
-			$msg .= "36+"; echo "OPERAT:",$form['operat'];
+	 	If ($service == 0 && $form['operat'][$form['mov']]==0 && isset($_POST['artico'.$_POST['mov']])) {
+			$msg .= "36+"; 
 		}
-}
-// fine
+}	
+
+//Antonio Germani prendo la data di fine sospensione del campo di coltivazione selezionato e la metto in $fine_sosp 
+		$campo_coltivazione=$form['campo_coltivazione'];//campo di coltivazione inserito nel form
+		$query="SELECT ".'giorno_decadimento'.",".'ricarico'." FROM ".$gTables['campi']. " WHERE codice ='". $campo_coltivazione."'";
+			$result = gaz_dbi_query($query);
+			while ($row = $result->fetch_assoc()) {
+			$fine_sosp=$row['giorno_decadimento']; $fine_sosp=strtotime($fine_sosp);
+			$dim_campo=$row['ricarico'];// prendo pure la dimensione del campo e la metto in $dim_campo
+			}
+
 		
-	 // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
-If ($itemart['good_or_service'] ==0) { // se non è un servizio
-	 $mv = $gForm->getStockValue(false, $form['artico'][$form['mov']]);
+/* inizio controlli sulle righe articoli >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> */
+
+for ($m = 0; $m <= $form['nmov']; ++$m){
+
+// controllo mancanza articolo
+	if (empty($form['artico'][$m])) {  //manca l'articolo
+            $msg .= "18+";
+			}
+
+// controllo quantità uguale a zero
+	if (gaz_format_quantity($form['quanti'][$m],0,$admin_aziend['decimal_quantity']) == 0) {  //la quantità è zero
+         $msg .= "19+";
+	}			
+		
+// Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
+	If ($itemart['good_or_service'] ==0) { // se non è un servizio
+		$mv = $gForm->getStockValue(false, $form['artico'][$m]);
         $magval = array_pop($mv); $print_magval=floatval($magval['q_g']); 
 		if (isset($_POST['Update'])) {
 			$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 			// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
-			$print_magval=$print_magval+$qta['quanti'];}
-		if ($form["operat"] == -1 and ($print_magval-$form['quanti'][$form['mov']]<0)) { //Antonio Germani quantità insufficiente
+			$print_magval=$print_magval+$qta['quanti'];
+		}
+		if ($form["operat"][$m] == -1 and ($print_magval-$form['quanti'][$m]<0)) { //Antonio Germani quantità insufficiente
 			$msg .= "23+";
-			}
-}
+		}
+	}
 
-	//Antonio Germani controllo se il prodotto è presente nel database fitofarmaci ed eventualmente se è scaduta l'autorizzazione		
-		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['artico'][$form['mov']]."'";
+//Antonio Germani controllo se il prodotto è presente nel database fitofarmaci ed eventualmente se è scaduta l'autorizzazione		
+		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['artico'][$m]."'";
 			$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 				$scadaut=$row['SCADENZA_AUTORIZZAZIONE']; $scadaut=strtotime(str_replace('/', '-', $scadaut));
@@ -373,42 +392,33 @@ If ($itemart['good_or_service'] ==0) { // se non è un servizio
 					// 1 giorno è 24*60*60=86400 - 30 giorni 30*86400=2592000		
 					If (intval($update)+2592000<$today){$msg .="28+";;}	
 					}
-					
-//Antonio Germani prendo e metto la data di fine sospensione del campo di coltivazione selezionato in $fine_sosp 
-		$campo_coltivazione=$form['campo_coltivazione'];//campo di coltivazione inserito nel form
-		$query="SELECT ".'giorno_decadimento'.",".'ricarico'." FROM ".$gTables['campi']. " WHERE codice ='". $campo_coltivazione."'";
-			$result = gaz_dbi_query($query);
-			while ($row = $result->fetch_assoc()) {
-			$fine_sosp=$row['giorno_decadimento']; $fine_sosp=strtotime($fine_sosp);
-			$dim_campo=$row['ricarico'];// prendo pure la dimensione del campo e la metto in $dim_campo
-			}
-			
+							
 // Antonio Germani Controllo se la quantità o dose è giusta rapportata al campo di coltivazione
-			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
+			$item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]);
 			$dose_artico=$item['dose_massima'];// prendo la dose
 			$rame_metallo=$item['rame_metallico'];// già che ci sono, prendo anche il rame metallo del prodotto oggetto del movimento, che mi servirà per il prossimo controllo	
 			
-			$query="SELECT ".'dose'." FROM ".$gTables['camp_uso_fitofarmaci']. " WHERE cod_art ='". $form['artico'][$form['mov']]."' AND id_colt ='".$form['id_colture']."' AND id_avv ='".$form['id_avversita'][$form['mov']]."'";
+			$query="SELECT ".'dose'." FROM ".$gTables['camp_uso_fitofarmaci']. " WHERE cod_art ='". $form['artico'][$m]."' AND id_colt ='".$form['id_colture']."' AND id_avv ='".$form['id_avversita'][$m]."'";
 			$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 				$dose_usofito=$row['dose'];
 			} 
 			if ($dose_usofito>0){
-			If ($dose_usofito>0 && $form['quanti'][$form['mov']] > $dose_usofito*$dim_campo && $form["operat"]==-1 && $dim_campo>0) {
+			If ($dose_usofito>0 && $form['quanti'][$m] > $dose_usofito*$dim_campo && $form['operat'][$m]==-1 && $dim_campo>0) {
 				$msg .="34+"; // errore dose uso fito superata
 				?>
 					<div class="alert alert-warning alert-dismissible">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Warning!</strong> Dose superata nel prodotto <?php echo $form['artico'][$form['mov']];?> con la coltura <?php echo $form['nome_colt'];?>.
+					<strong>Warning!</strong> Dose superata nel prodotto <?php echo $form['artico'][$m];?> con la coltura <?php echo $form['nome_colt'];?>.
 					</div>
 					<?php
 			}} else {
-				if ($dose_artico>0 && $form['quanti'][$form['mov']] > $dose_artico*$dim_campo && $form["operat"]==-1 && $dim_campo>0) {
+				if ($dose_artico>0 && $form['quanti'][$m] > $dose_artico*$dim_campo && $form['operat'][$m]==-1 && $dim_campo>0) {
 					$msg .="25+"; // errore dose artico superata
 					?>
 					<div class="alert alert-warning alert-dismissible">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Warning!</strong> Dose superata nel prodotto <?php echo $form['artico'][$form['mov']];?>
+					<strong>Warning!</strong> Dose superata nel prodotto <?php echo $form['artico'][$m];?>
 					</div>
 					<?php
 				}
@@ -428,22 +438,33 @@ If ($itemart['good_or_service'] ==0) { // se non è un servizio
 						}
 				}		
 			}
-// fine calcolo rame
 
-		// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha di rame metallo
-			
-				if (($campo_coltivazione>0)&&($dim_campo>0)&&($rame_met_annuo+($rame_metallo* $form['artico'][$form['mov']])> (6 * $dim_campo))) {
-					$msg .="26+";echo "CONTROLLO rame metallo: <br> Rame metallo anno già usato: ",$rame_met_annuo," Rame metallo che si tenta di usare: ",($rame_metallo* $form['artico'][$form['mov']]), " Limite annuo di legge per questo campo: ", (6 * $dim_campo);}	// errore superato il limite di rame metallo ad ettaro		
-			
-						
-// Antonio Germani creo la data d I ATTUAZIONE DELL'OPERAZIONE selezionata che poi confronterò con quella di sospensione del campo 
+// Antonio Germani controllo se con questo movimento non si supera la doce massima annua di 6Kg ad ha di rame metallo
+			if ($toDo=="update") { // se è un update tolgo il rame metallo memorizzato in precedenza
+				$rame_met_annuo=$rame_met_annuo-$rame_metallo* gaz_format_quantity($form['quanti'][$m],0,$admin_aziend['decimal_quantity']);
+			}	
+				if (($campo_coltivazione>0)&&($dim_campo>0)&&($rame_met_annuo+($rame_metallo* gaz_format_quantity($form['quanti'][$m],0,$admin_aziend['decimal_quantity']))> (6 * $dim_campo))) {
+					$msg .="26+";
+					?>
+					<div class="alert alert-warning alert-dismissible">
+					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+					<strong>Warning!</strong> ERRORE rame metallo <br> Rame metallo annuo già usato:  <?php echo gaz_format_quantity($rame_met_annuo,1,$admin_aziend['decimal_quantity']); ?>Kg - Rame metallo che si tenta di usare:  <?php echo gaz_format_quantity($rame_metallo* $form['quanti'][$m],1,$admin_aziend['decimal_quantity']); ?>Kg - Limite annuo di legge per questo campo:  <?php echo gaz_format_quantity((6 * $dim_campo),1,$admin_aziend['decimal_quantity']); ?>Kg
+					</div>
+					<?php
+					}	// errore superato il limite di rame metallo ad ettaro	
+					
+} 
+/*  fine controllo righe <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+					
+// Antonio Germani creo la data di ATTUAZIONE DELL'OPERAZIONE selezionata che poi confronterò con quella di sospensione del campo 
 		$dt=substr("0".$form['giodoc'],-2)."-".substr("0".$form['mesdoc'],-2)."-".$form['anndoc']; $dt=strtotime($dt); 			
 // controllo se è ammesso il raccolto sul campo di coltivazione selezionato $msg .=24+ errore tempo di sospensione
-		If ($form['campo_coltivazione']>0 && $form["operat"]==1 && intval($dt)<intval($fine_sosp)){
+		If ($form['campo_coltivazione']>0 && $form['operat'][$form['mov']]==1 && intval($dt)<intval($fine_sosp)){
 		
 			$msg .="24+";	
 			
 		}
+		
 //  §§§§§§§§§§§§§§§§ INIZIO salvataggio sui database §§§§§§§§§§§§§§§§§§§	
         if (empty($msg)) { // nessun errore  
 			$upd_mm = new magazzForm;
@@ -455,7 +476,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){
             if (!empty($form['artico'][$form['mov']])) {
                 $upd_mm->uploadMag($form['id_rif'], $form['tipdoc'], 0, // numdoc � in desdoc
                         0, // seziva � in desdoc 
-                        $form['datdoc'], $form['clfoco'][$form['mov']], $form['scochi'], $form['caumag'], $form['artico'][$form['mov']], $form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'], 'desdoc' => $form['desdoc'])
+                        $form['datdoc'], $form['clfoco'][$form['mov']], $form['scochi'], $form['caumag'], $form['artico'][$form['mov']], $form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'][$form['mov']], 'desdoc' => $form['desdoc'])
                 );
 		//Antonio Germani Non riesco a capire come funziona la funzione qui sopra; ho perso troppo tempo!!!!
 		// risolvo in questa maniera per far scrivere i nuovi campi di movmag, specifici del quaderno di campagna
@@ -488,7 +509,7 @@ $id_mov=$id_mov-1;
 else {$id_mov=$form['id_mov'];} // se non è un nuovo inserimento prendo il codice del movimento di magazzino selezionato
 
 // adesso vedo se si deve aggiornare il campo di coltivazione	
-	if ($form['campo_coltivazione']>0 && $form["operat"]<0) {
+	if ($form['campo_coltivazione']>0 && $form['operat'][$form['mov']]<0) {
 /* Antonio Germani creo la data del trattamento selezionato a cui poi aggiungerò i giorni di sospensione. */
 		$dt=substr("0".$form['giodoc'],-2)."-".substr("0".$form['mesdoc'],-2)."-".$form['anndoc']; $dt=strtotime($dt); 
 
@@ -681,8 +702,7 @@ If ($toDo <> "update") { // se non è un update
     $form['gioreg'] = date("d");
     $form['mesreg'] = date("m");
     $form['annreg'] = date("Y");
-    $form['caumag'] = "";
-    $form['operat'] = 0;
+    $form['caumag'] = "";    
     $form['campo_coltivazione'] = ""; //campo di coltivazione
     $form['clfocoin'] = 0;
 	$form['quantiin'] = "";
@@ -697,6 +717,7 @@ If ($toDo <> "update") { // se non è un update
 	$form['id_colture'] = 0;
 	$form['nome_colt'] = "";
 	$form['mov']=0;
+	$form['operat'][$form['mov']] = "";
 	$form['nome_avv'][$form['mov']] = "";
 	$form['id_avversita'][$form['mov']] = 0;
     $form['artico'][$form['mov']] = "";
@@ -718,9 +739,10 @@ if (isset($_POST['Add_mov'])){
 	$form['nmov']=$_POST['nmov'];
 	for ($m = 0; $m <= $form['nmov']; ++$m){
 		$form['artico'][$m] = $_POST['artico'.$m];
-		$form['quanti'][$m] = $_POST['quanti'.$m];
+		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['prezzo'][$m] = $_POST['prezzo'.$m];
 		$form['scorig'][$m] = $_POST['scorig'.$m];
+		$form['operat'][$m] = $_POST['operat'.$m];
 		$form['staff'][$m]=intval($_POST['staff'.$m]);
 		$form['clfoco'][$m]= $_POST['clfoco'.$m];
 		$form['nome_avv'][$m] = $_POST['nome_avv'.$m];
@@ -729,6 +751,7 @@ if (isset($_POST['Add_mov'])){
 	$form['nmov']=$form['nmov']+1;
 	$form['artico'][$form['nmov']] = "";
 	$form['quanti'][$form['nmov']] = "";
+	$form['operat'][$form['nmov']] = "";
 	$form['prezzo'][$form['nmov']] = 0;
 	$form['scorig'][$form['nmov']] = 0;
 	$form['staff'][$form['nmov']]= "";
@@ -778,18 +801,16 @@ $item = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov
 		}
 }
 
-If (isset($_POST['cancel'])){$form['hidden_req'] = '';
+If (isset($_POST['cancel'])){$form['hidden_req'] = ''; 
     //registri per il form della testata
     $form['id_mov'] = 0;
 	$form['type_mov'] = 1;
     $form['gioreg'] = date("d");
     $form['mesreg'] = date("m");
     $form['annreg'] = date("Y");
-    $form['caumag'] = "";
-    $form['operat'] = 0;
+    $form['caumag'] = "";    
     $form['campo_coltivazione'] = ""; //campo di coltivazione
-    
-	$form['adminid'] = "Utente connesso";
+    $form['adminid'] = "Utente connesso";
     $form['tipdoc'] = "";
     $form['desdoc'] = "";
     $form['giodoc'] = date("d");
@@ -797,9 +818,12 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
     $form['anndoc'] = date("Y");
     $form['scochi'] = 0;
 	$form['id_avversita'][$form['mov']] = 0;
+	$form['nome_avv'][$form['mov']] = "";
 	$form['id_colture'] = 0;
+	$form['nome_colt'] = "";
 	$form['nmov']= 0;
 	$form['mov']=0;
+	$form['operat'][$form['mov']] = "";
     $form['artico'][$form['mov']] = "";
     $form['prezzo'][$form['mov']] = 0;
     $form['scorig'][$form['mov']] = 0;
@@ -871,10 +895,10 @@ if (!empty($msg)) {
 		$itemtesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $row['id_tesbro']);
 		$stringa.="\"".$row['id']." ".$row['description']." ".gaz_format_date($itemtesbro['datemi'])."\", ";			
 	}
-	$stringa=substr($stringa,0,-2).$cod;
+	$stringa=substr($stringa,0,-1).$cod;
 	echo $stringa;
 	?>],
-		minLength:2,
+		minLength:1,
 	select: function(event, ui) {
         //assign value back to the form element
         if(ui.item){
@@ -921,30 +945,6 @@ echo "</select>&nbsp;";
 $item = gaz_dbi_get_row($gTables['campi'], "codice", $form['campo_coltivazione']);
 echo "Superficie: ",gaz_format_quantity($item["ricarico"],1,$admin_aziend['decimal_quantity'])," ha</tr>";
 
-//   CAUSALE
-echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
-echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-echo "<option value=\"\">-------------</option>\n";
-$result = gaz_dbi_dyn_query("*", $gTables['caumag'], " 1 ", "codice desc, descri asc");
-while ($row = gaz_dbi_fetch_array($result)) {
-    $selected = "";
-    if ($form["caumag"] == $row['codice']) {
-        $selected = " selected ";
-    }
-    echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
-}
-echo "</select>&nbsp;";
-
-echo "<select name=\"operat\" class=\"FacetSelect\">\n";
-for ($counter = -1; $counter <= 1; $counter++) {
-    $selected = "";
-    if ($form["operat"] == $counter) {
-        $selected = " selected ";
-    }
-    echo "<option value=\"$counter\" $selected > " . $strScript["admin_caumag.php"][$counter + 9] . "</option>\n";
-}
-echo "</td></tr>";
-
 /* Antonio Germani -  COLTURA */
 ?>
 <!-- Antonio Germani inizio script autocompletamento dalla tabella mysql camp_colture	-->	
@@ -958,10 +958,10 @@ echo "</td></tr>";
 	while($row = $result->fetch_assoc()){
 		$stringa.="\"".$row['id_colt']." - ".$row['nome_colt']."\", ";			
 	}
-	$stringa=substr($stringa,0,-2);
+	$stringa=substr($stringa,0,-1);
 	echo $stringa;
 	?>],
-		minLength:2,
+		minLength:1,
 	select: function(event, ui) {
         //assign value back to the form element
         if(ui.item){
@@ -983,6 +983,31 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[33]."</td><td cla
 	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete4 -->	 
 <?php
 /* fine coltura */
+
+//   CAUSALE
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[2] . "</td><td class=\"FacetDataTD\">\n";
+echo "<select name=\"caumag\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+echo "<option value=\"\">-------------</option>\n";
+$result = gaz_dbi_dyn_query("*", $gTables['caumag'], " 1 ", "codice desc, descri asc");
+while ($row = gaz_dbi_fetch_array($result)) {
+    $selected = "";
+    if ($form["caumag"] == $row['codice']) {
+        $selected = " selected ";
+    }
+    echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
+}
+echo "</select>&nbsp;";
+$res = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
+if ($res['operat']==0) {
+	echo " Non opera";
+}	
+if ($res['operat']==1) {
+	echo " Carico";
+}
+if ($res['operat']==-1) {
+	echo " Scarico";
+}
+echo "</select></td></tr>";
 
 // DATA della REGISTRAZIONE
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">\n";
@@ -1056,10 +1081,10 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td cl
 	while($row = $result->fetch_assoc()){
 		$stringa.="\"".$row['codice']."\", ";			
 	}
-	$stringa=substr($stringa,0,-2);
+	$stringa=substr($stringa,0,-1);
 	echo $stringa;
 	?>],
-		minLength:2,
+		minLength:1,
 	select: function(event, ui) {
         //assign value back to the form element
         if(ui.item){
@@ -1093,7 +1118,7 @@ $messaggio = "";
 $print_unimis = ""; 
 $ric_mastro = substr($form['artico'][$form['mov']], 0, 3);
 ?>
-             <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['artico'][$form['mov']] ?>" name="artico<?php echo $form['mov'] ?>" maxlength="15" /> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete -->
+             <input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['artico'][$form['mov']]; ?>" name="artico<?php echo $form['mov']; ?>" maxlength="15" /> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete -->
  <?php 
 if ($form['artico'][$form['mov']] == "") {
 } else {	
@@ -1115,13 +1140,17 @@ if ($form['artico'][$form['mov']] == "") {
 				// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 				$print_magval=$print_magval+$qta['quanti'];
 				}	 
-			echo " ",substr($itemart['descri'], 0, 25)," ";	
+			echo " ",substr($itemart['descri'], 0, 25)," ";
 			if ($dose>0) {echo "<br>Dose generica: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
+			
 		}  
 }
+?>
+<input type="hidden" name="operat<?php echo $form['mov']; ?>" value="<?php echo $form['operat'][$form['mov']]; ?>" />
+<?php
 ?></tr><tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl[12]; ?></td>
-<td class="FacetDataTD" ><input type="text" value="<?php echo $form['quanti'][$form['mov']];?>" maxlength="10" size="10" name="quanti<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo "&nbsp;".$print_unimis;?>
+<td class="FacetDataTD" ><input type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']],1,$admin_aziend['decimal_quantity']);?>" maxlength="10" size="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()"><?php echo "&nbsp;".$print_unimis;?>
 <?php
 	if ($service == 0) { //Antonio Germani se è un articolo con magazzino
 		echo " ".$script_transl[22]." ".gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity'])." ".$print_unimis."&nbsp;&nbsp;";
@@ -1174,10 +1203,10 @@ if ($print_unimis <> "h"){ // se è una lavorazione agricola disattivare avversi
 	while($row = $result->fetch_assoc()){
 		$stringa.="\"".$row['id_avv']." - ".$row['nome_avv']."\", ";			
 	}
-	$stringa=substr($stringa,0,-2);
+	$stringa=substr($stringa,0,-1);
 	echo $stringa;
 	?>],
-		minLength:2,
+		minLength:1,
 	select: function(event, ui) {
         //assign value back to the form element
         if(ui.item){
@@ -1193,22 +1222,26 @@ if ($print_unimis <> "h"){ // se è una lavorazione agricola disattivare avversi
  <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[20]."</td><td class=\"FacetDataTD\"\n>";
 ?>
-     <input id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov'] ?>" maxlength="50" size="50"/>
-	 <input type="hidden" value="<?php echo intval ($form['nome_avv'][$form['mov']]); ?>" name="id_avversita<?php echo $form['mov'] ?>"/>
-	 <?php
+     <input id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov']; ?>" maxlength="50" size="50"/>
+	 <input type="hidden" value="<?php echo intval ($form['nome_avv'][$form['mov']]); ?>" name="id_avversita<?php echo $form['mov']; ?>"/>
+	 <?php unset ($result); $dose_usofito="";
+	 if ($form['artico'][$form['mov']] <> "" && $form['nome_avv'][$form['mov']] <> "") { 
 	 $query="SELECT ".'dose'." FROM ".$gTables['camp_uso_fitofarmaci']. " WHERE cod_art ='". $form['artico'][$form['mov']]."' AND id_colt ='".$form['id_colture']."' AND id_avv ='".$form['id_avversita'][$form['mov']]."'";
 			$result = gaz_dbi_query($query);
 			while ($row = $result->fetch_assoc()) {
 				$dose_usofito=$row['dose'];
 			} 
-	 if ($dose_usofito>0) {echo "Dose specifica: ",gaz_format_quantity($dose_usofito,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
+	 if ($dose_usofito>0) {
+		 echo "Dose specifica: ",gaz_format_quantity($dose_usofito,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";
+		 }
+	 }
 	 ?>
 	 </td></tr> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete3 -->	 
 <?php
 } else {
 	?>
-     <input type="hidden" value="" name="nome_avv<?php echo $form['mov'] ?>"/>
-	 <input type="hidden" value="" name="id_avversita<?php echo $form['mov'] ?>"/>
+     <input type="hidden" value="" name="nome_avv<?php echo $form['mov']; ?>"/>
+	 <input type="hidden" value="" name="id_avversita<?php echo $form['mov']; ?>"/>
 	 <?php
 }
 	
