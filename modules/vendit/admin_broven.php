@@ -1467,6 +1467,7 @@ $rit = 0;
 $carry = 0;
 
 $last_row = array();
+$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 foreach ($form['rows'] as $k => $v) {
     //creo il castelletto IVA
     $imprig = 0;
@@ -1696,43 +1697,52 @@ foreach ($form['rows'] as $k => $v) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
         case "14":
-            if ($v['scorta'] < 0) {
-                //$scorta_col = 'FacetDataTDsmallRed';
-                $btn_class = 'btn-danger';
+            if ( $show_artico_composit['val']=="1" ) {
+                if ($v['scorta'] < 0) {
+                    //$scorta_col = 'FacetDataTDsmallRed';
+                    $btn_class = 'btn-danger';
+                } else {
+                    //$scorta_col = 'FacetDataTDsmall';
+                    $btn_class = 'btn-default';
+                }
+                echo '	<td></td>
+                                    <td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
+                        <button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
+                            <i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
+                        </button>
+                    </td>
+                    <td>
+                        <input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
+                    </td>
+                    <td>
+                        <input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
+                    </td>
+                    <td>
+                        <input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
+                    </td>';
+                echo "<td></td>\n";
+                echo "<td></td>\n";
+                echo "<td></td>\n";
+                echo "<td class=\"text-right\"></td>\n";
+                echo "<td class=\"text-right\"></td>\n";
+                echo "<td class=\"text-right\"></td>\n";
+                $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             } else {
-                //$scorta_col = 'FacetDataTDsmall';
-                $btn_class = 'btn-default';
+                echo "<input type=\"hidden\" name=\"rows[$k][descri]\" value=\"$descrizione\" maxlength=\"20\" size=\"50\" />
+                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl["weight"] . "\" type=\"text\" name=\"rows[" . $k . "][unimis]\" value=\"" . $v["unimis"] . "\" maxlength=\"3\" size=\"1\" />
+                    <input type=\"hidden\" class=\"gazie-tooltip\" data-type=\"weight\" data-id=\"" . $peso . "\" data-title=\"" . $script_transl['weight'] . "\" type=\"text\" name=\"rows[" . $k . "][quanti]\" value=\"" . $v["quanti"] . "\" align=\"right\" maxlength=\"11\" size=\"4\" id=\"righi_" . $k . "_quanti\" onchange=\"document.docven.last_focus.value=\"righi_" . $k . "_prelis\"; this.form.hidden_req.value=\"ROW\"; this.form.submit();\" />
+                    <input type=\"hidden\" name=\"rows[$k][prelis]\" value=\"\" />
+                    <input type=\"hidden\" name=\"rows[$k][sconto]\" value=\"\" />
+                    <input type=\"hidden\" name=\"rows[$k][provvigione]\" value=\"\" />";
             }
-            echo '	<td>
-					
-			  	</td>
-                                <td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-					<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
-						<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
-					</button>
-			 	</td>
-				<td>
-		 			<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $v["codart"] . '" data-title="' . $v['annota'] . '" type="text" name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
-			   	</td>
-			    <td>
-					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][unimis]" value="' . $v['unimis'] . '" maxlength="3" size="1" />
-				</td>
-				<td>
-					<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="rows[' . $k . '][quanti]" value="' . $v['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.hidden_req.value=\'ROW\'; this.form.submit();" />
-                </td>';
-            echo "<td></td>\n";
-            echo "<td></td>\n";
-            echo "<td></td>\n";
-            echo "<td class=\"text-right\"></td>\n";
-            echo "<td class=\"text-right\"></td>\n";
-            echo "<td class=\"text-right\"></td>\n";
-            $last_row[] = array_unshift($last_row, '' . $v['codart'] . ', ' . $v['descri'] . ', ' . $v['quanti'] . $v['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($v['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($v['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $v['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $v['codric']);
             break;
     }
-    echo '  <td class="text-right">
-		     <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
-		   </td>
-	     </tr>';
+    if ( $v['tiprig']!="14" ) {
+        echo '<td class="text-right">
+		    <button type="submit" class="btn btn-default btn-sm" name="del[' . $k . ']" title="' . $script_transl['delete'] . $script_transl['thisrow'] . '"><i class="glyphicon glyphicon-remove"></i></button>
+		    </td>';
+    }
+    echo "</tr>";
 }
 
 /* Nuovo alert per scontistica, da visualizzare rigorosamente dopo l'ultima riga inserita */
