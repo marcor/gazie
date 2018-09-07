@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS `gaz_camp_uso_fitofarmaci` (
   `id_colt` int(3) NOT NULL,
   `id_avv` int(3) NOT NULL,
   `dose` decimal(8,3) NOT NULL,
+  `tempo_sosp` int(2) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 CREATE TABLE `gaz_breadcrumb` (
