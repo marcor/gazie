@@ -32,16 +32,9 @@ $admin_aziend=checkAdmin();
 $titolo = 'Campi';
 require("../../library/include/header.php");
 $script_transl = HeadMain();
-
-echo "IN COSTRUZIONE";
-
 $form['nome_fito']="";
 
-
-
 print "<form method=\"POST\" enctype=\"multipart/form-data\">\n";
-
-
 print "<div align=\"center\" class=\"FacetFormHeaderFont\">CONSULTAZIONE DATABASE FITOFARMACI</div>";
 print "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
@@ -57,16 +50,84 @@ if (!empty($msg)) {
     }
     echo '<tr><td colspan="5" class="FacetDataTDred">'.$message."</td></tr>\n";
 }
-
-print "<tr><td class=\"FacetFieldCaptionTD\">NOME FITOFARMACO</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"nome_avv\" value=\"".$form['nome_fito']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
-
-
-
-print "</table>\n";
 ?>
-</form>
-
+<!-- Antonio Germani inizio script autocompletamento dalla tabella mysql artico	-->	
+  <script>
+	$(document).ready(function() {
+	$("input#autocomplete").autocomplete({
+		source: [<?php
+	$stringa="";
+	$query="SELECT prodotto FROM ".$gTables['camp_fitofarmaci'];
+	$result = gaz_dbi_query($query);
+	while($row = $result->fetch_assoc()){
+		$stringa.="\"".$row['prodotto']."\", ";			
+	}
+	$stringa=substr($stringa,0,-2);
+	echo $stringa;
+	?>],
+		minLength:2,
+	select: function(event, ui) {
+        //assign value back to the form element
+        if(ui.item){
+            $(event.target).val(ui.item.value);
+        }
+        //submit the form
+        $(event.target.form).submit();
+    }
+	});
+	});
+  </script>
+ <!-- fine autocompletamento --> 
 <?php
-  
+print "<tr><td class=\"FacetFieldCaptionTD\">NOME FITOFARMACO</td><td class=\"FacetDataTD\"><input type=\"text\" id=\"autocomplete\" name=\"nome_fito\" value=\"".$form['nome_fito']."\" maxlength=\"50\" size=\"50\" /></td></tr>\n";
+
+if (isset ($_POST['nome_fito'])) {
+	$form['nome_fito']=$_POST['nome_fito'];
+	$fito = gaz_dbi_get_row($gTables['camp_fitofarmaci'], 'prodotto', $form['nome_fito']);
+	?>
+		
+	<tr><td colspan="5" class="FacetDataTDred" align="center">
+	<?php echo $form['nome_fito']; ?>
+	</td></tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">IMPRESA</td>
+	<td class=\"FacetDataTD\">
+	<?php echo $fito['IMPRESA']; ?>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">SEDE LEGALE</td>
+	<td class=\"FacetDataTD\">
+	<?php echo $fito['SEDE_LEGALE_IMPRESA']; ?>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">SCADENZA AUTORIZZAZIONE</td>
+	<td class=\"FacetDataTD\">
+	<?php echo $fito['SCADENZA_AUTORIZZAZIONE']; ?>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">INDICAZIONI DI PERICOLO</td>
+	<td class=\"FacetDataTD\">
+	<?php echo $fito['INDICAZIONI_DI_PERICOLO']; ?>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">DESCRIZIONE FORMULAZIONE</td>
+	<td class=\"FacetDataTD\">
+	<?php echo $fito['DESCRIZIONE_FORMULAZIONE']; ?>
+	</td>
+	</tr>
+	<tr>
+	<td class="FacetFieldCaptionTD">SOSTANZE ATTIVE</td>
+	<td class=\"FacetDataTD\">
+	<?php echo $fito['SOSTANZE_ATTIVE']; ?>
+	</td>
+	</tr>
+	</table>
+	</form>
+<?php
+}
 require("../../library/include/footer.php");
 ?>
