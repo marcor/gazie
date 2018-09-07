@@ -83,10 +83,8 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="causale" placeholder="<?php echo $strScript['admin_movmag.php'][2];?>" class="input-sm form-control" value="<?php echo (isset($causale))? $causale : ""; ?>" maxlength="6" size="3" tabindex="1" class="FacetInput">
 		</td>
-		<td class="FacetFieldCaptionTD">
-			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-sm form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
-		</td>
-		<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione **DA COMPLETARE** qualcosa non va dopo aver cercato-->
+		
+		<!-- Antonio Germani - inserisco l'intestazione cerca per campi di coltivazione **DA COMPLETARE** non cerca se il campo è 0-->
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="campo" placeholder="<?php echo $script_transl[11];?>" class="input-sm form-control" value="<?php echo (isset($campo))? $campo : ""; ?>" maxlength="" size="3" tabindex="1" class="FacetInput">
 		</td>
@@ -95,6 +93,12 @@ if (!isset($_GET['flag_order']) || empty($_GET['flag_order'])) {
 		<td class="FacetFieldCaptionTD">
 			<input type="text" name="articolo" placeholder="<?php echo $script_transl[5];?>" class="input-sm form-control" value="<?php echo (isset($articolo))? $articolo : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
 		</td>
+		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD"></td>
+		<td class="FacetFieldCaptionTD">
+			<input type="text" name="documento" placeholder="<?php echo $script_transl[8];?>" class="input-sm form-control" value="<?php echo (isset($documento))? $documento : ""; ?>" maxlength="15" size="3" tabindex="1" class="FacetInput">
+		</td>
+		
 		<td class="FacetFieldCaptionTD" colspan="4">
 			<input type="submit" class="btn btn-xs btn-default" name="search" value="<?php echo $script_transl['search'];?>" tabindex="1" onClick="javascript:document.report.all.value=1;">
 			<input type="submit" class="btn btn-xs btn-default" name="all" value="<?php echo $script_transl['vall']; ?>" onClick="javascript:document.report.all.value=1;">
@@ -111,14 +115,14 @@ $headers_mov = array  (
             "n.ID" => "id_mov",
 			$script_transl[4] => "datdoc",
             $script_transl[15] => "datreg",
-            $strScript["admin_movmag.php"][2] => "caumag",
-            $script_transl[8] => "",
+            $strScript["admin_movmag.php"][2] => "caumag",            
 			$script_transl[11] => "",
 			$script_transl[12] => "",
 			$script_transl[13] => "",
             $script_transl[5] => "artico",
             $script_transl[6] => "",
             $script_transl[7] => "",
+			$script_transl[8] => "",
 			$script_transl[16] => "",
             $script_transl['delete'] => ""
             );
@@ -152,17 +156,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datreg"])." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_date($a_row["datdoc"])." &nbsp;</td>\n";
     echo "<td class=\"FacetDataTD\" align=\"center\">".$a_row["caumag"]." - ".$a_row["descau"]."</td>\n";
-    if ($a_row['id_rif'] == 0) {
-        echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\">".$a_row['desdoc']."</td>\n";
-    } else {
-        if ($a_row['tipdoc'] == "ADT"
-         || $a_row['tipdoc'] == "AFA"
-         || $a_row['tipdoc'] == "AFC") {
-            echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
-        } else {
-            echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
-        }
-    }
+    
 	
 	// Antonio Germani carico la tabella campi
 $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
@@ -200,7 +194,21 @@ while ($unirow = gaz_dbi_fetch_array($unires)) {
     echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($a_row["quanti"],1,$admin_aziend['decimal_quantity'])." ".$unimis."</td>\n";
 	$res = gaz_dbi_get_row($gTables['camp_avversita'], 'id_avv', $a_row['id_avversita']);
     echo "<td class=\"FacetDataTD\" align=\"right\">".$res["nome_avv"]." </td>\n";
+	
+	if ($a_row['id_rif'] == 0) {
+        echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\">".$a_row['desdoc']."</td>\n";
+    } else {
+        if ($a_row['tipdoc'] == "ADT"
+         || $a_row['tipdoc'] == "AFA"
+         || $a_row['tipdoc'] == "AFC") {
+            echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../acquis/admin_docacq.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
+        } else {
+            echo "<td class=\"FacetDataTD\" align=\"center\" title=\"$title\"><a href=\"../vendit/admin_docven.php?Update&id_tes=".$a_row['testata']."\">".$a_row['desdoc']." ".$script_transl[9]." ".gaz_format_date($a_row["datdoc"])."</a></td>\n";
+        }
+    }
+	
 	echo "<td class=\"FacetDataTD\" align=\"right\">".$a_row["adminid"]." </td>\n";
+		
     echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_movmag.php?id_mov=".$a_row["id_mov"]."\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>\n";
     echo "</tr>\n";
 	/** ENRICO FEDELE */
