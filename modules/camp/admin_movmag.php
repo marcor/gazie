@@ -283,7 +283,9 @@ if (isset($_POST['nome_colt'])){
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
 		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
 		If ($itemart['good_or_service'] == 0) {
-        $form['operat'][$form['mov']] = $causa['operat'];
+			for ($m = 0; $m <= $form['nmov']; ++$m){		
+				$form['operat'][$m] = $causa['operat'];
+			}
 		} else {
 			$form['operat'][$form['mov']]=0;
 		}
@@ -540,8 +542,6 @@ if ($tempo_sosp==0){ // se non è presente un tempo di sospensione specifico pre
 		} else { // altrimenti 
 			if ($toDo == "update"){ // se è un update, devo vedere se ci sono altri movimenti con un tempo superiore
 		
-		
-	
 // prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione
 $n=0;$array=array();
 		$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE campo_coltivazione ='". $codcamp."' AND operat ='-1' AND id_mov <> ".$id_movmag;
@@ -598,18 +598,9 @@ $n=0;$array=array();
 				gaz_dbi_query ($query) ;
 			}
 			
-			else { // altrimenti non faccio nulla perché va bene la data memorizzata in precedenza nel campo
-				
-				
+			else { // altrimenti non faccio nulla perché va bene la data memorizzata in precedenza nel campo				
 				echo "<br> Non faccio nulla";
-			}
-
-			
-			
-			
-			
-			
-			
+			}		
 			}
 		}	
 	}
@@ -1092,7 +1083,9 @@ if ($res['operat']==-1) {
 	echo " Scarico";
 }
 echo "</select></td></tr>";
+?>
 
+<?php
 // DATA della REGISTRAZIONE
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[1] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"gioreg\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
@@ -1231,7 +1224,7 @@ if ($form['artico'][$form['mov']] == "") {
 }
 ?>
 <input type="hidden" name="operat<?php echo $form['mov']; ?>" value="<?php echo $form['operat'][$form['mov']]; ?>" />
-<?php
+<?php 
 ?></tr><tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl[12]; ?></td>
 <td class="FacetDataTD" ><input type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']],1,$admin_aziend['decimal_quantity']);?>" maxlength="10" size="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()"><?php echo "&nbsp;".$print_unimis;?>
