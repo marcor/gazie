@@ -62,7 +62,8 @@ $strScript = array("browse_document.php" =>
 		"Codice già utilizzato",
 		"Coltura inesistente",
 		"Articolo inesistente",
-		"Avversità inesistente"
+		"Avversità inesistente",
+		"Tempo sospensione"
     ),
     "report_artico.php" =>
     array('title' => 'Lista delle merci e dei servizi',

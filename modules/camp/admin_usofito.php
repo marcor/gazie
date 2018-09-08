@@ -111,7 +111,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
           
           if ($toDo == 'update') { // e' una modifica
 		 
-		  $query="UPDATE " . $gTables['camp_uso_fitofarmaci'] . " SET cod_art ='"  .$form['cod_art']. "', id_colt ='" . $form['id_colt'] . "', id_avv =' ".$form['id_avv']. "', dose = '".$form['dose']."' WHERE id ='". $form['id'] ."'";
+		  $query="UPDATE " . $gTables['camp_uso_fitofarmaci'] . " SET cod_art ='"  .$form['cod_art']. "', id_colt ='" . $form['id_colt'] . "', id_avv =' ".$form['id_avv']. "', dose = '".$form['dose']. "', tempo_sosp = '".$form['tempo_sosp']."' WHERE id ='". $form['id'] ."'";
 			gaz_dbi_query ($query) ;
 		  
           } else { // e' un'inserimento
@@ -129,6 +129,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['id_colt'] = $camp_uso_fitofarmaci['id_colt'];
 	$form['id_avv'] = $camp_uso_fitofarmaci['id_avv'];
 	$form['dose'] = $camp_uso_fitofarmaci['dose'];
+	$form['tempo_sosp'] = $camp_uso_fitofarmaci['tempo_sosp'];
 	$colt = gaz_dbi_get_row($gTables['camp_colture'],"id_colt",$form['id_colt']);
 	$form['nome_colt'] = $form['id_colt']." - ".$colt['nome_colt'];
 	$avv = gaz_dbi_get_row($gTables['camp_avversita'],"id_avv",$form['id_avv']);
@@ -145,6 +146,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) {   //se non e' il p
 	$form['id_avv'] = "";
 	$form['nome_avv'] = "";
 	$form['dose'] = 0;
+	$form['tempo_sosp'] = 0;
 }
 if (isset($_POST['Insert']) or isset($_POST['Update'])) {   //se non e' il primo accesso
 
@@ -160,6 +162,7 @@ if (isset($_POST['Insert']) or isset($_POST['Update'])) {   //se non e' il primo
 	} else {
 		$form['dose'] = number_format ($_POST['dose'],$admin_aziend['decimal_price'], '.', '');
 	}
+	$form['tempo_sosp'] = $_POST['tempo_sosp'];
 }
 
 require("../../library/include/header.php");
@@ -306,6 +309,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td class=\"F
 $res2 = gaz_dbi_get_row($gTables['artico'], 'codice', $form['cod_art']);
 echo $res2['uniacq']."/ha</td></tr>\n";
 print "<tr>";
+print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[10]</td><td class=\"FacetDataTD\"><input type=\"text\" name=\"tempo_sosp\" value=\"".$form['tempo_sosp']."\" maxlength=\"2\" size=\"2\" /> gg </td></tr>\n";
 if ($toDo !== 'update') {
 	print "<td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n</td>";
 }

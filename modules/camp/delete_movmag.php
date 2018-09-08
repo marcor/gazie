@@ -49,36 +49,51 @@ if (isset($_POST['Delete'])) {
 	if ($campo_coltivazione>0) {
 	$form2 = gaz_dbi_get_row($gTables['campi'], 'codice', intval($campo_coltivazione));
 	if (intval($form2['id_mov'])==intval($id_mov)){
-		echo "da azzerare",$form2['id_mov'],$form2['giorno_decadimento'],$form2['codice_prodotto_usato'],"<br>";
+		echo "da cancellare> idmov:",$form2['id_mov']," giorno decadimento:",$form2['giorno_decadimento']," codice prodotto:",$form2['codice_prodotto_usato'],"<br>";
 // prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione
 $n=0;$array=array();
-		$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE campo_coltivazione ='". $campo_coltivazione."'";
+		$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE campo_coltivazione ='". $campo_coltivazione."' AND operat ='-1' AND id_mov <> ".$form2['id_mov'];
+		echo "<br>",$query,"<br>";
 		$result = gaz_dbi_query($query);
 		while($row = $result->fetch_assoc()) {
-// cerco i giorni di sospensione del prodotto interessato ad ogni movimento
-			$n=$n+1;$artico= $row['artico'];
+// cerco i giorni di sospensione del prodotto che si trovano in ogni movimento
+			$artico= $row['artico'];
+			$id_avversita=$row['id_avversita'];
+			$id_colture=$row['id_colture'];
 			$form3 =gaz_dbi_get_row($gTables['artico'], 'codice', $artico);
-			$temp_sosp = $form3['tempo_sospensione'];echo " tempo sospensione: ",$temp_sosp;
+			$temp_sosp = $form3['tempo_sospensione'];
+echo "<br> tempo sospensione generico: ",$temp_sosp;
+// se è presente prendo il tempo di sospensione specifico altrimenti lascio quello generico
+	$query2="SELECT ".'tempo_sosp'." FROM ".$gTables['camp_uso_fitofarmaci']. " WHERE cod_art ='". $artico ."' AND id_colt ='".$id_colture."' AND id_avv ='".$id_avversita."'";
+	echo "<br>",$query2,"<br>";
+			$result2 = gaz_dbi_query($query2);
+			while ($row2 = $result2->fetch_assoc()) {
+				$temp_sosp=$row2['tempo_sosp'];
+			}				
+			echo "<br> tempo sospensione risultante fra generico e specifico: ",$temp_sosp,"<br>";			
+				
 // creo un array con tempo di sospensione + codice articolo + movimento magazzino
-					$temp_deca=(intval($temp_sosp)*86400)+strtotime($row["datdoc"]);
-				$array[$n]= array('temp_deca'=>$temp_deca,'datdoc'=>$row["datdoc"],'artico'=>$artico, 'id_mov'=>$row["id_mov"]);
-			
+			$temp_deca=(intval($temp_sosp)*86400)+strtotime($row["datdoc"]);
+			$array[$n]= array('temp_deca'=>$temp_deca,'datdoc'=>$row["datdoc"],'artico'=>$artico, 'id_mov'=>$row["id_mov"]);
+			$n=$n+1;
 // ordino l'array per tempo di sospensione
 		
-        echo $n," id: ". $row["id_mov"]. " - Name: ". $row["datdoc"]. " " . $row["artico"] . "<br>";
+        echo $n," id: ". $row["id_mov"]. " - datadocumento: ". $row["datdoc"]. " prodotto:" . $row["artico"] . "<br>";
 		}
 		echo "----------- Array non ordinato <br>";
 		print_r ($array);
 		echo "<br> ----------------- Array ordinato <br>";
 		rsort ($array);
 		print_r ($array);
-		
-			if (isset ($array[1]['temp_deca'])) {	$dt=date('Y/m/d', $array[1]['temp_deca']);
+				
+			if (isset ($array[0]['temp_deca']) && $n>1) {	$dt=date('Y/m/d', $array[0]['temp_deca']);
 		// aggiorno la tabella del campo di coltivazione
-			$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt .  "' , codice_prodotto_usato = '"  .$array[1]['artico']. "' , id_mov = '"  .$array[1]['id_mov'].  "' WHERE codice ='". intval($campo_coltivazione)."'";
+			$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt .  "' , codice_prodotto_usato = '"  .$array[0]['artico']. "' , id_mov = '"  .$array[0]['id_mov'].  "' WHERE codice ='". intval($campo_coltivazione)."'";
+			echo "<br>",$query;
 			gaz_dbi_query ($query) ;
 			}	
 			else {$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . "" .  "' , codice_prodotto_usato = '"  ."". "' , id_mov = '"  ."".  "' WHERE codice ='". intval($campo_coltivazione)."'";
+			echo "<br>",$query;
 			gaz_dbi_query ($query) ;
 			}
 	}
