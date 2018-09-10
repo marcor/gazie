@@ -1,6 +1,6 @@
 <div class="panel panel-default panel-body panel-help">
 <h3 align="center">Registro/Quaderno di campagna</h3>
-<img src="icona-modulo-registro-di-campagna.png" alt="Quaderno di campagna" width="130" align="left" hspace="5px" />
+<img src="Icona-modulo-registro-di-campagna.png" alt="Quaderno di campagna" width="130" align="left" hspace="5px" />
 <p>In questo modulo si raccolgono le
 funzioni relative alla gestione di un Quaderno o Registro di campagna ai sensi delD.Lgs 150/2012, DPR 55/2012 e DPR 290/2001,
 incluse le stampe periodiche.</p><p>Il Registro di campagna va conservato almeno per i tre anni successivi a quello a cui si riferiscono gli interventi annotati. La sua compilazione è a cura dell'utilizzatore dei prodotti fitosanitari (possessore di patentino) che può essere diverso dal titolare dell'azienda; in questo caso il titolare dell'azienda dovrà sottoscrivere il registro al termine di ogni anno solare. Inoltre, sempre il titolare dell'azienda deve conservare in modo idoneo, per il periodo di tre anni, le fatture di acquisto dei prodotti fitosanitari, nonché la copia dei moduli di acquisto e delle schede di sicurezza dei prodotti con classificazione di pericolo, di molto tossici, tossici e nocivi (art.16, comma 4, del D.Lgs 150/2012).</p>
