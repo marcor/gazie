@@ -1050,6 +1050,9 @@ echo "Superficie: ",gaz_format_quantity($item["ricarico"],1,$admin_aziend['decim
  <!-- fine autocompletamento -->
  <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[33]."</td><td class=\"FacetDataTD\"\n>";
+	if (intval ($form['nome_colt'])==0) {
+		$form['nome_colt']="";
+	}
 ?>
      <input id="autocomplete4" type="text" value="<?php echo $form['nome_colt']; ?>" name="nome_colt" maxlength="50" size="50"/>
 	 <input type="hidden" value="<?php echo intval ($form['nome_colt']); ?>" name="id_colture"/>
