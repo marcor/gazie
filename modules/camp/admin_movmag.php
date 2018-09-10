@@ -373,7 +373,8 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 			// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 			$print_magval=$print_magval+$qta['quanti'];
 		}
-		if ($form["operat"][$m] == -1 and ($print_magval-$form['quanti'][$m]<0)) { //Antonio Germani quantità insufficiente
+	
+		if ($form["operat"][$m] == -1 and (number_format($print_magval,3) - number_format($form['quanti'][$m],3)<0)) { //Antonio Germani quantità insufficiente
 			$msg .= "23+";
 		}
 	}
