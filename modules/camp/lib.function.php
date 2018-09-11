@@ -136,7 +136,7 @@ class magazzForm extends GAzieForm {
       codice dell'articolo, in questo caso si prende in considerazione l'ultimo
       movimento riferito all'articolo
      */ {
-        global $gTables;
+        global $gTables;$row_val="";
         if (!$id_mov && empty($item_code)) { // non ho nulla!
             return array('q' => 0, 'v' => 0, 'q_g' => 0, 'v_g' => 0);
         } elseif (!$id_mov && !empty($item_code)) {    // ho il codice articolo  senza id
