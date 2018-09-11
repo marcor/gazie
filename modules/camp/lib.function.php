@@ -270,7 +270,7 @@ class magazzForm extends GAzieForm {
                     }
                     if ($r['id_mov'] == $id_mov) { // e' il movimento che voglio valorizzare
                         $return_val[0] = array('q' => $r['quanti'], 'v' => $row_val,
-                            'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                            'q_g' => number_format($giacenza['q_g'],3), 'v_g' => number_format($giacenza['v_g'],3));
                     }
                 }
                 break;
