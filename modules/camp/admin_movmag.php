@@ -413,7 +413,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 				?>
 					<div class="alert alert-warning alert-dismissible">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Warning!</strong> Dose superata nel prodotto <?php echo $form['artico'][$m];?> con la coltura <?php echo $form['nome_colt'];?>.
+					<strong>Warning!</strong> Dose superata nel prodotto <?php echo $form['artico'][$m];?> con la coltura <?php echo $form['nome_colt'];?>. La quantità massima utilizzabile è <?php echo gaz_format_quantity($dose_usofito*$dim_campo,1,$admin_aziend['decimal_quantity']) ?>.
 					</div>
 					<?php
 			}} else {
@@ -422,7 +422,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 					?>
 					<div class="alert alert-warning alert-dismissible">
 					<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-					<strong>Warning!</strong> Dose superata nel prodotto <?php echo $form['artico'][$m];?>
+					<strong>Warning!</strong> Dose superata nel prodotto <?php echo $form['artico'][$m];?>. La quantità massima utilizzabile è <?php echo gaz_format_quantity($dose_artico*$dim_campo,1,$admin_aziend['decimal_quantity']) ?> .
 					</div>
 					<?php
 				}
@@ -989,7 +989,7 @@ if (!empty($msg)) {
  <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td colspan=\"1\" class=\"FacetDataTD\"\n>";
 ?>
-      <input class="col-sm-5" id="autocomplete2" type="text" value="<?php echo $form['description'] ?>" name="description" maxlength="30" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete2 -->	  
+      <input class="col-sm-7" style="max-width: 320px;" id="autocomplete2" type="text" value="<?php echo $form['description'] ?>" name="description" maxlength="30" /> <!-- per funzionare autocomplete id dell'input deve essere autocomplete2 -->	  
 <script>
   var stile = "top=10, left=10, width=600, height=800 status=no, menubar=no, toolbar=no scrollbar=no";
      function Popup(apri) {
@@ -1301,8 +1301,11 @@ if ($print_unimis <> "h"){ // se è una lavorazione agricola disattivare avversi
  <!-- fine autocompletamento -->
  <?php
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[20]."</td><td class=\"FacetDataTD\"\n>";
+if (intval($form['nome_avv'][$form['mov']]) == 0){
+	$form['nome_avv'][$form['mov']]="";
+}
 ?>
-     <input id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov']; ?>" maxlength="50" size="50"/>
+     <input class="col-sm-4" id="autocomplete3" type="text" value="<?php echo $form['nome_avv'][$form['mov']]; ?>" name="nome_avv<?php echo $form['mov']; ?>" maxlength="15" />
 	 <input type="hidden" value="<?php echo intval ($form['nome_avv'][$form['mov']]); ?>" name="id_avversita<?php echo $form['mov']; ?>"/>
 	 <?php unset ($result); $dose_usofito="";
 	 if ($form['artico'][$form['mov']] <> "" && $form['nome_avv'][$form['mov']] <> "") { 
