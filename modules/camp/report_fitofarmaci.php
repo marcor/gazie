@@ -83,7 +83,8 @@ $recordnav -> output();
 							"Nome fitofarmaco" => "cod_art",	
 							"Coltura" => "id_colt",
 							"Avversità" => "id_avv",
-							"Dose" => "dose"
+							"Dose" => "dose",
+							"Tempo sosp." => "tempo_sosp"
 							);
 	$linkHeaders = new linkHeaders($headers_avv);
 	$linkHeaders -> output();
@@ -117,6 +118,9 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			</td>
 			<td>
 				<span><?php echo number_format ($a_row["dose"],$admin_aziend['decimal_price'], ',', '')," ",$unimis,"/ha"; ?></span>
+			</td>
+			<td>
+				<span><?php echo $a_row["tempo_sosp"]," gg"; ?></span>
 			</td>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina" title="Elimina" href="delete_fitofarmaci.php?id=<?php echo $a_row["id"]; ?>">

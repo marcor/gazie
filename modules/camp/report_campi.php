@@ -120,7 +120,7 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<td align="center"><a  href="javascript:;" onclick="window.open('<?php echo($a_row["web_url"])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 			<i class="glyphicon glyphicon-picture"></i>
 			</a></td>
-			<td align="center"><?php echo gaz_format_date($a_row["giorno_decadimento"]);?></td>
+			<td align="center"><?php echo gaz_format_date($a_row["giorno_decadimento"]),"<br>ID mov.",$a_row["id_mov"];?></td>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina" href="delete_campi.php?codice=<?php echo $a_row["codice"]; ?>">
 					<i class="glyphicon glyphicon-remove"></i>
