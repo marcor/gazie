@@ -543,7 +543,7 @@ if ($tempo_sosp==0){ // se non è presente un tempo di sospensione specifico pre
 		} else { // altrimenti 
 			if ($toDo == "update"){ // se è un update, devo vedere se ci sono altri movimenti con un tempo superiore
 		
-// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione
+// prendo tutti i movimenti di magazzino che hanno interessato il campo di coltivazione escludendo il movimento oggetto di update
 $n=0;$array=array();
 		$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE campo_coltivazione ='". $codcamp."' AND operat ='-1' AND id_mov <> ".$id_movmag;
 		$result = gaz_dbi_query($query);
@@ -570,32 +570,37 @@ $n=0;$array=array();
 			$n=$n+1;
 // ordino l'array per tempo di sospensione
 		
-        echo "<br>".$n." id: ". $row["id_mov"]. " - datadoc: ". $row["datdoc"]. " " . $row["artico"] . "<br>";
 		} 
-		echo "----------- Array non ordinato <br>";
-		
-		echo "<br> ----------------- Array ordinato <br>";
+	
 		rsort ($array);
-			
+		
 		$dt_db_movmag=date('Y/m/d', $array[0]['temp_deca']);
 		
-			if ($n>1 && $fine_sosp<$array[0]['temp_deca'] && $array[0]['temp_deca']>$dt ) { //se la data nel campo è minore della data trovata nei movimenti di magazzino che è maggiore di quella di questo movimento	
-			
+			if ($n>0 && $fine_sosp<$array[0]['temp_deca'] && $array[0]['temp_deca']>$dt ) { //se la data nel campo è minore della data trovata nei movimenti di magazzino che è maggiore di quella di questo movimento	
+			 
 			// memorizzo nel campo la data trovata nei movimenti
-			$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt_db_movmag .  "' , codice_prodotto_usato = '"  .$array[0]['artico']. "' , id_mov = '"  .$array[0]['id_mov'].  "' WHERE codice ='". $codcamp."'";
-			gaz_dbi_query ($query) ;
+				$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . $dt_db_movmag .  "' , codice_prodotto_usato = '"  .$array[0]['artico']. "' , id_mov = '"  .$array[0]['id_mov'].  "' WHERE codice ='". $codcamp."'";
+				gaz_dbi_query ($query) ;
+			 	
 			}	
-			elseif ($n>1 && $fine_sosp>$array[0]['temp_deca'] && $array[0]['temp_deca']>$dt){ //altrimenti se la data nel campo è maggiore della data trovata nei movimenti di magazzino e la data trovata nei movimenti di magazzino è maggiore di quella di questo movimento			
+			elseif ($n>0 && $fine_sosp>$array[0]['temp_deca'] && $array[0]['temp_deca']>$dt){ // se la data nel campo è maggiore della data trovata nei movimenti di magazzino e la data trovata nei movimenti di magazzino è maggiore di quella di questo movimento			
 			
+			// memorizzo nel campo la data trovata nei movimenti di magazzino
+				$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $array[0]['temp_deca']) .  "' , codice_prodotto_usato = '"  .$artico. "' , id_mov = '"  .$array[0]['id_mov'].  "' WHERE codice ='". $codcamp."'";
+				gaz_dbi_query ($query) ;
+		 	
+			} elseif ($n==1 && $dt>$array[0]['temp_deca']){ // se c'è un solo movimento di magazzino, oltre a questo in update, e la data di questo movimento è maggiore di quella del movimento di magazzino
+							
 			// memorizzo nel campo la data di questo movimento
 				$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) .  "' , codice_prodotto_usato = '"  .$artico. "' , id_mov = '"  .$id_mov.  "' WHERE codice ='". $codcamp."'";
 				gaz_dbi_query ($query) ;
-			
-			} elseif ($n==1){ // se c'è solo questo movimento
 				
+			} elseif ($n==0) { // se non ci altri movimenti di magazzino, cioè questo è unico
+			
 			// memorizzo nel campo la data di questo movimento
 				$query="UPDATE " . $gTables['campi'] . " SET giorno_decadimento = '" . date('Y/m/d', $dt) .  "' , codice_prodotto_usato = '"  .$artico. "' , id_mov = '"  .$id_mov.  "' WHERE codice ='". $codcamp."'";
 				gaz_dbi_query ($query) ;
+			 
 			}
 			
 			else { // altrimenti non faccio nulla perché va bene la data memorizzata in precedenza nel campo				
