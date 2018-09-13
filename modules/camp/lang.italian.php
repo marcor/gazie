@@ -112,7 +112,7 @@ $strScript = array("browse_document.php" =>
 		"Campo coltiv.",
 		"Superficie",
 		"Coltura",
-		"Registrazioni del Quaderno di campagna",
+		"Elenco movimenti agricoli",
 		"Data attuaz.",
 		"Operat."),
     "admin_movmag.php" =>

@@ -105,7 +105,7 @@ $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',9);
 if (sizeof($result) > 0) {
   while (list($key, $row) = each($result)) {
-	  if ($row['type_mov']==1 or $row['mostra_qdc']==1){ //escludi se non riguarda il Q.d.c. o se non è un articolo agricolo
+	  if ($row['mostra_qdc']==1){ //escludi se è stato selezionato di non mostrare nel Q.d.c.
       $datadoc = substr($row['datdoc'],8,2).'-'.substr($row['datdoc'],5,2).'-'.substr($row['datdoc'],0,4);
       $datareg = substr($row['datreg'],8,2).'-'.substr($row['datreg'],5,2).'-'.substr($row['datreg'],0,4);
       $movQuanti = $row['quanti']*$row['operat'];

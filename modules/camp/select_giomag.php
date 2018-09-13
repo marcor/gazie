@@ -185,7 +185,7 @@ if (isset($_POST['preview']) and $msg=='') {
 		
 		
         while (list($key, $mv) = each($m)) {
-			if ($mv['type_mov']==1 or $mv['mostra_qdc']==1){ // se è un movimento di campagna oppure è un articolo da mostrare nel quaderno di campagna
+			if ($mv['mostra_qdc']==1){ // se è un movimento di campagna oppure è un articolo da mostrare nel quaderno di campagna
             $datedoc = substr($mv['datdoc'],8,2).'-'.substr($mv['datdoc'],5,2).'-'.substr($mv['datdoc'],0,4);
             $datereg = substr($mv['datreg'],8,2).'-'.substr($mv['datreg'],5,2).'-'.substr($mv['datreg'],0,4);
             $movQuanti = $mv['quanti']*$mv['operat'];
