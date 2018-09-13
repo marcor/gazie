@@ -75,10 +75,10 @@ $annrf = substr($_GET['rf'],4,4);
 $utsrf= mktime(0,0,0,$mesrf,$giorf,$annrf);
 
 $result=getMovements(strftime("%Y%m%d",$utsri),strftime("%Y%m%d",$utsrf));
-
+$giorni=($utsrf-$utsri)/86400;
 require("../../config/templates/report_template_qc.php");
 $title = array('luogo_data'=>$luogo_data,
-               'title'=>"DICHIARAZIONE RAME METALLO USATO dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf),
+               'title'=>"DICHIARAZIONE RAME METALLO USATO dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf)." = ".$giorni." giorni",
                'hile'=>array(
 							array('lun' => 10,'nam'=>'N.'),
 							array('lun' => 55,'nam'=>'Campo'),
