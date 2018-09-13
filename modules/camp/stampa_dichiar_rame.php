@@ -38,7 +38,7 @@ function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
         $m=array();
-        $where="datreg BETWEEN $date_ini AND $date_fin";
+        $where="datdoc BETWEEN $date_ini AND $date_fin"; // Antonio Germani prendo la data di attuazione
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
 			  //$gTables['clfoco'].".codice, ".$gTables['clfoco'].".descri AS ragsoc, ".
@@ -80,17 +80,19 @@ require("../../config/templates/report_template_qc.php");
 $title = array('luogo_data'=>$luogo_data,
                'title'=>"DICHIARAZIONE RAME METALLO USATO dal ".strftime("%d %B %Y",$utsri)." al ".strftime("%d %B %Y",$utsrf),
                'hile'=>array(
+							array('lun' => 10,'nam'=>'N.'),
 							array('lun' => 55,'nam'=>'Campo'),
-							array('lun' => 10,'nam'=>'nr.'),
+							
                              array('lun' => 20,'nam'=>'Superficie ha'),                          
-                             
-                             array('lun' => 30,'nam'=>'Rame metallo'),
+                             array('lun' => 30,'nam'=>'Rame metallo usato'),
+                             array('lun' => 35,'nam'=>'Rame metallo ammesso'),
 							 array('lun' => 10,'nam'=>'U.M.'),
 							 array('lun' => 80,'nam'=>'Immagine')
                             )
               );
 
-$n=0; $campi=array(); if (sizeof($result) > 0) { 
+$n=0; $campi=array(); 
+if (sizeof($result) > 0) { 
   while (list($key, $row) = each($result)) {
 	  If ($row['campo_coltivazione']>0 && $row['type_mov']==1){ // se nel movimento è inserito un campo di coltivazione ed è un movimento del registro di campagna
 				if ($row['rame_metallico']>0){ // se l'articolo contiene rame metallo
@@ -123,22 +125,22 @@ $config = new Config;
 $pdf->AddPage('L',$config->getValue('page_format'));
 $pdf->SetFont('helvetica','',9);
   
-	  for ($i=0; $i<$c+1; $i++) {
-      $pdf->Cell(55,6,$campi[$i]['descri_campo'],1);
-	  $pdf->Cell(10,6,$campi[$i]['campo_coltivazione'],1);
-		
-		$pdf->Cell(20,6,$campi[$i]['superficie'],1);	
-     
-      $pdf->Cell(30,6,$campi[$i]['totale_rame'],1);
-	  $pdf->Cell(10,6,"Kg",1);
-	  if (strlen($campi[$i]['img_campo'])>0){	
-		$pdf->Image('@'.$campi[$i]['img_campo'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
-	  }
-	  if ($i<$c) {
-	   $pdf->AddPage(); 
-      }
+	for ($i=0; $i<$c+1; $i++) {
+		$pdf->Cell(10,6,$campi[$i]['campo_coltivazione'],1);	  
+		$pdf->Cell(55,6,$campi[$i]['descri_campo'],1);		
+		$pdf->Cell(20,6,gaz_format_quantity($campi[$i]['superficie'],1,$admin_aziend['decimal_quantity']),1);	
+		$pdf->Cell(30,6,gaz_format_quantity($campi[$i]['totale_rame'],1,$admin_aziend['decimal_quantity']),1);
+		$rame_ammesso = $campi[$i]['superficie']*6;
+		$pdf->Cell(35,6,gaz_format_quantity($rame_ammesso,1,$admin_aziend['decimal_quantity'])." limite annuo",1);
+		$pdf->Cell(10,6,"Kg",1);
+		if (strlen($campi[$i]['img_campo'])>0){	
+			$pdf->Image('@'.$campi[$i]['img_campo'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
+		}
+		if ($i<$c) {
+			$pdf->AddPage(); 
+		}
     
- }
+	}
 }
 $pdf->Output();
 ?>

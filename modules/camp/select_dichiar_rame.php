@@ -30,7 +30,7 @@ function getMovements($date_ini,$date_fin)
     {
         global $gTables,$admin_aziend;
         $m=array();
-        $where="datreg BETWEEN $date_ini AND $date_fin";
+        $where="datdoc BETWEEN $date_ini AND $date_fin"; // Antonio Germani prendo la data di attuazione
         $what=$gTables['movmag'].".*, ".
               $gTables['caumag'].".codice, ".$gTables['caumag'].".descri, ".
               $gTables['artico'].".codice, ".$gTables['artico'].".descri AS desart, ".$gTables['artico'].".unimis, ".$gTables['artico'].".scorta, ".$gTables['artico'].".catmer, ".$gTables['artico'].".rame_metallico ";
@@ -189,16 +189,17 @@ if (isset($_POST['preview']) and $msg=='') {
             $movQuanti = $mv['quanti']*$mv['operat'];
             $sum += $movQuanti;
             echo "<tr><td class=\"FacetDataTD\">".$datedoc." &nbsp;</td>";
-            echo "<td  align=\"center\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
-            echo "<td class=\"FacetDataTD\">".$mv['desdoc']." &nbsp;</td>";
+            echo "<td  align=\"left\" class=\"FacetDataTD\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)." &nbsp</td>";
+            
 // Antonio Germani carico la tabella campi e Inserisco campo, superficie e coltura
 $res = gaz_dbi_dyn_query ('*', $gTables['campi']);			
-            echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." &nbsp;</td>";
+            
 			$colonna="0";
 	while($b_row = $res->fetch_assoc()) { 
-		if ($mv['campo_coltivazione']==$b_row['codice']) { 
-			echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($b_row['ricarico'],1,$admin_aziend['decimal_quantity'])." &nbsp;</td>\n"; $dim_campo=$b_row['ricarico'];
-			echo "<td class=\"FacetDataTD\" align=\"center\">".$b_row['annota']." &nbsp;</td>\n";
+		if ($mv['campo_coltivazione']==$b_row['codice']) {
+			echo "<td align=\"left\" class=\"FacetDataTD\">".$mv['campo_coltivazione']." - ".$b_row['descri']." &nbsp;</td>";
+			echo "<td class=\"FacetDataTD\" align=\"left\">".gaz_format_quantity($b_row['ricarico'],1,$admin_aziend['decimal_quantity'])." ha"." &nbsp;</td>\n"; 
+			
 			$colonna="1";	 
 		} 		
 	} 
@@ -207,10 +208,10 @@ $res = gaz_dbi_dyn_query ('*', $gTables['campi']);
 		echo "<td class=\"FacetDataTD\" align=\"center\"></td>\n"; 
 	 }
 // fine inserisco campo, superficie, coltura
-			echo "<td class=\"FacetDataTD\" align=\"center\">".$mv['artico']." &nbsp;</td>\n";			
-            echo "<td class=\"FacetDataTD\" align=\"center\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
-            echo "<td align=\"right\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
-			echo "<td class=\"FacetDataTD\" align=\"right\">"."Kg ".gaz_format_quantity(($mv['quanti']*$mv['rame_metallico']),1,$admin_aziend['decimal_quantity'])." </td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"left\">".$mv['artico']." &nbsp;</td>\n";			
+            echo "<td class=\"FacetDataTD\" align=\"left\">".gaz_format_quantity($mv['quanti'],1,$admin_aziend['decimal_quantity'])."</td>\n";
+            echo "<td align=\"left\" class=\"FacetDataTD\">".$mv['unimis']." &nbsp;</td>\n";
+			echo "<td class=\"FacetDataTD\" align=\"left\">"."Kg ".gaz_format_quantity(($mv['quanti']*$mv['rame_metallico']),1,$admin_aziend['decimal_quantity'])." </td>\n";
             echo "</tr>\n";
             $ctr_mv = $mv['artico'];
   } }	
