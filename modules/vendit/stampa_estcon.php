@@ -42,7 +42,7 @@ if(!isset($_GET["annini"])) {
 $anagrafica = new Anagrafica();
 $conto = $anagrafica->getPartner(intval($_GET['codice']));
 //recupero tutti i movimenti contabili del conto insieme alle relative testate...
-$result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = ".intval($_GET['codice'])." AND datreg BETWEEN '".intval($_GET["annini"])."0101' AND '".intval($_GET["annfin"])."1231' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon ='".intval($_GET['codice'])."%' AND datreg LIKE '".intval($_GET["annini"])."%') ORDER BY datreg ASC");
+$result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = ".intval($_GET['codice'])." AND datreg BETWEEN '".intval($_GET["annini"])."0101' AND '".intval($_GET["annfin"])."1231' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon ='".intval($_GET['codice'])."%' AND datreg LIKE '".intval($_GET["annini"])."%') ORDER BY datreg ASC, ".$gTables['tesmov'].".id_tes");
 $emissione = 'Estratto conto: '.$conto['ragso1'].' '.$conto['ragso2'];
 $title = array('title'=>$emissione,
                'hile'=>array(array('lun' => 20,'nam'=>'Data'),
