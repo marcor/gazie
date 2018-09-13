@@ -369,7 +369,7 @@ if (isset($_POST['preview']) and $msg == '') {
                 $saldo -= $mv['avere'];
                 echo "<tr class=\"FacetDataTD\"><td>" . gaz_format_date($mv["datreg"]) . " &nbsp;</td>";
                 echo "<td align=\"center\"><a href=\"admin_movcon.php?id_tes=" . $mv["id_tes"] . "&Update\">" . $mv["id_tes"] . "</a> &nbsp</td>";
-                echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $mv["id_tes"] . '" data-title="' . $mv["tt"] . '" >' . $mv["tesdes"] . '</div></td>';
+                echo '<td><div class="gazie-tooltip" data-type="movcon-thumb" data-id="' . $mv["id_tes"] . '" data-title="' . str_replace("\"", "'", $mv["tt"]) . '" >' . $mv["tesdes"] . '</div></td>';
                 if (!empty($mv['numdoc'])) {
                     echo "<td align=\"center\">" . $mv["protoc"] . " &nbsp;</td>";
                     echo "<td align=\"center\">" . $mv["numdoc"] . " &nbsp;</td>";
