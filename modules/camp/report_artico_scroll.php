@@ -52,6 +52,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
     $so = filter_input(INPUT_POST, 'sort');
     $ca = filter_input(INPUT_POST, 'codart');
 	$mt = filter_input(INPUT_POST, 'mostra'); 
+	
     if (empty($ca)) {
         $where = '1';
     } else {
@@ -59,9 +60,11 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         $no = '0';
     }
     $gForm = new magazzForm();
+
     $result = gaz_dbi_dyn_query('*', $gTables['artico'], $where, $ob . ' ' . $so, $no, PER_PAGE);
     while ($row = gaz_dbi_fetch_array($result)) {
-			if ($row['mostra_qdc']==1 or $mt==1){ // Antonio Germani seleziona quali prodotti mostrare
+		// il problema è qui: $mt !!! se non c'è funziona!
+		if ($row['mostra_qdc']==1 or $mt==1){ // Antonio Germani seleziona quali prodotti mostrare
         $lastdoc = getLastDoc($row["codice"]);
 		if ($row['good_or_service']==0){
 			$mv = $gForm->getStockValue(false, $row['codice']);
@@ -147,7 +150,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             </td>
         </tr>  
         <?php
-			}
+		}
     }
     exit();
 }

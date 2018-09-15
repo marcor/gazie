@@ -21,28 +21,33 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
-$admin_aziend = checkAdmin();
+$admin_aziend = checkAdmin();$mt=0;
 
 
-if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordinamento
+if (isset($_POST['order_by'])&& !isset($_POST['button_mostra_tutto'])&& !isset($_POST['button_no_mostra_tutto'])) { // controllo se vengo da una richiesta di ordinamento
     $rn = filter_input(INPUT_POST, 'row_no');
     $ob = filter_input(INPUT_POST, 'order_by');
     $so = filter_input(INPUT_POST, 'sort');
     $cs = filter_input(INPUT_POST, 'cosear');
     $ca = filter_input(INPUT_POST, 'codart');
+	$mt = $_POST['mostra'];
 
 } else {
-    $rn = '0';
-    $ob = 'descri';
-    $so = 'ASC';
-    $cs = '';
-    $ca = '';
-	
+    $rn = "0";
+    $ob = "descri";
+    $so = "ASC";
+    $cs = "";
+    $ca = "";
+	if (isset($_POST['mostra'])){
+		$mt = $_POST['mostra'];
+	} else {$mt=0;}
 }
 
-if (isset ($_POST['mostra_tutto'])) {$mt=1;}
- else {$mt=0;}
-	
+if (isset ($_POST['button_no_mostra_tutto'])) {unset($_POST['order_by']);$mt=1;$_POST['mostra']=$mt;}
+
+if (isset ($_POST['button_mostra_tutto'])) {unset($_POST['order_by']);$mt=0;}
+ 
+
 require("../../library/include/header.php");
 ?>
 <script type="text/javascript">
@@ -62,6 +67,7 @@ require("../../library/include/header.php");
         var so = $("#sort").val();
         var ca = '<?php echo $cs ?>';
 		var mt = '<?php echo $mt ?>';
+		
         $.ajax({
             type: 'post',
             url: 'report_artico_scroll.php',
@@ -71,6 +77,7 @@ require("../../library/include/header.php");
                 sort: so,
                 codart: ca,
 				mostra: mt
+				
             },
             beforeSend: function () {
                 $('#loader-icon').show();
@@ -118,28 +125,31 @@ $script_transl = HeadMain(0, array('custom/autocomplete'));
 $gForm = new magazzForm();
 ?>
 <div class="text-center"><b><?php echo $script_transl['title']; ?></b></div>
-<form method="POST" id="form2">	
+<form method="POST" id="form">	
  <div class="panel panel-info col-lg-6">	 
 <?php if ($mt==1) {	?>
-	<label for="codice" ><?php echo "Sto mostrando anche articoli non agricoli"; ?></label>
+	<label for="codice" ><?php echo "Sto mostrando tutti gli articoli"; ?></label>
 			 
-			<button type="submit" name="no_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
+			<button type="submit" name="button_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
 <i class="glyphicon glyphicon-refresh" style="color:green">
+
 <?php } else {?>
-<label for="codice" ><?php echo "Sto mostrando solo articoli agricoli"; ?></label>
+<label for="codice" ><?php echo "Sto mostrando solo articoli da mostrare nel Q.d.c."; ?></label>
 			 
-			<button type="submit" name="mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  >
+			<button type="submit" name="button_no_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  >
 <i class="glyphicon glyphicon-refresh" style="color:red">
+
 <?php } ?>	
 		</i></button>
-	
-	
-</div>
-</form>	
 
-<form method="POST" id="form">
-    
+	<input type="hidden" name="mostra"  value="<?php echo $mt; ?>">
+</div>
+<!-- </form>	
+
+<form method="POST" id="form"> -->
+	    
     <div class="panel panel-info col-lg-6">
+	
         <div class="container-fluid">
             <label for="codice" class="col-lg-3 control-label"><?php echo $script_transl['codice'].'-'.$script_transl['descri']; ?></label>
             <?php
@@ -157,9 +167,14 @@ $gForm = new magazzForm();
                 <thead>
                     <tr class="bg-success">              
                         <th>
+						<!-- Antonio Germani - ci sono problemi quando mostro tutto.Per il momento sospendo l'ordinamento per codice
                             <a href="#" class="orby" data-order="codice">
                                 <?php echo $script_transl["codice"]; ?>
                             </a>
+						-->
+							
+                                <?php echo $script_transl["codice"]; ?>
+                           
                         </th>
                         <th>
                             <a href="#" class="orby" data-order="descri">
@@ -203,6 +218,7 @@ $gForm = new magazzForm();
     <input type="hidden" name="row_no" id="row_no" value="<?php echo $rn; ?>">
     <input type="hidden" name="order_by" id="order_by" value="<?php echo $ob; ?>">
     <input type="hidden" name="sort" id="sort" value="<?php echo $so; ?>">
+
 </form>
 <div id="loader-icon"><img src="../../library/images/ui-anim_basic_16x16.gif" />
 </div>  
