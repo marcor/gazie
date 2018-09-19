@@ -128,13 +128,13 @@ $gForm = new magazzForm();
 <form method="POST" id="form">	
  <div class="panel panel-info col-lg-6">	 
 <?php if ($mt==1) {	?>
-	<label for="codice" ><?php echo "Sto mostrando tutti gli articoli"; ?></label>
+	<label for="codice" ><?php echo "Elenco di tutti gli articoli"; ?></label>
 			 
 			<button type="submit" name="button_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  > 
 <i class="glyphicon glyphicon-refresh" style="color:green">
 
 <?php } else {?>
-<label for="codice" ><?php echo "Sto mostrando solo articoli da mostrare nel Q.d.c."; ?></label>
+<label for="codice" ><?php echo "Elenco degli articoli da mostrare nel Q.d.c."; ?></label>
 			 
 			<button type="submit" name="button_no_mostra_tutto" title="Inverti" class="btn btn-default btn-sm"  >
 <i class="glyphicon glyphicon-refresh" style="color:red">
@@ -166,15 +166,10 @@ $gForm = new magazzForm();
             <table class="table table-responsive table-striped table-condensed cf">
                 <thead>
                     <tr class="bg-success">              
-                        <th>
-						<!-- Antonio Germani - ci sono problemi quando mostro tutto.Per il momento sospendo l'ordinamento per codice
+                        <th>						
                             <a href="#" class="orby" data-order="codice">
                                 <?php echo $script_transl["codice"]; ?>
-                            </a>
-						-->
-							
-                                <?php echo $script_transl["codice"]; ?>
-                           
+                            </a>		
                         </th>
                         <th>
                             <a href="#" class="orby" data-order="descri">

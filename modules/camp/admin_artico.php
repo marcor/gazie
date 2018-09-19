@@ -50,6 +50,37 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
+	if (isset ($_POST['classif_amb'])) {
+		$form['classif_amb']= $_POST['classif_amb'];
+	} else {
+		$form['classif_amb']=0;
+	}
+	if (isset ($_POST['scorta'])) {
+		$form['scorta']= $_POST['scorta'];
+	} else {
+		$form['scorta']=0;
+	}
+	if (isset ($_POST['riordino'])) {
+		$form['riordino']= $_POST['riordino'];
+	} else {
+		$form['riordino']=0;
+	}
+	if (isset ($_POST['tempo_sospensione'])) {
+		$form['tempo_sospensione']= $_POST['tempo_sospensione'];
+	} else {
+		$form['tempo_sospensione']=0;
+	}
+	if (isset ($_POST['dose_massima'])) {
+		$form['dose_massima']= $_POST['dose_massima'];
+	} else {
+		$form['dose_massima']=0;
+	}
+	if (isset ($_POST['rame_metallico'])) {
+		$form['rame_metallico']= $_POST['rame_metallico'];
+	} else {
+		$form['rame_metallico']=0;
+	}
+	
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali 
 	
     $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
@@ -64,10 +95,17 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** inizio modifica FP 03/12/2015
      * fornitore
     */
-    $form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
+	if (isset ($_POST['search'])) {
+		$form['search']['id_anagra'] = $_POST['search'];
+		$form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
     foreach ($_POST['search'] as $k => $v) {
         $form['search'][$k] = $v;
     }
+	} else {
+		$form['search']['id_anagra'] = "";$form['id_anagra']="";
+	}
+    
+	
     /** fine modifica FP */
     // inizio documenti/certificati
     $ndoc = 0;
@@ -560,6 +598,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+				<?php if ($form['good_or_service']==0){ ?>
 				 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -570,7 +609,7 @@ if ($modal_ok_insert === true) {
                        </div>
                    </div>
                </div><!-- chiude row  -->
-				
+				<?php }?>
 				
 <!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
                     <div class="col-md-12">
@@ -668,6 +707,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+				<?php if ($form['good_or_service']==0){ ?>
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -873,7 +913,9 @@ if ($modal_ok_insert === true) {
                     </div>
                 </div><!-- chiude row  -->
                 <div class="col-sm-12">
-    <?php
+				
+    <?php 
+				}
     /** ENRICO FEDELE */
     /* SOlo se non sono in finestra modale */
     if ($modal === false) {
