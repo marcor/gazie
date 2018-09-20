@@ -45,11 +45,20 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
     $toDo = 'insert';
 }
 
+// Antonio Germani questo serve per la nuova ricerca fornitore
+if (isset($_POST['fornitore'])){
+		$form['fornitore'] = $_POST['fornitore'];
+		$form['id_anagra'] = intval ($form['fornitore']);	
+}	
+
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form = gaz_dbi_parse_post('artico');
     $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
+	$form['fornitore'] = $_POST['fornitore'];
+	$form['id_anagra'] = intval ($form['fornitore']);
+    
 	if (isset ($_POST['classif_amb'])) {
 		$form['classif_amb']= $_POST['classif_amb'];
 	} else {
@@ -95,15 +104,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** inizio modifica FP 03/12/2015
      * fornitore
     */
-	if (isset ($_POST['search'])) {
-		$form['search']['id_anagra'] = $_POST['search'];
-		$form['id_anagra'] = filter_input(INPUT_POST, 'id_anagra');
-    foreach ($_POST['search'] as $k => $v) {
-        $form['search'][$k] = $v;
-    }
-	} else {
-		$form['search']['id_anagra'] = "";$form['id_anagra']="";
-	}
+	
     
 	
     /** fine modifica FP */
@@ -286,7 +287,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
      * fornitore
      */
     $form['id_anagra'] = $form['clfoco'];
-    $form['search']['id_anagra'] = '';
+	$anagra = gaz_dbi_get_row($gTables['clfoco'], "codice", $form['id_anagra']);
+    $form['fornitore']=$form['id_anagra']." - ".$anagra['descri'];
     /** fine modifica FP */
     // inizio documenti/certificati
     $ndoc = 0;
@@ -321,8 +323,9 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** inizio modifica FP 03/12/2015
      * filtro per fornitore ed ordinamento
      */
-    $form['id_anagra'] = '';
-    $form['search']['id_anagra'] = '';
+    $form['id_anagra'] = "";
+	$form['fornitore'] = "";
+    
     /** fine modifica FP */
     // eventuale descrizione amplia
     $form['body_text'] = '';
@@ -846,6 +849,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
     <?php } ?>
+	<!--
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -855,11 +859,52 @@ if ($modal_ok_insert === true) {
     $select_id_anagra = new selectPartner("id_anagra");
     $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra',
 	$script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
-	
+	echo "form id anagra:",$form['id_anagra']," form search id anagra:",$form['search']['id_anagra'];
     ?>
                         </div>
                     </div>
                 </div><!-- chiude row  -->
+<div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>				
+ <script>
+	$(document).ready(function() {
+	$("input#autocomplete").autocomplete({
+		source: [<?php
+	$stringa="";
+	$query="SELECT * FROM ".$gTables['clfoco']." WHERE codice > 212000001 AND codice < 213000000";
+	$result = gaz_dbi_query($query);
+	while($row = $result->fetch_assoc()){
+		$stringa.="\"".$row['codice']." - ".$row['descri']."\", ";			
+	}
+	$stringa=substr($stringa,0,-1);
+	echo $stringa;
+	?>],
+		minLength:1,
+	select: function(event, ui) {
+        //assign value back to the form element
+        if(ui.item){
+            $(event.target).val(ui.item.value);
+        }
+        //submit the form
+        $(event.target.form).submit();
+    }
+	});
+	});
+  </script>	
+<input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['fornitore']; ?>" name="fornitore" maxlength="15" /> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete -->
+  
+  
+  
+
+ </div>
+                    </div>
+                </div><!-- chiude row  -->  
+				
+				
+				
+				
  <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
