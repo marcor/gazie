@@ -72,15 +72,18 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         // faccio i controlli sul codice postale
         $rs_pc = gaz_dbi_get_row($gTables['country'], 'iso', $form["country"]);
         $cap = new postal_code;
-        if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length'])) {
-            $msg .= '2+';
+        if ( gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit')==1 ) {
+            if ($cap->check_postal_code($form["capspe"], $form["country"], $rs_pc['postal_code_length'])) {
+                $msg .= '2+';
+            }
+            if (empty($form["citspe"])) {
+                $msg .= '3+';
+            }
+            if (empty($form["prospe"])) {
+                $msg .= '4+';
+            }
         }
-        if (empty($form["citspe"])) {
-            $msg .= '3+';
-        }
-        if (empty($form["prospe"])) {
-            $msg .= '4+';
-        }
+        
         if (empty($form["sexper"])) {
             $msg .= '5+';
         }

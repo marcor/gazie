@@ -56,6 +56,7 @@ INSERT INTO `gaz_breadcrumb` (`id_bread`, `file`, `titolo`, `link`) VALUES (1, '
 INSERT INTO `gaz_breadcrumb` (`id_bread`, `file`, `titolo`, `link`) VALUES (2, 'modules/magazz/admin_artico_compost.php', 'Gestione articoli composti', '../../modules/magazz/admin_artico_compost.php');
 INSERT INTO `gaz_breadcrumb` (`id_bread`, `file`, `titolo`, `link`) VALUES (3, 'modules/magazz/admin_artico_compost.php', 'Gestione merci e servizi', '../../modules/magazz/report_artico.php');
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Controlla regolarità indirizzo in inserimento cliente (0=No, 1=Si)', 'check_cust_address', '1');
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_resp` TINYINT(1) NOT NULL AFTER `print_map`;
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_service_descri` VARCHAR(100) NOT NULL COMMENT 'Descrizione del servizio esternalizzato, verrà riportato sulla nomina a responsabile esterno del trattamento dei dati' AFTER `external_resp`;
 CREATE TABLE `gaz_XXXregistro_trattamento_dati` (
