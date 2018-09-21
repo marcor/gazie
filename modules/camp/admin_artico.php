@@ -652,7 +652,7 @@ if ($modal_ok_insert === true) {
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="riordino" class="col-sm-4 control-label"><?php echo $script_transl['riordino']; ?></label>
-                            <input type="number" min="0" step="any" class="col-sm-4" type="text"  value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
+                            <input type="text" min="0" step="any" class="col-sm-4" value="<?php echo $form['riordino']; ?>" name="riordino" maxlength="13" />
                         </div>
                     </div>
                 </div><!-- chiude row  -->
@@ -714,7 +714,6 @@ if ($modal_ok_insert === true) {
                     </div>
     <?php } ?>
 	
-				 <form name="formf" action="<?php echo basename(__file__); ?>#autocomplete2" id="fornitore">
 				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -751,7 +750,6 @@ if ($modal_ok_insert === true) {
 						</div>
                     </div>
                 </div><!-- chiude row  -->  
-	</form>		
 
                 <div class="col-sm-12">
 				
