@@ -29,6 +29,7 @@ $modal_ok_insert = false;
 $today=	strtotime(date("Y-m-d H:i:s",time())); 
 $presente=""; 
 $largeimg=0;
+
 /** ENRICO FEDELE */
 /* Inizializzo per aprire in finestra modale */
 $modal = false;
@@ -48,17 +49,20 @@ if (isset($_POST['Update']) || isset($_GET['Update'])) {
 // Antonio Germani questo serve per la nuova ricerca fornitore
 if (isset($_POST['fornitore'])){
 		$form['fornitore'] = $_POST['fornitore'];
-		$form['id_anagra'] = intval ($form['fornitore']);	
-}	
+		$form['id_anagra'] = intval ($form['fornitore']);
+}
 
 if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form = gaz_dbi_parse_post('artico');
     $form['codice'] = trim($form['codice']);
     $form['ritorno'] = $_POST['ritorno'];
     $form['ref_code'] = substr($_POST['ref_code'], 0, 15);
-	$form['fornitore'] = $_POST['fornitore'];
-	$form['id_anagra'] = intval ($form['fornitore']);
-    
+	if (isset ($_POST['fornitore'])) {
+		$form['fornitore'] = $_POST['fornitore'];
+		$form['id_anagra'] = intval ($form['fornitore']);
+	} else {
+		$form['fornitore']="";
+	}
 	if (isset ($_POST['classif_amb'])) {
 		$form['classif_amb']= $_POST['classif_amb'];
 	} else {
@@ -89,7 +93,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
 	} else {
 		$form['rame_metallico']=0;
 	}
-	
+		
     // i prezzi devono essere arrotondati come richiesti dalle impostazioni aziendali 
 	
     $form["preacq"] = number_format($form['preacq'], $admin_aziend['decimal_price'], '.', '');
@@ -104,9 +108,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     /** inizio modifica FP 03/12/2015
      * fornitore
     */
-	
-    
-	
+		
     /** fine modifica FP */
     // inizio documenti/certificati
     $ndoc = 0;
@@ -301,6 +303,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $bodytext = gaz_dbi_get_row($gTables['body_text'], "table_name_ref", 'artico_' . $form['codice']);
     $form['body_text'] = $bodytext['body_text'];
 } else { //se e' il primo accesso per INSERT
+	
     $form = gaz_dbi_fields('artico');
     /** ENRICO FEDELE */
     if ($modal === false) {
@@ -344,7 +347,6 @@ if (isset($_POST['codice'])){
 		If (intval($update)+2592000<$today){$msg['err'][]= 'updatedb';}
 }
 
-
 if (isset($_POST['codice']) && strlen($form['codice'])>3){
 	 
 		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'.",".'INDICAZIONI_DI_PERICOLO'.",".'DESCRIZIONE_FORMULAZIONE'.",".'SOSTANZE_ATTIVE'.",".'IMPRESA'.",".'SEDE_LEGALE_IMPRESA'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['codice']."'";
@@ -373,7 +375,6 @@ if (isset($_POST['codice']) && strlen($form['codice'])>3){
 			} 
 		}	
 }
-
 
 /** ENRICO FEDELE */
 /* Solo se non sono in finestra modale carico il file di lingua del modulo */
@@ -415,7 +416,9 @@ if ($modal === false) {
         });
     });
 </script>
+
 <form method="POST" name="form" enctype="multipart/form-data" id="add-product">
+
 <?php
 if (!empty($form['descri'])) $form['descri'] = htmlentities($form['descri'], ENT_QUOTES);
 if ($modal === true) {
@@ -511,9 +514,9 @@ if ($modal_ok_insert === true) {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
-                            <label for="good_or_service" class="col-sm-4 control-label"><?php echo $script_transl['good_or_service']; ?>*</label>
+                            <label for = "good_or_service" class = "col-sm-4 control-label"><?php echo $script_transl['good_or_service']; ?>*</label>
     <?php
-    $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'onchange="this.form.submit()"; style="max-width: 200px;"');
+    $gForm->variousSelect('good_or_service', $script_transl['good_or_service_value'], $form['good_or_service'], "col-sm-8", true, '', false, 'onchange = "this.form.submit()"; style = "max-width: 200px;"');
     ?>
                         </div>
                     </div>
@@ -528,14 +531,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno campagna     <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="barcode" class="col-sm-4 control-label"><?php echo $script_transl['barcode']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['barcode']; ?>" name="barcode" maxlength="13" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
+
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -614,16 +610,6 @@ if ($modal_ok_insert === true) {
                </div><!-- chiude row  -->
 				<?php }?>
 				
-<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="ragstat" class="col-sm-4 control-label"><?php echo $script_transl['ragstat']; ?></label>
-    <?php
-    $gForm->selectFromDB('ragstat', 'ragstat', 'codice', $form['ragstat'], false, 1, ' - ', 'descri', '', 'col-sm-8', null, 'style="max-width: 250px;"');
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
 				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -632,54 +618,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="sconto" class="col-sm-4 control-label"><?php echo $script_transl['sconto']; ?></label>
-                            <input class="col-sm-2" name="sconto" id="sconto" type="number" step="0.01" min="0" max="100" value="<?php echo $form['sconto']; ?>" maxlength="6" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve1" class="col-sm-4 control-label"><?php echo $script_transl['preve1']; ?></label>
-                            <input type="number" step="any" min="0" id="preve1" name="preve1" value="<?php echo $form['preve1']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve1_sc']; ?>
-                            <input type="text" readonly="true" id="preve1_sc" name="preve1_sc" value="<?php echo gaz_format_number($form['preve1'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve2" class="col-sm-4 control-label"><?php echo $script_transl['preve2']; ?></label>
-                            <input type="number" step="any" min="0" id="preve2" name="preve2" value="<?php echo $form['preve2']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve2_sc']; ?>
-                            <input type="text" readonly="true" id="preve2_sc" name="preve2_sc" value="<?php echo gaz_format_number($form['preve2'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve3" class="col-sm-4 control-label"><?php echo $script_transl['preve3']; ?></label>
-                            <input type="number" step="any" min="0" id="preve3" name="preve3" value="<?php echo $form['preve3']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve3_sc']; ?>
-                            <input type="text" readonly="true" id="preve3_sc" name="preve3_sc" value="<?php echo gaz_format_number($form['preve3'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="preve4" class="col-sm-4 control-label"><?php echo $script_transl['preve4']; ?></label>
-                            <input type="number" step="any" min="0" id="preve4" name="preve4" value="<?php echo $form['preve4']; ?>"  maxlength="15" />
-    <?php echo $script_transl['preve4_sc']; ?>
-                            <input type="text" readonly="true" id="preve4_sc" name="preve4_sc" value="<?php echo gaz_format_number($form['preve4'] * (1 - $form['sconto'] / 100)); ?>" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
+
 					<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -690,26 +629,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="retention_tax" class="col-sm-4 control-label"><?php echo $script_transl['retention_tax'] . ' (' . $admin_aziend['ritenuta'] . '%)'; ?></label>
-    <?php
-    $gForm->variousSelect('retention_tax', $script_transl['retention_tax_value'], $form['retention_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="payroll_tax" class="col-sm-4 control-label"><?php echo $script_transl['payroll_tax']; ?>*</label>
-    <?php
-    $gForm->variousSelect('payroll_tax', $script_transl['payroll_tax_value'], $form['payroll_tax'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
+
 				<?php if ($form['good_or_service']==0){ ?>
                 <div class="row">
                     <div class="col-md-12">
@@ -719,22 +639,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="valore" class="col-sm-4 control-label"><?php echo $script_transl['valore']; ?></label>
-                            <div class="col-sm-2"><?php echo $admin_aziend['symbol'] . $magval['v_g']; ?></div>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="last_cost" class="col-sm-4 control-label"><?php echo $script_transl['last_cost']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['last_cost']; ?>" name="last_cost" maxlength="15" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
+ 
                 <div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
@@ -751,14 +656,7 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno di campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="uniacq" class="col-sm-4 control-label"><?php echo $script_transl['uniacq']; ?></label>
-                            <input class="col-sm-2" type="text" value="<?php echo $form['uniacq']; ?>" name="uniacq" maxlength="3" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  --> 
+
  <!-- Antonio Germani  il TEMPO DI SOSPENSIONE -->
                <div class="row">
                     <div class="col-md-12">
@@ -786,42 +684,8 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
                 </div><!-- chiude row  -->			
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="pack_units" class="col-sm-4 control-label"><?php echo $script_transl['pack_units']; ?></label>
-                            <input class="col-sm-4" type="number" min="0" step="any" value="<?php echo $form['pack_units']; ?>" name="pack_units" maxlength="6" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="codcon" class="col-sm-4 control-label"><?php echo $script_transl['codcon']; ?></label>
-    <?php
-    $gForm->selectAccount('codcon', $form['codcon'], 4, '', false, "col-sm-8");
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_cost']; ?></label>
-    <?php
-    $gForm->selectAccount('id_cost', $form['id_cost'], 3, '', false, "col-sm-8");
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="annota" class="col-sm-4 control-label"><?php echo $script_transl['annota']; ?></label>
-                            <input class="col-sm-8" type="text" value="<?php echo $form['annota']; ?>" name="annota" maxlength="50" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
+ 
+ 
     <?php if ($toDo == 'update') { ?>
                     <div class="row">
                         <div class="col-md-12">
@@ -849,28 +713,15 @@ if ($modal_ok_insert === true) {
                         </div>
                     </div>
     <?php } ?>
-	<!--
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>
-    <?php
 	
-    $select_id_anagra = new selectPartner("id_anagra");
-    $select_id_anagra->selectDocPartner('id_anagra', $form['id_anagra'], $form['search']['id_anagra'], 'id_anagra',
-	$script_transl['mesg'], $admin_aziend['masfor'], -1, 1, true);
-	echo "form id anagra:",$form['id_anagra']," form search id anagra:",$form['search']['id_anagra'];
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-<div class="row">
+				 <form name="formf" action="<?php echo basename(__file__); ?>#autocomplete2" id="fornitore">
+				<div class="row">
                     <div class="col-md-12">
                         <div class="form-group">
                             <label for="id_cost" class="col-sm-4 control-label"><?php echo $script_transl['id_anagra']; ?></label>				
  <script>
 	$(document).ready(function() {
-	$("input#autocomplete").autocomplete({
+	$("input#autocomplete2").autocomplete({
 		source: [<?php
 	$stringa="";
 	$query="SELECT * FROM ".$gTables['clfoco']." WHERE codice > 212000001 AND codice < 213000000";
@@ -892,71 +743,16 @@ if ($modal_ok_insert === true) {
     }
 	});
 	});
-  </script>	
-<input class="col-sm-4" id="autocomplete" type="text" value="<?php echo $form['fornitore']; ?>" name="fornitore" maxlength="15" /> <!-- per funzionare autocomplete, id dell'input deve essere autocomplete -->
-  
-  
-  
+  </script>
 
- </div>
+	<input class="col-sm-4" id="autocomplete2" type="text" value="<?php echo $form['fornitore']; ?>" name="fornitore" maxlength="15" /> <!-- per funzionare autocomplete2, id dell'input deve essere autocomplete -->
+	
+	
+						</div>
                     </div>
                 </div><!-- chiude row  -->  
-				
-				
-				
-				
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="web_mu" class="col-sm-4 control-label"><?php echo $script_transl['web_mu']; ?></label>
-                            <input class="col-sm-4" type="text" value="<?php echo $form['web_mu']; ?>" name="web_mu" maxlength="15" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="web_price" class="col-sm-4 control-label"><?php echo $script_transl['web_price']; ?></label>
-                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_price']; ?>" name="web_price" maxlength="15" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="web_multiplier" class="col-sm-4 control-label"><?php echo $script_transl['web_multiplier']; ?></label>
-                            <input class="col-sm-4" type="text"  value="<?php echo $form['web_multiplier']; ?>" name="web_multiplier" maxlength="15" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="web_url" class="col-sm-4 control-label"><?php echo $script_transl['web_url']; ?></label>
-                            <input class="col-sm-8" type="text" value="<?php echo $form['web_url']; ?>" name="web_url" maxlength="255" />
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
-<!-- Antonio Germani non serve per Quaderno campagna                <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="depli_public" class="col-sm-4 control-label"><?php echo $script_transl['depli_public']; ?></label>
-    <?php
-    $gForm->variousSelect('depli_public', $script_transl['depli_public_value'], $form['depli_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
- <!-- Antonio Germani non serve per Quaderno campagna               <div class="row">
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label for="web_public" class="col-sm-4 control-label"><?php echo $script_transl['web_public']; ?></label>
-    <?php
-    $gForm->variousSelect('web_public', $script_transl['web_public_value'], $form['web_public'], "col-sm-8", true, '', false, 'style="max-width: 200px;"');
-    ?>
-                        </div>
-                    </div>
-                </div><!-- chiude row  -->
+	</form>		
+
                 <div class="col-sm-12">
 				
     <?php 
@@ -974,6 +770,7 @@ if ($modal_ok_insert === true) {
         </div> <!-- chiude container -->
     </div><!-- chiude panel -->
 </form>
+
 <script type="text/javascript">
     // Basato su: http://www.abeautifulsite.net/whipping-file-inputs-into-shape-with-bootstrap-3/
     $(document).on('change', '.btn-file :file', function () {
