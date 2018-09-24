@@ -22,6 +22,7 @@
  */
 require("../../library/include/datlib.inc.php");
 checkCustoms($_SERVER['REQUEST_URI']);
+
 $admin_aziend = checkAdmin();
 
 if (isset($_POST['order_by'])) { // controllo se vengo da una richiesta di ordinamento

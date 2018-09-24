@@ -339,8 +339,8 @@ function CalcolaImportoRigo($quantita, $prezzo, $sconto, $decimal = 2) {
 
 //
 // La funzione table_prefix_ok() serve a determinare se il prefisso
-// delle tabelle ï¿½ valido, secondo lo schema di Gazie, oppure no.
-// In pratica, si verifica che inizi con la stringa `gaz' e puï¿½
+// delle tabelle e' valido, secondo lo schema di Gazie, oppure no.
+// In pratica, si verifica che inizi con la stringa `gaz' e può
 // continuare con lettere minuscole e cifre numeriche, fino
 // a un massimo di ulteriori nove caratteri
 //

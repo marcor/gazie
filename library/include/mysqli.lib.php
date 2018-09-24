@@ -834,6 +834,18 @@ function rigbroUpdate($codice, $newValue) {
    tableUpdate($table, $columns, $codice, $newValue);
 }
 
+function rigcmrInsert($newValue) {
+   $table = 'rigcmr';
+   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'status');
+   tableInsert($table, $columns, $newValue);
+}
+
+function rigcmrUpdate($codice, $newValue) {
+   $table = 'rigcmr';
+   $columns = array('id_tes', 'tiprig', 'codart', 'codice_fornitore', 'descri', 'id_body_text', 'unimis', 'quanti','prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'delivery_date', 'id_doc', 'id_mag', 'status');
+   tableUpdate($table, $columns, $codice, $newValue);
+}
+
 function rigdocInsert($newValue) {
    $table = 'rigdoc';
    $columns = array('id_tes', 'tiprig', 'codart', 'descri', 'id_body_text', 'unimis', 'quanti', 'prelis', 'sconto', 'codvat', 'pervat', 'codric', 'provvigione', 'ritenuta', 'id_order', 'id_mag', 'status');
@@ -856,8 +868,38 @@ function tesbroInsert($newValue) {
    tableInsert($table, $columns, $newValue);
 }
 
+function tescmrInsert($newValue) {
+   $table = 'tescmr';
+   $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
+       'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+       'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
+       'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableInsert($table, $columns, $newValue);
+}
+
+/*function tescmrInsert($newValue) {
+   $table = 'tescmr';
+   $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
+       'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+       'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
+       'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableInsert($table, $columns, $newValue);
+}*/
+
 function tesbroUpdate($codice, $newValue) {
    $table = 'tesbro';
+   $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
+       'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
+       'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',
+       'taxstamp', 'virtual_taxstamp', 'units', 'volume', 'initra', 'geneff', 'id_contract', 'id_con', 'status', 'adminid');
+   $newValue['adminid'] = $_SESSION["user_name"];
+   tableUpdate($table, $columns, $codice, $newValue);
+}
+
+function tescmrUpdate($codice, $newValue) {
+   $table = 'tescmr';
    $columns = array('seziva', 'tipdoc', 'template', 'print_total', 'delivery_time', 'day_of_validity', 'datemi', 'protoc', 'numdoc', 'numfat', 'datfat',
        'clfoco', 'pagame', 'banapp', 'vettor', 'weekday_repeat', 'listin', 'destin', 'id_des', 'id_des_same_company', 'spediz', 'portos', 'imball', 'traspo', 'speban', 'spevar',
        'round_stamp', 'cauven', 'caucon', 'caumag', 'id_agente', 'id_pro', 'sconto', 'expense_vat', 'stamp', 'net_weight', 'gross_weight',

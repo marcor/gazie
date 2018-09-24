@@ -83,14 +83,16 @@ class Cmr extends Template {
       $this->addPage();
 
       $offsetX = 6;
+      // cella numero 1
       $this->SetY(20);
       $this->SetX($offsetX);
       $this->Cell(70, 0, $this->intesta1.' '.$this->intesta1bis, 0, 1, 'L', 0, '', 1);
       $this->SetX($offsetX);
       $this->Cell(70, 0, $this->intesta2, 0, 1, 'L', 0, '', 1);
       $this->SetX($offsetX);
-      $this->Cell(70, 0, 'Italy', 0, 1, 'L', 0, '', 1);
+//      $this->Cell(70, 0, 'Italy', 0, 1, 'L', 0, '', 1);
 
+      // cella numero 2
       $this->SetFont('times', '', 10);
       $this->SetY(53);
       $this->SetX($offsetX);
@@ -100,29 +102,34 @@ class Cmr extends Template {
       $this->SetX($offsetX);
       $this->Cell(70, 0, $this->cliente4b, 0, 1, 'L', 0, '', 1);
 
-      $this->SetY(77);
+      $this->SetY(80);
       $this->SetX($offsetX);
       $this->Cell(70, 0, $this->intesta2, 0, 1, 'L', 0, '', 1);
-      $this->SetX($offsetX);
-      $this->Cell(70, 0, 'Italy', 0, 1, 'L', 0, '', 1);
+      //$this->SetX($offsetX);
+      //$this->Cell(70, 0, 'Italy', 0, 1, 'L', 0, '', 1);
 
       $this->SetFont('times', '', 10);
       $this->SetY(99);
       $this->SetX($offsetX);
-      $this->Cell(70, 0, $this->cliente3.' - '.$this->cliente4 , 0, 1, 'L', 0, '', 1);
-      $this->SetX($offsetX);
-      $this->Cell(70, 0, $this->cliente4b , 0, 1, 'L', 0, '', 1);
+      $this->Cell(70, 0, $this->cliente4 , 0, 1, 'L', 0, '', 1);
+      //$this->SetX($offsetX);
+      //$this->Cell(70, 0, $this->cliente4b , 0, 1, 'L', 0, '', 1);
+      //$this->cliente3.' - '.
 
       $this->SetY(53);
       $this->SetX(96);
-      $this->Cell(110,0,$this->docVars->vettor['ragione_sociale'],0,1,'L',0,'',1);
-      $this->SetX(96);
-      $this->Cell(110,0,$this->docVars->vettor['indirizzo'].' '.$this->docVars->vettor['citta'].' ('.$this->docVars->vettor['provincia'].')',0,1,'L',0,'',1);
+      //$this->Cell(110,0,$this->docVars->vettor['ragione_sociale'],0,1,'L',0,'',1);
+      //$this->SetX(96);
+      $this->Cell(110,0,$this->docVars->vettor['citta']. ' (' .$this->docVars->vettor['provincia'].')' ,0,1,'L',0,'',1);
+      //$this->docVars->vettor['indirizzo'].' '.
       $this->SetX(96);
       $this->Cell(110,0,'',0,1,'L',0,'',1);
 
+      $this->SetY(115);
+      $this->SetX(36);
+      $this->Cell(70,0,'INVOICE',0,1,'L',0,'',1);
 
-
+      
    }
 
    function pageFooter() {

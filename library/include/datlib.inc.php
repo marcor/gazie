@@ -43,7 +43,8 @@ $month = array(1=>"Gennaio", 2=>"Febbraio", 3=>"Marzo", 4=>"Aprile", 5=>"Maggio"
 $tn = array('admin', 'admin_config', 'admin_module', 'anagra', 'aziend', 'classroom', 'config',
     'country', 'currencies', 'currency_history', 'destina', 'camp_avversita', 'camp_colture', 
 	'camp_fitofarmaci', 'camp_uso_fitofarmaci',	'languages', 'menu_module', 'menu_script', 'menu_usage', 
-	'module', 'municipalities', 'provinces', 'regions', 'staff_absence_type', 'staff_work_type', 'students', "breadcrumb");
+    'module', 'municipalities', 'provinces', 'regions', 'staff_absence_type', 'staff_work_type', 'students',
+    'breadcrumb' );
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $v;
 }
@@ -80,7 +81,8 @@ $tn = array('aliiva', 'agenti', 'artico', 'assets', 'banapp', 'body_text', 'camp
 	'liquidazioni_iva', 'lotmag', 'movmag', 'pagame', 'paymov', 'portos', 'provvigioni', 'rigbro', 
 	'rigdoc', 'rigmoc', 'rigmoi', 'spediz', 'staff', 'staff_skills', 'staff_worked_hours', 'tesbro',
 	'tesdoc', 'tesmov', 'vettor', 'fae_flux', 'assist',	'ragstat', 'agenti_forn',	'movimenti', 
-	'sconti_articoli', 'sconti_raggruppamenti', 'instal', 'orderman', 'registro_trattamento_dati', 'distinta_base');
+    'sconti_articoli', 'sconti_raggruppamenti', 'instal', 'orderman', 'registro_trattamento_dati', 
+    'distinta_base', 'disbas', 'disbas_componente', 'tescmr', 'rigcmr');
 foreach ($tn as $v) {
     $gTables[$v] = $table_prefix . "_" . $id . $v;
 }
