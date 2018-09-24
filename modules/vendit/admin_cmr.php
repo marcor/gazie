@@ -22,6 +22,21 @@
   Fifth Floor Boston, MA 02110-1335 USA Stati Uniti.
   --------------------------------------------------------------------------
  */
+
+/*
+Il cmr documento deve recare le seguenti indicazioni obbligatorie:
+
+    data e luogo di emissione; nome e indirizzo del mittente;   
+    nome e indirizzo del vettore;
+    nome ed indirizzo del destinatario; 
+    nome ed indirizzo del luogo di destinazione se diverso dal destinatario;
+    natura, peso, quantità e/o numero delle cose da trasportare;
+    indicazione degli eventuali punti obbligatori di transito per le operazioni doganali;
+    istruzioni relative alle spese di trasporto, se pagato in partenza o a destino, preferibilmente utilizzando le rese codificate nell'Incoterms;
+    indicazione e classificazione dell'eventuale merce pericolosa A.D.R.;   
+    nel caso di trasporto a carico completo, vengono riportati anche i dati di immatricolazione del mezzo di trasporto.
+*/
+
 require("../../library/include/datlib.inc.php");
 require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
