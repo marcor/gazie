@@ -253,7 +253,7 @@ CREATE TABLE `gaz_XXXrigcmr` (
   `id_mag` int(9) NOT NULL,
   `status` varchar(10) NOT NULL DEFAULT '',
   PRIMARY KEY (`id_rig`,`id_tes`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Righi dei documenti le cui testate sono contenute in gaz_NNNtescmr';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Righi dei CMR (Convention des Marchandises par Route - Lettere di vettura internazionale). Le cui testate sono contenute in gaz_NNNtescmr';
 CREATE TABLE `gaz_XXXtescmr` (
   `id_tes` int(9) NOT NULL AUTO_INCREMENT,
   `seziva` int(1) NOT NULL DEFAULT '0',
@@ -306,5 +306,5 @@ CREATE TABLE `gaz_XXXtescmr` (
   `adminid` varchar(20) NOT NULL DEFAULT '',
   `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_tes`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate documenti che non hanno valenza fiscale.';
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate dei CMR (Convention des Marchandises par Route) - Lettere di vettura internazionale';
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
