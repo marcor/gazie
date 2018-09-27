@@ -33,7 +33,8 @@ $menu_data = array( 'm1'=>array('link'=>"docume_camp.php"),
                     'm3'=>array('m2'=>array(1=>array(
                                                     array('translate_key'=>1,'link'=>"admin_artico.php?Insert",'weight'=>1),
 													array('translate_key'=>2,'link'=>"inventory_stock.php",'weight'=>5),
-													array('translate_key'=>3,'link'=>"stampa_invmag.php",'weight'=>10)
+													array('translate_key'=>3,'link'=>"stampa_invmag.php",'weight'=>10),
+													array('translate_key'=>16,'link'=>"browse_document.php",'weight'=>11)
                                                     ),
 											2=>array(
                                                     array('translate_key'=>4,'link'=>"admin_catmer.php?Insert",'weight'=>1)

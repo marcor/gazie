@@ -45,7 +45,8 @@ $transl['camp'] = array('name' => "Registro di campagna",
 										 12 =>array("Calcolo costo di una produzione","Costo produzione"),
 										 13 =>array("Gestione avversità","Avversità"),
 										 14 =>array("Gestione colture","Colture"),
-										 15 =>array("Gestione uso fitofarmaci","Uso fitofarmaci")
+										 15 =>array("Gestione uso fitofarmaci","Uso fitofarmaci"),
+										 16 =>array("visualizza documenti e/o certificazioni","Documenti e/o certificazioni")
 										 
                                       )
                           );
