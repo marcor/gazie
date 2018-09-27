@@ -516,7 +516,7 @@ $strScript = array("browse_document.php" =>
         'codcon' => 'Conto di ricavo su vendite',
         'id_cost' => 'Conto di costo su acquisti',
         'annota' => 'Annotazioni (pubblicate anche sul web)',
-        'document' => 'Scheda di Sicurezza',
+        'document' => 'Documenti: scheda di sicurezza, scheda tecnica, certificazioni etc.',
         'web_mu' => 'Unit&agrave; di misura online',
         'web_price' => 'Prezzo di vendita online',
         'web_multiplier' => 'Moltiplicatore prezzo web',
