@@ -62,7 +62,7 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
     $sqlquery = "SELECT " . $gTables['rigmoi'] . ".*, ragso1,ragso2,sedleg,sexper,indspe,regiva,allegato,
                citspe,prospe,capspe,legrap_pf_nome,legrap_pf_cognome,country,codfis,pariva,id_anagra,fae_natura," .
             $gTables['tesmov'] . ".clfoco," . $gTables['tesmov'] . ".protoc," . $gTables['tesmov'] . ".numdoc," .
-            $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva," . $gTables['tesmov'] . ".caucon,datreg,datnas,luonas,pronas,counas,
+            $gTables['tesmov'] . ".datdoc," . $gTables['tesmov'] . ".seziva," . $gTables['tesmov'] . ".caucon," . $gTables['tesmov'] . ".datreg,datnas,luonas,pronas,counas,
                id_doc,iso,black_list,cod_agenzia_entrate, operat, impost AS imposta," . $gTables['rigmoi'] . ".id_tes
                AS idtes, imponi AS imponibile FROM " . $gTables['rigmoi'] . "
                LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoi'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes
@@ -71,10 +71,10 @@ function createRowsAndErrors($anno, $periodicita, $trimestre_semestre) {
                LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesmov'] . ".clfoco = " . $gTables['clfoco'] . ".codice
                LEFT JOIN " . $gTables['anagra'] . " ON " . $gTables['anagra'] . ".id = " . $gTables['clfoco'] . ".id_anagra
                LEFT JOIN " . $gTables['country'] . " ON " . $gTables['anagra'] . ".country = " . $gTables['country'] . ".iso
-               WHERE datreg BETWEEN '" . $di . "' AND '" . $df . "'
+               WHERE " . $gTables['tesmov'] . ".datreg BETWEEN '" . $di . "' AND '" . $df . "'
                  AND ( " . $gTables['tesmov'] . ".clfoco LIKE '" . $admin_aziend['masfor'] . "%' OR " . $gTables['tesmov'] . ".clfoco LIKE '" . $admin_aziend['mascli'] . "%')
                  AND " . $gTables['clfoco'] . ".allegato > 0 AND " . $gTables['tesmov'] . ".seziva <> " . $admin_aziend['reverse_charge_sez'] . "
-               ORDER BY regiva,operat,clfoco,datreg,protoc";
+               ORDER BY regiva,operat,clfoco," . $gTables['tesmov'] . ".datreg,protoc";
     $result = gaz_dbi_query($sqlquery);
     $castel_transact = array();
     $error_transact = array();
@@ -448,11 +448,7 @@ if (!isset($_POST['ritorno'])) {
         $rs_query = gaz_dbi_dyn_query("*", $gTables['comunicazioni_dati_fatture'], 1, "anno DESC, trimestre_semestre DESC", 0, 1);
         $ultima_comunicazione = gaz_dbi_fetch_array($rs_query);
         if ($ultima_comunicazione) {
-            if ($ultima_comunicazione['periodicita'] == 'T') { // ho fatto una comunicazione trimestrale
                 $ultimo_trimestre_comunicato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'];
-            } else { // semestrale
-                $ultimo_trimestre_comunicato = $ultima_comunicazione['anno'] . $ultima_comunicazione['trimestre_semestre'] * 2;
-            }
         } else { // non ho mai fatto liquidazioni, propongo la prima da fare
             $ultimo_trimestre_comunicato = 0;
         }
