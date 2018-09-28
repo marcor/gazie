@@ -428,6 +428,7 @@ $strScript = array("select_liqiva.php" =>
         'DatiGenerali' => 'Dati Generali',
         'DatiRiepilogo' => 'Dati Riepilogo',
         'ImponibileImporto' => 'Imponibile o importo',
+        'NonImponibile' => 'Non Impon.',
         'Imposta' => 'Imposta',
         'Aliquota' => 'Aliquota',
         'errors' => array("CORREGGI !",

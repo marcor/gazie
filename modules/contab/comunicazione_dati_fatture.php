@@ -635,6 +635,9 @@ $gForm = new contabForm();
                                     <th>
                                         <?php echo $script_transl["ImponibileImporto"]; ?>
                                     </th>
+                                    <th>
+                                        <?php echo $script_transl["NonImponibile"]; ?>
+                                    </th>
                                     <th class="text-right">
                                         <?php echo $script_transl["Imposta"]; ?>
                                     </th>
@@ -690,6 +693,9 @@ $gForm = new contabForm();
                                             <th>
                                                 <?php echo $script_transl["ImponibileImporto"]; ?>
                                             </th>
+                                            <th>
+                                                <?php echo $script_transl["NonImponibile"]; ?>
+                                            </th>
                                             <th class="text-right">
                                                 <?php echo $script_transl["Imposta"]; ?>
                                             </th>
@@ -733,6 +739,15 @@ $gForm = new contabForm();
                                         </td>
                                         <td data-title="<?php echo $script_transl["ImponibileImporto"]; ?>" class="text-right">
                                             <?php echo gaz_format_number($v['operazioni_imponibili']); ?>
+                                        </td>
+                                        <td data-title="<?php echo $script_transl["NonImponibile"]; ?>"  class="<?php
+										if ($v['operazioni_nonimp']>=0.01){
+											echo 'text-right warning'; 
+										} else {
+											echo 'text-right'; 
+										}
+										?>">
+                                            <?php echo gaz_format_number($v['operazioni_nonimp']); ?>
                                         </td>
                                         <td data-title="<?php echo $script_transl["Imposta"]; ?>"  class="text-right">
                                             <?php echo gaz_format_number($v['imposte_addebitate']); ?>
