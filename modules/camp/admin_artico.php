@@ -356,11 +356,12 @@ if (isset($_POST['codice']) && strlen($form['codice'])>3){
 			$form['descri']=$row['SOSTANZE_ATTIVE']." ".$row['DESCRIZIONE_FORMULAZIONE'];
 			$form['body_text']=$row['SOSTANZE_ATTIVE']." ".$row['IMPRESA']." ".$row['SEDE_LEGALE_IMPRESA'];
 			$indper=$row['INDICAZIONI_DI_PERICOLO'];
-			$scadaut=$row['SCADENZA_AUTORIZZAZIONE'];
+			$scadaut=$row['SCADENZA_AUTORIZZAZIONE']; 
 			}
 		if ($presente==1) { // se trovato nel database fitofarmaci	
 		// controllo se è scaduta l'autorizzazione
 			if (strtotime(str_replace('/', '-', $scadaut))>0 && $today>strtotime(str_replace('/', '-', $scadaut))) {$msg['err'][] ='scaduto';}
+			if (strtotime(str_replace('/', '-', $scadaut))<1) {$msg['err'][] ='revocato';}
 		// estraggo il simbolo della classe tossicologica
 			
 			$cltoss=$indper;

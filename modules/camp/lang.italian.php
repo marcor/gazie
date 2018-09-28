@@ -469,8 +469,9 @@ $strScript = array("browse_document.php" =>
             'aliiva' => 'Inserire l\'aliquota I.V.A.',
 			'catmer' => 'Selezionare una categoria merceologica',
             'lotmag' => 'Per avere la tracciabilità per lotti è necessario attivare la contabilità di magazzino in configurazione azienda',
-			'scaduto' =>'Il prodotto non può più essere usato: è scaduta l\'autorizzazione del Ministero',
-			'updatedb' =>'Il db fitofarmaci non viene aggiornato da oltre 30 giorni. Per effettuarlo: Merci/servizi > Aggiorna tabella fitofarmaci'
+			'scaduto' =>'Il prodotto non può più essere usato: è scaduta l\'autorizzazione del Ministero!',
+			'updatedb' =>'Il db fitofarmaci non viene aggiornato da oltre 30 giorni. Per effettuarlo: Merci/servizi > Aggiorna tabella fitofarmaci',
+			'revocato' =>'Il prodotto non può più essere usato: l\'autorizzazione del Ministero è stata revocata!'
         ),
         'codice' => "Codice",
         'descri' => "Descrizione",
