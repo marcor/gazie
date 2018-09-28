@@ -128,7 +128,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     if (isset($_POST['Submit']) || ($modal === true && isset($_POST['mode-act']))) { // conferma tutto
         /** ENRICO FEDELE */
         if ($toDo == 'update') {  // controlli in caso di modifica
-            if ($form['codice'] != $form['ref_code']) { // se sto modificando il codice originario
+            if (trim($form['codice']) != trim($form['ref_code'])) { // se sto modificando il codice originario
                 // controllo che l'articolo ci sia gia'
                 $rs_articolo = gaz_dbi_dyn_query('codice', $gTables['artico'], "codice = '" . $form['codice'] . "'", "codice DESC", 0, 1);
                 $rs = gaz_dbi_fetch_array($rs_articolo);
