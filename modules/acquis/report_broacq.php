@@ -346,15 +346,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
                     $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigbro_r["id_doc"], 'id_tes DESC');
                             $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
                             if ($tesdoc_r["tipdoc"] == "AFA") {
-                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $rigbro_r["id_doc"] . "\">";
+                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docacq.php?id_tes=" . $rigbro_r["id_doc"] . "\">";
                                 echo "fatt. " . $tesdoc_r["numfat"];
                                 echo "</a> ";
                             } elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
-                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $rigbro_r["id_doc"] . "&template=DDT\">";
+                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docacq.php?id_tes=" . $rigbro_r["id_doc"] . "&template=DDT\">";
                                 echo "ddt " . $tesdoc_r["numdoc"];
                                 echo "</a> ";
                             } elseif ($tesdoc_r["tipdoc"] == "VCO") {
-                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $rigbro_r["id_doc"] . "&template=FatturaAllegata\">";
+                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docacq.php?id_tes=" . $rigbro_r["id_doc"] . "&template=FatturaAllegata\">";
                                 echo "scontrino n." . $tesdoc_r["numdoc"] . "<br />del " . gaz_format_date($tesdoc_r["datemi"]);
                                 echo "</a> ";
                             } else {

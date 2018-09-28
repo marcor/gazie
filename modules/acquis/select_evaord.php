@@ -60,7 +60,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
     $form['destin'] = '';
     $form['id_des'] = 0;
     $form['id_des_same_company'] = 0;
-    $form['caumag'] = '';
+    $form['caumag'] = 0;
     $form['id_agente'] = 0;
     $form['banapp'] = "";
     $form['spediz'] = "";

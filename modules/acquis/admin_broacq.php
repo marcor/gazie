@@ -670,7 +670,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['spevar'] = 0;
     $form['cauven'] = 0;
     $form['caucon'] = '';
-    $form['caumag'] = 0;
+    $form['caumag'] = 5;
     $form['id_agente'] = 0;
     $form['id_pro'] = 0;
     $form['sconto'] = 0;
