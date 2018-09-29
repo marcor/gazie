@@ -1219,7 +1219,7 @@ if ($form['artico'][$form['mov']] == "") {
 	 	If ($service == 0) { //Antonio Germani se è un articolo con magazzino
 			// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 			$mv = $gForm->getStockValue(false, $itemart['codice']);
-			$magval = array_pop($mv); $print_magval=floatval($magval['q_g']);
+			$magval = array_pop($mv); $print_magval=str_replace(",","",$magval['q_g']); 
 				if (isset($_POST['Update'])) { // se è update
 				$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 				// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene

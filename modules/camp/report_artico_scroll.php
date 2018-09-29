@@ -137,7 +137,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             </td>
             
             <td data-title="<?php echo $script_transl["stock"]; ?>" title="Visualizza scheda prodotto">
-               <?php echo gaz_format_quantity($magval['q_g'],1,$admin_aziend['decimal_quantity']); echo "<p style='float:right;'>".$com."</p>"; ?>
+               <?php $print_magval=str_replace(",","",$magval['q_g']);echo gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']); echo "<p style='float:right;'>".$com."</p>"; ?>
             </td>
             
             <td data-title="<?php echo $script_transl["clone"] . ' in ' . $row["codice"]; ?>_2" title="Copia" class="text-center">
