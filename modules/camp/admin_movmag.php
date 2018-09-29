@@ -222,7 +222,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 	if (isset($_POST['scorig'.$form['mov']])) {
 		$form['scorig'][$form['mov']] = floatval(preg_replace("/\,/", '.', $_POST['scorig'.$form['mov']]));
 	} else {
-		$form['scorig'][$form['mov']]="";
+		$form['scorig'][$form['mov']]=0;
 	}
     $form['status'] = substr($_POST['status'], 0, 10);
 	$form['id_orderman'] = intval ($_POST['description']);
@@ -300,7 +300,7 @@ if (isset($_POST['nome_colt'])){
 			$form['giodoc'] = date("d");
 			$form['mesdoc'] = date("m");
 			$form['anndoc'] = date("Y");
-            $form['scochi'] = "";
+            $form['scochi'] = 0;
             $form['id_rif'] = 0;
         }
     } 
@@ -801,7 +801,7 @@ If ($toDo <> "update") { // se non è un update
 	$form['nome_avv'][$form['mov']] = "";
 	$form['id_avversita'][$form['mov']] = 0;
     $form['artico'][$form['mov']] = "";
-    $form['quanti'][$form['mov']] = "";
+    $form['quanti'][$form['mov']] = 0;
     $form['prezzo'][$form['mov']] = 0;
     $form['scorig'][$form['mov']] = 0;
 	$form['clfoco'][$form['mov']]= 0;
@@ -944,7 +944,7 @@ echo "<input type=\"hidden\" name=\"clfocoin\" value=\"" . $form['clfocoin'] . "
 echo "<input type=\"hidden\" name=\"quantiin\" value=\"" . $form['quantiin'] . "\">\n";
 echo "<input type=\"hidden\" name=\"datdocin\" value=\"" . $form['datdocin'] . "\">\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">$title</div>\n";
-$importo_rigo = CalcolaImportoRigo($form['artico'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
+$importo_rigo = CalcolaImportoRigo($form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
 $importo_totale = CalcolaImportoRigo(1, $importo_rigo, $form['scochi']);
 echo "<table border=\"0\" cellpadding=\"3\" cellspacing=\"1\" class=\"FacetFormTABLE\" align=\"center\">\n";
 if (!empty($msg)) {
@@ -1186,7 +1186,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td cl
  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']) {
 	  
-	  $importo_rigo = CalcolaImportoRigo($form['artico'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
+	  $importo_rigo = CalcolaImportoRigo($form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
 		$importo_totale = CalcolaImportoRigo(1, $importo_rigo, $form['scochi']);
 		
 		 echo "<input type=\"hidden\" name=\"mov\" value=\"" . $form['mov'] . "\">\n";
