@@ -515,7 +515,8 @@ $strScript = array("admin_fornit.php" =>
             'NON HAI ESEGUITO LA CHIUSURA GIORNALIERA DEL REGISTRATORE DI CASSA FALLO PRIMA DI EMETTERNE UNO!!!',
             "C'è almeno un DdT già emesso con data successiva a quella scelta per l'evasione",
             "C'è almeno uno scontrino emesso con data successiva a quella scelta per l'evasione",
-            "C'è almeno una fattura già emessa con data successiva a quella scelta per l'evasione"
+            "C'è almeno una fattura già emessa con data successiva a quella scelta per l'evasione",
+            "Devi impostare il numero della fattura di acquisto."
         ),
         'customer' => 'Cliente',
         'search_customer' => array('La ricerca non ha dato risultati!',

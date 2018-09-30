@@ -59,14 +59,16 @@ $script_transl = HeadMain();
 ?>
 <form method="POST" name="form">
     Posizione corrente <input type="text" name="file" size="50" value="<?php echo $form['file']; ?>">
-    <br>il primo rigo di questa pagina è il titolo che compare alla sinistra dei tasti rapidi
+    <br><br>il primo rigo di questa pagina è il titolo che compare alla sinistra dei tasti rapidi
+    <br>esempio : Emetti DDT	../../modules/vendit/admin_docven.php?Insert&tipdoc=DDT
     <br><br>
     <?php
     $res_pos = gaz_dbi_dyn_query("*", $gTables['breadcrumb'], ' file="'. $form['file'].'"', ' id_bread',0,999);
     if ( gaz_dbi_num_rows($res_pos)>0 ) {
         echo "<table>";
-        while ( $row = gaz_dbi_fetch_array($res_pos) ) {
-            echo '<tr>';
+        echo '<tr></tr><th>titolo</th><th>link</th></tr>';
+        while ( $row = gaz_dbi_fetch_array($res_pos) ) {           
+            echo '<tr>';           
             echo '<td> <input size="30" type="text" name="title['.$row['id_bread'].']" value="'.$row['titolo'].'"> </td>';
             echo '<td> <input size="60" type="text" name="link['.$row['id_bread'].']" value="'.$row['link'].'"> </td>';
             echo '<td><a href="admin_breadcrumb.php?url='.$form['file'].'&del='.$row['id_bread'].'" class="btn btn-default btn-xs">del</td>';

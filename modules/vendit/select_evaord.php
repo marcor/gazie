@@ -121,6 +121,21 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
+            
+            // controllo la quantità già evasa sfogliando la tabella rigdoc
+            $totale_evadibile = $rigo['quanti'];
+            $tesdoc_r = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_order = " . $form['id_tes'], "id_tes asc");
+            while ($tesdoc_result = gaz_dbi_fetch_array($tesdoc_r) ) {
+                $rs_evasi = gaz_dbi_dyn_query("*", $gTables['rigdoc'], "id_tes = " . $tesdoc_result['id_tes'] ." and codart='".$rigo['codart']."'", "id_rig asc");
+                while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
+                    $totale_evadibile -= $rg_evasi['quanti'];
+                }
+                $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
+                if ( $totale_evadibile == 0 ) {
+                    $form['righi'][$_POST['num_rigo']]['checkval'] = false;
+                }
+            }
+
             $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
             $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
             $form['righi'][$_POST['num_rigo']]['pervat'] = $rigo['pervat'];
@@ -218,6 +233,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
                 $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
                 $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
                 $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
+                //$form['righi'][$_POST['num_rigo']]['evadibile'] = $rigo['quanti'];
                 $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
                 $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
                 $form['righi'][$_POST['num_rigo']]['pervat'] = $rigo['pervat'];
@@ -319,11 +335,15 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
             if (isset($v['checkval'])) {   //se e' un rigo selezionato
                 //lo inserisco nel DdT
                 $row = $v;
-                unset($row['id_rig']);
+                if ( $v['quanti']==$v['evadibile'] ) {
+                    unset($row['id_rig']);
+                }
                 $row['id_tes'] = $last_id;
+                //$row['id_order'] = $v['id_tes'];
+                $row['quanti'] = $v['evadibile'];
                 rigdocInsert($row);
                 $last_rigdoc_id = gaz_dbi_last_id();
-                if ($v['id_body_text'] > 0 ) { //se � un rigo testo copio il contenuto vecchio su uno nuovo
+                if ($v['id_body_text'] > 0 ) { //se è un rigo testo copio il contenuto vecchio su uno nuovo
                     $old_body_text = gaz_dbi_get_row($gTables['body_text'], "id_body", $v['id_body_text']);
                     bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $old_body_text['body_text']));
                     gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
@@ -331,22 +351,22 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                 $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
                 if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service']==0 and
                         $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
+                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 } else if ( $admin_aziend['conmag'] == 2 and
                         $form['righi'][$k]['tiprig'] == 14 and ! empty($form['righi'][$k]['codart']) ) {
-                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
+                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
                 //modifico il rigo dell'ordine indicandoci l'id della testata del DdT
-                gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
+                gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
-            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non � il primo rigo processato
+            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
                 //controllo se ci sono ancora righi inevasi
-                $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
-                $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
-                if (!$inevasi) {  //se non ci sono + righi da evadere
+                //$rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
+                //$inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
+                //if (!$inevasi) {  //se non ci sono + righi da evadere
                     //modifico lo status della testata dell'ordine solo se completamente evaso
-                    gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-                }
+                    //gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
+                //}
             }
             if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
                 $row = $v;
@@ -357,13 +377,13 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
             $ctrl_tes = $v['id_tes'];
         }
         //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-        $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
+        /*$rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
         $inevasi = "";
         $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
         if (!$inevasi) {  //se non ci sono + righi da evadere
             //modifico lo status della testata dell'ordine solo se completamente evaso
             gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-        }
+        }*/
         $_SESSION['print_request'] = $last_id;
         header("Location: invsta_docven.php");
         exit;
@@ -416,7 +436,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
             $msg .= "9+";
         }
     }
-    if ($msg == "e") {//procedo all'inserimento
+    if ($msg == "") {//procedo all'inserimento
         require("lang." . $admin_aziend['lang'] . ".php");
         $script_transl = $strScript['select_evaord.php'];
         $ecr_user = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $admin_aziend["user_name"]);
@@ -450,6 +470,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
             }
             $form['datfat'] = $form['datemi'];
         }
+
         tesdocInsert($form);
         $last_id = gaz_dbi_last_id();
         $ctrl_tes = 0;
@@ -468,21 +489,25 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
             if (isset($v['checkval'])) {   //se e' un rigo selezionato
                 //lo inserisco nel VCO
                 $row = $v;
-                unset($row['id_rig']);
+                if ( $v['quanti']==$v['evadibile'] ) {
+                    unset($row['id_rig']);
+                }
                 $row['id_tes'] = $last_id;
+                $row['quanti'] = $v['evadibile'];
                 rigdocInsert($row);
                 $last_rigdoc_id = gaz_dbi_last_id();
                 $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
                 if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service']==0 and
                         $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
+                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
                     );
                 } else if ( $admin_aziend['conmag'] == 2 and
                         $form['righi'][$k]['tiprig'] == 14 and ! empty($form['righi'][$k]['codart']) ) {
-                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
+                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
                 //modifico il rigo dell'ordine indicandoci l'id della testata del VCO
-                gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
+                //gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
+                gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
             if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non � il primo rigo processato
                 //controllo se ci sono ancora righi inevasi
@@ -639,11 +664,15 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
             if (isset($v['checkval'])) {   //se e' un rigo selezionato
                 //lo inserisco nella fattura immediata
                 $row = $v;
-                unset($row['id_rig']);
+                if ( $v['quanti']==$v['evadibile'] ) {
+                    unset($row['id_rig']);
+                }
                 $row['id_tes'] = $last_id;
+                //$row['id_order'] = $v['id_rig'];
+                $row['quanti'] = $v['evadibile'];
                 rigdocInsert($row);
                 $last_rigdoc_id = gaz_dbi_last_id();
-                if ($v['id_body_text'] > 0) { //se � un rigo testo copio il contenuto vecchio su uno nuovo
+                if ($v['id_body_text'] > 0) { //se è un rigo testo copio il contenuto vecchio su uno nuovo
                     $old_body_text = gaz_dbi_get_row($gTables['body_text'], "id_body", $v['id_body_text']);
                     bodytextInsert(array('table_name_ref' => 'rigdoc', 'id_ref' => $last_rigdoc_id, 'body_text' => $old_body_text['body_text']));
                     gaz_dbi_put_row($gTables['rigdoc'], 'id_rig', $last_rigdoc_id, 'id_body_text', gaz_dbi_last_id());
@@ -658,16 +687,16 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['quanti'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
                 //modifico il rigo dell'ordine indicandoci l'id della testata della fattura immediata
-                gaz_dbi_put_row($gTables['rigbro'], "id_rig", $v['id_rig'], "id_doc", $last_id);
+                gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $last_id, "id_order", $form['id_tes'] );
             }
-            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non � il primo rigo processato
+            if ($ctrl_tes != 0 and $ctrl_tes != $v['id_tes']) {  //se non è il primo rigo processato
                 //controllo se ci sono ancora righi inevasi
-                $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
+                /*$rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
                 $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
                 if (!$inevasi) {  //se non ci sono + righi da evadere
                     //modifico lo status della testata dell'ordine solo se completamente evaso
                     gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-                }
+                }*/
             }
             if ($v['tiprig'] >= 11 && $v['tiprig'] <= 13) {
                 $row = $v;
@@ -678,13 +707,13 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
             $ctrl_tes = $v['id_tes'];
         }
         //controllo se l'ultimo ordine tra quelli processati ha ancora righi inevasi
-        $rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
+        /*$rs_righi_inevasi = gaz_dbi_dyn_query("id_tes", $gTables['rigbro'], "id_tes = $ctrl_tes AND id_doc = 0 AND tiprig BETWEEN 0 AND 1 or tiprig=14", "id_rig", 0, 1);
         $inevasi = "";
         $inevasi = gaz_dbi_fetch_array($rs_righi_inevasi);
         if (!$inevasi) {  //se non ci sono + righi da evadere
             //modifico lo status della testata dell'ordine solo se completamente evaso
             gaz_dbi_put_row($gTables['tesbro'], "id_tes", $ctrl_tes, "status", "EVASO");
-        }
+        }*/
         $_SESSION['print_request'] = $last_id;
         header("Location: invsta_docven.php");
         exit;
@@ -693,6 +722,16 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
     header("Location: " . $_POST['ritorno']);
     exit;
 }
+
+
+
+// **************************************************************************************************************************
+//
+//  Visualizzazione maschera di evasione ordine di vendita
+//
+// **************************************************************************************************************************
+
+
 
 require("../../library/include/header.php");
 $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autocomplete'));
@@ -901,7 +940,8 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "<tr class=\"FacetFieldCaptionTD\"><th> " . $script_transl['codart'] . "</th>
    <th> " . $script_transl['descri'] . "</th>
    <th align=\"center\"> " . $script_transl['unimis'] . "</th>
-   <th align=\"right\"> " . $script_transl['quanti'] . "</th>
+   <th align=\"right\"> " . $script_transl['quanti'] . " richiesta</th>
+   <th align=\"right\"> " . $script_transl['quanti'] . " evadibile</th>
    <th align=\"right\"> " . $script_transl['prezzo'] . "</th>
    <th align=\"right\"> " . $script_transl['sconto'] . "</th>
    <th align=\"right\"> " . $script_transl['provvigione'] . "</th>
@@ -919,7 +959,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                 //calcolo importo rigo
                 switch ($v['tiprig']) {
                     case "0":
-                        $imprig = CalcolaImportoRigo($form['righi'][$k]['quanti'], $form['righi'][$k]['prelis'], $form['righi'][$k]['sconto']);
+                        $imprig = CalcolaImportoRigo($form['righi'][$k]['evadibile'], $form['righi'][$k]['prelis'], $form['righi'][$k]['sconto']);
                         if ($v['id_doc'] == 0) {
                             $checkin = ' checked';
                             $total_order += $imprig;
@@ -972,6 +1012,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
                     );
                     echo "<td align=\"center\">" . $v['unimis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['quanti'] . "</td>\n";
+                    echo "<td align=\"right\" width=\"10%\"><input type=\"text\" value=\"".  $v['evadibile']."\" name=\"righi[$k][evadibile]\"></td>\n";
                     echo "<td align=\"right\">" . $v['prelis'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['provvigione'] . "</td>\n";
                     echo "<td align=\"right\">" . $v['sconto'] . "</td>\n";

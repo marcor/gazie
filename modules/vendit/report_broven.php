@@ -255,42 +255,37 @@ $recordnav->output();
             echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . $r["ragso1"] . "&search=Cerca\">" . $r["ragso1"] . "</a> &nbsp;</td>";
             echo "<td><a href=\"admin_destinazioni.php?codice=".$r["codice"]."&Update\">".$r["unita_locale1"]."</a></td>";
             
+            // colonna stato ordine
             $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
-            $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.
+            $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
             $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
-            while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
-                if ($rigbro_r["id_doc"] == 0) {
-                    $remains_atleastone = true;
-                    continue;
+            while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
+            
+                $totale_da_evadere = $rigbro_r['quanti'];
+                $totale_evaso = 0;
+                $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_order='".$r['id_tes']."'", 'id_tes DESC');
+                while ( $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result) ) {
+                    $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_tes=" . $tesdoc_r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
+                    while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
+                        $totale_evaso += $rigdoc_r['quanti'];
+                        $processed_atleastone = true;
+                    }
                 }
-                $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigbro_r["id_doc"], 'id_tes DESC');
-                $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
-                if ($rigbro_r["id_doc"] != $tesdoc_r["id_tes"]) {
-                    //
-                    // Azzera il numero documento nel rigo dell'ordine, dato
-                    // che non e' piu' valido.
-                    //
-            gaz_dbi_put_row($gTables['rigbro'], "id_tes", $rigbro_r["id_tes"], "id_doc", 0);
-                    //
-                    // Il rigo e' da evadere.
-                    //
-            $remains_atleastone = true;
-                } else {
-                    //
-                    // L'ordine sembra evaso.
-                    //
-            $processed_atleastone = true;
+                //echo $totale_evaso ." ". $totale_da_evadere."<br>";
+                if ( $totale_evaso != $totale_da_evadere ) {
+                    //echo $totale_evaso ." -> ". $totale_da_evadere." -> ".$rigbro_r['quanti']."<br>";
+                    $remains_atleastone = true;
                 }
             }
             //
             // Se l'ordine e' da evadere completamente, verifica lo status ed
             // eventualmente lo aggiorna.
             //
-    if ($remains_atleastone && !$processed_atleastone) {
+            if ($remains_atleastone && !$processed_atleastone) {
                 //
                 // L'ordine e' completamente da evadere.
                 //
-        if ($r["status"] != "GENERATO") {
+                if ($r["status"] != "GENERATO") {
                     gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r["id_tes"], "status", "RIGENERATO");
                 }
                 if ( $what=="VOG" ) {
@@ -306,7 +301,7 @@ $recordnav->output();
                 // Interroga la tabella gaz_XXXrigbro per le righe corrispondenti
                 // a questa testata.
                 //
-        $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"], 'id_tes DESC');
+                $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"], 'id_tes DESC');
                 //
                 while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
                     if ($rigbro_r["id_doc"] == 0) {
@@ -340,17 +335,17 @@ $recordnav->output();
                 if ( $what=="VOG" ) {
                     echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord_gio.php\">evadi il rimanente</a></td>";
                 } else {
-                    echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a></td>";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a></td>";
                 }
             } else {
-                echo "<td>";
+                echo "<td> evaso";
                 //
                 $ultimo_documento = 0;
                 //
                 // Interroga la tabella gaz_XXXrigbro per le righe corrispondenti
                 // a questa testata.
                 //
-        $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"], 'id_tes DESC');
+                $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"], 'id_tes DESC');
                 //
                 while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
                     if ($rigbro_r["id_doc"] == 0) {
@@ -385,6 +380,8 @@ $recordnav->output();
                 }
                 echo "</td>";
             }
+            
+            // stampa
             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-stampa\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a>";
             echo "</td>";
             // Colonna "Mail"

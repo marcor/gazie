@@ -1632,13 +1632,15 @@ for ($counter = 1; $counter <= 9; $counter++) {
 }
 echo "</select></td>\n";
 if (!empty($msg)) {
+    $gForm = new venditForm();
+    //$message = $gForm->outputErrors($msg, $script_transl['errors']);
     $message = "";
     $rsmsg = array_slice(explode('+', chop($msg)), 0, -1);
     foreach ($rsmsg as $v) {
         $message .= $script_transl['error'] . "! -> ";
         $rsval = explode('-', chop($v));
         foreach ($rsval as $valmsg) {
-            $message .= $script_transl[$valmsg] . " ";
+            $message .= ' &raquo;' . $script_transl[$valmsg] . " ";
         }
         $message .= "<br />";
     }

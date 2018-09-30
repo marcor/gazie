@@ -272,13 +272,17 @@ function confirMail(link){
                             echo "</td>\n";
 
                             echo "<td align=\"center\">";
-                            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_doc = " . $r['id_tes'] . " GROUP BY id_doc", 'id_tes');
+                            /*$rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_doc = " . $r['id_tes'] . " GROUP BY id_doc", 'id_tes');
                             while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
                                 $r_d = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $rigbro_r["id_tes"]);
                                 if ($r_d["id_tes"] > 0) {
                                     echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r_d['id_tes'] . "\" style=\"font-size:10px;\">Ord." . $r_d['numdoc'] . "</a>\n";
                                 }
-                            }
+                            }*/
+                            $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
+                            $t_r = gaz_dbi_fetch_array($tesbro_result);
+                            echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
+
                             if ($lot->thereisLot($r['id_tes'])) {
                                 echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $r['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a>\n";
                             }
@@ -388,13 +392,13 @@ function confirMail(link){
                             echo "</td>";
                             // Colonna
                             echo "<td align=\"center\">";
-                            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_doc = " . $r['id_tes'] . " GROUP BY id_doc", 'id_tes');
-                            while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
-                                $r_d = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $rigbro_r["id_tes"]);
-                                if ($r_d["id_tes"] > 0) {
-                                    echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r_d['id_tes'] . "\" style=\"font-size:10px;\">Ord." . $r_d['numdoc'] . "</a>\n";
-                                }
-                            }
+                            $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
+                            $t_r = gaz_dbi_fetch_array($tesbro_result);
+                                //if ($t_r["id_tes"] > 0) {
+                                    //echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r_d['id_tes'] . "\" style=\"font-size:10px;\">Ord." . $r_d['numdoc'] . "</a>\n";
+                                    echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";                            
+                                //}
+                            //}                           
                             echo "</td>";
                             echo "<td></td>";
                             echo "<td></td>";
