@@ -205,14 +205,14 @@ $script_transl = HeadMain();
             ?>
         </tr>
         <?php
-        $rs_last_doc = gaz_dbi_dyn_query("MAX(protoc) AS maxpro, YEAR(datfat) AS y", $gTables['tesdoc'], "tipdoc LIKE 'AF_' AND seziva = '$seziva' GROUP BY y ", 'protoc DESC');
+/*        $rs_last_doc = gaz_dbi_dyn_query("MAX(protoc) AS maxpro, YEAR(datfat) AS y", $gTables['tesdoc'], "tipdoc LIKE 'AF_' AND seziva = '$seziva' GROUP BY y ", 'protoc DESC');
         while ($last_doc = gaz_dbi_fetch_array($rs_last_doc)) {
             $lt_doc[$last_doc['y']] = $last_doc['maxpro'];
-        }
+        }*/
 
 //recupero le testate in base alle scelte impostate
     	//echo $where." ".$year." ".$ragso1;    
-		$result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
+        $result = gaz_dbi_dyn_query($gTables['tesdoc'] . ".*," . $gTables['anagra'] . ".ragso1", $gTables['tesdoc'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesdoc'] . ".clfoco = " . $gTables['clfoco'] . ".codice LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id', $where, $orderby, $limit, $passo);
         $ctrlprotoc = "";
         while ($row = gaz_dbi_fetch_array($result)) {
             $y = substr($row['datfat'], 0, 4);
@@ -248,11 +248,11 @@ $script_transl = HeadMain();
                     echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=A&last=" . $row["protoc"] . "\">Contabilizza</a></td>";
                 }
                 print "<td><a class=\"btn btn-xs btn-default\" href=\"" . $modulo . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
-                if ($lt_doc[$y] == $row['protoc']) {
+                //if ($lt_doc[$y] == $row['protoc']) {
                     print "<td><a class=\"btn btn-xs btn-default btn-elimina\" href=\"delete_docacq.php?id_tes=" . $row["id_tes"] . "\"><i class=\"glyphicon glyphicon-remove\"></i></a></td>";
-                } else {
-                    print "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
-                }
+                //} else {
+//                    print "<td><button title=\"Per garantire la sequenza corretta della numerazione, non &egrave; possibile cancellare un documento diverso dall'ultimo\" class=\"btn btn-xs btn-default btn-elimina disabled\"><i class=\"glyphicon glyphicon-remove\"></i></button></td>";
+  //              }
                 print "</tr>\n";
             }
             $ctrlprotoc = $row["protoc"];

@@ -122,7 +122,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
             
-            // controllo la quantità già evasa sfogliando la tabella rigdoc
+            // controllo la quantità già evasa sfogliando le tabelle tesdoc e rigdoc
             $totale_evadibile = $rigo['quanti'];
             $tesdoc_r = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_order = " . $form['id_tes'], "id_tes asc");
             while ($tesdoc_result = gaz_dbi_fetch_array($tesdoc_r) ) {
@@ -130,11 +130,11 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
                 while ($rg_evasi = gaz_dbi_fetch_array($rs_evasi)) {
                     $totale_evadibile -= $rg_evasi['quanti'];
                 }
-                $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
                 if ( $totale_evadibile == 0 ) {
                     $form['righi'][$_POST['num_rigo']]['checkval'] = false;
                 }
             }
+            $form['righi'][$_POST['num_rigo']]['evadibile'] = $totale_evadibile;
 
             $form['righi'][$_POST['num_rigo']]['id_doc'] = $rigo['id_doc'];
             $form['righi'][$_POST['num_rigo']]['codvat'] = $rigo['codvat'];
