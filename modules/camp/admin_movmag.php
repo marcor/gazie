@@ -102,7 +102,7 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 		$form['artico'][$m] = $_POST['artico'.$m];
 		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['scorig'][$m] = $_POST['scorig'.$m];
-		$form['prezzo'][$m] = $_POST['prezzo'.$m];
+		$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['clfoco'][$m] = $_POST['clfoco'.$m];
 		$form['nome_avv'][$m] = $_POST['nome_avv'.$m];
 		$form['id_avversita'][$m] = intval ($form['nome_avv'][$m]);
@@ -785,7 +785,7 @@ If ($toDo <> "update") { // se non è un update
     $form['caumag'] = "";    
     $form['campo_coltivazione'] = ""; //campo di coltivazione
     $form['clfocoin'] = 0;
-	$form['quantiin'] = "";
+	$form['quantiin'] = 0;
 	$form['datdocin'] = "";
 	$form['adminid'] = "Utente connesso";
     $form['tipdoc'] = "";
@@ -820,7 +820,7 @@ if (isset($_POST['Add_mov'])){
 	for ($m = 0; $m <= $form['nmov']; ++$m){
 		$form['artico'][$m] = $_POST['artico'.$m];
 		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
-		$form['prezzo'][$m] = $_POST['prezzo'.$m];
+		$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['operat'][$m] = $_POST['operat'.$m];
 		$form['staff'][$m]=intval($_POST['staff'.$m]);
@@ -830,7 +830,7 @@ if (isset($_POST['Add_mov'])){
 	}
 	$form['nmov']=$form['nmov']+1;
 	$form['artico'][$form['nmov']] = "";
-	$form['quanti'][$form['nmov']] = "";
+	$form['quanti'][$form['nmov']] = 0;
 	$form['operat'][$form['nmov']] = "";
 	$form['prezzo'][$form['nmov']] = 0;
 	$form['scorig'][$form['nmov']] = 0;
@@ -910,8 +910,8 @@ If (isset($_POST['cancel'])){$form['hidden_req'] = '';
 	$form['quanti'][$form['mov']] = 0;
 	$form['staff'][$form['mov']]="";
 	$form['clfoco'][$form['mov']]=0;
-	$form['clfocoin'] = "";
-	$form['quantiin'] = "";
+	$form['clfocoin'] = 0;
+	$form['quantiin'] = 0;
 	$form['datdocin'] = "";
     $form['status'] = "";
     $form['search_partner'] = "";
@@ -1001,7 +1001,9 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td col
         window.open(apri, "", stile);
      }
 </script>
+
 <button type="submit" name="erase2" title="Reset produzione" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>
+<br>
 <a href="javascript:Popup('../../modules/orderman/admin_orderman.php?Insert&popup=1')"> Crea nuova produzione <i class="glyphicon glyphicon-plus-sign" style="color:green" ></i></a>
 	  
 </td></tr>
@@ -1212,18 +1214,19 @@ if ($form['artico'][$form['mov']] == "") {
 	$dose=$itemart['dose_massima'];// prendo anche la dose
 	$scorta=$itemart['scorta'];// prendo la scorta minima
 	$descri=$itemart['descri'];//prendo descrizione articolo
-	if (isset($_POST['Insert'])) {
+	
         $form['prezzo'][$form['mov']]=$itemart['preacq']; 
-    }
+   
 	$service=intval($itemart['good_or_service']);
 	 	If ($service == 0) { //Antonio Germani se è un articolo con magazzino
 			// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 			$mv = $gForm->getStockValue(false, $itemart['codice']);
 			$magval = array_pop($mv); $print_magval=str_replace(",","",$magval['q_g']); 
-				if (isset($_POST['Update'])) { // se è update
-				$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
-				// Antonio Germani prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
-				$print_magval=$print_magval+$qta['quanti'];
+				if (isset($_POST['Update']) or $toDo=="update") { // se è un update
+				$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);				
+				if ($qta['artico']==$form['artico'][$form['mov']]){ // se l'update è per lo stesso articolo
+				$print_magval=$print_magval+$qta['quanti'];// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
+				}
 				}	 
 			echo " ",substr($itemart['descri'], 0, 25)," ";
 			if ($dose>0) {echo "<br>Dose generica: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
@@ -1240,7 +1243,7 @@ if ($form['artico'][$form['mov']] == "") {
 	if ($service == 0) { //Antonio Germani se è un articolo con magazzino
 		echo " ".$script_transl[22]." ".gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity'])." ".$print_unimis."&nbsp;&nbsp;";
 	
-		if ($print_magval<$scorta and $service ==0 ) {
+		if ($print_magval<$scorta and $service ==0 and $scorta>0) {
 			echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 		}
 		?>
@@ -1341,8 +1344,8 @@ $importo_totale=($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.'
 ?>
 <!-- COSTO MOVIMENTO  -->
 <tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?></td><td class="FacetDataTD" colspan="1"><input type="text" value="<?php echo number_format ($importo_totale,$admin_aziend['decimal_price'], ',', ''); ?>" name="total" size="20" readonly /><?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;". $script_transl[31]; ?>
-<input type="text" value="<?php echo number_format ($form['prezzo'][$form['mov']],$admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" size="12" name="prezzo<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " ".$admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;" . $script_transl[14] . "&nbsp;"; ?>
-<input type="text" value="<?php echo $form['scorig'][$form['mov']];?>" maxlength="4" size="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " %" . "&nbsp;&nbsp;&nbsp;"; ?></td></tr>
+<input type="text" value="<?php echo number_format ($form['prezzo'][$form['mov']],$admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" size="12" name="prezzo<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " ".$admin_aziend['symbol']; ?>
+<input type="hidden" value="<?php echo $form['scorig'][$form['mov']];?>" maxlength="4" size="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()"></td></tr>
 <tr><td style="font-size:5pt;" colspan="4"><?php echo $form['mov']+1; ?></td></tr>
  <?php
 /* fine riattivo prezzo e sconto */
