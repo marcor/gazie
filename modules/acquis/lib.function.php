@@ -94,6 +94,10 @@ class acquisForm extends GAzieForm {
         }
         echo "\t </select>\n";
     }
+	
+    function selectArtico($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $class = 'FacetSelect') {
+		// funzione per la selezione di un articolo di magazzino avvalendosi dell'autocomplete
+	}	
 }
 
 ?>
