@@ -367,7 +367,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]);
 	If ($itemart['good_or_service'] ==0) { // se non è un servizio	
 		$mv = $gForm->getStockValue(false, $form['artico'][$m]);
-        $magval = array_pop($mv); $print_magval=$magval['q_g']; 
+        $magval = array_pop($mv); $print_magval=floatval(str_replace(',', '', $magval['q_g'])); 
 		if (isset($_POST['Update'])) {
 			$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 			// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
