@@ -367,14 +367,16 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]);
 	If ($itemart['good_or_service'] ==0) { // se non è un servizio	
 		$mv = $gForm->getStockValue(false, $form['artico'][$m]);
-        $magval = array_pop($mv); $print_magval=floatval($magval['q_g']); 
+        $magval = array_pop($mv); $print_magval=$magval['q_g']; 
 		if (isset($_POST['Update'])) {
 			$qta = gaz_dbi_get_row($gTables['movmag'], "id_mov", $_GET['id_mov']);
 			// prendo la quantità precedentemente memorizzata e la riaggiungo alla giacenza di magazzino altrimenti il controllo quantità non funziona bene
 			$print_magval=$print_magval+$qta['quanti'];
 		}
 	
-		if ($form["operat"][$m] == -1 and (number_format($print_magval,3) - number_format($form['quanti'][$m],3)<0)) { //Antonio Germani quantità insufficiente
+		if ($form["operat"][$m] == -1 and (floatval(str_replace(',', '', $print_magval)) - floatval(str_replace(',', '', $form['quanti'][$m]))<0)) {
+			
+		//Antonio Germani quantità insufficiente
 			$msg .= "23+";
 		}
 	}
@@ -1245,8 +1247,10 @@ if ($form['artico'][$form['mov']] == "") {
 	
 		if ($print_magval<$scorta and $service ==0 and $scorta>0) {
 			echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
-		}
+		} 
+		$anchor["num"]=$form['mov']; // Antonio Germani quale riga deve essere ancorata allo scroll
 		?>
+		<a name="<?php echo $form['mov'];?>"></a> <!-- Antonio Germani Questa è l'ancora dello scroll -->
 	<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">
 	<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']];?>">
 <?php	
@@ -1378,6 +1382,13 @@ if ($toDo == 'update') {
 echo "</td></tr></table>\n";
 ?>
 </form>
+<?php
+// Antonio Germani questo serve per fare lo scroll all'ultimo movimento inserito
+if ( isset( $anchor["num"] ) )
+   echo "<script type='text/javascript'>\n" .
+        "window.location.hash = '#{$anchor["num"]}';" . //◄■■■ JUMP TO LOCAL ANCHOR.
+        "</script>\n"; 
+?>
 <?php
 require("../../library/include/footer.php");
 ?>
