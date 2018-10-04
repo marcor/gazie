@@ -279,9 +279,11 @@ function confirMail(link){
                                     echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r_d['id_tes'] . "\" style=\"font-size:10px;\">Ord." . $r_d['numdoc'] . "</a>\n";
                                 }
                             }*/
-                            $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
-                            $t_r = gaz_dbi_fetch_array($tesbro_result);
-                            echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
+                            if ( isset($r['id_order']) && $r['id_order']>0 ) {
+                                $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
+                                $t_r = gaz_dbi_fetch_array($tesbro_result);
+                                echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
+                            }
 
                             if ($lot->thereisLot($r['id_tes'])) {
                                 echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $r['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a>\n";
@@ -390,15 +392,13 @@ function confirMail(link){
                                 echo '<a title="' . $script_transl['no_mail'] . '" target="_blank" href="admin_client.php?codice=' . substr($clfoco["codice"], 3) . '&Update"><i class="glyphicon glyphicon-edit"></i></a>';
                             }
                             echo "</td>";
-                            // Colonna
+                            // Colonna origine
                             echo "<td align=\"center\">";
-                            $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
-                            $t_r = gaz_dbi_fetch_array($tesbro_result);
-                                //if ($t_r["id_tes"] > 0) {
-                                    //echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r_d['id_tes'] . "\" style=\"font-size:10px;\">Ord." . $r_d['numdoc'] . "</a>\n";
-                                    echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";                            
-                                //}
-                            //}                           
+                            if ( isset($r['id_order']) && $r['id_order']>0 ) {
+                                $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
+                                $t_r = gaz_dbi_fetch_array($tesbro_result);
+                                echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";                            
+                            }
                             echo "</td>";
                             echo "<td></td>";
                             echo "<td></td>";
