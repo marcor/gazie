@@ -443,6 +443,7 @@ $strScript = array(
         'user_email' => "Mail (anche per recupero password)",
         'image' => 'Immagine dell\'utente<br />(solo in formato JPG, max 64kb)',
         'Abilit' => "Livello",
+        'mesg_co' => array('Non &egrave; stato trovato nulla!', 'Minimo 2 caratteri', 'Azienda di lavoro'),
         'Access' => "Accesso",
         'user_password_old' => 'Vecchia Password',
         'user_password_new' => 'Nuova Password',

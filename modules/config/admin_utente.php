@@ -29,6 +29,7 @@ if (!isset($_POST['ritorno'])) {
 }
 $global_config = new Config;
 $user_data = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
+
 $msg = array('err' => array(), 'war' => array());
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
 	$toDo = 'update';
@@ -64,6 +65,9 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["style"] = substr($_POST['style'], 0, 30);
 	$form["skin"] = substr($_POST['skin'], 0, 30);
 	$form["Abilit"] = intval($_POST['Abilit']);
+    $form['hidden_req'] = $_POST['hidden_req'];
+	$form['company_id'] = intval($_POST['company_id']);
+	$form['search']['company_id'] = $_POST['search']['company_id'];
 	$form["Access"] = intval($_POST['Access']);
 	$form["user_name"] = substr($_POST["user_name"], 0, 15);
 	$form["user_password_old"] = substr($_POST['user_password_old'], 0, 40);
@@ -92,6 +96,8 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	// attingo il testo delle email dalla tabella configurazione utente
 	$bodytext = gaz_dbi_get_row($gTables['admin_config'], 'var_name', "body_send_doc_email' AND adminid = '" . $form["user_name"]);
 	$form['body_text'] = $bodytext['var_value'];
+    $form['hidden_req'] = '';
+    $form['search']['company_id'] = '';
 } else {
 	/*
 	* La prima entrata per insert
@@ -105,6 +111,10 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form["skin"] = $admin_aziend['skin'];
 	$form["lang"] = $admin_aziend['lang'];
 	$form["Abilit"] = 5;
+	// propongo la stessa azienda attiva sull'utente amministratore
+    $form['hidden_req'] = '';
+    $form['company_id'] = $user_data['company_id'];
+    $form['search']['company_id'] = '';
 	$form["Access"] = 0;
 	$form["user_name"] = "";
 	$form['user_password_old'] = '';
@@ -112,6 +122,7 @@ if ((isset($_POST['Insert'])) || (isset($_POST['Update']))) {   //se non e' il p
 	$form['user_password_ver'] = '';
 	$form["user_active"] = 1;
 	$form['body_text'] = "";
+	
 	if (preg_match("/school/", $_SERVER['HTTP_REFERER'])) {
 		// nel caso voglio inserire un nuovo insegnante propongo abilitazione a 9
 		$form["Abilit"] = 9;
@@ -155,6 +166,8 @@ if (isset($_POST['Submit'])) {
 	}
 	if ($form["Abilit"] < 9) {
 		$ricerca = trim($form["user_name"]);
+		// impedisco agli utenti non amministratori di cambiarsi l'azienda di lavoro
+		$form["company_id"] = $old_data["company_id"];
 		$rs_utente = gaz_dbi_dyn_query("*", $gTables['admin'], "user_name <> '$ricerca' AND Abilit ='9'", "user_name", 0, 1);
 		$risultato = gaz_dbi_fetch_array($rs_utente);
 		$student = false;
@@ -316,6 +329,7 @@ $(document).ready(function () {
 </script>
 <form method="POST" enctype="multipart/form-data"  autocomplete="off">
 <input type="hidden" name="ritorno" value="<?php print $_POST['ritorno']; ?>">
+<input type="hidden" name="hidden_req" value="<?php print $_POST['hidden_req']; ?>">
 <?php
 if ($toDo == 'insert') {
 	echo "<div align=\"center\" class=\"FacetFormHeaderFont\">" . $script_transl['ins_this'] . "</div>\n";
@@ -426,6 +440,20 @@ echo "</td></tr>\n";
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['Abilit']; ?></td>
 <td colspan="2" class="FacetDataTD"><input title="Livello " type="text" name="Abilit" value="<?php print $form["Abilit"] ?>" maxlength="1" size="1" class="FacetInput">&nbsp;</td>
+</tr>
+<tr>
+<td class="FacetFieldCaptionTD"><?php echo $script_transl['mesg_co'][2]; ?></td>
+<td class="FacetDataTD" colspan="2">
+<?php 
+if ($user_data['Abilit'] == 9) {
+	$gForm->selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
+} else {
+	$company = gaz_dbi_get_row($gTables['aziend'], 'codice', $form['company_id']);
+	echo '<input type="hidden" name="company_id" value="'.$form['company_id'].'">';
+	echo $company['ragso1'].' '.$company['ragso2'];
+}
+?>
+</td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['Access']; ?></td>

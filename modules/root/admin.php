@@ -26,8 +26,8 @@
 require("../../library/include/datlib.inc.php");
 
 $admin_aziend = checkAdmin();
+$company_choice = gaz_dbi_get_row($gTables['config'], 'variable', 'users_noadmin_all_company')['cvalue'];
 if (!isset($_POST['hidden_req'])) {
-
     $form['hidden_req'] = '';
     $form['company_id'] = $admin_aziend['company_id'];
     $form['search']['company_id'] = '';
@@ -37,8 +37,10 @@ if (!isset($_POST['hidden_req'])) {
         exit;
     }
     $form['hidden_req'] = $_POST['hidden_req'];
-    $form['company_id'] = $_POST['company_id'];
-    $form['search']['company_id'] = $_POST['search']['company_id'];
+	if ($company_choice==1){
+		$form['company_id'] = intval($_POST['company_id']);
+		$form['search']['company_id'] = $_POST['search']['company_id'];
+	}
 }
 
 function selectCompany($name, $val, $strSearch = '', $val_hiddenReq = '', $mesg, $class = 'FacetSelect') {
@@ -182,9 +184,11 @@ if ($t > 4 && $t <= 13) {
                     </p>
                     <p>
                         <?php
-                        echo $script_transl['mesg_co'][2] . ' &rArr; ';
-                        selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
-                        ?>
+						if ($company_choice==1){
+							echo $script_transl['mesg_co'][2] . ' &rArr; ';
+							selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
+                        }
+						?>
                     </p>
                     <p>
                         <?php echo $script_transl['logout']; ?> &rArr; <input name="logout" type="submit" value=" Logout ">
