@@ -22,8 +22,10 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin(9);
+$company_choice = gaz_dbi_get_row($gTables['config'], 'variable', 'users_noadmin_all_company')['cvalue'];
 require("../../library/include/header.php");
 $script_transl = HeadMain('','','admin_utente');
+
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['report']; ?></div>
 <?php
@@ -37,6 +39,7 @@ $headers_utenti = array  (
               $script_transl['user_lastname'] => "Cognome",
               $script_transl['user_firstname'] => "Nome",
               $script_transl['Abilit'] => "Abilit",
+              $script_transl['company'] => "",
 			  'Privacy'=>'user_id',
               $script_transl['Access'] => "Access",
               $script_transl['delete'] => ""
@@ -48,15 +51,21 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 	// RESPONSABILE O INCARICATO: DIPENDE DAL LIVELLO DI ABILITAZIONE
 	$ri_descr='stampa nomina INCARICATO trattamento dati personali';
 	$regol_lnk='';
+	$company = gaz_dbi_get_row($gTables['aziend'], 'codice', $a_row['company_id']);
 	if ($a_row["Abilit"]>8){
+		$company['ragso1']=$script_transl['all'];
 		$ri_descr='stampa nomina RESPONSABILE trattamento dati personali';
 		$regol_lnk=' _ <a title="stampa e/o edita il REGOLAMENTO per l’utilizzo e la gestione delle risorse informatiche" class="btn btn-xs btn-default" href="edit_privacy_regol.php?user_id=' . $a_row["user_id"] . '" target="_blank"><i class="glyphicon glyphicon-list"></i></a> ';
+	}
+	if ($company_choice>0){
+		$company['ragso1']=$script_transl['all'];
 	}
     echo "<tr class=\"FacetDataTD\">";
     echo "<td title=\"".$script_transl['update']."\"><a class=\"btn btn-xs btn-default\" href=\"admin_utente.php?user_name=".$a_row["user_name"]."&Update\">".$a_row["user_name"]." </a> &nbsp</td>";
     echo "<td>".$a_row["user_lastname"]." &nbsp;</td>";
     echo "<td>".$a_row["user_firstname"]." &nbsp;</td>";
     echo "<td align=\"center\">".$a_row["Abilit"]." &nbsp;</td>";
+    echo "<td>".$company['ragso1']." &nbsp;</td>";
     // colonna stampa nomina trattamento dati personali 
     echo "<td align=\"center\"><a title=\"".$ri_descr."\" class=\"btn btn-xs btn-default\" href=\"stampa_nomina.php?user_id=" . $a_row["user_id"] . "\" target=\"_blank\"><i class=\"glyphicon glyphicon-eye-close\"></i></a>".
 	$regol_lnk."

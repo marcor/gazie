@@ -442,6 +442,7 @@ $strScript = array("admin_aziend.php" =>
         'user_email' => "Mail (anche per recupero password)",
         'image' => 'Icon de lo usuario<br />(solo formato JPG, max 64kb)',
         'Abilit' => "Nivel",
+		'company'=>'Empresa',
         'mesg_co' => array('Non &egrave; stato trovato nulla!', 'Minimo 2 caratteri', 'Azienda di lavoro'),
         'Access' => "Acceso",
         'user_password_old' => 'Vecchia Password',
