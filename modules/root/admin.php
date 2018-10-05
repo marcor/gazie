@@ -37,7 +37,7 @@ if (!isset($_POST['hidden_req'])) {
         exit;
     }
     $form['hidden_req'] = $_POST['hidden_req'];
-	if ($company_choice==1){
+	if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
 		$form['company_id'] = intval($_POST['company_id']);
 		$form['search']['company_id'] = $_POST['search']['company_id'];
 	}
@@ -184,7 +184,7 @@ if ($t > 4 && $t <= 13) {
                     </p>
                     <p>
                         <?php
-						if ($company_choice==1){
+						if ($company_choice==1 || $admin_aziend['Abilit'] >= 8){
 							echo $script_transl['mesg_co'][2] . ' &rArr; ';
 							selectCompany('company_id', $form['company_id'], $form['search']['company_id'], $form['hidden_req'], $script_transl['mesg_co']);
                         }

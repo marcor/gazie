@@ -57,7 +57,7 @@ COLLATE='utf8_general_ci' ENGINE=MyISAM AUTO_INCREMENT=3;
 INSERT INTO `gaz_breadcrumb` (`id_bread`, `file`, `titolo`, `link`) VALUES (1, 'modules/root/admin_breadcrumb.php', 'Gestione tasti rapidi', '../../modules/root/admin_breadcrumb.php');
 INSERT INTO `gaz_breadcrumb` (`id_bread`, `file`, `titolo`, `link`) VALUES (2, 'modules/magazz/admin_artico_compost.php', 'Gestione articoli composti', '../../modules/magazz/admin_artico_compost.php');
 INSERT INTO `gaz_breadcrumb` (`id_bread`, `file`, `titolo`, `link`) VALUES (3, 'modules/magazz/admin_artico_compost.php', 'Gestione merci e servizi', '../../modules/magazz/report_artico.php');
-INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Utenti non amministratori (abilit<=8) possono accedere a tutte le aziende', 'users_noadmin_all_company', '0');
+INSERT INTO `gaz_config` (`description`, `variable`, `cvalue`) VALUES ('Utenti non amministratori (abilit < 8) possono accedere a tutte le aziende', 'users_noadmin_all_company', '0');
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Controlla regolarità indirizzo in inserimento cliente (0=No, 1=Si)', 'check_cust_address', '1');
 ALTER TABLE `gaz_XXXclfoco`	ADD COLUMN `external_resp` TINYINT(1) NOT NULL AFTER `print_map`;
