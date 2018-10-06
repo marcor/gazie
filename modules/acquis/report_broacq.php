@@ -259,7 +259,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
                     }
                 }
                 if ( $totale_evaso != $totale_da_evadere ) {
-                    echo $totale_evaso ." -> ". $totale_da_evadere."<br>";
+                    //echo $totale_evaso ." -> ". $totale_da_evadere."<br>";
                     $remains_atleastone = true;
                 }
             }
@@ -277,7 +277,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
                 echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a></td>";
 
             } elseif ($remains_atleastone) {
-                echo "<td> parziale";
+                echo "<td> ";
 
                 $ultimo_documento = 0;
                 //

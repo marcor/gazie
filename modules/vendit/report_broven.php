@@ -338,7 +338,7 @@ $recordnav->output();
                     echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a></td>";
                 }
             } else {
-                echo "<td> evaso";
+                echo "<td> ";
                 //
                 $ultimo_documento = 0;
                 //

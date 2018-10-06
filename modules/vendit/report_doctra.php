@@ -352,9 +352,9 @@ function confirMail(link){
                         case "FAD":
                             echo "<tr class=\"FacetDataTD\">";
                             // Colonna id
-                            echo "<td align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["id_tes"] . "</a></td>";
+                            echo "<td align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>".$r['tipdoc']."&nbsp;" . $r["id_tes"] . "</a></td>";
                             // Colonna protocollo
-                            echo "<td align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>&nbsp;" . $r["numdoc"] . "</a></td>";
+                            echo "<td align=\"left\"><a href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">" . $r["numdoc"] . "</a></td>";
                             // Colonna type
                             echo "<td align=\"center\"><a class=\"btn btn-xs btn-primary btn-primary \" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\">&nbsp;" . $script_transl['ddt_type'][$r["ddt_type"]] . "</a> &nbsp;</td>";
                             // Colonna Data emissione
