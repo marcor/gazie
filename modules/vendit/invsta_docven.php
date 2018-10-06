@@ -31,7 +31,7 @@ if (isset($_SESSION['print_request'])) {
    unset($_SESSION['print_request']);
    if (is_array($id_tes)) { // l'array deve contenere i limiti per la stampa multipla
       // si deve discernere i documenti singoli da quelli ottenuti
-      // da pi� testate come le fatture differite (FAD-DDT)
+      // da più testate come le fatture differite (FAD-DDT)
       echo "<HTML><HEAD><TITLE>Wait for PDF</TITLE>\n";
       echo "<script type=\"text/javascript\">\n";
       $_SESSION['script_ref'] = $_SERVER['HTTP_REFERER'];
@@ -50,6 +50,10 @@ if (isset($_SESSION['print_request'])) {
          $template = '&template=DDT';
       } else if ($documento['tipdoc'] == 'VRI') {
          $template = '&template=Received';
+      } else if ($documento['tipdoc'] == 'CMR') {
+          $template = '&template=CMR';
+          $result = gaz_dbi_dyn_query("*", $gTables['tescmr'], "id_tes = $id_tes", "id_tes desc", 0, 1);
+          $documento = gaz_dbi_fetch_array($result);
       } else {
          $template = '';
       }

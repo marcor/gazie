@@ -31,7 +31,7 @@ if ( isset($_POST["Stampa"]) ) {
 
 require("../../library/include/header.php");
 $script_transl = Headmain();
-
+$passo = 1000;
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?> </div>
 <?php

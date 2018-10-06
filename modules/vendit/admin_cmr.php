@@ -149,7 +149,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['net_weight'] = floatval($_POST['net_weight']);
     $form['gross_weight'] = floatval($_POST['gross_weight']);
     $form['units'] = intval($_POST['units']);
-    $form['volume'] = floatval($_POST['volume']);
+    $form['volume'] = $_POST['volume'];
     $form['listin'] = $_POST['listin'];
     $form['spediz'] = $_POST['spediz'];
     $form['portos'] = $_POST['portos'];
@@ -417,7 +417,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     }
                 }
                 $_SESSION['print_request'] = $ultimo_id;
-                header("Location: invsta_broven.php");
+                header("Location: invsta_cmrven.php");
                 exit;
             }
         }
@@ -488,7 +488,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
             }
             $_SESSION['print_request'] = $ultimo_id;
-            header("Location: invsta_broven.php");
+            header("Location: invsta_cmrven.php");
             exit;
         }
     }
@@ -1877,7 +1877,7 @@ echo "			</select>
 			</td>
 			<td class=\"FacetFieldCaptionTD text-right\">$script_transl[55]</td>
 			<td class=\"FacetDataTD\">
-				<input type=\"text\" value=\"" . $form['volume'] . "\" name=\"volume\" maxlength=\"9\" size=\"4\" />
+				<input type=\"text\" value=\"" . $form['volume'] . "\" name=\"volume\" maxlength=\"20\" size=\"20\" />
 			</td>
 		</tr>
 		<tr>
