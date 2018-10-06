@@ -124,6 +124,7 @@ $strScript = array("admin_client.php" =>
         'report_alert0' => 'Mostra tutti i documenti',
         'report_alert1' => 'Sicuro di voler mostrare tutti i documenti?',
         'print_lot' => 'Stampa certificati',
+        'view_ord' => 'visualizza l\'ordine',
     ),
     "admin_agenti.php" =>
     array("Agenti di vendita ",

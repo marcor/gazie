@@ -383,7 +383,7 @@ switch ($admin_aziend['fatimm']) {
                     if ($r["id_con"] > 0) {
                         echo " <a class=\"btn btn-xs btn-default btn-default\" style=\"font-size:10px;\" title=\"Modifica il movimento contabile generato da questo documento\" href=\"../contab/admin_movcon.php?id_tes=" . $r["id_con"] . "&Update\">Cont." . $r["id_con"] . "</a> ";
                     } else {
-                        echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=" . $seziva . "&last=" . $r["protoc"] . "\">Contabilizza</a>";
+                        echo " <a class=\"btn btn-xs btn-default btn-cont\" href=\"accounting_documents.php?type=F&vat_section=" . $seziva . "&last=" . $r["protoc"] . "\"><i class=\"glyphicon glyphicon-euro\"></i>&nbsp;Contabilizza</a>";
                     }
                     $effett_result = gaz_dbi_dyn_query('*', $gTables['effett'], "id_doc = " . $r["reftes"], 'progre');
                     while ($r_e = gaz_dbi_fetch_array($effett_result)) {
@@ -479,11 +479,11 @@ switch ($admin_aziend['fatimm']) {
                     } elseif ($lot->thereisLot($r['id_tes'])) {
                         echo "<td> <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $r['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a></td>\n";
                     } else {
-                        echo "<td>";
+                        echo "<td align=\"center\">";
                         if ( isset ($r['id_order']) && $r['id_order']>0 ) {
                             $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
                             $t_r = gaz_dbi_fetch_array($tesbro_result);
-                            echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
+                            echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
                         }
                         echo "</td>";
                     }

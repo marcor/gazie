@@ -123,7 +123,7 @@ if (!isset($_POST['id_tes'])) { //al primo accesso  faccio le impostazioni ed il
             $form['righi'][$_POST['num_rigo']]['ritenuta'] = $rigo['ritenuta'];
             $form['righi'][$_POST['num_rigo']]['sconto'] = $rigo['sconto'];
             $form['righi'][$_POST['num_rigo']]['quanti'] = $rigo['quanti'];
-            
+
             $totale_evadibile = $rigo['quanti'];
             $tesdoc_r = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_order = " . $form['id_tes'], "id_tes asc");
             while ($tesdoc_result = gaz_dbi_fetch_array($tesdoc_r) ) {
@@ -349,11 +349,10 @@ if (isset($_POST['afa'])) {
                 }
                 $articolo = gaz_dbi_get_row($gTables['artico'], "codice", $form['righi'][$k]['codart']);
                 if ($admin_aziend['conmag'] == 2 and $articolo['good_or_service']==0 and
-                        $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
-                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']
-                    );
+                    $form['righi'][$k]['tiprig'] == 0 and ! empty($form['righi'][$k]['codart'])) { //se l'impostazione in azienda prevede l'aggiornamento automatico dei movimenti di magazzino
+                    $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 } else if ( $admin_aziend['conmag'] == 2 and
-                        $form['righi'][$k]['tiprig'] == 14 and ! empty($form['righi'][$k]['codart']) ) {
+                    $form['righi'][$k]['tiprig'] == 14 and ! empty($form['righi'][$k]['codart']) ) {
                     $upd_mm->uploadMag($last_rigdoc_id, $form['tipdoc'], $form['numdoc'], $form['seziva'], $dataemiss, $form['clfoco'], $form['sconto'], $form['caumag'], $v['codart'], $v['evadibile'], $v['prelis'], $v['sconto'], 0, $admin_aziend['stock_eval_method']);
                 }
                 //modifico il rigo dell'ordine indicandoci l'id della testata della fattura immediata

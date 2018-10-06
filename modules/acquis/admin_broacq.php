@@ -27,7 +27,7 @@ require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = "";
 //Creo l'array associativo delle descrizioni dei documenti e dei relativi operatori
-$TipoDocumento = array("AOR" => 0, "APR" => 0);
+$TipoDocumento = array("AOR" => 0, "APR" => 0, "AFA" => 1);
 if (isset($_POST['newdestin'])) {
     $_POST['id_des'] = 0;
     $_POST['destin'] = "";
