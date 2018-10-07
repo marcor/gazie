@@ -1094,7 +1094,7 @@ if ($res['operat']==1) {
 if ($res['operat']==-1) {
 	echo " Scarico";
 }
-echo "</select></td></tr>";
+echo "</td></tr>";
 ?>
 
 <?php
@@ -1127,7 +1127,7 @@ for ($counter = date("Y") - 10; $counter <= date("Y") + 10; $counter++) {
 echo "\t </select></td></tr>\n";
 
  /* Antonio Germani qui si seleziona la DATA di ATTUAZIONE */      	
-echo "<tr></td><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">\n";
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[8] . "</td><td class=\"FacetDataTD\">\n";
 echo "\t <select name=\"giodoc\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
 for ($counter = 1; $counter <= 31; $counter++) {
     $selected = "";
@@ -1193,13 +1193,8 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td cl
 	  $importo_rigo = CalcolaImportoRigo($form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
 		$importo_totale = CalcolaImportoRigo(1, $importo_rigo, $form['scochi']);
 		
-		 echo "<input type=\"hidden\" name=\"mov\" value=\"" . $form['mov'] . "\">\n";
-		 
- /* Antonio Germani questo non serve al quaderno di campagna
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[10] . "</td><td class=\"FacetDataTD\" ><input type=\"text\" value=\"" . $form['scochi'] . "\" maxlength=\"5\" size=\"5\" name=\"scochi\" onChange=\"this.form.submit\"> %</td></tr>";
-*/
-//però devo metterlo come nascosto altrimenti mi segnala un warning su 'scochi'
-echo "<input type=\"hidden\" name=\"scochi\" value=\"" . $form['scochi'] . "\">\n";
+		 echo "<tr><td><input type=\"hidden\" name=\"mov\" value=\"" . $form['mov'] . "\">\n";
+		 echo "<input type=\"hidden\" name=\"scochi\" value=\"" . $form['scochi'] . "\">\n</td></tr>";
 
 echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[7] . "</td><td class=\"FacetDataTD\">\n";
 $messaggio = "";
@@ -1244,9 +1239,10 @@ if ($form['artico'][$form['mov']] == "") {
 <?php
 	if ($service == 0) { //Antonio Germani se è un articolo con magazzino
 		echo " ".$script_transl[22]." ".gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity'])." ".$print_unimis."&nbsp;&nbsp;";
-	
+// Antonio Germani se sottoscorta si attiva il pulsante di allerta e riordino. Al click si apre il popup con l'ordine compilato. >>> NB: al ritorno dall'ordine e dopo un submit, c'è un problema DA RISOLVERE: si apre una nuova finestra. <<< preferisco questo problema a quello che c'era prima, cioè si apriva la pagina dell'ordine annullando quanto già inserito nei movimenti.	
 		if ($print_magval<$scorta and $service ==0 and $scorta>0) {
-			echo "<button type=\"submit\" name=\"acquis\" class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
+			echo "<button type=\"submit\" name=\"acquis\"  class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" onclick=\"myform.target='POPUPW'; POPUPW = window.open(
+   'about:blank','POPUPW','width=800,height=400');\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 		} 
 		$anchor["num"]=$form['mov']; // Antonio Germani quale riga deve essere ancorata allo scroll
 		?>
@@ -1271,14 +1267,14 @@ if ($form['artico'][$form['mov']] == "") {
 					$anagra = gaz_dbi_get_row($gTables['clfoco'], "codice", $row['id_clfoco']); 
 					echo "<option value=\"" . $row['id_staff'] . "\"" . $selected . ">" . $row['id_staff'] . " - " . $anagra['descri'] . "</option>\n"; $form['clfoco'][$form['mov']]=$row['id_clfoco'];
 				}
-				
+	echo "</select>&nbsp;";			
 			}
 			$itm = gaz_dbi_get_row($gTables['staff'], "id_staff", $form['staff'][$form['mov']]);
 			?>
 			<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php echo $itm['id_clfoco'];?>">
 			<?php
 	}
-echo "</select>&nbsp;"; 
+ 
 echo "</td></tr>\n";
 
 /* Antonio Germani -  AVVERSITà */
@@ -1335,8 +1331,10 @@ if (intval($form['nome_avv'][$form['mov']]) == 0){
 <?php
 } else {
 	?>
+	<tr><td>
      <input type="hidden" value="" name="nome_avv<?php echo $form['mov']; ?>"/>
 	 <input type="hidden" value="" name="id_avversita<?php echo $form['mov']; ?>"/>
+	</td></tr>
 	 <?php
 }
 	
@@ -1360,9 +1358,9 @@ $importo_totale=($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.'
 
 
 /*ANtonio Germani - visualizzo l'operatore */
-echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl[21]."</td><td class=\"FacetDataTD\" colspan=\"1\">".$form["adminid"]."</td>\n"; 
+echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[21]."</td><td class=\"FacetDataTD\" colspan=\"1\">".$form["adminid"]."</td>\n"; 
 /* fine visualizzo l'operatore */
-echo "</select></td></tr><tr><td colspan=\"1\"><input type=\"submit\" name=\"cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
+echo "</tr><tr><td colspan=\"1\"><input type=\"submit\" name=\"cancel\" value=\"" . $script_transl['cancel'] . "\">\n";
 
 echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">\n";
 echo "</td><td align=\"right\" colspan=\"1\">\n";
@@ -1379,7 +1377,7 @@ if ($toDo == 'update') {
 } else {
     echo '<input type="submit" accesskey="i" name="Insert" value="' . strtoupper($script_transl['insert']) . '!"></td></tr><tr></tr>';
 }
-echo "</td></tr></table>\n";
+echo "</table>\n";
 ?>
 </form>
 <?php
