@@ -2177,8 +2177,11 @@ class Schedule {
          * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
          */
         global $gTables;
-        $date_ctrl = new DateTime($date);
-        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0)- amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
+		$date_ctrl='1';
+		if ($date){
+			$date_ctrl=" (expiry <= '".$date."')";
+		}
+        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
           SUM(amount*(id_rigmoc_pay>0)) AS pay, 
           SUM(amount*(id_rigmoc_doc>0))AS doc,
           MAX(expiry) AS exp
