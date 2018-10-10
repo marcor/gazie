@@ -943,7 +943,9 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                     'value' => '<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['upper_row'] . '!">
                                 ' . ($k + 1) . ' <i class="glyphicon glyphicon-arrow-up"></i></button>'),
                 array('head' => $script_transl["codart"], 'class' => '',
-                    'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' " type="submit">
+                    'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' "
+					title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Scorta =' . $v['scorta'] . '"
+					type="submit">
                                 <i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
                                 </button>',
                     'td_content' => ' title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Sottoscorta =' . $v['scorta'] . '" '

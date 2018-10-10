@@ -1980,7 +1980,7 @@ foreach ($form['rows'] as $k => $v) {
 							<i class="glyphicon glyphicon-arrow-up"></i>
 						</button>
 					</td>
-					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Sottoscorta =' . $v['scorta'] . '">
+					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Scorta =' . $v['scorta'] . '">
 						<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
 						</button>
