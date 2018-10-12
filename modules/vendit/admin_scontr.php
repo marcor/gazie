@@ -891,7 +891,9 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             $btn_class = 'btn-success';
             $peso = 0;
             if ($v['tiprig'] == 0) {
-                if ($v['scorta'] < 0) {
+				if ($artico['good_or_service']>0){ 
+					$btn_class = 'btn-info';
+				} elseif ($v['scorta'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
                     //$scorta_col = 'FacetDataTDsmallRed';
                     $btn_class = 'btn-danger';
                 }

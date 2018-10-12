@@ -24,12 +24,12 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 $msg = '';
-$paymov = new Schedule;
-$paymov->setScheduledPartner($admin_aziend['masfor']);
 
 if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['hidden_req'] = '';
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
+    $form['clfoco'] = '';
+    $form['search']['clfoco'] = '';
     $form['date_ini_D'] = date("d");
     $form['date_ini_M'] = date("m");
     $form['date_ini_Y'] = date("Y");
@@ -43,6 +43,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 } else { // accessi successivi
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     $form['ritorno'] = $_POST['ritorno'];
+    $form['clfoco'] = intval($_POST['clfoco']);
+    foreach ($_POST['search'] as $k => $v) {
+        $form['search'][$k] = $v;
+    }
     $form['date_ini_D'] = intval($_POST['date_ini_D']);
     $form['date_ini_M'] = intval($_POST['date_ini_M']);
     $form['date_ini_Y'] = intval($_POST['date_ini_Y']);
@@ -50,6 +54,16 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
         header("Location: " . $form['ritorno']);
         exit;
     }
+    if ($_POST['hidden_req'] == 'clfoco') {
+        $anagrafica = new Anagrafica();
+        if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {
+            $fornitore = $anagrafica->getPartnerData($match[1], 1);
+        } else {
+            $fornitore = $anagrafica->getPartner($form['clfoco']);
+        }
+        $form['hidden_req'] = '';
+    }
+
 }
 
 //controllo i campi
@@ -98,6 +112,12 @@ if (!empty($msg)) {
     echo '<tr><td colspan="2" class="FacetDataTDred">' . $gForm->outputErrors($msg, $script_transl['errors']) . "</td></tr>\n";
 }
 echo "<tr>\n";
+echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['supplier'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
+$select_fornitore = new selectPartner("clfoco");
+$select_fornitore->selectDocPartner('clfoco', $form['clfoco'], $form['search']['clfoco'], 'clfoco', $script_transl['mesg'], $admin_aziend['masfor']);
+echo "</td>\n";
+echo "</tr>\n";
+echo "<tr>\n";
 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['date_ini'] . "</td><td colspan=\"3\" class=\"FacetDataTD\">\n";
 $gForm->CalendarPopup('date_ini', $form['date_ini_D'], $form['date_ini_M'], $form['date_ini_Y'], 'FacetSelect', 1);
 echo "</td>\n";
@@ -113,6 +133,11 @@ echo "</table>\n";
 
 if (isset($_POST['preview'])) {
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">";
+	$paymov = new Schedule;
+	if ($form['clfoco']>=100000001){
+		$admin_aziend['masfor']=$form['clfoco'];		
+	}
+	$paymov->setScheduledPartner($admin_aziend['masfor']);
     if (sizeof($paymov->Partners) > 0) {
         $anagrafica = new Anagrafica();
         echo "<tr>";

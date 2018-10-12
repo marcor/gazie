@@ -1953,7 +1953,9 @@ foreach ($form['rows'] as $k => $v) {
     switch ($v['tiprig']) {
         case "0":
             echo '<tr>';
-            if ($v['scorta'] < 0) {
+            if ($artico['good_or_service']>0){ 
+				$btn_class = 'btn-info';
+			} elseif ($v['scorta'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
                 //$scorta_col = 'FacetDataTDsmallRed';
                 $btn_class = 'btn-danger';
             } else {
@@ -1980,7 +1982,7 @@ foreach ($form['rows'] as $k => $v) {
 							<i class="glyphicon glyphicon-arrow-up"></i>
 						</button>
 					</td>
-					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Scorta =' . $v['scorta'] . '">
+					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Sottoscorta =' . $v['scorta'] . '">
 						<button name="upd_row[' . $k . ']" class="btn btn-xs ' . $btn_class . ' btn-block" type="submit">
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
 						</button>

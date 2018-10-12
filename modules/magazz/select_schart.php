@@ -276,28 +276,21 @@ if (isset($_POST['preview']) and $msg=='') {
 
             // passo tutte le variabili al metodo in modo da non costringere lo stesso a fare le query per ricavarsele
             $magval= $gForm->getStockValue($mv['id_mov'],$mv['artico'],$mv['datreg'],$admin_aziend['stock_eval_method']);
-            $r_span=count($magval);
-            foreach ($magval as $mval) {
-              if ($ctrl_id <> $mv['id_mov']) {
-                echo "<tr><td class=\"FacetDataTD\" rowspan=\"$r_span\">".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
-                echo "<td align=\"center\" class=\"FacetDataTD\" rowspan=\"$r_span\">".$mv['caumag'].'-'.substr($mv['descri'],0,20)."</td>";
-                echo "<td class=\"FacetDataTD\" rowspan=\"$r_span\">".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85)."</td>";
-                echo "<td align=\"right\" class=\"FacetDataTD\" rowspan=\"$r_span\">".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')."</td>";
-                echo "<td align=\"right\" class=\"FacetDataTD\" rowspan=\"$r_span\">".$mv['unimis']."</td>\n";
-              } else {
-                echo "<tr>";
-              }
-              echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mval['q']*$mv['operat'],1,$admin_aziend['decimal_quantity'])."</td>";
-              if ($mv['operat']==1) {
-                echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td><td></td>";
-              } else {
-                echo "<td></td><td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td>";
-              }
-              echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity'])."</td>";
-              echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mval['v_g'])."</td>";
-              echo "</tr>";
-              $ctrl_id = $mv['id_mov'];
+            $mval=end($magval);
+            echo "<tr><td class=\"FacetDataTD\" >".gaz_format_date($mv['datreg'])." id:".$mv['id_mov']."</td>";
+            echo "<td align=\"center\" class=\"FacetDataTD\" >".$mv['caumag'].'-'.substr($mv['descri'],0,20)."</td>";
+            echo "<td class=\"FacetDataTD\" >".substr($mv['desdoc'].' del '.gaz_format_date($mv['datdoc']).' - '.$mv['ragso1'].' '.$mv['ragso2'],0,85)."</td>";
+            echo "<td align=\"right\" class=\"FacetDataTD\" >".number_format($mv['prezzo'],$admin_aziend['decimal_price'],',','.')."</td>";
+            echo "<td align=\"right\" class=\"FacetDataTD\" >".$mv['unimis']."</td>\n";
+            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mval['q']*$mv['operat'],1,$admin_aziend['decimal_quantity'])."</td>";
+            if ($mv['operat']==1) {
+              echo "<td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td><td></td>";
+            } else {
+              echo "<td></td><td align=\"right\" class=\"FacetDataTD\">".number_format($mval['v'],$admin_aziend['decimal_price'],',','')."</td>";
             }
+            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_quantity($mval['q_g'],1,$admin_aziend['decimal_quantity'])."</td>";
+            echo "<td align=\"right\" class=\"FacetDataTD\">".gaz_format_number($mval['v_g'])."</td>";
+            echo "</tr>";
             $ctr_mv = $mv['artico'];
          }
          echo "\t<tr class=\"FacetFieldCaptionTD\">\n";

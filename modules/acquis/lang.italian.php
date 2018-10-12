@@ -378,6 +378,11 @@ $strScript = array("admin_fornit.php" =>
         'errors' => array('La data  non &egrave; corretta!',
             'err' => 'Ci sono degli errori che impediscono la stampa'
         ),
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!',
+            'Cambia fornitore'
+        ),
+		'supplier'=>'Tutti o fornitore',
         'date_ini' => 'Data di riferimento ',
         'header' => array('ID' => '', 'Importo apertura' => '', 'Data Scadenza' => '', 'Importo chiusura' => ''
             , 'Data chiusura' => '', 'Giorni esposizione' => '', 'Stato' => ''
