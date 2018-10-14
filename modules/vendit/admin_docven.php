@@ -1969,7 +1969,7 @@ foreach ($form['rows'] as $k => $v) {
     switch ($v['tiprig']) {
         case "0":
             echo '<tr>';
-            if ($artico['good_or_service']>0){ 
+            if ($v['gooser']>0){ 
 				$btn_class = 'btn-info';
 			} elseif ($v['scorta'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
                 //$scorta_col = 'FacetDataTDsmallRed';
