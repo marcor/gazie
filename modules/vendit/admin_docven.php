@@ -337,6 +337,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['hidden_req'] = '';
                 }
                 $artico = gaz_dbi_get_row($gTables['artico'], "codice", $form['rows'][$next_row]['codart']);
+                if ($artico['lot_or_serial'] > 0) {
+                    $lm->getAvailableLots($form['rows'][$next_row]['codart'], $form['rows'][$next_row]['id_mag']);
+                    $ld = $lm->divideLots($form['rows'][$next_row]['quanti']);
+                    /* ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
+                     * e se è il caso creo più righi
+                     */
+                    $i = $next_row;
+                    foreach ($lm->divided as $k => $v) {
+                        if ($v['qua'] >= 0.00001) {
+                            $form['rows'][$i] = $form['rows'][$next_row]; // copio il rigo di origine
+                            $form['rows'][$i]['id_lotmag'] = $k; // setto il lotto
+                            $form['rows'][$i]['quanti'] = $v['qua']; // e la quantità in base al riparto
+                            $i++;
+                        }
+                    }
+                }
                 $form['net_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
                 $form['gross_weight'] += $form['rows'][$next_row]['quanti'] * $artico['peso_specifico'];
                 if ($artico['pack_units'] > 0) {
