@@ -465,6 +465,19 @@ class magazzForm extends GAzieForm {
       $this->lot = gaz_dbi_fetch_array($result);
       return $this->lot;
    }
+   
+   function getLotQty($id) {
+// Antonio Germani - restituisce la quantità disponibile di uno specifico lotto
+      global $gTables;
+      $sqlquery = "SELECT operat, quanti FROM " . $gTables['movmag'] . " WHERE id_lotmag = '" . $id . "'";
+      $result = gaz_dbi_query($sqlquery);
+	  $lotqty=0;
+      while ($row = gaz_dbi_fetch_array($result)) {
+		  if ($row['operat']>0){$lotqty=$lotqty+$row['quanti'];}
+		  if ($row['operat']<0){$lotqty=$lotqty-$row['quanti'];}
+	  }
+      return $lotqty;
+   }
 
    function getAvailableLots($codart, $excluded_movmag = 0) {
 // restituisce tutti i lotti non completamente venduti ordinandoli in base alla configurazione aziendale (FIFO o LIFO)
