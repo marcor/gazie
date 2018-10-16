@@ -291,6 +291,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if (!checkdate($form['mestra'], $form['giotra'], $form['anntra'])) {
                 $msg .= "37+";
             }
+        } elseif ($form['tipdoc'] == 'ADT') { // è un ddt ricevuto da fornitore non effettuo controlli su date e numeri
         } else {
 			$utsfat = mktime(0, 0, 0, substr($form['datfat'],3,2), substr($form['datfat'],0,2), substr($form['datfat'],6,4));
             if ($utsfat > $utsreg) {
@@ -337,6 +338,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
                     $msg .= "44+";
                 }
+            } elseif ($form['tipdoc'] == 'ADT') {  //se è un DDT d'acquisto non effettuo controlli sulle date
             } else { //se sono altri documenti AFA AFC
                 $rs_ultimo_tipo = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datreg) = " . substr($form['datreg'],-4) . " AND tipdoc LIKE '" . substr($form['tipdoc'], 0, 1) . "%' and seziva = ".$sezione, "protoc desc, datreg desc, datfat desc", 0, 1);
                 $ultimo_tipo = gaz_dbi_fetch_array($rs_ultimo_tipo);
@@ -1328,18 +1330,6 @@ if (substr($form['tipdoc'], 0, 2) == 'AF') { // ricevuta fattura o nota credito 
     echo '<td><input type="text" name="numfat" value="' . $form['numfat'] . '" maxlength="20" size="20"></td>';
     echo '<td class="FacetFieldCaptionTD">'.$script_transl['of_the'].'<input type="text" id="datfat" name="datfat" value="'.$form['datfat'].'">';
 	echo '</td><td colspan="2" class="FacetFieldCaptionTD" > '.$script_transl['datreg'].' <input type="text" id="datreg" name="datreg" value="'.$form['datreg'].'">';
-} else if (substr($form['tipdoc'], 0, 1) == 'A') { // è un ddt d'acquisto
-    echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['imball'] . "\" name=\"imball\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['id_des_same_company'] . "\" name=\"id_des_same_company\">\n";
-    echo "<input type=\"hidden\" value=\"" . $form['destin'] . "\" name=\"destin\">\n";
-    echo '<input type="hidden" value="' . $form['giotra'] . '" name="giotra">';
-    echo '<input type="hidden" value="' . $form['mestra'] . '" name="mestra">';
-    echo '<input type="hidden" value="' . $form['anntra'] . '" name="anntra">';
-    echo '<input type="hidden" value="' . $form['datreg'] . '" name="datreg">';
-    echo '<input type="hidden" value="' . $form['datfat'] . '" name="datfat">';
-    echo '<input type="hidden" value="' . $form['numfat'] . '" name="numfat">';
 } else { // è un ddt a fornitore (c/lavorazione oppure reso a fornitore)
     echo '<input type="hidden" value="' . $form['datreg'] . '" name="datreg">';
     echo '<input type="hidden" value="' . $form['datfat'] . '" name="datfat">';
@@ -1430,6 +1420,24 @@ $select_banapp = new selectbanapp("banapp");
 $select_banapp->addSelected($form["banapp"]);
 $select_banapp->output();
 echo "</td></tr>\n";
+if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (non fiscale)
+	echo "<tr>\n";
+    echo "<td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl[0][$form['tipdoc']] . " " . $script_transl[52] . " </td>\n";
+    echo "<td><input type=\"text\" name=\"numfat\" value=\"" . $form['numfat'] . "\" maxlength=\"20\" size=\"20\"></td>\n";
+    echo "<td class=\"FacetFieldCaptionTD\">$script_transl[6]</td>";
+    echo "<td class=\"FacetDataTD\"><input type=\"text\" name=\"giotra\" value=\"" . $form['giotra'] . "\" size=\"2\">\n";
+    echo "<input type=\"text\" name=\"mestra\" value=\"" . $form['mestra'] . "\" size=\"2\">\n";
+    echo "<input type=\"text\" id=\"datepicker\" class=\"hasDatepicker\" name=\"anntra\" value=\"" . $form['anntra'] . "\" size=\"2\">\n";
+    echo "<a href=\"#\" onClick=\"cal.showCalendar('anchor','document.docacq.mestra.value+'/'+document.docacq.giotra.value+'/'+document.docacq.anntra.value'); return false;\" title=\" cambia la data! \" name=\"anchor\" id=\"anchor\" class=\"btn btn-default btn-sm\">\n";
+    //echo "<img border=\"0\" src=\"../../library/images/cal.png\"></a>";
+    echo '<i class="glyphicon glyphicon-calendar"></i></a>';
+    echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['imball'] . "\" name=\"imball\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['destin'] . "\" name=\"destin\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['id_des_same_company'] . "\" name=\"id_des_same_company\">\n";
+	echo "</tr>\n";
+}
 echo "</table>\n";
 echo "<div class=\"FacetSeparatorTD\" align=\"center\">$script_transl[1]</div>\n";
 echo "<table class=\"Tlarge table table-striped table-bordered table-condensed table-responsive\">\n";
