@@ -23,6 +23,7 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+$lm = new lotmag;
 $admin_aziend = checkAdmin();
 $msg = "";$print_magval="";$dose="";$dose_usofito="";$tempo_sosp="";$dim_campo="";$rame_met_annuo="";$scadaut="";$scorta="";$service="";
 $today=	strtotime(date("Y-m-d H:i:s",time()));
@@ -84,7 +85,6 @@ if (isset($_POST['nome_avv'])){
 		
 	}
 	
-	
 // Antonio Germani questo serve per la ricerca colture
 if (isset($_POST['nome_colt'])){
 		$form['nome_colt'] = $_POST['nome_colt'];
@@ -100,6 +100,7 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 	$form['nmov']=$_POST['nmov'];
 	for ($m = 0; $m <= $form['nmov']; ++$m){
 		$form['artico'][$m] = $_POST['artico'.$m];
+		if (isset($_POST['id_lotmag'.$m])) {$form['id_lotmag'][$m] = $_POST['id_lotmag'.$m];}
 		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo'.$m],0,$admin_aziend['decimal_quantity']);
@@ -180,6 +181,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['mesdoc'] = substr($result['datdoc'], 5, 2);
     $form['anndoc'] = substr($result['datdoc'], 0, 4);
     $form['artico'][$form['mov']] = $result['artico'];
+	$form['id_lotmag'][$form['mov']] = $result['id_lotmag'];
     $form['quanti'][$form['mov']] = gaz_format_quantity($result['quanti'], 0, $admin_aziend['decimal_quantity']);
 	$form['quantiin']=$result['quanti'];
 	$form['datdocin']=$result['datdoc'];
@@ -191,6 +193,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['search_item'] = "";
 	
 } elseif (isset($_POST['Insert']) or isset($_POST['Update'])) {   //se non e' il primo accesso
+	$lot_or_serial="";
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     //ricarico i registri per il form facendo gli eventuali parsing
     $form['id_mov'] = intval($_POST['id_mov']);
@@ -212,13 +215,15 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['mesdoc'] = intval($_POST['mesdoc']);
     $form['anndoc'] = intval($_POST['anndoc']);
 	$form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
+	if (isset($_POST['id_lotmag'.$form['mov']])) {$form['id_lotmag'][$form['mov']] = $_POST['id_lotmag'.$form['mov']];}
 	    
     $form['quanti'][$form['mov']] = gaz_format_quantity($_POST['quanti'.$form['mov']], 0, $admin_aziend['decimal_quantity']);
 	if ((isset($_POST['prezzo'.$form['mov']])>0) && (strlen ($_POST['prezzo'.$form['mov']])>0)) {
-		$form['prezzo'][$form['mov']] = number_format(preg_replace("/\,/", '.', $_POST['prezzo'.$form['mov']]), $admin_aziend['decimal_price'], '.', '');
+		$form['prezzo'][$form['mov']] = $_POST['prezzo'.$form['mov']]; $form['prezzo'][$form['mov']]= str_replace ('.','',$form['prezzo'][$form['mov']]);$form['prezzo'][$form['mov']]= str_replace (',','.',$form['prezzo'][$form['mov']]);
+		
 	} else {
 		$form['prezzo'][$form['mov']]="";
-	}
+	} 
 	if (isset($_POST['scorig'.$form['mov']])) {
 		$form['scorig'][$form['mov']] = floatval(preg_replace("/\,/", '.', $_POST['scorig'.$form['mov']]));
 	} else {
@@ -380,6 +385,14 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 			$msg .= "23+";
 		}
 	}
+	
+// Antonio Germani - se l'articolo ha lotti controllo se il lotto selezionato ha quantità sufficiente
+	If (($itemart['good_or_service'] ==0) && ($itemart['lot_or_serial']==1)) { // se non è un servizio e ha lotti 
+		$lotqty = $lm -> getLotQty($form['id_lotmag'][$m]);
+		if ($lotqty<$form['quanti'][$m]) {
+			$msg .= "38+";
+		}
+	}
 
 //Antonio Germani controllo se il prodotto è presente nel database fitofarmaci ed eventualmente se è scaduta l'autorizzazione		
 		$query="SELECT ".'SCADENZA_AUTORIZZAZIONE'." FROM ".$gTables['camp_fitofarmaci']. " WHERE PRODOTTO ='". $form['artico'][$m]."'";
@@ -496,7 +509,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){
 				// siccome ha già registrato il movimento di magazzino devo togliere 1
 				$id_movmag=$id_movmag-1;
 			}		
-		$query="UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 .  "' , campo_coltivazione = '"  .$form['campo_coltivazione']. "' , id_avversita = '"  .$form['id_avversita'][$form['mov']]. "' , id_colture = '"  .$form['id_colture']. "' , id_orderman = '"  .$form['id_orderman']. "' WHERE id_mov ='". $id_movmag."'"; 
+		$query="UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 .  "' , campo_coltivazione = '"  .$form['campo_coltivazione']. "' , id_avversita = '"  .$form['id_avversita'][$form['mov']]. "' , id_colture = '"  .$form['id_colture']. "' , id_orderman = '"  .$form['id_orderman']. "' , id_lotmag = '" .$form['id_lotmag'][$form['mov']]. "' WHERE id_mov ='". $id_movmag."'"; 
 			gaz_dbi_query ($query) ;
 					
 // Antonio Germani - aggiorno la tabella campi se c'è un campo inserito (cioè >0) e se l'operazione è uno scarico (cioè operat<0) e se la data di fine sospensione già presente nel campo è inferiore alla data di sospensione del prodotto appena usato (cioè $fine_sosp<$dt)
@@ -778,6 +791,7 @@ If ($toDo <> "update") { // se non è un update
 
 } elseif (!isset($_POST['Insert'])) {//se e' il primo accesso per INSERT
     $form['hidden_req'] = '';
+	$lot_or_serial="";
     //registri per il form della testata
     $form['id_mov'] = 0;
 	$form['type_mov'] = 1;
@@ -803,6 +817,7 @@ If ($toDo <> "update") { // se non è un update
 	$form['nome_avv'][$form['mov']] = "";
 	$form['id_avversita'][$form['mov']] = 0;
     $form['artico'][$form['mov']] = "";
+	$form['id_lotmag'][$form['mov']] = 0;
     $form['quanti'][$form['mov']] = 0;
     $form['prezzo'][$form['mov']] = 0;
     $form['scorig'][$form['mov']] = 0;
@@ -821,6 +836,7 @@ if (isset($_POST['Add_mov'])){
 	$form['nmov']=$_POST['nmov'];
 	for ($m = 0; $m <= $form['nmov']; ++$m){
 		$form['artico'][$m] = $_POST['artico'.$m];
+		$form['id_lotmag'][$m] = $_POST['id_lotmag'.$m];
 		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['scorig'][$m] = $_POST['scorig'.$m];
@@ -832,6 +848,7 @@ if (isset($_POST['Add_mov'])){
 	}
 	$form['nmov']=$form['nmov']+1;
 	$form['artico'][$form['nmov']] = "";
+	$form['id_lotmag'][$form['nmov']] = 0;
 	$form['quanti'][$form['nmov']] = 0;
 	$form['operat'][$form['nmov']] = "";
 	$form['prezzo'][$form['nmov']] = 0;
@@ -1211,10 +1228,10 @@ if ($form['artico'][$form['mov']] == "") {
 	$dose=$itemart['dose_massima'];// prendo anche la dose
 	$scorta=$itemart['scorta'];// prendo la scorta minima
 	$descri=$itemart['descri'];//prendo descrizione articolo
-	
-        $form['prezzo'][$form['mov']]=$itemart['preacq']; 
-   
-	$service=intval($itemart['good_or_service']);
+	$lot_or_serial=$itemart['lot_or_serial'];//vedo se è un articolo con lotti
+	$form['prezzo'][$form['mov']]=$itemart['preacq'];// prendo il prezzo di acquisto
+	$service=intval($itemart['good_or_service']);// vedo se è articolo o servizio
+		
 	 	If ($service == 0) { //Antonio Germani se è un articolo con magazzino
 			// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 			$mv = $gForm->getStockValue(false, $itemart['codice']);
@@ -1236,7 +1253,7 @@ if ($form['artico'][$form['mov']] == "") {
 ?></tr><tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl[12]; ?></td>
 <td class="FacetDataTD" ><input type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']],1,$admin_aziend['decimal_quantity']);?>" maxlength="10" size="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()"><?php echo "&nbsp;".$print_unimis;?>
-<?php
+<?php 
 	if ($service == 0) { //Antonio Germani se è un articolo con magazzino
 		echo " ".$script_transl[22]." ".gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity'])." ".$print_unimis."&nbsp;&nbsp;";
 // Antonio Germani se sottoscorta si attiva il pulsante di allerta e riordino. Al click si apre il popup con l'ordine compilato. >>> NB: al ritorno dall'ordine e dopo un submit, c'è un problema DA RISOLVERE: si apre una nuova finestra. <<< preferisco questo problema a quello che c'era prima, cioè si apriva la pagina dell'ordine annullando quanto già inserito nei movimenti.	
@@ -1244,7 +1261,105 @@ if ($form['artico'][$form['mov']] == "") {
 			echo "<button type=\"submit\" name=\"acquis\"  class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" onclick=\"myform.target='POPUPW'; POPUPW = window.open(
    'about:blank','POPUPW','width=800,height=400');\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 		} 
-		$anchor["num"]=$form['mov']; // Antonio Germani quale riga deve essere ancorata allo scroll
+		
+// Antonio Germani --- inizio LOTTI	in uscita	
+		if (($lot_or_serial > 0) && ($res['operat']==-1)) { 
+			$lm -> getAvailableLots($form['artico'][$form['mov']],$form['id_mov']);
+			
+			$ld = $lm->divideLots($form['quanti'][$form['mov']]);
+			if ($ld>0){
+				echo "ERRORE ne mancano: ",$ld,"<br>"; // >>>>> quantità insufficiente - riaggiorno form[quanti] con quello che c'è !!
+				$form['quanti'][$form['mov']]=$form['quanti'][$form['mov']]-$ld;
+				?>
+				<input type="hidden" name="quanti<?php echo $form['mov']; ?>" value="<?php echo $form['quanti'][$form['mov']];?>">
+				<?php
+			}
+		
+if (isset ($form['id_lotmag'][$form['mov']]) && $form['id_lotmag'][$form['mov']]>0) {
+	$selected_lot = $lm->getLot( $form['id_lotmag'][$form['mov']]); 
+				echo '<div><button class="btn btn-xs btn-success" title="clicca per cambiare lotto" type="image"  data-toggle="collapse" href="#lm_dialog' . $form['mov'] . '">'
+                . $selected_lot['id']
+                . ' lotto n.:' . $selected_lot['identifier']
+                . ' exp:' . gaz_format_date($selected_lot['expiry'])
+                . ' - <i class="glyphicon glyphicon-tag"></i></button>';
+	$lotqty = $lm -> getLotQty($form['id_lotmag'][$form['mov']]);
+				echo "Q.tà disp:",$lotqty;
+				?>
+							<input type="hidden" name="id_lotmag<?php echo $form['mov']; ?>" value="<?php echo $form['id_lotmag'][$form['mov']];?> ">
+							<?php
+							
+}	else {		
+					
+                    $l = $form['mov'];// ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
+							// e se è il caso creo più righe 
+                    foreach ($lm->divided as $k => $v) {
+                        if ($v['qua'] >= 0.00001) {
+                         
+                            $form['id_lotmag'][$l] = $v['id']; // setto il lotto
+                            $form['quanti'][$l] = $v['qua']; // e la quantità in base al riparto
+							?>
+							<input type="hidden" name="id_lotmag<?php echo $l; ?>" value="<?php echo $form['id_lotmag'][$l];?>">
+							<input type="hidden" name="quanti<?php echo $l; ?>" value="<?php echo $form['quanti'][$l];?>">
+							<input type="hidden" name="artico<?php echo $l; ?>" value="<?php echo $form['artico'][$form['mov']];?>">
+							<input type="hidden" name="scorig<?php echo $l; ?>" value="<?php echo $form['scorig'][$form['mov']];?>">
+							<input type="hidden" name="clfoco<?php echo $l; ?>" value="<?php echo $form['clfoco'][$form['mov']];?>">
+							<input type="hidden" name="nome_avv<?php echo $l; ?>" value="<?php echo $form['nome_avv'][$form['mov']];?>">
+							<input type="hidden" name="id_avversita<?php echo $l; ?>" value="<?php echo $form['id_avversita'][$form['mov']];?>">
+							<input type="hidden" name="staff<?php echo $l; ?>" value="<?php echo $form['staff'][$form['mov']];?>">
+							<input type="hidden" name="prezzo<?php echo $l; ?>" value="<?php echo gaz_format_quantity($form['prezzo'][$form['mov']],1,$admin_aziend['decimal_quantity']);?>">
+							<input type="hidden" name="operat<?php echo $l; ?>" value="<?php echo $form['operat'][$form['mov']];?>">
+							
+								<?php 
+								if ($l>$form['mov']) {
+									$form['nmov']=$form['nmov']+1;
+									echo "<input type=\"hidden\" name=\"nmov\" value=\"" . $form['nmov'] . "\">\n";
+								}
+                            $l++;
+                        }
+                    } 
+					if ($l>$form['mov']){ //devo rifare il submit in automatico per aggiornare la quantità del form
+				?>
+<script>				
+document.myform.submit();
+</script>
+		 <?php
+					} 														
+?>		
+	</div>
+	
+<?php 
+}	
+?>
+	<!-- Antonio Germani - Cambio lotto solo se c'è una sola riga di movimento altrimenti si rischia un errore inserendo due volte lo stesso lotto -->
+	<div id="lm_dialog<?php echo $form['mov'];?>" class="collapse" >
+	<div class="form-group">
+<?php
+		if ((count($lm->available) > 1) && (intval($form['nmov'])==0)) {
+                    foreach ($lm->available as $v_lm) {
+                        if ($v_lm['id'] <> $form['id_lotmag'][$form['mov']]) { 
+                            echo '<div>change to:<button class="btn btn-xs btn-warning" type="image" onclick="this.form.submit();" name="id_lotmag'.$form['mov'].'" value="'.$v_lm['id'].'">'
+                            . $v_lm['id']
+                            . ' lotto n.:' . $v_lm['identifier']
+                            . ' exp:' . gaz_format_date($v_lm['expiry'])
+                            . '</button></div>';
+                        }
+                    }
+                } else {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" >Non sono disponibili altri lotti, <br> oppure non è possibile cambiare lotto negli inserimenti multipli</button></div>';
+                }
+?>
+	</div></div>
+<?php
+			
+		} else { 
+?>
+			<input type="hidden" name="id_lotmag<?php echo $form['mov']; ?>" value="0">
+<?php
+		}
+	
+// Fine  LOTTI	in uscita
+		
+		$anchor["num"]=$form['mov']; // Antonio Germani imposto la riga che deve essere ancorata allo scroll
 		?>
 		<a name="<?php echo $form['mov'];?>"></a> <!-- Antonio Germani Questa è l'ancora dello scroll -->
 	<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">

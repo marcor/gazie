@@ -154,6 +154,7 @@ $strScript = array("browse_document.php" =>
 		"Senza campo di coltivazione non si può inserire una coltura!",
 		"Per inserire un articolo con magazzino la causale del movimento deve operare uno scarico o un carico!",
 		"La coltura impostata non esiste. Devi selezionare la coltura fra quelle che appaiono nel menù a tendina. Se non è presente, devi creare una nuova coltura.",
+		"Lotto con giacenza inferiore alla quantità richiesta.",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
