@@ -309,4 +309,5 @@ CREATE TABLE `gaz_XXXtescmr` (
   `last_modified` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id_tes`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate dei CMR (Convention des Marchandises par Route) - Lettere di vettura internazionale';
+ALTER TABLE `gaz_XXXorderman` ADD COLUMN `id_lotmag` INT(9) NOT NULL COMMENT 'Riferimento al lotto (tabella gaz_NNNlotmag) per la tracciabilità e/o certificazione delle produzioni ' AFTER `id_colture`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
