@@ -1328,6 +1328,7 @@ if (substr($form['tipdoc'], 0, 2) == 'AF') { // ricevuta fattura o nota credito 
     echo '<td><input type="text" name="numfat" value="' . $form['numfat'] . '" maxlength="20" size="20"></td>';
     echo '<td class="FacetFieldCaptionTD">'.$script_transl['of_the'].'<input type="text" id="datfat" name="datfat" value="'.$form['datfat'].'">';
 	echo '</td><td colspan="2" class="FacetFieldCaptionTD" > '.$script_transl['datreg'].' <input type="text" id="datreg" name="datreg" value="'.$form['datreg'].'">';
+} else if (substr($form['tipdoc'], 0, 1) == 'A') { // è un ddt d'acquisto
     echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['imball'] . "\" name=\"imball\">\n";
     echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
@@ -1336,7 +1337,10 @@ if (substr($form['tipdoc'], 0, 2) == 'AF') { // ricevuta fattura o nota credito 
     echo '<input type="hidden" value="' . $form['giotra'] . '" name="giotra">';
     echo '<input type="hidden" value="' . $form['mestra'] . '" name="mestra">';
     echo '<input type="hidden" value="' . $form['anntra'] . '" name="anntra">';
-} else {
+    echo '<input type="hidden" value="' . $form['datreg'] . '" name="datreg">';
+    echo '<input type="hidden" value="' . $form['datfat'] . '" name="datfat">';
+    echo '<input type="hidden" value="' . $form['numfat'] . '" name="numfat">';
+} else { // è un ddt a fornitore (c/lavorazione oppure reso a fornitore)
     echo '<input type="hidden" value="' . $form['datreg'] . '" name="datreg">';
     echo '<input type="hidden" value="' . $form['datfat'] . '" name="datfat">';
     echo '<input type="hidden" value="' . $form['numfat'] . '" name="numfat">';
@@ -1370,7 +1374,7 @@ if (!empty($msg)) {
     echo "<td class=\"FacetFieldCaptionTD\">$script_transl[5]</td><td>" . $fornitore['indspe'] . "<br />";
     echo "</td>\n";
 }
-if (substr($form['tipdoc'], 0, 2) == 'AF') { // nascondo la data emissione sulle fattura o nota credito da fornitore (ho datffat)
+if (substr($form['tipdoc'], 0, 2) == 'AF') { // nascondo la data emissione sulle fattura o nota credito da fornitore (ho datfat)
     echo '<td colspan="2">'. $fornitore['citspe'] .'<input type="hidden" value="' . $form['gioemi'] . '" name="gioemi">';
     echo '<input type="hidden" value="' . $form['mesemi'] . '" name="mesemi">';
     echo '<input type="hidden" value="' . $form['annemi'] . '" name="annemi">';

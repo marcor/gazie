@@ -2182,11 +2182,11 @@ class Schedule {
 			$date_ctrl=" (expiry <= '".$date."')";
 		}
         $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
-          SUM(amount*(id_rigmoc_pay>0)) AS pay, 
-          SUM(amount*(id_rigmoc_doc>0))AS doc,
-          MAX(expiry) AS exp
-            FROM " . $gTables['paymov'] . "
-            WHERE id_tesdoc_ref = '" . $id_tesdoc_ref . "' GROUP BY id_tesdoc_ref";
+        SUM(amount*(id_rigmoc_pay>0)) AS pay, 
+        SUM(amount*(id_rigmoc_doc>0))AS doc,
+        MAX(expiry) AS exp
+        FROM " . $gTables['paymov'] . "
+        WHERE id_tesdoc_ref = '" . $id_tesdoc_ref . "' GROUP BY id_tesdoc_ref";
         $rs = gaz_dbi_query($sqlquery);
         $r = gaz_dbi_fetch_array($rs);
         return $r['diff_paydoc'];
@@ -2197,13 +2197,16 @@ class Schedule {
          * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
          */
         global $gTables;
-        $date_ctrl = new DateTime($date);
-        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0)- amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
-          SUM(amount*(id_rigmoc_pay>0)) AS pay, 
-          SUM(amount*(id_rigmoc_doc>0))AS doc,
-          MAX(expiry) AS exp
-            FROM " . $gTables['paymov'] . "
-            WHERE id_tesdoc_ref = '" . $id_tesdoc_ref . "' GROUP BY id_tesdoc_ref";
+		$date_ctrl='1';
+		if ($date){
+			$date_ctrl=" (expiry <= '".$date."')";
+		}
+        $sqlquery = "SELECT SUM(amount*(id_rigmoc_doc>0) * ".$date_ctrl." - amount*(id_rigmoc_pay>0)) AS diff_paydoc, 
+        SUM(amount*(id_rigmoc_pay>0)) AS pay, 
+        SUM(amount*(id_rigmoc_doc>0))AS doc,
+        MAX(expiry) AS exp
+        FROM " . $gTables['paymov'] . "
+        WHERE id_tesdoc_ref = '" . $id_tesdoc_ref . "' GROUP BY id_tesdoc_ref";
         $rs = gaz_dbi_query($sqlquery);
         $r = gaz_dbi_fetch_array($rs);
         $ex = new DateTime($r['exp']);
