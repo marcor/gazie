@@ -334,7 +334,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             if ($form['tipdoc'] == 'DDR' or $form['tipdoc'] == 'DDL') {  //se è un DDT
                 $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " and tipdoc like 'DD_' and seziva = $sezione", "numdoc desc, datemi desc", 0, 1);
                 $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
-                $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datfat'], 5, 2), substr($ultimo_ddt['datfat'], 8, 2), substr($ultimo_ddt['datfat'], 0, 4));
+                $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
                 if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
                     $msg .= "44+";
                 }
@@ -1330,6 +1330,14 @@ if (substr($form['tipdoc'], 0, 2) == 'AF') { // ricevuta fattura o nota credito 
     echo '<td><input type="text" name="numfat" value="' . $form['numfat'] . '" maxlength="20" size="20"></td>';
     echo '<td class="FacetFieldCaptionTD">'.$script_transl['of_the'].'<input type="text" id="datfat" name="datfat" value="'.$form['datfat'].'">';
 	echo '</td><td colspan="2" class="FacetFieldCaptionTD" > '.$script_transl['datreg'].' <input type="text" id="datreg" name="datreg" value="'.$form['datreg'].'">';
+    echo "<input type=\"hidden\" value=\"" . $form['vettor'] . "\" name=\"vettor\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['imball'] . "\" name=\"imball\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['id_des'] . "\" name=\"id_des\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['id_des_same_company'] . "\" name=\"id_des_same_company\">\n";
+    echo "<input type=\"hidden\" value=\"" . $form['destin'] . "\" name=\"destin\">\n";
+    echo '<input type="hidden" value="' . $form['giotra'] . '" name="giotra">';
+    echo '<input type="hidden" value="' . $form['mestra'] . '" name="mestra">';
+    echo '<input type="hidden" value="' . $form['anntra'] . '" name="anntra">';
 } else { // è un ddt a fornitore (c/lavorazione oppure reso a fornitore)
     echo '<input type="hidden" value="' . $form['datreg'] . '" name="datreg">';
     echo '<input type="hidden" value="' . $form['datfat'] . '" name="datfat">';
@@ -1420,7 +1428,7 @@ $select_banapp = new selectbanapp("banapp");
 $select_banapp->addSelected($form["banapp"]);
 $select_banapp->output();
 echo "</td></tr>\n";
-if (substr($form['tipdoc'], 0, 1) == 'A') { // documento d'acquisto ricevuto (non fiscale)
+if ($form['tipdoc'] == 'ADT') { // ddt d'acquisto ricevuto da fornitore
 	echo "<tr>\n";
     echo "<td colspan=\"3\" class=\"FacetFieldCaptionTD\" align=\"right\">" . $script_transl[0][$form['tipdoc']] . " " . $script_transl[52] . " </td>\n";
     echo "<td><input type=\"text\" name=\"numfat\" value=\"" . $form['numfat'] . "\" maxlength=\"20\" size=\"20\"></td>\n";
