@@ -434,8 +434,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                             gaz_dbi_del_row($gTables['body_text'], "table_name_ref = 'rigdoc' AND id_ref", $val_old_row['id_rig']);
                         }
                         if ($form['rows'][$i]['id_mag'] > 0) {
+							// riprendo il vecchio movimento per non perdere il riferimento al lotto/matricola
+							$old_movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $val_old_row['id_mag']);
 // se il rigo ha un movimento di magazzino associato lo aggiorno
-                            $upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc']);
+                            $upd_mm->uploadMag($val_old_row['id_rig'], $form['tipdoc'], $form['numdoc'], $form['seziva'], $datemi, $form['clfoco'], $form['sconto'], $form['caumag'], $form['rows'][$i]['codart'], $form['rows'][$i]['quanti'], $form['rows'][$i]['prelis'], $form['rows'][$i]['sconto'], $val_old_row['id_mag'], $admin_aziend['stock_eval_method'], false, $form['protoc'],$old_movmag['id_lotmag']);
 // aggiorno pure i documenti relativi ai lotti
                             $old_lm = gaz_dbi_get_row($gTables['lotmag'], 'id_rigdoc', $val_old_row['id_rig']);
                             if ($old_lm && substr($form['rows'][$i]['filename'], 0, 7) <> 'lotmag_') {
