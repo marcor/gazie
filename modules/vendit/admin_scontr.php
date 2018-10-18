@@ -102,6 +102,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_id_mag'] = $_POST['in_id_mag'];
     $form['in_annota'] = $_POST['in_annota'];
     $form['in_scorta'] = $_POST['in_scorta'];
+    $form['in_quamag'] = $_POST['in_quamag'];
     $form['in_pesosp'] = $_POST['in_pesosp'];
     $form['in_lot_or_serial'] = intval($_POST['in_lot_or_serial']);
     $form['in_id_lotmag'] = intval($_POST['in_id_lotmag']);
@@ -142,6 +143,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
             $form['rows'][$next_row]['annota'] = substr($v['annota'], 0, 50);
             $form['rows'][$next_row]['scorta'] = floatval($v['scorta']);
+            $form['rows'][$next_row]['quamag'] = floatval($v['quamag']);
             $form['rows'][$next_row]['pesosp'] = floatval($v['pesosp']);
             if (isset($_POST['upd_row'])) {
                 $key_row = key($_POST['upd_row']);
@@ -160,6 +162,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['in_id_mag'] = $form['rows'][$key_row]['id_mag'];
                     $form['in_annota'] = $form['rows'][$key_row]['annota'];
                     $form['in_scorta'] = $form['rows'][$key_row]['scorta'];
+                    $form['in_quamag'] = $form['rows'][$key_row]['quamag'];
                     $form['in_pesosp'] = $form['rows'][$key_row]['pesosp'];
                     $form['in_lot_or_serial'] = $form['rows'][$key_row]['lot_or_serial'];
                     $form['in_id_lotmag'] = $form['rows'][$key_row]['id_lotmag'];
@@ -413,7 +416,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
               $pervat=gaz_dbi_get_row($gTables['aliiva'],"codice",$form['in_codvat']);
               $form['rows'][$old_key]['pervat'] = $pervat['aliquo']; */
             $form['rows'][$old_key]['annota'] = '';
-            $form['rows'][$old_key]['scorta'] = '';
+            $form['rows'][$old_key]['scorta'] = 0;
+            $form['rows'][$old_key]['quamag'] = 0;
             $form['rows'][$old_key]['pesosp'] = '';
             if ($form['in_tiprig'] == 0 and ! empty($form['in_codart'])) {  //rigo normale
                 $form['rows'][$old_key]['annota'] = $artico['annota'];
@@ -429,7 +433,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $mv = $magazz->getStockValue(false, $form['in_codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
-                $form['rows'][$old_key]['scorta'] = $magval['q_g'] - $artico['scorta'];
+                $form['rows'][$old_key]['scorta'] = $artico['scorta'];
+                $form['rows'][$old_key]['quamag'] = $magval['q_g'];
             } elseif ($form['in_tiprig'] == 1) { //rigo forfait
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
@@ -455,7 +460,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['rows'][$next_row]['id_lotmag'] = 0;
             $form['rows'][$next_row]['id_mag'] = $form['in_id_mag'];
             $form['rows'][$next_row]['status'] = "INSERT";
-            $form['rows'][$next_row]['scorta'] = '';
+            $form['rows'][$next_row]['scorta'] = 0;
+            $form['rows'][$next_row]['quamag'] = 0;
             if ($form['in_tiprig'] == 0) {  //rigo normale
                 $form['rows'][$next_row]['codart'] = $form['in_codart'];
                 $form['rows'][$next_row]['annota'] = $artico['annota'];
@@ -499,7 +505,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
                 $mv = $magazz->getStockValue(false, $form['in_codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
                 $magval = array_pop($mv);
-                $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $artico['scorta'];
+                $form['rows'][$next_row]['scorta'] = $artico['scorta'];
+                $form['rows'][$next_row]['quamag'] = $magval['q_g'];
                 if ($artico['lot_or_serial'] > 0) {
                     $lm->getAvailableLots($form['in_codart'], $form['in_id_mag']);
                     $ld = $lm->divideLots($form['in_quanti']);
@@ -559,6 +566,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['in_id_mag'] = 0;
         $form['in_annota'] = "";
         $form['in_scorta'] = 0;
+        $form['in_quamag'] = 0;
         $form['in_pesosp'] = 0;
         $form['in_status'] = "INSERT";
         $form['cosear'] = "";
@@ -632,6 +640,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
     $form['in_scorta'] = 0;
+    $form['in_quamag'] = 0;
     $form['in_pesosp'] = 0;
     $form['in_lot_or_serial'] = 0;
     $form['in_id_lotmag'] = 0;
@@ -658,7 +667,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['rows'][$next_row]['annota'] = $articolo['annota'];
         $mv = $magazz->getStockValue(false, $r['codart'], gaz_format_date($form['datemi'], true), $admin_aziend['stock_eval_method']);
         $magval = array_pop($mv);
-        $form['rows'][$next_row]['scorta'] = $magval['q_g'] - $articolo['scorta'];
+        $form['rows'][$next_row]['scorta'] = $articolo['scorta'];
+        $form['rows'][$next_row]['quamag'] = $magval['q_g'];
         $form['rows'][$next_row]['pesosp'] = $articolo['peso_specifico'];
         $form['rows'][$next_row]['lot_or_serial'] = $articolo['lot_or_serial'];
         $movmag = gaz_dbi_get_row($gTables['movmag'], "id_mov", $r['id_mag']);
@@ -710,6 +720,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
     $form['in_id_mag'] = 0;
     $form['in_annota'] = "";
     $form['in_scorta'] = 0;
+    $form['in_quamag'] = 0;
     $form['in_pesosp'] = 0;
     $form['in_lot_or_serial'] = 0;
     $form['in_id_lotmag'] = 0;
@@ -869,6 +880,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
         <input type=\"hidden\" value=\"" . $form['in_id_mag'] . "\" name=\"in_id_mag\" />
         <input type=\"hidden\" value=\"" . $form['in_annota'] . "\" name=\"in_annota\" />
         <input type=\"hidden\" value=\"" . $form['in_scorta'] . "\" name=\"in_scorta\" />
+        <input type=\"hidden\" value=\"" . $form['in_quamag'] . "\" name=\"in_quamag\" />
         <input type=\"hidden\" value=\"" . $form['in_pesosp'] . "\" name=\"in_pesosp\" />
         <input type=\"hidden\" value=\"" . $form['in_lot_or_serial'] . "\" name=\"in_lot_or_serial\" />
         <input type=\"hidden\" value=\"" . $form['in_id_lotmag'] . "\" name=\"in_id_lotmag\" />
@@ -889,13 +901,21 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             $form['volume'] += $v['quanti'] * $artico['volume_specifico'];
             // fine addizione peso,pezzi,volume
             $btn_class = 'btn-success';
+            $btn_title = '';
             $peso = 0;
             if ($v['tiprig'] == 0) {
-				if ($artico['good_or_service']>0){ 
+                if ($artico['good_or_service']>0){ 
 					$btn_class = 'btn-info';
-				} elseif ($v['scorta'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
-                    //$scorta_col = 'FacetDataTDsmallRed';
+					$btn_title = ' Servizio';
+				} elseif ($v['quamag'] < 0.00001 && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo presenza articolo
                     $btn_class = 'btn-danger';
+					$btn_title = ' ARTICOLO NON DISPONIBILE!!!';
+				} elseif ($v['quamag'] <= $v['scorta'] && $admin_aziend['conmag']==2) { // se gestisco la contabilità di magazzino controllo il sottoscorta
+                    $btn_class = 'btn-warning';
+					$btn_title = ' Articolo sottoscorta: disponibili '.$v['quamag'].'/'.floatval($v['scorta']);
+                } else {
+                    $btn_class = 'btn-success';
+					$btn_title = $v['quamag'].' '.$v['unimis'].' disponibili';
                 }
                 if ($v['pesosp'] <> 0) {
                     $peso = gaz_format_number($v['quanti'] / $v['pesosp']);
@@ -928,6 +948,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
             echo "<input type=\"hidden\" value=\"" . $v['id_mag'] . "\" name=\"rows[$k][id_mag]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['annota'] . "\" name=\"rows[$k][annota]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['scorta'] . "\" name=\"rows[$k][scorta]\">\n";
+			echo "<input type=\"hidden\" value=\"" . $v['quamag'] . "\" name=\"rows[$k][quamag]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['provvigione'] . "\" name=\"rows[$k][provvigione]\">\n";
             echo "<input type=\"hidden\" value=\"" . $v['pesosp'] . "\" name=\"rows[$k][pesosp]\">\n";
             echo '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />';
@@ -946,7 +967,7 @@ if (!(count($msg['err']) > 0 || count($msg['war']) > 0)) { // ho un errore non s
                                 ' . ($k + 1) . ' <i class="glyphicon glyphicon-arrow-up"></i></button>'),
                 array('head' => $script_transl["codart"], 'class' => '',
                     'value' => ' <button name="upd_row[' . $k . ']" class="btn ' . $btn_class . ' "
-					title="' . $script_transl['update'] . $script_transl['thisrow'] . '! Scorta =' . $v['scorta'] . '"
+					title="' . $script_transl['update'] . $script_transl['thisrow'] . '! ' . $btn_title . '"
 					type="submit">
                                 <i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $v['codart'] . '
                                 </button>',
