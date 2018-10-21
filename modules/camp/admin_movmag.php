@@ -106,6 +106,10 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 			$form['identifier'][$m] = $_POST['identifier'.$m];
 			$form['expiry'][$m] = $_POST['expiry'.$m];
 			$form['filename'][$m] = $_POST['filename'.$m];
+		} else {
+			$form['identifier'][$m] = "";
+			$form['expiry'][$m] = "";
+			$form['filename'][$m] = "";
 		}
 		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['scorig'][$m] = $_POST['scorig'.$m];
@@ -409,7 +413,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 		// controllo se sono stati inseriti articoli merci uguali in più righe /perché non è possibile altrimenti non funzionano i controlli sulle quantità per lotto/	
 			for ($mart = 0; $mart <= $form['nmov']; ++$mart){
 				if ($m<>$mart) {
-					if (intval($form['id_lotmag'][$m]) == intval($form['id_lotmag'][$mart])) {
+					if ((intval($form['id_lotmag'][$m])>0) && (intval($form['id_lotmag'][$m]) == intval($form['id_lotmag'][$mart]))) {
 					$msg .= "40+";
 					}
 				}
@@ -944,10 +948,16 @@ if (isset($_POST['Add_mov'])){
 	for ($m = 0; $m <= $form['nmov']; ++$m){
 		$form['artico'][$m] = $_POST['artico'.$m];
 		$form['id_lotmag'][$m] = $_POST['id_lotmag'.$m];
-		$form['identifier'][$m] = $_POST['identifier'.$m];
-		$form['expiry'][$m] = $_POST['expiry'.$m];
 		$form['lot_or_serial'][$m] = $_POST['lot_or_serial'.$m];
-		$form['filename'][$m] = $_POST['filename'.$m];
+		if ($form['lot_or_serial'][$m]==1){
+			$form['identifier'][$m] = $_POST['identifier'.$m];
+			$form['expiry'][$m] = $_POST['expiry'.$m];
+			$form['filename'][$m] = $_POST['filename'.$m];
+		} else {
+			$form['identifier'][$m] = "";
+			$form['expiry'][$m] = "";
+			$form['filename'][$m] = "";
+		}
 		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['scorig'][$m] = $_POST['scorig'.$m];
@@ -1353,7 +1363,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td cl
  <?php
  // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
   for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']) {
-	  
+	  $anchor["num"]=$form['mov']; // Antonio Germani imposto la riga che dovrà essere ancorata allo scroll
 	  $importo_rigo = CalcolaImportoRigo($form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']]);
 		$importo_totale = CalcolaImportoRigo(1, $importo_rigo, $form['scochi']);
 		
@@ -1392,7 +1402,6 @@ if ($form['artico'][$form['mov']] == "") {
 				}	 
 			echo " ",substr($itemart['descri'], 0, 25)," ";
 			if ($dose>0) {echo "<br>Dose generica: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
-			
 		}  
 }
 ?>
@@ -1412,7 +1421,9 @@ if ($form['artico'][$form['mov']] == "") {
 			echo "<button type=\"submit\" name=\"acquis\"  class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" onclick=\"myform.target='POPUPW'; POPUPW = window.open(
    'about:blank','POPUPW','width=800,height=400');\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 		} 
-		
+?>
+</td></tr>
+<?php		
 // Antonio Germani --- inizio gestione form  LOTTI	in uscita	
 	if (($form['lot_or_serial'][$form['mov']] > 0) && ($res['operat']==-1)) { 
 			?>
@@ -1445,8 +1456,7 @@ if (isset ($form['id_lotmag'][$form['mov']]) && $form['id_lotmag'][$form['mov']]
 					<input type="hidden" name="id_lotmag<?php echo $form['mov']; ?>" value="<?php echo $form['id_lotmag'][$form['mov']];?> ">
 					<?php
 							
-}	else {		
-					
+}	else {							
                     $l = $form['mov'];// ripartisco la quantità introdotta tra i vari lotti disponibili per l'articolo
 							// e se è il caso creo più righe 
                     foreach ($lm->divided as $k => $v) {
@@ -1508,7 +1518,7 @@ document.myform.submit();
                     echo '<div><button class="btn btn-xs btn-danger" type="image" >Non sono disponibili altri lotti, <br> oppure non è possibile cambiare lotto negli inserimenti multipli</button></div>';
                 }
 ?>
-	</div></div></td></tr>
+	</div></div></div></td></tr>
 <?php			
 	} 
 	
@@ -1575,13 +1585,8 @@ document.myform.submit();
 				} 
 			}
 			// fine scelta lotto fra esistenti 	
-
 		} // fine (esclusione del movimento madre)	
-			
-			
-		
-		
-		
+				
               if (strlen($form['identifier'][$form['mov']])==0){
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog_lot' . $form['mov'] . '">' . 'Inserire nuovo Lotto' . " ".'<i class="glyphicon glyphicon-tag"></i></button></div>';
 			  } else {
@@ -1614,20 +1619,24 @@ document.myform.submit();
 		     </div>
               </div>' . "\n";
     } else {
-			echo ' <input type="hidden" name="identifier'.$form['mov'].'" value="'.$form['identifier'][$form['mov']].'" />';
+			echo '<tr><td> <input type="hidden" name="identifier'.$form['mov'].'" value="'.$form['identifier'][$form['mov']].'" />';
 			echo ' <input type="hidden" name="expiry'.$form['mov'].'" value="'.$form['expiry'][$form['mov']].'" />';
-			echo ' <input type="hidden" name="filename'.$form['mov'].'" value="'.$form['filename'][$form['mov']].'" />';
+			echo ' <input type="hidden" name="filename'.$form['mov'].'" value="'.$form['filename'][$form['mov']].'" /></td></tr>';
 			
         }
 // fine LOTTI in entrata
 		
-		$anchor["num"]=$form['mov']; // Antonio Germani imposto la riga che deve essere ancorata allo scroll
+		
 		?>
-		<a name="<?php echo $form['mov'];?>"></a> <!-- Antonio Germani Questa è l'ancora dello scroll -->
+	<tr><td>	
 	<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php $form['clfoco'][$form['mov']]; ?>">
-	<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']];?>">
+	<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="">
+	</td></tr>
 <?php	
-	} else {
+	} else { // se è articolo senza magazzino 
+	?>
+		<input type="hidden" name="staff<?php echo $form['mov']; ?>" value="<?php echo $form['staff'][$form['mov']];?>">
+		<?php
 /*Antonio Germani se l'unità di misura è oraria attivare Operaio */
 			if ($print_unimis == "h"){
 				echo "&nbsp;&nbsp;" .$script_transl[32]. "&nbsp;";
@@ -1648,11 +1657,10 @@ document.myform.submit();
 			}
 			$itm = gaz_dbi_get_row($gTables['staff'], "id_staff", $form['staff'][$form['mov']]);
 			?>
-			<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php echo $itm['id_clfoco'];?>">
+			
+			<input type="hidden" name="clfoco<?php echo $form['mov']; ?>" value="<?php echo $itm['id_clfoco'];?>"></td></tr>
 			<?php
 	}
- 
-echo "</td></tr>\n";
 
 /* Antonio Germani -  AVVERSITà */
 if ($print_unimis <> "h"){ // se è una lavorazione agricola disattivare avversità
@@ -1725,7 +1733,9 @@ $importo_totale=($form['prezzo'][$form['mov']]*floatval(preg_replace("/\,/", '.'
 <tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13]; ?></td><td class="FacetDataTD" colspan="1"><input type="text" value="<?php echo number_format ($importo_totale,$admin_aziend['decimal_price'], ',', ''); ?>" name="total" size="20" readonly /><?php echo "&nbsp;" . $admin_aziend['symbol'] . "&nbsp;&nbsp;&nbsp;&nbsp;". $script_transl[31]; ?>
 <input type="text" value="<?php echo number_format ($form['prezzo'][$form['mov']],$admin_aziend['decimal_price'], ',', '') ?>" maxlength="12" size="12" name="prezzo<?php echo $form['mov'] ?>" onChange="this.form.submit()"><?php echo " ".$admin_aziend['symbol']; ?>
 <input type="hidden" value="<?php echo $form['scorig'][$form['mov']];?>" maxlength="4" size="4" name="scorig<?php echo $form['mov'] ?>" onChange="this.form.submit()"></td></tr>
-<tr><td style="font-size:5pt;" colspan="4"><?php echo $form['mov']+1; ?></td></tr>
+<tr><td style="font-size:5pt;" colspan="4"><?php echo $form['mov']+1; ?>
+<a name="<?php echo $form['mov'];?>"></a> <!-- Antonio Germani Questa è l'ancora dello scroll -->
+</td></tr>
  <?php
 /* fine riattivo prezzo e sconto */
 
