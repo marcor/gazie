@@ -102,9 +102,11 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 		$form['artico'][$m] = $_POST['artico'.$m];
 		$form['id_lotmag'][$m] = $_POST['id_lotmag'.$m];
 		$form['lot_or_serial'][$m] = $_POST['lot_or_serial'.$m];
-		$form['identifier'][$m] = $_POST['identifier'.$m];
-		$form['expiry'][$m] = $_POST['expiry'.$m];
-		$form['filename'][$m] = $_POST['filename'.$m];
+		if ($form['lot_or_serial'][$m]==1){
+			$form['identifier'][$m] = $_POST['identifier'.$m];
+			$form['expiry'][$m] = $_POST['expiry'.$m];
+			$form['filename'][$m] = $_POST['filename'.$m];
+		}
 		$form['quanti'][$m] = gaz_format_quantity($_POST['quanti'.$m],0,$admin_aziend['decimal_quantity']);
 		$form['scorig'][$m] = $_POST['scorig'.$m];
 		$form['prezzo'][$m] = gaz_format_quantity($_POST['prezzo'.$m],0,$admin_aziend['decimal_quantity']);
@@ -239,10 +241,16 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
     $form['anndoc'] = intval($_POST['anndoc']);
 	$form['scochi'] = floatval(preg_replace("/\,/", '.', $_POST['scochi']));
 	$form['id_lotmag'][$form['mov']] = $_POST['id_lotmag'.$form['mov']];
-	$form['identifier'][$form['mov']] = $_POST['identifier'.$form['mov']];
-    $form['expiry'][$form['mov']] = $_POST['expiry'.$form['mov']];
-	$form['filename'][$form['mov']] = $_POST['filename'.$form['mov']];
 	$form['lot_or_serial'][$form['mov']] = $_POST['lot_or_serial'.$form['mov']];
+	if ($form['lot_or_serial'][$form['mov']]==1) {
+		$form['identifier'][$form['mov']] = $_POST['identifier'.$form['mov']];
+		$form['expiry'][$form['mov']] = $_POST['expiry'.$form['mov']];
+		$form['filename'][$form['mov']] = $_POST['filename'.$form['mov']];
+	} else {
+		$form['identifier'][$form['mov']] = "";
+		$form['expiry'][$form['mov']] = "";
+		$form['filename'][$form['mov']] = "";
+	}
     $form['quanti'][$form['mov']] = gaz_format_quantity($_POST['quanti'.$form['mov']], 0, $admin_aziend['decimal_quantity']);
 	if ((isset($_POST['prezzo'.$form['mov']])>0) && (strlen ($_POST['prezzo'.$form['mov']])>0)) {
 		$form['prezzo'][$form['mov']] = $_POST['prezzo'.$form['mov']]; $form['prezzo'][$form['mov']]= str_replace ('.','',$form['prezzo'][$form['mov']]);$form['prezzo'][$form['mov']]= str_replace (',','.',$form['prezzo'][$form['mov']]);
@@ -519,11 +527,13 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 			$msg .="24+";	
 			
 		}
+ 	
+		
 		
 //  §§§§§§§§§§§§§§§§ INIZIO salvataggio sui database §§§§§§§§§§§§§§§§§§§	
        if (empty($msg)) { // nessun errore	
-			$upd_mm = new magazzForm; 
-            //formatto le date
+	echo "expiry:",$form['expiry'][$form['mov']]," identifier:",$form['identifier'][$form['mov']]," idmov:",$form['id_mov']," lot or serial:",$form['lot_or_serial'][$form['mov']]," idlotmag:",$form['id_lotmag'][$form['mov']];if (isset($_POST['Update'])){echo " è update";} else {echo " NON è update";} 		$upd_mm = new magazzForm; 
+            //formatto le date  
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
             $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
             $new_caumag = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
@@ -534,7 +544,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
                         0, // seziva � in desdoc 
                         $form['datdoc'], $form['clfoco'][$form['mov']], $form['scochi'], $form['caumag'], $form['artico'][$form['mov']], $form['quanti'][$form['mov']], $form['prezzo'][$form['mov']], $form['scorig'][$form['mov']], $form['id_mov'], $admin_aziend['stock_eval_method'], array('datreg' => $form['datreg'], 'operat' => $form['operat'][$form['mov']], 'desdoc' => $form['desdoc'])
                 );
-		//Antonio Germani Non riesco a capire come funziona la funzione qui sopra; ho perso troppo tempo!!!!
+		//Antonio Germani Non riesco a capire come funziona la funzione uploadMag qui sopra; ho perso troppo tempo!!!!
 		// risolvo in questa maniera per far scrivere i nuovi campi di movmag, specifici del quaderno di campagna
 		If ($form['id_mov']>0){
 			$id_movmag=$form['id_mov'];
@@ -546,24 +556,26 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 				$id_movmag = $row['Auto_increment'];
 				// siccome ha già registrato il movimento di magazzino devo togliere 1
 				$id_movmag=$id_movmag-1;
-			} // inframezzo il salvataggio del movmag con i lotti perché altrimenti, se è un movimento in entrata, non ho id_lotmag da salvare in movmag
+			} 
+	// inframezzo il salvataggio del movmag con i lotti perché altrimenti, se è un movimento in entrata, non ho id_lotmag da salvare in movmag
 
 //Antonio Germani - >>> inizio salvo lotti -se ci sono e se il prodotto li richiede-
 if ($form['operat'][$form['mov']]==1) { // se il movimento è in entrata -carico-
-	if ($form['lot_or_serial'][$form['mov']] > 0) {
+	$idlotcontroll = gaz_dbi_get_row($gTables['lotmag'], "id", $form['id_lotmag'][$form['mov']]); // in $idlotcontroll['id_movmag'] ho l'id del movimento madre del lotto mi
+	if ($form['lot_or_serial'][$form['mov']] > 0 && intval($form['id_lotmag'][$form['mov']])==0) { // se l'articolo prevede un lotto e non ho id_lotmag, vuol dire che non ho scelto il lotto fra gli esistenti e quindi devo creare un  nuovo lotto
 		// ripulisco il numero lotto da caratteri dannosi
 		$form['identifier'][$form['mov']] = (empty($form['identifier'][$form['mov']])) ? '' : filter_var($form['identifier'][$form['mov']], FILTER_SANITIZE_STRING);
-		if (strlen ($form['identifier'][$form['mov']]) ==0) { // se non c'è il lotto lo si inserisce con data e ora in automatico
+		if (strlen ($form['identifier'][$form['mov']]) ==0) { // se non c'è il lotto lo inserisco con data e ora in automatico
 			$form['identifier'][$form['mov']]=date("Ymd Hms");
 		}
-		if (strlen ($form['expiry'][$form['mov']]) ==0) { // se non c'è la scadenza la si inserisce a zero in automatico
+		if (strlen ($form['expiry'][$form['mov']]) ==0) { // se non c'è la scadenza la inserisco a zero in automatico
 			$form['expiry'][$form['mov']]="0000-00-00 00:00:00";
 		} 
-		if ((!isset($_POST['Update'])) ){ // se è un nuovo INSERT
+		 // è un nuovo INSERT
 			if (strlen ($form['identifier'][$form['mov']]) >0) {
-			// formatto la data per il database	
-			gaz_format_date($form['expiry'][$form['mov']]); $arraydt = explode("/", $form['expiry'][$form['mov']]); 
-			$form['expiry'][$form['mov']] = $arraydt[2]."-".$arraydt[1]."-".$arraydt[0];
+			/* formatto la data per il database se arriva come yyyy/mm/dd	
+			$arraydt = explode("/", $form['expiry'][$form['mov']]); 
+			$form['expiry'][$form['mov']] = $arraydt[2]."-".$arraydt[1]."-".$arraydt[0];*/
 			gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('". $form[	'artico'][$form['mov']] . "','" . $id_movmag . "','" . $form['identifier'][$form['mov']] . "','" . $form['expiry'][$form['mov']] . "')");
 			// vedo in quale id è stato salvato il lotto e lo metto in id_lotmag di movmag
 			$query="SHOW TABLE STATUS LIKE '".$gTables['lotmag']."'"; 
@@ -571,14 +583,20 @@ if ($form['operat'][$form['mov']]==1) { // se il movimento è in entrata -carico
 				$row = $result->fetch_assoc();
 				$form['id_lotmag'][$form['mov']] = $row['Auto_increment']-1;	
 			}
-		} else { // se è un UPDATE
-			if (strlen ($form['identifier'][$form['mov']]) >0){
-				// formatto la data per il database	
-				gaz_format_date($form['expiry'][$form['mov']]); $arraydt = explode("/", $form['expiry'][$form['mov']]); 
-				$form['expiry'][$form['mov']] = $arraydt[2]."-".$arraydt[1]."-".$arraydt[0];
+		  
+			
+		 
+	} else {
+		if (($form['lot_or_serial'][$form['mov']] > 0) && (intval($form['id_mov']) == intval($idlotcontroll['id_movmag']))) {  // se l'articolo prevede un lotto e ho id_lotmag e se il movimento movmag è la madre del lotto devo modificare il lotto
+		//  è un UPDATE 
+		if (strlen ($form['identifier'][$form['mov']]) >0){
+				/* formatto la data per il database	se arriva come yyy/mm/dd
+				$arraydt = explode("/", $form['expiry'][$form['mov']]); 
+				$form['expiry'][$form['mov']] = $arraydt[2]."-".$arraydt[1]."-".$arraydt[0];*/
 				gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'][$form['mov']] . "' , id_movmag = '" . $id_movmag . "' , identifier = '" . $form['identifier'][$form['mov']] . "' , expiry = '" . $form['expiry'][$form['mov']] . "' WHERE id = '" . $form['id_lotmag'][$form['mov']] . "'");
 			}
-		} 
+		
+		}
 	}
 // Antonio Germani - inizio salvo documento/certificato
 	if (substr($form['filename'][$form['mov']], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
@@ -595,7 +613,7 @@ if ($form['operat'][$form['mov']]==1) { // se il movimento è in entrata -carico
 // riprendo il salvataggio del movimento di magazzino in movmag			
 		$query="UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 .  "', tipdoc = 'MAG' , campo_coltivazione = '"  .$form['campo_coltivazione']. "' , id_avversita = '"  .$form['id_avversita'][$form['mov']]. "' , id_colture = '"  .$form['id_colture']. "' , id_orderman = '"  .$form['id_orderman']. "' , id_lotmag = '" .$form['id_lotmag'][$form['mov']]. "' WHERE id_mov ='". $id_movmag."'"; 
 			gaz_dbi_query ($query) ;
-			
+		
 		
 					
 // Antonio Germani - aggiorno la tabella campi se c'è un campo inserito (cioè >0) e se l'operazione è uno scarico (cioè operat<0) e se la data di fine sospensione già presente nel campo è inferiore alla data di sospensione del prodotto appena usato (cioè $fine_sosp<$dt)
@@ -1362,6 +1380,7 @@ if ($form['artico'][$form['mov']] == "") {
 	$service=intval($itemart['good_or_service']);// vedo se è articolo o servizio
 		
 	 	If ($service == 0) { //Antonio Germani se è un articolo con magazzino
+			
 			// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 			$mv = $gForm->getStockValue(false, $itemart['codice']);
 			$magval = array_pop($mv); $print_magval=str_replace(",","",$magval['q_g']); 
@@ -1395,8 +1414,10 @@ if ($form['artico'][$form['mov']] == "") {
 		} 
 		
 // Antonio Germani --- inizio gestione form  LOTTI	in uscita	
-		if (($form['lot_or_serial'][$form['mov']] > 0) && ($res['operat']==-1)) {
+	if (($form['lot_or_serial'][$form['mov']] > 0) && ($res['operat']==-1)) { 
 			?>
+			<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[41];?></td>
+			<td class="FacetDataTD" >
 			<input type="hidden" name="filename<?php echo $form['mov']; ?>" value="<?php echo $form['filename'][$form['mov']]; ?>">			
 			<?php
 			$lm -> getAvailableLots($form['artico'][$form['mov']],$form['id_mov']);
@@ -1421,7 +1442,7 @@ if (isset ($form['id_lotmag'][$form['mov']]) && $form['id_lotmag'][$form['mov']]
 	$lotqty = $lm -> getLotQty($form['id_lotmag'][$form['mov']]);
 				echo "Q.tà disp:",$lotqty;
 					?>
-					<input type="text" name="id_lotmag<?php echo $form['mov']; ?>" value="<?php echo $form['id_lotmag'][$form['mov']];?> ">
+					<input type="hidden" name="id_lotmag<?php echo $form['mov']; ?>" value="<?php echo $form['id_lotmag'][$form['mov']];?> ">
 					<?php
 							
 }	else {		
@@ -1465,8 +1486,7 @@ document.myform.submit();
 		 <?php
 					} 														
 ?>		
-	</div>
-	
+	</div>	
 <?php 
 }	
 ?>
@@ -1474,7 +1494,7 @@ document.myform.submit();
 	<div id="lm_dialog<?php echo $form['mov'];?>" class="collapse" >
 	<div class="form-group">
 <?php
-		if ((count($lm->available) > 1) && (intval($form['nmov'])==0)) {
+		if ((count($lm->available) > 1) && (intval($form['nmov'])==0)) { 
                     foreach ($lm->available as $v_lm) {
                         if ($v_lm['id'] <> $form['id_lotmag'][$form['mov']]) { 
                             echo '<div>change to:<button class="btn btn-xs btn-warning" type="image" onclick="this.form.submit();" name="id_lotmag'.$form['mov'].'" value="'.$v_lm['id'].'">'
@@ -1488,27 +1508,30 @@ document.myform.submit();
                     echo '<div><button class="btn btn-xs btn-danger" type="image" >Non sono disponibili altri lotti, <br> oppure non è possibile cambiare lotto negli inserimenti multipli</button></div>';
                 }
 ?>
-	</div></div>
-<?php
-			
-		} 
+	</div></div></td></tr>
+<?php			
+	} 
 	
 // Fine  LOTTI	in uscita
 ?>  
 <script>
-  $( function() {
-    $( "#datepicker" ).datepicker();
-  } );
+  $(function() {
+    $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+});
   </script>
 <?php
 // Inizio LOTTI in entrata
-	 if (($form['lot_or_serial'][$form['mov']] > 0) && ($res['operat']==1)) {
-		 
+	if (($form['lot_or_serial'][$form['mov']] > 0) && ($res['operat']==1)) {
+		$idlotcontroll = gaz_dbi_get_row($gTables['lotmag'], "id", $form['id_lotmag'][$form['mov']]); // in $idlotcontroll['id_movmag'] ho l id del movimento madre che ha generato il lotto
 		?>
+		<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[41];echo "<br> <p> <font color=blue size='1pt'> N.b.: è possibile modificare <br> il lotto solo dal movimento<br> che lo ha creato </font></p>"; ?></td>
+		<td class="FacetDataTD" >
 			  <input type="hidden" name="filename<?php echo $form['mov']; ?>" value="<?php echo $form['filename'][$form['mov']]; ?>">			  
-		<?php
+		<?php 
+		if (intval($form['id_mov'])>0 or intval($form['id_mov']) == intval($idlotcontroll['id_movmag'])) { // attiva inserimento certificato in alcuni casi
+		
               if (strlen($form['filename'][$form['mov']])==0) {
-                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $form['mov'] . '">'. 'Inserire certificato' . ' '.'<i class="glyphicon glyphicon-tag"></i>'
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog' . $form['mov'] . '">'. 'Inserire nuovo certificato' . ' '.'<i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
 			  } else {
 				  echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $form['mov'] . '">'. $form['filename'][$form['mov']] . ' '.'<i class="glyphicon glyphicon-tag"></i>'
@@ -1522,8 +1545,45 @@ document.myform.submit();
 						echo '</div>';
 					}
 			  }
+		}	  
+			  
+// Esclusione del movimento Madre dalla scelta fra i lotti esistenti
+// se questo è il movimento che ha generato il lotto in lotmag (movimento madre), allora escludo la scelta fra quelli esistenti, così si ha la possibilità di modificare il lotto su lotmag	  
+		$idlotcontroll = gaz_dbi_get_row($gTables['lotmag'], "id", $form['id_lotmag'][$form['mov']]); 	
+		
+		if ((intval($form['id_mov'])==0) or (intval($form['id_mov']) <> intval($idlotcontroll['id_movmag']))) {
+		
+/*Antonio Germani scelta lotto fra quelli esistenti  */
+			$query="SELECT ".'*'." FROM ".$gTables['lotmag']. " WHERE codart ='". $form['artico'][$form['mov']]."'";
+			$result = gaz_dbi_query($query);
+			if ($result->num_rows >0) { // se ci sono lotti attivo la selezione
+				echo '<select name="id_lotmag'.$form['mov'].'" class="FacetSelect" onchange="this.form.submit()">\n';
+				echo "<option value=\"\">-seleziona fra lotti esistenti-</option>\n";	
+				$sel=0;
+				while ($rowlot = gaz_dbi_fetch_array($result)) {
+					$selected = "";
+					if ($form['id_lotmag'][$form['mov']] == $rowlot['id']) {
+						$selected = " selected ";$sel=1;
+					}
+					echo "<option value=\"" . $rowlot['id'] . "\"" . $selected . ">" . $rowlot['id'] . " - " . $rowlot['identifier'] . " - " . gaz_format_date($rowlot['expiry']) . "</option>\n";
+				} 
+				echo "</select>&nbsp;";
+				If ((intval($form['id_lotmag'][$form['mov']])>0) && (intval($sel)==1)){ // se è stato selezionato un lotto
+					$rowlot = gaz_dbi_get_row($gTables['lotmag'], "id", $form['id_lotmag'][$form['mov']]);	
+					$form['identifier'][$form['mov']]=$rowlot['identifier']; 
+					$form['expiry'][$form['mov']]=$rowlot['expiry'];
+				} 
+			}
+			// fine scelta lotto fra esistenti 	
+
+		} // fine (esclusione del movimento madre)	
+			
+			
+		
+		
+		
               if (strlen($form['identifier'][$form['mov']])==0){
-                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog_lot' . $form['mov'] . '">' . 'Inserire Lotto' . " ".'<i class="glyphicon glyphicon-tag"></i></button></div>';
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog_lot' . $form['mov'] . '">' . 'Inserire nuovo Lotto' . " ".'<i class="glyphicon glyphicon-tag"></i></button></div>';
 			  } else {
 				  if(intval($form['expiry'][$form['mov']])>0){
 					echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog_lot' . $form['mov'] . '">' . $form['identifier'][$form['mov']]." ".gaz_format_date($form['expiry'][$form['mov']]) . " ".'<i class="glyphicon glyphicon-tag"></i></button></div>';
@@ -1531,7 +1591,8 @@ document.myform.submit();
 					 echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog_lot' . $form['mov'] . '">' . $form['identifier'][$form['mov']]." ".'<i class="glyphicon glyphicon-tag"></i></button></div>'; 
 				  }
 			  }
-                
+              
+			  if (intval($form['id_mov']) == intval($idlotcontroll['id_movmag'])) {
                 echo '<div id="lm_dialog' . $form['mov'] . '" class="collapse" >
                         <div class="form-group">
                           <div>';						
@@ -1540,25 +1601,24 @@ document.myform.submit();
 			 </div>
 		     </div>
              </div>
-			  
 				<?php
+			  }
 				 echo '<div id="lm_dialog_lot' . $form['mov'] . '" class="collapse" >
                         <div class="form-group">
                           <div>';
 				echo '<label>' . "Numero: " . '</label><input type="text" name="identifier'.$form['mov'].'" value="'.$form['identifier'][$form['mov']].'" >';
 				echo "<br>";			
-                echo '<label>' . "Scadenza: " . ' </label><input id="datepicker" type="text" name="expiry'.$form['mov'].'"  value="' . $form['expiry'][$form['mov']] . '" >
+                echo '<label>' . "Scadenza: " . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="expiry'.$form['mov'].'"  value="' . $form['expiry'][$form['mov']] . '" >
+				
 			</div>
 		     </div>
               </div>' . "\n";
-            } else {
-                echo ' <input type="hidden" name="identifier'.$form['mov'].'" value="'.$form['identifier'][$form['mov']].'" />';
-                echo ' <input type="hidden" name="expiry'.$form['mov'].'" value="'.$form['expiry'][$form['mov']].'" />';
-				echo ' <input type="hidden" name="filename'.$form['mov'].'" value="'.$form['filename'][$form['mov']].'" />';
-            }
-			  
-
-
+    } else {
+			echo ' <input type="hidden" name="identifier'.$form['mov'].'" value="'.$form['identifier'][$form['mov']].'" />';
+			echo ' <input type="hidden" name="expiry'.$form['mov'].'" value="'.$form['expiry'][$form['mov']].'" />';
+			echo ' <input type="hidden" name="filename'.$form['mov'].'" value="'.$form['filename'][$form['mov']].'" />';
+			
+        }
 // fine LOTTI in entrata
 		
 		$anchor["num"]=$form['mov']; // Antonio Germani imposto la riga che deve essere ancorata allo scroll

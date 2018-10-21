@@ -157,6 +157,7 @@ $strScript = array("browse_document.php" =>
 		"Lotto con giacenza inferiore alla quantità richiesta.",
 		"E' possibile caricare solo file nel formato png peg jpeg pdf odt e di dimensione massima di 1 Mega.",
 		"Non è possibile inserire articoli uguali, con lotti uguali, su righe differenti.",
+		"Lotti e certificati",
         'operat' => 'Operazione',
         'operat_value' => array(-1 => "Scarico", 0 => "Non opera", 1 => "Carico"),
         'partner' => 'Cliente/Fornitore',
