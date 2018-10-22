@@ -80,7 +80,8 @@ $strScript = array("browse_document.php" =>
         'payroll_tax' => 'Cassa Prev.',
         'barcode' => 'Cod.Barre',
         'clone' => 'Duplica',
-		'class' => 'Classe'
+		'class' => 'Classe',
+		'lot' => 'Lotti'
     ),
     "report_statis.php" =>
     array("statistica ",

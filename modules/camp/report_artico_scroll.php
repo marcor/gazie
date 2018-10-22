@@ -137,9 +137,13 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
             </td>
             
             <td data-title="<?php echo $script_transl["stock"]; ?>" title="Visualizza scheda prodotto">
-               <?php $print_magval=str_replace(",","",$magval['q_g']);echo gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']); echo "<p style='float:right;'>".$com."</p>"; ?>
+               <?php $print_magval=str_replace(",","",$magval['q_g']);echo gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity']); echo '<p style="float:right;">'.$com.'</p></td><td title="Visualizza lotti">'; 
+			   if (intval($row['lot_or_serial'])>0) {
+			   ?>
+			   <a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"../../modules/camp/mostra_lotti.php?codice=".$row['codice'];?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
+						<span class="glyphicon glyphicon-tag"></span></a>
+			   <?php } ?>
             </td>
-            
             <td data-title="<?php echo $script_transl["clone"] . ' in ' . $row["codice"]; ?>_2" title="Copia" class="text-center">
                 <a class="btn btn-xs btn-default" href="clone_artico.php?codice=<?php echo $row["codice"]; ?>">
                     <i class="glyphicon glyphicon-export"></i>
