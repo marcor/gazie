@@ -349,6 +349,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
         'OrdineFornitore' => 'ordine_fornitore',
         'PreventivoFornitore' => 'preventivo_fornitore',
         'InformativaPrivacy' => 'informativa_privacy',
+        'RichiestaPecSdi' => 'richiesta_pecsdi',
 		'NominaResponsabile'=>'nomina_responsabile',
 		'NominaResponsabileEsterno'=>'nomina_responsabile_esterno',
 		'NominaIncaricatoInterno'=>'nomina_incaricato_interno',
