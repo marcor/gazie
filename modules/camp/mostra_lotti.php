@@ -45,9 +45,15 @@ if (isset($_POST['close'])){
 <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
     	<thead>
             <tr class="FacetDataTD">
-                <th align="center" >Lotti disponibili   
+				<th align="center" >Id lotto   
                 </th>
-                <th align="center" >Certificati   
+                <th align="center" >Numero lotto   
+                </th>
+				<th align="center" >Scadenza				
+                </th>
+				<th align="center" >Disponibilità   
+                </th>
+                <th align="center" >Certificato   
                 </th>              
             </tr>
 			</thead>
@@ -59,11 +65,11 @@ if (isset($_POST['close'])){
 	if (count($lm->available) > 0) { 
         foreach ($lm->available as $v_lm) {
                $img="";
-               echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">id: '
+               echo '<tr class="FacetDataTD"><td class="FacetFieldCaptionTD">'
                . $v_lm['id']
-               . ' - lotto: ' . $v_lm['identifier']
-               . ' - exp: ' . gaz_format_date($v_lm['expiry'])
-				. ' - disponibilità: ' . gaz_format_quantity($v_lm['rest'], 0, $admin_aziend['decimal_quantity'])
+               . '</td><td>' . $v_lm['identifier']
+               . '</td><td>' . gaz_format_date($v_lm['expiry'])
+				. '</td><td>' . gaz_format_quantity($v_lm['rest'], 0, $admin_aziend['decimal_quantity'])
                 .'</td><td>';
 							
 				If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {		
