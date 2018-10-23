@@ -199,7 +199,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se è il primo acce
 // Antonio Germani - se è presente, recupero il file documento lotto
 	$form['filename'][$form['mov']] = "";
 	If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {		
-			// recupero il filename dal filesystem e lo sposto sul tmp 
+			// recupero il filename dal filesystem 
 			$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
 			while (false !== ($filename = readdir($dh))) {
 				$fd = pathinfo($filename); 
