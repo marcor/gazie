@@ -30,9 +30,6 @@ $script_transl=HeadMain();
 ?>
 <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?></div>
 <?php
-if (!isset($_GET['flag_order'])) {
-    $orderby = "datemi DESC";
-    }
 $where = "tipdoc = 'ADT'";
 $recordnav = new recordnav($gTables['tesdoc'], $where, $limit, $passo);
 $recordnav -> output();
