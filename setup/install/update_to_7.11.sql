@@ -228,6 +228,7 @@ UPDATE `gaz_XXXtesdoc` SET `template` = 'FatturaSemplice' WHERE `tipdoc` = 'FNC'
 ALTER TABLE `gaz_XXXrigdoc`	CHANGE COLUMN `descri` `descri` VARCHAR(1000) NOT NULL COMMENT '1000 caratteri per uniformarsi al tracciato della fattura elettronica' AFTER `codart`;
 ALTER TABLE `gaz_XXXrigbro`	CHANGE COLUMN `descri` `descri` VARCHAR(1000) NOT NULL COMMENT '1000 caratteri per uniformarsi al tracciato della fattura elettronica' AFTER `codice_fornitore`;
 ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `datreg` DATE NULL DEFAULT NULL COMMENT 'Data in cui si vuole venga registrata in contabilità la fattura d\'acquisto (prima veniva messo in impropriamente in datemi)' AFTER `id_con`;
+ALTER TABLE `gaz_XXXtesdoc`	ADD COLUMN `fattura_elettronica_zip_package` VARCHAR(100) NULL DEFAULT NULL COMMENT 'Nome del file zip in cui è contenuto la fattura elettronica' AFTER `datreg`;
 UPDATE `gaz_XXXtesdoc` SET `datreg`=`datemi` WHERE `tipdoc` LIKE 'AF_';
 UPDATE `gaz_XXXtesdoc` SET `datemi`=FALSE WHERE `tipdoc` LIKE 'AF_';
 UPDATE `gaz_XXXtesdoc` SET `datemi`=FALSE WHERE `datemi` <= '2004-01-27';
@@ -311,4 +312,5 @@ CREATE TABLE `gaz_XXXtescmr` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='Testate dei CMR (Convention des Marchandises par Route) - Lettere di vettura internazionale';
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `id_lotmag` INT(9) NOT NULL COMMENT 'Riferimento al lotto (tabella gaz_NNNlotmag) per la tracciabilità e/o certificazione delle produzioni ' AFTER `id_colture`;
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `id_rigbro` INT(9) NOT NULL COMMENT 'Riferimento al rigo ordine da cliente del modulo vendite' AFTER `id_tesbro`;
+UPDATE `gaz_XXXpagame` SET `fae_mode`='MP05' WHERE `fae_mode`=''; 
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
