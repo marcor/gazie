@@ -43,7 +43,7 @@ $recordnav -> output();
 // creo l'array (header => campi) per l'ordinamento dei record
 $headers_tesdoc = array  (
             "ID" => "id_tes",
-            "Numero" => "numdoc",
+            "Numero-protocollo" => "protoc",
             "Data" => "datemi",
             "Fornitore (cod.)" => "clfoco",
             "Status" => "",
@@ -65,7 +65,7 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
 								<i class="glyphicon glyphicon-edit"></i>'.$a_row["id_tes"].'
 							</a>
 						</td>
-						<td>'.$a_row["numfat"].'</td>
+						<td>'.$a_row["numdoc"].' - '.$a_row["protoc"].'</td>
 						<td>'.$a_row["datemi"].'</td>
 						<td>'.$cliente["ragso1"].'</td>
 						<td>'.$a_row["status"].'</td>
