@@ -95,7 +95,7 @@ if (isset($_POST['close'])){
 				}
             } 
         } else {
-				echo '<div><button class="btn btn-xs btn-danger" type="image" >Non sono disponibili altri lotti, <br> oppure non è possibile cambiare lotto negli inserimenti multipli</button></div>';
+				echo '<div><button class="btn btn-xs btn-danger" type="image" >Non ci sono lotti disponibili.</button></div>';
             }
 ?>
 	</table>
