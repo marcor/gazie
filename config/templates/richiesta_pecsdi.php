@@ -88,16 +88,17 @@ Le fatture elettroniche saranno trasmesse unicamente attraverso il Sistema di In
 in formato XML.
 </p>
 <p>
-Siamo pertanto a richiedere di compilare i Vs. dati ed inviarli al seguente indirizzo di posta elettronica
-<a href="mailto:'.$this->pec.'">'.$this->pec.'</a> indicando obbligatoriamente l’indirizzo PEC o il codice univoco SDI necessari per poter
-emettere e trasmettere correttamente le fatture elettroniche.
+Siamo pertanto a richiedere di controllare i Vostri dati sottoriportati aggiungendovi l\'indirizzo di posta elettronica certificata (PEC) e, se in vostro possesso, il Codice Univoco per il Sistema di Interscambio (SdI) e inviarli ad uno dei seguenti indirizzi di posta elettronica
+<a href="mailto:'.$this->pec.'">'.$this->pec.'</a> <a href="mailto:'.$this->intesta4.'">'.$this->intesta4.'</a> oppure consegnando il cartaceo presso i nostri uffici.
+</p>
+<p>Solo così potremo emettere e trasmettere correttamente le fatture elettroniche a Voi destinate.
 </p>
 <p></p>
 <p></p>
-<p>RAGIONE SOCIALE: __________________________________________________________</p>
-<p>SEDE LEGALE: ______________________________________________________________</p>
-<p>CAP: ________ CITTÀ ____________________________________________ PROV. (___) </p>
-<p>PARTITA IVA: ________________________ CODICE FISCALE: _____________________</p>
+<p><b>RAGIONE SOCIALE</b>: '.str_pad($this->cliente1.''.$this->cliente2,64,'_').'</p>
+<p><b>INDIRIZZO</b>: '.str_pad($this->cliente3,65,'_').'</p>
+<p><b>CITTÀ</b>: '.str_pad($this->cliente4,66,'_').'</p>
+<p><b>CODICE FISCALE - PARTITA IVA</b>: '.str_pad($this->cliente5,49,'_').'</p>
 <p><b>INDIRIZZO PEC</b>: ____________________________________________________________</p>
 <p><b>CODICE SDI</b>: _______________________________________________________________</p>
 <p></p>
