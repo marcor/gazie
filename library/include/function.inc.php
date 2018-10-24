@@ -2197,6 +2197,7 @@ class Schedule {
          * restituisce in $this->Satus la differenza (stato) tra apertura e chiusura di una partita
          */
         global $gTables;
+		$date_ref = new DateTime($date);
 		$date_ctrl='1';
 		if ($date){
 			$date_ctrl=" (expiry <= '".$date."')";
@@ -2210,14 +2211,14 @@ class Schedule {
         $rs = gaz_dbi_query($sqlquery);
         $r = gaz_dbi_fetch_array($rs);
         $ex = new DateTime($r['exp']);
-        $interval = $date_ctrl->diff($ex);
+        $interval = $date_ref->diff($ex);
         if ($r['diff_paydoc'] >= 0.01) { // la partita � aperta
             $r['sta'] = 0;
-            if ($date_ctrl > $ex) { // ... ed � pure scaduta
+            if ($date_ref > $ex) { // ... ed � pure scaduta
                 $r['sta'] = 3;
             }
         } elseif ($r['diff_paydoc'] == 0.00) { // la partita � chiusa ma...
-            if ($date_ctrl < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
+            if ($date_ref < $ex) { //  se � un pagamento che avverr� ma non � stato realmente effettuato , che comporta esposizione a rischio
                 $r['sta'] = 2; // esposta
             } else { // altrimenti � chiusa completamente
                 $r['sta'] = 1;
