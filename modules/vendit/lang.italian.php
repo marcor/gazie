@@ -1551,6 +1551,35 @@ $strScript = array("admin_client.php" =>
         'amount' => 'Costo totale del bene € ',
         'ss_amm_min' => 'Ammort.Minister.',
         'super_ammort' => '% Super ammortamento'
+    ),
+    "fae_packaging.php" =>
+    array('title' => 'Genera un file zip contenente una o più fatture elettroniche di vendita',
+        'errors' => array('Data non corretta',
+            'Non ci sono fatture nell\'intervallo selezionato'
+        ),
+        'vat_section' => ' della sezione IVA n.',
+        'date' => 'Fino al :',
+        'type' => 'Registro IVA ',
+        'type_value' => array('F' => 'delle Fatture di Vendita', 'V' => 'dei Corrispettivi'),
+        'proini' => 'Protocollo iniziale',
+        'profin' => 'Protocollo finale',
+        'preview' => 'Anteprima di contabilizzazione',
+        'date_reg' => 'Data',
+        'protoc' => 'Protocollo',
+        'doc_type' => 'Tipo',
+        'doc_type_value' => array('FAD' => 'FATTURA DIFFERITA A CLIENTE',
+            'FAI' => 'FATTURA IMMEDIATA A CLIENTE',
+            'FAP' => 'PARCELLA',
+            'FNC' => 'NOTA CREDITO A CLIENTE',
+            'FND' => 'NOTA DEBITO A CLIENTE',
+            'VCO' => 'CORRISPETTIVO',
+            'VRI' => 'RICEVUTA',
+        ),
+        'customer' => 'Cliente',
+        'taxable' => 'Imponibile',
+		'no_tax'=>'Non Imp., Escl., ecc.',
+        'vat' => 'I.V.A.',
+        'tot' => 'Totale'
     )
 	);
 ?>
