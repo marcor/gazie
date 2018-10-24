@@ -400,8 +400,6 @@ class magazzForm extends GAzieForm {
             'quanti' => $quantita,
             'prezzo' => $prezzo,
             'scorig' => $sconto_rigo,
-			//'campo_coltivazione' => $campo_coltivazione,
-			//'avversita' => $avversita,
             'id_lotmag'=>$id_lotmag);
 			
         if ($id_movmag == 0) {                             // si deve inserire un nuovo movimento

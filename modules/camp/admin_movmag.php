@@ -325,7 +325,7 @@ if (isset($_POST['nome_colt'])){
     if (isset($_POST['caumag'])) {          
         $causa = gaz_dbi_get_row($gTables['caumag'], "codice", $form['caumag']);
 		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
-		If ($itemart['good_or_service'] == 0) {
+		If ($itemart['good_or_service'] == 0 or $itemart['good_or_service'] == 2) {
 			for ($m = 0; $m <= $form['nmov']; ++$m){		
 				$form['operat'][$m] = $causa['operat'];
 			}
@@ -381,6 +381,9 @@ if (!empty($_POST['artico'.$_POST['mov']])) {
 	 	If ($service == 0 && $form['operat'][$form['mov']]==0 && isset($_POST['artico'.$_POST['mov']])) {
 			$msg .= "36+"; 
 		}
+		If ($service == 2 && $form['operat'][$form['mov']]==0 && isset($_POST['artico'.$_POST['mov']])) {
+			$msg .= "36+"; 
+		}
 }	
 
 //Antonio Germani prendo la data di fine sospensione del campo di coltivazione selezionato e la metto in $fine_sosp 
@@ -408,7 +411,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 		
 // Antonio Germani calcolo giacenza di magazzino, la metto in $print_magval e, se è uno scarico, controllo sufficiente giacenza
 	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$m]);
-	If ($itemart['good_or_service'] ==0) { // se non è un servizio
+	If ($itemart['good_or_service'] ==0 or $itemart['good_or_service'] ==2) { // se non è un servizio
 
 		// controllo se sono stati inseriti articoli merci uguali in più righe /perché non è possibile altrimenti non funzionano i controlli sulle quantità per lotto/	
 			for ($mart = 0; $mart <= $form['nmov']; ++$mart){
@@ -434,9 +437,20 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 		}
 	}
 	
+	// Antonio Germani > controllo che non sia caricato un articolo composito
+		if ($itemart['good_or_service'] ==2 && $form["operat"][$m] == 1 ) {
+			$msg .="42+"; // il carico di articolo compisiti si può fare solo dal modulo produzioni
+		}
+	
 // Antonio Germani - se l'articolo ha lotti in uscita controllo se il lotto selezionato ha quantità sufficiente
 
 	If (($itemart['good_or_service'] ==0) && ($itemart['lot_or_serial']==1) && ($form['operat'][$m]==-1)) { // se non è un servizio e ha lotti 
+		$lotqty = $lm -> getLotQty($form['id_lotmag'][$m]);
+		if ($lotqty<$form['quanti'][$m]) {
+			$msg .= "38+";
+		}
+	}
+	If (($itemart['good_or_service'] ==2) && ($itemart['lot_or_serial']==1) && ($form['operat'][$m]==-1)) { // se non è un servizio e ha lotti 
 		$lotqty = $lm -> getLotQty($form['id_lotmag'][$m]);
 		if ($lotqty<$form['quanti'][$m]) {
 			$msg .= "38+";
@@ -518,7 +532,9 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 					<strong>Warning!</strong> ERRORE rame metallo <br> Rame metallo annuo già usato:  <?php echo gaz_format_quantity($rame_met_annuo,1,$admin_aziend['decimal_quantity']); ?>Kg - Rame metallo che si tenta di usare:  <?php echo gaz_format_quantity($rame_metallo* $form['quanti'][$m],1,$admin_aziend['decimal_quantity']); ?>Kg - Limite annuo di legge per questo campo:  <?php echo gaz_format_quantity((6 * $dim_campo),1,$admin_aziend['decimal_quantity']); ?>Kg
 					</div>
 					<?php
-					}	
+					}
+
+				
 					
 } 
 /*  fine controllo righe articoli    <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
@@ -1387,9 +1403,9 @@ if ($form['artico'][$form['mov']] == "") {
 	$descri=$itemart['descri'];//prendo descrizione articolo
 	$form['lot_or_serial'][$form['mov']]=$itemart['lot_or_serial'];//vedo se è un articolo con lotti
 	$form['prezzo'][$form['mov']]=$itemart['preacq'];// prendo il prezzo di acquisto
-	$service=intval($itemart['good_or_service']);// vedo se è articolo o servizio
+	$service=intval($itemart['good_or_service']);// carico $service per vedere se è articolo o servizio
 		
-	 	If ($service == 0) { //Antonio Germani se è un articolo con magazzino
+	 	If ($service == 0 or $service == 2) { //Antonio Germani se è un articolo con magazzino
 			
 			// Antonio Germani calcolo giacenza di magazzino e la metto in $print_magval
 			$mv = $gForm->getStockValue(false, $itemart['codice']);
@@ -1402,7 +1418,11 @@ if ($form['artico'][$form['mov']] == "") {
 				}	 
 			echo " ",substr($itemart['descri'], 0, 25)," ";
 			if ($dose>0) {echo "<br>Dose generica: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
-		}  
+		} 
+		if ($service ==2 && $res['operat']==1 ) {
+			echo "<br><br>Attenzione: ".$script_transl[42];
+			
+		}
 }
 ?>
 <input type="hidden" name="id_lotmag<?php echo $form['mov']; ?>" value="<?php echo $form['id_lotmag'][$form['mov']]; ?>" />
@@ -1414,13 +1434,17 @@ if ($form['artico'][$form['mov']] == "") {
 <td class="FacetFieldCaptionTD"><?php echo $script_transl[12]; ?></td>
 <td class="FacetDataTD" ><input type="text" value="<?php echo gaz_format_quantity($form['quanti'][$form['mov']],1,$admin_aziend['decimal_quantity']);?>" maxlength="10" size="10" name="quanti<?php echo $form['mov']; ?>" onChange="this.form.submit()"><?php echo "&nbsp;".$print_unimis;?>
 <?php 
-	if ($service == 0) { //Antonio Germani se è un articolo con magazzino
+	if ($service == 0 or $service == 2) { //Antonio Germani se è un articolo con magazzino
 		echo " ".$script_transl[22]." ".gaz_format_quantity($print_magval,1,$admin_aziend['decimal_quantity'])." ".$print_unimis."&nbsp;&nbsp;";
 // Antonio Germani se sottoscorta si attiva il pulsante di allerta e riordino. Al click si apre il popup con l'ordine compilato. >>> NB: al ritorno dall'ordine e dopo un submit, c'è un problema DA RISOLVERE: si apre una nuova finestra. <<< preferisco questo problema a quello che c'era prima, cioè si apriva la pagina dell'ordine annullando quanto già inserito nei movimenti.	
 		if ($print_magval<$scorta and $service ==0 and $scorta>0) {
 			echo "<button type=\"submit\" name=\"acquis\"  class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" onclick=\"myform.target='POPUPW'; POPUPW = window.open(
    'about:blank','POPUPW','width=800,height=400');\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
 		} 
+		if ($print_magval<$scorta and $service ==2 and $scorta>0) {
+			echo "<button type=\"submit\" name=\"acquis\"  class=\"btn btn-default btn-lg\" title=\"Sottoscorta, riordinare\" onclick=\"myform.target='POPUPW'; POPUPW = window.open(
+   'about:blank','POPUPW','width=800,height=400');\" style=\"background-color:red\"><span class=\"glyphicon glyphicon-alert\" aria-hidden=\"true\"></span></button>";
+		}
 ?>
 </td></tr>
 <?php		

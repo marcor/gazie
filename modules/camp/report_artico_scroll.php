@@ -81,11 +81,13 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 		<i class="glyphicon glyphicon-file" title="Scheda di sicurezza (ultima inserita)"></i>
 		</a>';
         }
-        if ($row["good_or_service"] > 0) {
+        if ($row["good_or_service"] == 1) {
             $gooser_i = 'wrench';
-        } else {
+        } else if ($row["good_or_service"] == 0) {
             $gooser_i = 'shopping-cart';
-        }
+        } else if ($row["good_or_service"] == 2) {
+            $gooser_i = 'tasks';
+        } 
        
         $com = '';
         if ($admin_aziend['conmag'] > 0 && $row["good_or_service"] <= 0) {
