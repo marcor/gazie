@@ -547,11 +547,14 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 			$msg .="24+";	
 			
 		}
- 	
-		
-		
+ 			
 //  §§§§§§§§§§§§§§§§ INIZIO salvataggio sui database §§§§§§§§§§§§§§§§§§§	
-       if (empty($msg)) { // nessun errore	
+       if (empty($msg)) { // nessun errore
+			if ($toDo=="update"){ // se è un update cancello eventule file di certificato lotto messo sulla cartella tmp
+						foreach (glob("../../modules/camp/tmp/*") as $fn) {
+							unlink($fn);
+						}
+			}
 	echo "expiry:",$form['expiry'][$form['mov']]," identifier:",$form['identifier'][$form['mov']]," idmov:",$form['id_mov']," lot or serial:",$form['lot_or_serial'][$form['mov']]," idlotmag:",$form['id_lotmag'][$form['mov']];if (isset($_POST['Update'])){echo " è update";} else {echo " NON è update";} 		$upd_mm = new magazzForm; 
             //formatto le date  
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
@@ -602,10 +605,7 @@ if ($form['operat'][$form['mov']]==1) { // se il movimento è in entrata -carico
 				$result = gaz_dbi_query($query);
 				$row = $result->fetch_assoc();
 				$form['id_lotmag'][$form['mov']] = $row['Auto_increment']-1;	
-			}
-		  
-			
-		 
+			}		 
 	} else {
 		if (($form['lot_or_serial'][$form['mov']] > 0) && (intval($form['id_mov']) == intval($idlotcontroll['id_movmag']))) {  // se l'articolo prevede un lotto e ho id_lotmag e se il movimento movmag è la madre del lotto devo modificare il lotto
 		//  è un UPDATE 
@@ -614,8 +614,7 @@ if ($form['operat'][$form['mov']]==1) { // se il movimento è in entrata -carico
 				$arraydt = explode("/", $form['expiry'][$form['mov']]); 
 				$form['expiry'][$form['mov']] = $arraydt[2]."-".$arraydt[1]."-".$arraydt[0];*/
 				gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'][$form['mov']] . "' , id_movmag = '" . $id_movmag . "' , identifier = '" . $form['identifier'][$form['mov']] . "' , expiry = '" . $form['expiry'][$form['mov']] . "' WHERE id = '" . $form['id_lotmag'][$form['mov']] . "'");
-			}
-		
+			}		
 		}
 	}
 // Antonio Germani - inizio salvo documento/certificato
@@ -633,9 +632,7 @@ if ($form['operat'][$form['mov']]==1) { // se il movimento è in entrata -carico
 // riprendo il salvataggio del movimento di magazzino in movmag			
 		$query="UPDATE " . $gTables['movmag'] . " SET type_mov = '" . 1 .  "', tipdoc = 'MAG' , campo_coltivazione = '"  .$form['campo_coltivazione']. "' , id_avversita = '"  .$form['id_avversita'][$form['mov']]. "' , id_colture = '"  .$form['id_colture']. "' , id_orderman = '"  .$form['id_orderman']. "' , id_lotmag = '" .$form['id_lotmag'][$form['mov']]. "' WHERE id_mov ='". $id_movmag."'"; 
 			gaz_dbi_query ($query) ;
-		
-		
-					
+						
 // Antonio Germani - aggiorno la tabella campi se c'è un campo inserito (cioè >0) e se l'operazione è uno scarico (cioè operat<0) e se la data di fine sospensione già presente nel campo è inferiore alla data di sospensione del prodotto appena usato (cioè $fine_sosp<$dt)
 
 //Antonio Germani per prima cosa determino il codice del movimento che eventualmente andrà nella tabella del campo di coltivazione
@@ -1419,9 +1416,10 @@ if ($form['artico'][$form['mov']] == "") {
 			echo " ",substr($itemart['descri'], 0, 25)," ";
 			if ($dose>0) {echo "<br>Dose generica: ",gaz_format_quantity($dose,1,$admin_aziend['decimal_quantity'])," ",$print_unimis,"/ha";}
 		} 
-		if ($service ==2 && $res['operat']==1 ) {
-			echo "<br><br>Attenzione: ".$script_transl[42];
-			
+		if ($service ==2 && $res['operat']==1 ) { // se è articolo composito avviso che non è possibile il carico
+			echo '<div><button class="btn btn-xs btn-danger" type="image" >';
+			echo $script_transl[42];
+			echo '</button></div>';
 		}
 }
 ?>
@@ -1571,8 +1569,16 @@ document.myform.submit();
 				  echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog' . $form['mov'] . '">'. $form['filename'][$form['mov']] . ' '.'<i class="glyphicon glyphicon-tag"></i>'
                     . '</button>';
 					if ($toDo=="update"){
+						foreach (glob("../../modules/camp/tmp/*") as $fn) {// prima cancello eventuali precedenti file temporanei
+							unlink($fn);
+						} 
+						if (strlen($form['filename'][$form['mov']])>0) {
+							$tmp_file = "../../data/files/".$admin_aziend['company_id']."/".$form['filename'][$form['mov']];
+							// sposto nella cartella di lettura il relativo file temporaneo            
+							copy($tmp_file, "../../modules/camp/tmp/".$form['filename'][$form['mov']]);
+						}
 					?>
-						<a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"../../data/files/". $admin_aziend['company_id'] . '/' .($form['filename'][$form['mov']])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
+						<a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"../../modules/camp/tmp/".($form['filename'][$form['mov']])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
 						<span class="glyphicon glyphicon-eye-open"></span></a></div>
 					<?php
 					} else {
