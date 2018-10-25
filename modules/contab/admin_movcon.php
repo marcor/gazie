@@ -579,8 +579,8 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         if ($_POST['registroiva'] > 0 && $ctrl_mov_iva == 0) {
             $msg .= "5+";
         }
-        if ($_POST['registroiva'] > 0 && $ctrl_mov_iva <> $ctrl_mov_con) {
-            print $ctrl_mov_iva . ' ' . $ctrl_mov_con . '<br><hr>';
+        if ($_POST['registroiva'] > 0 && !((abs($ctrl_mov_iva-$ctrl_mov_con)/$ctrl_mov_con) < 0.00001)) {
+			print $ctrl_mov_iva . ' ' . $ctrl_mov_con . '<br><hr>';
             $msg .= "6+";
         }
         if (empty($_POST['descrizion'])) {
