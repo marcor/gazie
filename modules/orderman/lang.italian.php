@@ -34,12 +34,18 @@ $strScript =
         'errors' => array(),
 		"ID ",
 		"Tipo di produzione",
-		"Descrizione",
+		"Descrizione produzione",
 		"Informazioni supplementari",
 		"Descrizione vuota",
 		"Data inizio produzione",
 		"Durata produzione in giorni",
-		"Luogo di produzione"
+		"Luogo di produzione",
+		"Ordine",
+		"Articolo da produrre",
+		"Operaio",
+		"Durata produzione in ore",
+		"Tipo di produzione vuoto",
+		"Lotto di produzione"
 		),
 	array("orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',

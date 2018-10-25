@@ -551,7 +551,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 //  §§§§§§§§§§§§§§§§ INIZIO salvataggio sui database §§§§§§§§§§§§§§§§§§§	
        if (empty($msg)) { // nessun errore
 			if ($toDo=="update"){ // se è un update cancello eventule file di certificato lotto messo sulla cartella tmp
-						foreach (glob("../../modules/camp/tmp/*") as $fn) {
+						foreach (glob("../../modules/camp/tmp/*") as $fn) {// prima cancello eventuali precedenti file temporanei
 							unlink($fn);
 						}
 			}
