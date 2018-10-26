@@ -1563,7 +1563,7 @@ $strScript = array("admin_client.php" =>
         'type_value' => array('F' => 'delle Fatture di Vendita', 'V' => 'dei Corrispettivi'),
         'proini' => 'Protocollo iniziale',
         'profin' => 'Protocollo finale',
-        'preview' => 'Le fatture elettroniche sotto indicate genereranno un pacchetto (file zip) con nome: ',
+        'preview' => 'Le fatture elettroniche sotto indicate genereranno un pacchetto con nome: ',
         'date_reg' => 'Data',
         'protoc' => 'Protocollo',
         'doc_type' => 'Tipo',

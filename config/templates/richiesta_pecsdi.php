@@ -95,7 +95,7 @@ Siamo pertanto a richiedere di controllare i Vostri dati sottoriportati aggiunge
 </p>
 <p></p>
 <p></p>
-<p><b>RAGIONE SOCIALE</b>: '.str_pad($this->cliente1.''.$this->cliente2,64,'_').'</p>
+<p><b>RAGIONE SOCIALE</b>: '.str_pad($this->cliente1.''.$this->cliente2,54,'_').'</p>
 <p><b>INDIRIZZO</b>: '.str_pad($this->cliente3,65,'_').'</p>
 <p><b>CITTÀ</b>: '.str_pad($this->cliente4,66,'_').'</p>
 <p><b>CODICE FISCALE - PARTITA IVA</b>: '.str_pad($this->cliente5,49,'_').'</p>
@@ -109,7 +109,7 @@ Siamo pertanto a richiedere di controllare i Vostri dati sottoriportati aggiunge
 Vi ringraziamo in anticipo per la collaborazione e con l’occasione porgiamo cordiali saluti.
 </p>';
     $this->SetFont('helvetica','',12);
-    $this->WriteHTMLCell(184,4,10,65,$testo, 0, 0, 0, true,'J');
+    $this->WriteHTMLCell(184,4,10,65,$testo, 0, 0, 0, true, 'J');
     }
     function pageFooter()
     {

@@ -243,6 +243,8 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     }
     $form['year_ini'] = substr($extreme['ini']['date'], 0, 4);
     $form['year_fin'] = substr($extreme['fin']['date'], 0, 4);
+	// Stabilisco il nome del file tramite timestamp
+	$form['filename']='IT'.$admin_aziend['codfis'].'_'.date("YmdHis").'.zip';	
     $form['hidden_req'] = '';
 } else {    // accessi successivi
     $form['type'] = substr($_POST['type'], 0, 1);
@@ -254,6 +256,7 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     $form['profin'] = intval($_POST['profin']);
     $form['year_ini'] = intval($_POST['year_ini']);
     $form['year_fin'] = intval($_POST['year_fin']);
+    $form['filename'] = substr($_POST['filename'],0,37);
     $form['hidden_req'] = htmlentities($_POST['hidden_req']);
     if (!checkdate($form['this_date_M'], $form['this_date_D'], $form['this_date_Y']))
         $msg .= "0+";
@@ -278,201 +281,11 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
         $rs = getFAEunpacked($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
         if (count($rs > 0)) {
-            require("lang." . $admin_aziend['lang'] . ".php");
-            $script_transl = $strScript['accounting_documents.php'];
             foreach ($rs as $k => $v) {
-                switch ($v['tes']['tipdoc']) {
-                    case "FAD":case "FAI":case "FAP":case "FND":
-                        $reg = 2;
-                        $op = 1;
-                        $da_c = 'A';
-                        $da_p = 'D';
-                        $kac = $admin_aziend['ivaven'];
-                        break;
-                    case "FNC":$reg = 2;
-                        $op = 2;
-                        $da_c = 'D';
-                        $da_p = 'A';
-                        $kac = $admin_aziend['ivaven'];
-                        break;
-                    case "VCO":$reg = 4;
-                        $op = 1;
-                        $da_c = 'A';
-                        $da_p = 'D';
-                        $kac = $admin_aziend['ivacor'];
-                        break;
-                    case "VRI":$reg = 4;
-                        $op = 1;
-                        $da_c = 'A';
-                        $da_p = 'D';
-                        $kac = $admin_aziend['ivacor'];
-                        break;
-                    case "AFA":$reg = 6;
-                        $op = 1;
-                        $da_c = 'D';
-                        $da_p = 'A';
-                        $kac = $admin_aziend['ivaacq'];
-                        break;
-                    case 'AFC':$reg = 6;
-                        $op = 2;
-                        $da_c = 'A';
-                        $da_p = 'D';
-                        $kac = $admin_aziend['ivaacq'];
-                        break;
-                    case 'AFD':$reg = 6;
-                        $op = 1;
-                        $da_c = 'D';
-                        $da_p = 'A';
-                        $kac = $admin_aziend['ivaacq'];
-                        break;
-                    default:$reg = 0;
-                        $op = 0;
-                        break;
-                }
-                $tot = computeTot($v['vat']);
-                // fine calcolo totali
-                // calcolo le rate al fine di inserire le partite aperte  
-                $rate = CalcolaScadenze($tot['tot'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
-                // rateizzo anche l'iva split payment  
-                $rateisp = CalcolaScadenze($v['isp'], substr($v['tes']['datfat'], 8, 2), substr($v['tes']['datfat'], 5, 2), substr($v['tes']['datfat'], 0, 4), $v['tes']['tipdec'], $v['tes']['giodec'], $v['tes']['numrat'], $v['tes']['tiprat'], $v['tes']['mesesc'], $v['tes']['giosuc']);
-                // inserisco la testata
-                $newValue = array('caucon' => $v['tes']['tipdoc'],
-                    'descri' => $script_transl['doc_type_value'][$v['tes']['tipdoc']],
-                    'id_doc' => $v['tes']['id_tes'],
-                    'datreg' => $v['tes']['datfat'],
-                    'seziva' => $v['tes']['seziva'],
-                    'protoc' => $v['tes']['protoc'],
-                    'numdoc' => $v['tes']['numfat'],
-                    'datdoc' => $v['tes']['datfat'],
-                    'clfoco' => $v['tes']['clfoco'],
-                    'regiva' => $reg,
-                    'operat' => $op
-                );
-                tesmovInsert($newValue);
-                $tes_id = gaz_dbi_last_id();
-                //inserisco i righi iva nel db
-                foreach ($v['vat'] as $k => $vv) {
-                    $vat = gaz_dbi_get_row($gTables['aliiva'], 'codice', $k);
-                    //aggiungo i valori mancanti all'array
-                    $vv['tipiva'] = $vat['tipiva'];
-                    $vv['codiva'] = $k;
-                    $vv['id_tes'] = $tes_id;
-                    $vv['impost'] = round($vv['impcast'] * $vv['periva']) / 100;
-                    rigmoiInsert($vv);
-                }
-                //inserisco i righi contabili nel db
-                if ($v['tes']['tipdoc'] == 'VCO') {  // se è uno scontrino cassa anzichè cliente
-                    $v['tes']['clfoco'] = $admin_aziend['cassa_'];
-                }
-                rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
-                // memorizzo l'id del rigo cliente  
-                $paymov_id = gaz_dbi_last_id();
-                foreach ($v['acc'] as $acc_k => $acc_v) {
-                    if ($acc_v['import'] != 0) {
-                        if (isset($acc_v['asset'])) { // qui eseguo tutte le registrazioni relative alla vendita del cespite con relativa rilevazione della eventuale plus/minusvalenza 
-                            $asset = gaz_dbi_get_row($gTables['assets'], 'acc_fixed_assets', $acc_k . "' AND type_mov = '1"); // riprendo l'asset
-                            // calcolo il costo storico
-                            $rs = gaz_dbi_dyn_query($gTables['rigmoc'] . ".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = " . $acc_k);
-                            $saldo_costo_storico = 0;
-                            while ($r = gaz_dbi_fetch_array($rs)) {
-                                $saldo_costo_storico += $r['dare'];
-                                $saldo_costo_storico -= $r['avere'];
-                            }
-                            // calcolo il fondo ammortamento
-                            $rs = gaz_dbi_dyn_query($gTables['rigmoc'] . ".*, import*(darave='D') AS dare,import*(darave='A') AS avere", $gTables['rigmoc'], " codcon = " . $asset['acc_found_assets']);
-                            $saldo_fondo_ammortamento = 0;
-                            while ($r = gaz_dbi_fetch_array($rs)) {
-                                $saldo_fondo_ammortamento += $r['dare'];
-                                $saldo_fondo_ammortamento -= $r['avere'];
-                            }
-                            // calcolo il residuo che dovrebbe essere in dare (+)
-                            $rest = $saldo_costo_storico + $saldo_fondo_ammortamento;
-                            $plus_minus = round($acc_v['import'] - $rest, 2);
-                            // intanto storno il costo storico ed il fondo ammortamento
-                            rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $acc_k, 'import' => $saldo_costo_storico));
-                            rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $asset['acc_found_assets'], 'import' => abs($saldo_fondo_ammortamento)));
-                            // quindi si possono verificare due condizioni: vendita ad un prezzo inferiore al residuo (minusvalenza) oppure  superiore (plusvalenza)
-                            if ($plus_minus >= 0.01) { // c'è una plusvalenza
-                                rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'A', 'codcon' => $admin_aziend['capital_gains_account'], 'import' => $plus_minus));
-                            } elseif ($plus_minus <= -0.01) { // è una minusvalenza
-                                rigmocInsert(array('id_tes' => $tes_id, 'darave' => 'D', 'codcon' => $admin_aziend['capital_loss_account'], 'import' => abs($plus_minus)));
-                            } else { // è pari non plusvalenza ne minusvalenza
-                            }
-                            // infine inserisco il rigo sulla tabella degli assets
-                            unset($asset['id']);
-                            $asset['id_movcon'] = $tes_id;
-                            $asset['type_mov'] = 90;
-                            $asset['descri'] = 'ALIENAZIONE DEL BENE';
-                            $asset['pagame'] = $v['tes']['pagame'];
-                            $asset['a_value'] = $acc_v['import'];
-                            gaz_dbi_table_insert('assets', $asset);
-                        } else {
-                            rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $acc_k, 'import' => $acc_v['import']));
-                        }
-                    }
-                }
-                if ($tot['vat'] > 0) {
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $kac, 'import' => $tot['vat']));
-                }
-                if ($v['rit'] > 0) {  // se ho una ritenuta d'acconto
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['c_ritenute'], 'import' => $v['rit']));
-                }
-                if ($v['tes']['incaut'] > 100000000) {  // se il pagamento prevede l'incasso automatico 
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => ($tot['tot'] - $v['rit'])));
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $v['tes']['incaut'], 'import' => ($tot['tot'] - $v['rit'])));
-                } else { // altrimenti inserisco le partite aperte
-                    foreach ($rate['import'] as $k_rate => $v_rate) {
-                        // preparo l'array da inserire sui movimenti delle partite aperte
-                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
-                            'id_rigmoc_doc' => $paymov_id,
-                            'amount' => $v_rate,
-                            'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
-                        if ($op == 2) { /* le note credito sono assimilabili ad un pagamento, 
-                          ovvero ad una chiusura di partita
-                          pertanto modifico l'array prima di passarlo */
-                            unset($paymov_value['id_rigmoc_doc']);
-                            $paymov_value['id_rigmoc_pay'] = $paymov_id;
-                        }
-                        paymovInsert($paymov_value);
-                    }
-                }
-                // alla fine modifico le testate documenti introducendo il numero del movimento contabile
-                gaz_dbi_put_query($gTables['tesdoc'], "tipdoc = '" . $v['tes']['tipdoc'] . "' AND datfat = '" . $v['tes']['datfat'] . "' AND seziva = " . $v['tes']['seziva'] . " AND protoc = " . $v['tes']['protoc'], "id_con", $tes_id);
-                // movimenti di storno in caso di split payment 
-                if ($v['isp'] > 0) {
-                    // inserisco la testata del movimento di storno Split payment
-                    $newValue = array('caucon' => 'ISP',
-                        'descri' => 'STORNO IVA SPLIT PAYMENT',
-                        'id_doc' => $v['tes']['id_tes'],
-                        'datreg' => $v['tes']['datfat'],
-                        'seziva' => $v['tes']['seziva'],
-                        'protoc' => $v['tes']['protoc'],
-                        'numdoc' => $v['tes']['numfat'],
-                        'datdoc' => $v['tes']['datfat'],
-                        'clfoco' => $v['tes']['clfoco'],
-                        'regiva' => '',
-                        'operat' => ''
-                    );
-                    tesmovInsert($newValue);
-                    $tes_id = gaz_dbi_last_id();
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $kac, 'import' => $v['isp']));
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_p, 'codcon' => $admin_aziend['split_payment'], 'import' => $v['isp']));
-                    rigmocInsert(array('id_tes' => $tes_id, 'darave' => $da_c, 'codcon' => $v['tes']['clfoco'], 'import' => $v['isp']));
-                    // memorizzo l'id del rigo cliente  
-                    $paymov_id = gaz_dbi_last_id();
-                    // chiudo le partite aperte dell'iva split payment
-                    foreach ($rateisp['import'] as $k_rate => $v_rate) {
-                        // preparo l'array da inserire sui movimenti delle partite aperte
-                        $paymov_value = array('id_tesdoc_ref' => substr($v['tes']['datfat'], 0, 4) . $reg . $v['tes']['seziva'] . str_pad($v['tes']['protoc'], 9, 0, STR_PAD_LEFT),
-                            'id_rigmoc_pay' => $paymov_id,
-                            'amount' => $v_rate,
-                            'expiry' => $rate['anno'][$k_rate] . '-' . $rate['mese'][$k_rate] . '-' . $rate['giorno'][$k_rate]);
-                        paymovInsert($paymov_value);
-                    }
-                }
+				//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
+				gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$form['filename']."' WHERE seziva = " .$v['tes']['seziva']. " AND protoc = " .$v['tes']['protoc']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND tipdoc = '" .$v['tes']['tipdoc']. "';");
             }
-            header("Location: report_docven.php");
+            //header("Location: fae_pack_report.php");
             exit;
         } else {
             $msg .= "1+";
@@ -505,6 +318,7 @@ function setDate(name) {
 
 echo "<form method=\"POST\" name=\"accounting\">\n";
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
+echo "<input type=\"hidden\" value=\"" . $form['filename'] . "\" name=\"filename\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['proini'] . "\" name=\"proini\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['year_ini'] . "\" name=\"year_ini\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['year_fin'] . "\" name=\"year_fin\" />\n";
@@ -536,8 +350,8 @@ echo "</tr>\n";
 echo "\t<tr class=\"FacetDataTD\">\n";
 echo "\t<td class=\"FacetFieldCaptionTD\"><input type=\"submit\" name=\"return\" value=\"" .
  $script_transl['return'] . "\"></td>\n";
-echo '<td align="right"><input type="submit" name="preview" value="';
-echo $script_transl['view'];
+echo '<td align="right"><input type="submit" class="warning" name="preview" value="';
+echo $script_transl['view'].' del file: '. $form['filename'];
 echo '">';
 echo "\t </td>\n";
 echo "\t </tr>\n";
@@ -546,7 +360,7 @@ echo "</table>\n";
 //mostro l'anteprima
 if (isset($_POST['preview'])) {
     $rs = getFAEunpacked($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
-    echo "<div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
+    echo "<div align=\"center\"><b>" . $script_transl['preview'] . $form['filename']. "</b></div>";
     echo "<div class=\"box-primary table-responsive\">";
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
     echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
@@ -565,7 +379,7 @@ if (isset($_POST['preview'])) {
 		} else {
 			if (strlen($v['tes']['pec_email'])<5){	// non ho nemmeno la pec
 				$cl_sdi='bg-danger';
-				$v['tes']['pec_email']= '*** QUESTA '.$script_transl['doc_type_value'][$v['tes']['tipdoc']] .' NON VERRÀ RECAPITATA AL DESTINATARIO ***';
+				$v['tes']['pec_email']= '<a href="stampa_richiesta_pecsdi.php?codice='.$v['tes']['clfoco'].'" target="_blank">Questa '.$script_transl['doc_type_value'][$v['tes']['tipdoc']] .' non potrà essere recapitata al cliente, chiedi la PEC o il codice SDI</a>';
 			} else{
 				$v['tes']['pec_email']=$script_transl['pec'].$v['tes']['pec_email'];
 			}
