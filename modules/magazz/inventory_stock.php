@@ -370,7 +370,7 @@ if (isset($form['a'])) {
 						<td ' . $class . ' align="right">
 							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">
 						</td>
-						<td ' . $class . ' align="center" align="right">' . gaz_format_quantity($v['v_g'], 0, $admin_aziend['decimal_price']) . '</td>
+						<td ' . $class . ' align="right" align="right">' . gaz_format_number($v['v_g']) . '</td>
 					</tr>';
         $ctrl_cm = $v['i_g'];
         $elem_n++;
@@ -382,7 +382,7 @@ if (isset($form['a'])) {
 					<td align="center" colspan="6" class="FacetFieldCaptionTD">
 						<input type="submit" name="preview" value="' . $script_transl['view'] . '!" />
 					</td>
-					<td align="center" class="FacetFieldCaptionTD">Tot. ' . gaz_format_number($tot_val_giac) . '</td>
+					<td align="right" class="bg-primary">Totale ' . gaz_format_number($tot_val_giac) . '</td>
 				</tr>';
     if (isset($_POST['preview']) && empty($msg)) { // e' possibile confermare, non i sono errori formali
         echo '	</table>
@@ -415,7 +415,7 @@ if (isset($form['a'])) {
 							<td class="FacetDataTD"></td>
 							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
 							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_quantity($v['v_r'] * $mq, 0, $admin_aziend['decimal_price']) . '</td>
+							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
 						</tr>';
                 } elseif ($v['g_a'] < $v['g_r']) { // se maggiore carico
                     // devo fare prima uno storno per caricare
@@ -428,7 +428,7 @@ if (isset($form['a'])) {
 							<td class="FacetDataTD" align="right">' . gaz_format_quantity($mq, 0, $admin_aziend['decimal_quantity']) . '</td>
 							<td class="FacetDataTD"></td>
 							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_quantity($v['v_r'] * $mq, 0, $admin_aziend['decimal_price']) . '</td>
+							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $mq) . '</td>
 						</tr>';
                 }
                 echo '		<tr>
@@ -439,7 +439,7 @@ if (isset($form['a'])) {
 							<td class="FacetDataTD" align="right">' . $v['g_r'] . '</td>
 							<td class="FacetDataTD"></td>
 							<td class="FacetDataTD" align="right">' . $v['v_r'] . '</td>
-							<td class="FacetDataTD" align="right">' . gaz_format_quantity($v['v_r'] * $v['g_r'], 0, $admin_aziend['decimal_price']) . '</td>
+							<td class="FacetDataTD" align="right">' . gaz_format_number($v['v_r'] * $v['g_r']) . '</td>
 						</tr>';
             }
         }
