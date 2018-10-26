@@ -29,7 +29,8 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
     gaz_set_time_limit(0);
 }
 $msg = '';
-
+require("../../library/include/electronic_invoice.inc.php");
+$XMLdata = new invoiceXMLvars();
 function getExtremeDocs($type = '_', $vat_section = 1, $date = false) {
     global $gTables;
     $type = substr($type, 0, 1);
@@ -76,7 +77,7 @@ function getFAEunpacked($type = '___', $vat_section = 1, $date = false, $protoc 
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
                         customer.codice,
                         customer.speban AS addebitospese,
-                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta', $from, $where, $orderby);
+                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, anagraf.fe_cod_univoco, anagraf.pec_email', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
 
@@ -548,27 +549,47 @@ if (isset($_POST['preview'])) {
     echo "<div align=\"center\"><b>" . $script_transl['preview'] . "</b></div>";
     echo "<div class=\"box-primary table-responsive\">";
     echo "<table class=\"Tlarge table table-striped table-bordered table-condensed\">";
-    echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
-         <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>
+    echo "<th class=\"FacetFieldCaptionTD\">" . $script_transl['protoc'] . "</th>
+		 <th class=\"FacetFieldCaptionTD\">" . $script_transl['doc_type'] . "</th>
          <th class=\"FacetFieldCaptionTD\">N.</th>
+         <th class=\"FacetFieldCaptionTD\">" . $script_transl['date_reg'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['customer'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['taxable'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['vat'] . "</th>
          <th class=\"FacetFieldCaptionTD\">" . $script_transl['tot'] . "</th>\n";
     foreach ($rs as $k => $v) {
+		// se ho il codice univoco non utilizzo la pec
+		$cl_sdi='bg-primary';
+		if (strlen($v['tes']['fe_cod_univoco'])>5){
+			$v['tes']['pec_email']=$script_transl['sdi'].$v['tes']['fe_cod_univoco'];
+		} else {
+			if (strlen($v['tes']['pec_email'])<5){	// non ho nemmeno la pec
+				$cl_sdi='bg-danger';
+				$v['tes']['pec_email']= '*** QUESTA '.$script_transl['doc_type_value'][$v['tes']['tipdoc']] .' NON VERRÀ RECAPITATA AL DESTINATARIO ***';
+			} else{
+				$v['tes']['pec_email']=$script_transl['pec'].$v['tes']['pec_email'];
+			}
+		}
         $tot = computeTot($v['vat']);
         //fine calcolo totali
-        echo "<tr class=\"FacetDataTD\">
-               <td align=\"center\">" . gaz_format_date($v['tes']['datfat']) . "</td>
-               <td>" . $v['tes']['protoc'] . "</td>
-               <td>" . $v['tes']['tipdoc'] . "</td>
-               <td>" . $v['tes']['numfat'] . "</td>
-               <td>" . $v['tes']['ragsoc'] . "</td>
-               <td align=\"right\">" . gaz_format_number($tot['taxable']) . "</td>
-               <td align=\"right\">" . gaz_format_number($tot['vat']) . "</td>
-               <td align=\"right\">" . gaz_format_number($tot['tot']) . "</td>
+		$enc_data['sezione']=$v['tes']['seziva'];
+		$enc_data['anno']=substr($v['tes']['datfat'],0,4);
+ 		$enc_data['protocollo']=$v['tes']['protoc'];
+ 		$enc_data['intermediary']=false;
+        echo '<tr class="FacetDataTD">
+               <td>' . $v['tes']['protoc'] .'</td>
+               <td>' . $script_transl['doc_type_value'][$v['tes']['tipdoc']] . '</td>
+               <td>' . $v['tes']['numfat'] .'/'. $v['tes']['seziva'] .'</td>
+               <td align="center">' . gaz_format_date($v['tes']['datfat']) . '</td>
+               <td>' . $v['tes']['ragsoc'] . '</td>
+               <td align="right">' . gaz_format_number($tot['taxable']) . '</td>
+               <td align="right">' . gaz_format_number($tot['vat']) . '</td>
+               <td align="right">' . gaz_format_number($tot['tot']) . "</td>
                </tr>\n";
+        echo '<tr class="FacetDataTD">
+               <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.$XMLdata->encodeSendingNumber($enc_data,36).'.xml che dovrà essere firmata ed inviata tramite SdI </td>
+               <td colspan="3" class="'.$cl_sdi.'">'.$v['tes']['pec_email'] . '</td>
+               </tr>';
     }
     if (count($rs) > 0) {
         echo "\t<tr class=\"FacetFieldCaptionTD\">\n";
