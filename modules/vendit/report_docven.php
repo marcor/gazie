@@ -417,7 +417,11 @@ switch ($admin_aziend['fatimm']) {
 
                     // Colonna "Fattura elettronica"
                     if (substr($r["tipdoc"], 0, 1) == 'F') {
-                        if (strlen($anagra["fe_cod_univoco"]) != 6 and ( strlen($anagra["fe_cod_univoco"]) == "0" and $anagra["pec_email"] == '')) { // se il cliente non è un ufficio della PA tolgo il link
+                        if(strlen($r["fattura_elettronica_zip_package"])>10){ // se è contenuto in un pacchetto di file permetterò sia il download del singolo XML che del pacchetto in cui è contenuto
+                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\">xml</a>";
+                            echo "</td>";
+							
+						} elseif (strlen($anagra["fe_cod_univoco"]) != 6 and ( strlen($anagra["fe_cod_univoco"]) == "0" and $anagra["pec_email"] == '')) { // se il cliente non ha codice univoco o pec tolgo il link
                             $modulo_fae = '';
                             echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-xml disabled\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\"><i class=\"glyphicon glyphicon-tag\"></i></button>";
                             echo "</td>";

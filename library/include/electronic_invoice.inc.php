@@ -409,7 +409,7 @@ class invoiceXMLvars {
 
 }
 
-function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false) {
+function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false, $res_to_string = false) {
     $XMLvars = new invoiceXMLvars();
     $domDoc = new DOMDocument;
 	$domDoc->preserveWhiteSpace = false;
@@ -992,9 +992,13 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false)
             'flux_descri' => '');
         fae_fluxInsert($valori);
     }
-    header("Content-type: text/plain");
-    header("Content-Disposition: attachment; filename=" . $nome_file . ".xml");
-    print $domDoc->saveXML();
+	if ($res_to_string){
+		return $domDoc->saveXML();
+	} else {
+		header("Content-type: text/plain");
+		header("Content-Disposition: attachment; filename=" . $nome_file . ".xml");
+		print $domDoc->saveXML();
+	}
 }
 
 ?>

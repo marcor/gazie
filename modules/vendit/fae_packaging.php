@@ -281,12 +281,29 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
     if (isset($_POST['submit']) && empty($msg)) {   //confermo la contabilizzazione
         $rs = getFAEunpacked($form['type'], $form['vat_section'], strftime("%Y%m%d", $uts_this_date), $form['profin']);
         if (count($rs > 0)) {
-            foreach ($rs as $k => $v) {
-				//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
-				gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$form['filename']."' WHERE seziva = " .$v['tes']['seziva']. " AND protoc = " .$v['tes']['protoc']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND tipdoc = '" .$v['tes']['tipdoc']. "';");
-            }
-            //header("Location: fae_pack_report.php");
-            exit;
+			$zip = new ZipArchive;
+			$res = $zip->open('../../data/files/'.$admin_aziend['codice'].'/'.$form['filename'], ZipArchive::CREATE);
+			if ($res === TRUE) { 
+				// ho creato l'archivio e adesso lo riempio con i file xml delle singole fatture 
+				foreach ($rs as $k => $v) {
+					//vado a modificare le testate valorizzando con il nome del file zip (pacchetto) in cui desidero siano contenuti i file xml delle fatture selezionate
+					gaz_dbi_query("UPDATE " . $gTables['tesdoc'] . " SET fattura_elettronica_zip_package = '".$form['filename']."' WHERE seziva = " .$v['tes']['seziva']. " AND protoc = " .$v['tes']['protoc']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND tipdoc = '" .$v['tes']['tipdoc']. "';");
+					//recupero i dati
+					$testate = gaz_dbi_dyn_query("*", $gTables['tesdoc']," tipdoc LIKE '" .$v['tes']['tipdoc']. "' AND seziva = " .$v['tes']['seziva']. " AND YEAR(datfat)=".substr($v['tes']['datfat'],0,4)." AND protoc = " .$v['tes']['protoc'],'datemi ASC, numdoc ASC, id_tes ASC');
+							$enc_data['sezione']=$v['tes']['seziva'];
+					$enc_data['anno']=substr($v['tes']['datfat'],0,4);
+					$enc_data['protocollo']=$v['tes']['protoc'];
+					$enc_data['intermediary']=false;
+					$file_content=create_XML_invoice($testate,$gTables,'rigdoc',false,true);
+					$zip->addFromString('IT'.$admin_aziend['codfis'].'_'.$XMLdata->encodeSendingNumber($enc_data,36).'.xml', $file_content);
+				}
+				$zip->close();
+				echo 'ok';
+			} else {
+				echo 'failed';
+			}
+			//header("Location: fae_pack_report.php");
+			exit;
         } else {
             $msg .= "1+";
         }
