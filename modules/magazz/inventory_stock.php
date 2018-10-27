@@ -92,6 +92,8 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
         if ($form['catmer'] == 100) {
             $where = 1;
         }
+        // visualizzo solo gli articoli escludendo servizi e composizioni
+        $where .= " and good_or_service = 0"; 
         $ctrl_cm = 0;
         $result = gaz_dbi_dyn_query($gTables['artico'] . '.*, ' . $gTables['catmer'] . '.descri AS descat,' . $gTables['catmer'] . '.annota AS anncat', $gTables['artico'] . ' LEFT JOIN ' . $gTables['catmer'] . ' ON catmer = ' . $gTables['catmer'] . '.codice', $where, 'catmer ASC, ' . $gTables['artico'] . '.codice ASC');
         if ($result) {
