@@ -47,7 +47,6 @@ if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Retur
     exit;
 }
 
-
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Germani se non e' il primo accesso
 	$form=gaz_dbi_parse_post('orderman');
 	$form['description'] = $_POST['description'];
@@ -66,8 +65,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Ger
 	$form['filename']=$_POST['filename'];
 	$form['identifier']=$_POST['identifier'];
 	$form['expiry']=$_POST['expiry'];
-
- 
+	$form['lot_or_serial']=$_POST['lot_or_serial'];
+	$form['datreg']=$_POST['datreg'];
+	$form['quanti']=$_POST['quanti'];
 
 // Antonio Germani > questo serve per aggiungere o togliere un operaio
 if (isset($_POST['add_staff'])){ 
@@ -85,7 +85,7 @@ if (isset($_POST['Del_mov'])) {
 	}
 }
 
-    // Se viene inviata la richiesta di conferma totale ...
+    // Se viene inviata la richiesta di conferma totale ...CONTROLLO ERRORI
 	$form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
     if (isset($_POST['ins'])) {
        
@@ -98,36 +98,122 @@ if (isset($_POST['Del_mov'])) {
              $msg .= "12+";
        } 
 	   
-       if ($msg == "") {// nessun errore
- // Antonio Germani  qui si scrive il database       
-          if ($toDo == 'update') { // Antonio Germani e' una modifica quindi aggiorno orderman e tesbro
-            $query="UPDATE ".$gTables['orderman']." SET ".'order_type'." = '".$form['order_type']."', ".'description'." = '".$form['description']."', ".'campo_impianto'." = '".$form["campo_impianto"]."', ".'add_info'." = '".$form['add_info']."' WHERE id = '".$form['id']."'";
-		 	   $res = gaz_dbi_query($query);
-			$query="UPDATE ".$gTables['tesbro']." SET ".'datemi'." = '".$form['datemi']."', ".'day_of_validity'." = '".$form['day_of_validity']."' WHERE id_tes = '".$form['id_tesbro']."'";
-			  $res = gaz_dbi_query($query);    
-          } else { // e' un'inserimento
-		  gaz_dbi_table_insert('tesbro',$form);
-		  $query="SHOW TABLE STATUS LIKE '".$gTables['tesbro']."'"; // vedo dove lo ha scritto
-				$result = gaz_dbi_query($query);
-				$row = $result->fetch_assoc();
-				$id_movmag = $row['Auto_increment'];
-				// siccome ha già registrato la produzione devo togliere 1
-				$form['id_tesbro']=$id_movmag-1; //Antonio Germani connetto tesbro a orderman
-            gaz_dbi_table_insert('orderman',$form);
-			
-			
-          }
-		  if($popup==1){
-		  echo "<script> 
-        window.opener.location.reload(true);
-        window.close();</script>";
+		if ($msg == "") {// nessun errore
+	   
+ // Antonio Germani >>>> inizio SCRITTURA dei database    §§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§§
+ 
+			if ($form['order_type']=="IND") { // >>> !!!! DA FARE !!!! <<< distingure se IND o AGR. Se AGR deve interagire con movmag di camp!!!!!
+			}
+			// ricarico i dati dell'articolo che non sono nel form; li avrò in array $resartico
+			$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 		
-		  }else {
-          header("Location: ".$_POST['ritorno']);}
-          exit;
-       }
-  }
-
+			if ($toDo=="update"){ // se è un update cancello eventuali precedenti file temporanei nella cartella tmp
+						foreach (glob("../../modules/orderman/tmp/*") as $fn) { 
+							unlink($fn);
+						}
+			} else { // se è insert
+				if ($form['order_type']=="IND") { // se produzione industriale 
+					$query="SHOW TABLE STATUS LIKE '".$gTables['movmag']."'"; unset($row); 
+						$result = gaz_dbi_query($query);
+						$row = $result->fetch_assoc();
+						$id_movmag = $row['Auto_increment']; // trovo l'ID che avrà il movimento di magazzino MOVMAG
+				}
+					$query="SHOW TABLE STATUS LIKE '".$gTables['orderman']."'"; unset($row); 
+						$result = gaz_dbi_query($query);
+						$row = $result->fetch_assoc();
+						$id_orderman = $row['Auto_increment']; // trovo l'ID che avrà il movimento di produzione ORDERMAN
+					$query="SHOW TABLE STATUS LIKE '".$gTables['lotmag']."'"; unset($row); 
+						$result = gaz_dbi_query($query);
+						$row = $result->fetch_assoc();
+						$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il movimento di magazzino
+					$query="SHOW TABLE STATUS LIKE '".$gTables['tesbro']."'"; unset($row); 
+						$result = gaz_dbi_query($query);
+						$row = $result->fetch_assoc();
+						$id_tesbro = $row['Auto_increment']; // trovo l'ID che avrà TESBRO testata documento
+					$query="SHOW TABLE STATUS LIKE '".$gTables['rigbro']."'"; unset($row); 
+						$result = gaz_dbi_query($query);
+						$row = $result->fetch_assoc();
+						$id_rigbro = $row['Auto_increment']; // trovo l'ID che avrà RIGBRO rigo documento	
+			}	
+				
+// scrittura movimento di magazzino MOVMAG
+			if ($toDo=="update"){ // se è update, aggiorno in ogni caso
+				$query="UPDATE " . $gTables['movmag'] . " SET tipdoc = 'MAG' , campo_coltivazione = '"  .$form['campo_impianto']. "' , id_avversita = '"."' , id_colture = '"."' , id_orderman = '"  .$id_orderman. "' , id_lotmag = '" .$id_lotmag. "' WHERE id_mov ='". $id_movmag."'"; 
+				gaz_dbi_query ($query) ;
+			}
+			if ($toDo=="insert" && $form['order_type']=="IND"){ // se è insert, creo il movimento di magazzino solo se produzione industriale
+				$query="INSERT INTO " . $gTables['movmag'] . "(type_mov,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '".$form['datreg']."', 'MAG', 'Produzione', '".$form['datemi']."', '".$form['artico']."', '".$form['campo_impianto']."', '".$form['quanti']."', '".$id_orderman."', '".$id_lotmag."', '".$admin_aziend['adminid']."')"; 
+				gaz_dbi_query ($query) ;
+			}
+		 
+//Antonio Germani - > inizio salvo LOTTO, se c'è lotto e se il prodotto li richiede
+		
+		if ($form['lot_or_serial']> 0 ) { // se l'articolo prevede un lotto 
+		// ripulisco il numero lotto inserito da caratteri dannosi
+			$form['identifier'] = (empty($form['identifier'])) ? '' : filter_var($form['identifier'], FILTER_SANITIZE_STRING);
+			if (strlen ($form['identifier']) ==0) { // se non c'è il lotto lo inserisco con data e ora in automatico
+			$form['identifier']=date("Ymd Hms");
+			}
+			if (strlen ($form['expiry']) ==0) { // se non c'è la scadenza la inserisco a zero in automatico
+			$form['expiry']="0000-00-00 00:00:00";
+			} 
+		 // è un nuovo INSERT
+			if (strlen ($form['identifier']) >0 && $toDo=="insert") {
+			
+				gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('". $form[	'artico'] . "','" . $id_movmag . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
+					
+			}		 
+		 //  è un UPDATE 
+		 
+			if (strlen ($form['identifier']) >0  && $toDo=="update"){	die;//da controllare il valore di id_lotmag			
+				gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , id_movmag = '" . $id_movmag . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
+			}		
+		}
+		
+// Antonio Germani - inizio salvo documento/CERTIFICATO lotto
+		if ($toDo=="update") { // imposto $form id_lotmag
+			$form['id_lotmag'];
+		} else {
+			$form['id_lotmag']=$id_lotmag;
+		}
+		if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
+			if (!empty($form['filename'])) { // e se ha un nome impostato nel form
+				$tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $form['filename'];
+				// sposto il file nella cartella definitiva, rinominandolo e cancellandolo dalla temporanea    
+				$fd = pathinfo($form['filename']);
+				rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/lotmag_" . $form['id_lotmag'] . '.' . $fd['extension']);
+			}
+		} 
+// <<< fine salvo lotti	
+			
+// Scrittura produzione ORDERMAN e, se non già creati da un ordine, scrittura di TESBRO E RIGBRO
+			if ($toDo == 'update') { // DA CONTROLLARE ??????????? Antonio Germani e' una modifica quindi aggiorno orderman e tesbro
+				$query="UPDATE ".$gTables['orderman']." SET ".'order_type'." = '".$form['order_type']."', ".'description'." = '".$form['description']."', ".'campo_impianto'." = '".$form["campo_impianto"]."', ".'add_info'." = '".$form['add_info']."' WHERE id = '".$form['id']."'";
+		 	   $res = gaz_dbi_query($query);
+				$query="UPDATE ".$gTables['tesbro']." SET ".'datemi'." = '".$form['datemi']."', ".'day_of_validity'." = '".$form['day_of_validity']."' WHERE id_tes = '".$form['id_tesbro']."'";
+				$res = gaz_dbi_query($query);    
+			} else { // e' un'inserimento
+												// creo e salvo ORDERMAN
+				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,adminid) VALUES ('". $form[	'order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $id_lotmag . "', '". $admin_aziend['adminid'] ."')");
+				
+				if (strlen($form['order'])<1){ // se non c'è un ordine ne creo uno fittizio in TESBRO e RIGBRO
+					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,day_of_validity,datemi,id_orderman,adminid) VALUES ('PRO','" . $form['day_of_validity'] . "','" . $form['datemi'] . "','" . $id_orderman ."', '".$admin_aziend['adminid']."')");
+					gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti) VALUES ('".$id_tesbro."','" . $form['artico'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] ."', '".$form['quanti']."')");
+				}
+			}
+		// se sono in un popup lo chiudo dopo aver salvato tutto	
+			if($popup==1){
+				echo "<script> 
+				window.opener.location.reload(true);
+				window.close();</script>";
+			}else {
+				header("Location: ".$_POST['ritorno']);
+				}
+				exit;
+			
+		}
+	}
+//  fine scrittura database §§§§§§§§§§§§§§§§§§§§§§§§§§§§
 
 } elseif ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo accesso per UPDATE
 
@@ -137,18 +223,51 @@ $result = gaz_dbi_get_row($gTables['orderman'],"id",$_GET['codice']);
     $form['order_type']=$result['order_type'];
     $form['description']=$result['description'];
     $form['id_tesbro']=$result['id_tesbro'];
+	$form['id_rigbro']=$result['id_rigbro'];
 	$form['add_info']=$result['add_info'];
-	$result2 = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$result['id_tesbro']);
+$result2 = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$result['id_tesbro']);
 	$form['gioinp'] = substr($result2['datemi'], 8, 2);
 	$form['mesinp'] = substr($result2['datemi'], 5, 2);
 	$form['anninp'] = substr($result2['datemi'], 0, 4);	
 	$form['datemi']=$result2['datemi'];
 	$form['day_of_validity']=$result2['day_of_validity'];
 	$form["campo_impianto"]=$result['campo_impianto'];
-	$form['order']=$_POST['order'];
-	$form['artico']=$_POST['artico'];
-	$form['mov']=$_POST['mov'];
-	$form['staff'][$form['mov']]=$_POST['staff'.$m]; 
+	$form["id_colture"]=$result['id_colture'];
+	$form["id_lotmag"]=$result['id_lotmag'];
+	$form['order']=$result2['numdoc'];
+$result3 = gaz_dbi_get_row($gTables['rigbro'],"id_rig",$result['id_rigbro']);
+	$form['artico']=$result3['codart'];
+$result4 = gaz_dbi_get_row($gTables['movmag'],"id_orderman",$_GET['codice']);	
+	$form['datreg']=$result4['datreg'];
+	$form['quanti']=$result4['quanti'];
+$result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);		
+	$form['identifier']=$result5['identifier'];
+	$form['expiry']=$result5['expiry'];
+// Antonio Germani - se è presente, recupero il file documento lotto
+	$form['filename'] = "";
+	If (file_exists('../../data/files/' . $admin_aziend['company_id'])>0) {		
+			// recupero il filename dal filesystem 
+			$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+			while (false !== ($filename = readdir($dh))) {
+				$fd = pathinfo($filename); 
+				$r = explode('_', $fd['filename']); 
+				if ($r[0] == 'lotmag' && $r[1] == $result['id_lotmag']) {
+					// riassegno il nome file 
+					$form['filename'] = $fd['basename'];
+				} 
+			}
+		} 	
+// se presenti, prendo gli operai
+		$query="SELECT ".'*'." FROM ".$gTables['staff_worked_hours']. " WHERE id_orderman ='". $_GET['codice']."'";
+	$result6 = gaz_dbi_query($query);$form['mov']=0;$form['nmov']=0;$form['staff'][$form['mov']]="";
+	if ($result6->num_rows >0){
+	while($row = $result->fetch_assoc()){
+		$form['staff'][$form['mov']]=$result6['id_staff'];
+		$form['mov']++;
+	}
+	$form['nmov']=$form['mov']-1;
+	}
+	
 
 } else { //se e' il primo accesso per INSERT
     
@@ -170,6 +289,9 @@ $result = gaz_dbi_get_row($gTables['orderman'],"id",$_GET['codice']);
 	$form['filename']="";
 	$form['identifier']="";
 	$form['expiry']="";
+	$form['lot_or_serial']="";
+	$form['datreg']=""; // meglio se today >>>> modificare <<<<<<<<
+	$form['quanti']="";
 }
 If (isset($_POST['Cancel'])){ // se è stato premuto ANNULLA
 	$form['hidden_req'] = ''; 
@@ -190,7 +312,25 @@ If (isset($_POST['Cancel'])){ // se è stato premuto ANNULLA
 	$form['filename']="";
 	$form['identifier']="";
 	$form['expiry']="";	
+	$form['quanti']="";
 }
+if (!empty ($_FILES['docfile_']['name'])) { // Antonio Germani - se c'è un nome in $_FILES
+	$prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
+	foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
+             unlink($fn);
+    }
+	
+	$mt = substr($_FILES['docfile_']['name'], -3);
+	if (($mt == "png" || $mt == "odt" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_']['size'] > 1000){ // se rispetta limiti e parametri lo salvo nella cartella tmp
+		move_uploaded_file($_FILES['docfile_']['tmp_name'], '../../data/files/tmp/' . $prefix . '_' . $_FILES['docfile_']['name']);                
+		$form['filename']=$_FILES['docfile_']['name'];
+	} else {
+		$msg .= "14+";
+	}
+}
+
+
+
 require("../../library/include/header.php");
 $script_transl = HeadMain();
 if ($toDo == 'update') {
@@ -228,11 +368,19 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 		$form['order_type'] = $_POST["order_type"]; // memorizzo il valore selezionato
 	}
 ?>
+<script>
+  $(function() {
+    $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+});
+</script>
 <select name="order_type" onchange="this.form.submit()" >
 <option <?php if ($form['order_type'] == "" ) echo 'selected' ; ?> value="">--</option>
 <option <?php if ($form['order_type'] == "AGR" ) echo 'selected' ; ?> value="AGR">Agricola</option>
 <option <?php if ($form['order_type'] == "IND" ) echo 'selected' ; ?> value="IND">Industriale</option>
 </select>
+<?php
+echo '<label>' . 'Data registrazione: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="datreg"  value="' . $form['datreg']. '">';
+?>
 </td></tr>
 <?php
 
@@ -277,7 +425,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 <!-- Antonio Germani > inserimento articolo	-->
 <tr> 
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['9']; ?> </td>
-<!-- Antonio Germani inizio script autocompletamento ARTICOLO dalla tabella mysql tesbro	-->	
+<!-- Antonio Germani inizio script autocompletamento ARTICOLO dalla tabella mysql artico	-->	
   <script>
 	$(document).ready(function() {
 	$("input#autocomplete2").autocomplete({
@@ -286,7 +434,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 	$query="SELECT * FROM ".$gTables['artico'];
 	$result = gaz_dbi_query($query);
 	while($row = $result->fetch_assoc()){
-		$stringa.="\"".$row['codice']." - ".$row['descri']."\", ";			
+		$stringa.="\"".$row['codice']."\", ";		
 	}
 	$stringa=substr($stringa,0,-1);
 	echo $stringa;
@@ -307,6 +455,20 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 	
 	<td colspan="2" class="FacetDataTD">
 		<input id="autocomplete2" type="text" name="artico" Value="<?php echo $form['artico']; ?>"/>
+	<?php // prendo i dati dall'articolo
+		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+		echo $resartico['descri'];// visualizzo la descrizione
+		echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"';$form['lot_or_serial']=$resartico['lot_or_serial'];
+		
+	?>	
+	</td>
+</tr>
+
+<!--- Antonio Germani - inserimento quantità  -->
+<tr>
+	<td class="FacetFieldCaptionTD"><?php echo $script_transl['15']; ?> </td>
+	<td colspan="2" class="FacetDataTD">
+		<input type="text" name="quanti" value="<?php echo $form['quanti']; ?>" />
 	</td>
 </tr>
 
@@ -398,30 +560,20 @@ echo "</select></td></tr>";
 					echo "<input type=\"submit\" name=\"add_staff\" value=\"" . $script_transl['add_staff'] . "\">\n";
 				}
 				If ($form['mov']>0){
-				echo "<input type=\"submit\" title=\"Togli ultimo movimento\" name=\"Del_mov\" value=\"X\">\n";
+				echo "<input type=\"submit\" title=\"Togli ultimo operaio\" name=\"Del_mov\" value=\"X\">\n";
 				}
 				
 			} $form['mov']=$form['nmov'];
 	echo "<input type=\"hidden\" name=\"nmov\" value=\"" . $form['nmov'] . "\">\n</td></tr>";
 
-	
-// Antonio Germani > Inizio LOTTO in entrata
-	
-		
-		?>
-		  
-<script>
-  $(function() {
-    $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
-});
-</script>
+// Antonio Germani > Inizio LOTTO in entrata o creazione nuovo	
+if (intval($form['lot_or_serial']) == 1) { // se l'articolo prevede il lotto apro la gestione lotti
+?>	  
 
 		<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13];?></td>
 		<td class="FacetDataTD" >
 			  <input type="hidden" name="filename" value="<?php echo $form['filename']; ?>">			  
-		<?php 
-		
-		
+<?php 	
               if (strlen($form['filename'])==0) {
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog">'. 'Inserire nuovo certificato' . ' '.'<i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
@@ -429,13 +581,13 @@ echo "</select></td></tr>";
 				  echo '<div><button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#lm_dialog">'. $form['filename'] . ' '.'<i class="glyphicon glyphicon-tag"></i>'
                     . '</button>';
 					if ($toDo=="update"){
-						foreach (glob("../../modules/camp/tmp/*") as $fn) {// prima cancello eventuali precedenti file temporanei
+						foreach (glob("../../modules/orderman/tmp/*") as $fn) {// prima cancello eventuali precedenti file temporanei
 							unlink($fn);
 						} 
 						if (strlen($form['filename'])>0) {
 							$tmp_file = "../../data/files/".$admin_aziend['company_id']."/".$form['filename'];
 							// sposto nella cartella di lettura il relativo file temporaneo            
-							copy($tmp_file, "../../modules/camp/tmp/".$form['filename']);
+							copy($tmp_file, "../../modules/orderman/tmp/".$form['filename']);
 						}
 					?>
 						<a  class="btn btn-info btn-md" href="javascript:;" onclick="window.open('<?php echo"../../modules/camp/tmp/".($form['filename'])?>', 'titolo', 'width=800, height=400, left=80%, top=80%, resizable, status, scrollbars=1, location');">
@@ -446,7 +598,7 @@ echo "</select></td></tr>";
 					}
 			  }		
 /*Antonio Germani scelta lotto fra quelli esistenti  DA RIVEDERE PERCHE IN PRODUZIONE INDUSTRIALE AD OGNI PRODUZIONE CORRISPONDE UN NUOVO LOTTO!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!*/
-			$query="SELECT ".'*'." FROM ".$gTables['lotmag']. " WHERE codart ='". $form['artico']."'";
+	/*		$query="SELECT ".'*'." FROM ".$gTables['lotmag']. " WHERE codart ='". $form['artico']."'";
 			$result = gaz_dbi_query($query);
 			if ($result->num_rows >0) { // se ci sono lotti attivo la selezione
 				echo '<select name="id_lotmag" class="FacetSelect" onchange="this.form.submit()">\n';
@@ -465,7 +617,7 @@ echo "</select></td></tr>";
 					$form['identifier']=$rowlot['identifier']; 
 					$form['expiry']=$rowlot['expiry'];
 				} 
-			}
+			}          */
 			// fine scelta lotto fra esistenti 					
               if (strlen($form['identifier'])==0){
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog_lot">' . 'Inserire nuovo Lotto' . ' ' . '<i class="glyphicon glyphicon-tag"></i></button></div>';
@@ -492,7 +644,12 @@ echo "</select></td></tr>";
 				echo '<label>' . "Numero: " . '</label><input type="text" name="identifier" value="'.$form['identifier'].'" >';
 				echo "<br>";			
                 echo '<label>' . 'Scadenza: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="expiry"  value="' . $form['expiry']. '"></div></div></div>';
-    
+} else { 
+	echo '<tr><td><input type="hidden" name="filename" value="' . $form['filename'] . '">';
+	echo '<input type="hidden" name="identifier" value="' . $form['identifier'] . '">';
+	echo '<input type="hidden" name="expiry" value="' . $form['expiry'] . '"></td></tr>';
+	
+}   
 // fine LOTTI in entrata	
 	
 	if ($popup<>1){

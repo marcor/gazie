@@ -41,11 +41,13 @@ $strScript =
 		"Durata produzione in giorni",
 		"Luogo di produzione",
 		"Ordine",
-		"Articolo da produrre",
+		"Articolo prodotto",
 		"Operaio",
 		"Durata produzione in ore",
 		"Tipo di produzione vuoto",
-		"Lotto di produzione"
+		"Lotto di produzione",
+		"Si possono caricare solo file nel formato png, jpg, pdf, odt di dimensioni inferiori a 1M",
+		"Quantità prodotta"
 		),
 	array("orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',
