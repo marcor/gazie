@@ -35,6 +35,31 @@ function getDocRef($data) {
     return $r;
 }
 
+// visualizza i bottoni dei documenti di evasione associati all'ordine
+function mostra_documenti_associati($ordine) {
+    global $gTables;
+    $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_tes', $gTables['rigdoc'], "id_order = " . $ordine, 'id_tes ASC');
+    while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
+        $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigdoc["id_tes"], 'id_tes DESC');
+        $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
+        if ($tesdoc_r["tipdoc"] == "FAI") {
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "\">";
+            echo "fatt. " . $tesdoc_r["numfat"];
+            echo "</a> ";
+        } elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=DDT\">";
+            echo "ddt " . $tesdoc_r["numdoc"];
+            echo "</a> ";
+        } elseif ($tesdoc_r["tipdoc"] == "VCO") {
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=FatturaAllegata\">";
+            echo "scontr. " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
+            echo "</a> ";
+        } else {
+            echo $tesdoc_r["tipdoc"] . $rigbro_r["id_doc"] . " ";
+        }
+    }
+}
+
 if (isset($_GET['auxil'])) {
     $auxil = $_GET['auxil'];
     if ($_GET['auxil'] == 'VPR') {
@@ -223,7 +248,7 @@ $recordnav->output();
             ?>
         </tr>
         <?php
-//recupero le testate in base alle scelte impostate
+        //recupero le testate in base alle scelte impostate
         $result = gaz_dbi_dyn_query($gTables['tesbro'] . ".*," . $gTables['anagra'] . ".ragso1," . $gTables['anagra'] . ".e_mail AS base_mail," . $gTables["clfoco"] . ".codice, ".$gTables["destina"].".*", $gTables['tesbro'] . " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice  LEFT JOIN " . $gTables['anagra'] . ' ON ' . $gTables['clfoco'] . '.id_anagra = ' . $gTables['anagra'] . '.id  left join '. $gTables['destina'].' on ' .$gTables['tesbro'].'.id_des_same_company = ' . $gTables['destina'] . '.codice', $where, $orderby, $limit, $passo);
         if ($result == false) {
             die(mysql_error());
@@ -245,7 +270,6 @@ $recordnav->output();
             } else {
                 echo "<td><button class=\"btn btn-xs btn-default disabled\">&nbsp;" . substr($r["tipdoc"], 1, 2) . "&nbsp;" . $r["id_tes"] . " </button></td>";
             }
-            //echo "<td>".$script_transl['type_value'][$r["tipdoc"]]." &nbsp;</td>";
             echo "<td>" . $r["numdoc"] . " &nbsp;</td>";
             if ( $what=="VOG" ) {
                 echo "<td>". getDayNameFromDayNumber($r["weekday_repeat"]). " &nbsp;</td>";
@@ -260,20 +284,14 @@ $recordnav->output();
             $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
             $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
             while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
-            
                 $totale_da_evadere = $rigbro_r['quanti'];
                 $totale_evaso = 0;
-                $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_order='".$r['id_tes']."'", 'id_tes DESC');
-                while ( $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result) ) {
-                    $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_tes=" . $tesdoc_r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
-                    while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
-                        $totale_evaso += $rigdoc_r['quanti'];
-                        $processed_atleastone = true;
-                    }
-                }
-                //echo $totale_evaso ." ". $totale_da_evadere."<br>";
+                $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
+                while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
+                    $totale_evaso += $rigdoc_r['quanti'];
+                    $processed_atleastone = true;
+                }               
                 if ( $totale_evaso != $totale_da_evadere ) {
-                    //echo $totale_evaso ." -> ". $totale_da_evadere." -> ".$rigbro_r['quanti']."<br>";
                     $remains_atleastone = true;
                 }
             }
@@ -282,9 +300,7 @@ $recordnav->output();
             // eventualmente lo aggiorna.
             //
             if ($remains_atleastone && !$processed_atleastone) {
-                //
                 // L'ordine e' completamente da evadere.
-                //
                 if ($r["status"] != "GENERATO") {
                     gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r["id_tes"], "status", "RIGENERATO");
                 }
@@ -294,90 +310,21 @@ $recordnav->output();
                     echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a></td>";
                 }
             } elseif ($remains_atleastone) {
+                // l'ordine è parzialmente evaso, mostro lista documenti e tasto per evadere rimanenze
                 echo "<td>";
-
                 $ultimo_documento = 0;
-                //
-                // Interroga la tabella gaz_XXXrigbro per le righe corrispondenti
-                // a questa testata.
-                //
-                $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"], 'id_tes DESC');
-                //
-                while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
-                    if ($rigbro_r["id_doc"] == 0) {
-                        continue;
-                    } else {
-                        if ($ultimo_documento == $rigbro_r["id_doc"]) {
-                            continue;
-                        } else {
-                            //
-                            // Individua il documento.
-                            //
-                    $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigbro_r["id_doc"], 'id_tes DESC');
-                            #
-                            $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
-                            #
-                            if ($tesdoc_r["tipdoc"] == "FAI") {
-                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $rigbro_r["id_doc"] . "\">";
-                                echo "fatt. " . $tesdoc_r["numfat"];
-                                echo "</a> ";
-                            } elseif ($tesdoc_r["tipdoc"] == "DDT") {
-                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $rigbro_r["id_doc"] . "&template=DDT\">";
-                                echo "ddt " . $tesdoc_r["numdoc"];
-                                echo "</a> ";
-                            } else {
-                                echo $tesdoc_r["tipdoc"] . $rigbro_r["id_doc"] . " ";
-                            }
-                            $ultimo_documento = $rigbro_r["id_doc"];
-                        }
-                    }
-                }
+                mostra_documenti_associati ( $r["id_tes"]);
                 if ( $what=="VOG" ) {
-                    echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord_gio.php\">evadi il rimanente</a></td>";
+                    echo "<a class=\"btn btn-xs btn-default\" href=\"select_evaord_gio.php\">evadi il rimanente</a>";
                 } else {
-                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a></td>";
+                    echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a>";
                 }
+                echo "</td>";
             } else {
+                // l'ordine è completamente evaso, mostro i riferimenti ai documenti che lo hanno evaso
                 echo "<td> ";
-                //
                 $ultimo_documento = 0;
-                //
-                // Interroga la tabella gaz_XXXrigbro per le righe corrispondenti
-                // a questa testata.
-                //
-                $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"], 'id_tes DESC');
-                //
-                while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
-                    if ($rigbro_r["id_doc"] == 0) {
-                        continue;
-                    } else {
-                        if ($ultimo_documento == $rigbro_r["id_doc"]) {
-                            continue;
-                        } else {
-                            //
-                            // Individua il documento.
-                            //
-                    $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigbro_r["id_doc"], 'id_tes DESC');
-                            $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
-                            if ($tesdoc_r["tipdoc"] == "FAI") {
-                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $rigbro_r["id_doc"] . "\">";
-                                echo "fatt. " . $tesdoc_r["numfat"];
-                                echo "</a> ";
-                            } elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
-                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $rigbro_r["id_doc"] . "&template=DDT\">";
-                                echo "ddt " . $tesdoc_r["numdoc"];
-                                echo "</a> ";
-                            } elseif ($tesdoc_r["tipdoc"] == "VCO") {
-                                echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $rigbro_r["id_doc"] . "&template=FatturaAllegata\">";
-                                echo "scontrino n." . $tesdoc_r["numdoc"] . "<br />del " . gaz_format_date($tesdoc_r["datemi"]);
-                                echo "</a> ";
-                            } else {
-                                echo $tesdoc_r["tipdoc"] . $rigbro_r["id_doc"] . " ";
-                            }
-                            $ultimo_documento = $rigbro_r["id_doc"];
-                        }
-                    }
-                }
+                mostra_documenti_associati($r["id_tes"]);
                 echo "</td>";
             }
             
