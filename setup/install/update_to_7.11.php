@@ -25,19 +25,21 @@ if ($camp_mod){
 }
 
 // converto i vecchi ordini nel nuovo tipo evadibili parzialmente
-require("../../library/include/datlib.inc.php");
+$limit="99999999";
+$passo="99999999";
 
-$limit="9999";
-$passo="9999";
-
-$rtesbro = gaz_dbi_dyn_query("*", $gTables["tesbro"], "tipdoc='VOR'", "id_tes DESC");
-while ($rtb = gaz_dbi_fetch_array($rtesbro)) {
-	$rrigbro = gaz_dbi_dyn_query("*", $gTables["rigbro"], "id_tes=".$rtb["id_tes"], "id_rig DESC");
-	while ($rrb = gaz_dbi_fetch_array($rrigbro)) {
-		if ( $rrb["id_doc"]!=0 ) {
-			$res = gaz_dbi_query("UPDATE ".$gTables["rigdoc"]." set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';");
-			if ( !$res ) {
-				echo "errore UPDATE ".$gTables["rigdoc"]." set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';<br>";
+$result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
+while ($row = gaz_dbi_fetch_array($result)) {
+	$aziend_codice = sprintf("%03s", $row["codice"]);
+	$rtesbro = gaz_dbi_dyn_query("*", $table_prefix . "_" . $aziend_codice."tesbro", "tipdoc='VOR'", "id_tes DESC");
+	while ($rtb = gaz_dbi_fetch_array($rtesbro)) {
+		$rrigbro = gaz_dbi_dyn_query("*", $table_prefix . "_" . $aziend_codice."rigbro", "id_tes=".$rtb["id_tes"], "id_rig DESC");
+		while ($rrb = gaz_dbi_fetch_array($rrigbro)) {
+			if ( $rrb["id_doc"]!=0 ) {
+				$res = gaz_dbi_query("UPDATE ".$table_prefix . "_" . $aziend_codice."rigdoc set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';");
+				if ( !$res ) {
+					echo "errore UPDATE ".$table_prefix . "_" . $aziend_codice."rigdoc set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';<br>";
+				}
 			}
 		}
 	}
