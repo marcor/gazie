@@ -23,4 +23,23 @@ if ($camp_mod){
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='fitofarmaci.php'), 'update_fitofarmaci.php', '', '', 16, '', 20  FROM `gaz_menu_script`");
 	echo "Ho modificato il menù del modulo <b>Registro di campagna</b>";
 }
+
+// converto i vecchi ordini nel nuovo tipo evadibili parzialmente
+require("../../library/include/datlib.inc.php");
+
+$limit="9999";
+$passo="9999";
+
+$rtesbro = gaz_dbi_dyn_query("*", $gTables["tesbro"], "tipdoc='VOR'", "id_tes DESC");
+while ($rtb = gaz_dbi_fetch_array($rtesbro)) {
+	$rrigbro = gaz_dbi_dyn_query("*", $gTables["rigbro"], "id_tes=".$rtb["id_tes"], "id_rig DESC");
+	while ($rrb = gaz_dbi_fetch_array($rrigbro)) {
+		if ( $rrb["id_doc"]!=0 ) {
+			$res = gaz_dbi_query("UPDATE ".$gTables["rigdoc"]." set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';");
+			if ( !$res ) {
+				echo "errore UPDATE ".$gTables["rigdoc"]." set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';<br>";
+			}
+		}
+	}
+}
 ?>
