@@ -409,7 +409,7 @@ class invoiceXMLvars {
 
 }
 
-function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false, $res_to_string = false) {
+function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false, $name_ziparchive = false) {
     $XMLvars = new invoiceXMLvars();
     $domDoc = new DOMDocument;
 	$domDoc->preserveWhiteSpace = false;
@@ -974,10 +974,31 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
     $id_tes = $XMLvars->tesdoc['id_tes'];
     $data_ora_ricezione = $XMLvars->docRelDate;
 
-
-    $verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file . ".xml");
-    if ($verifica == false) {
-        $valori = array('filename_ori' => $nome_file . ".xml",
+	if ($name_ziparchive){
+		$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file . ".xml");
+		if ($verifica == false) {
+			$valori = array('filename_ori' => $nome_file . ".xml",
+				'filename_zip_package'=>$name_ziparchive,
+				'id_tes_ref' => $id_tes,
+				'exec_date' => $data_ora_ricezione,
+				'received_date' => $data_ora_ricezione,
+				'delivery_date' => $data_ora_ricezione,
+				'filename_son' => '',
+				'id_SDI' => 0,
+				'filename_ret' => '',
+				'mail_id' => 0,
+				'data' => '',
+				'flux_status' => '@@',
+				'progr_ret' => '000',
+				'flux_descri' => '');
+			fae_fluxInsert($valori);
+		}
+		return $domDoc->saveXML();
+	} else {
+		$verifica = gaz_dbi_get_row($gTables['fae_flux'], 'filename_ori', $nome_file . ".xml");
+		if ($verifica == false) {
+			$valori = array('filename_ori' => $nome_file . ".xml",
+			'filename_zip_package'=>'',
             'id_tes_ref' => $id_tes,
             'exec_date' => $data_ora_ricezione,
             'received_date' => $data_ora_ricezione,
@@ -990,11 +1011,8 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
             'flux_status' => '#',
             'progr_ret' => '000',
             'flux_descri' => '');
-        fae_fluxInsert($valori);
-    }
-	if ($res_to_string){
-		return $domDoc->saveXML();
-	} else {
+			fae_fluxInsert($valori);
+		}
 		header("Content-type: text/plain");
 		header("Content-Disposition: attachment; filename=" . $nome_file . ".xml");
 		print $domDoc->saveXML();

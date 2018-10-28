@@ -312,4 +312,5 @@ CREATE TABLE `gaz_XXXtescmr` (
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `id_lotmag` INT(9) NOT NULL COMMENT 'Riferimento al lotto (tabella gaz_NNNlotmag) per la tracciabilità e/o certificazione delle produzioni ' AFTER `id_colture`;
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `id_rigbro` INT(9) NOT NULL COMMENT 'Riferimento al rigo ordine da cliente del modulo vendite' AFTER `id_tesbro`;
 UPDATE `gaz_XXXpagame` SET `fae_mode`='MP05' WHERE `fae_mode`=''; 
+ALTER TABLE `gaz_XXXfae_flux` ADD COLUMN `filename_zip_package` VARCHAR(50) NOT NULL COMMENT 'Nome del pacchetto zip contenitore dei file xml, è un metodo utilizzato quando lo si trasmette massivamente ad un intermediario' AFTER `filename_ori`;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
