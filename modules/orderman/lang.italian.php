@@ -47,7 +47,10 @@ $strScript =
 		"Tipo di produzione vuoto",
 		"Lotto di produzione",
 		"Si possono caricare solo file nel formato png, jpg, pdf, odt di dimensioni inferiori a 1M",
-		"Quantità prodotta"
+		"Quantità prodotta",
+		"Manca l'articolo prodotto",
+		"Manca la quantità prodotta",
+		"Gli operai non possono lavorare più di 13 ore al giorno: D. Lgs. 66/2003"
 		),
 	array("orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',

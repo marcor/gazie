@@ -86,7 +86,7 @@ $recordnav -> output();
 							"Tipo lavorazione"  => "order_type",
 							"Informazioni aggiuntive" => "add_info",
 							"Inizio produzione" => "datemi",
-							"Durata in giorni" => "day_of_validity",
+							"Durata" => "day_of_validity",
 							"Luogo di produzione" => "campo_impianto",
 							"Cancella"    => ""
 							);

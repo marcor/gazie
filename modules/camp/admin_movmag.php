@@ -555,7 +555,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 							unlink($fn);
 						}
 			}
-	echo "expiry:",$form['expiry'][$form['mov']]," identifier:",$form['identifier'][$form['mov']]," idmov:",$form['id_mov']," lot or serial:",$form['lot_or_serial'][$form['mov']]," idlotmag:",$form['id_lotmag'][$form['mov']];if (isset($_POST['Update'])){echo " è update";} else {echo " NON è update";} 		$upd_mm = new magazzForm; 
+		$upd_mm = new magazzForm; 
             //formatto le date  
             $form['datreg'] = $form['annreg'] . "-" . $form['mesreg'] . "-" . $form['gioreg'];
             $form['datdoc'] = $form['anndoc'] . "-" . $form['mesdoc'] . "-" . $form['giodoc'];
