@@ -25,6 +25,9 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
+$cemail = gaz_dbi_get_row($gTables['company_config'], 'var', 'cemail');
+$dest_fae_zip_package = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package');
+
 
 if (!isset($_POST['ritorno'])) {
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
@@ -120,7 +123,13 @@ echo '<form method="GET">';
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
 echo "<div align=\"center\" class=\"FacetFormHeaderFont\">".$script_transl['title'];
 echo "</div>\n";
-echo "<p align=\"center\"><a href=\"./check_fae_sdi.php\">Verifica email (...)</a></p>";
+if (strlen($cemail['val'])>5){
+	echo "<p align=\"center\"><a href=\"./check_fae_sdi.php\">Verifica email (...)</a></p>";
+} elseif (strlen($dest_fae_zip_package['val'])>5){
+	echo "<p align=\"center\"><a href=\"./check_fae_sdi.php\">Verifica email (...)</a></p>";
+} else {
+	echo "<p class=\"bg-danger text-center\">La configurazione avanzata azienda non ha alcun indirizzo email per il servizio di invio fatture elettroniche</p>";
+}
 
 $recordnav = new recordnav($gTables['fae_flux'], $where, $limit, $passo);
 $recordnav -> output();
@@ -191,19 +200,41 @@ if ( $mostra_intesta == 1 and $mostra_intesta_riga == 0 ) {
 }
 
 
-$orderby = $gTables['fae_flux'].'.filename_ori, '. $gTables['fae_flux'].'.progr_ret'   ;
+$orderby = $gTables['fae_flux'].'.filename_zip_package DESC, '.$gTables['fae_flux'].'.filename_ori DESC,'. $gTables['fae_flux'].'.progr_ret'   ;
 
 
-$result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].
+$result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".seziva,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].
                              ' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes'.
                              ' LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice',
                              $where, $orderby, $limit, $passo);
 
 
-    
+$ctrl_zip='';    
 while ($r = gaz_dbi_fetch_array($result)) {
-    
-    
+
+  if (strlen($r['filename_zip_package'])>16){
+	// uso un report diverso in caso di impacchettamento in files zip
+	if (empty($ctrl_zip)){ // stampo la testa della tabella
+		
+	}
+	if ($ctrl_zip!=$r['filename_zip_package']) {
+		echo '<tr><td class="bg-info" colspan="10">Il file pacchetto di fatture <span class="bg-warning">'.$r['filename_zip_package'].'</span> è stato generato per contenere le seguenti fatture elettroniche:</td>';
+        echo '<td colspan="2" align="center"><a class="btn btn-xs btn-info btn-email" onclick="confirMail(this);return false;" fn="' . $r["filename_zip_package"] . '" url="" href="#" title="Mailto: ' . $dest_fae_zip_package['val'] . '"
+            mail="' . $dest_fae_zip_package['val'] . '" namedoc="Pacchetto fatture elettroniche">Invia <i class="glyphicon glyphicon-envelope"></i></a>';
+		echo '<td colspan="2" align="center"><a class="btn btn-xs btn-success" title="Download del pacchetto di fatture elettroniche" href="download_zip_package.php?fn='.$r['filename_zip_package'].'">Download <i class="glyphicon glyphicon-download"></i></a></td>';
+		if (empty($ctrl_zip) && $r['flux_status'] != "@@" && $r['flux_status'] != "@") {
+			// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso allo SdI 
+			echo '<td colspan="2"><a class="btn btn-xs btn-default btn-elimina" title="Cancella il pacchetto di fatture elettroniche" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
+		} else {
+			echo '<td colspan="2"></td>';
+		}
+		echo '</tr>';
+	}	
+    echo '<tr>';
+	echo '<td>'.$r['id'].'</td><td>'.$r['filename_ori'].'</td><td colspan="2">'.$script_transl['doc_type_value'][$r['tipdoc']].' n.'.$r['numfat'].'/'.$r['seziva'].'</td><td>prot.'.$r['protoc'].'</td><td>'.gaz_format_date($r['datfat']).'</td><td colspan="4">'.$r['descri'].'</td>';
+    echo '</tr>';
+	$ctrl_zip=$r['filename_zip_package'];
+  } else {
     if ($senza_esito == 1) {
     
        
@@ -305,7 +336,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
       echo "</tr><tr><td colspan=\"15\">&nbsp;</td></tr>";    
     }
     echo "</tr>";
-   }    
+  } 
+}    
 
 echo "</table>\n";
 echo "</div>";

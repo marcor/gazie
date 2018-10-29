@@ -1313,7 +1313,15 @@ $strScript = array("admin_client.php" =>
             'NE' => 'Notifica esito',
             'DT' => 'Decorrenza termini'),
         'progr_ret' => 'Progr.',
-        'flux_descri' => 'Descrizione'
+        'flux_descri' => 'Descrizione',
+        'doc_type_value' => array('FAD' => 'FATTURA DIFFERITA',
+            'FAI' => 'FATTURA IMMEDIATA',
+            'FAP' => 'PARCELLA',
+            'FNC' => 'NOTA CREDITO',
+            'FND' => 'NOTA DEBITO',
+            'VCO' => 'CORRISPETTIVO',
+            'VRI' => 'RICEVUTA',
+        )
     ),
     "admin_destinazioni.php" =>
     array('title' => 'Gestione degli indirizzi di destinazione',

@@ -298,11 +298,10 @@ if (!isset($_POST['hidden_req'])) { //al primo accesso allo script
 					$zip->addFromString('IT'.$admin_aziend['codfis'].'_'.$XMLdata->encodeSendingNumber($enc_data,36).'.xml', $file_content);
 				}
 				$zip->close();
-				echo 'ok';
+				header("Location: report_fae_sdi.php");
 			} else {
-				echo 'failed';
+				echo 'La creazione del pacchetto è fallita!';
 			}
-			//header("Location: fae_pack_report.php");
 			exit;
         } else {
             $msg .= "1+";

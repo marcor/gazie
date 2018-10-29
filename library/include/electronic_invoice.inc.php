@@ -988,7 +988,7 @@ function create_XML_invoice($testata, $gTables, $rows = 'rigdoc', $dest = false,
 				'filename_ret' => '',
 				'mail_id' => 0,
 				'data' => '',
-				'flux_status' => '@@',
+				'flux_status' => '#',
 				'progr_ret' => '000',
 				'flux_descri' => '');
 			fae_fluxInsert($valori);

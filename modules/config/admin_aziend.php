@@ -255,7 +255,7 @@ if (count($msg['err']) > 0) { // ho un errore
                 <div class="col-md-12">
                     <div class="form-group">
                         <label for="ragso1" class="col-sm-4 control-label"><?php echo $script_transl['ragso1']; ?></label>
-                        <input class="col-sm-7" type="text" value="<?php echo $form['ragso1']; ?>" name="ragso1" /><a class="btn btn-xs btn-default col-sm-1" href="config_aziend.php"><i class="glyphicon glyphicon-lock"></i>&nbsp;config</a>
+                        <input class="col-sm-6" type="text" value="<?php echo $form['ragso1']; ?>" name="ragso1" /><a class="btn btn-xs btn-default col-sm-2" href="config_aziend.php"><i class="glyphicon glyphicon-lock"></i>&nbsp;Configurazione avanzata</a>
                     </div>
                 </div>
             </div><!-- chiude row  -->
