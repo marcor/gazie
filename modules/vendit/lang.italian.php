@@ -1590,6 +1590,21 @@ $strScript = array("admin_client.php" =>
 		'no_tax'=>'Non Imp., Escl., ecc.',
         'vat' => 'I.V.A.',
         'tot' => 'Totale'
+    ),
+    "delete_zip_package.php" =>
+    array('title' => 'Elimina il pacchetto di fatture elettroniche nome file: ',
+        'head' => 'Il pacchetto zip contiene i seguenti XML delle fatture elettroniche (che non saranno eliminate):',
+        'danger' => 'ATTENZIONE!!! Questo file risulta essere già stato inviato all\'intermediario! Eliminare solo nel caso in cui lo stesso non abbia provveduto alla trasmissione delle fatture in esso contenute al SdI',
+        'customer' => 'Cliente',
+        'doc_type_value' => array('FAD' => 'FATTURA DIFFERITA',
+            'FAI' => 'FATTURA IMMEDIATA',
+            'FAP' => 'PARCELLA',
+            'FNC' => 'NOTA CREDITO',
+            'FND' => 'NOTA DEBITO',
+            'VCO' => 'CORRISPETTIVO',
+            'VRI' => 'RICEVUTA',
+        ),
+		'danger_confirm'=>'Sono consapevole. Eliminalo comunque!'
     )
 	);
 ?>

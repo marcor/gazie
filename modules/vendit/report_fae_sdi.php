@@ -169,12 +169,7 @@ $recordnav -> output();
 </td>
 </tr>
 </form>
-
-
 <?php
-
-
-
 $headers = array  ($script_transl['id']=>'id',
                    $script_transl['filename_ori']=>'',
                    $script_transl['numfat']=>'',
@@ -193,21 +188,13 @@ $headers = array  ($script_transl['id']=>'id',
             );
 $linkHeaders = new linkHeaders($headers);
 
-
-
 if ( $mostra_intesta == 1 and $mostra_intesta_riga == 0 ) {
     $linkHeaders -> output();
 }
 
-
 $orderby = $gTables['fae_flux'].'.filename_zip_package DESC, '.$gTables['fae_flux'].'.filename_ori DESC,'. $gTables['fae_flux'].'.progr_ret'   ;
 
-
-$result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".seziva,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].
-                             ' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes'.
-                             ' LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice',
-                             $where, $orderby, $limit, $passo);
-
+$result = gaz_dbi_dyn_query ($gTables['fae_flux'].".*,".$gTables['tesdoc'].".tipdoc,".$gTables['tesdoc'].".datfat,".$gTables['tesdoc'].".protoc,".$gTables['tesdoc'].".seziva,".$gTables['tesdoc'].".numfat,".$gTables['clfoco'].".codice,".$gTables['clfoco'].".descri", $gTables['fae_flux'].' LEFT JOIN '.$gTables['tesdoc'].' ON '.$gTables['fae_flux'].'.id_tes_ref = '.$gTables['tesdoc'].'.id_tes LEFT JOIN '.$gTables['clfoco'].' ON '.$gTables['tesdoc'].'.clfoco = '.$gTables['clfoco'].'.codice', $where, $orderby, $limit, $passo);
 
 $ctrl_zip='';    
 while ($r = gaz_dbi_fetch_array($result)) {
@@ -222,9 +209,15 @@ while ($r = gaz_dbi_fetch_array($result)) {
         echo '<td colspan="2" align="center"><a class="btn btn-xs btn-info btn-email" onclick="confirMail(this);return false;" fn="' . $r["filename_zip_package"] . '" url="" href="#" title="Mailto: ' . $dest_fae_zip_package['val'] . '"
             mail="' . $dest_fae_zip_package['val'] . '" namedoc="Pacchetto fatture elettroniche">Invia <i class="glyphicon glyphicon-envelope"></i></a>';
 		echo '<td colspan="2" align="center"><a class="btn btn-xs btn-success" title="Download del pacchetto di fatture elettroniche" href="download_zip_package.php?fn='.$r['filename_zip_package'].'">Download <i class="glyphicon glyphicon-download"></i></a></td>';
-		if (empty($ctrl_zip) && $r['flux_status'] != "@@" && $r['flux_status'] != "@") {
-			// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso allo SdI 
-			echo '<td colspan="2"><a class="btn btn-xs btn-default btn-elimina" title="Cancella il pacchetto di fatture elettroniche" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
+		if (empty($ctrl_zip)) {
+			$class='btn btn-xs btn-default btn-elimina';
+			$title='Cancella il pacchetto di fatture elettroniche';
+			if ($r['flux_status'] == "@@" || $r['flux_status'] == "@"){
+				$class='btn btn-xs btn-danger btn-elimina';
+				$title='SEI SICURO? ATTENZIONE! Stai cancellando un pacchetto già inviato all\'intermediario';
+			}
+		// l'ultimo zip può essere eliminato ma se è stato inviato all'intermediario/servizio si deve controllare che il suo contenuto non sia stato trasmesso al SdI 
+			echo '<td colspan="2"><a class="'.$class.'" title="'.$title.'" href="delete_zip_package.php?fn='.$r['filename_zip_package'].'">'.$script_transl['delete'].'<i class="glyphicon glyphicon-remove"></i></a></td>';
 		} else {
 			echo '<td colspan="2"></td>';
 		}
