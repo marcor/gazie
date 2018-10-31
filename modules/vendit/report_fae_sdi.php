@@ -102,22 +102,47 @@ if (isset($_GET['all'])) {
 
 require("../../library/include/header.php");
 $script_transl=HeadMain(0,array('calendarpopup/CalendarPopup',
-                                  /** ENRICO FEDELE */
-								  /*'jquery/jquery-1.7.1.min',
-                                  'jquery/ui/jquery.ui.core',
-                                  'jquery/ui/jquery.ui.widget',
-                                  'jquery/ui/jquery.ui.mouse',
-                                  'jquery/ui/jquery.ui.button',
-                                  'jquery/ui/jquery.ui.autocomplete',
-                                  'jquery/ui/jquery.ui.dialog',
-                                  'jquery/ui/jquery.ui.position',
-                                  'jquery/ui/jquery.ui.draggable',
-                                  'jquery/ui/jquery.ui.resizable',
-                                  'jquery/ui/jquery.effects.core',
-                                  'jquery/ui/jquery.effects.scale',*/
-								  /** ENRICO FEDELE */
                                   'custom/modal_form',
                                   'custom/varie'));
+echo '<script>
+$(function() {
+   $( "#dialog" ).dialog({
+      autoOpen: false
+   });
+   
+   $( "#dialog1" ).dialog({
+      autoOpen: false
+   });
+
+   $( "#dialog2" ).dialog({
+      autoOpen: false
+   });
+   
+});
+
+function confirMail(link) {
+   na_fi = link.id.replace("fn", "");
+   $.fx.speeds._default = 500;
+   targetUrl = $("#fn"+na_fi).attr("url");
+   //alert (na_fi);
+   $("p#mail_adrs").html($("#fn"+na_fi).attr("mail"));
+   $("p#mail_attc").html($("#fn"+na_fi).attr("namedoc"));
+   $( "#dialog" ).dialog({
+      modal: "true",
+      show: "blind",
+      hide: "explode",
+      buttons: {
+                      " ' . $script_transl['submit'] . ' ": function() {
+                         window.location.href = targetUrl;
+                      },
+                      " ' . $script_transl['cancel'] . ' ": function() {
+                        $(this).dialog("close");
+                      }
+      }
+   });
+   $("#dialog" ).dialog( "open" );
+}
+</script>';
 $gForm = new GAzieForm();
 echo '<form method="GET">';
 echo "<input type=\"hidden\" value=\"".$form['ritorno']."\" name=\"ritorno\" />\n";
@@ -139,6 +164,14 @@ $recordnav -> output();
 <div class="box-primary table-responsive">
 <table id ="tableId" name="tableId" class="Tlarge table table-striped table-bordered table-condensed">
 <form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
+
+    <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+        <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+        <p class="ui-state-highlight" id="mail_adrs"></p>
+        <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
+        <p class="ui-state-highlight" id="mail_attc"></p>
+    </div>
+
 <tr style="margin-bottom: 20px !important;">
 <td class="FacetFieldCaptionTD"></td>
 <td class="FacetFieldCaptionTD">
@@ -206,8 +239,8 @@ while ($r = gaz_dbi_fetch_array($result)) {
 	}
 	if ($ctrl_zip!=$r['filename_zip_package']) {
 		echo '<tr><td class="bg-info" colspan="10">Il file pacchetto di fatture <span class="bg-warning">'.$r['filename_zip_package'].'</span> è stato generato per contenere le seguenti fatture elettroniche:</td>';
-        echo '<td colspan="2" align="center"><a class="btn btn-xs btn-info btn-email" onclick="confirMail(this);return false;" fn="' . $r["filename_zip_package"] . '" url="" href="#" title="Mailto: ' . $dest_fae_zip_package['val'] . '"
-            mail="' . $dest_fae_zip_package['val'] . '" namedoc="Pacchetto fatture elettroniche">Invia <i class="glyphicon glyphicon-envelope"></i></a>';
+        echo '<td colspan="2" align="center"><a class="btn btn-xs btn-info btn-email" onclick="confirMail(this);return false;" id="fn' . substr($r["filename_zip_package"],0,-4) . '" url="send_fae_package.php?fn='.$r['filename_zip_package'].'" href="#" title="Mailto: ' . $dest_fae_zip_package['val'] . '"
+            mail="' . $dest_fae_zip_package['val'] . '" namedoc="'.$r["filename_zip_package"].'">Invia <i class="glyphicon glyphicon-envelope"></i></a>';
 		echo '<td colspan="2" align="center"><a class="btn btn-xs btn-success" title="Download del pacchetto di fatture elettroniche" href="download_zip_package.php?fn='.$r['filename_zip_package'].'">Download <i class="glyphicon glyphicon-download"></i></a></td>';
 		if (empty($ctrl_zip)) {
 			$class='btn btn-xs btn-default btn-elimina';

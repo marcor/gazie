@@ -706,7 +706,10 @@ $strScript = array("admin_client.php" =>
         'issue' => 'Evadi',
         'status' => 'Stato',
         'weekday_repeat' => 'Ricorre il',
-        'status_value' => array(0 => '', 1 => 'EVASO')
+        'status_value' => array(0 => '', 1 => 'EVASO'),
+		'mail_alert0' => 'Invio documento con email',
+		'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
+		'mail_alert2' => 'con allegato il seguente documento:'
     ),
     "select_evaord_gio.php" =>
     array('doc_name' => array("VOG" => "Ordine",
@@ -1321,7 +1324,11 @@ $strScript = array("admin_client.php" =>
             'FND' => 'NOTA DEBITO',
             'VCO' => 'CORRISPETTIVO',
             'VRI' => 'RICEVUTA',
-        )
+        ),
+        'mail_alert0' => 'Invio mail pacchetto fatture elettroniche',
+        'mail_alert1' => 'all\'indirizzo: ',
+        'mail_alert2' => 'con allegato il seguente file zip:',
+
     ),
     "admin_destinazioni.php" =>
     array('title' => 'Gestione degli indirizzi di destinazione',
