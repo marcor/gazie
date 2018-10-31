@@ -50,22 +50,34 @@ if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Retur
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Germani se non e' il primo accesso
 	$form=gaz_dbi_parse_post('orderman');
 	$form['order_type']=$_POST['order_type'];
-	$form['description'] = $_POST['description'];
-	$form['id_tesbro']= $_POST['id_tesbro'];
+	$form['description'] = $_POST['description'];	
 	$form['gioinp'] = $_POST['gioinp'];
 	$form['mesinp'] = $_POST['mesinp'];
 	$form['anninp'] = $_POST['anninp'];
 	$form['day_of_validity'] = $_POST['day_of_validity'];
 	$form["campo_impianto"] = $_POST["campo_impianto"];
 	$form['order']=$_POST['order'];
-	If ($form['order']>0) {// se c'è un ordine lo importo
+	If (intval($form['order'])>0) {// se c'è un numero ordine lo importo
 		$res = gaz_dbi_get_row($gTables['tesbro'],"numdoc",$form['order']);
-		$res2 = gaz_dbi_get_row($gTables['rigbro'],"id_tes",$res['id_tes']);
-		$form['artico']=$res2['codart'];
-		$form['quanti']=$res2['quanti'];
+		if (isset($res)) { // se esiste veramente l'ordine
+			$res2 = gaz_dbi_get_row($gTables['rigbro'],"id_tes",$res['id_tes']);
+			$form['artico']=$res2['codart'];
+			$form['quanti']=$res2['quanti'];
+			$form['id_tesbro']=$res['id_tes'];
+			$form['id_rigbro']=$res2['id_rig'];
+		} else { // se l'ordine non esiste ed è stato inserito un numero anomalo
+			$form['artico']="";
+			$form['quanti']=0;
+			$form['id_tesbro']=0;
+			$form['id_rigbro']=0;
+			$form['order']=0;
+		}
 	} else {
 		$form['artico']=$_POST['artico'];
 		$form['quanti']=$_POST['quanti'];
+		$form['id_tesbro']= 0;
+		$form['id_rigbro']= 0;
+		$form['order']=0;
 	}
 	$form['nmov']=$_POST['nmov'];
 	$form['nmovdb']=$_POST['nmovdb'];
@@ -150,10 +162,14 @@ if (isset($_POST['Del_mov'])) {
 						$result = gaz_dbi_query($query);
 						$row = $result->fetch_assoc();
 						$id_orderman = $row['Auto_increment']; // trovo l'ID che avrà il movimento di produzione ORDERMAN
-					$query="SHOW TABLE STATUS LIKE '".$gTables['lotmag']."'"; unset($row); 
-						$result = gaz_dbi_query($query);
-						$row = $result->fetch_assoc();
-						$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il movimento di magazzino
+						
+						if ($form['lot_or_serial']==1) {
+							$query="SHOW TABLE STATUS LIKE '".$gTables['lotmag']."'"; unset($row); 
+								$result = gaz_dbi_query($query);
+								$row = $result->fetch_assoc();
+								$id_lotmag = $row['Auto_increment']; // trovo l'ID che avrà il lotto
+						}
+						
 					$query="SHOW TABLE STATUS LIKE '".$gTables['tesbro']."'"; unset($row); 
 						$result = gaz_dbi_query($query);
 						$row = $result->fetch_assoc();
@@ -187,23 +203,38 @@ if ($form['order_type']=="AGR" or $form['order_type']=="RIC" or $form['order_typ
 			if (strlen ($form['expiry']) ==0) { // se non c'è la scadenza la inserisco a zero in automatico
 			$form['expiry']="0000-00-00 00:00:00";
 			} 
-		 // è un nuovo INSERT
+		 // è un nuovo INSERT 
 			if (strlen ($form['identifier']) >0 && $toDo=="insert") {
-			
-				gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('". $form[	'artico'] . "','" . $id_movmag . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
-					
+				$form['id_lotmag']=$id_lotmag; //inserisco il nuovo lotto che deve essere nuovo ad ogni inerimento di orderman
+				gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('". $form['artico'] . "','" . $id_movmag . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
+				gaz_dbi_query ("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" .$form['id_lotmag']. "' WHERE id_mov ='".$form['id_movmag']."'") ; // aggiorno id_lotmag sul movmag	
 			}		 
 		 //  è un UPDATE 
 		 
-			if (strlen ($form['identifier']) >0  && $toDo=="update"){		
-				gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , id_movmag = '" . $form['id_movmag'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
+			if (strlen ($form['identifier']) >0  && $toDo=="update"){
+				$resin = gaz_dbi_get_row($gTables['orderman'],"id",$_GET['codice']);
+				$resin2 = gaz_dbi_get_row($gTables['lotmag'],"id",$resin['id_lotmag']);
+				if ($resin2['identifier']==$form['identifier']){ // se ha lo stesso numero di lotto di quello precedentemente salvato faccio update di lotmag
+					gaz_dbi_query("UPDATE " . $gTables['lotmag'] . " SET codart = '" . $form['artico'] . "' , id_movmag = '" . $form['id_movmag'] . "' , identifier = '" . $form['identifier'] . "' , expiry = '" . $form['expiry'] . "' WHERE id = '" . $form['id_lotmag'] . "'");
+				} else { // se non è lo stesso numero, cancello il lotto iniziale e ne creo uno nuovo
+					gaz_dbi_query("DELETE FROM ".$gTables['lotmag']." WHERE id = ".$resin['id_lotmag']);
+					gaz_dbi_query("INSERT INTO " . $gTables['lotmag'] . "(codart,id_movmag,identifier,expiry) VALUES ('". $form['artico'] . "','" . $form['id_movmag'] . "','" . $form['identifier'] . "','" . $form['expiry'] . "')");
+					
+					$query="SHOW TABLE STATUS LIKE '".$gTables['lotmag']."'"; unset($row); 
+					$result = gaz_dbi_query($query);
+					$row = $result->fetch_assoc();
+					$form['id_lotmag'] = $row['Auto_increment']-1; // vedo dove è stato salvato lotmag
+					
+					gaz_dbi_query ("UPDATE " . $gTables['movmag'] . " SET id_lotmag = '" .$form['id_lotmag']. "' WHERE id_mov ='".$form['id_movmag']."'") ; // aggiorno id_lotmag sul movmag			
+				}
+				
 			}		
 		}
 		
 // Antonio Germani - inizio salvo documento/CERTIFICATO lotto
 		if ($toDo=="update") { // se è update lascio $form id_lotmag del form
 			$form['id_lotmag'];// 
-		} else { // se è insert metto il nuovo id cercat ad inizio salvataggio
+		} else { // se è insert nuovo metto il nuovo id cercat ad inizio salvataggio
 			$form['id_lotmag']=$id_lotmag;
 		}
 		if (substr($form['filename'], 0, 7) <> 'lotmag_') { // se è stato cambiato il file, cioè il nome non inizia con lotmag e, quindi, anche se è un nuovo insert
@@ -242,7 +273,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 			$hours_extra_pre=$result2['day_of_validity']-8;
 		} else {
 			$hours_normal_pre=$result2['day_of_validity'];
-			$hours_extra_pre="";
+			$hours_extra_pre=0;
 		}
 		
 // controllo se è una variazione movimento e se è stato cambiato l'operaio
@@ -262,7 +293,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 						$id_work_type_extra=2;
 					} 
 					// e faccio l'UPDATE - NON tocco id_orderman
-					$query = "UPDATE " . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', hours_extra = '".$ore_extra."' WHERE id_staff = '".$form['staffdb'][$form['mov']]."' AND work_day = '".$work_day."'";
+					$query = "UPDATE " . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', id_orderman = '', hours_extra = '".$ore_extra."' WHERE id_staff = '".$form['staffdb'][$form['mov']]."' AND work_day = '".$work_day."'";
 					gaz_dbi_query($query);
 				}
 			// al nuovo operaio devo aggiungere le ore lavorate
@@ -309,7 +340,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 						$id_work_type_extra=2;
 					}
 					// e faccio l'UPDATE - NON tocco id_orderman
-					$query = "UPDATE " . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', hours_extra = '".$ore_extra."' WHERE id_staff = '".$form['staffdb'][$form['mov']]."' AND work_day = '".$result2['datemi']."'";
+					$query = "UPDATE " . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', id_orderman = '', hours_extra = '".$ore_extra."' WHERE id_staff = '".$form['staffdb'][$form['mov']]."' AND work_day = '".$result2['datemi']."'";
 					gaz_dbi_query($query);
 				}		
 			// al nuovo operaio devo aggiungere le ore lavorate nel nuovo giorno di produzione
@@ -498,21 +529,69 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 }
 // FINE gestione registrazione database operai 
 
-// Inizio Scrittura produzione ORDERMAN e, se non già creati da un ordine, scrittura di TESBRO E RIGBRO
-			if ($toDo == 'update') { // Antonio Germani e' una modifica quindi aggiorno orderman e tesbro
-				$query="UPDATE ".$gTables['orderman']." SET ".'order_type'." = '".$form['order_type']."', ".'description'." = '".$form['description']."', ".'campo_impianto'." = '".$form["campo_impianto"]."', ".'add_info'." = '".$form['add_info']."' WHERE id = '".$form['id']."'";
-				$res = gaz_dbi_query($query);
-				$query="UPDATE ".$gTables['tesbro']." SET ".'datemi'." = '".$form['datemi']."', ".'day_of_validity'." = '".$form['day_of_validity']."' WHERE id_tes = '".$form['id_tesbro']."'";
-				$res = gaz_dbi_query($query);
-				$query="UPDATE ".$gTables['rigbro']." SET ".'codart'." = '".$form['artico']."', ".'descri'." = '".$resartico['descri']."', ".'unimis'." = '".$resartico['unimis']."', ".'quanti'." = '".$form['quanti']."' WHERE id_tes = '".$form['id_tesbro']."'";
-				$res = gaz_dbi_query($query);
-			} else { // e' un'inserimento
-												// creo e salvo ORDERMAN
-				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,adminid) VALUES ('". $form[	'order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $id_lotmag . "', '". $admin_aziend['adminid'] ."')");
+// Antonio Germani - Inizio Scrittura produzione ORDERMAN e, se non già creati da un ordine, scrittura di TESBRO E RIGBRO
+			if ($toDo == 'update') { //  se e' una modifica, aggiorno orderman e tesbro
+			
+				$query="UPDATE ".$gTables['orderman']." SET ".'order_type'." = '".$form['order_type']."', ".'description'." = '".$form['description']."', ".'campo_impianto'." = '".$form["campo_impianto"]."', ".'id_lotmag'." = '".$form['id_lotmag']."', ".'add_info'." = '".$form['add_info']."' WHERE id = '".$form['id']."'";
+				gaz_dbi_query($query);
+				$resin=gaz_dbi_get_row($gTables['tesbro'],"id_orderman",$id_orderman);
 				
-				if (strlen($form['order'])<1){ // se non c'è un ordine ne creo uno fittizio in TESBRO e RIGBRO
-					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,day_of_validity,datemi,id_orderman,status,adminid) VALUES ('PRO','" . $form['day_of_validity'] . "','" . $form['datemi'] . "','" . $id_orderman ."', AUTOGENERATO, '".$admin_aziend['adminid']."')");
+				if ($resin['id_tes']<>$form['id_tesbro']) { // se l'ordine iniziale è diverso da quello del form
+					if ($resin['tipdoc']=="PRO") { // se era autogenerato, cioè era PRO, lo cancello e basta perché vuol dire che è stato tolto completamente dal form o sostituito con un vero ordine VOR
+						gaz_dbi_query("DELETE FROM ".$gTables['tesbro']." WHERE id_orderman = ".$id_orderman);
+						// devo cancellare anche il relativo rigo rigbro ad esso connesso
+						gaz_dbi_query("DELETE FROM ".$gTables['rigbro']." WHERE id_tes = ".$resin['id_tes']);					
+					} else {// se il numero ordine iniziale non era PRO, cioè era un ordine vero, gli azzero solo id orderman
+						gaz_dbi_query("UPDATE ".$gTables['tesbro']." SET id_orderman = '' WHERE id_tes = '".$resin['id_tes']."'"); 
+					}
+					$query="UPDATE ".$gTables['orderman']." SET ".'id_tesbro'." = '', ".'id_rigbro'." = '' WHERE id = '".$form['id']."'";// azzero anche i riferimenti su orderman
+					gaz_dbi_query($query);
+					
+					if ($form['id_tesbro']>0) { // poi, se c'è un nuovo ordine VOR nel form, lo collego a id orderman 
+						gaz_dbi_query("UPDATE ".$gTables['tesbro']." SET id_orderman = '".$id_orderman."' WHERE id_tes = '".$form['id_tesbro']."'");
+						$query="UPDATE ".$gTables['orderman']." SET ".'id_tesbro'." = '".$form['id_tesbro']."', ".'id_rigbro'." = '".$form['id_rigbro']."' WHERE id = '".$form['id']."'";
+						gaz_dbi_query($query); // aggiorno i riferimenti su orderman
+						
+					} else { // se non c'è un nuovo ordine lo creo in automatico in tesbro, rigbro e metto i riferimenti su orderman
+						$query="SHOW TABLE STATUS LIKE '".$gTables['tesbro']."'"; unset($row); 
+							$result = gaz_dbi_query($query);
+							$row = $result->fetch_assoc();
+							$id_tesbro = $row['Auto_increment']; // trovo l'ID che avrà TESBRO testata documento
+						$query="SHOW TABLE STATUS LIKE '".$gTables['rigbro']."'"; unset($row); 
+							$result = gaz_dbi_query($query);
+							$row = $result->fetch_assoc();
+							$id_rigbro = $row['Auto_increment']; // trovo l'ID che avrà RIGBRO rigo documento
+						gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,day_of_validity,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['day_of_validity'] . "','" . $form['datemi'] . "', '".time()."', '" . $id_orderman ."', 'AUTOGENERA', '".$admin_aziend['adminid']."')"); // creo tesbro
+						gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti) VALUES ('".$id_tesbro."','" . $form['artico'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] ."', '".$form['quanti']."')"); // creo rigbro
+						$query="UPDATE ".$gTables['orderman']." SET ".'id_tesbro'." = '".$id_tesbro."', ".'id_rigbro'." = '".$id_rigbro."' WHERE id = '".$form['id']."'";
+						gaz_dbi_query($query); // aggiorno i riferimenti su orderman
+						
+					}
+					
+					
+					
+				} else { // se il numero d'ordine NON è stato cambiato posso fare update solo se è PRO, cioè autogenerato
+					if ($resin['tipdoc']=="PRO"){
+						$res=gaz_dbi_get_row($gTables['rigbro'],"id_tes",$form['id_tesbro']);   
+						if (isset($res)) { // se esiste il rigo lo aggiorno tesbro e rigbro
+							$query="UPDATE ".$gTables['tesbro']." SET ".'datemi'." = '".$form['datemi']."', ".'day_of_validity'." = '".$form['day_of_validity']."', id_orderman = '".$id_orderman."' WHERE id_tes = '".$form['id_tesbro']."'";
+							$res = gaz_dbi_query($query);							
+							$query="UPDATE ".$gTables['rigbro']." SET ".'codart'." = '".$form['artico']."', ".'descri'." = '".$resartico['descri']."', ".'unimis'." = '".$resartico['unimis']."', ".'quanti'." = '".$form['quanti']."' WHERE id_tes = '".$form['id_tesbro']."'";
+							$res = gaz_dbi_query($query);
+						}
+					}
+				}
+				
+			} else { // e' un nuovo inserimento
+												// creo e salvo ORDERMAN
+				gaz_dbi_query("INSERT INTO " . $gTables['orderman'] . "(order_type,description,add_info,id_tesbro,id_rigbro,campo_impianto,id_lotmag,adminid) VALUES ('". $form[	'order_type'] . "','" . $form['description'] . "','" . $form['add_info'] . "','" . $id_tesbro . "', '" . $id_rigbro . "', '" . $form['campo_impianto'] . "', '" . $form['id_lotmag'] . "', '". $admin_aziend['adminid'] ."')");
+				
+				if (intval($form['order'])<=0){ // se non c'è un numero ordine ne creo uno fittizio in TESBRO e RIGBRO
+					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,day_of_validity,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['day_of_validity'] . "','" . $form['datemi'] . "', '".time()."', '" . $id_orderman ."', 'AUTOGENERA', '".$admin_aziend['adminid']."')");
 					gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti) VALUES ('".$id_tesbro."','" . $form['artico'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] ."', '".$form['quanti']."')");
+				} else { // se c'è l'ordine lo collego ad orderman
+					$query="UPDATE ".$gTables['tesbro']." SET ".'id_orderman'." = '".$id_orderman."' WHERE id_tes = '".$form['id_tesbro']."'";
+					$res = gaz_dbi_query($query);
 				}
 			}
 // fine Orderman tesbro e rigbro			
@@ -545,6 +624,10 @@ $result = gaz_dbi_get_row($gTables['orderman'],"id",$_GET['codice']);
     $form['id_tesbro']=$result['id_tesbro'];
 	$form['id_rigbro']=$result['id_rigbro'];
 	$form['add_info']=$result['add_info'];
+$result4 = gaz_dbi_get_row($gTables['movmag'],"id_orderman",$_GET['codice']);	
+	$form['datreg']=$result4['datreg'];
+	$form['quanti']=$result4['quanti'];
+	$form['id_movmag']=$result4['id_mov'];	
 $result2 = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$result['id_tesbro']);
 	$form['gioinp'] = substr($result2['datemi'], 8, 2);
 	$form['mesinp'] = substr($result2['datemi'], 5, 2);
@@ -557,10 +640,7 @@ $result2 = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$result['id_tesbro']);
 	$form['order']=$result2['numdoc'];
 $result3 = gaz_dbi_get_row($gTables['rigbro'],"id_rig",$result['id_rigbro']);
 	$form['artico']=$result3['codart'];
-$result4 = gaz_dbi_get_row($gTables['movmag'],"id_orderman",$_GET['codice']);	
-	$form['datreg']=$result4['datreg'];
-	$form['quanti']=$result4['quanti'];
-	$form['id_movmag']=$result4['id_mov'];
+	$form['quanti']=$result3['quanti']; // sovrascrive il magazzino se c'è un ordine a riferimento
 $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);		
 	$form['identifier']=$result5['identifier'];
 	$form['expiry']=$result5['expiry'];
@@ -614,7 +694,7 @@ $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);
 	$form['identifier']="";
 	$form['expiry']="";
 	$form['lot_or_serial']="";
-	$form['datreg']=""; // meglio se today >>>> modificare <<<<<<<<
+	$form['datreg']=date("Y-m-d");
 	$form['quanti']="";
 	$form['id_movmag']="";
 	$form['id_lotmag']="";
@@ -728,7 +808,12 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 	$query="SELECT * FROM ".$gTables['tesbro'];
 	$result = gaz_dbi_query($query);
 	while($row = $result->fetch_assoc()){
-		$stringa.="\"".$row['numdoc']." - ".$row['clfoco']."\", ";			
+		if (intval($row['clfoco'])>0){
+		$resforname = gaz_dbi_get_row($gTables['clfoco'],"codice",$row['clfoco']);	
+		} else {
+			$resforname['descri']="AUTO";
+		}
+		$stringa.="\"".$row['numdoc']." - ".$resforname['descri']."\", ";			
 	}
 	$stringa=substr($stringa,0,-1);
 	echo $stringa;
@@ -748,7 +833,7 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
  <!-- fine autocompletamento -->	
 	
 	<td colspan="2" class="FacetDataTD">
-		<input id="autocomplete" type="text" name="order" Value="<?php echo $form['order']; ?>"/>
+		<input id="autocomplete" type="text" name="order" onchange="this.form.submit()" Value="<?php echo $form['order']; ?>"/>
 	</td>
 </tr>
 
@@ -798,7 +883,7 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['15']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
-		<input type="text" name="quanti" value="<?php echo $form['quanti']; ?>" />
+		<input type="text" name="quanti" onchange="this.form.submit()" value="<?php echo $form['quanti']; ?>" />
 		<input type="hidden" name="id_movmag" value="<?php echo $form['id_movmag']; ?>">
 	</td>
 </tr>
@@ -917,7 +1002,7 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 		<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13];?></td>
 		<td class="FacetDataTD" >
 		<input type="hidden" name="filename" value="<?php echo $form['filename']; ?>">
-		<input type="hidden" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
+	idlotmag:	<input type="text" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
 <?php 	
               if (strlen($form['filename'])==0) {
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog">'. 'Inserire nuovo certificato' . ' '.'<i class="glyphicon glyphicon-tag"></i>'
