@@ -21,13 +21,27 @@ if ($camp_mod){
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='fitofarmaci.php'), 'report_fitofarmaci.php', '', '', 15, '', 10  FROM `gaz_menu_script`");
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='fitofarmaci.php'), 'update_fitofarmaci.php', '', '', 11, '', 15  FROM `gaz_menu_script`");
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='fitofarmaci.php'), 'update_fitofarmaci.php', '', '', 16, '', 20  FROM `gaz_menu_script`");
-	echo "Ho modificato il menù del modulo <b>Registro di campagna</b>";
+	echo "<p>Ho modificato il menù del modulo <b>Registro di campagna</b></p>";
 }
 
-// converto i vecchi ordini nel nuovo tipo evadibili parzialmente
+/* CONVERSIONE VECCHI ORDINI CON NUOVI EVADIBILI PARZIALMENTE
+
+ho provato questa query ma è molto più lenta di quelle annidate sotto 
+
+UPDATE gaz_XXXrigdoc INNER JOIN gaz_XXXrigbro ON gaz_XXXrigdoc.id_tes = gaz_XXXrigbro.id_doc AND gaz_XXXrigdoc.codart = gaz_XXXrigbro.codart SET gaz_XXXrigdoc.id_order=gaz_XXXrigbro.id_tes WHERE 1 
+
+*/
+
+
+// su macchine lente può richiedere molto tempo, allora aumento quello ammissibile
+if (!ini_get('safe_mode')){ //se me lo posso permettere...
+    ini_set('memory_limit','128M');
+    set_time_limit(0);
+}
+
 $limit="99999999";
 $passo="99999999";
-
+$nu=0;
 $result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
 while ($row = gaz_dbi_fetch_array($result)) {
 	$aziend_codice = sprintf("%03s", $row["codice"]);
@@ -36,6 +50,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		$rrigbro = gaz_dbi_dyn_query("*", $table_prefix . "_" . $aziend_codice."rigbro", "id_tes=".$rtb["id_tes"], "id_rig DESC");
 		while ($rrb = gaz_dbi_fetch_array($rrigbro)) {
 			if ( $rrb["id_doc"]!=0 ) {
+				$nu++;
 				$res = gaz_dbi_query("UPDATE ".$table_prefix . "_" . $aziend_codice."rigdoc set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';");
 				if ( !$res ) {
 					echo "errore UPDATE ".$table_prefix . "_" . $aziend_codice."rigdoc set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';<br>";
@@ -44,4 +59,6 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		}
 	}
 }
+echo "<p>Ho convertito <b>".$nu." righi di ordini</b> nella nuova versione evadibili parzialmente</p>";
+
 ?>
