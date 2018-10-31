@@ -25,14 +25,20 @@
  */
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
-if (isset($_GET['fn'])) {   
-    // Costruisco oggetto con tutti i dati del file pdf da allegare
-    $content = new StdClass;
-    $content->name = $doc_name;
-    $content->string = $pdf->Output($doc_name, $dest);
-    $content->encoding = "base64";
-    $content->mimeType = "application/pdf";
+if (isset($_GET['fn'])) {
+    $user = gaz_dbi_get_row($gTables['admin'], "user_name", $_SESSION["user_name"]);
+	$fn=substr($_GET['fn'],0,37);
+	$file_url = "../../data/files/".$admin_aziend['codice']."/".$fn;
+    $content = new StdClass;	
+    $content->name = $admin_aziend['ragso1'].' '.$admin_aziend['ragso2'].'_FattureElettroniche_'.$fn;
+    $content->urlfile = $file_url; // se passo l'url GAzieMail allega un file del file system e non da stringa
+	$dest_fae_zip_package['e_mail'] = gaz_dbi_get_row($gTables['company_config'], 'var', 'dest_fae_zip_package')['val'];
     $gMail = new GAzieMail();
-    $gMail->sendMail($admin_aziend, $docVars->user, $content, $docVars->client);
+	if ($gMail->sendMail($admin_aziend, $user, $content, $dest_fae_zip_package)){
+		// se la mail è stata trasmessa con successo aggiorno lo stato sulla tabella dei flussi
+		gaz_dbi_put_query($gTables['fae_flux'], "filename_zip_package = '" . $fn."'", "flux_status", "@@");
+		echo "<p>INVIO FATTURE ELETTRONICHE RIUSCITO!!!";
+	}
+	
 }
 ?>

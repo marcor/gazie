@@ -1340,13 +1340,19 @@ class GAzieMail {
         // Imposto il testo HTML dell'email
         $mail->MsgHTML($body_text);
         // Aggiungo la fattura in allegato
-        $mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
+		if ($content->urlfile){ // se devo trasmettere un file allegato passo il suo url
+			$mail->AddAttachment( $content->urlfile, $content->name );
+		} else { // altrimenti metto il contenuto del pdf che presumibilmente mi arriva da document.php
+			$mail->AddStringAttachment($content->string, $content->name, $content->encoding, $content->mimeType);
+		}
         // Invio...
         if ($mail->Send()) {
             echo "invio e-mail riuscito... <strong>OK</strong><br />mail send has been successful... <strong>OK</strong>"; // or use booleans here
+			return true;
         } else {
             echo "<br />invio e-mail <strong style=\"color: #ff0000;\">NON riuscito... ERROR!</strong><br />mail send has<strong style=\"color: #ff0000;\"> NOT been successful... ERROR!</strong> ";
             echo "<br />mailer error: " . $mail->ErrorInfo;
+			return false;
         }
     }
 

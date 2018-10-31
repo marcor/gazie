@@ -43,12 +43,9 @@ if (isset($_POST['Delete'])) {
 	@unlink($file_url);
 	// elimino i righi dalla tabella dei flussi
     gaz_dbi_del_row($gTables['fae_flux'], 'filename_zip_package', $fn);
-
-//	gaz_dbi_dyn_query('DELETE FROM '.$gTables['fae_flux']." WHERE `filename_zip_package`='".$fn."'");
 	// ristabilisco la possibilità i ricreare il pacchetto dalle fatture
     gaz_dbi_put_query($gTables['tesdoc'], "fattura_elettronica_zip_package = '" . $fn."'", "fattura_elettronica_zip_package", "");
 
-//	gaz_dbi_dyn_query('UPDATE '.$gTables['tesdoc']." SET fattura_elettronica_zip_package ='' WHERE  `fattura_elettronica_zip_package`='".$fn."'");
     header("Location: " . $_POST['ritorno']);
     exit;
 }
