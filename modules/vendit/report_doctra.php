@@ -271,13 +271,18 @@ function confirMail(link){
                             }
                             echo "</td>\n";
 
-                            // Colonna Origine
-                            echo "<td>";
-                            $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_order', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes');
-                            while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
-                                    $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
-                                    $t_r = gaz_dbi_fetch_array($tesbro_result);
-                                    echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
+                            echo "<td align=\"center\">";
+                            /*$rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_doc = " . $r['id_tes'] . " GROUP BY id_doc", 'id_tes');
+                            while ($rigbro_r = gaz_dbi_fetch_array($rigbro_result)) {
+                                $r_d = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $rigbro_r["id_tes"]);
+                                if ($r_d["id_tes"] > 0) {
+                                    echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r_d['id_tes'] . "\" style=\"font-size:10px;\">Ord." . $r_d['numdoc'] . "</a>\n";
+                                }
+                            }*/
+                            if ( isset($r['id_order']) && $r['id_order']>0 ) {
+                                $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
+                                $t_r = gaz_dbi_fetch_array($tesbro_result);
+                                echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";
                             }
 
                             if ($lot->thereisLot($r['id_tes'])) {
@@ -389,11 +394,10 @@ function confirMail(link){
                             echo "</td>";
                             // Colonna origine
                             echo "<td align=\"center\">";
-                            $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_order', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes');
-                            while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
-                                $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
-                                $t_r = gaz_dbi_fetch_array($tesbro_result);                           
-                                echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";                            
+                            if ( isset($r['id_order']) && $r['id_order']>0 ) {
+                                $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
+                                $t_r = gaz_dbi_fetch_array($tesbro_result);
+                                echo "<a title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\">Ord." . $t_r['numdoc'] . "</a>\n";                            
                             }
                             echo "</td>";
                             echo "<td></td>";

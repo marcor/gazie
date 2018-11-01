@@ -461,7 +461,7 @@ switch ($admin_aziend['fatimm']) {
                     if ($r["tipdoc"] == 'FAD') {
                         $ddt_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "tipdoc = '" . $r["tipdoc"] . "' AND numfat = " . $r["numfat"] . " AND datfat = '" . $r["datfat"] . "'", 'datemi DESC');
                         echo "<td align=\"center\">";
-
+                        
                         if ( gaz_dbi_num_rows($ddt_result) > 5 ) {
                             echo "<a href=\"report_doctra.php\" style=\"font-size:10px;\" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-plane\"></i>DdT</a>";
                             while ($r_d = gaz_dbi_fetch_array($ddt_result)) {
@@ -483,12 +483,11 @@ switch ($admin_aziend['fatimm']) {
                     } elseif ($lot->thereisLot($r['id_tes'])) {
                         echo "<td> <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $r['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a></td>\n";
                     } else {
-                        echo "<td>";
-                        $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_order', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes');
-                            while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
-                                $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
-                                $t_r = gaz_dbi_fetch_array($tesbro_result);
-                            echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
+                        echo "<td align=\"center\">";
+                        if ( isset ($r['id_order']) && $r['id_order']>0 ) {
+                            $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $r['id_order'], 'id_tes');
+                            $t_r = gaz_dbi_fetch_array($tesbro_result);
+                            echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $r['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
                         }
                         echo "</td>";
                     }
