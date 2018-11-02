@@ -21,6 +21,53 @@ if ($camp_mod){
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='fitofarmaci.php'), 'report_fitofarmaci.php', '', '', 15, '', 10  FROM `gaz_menu_script`");
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='fitofarmaci.php'), 'update_fitofarmaci.php', '', '', 11, '', 15  FROM `gaz_menu_script`");
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='fitofarmaci.php'), 'update_fitofarmaci.php', '', '', 16, '', 20  FROM `gaz_menu_script`");
-	echo "Ho modificato il menù del modulo <b>Registro di campagna</b>";
+	echo "<p>Ho modificato il menù del modulo <b>Registro di campagna</b></p>";
 }
+
+/* CONVERSIONE VECCHI ORDINI CON NUOVI EVADIBILI PARZIALMENTE MA LA CONVERSIONE E' LIMITATA ALL'ANNO 2018
+*/
+
+
+// su macchine lente può richiedere molto tempo, allora aumento quello ammissibile
+if (!ini_get('safe_mode')){ //se me lo posso permettere...
+    ini_set('memory_limit','128M');
+    set_time_limit(0);
+}
+
+$limit="99999999";
+$passo="99999999";
+$nu=0;
+$result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
+while ($row = gaz_dbi_fetch_array($result)) {
+	$aziend_codice = sprintf("%03s", $row["codice"]);
+	// controllo se ho l'indice id_tes su rigdoc altrimenti lo creo perché senza di esso la query di update sarebbe lentissima 
+	$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice."rigdoc WHERE 1");
+	$ex=false;	
+	while ($vk = gaz_dbi_fetch_array($rk)) {
+		if ($vk['Column_name'] == 'id_tes'){
+			$ex=true;
+		}
+	}
+	if (!$ex){
+		gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice."rigdoc	ADD INDEX `id_tes` (`id_tes`)");		
+		echo "<p>Ho creato l'index <b>id_tes</b> su ". $table_prefix . "_" . $aziend_codice."rigdoc perché non esisteva</p>";
+	}
+	// fine controllo - creazione
+
+	$rtesbro = gaz_dbi_dyn_query("*", $table_prefix . "_" . $aziend_codice."tesbro", "tipdoc='VOR'", "id_tes DESC"); 
+	while ($rtb = gaz_dbi_fetch_array($rtesbro)) {
+		$rrigbro = gaz_dbi_dyn_query("*", $table_prefix . "_" . $aziend_codice."rigbro", "id_tes=".$rtb["id_tes"], "id_rig DESC");
+		while ($rrb = gaz_dbi_fetch_array($rrigbro)) {
+			if ( $rrb["id_doc"]!=0 ) {
+				$nu++;
+				$res = gaz_dbi_query("UPDATE ".$table_prefix . "_" . $aziend_codice."rigdoc set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';");
+				if ( !$res ) {
+					echo "errore UPDATE ".$table_prefix . "_" . $aziend_codice."rigdoc set id_order=".$rtb["id_tes"]." WHERE id_tes=".$rrb["id_doc"]." and codart='".$rrb["codart"]."';<br>";
+				}
+			}
+		}
+	}
+}
+echo "<p>Ho convertito <b>".$nu." righi di ordini</b> nella nuova versione evadibili parzialmente</p>";
+
 ?>
