@@ -75,6 +75,7 @@ $strCommon = array('cancel' => " Annulla ",
     'duplicate' => 'Duplica',
     'browse_for_file' => 'Sfoglia',
 	'refresh' => ' AGGIORNA ',
-	'add' => 'Aggiungi movimento'
+	'add' => 'Aggiungi movimento',
+	'add_staff' => 'Aggiungi operaio'
 );
 ?>
