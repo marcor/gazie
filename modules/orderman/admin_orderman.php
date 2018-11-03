@@ -254,6 +254,7 @@ if ($form['order_type']=="AGR" or $form['order_type']=="RIC" or $form['order_typ
 // INIZIO gestione salvataggio database operai
 
 for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per ogni operaio
+
 	If (intval($form['staff'][$form['mov']])>0){ // se il codice operaio esiste
 		$id_worker=$form['staff'][$form['mov']]; //identificativo operaio
 		
@@ -294,13 +295,13 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 					} else {
 						$id_work_type_extra=2;
 					} 
-					// e faccio l'UPDATE - NON tocco orderman
+					// e faccio l'UPDATE 
 					$query = "UPDATE " . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', id_orderman = '', hours_extra = '".$ore_extra."' WHERE id_staff = '".$form['staffdb'][$form['mov']]."' AND work_day = '".$work_day."'";
 					gaz_dbi_query($query);
 				}
 			// al nuovo operaio devo aggiungere le ore lavorate
-				$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
-				If (isset($r)) { // se esiste giorno e nuovo operaio, vedo se ci sono ore lavorate in precedenza e ci aggiungo quelle della produzione
+				$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day."' AND id_orderman ='".$id_orderman);
+				If (isset($r)) { // se esiste il nuovo operaio nel giorno e con id_orderman, vedo se ci sono ore lavorate in precedenza e ci aggiungo quelle della produzione
 					$ore_normal=$r['hours_normal']+$hours_normal;
 					$ore_extra=$r['hours_extra']+$hours_extra;
 				}	
@@ -314,8 +315,8 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 						$id_work_type_extra="";
 					}
 			// salvo ore su nuovo operaio			
-				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker );
-				if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
+				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker."' AND id_orderman ='".$id_orderman );
+				if ($exist>=1){ // se ho già un record del lavoratore per quella data e con quel id_orderman faccio UPDATE
 					$query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$id_worker.", id_orderman = '".$id_orderman."', work_day = '".$work_day."', hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', hours_extra = '".$ore_extra."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
 					gaz_dbi_query($query);
 				} else { // altrimenti faccio l'INSERT
@@ -341,13 +342,13 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 					} else {
 						$id_work_type_extra=2;
 					}
-					// e faccio l'UPDATE - NON tocco orderman
+					// e faccio l'UPDATE 
 					$query = "UPDATE " . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', id_orderman = '', hours_extra = '".$ore_extra."' WHERE id_staff = '".$form['staffdb'][$form['mov']]."' AND work_day = '".$result2['datemi']."'";
 					gaz_dbi_query($query);
 				}		
 			// al nuovo operaio devo aggiungere le ore lavorate nel nuovo giorno di produzione
-				$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
-				If (isset($r)) { // se esiste giorno e nuovo operaio, vedo se ci sono ore lavorate in precedenza e ci aggiungo quelle della produzione
+				$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day."' AND id_orderman ='".$id_orderman);
+				If (isset($r)) { // se esiste giorno e nuovo operaio con id_orderman, vedo se ci sono ore lavorate in precedenza e ci aggiungo quelle della produzione
 					$ore_normal=$r['hours_normal']+$hours_normal;
 					$ore_extra=$r['hours_extra']+$hours_extra;
 				}
@@ -362,8 +363,8 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 					}
 				
 			// salvo ore su nuovo operaio			
-				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker );
-				if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
+				$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker."' AND id_orderman ='".$id_orderman );
+				if ($exist>=1){ // se ho già un record del lavoratore per quella data e con quel id_orderman faccio UPDATE
 					$query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$id_worker.", id_orderman = '".$id_orderman."', work_day = '".$work_day."', hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', hours_extra = '".$ore_extra."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
 					gaz_dbi_query($query);
 				} else { // altrimenti faccio l'INSERT
@@ -398,8 +399,8 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 					}
 					
 									
-					$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
-					If (isset($rin)) { // se esiste giorno e operaio gli aggiungo le ore
+					$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day."' AND id_orderman ='".$id_orderman);
+					If (isset($rin)) { // se esiste giorno e operaio con id_orderman gli aggiungo le ore
 						$ore_normal=$rin['hours_normal']+$hours_normal;
 						$ore_extra=$rin['hours_extra']+$hours_extra;
 						if ($ore_normal>8) {
@@ -427,8 +428,8 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 		
 				} else { //se NON è stata cambiata la data aggiorno solo le ore
 					
-					$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day); 
-					If (isset($rin)) { // se esiste giorno e operaio gli modifico le ore nello stesso giorno
+					$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day."' AND id_orderman ='".$id_orderman); 
+					If (isset($rin)) { // se esiste giorno e operaio con id_orderman gli modifico le ore nello stesso giorno
 						$ore_normal= $rin['hours_normal'] - $hours_normal_pre + $hours_normal; 
 						$ore_extra= $rin['hours_extra'] - $hours_extra_pre + $hours_extra;
 						if ($ore_normal>8) {
@@ -456,8 +457,8 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 			}	
 		}
 		If ($toDo=="update" && $form['nmov']>$form['nmovdb'] && $form['staffdb'][$form['mov']] <> $id_worker){ // se è update ed è stato aggiunto un nuovo operaio a quelli esistenti e si tratta proprio di quello aggiunto
-			$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
-			If (isset($rin)) { // se esiste giorno e operaio gli aggiungo le ore e aggiorno database
+			$rin = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day."' AND id_orderman ='".$id_orderman);
+			If (isset($rin)) { // se esiste giorno e operaio con id_ordeman gli aggiungo le ore e aggiorno database
 				$ore_normal=$rin['hours_normal']+$hours_normal;
 				$ore_extra=$rin['hours_extra']+$hours_extra;
 				if ($ore_normal>8) {
@@ -484,8 +485,8 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 		}
 		
 		If ($toDo <> "update") { // se non è un update
-			$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day);
-			If (isset($r)) { // se esiste giorno e operaio vedo se ci sono ore normali lavorate 
+			$r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $id_worker."' AND work_day ='".$work_day."' AND id_orderman ='".$id_orderman);
+			If (isset($r)) { // se esiste giorno e operaio con id_orderman vedo se ci sono ore normali lavorate 
 				$ore_normali_lavorate = $r['hours_normal'];
 				$ore_extra_lavorate = $r['hours_extra'];
 				$id_work_type_extra = $r['id_work_type_extra'];
@@ -512,8 +513,8 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 						}        
 			}
 		// salvo ore su operaio attuale					
-			$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker );
-			if ($exist>=1){ // se ho già un record del lavoratore per quella data faccio UPDATE
+			$exist=gaz_dbi_record_count($gTables['staff_worked_hours'], "work_day = '" . $work_day . "' AND id_staff = ".$id_worker."' AND id_orderman ='".$id_orderman );
+			if ($exist>=1){ // se ho già un record del lavoratore per quella data con quel id_orderman faccio UPDATE
 				$query = 'UPDATE ' . $gTables['staff_worked_hours'] . ' SET id_staff ='.$id_worker.", id_orderman = '".$id_orderman."', work_day = '".$work_day."', hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', hours_extra = '".$ore_extra."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
 				gaz_dbi_query($query);
 				} else { // altrimenti faccio l'INSERT
@@ -793,6 +794,7 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 <?php 
 	} else {
 		echo $form['order_type'],"&nbsp &nbsp";
+		echo '<input type="hidden" name="order_type" value="'.$form['order_type'].'">';
 	}
 
 
