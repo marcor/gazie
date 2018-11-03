@@ -48,7 +48,9 @@ if ((isset($_GET['Update']) and  !isset($_GET['codice'])) or isset($_POST['Retur
 }
 
 if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Germani se non e' il primo accesso
+
 	$form=gaz_dbi_parse_post('orderman');
+	
 	$form['order_type']=$_POST['order_type'];
 	$form['description'] = $_POST['description'];	
 	$form['gioinp'] = $_POST['gioinp'];
@@ -127,7 +129,7 @@ if (isset($_POST['Del_mov'])) {
              $msg .= "12+";
        } 
 	   
-	   if ($form['order_type']=="IND" or $form['order_type']=="IND") { // in produzione industriale e artigianale
+	   if ($form['order_type']=="IND" or $form['order_type']=="ART") { // in produzione industriale e artigianale
 		   if (strlen($form['artico'])==0){ // articolo vuoto
 			   $msg .= "16+"; 
 		   }
@@ -292,7 +294,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 					} else {
 						$id_work_type_extra=2;
 					} 
-					// e faccio l'UPDATE - NON tocco id_orderman
+					// e faccio l'UPDATE - NON tocco orderman
 					$query = "UPDATE " . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', id_orderman = '', hours_extra = '".$ore_extra."' WHERE id_staff = '".$form['staffdb'][$form['mov']]."' AND work_day = '".$work_day."'";
 					gaz_dbi_query($query);
 				}
@@ -339,7 +341,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 					} else {
 						$id_work_type_extra=2;
 					}
-					// e faccio l'UPDATE - NON tocco id_orderman
+					// e faccio l'UPDATE - NON tocco orderman
 					$query = "UPDATE " . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', id_orderman = '', hours_extra = '".$ore_extra."' WHERE id_staff = '".$form['staffdb'][$form['mov']]."' AND work_day = '".$result2['datemi']."'";
 					gaz_dbi_query($query);
 				}		
@@ -467,7 +469,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 				} else {
 					$id_work_type_extra="";
 				}
-				$query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', hours_extra = '".$ore_extra."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
+				$query = 'UPDATE ' . $gTables['staff_worked_hours'] . " SET hours_normal = '".$ore_normal."', id_work_type_extra = '".$id_work_type_extra."', hours_extra = '".$ore_extra."', id_orderman = '".$id_orderman."' WHERE id_staff = '".$id_worker."' AND work_day = '".$work_day."'";
 				gaz_dbi_query($query);
 			} else { // altrimenti faccio l'INSERT
 				$v=array();
@@ -640,7 +642,7 @@ $result2 = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$result['id_tesbro']);
 	$form['order']=$result2['numdoc'];
 $result3 = gaz_dbi_get_row($gTables['rigbro'],"id_rig",$result['id_rigbro']);
 	$form['artico']=$result3['codart'];
-	$form['quanti']=$result3['quanti']; // sovrascrive il magazzino se c'è un ordine a riferimento
+	$form['quanti']=$result3['quanti']; // sovrascrive la quantità presente nel movmag se c'è un ordine a riferimento
 $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);		
 	$form['identifier']=$result5['identifier'];
 	$form['expiry']=$result5['expiry'];
@@ -770,24 +772,30 @@ if ($toDo == 'update') {
 
 // Antonio Germani > inserimento tipo di produzione 
 print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"FacetDataTD\">";
-	if(isset($_POST['order_type'])){
-		$form['order_type'] = $_POST['order_type']; // Antonio Germani - Memorizzo il valore iniziale: IN UPDATE NON POSSIAMO VARIARE IL TIPO DI PRODUZIONE ... si complicherebbe troppo con i file di magazzino che alcune produzioni creano e altre no. In seguito vedremo! ... tutto si può!
-	}
+	
 ?>
 <script>
   $(function() {
     $( ".datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
 });
 </script>
-<select name="order_type" onchange="this.form.submit()" >
-<option <?php if ($form['order_type'] == "" ) echo 'selected' ; ?> value="">--</option>
-<option <?php if ($form['order_type'] == "AGR" ) echo 'selected' ; ?> value="AGR">Agricola</option>
-<option <?php if ($form['order_type'] == "IND" ) echo 'selected' ; ?> value="IND">Industriale</option>
-<option <?php if ($form['order_type'] == "RIC" ) echo 'selected' ; ?> value="IND">Ricerca e sviluppo</option>
-<option <?php if ($form['order_type'] == "PRF" ) echo 'selected' ; ?> value="IND">Professionale</option>
-<option <?php if ($form['order_type'] == "ART" ) echo 'selected' ; ?> value="IND">Artigianale</option>
-</select>
-<?php
+
+<?php if ($toDo=="insert"){
+	?>
+	<select name="order_type" onchange="this.form.submit()" >
+	<option <?php if ($form['order_type'] == "" ) echo 'selected' ; ?> value="">--</option>
+	<option <?php if ($form['order_type'] == "AGR" ) echo 'selected' ; ?> value="AGR">Agricola</option>
+	<option <?php if ($form['order_type'] == "IND" ) echo 'selected' ; ?> value="IND">Industriale</option>
+	<option <?php if ($form['order_type'] == "RIC" ) echo 'selected' ; ?> value="RIC">Ricerca e sviluppo</option>
+	<option <?php if ($form['order_type'] == "PRF" ) echo 'selected' ; ?> value="PRF">Professionale</option>
+	<option <?php if ($form['order_type'] == "ART" ) echo 'selected' ; ?> value="ART">Artigianale</option>
+	</select>
+<?php 
+	} else {
+		echo $form['order_type'],"&nbsp &nbsp";
+	}
+
+
 echo '<label>' . 'Data registrazione: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="datreg"  value="' . $form['datreg']. '">';
 ?>
 </td></tr>
@@ -1002,7 +1010,7 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 		<tr><td class="FacetFieldCaptionTD"><?php echo $script_transl[13];?></td>
 		<td class="FacetDataTD" >
 		<input type="hidden" name="filename" value="<?php echo $form['filename']; ?>">
-	idlotmag:	<input type="text" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
+		<input type="hidden" name="id_lotmag" value="<?php echo $form['id_lotmag']; ?>">
 <?php 	
               if (strlen($form['filename'])==0) {
                     echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#lm_dialog">'. 'Inserire nuovo certificato' . ' '.'<i class="glyphicon glyphicon-tag"></i>'
@@ -1048,12 +1056,14 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 // fine LOTTI in entrata	
 } else { //se è produzione agricola
 	print "<tr><td><input type=\"hidden\" name=\"nmov\" value=\"0\">";
+	print "<input type=\"hidden\" name=\"nmovdb\" value=\"\">\n";
 	print "<input type=\"hidden\" name=\"staff0\" value=\"\">\n";
 	print "<input type=\"hidden\" name=\"filename\" value=\"\">\n";
 	print "<input type=\"hidden\" name=\"expiry\" value=\"\">\n";
 	print "<input type=\"hidden\" name=\"identifier\" value=\"\">\n";
 	print "<input type=\"hidden\" name=\"id_lotmag\" value=\"\">\n";
 	print "<input type=\"hidden\" name=\"lot_or_serial\" value=\"\"></td></tr>";
+	
 }
 	if ($popup<>1){
 		//ANNULLA/RESET NON FUNZIONA DA RIVEDERE > print "<tr><td class=\"FacetFieldCaptionTD\"><input type=\"reset\" name=\"Cancel\" value=\"".$script_transl['cancel']."\">\n";
