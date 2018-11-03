@@ -25,22 +25,29 @@ if ($camp_mod){
 }
 
 /* CONVERSIONE VECCHI ORDINI CON NUOVI EVADIBILI PARZIALMENTE MA LA CONVERSIONE E' LIMITATA ALL'ANNO 2018
+ALTER TABLE `gaz_001tesdoc`
+	ADD INDEX `tipdoc` (`tipdoc`),
+	ADD INDEX `numfat` (`numfat`),
+	ADD INDEX `datfat` (`datfat`);
+
+	ALTER TABLE `gaz_001effett`
+	ADD INDEX `id_doc` (`id_doc`);
+
 */
 
 
-// su macchine lente può richiedere molto tempo, allora aumento quello ammissibile
-if (!ini_get('safe_mode')){ //se me lo posso permettere...
-    ini_set('memory_limit','128M');
-    set_time_limit(0);
-}
 
 $limit="99999999";
 $passo="99999999";
 $nu=0;
 $result = gaz_dbi_dyn_query("*", $table_prefix.'_aziend', 1);
+
 while ($row = gaz_dbi_fetch_array($result)) {
 	$aziend_codice = sprintf("%03s", $row["codice"]);
-	// controllo se ho l'indice id_tes su rigdoc altrimenti lo creo perché senza di esso la query di update sarebbe lentissima 
+	
+	// inizio controlli presenza di alcuni indici altrimenti li creo perché senza di essi diverse query ricorsive sarebbero troppo lente in caso di tabelle con molti righi
+	
+	// id_tes su rigdoc
 	$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice."rigdoc WHERE 1");
 	$ex=false;	
 	while ($vk = gaz_dbi_fetch_array($rk)) {
@@ -52,7 +59,72 @@ while ($row = gaz_dbi_fetch_array($result)) {
 		gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice."rigdoc	ADD INDEX `id_tes` (`id_tes`)");		
 		echo "<p>Ho creato l'index <b>id_tes</b> su ". $table_prefix . "_" . $aziend_codice."rigdoc perché non esisteva</p>";
 	}
-	// fine controllo - creazione
+
+	// id_doc su effett
+	$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice."effett WHERE 1");
+	$ex=false;	
+	while ($vk = gaz_dbi_fetch_array($rk)) {
+		if ($vk['Column_name'] == 'id_doc'){
+			$ex=true;
+		}
+	}
+	if (!$ex){
+		gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice."effett	ADD INDEX `id_doc` (`id_doc`)");		
+		echo "<p>Ho creato l'index <b>id_doc</b> su ". $table_prefix . "_" . $aziend_codice."effett perché non esisteva</p>";
+	}
+
+	// tipdoc su tesdoc
+	$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice."tesdoc WHERE 1");
+	$ex=false;	
+	while ($vk = gaz_dbi_fetch_array($rk)) {
+		if ($vk['Column_name'] == 'tipdoc'){
+			$ex=true;
+		}
+	}
+	if (!$ex){
+		gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice."tesdoc	ADD INDEX `tipdoc` (`tipdoc`)");		
+		echo "<p>Ho creato l'index <b>tipdoc</b> su ". $table_prefix . "_" . $aziend_codice."tesdoc perché non esisteva</p>";
+	}
+
+	// numfat su tesdoc
+	$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice."tesdoc WHERE 1");
+	$ex=false;	
+	while ($vk = gaz_dbi_fetch_array($rk)) {
+		if ($vk['Column_name'] == 'numfat'){
+			$ex=true;
+		}
+	}
+	if (!$ex){
+		gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice."tesdoc	ADD INDEX `numfat` (`numfat`)");		
+		echo "<p>Ho creato l'index <b>numfat</b> su ". $table_prefix . "_" . $aziend_codice."tesdoc perché non esisteva</p>";
+	}
+
+	// datfat su tesdoc
+	$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice."tesdoc WHERE 1");
+	$ex=false;	
+	while ($vk = gaz_dbi_fetch_array($rk)) {
+		if ($vk['Column_name'] == 'datfat'){
+			$ex=true;
+		}
+	}
+	if (!$ex){
+		gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice."tesdoc	ADD INDEX `datfat` (`datfat`)");		
+		echo "<p>Ho creato l'index <b>datfat</b> su ". $table_prefix . "_" . $aziend_codice."tesdoc perché non esisteva</p>";
+	}
+
+	// id_tes su rigmoc
+	$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice."rigmoc WHERE 1");
+	$ex=false;	
+	while ($vk = gaz_dbi_fetch_array($rk)) {
+		if ($vk['Column_name'] == 'id_tes'){
+			$ex=true;
+		}
+	}
+	if (!$ex){
+		gaz_dbi_query("ALTER TABLE ". $table_prefix . "_" . $aziend_codice."rigmoc	ADD INDEX `id_tes` (`id_tes`)");		
+		echo "<p>Ho creato l'index <b>id_tes</b> su ". $table_prefix . "_" . $aziend_codice."rigmoc perché non esisteva</p>";
+	}
+	// fine controlli - creazioni indici
 
 	$rtesbro = gaz_dbi_dyn_query("*", $table_prefix . "_" . $aziend_codice."tesbro", "tipdoc='VOR'", "id_tes DESC"); 
 	while ($rtb = gaz_dbi_fetch_array($rtesbro)) {
