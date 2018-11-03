@@ -31,6 +31,9 @@ if (isset ($_GET['popup'])){ //controllo se proviene da una richiesta apertura p
 	else {
 		$popup="";
 	}
+If (isset ($_GET['type'])){ // controllo se proviene anche da una richiesta del modulo camp
+	$form['order_type']=$_GET['type'];
+}
 
 if ((isset($_POST['Update'])) or ( isset($_GET['Update']))) {
     $toDo = 'update';
@@ -644,7 +647,11 @@ $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);
 } else { //se e' il primo accesso per INSERT
     
 	$form['ritorno'] = $_SERVER['HTTP_REFERER'];
-    $form['order_type']="";
+	If (isset ($_GET['type'])){ // controllo se proviene anche da una richiesta del modulo camp
+		$form['order_type']=$_GET['type'];
+	} else {
+		$form['order_type']="";
+	}
     $form['description']="";
     $form['id_tesbro']="";
 	$form['add_info']="";
