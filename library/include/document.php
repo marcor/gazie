@@ -100,13 +100,15 @@ class DocContabVars {
         } else {
             $this->cliente5 = '';
         }
-        if (!empty($this->client['pariva'])) { //se c'e' la partita iva
+        if ( $this->client['country']!="IT" && $this->client['country']!="" ) {
+            $this->cliente5 = 'vat num. ' . $this->client['country'] .$this->client['codfis'];
+        } else if (!empty($this->client['pariva'])) { //se c'e' la partita iva
             if (!empty($this->client['codfis']) and $this->client['codfis'] == $this->client['pariva']) {
-                $this->cliente5 = 'C.F. e P.I. ' . $this->client['codfis'];
+                $this->cliente5 = 'C.F. e P.I. ' . $this->client['country'] . $this->client['codfis'];
             } elseif (!empty($this->client['codfis']) and $this->client['codfis'] != $this->client['pariva']) {
-                $this->cliente5 = 'C.F. ' . $this->client['codfis'] . ' P.I. ' . $this->client['pariva'];
+                $this->cliente5 = 'C.F. ' . $this->client['codfis'] . ' P.I. ' . $this->client['country'] . $this->client['pariva'];
             } else { //per es. se non c'e' il codice fiscale
-                $this->cliente5 = ' P.I. ' . $this->client['pariva'];
+                $this->cliente5 = ' P.I. ' . $this->client['country'] . $this->client['pariva'];
             }
         } else { //se  NON c'e' la partita iva
             $this->cliente5 = '';

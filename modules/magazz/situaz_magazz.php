@@ -25,13 +25,20 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend = checkAdmin();
 
-if ( isset($_POST["Stampa"]) ) {
+if ( isset($_GET["Stampa"]) ) {
     header("Location: ../../modules/magazz/stampa_situaz.php");
 }
 
 require("../../library/include/header.php");
 $script_transl = Headmain();
 $passo = 1000;
+
+gaz_flt_var_assign('descri', 'v');
+
+if (isset($_GET['all'])) {
+    $auxil = "&all=yes";
+    $passo = 100000;
+}
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl['title']; ?> </div>
 <?php
@@ -39,9 +46,24 @@ $recordnav = new recordnav($gTables['artico'], $where, $limit, $passo);
 $recordnav->output();
 
 ?>
-<form method="POST">
+<form method="GET" action="<?php echo $_SERVER['PHP_SELF']; ?>">
     <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
         <tbody>
+        <tr>
+            <td class="FacetFieldCaptionTD">
+                &nbsp;
+            </td>
+            <td class="FacetFieldCaptionTD">
+                <?php gaz_flt_disp_int("descri", "Articolo"); //gaz_flt_disp_select ( "clfoco", $gTables['anagra'].".ragso1", $gTables['clfoco'].' LEFT JOIN '.$gTables['anagra'].' ON '.$gTables['clfoco'].'.id_anagra = '.$gTables['anagra'].'.id', $all, $orderby, "ragso1");  ?>
+            </td>
+            <td class="FacetFieldCaptionTD" colspan="3"></td>
+            <td class="FacetFieldCaptionTD">
+                <input type="submit" class="btn btn-xs btn-default" name="search" value="Cerca" tabindex="1" onClick="javascript:document.report.all.value = 1;">
+            </td>
+            <td class="FacetFieldCaptionTD">
+                <input type="submit" class="btn btn-xs btn-default" name="all" value="Mostra tutti" onClick="javascript:document.report.all.value = 1;">
+            </td>
+            </tr>
             <?php
             // creo l'array (header => campi) per l'ordinamento dei record
             $headers_artico = array("Codice" => "codice",
@@ -54,8 +76,7 @@ $recordnav->output();
 
             $linkHeaders = new linkHeaders($headers_artico);
             $gForm = new magazzForm();
-
-            $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0", $orderby, $limit, $passo);
+            $result = gaz_dbi_dyn_query("*", $gTables['artico'], "good_or_service=0 and ". $where, $orderby, $limit, $passo);
             echo '<tr>'. $linkHeaders->output() .'</tr>';
             while ($r = gaz_dbi_fetch_array($result)) {
                 $totale = 0;
