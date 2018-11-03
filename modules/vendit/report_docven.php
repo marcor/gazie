@@ -484,13 +484,16 @@ switch ($admin_aziend['fatimm']) {
                         echo "<td> <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['print_lot'] . "\" href=\"lotmag_print_cert.php?id_tesdoc=" . $r['id_tes'] . "\" style=\"font-size:10px;\">Cert.<i class=\"glyphicon glyphicon-tags\"></i></a></td>\n";
                     } else {
                         echo "<td>";
-                        $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_order', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes');
-                        while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
-							if($rigdoc['id_order']>0){
-								$tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
-								$t_r = gaz_dbi_fetch_array($tesbro_result);
-								echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
-							}
+                        $resorigine = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes', 1,1);
+                        if ( gaz_dbi_num_rows( $resorigine )>0 ) {
+                            $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_order', $gTables['rigdoc'], "id_tes = " . $r["id_tes"], 'id_tes');
+                            while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
+                                if($rigdoc['id_order']>0){
+                                    $tesbro_result = gaz_dbi_dyn_query('*', $gTables['tesbro'], "id_tes = " . $rigdoc['id_order'], 'id_tes');
+                                    $t_r = gaz_dbi_fetch_array($tesbro_result);
+                                    echo " <a class=\"btn btn-xs btn-default\" title=\"" . $script_transl['view_ord'] . "\" href=\"stampa_ordcli.php?id_tes=" . $rigdoc['id_order'] . "\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-check\"></i>&nbsp;Ord." . $t_r['numdoc'] . "</a>\n";
+                                }
+                            }
                         }
                         echo "</td>";
                     }
