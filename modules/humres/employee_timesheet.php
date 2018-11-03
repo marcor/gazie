@@ -58,7 +58,41 @@ function getWorkers($date) {
 	return $ret;
 }
 
+// Antonio Germani -  nuova funzione che conteggia le ore di più righi nello stesso giorno
 function getStaffTimesheet($worker,$dates) {
+	global $gTables;
+	foreach ($dates as $k=>$v) {
+        $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $worker."' AND work_day ='".$v);
+		if (!empty($r)){$hnormal=0;$hextra=0;$habsence=0;$hother=0;
+			$query="SELECT * FROM ".$gTables['staff_worked_hours']." WHERE id_staff = '".$worker."' and work_day = '".$v."'";
+			$rc = gaz_dbi_query($query);
+			while($rowrc = $rc->fetch_assoc()){ 
+				 $hnormal=$hnormal+$rowrc['hours_normal'];
+				 $hextra=$hextra+$rowrc['hours_extra'];
+				 $habsence=$habsence+$rowrc['hours_absence'];
+				 $hother=$hother+$rowrc['hours_other'];
+				 $id_work_type_extra=$rowrc['id_work_type_extra'];
+				 $id_absence_type=$rowrc['id_absence_type'];
+				 $id_other_type=$rowrc['id_other_type'];
+				 $note=$rowrc['note'];				 
+			 }
+			 $ret[$worker][$v] = array( 'hours_normal'=>$hnormal, 'id_work_type_extra'=>$id_work_type_extra,
+			'hours_extra'=>$hextra, 'id_absence_type'=> $id_absence_type, 'hours_absence'=>$habsence,
+			'id_other_type'=>$id_other_type, 'hours_other'=>$hother, 'note'=>$note
+			);
+		} else {
+			$ret[$worker][$v] = array( 'hours_normal'=>'', 'id_work_type_extra'=>0,
+			'hours_extra'=>'', 'id_absence_type'=>0, 'hours_absence'=>'',
+			'id_other_type'=>0, 'hours_other'=>'', 'note'=>'', 'id_orderman'=>0
+			);
+		}
+	}
+	return $ret;
+}
+
+
+// Antonio Germani - vecchia funzione che prendeva le ore solo nel primo rigo che trovava
+/*function getStaffTimesheet($worker,$dates) {
 	global $gTables;
 	foreach ($dates as $k=>$v) {
         $r = gaz_dbi_get_row($gTables['staff_worked_hours'], "id_staff ", $worker."' AND work_day ='".$v);
@@ -72,7 +106,7 @@ function getStaffTimesheet($worker,$dates) {
 		}
 	}
 	return $ret;
-}
+}*/
 
 if (isset($_POST['week'])) { // accessi successivi
     $form['week'] = filter_input(INPUT_POST, 'week');
