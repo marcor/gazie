@@ -1193,7 +1193,7 @@ echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[29]."</td><td col
 
 <button type="submit" name="erase2" title="Reset produzione" class="btn btn-default"  style="border-radius= 85px; "> <i class="glyphicon glyphicon-remove-circle"></i></button>
 <br>
-<a href="javascript:Popup('../../modules/orderman/admin_orderman.php?Insert&popup=1')"> Crea nuova produzione <i class="glyphicon glyphicon-plus-sign" style="color:green" ></i></a>
+<a href="javascript:Popup('../../modules/orderman/admin_orderman.php?Insert&popup=1&type=AGR')"> Crea nuova produzione <i class="glyphicon glyphicon-plus-sign" style="color:green" ></i></a>
 	  
 </td></tr>
 <?php	
