@@ -486,6 +486,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 }
             }
         }
+		// dal 2019 non sarà più possibile emettere fatture a clienti che non ci hanno comunicato la PEC o il codice SdI
+		if ($form['annemi']>=2019 && strlen($cliente['pec_email'])<5 && strlen(trim($cliente['fe_cod_univoco']))<6 ){
+				$msg.="62+";
+		}
         if ($msg == "") {// nessun errore
             $initra .= " " . $form['oratra'] . ":" . $form['mintra'] . ":00";
             if (preg_match("/^id_([0-9]+)$/", $form['clfoco'], $match)) {

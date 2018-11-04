@@ -103,6 +103,9 @@ $(function() {
    $( "#dialog2" ).dialog({
       autoOpen: false
    });
+   $( "#dialog3" ).dialog({
+      autoOpen: false
+   });
    
 });
 function confirMail(link){
@@ -128,6 +131,27 @@ function confirMail(link){
    $("#dialog" ).dialog( "open" );
 }
 
+function confirPecSdi(link){
+   codice = link.id.replace("doc3", "");
+   $.fx.speeds._default = 500;
+   targetUrl = $("#doc3"+codice).attr("url");
+   $("p#mailpecsdi").html($("#doc3"+codice).attr("mail"));
+   $("p#mail_attc").html($("#doc3"+codice).attr("namedoc"));
+   $( "#dialog3" ).dialog({
+         modal: "true",
+      show: "blind",
+      hide: "explode",
+         buttons: {
+                      " ' . $script_transl['submit'] . ' ": function() {
+                         window.location.href = targetUrl;
+                      },
+                      " ' . $script_transl['cancel'] . ' ": function() {
+                        $(this).dialog("close");
+                      }
+                  }
+         });
+   $("#dialog3" ).dialog( "open" );
+}
 
 
 function confirFae(link){
@@ -214,7 +238,12 @@ switch ($admin_aziend['fatimm']) {
         <p id="report_alert1"><?php echo $script_transl['report_alert1']; ?></p>
         <p class="ui-state-highlight" id="report1"></p>
     </div>
-
+	
+    <div style="display:none" id="dialog3" title="<?php echo $script_transl['faesdi_alert0']; ?>">
+        <p id="faesdi_alert1"><?php echo $script_transl['faesdi_alert1']; ?></p>
+        <p class="ui-state-highlight" id="mailpecsdi"></p>
+    </div>
+	
     <div align="center" class="FacetFormHeaderFont">Documenti di vendita della sezione
         <select name="auxil" class="FacetSelect" onchange="this.form.submit()">
             <?php
@@ -421,9 +450,15 @@ switch ($admin_aziend['fatimm']) {
                             echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>'."<a class=\"btn btn-xs btn-default\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\"> xml </a>";
                             echo "</td>";
 							
-						} elseif (strlen($anagra["fe_cod_univoco"]) != 6 and ( strlen($anagra["fe_cod_univoco"]) == "0" and $anagra["pec_email"] == '')) { // se il cliente non ha codice univoco o pec tolgo il link
-                            $modulo_fae = '';
-                            echo "<td align=\"center\"><button class=\"btn btn-xs btn-default btn-xml disabled\" title=\"Fattura elettronica non disponibile: codice ufficio univoco non presente\"><i class=\"glyphicon glyphicon-tag\"></i></button>";
+						} elseif (strlen($anagra['pec_email'])<5 && strlen(trim($anagra['fe_cod_univoco']))<6) { 	  	
+							//se il cliente non ha codice univoco o pec tolgo il link e do la possibilità di richiederli via mail o carta
+                            $d_title = 'Invia richiesta PEC e/o codice SdI all\'indirizzo: '.$anagra["e_mail"];
+							$dest='&dest=E';
+							if (strlen($anagra['e_mail'])<5){
+								$dest='';
+								$d_title = 'Stampa richiesta cartacea (cliente senza mail)';
+							}
+                            echo '<td align=\"center\"><button onclick="confirPecSdi(this);return false;" id="doc3' . $r["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$r['clfoco'].$dest.'" href="#" title="'. $d_title . '" mail="' . $anagra["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina"><i class="glyphicon glyphicon-tag"></i></button>';
                             echo "</td>";
                         } else {
                             echo "<td align=\"center\"><a class=\"btn btn-xs btn-default btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\">xml</a>";
