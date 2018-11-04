@@ -23,18 +23,29 @@
  --------------------------------------------------------------------------
 */
 require("../../library/include/datlib.inc.php");
-// Antonio Germani cancellazione di una produzione: questa cancellazione agisce anche sulla tabella tesbro a cui la produzione è direttamente connessa
+// Antonio Germani cancellazione di una produzione: questa cancellazione agisce anche sulla tabella tesbro, rigbro e staff_worked_hours a cui la produzione è direttamente connessa
 $admin_aziend=checkAdmin();
 $message = "Sei sicuro di voler rimuovere ?";
 $titolo="Cancella la Produzione";
-if (isset($_POST['Delete']))
-    {
-        $result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $_GET['id_tesbro']);
-		$result = gaz_dbi_del_row($gTables['orderman'], "id", $_POST['id']);
+if (isset($_POST['Delete'])){
+	
+	$res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$_GET['id_tesbro']); // prendo la data 
+	
+	$query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".$_POST['id']."' AND work_day = '".$res['datemi']."'"; 
+	gaz_dbi_query($query); // cancello tutti i righi operai con quel giorno e quella produzione
+	
+	$query="DELETE FROM ".$gTables['movmag']." WHERE id_orderman = '".$_POST['id']."'"; 
+	gaz_dbi_query($query); //cancello il movimento di magazzino corrispondente
+	
+        $result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $_GET['id_tesbro']); // cancello tesbro
+		$result = gaz_dbi_del_row($gTables['orderman'], "id", $_POST['id']); // cancello orderman
+		$result = gaz_dbi_del_row($gTables['rigbro'], "id_tes", $_GET['id_tesbro']); // cancello rigbro
+		
+		
 		
         header("Location: orderman_report.php");
         exit;
-    }
+}
 
 if (isset($_POST['Return']))
         {
