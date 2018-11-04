@@ -42,7 +42,8 @@ while ($row = gaz_dbi_fetch_array($result)) {
 				3=>array('datfat'=>'tesdoc'),
 				4=>array('numfat'=>'tesdoc'),
 				5=>array('id_tes'=>'rigmoc'),
-				6=>array('expiry'=>'paymov'));
+				6=>array('expiry'=>'paymov'),
+				7=>array('id_tes'=>'rigmoi'));
 	foreach($idx as $vi){
 		foreach($vi as $k=>$v){
 			$rk=gaz_dbi_query("SHOW KEYS FROM ". $table_prefix . "_" . $aziend_codice.$v." WHERE 1");
