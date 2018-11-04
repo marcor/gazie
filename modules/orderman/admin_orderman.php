@@ -975,7 +975,7 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 				;
 				
 				If ($form['staff'][$form['mov']] > 0) {
-					echo "<input type=\"submit\" name=\"add_staff\" value=\"" . $script_transl['add_staff'] . "\">\n";
+					echo "<input type=\"submit\" name=\"add_staff\" value=\"" . $script_transl[19] . "\">\n";
 				}
 				If ($form['mov']>0 && $form['mov']>$form['nmovdb']){ // se è update non si possono togliere gli operai già memorizzati nel database
 				echo "<input type=\"submit\" title=\"Togli ultimo operaio\" name=\"Del_mov\" value=\"X\">\n";
