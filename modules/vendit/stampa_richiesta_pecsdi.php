@@ -24,13 +24,16 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-
+$dest=false;
 $logo = $admin_aziend['image'];
 if (!isset($_POST['ritorno'])) {
         $ritorno = $_SERVER['HTTP_REFERER'];
 }
 if (!isset($_GET['codice'])) {
      header("Location: ".$ritorno);
+}
+if (isset($_GET['dest']) && $_GET['dest']=='E') {
+	$dest='E';
 }
 $codice = intval($_GET['codice']);
 if (substr($codice,0,3) != $admin_aziend['mascli'] or substr($codice,3,9) == 0) {
@@ -48,5 +51,6 @@ $testata= array('id_tes'=> 0,'seziva'=>0,'tipdoc'=>'','protoc'=>0,'numdoc'=>0,
 if (!empty(trim($cliente['sedleg']))){ // sposto l'eventuale sede legale al posto della destinazione merce in testata
 	$testata['destin']=array('Sede legale',$cliente['sedleg']);	
 }
-createDocument($testata, 'RichiestaPecSdi',$gTables);
+
+createDocument($testata, 'RichiestaPecSdi',$gTables,'rigdoc',$dest);
 ?>

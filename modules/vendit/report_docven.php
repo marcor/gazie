@@ -418,7 +418,7 @@ switch ($admin_aziend['fatimm']) {
                     // Colonna "Fattura elettronica"
                     if (substr($r["tipdoc"], 0, 1) == 'F') {
                         if(strlen($r["fattura_elettronica_zip_package"])>10){ // se è contenuto in un pacchetto di file permetterò sia il download del singolo XML che del pacchetto in cui è contenuto
-                            echo "<td align=\"center\"><a class=\"btn btn-xs btn-edit btn-xml\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\">xml</a>";
+                            echo "<td align=\"center\">".'<a class="btn btn-xs btn-edit" title="Pacchetto di fatture elettroniche in cui è contenuta questa fattura" href="download_zip_package.php?fn='.$r['fattura_elettronica_zip_package'].'">zip <i class="glyphicon glyphicon-compressed"></i> </a>'."<a class=\"btn btn-xs btn-default\" onclick=\"confirFae(this);return false;\" id=\"doc1" . $r["id_tes"] . "\" n_fatt=\"" . $r["numfat"] . "\" target=\"_blank\" href=\"" . $modulo_fae . "\"> xml </a>";
                             echo "</td>";
 							
 						} elseif (strlen($anagra["fe_cod_univoco"]) != 6 and ( strlen($anagra["fe_cod_univoco"]) == "0" and $anagra["pec_email"] == '')) { // se il cliente non ha codice univoco o pec tolgo il link

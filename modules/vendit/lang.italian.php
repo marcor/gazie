@@ -1596,7 +1596,9 @@ $strScript = array("admin_client.php" =>
         'taxable' => 'Imponibile',
 		'no_tax'=>'Non Imp., Escl., ecc.',
         'vat' => 'I.V.A.',
-        'tot' => 'Totale'
+        'tot' => 'Totale',
+        'mail_alert0' => 'Invio mail per richiesta codice SdI o PEC',
+        'mail_alert1' => 'all\'indirizzo: '
     ),
     "delete_zip_package.php" =>
     array('title' => 'Elimina il pacchetto di fatture elettroniche nome file: ',

@@ -77,7 +77,7 @@ function getFAEunpacked($type = '___', $vat_section = 1, $date = false, $protoc 
                         pay.tippag,pay.numrat,pay.incaut,pay.tipdec,pay.giodec,pay.tiprat,pay.mesesc,pay.giosuc,pay.id_bank,
                         customer.codice,
                         customer.speban AS addebitospese,
-                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, anagraf.fe_cod_univoco, anagraf.pec_email', $from, $where, $orderby);
+                        CONCAT(anagraf.ragso1,\' \',anagraf.ragso2) AS ragsoc,CONCAT(anagraf.citspe,\' (\',anagraf.prospe,\')\') AS citta, anagraf.fe_cod_univoco, anagraf.pec_email, anagraf.e_mail', $from, $where, $orderby);
     $doc = array();
     $ctrlp = 0;
 
@@ -85,6 +85,7 @@ function getFAEunpacked($type = '___', $vat_section = 1, $date = false, $protoc 
     $ivasplitpay = 0;
     $somma_spese = 0;
     $totimpdoc = 0;
+	$taxstamp = 0; 
     $rit = 0;
 
     while ($tes = gaz_dbi_fetch_array($result)) {
@@ -190,7 +191,7 @@ function getFAEunpacked($type = '___', $vat_section = 1, $date = false, $protoc 
         $doc[$tes['protoc']]['vat'] = $calc->castle;
         $ctrlp = $tes['protoc'];
     }
-    if ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
+    if ($ctrlp > 0 && ($doc[$ctrlp]['tes']['stamp'] >= 0.01 || $taxstamp >= 0.01)) { // a chiusura dei cicli faccio il calcolo dei bolli del pagamento e lo aggiungo ai castelletti
         $calc->payment_taxstamp($calc->total_imp + $calc->total_vat + $carry - $rit - $ivasplitpay + $taxstamp, $doc[$ctrlp]['tes']['stamp'], $doc[$ctrlp]['tes']['round_stamp'] * $doc[$ctrlp]['tes']['numrat']);
         // aggiungo al castelletto IVA
         $calc->add_value_to_VAT_castle($doc[$ctrlp]['vat'], $taxstamp + $calc->pay_taxstamp, $admin_aziend['taxstamp_vat']);
@@ -329,10 +330,46 @@ function setDate(name) {
   cal.setReturnFunction('setMultipleValues');
   cal.showCalendar('anchor', mdy);
 }
+".
+'
+$(function() {
+   $( "#dialog" ).dialog({
+      autoOpen: false
+   });
+  
+});
+function confirMail(link){
+   codice = link.id.replace("doc", "");
+   $.fx.speeds._default = 500;
+   targetUrl = $("#doc"+codice).attr("url");
+   //alert (targetUrl);
+   $("p#mail_adrs").html($("#doc"+codice).attr("mail"));
+   $("p#mail_attc").html($("#doc"+codice).attr("namedoc"));
+   $( "#dialog" ).dialog({
+         modal: "true",
+      show: "blind",
+      hide: "explode",
+         buttons: {
+                      " ' . $script_transl['submit'] . ' ": function() {
+                         window.location.href = targetUrl;
+                      },
+                      " ' . $script_transl['cancel'] . ' ": function() {
+                        $(this).dialog("close");
+                      }
+                  }
+         });
+   $("#dialog" ).dialog( "open" );
+}
 </script>
-";
+';
 
 echo "<form method=\"POST\" name=\"accounting\">\n";
+?>
+    <div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+        <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+        <p class="ui-state-highlight" id="mail_adrs"></p>
+    </div>
+<?php
 echo "<input type=\"hidden\" value=\"" . $form['hidden_req'] . "\" name=\"hidden_req\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['filename'] . "\" name=\"filename\" />\n";
 echo "<input type=\"hidden\" value=\"" . $form['proini'] . "\" name=\"proini\" />\n";
@@ -394,8 +431,13 @@ if (isset($_POST['preview'])) {
 			$v['tes']['pec_email']=$script_transl['sdi'].$v['tes']['fe_cod_univoco'];
 		} else {
 			if (strlen($v['tes']['pec_email'])<5){	// non ho nemmeno la pec
+				$dest='&dest=E';
+				if (strlen($v['tes']['e_mail']<5)){
+					$dest='';
+				}
 				$cl_sdi='bg-danger';
-				$v['tes']['pec_email']= '<a href="stampa_richiesta_pecsdi.php?codice='.$v['tes']['clfoco'].'" target="_blank">Questa '.$script_transl['doc_type_value'][$v['tes']['tipdoc']] .' non potrà essere recapitata al cliente, chiedi la PEC o il codice SDI</a>';
+				$v['tes']['pec_email']= '<a onclick="confirMail(this);return false;" id="doc' . $v['tes']["clfoco"] . '" url="stampa_richiesta_pecsdi.php?codice='.$v['tes']['clfoco'].$dest.'" href="#" title="Mailto: ' . $v['tes']["e_mail"] . '"
+            mail="' . $v['tes']["e_mail"] . '" namedoc="Richiesta codice SdI o indirizzo PEC"  class="btn btn-xs btn-default btn-elimina">Questa '.$script_transl['doc_type_value'][$v['tes']['tipdoc']] .' non potrà essere recapitata al cliente, richiedi la PEC o il codice SDI </a>';
 			} else{
 				$v['tes']['pec_email']=$script_transl['pec'].$v['tes']['pec_email'];
 			}
@@ -417,7 +459,7 @@ if (isset($_POST['preview'])) {
                <td align="right">' . gaz_format_number($tot['tot']) . "</td>
                </tr>\n";
         echo '<tr class="FacetDataTD">
-               <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.$XMLdata->encodeSendingNumber($enc_data,36).'.xml che dovrà essere firmata ed inviata tramite SdI </td>
+               <td colspan="5" align="right">produrrà il file IT'.$admin_aziend['codfis'].'_'.$XMLdata->encodeSendingNumber($enc_data,36).'.xml che dovrà essere firmato ed inviato tramite SdI </td>
                <td colspan="3" class="'.$cl_sdi.'">'.$v['tes']['pec_email'] . '</td>
                </tr>';
     }
