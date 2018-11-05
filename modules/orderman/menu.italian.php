@@ -27,7 +27,9 @@ $transl['orderman'] = array('name' => "Produzioni",
     'title' => "Gestione delle produzioni",
     'm2' => array(1 => array("Lista delle produzioni", "Lista delle produzioni")
     ),
-    'm3' => array(1 => array("Nuova produzione", "Nuova produzione")
+    'm3' => array(1 => array("Nuova produzione", "Nuova produzione"),
+				  2 => array("Luoghi produzione", "Luoghi produzione"),
+				  3 => array("Inserimento luogo", "Inserimento luogo")
     )
 );
 ?>

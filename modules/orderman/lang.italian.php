@@ -24,8 +24,7 @@
   --------------------------------------------------------------------------
  */
 
-$strScript = 
-	array("admin_orderman.php" =>
+$strScript = array("admin_orderman.php" =>
 		array('title' => 'Amministrazione delle produzioni',
         'ins_this' => 'Inserisci una nuova produzione',
         'upd_this' => 'Aggiorna la produzione',
@@ -51,13 +50,28 @@ $strScript =
 		"Manca l'articolo prodotto",
 		"Manca la quantità prodotta",
 		"Gli operai non possono lavorare più di 13 ore al giorno: D. Lgs. 66/2003",
-		"Aggiungi operaio"
+		"Aggiungi operaio",
+		"Articolo non presente o sconosciuto! Selezionare l'articolo fra quelli mostrati nell'elenco a tendina."
 		),
-	array("orderman_report.php" =>
+	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',
         'mesg' => array('La ricerca non ha dato risultati!',
             'Inserire almeno 2 caratteri!')
-			)
-		)
+			),
+	"admin_luoghi.php" =>	
+	array('title' => 'Gestione luoghi di produzione',
+        'mesg' => array('La ricerca non ha dato risultati!',
+            'Inserire almeno 2 caratteri!'),
+		"Id",
+		"Descrizione",
+		"Immagine (jpg,png,gif) max 300kb: ",
+		"Note",
+		"Codice già usato",
+		"Descrizione vuota",
+		"L'immagine non dev'essere pi&ugrave; grande di 300 kb",
+		"L'immagine inserita ha un formato non ammesso",
+		"Luogo di produzione",
+		'web_url' => 'Mappa di Google<br />(es: https://goo.gl/maps/YajAcRexvDp)'
+			)	
 );
 ?>

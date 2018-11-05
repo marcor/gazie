@@ -23,7 +23,10 @@
   --------------------------------------------------------------------------
  */
 require("../../library/include/datlib.inc.php");
+require ("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();$msg="";
+
+$gForm = new magazzForm();
 
 if (isset ($_GET['popup'])){ //controllo se proviene da una richiesta apertura popup
 		$popup=$_GET['popup'];
@@ -122,7 +125,11 @@ if (isset($_POST['Del_mov'])) {
     // Se viene inviata la richiesta di conferma totale ...CONTROLLO ERRORI
 	$form['datemi'] = $form['anninp'] . "-" . $form['mesinp'] . "-" . $form['gioinp'];
     if (isset($_POST['ins'])) {
-       
+		
+		$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
+		if ($form['artico']<>"" && !isset($itemart)) { // controllo se codice articolo non esiste o se è nullo    
+			$msg .= "20+";
+			}   
        
        if (empty($form['description'])){  //descrizione vuota
              $msg .= "4+";
@@ -863,6 +870,35 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 		echo $resartico['descri'];// visualizzo la descrizione
 		echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"';$form['lot_or_serial']=$resartico['lot_or_serial'];
+		
+		if ($resartico['good_or_service']==2){ // se è un articolo composto
+			
+			$query="SELECT * FROM ".$gTables['distinta_base']." WHERE codice_composizione = '".$form['artico']."'";
+			$rescompo = gaz_dbi_query($query);
+			
+			
+			
+			while($row = $rescompo->fetch_assoc()){ // visualizzo i componenti 
+				$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
+				$magval = array_pop($mv); // controllo disponibilità in magazzino
+			
+				?>
+				<div class="container-fluid">
+					<div class="row">
+						<div class="col-sm-8"><?php echo $row['codice_artico_base']," Disp.:",$magval['q_g']," Necessari:",$row['quantita_artico_base']; 
+						if ($magval['q_g']-$row['quantita_artico_base'] >= 0) {
+							echo " Produzione OK";
+						} else {
+							echo "Errore: impossibile produrre";
+						}
+						?>
+						</div>
+					</div>
+				</div>	
+							
+				<?php
+			}
+		}
 		
 	?>	
 	</td>
