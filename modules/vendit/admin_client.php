@@ -105,7 +105,8 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         } else {
             $r_cf = $cf_pi->check_TAXcode($form['codfis'], $form['country']);
         }
-        if (!empty($r_pi)) {
+        if (!empty($r_pi) || ( $form['sexper']=='G' && intval(substr($form['codfis'],0,1)) < 8 && $form['country']=='IT' && strlen(trim($form['pariva'])) < 11 )) {
+			// se la partita iva è sbagliata o un cliente persona giuridica senza partita iva e non ha un codice fiscale di una associazione 
             $msg .= "9+";
         }
         if ($form['codpag'] < 1) {
