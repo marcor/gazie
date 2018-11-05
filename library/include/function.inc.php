@@ -2288,7 +2288,7 @@ class Schedule {
         $sqlquery = "SELECT " . $gTables['paymov'] . ".*, " . $gTables['tesmov'] . ".* ," . $gTables['rigmoc'] . ".*
             FROM " . $gTables['paymov'] . " LEFT JOIN " . $gTables['rigmoc'] . " ON (" . $gTables['paymov'] . ".id_rigmoc_pay = " . $gTables['rigmoc'] . ".id_rig OR " . $gTables['paymov'] . ".id_rigmoc_doc = " . $gTables['rigmoc'] . ".id_rig )"
                 . "LEFT JOIN " . $gTables['tesmov'] . " ON " . $gTables['rigmoc'] . ".id_tes = " . $gTables['tesmov'] . ".id_tes "
-                . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['clfoco'] . ".codice = " . $gTables['rigmoc'] . ".codcon 
+                . "LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['rigmoc'] . ".codcon = " . $gTables['clfoco'] . ".codice 
             WHERE " . $gTables['clfoco'] . ".codice  = " . $clfoco . " ORDER BY id_tesdoc_ref, id_rigmoc_pay, expiry";
         $rs = gaz_dbi_query($sqlquery);
         $date_ctrl = new DateTime($date);
