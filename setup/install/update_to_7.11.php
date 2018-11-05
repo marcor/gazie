@@ -8,7 +8,6 @@ if (isset($_SESSION['table_prefix'])) {
 }
 // se ho il modulo "camp" attivo allora aggiungo una voce al menù
 $camp_mod = gaz_dbi_get_row($table_prefix.'_module','name', 'camp');
-
 if ($camp_mod){
 	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_movmag.php' AND `id_module`> 6), 'calc_prod.php', '', '', 12, '', 15  FROM `gaz_menu_script`");
 	// aggiungo una voce al menù_module (2°livello)
@@ -24,8 +23,12 @@ if ($camp_mod){
 	echo "<p>Ho modificato il menù del modulo <b>Registro di campagna</b></p>";
 }
 
-
-
+// se ho il modulo "orderman" attivo allora aggiungo due voci di menù
+$orderman_mod = gaz_dbi_get_row($table_prefix.'_module','name', 'orderman');
+if($orderman_mod){
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='orderman_report.php'), 'report_luoghi.php', '', '', 2, '', 5  FROM `gaz_menu_script`");
+	gaz_dbi_query("INSERT INTO `gaz_menu_script` SELECT MAX(id)+1 , (SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='fitofarmaci.php'), 'admin_luoghi.php?Insert', '', '', 3, '', 10  FROM `gaz_menu_script`");
+}
 
 $limit="99999999";
 $passo="99999999";
