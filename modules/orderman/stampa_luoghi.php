@@ -39,10 +39,9 @@ $now = new DateTime();
 require("../../config/templates/report_template_qc.php");
 $title = array('luogo_data'=>$luogo_data,
                'title'=>"SITUAZIONE LUOGHI DI PRODUZIONE al ".$now->format('d-m-Y'),
-               'hile'=>array(array('lun' => 15,'nam'=>'N. campo'),
-							array('lun' => 50,'nam'=>'Descrizione campo'),
-                             array('lun' => 50,'nam'=>'Dimensione in ha'),
-                             array('lun' => 50,'nam'=>'Coltura in atto'),
+               'hile'=>array(array('lun' => 15,'nam'=>'ID luogo'),
+							array('lun' => 50,'nam'=>'Descrizione produzione'),
+                             array('lun' => 50,'nam'=>'Note'),
                              array('lun' => 80,'nam'=>'Immagine')                             
                             )
               );
@@ -66,7 +65,7 @@ if (sizeof($res) > 0) {
 	  }$n=1;
       $pdf->Cell(15,3,$b_row['codice'],1);
       $pdf->Cell(50,3,$b_row['descri'],1);
-	  $pdf->Cell(50,3,str_replace('.', ',',$b_row["ricarico"]),1);
+	  
 	  $pdf->Cell(50,3,substr($b_row["annota"],0,50),1);
 		if (strlen($b_row['image'])>0){		      
 			$pdf->Image('@'.$b_row['image'], $x='', $y='', $w=80, $h=0, $type='', $link='', $align='', $resize=true, $dpi=300, $palign='', $ismask=false, $imgmask=false, $border=0, $fitbox=false, $hidden=false, $fitonpage=false);
