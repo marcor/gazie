@@ -27,10 +27,16 @@ $admin_aziend=checkAdmin();
 require("../../library/include/document.php");
 $tesbro = gaz_dbi_get_row($gTables['tescmr'],"id_tes", intval($_GET['id_tes']));
 if ($tesbro['tipdoc']=='CMR') {
+    $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $tesbro['clfoco'] );
+    $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
+    $lang_template=false;
+	if ($stato['country']!=="IT") {
+		$lang_template='english';
+	}
     if (isset($_GET['dest']) && $_GET['dest']=='E' ){ // se l'utente vuole inviare una mail
-        createDocument($tesbro, 'Cmr',$gTables,'rigcmr','E');
+        createDocument($tesbro, 'Cmr',$gTables,'rigcmr','E',$lang_template);
     } else {
-        createDocument($tesbro, 'Cmr',$gTables,'rigcmr');
+        createDocument($tesbro, 'Cmr',$gTables,'rigcmr',false,$lang_template);
     }
 } else {
     header("Location: report_cmr.php");

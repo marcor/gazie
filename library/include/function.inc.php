@@ -589,6 +589,9 @@ class configTemplate {
         $row = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
         $this->template = $row['template'];
     }
+    function setTemplateLang($lang) {
+        $this->template .= $lang;
+    }
 
 }
 
