@@ -317,4 +317,14 @@ UPDATE `gaz_XXXpagame` SET `fae_mode`='MP05' WHERE `fae_mode`='';
 ALTER TABLE `gaz_XXXfae_flux` ADD COLUMN `filename_zip_package` VARCHAR(50) NOT NULL COMMENT 'Nome del pacchetto zip contenitore dei file xml, è un metodo utilizzato quando lo si trasmette massivamente ad un intermediario' AFTER `filename_ori`;
 INSERT INTO `gaz_XXXcompany_config` (`description`, `var`) VALUES ('Indirizzo mail al quale inviare i pacchetti di fatture elettroniche', 'dest_fae_zip_package');
 ALTER TABLE `gaz_XXXorderman` ADD COLUMN `duration` INT(3) NOT NULL COMMENT 'Durata della produzione' AFTER `campo_impianto`;
+UPDATE `gaz_municipalities` SET `postal_code` = 76016 WHERE `postal_code` = 71044;
+UPDATE `gaz_municipalities` SET `postal_code` = 76017 WHERE `postal_code` = 71046;
+UPDATE `gaz_municipalities` SET `postal_code` = 76015 WHERE `postal_code` = 71049;
+UPDATE `gaz_municipalities` SET `postal_code` = 76123 WHERE `postal_code` = 70031;
+UPDATE `gaz_municipalities` SET `postal_code` = 76121 WHERE `postal_code` = 70051;
+UPDATE `gaz_municipalities` SET `postal_code` = 76011 WHERE `postal_code` = 70052;
+UPDATE `gaz_municipalities` SET `postal_code` = 76012 WHERE `postal_code` = 70053;
+UPDATE `gaz_municipalities` SET `postal_code` = 76013 WHERE `postal_code` = 70055;
+UPDATE `gaz_municipalities` SET `postal_code` = 76014 WHERE `postal_code` = 70058;
+UPDATE `gaz_municipalities` SET `postal_code` = 76125 WHERE `postal_code` = 70059;
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
