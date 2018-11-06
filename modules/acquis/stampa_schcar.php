@@ -44,7 +44,6 @@ $pdf->setPrintHeader(false);
 $pdf->setPrintFooter(false);
 $pdf->SetTopMargin(5);
 $pdf->SetHeaderMargin(5);
-$pdf->AliasNbPages();
 $pdf->AddPage();
 $pdf->SetFillColor(hexdec(substr($admin_aziend['colore'],0,2)),hexdec(substr($admin_aziend['colore'],2,2)),hexdec(substr($admin_aziend['colore'],4,2)));
 $pdf->SetFont('helvetica','B',10);
