@@ -347,6 +347,7 @@ if (isset($_POST['afa'])) {
                 $row = $v;
                 unset($row['id_rig']);
                 $row['id_tes'] = $last_id;
+                $row['id_order'] = $v['id_tes'];
                 $row['quanti'] = $v['evadibile'];
                 rigdocInsert($row);
                 $last_rigdoc_id = gaz_dbi_last_id();
