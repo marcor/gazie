@@ -38,19 +38,25 @@ function getDocRef($data) {
 // visualizza i bottoni dei documenti di evasione associati all'ordine
 function mostra_documenti_associati($ordine) {
     global $gTables;
+    // seleziono i documenti evasi che contengono gli articoli di questo ordine
     $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_tes', $gTables['rigdoc'], "id_order = " . $ordine, 'id_tes ASC');
     while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
+        // per ogni documento vado a leggere il numero documento
         $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigdoc["id_tes"], 'id_tes DESC');
         $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
+        // a seconda del tipo di documento visualizzo il bottone corrispondente
         if ($tesdoc_r["tipdoc"] == "FAI") {
+            // fattura immediata
             echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "\">";
             echo "fatt. " . $tesdoc_r["numfat"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
+            // documento di trasporto
             echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=DDT\">";
             echo "ddt " . $tesdoc_r["numdoc"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "VCO") {
+            // scontrino
             echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=FatturaAllegata\">";
             echo "scontr. " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
             echo "</a> ";

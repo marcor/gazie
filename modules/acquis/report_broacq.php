@@ -94,7 +94,7 @@ function mostra_documenti_associati($ordine) {
         $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigdoc["id_tes"], 'id_tes DESC');
         $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
         if ($tesdoc_r["tipdoc"] == "AFA") {
-            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "\">";
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docacq.php?id_tes=" . $tesdoc_r["id_tes"] . "\">";
             echo "fatt. " . $tesdoc_r["numfat"];
             echo "</a> ";
         }/* elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
