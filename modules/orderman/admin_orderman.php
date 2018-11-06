@@ -104,6 +104,18 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Ger
 	$form['datreg']=$_POST['datreg'];
 	$form['id_movmag']=$_POST['id_movmag'];
 	$form['id_lotmag']=$_POST['id_lotmag'];
+	if (isset($_POST['numcomp'])){
+		$form['numcomp']=$_POST['numcomp'];
+	
+		If ($form['numcomp']>0){
+			for ($m = 0; $m <= $form['numcomp']-1; ++$m){
+				if (!empty($_POST['id_lotmag'.$m])){
+					$form['id_lotmag'][$m] = $_POST['id_lotmag'.$m];
+					$form['artcomp'][$m] = $_POST['artcomp'.$m];
+				}
+			}
+		}
+	}
 	
 
 // Antonio Germani > questo serve per aggiungere o togliere un operaio
@@ -681,6 +693,7 @@ $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);
 	$form['quanti']="";
 	$form['id_movmag']="";
 	$form['id_lotmag']="";
+	$form['numcomp']=0;
 }
 If (isset($_POST['Cancel'])){ // se è stato premuto ANNULLA
 	$form['hidden_req'] = ''; 
@@ -705,6 +718,7 @@ If (isset($_POST['Cancel'])){ // se è stato premuto ANNULLA
 	$form['quanti']="";
 	$form['id_movmag']="";
 	$form['id_lotmag']="";
+	$form['numcomp']=0;
 }
 if (!empty ($_FILES['docfile_']['name'])) { // Antonio Germani - se c'è un nome in $_FILES
 	$prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'];
@@ -872,32 +886,80 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 		echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"';$form['lot_or_serial']=$resartico['lot_or_serial'];
 		
 		if ($resartico['good_or_service']==2){ // se è un articolo composto
-			
+			?>
+			<div class="container-fluid">
+			<div class="row" style="margin-left: 0px;">
+			<div class="col-sm-12" align="center" style="border:1px solid red">Articolo composto
+			</div>
+			</div>
+			<?php
 			$query="SELECT * FROM ".$gTables['distinta_base']." WHERE codice_composizione = '".$form['artico']."'";
 			$rescompo = gaz_dbi_query($query);
 			
 			
-			
-			while($row = $rescompo->fetch_assoc()){ // visualizzo i componenti 
+			$nc=0;
+			while($row = $rescompo->fetch_assoc()){ // visualizzo i componenti e li memorizzo nel form
 				$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
 				$magval = array_pop($mv); // controllo disponibilità in magazzino
-			
+				
 				?>
-				<div class="container-fluid">
-					<div class="row">
-						<div class="col-sm-8"><?php echo $row['codice_artico_base']," Disp.:",$magval['q_g']," Necessari:",$row['quantita_artico_base']; 
-						if ($magval['q_g']-$row['quantita_artico_base'] >= 0) {
-							echo " Produzione OK";
-						} else {
-							echo "Errore: impossibile produrre";
-						}
-						?>
+				<input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
+				
+					<div class="row" style="margin-left: 0px;">
+						<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base'];?>
 						</div>
-					</div>
+						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Necessari: ",gaz_format_quantity($row['quantita_artico_base'],0,$admin_aziend['decimal_quantity']);?>
+						</div>
+						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ",gaz_format_quantity($magval['q_g'],0,$admin_aziend['decimal_quantity']);?>
+						</div>
+						<?php						
+						if ($magval['q_g']-$row['quantita_artico_base'] >= 0) {
+						?>
+							<div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
+						<?php
+							
+							
+						} else {
+							?>
+							<div class="col-sm-1" style="background-color:red;"> KO</div>
+							<?php
+							
+						}
+						$artico = gaz_dbi_get_row($gTables['artico'], "codice", $row['codice_artico_base']); 
+						if ($artico['lot_or_serial']==1){ // se il componente prevede lotti
+							echo "lotto";
+						/*Antonio Germani scelta lotto fra quelli esistenti  */
+							$query="SELECT ".'*'." FROM ".$gTables['lotmag']. " WHERE codart ='". $row['codice_artico_base']."'";
+							$result = gaz_dbi_query($query);
+							if ($result->num_rows >0) { // se ci sono lotti attivo  selezione
+								echo '<select name="id_lotmag'.$nc.'" class="FacetSelect" onchange="this.form.submit()">\n';
+								echo "<option value=\"\">-seleziona fra lotti esistenti-</option>\n";	
+								$sel=0;
+								while ($rowlot = gaz_dbi_fetch_array($result)) {
+									$selected = "";
+									if ($form['id_lotmag'][$nc] == $rowlot['id']) {
+										$selected = " selected ";$sel=1;
+									}
+								echo "<option value=\"" . $rowlot['id'] . "\"" . $selected . ">" . $rowlot['id'] . " - " . $rowlot['identifier'] . " - " . gaz_format_date($rowlot['expiry']) . "</option>\n";
+								} 
+								echo "</select>&nbsp;";
+								 
+							}
+						// fine scelta lotto fra esistenti 
+						} else { // se non prevede lotto azzero id_lotmag $nc
+							echo '<input type="hidden" name="id_lotmag'.$nc.'" value="">';
+						}
+						
+						?>
+						
+						
+					</div> <!-- chiude row  -->
 				</div>	
 							
 				<?php
+				$nc=$nc+1;
 			}
+			echo '<input type="hidden" name="numcomp" value="'. $nc .'">';
 		}
 		
 	?>	

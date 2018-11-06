@@ -124,8 +124,8 @@ if (isset($_POST['mov']) && isset($_POST['artico'.$_POST['mov']])){
 			$form['staff'][$m]="";
 		}
 	} 
-$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
-if ($form['artico'][$form['mov']]<>"" && !isset($itemart)) {$msg .= "18+";}
+	$itemart = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico'][$form['mov']]);
+	if ($form['artico'][$form['mov']]<>"" && !isset($itemart)) {$msg .= "18+";} // controllo se codice articolo non corrisponde a quelli forniti da autocomplete o se è nullo
 	}
 
 // Antonio Germani questo serve per la ricerca produzione
@@ -439,7 +439,7 @@ for ($m = 0; $m <= $form['nmov']; ++$m){
 	
 	// Antonio Germani > controllo che non sia caricato un articolo composito
 		if ($itemart['good_or_service'] ==2 && $form["operat"][$m] == 1 ) {
-			$msg .="42+"; // il carico di articolo compisiti si può fare solo dal modulo produzioni
+			$msg .="42+"; // il carico di articolo composti si può fare solo dal modulo produzioni
 		}
 	
 // Antonio Germani - se l'articolo ha lotti in uscita controllo se il lotto selezionato ha quantità sufficiente
