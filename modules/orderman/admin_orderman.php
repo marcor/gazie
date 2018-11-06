@@ -25,7 +25,7 @@
 require("../../library/include/datlib.inc.php");
 require ("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();$msg="";
-
+$lm = new lotmag;
 $gForm = new magazzForm();
 
 if (isset ($_GET['popup'])){ //controllo se proviene da una richiesta apertura popup
