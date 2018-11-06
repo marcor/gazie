@@ -27,11 +27,8 @@ $admin_aziend=checkAdmin();
 
 $message = "";
 $anno = date("Y");
-require("../../library/include/header.php");
-$script_transl=HeadMain(0,array('custom/modal_form'));
 
 $where = "tipdoc like 'A_R'";
-$passo = 99999;
 $orderby = "id_tes DESC";
 $all = $where;
 
@@ -40,7 +37,6 @@ if (isset($_GET['flt_tipo']) && $_GET['flt_tipo']!= "All") {
         $tipdoc = $_GET['flt_tipo'];
         $auxil .= "&flt_tipo=" . $tipdoc;
         $where = " tipdoc like '%$tipdoc%'";
-        $passo = 9999;
     }
 } else {
     $tipdoc = '';
@@ -49,7 +45,6 @@ if (isset($_GET['protoc'])) {
     if ($_GET['protoc'] != "") {
         $protocollo = $_GET['protoc'];
         $where .= " and id_tes = $protocollo";
-        $passo = 9999;
     }
 } else {
     $tipdoc = '';
@@ -58,7 +53,6 @@ if (isset($_GET['numdoc'])) {
     if ($_GET['numdoc'] != "") {
         $numdoc = $_GET['numdoc'];
         $where .= " AND numdoc like '%$numdoc%'";
-        $passo = 9999;
     }
 } else {
     $numfat = '';
@@ -67,7 +61,6 @@ if (isset($_GET['flt_year'])) {
 	if ($_GET['flt_year'] != "" && $_GET['flt_year']!= "All") {
         $year = $_GET['flt_year'];
 		$where .= " and datemi >= \"".$year."/01/01\" and datemi <= \"".$year."/12/31\"";
-        $passo = 9999;
     } else {
 		$year = 'All';
 	}
@@ -80,11 +73,21 @@ if (isset($_GET['flt_ragso1'])) {
 		if ($ragso1!="All") {
 			$where .= " and ".$gTables["tesbro"].".clfoco = ".$ragso1;
 		}
-        $passo = 9999;
     }
 } else {
     $ragso1 = '';
 }
+if (isset($_GET['all'])) {
+    $year = "";
+    $numdoc = "";
+    $tipdoc = "";
+    $ragso1 = "";
+    $protocollo = "";
+	$passo = 100000;
+	$where = "tipdoc like 'A_R'";
+    $auxil = "&all=yes";
+}
+
 
 // visualizza i bottoni dei documenti di evasione associati all'ordine
 function mostra_documenti_associati($ordine) {
@@ -110,22 +113,10 @@ function mostra_documenti_associati($ordine) {
         }
     }
 }
+require("../../library/include/header.php");
+$script_transl=HeadMain(0,array('custom/modal_form'));
 
 ?>
-<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl["title2"]; ?></div>
-<?php
-$recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
-$recordnav -> output();
-?>
-<form method="GET" >
-<div id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
-      <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
-      <p class="ui-state-highlight" id="mail_adrs"></p>
-      <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
-      <p class="ui-state-highlight" id="mail_attc"></p>
-</div>
-    <div class="box-primary table-responsive">
-    <table class="Tlarge table table-striped table-bordered table-condensed">
 <script>
 $(function() {
    $( "#dialog" ).dialog({
@@ -156,6 +147,20 @@ function confirMail(link){
 }
 </script>
 
+<div align="center" class="FacetFormHeaderFont"><?php echo $script_transl["title2"]; ?></div>
+<?php
+$recordnav = new recordnav($gTables['tesbro'], $where, $limit, $passo);
+$recordnav -> output();
+?>
+<form method="GET" >
+<div style="display:none" id="dialog" title="<?php echo $script_transl['mail_alert0']; ?>">
+      <p id="mail_alert1"><?php echo $script_transl['mail_alert1']; ?></p>
+      <p class="ui-state-highlight" id="mail_adrs"></p>
+      <p id="mail_alert2"><?php echo $script_transl['mail_alert2']; ?></p>
+      <p class="ui-state-highlight" id="mail_attc"></p>
+</div>
+    <div class="box-primary table-responsive">
+    <table class="Tlarge table table-striped table-bordered table-condensed">
 <!-- inizio il filtro ricerca -->
 <tr>
     <td colspan="1" class="FacetFieldCaptionTD">
