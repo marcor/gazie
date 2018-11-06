@@ -85,6 +85,32 @@ if (isset($_GET['flt_ragso1'])) {
 } else {
     $ragso1 = '';
 }
+
+// visualizza i bottoni dei documenti di evasione associati all'ordine
+function mostra_documenti_associati($ordine) {
+    global $gTables;
+    $rigdoc_result = gaz_dbi_dyn_query('DISTINCT id_tes', $gTables['rigdoc'], "id_order = " . $ordine, 'id_tes ASC');
+    while ( $rigdoc = gaz_dbi_fetch_array($rigdoc_result) ) {
+        $tesdoc_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "id_tes = " . $rigdoc["id_tes"], 'id_tes DESC');
+        $tesdoc_r = gaz_dbi_fetch_array($tesdoc_result);
+        if ($tesdoc_r["tipdoc"] == "AFA") {
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "\">";
+            echo "fatt. " . $tesdoc_r["numfat"];
+            echo "</a> ";
+        }/* elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=DDT\">";
+            echo "ddt " . $tesdoc_r["numdoc"];
+            echo "</a> ";
+        } elseif ($tesdoc_r["tipdoc"] == "VCO") {
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza lo scontrino come fattura\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=FatturaAllegata\">";
+            echo "scontr. " . $tesdoc_r["numdoc"] . "<br /> " . gaz_format_date($tesdoc_r["datemi"]);
+            echo "</a> ";
+        }*/ else {
+            echo $tesdoc_r["tipdoc"] . $rigbro_r["id_doc"] . " ";
+        }
+    }
+}
+
 ?>
 <div align="center" class="FacetFormHeaderFont"><?php echo $script_transl["title2"]; ?></div>
 <?php
@@ -238,9 +264,61 @@ while ($r = gaz_dbi_fetch_array($result)) {
     echo "	<td>".$tipodoc." &nbsp;</td>
 			<td>".$r["numdoc"]." &nbsp;</td>
 			<td>".gaz_format_date($r["datemi"])." &nbsp;</td>
-			<td>".$fornitore["ragso1"]."&nbsp;</td>
-			<td>".$r["status"]." &nbsp;</td>
-			<td align=\"center\">
+			<td>".$fornitore["ragso1"]."&nbsp;</td>";
+			//<td>".$r["status"]." &nbsp;</td>
+            
+            // colonna stato ordine
+            $remains_atleastone = false; // Almeno un rigo e' rimasto da evadere.
+            $processed_atleastone = false; // Almeno un rigo e' gia' stato evaso.  
+            $rigbro_result = gaz_dbi_dyn_query('*', $gTables['rigbro'], "id_tes = " . $r["id_tes"] . " AND tiprig <=1 ", 'id_tes DESC');
+            while ( $rigbro_r = gaz_dbi_fetch_array($rigbro_result) ) {
+                $totale_da_evadere = $rigbro_r['quanti'];
+                $totale_evaso = 0;
+                $rigdoc_result = gaz_dbi_dyn_query('*', $gTables['rigdoc'], "id_order=" . $r['id_tes'] . " AND codart='".$rigbro_r['codart']."' AND tiprig <=1 ", 'id_tes DESC');
+                while ($rigdoc_r = gaz_dbi_fetch_array($rigdoc_result)) {
+                    $totale_evaso += $rigdoc_r['quanti'];
+                    $processed_atleastone = true;
+                }               
+                if ( $totale_evaso != $totale_da_evadere ) {
+                    $remains_atleastone = true;
+                }
+            }
+            //
+            // Se l'ordine e' da evadere completamente, verifica lo status ed
+            // eventualmente lo aggiorna.
+            //
+            if ($remains_atleastone && !$processed_atleastone) {
+                //
+                // L'ordine e' completamente da evadere.
+                //
+                if ($r["status"] != "GENERATO") {
+                    gaz_dbi_put_row($gTables['tesbro'], "id_tes", $r["id_tes"], "status", "RIGENERATO");
+                }
+                echo "<td><a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi</a></td>";
+
+            } elseif ($remains_atleastone) {
+                echo "<td> ";
+
+                $ultimo_documento = 0;
+                //
+                // Interroga la tabella gaz_XXXrigbro per le righe corrispondenti
+                // a questa testata.
+                //
+                mostra_documenti_associati ( $r["id_tes"]);
+                echo "<a class=\"btn btn-xs btn-warning\" href=\"select_evaord.php?id_tes=" . $r['id_tes'] . "\">evadi il rimanente</a></td>";
+            } else {
+                echo "<td>";
+                //
+                $ultimo_documento = 0;
+                //
+                // Interroga la tabella gaz_XXXrigbro per le righe corrispondenti
+                // a questa testata.
+                //
+                mostra_documenti_associati ( $r["id_tes"]);
+                echo "</td>";
+            }
+
+            echo "<td align=\"center\">
 				<a class=\"btn btn-xs btn-default\" href=\"".$modulo."\" target=\"_blank\">
 					<i class=\"glyphicon glyphicon-print\"></i>
 				</a>
@@ -261,6 +339,7 @@ while ($r = gaz_dbi_fetch_array($result)) {
 		  </tr>";
 }
 ?>
+ <tr><th class="FacetFieldCaptionTD" colspan="10"></th></tr>
 </table>
     </div>
 </form>
