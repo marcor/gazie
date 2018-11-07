@@ -80,7 +80,7 @@ require("../../library/include/header.php");
 $script_transl = HeadMain();
 
 ?>
-<form method="GET" name="form" enctype="multipart/form-data">
+<form method="POST" name="form" enctype="multipart/form-data">
 <?php
     echo '<input type="hidden" name="ritorno" value="' . $ritorno . '" />';
     echo '<input type="hidden" name="' . ucfirst($toDo) . '" value="" />';
@@ -109,7 +109,12 @@ $script_transl = HeadMain();
                         //gaz_flt_var_assign('codice', 'v');
                         gaz_flt_var_assign('descri', 'v');
                         gaz_flt_var_assign('good_or_service', 'v');
-
+						
+						if ( isset($_POST['search']) && $_POST['search']=="Cerca" && isset($_POST['descri']) && $_POST['descri']!="" ) {
+							$where .= " AND ( codice LIKE '%" . addslashes(substr($_POST['descri'], 0, 30)) . "%' OR descri LIKE '%" . addslashes(substr($_POST['descri'], 0, 30)) . "%')" ;
+						}
+						
+						
                         if ( gaz_dbi_num_rows($result)==0 ) {
                             echo 'non ci sono articoli';
                         } else {
@@ -124,7 +129,7 @@ $script_transl = HeadMain();
                             while ($row = gaz_dbi_fetch_array($result)) {
                                 echo '<tr>';
                                 echo '<td>'. $row['codice_artico_base'].'</td>';
-                                echo '<td><input type="text" name="qta['.$row['id'].']" value="'. $row['quantita_artico_base'].'" ></td>'; //onchange="this.form.submit()"
+                                echo '<td><input type="text" name="qta['.$row['id'].']" value="'. $row['quantita_artico_base'].'"></td>'; //onchange="this.form.submit()"
                                 echo '<td><a class="btn btn-xs btn-default" href="../magazz/admin_artico_compost.php?del='.$row['codice_artico_base'].'&id='.$row['id'].'&codice='.$codice.'"><i class="glyphicon glyphicon-remove"></i></a></td>';
                                 echo '</tr>';
                                 
@@ -138,7 +143,7 @@ $script_transl = HeadMain();
                         </div>
                     </div>
                     <div class="box-footer">
-                        <!--<input type="submit" class="btn btn-primary" name="submit" value="Salva">-->
+                        <input type="submit" class="btn btn-primary" name="submit" value="Salva">
                     </div>        
                 </div>
             </div>
