@@ -24,9 +24,12 @@
 */
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
-
 require("../../library/include/header.php");
 $script_transl=HeadMain();
+if (!isset($_GET['field'])) {
+	$orderby='datemi DESC, numdoc DESC';
+}
+
 ?>
 <div align="center" class="FacetFormHeaderFont"> <?php echo $script_transl['title']; ?></div>
 <?php
@@ -58,12 +61,12 @@ while ($a_row = gaz_dbi_fetch_assoc($result)) {
     $cliente = $anagrafica->getPartner($a_row['clfoco']);
     echo '			<tr class="FacetDataTD">
 						<td>
-							<a class="btn btn-xs btn-default btn-edit" href="admin_docacq.php?id_tes='.$a_row["id_tes"].'&Update">
+							<a class="btn btn-xs btn-edit" href="admin_docacq.php?id_tes='.$a_row["id_tes"].'&Update">
 								<i class="glyphicon glyphicon-edit"></i>'.$a_row["id_tes"].'
 							</a>
 						</td>
 						<td>'.$a_row["numdoc"].' - '.$a_row["protoc"].'</td>
-						<td>'.$a_row["datemi"].'</td>
+						<td>'.gaz_format_date($a_row["datemi"]).'</td>
 						<td>'.$cliente["ragso1"].'</td>
 						<td>'.$a_row["status"].'</td>
 						<td>
