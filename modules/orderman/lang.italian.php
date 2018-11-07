@@ -51,7 +51,9 @@ $strScript = array("admin_orderman.php" =>
 		"Manca la quantità prodotta",
 		"Gli operai non possono lavorare più di 13 ore al giorno: D. Lgs. 66/2003",
 		"Aggiungi operaio",
-		"Articolo non presente o sconosciuto! Selezionare l'articolo fra quelli mostrati nell'elenco a tendina."
+		"Articolo non presente o sconosciuto! Selezionare l'articolo fra quelli mostrati nell'elenco a tendina.",
+		"Non c'è sufficiente disponibilità di un componente",
+		"Manca la data di registrazione"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',
