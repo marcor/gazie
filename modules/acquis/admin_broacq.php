@@ -877,7 +877,7 @@ echo '  </td>
 /** ENRICO FEDELE */
 echo "</td></tr>\n";
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[17]: <select name=\"in_tiprig\" class=\"FacetSelect\">\n";
-$selArray = array('0' => 'Normale', '1' => 'Forfait', '2' => 'Descrittivo', '3' => 'Var.totale fatt');
+$selArray = array('0' => 'Normale', '1' => 'Forfait', '2' => 'Descrittivo');
 foreach ($selArray as $key => $value) {
     $selected = "";
     if (isset($form["in_tiprig"]) and $form["in_tiprig"] == $key) {
@@ -911,9 +911,10 @@ echo '</table>
 	  <table class="Tlarge table table-striped table-bordered table-condensed table-responsive">
 		  <thead>
 			<tr>
+				<th class="FacetFieldCaptionTD"></th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
-				<th class="FacetFieldCaptionTD"> Codice Fornitore </th>  <!-- Aggiunto a mano -->
-				<th class="FacetFieldCaptionTD" colspan="2">' . $script_transl[21] . '</th>
+				<th class="FacetFieldCaptionTD"> Codice Fornitore </th>
+				<th class="FacetFieldCaptionTD">' . $script_transl[21] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[23] . '</th>
@@ -979,23 +980,18 @@ foreach ($form['righi'] as $key => $value) {
               <input class="FacetDataTDsmall" type="submit" name="upd_row['.$key.']" value="'.$value['codart'].'" /> */
             /** ENRICO FEDELE */
             echo '<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '!">
-						<button name="upd_row[' . $key . ']" class="btn btn-xs btn-success btn-block" type="submit">
+						<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</button> </td> 
+					  <td>
+<button name="upd_row[' . $key . ']" class="btn btn-xs btn-success btn-block" type="submit">
 							<i class="glyphicon glyphicon-refresh"></i>&nbsp;' . $value['codart'] . '
 						</button>
 					  </td>';
-            //echo "<td $boxover><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td><td><input type=\"image\" name=\"upper_row[{$key}]\" src=\"../../library/images/upp.png\" title=\"".$script_transl['3']."!\" /></td>\n";
-
-            /** ENRICO FEDELE */
-            /* Tooltip e glyphicon */
+			echo '<td>
+					<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codice_fornitore'] . '" data-title="' . $value['codice_fornitore'] . '" type="text" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" /></td>';
             echo '<td>
-					   <input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codice_fornitore'] . '" data-title="' . $value['codice_fornitore'] . '" type="text" name="righi[' . $key . '][codice_fornitore]" value="' . $value['codice_fornitore'] . '" maxlength="15" size="15" /></td> <td> <!-- Aggiunto a mano -->
-				
 						<input class="gazie-tooltip" data-type="product-thumb" data-id="' . $value['codart'] . '" data-title="' . $value['annota'] . '" type="text" name="righi[' . $key . '][descri]" value="' . $descrizione . '" maxlength="50" size="50" />
-					  </td>
-					  <td>
-						<button type="image" name="upper_row[' . $key . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
-							<i class="glyphicon glyphicon-arrow-up"></i>
-						</button>
 					  </td>';
             /* Peso */
             $peso = 0;
@@ -1019,13 +1015,9 @@ foreach ($form['righi'] as $key => $value) {
             $last_row[] = array_unshift($last_row, '' . $value['codart'] . ', ' . $value['descri'] . ', ' . $value['quanti'] . $value['unimis'] . ', <strong>' . $script_transl[23] . '</strong>: ' . gaz_format_number($value['prelis']) . ', %<strong>' . substr($script_transl[24], 0, 2) . '</strong>: ' . gaz_format_number($value['sconto']) . ', <strong>' . $script_transl[25] . '</strong>: ' . gaz_format_number($imprig) . ', <strong>' . $script_transl[19] . '</strong>: ' . $value['pervat'] . '%, <strong>' . $script_transl[18] . '</strong>: ' . $value['codric']);
             break;
         case "1":
+			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* forfait *\" /></td>\n";
-            echo "	<td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
-						<td>
-							<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-								<i class=\"glyphicon glyphicon-arrow-up\"></i>
-							</button>
-						</td>\n";
+            echo "<td></td><td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
@@ -1036,13 +1028,10 @@ foreach ($form['righi'] as $key => $value) {
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
             break;
         case "2":
+			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
             echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* descrittivo *\" /></td>\n";
-            echo "	<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>
-						<td>
-							<button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\">
-								<i class=\"glyphicon glyphicon-arrow-up\"></i>
-							</button>
-						</td>\n";
+            echo "<td></td>\n";
+            echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
             echo "<td><input type=\"hidden\" name=\"righi[{$key}][prelis]\" value=\"\" /></td>\n";
