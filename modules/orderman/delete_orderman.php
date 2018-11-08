@@ -28,19 +28,23 @@ $admin_aziend=checkAdmin();
 $message = "Sei sicuro di voler rimuovere ?";
 $titolo="Cancella la Produzione";
 if (isset($_POST['Delete'])){
-	
-	$res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$_GET['id_tesbro']); // prendo la data 
+		
+	$res = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$_GET['id_tesbro']); // prendo il rigo di tesbro interessato
 	
 	$query="DELETE FROM ".$gTables['staff_worked_hours']." WHERE id_orderman = '".$_POST['id']."' AND work_day = '".$res['datemi']."'"; 
 	gaz_dbi_query($query); // cancello tutti i righi operai con quel giorno e quella produzione
 	
 	$query="DELETE FROM ".$gTables['movmag']." WHERE id_orderman = '".$_POST['id']."'"; 
-	gaz_dbi_query($query); //cancello il movimento di magazzino corrispondente
+	gaz_dbi_query($query); //cancello i movimenti di magazzino corrispondenti
 	
+	if ($res['clfoco']<=0) { // se NON è un ordine cliente esistente e quindi fu generato automaticamente da orderman
         $result = gaz_dbi_del_row($gTables['tesbro'], "id_tes", $_GET['id_tesbro']); // cancello tesbro
-		$result = gaz_dbi_del_row($gTables['orderman'], "id", $_POST['id']); // cancello orderman
+		$result = gaz_dbi_del_row($gTables['orderman'], "id", $_POST['id']); // cancello orderman/produzione
 		$result = gaz_dbi_del_row($gTables['rigbro'], "id_tes", $_GET['id_tesbro']); // cancello rigbro
-		
+	} else { // se invece è un ordine cliente devo lasciarlo e solo sganciarlo da orderman
+		gaz_dbi_query ("UPDATE " . $gTables['tesbro'] . " SET id_orderman = '' WHERE id_tes ='".$_GET['id_tesbro']."'") ; // sgancio tesbro da orderman
+		$result = gaz_dbi_del_row($gTables['orderman'], "id", $_POST['id']); // cancello orderman/produzione
+	}
 		
 		
         header("Location: orderman_report.php");

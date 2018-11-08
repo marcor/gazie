@@ -216,7 +216,11 @@ if (isset($_POST['Del_mov'])) {
 					$query="SHOW TABLE STATUS LIKE '".$gTables['rigbro']."'"; unset($row); 
 						$result = gaz_dbi_query($query);
 						$row = $result->fetch_assoc();
-						$id_rigbro = $row['Auto_increment']; // trovo l'ID che avrà RIGBRO rigo documento	
+						$id_rigbro = $row['Auto_increment']; // trovo l'ID che avrà RIGBRO rigo documento
+				if (intval($form['order'])>0){ // se c'è un ordine cliente esistente devo sovrascrivere gli id tesbro e rigbro
+					$id_tesbro=$form['id_tesbro'];
+					$id_rigbro=$form['id_rigbro'];
+				}		
 			}	
 if ($form['order_type']=="AGR" or $form['order_type']=="RIC" or $form['order_type']=="PRF"){
 	// escludo AGR RIC e PRF dal creare movimento di magazzino e lotti
@@ -225,7 +229,7 @@ if ($form['order_type']=="AGR" or $form['order_type']=="RIC" or $form['order_typ
 			if ($toDo=="update"){ // se è update, aggiorno in ogni caso
 				$query="UPDATE " . $gTables['movmag'] . " SET quanti = '".$form['quantip']."', datreg = '".$form['datreg']."', datdoc = '".$form['datemi']."', artico = '".$form['artico']."' , campo_coltivazione = '"  . $form['campo_impianto'] . "', id_orderman = '"  . $_GET['codice'] . "' , id_lotmag = '" .$form['id_lotmag']. "' WHERE id_mov ='".$form['id_movmag']."'"; 
 				gaz_dbi_query ($query) ;
-			}
+			} //************************************************manca update composti lotti
 			if ($toDo=="insert" && $form['order_type']=="IND"){ // se è insert, creo il movimento di magazzino solo se produzione industriale
 				$query="INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '1', '".$form['datreg']."', 'MAG', 'Produzione', '".$form['datemi']."', '".$form['artico']."', '".$form['campo_impianto']."', '".$form['quantip']."', '".$id_orderman."', '".$id_lotmag."', '".$admin_aziend['adminid']."')"; 
 				gaz_dbi_query ($query); // carico il magazzino con l'articolo prodotto
@@ -848,13 +852,15 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 	$stringa="";
 	$query="SELECT * FROM ".$gTables['tesbro'];
 	$result = gaz_dbi_query($query);
-	while($row = $result->fetch_assoc()){
-		if (intval($row['clfoco'])>0){
-		$resforname = gaz_dbi_get_row($gTables['clfoco'],"codice",$row['clfoco']);	
-		} else {
-			$resforname['descri']="AUTO";
-		}
-		$stringa.="\"".$row['numdoc']." - ".$resforname['descri']."\", ";			
+	while($row = $result->fetch_assoc()){		
+		if (intval($row['id_orderman'])==0) {		
+			if (intval($row['clfoco'])>0){
+				$resforname = gaz_dbi_get_row($gTables['clfoco'],"codice",$row['clfoco']);	
+			} else {
+				$resforname['descri']="AUTO";
+			}
+			$stringa.="\"".$row['numdoc']." - ".$resforname['descri']."\", ";
+		}		
 	}
 	$stringa=substr($stringa,0,-1);
 	echo $stringa;
@@ -875,6 +881,13 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 	
 	<td colspan="2" class="FacetDataTD">
 		<input id="autocomplete" type="text" name="order" onchange="this.form.submit()" Value="<?php echo $form['order']; ?>"/>
+		<?php
+		If (strlen($form['order'])>0){
+			?>
+			<span class="glyphicon glyphicon-bell fa-2x" title="L'ordine impone l'articolo e la quantità" style="color:blue"></span>
+			<?php
+		}
+		?>
 	</td>
 </tr>
 
@@ -946,7 +959,10 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 						</div>
 						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ",gaz_format_quantity($magval['q_g'],0,$admin_aziend['decimal_quantity']);?>
 						</div>
-						<?php						
+						<?php
+						if ($toDo=="update"){
+							$magval['q_g']=$magval['q_g']+$row['quantita_artico_base'];
+						}
 						if ($magval['q_g']-$row['quantita_artico_base'] >= 0) { // giacenza sufficiente
 						
 						?>
