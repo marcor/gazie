@@ -253,6 +253,7 @@ $strScript = array("admin_aziend.php" =>
         "El c&oacute;digo elegido ya est&aacute; en uso!",
         "La descripci&oacute;n est&aacute; vac&iacute;a!",
         "El c&oacute;digo debe estar entre 1 y 99",
+		'Non hai scelto la tipologia di pagamento per la fattura elettronica',
         'ins_this' => 'Insertar nueva modalidad el pago',
         'fae_mode' => "Modalidad fatt.elettronica PA"
     ),

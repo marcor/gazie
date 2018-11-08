@@ -249,6 +249,7 @@ $strScript = array("admin_aziend.php" =>
         "Il codice scelto &egrave; gi&agrave; stato usato!",
         "La descrizione &egrave; vuota!",
         "Il codice dev'essere compreso tra 1 e 99",
+		'Non hai scelto la tipologia di pagamento per la fattura elettronica',
         'ins_this' => 'Insert new payments method',
         'fae_mode' => "PA electronic invoice mode"
     ),

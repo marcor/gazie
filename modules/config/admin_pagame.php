@@ -65,6 +65,9 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         if ($form['codice'] <= 0) {
             $msg .= "20+";
         }
+        if (empty($form['fae_mode'])) {
+            $msg .= "21+";
+        }
         if (empty($msg)) { // nessun errore
             // aggiorno il db
             if ($toDo == 'insert') {
