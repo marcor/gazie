@@ -1,0 +1,21 @@
+Titolo:
+Inveni portum.
+
+Presentazione:
+La versione che vado a rilasciare ha come caratteristica principale quella di permettere l'acquisizione delle fatture elettroniche passive provenienti dai nostri fornitori e di produrre fatture elettroniche attive anche in pacchetti zip di file XML.
+Così facendo il nostro software è adesso in grado di esportare massivamente le fatture elettroniche ad uno dei tanti servizi online per l'invio al Sistema di Interscambio e la concomitante conservazione sostitutiva. 
+Inoltre, per chi non ha la contabilità all'interno dell'azienda e si avvale di consulenti esterni: si potrà inviar loro i pacchetti di file evitando agli studi professionali l'inserimento per singolo documento.
+La fattura elettronica è in vigore già da molti mesi per la pubblica amministrazione ed il tracciato di questa tra privati è molto simile, quindi non credo possa essere definita sperimentale, comunque vi esorto a contattarmi per eventuali problemi ed anche per consigli sulle migliorie.
+Una moltitudine di altri piccoli progressi sono stati fatti in  diversi ambiti, cito solo l'evidenza più marcata dello stato del magazzino in fase di inserimento dei documenti di vendita: il codice articolo avrà tre colori diversi a secondo che la giacenza sia zero (rosso), sottoscorta (arancio) o sufficiente (verde).
+
+Notevole è stato l'apporto di Antonio Germani: è lui l'autore del nuovo modulo "Registro di campagna" specifico per le aziende agricole anche (e soprattutto) biologiche, con esso è possibile controllare il funzionamento di una azienda del primo settore economico. Il Registro di campagna è integrato con tutti gli altri moduli di GAzie, in particolare la tracciabilità dei prodotti e rispetta i D.Lgs 150/2012, DPR 55/2012 e DOR 290/2001, permette di redigere un quaderno di campagna elettronico, registra i trattamenti e le lavorazioni agricole, il magazzino dei fitofarmaci, i campi di coltivazione, le produzioni agricole e gli operai addetti. Sono presenti numerosi controlli per evitare registrazioni errate o fuorilegge, fra cui quello sulla validità delle autorizzazioni del Ministero della salute.
+
+Altrettanto importante è stato il contributo dato da Andrea Biasi che ha introdotto la possibilità di gestire le evasioni parziali degli ordini e l'integrazione sull'interfaccia LTE di un menù breadcrump (per giunta editabile a piacimento), inoltre è al lavoro per l'emissione delle lettera di vettura internazionale (CMR) della quale ha già realizzato il template di stampa.
+
+Di Angelo Romano è il merito della condivisione di alcune facilities che riguardano l'interfaccia di inserimento dei documenti di vendita, in particolare la possibilità di impostare un "prezzo finito" ovvero IVA compresa sui righi dei documenti di vendita.
+
+In futuro, ci auguriamo di poter raggiungere l'obbiettivo di lavorare per completare il modulo produzioni e quello della gestione delle risorse umane e dei beni strumentali nel senso della contabilità industriale o, più ampiamente, spingere il gestionale verso la business intelligence. 
+
+Certo di aver fatto cosa gradita, vi saluto con la speranza che sempre più programmatori contribuiscano a far crescere questo applicativo incrementando il valore aggiunto delle aziende dove lavorano o alle quali fanno consulenza.
+
+Antonio de Vincentiis, Montesilvano, 8 Novembre 2018
