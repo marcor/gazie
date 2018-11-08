@@ -259,10 +259,14 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 					$new_partner['codfis'] = $xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue;
 					// ho un codice fiscale posso vedere se è una persona fisica e di quale sesso
 					preg_match('/^[a-z]{6}[0-9]{2}[a-z]([0-9]{2})[a-z][0-9]{3}[a-z]$/i',trim($new_partner['codfis']),$match);
-					if (count($match)>1 && $match[1] > 40 ){  // è un codice fiscale femminile
-						$new_partner['sexper'] = 'F';
-					} else { // maschio
-						$new_partner['sexper'] = 'M';
+					if (count($match)>1){
+						if ($match[1] > 40 ){  // è un codice fiscale femminile
+							$new_partner['sexper'] = 'F';
+						} else {
+							$new_partner['sexper'] = 'M';
+						}
+					} else { // giuridica
+						$new_partner['sexper'] = 'G';
 					}
 				}
 				if (@$xpath->query("//FatturaElettronicaHeader/CedentePrestatore/DatiAnagrafici/Anagrafica/Nome")->item(0)){
