@@ -169,6 +169,10 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             $where = "tipdoc = 'VRI'";
             $template = 'Received';
             break;
+        case 8: //cmr
+            $where = "tipdoc = 'CMR'";
+            $template = "CMR";
+            break;
     }
     if (!isset($_GET['ni'])) {
         $_GET['ni'] = 1;

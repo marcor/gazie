@@ -174,7 +174,8 @@ $strScript = array("admin_client.php" =>
             "DDV" => "D.d.T. per Cessione in Conto Visione",
             "DDY" => "D.d.T. da non fatturare automaticamente",
             "RDV" => "Ricevuto DdT di Reso da C/Visione",
-            "VRI" => "Ricevuta"
+            "VRI" => "Ricevuta",
+            "CMR" => "Contratto di trasporto internazionale"
         ),
         'title' => 'Documenti di vendita',
         'tipdoc' => ' documento di vendita tipo: ',
@@ -1113,6 +1114,44 @@ $strScript = array("admin_client.php" =>
         'report_alert0' => 'Mostra tutti i documenti',
         'report_alert1' => 'Sicuro di voler mostrare tutti i documenti?'
     ),
+    "report_doccmr.php" =>
+    array('title' => 'Documenti di trasporto della sezione: ',
+        'cmr_type' => array("R" => "vendita",
+            "V" => "c/visione",
+            "Y" => "", //triangolazione",
+            "DDR" => "reso a fornitore",
+            "DDL" => "c/lavorazione"
+        ),
+        'header' => array(
+            "ID" => 'id_tes',
+            "Numero" => "numdoc",
+            "Tipo" => 'cmr_type',
+            "Data" => "datemi",
+            "Cliente" => "",
+            "Destinazione" => "",
+            "Status" => "",
+            "Stampa" => "",
+            "Mail" => "",
+            "Origine" => "",
+            "Duplica" => "",
+            "Cancella" => ""
+        ),
+        'to_invoice' => 'da fatturare',
+        'print_invoice' => 'stampa la fattura differita',
+        'print_cmr' => 'stampa il documento di trasporto',
+        'print_lot' => 'Stampa certificati',
+        'doc_returned' => 'Reso da c/visione',
+        'delete_returned' => 'Elimina il reso',
+        'from_suppl' => 'DdT a fornitore',
+        'view_ord' => 'visualizza l\'ordine',
+        'acc_entry' => 'visualizza la registrazione contabile della fattura differita',
+        'no_mail' => 'Non hai memorizzato l\'email fallo ora',
+        'mail_alert0' => 'Invio documento con email',
+        'mail_alert1' => 'Hai scelto di inviare una e-mail all\'indirizzo: ',
+        'mail_alert2' => 'con allegato il seguente documento di vendita:',
+        'report_alert0' => 'Mostra tutti i documenti',
+        'report_alert1' => 'Sicuro di voler mostrare tutti i documenti?'
+    ),
     "emissi_fatdif.php" =>
     array('title' => 'Selezione per la fatturazione dei Documenti di Trasporto della sezione IVA ',
         'ddt_type' => array("T" => "vendita",
@@ -1141,6 +1180,7 @@ $strScript = array("admin_client.php" =>
         'incasso' => 'SPESE INCASSO',
         'n_inv' => ' Fatturabili nel periodo',
         'add_invoice' => 'Dal/i seguente/i DdT verrà generata la FATTURA DIFFERITA N.',
+        'add_invoice_cmr' => 'Dal/i seguente/i CMR verrà generata la FATTURA DIFFERITA N.',
         'preview_inv' => 'Anteprima di fatturazione',
         'submit_inv' => 'CONFERMA LA GENERAZIONE DELLE FATTURE COME DA ANTEPRIMA'
     ),

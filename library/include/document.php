@@ -358,14 +358,14 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
 		'RegolamentoPrivacy'=>'privacy_regol',
         'DDT' => 'ddt',
         'Etichette' => 'etichette',
-        'Cmr' => 'cmr'
+        'CMR' => 'cmr'
     );
 
     $config = new Config;
     $configTemplate = new configTemplate;
     if ($lang_template) {
 		$configTemplate->setTemplateLang($lang_template);
-    } 
+    }
 	require_once ("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/' . $templates[$templateName] . '.php');
     $pdf = new $templateName();
     $ecr = gaz_dbi_get_row($gTables['cash_register'], 'adminid', $_SESSION["user_name"]);

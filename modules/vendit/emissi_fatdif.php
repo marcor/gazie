@@ -28,6 +28,11 @@ if (!ini_get('safe_mode')) { //se me lo posso permettere...
 }
 $msg = '';
 $clienti = $admin_aziend['mascli'];
+if ( isset($_GET['tipodocumento'])) {
+    $tipodocumento = $_GET['tipodocumento'];
+} else {
+    $tipodocumento = "DDT";
+}
 
 function getDateLimits($sez = 1) {
     $acc = array();
@@ -37,11 +42,12 @@ function getDateLimits($sez = 1) {
     $acc['date_ini'] = $acc['date_exe'];
     global $gTables;
     // ricavo i limiti di fatturabilitÃ  e le date dei vari tipi di DdT
-    $doctype = array('DDT', 'DDV', 'DDY');
+    $doctype = array('DDT', 'DDV', 'DDY', 'CMR');
     foreach ($doctype as $k => $v) {
         switch ($v) {
             default :
             case 'DDT':
+            case 'CMR':
                 $rs_first = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez", "numdoc ASC", 0, 1);
                 $rs_last = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "tipdoc = '$v' AND seziva = $sez", "numdoc DESC", 0, 1);
                 // in questo caso modifico la data di emissione e di fine periodo con l'ultimo del mese del primo ddt fatturabile
@@ -118,6 +124,8 @@ function getInvoiceableBills($date, $sez = 1, $cliente = 0) {
             . "(tipdoc = 'DDV' AND datemi <= '" . $date['fin'] . "' AND id_doc_ritorno <= 0 )"
             . " OR "
             . "(tipdoc = 'DDY' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
+            . " OR "
+            . "(tipdoc = 'CMR' AND datemi BETWEEN '" . $date['ini'] . "' AND '" . $date['fin'] . "')"
             . ")";
     //recupero i dati dal DB (testate+cliente+pagamento+righi)
     $field = 'tes.id_tes,tes.clfoco,tes.pagame,tes.banapp,tes.datemi,tes.ragbol,tes.tipdoc,
@@ -277,8 +285,8 @@ if (isset($_POST['genera']) && $msg == "") {
             foreach ($vt as $kr => $vr) {
                 $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
                 $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
-                if (($vr == 'yes' && $tes['tipdoc'] == 'DDT' && !in_array($kr, $form['changeStatus'])) || (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != 'DDT')) {
-                    // se Ã¨ un DDT da fatturare non escluso o  Ã¨ un DDV-Y normalmente escluso ma richiesto alla fatturazione 
+                if (($vr == 'yes' && $tes['tipdoc'] == $tipodocumento && !in_array($kr, $form['changeStatus'])) || (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != $tipodocumento)) { //||
+                    // se Ã¨ un s da fatturare non escluso o  Ã¨ un DDV-Y normalmente escluso ma richiesto alla fatturazione 
                     if ($ctrl_first) {
                         $protoc++;
                         $numfat++;
@@ -399,7 +407,8 @@ if (isset($invoices['data'])) {
 			
             $tes = gaz_dbi_get_row($gTables['tesdoc'], "id_tes", $kr);
             $pag = gaz_dbi_get_row($gTables['pagame'], "codice", $tes['pagame']);
-            if (($vr == 'yes' && $tes['tipdoc'] == 'DDT' && !in_array($kr, $form['changeStatus'])) || (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != 'DDT')) {
+            if (($vr == 'yes' && $tes['tipdoc']==$tipodocumento && !in_array($kr, $form['changeStatus'])) || 
+                (in_array($kr, $form['changeStatus']) && $tes['tipdoc'] != $tipodocumento)) {
                 // se Ã¨ un DDT da fatturare non escluso o  Ã¨ un DDV-Y normalmente escluso ma richiesto alla fatturazione 
                 if ($ctrl_first) {
                     $protoc++;
@@ -414,7 +423,9 @@ if (isset($invoices['data'])) {
 						$btn_class ="btn-default";
 					}
                     echo "<tr>";
-                    echo '<td  class="FacetDataTDevidenziaOK" colspan="8"><b>' .$cliente['ragso1'] . ' ' . $cliente['ragso2'] .'</b> '. $script_transl['add_invoice'] . $numfat . '/' . $tes['seziva'] . ' pr.' . $protoc . " &nbsp;</td>";
+                    if ( $tes['tipdoc'] == 'CMR') $transl_movimento = $script_transl['add_invoice_cmr'];
+                    else $transl_movimento = $script_transl['add_invoice']; 
+                    echo '<td  class="FacetDataTDevidenziaOK" colspan="8"><b>' .$cliente['ragso1'] . ' ' . $cliente['ragso2'] .'</b> '. $transl_movimento . $numfat . '/' . $tes['seziva'] . ' pr.' . $protoc . " &nbsp;</td>";
                     echo "</tr>\n";
                     $ctrl_first = false;
                 }
@@ -462,7 +473,7 @@ if (isset($invoices['data'])) {
                     } else {
 						if ($row['tiprig']<=0 && $row['prelis'] <= 0.00000 ) { $c = 'danger';	} // allerto di un possibile errore di importo a zero
                         echo "<td class=\"$c\" align=\"right\"> ";
-						if ($row['tiprig']==0) {echo gaz_format_quantity($row['quanti'], true);	}
+						if ($row['tiprig']==0 || $row['tiprig']==14 ) {echo gaz_format_quantity($row['quanti'], true);	}
                         echo "</td>\n<td class=\"$c\" align=\"right\"> " . gaz_format_quantity($row['prelis'], true, $admin_aziend['decimal_price']) . " </td>";
                         echo "<td class=\"$c\" align=\"right\"> ";
 						if ($row['sconto']>=0.00001) { echo floatval($row['sconto']);}

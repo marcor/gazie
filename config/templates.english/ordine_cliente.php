@@ -41,7 +41,7 @@ class OrdineCliente extends Template
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->SetFont('helvetica','',9);
-        $this->Cell(25,6,'Codice',1,0,'L',1);
+        $this->Cell(25,6,'Code',1,0,'L',1);
         $this->Cell(80,6,'Descrizione',1,0,'L',1);
         $this->Cell(7, 6,'U.m.',1,0,'C',1);
         $this->Cell(16,6,'Quantità',1,0,'R',1);

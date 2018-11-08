@@ -496,15 +496,29 @@ switch ($admin_aziend['fatimm']) {
                     if ($r["tipdoc"] == 'FAD') {
                         $ddt_result = gaz_dbi_dyn_query('*', $gTables['tesdoc'], "tipdoc = '" . $r["tipdoc"] . "' AND numfat = " . $r["numfat"] . " AND datfat = '" . $r["datfat"] . "'", 'datemi DESC');
                         echo "<td align=\"center\">";
-
+                        $cmr = false;
+                        if ( $r['ddt_type']=='R' ) {
+                            $cmr = true;
+                        }
                         if ( gaz_dbi_num_rows($ddt_result) > 5 ) {
-                            echo "<a href=\"report_doctra.php\" style=\"font-size:10px;\" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-plane\"></i>DdT</a>";
-                            while ($r_d = gaz_dbi_fetch_array($ddt_result)) {
-                                echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=DDT\" style=\"font-size:9px;\">" . $r_d['numdoc'] . "</a>\n";
+                            if ( $cmr ) {
+                                echo "<a href=\"report_doccmr.php\" style=\"font-size:10px;\" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-plane\"></i>CMR</a>";
+                                while ($r_d = gaz_dbi_fetch_array($ddt_result)) {
+                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza i CMR\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=CMR\" style=\"font-size:9px;\">" . $r_d['numdoc'] . "</a>\n";
+                                }
+                            } else {
+                                echo "<a href=\"report_doctra.php\" style=\"font-size:10px;\" class=\"btn btn-xs btn-default\"><i class=\"glyphicon glyphicon-plane\"></i>DdT</a>";
+                                while ($r_d = gaz_dbi_fetch_array($ddt_result)) {
+                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=DDT\" style=\"font-size:9px;\">" . $r_d['numdoc'] . "</a>\n";
+                                }
                             }
                         } else {
                             while ($r_d = gaz_dbi_fetch_array($ddt_result)) {
-                                echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=DDT\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;DdT" . $r_d['numdoc'] . "</a>\n";
+                                if ( $cmr ) {
+                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il CMR\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=CMR\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;CMR" . $r_d['numdoc'] . "</a>\n";
+                                } else {
+                                    echo " <a class=\"btn btn-xs btn-default btn-ddt\" title=\"Visualizza il DdT\" href=\"stampa_docven.php?id_tes=" . $r_d['id_tes'] . "&template=DDT\" style=\"font-size:10px;\"><i class=\"glyphicon glyphicon-plane\"></i>&nbsp;DdT" . $r_d['numdoc'] . "</a>\n";
+                                }
                             }
                         }
                         echo "</td>";

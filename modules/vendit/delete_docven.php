@@ -63,7 +63,7 @@ if (isset($_POST['Delete'])) {
     $ultimo_documento = gaz_dbi_fetch_array($rs_ultimo_documento);
     if ($ultimo_documento) {
         if (($ultimo_documento['tipdoc'] == 'VRI' || $ultimo_documento['tipdoc'] == 'VCO' 
-            || substr($ultimo_documento['tipdoc'], 0, 2) == 'DD' || $ultimo_documento['tipdoc'] == 'RDV' ) 
+            || substr($ultimo_documento['tipdoc'], 0, 2) == 'DD' || $ultimo_documento['tipdoc'] == 'RDV' || $ultimo_documento['tipdoc'] == 'CMR' ) 
             && $ultimo_documento['numdoc'] == $row['numdoc']) {
             gaz_dbi_del_row($gTables['tesdoc'], 'id_tes', $row['id_tes']);
             gaz_dbi_del_row($gTables['tesmov'], 'id_tes', $row['id_con']);
@@ -110,7 +110,11 @@ if (isset($_POST['Delete'])) {
             exit;
         } elseif ($ultimo_documento['protoc'] == intval($_GET['protoc']) and $ultimo_documento['tipdoc'] == 'FAD') {
             //allora procedo alla modifica delle testate per ripristinare i DdT...
-            gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "tipdoc", "DD" . $row["ddt_type"]);
+            if ( $row["ddt_type"]!="R") {
+                gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "tipdoc", "DD" . $row["ddt_type"]);
+            } else {
+                gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "tipdoc", "CM" . $row["ddt_type"]);
+            }
             gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "protoc", "");
             gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "numfat", "");
             gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $row["id_tes"], "datfat", "");
@@ -118,7 +122,11 @@ if (isset($_POST['Delete'])) {
             gaz_dbi_del_row($gTables['rigmoc'], 'id_tes', $row['id_con']);
             gaz_dbi_del_row($gTables['rigmoi'], 'id_tes', $row['id_con']);
             while ($a_row = gaz_dbi_fetch_array($result)) {
-                gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "tipdoc", "DD" . $a_row["ddt_type"]);
+                if ( $row["ddt_type"]!="R") {
+                    gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "tipdoc", "DD" . $a_row["ddt_type"]);
+                } else {
+                    gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "tipdoc", "CM" . $a_row["ddt_type"]);
+                }
                 gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "protoc", "");
                 gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "numfat", "");
                 gaz_dbi_put_row($gTables['tesdoc'], "id_tes", $a_row["id_tes"], "datfat", "");

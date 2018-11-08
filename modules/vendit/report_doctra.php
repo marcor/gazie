@@ -32,7 +32,7 @@ if (isset($_GET['auxil'])) {
 } else {
     $auxil = 1;
 }
-$where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil'";
+$where = " ((tipdoc = 'FAD' && ddt_type != 'R') or tipdoc like 'DD_') and seziva = '$auxil'";
 $all = $where;
 
 $documento = '';
@@ -53,7 +53,7 @@ if (isset($_GET['datemi'])) {
 if (isset($_GET['cliente'])) {
     if ($_GET['cliente'] <> '') {
         $cliente = $_GET['cliente'];
-        $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil' ";
+        $where = " ((tipdoc = 'FAD' && ddt_type != 'R') or tipdoc like 'DD_') and seziva = '$auxil' ";
         $limit = 0;
         $passo = 2000000;
         $auxil = $_GET['auxil'] . "&cliente=" . $cliente;
@@ -70,7 +70,7 @@ if (isset($_GET['all'])) {
     gaz_set_time_limit(0);
     $auxil = filter_input(INPUT_GET, 'auxil') . "&all=yes";
     $passo = 100000;
-    $where = " (tipdoc = 'FAD' or tipdoc like 'DD_') and seziva = '$auxil'";
+    $where = " ((tipdoc = 'FAD' && ddt_type != 'R') or tipdoc like 'DD_') and seziva = '$auxil'";
     unset($documento);
     $cliente = '';
 }
@@ -349,6 +349,7 @@ function confirMail(link){
                             echo "</tr>\n";
                             break;
                         case "FAD":
+                            if ( $r['ddt_type'] != 'R') {
                             echo "<tr class=\"FacetDataTD\">";
                             // Colonna id
                             echo "<td align=\"left\"><a class=\"btn btn-xs btn-default btn-edit\" href=\"admin_docven.php?Update&id_tes=" . $r["id_tes"] . "\"><i class=\"glyphicon glyphicon-edit\"></i>".$r['tipdoc']."&nbsp;" . $r["id_tes"] . "</a></td>";
@@ -408,6 +409,7 @@ function confirMail(link){
                             echo "<td></td>";
                             echo "<td></td>";
                             echo "</tr>\n";
+                            }
                             break;
                     }
                 }

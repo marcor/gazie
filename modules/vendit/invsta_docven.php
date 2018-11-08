@@ -52,7 +52,7 @@ if (isset($_SESSION['print_request'])) {
          $template = '&template=Received';
       } else if ($documento['tipdoc'] == 'CMR') {
           $template = '&template=CMR';
-          $result = gaz_dbi_dyn_query("*", $gTables['tescmr'], "id_tes = $id_tes", "id_tes desc", 0, 1);
+          $result = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "id_tes = $id_tes", "id_tes desc", 0, 1);
           $documento = gaz_dbi_fetch_array($result);
       } else {
          $template = '';

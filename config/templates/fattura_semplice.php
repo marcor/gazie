@@ -89,8 +89,10 @@ class FatturaSemplice extends Template {
                 $ddtdescri .= ' in triangolazione';
             } elseif ($this->tesdoc['ddt_type'] == 'V') {
                 $ddtdescri .= ' in c/visione';
+            } elseif ($this->tesdoc['ddt_type'] == 'R') {
+                $ddtdescri = 'C M R';
             }
-            $this->Cell(105, 6, ' DA ' . $ddtdescri . ' n. ' . $this->tesdoc['numdoc'] . ' del ' . $dataddt, 1, 0, 'L');
+            $this->Cell(105, 6, ' Da ' . $ddtdescri . ' n. ' . $this->tesdoc['numdoc'] . ' del ' . $dataddt, 1, 0, 'L');
             $this->Cell(81, 6, '', 'BR', 1);
             $this->SetFont('helvetica', '', 9);
         }
