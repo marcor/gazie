@@ -440,7 +440,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             }
         } else {    //controlli in caso di inserimento
             if ($form['tipdoc'] == 'DDT' || $form['tipdoc'] == 'DDV' || $form['tipdoc'] == 'DDY') {  //se è un DDT
-                $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " AND (tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND seziva = " . $sezione, "datemi DESC ,numdoc DESC ", 0, 1);
+                $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['annemi'] . " AND (tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND ddt_type!='R' AND seziva = " . $sezione, "datemi DESC ,numdoc DESC ", 0, 1);
                 $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
                 $utsUltimoDdT = mktime(0, 0, 0, substr($ultimo_ddt['datemi'], 5, 2), substr($ultimo_ddt['datemi'], 8, 2), substr($ultimo_ddt['datemi'], 0, 4));
                 if ($ultimo_ddt and ( $utsUltimoDdT > $utsemi)) {
@@ -461,7 +461,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['numdoc'] = 1;
                 }
             } else if ($form['tipdoc'] == 'CMR' ) {
-                $rs_last_n = gaz_dbi_dyn_query("numdoc", $gTables['tesdoc'], "tipdoc = 'CMR' AND id_con = 0", 'datemi DESC, numdoc DESC', 0, 1);
+                $rs_last_n = gaz_dbi_dyn_query("numdoc", $gTables['tesdoc'], "tipdoc = 'CMR' AND ddt_type='R' AND id_con = 0", 'datemi DESC, numdoc DESC', 0, 1);
                 $last_n = gaz_dbi_fetch_array($rs_last_n);
                 if ($last_n) {
                     $form['numdoc'] = $last_n['numdoc'] + 1;
@@ -1532,7 +1532,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['seziva'] = $_GET['seziva'];
     }
     //cerco l'ultimo template
-    $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' and seziva = " .
+    $rs_ultimo_template = gaz_dbi_dyn_query($gTables['tesdoc'] . ".template", $gTables['tesdoc'], "tipdoc = '" . $form['tipdoc'] . "' and ddt_type!='R' and seziva = " .
             $form['seziva'], 'datfat desc, protoc desc', 0, 1);
     $ultimo_template = gaz_dbi_fetch_array($rs_ultimo_template);
     if ($ultimo_template['template'] == 'FatturaImmediata') {

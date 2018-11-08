@@ -1278,6 +1278,7 @@ $strScript = array("admin_client.php" =>
         'taxable' => 'Imponibile',
         'issue_fat' => 'Evadi con Fattura Immediata',
         'issue_ddt' => 'Evadi con Documento di Trasporto',
+        'issue_cmr' => 'Evadi con Documento CMR',
         'issue_cor' => 'Evadi con Corrispettivo',
         'checkbox' => 'Questa checkbox dev\'essere selezionata per evadere il rigo',
         'alert1' => '&sup1; La sezione IVA scelta non &egrave; quella<br/>normalente usata per<br/>l\'emissione delle Fatture immediate.',

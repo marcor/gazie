@@ -258,7 +258,7 @@ if (isset($_POST['clfoco'])) {
     $form['clfoco'] = 0;
 }
 
-if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
+if (isset($_POST['ddt']) || isset($_POST['cmr']) ) { //conferma dell'evasione di un ddt
     //controllo i campi
     $dataemiss = $_POST['datemi_Y'] . "-" . $_POST['datemi_M'] . "-" . $_POST['datemi_D'];
     $utsDataemiss = mktime(0, 0, 0, $_POST['datemi_M'], $_POST['datemi_D'], $_POST['datemi_Y']);
@@ -288,7 +288,11 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         $msg .= "6+";
     }
     // controllo che la data dell'ultimo ddt emesso non sia successiva a questa
-    $rs_lastddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND ( tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND seziva = " . $form['seziva'], "numdoc DESC", 0, 1);
+    if ( isset($_POST['cmr'] )) {
+        $rs_lastddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND ( tipdoc LIKE 'CMR' OR tipdoc = 'FAD') AND ddt_type='R' AND seziva = " . $form['seziva'], "numdoc DESC", 0, 1);
+    } else {
+        $rs_lastddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "YEAR(datemi) = " . $form['datemi_Y'] . " AND ( tipdoc LIKE 'DD_' OR tipdoc = 'FAD') AND ddt_type!='R' AND seziva = " . $form['seziva'], "numdoc DESC", 0, 1);
+    }
     $r = gaz_dbi_fetch_array($rs_lastddt);
     if ($r) {
         $uts_last_data_emiss = gaz_format_date($r['datemi'], false, 2); // mktime
@@ -302,7 +306,11 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
         require("lang." . $admin_aziend['lang'] . ".php");
         $script_transl = $strScript['select_evaord.php'];
         //ricavo il numero progressivo
-        $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi LIKE '" . $_POST['datemi_Y'] . "%' AND (tipdoc like 'DD_' OR tipdoc = 'FAD') AND seziva = " . $_POST['seziva'], "numdoc DESC", 0, 1);
+        if ( isset($_POST['cmr'] )) {
+            $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi LIKE '" . $_POST['datemi_Y'] . "%' AND (tipdoc like 'CMR' OR tipdoc = 'FAD') AND ddt_type='R' AND seziva = " . $_POST['seziva'], "numdoc DESC", 0, 1);
+        } else {
+            $rs_ultimo_ddt = gaz_dbi_dyn_query("*", $gTables['tesdoc'], "datemi LIKE '" . $_POST['datemi_Y'] . "%' AND (tipdoc like 'DD_' OR tipdoc = 'FAD') AND ddt_type!='R' AND seziva = " . $_POST['seziva'], "numdoc DESC", 0, 1);            
+        }
         $ultimo_ddt = gaz_dbi_fetch_array($rs_ultimo_ddt);
         // se e' il primo documento dell'anno, resetto il contatore
         if ($ultimo_ddt) {
@@ -311,8 +319,13 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
             $form['numdoc'] = 1;
         }
         //inserisco la testata
-        $form['tipdoc'] = 'DDT';
-        $form['ddt_type'] = 'T';
+        if ( isset($_POST['cmr'] )) {
+            $form['ddt_type'] = 'R';
+            $form['tipdoc'] = 'CMR';
+        } else {
+            $form['ddt_type'] = 'T';
+            $form['tipdoc'] = 'DDT';
+        }
         $form['template'] = "FatturaSemplice";
         $form['id_con'] = '';
         $form['status'] = 'GENERATO';
@@ -349,7 +362,7 @@ if (isset($_POST['ddt'])) { //conferma dell'evasione di un ddt
                 $row['id_tes'] = $last_id;
                 $row['id_order'] = $v['id_tes'];
                 $row['quanti'] = $v['evadibile'];
-                echo "evadibile ........................ ".$v["evadibile"]."<br>";
+                //echo "evadibile ........................ ".$v["evadibile"]."<br>";
                 rigdocInsert($row);
                 $last_rigdoc_id = gaz_dbi_last_id();
                 if ($v['id_body_text'] > 0 ) { //se è un rigo testo copio il contenuto vecchio su uno nuovo
@@ -1049,6 +1062,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
             echo "<input type=\"hidden\" name=\"hiddentot\" value=\"$total_order\">\n";
             echo "<input type=\"submit\" name=\"Return\" value=\"" . $script_transl['return'] . "\">&nbsp;</td>\n";
             echo "<td align=\"right\" colspan=\"6\" class=\"FacetFieldCaptionTD\">\n";
+            echo "<input type=\"submit\" name=\"cmr\" value=\"" . $script_transl['issue_cmr'] . "\" accesskey=\"m\" />\n";
             echo "<input type=\"submit\" name=\"ddt\" value=\"" . $script_transl['issue_ddt'] . "\" accesskey=\"d\" />\n";
             echo "<input type=\"submit\" name=\"fai\" value=\"" . $script_transl['issue_fat'] . "\" accesskey=\"f\" />\n";
             if (!empty($alert_sezione))
