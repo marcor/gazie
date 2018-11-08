@@ -413,7 +413,7 @@ function createDocument($testata, $templateName, $gTables, $rows = 'rigdoc', $de
     }
 }
 
-function createMultiDocument($results, $templateName, $gTables, $dest = false) {
+function createMultiDocument($results, $templateName, $gTables, $dest = false, $lang_template=false) {
     $templates = array('Received' => 'received',
         'CartaIntestata' => 'carta_intestata',
         'Lettera' => 'lettera',
@@ -494,12 +494,15 @@ function createMultiDocument($results, $templateName, $gTables, $dest = false) {
     }
 }
 
-function createInvoiceFromDDT($result, $gTables, $dest = false) {
+function createInvoiceFromDDT($result, $gTables, $dest = false, $lang_template=false) {
 
     $templateName = "FatturaDifferita";
 
     $config = new Config;
     $configTemplate = new configTemplate;
+    if ($lang_template) {
+		$configTemplate->setTemplateLang($lang_template);
+    }
     require_once("../../config/templates" . ($configTemplate->template ? '.' . $configTemplate->template : '') . '/fattura_semplice.php');
     $pdf = new FatturaSemplice();
     $docVars = new DocContabVars();

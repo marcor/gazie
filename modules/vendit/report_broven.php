@@ -50,10 +50,15 @@ function mostra_documenti_associati($ordine) {
             echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza la fattura immediata\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "\">";
             echo "fatt. " . $tesdoc_r["numfat"];
             echo "</a> ";
-        } elseif ($tesdoc_r["tipdoc"] == "DDT" || $tesdoc_r["tipdoc"] == "FAD") {
+        } elseif ($tesdoc_r["tipdoc"] == "DDT" || ($tesdoc_r["tipdoc"] == "FAD" && $tesdoc_r["ddt_type"]!='R')) {
             // documento di trasporto
             echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il documento di trasporto\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=DDT\">";
             echo "ddt " . $tesdoc_r["numdoc"];
+            echo "</a> ";
+        } elseif ($tesdoc_r["tipdoc"] == "CMR" || ($tesdoc_r["tipdoc"] == "FAD" && $tesdoc_r["ddt_type"]='R')) {
+            // documento cmr
+            echo "<a class=\"btn btn-xs btn-default\" title=\"visualizza il cmr\" href=\"stampa_docven.php?id_tes=" . $tesdoc_r["id_tes"] . "&template=CMR\">";
+            echo "cmr " . $tesdoc_r["numdoc"];
             echo "</a> ";
         } elseif ($tesdoc_r["tipdoc"] == "VCO") {
             // scontrino

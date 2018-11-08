@@ -35,11 +35,13 @@ class FatturaSemplice extends Template {
         $this->giorno = substr($this->tesdoc['datfat'], 8, 2);
         $this->mese = substr($this->tesdoc['datfat'], 5, 2);
         $this->anno = substr($this->tesdoc['datfat'], 0, 4);
-		if ($this->tesdoc['datfat']){
+		/*if ($this->tesdoc['datfat']){
 			$nomemese = ucwords(strftime("%B", mktime (0,0,0,substr($this->tesdoc['datfat'],5,2),1,0)));
 		} else {
 			$nomemese = '';
-		}
+        }*/
+        $nomemese = $this->mese;
+
         $this->sconto = $this->tesdoc['sconto'];
         $this->virtual_taxstamp = $this->tesdoc['virtual_taxstamp'];
         $this->trasporto = $this->tesdoc['traspo'];
@@ -57,7 +59,7 @@ class FatturaSemplice extends Template {
 		} else {
 			$numfat = ' _ _ _ _ _ _ _';
 		}
-        $this->tipdoc = $descri . $numfat . ' of ' . $this->giorno . ' ' . $nomemese . ' ' . $this->anno;
+        $this->tipdoc = $descri . $numfat . ' of ' . $this->giorno . '/' . $nomemese . '/' . $this->anno;
     }
 
     function newPage() {
@@ -109,6 +111,14 @@ class FatturaSemplice extends Template {
                 $this->newPage();
                 $this->Cell(186, 5, '<<< --- FOLLOWS FROM PREVIOUS PAGE --- <<< ', 0, 1);
             }
+
+            $rigo['descri'] = str_replace("LASTRA","SHEETS", $rigo['descri']);
+            $rigo['descri'] = str_replace("TONDI","RODS", $rigo['descri']);
+            $rigo['descri'] = str_replace("ROTOLI","ROLLS", $rigo['descri']);
+            $rigo['descri'] = str_replace("PIATTINA ADESIVA","SELFADHESIVE EXPANDIDE", $rigo['descri']);
+            $rigo['descri'] = str_replace("NASTRINI","SEAL TAPES", $rigo['descri']);
+            $rigo['descri'] = str_replace("TUBETTI","THIN WALL PIPES", $rigo['descri']);
+
             switch ($rigo['tiprig']) {
                 case "0":
                     $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L');
@@ -273,7 +283,7 @@ class FatturaSemplice extends Template {
         $this->Cell(36, 6, 'Fixed Price', 'LTR', 0, 'C', 1);
         $this->Cell(16, 6, '% Discount', 'LTR', 0, 'C', 1);
         $this->Cell(24, 6, 'Collection Costs', 'LTR', 0, 'C', 1);
-        $this->Cell(26, 6, 'Trasport', 'LTR', 0, 'C', 1);
+        $this->Cell(26, 6, 'Transport', 'LTR', 0, 'C', 1);
         $this->Cell(36, 6, 'Tot.Taxable', 'LTR', 0, 'C', 1);
         $this->Cell(26, 6, 'Tot. VAT', 'LTR', 0, 'C', 1);
         $this->Cell(22, 6, 'Stamps', 'LTR', 1, 'C', 1);

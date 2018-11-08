@@ -42,10 +42,16 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     } else {
         $template = 'FatturaImmediata';
     }
+
+    $lang = 'italian';
+    $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
+    $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
+    if ( $stato['country']!=="IT") $lang='english';
+
     if (isset($_GET['dest']) && $_GET['dest'] == 'E') { // se l'utente vuole inviare una mail
-        createDocument($testata, $template, $gTables, 'rigdoc', 'E');
+        createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
     } else {
-        createDocument($testata, $template, $gTables);
+        createDocument($testata, $template, $gTables, 'rigdoc', false, $lang);
     }
 } elseif (isset($_GET['td']) and $_GET['td'] == 2) {  //se viene richiesta la stampa di fattura/e differita/e appartenenti ad un periodo
     if (!isset($_GET['pi'])) {
@@ -116,11 +122,23 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
             foreach ($arrayClienti as $cliente) {
                 $clfoco = $cliente['clfoco'];
                 $testate = gaz_dbi_dyn_query("A.*", $from, $where . " and A.clfoco=$clfoco", $orderby);
-                createInvoiceFromDDT($testate, $gTables, 'E');
+        
+                $lang = 'italian';
+                $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
+                $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
+                if ( $stato['country']!=="IT") $lang='english';
+                
+                createInvoiceFromDDT($testate, $gTables, 'E', $lang);
             }
         } else {
             $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
-            createInvoiceFromDDT($testate, $gTables);
+
+            $lang = 'italian';
+                $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
+                $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
+                if ( $stato['country']!=="IT") $lang='english';
+
+            createInvoiceFromDDT($testate, $gTables, false, $lang);
         }
     } else {
         alert("Nessun documento da stampare");
@@ -216,12 +234,18 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
                                      left join " . $gTables['anagra'] . " C on B.id_anagra=C.id  ";
     //recupero i documenti da stampare
     $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
+    
+    $lang = 'italian';
+    $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
+    $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
+    if ( $stato['country']!=="IT") $lang='english';
+
     if ($testate->num_rows > 0) {
 //   createMultiDocument($testate, $template, $gTables, ($invioPerEmail ? "E" : false)); non funziona, invia tutte le fatture allo stesso destinatario
         if ($invioPerEmail) {
             foreach ($testate as $doc) {
                 $testata = gaz_dbi_get_row($gTables['tesdoc'], 'id_tes', $doc['id_tes']);
-                createDocument($testata, $template, $gTables, 'rigdoc', 'E');
+                createDocument($testata, $template, $gTables, 'rigdoc', 'E', $lang);
             }
         } else {
             createMultiDocument($testate, $template, $gTables);

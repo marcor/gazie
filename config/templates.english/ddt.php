@@ -48,7 +48,7 @@ class DDT extends Template_con_scheda
         } elseif ($this->tesdoc['ddt_type'] == 'Y') {
             $descri='D.d.T. cessione per triangolazione n.';
         } else {
-            $descri='Documento di Trasporto n.';
+            $descri='Transport document n.';
         }
 		if ($this->tesdoc['numdoc']>0){
 			$numdoc = $this->tesdoc['numdoc'].'/'.$this->tesdoc['seziva'];
@@ -62,13 +62,13 @@ class DDT extends Template_con_scheda
         $this->AddPage();
         $this->SetFillColor(hexdec(substr($this->colore,0,2)),hexdec(substr($this->colore,2,2)),hexdec(substr($this->colore,4,2)));
         $this->SetFont('helvetica','',9);
-        $this->Cell(30,6,'Codice',1,0,'L',1);
-        $this->Cell(82,6,'Descrizione',1,0,'L',1);
+        $this->Cell(30,6,'Code',1,0,'L',1);
+        $this->Cell(82,6,'Description',1,0,'L',1);
         $this->Cell(10,6,'U.m.',1,0,'L',1);
         //$tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
-        $this->Cell(30,6,'Quantità',1,0,'R',1);
-        $this->Cell(25,6,'Prezzo',1,0,'R',1);
-        $this->Cell(10,6,'%Sc.',1,1,'R',1);
+        $this->Cell(30,6,'Quantity',1,0,'R',1);
+        $this->Cell(25,6,'Price',1,0,'R',1);
+        $this->Cell(10,6,'%Dis.',1,1,'R',1);
     }
 
     function pageHeader()
@@ -88,10 +88,10 @@ class DDT extends Template_con_scheda
                 $this->Cell(155,6,'','T',1);
                 $this->SetFont('helvetica', '', 20);
                 $this->SetY(225);
-                $this->Cell(185,12,'>>> --- SEGUE SU PAGINA SUCCESSIVA --- >>> ',1,1,'R');
+                $this->Cell(185,12,'>>> --- FOLLOWS ON NEXT PAGE --- >>> ',1,1,'R');
                 $this->SetFont('helvetica', '', 9);
                 $this->newPage();
-                $this->Cell(185,5,'<<< --- SEGUE DA PAGINA PRECEDENTE --- <<< ',0,1);
+                $this->Cell(185,5,'<<< --- FOLLOWS FROM PREVIOUS PAGE --- <<< ',0,1);
             }
                 if ($rigo['tiprig'] < 2) {
                     $this->Cell(30,6,$rigo['codart'],1,0,'L');
@@ -131,7 +131,7 @@ class DDT extends Template_con_scheda
                     $this->Cell(30, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(35, 6, "",1,1,'R');
                 }  elseif ($rigo['tiprig'] == 90) {
-                    $this->Cell(152, 6, 'VENDITA CESPITE: ' . $rigo['codart'], 1, 0, 'L');
+                    $this->Cell(152, 6, 'ASSET SALE: ' . $rigo['codart'], 1, 0, 'L');
                     $this->Cell(25, 6, '', 1);
                     $this->Cell(10, 6, '', 1, 1);
                     $this->Cell(152, 6, $rigo['descri'],1,0,'L',0,'',1);
@@ -151,10 +151,10 @@ class DDT extends Template_con_scheda
         $this->Rect(10,$y,187,220-$y); //questa marca le linee dx e sx del documento
         $this->SetY(220);
         $this->SetFont('helvetica','',9);
-        $this->Cell(83, 5,'Agente','LTR',0,'C',1);
-        $this->Cell(26, 5,'Peso netto','LTR',0,'C',1);
-        $this->Cell(26, 5,'Peso lordo','LTR',0,'C',1);
-        $this->Cell(26, 5,'N.colli','LTR',0,'C',1);
+        $this->Cell(83, 5,'Agent','LTR',0,'C',1);
+        $this->Cell(26, 5,'Net weight','LTR',0,'C',1);
+        $this->Cell(26, 5,'Gross weight','LTR',0,'C',1);
+        $this->Cell(26, 5,'N. of packages','LTR',0,'C',1);
         $this->Cell(26, 5,'Volume','LTR',1,'C',1);
         $this->Cell(83, 5,$this->agente,'LR');
         if ($this->tesdoc['net_weight'] > 0) {
@@ -177,11 +177,11 @@ class DDT extends Template_con_scheda
         } else {
             $this->Cell(26, 5,'','LR',1);
         }
-        $this->Cell(187,5,'Pagamento - Banca','LTR',1,'C',1);
+        $this->Cell(187,5,'Payment - Bank','LTR',1,'C',1);
         $this->Cell(187,5,$this->pagame['descri'].' '.$this->banapp['descri'],'LBR',1,'C',0,'',1);
-        $this->Cell(51,5,'Spedizione','LTR',0,'C',1);
-        $this->Cell(114,5,'Vettore','LTR',0,'C',1);
-        $this->Cell(22,5,'Trasporto','LTR',1,'C',1);
+        $this->Cell(51,5,'Shipment','LTR',0,'C',1);
+        $this->Cell(114,5,'Carrier','LTR',0,'C',1);
+        $this->Cell(22,5,'Transport','LTR',1,'C',1);
         $this->Cell(51,5,$this->tesdoc['spediz'],'LBR',0,'C');
         $this->Cell(114,5,$this->docVars->vettor['ragione_sociale'].' '.
                           $this->docVars->vettor['indirizzo'].' '.
@@ -193,14 +193,14 @@ class DDT extends Template_con_scheda
             $ImportoTrasporto = gaz_format_number($this->docVars->tesdoc['traspo']);
         }
         $this->Cell(22,5,$ImportoTrasporto,'LBR',1,'C');
-        $this->Cell(51,5,'Inizio trasporto','LTR',0,'C',1);
+        $this->Cell(51,5,'Shipment start','LTR',0,'C',1);
         if (empty($this->docVars->vettor['ragione_sociale'])){
-            $signature=' Firma del conducente ';
+            $signature=' Driver\'s signature ';
         } else {
-            $signature=' Firma del vettore ';
+            $signature=' Carrier\'s signature ';
         }
         $this->Cell(68,5,$signature,'LTR',0,'C',1);
-        $this->Cell(68,5,'Firma destinatario','LTR',1,'C',1);
+        $this->Cell(68,5,'Recipient\'s signature','LTR',1,'C',1);
         if ($this->day > 0) {
            $this->Cell(51,5,'data '.$this->day.'-'.$this->month.'-'.$this->year,'LR',0,'C');
         } else {
