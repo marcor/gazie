@@ -249,4 +249,5 @@ UPDATE `gaz_municipalities` SET `postal_code` = 76012 WHERE `postal_code` = 7005
 UPDATE `gaz_municipalities` SET `postal_code` = 76013 WHERE `postal_code` = 70055;
 UPDATE `gaz_municipalities` SET `postal_code` = 76014 WHERE `postal_code` = 70058;
 UPDATE `gaz_municipalities` SET `postal_code` = 76125 WHERE `postal_code` = 70059;
+INSERT INTO `gaz_XXXcompany_config` (`description`, `var`, `val`) VALUES ('Apre dialog per impostazione prezzo IVA compresa(0=No,1=Si)','vat_price','0');
 -- STOP_WHILE ( questo e' un tag che serve per istruire install.php a SMETTERE di eseguire le query su tutte le aziende dell'installazione)
