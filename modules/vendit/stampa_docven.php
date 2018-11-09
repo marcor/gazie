@@ -43,7 +43,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         $template = 'FatturaImmediata';
     }
 
-    $lang = 'italian';
+    $lang = '';
     $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
     $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
     if ( $stato['country']!=="IT") $lang='english';
@@ -123,7 +123,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
                 $clfoco = $cliente['clfoco'];
                 $testate = gaz_dbi_dyn_query("A.*", $from, $where . " and A.clfoco=$clfoco", $orderby);
         
-                $lang = 'italian';
+                $lang = '';
                 $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
                 $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
                 if ( $stato['country']!=="IT") $lang='english';
@@ -133,7 +133,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
         } else {
             $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
 
-            $lang = 'italian';
+            $lang = '';
                 $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
                 $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
                 if ( $stato['country']!=="IT") $lang='english';
@@ -235,7 +235,7 @@ if (isset($_GET['id_tes'])) {   //se viene richiesta la stampa di un solo docume
     //recupero i documenti da stampare
     $testate = gaz_dbi_dyn_query("A.*", $from, $where, $orderby);
     
-    $lang = 'italian';
+    $lang = '';
     $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $testata['clfoco'] );
     $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
     if ( $stato['country']!=="IT") $lang='english';
