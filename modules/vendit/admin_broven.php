@@ -27,6 +27,7 @@ require("../../modules/magazz/lib.function.php");
 $admin_aziend = checkAdmin();
 $msgtoast = "";
 $msg = "";
+$show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show_artico_composit');
 
 function getDayNameFromDayNumber($day_number) {
     return ucfirst(utf8_encode(strftime('%A', mktime(0, 0, 0, 3, 19 + $day_number, 2017))));
@@ -742,7 +743,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $magval = array_pop($mv);
                 $form['rows'][$next_row]['scorta'] = $artico['scorta'];
                 $form['rows'][$next_row]['quamag'] = $magval['q_g'];
-                if ($artico['good_or_service']==2 ) {
+                if ($artico['good_or_service']==2 && $show_artico_composit==1 ) {
                     $whe_dis = "codice_composizione = '".$form['in_codart']."'";
                     $res_dis = gaz_dbi_dyn_query('*', $gTables['distinta_base'], $whe_dis, 'id', 0, PER_PAGE);
                     while ($row_dis = gaz_dbi_fetch_array($res_dis)) {
