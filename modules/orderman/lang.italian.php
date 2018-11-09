@@ -53,7 +53,8 @@ $strScript = array("admin_orderman.php" =>
 		"Aggiungi operaio",
 		"Articolo non presente o sconosciuto! Selezionare l'articolo fra quelli mostrati nell'elenco a tendina.",
 		"Non c'è sufficiente disponibilità di un componente",
-		"Manca la data di registrazione"
+		"Manca la data di registrazione",
+		"Il numero d'ordine inserito è inesistente"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',

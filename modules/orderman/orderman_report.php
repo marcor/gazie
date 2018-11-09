@@ -88,6 +88,7 @@ $recordnav -> output();
 							"Inizio produzione" => "datemi",
 							"Durata" => "day_of_validity",
 							"Luogo di produzione" => "campo_impianto",
+							"Distinta" => "distinta",
 							"Cancella"    => ""
 							);
 	$linkHeaders = new linkHeaders($headers_orderman);
@@ -116,6 +117,11 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			<!-- Antonio Germani Vado a leggere la descrizione del campo connesso alla produzione -->
 			<?php $c_row = gaz_dbi_get_row($gTables['campi'], "codice", $a_row['campo_impianto']);?>
 			<td align="center"><?php echo $a_row['campo_impianto'], " ", $c_row['descri'] ;?></td>
+			<td align="center">
+				<a class="btn btn-info" href="stampa_produzione.php?id_orderman=<?php echo $a_row['id']; ?>">
+					<i class="glyphicon glyphicon-list-alt"></i>
+				</a>
+			</td>
 			<td align="center">
 				<a class="btn btn-xs btn-default btn-elimina" href="delete_orderman.php?id=<?php echo $a_row['id']; ?>&id_tesbro=<?php echo $a_row['id_tesbro']; ?>">
 					<i class="glyphicon glyphicon-remove"></i>

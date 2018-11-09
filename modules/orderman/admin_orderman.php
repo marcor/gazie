@@ -65,12 +65,13 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Ger
 	$form['day_of_validity'] = $_POST['day_of_validity'];
 	$form["campo_impianto"] = $_POST["campo_impianto"];
 	$form['order']=$_POST['order'];
+	$form['quantip']=$_POST['quantip'];
 	If (intval($form['order'])>0) {// se c'è un numero ordine lo importo
 		$res = gaz_dbi_get_row($gTables['tesbro'],"numdoc",$form['order']);
 		if (isset($res)) { // se esiste veramente l'ordine
 			$res2 = gaz_dbi_get_row($gTables['rigbro'],"id_tes",$res['id_tes']);
 			$form['artico']=$res2['codart'];
-			$form['quantip']=$res2['quanti'];
+			$form['quantipord']=$res2['quanti'];
 			$form['id_tesbro']=$res['id_tes'];
 			$form['id_rigbro']=$res2['id_rig'];
 		} else { // se l'ordine non esiste ed è stato inserito un numero anomalo
@@ -154,6 +155,14 @@ if (isset($_POST['Del_mov'])) {
 				}
 			}
 		}
+		
+		if ($form['order']>0){ // se c'è un numero ordine controllo che esista veramente l'ordine
+			$itemord = gaz_dbi_get_row($gTables['tesbro'], "numdoc", $form['order']);
+			if (!isset($itemord)) {
+				$msg .= "23+"; 
+				unset ($itemord);
+			}
+		}
        
        if (empty($form['description'])){  //descrizione vuota
              $msg .= "4+";
@@ -229,8 +238,28 @@ if ($form['order_type']=="AGR" or $form['order_type']=="RIC" or $form['order_typ
 			if ($toDo=="update"){ // se è update, aggiorno in ogni caso
 				$query="UPDATE " . $gTables['movmag'] . " SET quanti = '".$form['quantip']."', datreg = '".$form['datreg']."', datdoc = '".$form['datemi']."', artico = '".$form['artico']."' , campo_coltivazione = '"  . $form['campo_impianto'] . "', id_orderman = '"  . $_GET['codice'] . "' , id_lotmag = '" .$form['id_lotmag']. "' WHERE id_mov ='".$form['id_movmag']."'"; 
 				gaz_dbi_query ($query) ;
-			} //************************************************manca update composti lotti
-			if ($toDo=="insert" && $form['order_type']=="IND"){ // se è insert, creo il movimento di magazzino solo se produzione industriale
+				/* Nell' update è stata bloccata la possibilità di variare l'articolo e la sua composizione, pertanto quanto segue è stato commentato
+				
+				if ($itemart['good_or_service']==2){ // se è un articolo composto 
+					$query="DELETE FROM ".$gTables['movmag']." WHERE id_orderman = '".$_GET['codice']."' AND operat = '-1'"; 
+					gaz_dbi_query($query); //cancello tutti movimenti di magazzino corrispondenti alle uscite dei componenti
+				//Riscrivo nuovamente le uscite per i componenti
+					for ($nc = 0; $nc <= $form['numcomp']-1; ++$nc){ // faccio un ciclo con tutti i componenti
+						if ($form['q_lot_comp'][$nc]>0){ // se il componente ha lotti
+							for ($n = 0; $n < $form['q_lot_comp'][$nc]; ++$n){ //faccio un ciclo con i lotti di ogni singolo componente
+								$query="INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '-1', '".$form['datreg']."', 'MAG', 'Scarico per Produzione', '".$form['datemi']."', '".$form['artcomp'][$nc]."', '".$form['campo_impianto']."', '".$form['lot_quanti'][$nc][$n]."', '".$id_orderman."', '".$form['id_lot_comp'][$nc][$n]."', '".$admin_aziend['adminid']."')"; 
+								gaz_dbi_query ($query); // Scarico il magazzino con l'articolo usato e i suoi lotti
+							}
+						} else { // se non ci sono lotti scarico semplicemente il magazzino
+							$query="INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '-1', '".$form['datreg']."', 'MAG', 'Scarico per Produzione', '".$form['datemi']."', '".$form['artcomp'][$nc]."', '".$form['campo_impianto']."', '".$form['quanti_comp'][$nc]."', '".$id_orderman."', '', '".$admin_aziend['adminid']."')"; 
+							gaz_dbi_query ($query); // Scarico il magazzino con l'articolo usato
+						}
+					}
+				} 
+				*/				
+			} 
+			
+			if ($toDo=="insert"){ // se è insert, creo il movimento di magazzino
 				$query="INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '1', '".$form['datreg']."', 'MAG', 'Produzione', '".$form['datemi']."', '".$form['artico']."', '".$form['campo_impianto']."', '".$form['quantip']."', '".$id_orderman."', '".$id_lotmag."', '".$admin_aziend['adminid']."')"; 
 				gaz_dbi_query ($query); // carico il magazzino con l'articolo prodotto
 				
@@ -238,20 +267,15 @@ if ($form['order_type']=="AGR" or $form['order_type']=="RIC" or $form['order_typ
 					for ($nc = 0; $nc <= $form['numcomp']-1; ++$nc){ // faccio un ciclo con tutti i componenti
 						if ($form['q_lot_comp'][$nc]>0){ // se il componente ha lotti
 							for ($n = 0; $n < $form['q_lot_comp'][$nc]; ++$n){ //faccio un ciclo con i lotti di ogni singolo componente
-								echo "<br> SCARICO magazzino Nome del componente:",$form['artcomp'][$nc]," Id del lotto utilizzato:",$form['id_lot_comp'][$nc][$n]," Quantita lotto utilizzato:",$form['lot_quanti'][$nc][$n],"<br>";
-								
 								$query="INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '-1', '".$form['datreg']."', 'MAG', 'Scarico per Produzione', '".$form['datemi']."', '".$form['artcomp'][$nc]."', '".$form['campo_impianto']."', '".$form['lot_quanti'][$nc][$n]."', '".$id_orderman."', '".$form['id_lot_comp'][$nc][$n]."', '".$admin_aziend['adminid']."')"; 
 								gaz_dbi_query ($query); // Scarico il magazzino con l'articolo usato e i suoi lotti
 							}
 						} else { // se non ci sono lotti scarico semplicemente il magazzino
-							echo "<br> SCARICO magazzino Nome del componente:",$form['artcomp'][$nc]," Quantita senza lotto utilizzato:",$form['quanti_comp'][$nc],"<br>";
-							
 							$query="INSERT INTO " . $gTables['movmag'] . "(type_mov,operat,datreg,tipdoc,desdoc,datdoc,artico,campo_coltivazione,quanti,id_orderman,id_lotmag,adminid) VALUES ('0', '-1', '".$form['datreg']."', 'MAG', 'Scarico per Produzione', '".$form['datemi']."', '".$form['artcomp'][$nc]."', '".$form['campo_impianto']."', '".$form['quanti_comp'][$nc]."', '".$id_orderman."', '', '".$admin_aziend['adminid']."')"; 
 							gaz_dbi_query ($query); // Scarico il magazzino con l'articolo usato
 						}
 					}
-				}
-				
+				}				
 			}
 		 
 //Antonio Germani - > inizio salvo LOTTO, se c'è lotto e se il prodotto li richiede
@@ -666,7 +690,7 @@ $result2 = gaz_dbi_get_row($gTables['tesbro'],"id_tes",$result['id_tesbro']);
 	$form['order']=$result2['numdoc'];
 $result3 = gaz_dbi_get_row($gTables['rigbro'],"id_rig",$result['id_rigbro']);
 	$form['artico']=$result3['codart'];
-	$form['quantip']=$result3['quanti']; // sovrascrive la quantità presente nel movmag se c'è un ordine a riferimento
+	$form['quantipord']=$result3['quanti'];
 $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);		
 	$form['identifier']=$result5['identifier'];
 	$form['expiry']=$result5['expiry'];
@@ -683,7 +707,7 @@ $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);
 				$form['filename'] = $fd['basename'];
 			} 
 		}
-	} 	
+	}	
 // se presenti, prendo gli operai
 	$query="SELECT ".'*'." FROM ".$gTables['staff_worked_hours']. " WHERE id_orderman ='". $_GET['codice']."'";
 	$result6 = gaz_dbi_query($query);$form['mov']=0;$form['nmov']=0;$form['nmovdb']=0;$form['staff'][$form['mov']]="";$form['staffdb'][$form['mov']]="";
@@ -695,8 +719,7 @@ $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);
 	}
 	$form['nmov']=$form['mov']-1;
 	$form['nmovdb']=$form['mov']-1;
-	}
-	
+	}	
 
 } else { //se e' il primo accesso per INSERT
     
@@ -726,6 +749,7 @@ $result5 = gaz_dbi_get_row($gTables['lotmag'],"id",$result['id_lotmag']);
 	$form['lot_or_serial']="";
 	$form['datreg']=date("Y-m-d");
 	$form['quantip']="";
+	$form['quantipord']="";
 	$form['id_movmag']="";
 	$form['id_lotmag']="";
 	$form['numcomp']=0;
@@ -880,8 +904,18 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
  <!-- fine autocompletamento -->	
 	
 	<td colspan="2" class="FacetDataTD">
-		<input id="autocomplete" type="text" name="order" onchange="this.form.submit()" Value="<?php echo $form['order']; ?>"/>
 		<?php
+		if ($toDo=="update"){
+			echo $form['order'];
+			?>
+			<input type="hidden" name="order" Value="<?php echo $form['order']; ?>"/>
+			<?php
+		} else {
+			?>
+			<input id="autocomplete" type="text" name="order" onchange="this.form.submit()" Value="<?php echo $form['order']; ?>"/>
+			<?php
+			}
+		
 		If (strlen($form['order'])>0){
 			?>
 			<span class="glyphicon glyphicon-bell fa-2x" title="L'ordine impone l'articolo e la quantità" style="color:blue"></span>
@@ -923,48 +957,74 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
  <!-- fine autocompletamento -->	
 	
 	<td colspan="2" class="FacetDataTD">
-		<input id="autocomplete2" type="text" name="artico" Value="<?php echo $form['artico']; ?>"/>
-	<?php // prendo i dati dall'articolo
+		<?php
+		if ($toDo=="update"){
+			echo $form['artico'];
+			?>
+			<input type="hidden" name="artico" Value="<?php echo $form['artico']; ?>"/>
+			<?php
+		} else {
+			?>
+			<input id="autocomplete2" type="text" name="artico" Value="<?php echo $form['artico']; ?>"/>
+			<?php
+		}
+	// prendo i dati dall'articolo
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 		echo $resartico['descri'];// visualizzo la descrizione
 		echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"';$form['lot_or_serial']=$resartico['lot_or_serial'];
 		
-		if ($resartico['good_or_service']==2){ // se è un articolo composto
-			?>
-			<div class="container-fluid">
-			<div class="row" style="margin-left: 0px;">
-			<div class="col-sm-12" align="center" style="border:1px solid red">Articolo composto
-			</div>
-			</div>
-			<?php
+	if ($resartico['good_or_service']==2){ // se è un articolo composto
+		?>
+		<div class="container-fluid">
+		<div class="row" style="margin-left: 0px;">
+		<div class="col-sm-12" align="center" style="border:1px solid red">Articolo composto
+		</div>
+		</div>
+		<?php
+		if ($toDo=="update") { //se UPDATE
+			// se previsti prendo i movimenti di magazzino dei componenti e li visualizzo NON sarà possibile modificarli	
+			$query="SELECT ".'*'." FROM ".$gTables['movmag']. " WHERE operat = '-1' AND id_orderman ='". $_GET['codice']."'";
+			$result7 = gaz_dbi_query($query);
+			if (isset($result7)) {
+				while($row = $result7->fetch_assoc()){
+					?>
+					<div class="row" style="margin-left: 0px;">
+						<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['artico'];?>
+						</div>
+						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Q.tà usata: ",gaz_format_quantity($row['quanti'],0,$admin_aziend['decimal_quantity']);?>
+						</div>
+						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "id lotto: ",$row['id_lotmag'];?>
+						</div>
+					</div> <!-- chiude row  -->
+					<?php
+				}
+			}
+		} else { // se INSERT
 			$query="SELECT * FROM ".$gTables['distinta_base']." WHERE codice_composizione = '".$form['artico']."'";
-			$rescompo = gaz_dbi_query($query);
-			
-			
+			$rescompo = gaz_dbi_query($query);			
 			$nc=0; // numero componente
 			$l=0; // numero lotto componente
-		while($row = $rescompo->fetch_assoc()){ // visualizzo i componenti e li memorizzo nel form
-			if ($form['quantip']>0){
-				$row['quantita_artico_base']=$row['quantita_artico_base']*$form['quantip'];
-				$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
-				$magval = array_pop($mv); // controllo disponibilità in magazzino
-				
-				?>
-				<input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
+			while($row = $rescompo->fetch_assoc()){ // visualizzo i componenti e li memorizzo nel form
+				if ($form['quantip']>0){
+					$row['quantita_artico_base']=$row['quantita_artico_base']*$form['quantip'];
+					$mv = $gForm->getStockValue(false, $row['codice_artico_base']);
+					$magval = array_pop($mv); // controllo disponibilità in magazzino
+					if ($toDo=="update"){ // se è un update riaggiungo la quantità utilizzata
+						$magval['q_g']=$magval['q_g']+$row['quantita_artico_base'];
+					}
+					?>
+					<input type="hidden" name="artcomp<?php echo $nc; ?>" value="<?php echo $row['codice_artico_base']; ?>">
 								
 					<div class="row" style="margin-left: 0px;">
-						<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base'];?>
-						</div>
-						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Necessari: ",gaz_format_quantity($row['quantita_artico_base'],0,$admin_aziend['decimal_quantity']);?>
-						</div>
-						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ",gaz_format_quantity($magval['q_g'],0,$admin_aziend['decimal_quantity']);?>
-						</div>
-						<?php
-						if ($toDo=="update"){
-							$magval['q_g']=$magval['q_g']+$row['quantita_artico_base'];
-						}
-						if ($magval['q_g']-$row['quantita_artico_base'] >= 0) { // giacenza sufficiente
+					<div class="col-sm-3 "  style="background-color:lightcyan;"><?php echo $row['codice_artico_base'];?>
+					</div>
+					<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Necessari: ",gaz_format_quantity($row['quantita_artico_base'],0,$admin_aziend['decimal_quantity']);?>
+					</div>
+					<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Disponibili: ",gaz_format_quantity($magval['q_g'],0,$admin_aziend['decimal_quantity']);?>
+					</div>
+					<?php
 						
+					if ($magval['q_g']-$row['quantita_artico_base'] >= 0) { // giacenza sufficiente						
 						?>
 						<input type="hidden" name="quanti_comp<?php echo $nc; ?>" value="<?php echo $row['quantita_artico_base']; ?>"> <!-- quantità utilizzata di ogni componente   -->
 							<div class="col-sm-1" style="background-color:lightgreen;"> OK</div>
@@ -982,9 +1042,8 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 					// Antonio Germani - inserimento lotti in uscita
 						$artico = gaz_dbi_get_row($gTables['artico'], "codice", $row['codice_artico_base']); 
 						if ($artico['lot_or_serial']==1){ // se il componente prevede lotti
-							
-							$lm -> getAvailableLots($row['codice_artico_base']);// manca esclusione movimento di magazzino ???? da risolvere altrimenti se siamo in update conteggia anche questo movimento!!!??????
-							// ****************************** NOTA BENE --RICORDARSI !!!---************************************
+							// PROBLEMA IN UPDATE non esclude il lotti!!!
+							$lm -> getAvailableLots($row['codice_artico_base']);// Antonio Germani - non è stato inserito il movimento di magazzino da escludere perché questa funzione ne accetta uno solo e, invece, potrebbero essere di più. E' questo il motivo per cui, in update, sono stati bloccati articolo, componenti, lotti e quantità.
 							$ld = $lm->divideLots($row['quantita_artico_base']);
 							$l = 0;
 							$form['lot_quanti'][$nc][$l]=0;
@@ -1009,8 +1068,8 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 										. $selected_lot['id']. ' Lotto n.: ' . $selected_lot['identifier']. ' Scadenza: ' . gaz_format_date($selected_lot['expiry']);
 				
 										echo ' - <i class="glyphicon glyphicon-tag"></i></button>';
-										$lotqty = $lm -> getLotQty($form['id_lotmag'][$nc]);
-										echo " Q.tà disp: ",$lotqty," Se ne utilizzerà: ",$form['quanti'][$l];
+										
+										echo " Se ne utilizzerà: ",$form['quanti'][$l];
 										?>
 															
 										<input type="hidden" name="id_lotmag<?php echo $nc,$l; ?>" value="<?php echo $form['id_lotmag'][$l];?>">
@@ -1030,6 +1089,7 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 						} else { // se non prevede lotto azzero id_lotmag e q_lot_mag di $nc 
 							echo '<input type="hidden" name="id_lotmag'.$nc.'" value="">';
 							echo '<input type="hidden" name="q_lot_comp'.$nc.'" value="">'; // non ci sono lotti per questo componente
+							echo " Componente senza lotto";
 						}
 						
 						?>
@@ -1038,10 +1098,11 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 							
 				<?php
 				$nc=$nc+1;
-			}
-		}	
+				}
+			}	
 			echo '<input type="hidden" name="numcomp" value="'. $nc .'">'; // Antonio Germani - Nota bene: numcomp ha sempre una unità in più! Non l'ho tolta per distinguere se c'è un solo componente o nessuno.
 		}
+	}
 		
 	?>	
 	</td>
@@ -1051,7 +1112,24 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 <tr>
 	<td class="FacetFieldCaptionTD"><?php echo $script_transl['15']; ?> </td>
 	<td colspan="2" class="FacetDataTD">
+	<?php
+	if ($toDo=="update"){
+			echo gaz_format_quantity($form['quantip'],0,$admin_aziend['decimal_quantity']);
+			?>
+			<input type="hidden" name="quantip" Value="<?php echo $form['quantip']; ?>"/>
+			<?php
+			if ($form['quantipord']-$form['quantip']>0) {
+				echo " Sono ancora da produrre: ",gaz_format_quantity($form['quantipord']-$form['quantip'],0,$admin_aziend['decimal_quantity']);
+			}
+			if ($form['quantipord']-$form['quantip']<=0) {
+				echo " La produzione per questo ordine è completata";
+			}
+		} else {
+			?>
 		<input type="text" name="quantip" onchange="this.form.submit()" value="<?php echo $form['quantip']; ?>" />
+		<?php echo "L'ordine ne richiede: ",gaz_format_quantity($form['quantipord'],0,$admin_aziend['decimal_quantity']);
+		}
+		?>
 		<input type="hidden" name="id_movmag" value="<?php echo $form['id_movmag']; ?>">
 	</td>
 </tr>
