@@ -59,18 +59,20 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
             $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
             $form['a'][$r['codice']]['g_r'] = $magval['q_g'];
             $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
+			$form['a'][$r['codice']]['class'] = 'default';
             $form['vac_on' . $r['codice']] = '';
-            if ($magval['q_g'] < 0) {
+            if ($magval['q_g'] < 0) { // giacenza inferiore a 0
                 $form['chk_on' . $r['codice']] = ' checked ';
-                $form['a'][$r['codice']]['col'] = 'red';
-            } elseif ($magval['q_g'] > 0) {
+                $form['a'][$r['codice']]['class'] = 'danger';
+            } elseif ($magval['q_g'] > 0) { //
                 $form['chk_on' . $r['codice']] = ' checked ';
-                $form['a'][$r['codice']]['col'] = '';
-            } else {
+				if ($magval['q_g']<=$r['scorta']){
+					$form['a'][$r['codice']]['class'] = 'warning';
+				}
+            } else { // giacenza = 0
                 $form['chk_on' . $r['codice']] = '';
-                $form['a'][$r['codice']]['col'] = '';
+                $form['a'][$r['codice']]['class'] = 'danger';
             }
-
             // Calcolo totale valore giacenza by DF
             $tot_val_giac += $magval['v_g'];
         }
@@ -117,19 +119,21 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                 $form['a'][$r['codice']]['g_a'] = $magval['q_g'];
                 $form['a'][$r['codice']]['v_g'] = $magval['v_g'];
                 $form['vac_on' . $r['codice']] = '';
-                if ($magval['q_g'] < 0) {
+                if ($magval['q_g'] < 0) { // giacenza inferiore a 0
                     $form['chk_on' . $r['codice']] = ' checked ';
-                    $form['a'][$r['codice']]['col'] = 'red';
-                } elseif ($magval['q_g'] > 0) {
+                    $form['a'][$r['codice']]['class'] = 'danger';
+                } elseif ($magval['q_g'] > 0) { //
                     $form['chk_on' . $r['codice']] = ' checked ';
-                    $form['a'][$r['codice']]['col'] = '';
-                } else {
+					if ($magval['q_g']<=$r['scorta']){
+						$form['a'][$r['codice']]['class'] = 'warning';
+					}
+                } else { // giacenza = 0
                     $form['chk_on' . $r['codice']] = '';
-                    $form['a'][$r['codice']]['col'] = '';
+                    $form['a'][$r['codice']]['class'] = 'danger';
                 }
-                // Calcolo totale valore giacenza by DF
-                $tot_val_giac += $magval['v_g'];
-            }
+                    // Calcolo totale valore giacenza by DF
+                    $tot_val_giac += $magval['v_g'];
+                }
         }
     } elseif (isset($_POST['preview']) || isset($_POST['insert'])) {  //in caso di conferma
         $cau99 = gaz_dbi_get_row($gTables['caumag'], 'codice', 99);
@@ -166,7 +170,7 @@ if (!isset($_POST['ritorno'])) { //al primo accesso allo script
                     $form['a'][$ka]['g_r'] = $va['g_r'];
                     $form['a'][$ka]['g_a'] = gaz_format_quantity($va['g_a'], 0, $admin_aziend['decimal_quantity']);
                     $form['a'][$ka]['v_g'] = gaz_format_quantity($va['v_g'], 0, $admin_aziend['decimal_price']);
-                    $form['a'][$ka]['col'] = $va['col'];
+                    $form['a'][$ka]['class'] = $va['class'];
                 }
             }
         }
@@ -320,7 +324,6 @@ if (isset($form['a'])) {
         //ini default value
         //$title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['i_a']."] body=[<center><img src='../root/view.php?table=artico&value=".$k."'>] fade=[on] fadespeed=[0.03] \"";
         $tooltip = ' class="gazie-tooltip" data-type="product-thumb" data-id="' . $k . '" data-title="' . $v['i_a'] . '"';
-        $class = ' class="FacetDataTD' . $v['col'] . '" ';
         // end default value
         if ($ctrl_cm <> $v['i_g']) {
             //$cm_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$v['g_d']."] body=[<center><img src='../root/view.php?table=catmer&value=".$v['i_g']."'>] fade=[on] fadespeed=[0.03] \"";
@@ -347,7 +350,7 @@ if (isset($form['a'])) {
         }
 
         echo '		<input type="hidden" value="' . $v['i_a'] . '" name="a[' . $k . '][i_a]" />
-					<input type="hidden" value="' . $v['col'] . '" name="a[' . $k . '][col]" />
+					<input type="hidden" value="' . $v['class'] . '" name="a[' . $k . '][class]" />
 					<input type="hidden" value="' . $v['i_g'] . '" name="a[' . $k . '][i_g]" />
 					<input type="hidden" value="' . $v['g_d'] . '" name="a[' . $k . '][g_d]" />
 					<input type="hidden" value="' . $v['i_d'] . '" name="a[' . $k . '][i_d]" />
@@ -356,23 +359,23 @@ if (isset($form['a'])) {
 					<input type="hidden" value="' . $v['v_r'] . '" name="a[' . $k . '][v_r]" />
 					<input type="hidden" value="' . $v['g_a'] . '" name="a[' . $k . '][g_a]" />
 					<input type="hidden" value="' . $v['v_g'] . '" name="a[' . $k . '][v_g]" />
-					<tr>
+					<tr class="'.$v['class'].'">
 						<td class="FacetFieldCaptionTD" align="center">
 							<input class="jq_chk" name="chk' . $k . '" ' . $form['chk_on' . $k] . ' type="checkbox" />
 						</td>
-						<td ' . $class . ' align="left"><span ' . $tooltip . '>' . $k . '</span></td>
-						<td ' . $class . ' align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
-						<td ' . $class . ' align="center">' . $v['i_u'] . '</td>
-						<td ' . $class . ' align="center" align="right">' . gaz_format_quantity($v['v_a'], 0, $admin_aziend['decimal_price']) . '</td>
-						<td ' . $class . ' align="right">
+						<td align="left"><span ' . $tooltip . '>' . $k . '</span></td>
+						<td align="left"><span ' . $tooltip . '>' . $v['i_d'] . '</span></td>
+						<td align="center">' . $v['i_u'] . '</td>
+						<td align="right">' . gaz_format_quantity($v['v_a'], 0, $admin_aziend['decimal_price']) . '</td>
+						<td align="right">
 							<input id="vac' . $k . '" name="vac' . $k . '" ' . $form['vac_on' . $k] . ' onClick="toggle(\'vac' . $k . '\', \'a[' . $k . '][v_r]\')" type="checkbox" />
 							<input type="text" size="10" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" id="a[' . $k . '][v_r]" name="a[' . $k . '][v_r]" value="' . gaz_format_quantity($v['v_r'], 0, $admin_aziend['decimal_price']) . '" disabled="disabled" />
 						</td>
-						<td ' . $class . ' align="center" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
-						<td ' . $class . ' align="right">
+						<td class="FacetFieldCaptionTD" align="right">' . gaz_format_quantity($v['g_a'], 0, $admin_aziend['decimal_quantity']) . '</td>
+						<td  align="right">
 							<input type="text" style="text-align:right" onchange="document.maschera.chk' . $k . '.checked=true" name="a[' . $k . '][g_r]" value="' . $v['g_r'] . '">
 						</td>
-						<td ' . $class . ' align="right" align="right">' . gaz_format_number($v['v_g']) . '</td>
+						<td  align="right" align="right">' . gaz_format_number($v['v_g']) . '</td>
 					</tr>';
         $ctrl_cm = $v['i_g'];
         $elem_n++;

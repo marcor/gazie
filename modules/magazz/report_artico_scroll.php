@@ -64,6 +64,16 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
         $lastdoc = getLastDoc($row["codice"]);
         $mv = $gForm->getStockValue(false, $row['codice']);
         $magval = array_pop($mv);
+		$class = 'default';
+        if ($magval['q_g'] < 0) { // giacenza inferiore a 0
+            $class = 'danger';
+        } elseif ($magval['q_g'] > 0) { //
+			if ($magval['q_g']<=$row['scorta']){
+				$class = 'warning';
+			}
+        } else { // giacenza = 0
+            $class = 'danger';
+        }
         $iva = gaz_dbi_get_row($gTables['aliiva'], "codice", $row["aliiva"]);
 		
 		//*+ Recupero Ragione sociale Fornitore - DC - 02 feb 2018 
@@ -138,7 +148,7 @@ if (isset($_POST['rowno'])) { //	Evitiamo errori se lo script viene chiamato dir
 			<td data-title="<?php echo $script_transl["preacq"]; ?>" class="text-right">
                 <?php echo number_format($row["preacq"], $admin_aziend['decimal_price'], ',', '.'); ?>
             </td>
-            <td data-title="<?php echo $script_transl["stock"]; ?>" title="<?php echo $admin_aziend['symbol'] . ' ' . $magval['v_g']; ?>" class="text-center">
+            <td data-title="<?php echo $script_transl["stock"]; ?>" title="<?php echo $admin_aziend['symbol'] . ' ' . $magval['v_g']; ?>" class="text-center <?php echo $class; ?>">
                <?php echo $com.floatval($magval['q_g']); ?>
             </td>
             <td data-title="<?php echo $script_transl["aliiva"]; ?>">
