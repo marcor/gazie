@@ -81,7 +81,7 @@
 			$pdf->Cell(15,3,$resrig['codart'],1);
 			$pdf->Cell(15,3,$resrig['quanti'],1);
 			$pdf->Cell(30,3,substr($reslot['identifier'],0,30),1);
-			$pdf->Cell(18,3,$reslot['expiry'],1);       
+			$pdf->Cell(18,3,gaz_format_date($reslot['expiry']),1);       
 	
 
 	$pdf->Output();

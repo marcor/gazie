@@ -46,7 +46,7 @@ $strScript = array("admin_orderman.php" =>
 		"Tipo di produzione vuoto",
 		"Lotto di produzione",
 		"Si possono caricare solo file nel formato png, jpg, pdf, odt di dimensioni inferiori a 1M",
-		"Quantità prodotta",
+		"Quantità produzione",
 		"Manca l'articolo prodotto",
 		"Manca la quantità prodotta",
 		"Gli operai non possono lavorare più di 13 ore al giorno: D. Lgs. 66/2003",
@@ -54,7 +54,8 @@ $strScript = array("admin_orderman.php" =>
 		"Articolo non presente o sconosciuto! Selezionare l'articolo fra quelli mostrati nell'elenco a tendina.",
 		"Non c'è sufficiente disponibilità di un componente",
 		"Manca la data di registrazione",
-		"Il numero d'ordine inserito è inesistente"
+		"Il numero d'ordine inserito è inesistente",
+		"L'articolo è già stato prodotto per questo ordine"
 		),
 	"orderman_report.php" =>
 		array('title' => 'Lista delle produzioni',

@@ -66,11 +66,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Ger
 	$form["campo_impianto"] = $_POST["campo_impianto"];
 	$form['order']=$_POST['order'];
 	$form['quantip']=$_POST['quantip'];
+	$form['artico']=$_POST['artico'];
 	If (intval($form['order'])>0) {// se c'è un numero ordine lo importo
 		$res = gaz_dbi_get_row($gTables['tesbro'],"numdoc",$form['order']);
 		if (isset($res)) { // se esiste veramente l'ordine
-			$res2 = gaz_dbi_get_row($gTables['rigbro'],"id_tes",$res['id_tes']);
-			$form['artico']=$res2['codart'];
+			$res2 = gaz_dbi_get_row($gTables['rigbro'],"id_tes",$res['id_tes']."' AND codart = '".$form['artico']);
+		
 			$form['quantipord']=$res2['quanti'];
 			$form['id_tesbro']=$res['id_tes'];
 			$form['id_rigbro']=$res2['id_rig'];
@@ -80,6 +81,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Ger
 			$form['id_tesbro']=0;
 			$form['id_rigbro']=0;
 			$form['order']=0;
+			$form['quantipord']=0;
 		}
 	} else {
 		$form['artico']=$_POST['artico'];
@@ -87,6 +89,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Ger
 		$form['id_tesbro']= 0;
 		$form['id_rigbro']= 0;
 		$form['order']=0;
+		$form['quantipord']=0;
 	}
 	$form['nmov']=$_POST['nmov'];
 	$form['nmovdb']=$_POST['nmovdb'];
@@ -102,7 +105,12 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {    // Antonio Ger
 	$form['identifier']=$_POST['identifier'];
 	$form['expiry']=$_POST['expiry'];
 	$form['lot_or_serial']=$_POST['lot_or_serial'];
-	$form['datreg']=$_POST['datreg'];
+	
+	if (strlen($_POST['datreg'])>0){
+		$form['datreg']=$_POST['datreg'];
+	} else {
+		$form['datreg']=date("Y-m-d");
+	}
 	$form['id_movmag']=$_POST['id_movmag'];
 	$form['id_lotmag']=$_POST['id_lotmag'];
 	if (isset($_POST['numcomp'])){
@@ -161,6 +169,9 @@ if (isset($_POST['Del_mov'])) {
 			if (!isset($itemord)) {
 				$msg .= "23+"; 
 				unset ($itemord);
+			}
+			if ($_POST['okprod']<>"ok"){
+				$msg .= "24+";
 			}
 		}
        
@@ -849,9 +860,9 @@ print "<tr><td class=\"FacetFieldCaptionTD\">$script_transl[1]</td><td class=\"F
 		echo $form['order_type'],"&nbsp &nbsp";
 		echo '<input type="hidden" name="order_type" value="'.$form['order_type'].'">';
 	}
-
+// inserimento data di registrazione
 	if ($form['order_type']=="IND") {
-		echo '<label>' . 'Data registrazione: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="datreg"  value="' . $form['datreg']. '">';
+		echo '<label>' . 'Data registrazione magazzino: ' . ' </label><input class="datepicker" type="text" onchange="this.form.submit();" name="datreg"  value="' . $form['datreg']. '">';
 	} else {
 		echo '<input type="hidden" name="datreg" value="">';
 		if ($form['order_type'] != ""){
@@ -877,14 +888,14 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 	$query="SELECT * FROM ".$gTables['tesbro'];
 	$result = gaz_dbi_query($query);
 	while($row = $result->fetch_assoc()){		
-		if (intval($row['id_orderman'])==0) {		
+				
 			if (intval($row['clfoco'])>0){
 				$resforname = gaz_dbi_get_row($gTables['clfoco'],"codice",$row['clfoco']);	
 			} else {
 				$resforname['descri']="AUTO";
 			}
 			$stringa.="\"".$row['numdoc']." - ".$resforname['descri']."\", ";
-		}		
+				
 	}
 	$stringa=substr($stringa,0,-1);
 	echo $stringa;
@@ -924,54 +935,74 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 		?>
 	</td>
 </tr>
-
-<!-- Antonio Germani > inserimento articolo	-->
-<tr> 
-	<td class="FacetFieldCaptionTD"><?php echo $script_transl['9']; ?> </td>
-<!-- Antonio Germani inizio script autocompletamento ARTICOLO dalla tabella mysql artico	-->	
-  <script>
-	$(document).ready(function() {
-	$("input#autocomplete2").autocomplete({
-		source: [<?php
-	$stringa="";
-	$query="SELECT * FROM ".$gTables['artico'];
-	$result = gaz_dbi_query($query);
-	while($row = $result->fetch_assoc()){
-		$stringa.="\"".$row['codice']."\", ";		
-	}
-	$stringa=substr($stringa,0,-1);
-	echo $stringa;
-	?>],
-		minLength:1,
-	select: function(event, ui) {
-        //assign value back to the form element
-        if(ui.item){
-            $(event.target).val(ui.item.value);
-        }
-        //submit the form
-        $(event.target.form).submit();
-    }
-	});
-	});
-  </script>
- <!-- fine autocompletamento -->	
+<?php
+	if($form['order']>0) { // se c'è un ordine seleziono l'articolo dall'ordine
+	/*Antonio Germani inserimento articolo dall'ordine cliente  */
+		$restes = gaz_dbi_get_row($gTables['tesbro'], "numdoc", $form['order']);
+		echo "<tr><td class=\"FacetFieldCaptionTD\">" . $script_transl[9] . "</td><td class=\"FacetDataTD\">\n";
+		echo "<select name=\"artico\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+		echo "<option value=\"\">-------------</option>\n";
+		$query="SELECT * FROM ".$gTables['rigbro']." WHERE id_tes = '".$restes['id_tes']."'";
+		$result = gaz_dbi_query($query);
+		while ($row = gaz_dbi_fetch_array($result)) {
+			$selected = "";
+			if ($form['artico'] == $row['codart']) {
+				$selected = " selected ";
+			}
+			echo "<option value=\"" . $row['codart'] . "\"" . $selected . ">" . $row['codart'] . "</option>\n";
+		} 
+		echo "</select>";
+	} else { //se non c'è l'ordine seleziono l'articolo da artico
+		?>
+		<!-- Antonio Germani > inserimento articolo	con autocomplete dalla tabella artico-->
+		<tr> 
+		<td class="FacetFieldCaptionTD"><?php echo $script_transl['9']; ?> </td>
+		<!-- Antonio Germani inizio script autocompletamento ARTICOLO dalla tabella mysql artico	-->	
+		<script>
+		$(document).ready(function() {
+			$("input#autocomplete2").autocomplete({
+				source: [<?php
+				$stringa="";
+				$query="SELECT * FROM ".$gTables['artico'];
+				$result = gaz_dbi_query($query);
+				while($row = $result->fetch_assoc()){
+					$stringa.="\"".$row['codice']."\", ";		
+				}
+				$stringa=substr($stringa,0,-1);
+				echo $stringa;
+				?>],
+				minLength:1,
+				select: function(event, ui) {
+					//assign value back to the form element
+					if(ui.item){
+						$(event.target).val(ui.item.value);
+					}
+					//submit the form
+					$(event.target.form).submit();
+				}
+			});
+		});
+		</script>
+	<!-- fine autocompletamento -->	
 	
-	<td colspan="2" class="FacetDataTD">
-		<?php
-		if ($toDo=="update"){
-			echo $form['artico'];
-			?>
-			<input type="hidden" name="artico" Value="<?php echo $form['artico']; ?>"/>
+		<td colspan="2" class="FacetDataTD">
 			<?php
-		} else {
-			?>
-			<input id="autocomplete2" type="text" name="artico" Value="<?php echo $form['artico']; ?>"/>
-			<?php
-		}
+			if ($toDo=="update"){
+				echo $form['artico'];
+				?>
+				<input type="hidden" name="artico" Value="<?php echo $form['artico']; ?>"/>
+				<?php
+			} else {
+				?>
+				<input id="autocomplete2" type="text" name="artico" Value="<?php echo $form['artico']; ?>"/>
+				<?php
+			}
+	}	
 	// prendo i dati dall'articolo
 		$resartico = gaz_dbi_get_row($gTables['artico'], "codice", $form['artico']);
 		echo $resartico['descri'];// visualizzo la descrizione
-		echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"';$form['lot_or_serial']=$resartico['lot_or_serial'];
+		echo '<input type="hidden" name="lot_or_serial" value="' . $resartico['lot_or_serial'] . '"/>';
+		$form['lot_or_serial']=$resartico['lot_or_serial'];
 		
 	if ($resartico['good_or_service']==2){ // se è un articolo composto
 		?>
@@ -1125,9 +1156,42 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 				echo " La produzione per questo ordine è completata";
 			}
 		} else {
-			?>
-		<input type="text" name="quantip" onchange="this.form.submit()" value="<?php echo $form['quantip']; ?>" />
-		<?php echo "L'ordine ne richiede: ",gaz_format_quantity($form['quantipord'],0,$admin_aziend['decimal_quantity']);
+			
+				?>
+				<input type="text" name="quantip" onchange="this.form.submit()" value="<?php echo $form['quantip']; ?>" />
+				<?php
+	// Antonio Germani - Controllo quantità prodotte e rimanenti
+				if (($form['order'])>0 && strlen($form['artico'])>0) { // se c'è un ordine e c'è un articolo selezionato, controllo se è già stato prodotto
+				// individuo qual'è il rigbro dell'ordine per questo articolo
+					$rig = gaz_dbi_get_row($gTables['rigbro'], "id_tes", $restes['id_tes']."' AND codart ='".$form['artico']); 
+				// prendo tutte le righe di orderman in cui c'è questo rigbro $rig['id_rig']
+					$query="SELECT id FROM ".$gTables['orderman']." WHERE id_rigbro = '".$rig['id_rig']."'";
+					$resor = gaz_dbi_query($query);
+					$quantiprod=0; 
+					while($row = $resor->fetch_assoc()){// qui mi serviranno tutti gli id_orderman $row['id'] dei righi selezionati
+					// per ogni orderman consulto movmag e conteggio le quantità per articolo già prodotte
+						$row = gaz_dbi_get_row($gTables['movmag'], "artico ", $form['artico']."' AND operat ='1' AND id_orderman ='".$row['id']);
+						$quantiprod=$quantiprod+$row['quanti'];
+					}			
+					if ($quantiprod>0){ // se c'è stata già una produzione per questo articolo e per questo ordine
+						echo "già prodotti:",$quantiprod;
+						echo " <b> Ne servono ancora: ",gaz_format_quantity($form['quantipord']-$quantiprod,0,$admin_aziend['decimal_quantity']),"</b>";
+					} else {
+						echo "L'ordine ne richiede: ",gaz_format_quantity($form['quantipord'],0,$admin_aziend['decimal_quantity']);
+					}
+					if ($form['quantipord']-$quantiprod >0) {
+						$form['okprod']="ok";
+					} else {
+						$form['okprod']="";
+					}
+					?>
+					<input type="hidden" name="okprod" value="<?php echo $form['okprod']; ?>">
+					<?php
+			} else {
+				?>
+				<input type="hidden" name="okprod" value="">
+				<?php
+			}
 		}
 		?>
 		<input type="hidden" name="id_movmag" value="<?php echo $form['id_movmag']; ?>">
@@ -1203,6 +1267,7 @@ while ($row = gaz_dbi_fetch_array($result)) {
     echo "<option value=\"" . $row['codice'] . "\"" . $selected . ">" . $row['codice'] . " - " . $row['descri'] . "</option>\n";
 } 
 echo "</select></td></tr>";
+
 if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 // Antonio Germani selezione operai
 
@@ -1228,7 +1293,7 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 					$anagra = gaz_dbi_get_row($gTables['clfoco'], "codice", $row['id_clfoco']); 
 					echo "<option value=\"" . $row['id_staff'] . "\"" . $selected . ">" . $row['id_staff'] . " - " . $anagra['descri'] . "</option>\n"; 
 				}
-				
+				echo '</select>';
 				;
 				
 				If ($form['staff'][$form['mov']] > 0) {
