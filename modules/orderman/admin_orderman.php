@@ -170,7 +170,7 @@ if (isset($_POST['Del_mov'])) {
 				$msg .= "23+"; 
 				unset ($itemord);
 			}
-			if ($_POST['okprod']<>"ok"){
+			if ($_POST['okprod']<>"ok" && $toDo=="insert"){
 				$msg .= "24+";
 			}
 		}
@@ -627,7 +627,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 							$row = $result->fetch_assoc();
 							$id_rigbro = $row['Auto_increment']; // trovo l'ID che avrà RIGBRO rigo documento
 						gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,day_of_validity,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['day_of_validity'] . "','" . $form['datemi'] . "', '".time()."', '" . $id_orderman ."', 'AUTOGENERA', '".$admin_aziend['adminid']."')"); // creo tesbro
-						gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti) VALUES ('".$id_tesbro."','" . $form['artico'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] ."', '".$form['quantip']."')"); // creo rigbro
+						gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,rigbro,status) VALUES ('".$id_tesbro."','" . $form['artico'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] ."', '".$form['quantip']."', 'AUTOGENERA')");  // creo rigbro
 						$query="UPDATE ".$gTables['orderman']." SET ".'id_tesbro'." = '".$id_tesbro."', ".'id_rigbro'." = '".$id_rigbro."' WHERE id = '".$form['id']."'";
 						gaz_dbi_query($query); // aggiorno i riferimenti su orderman
 						
@@ -650,7 +650,7 @@ for ($form['mov'] = 0; $form['mov'] <= $form['nmov']; ++$form['mov']){ // per og
 				
 				if (intval($form['order'])<=0){ // se non c'è un numero ordine ne creo uno fittizio in TESBRO e RIGBRO
 					gaz_dbi_query("INSERT INTO " . $gTables['tesbro'] . "(tipdoc,day_of_validity,datemi,numdoc,id_orderman,status,adminid) VALUES ('PRO','" . $form['day_of_validity'] . "','" . $form['datemi'] . "', '".time()."', '" . $id_orderman ."', 'AUTOGENERA', '".$admin_aziend['adminid']."')");
-					gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti) VALUES ('".$id_tesbro."','" . $form['artico'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] ."', '".$form['quantip']."')");
+					gaz_dbi_query("INSERT INTO " . $gTables['rigbro'] . "(id_tes,codart,descri,unimis,quanti,status) VALUES ('".$id_tesbro."','" . $form['artico'] . "','" . $resartico['descri'] . "','" . $resartico['unimis'] ."', '".$form['quantip']."', 'AUTOGENERA')");
 				} else { // se c'è l'ordine lo collego ad orderman
 					$query="UPDATE ".$gTables['tesbro']." SET ".'id_orderman'." = '".$id_orderman."' WHERE id_tes = '".$form['id_tesbro']."'";
 					$res = gaz_dbi_query($query);
@@ -1024,7 +1024,17 @@ if ($form['order_type']<>"AGR") { // input esclusi se produzione agricola
 						</div>
 						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "Q.tà usata: ",gaz_format_quantity($row['quanti'],0,$admin_aziend['decimal_quantity']);?>
 						</div>
-						<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "id lotto: ",$row['id_lotmag'];?>
+						<?php 
+						if (intval($row['id_lotmag'])>0){
+							?>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "id lotto: ",$row['id_lotmag'];?>
+							<?php
+						} else {
+							?>
+							<div class="col-sm-4 "  style="background-color:lightcyan;"><?php echo "articolo senza lotto ";?>
+							<?php
+						}
+						?>
 						</div>
 					</div> <!-- chiude row  -->
 					<?php

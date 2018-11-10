@@ -85,6 +85,8 @@ $recordnav -> output();
 							"Descrizione" => "description",
 							"Tipo lavorazione"  => "order_type",
 							"Informazioni aggiuntive" => "add_info",
+							"Articolo" => "artico",
+							"Ordine" => "ordine",
 							"Inizio produzione" => "datemi",
 							"Durata" => "day_of_validity",
 							"Luogo di produzione" => "campo_impianto",
@@ -110,8 +112,11 @@ while ($a_row = gaz_dbi_fetch_array($result)) {
 			</td>
 			<td align="center"><?php echo $a_row['order_type'];?></td>
 			<td align="center"><?php echo $a_row['add_info'];?></td>
+			<?php $d_row = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $a_row['id_rigbro']);?>
+			<td align="center"><?php echo $d_row['codart'];?></td>
 			<!-- Antonio Germani Vado a leggere la tabella tesbro connessa alla produzione -->
 			<?php $b_row = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $a_row['id_tesbro']);?>
+			<td align="center"><?php echo $b_row['numdoc'];?></td>
 			<td align="center"><?php echo gaz_format_date($b_row['datemi']);?></td>
 			<td align="center"><?php echo $b_row['day_of_validity'];?></td>
 			<!-- Antonio Germani Vado a leggere la descrizione del campo connesso alla produzione -->
