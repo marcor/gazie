@@ -46,19 +46,23 @@
 							array('lun' => 18,'nam'=>'Data ordine'),
 							array('lun' => 30,'nam'=>'Cliente'),
 							array('lun' => 30,'nam'=>'Descrizione'),
+							array('lun' => 30,'nam'=>'Informazioni'),
                              array('lun' => 15,'nam'=>'Articolo'),
                              array('lun' => 15,'nam'=>'Quantità'),
                              array('lun' => 30,'nam'=>'Lotto'),
                              array('lun' => 18,'nam'=>'Scadenza'),
+							 array('lun' => 25,'nam'=>'Luogo'),
+							 array('lun' => 10,'nam'=>'Durata'),
                             )
               );
 // Antonio Germani 
-	$resord = gaz_dbi_get_row($gTables['orderman'], "id", $_GET['id_orderman']); 
-	// in caso di più orderman si dovrà inserire un ciclo
+	$resord = gaz_dbi_get_row($gTables['orderman'], "id", $_GET['id_orderman']);	
 	$restes = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $resord['id_tesbro']);
 	$resrig = gaz_dbi_get_row($gTables['rigbro'], "id_rig", $resord['id_rigbro']);
 	$resclfo = gaz_dbi_get_row($gTables['clfoco'], "codice", $restes['clfoco']);
 	$reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $resord['id_lotmag']);
+	$resart = gaz_dbi_get_row($gTables['artico'], "codice", $resrig['codart']);
+	$rescamp = gaz_dbi_get_row($gTables['campi'], "codice", $resord['campo_impianto']);
 	
 	$pdf = new Report_template('L','mm','A4',true,'UTF-8',false,true);
 	$pdf->setVars($admin_aziend,$title);
@@ -66,23 +70,71 @@
 	$pdf->SetFooterMargin(20);
 	$config = new Config;
 	$pdf->AddPage('L',$config->getValue('page_format'));
-	$pdf->SetFont('helvetica','',7);
+	$pdf->SetFont('helvetica','',8);
 	$pdf->setJPEGQuality(15);
 	$n="";
-	 
+//Cell($w, $h=0, $txt='', $border=0, $ln=0, $align='', $fill=0, $link='', $stretch=0, $ignore_min_height=false, $calign='T', $valign='M')	 
 		
-			if ($n>0){// evita la pagina bianca alla fine del ciclo while
-				$pdf->AddPage(); // manda alla pagina successiva
-			}$n=1;
-			$pdf->Cell(16,3,$restes['numdoc'],1);
-			$pdf->Cell(18,3,$restes['datemi'],1);
-			$pdf->Cell(30,3,substr($resclfo['descri'],0,30),1);
-			$pdf->Cell(30,3,substr($resord['description'],0,30),1);
-			$pdf->Cell(15,3,$resrig['codart'],1);
-			$pdf->Cell(15,3,$resrig['quanti'],1);
-			$pdf->Cell(30,3,substr($reslot['identifier'],0,30),1);
-			$pdf->Cell(18,3,gaz_format_date($reslot['expiry']),1);       
+			$pdf->Cell(16,4,$restes['numdoc'],1);
+			$pdf->Cell(18,4,$restes['datemi'],1);
+			$pdf->Cell(30,4,substr($resclfo['descri'],0,30),1);
+			$pdf->Cell(30,4,substr($resord['description'],0,30),1);
+			$pdf->Cell(30,4,substr($resord['add_info'],0,30),1);
+			$pdf->Cell(15,4,$resrig['codart'],1);
+			$pdf->Cell(15,4,$resrig['quanti'],1);
+			$pdf->Cell(30,4,substr($reslot['identifier'],0,30),1);
+			$pdf->Cell(18,4,gaz_format_date($reslot['expiry']),1);
+			$pdf->Cell(25,4,substr($rescamp['descri'],0,30),1);
+			$pdf->Cell(10,4,$restes['day_of_validity'],1);
+$pdf->Ln(8);
+
+// MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0)
+
+	// Antonio Germani - Stampa operai
+		$query="SELECT ".'id_staff'." FROM ".$gTables['staff_worked_hours']. " WHERE id_orderman ='". $_GET['id_orderman']."'";
+			$resoper = gaz_dbi_query($query);
+			
+			if ($resoper->num_rows >0) {
+				$pdf->SetFillColor(255, 255, 127);
+				$pdf->MultiCell(50, 4, 'Elenco operai', 1, 'C', 1, 0, '', 50, false);
+				$sp=55;
+				while($row = $resoper->fetch_assoc()){
+					
+					$resstaff = gaz_dbi_get_row($gTables['staff'], "id_staff", $row['id_staff']);
+					$resnome = gaz_dbi_get_row($gTables['clfoco'], "codice", $resstaff['id_clfoco']);
+					
+					$pdf->MultiCell(50, 4, $resnome['descri'], 1, 'L', 0, 0, '', $sp, false);
+					$sp=$sp+5;
+				}
+			}
+// MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0)			
+	// Antonio Germani - Stampa componenti
+			If ($resart['good_or_service']==2){ // se l'articolo prodotto prevede componenti
+				$query="SELECT artico, quanti, id_lotmag FROM ".$gTables['movmag']. " WHERE id_orderman ='". $_GET['id_orderman']."' AND operat = '-1'";
+				$rescomp = gaz_dbi_query($query);
+				if ($rescomp->num_rows >0) {
+					$pdf->SetFillColor(255, 255, 127);
+					$pdf->MultiCell(25, 4, 'Componenti', 1, 'C', 1, 0, '150', 50, false,0,false,true,100);
+					$pdf->MultiCell(25, 4, 'Quantità', 1, 'C', 1, 0, '175', 50, false,0,false,true,100);
+					$pdf->MultiCell(25, 4, 'Lotto', 1, 'C', 1, 0, '200', 50, false,0,false,true,100);
+					$pdf->MultiCell(25, 4, 'Scadenza', 1, 'C', 1, 0, '225', 50, false,0,false,true,100);
+					$sp=55;
+					while($row = $rescomp->fetch_assoc()){
+						while($row = $rescomp->fetch_assoc()){
+						$reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $row['id_lotmag']);	
+						$pdf->MultiCell(25, 4, $row['artico'] , 1, 'L', 0, 1, '150', $sp, false,0,true,true);
+						$pdf->MultiCell(25, 4, $row['quanti'] , 1, 'L', 0, 1, '175', $sp, false,0,true,true);
+						$pdf->MultiCell(25, 4, $reslot['identifier'] , 1, 'L', 0, 1, '200', $sp, false,0,true,true);
+						$pdf->MultiCell(25, 4, gaz_format_date($reslot['expiry']) , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
+						$sp=$sp+6;
+						}
+					}
+					
+				}
+				
+			}
 	
+			
 
 	$pdf->Output();
 ?>
