@@ -198,10 +198,16 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			}
 			$form['rows'][$nl]['unimis'] =  ($item->getElementsByTagName("UnitaMisura")->length >= 1 ? $item->getElementsByTagName('UnitaMisura')->item(0)->nodeValue :	'');
 			$form['rows'][$nl]['prelis'] = $item->getElementsByTagName('PrezzoUnitario')->item(0)->nodeValue; 
+			// inizio procedura per applicazione sconto su rigo
+			$form['rows'][$nl]['sconto'] = 0;
 			if ($item->getElementsByTagName("Tipo")->length >= 1) { // ho uno sconto/maggiorazione
-				$form['rows'][$nl]['sconto'] = ($item->getElementsByTagName('Percentuale')->item(0)->nodeValue == 'S' ? -$item->getElementsByTagName('Percentuale')->item(0)->nodeValue : $item->getElementsByTagName('Percentuale')->item(0)->nodeValue); 
-			} else {
-				$form['rows'][$nl]['sconto'] = '';
+				if ($item->getElementsByTagName("Importo")->length >= 1 && $item->getElementsByTagName('Importo')->item(0)->nodeValue >= 0.00001){ 
+					// calcolo la percentuale di sconto partendo dall'importo del rigo e da quello dello sconto, il funzionamento di GAzie prevede la percentuale e non l'importo dello sconto 
+					$tot_rig= $form['rows'][$nl]['quanti']*$form['rows'][$nl]['prelis'];
+					$form['rows'][$nl]['sconto']=$item->getElementsByTagName('Importo')->item(0)->nodeValue*100/$tot_rig;  
+				} elseif($item->getElementsByTagName("Percentuale")->length >= 1 && $item->getElementsByTagName('Percentuale')->item(0)->nodeValue>=0.00001){
+					$form['rows'][$nl]['sconto'] = ($item->getElementsByTagName('Tipo')->item(0)->nodeValue == 'SC' ? $item->getElementsByTagName('Percentuale')->item(0)->nodeValue : $item->getElementsByTagName('Percentuale')->item(0)->nodeValue);
+				}
 			}
 			$form['rows'][$nl]['pervat'] = $item->getElementsByTagName('AliquotaIVA')->item(0)->nodeValue;
 			$post_nl = $nl-1;
