@@ -186,6 +186,9 @@ $gForm = new humresForm();
 			</div>
 	<?php
 	$workers=getWorkers($week_days['mon']);
+	$htopt=false;
+	$acopt=false;
+	$otopt=false;
     foreach ($workers as $k => $v) {
 		$form['rows'] = getStaffTimesheet($k,$week_days);
 	?>
@@ -246,7 +249,7 @@ $gForm = new humresForm();
                         </td>
                         <td>
 						<?php
-							$htopt=$gForm->selectHextraType("rows[".$k."][".$week_days['mon']."][id_work_type_extra]",$form['rows'][$k][$week_days['mon']]['id_work_type_extra']);
+							$htopt=$gForm->selectHextraType("rows[".$k."][".$week_days['mon']."][id_work_type_extra]",$form['rows'][$k][$week_days['mon']]['id_work_type_extra'],$htopt);
 						?>
 						</td>
                         <td>						
@@ -305,7 +308,7 @@ $gForm = new humresForm();
                         </td>
                         <td>
 						<?php
-							$acopt=$gForm->selectAbsenceCau("rows[".$k."][".$week_days['mon']."][id_absence_type]",$form['rows'][$k][$week_days['mon']]['id_absence_type']);
+							$acopt=$gForm->selectAbsenceCau("rows[".$k."][".$week_days['mon']."][id_absence_type]",$form['rows'][$k][$week_days['mon']]['id_absence_type'],$acopt);
 						?>
 						</td>
                         <td>						
@@ -364,7 +367,7 @@ $gForm = new humresForm();
                         </td>
                         <td>
 						<?php
-							$otopt=$gForm->selectOtherType("rows[".$k."][".$week_days['mon']."][id_other_type]",$form['rows'][$k][$week_days['mon']]['id_other_type']);
+							$otopt=$gForm->selectOtherType("rows[".$k."][".$week_days['mon']."][id_other_type]",$form['rows'][$k][$week_days['mon']]['id_other_type'],$otopt);
 						?>
 						</td>
                         <td>						
@@ -389,7 +392,7 @@ $gForm = new humresForm();
                         </td>
                         <td>						
 						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['sat']."][id_other_type]",$form['rows'][$k][$week_days['sat']]['id_other_type']);
+							$gForm->selectOtherType("rows[".$k."][".$week_days['sat']."][id_other_type]",$form['rows'][$k][$week_days['sat']]['id_other_type'],$otopt);
 						?>
                         </td>
                         <td class="bg-warning">						

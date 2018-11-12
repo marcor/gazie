@@ -142,7 +142,7 @@ while ($mv = gaz_dbi_fetch_array($result)) {
 					$hn='-';	
 				}
 				if ($work_h['hours_extra']>=0.01){
-					$he=number_format($work_h['hours_normal'],1,',','');
+					$he=number_format($work_h['hours_extra'],1,',','');
 				} else {
 					$he='';	
 				}
