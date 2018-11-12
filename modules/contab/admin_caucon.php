@@ -63,7 +63,7 @@ if (!isset($_POST['Update']) and isset($_GET['Update'])) { //se e' il primo acce
 } elseif (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo accesso
     $form['ritorno'] = $_POST['ritorno'];
     $form['hidden_req']=htmlentities($_POST['hidden_req']);
-    $form["codice"] = strtoupper(substr($_POST["codice"],0,3));;
+    $form["codice"] = strtoupper(substr($_POST["codice"],0,3));
     $form["descri"] = substr($_POST["descri"],0,50);
     $form["insdoc"] = intval($_POST["insdoc"]);
     $form["regiva"] = intval($_POST["regiva"]);

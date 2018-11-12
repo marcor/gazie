@@ -33,16 +33,35 @@ if (!isset($_GET['codice'])){
     exit;
 }
 if(!isset($_GET["annfin"])){
-    $_GET["annfin"] = date("Y");
+    $day_end = 31;
+    $month_end = 12;
+    $year_end = intval(date("Y"));
+} else {
+    $day_end = intval($_GET["giornfin"]);
+    $month_end = intval($_GET["mesfin"]);
+    $year_end = intval($_GET["annfin"]);
 }
-if(!isset($_GET["annini"])) {
-    $_GET["annini"] = date("Y")-1;
+
+if(!isset($_GET["annini"])){
+    $day_start = 1;
+    $month_start = 1;
+    $year_start = intval(date("Y"))-1;
+} else {
+    $day_start = intval($_GET["giornini"]);
+    $month_start = intval($_GET["mesini"]);
+    $year_start = intval($_GET["annini"]);
 }
+
+$day_end = str_pad($day_end, 2, "0", STR_PAD_LEFT);
+$month_end = str_pad($month_end, 2, "0", STR_PAD_LEFT);
+
+$day_start = str_pad($day_start, 2, "0", STR_PAD_LEFT);
+$month_start = str_pad($month_start, 2, "0", STR_PAD_LEFT);
 
 $anagrafica = new Anagrafica();
 $conto = $anagrafica->getPartner(intval($_GET['codice']));
 //recupero tutti i movimenti contabili del conto insieme alle relative testate...
-$result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = ".intval($_GET['codice'])." AND datreg BETWEEN '".intval($_GET["annini"])."0101' AND '".intval($_GET["annfin"])."1231' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon ='".intval($_GET['codice'])."%' AND datreg LIKE '".intval($_GET["annini"])."%') ORDER BY datreg ASC, ".$gTables['tesmov'].".id_tes");
+$result = mergeTable($gTables['rigmoc'],"*",$gTables['tesmov'],"*","id_tes","codcon = ".intval($_GET['codice'])." AND datreg BETWEEN '".$year_start.$month_start.$day_start."' AND '".$year_end.$month_end.$day_end."' AND caucon <> 'CHI' AND caucon <> 'APE' OR (caucon = 'APE' AND codcon ='".intval($_GET['codice'])."%' AND datreg LIKE '".intval($_GET["annini"])."%') ORDER BY datreg ASC, ".$gTables['tesmov'].".id_tes");
 $emissione = 'Estratto conto: '.$conto['ragso1'].' '.$conto['ragso2'];
 $title = array('title'=>$emissione,
                'hile'=>array(array('lun' => 20,'nam'=>'Data'),
@@ -109,8 +128,8 @@ if (isset($_GET["dest"]) && $_GET["dest"]=='E'){ // � stata richiesta una e-ma
    $dest = 'S';     // Genero l'output pdf come stringa binaria
    // Costruisco oggetto con tutti i dati del file pdf da allegare
    $content = new StdClass; //PHP Strict standards: Creating default object from empty value
-   $content->name = 'Estratto_conto_del_'.intval($_GET["annini"]).'_'.intval($_GET["annfin"]).'.pdf';
-   $content->string = $pdf->Output('Estratto_conto_del_'.intval($_GET["annini"]).'_'.intval($_GET["annfin"]).'.pdf', $dest);
+   $content->name = 'Estratto_conto_al_'.intval($_GET["giornfin"]).'_'.intval($_GET["mesfin"]).'_'.intval($_GET["annfin"]).'.pdf';
+   $content->string = $pdf->Output('Estratto_conto_al_'.intval($_GET["giornfin"]).'_'.intval($_GET["mesfin"]).'_'.intval($_GET["annfin"]).'.pdf', $dest);
    $content->encoding = "base64";
    $content->mimeType = "application/pdf";
    $gMail = new GAzieMail();

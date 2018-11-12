@@ -85,7 +85,12 @@ class DocContabVars {
         $this->cliente2 = $this->client['ragso2'];
         $this->cliente3 = $this->client['indspe'];
         if (!empty($this->client['citspe'])) {
-            $this->cliente4 = sprintf("%05d", $this->client['capspe']) . ' ' . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
+			if ($this->client['country'] == 'IT') {
+				$this->client['capspe'] = sprintf("%05d",$this->client['capspe']);
+				$this->cliente4 = (($this->client['capspe']=='00000') ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
+			} else {
+				$this->cliente4 = (empty($this->client['capspe']) ? '' : $this->client['capspe'].' ') . strtoupper($this->client['citspe']) . ' ' . strtoupper($this->client['prospe']);
+			}
         } else {
             $this->cliente4 = '';
         }

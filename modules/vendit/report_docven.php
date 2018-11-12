@@ -155,7 +155,7 @@ function confirPecSdi(link){
 
 
 function confirFae(link){
-   tes_id = link.id.replace("doc1", "");;
+   tes_id = link.id.replace("doc1", "");
    $.fx.speeds._default = 500;
    $("p#fae1").html("numero: " + $("#doc1"+tes_id).attr("n_fatt"));
    $( "#dialog1" ).dialog({
@@ -206,6 +206,24 @@ switch ($admin_aziend['fatimm']) {
         break;
     case "3":
         $sezfatimm = 3;
+        break;
+    case "4":
+        $sezfatimm = 4;
+        break;
+    case "5":
+        $sezfatimm = 5;
+        break;
+    case "6":
+        $sezfatimm = 6;
+        break;
+    case "7":
+        $sezfatimm = 7;
+        break;
+    case "8":
+        $sezfatimm = 8;
+        break;
+    case "9":
+        $sezfatimm = 9;
         break;
     case "R":
         $sezfatimm = $seziva;
@@ -406,7 +424,7 @@ switch ($admin_aziend['fatimm']) {
                     // Colonna data documento
                     echo "<td align=\"center\">" . gaz_format_date($r["datfat"]) . " &nbsp;</td>";
                     // Colonna cliente
-                    echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . htmlspecialchars($anagra["ragso1"]) . "&search=Cerca\">" . $anagra["ragso1"] . "</a>&nbsp;</td>";
+                    echo "<td><a title=\"Dettagli cliente\" href=\"report_client.php?auxil=" . htmlspecialchars($anagra["ragso1"]) . "&search=Cerca\">" . $anagra["ragso1"] . ((empty($anagra["ragso2"]))?"":" ".$anagra["ragso2"]) . "</a>&nbsp;</td>";
                     // Colonna movimenti contabili
                     echo "<td align=\"left\">";
                     if ($r["id_con"] > 0) {

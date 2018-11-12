@@ -25,8 +25,12 @@
 require("../../library/include/datlib.inc.php");
 $admin_aziend=checkAdmin();
 if(!isset($_GET["annfin"])) {
-    $annfin = date("Y");
+    $giornfin = 31;
+    $mesfin = 12;
+    $annfin = intval(date("Y"));
 } else {
+    $giornfin = intval($_GET["giornfin"]);
+    $mesfin = intval($_GET["mesfin"]);
     $annfin = intval($_GET["annfin"]);
 }
 if(!isset($_GET["annini"])) {
@@ -34,20 +38,34 @@ if(!isset($_GET["annini"])) {
     $rs_ultima_apertura = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
     $ultima_apertura = gaz_dbi_fetch_array($rs_ultima_apertura);
     if ($ultima_apertura){
+		$giornini = substr($ultima_apertura['datreg'],6,2);
+		$mesini = substr($ultima_apertura['datreg'],4,2);
 		$annini = substr($ultima_apertura['datreg'],0,4);
 	} else {
 		// non avendo aperture trovo la prima registrazione
 		$rs_prima_registrazione = gaz_dbi_dyn_query("*", $gTables['tesmov'], 1 , "datreg ASC", 0, 1);
 		$prima_registrazione = gaz_dbi_fetch_array($rs_prima_registrazione);
 		if ($prima_registrazione) {
+			$giornini = substr($prima_registrazione['datreg'],6,2);
+			$mesini = substr($prima_registrazione['datreg'],4,2);
 			$annini = substr($prima_registrazione['datreg'],0,4);
 		} else {
-			$annini = date("Y");
+			$giornini = 1;
+			$mesini = 1;
+			$annini = intval((date("Y"));
 		}
 	}
 } else {
+    $giornini = intval($_GET["giornini"]);
+    $mesini = intval($_GET["mesini"]);
     $annini = intval($_GET["annini"]);
 }
+
+$giornfin = str_pad($giornfin, 2, "0", STR_PAD_LEFT);
+$mesfin = str_pad($mesfin, 2, "0", STR_PAD_LEFT);
+
+$giornini = str_pad($giornini, 2, "0", STR_PAD_LEFT);
+$mesini = str_pad($mesini, 2, "0", STR_PAD_LEFT);
 
 if (isset($_GET['stampa']) and $message == "") {
     //Mando in stampa i movimenti contabili generati
@@ -64,7 +82,7 @@ $sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) AS nummov,codco
             FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes
                                         LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice
                                         LEFT JOIN ".$gTables['anagra']." ON ".$gTables['clfoco'].".id_anagra = ".$gTables['anagra'].".id
-                                        WHERE datreg between ".$annini."0101 and ".$annfin."1231 and codcon like '".$admin_aziend['masfor']."%' and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon like '".$admin_aziend['masfor']."%' and datreg like '".$annini."%') GROUP BY codcon ORDER BY ragso1, darave";
+                                        WHERE datreg between ".$annini.$mesini.$giornini." and ".$annfin.$mesfin.$giornfin." and codcon like '".$admin_aziend['masfor']."%' and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon like '".$admin_aziend['masfor']."%' and datreg like '".$annini."%') GROUP BY codcon ORDER BY ragso1, darave";
 $rs_castel = gaz_dbi_query($sqlquery);
 require("../../library/include/header.php");
 $script_transl=HeadMain();
@@ -75,34 +93,78 @@ $script_transl=HeadMain();
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['start_date']; ?></td>
 <td class="FacetDataTD">
+<td class="FacetDataTD">
+	<!--// select del giorno-->
+	<select name="giornini" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
 <?php
-// select del anno
-echo "\t <select name=\"annini\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
+for( $counter = 1; $counter <= 31; $counter++ ) {
+    $selected = "";
+    if($counter == $giornini)
+            $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+?>
+	</select> /
+	<!--// select del mese-->
+	<select name="mesini" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
+<?php
+for( $counter = 1; $counter <= 12; $counter++ ) {
+    $selected = "";
+    if($counter == $mesini)
+            $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+?>
+	</select> /
+	<!--// select del anno-->
+	<select name="annini" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
+<?php
 for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
     $selected = "";
     if($counter == $annini)
             $selected = "selected";
     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
 }
-echo "\t </select>\n";
 ?>
+	</select>
 </td>
 </tr>
 <tr>
 <td class="FacetFieldCaptionTD"><?php echo $script_transl['end_date']; ?></td>
 <td class="FacetDataTD">
+	<!--// select del giorno-->
+	<select name="giornfin" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
 <?php
-// select del anno
-echo "\t <select name=\"annfin\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ )
-    {
+for( $counter = 1; $counter <= 31; $counter++ ) {
+    $selected = "";
+    if($counter == $giornfin)
+            $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+?>
+	</select> /
+	<!--// select del mese-->
+	<select name="mesfin" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
+<?php
+for( $counter = 1; $counter <= 12; $counter++ ) {
+    $selected = "";
+    if($counter == $mesfin)
+            $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+?>
+	</select> /
+	<!--// select del anno-->
+	<select name="annfin" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
+<?php
+for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
     $selected = "";
     if($counter == $annfin)
             $selected = "selected";
     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
-    }
-echo "\t </select>\n";
+}
 ?>
+	</select>
 </td>
 </tr>
 <tr>

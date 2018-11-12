@@ -26,8 +26,12 @@ require("../../library/include/datlib.inc.php");
 
 $admin_aziend=checkAdmin();
 if(!isset($_GET["annfin"])) {
-    $annfin = date("Y");
+    $giornfin = intval(date("d"));
+    $mesfin = intval(date("m"));
+    $annfin = intval(date("Y"));
 } else {
+    $giornfin = intval($_GET["giornfin"]);
+    $mesfin = intval($_GET["mesfin"]);
     $annfin = intval($_GET["annfin"]);
 }
 if(!isset($_GET["annini"])) {
@@ -35,25 +39,39 @@ if(!isset($_GET["annini"])) {
     $rs_ultima_apertura = gaz_dbi_dyn_query("*", $gTables['tesmov'], "caucon = 'APE'", "datreg DESC", 0, 1);
     $ultima_apertura = gaz_dbi_fetch_array($rs_ultima_apertura);
     if ($ultima_apertura){
+		$giornini = substr($ultima_apertura['datreg'],8,2);
+		$mesini = substr($ultima_apertura['datreg'],5,2);
 		$annini = substr($ultima_apertura['datreg'],0,4);
 	} else {
 		// non avendo aperture trovo la prima registrazione
 		$rs_prima_registrazione = gaz_dbi_dyn_query("*", $gTables['tesmov'], 1 , "datreg ASC", 0, 1);
 		$prima_registrazione = gaz_dbi_fetch_array($rs_prima_registrazione);
 		if ($prima_registrazione) {
+			$giornini = substr($prima_registrazione['datreg'],8,2);
+			$mesini = substr($prima_registrazione['datreg'],5,2);
 			$annini = substr($prima_registrazione['datreg'],0,4);
 		} else {
+			$giornini = 1;
+			$mesini = 1;
 			$annini = date("Y");
 		}
 	}
 } else {
+    $giornini = intval($_GET["giornini"]);
+    $mesini = intval($_GET["mesini"]);
     $annini = intval($_GET["annini"]);
 }
+
+$giornfin = str_pad($giornfin, 2, "0", STR_PAD_LEFT);
+$mesfin = str_pad($mesfin, 2, "0", STR_PAD_LEFT);
+
+$giornini = str_pad($giornini, 2, "0", STR_PAD_LEFT);
+$mesini = str_pad($mesini, 2, "0", STR_PAD_LEFT);
 
 $message = "";
 if (isset($_GET['stampa']) and $message == "") {
         //Mando in stampa i movimenti contabili generati
-        $locazione = "Location: stampa_liscre.php?annini=".$annini."&annfin=".$annfin;
+        $locazione = "Location: stampa_liscre.php?annini=".$annini."&mesini=".$mesini."&giornini=".$giornini."&annfin=".$annfin."&mesfin=".$mesfin."&giornfin=".$giornfin;
         header($locazione);
         exit;
 }
@@ -65,7 +83,7 @@ if (isset($_GET['Return'])) {
 // garvin: Measure query time. TODO-Item http://sourceforge.net/tracker/index.php?func=detail&aid=571934&group_id=23067&atid=377411
 list($usec, $sec) = explode(' ',microtime());
 $querytime_before = ((float)$usec + (float)$sec);
-$sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) as nummov,codcon, ragso1, e_mail, telefo,".$gTables['clfoco'].".codice, sum(import*(darave='D')) as dare,sum(import*(darave='A')) as avere, sum(import*(darave='D') - import*(darave='A')) as saldo, darave FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra WHERE datreg between ".$annini."0101 and ".$annfin."1231 and codcon like '".$admin_aziend['mascli']."%' and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon like '".$admin_aziend['mascli']."%' and datreg like '".$annini."%') GROUP BY codcon ORDER BY ragso1, darave";
+$sqlquery= "SELECT COUNT(DISTINCT ".$gTables['rigmoc'].".id_tes) as nummov,codcon, ragso1, e_mail, telefo,".$gTables['clfoco'].".codice, sum(import*(darave='D')) as dare,sum(import*(darave='A')) as avere, sum(import*(darave='D') - import*(darave='A')) as saldo, darave FROM ".$gTables['rigmoc']." LEFT JOIN ".$gTables['tesmov']." ON ".$gTables['rigmoc'].".id_tes = ".$gTables['tesmov'].".id_tes LEFT JOIN ".$gTables['clfoco']." ON ".$gTables['rigmoc'].".codcon = ".$gTables['clfoco'].".codice LEFT JOIN ".$gTables['anagra']." ON ".$gTables['anagra'].".id = ".$gTables['clfoco'].".id_anagra WHERE datreg between ".$annini.$mesini.$giornini." and ".$annfin.$mesfin.$giornfin." and codcon like '".$admin_aziend['mascli']."%' and caucon <> 'CHI' and caucon <> 'APE' or (caucon = 'APE' and codcon like '".$admin_aziend['mascli']."%' and datreg like '".$annini."%') GROUP BY codcon ORDER BY ragso1, darave";
 $rs_castel = gaz_dbi_query($sqlquery);
 list($usec, $sec) = explode(' ',microtime());
 $querytime_after = ((float)$usec + (float)$sec);
@@ -119,10 +137,32 @@ if (! $message == "") {
 }
 ?>
 <tr>
-<td class="FacetFieldCaptionTD">Anno inizio &nbsp;</td>
-<td class="FacetDataTD">
+<td class="FacetFieldCaptionTD">Data inizio &nbsp;</td>
+<td align="center" nowrap class="FacetFooterTD">
+	<!--// select del giorno-->
+	<select name="giornini" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
+<?php
+for( $counter = 1; $counter <= 31; $counter++ ) {
+    $selected = "";
+    if($counter == $giornini)
+            $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+?>
+	</select> /
+	<!--// select del mese-->
+	<select name="mesini" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
+<?php
+for( $counter = 1; $counter <= 12; $counter++ ) {
+    $selected = "";
+    if($counter == $mesini)
+            $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+?>
+	</select> /
 	<!--// select del anno-->
-	<select name="annini" class="FacetSelect" onchange="this.form.submit()">
+	<select name="annini" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
 <?php
 for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
     $selected = "";
@@ -135,20 +175,41 @@ for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
 </td>
 </tr>
 <tr>
-<td class="FacetFieldCaptionTD">Anno fine &nbsp;</td>
-<td class="FacetDataTD">
+<td class="FacetFieldCaptionTD">Data fine &nbsp;</td>
+<td align="center" nowrap class="FacetFooterTD">
+	<!--// select del giorno-->
+	<select name="giornfin" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
 <?php
-// select del anno
-echo "\t <select name=\"annfin\" class=\"FacetSelect\" onchange=\"this.form.submit()\">\n";
-for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ )
-    {
+for( $counter = 1; $counter <= 31; $counter++ ) {
+    $selected = "";
+    if($counter == $giornfin)
+            $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+?>
+	</select> /
+	<!--// select del mese-->
+	<select name="mesfin" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
+<?php
+for( $counter = 1; $counter <= 12; $counter++ ) {
+    $selected = "";
+    if($counter == $mesfin)
+            $selected = "selected";
+    echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
+}
+?>
+	</select> /
+	<!--// select del anno-->
+	<select name="annfin" class="FacetSelect" onchange="this.form.target='_self'; this.form.submit()">
+<?php
+for( $counter = date("Y")-10 ; $counter <= date("Y")+2; $counter++ ) {
     $selected = "";
     if($counter == $annfin)
             $selected = "selected";
     echo "\t\t <option value=\"$counter\"  $selected >$counter</option>\n";
-    }
-echo "\t </select>\n";
+}
 ?>
+	</select>
 </td>
 </tr>
 <tr>
@@ -197,12 +258,12 @@ while ($r = gaz_dbi_fetch_array($rs_castel)) {
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['avere'])." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"right\">".gaz_format_number($r['saldo'])." &nbsp;</td>";
          echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default btn-pagamento\" title=\"Effettuato un pagamento da ".$r["ragso1"]."\"  href=\"customer_payment.php?partner=".$r['codcon']."\"><i class=\"glyphicon glyphicon-euro\"></i></a></td>";
-         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&annfin=".$annfin."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
+         echo "<td class=\"FacetDataTD\" align=\"center\"><a class=\"btn btn-xs btn-default\" title=\"Stampa l'Estratto Conto di {$r['ragso1']}\" href=\"stampa_estcon.php?codice=".$r['codcon']."&annini=".$annini."&mesini=".$mesini."&giornini=".$giornini."&annfin=".$annfin."&mesfin=".$mesfin."&giornfin=".$giornfin."\" target=\"_blank\"><i class=\"glyphicon glyphicon-print\"></i></a></td>";
     // Colonna "Mail"
     echo "<td class=\"FacetDataTD\" align=\"center\">";
     if (!empty($r["e_mail"])) {
-        echo '<a class="btn btn-xs btn-default" onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="stampa_estcon.php?codice='.$r["codcon"].'&annini='.$annini.'&annfin='.$annfin.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
-        mail="'.$r["e_mail"].'" namedoc="Estratto conto '.$annini.'-'.$annfin.'"><i class="glyphicon glyphicon-envelope"></i></a>';
+        echo '<a class="btn btn-xs btn-default" onclick="confirMail(this);return false;" id="doc'.$r["codcon"].'" url="stampa_estcon.php?codice='.$r["codcon"].'&annini='.$annini.'&mesini='.$mesini.'&giornini='.$giornini.'&annfin='.$annfin.'&mesfin='.$mesfin.'&giornfin='.$giornfin.'&dest=E" href="#" title="mailto: '.$r["e_mail"].'"
+        mail="'.$r["e_mail"].'" namedoc="Estratto conto al '.$giornfin.'-'.$mesfin.'-'.$annfin.'"><i class="glyphicon glyphicon-envelope"></i></a>';
     } else {
 		echo '<a title="Non hai memorizzato l\'email per questo cliente, inseriscila ora" href="admin_client.php?codice='.substr($r["codice"],3).'&Update"><i class="glyphicon glyphicon-edit"></i></a>';
 	} 

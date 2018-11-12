@@ -264,7 +264,7 @@ function executeQueryFileUpgrade($table_prefix,$exe_script) // funzione dedicata
             $sql = preg_replace("/;\s*\n/", "\n", $sql);
             if ($activateWhile){
                // Esegue l'istruzione sulle tabelle di tutte le aziende installate.
-               $sql_ori=$sql;;
+               $sql_ori=$sql;
                foreach ($companies as $i) {
                     $sql = preg_replace("/XXX/", sprintf('%03d',$i), $sql_ori);
                     if (!gaz_dbi_query($sql)) { // si collega al DB

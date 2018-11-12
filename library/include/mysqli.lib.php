@@ -163,12 +163,17 @@ function gaz_dbi_get_fields_meta($result) {
    return $fields;
 }
 
-function gaz_dbi_get_row($table, $fnm, $fval) {
+function gaz_dbi_get_row($table, $fnm, $fval, $cell="*", $other="") {
    global $link;
-   $result = mysqli_query($link, "SELECT * FROM $table WHERE $fnm = '$fval'");
+   $result = mysqli_query($link, "SELECT $cell FROM $table WHERE $fnm = '$fval' $other");
    if (!$result)
       die(" Error gaz_dbi_get_row: " . mysqli_error($link));
-   return mysqli_fetch_array($result);
+   if ($cell != "*") {
+      $row = mysqli_fetch_array($result);
+      return $row[$cell];
+   } else {
+      return mysqli_fetch_array($result);
+   }
 }
 
 function gaz_dbi_get_single_value($table, $campo, $where) {

@@ -1967,6 +1967,7 @@ class Compute {
                 foreach ($vat_castle as $k => $v) {   // riattraverso l'array del castelletto
                     // per aggiungere proporzionalmente (ventilazione)
                     $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
+                    $new_castle[$k]['codiva'] = $vat['codice'];
                     $new_castle[$k]['periva'] = $vat['aliquo'];
                     $new_castle[$k]['tipiva'] = $vat['tipiva'];
                     $new_castle[$k]['descriz'] = $vat['descri'];
@@ -1996,6 +1997,7 @@ class Compute {
             $match = false;
             foreach ($vat_castle as $k => $v) { // attraverso dell'array 
                 $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $k);
+                $new_castle[$k]['codiva'] = $vat['codice'];
                 $new_castle[$k]['periva'] = $vat['aliquo'];
                 $new_castle[$k]['tipiva'] = $vat['tipiva'];
                 $new_castle[$k]['descriz'] = $vat['descri'];
@@ -2022,6 +2024,7 @@ class Compute {
             }
             if (!$match && $value >= 0.01) { // non ho trovato una aliquota uguale a quella del nuovo valore se > 0 
                 $vat = gaz_dbi_get_row($gTables['aliiva'], "codice", $vat_rate);
+                $new_castle[$vat_rate]['codiva'] = $vat['codice'];
                 $new_castle[$vat_rate]['periva'] = $vat['aliquo'];
                 $new_castle[$vat_rate]['tipiva'] = $vat['tipiva'];
                 $new_castle[$vat_rate]['impcast'] = $value;

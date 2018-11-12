@@ -36,7 +36,7 @@ function get_template_lang( $clfoco ) {
     $lang = false;
     $id_anagra = gaz_dbi_get_row( $gTables['clfoco'], 'codice', $clfoco );
     $stato = gaz_dbi_get_row( $gTables['anagra'], 'id', $id_anagra['id_anagra']);
-    if ( $stato['country']!=="IT") $lang='english';;
+    if ( $stato['country']!=="IT") $lang='english';
     return $lang;
 }
 require("../../library/include/document.php");

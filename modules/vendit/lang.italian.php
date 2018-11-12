@@ -1089,7 +1089,7 @@ $strScript = array("admin_client.php" =>
             "Numero" => "numdoc",
             "Tipo" => 'ddt_type',
             "Data" => "datemi",
-            "Cliente" => "",
+            "Cliente" => "ragso1",
             "Destinazione" => "",
             "Status" => "",
             "Stampa" => "",

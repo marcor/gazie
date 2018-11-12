@@ -55,6 +55,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['id_testata'] = $testata['id_tes'];
     $form['codcausale'] = $testata['caucon'];
     $form['descrizion'] = $testata['descri'];
+    $form['notess'] = $testata['notess'];
     $form['registroiva'] = $testata['regiva'];
     $form['operatore'] = $testata['operat'];
     $form['date_reg_D'] = substr($testata['datreg'], 8, 2);
@@ -140,6 +141,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['id_testata'] = $_POST['id_testata'];
     $form['codcausale'] = $_POST['codcausale'];
     $form['descrizion'] = $_POST['descrizion'];
+    $form['notess'] = $_POST['notess'];
 
     $form['date_reg_D'] = intval($_POST['date_reg_D']);
     $form['date_reg_M'] = intval($_POST['date_reg_M']);
@@ -806,6 +808,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 $codice = array('id_tes', intval($_POST['id_testata']));
                 $newValue = array('caucon' => substr($_POST['codcausale'], 0, 3),
                     'descri' => substr($_POST['descrizion'], 0, 100),
+                    'notess' => $_POST['notess'],
                     'datreg' => $datareg,
                     'seziva' => intval($_POST['sezioneiva']),
                     'protoc' => intval($_POST['protocollo']),
@@ -820,6 +823,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                 //inserisco la testata
                 $newValue = array('caucon' => substr($_POST['codcausale'], 0, 3),
                     'descri' => substr($_POST['descrizion'], 0, 100),
+                    'notess' => $_POST['notess'],
                     'datreg' => $datareg,
                     'seziva' => intval($_POST['sezioneiva']),
                     'protoc' => intval($_POST['protocollo']),
@@ -1017,6 +1021,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
     $form['id_testata'] = "";
     $form['codcausale'] = "";
     $form['descrizion'] = "";
+    $form['notess'] = "";
     // ricerco l'ultimo inserimento per ricavarne la data
     $rs_last = gaz_dbi_dyn_query('datreg', $gTables['tesmov'], 1, "id_tes DESC", 0, 1);
     $last = gaz_dbi_fetch_array($rs_last);
@@ -1199,7 +1204,7 @@ echo "function tot_bal(da)
         var elda = document.getElementById('daavRC'+i).value;
         if (elda != d_a && accu > 0) {
            if (oper == 1) {
-               document.getElementById('impoRC'+i).value=(Math.round((elva + accu)*100)/100).toFixed(2);;
+               document.getElementById('impoRC'+i).value=(Math.round((elva + accu)*100)/100).toFixed(2);
                accu = 0;
            } else if (accu < elva && oper == -1) {
                document.getElementById('impoRC'+i).value=(Math.round((elva - accu)*100)/100).toFixed(2);
@@ -1391,6 +1396,9 @@ echo "</script>\n";
                 echo "<td class=\"FacetFieldCaptionTD\">" . $script_transl['operat'] . "</td><td class=\"FacetDataTD\">\n";
                 $gForm->variousSelect('operatore', $script_transl['operat_value'], $form['operatore'], 'FacetSelect', false, 'operatore');
                 echo "\t </td>\n";
+                echo "</tr>\n";
+                echo "\t<td class=\"FacetFieldCaptionTD\">" . "Note" . "</td>\n";
+                echo "\t<td colspan=\"5\" class=\"FacetDataTD\"><textarea name=\"notess\" style=\"width: 90%;\">" . $form['notess'] . "</textarea></td>\n";
                 echo "</tr>\n";
                 ?>
     </table>

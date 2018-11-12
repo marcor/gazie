@@ -58,7 +58,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
             $form['codice'] ++; // lo aumento di 1
             $msg .= "18+";
         }
-        if (strlen($form["ragso1"]) < 4) {
+        if (strlen($form["ragso1"]) < 3) {
             if (!empty($form["legrap_pf_nome"]) && !empty($form["legrap_pf_cognome"]) && $form["sexper"] != 'G') {// setto la ragione sociale con l'eventuale legale rappresentante
                 $form["ragso1"] = strtoupper($form["legrap_pf_cognome"] . ' ' . $form["legrap_pf_nome"]);
             } else { // altrimenti do errore                
@@ -96,7 +96,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
         // danielemz - temporaneo per imposta 2017- bolle doganali
         if (isset($form['pariva']) && trim($form['pariva']) == '99999999999') {
             $r_pi = "";
-        } 
+        }
         if (strlen(trim($form['codfis'])) == 11) {
             $r_cf = $cf_pi->check_VAT_reg_no($form['codfis'], $form['country']);
             if ($form['sexper'] != 'G') {

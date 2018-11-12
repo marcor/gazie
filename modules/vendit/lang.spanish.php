@@ -815,7 +815,7 @@ $strScript = array("admin_client.php" =>
             "Number" => "numdoc",
             "Type" => 'ddt_type',
             "Date" => "datemi",
-            "Customer" => "",
+            "Customer" => "ragso1",
             "Status" => "",
             "Print" => "",
             "Mail" => "",

@@ -1964,6 +1964,39 @@ if ($toDo == 'update' and $form['tipdoc'] == 'VPR') {
 echo "	</table>";
 ?>
 </form>
+<div class="modal" id="vat-price" title="IMPORTO IVA COMPRESA">
+	<input type="text" id="cat_prevat" style="text-align: right;" maxlength="11" size="7" onkeyup="vatPriceCalc();" />
+	<br /><br />
+	<!--select id="codvat" name="cat_codvat" class="FacetSelect"></select-->
+	<input type="text" id="cat_pervat" style="text-align: center;" maxlength="5" size="4" disabled="disabled" />
+	<br /><br />
+	<input type="text" id="cat_prelis" style="text-align: right;" maxlength="11" size="7" disabled="disabled" />
+</div>
+<script type="text/javascript">
+	//var $options = $("#in_codvat > option").clone();
+	//$('#cat_codvat').append($options);
+	function vatPrice(row,pervat) {
+		prelis = $("[name='rows["+row+"][prelis]']").val();
+		prevat = Math.round(parseFloat(prelis)*(1+parseFloat(pervat)/100),4);
+		$("#cat_prevat").val(prevat);
+		$("#cat_pervat").val(pervat);
+		$("#cat_prelis").val(prelis);
+		$("#vat-price").dialog({
+			modal: true,
+			buttons: {
+				Ok: function() {
+					$("[name='rows["+row+"][prelis]']").val($("#cat_prelis").val());
+					$(this).dialog("close");
+				}
+			}
+		});
+	};
+	function vatPriceCalc() {
+		prelis = $("#cat_prevat").val();
+		pervat = $("#cat_pervat").val();
+		$("#cat_prelis").val(parseFloat(prelis)/(1+parseFloat(pervat)/100));
+	}
+</script>
 <?php
 require("../../library/include/footer.php");
 ?>

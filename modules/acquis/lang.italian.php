@@ -226,7 +226,7 @@ $strScript = array("admin_fornit.php" =>
         "La data del documento da registrare non &egrave; corretta!",
         "Non &egrave; stato inserito il numero del documento!",
         "Non &egrave; stato possibile caricare il documento per la tracciabilità del prodotto!",
-        "L'articolo di magazzino ha una matricola/numero di serie pertanto la quantità &egrave stata forzata ad 1",
+        "L'articolo di magazzino ha una matricola/numero di serie pertanto la quantit&agrave; &egrave; stata forzata ad 1",
         "Risulta un documento gi&agrave; registrato con questo numero fattura per questo fornitore",
 		"Non esiste la cartella ID azienda nel percorso data/files!",
 		"Nulla da variare, il prezzo dell'articolo &egrave lo stesso",
@@ -575,7 +575,7 @@ $strScript = array("admin_fornit.php" =>
             'no_db' => "Di questo file è stato fatto solo l'upload ma non è stata confermata la registrazione"
         ),
         'err' => array(
-            'filmim' => 'Il file dev\'essere nel formato XML o P7M',
+            'filmim' => 'Il file deve essere nel formato XML o P7M',
             'invalid_xml' => 'Il contenuto del file non è un XML valido',
             'invalid_fae' => 'Il contenuto del file XML non sembra essere una fattura elettronica',
             'file_exists' => 'Un file con questo nome è stato già stato acquisito',
@@ -584,7 +584,7 @@ $strScript = array("admin_fornit.php" =>
             'no_pagame' => 'Non hai selezionato la modalità di pagamento',
         ),
         'head_text1' => "La fatture elettronica: ",
-		'head_text2' => " che stai per acquisire è visibile in fondo.<br> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di acquisto già inserite",
+		'head_text2' => " che stai per acquisire è visibile in fondo.<br/> In questo form ti proponiamo di imputare i costi secondo quanto contenuto sugli archivi, e ti invitiamo a controllare ed eventualmente apportare le modifiche opportune. Avrai comunque la possibilità di modificarla sia prima che dopo averla contabilizzata agendo attraverso le apposite interfacce. Dopo l'acquisizione verrai portato sulla lista delle fatture di acquisto già inserite",
         'datreg' => 'Data Registrazione',
 		'pagame'=>'Modalità di pagamento',
         'nrow' => 'Rigo',
