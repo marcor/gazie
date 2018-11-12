@@ -44,8 +44,8 @@
                'title'=>"Distinta di produzione del ".$now->format('d-m-Y'),
                'hile'=>array(array('lun' => 16,'nam'=>'N. ordine'),
 							array('lun' => 18,'nam'=>'Data ordine'),
-							array('lun' => 30,'nam'=>'Cliente'),
-							array('lun' => 30,'nam'=>'Descrizione'),
+							array('lun' => 35,'nam'=>'Cliente'),
+							array('lun' => 40,'nam'=>'Descrizione'),
 							array('lun' => 30,'nam'=>'Informazioni'),
                              array('lun' => 15,'nam'=>'Articolo'),
                              array('lun' => 15,'nam'=>'Quantità'),
@@ -77,15 +77,15 @@
 		
 			$pdf->Cell(16,4,$restes['numdoc'],1);
 			$pdf->Cell(18,4,$restes['datemi'],1);
-			$pdf->Cell(30,4,substr($resclfo['descri'],0,30),1);
-			$pdf->Cell(30,4,substr($resord['description'],0,30),1);
+			$pdf->Cell(35,4,substr($resclfo['descri'],0,35),1);
+			$pdf->Cell(40,4,substr($resord['description'],0,40),1);
 			$pdf->Cell(30,4,substr($resord['add_info'],0,30),1);
 			$pdf->Cell(15,4,$resrig['codart'],1);
 			$pdf->Cell(15,4,$resrig['quanti'],1);
 			$pdf->Cell(30,4,substr($reslot['identifier'],0,30),1);
 			$pdf->Cell(18,4,gaz_format_date($reslot['expiry']),1);
-			$pdf->Cell(25,4,substr($rescamp['descri'],0,30),1);
-			$pdf->Cell(10,4,$restes['day_of_validity'],1);
+			$pdf->Cell(25,4,substr($rescamp['descri'],0,25),1);
+			$pdf->Cell(10,4,$resord['duration'],1);
 $pdf->Ln(8);
 
 // MultiCell($w, $h, $txt, $border=0, $align='J', $fill=0, $ln=1, $x='', $y='', $reseth=true, $stretch=0, $ishtml=false, $autopadding=true, $maxh=0)
@@ -120,14 +120,14 @@ $pdf->Ln(8);
 					$pdf->MultiCell(25, 4, 'Scadenza', 1, 'C', 1, 0, '225', 50, false,0,false,true,100);
 					$sp=55;
 					while($row = $rescomp->fetch_assoc()){
-						while($row = $rescomp->fetch_assoc()){
+						
 						$reslot = gaz_dbi_get_row($gTables['lotmag'], "id", $row['id_lotmag']);	
 						$pdf->MultiCell(25, 4, $row['artico'] , 1, 'L', 0, 1, '150', $sp, false,0,true,true);
 						$pdf->MultiCell(25, 4, $row['quanti'] , 1, 'L', 0, 1, '175', $sp, false,0,true,true);
 						$pdf->MultiCell(25, 4, $reslot['identifier'] , 1, 'L', 0, 1, '200', $sp, false,0,true,true);
 						$pdf->MultiCell(25, 4, gaz_format_date($reslot['expiry']) , 1, 'L', 0, 1, '225', $sp, false,0,true,true);
 						$sp=$sp+6;
-						}
+						
 					}
 					
 				}

@@ -1158,7 +1158,7 @@ if (!empty($msg)) {
 	$("input#autocomplete2").autocomplete({
 		source: [<?php
 	$stringa="";$cod="";
-	$query="SELECT * FROM ".$gTables['orderman'];
+	$query="SELECT * FROM ".$gTables['orderman']." WHERE order_type = 'AGR'";
 	$res = gaz_dbi_query($query);
 	while($row = $res->fetch_assoc()){
 		$itemtesbro = gaz_dbi_get_row($gTables['tesbro'], "id_tes", $row['id_tesbro']);
