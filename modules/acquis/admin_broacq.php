@@ -158,6 +158,22 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
             $form['righi'][$next_row]['annota'] = substr($value['annota'], 0, 50);
             $form['righi'][$next_row]['pesosp'] = floatval($value['pesosp']);
+            $form['righi'][$i]['extdoc'] = filter_var($_POST['righi'][$i]['extdoc'], FILTER_SANITIZE_STRING);
+            if (!empty($_FILES['docfile_' . $next_row]['name'])) {
+                $move = false;
+                $mt = substr($_FILES['docfile_' . $next_row]['name'], -3);
+                $prefix = $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $next_row;
+                if (($mt == "png" || $mt == "peg" || $mt == "jpg" || $mt == "pdf") && $_FILES['docfile_' . $next_row]['size'] > 1000) { //se c'e' un nuovo documento nel buffer
+                    foreach (glob("../../data/files/tmp/" . $prefix . "_*.*") as $fn) {// prima cancello eventuali precedenti file temporanei
+                        unlink($fn);
+                    }
+                    $move = move_uploaded_file($_FILES['docfile_' . $next_row]['tmp_name'], '../../data/files/tmp/' . $prefix . '_' . $_FILES['docfile_' . $next_row]['name']);
+                    $form['righi'][$next_row]['extdoc'] = $_FILES['docfile_' . $next_row]['name'];
+                }
+                if (!$move) {
+                    $msg .= "56+";
+                }
+            }
             $form['righi'][$next_row]['status'] = substr($value['status'], 0, 10);
             if (isset($_POST['upd_row'])) {
                 $key_row = key($_POST['upd_row']);
@@ -460,7 +476,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['righi'][$next_row]['sconto'] = 0;
                 $form['righi'][$next_row]['pervat'] = 0;
                 $form['righi'][$next_row]['codvat'] = 0;
-            } else {
+            } elseif ($form['in_tiprig'] == 3) { // FORFAIT
                 $form['righi'][$next_row]['codart'] = "";
                 $form['righi'][$next_row]['annota'] = "";
                 $form['righi'][$next_row]['pesosp'] = "";
@@ -478,6 +494,29 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['righi'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
                     $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
                     $form['righi'][$next_row]['pervat'] = $iva_azi['aliquo'];
+                }
+            } elseif ($form['in_tiprig'] == 50) {  // rigo normale ma con documento allegato e senza codice articolo
+                $form['righi'][$next_row]['codart'] = '';
+                $form['righi'][$next_row]['annota'] = '';
+                $form['righi'][$next_row]['pesosp'] = '';
+                $form['righi'][$next_row]['descri'] = '';
+				$form['righi'][$next_row]['codice_fornitore'] = ''; //M1 aggiunto a mano
+                $form['righi'][$next_row]['unimis'] = '';
+                $form['righi'][$next_row]['codric'] = $form['in_codric'];
+                $form['righi'][$next_row]['quanti'] = $form['in_quanti'];
+                $form['righi'][$next_row]['sconto'] = $form['in_sconto'];
+                $form['righi'][$next_row]['prelis'] = 0;
+                if ($form['tipdoc'] == 'APR') {  // se è un preventivo non conosco prezzo e sconto
+                    $form['righi'][$next_row]['sconto'] = 0;
+                    $form['righi'][$next_row]['prelis'] = 0;
+                }
+                $form['righi'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
+                $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
+                $form['righi'][$next_row]['pervat'] = $iva_azi['aliquo'];
+                if ($form['in_codvat'] > 0) {
+                    $form['righi'][$next_row]['codvat'] = $form['in_codvat'];
+                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
+                    $form['righi'][$next_row]['pervat'] = $iva_row['aliquo'];
                 }
             }
         }
@@ -612,7 +651,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
         $form['righi'][$next_row]['id_mag'] = $rigo['id_mag'];
         $form['righi'][$next_row]['annota'] = $articolo['annota'];
         $form['righi'][$next_row]['pesosp'] = $articolo['peso_specifico'];
+        $form['righi'][$next_row]['extdoc'] = '';
         $form['righi'][$next_row]['status'] = "UPDATE";
+		// recupero il filename dal filesystem e lo sposto sul tmp 
+		$dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+		while (false !== ($filename = readdir($dh))) {
+				$fd = pathinfo($filename);
+				$r = explode('_', $fd['filename']);
+				if ($r[0] == 'extdoc' && $r[1] == $rigo['id_body_text']) { 
+					/* 	uso id_body_text per mantenere il riferimento riferimento al file del documento esterno
+					* 	e riassegno il nome file
+					*/					 
+					$form['rows'][$next_row]['extdoc'] = $fd['basename'];
+				}
+		}
         $next_row++;
     }
 } elseif (!isset($_POST['Insert'])) { //se e' il primo accesso per INSERT
@@ -877,7 +929,7 @@ echo '  </td>
 /** ENRICO FEDELE */
 echo "</td></tr>\n";
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[17]: <select name=\"in_tiprig\" class=\"FacetSelect\">\n";
-$selArray = array('0' => 'Normale', '1' => 'Forfait', '2' => 'Descrittivo');
+$selArray = array(0 => 'Normale', 1 => 'Forfait', 2 => 'Descrittivo', 50=> 'Documento allegato' );
 foreach ($selArray as $key => $value) {
     $selected = "";
     if (isset($form["in_tiprig"]) and $form["in_tiprig"] == $key) {
@@ -913,7 +965,7 @@ echo '</table>
 			<tr>
 				<th class="FacetFieldCaptionTD"></th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[20] . '</th>
-				<th class="FacetFieldCaptionTD"> Codice Fornitore </th>
+				<th class="FacetFieldCaptionTD"> Codice Fornitore/Doc. </th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[21] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[22] . '</th>
 				<th class="FacetFieldCaptionTD">' . $script_transl[16] . '</th>
@@ -941,12 +993,12 @@ foreach ($form['righi'] as $key => $value) {
     $tiporigo = $value['tiprig'];
     $descrizione = $value['descri'];
     //calcolo importo rigo
-    if ($tiporigo == 0) {//se del tipo normale
+    if ($tiporigo == 0 || $tiporigo ==50) {//se del tipo normale o con documento allegato
         $imprig = CalcolaImportoRigo($form['righi'][$key]['quanti'], $form['righi'][$key]['prelis'], $form['righi'][$key]['sconto']);
     } elseif ($tiporigo == 1) {//ma se del tipo forfait
         $imprig = CalcolaImportoRigo(1, $form['righi'][$key]['prelis'], 0);
     }
-    if ($tiporigo <= 1) {//ma solo se del tipo normale o forfait
+    if ($tiporigo <= 1 || $tiporigo ==50) { // se del tipo normale, forfait o documento  allegato
         if (!isset($castel[$codice_vat])) {
             $castel[$codice_vat] = "0.00";
         }
@@ -1056,6 +1108,43 @@ foreach ($form['righi'] as $key => $value) {
             echo "<td class=\"text-right\"><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" /></td>\n";
             echo "<td></td>\n";
             echo "<td></td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+            break;
+        case "50":
+			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* documento allegato *\" /></td>\n";
+                echo '<td>';
+                if (empty($form['righi'][$key]['extdoc'])) {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
+                    . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                } else {
+                    echo '<div>' . $script_transl['extdoc'] . ':<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
+                    . $form['righi'][$key]['filename'] . ' <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                }
+				echo '<div id="extdoc_dialog' . $key . '" class="collapse" >
+                        <div class="form-group">
+                          <div>';
+
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $key . '"> 
+                            <label>' . $script_transl['extdoc'] . '</label><input type="text" name="righi[' . $key . '][extdoc]" value="' . $form['righi'][$key]['extdoc'] . '" >
+			</div>
+		     </div>
+              </div>' . "</td>\n";
+            echo "<td><input type=\"text\" name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>\n";
+            echo '<td>
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="righi[' . $key . '][unimis]" value="' . $value['unimis'] . '" maxlength="3" size="1" />
+					  </td>
+					  <td>
+						<input class="gazie-tooltip" data-type="weight" data-id="' . $peso . '" data-title="' . $script_transl['weight'] . '" type="text" name="righi[' . $key . '][quanti]" value="' . $value['quanti'] . '" align="right" maxlength="11" size="4" onchange="this.form.submit();" />
+					  </td>';
+            /** ENRICO FEDELE */
+            echo "<td><input type=\"text\" name=\"righi[{$key}][prelis]\" value=\"{$value['prelis']}\" align=\"right\" maxlength=\"11\" size=\"7\" onchange=\"this.form.submit()\" /></td>\n";
+            echo "<td><input type=\"text\" name=\"righi[{$key}][sconto]\" value=\"{$value['sconto']}\" maxlength=\"4\" size=\"1\" onchange=\"this.form.submit()\" /></td>\n";
+            echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
+            echo "<td>{$value['pervat']}%</td>\n";
+            echo "<td>" . $value['codric'] . "</td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
             break;
     }
