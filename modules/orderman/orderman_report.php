@@ -85,12 +85,12 @@ $recordnav -> output();
 							"Descrizione" => "description",
 							"Tipo lavorazione"  => "order_type",
 							"Informazioni aggiuntive" => "add_info",
-							"Articolo" => "artico",
-							"Ordine" => "ordine",
-							"Inizio produzione" => "datemi",
-							"Durata" => "day_of_validity",
+							"Articolo" => "",
+							"Ordine" => "",
+							"Inizio produzione" => "",
+							"Durata" => "",
 							"Luogo di produzione" => "campo_impianto",
-							"Distinta" => "distinta",
+							"Distinta" => "",
 							"Cancella"    => ""
 							);
 	$linkHeaders = new linkHeaders($headers_orderman);
