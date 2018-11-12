@@ -25,67 +25,118 @@
  */
 class humresForm extends GAzieForm {
 
-    function selectHextraType($name,$val) {
+    function selectHextraType($name,$val,$opt=false) {
         global $gTables;
-        $query = 'SELECT * FROM `' . $gTables['staff_work_type'] . '` ';
+        $query = 'SELECT id_work,descri,increase FROM `' . $gTables['staff_work_type'] . '` ';
         $query .= 'WHERE id_work_type = 1 ORDER BY `id_work_type`';
         $ret0 = '<div';
         $ret1 =  '<select name="'.$name.'" class="col-sm-12 dropdownmenustyle">';
         $ret1 .= '<option value="0"></option>';
-        $result = gaz_dbi_query($query);
-        while ($r = gaz_dbi_fetch_array($result)) {
-            $selected = '';
-            if ($r['id_work'] == $val) {
-				$ret0 .= ' title="'.$r['descri'].'"';
-                $selected = " selected";
-				$r['descri']=substr($r['descri'],0,5);
-             }
-            $ret1 .= '<option value="' . $r['id_work'] . '"'. $selected.' >'.$r['id_work'].'-'.$r['descri'].' '.$r['increase']. "</option>\n";
-        }
-		$ret0 .= '>';
-        echo $ret0.$ret1."\t </select>\n</div>\n";
+		if ($opt){
+			foreach($opt as $k=>$v){
+				$selected = '';	
+				if ($k == $val) {
+					$ret0 .= ' title="'.$v.'"';
+					$selected = " selected";
+					$v=substr($v,0,8);
+				}
+				$ret1 .= '<option value="' . $k . '"'. $selected.' >'.$v. "</option>\n";
+			}
+			$ret0 .= '>';
+			echo $ret0.$ret1."\t </select>\n</div>\n";
+		} else {
+			$retopt=array();
+			$result = gaz_dbi_query($query);
+			while ($r = gaz_dbi_fetch_array($result)) {
+				$retopt[$r['id_work']]=$r['id_work'].'-'.$r['descri'].' '.$r['increase'];
+				$selected = '';
+				if ($r['id_work'] == $val) {
+					$ret0 .= ' title="'.$r['descri'].'"';
+					$selected = " selected";
+					$r['descri']=substr($r['descri'],0,5);
+				}
+				$ret1 .= '<option value="' . $r['id_work'] . '"'. $selected.' >'.$r['id_work'].'-'.$r['descri'].' '.$r['increase']. "</option>\n";
+			}
+			$ret0 .= '>';
+			echo $ret0.$ret1."\t </select>\n</div>\n";
+			return $retopt;
+		}
     }
 
-    function selectAbsenceCau($name,$val) {
+    function selectAbsenceCau($name,$val,$opt=false) {
         global $gTables;
-        $query = 'SELECT * FROM `' . $gTables['staff_absence_type'] . '` ';
+        $query = 'SELECT id_absence,causal,descri FROM `' . $gTables['staff_absence_type'] . '` ';
         $query .= 'WHERE 1';
         $ret0 = '<div';
         $ret1 =  '<select name="'.$name.'" class="col-sm-12 dropdownmenustyle">';
         $ret1 .= '<option value="0"></option>';
-        $result = gaz_dbi_query($query);
-        while ($r = gaz_dbi_fetch_array($result)) {
-            $selected = '';
-            if ($r['id_absence'] == $val) {
-				$ret0 .= ' title="'.$r['descri'].'"';
-                $selected = " selected";
-				$r['descri']=substr($r['descri'],0,5);
-             }
-            $ret1 .= '<option value="' . $r['id_absence'] . '"'. $selected.' >'.$r['causal'].'-'.$r['descri']. "</option>\n";
-        }
-		$ret0 .= '>';
-        echo $ret0.$ret1."\t </select>\n</div>\n";
-    }
+		if ($opt){
+			foreach($opt as $k=>$v){
+				$selected = '';	
+				if ($k == $val) {
+					$ret0 .= ' title="'.$v.'"';
+					$selected = " selected";
+					$v=substr($v,0,8);
+				}
+				$ret1 .= '<option value="' . $k . '"'. $selected.' >'.$v. "</option>\n";
+			}
+			$ret0 .= '>';
+			echo $ret0.$ret1."\t </select>\n</div>\n";
+		} else {
+			$retopt=array();
+			$result = gaz_dbi_query($query);
+			while ($r = gaz_dbi_fetch_array($result)) {
+				$retopt[$r['id_absence']]=$r['causal'].'-'.$r['descri'];
+				$selected = '';
+				if ($r['id_absence'] == $val) {
+					$ret0 .= ' title="'.$r['descri'].'"';
+					$selected = " selected";
+					$r['descri']=substr($r['descri'],0,5);
+				}
+				$ret1 .= '<option value="' . $r['id_absence'] . '"'. $selected.' >'.$r['causal'].'-'.$r['descri']. "</option>\n";
+			}
+			$ret0 .= '>';
+			echo $ret0.$ret1."\t </select>\n</div>\n";
+			return $retopt;
+		}
+	}
 
-    function selectOtherType($name,$val) {
+    function selectOtherType($name,$val,$opt=false) {
         global $gTables;
-        $query = 'SELECT * FROM `' . $gTables['staff_work_type'] . '` ';
+        $query = 'SELECT id_work,descri,increase FROM `' . $gTables['staff_work_type'] . '` ';
         $query .= 'WHERE id_work_type > 1  ORDER BY id_work_type, descri';
         $ret0 = '<div';
         $ret1 =  '<select name="'.$name.'" class="col-sm-12 dropdownmenustyle">';
         $ret1 .= '<option value="0"></option>';
-        $result = gaz_dbi_query($query);
-        while ($r = gaz_dbi_fetch_array($result)) {
-            $selected = '';
-            if ($r['id_work'] == $val) {
-				$ret0 .= ' title="'.$r['descri'].'"';
-                $selected = " selected";
-				$r['descri']=substr($r['descri'],0,5);
+		if ($opt){
+			foreach($opt as $k=>$v){
+				$selected = '';	
+				if ($k == $val) {
+					$ret0 .= ' title="'.$v.'"';
+					$selected = " selected";
+					$v=substr($v,0,8);
+				}
+				$ret1 .= '<option value="' . $k . '"'. $selected.' >'.$v. "</option>\n";
 			}
-            $ret1 .= '<option value="' . $r['id_work'] . '"'. $selected.' >'.$r['id_work_type'].' '.$r['descri'].' '.$r['increase']. "</option>\n";
-        }
-		$ret0 .= '>';
-        echo $ret0.$ret1."\t </select>\n</div>\n";
+			$ret0 .= '>';
+			echo $ret0.$ret1."\t </select>\n</div>\n";
+		} else {
+			$retopt=array();
+			$result = gaz_dbi_query($query);
+			while ($r = gaz_dbi_fetch_array($result)) {
+				$retopt[$r['id_work']]=$r['id_work'].'-'.$r['descri'].' '.$r['increase'];
+				$selected = '';
+				if ($r['id_work'] == $val) {
+					$ret0 .= ' title="'.$r['descri'].'"';
+					$selected = " selected";
+					$r['descri']=substr($r['descri'],0,5);
+				}
+				$ret1 .= '<option value="' . $r['id_work'] . '"'. $selected.' >'.$r['id_work'].'-'.$r['descri'].' '.$r['increase']. "</option>\n";
+			}
+			$ret0 .= '>';
+			echo $ret0.$ret1."\t </select>\n</div>\n";
+			return $retopt;
+		}
     }
 }
 ?>

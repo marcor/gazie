@@ -246,37 +246,37 @@ $gForm = new humresForm();
                         </td>
                         <td>
 						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['mon']."][id_work_type_extra]",$form['rows'][$k][$week_days['mon']]['id_work_type_extra']);
+							$htopt=$gForm->selectHextraType("rows[".$k."][".$week_days['mon']."][id_work_type_extra]",$form['rows'][$k][$week_days['mon']]['id_work_type_extra']);
 						?>
 						</td>
                         <td>						
 						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['tue']."][id_work_type_extra]",$form['rows'][$k][$week_days['tue']]['id_work_type_extra']);
+							$gForm->selectHextraType("rows[".$k."][".$week_days['tue']."][id_work_type_extra]",$form['rows'][$k][$week_days['tue']]['id_work_type_extra'],$htopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['wed']."][id_work_type_extra]",$form['rows'][$k][$week_days['wed']]['id_work_type_extra']);
+							$gForm->selectHextraType("rows[".$k."][".$week_days['wed']."][id_work_type_extra]",$form['rows'][$k][$week_days['wed']]['id_work_type_extra'],$htopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['thu']."][id_work_type_extra]",$form['rows'][$k][$week_days['thu']]['id_work_type_extra']);
+							$gForm->selectHextraType("rows[".$k."][".$week_days['thu']."][id_work_type_extra]",$form['rows'][$k][$week_days['thu']]['id_work_type_extra'],$htopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['fri']."][id_work_type_extra]",$form['rows'][$k][$week_days['fri']]['id_work_type_extra']);
+							$gForm->selectHextraType("rows[".$k."][".$week_days['fri']."][id_work_type_extra]",$form['rows'][$k][$week_days['fri']]['id_work_type_extra'],$htopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['sat']."][id_work_type_extra]",$form['rows'][$k][$week_days['sat']]['id_work_type_extra']);
+							$gForm->selectHextraType("rows[".$k."][".$week_days['sat']."][id_work_type_extra]",$form['rows'][$k][$week_days['sat']]['id_work_type_extra'],$htopt);
 						?>
                         </td>
                         <td class="bg-warning">						
 						<?php
-							$gForm->selectHextraType("rows[".$k."][".$week_days['sun']."][id_work_type_extra]",$form['rows'][$k][$week_days['sun']]['id_work_type_extra']);
+							$gForm->selectHextraType("rows[".$k."][".$week_days['sun']."][id_work_type_extra]",$form['rows'][$k][$week_days['sun']]['id_work_type_extra'],$htopt);
 						?>
                         </td>
                     </tr>      
@@ -305,37 +305,37 @@ $gForm = new humresForm();
                         </td>
                         <td>
 						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['mon']."][id_absence_type]",$form['rows'][$k][$week_days['mon']]['id_absence_type']);
+							$acopt=$gForm->selectAbsenceCau("rows[".$k."][".$week_days['mon']."][id_absence_type]",$form['rows'][$k][$week_days['mon']]['id_absence_type']);
 						?>
 						</td>
                         <td>						
 						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['tue']."][id_absence_type]",$form['rows'][$k][$week_days['tue']]['id_absence_type']);
+							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['tue']."][id_absence_type]",$form['rows'][$k][$week_days['tue']]['id_absence_type'],$acopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['wed']."][id_absence_type]",$form['rows'][$k][$week_days['wed']]['id_absence_type']);
+							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['wed']."][id_absence_type]",$form['rows'][$k][$week_days['wed']]['id_absence_type'],$acopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['thu']."][id_absence_type]",$form['rows'][$k][$week_days['thu']]['id_absence_type']);
+							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['thu']."][id_absence_type]",$form['rows'][$k][$week_days['thu']]['id_absence_type'],$acopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['fri']."][id_absence_type]",$form['rows'][$k][$week_days['fri']]['id_absence_type']);
+							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['fri']."][id_absence_type]",$form['rows'][$k][$week_days['fri']]['id_absence_type'],$acopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['sat']."][id_absence_type]",$form['rows'][$k][$week_days['sat']]['id_absence_type']);
+							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['sat']."][id_absence_type]",$form['rows'][$k][$week_days['sat']]['id_absence_type'],$acopt);
 						?>
                         </td>
                         <td class="bg-warning">						
 						<?php
-							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['sun']."][id_absence_type]",$form['rows'][$k][$week_days['sun']]['id_absence_type']);
+							$gForm->selectAbsenceCau("rows[".$k."][".$week_days['sun']."][id_absence_type]",$form['rows'][$k][$week_days['sun']]['id_absence_type'],$acopt);
 						?>
                         </td>
                     </tr>      
@@ -364,27 +364,27 @@ $gForm = new humresForm();
                         </td>
                         <td>
 						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['mon']."][id_other_type]",$form['rows'][$k][$week_days['mon']]['id_other_type']);
+							$otopt=$gForm->selectOtherType("rows[".$k."][".$week_days['mon']."][id_other_type]",$form['rows'][$k][$week_days['mon']]['id_other_type']);
 						?>
 						</td>
                         <td>						
 						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['tue']."][id_other_type]",$form['rows'][$k][$week_days['tue']]['id_other_type']);
+							$gForm->selectOtherType("rows[".$k."][".$week_days['tue']."][id_other_type]",$form['rows'][$k][$week_days['tue']]['id_other_type'],$otopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['wed']."][id_other_type]",$form['rows'][$k][$week_days['wed']]['id_other_type']);
+							$gForm->selectOtherType("rows[".$k."][".$week_days['wed']."][id_other_type]",$form['rows'][$k][$week_days['wed']]['id_other_type'],$otopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['thu']."][id_other_type]",$form['rows'][$k][$week_days['thu']]['id_other_type']);
+							$gForm->selectOtherType("rows[".$k."][".$week_days['thu']."][id_other_type]",$form['rows'][$k][$week_days['thu']]['id_other_type'],$otopt);
 						?>
                         </td>
                         <td>						
 						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['fri']."][id_other_type]",$form['rows'][$k][$week_days['fri']]['id_other_type']);
+							$gForm->selectOtherType("rows[".$k."][".$week_days['fri']."][id_other_type]",$form['rows'][$k][$week_days['fri']]['id_other_type'],$otopt);
 						?>
                         </td>
                         <td>						
@@ -394,7 +394,7 @@ $gForm = new humresForm();
                         </td>
                         <td class="bg-warning">						
 						<?php
-							$gForm->selectOtherType("rows[".$k."][".$week_days['sun']."][id_other_type]",$form['rows'][$k][$week_days['sun']]['id_other_type']);
+							$gForm->selectOtherType("rows[".$k."][".$week_days['sun']."][id_other_type]",$form['rows'][$k][$week_days['sun']]['id_other_type'],$otopt);
 						?>
                         </td>
                     </tr>      

@@ -1015,6 +1015,7 @@ foreach ($form['righi'] as $key => $value) {
     echo "<input type=\"hidden\" value=\"{$value['id_mag']}\" name=\"righi[{$key}][id_mag]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['annota']}\" name=\"righi[{$key}][annota]\">\n";
     echo "<input type=\"hidden\" value=\"{$value['pesosp']}\" name=\"righi[{$key}][pesosp]\">\n";
+	echo '<input type="hidden" value="' . $value['extdoc'] . '" name="righi[' . $key . '][extdoc]" />';
     //stampo i righi in modo diverso a secondo del tipo
     switch ($value['tiprig']) {
         case "0":
