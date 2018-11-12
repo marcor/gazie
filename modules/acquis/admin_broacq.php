@@ -158,7 +158,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
             $form['righi'][$next_row]['id_mag'] = intval($value['id_mag']);
             $form['righi'][$next_row]['annota'] = substr($value['annota'], 0, 50);
             $form['righi'][$next_row]['pesosp'] = floatval($value['pesosp']);
-            $form['righi'][$i]['extdoc'] = filter_var($_POST['righi'][$i]['extdoc'], FILTER_SANITIZE_STRING);
+            $form['righi'][$next_row]['extdoc'] = filter_var($_POST['righi'][$next_row]['extdoc'], FILTER_SANITIZE_STRING);
             if (!empty($_FILES['docfile_' . $next_row]['name'])) {
                 $move = false;
                 $mt = substr($_FILES['docfile_' . $next_row]['name'], -3);
@@ -760,7 +760,7 @@ if ($form['id_tes'] > 0) {
     }
 </script>
 <?php
-echo "<form method=\"POST\" name=\"docacq\">\n";
+echo "<form method=\"POST\" name=\"docacq\" enctype=\"multipart/form-data\">\n";
 echo "<input type=\"hidden\" name=\"" . ucfirst($toDo) . "\" value=\"\">\n";
 echo "<input type=\"hidden\" value=\"{$form['id_tes']}\" name=\"id_tes\">\n";
 echo "<input type=\"hidden\" value=\"{$form['seziva']}\" name=\"seziva\">\n";
@@ -1119,8 +1119,8 @@ foreach ($form['righi'] as $key => $value) {
                     . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
                 } else {
-                    echo '<div>' . $script_transl['extdoc'] . ':<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
-                    . $form['righi'][$key]['filename'] . ' <i class="glyphicon glyphicon-tag"></i>'
+                    echo '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
+                    . $form['righi'][$key]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
                     . '</button></div>';
                 }
 				echo '<div id="extdoc_dialog' . $key . '" class="collapse" >
