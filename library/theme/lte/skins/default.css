@@ -90,10 +90,8 @@ div.th {
 }
 .FacetDataTDred
 {
-  text-align: center;
   color: #f00;
   font-weight: bold;
   background-color: #aae2a8;
-  border: #f00 solid 1px;
   margin-bottom: 10px;
 }
