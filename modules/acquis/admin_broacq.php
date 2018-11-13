@@ -275,6 +275,25 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                         $form['righi'][$i]['id_tes'] = $form['id_tes'];
                         $codice = array('id_rig', $val_old_row['id_rig']);
                         rigbroUpdate($codice, $form['righi'][$i]);
+                        if ($form['righi'][$i]['tiprig']==50 && !empty($form['righi'][$i]['extdoc']) && substr($form['righi'][$i]['extdoc'],0,10)!='rigbrodoc_') {
+							// se a questo rigo corrispondeva un certificato controllo che non sia stato aggiornato, altrimenti lo cambio
+                            $dh = opendir('../../data/files/' . $admin_aziend['company_id']);
+                            while (false !== ($filename = readdir($dh))) {
+                                $fd = pathinfo($filename);
+                                if ($fd['filename'] == 'rigbrodoc_' . $val_old_row['id_rig']) {
+                                    // cancello il file precedente indipendentemente dall'estensione
+                                    $frep = glob('../../data/files/' . $admin_aziend['company_id'] . "/rigbrodoc_" . $val_old_row['id_rig'] . ".*");
+                                    foreach ($frep as $fdel) {// prima cancello eventuali precedenti file temporanei
+                                        unlink($fdel);
+                                    }
+                                }
+                            }
+                            $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['righi'][$i]['extdoc'];
+							// sposto e rinomino il relativo file temporaneo    
+                            $fn = pathinfo($form['righi'][$i]['extdoc']);
+                            rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/rigbrodoc_" . $val_old_row['id_rig'] . '.' . $fn['extension']);
+						
+						}						
                     } else { //altrimenti lo elimino
                         gaz_dbi_del_row($gTables['rigbro'], "id_rig", $val_old_row['id_rig']);
                     }
@@ -284,7 +303,14 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 for ($i = $i; $i <= $count; $i++) {
                     $form['righi'][$i]['id_tes'] = $form['id_tes'];
                     rigbroInsert($form['righi'][$i]);
-                }
+                    $last_rigbro_id = gaz_dbi_last_id();
+                    if (!empty($form['righi'][$i]['extdoc'])) {
+                        $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['righi'][$i]['extdoc'];
+// sposto e rinomino il relativo file temporaneo    
+                        $fd = pathinfo($form['righi'][$i]['extdoc']);
+                        rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/rigbrodoc_" . $last_rigbro_id . '.' . $fd['extension']);
+                    }
+				}
                 //modifico la testata con i nuovi dati...
                 $old_head = array('datfat' => '', 'geneff' => '', 'id_contract' => 0, 'id_con' => 0);
                 $form['datfat'] = $old_head['datfat'];
@@ -658,11 +684,11 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 		while (false !== ($filename = readdir($dh))) {
 				$fd = pathinfo($filename);
 				$r = explode('_', $fd['filename']);
-				if ($r[0] == 'extdoc' && $r[1] == $rigo['id_body_text']) { 
+				if ($r[0] == 'rigbrodoc' && $r[1] == $rigo['id_rig']) { 
 					/* 	uso id_body_text per mantenere il riferimento riferimento al file del documento esterno
 					* 	e riassegno il nome file
-					*/					 
-					$form['rows'][$next_row]['extdoc'] = $fd['basename'];
+					*/
+					$form['righi'][$next_row]['extdoc'] = $fd['basename'];
 				}
 		}
         $next_row++;
