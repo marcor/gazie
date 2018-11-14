@@ -25,7 +25,7 @@
  */
 $transl['acquis'] = array('name' => "Acquisti",
     'title' => "Gestione Acquisti",
-    'm2' => array(1 => array("Gestione Preventivi e Ordini a Fornitori", "Preventivi e Ordini"),
+    'm2' => array(1 => array("Gestione Preventivi/Offerte ", "Preventivi/Offerte"),
         2 => array("Gestione dei D.d.T. a Fornitori", "D.d.T."),
         3 => array("Fatture d'Acquisto", "Fatture"),
         4 => array("Lista degli ordini di bonifico/addebito", "Bonifici-Addebiti"),
@@ -33,7 +33,8 @@ $transl['acquis'] = array('name' => "Acquisti",
         6 => array("Visualizzazione e Stampa della Lista dei Debiti verso Fornitori", "Lista Debiti"),
         7 => array("Stampa modulo Scheda Carburante", "Scheda Carburante"),
         8 => array("Scadenzario a partite aperte", "Scadenzario"),
-        9 => array("Agenti di Fornitori", "Agenti")
+        9 => array("Agenti di Fornitori", "Agenti"),
+        10 => array("Gestione Ordini a Fornitori", "Ordini")
     ),
     'm3' => array(1 => array("Richiedi un preventivo a fornitore", "Richiedi preventivo"),
         2 => array("Ordine a fornitore ", "Ordina a fornitore"),
