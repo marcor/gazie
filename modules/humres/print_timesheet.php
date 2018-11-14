@@ -45,7 +45,9 @@ $last_day = $dto->format('Y-m-d');
 $aDates = array();
 $st_date = strtotime($first_day);
 $ed_date = strtotime($last_day);
-for ($i = $st_date; $i <= $ed_date; $i += (60 * 60 * 24)) {
+//Luca 2018-11-14 Con il cambio dell'ora il report sballava
+//for ($i = $st_date; $i <= $ed_date; $i += (60 * 60 * 24)) {
+for ($i = $st_date; $i <= $ed_date; $i = mktime(0, 0, 0, date("m",$i)  , date("d",$i)+1, date("Y",$i)) ) {
 	$currDate = array('strdate'=>date('Y-m-d', $i),'daydate'=>date('w',$i),'tsdate'=>$i);
 	// in $aDates accumulo i giorni del mese
     $aDates[] = $currDate;
