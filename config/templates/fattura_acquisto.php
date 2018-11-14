@@ -49,6 +49,7 @@ class FatturaAcquisto extends Template
             $descri='** documento sconosciuto **';
         }
         $this->tipdoc=$descri.$this->tesdoc['numfat'].'/'.$this->tesdoc['seziva'].' del '.$this->giorno.' '.$this->nomemese.' '.$this->anno;
+		$this->pers_title='Ricevuto da: ';
 		
     }
 
@@ -74,6 +75,14 @@ class FatturaAcquisto extends Template
 
     function compose()
     {
+        $this->SetFont('helvetica','B',18);
+        $this->SetTextColor(255,150,150);
+        $this->StartTransform();
+		$this->Rotate(-30);
+		$this->Cell(186,0,$this->tipdoc,0,1,'C');
+		$this->StopTransform();
+        $this->SetFont('helvetica','',9);
+        $this->SetTextColor(0,0,0);
         $this->body();
     }
 
@@ -92,8 +101,8 @@ class FatturaAcquisto extends Template
             }
                 switch($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L', 0, '', 1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L', 0, '', 1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
@@ -106,15 +115,15 @@ class FatturaAcquisto extends Template
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "1":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L', 0, '', 1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L', 0, '', 1);
                     $this->Cell(49, 6, '',1);
                     $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "2":
                     $this->Cell(25,6,'','L');
-                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L');
+                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L', 0, '', 1);
                     $this->Cell(81,6,'','R',1);
                     break;
                 case "3":
@@ -136,11 +145,6 @@ class FatturaAcquisto extends Template
     {
         $this->Cell(186,6,'','T',1);
         //stampo il castelletto
-        $this->SetY(180);
-        $this->SetFont('helvetica','B',48);
-        $this->SetTextColor(255,150,150);
-        $this->Cell(186,20,'N O N   F I S C A L E',0,1,'C');
-        $this->SetTextColor(0,0,0);
         $this->SetY(212);
         $this->SetFont('helvetica','',8);
         $this->Cell(62,6,'Pagamento','LTR',0,'C',1);

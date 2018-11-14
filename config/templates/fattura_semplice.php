@@ -113,7 +113,7 @@ class FatturaSemplice extends Template {
             }
             switch ($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L');
+                    $this->Cell(25, 5, $rigo['codart'], 1, 0, 'L', 0, '', 1);
                     $this->Cell(80, 5, $rigo['descri'], 1, 0, 'L', 0, '', 1);                  
                     $this->Cell(7, 5, $rigo['unimis'], 1, 0, 'C');
                     $this->Cell(16, 5, gaz_format_quantity($rigo['quanti'], 1, $this->decimal_quantity), 1, 0, 'R');                      

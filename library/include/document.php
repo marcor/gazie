@@ -292,7 +292,32 @@ class DocContabVars {
             } elseif ($rigo['tiprig'] == 3) {
                 $this->riporto += $rigo['prelis'];
             }
-            $results[] = $rigo;
+			if ($rigo['tiprig'] <= 2 && strlen($rigo['descri'])>70 ){
+				/* 	se la descrizione no la si riesce a contenere in un rigo (es.fattura elettronica d'acquisto)
+					aggiungo righi descrittivi
+				*/
+				$descrizione_nuova='';
+				$nuovi_righi=array();
+				$n_r=explode(' ',$rigo['descri']);
+				foreach($n_r as $v){
+					if (strlen($descrizione_nuova)<=60){ // se  la descrizione è ancora abbastanza corta la aggiungo
+						$descrizione_nuova .= ' '.$v;
+					} else { 
+						// i righi iniziali sono aggiunti e definiti descrittivi
+						$nuovi_righi[]=array('tiprig'=>2,'codart'=>'','descri'=>$descrizione_nuova,'quanti'=>0, 'unimis'=>'','prelis'=>0,'sconto'=>0,'prelis'=>0,'pervat'=>0);
+						// riparto con un nuovo valore di descrizione
+						$descrizione_nuova = $v;
+					}
+				}
+				// quando esco dal ciclo sull'ultimo rigo rimane dello stesso tipo originale
+				$rigo['descri']=$descrizione_nuova;  
+				$nuovi_righi[]=$rigo;
+				foreach($nuovi_righi as $v_nr) { // riattraverso l'array dei nuovi righi e sull'ultimo 
+					$results[] = $v_nr;
+				}
+			} else {
+				$results[] = $rigo;
+			}
             //creo il castelletto IVA ma solo se del tipo normale o forfait
         }
         return $results;
