@@ -88,7 +88,8 @@ $transl['vendit'] = array('name' => "Sales",
         49 => array("Emetti scontrino prezzi IVA inclusa", "Scontrini prezzi IVA incl."),
         50 => array("Emetti CMR", "Emetti CMR"),
         51 => array("Lista CMR", "Lista CMR"),
-        52 => array("Impacchetta fatture elettroniche", "Impacchetta fatture elettroniche")
+        52 => array("Impacchetta fatture elettroniche", "Impacchetta fatture elettroniche"),
+        53 => array("Genera fatture differite da CMR", "Fatturazione CMR")
     )
 );
 ?>
