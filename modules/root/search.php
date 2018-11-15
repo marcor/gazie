@@ -76,6 +76,16 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
             $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode,' - ',codice_fornitore) AS label, codice AS value, movimentabile", $gTables['artico'], $like, "catmer, codice");
             break;
+		case 'order':
+            $fields = array("id_tes", "numdoc"); //	Sono i campi sui quali effettuare la ricerca
+            foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
+                foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
+                    $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
+                }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
+            }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
+            $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
+            $result = gaz_dbi_dyn_query("numdoc AS id, CONCAT(id_tes,' - ',numdoc) AS label, numdoc AS value, movimentabile", $gTables['tesbro'], $like, "numdoc,id_tes");
+            break;	
         case 'municipalities':
             $fields = array("name"); //	Sono i campi sui quali effettuare la ricerca
             foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat

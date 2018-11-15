@@ -51,6 +51,7 @@ if ((isset($_GET['Update']) and !isset($_GET['codice'])) or isset($_POST['Return
 if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani se non e' il primo accesso
     $form = gaz_dbi_parse_post('orderman');
 	$form['cosear']=$_POST['cosear'];
+	$form['numdoc']=$_POST['numdoc'];
     $form['order_type'] = $_POST['order_type'];
     $form['description'] = $_POST['description'];
     $form['gioinp'] = $_POST['gioinp'];
@@ -687,6 +688,7 @@ if ((isset($_POST['Insert'])) or (isset($_POST['Update']))) { // Antonio Germani
 } else { //se e' il primo accesso per INSERT
     $form['ritorno'] = $_SERVER['HTTP_REFERER'];
 	$form['cosear']="";
+	$form['numdoc']="";
     if (isset($_GET['type'])) { // controllo se proviene anche da una richiesta del modulo camp
         $form['order_type'] = $_GET['type'];
     } else {
@@ -877,6 +879,11 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 			<span class="glyphicon glyphicon-bell fa-2x" title="L'ordine impone l'articolo e la quantità" style="color:blue"></span>
 			<?php
     }
+	
+	$select_order = new selectorder("numdoc");
+	$select_order->addSelected($form['numdoc']);
+	$select_order->output($form['order']);
+	
 ?>
 	</td>
 </tr>
@@ -910,7 +917,7 @@ if ($form['order_type'] <> "AGR") { // input esclusi se produzione agricola
 			<input type="hidden" name="cosear" Value="<?php echo $form['cosear']; ?>"/>
 			<?php
         } else {
-			$select_artico = new selectartico("artico");
+			$select_artico = new selectartico("pippo");
 			$select_artico->addSelected($form['cosear']);			
 			$select_artico->output(substr($form['cosear'], 0, 20));
         }

@@ -1046,6 +1046,60 @@ class selectPartner extends SelectBox {
 
 }
 
+// Antonio Germani - classe per la generazione di select box ordini
+class selectorder extends SelectBox {
+
+     function output($cerca, $field = 'C', $class = 'FacetSelect',$sele=1) {
+        global $gTables, $script_transl, $script_transl;
+        $msg = "";
+        $tabula = ' tabindex="4" ';
+        $opera = "%'";
+        if (strlen($cerca) >= 1) {
+            $opera = "'"; ////
+            $field_sql = 'numdoc';
+            if (substr($cerca, 0, 1) == "@") {
+                $cerca = substr($cerca, 1);
+            }
+            // uso la variabile $field per aggiungere al $where un filtro sui articoli composti
+            if ( $field!='C' ) {
+                $opera .= $field;
+            }
+            
+            $result = gaz_dbi_dyn_query("numdoc,id_tes,datemi", $gTables['tesbro'], $field_sql . " LIKE '" . addslashes($cerca) . $opera, "id_tes DESC");
+            // nella tabella tesbro seleziona id_tes, numdoc e datemi dove numdoc è come $cerca. Ordina per numdoc
+            $numclfoco = gaz_dbi_num_rows($result);
+            if ($numclfoco > 0) {
+				if ($sele) {
+					$tabula = "";
+					echo ' <select tabindex="4" name="' . $this->name . '" class="' . $class . '">';
+					while ($z_row = gaz_dbi_fetch_array($result)) {
+						$selected = "";
+						if ($z_row["numdoc"] == $this->selected) {
+							$selected = ' selected=""';
+						}
+						echo ' <option value="' . $z_row["numdoc"] . '"' . $selected . '>' . $z_row["numdoc"] . '-' . $z_row["id_tes"] . '</option>';
+					}
+					echo ' </select>';
+				}
+			} else {
+                $msg = $script_transl['notfound'] . '!';
+                echo '<input type="hidden" name="' . $this->name . '" value="" />';
+            }
+        } else {
+//            $msg = $script_transl['minins'] . ' 1 ' . $script_transl['charat'] . '!';
+            $msg = $script_transl['minins'] . ' 2 ' . $script_transl['charat'] . '!';
+            echo '<input type="hidden" name="' . $this->name . '" value="" />';
+        }
+       
+        echo '&nbsp;<input type="text" class="' . $class . '" name="order" id="search_order" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
+        //echo "<font style=\"color:#ff0000;\">$msg </font>";
+        if ($msg != "") {
+            echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';
+        }
+    }
+
+}
+
 // classe per la generazione di select box degli articoli
 class selectartico extends SelectBox {
 
