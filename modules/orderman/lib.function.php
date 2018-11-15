@@ -27,6 +27,9 @@
 class ordermanForm extends GAzieForm {
 
 }
+
+
+
 class lotmag {
 
    function __construct() {

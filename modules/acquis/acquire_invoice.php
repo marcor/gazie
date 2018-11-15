@@ -140,7 +140,7 @@ if (!isset($_POST['fattura_elettronica_original_name'])) { // primo accesso ness
 			if ($doc->getElementsByTagName("FatturaElettronicaHeader")->length < 1) { // non esiste il nodo <FatturaElettronicaHeader>
 				$msg['err'][] = 'invalid_fae';
 				$f_ex=false; // non è visualizzabile
-			} else if (@$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] ) { // la partita IVA del cliente non coincide con la mia 
+			} else if (@$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/IdFiscaleIVA/IdCodice")->item(0)->nodeValue <> $admin_aziend['pariva'] && @$xpath->query("//FatturaElettronicaHeader/CessionarioCommittente/DatiAnagrafici/CodiceFiscale")->item(0)->nodeValue <> $admin_aziend['codfis'] ) { // ne partita IVA ne codice fiscale coincidono con quella della azienda che sta acquisendo la fattura 
 				$msg['err'][] = 'not_mine';
 				$f_ex=false; // non la visualizzo perché non è una mia fattura
 			} else {
