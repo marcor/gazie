@@ -1056,7 +1056,7 @@ class selectorder extends SelectBox {
         $opera = "%'";
         if (strlen($cerca) >= 1) {
             $opera = "'"; ////
-            $field_sql = 'numdoc';
+            $field_sql = 'id_tes';
             if (substr($cerca, 0, 1) == "@") {
                 $cerca = substr($cerca, 1);
             }
@@ -1065,7 +1065,7 @@ class selectorder extends SelectBox {
                 $opera .= $field;
             }
             
-            $result = gaz_dbi_dyn_query("numdoc,id_tes,datemi", $gTables['tesbro'], $field_sql . " LIKE '" . addslashes($cerca) . $opera, "id_tes DESC");
+            $result = gaz_dbi_dyn_query("numdoc,id_tes,datemi,descri", $gTables['tesbro']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice", $field_sql . " LIKE '" . addslashes($cerca) . $opera, "id_tes DESC");
             // nella tabella tesbro seleziona id_tes, numdoc e datemi dove numdoc è come $cerca. Ordina per numdoc
             $numclfoco = gaz_dbi_num_rows($result);
             if ($numclfoco > 0) {
@@ -1074,10 +1074,10 @@ class selectorder extends SelectBox {
 					echo ' <select tabindex="4" name="' . $this->name . '" class="' . $class . '">';
 					while ($z_row = gaz_dbi_fetch_array($result)) {
 						$selected = "";
-						if ($z_row["numdoc"] == $this->selected) {
+						if ($z_row["id_tes"] == $this->selected) {
 							$selected = ' selected=""';
 						}
-						echo ' <option value="' . $z_row["numdoc"] . '"' . $selected . '>' . $z_row["numdoc"] . '-' . $z_row["id_tes"] . '</option>';
+						echo ' <option value="' . $z_row["id_tes"] . '"' . $selected . '>' . $z_row["numdoc"] . ' del ' . gaz_format_date( $z_row["datemi"]).' '.$z_row["descri"] . '</option>';
 					}
 					echo ' </select>';
 				}
@@ -1091,7 +1091,7 @@ class selectorder extends SelectBox {
             echo '<input type="hidden" name="' . $this->name . '" value="" />';
         }
        
-        echo '&nbsp;<input type="text" class="' . $class . '" name="order" id="search_order" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
+        echo '&nbsp;<input type="text" class="' . $class . '" name="coseor" id="search_order" value="' . $cerca . '" ' . $tabula . ' maxlength="16" />';
         //echo "<font style=\"color:#ff0000;\">$msg </font>";
         if ($msg != "") {
             echo '&nbsp;<span class="bg-danger text-danger"><span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>' . $msg . '</span>';

@@ -77,14 +77,17 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
             $result = gaz_dbi_dyn_query("codice AS id, CONCAT(codice,' - ',descri,' - ',barcode,' - ',codice_fornitore) AS label, codice AS value, movimentabile", $gTables['artico'], $like, "catmer, codice");
             break;
 		case 'order':
-            $fields = array("id_tes", "numdoc"); //	Sono i campi sui quali effettuare la ricerca
+            $fields = array("numdoc", "descri"); //	Sono i campi sui quali effettuare la ricerca
             foreach ($fields as $id1 => $field) {   //	preparo i diversi campi per il like, questo funziona meglio del concat
                 foreach ($parts as $id => $part) {   //	(inteso come stringa sulla quale fare il like) perchè è più flessibile con i caratteri jolly
                     $like[] = like_prepare($field, $part); //	Altrimenti se si cerca za%, il like viene fatto su tutto il concat, e se il codice prodotto
                 }           //	non inizia per za il risultato è nullo, così invece se cerco za%, viene fuori anche un prodotto il
             }            //  cui nome (o descrizione) inizia per za ma il cui codice può anche essere TPQ 
             $like = implode(" OR ", $like);    //	creo la porzione di query per il like, con OR perchè cerco in campi differenti
-            $result = gaz_dbi_dyn_query("numdoc AS id, CONCAT(id_tes,' - ',numdoc) AS label, numdoc AS value, movimentabile", $gTables['tesbro'], $like, "numdoc,id_tes");
+            $result = gaz_dbi_dyn_query("id_tes AS id, CONCAT('n.',numdoc,' del ',datemi,' - ',descri) AS label, id_tes AS value, 'S' AS movimentabile ", 
+										$gTables['tesbro']. " LEFT JOIN " . $gTables['clfoco'] . " ON " . $gTables['tesbro'] . ".clfoco = " . $gTables['clfoco'] . ".codice", 
+										"(".$like.") AND tipdoc='VOR'", // così prendo solo gli ordini da clienti
+										"datemi DESC, numdoc DESC");
             break;	
         case 'municipalities':
             $fields = array("name"); //	Sono i campi sui quali effettuare la ricerca
@@ -106,7 +109,8 @@ if (isset($_GET['term'])) { //	Evitiamo errori se lo script viene chiamato diret
 							" . $gTables['provinces'] . ".abbreviation AS prospe, 
 							" . $gTables['country'] . ".name AS nation, 
 							" . $gTables['country'] . ".iso AS country, 'S' AS movimentabile,
-							CONCAT(" . $gTables['municipalities'] . ".postal_code, ' ', " . $gTables['municipalities'] . ".name, ' (', " . $gTables['provinces'] . ".abbreviation, ') ', " . $gTables['regions'] . ".name, ' ', " . $gTables['country'] . ".name) AS label ", $gTables['municipalities'] . " 
+							CONCAT(" . $gTables['municipalities'] . ".postal_code, ' ', " . $gTables['municipalities'] . ".name, ' (', " . $gTables['provinces'] . ".abbreviation, ') ', " . $gTables['regions'] . ".name, ' ', " . $gTables['country'] . ".name) AS label ", 
+							$gTables['municipalities'] . " 
 							LEFT JOIN " . $gTables['provinces'] . " ON 
 							" . $gTables['municipalities'] . ".id_province = " . $gTables['provinces'] . ".id
 							LEFT JOIN " . $gTables['regions'] . " ON 
