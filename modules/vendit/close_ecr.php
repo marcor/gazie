@@ -123,27 +123,16 @@ function getAccountedTickets($id_cash) {
                     if (!isset($cast_acc[$tes['clfoco']]['D'])) {
                         $cast_acc[$tes['clfoco']]['D'] = 0;
                     }
-                    $cast_acc[$tes['clfoco']]['D'] += $tot_row;
-                    if ($tes['tippag'] == 'K') { // ha pagato con carta incasso direttamente sul CC/bancario
-                        if (!isset($cast_acc[$tes['clfoco']]['A'])) {
-                            $cast_acc[$tes['clfoco']]['A'] = 0;
-                        }
-                        $cast_acc[$tes['clfoco']]['A'] += $tot_row;
-                        if (!isset($cast_acc[$tes['id_bank']]['D'])) {
-                            $cast_acc[$tes['id_bank']]['D'] = 0;
-                        }
-                        $cast_acc[$tes['id_bank']]['D'] += $tot_row;
-                    } else {
-                        if ($tes['incaut'] > 100000000) { //  ha pagato contanti vado per cassa 
+                    $cast_acc[$tes['clfoco']]['D'] += $tot_row; // metto in dare il cliente
+                    if ($tes['incaut'] > 100000000) { // pagamento che prevede incasso automatico
                             if (!isset($cast_acc[$tes['clfoco']]['A'])) {
                                 $cast_acc[$tes['clfoco']]['A'] = 0;
                             }
                             $cast_acc[$tes['clfoco']]['A'] += $tot_row;
-                            if (!isset($cast_acc[$admin_aziend['cassa_']]['D'])) {
-                                $cast_acc[$admin_aziend['cassa_']]['D'] = 0;
+                            if (!isset($cast_acc[$tes['incaut']]['D'])) {
+                                $cast_acc[$tes['incaut']]['D'] = 0;
                             }
-                            $cast_acc[$admin_aziend['cassa_']]['D'] += $tot_row;
-                        }
+                            $cast_acc[$tes['incaut']]['D'] += $tot_row;
                     }
                 } else {  // il cliente è anonimo 
                     if ($tes['incaut'] > 100000000) { // pagamento che prevede incasso automatico

@@ -607,8 +607,8 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
             if ($ctrldatreg < $ctrldatdoc) {
                 $msg .= "12+";
             }
-            // controllo se ci documenti con lo stesso numero e anno dello stesso fornitore (duplicato) 
-            if ($_POST['cod_partner'] > 0) {
+            // controllo se ci documenti con lo stesso numero e anno dello stesso cliente/fornitore (duplicato) tranne che per gli scontrini 
+            if ($_POST['cod_partner'] > 0 && $_POST['codcausale']!='VCO') {
                 $dupli = gaz_dbi_record_count($gTables['tesmov'], "caucon = '" . substr($_POST['codcausale'], 0, 3) . "' AND numdoc = '" . trim(substr($_POST['numdocumen'], 0, 20)) . "' AND seziva = " . intval($_POST['sezioneiva']) . " AND clfoco = " . intval($_POST['cod_partner']) . " AND YEAR(datdoc) = " . intval(substr($_POST['datdoc'], -4)));
                 if ($dupli > 1 || ($dupli == 1 && $toDo == 'insert')) {
                     $msg .= "14+";
