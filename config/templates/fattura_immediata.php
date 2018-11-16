@@ -100,6 +100,7 @@ class FatturaImmediata extends Template_con_scheda
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "1":
+                case "4":
                     $this->Cell(25, 6, $rigo['codart'],1,0,'L');
                     $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(49, 6, '',1);

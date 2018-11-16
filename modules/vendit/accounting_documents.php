@@ -143,10 +143,10 @@ function getDocumentsAccounts($type = '___', $vat_section = 1, $date = false, $p
                     ON rows.codvat=vat.codice';
         $rs_rig = gaz_dbi_dyn_query('rows.*,vat.tipiva AS tipiva', $from, "rows.id_tes = " . $tes['id_tes'], "id_tes DESC");
         while ($r = gaz_dbi_fetch_array($rs_rig)) {
-            if ($r['tiprig'] <= 1 || $r['tiprig'] == 90) { //ma solo se del tipo normale, forfait, vendita cespite
+            if ($r['tiprig'] <= 1  || $r['tiprig'] == 4 || $r['tiprig'] == 90) { // se del tipo normale, forfait, cassa previdenziale, vendita cespite
                 //calcolo importo rigo
                 $importo = CalcolaImportoRigo($r['quanti'], $r['prelis'], array($r['sconto'], $tes['sconto']));
-                if ($r['tiprig'] == 1 || $r['tiprig'] == 90) { // se di tipo forfait o vendita cespite 
+                if ($r['tiprig'] == 1  || $r['tiprig'] == 4 || $r['tiprig'] == 90) { // se di tipo forfait, cassa previdenziale e vendita cespite 
                     $importo = CalcolaImportoRigo(1, $r['prelis'], $tes['sconto']);
                 }
                 //creo il castelletto IVA

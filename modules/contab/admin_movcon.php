@@ -524,6 +524,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         $ctrl_tot_A = 0.00;
         $ctrl_mov_iva = 0.00;
         $ctrl_bal = 0.00;
+        $ctrl_ritenute = 0.00; // per aggiungere le ritenute al valore cliente/fornitore e fare il controllo
         $ctrl_mov_con = 0.00;
         $acc_partner_mov = array();
 		$fattura_allegata = false; 
@@ -552,6 +553,10 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
                     $ctrl_mov_con = number_format($_POST['importorc'][$i], 2, '.', '');
                 }
             }
+			if ($_POST['conto_rc' . $i]== $admin_aziend['c_ritenute']) {
+				$ctrl_ritenute +=$_POST['importorc'][$i];
+				
+			}
             if ($_POST['darave_rc'][$i] == "D") {
                 $ctrl_tot_D += $_POST['importorc'][$i];
             } else {
@@ -581,6 +586,7 @@ if ((!isset($_POST['Update'])) and ( isset($_GET['Update']))) { //se e' il primo
         if ($_POST['registroiva'] > 0 && $ctrl_mov_iva == 0) {
             $msg .= "5+";
         }
+		$ctrl_mov_con += $ctrl_ritenute;
         if ($_POST['registroiva'] > 0 && !((abs($ctrl_mov_iva-$ctrl_mov_con)/$ctrl_mov_con) < 0.00001)) {
 			print $ctrl_mov_iva . ' ' . $ctrl_mov_con . '<br><hr>';
             $msg .= "6+";
