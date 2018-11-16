@@ -901,6 +901,10 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$old_key]['quanti'] = "";
                 $form['rows'][$old_key]['unimis'] = "";
                 $form['rows'][$old_key]['sconto'] = 0;
+            } elseif ($form['in_tiprig'] == 4) { //rigo cassa previdenziale
+                $form['rows'][$old_key]['unimis'] = "";
+                $form['rows'][$old_key]['quanti'] = 0;
+                $form['rows'][$old_key]['sconto'] = 0;
             } elseif ($form['in_tiprig'] == 11 or $form['in_tiprig'] == 12 or $form['in_tiprig'] == 13) { //rigo fattura elettronica
                 $form['rows'][$old_key]['codart'] = "";
                 $form['rows'][$old_key]['annota'] = "";
@@ -1176,6 +1180,27 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
                 $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
                 $form['rows'][$next_row]['ritenuta'] = 0;
+            } elseif ($form['in_tiprig'] == 4) { // cassa previdenziale
+                $form['rows'][$next_row]['codart'] = "";
+                $form['rows'][$next_row]['annota'] = "";
+                $form['rows'][$next_row]['pesosp'] = "";
+                $form['rows'][$next_row]['gooser'] = 0;
+                $form['rows'][$next_row]['unimis'] = "";
+                $form['rows'][$next_row]['quanti'] = 0;
+                $form['rows'][$next_row]['prelis'] = 0;
+                $form['rows'][$next_row]['codric'] = $form['in_codric'];
+                $form['rows'][$next_row]['sconto'] = 0;
+                $form['rows'][$next_row]['codvat'] = $admin_aziend['preeminent_vat'];
+                $iva_azi = gaz_dbi_get_row($gTables['aliiva'], "codice", $admin_aziend['preeminent_vat']);
+                $form['rows'][$next_row]['pervat'] = $iva_azi['aliquo'];
+                $form['rows'][$next_row]['tipiva'] = $iva_azi['tipiva'];
+                if ($form['in_codvat'] > 0) {
+                    $form['rows'][$next_row]['codvat'] = $form['in_codvat'];
+                    $iva_row = gaz_dbi_get_row($gTables['aliiva'], "codice", $form['in_codvat']);
+                    $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
+                    $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
+                }
+                $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
             } elseif ($form['in_tiprig'] > 5 && $form['in_tiprig'] < 9) { //testo
                 $form["row_$next_row"] = "";
                 $form['rows'][$next_row]['codart'] = "";
@@ -1895,25 +1920,14 @@ echo $script_transl[15] . ':';
 
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
-//$select_artico->output(substr($form['cosear'], 0, 20), $form['in_artsea']);
 $select_artico->output(substr($form['cosear'], 0, 20));
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
-/* echo $script_transl['in_artsea'];
-  $gForm->selSearchItem('in_artsea', $form['in_artsea']); */
-
 echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"" . $form['in_quanti'] . "\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
-/*
-  echo "</td><td class=\"FacetColumnTD\" align=\"right\"><input type=\"image\" name=\"in_submit\" src=\"../../library/images/vbut.gif\" tabindex=\"6\" title=\"" . $script_transl['submit'] . $script_transl['thisrow'] . "!\">\n"; */
-
-/** ENRICO FEDELE */
-/* glyph-icon */
 echo '  </td>
 		<td class="FacetColumnTD" align="right">
 			<button type="submit" class="btn btn-default btn-sm" name="in_submit" title="' . $script_transl['submit'] . $script_transl['thisrow'] . '" tabindex="6"><i class="glyphicon glyphicon-ok"></i></button>
 		</td>
 	  </tr>';
-/** ENRICO FEDELE */
-//echo "</td></tr>\n";
 echo "<tr><td class=\"FacetColumnTD\">$script_transl[18]: ";
 $ric = intval(substr($form['in_codric'], 0, 1));
 if ($form['tipdoc'] == 'FAP') {
@@ -1985,12 +1999,6 @@ foreach ($form['rows'] as $k => $v) {
         $totimp_body += $imprig;
         $castle[$v['codvat']]['impcast'] += $v_for_castle;
     }
-    /** inizio modifica FP 09/10/2015 */
-    /* if (!empty($msgtoast)) {   //c'è un messaggio da mostrare (toast)
-      $upd_mm->toast($msgtoast);  //lo mostriamo
-      $msgtoast = "";   //lo cancelliamo
-      } */
-    /* fine modifica FP */
     $descrizione = htmlentities($v['descri'], ENT_QUOTES);
     echo "<input type=\"hidden\" value=\"" . $v['codart'] . "\" name=\"rows[$k][codart]\">\n";
     echo "<input type=\"hidden\" value=\"" . $v['status'] . "\" name=\"rows[$k][status]\">\n";
@@ -2008,8 +2016,6 @@ foreach ($form['rows'] as $k => $v) {
     echo "<input type=\"hidden\" value=\"" . $v['gooser'] . "\" name=\"rows[$k][gooser]\">" .
     '<input type="hidden" value="' . $v['lot_or_serial'] . '" name="rows[' . $k . '][lot_or_serial]" />' .
     '<input type="hidden" value="' . $v['id_lotmag'] . '" name="rows[' . $k . '][id_lotmag]" />';
-    //$rit_title = "title=\"cssbody=[FacetInput] cssheader=[FacetButton] header=[".$script_transl['ritenuta'].$v['ritenuta'].'% = '.gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2))."]  fade=[on] fadespeed=[0.03] \"";
-    //stampo i righi in modo diverso a secondo del tipo
     switch ($v['tiprig']) {
         case "0":
             $vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
@@ -2194,6 +2200,37 @@ foreach ($form['rows'] as $k => $v) {
 					<td></td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
+       case "4": // rigo cassa previdenziale
+            $vp = gaz_dbi_get_row($gTables['company_config'], 'var', 'vat_price')['val'];
+            echo '	<td>
+						<button type="image" name="upper_row[' . $k . ']" class="btn btn-default btn-sm" title="' . $script_transl['3'] . '!">
+							<i class="glyphicon glyphicon-arrow-up"></i>
+						</button>
+					</td>
+					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! ">';
+					// al posto 
+                     $gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'rows[' . $k . '][codart]', 'rows[' . $k . '][codart]', $v["codart"], true, '', 'col-sm-12');
+
+			echo '					  <td>
+						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />
+					</td>
+                    <td><input type="hidden" name="rows[' . $k . '][unimis]" value="" /></td>
+                    <td><input type="hidden" name="rows[' . $k . '][quanti]" value="" /></td>
+					<td><input type="hidden" name="rows[' . $k . '][sconto]" value="" /></td>
+					<td><input type="hidden" name="rows[' . $k . '][provvigione]" value="" /></td>
+					<td></td>
+					<td class="text-right">
+						<input class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '" type="text" name="rows[' . $k . '][prelis]" value="' . number_format($v['prelis'], 2, '.', '') . '" maxlength="11" size="7" onclick="vatPrice(\''.$k.'\',\''.$v['pervat'].'\');" id="righi_' . $k . '_prelis" onchange="document.docven.last_focus.value=this.id; this.form.submit()" />
+					</td>
+					<td class="text-right">
+						<span class="gazie-tooltip text-right" data-type="ritenuta" data-id="' . $v['ritenuta'] . '% = ' . gaz_format_number(round($imprig * $v['ritenuta'] / 100, 2)) . '" data-title="' . $script_transl['ritenuta'] . '">' . $v['pervat'] . '%
+						</span>
+					</td>
+					<td class="text-right codricTooltip" title="Contropartita">
+						' . $v['codric'] . '
+					</td>';
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
+            break;
         case "6":
         case "7":
         case "8": // testuali
@@ -2295,7 +2332,7 @@ foreach ($form['rows'] as $k => $v) {
             }
             //$last_row[] = array_unshift($last_row, $script_transl['typerow'][$v['tiprig']]);
             break;
-        case "90": //ventita cespite - alienazione bene ammortizzabile
+			case "90": //ventita cespite - alienazione bene ammortizzabile
             /*
              */
             echo '	<td>
