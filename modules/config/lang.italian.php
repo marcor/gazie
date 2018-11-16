@@ -197,6 +197,8 @@ $strScript = array(
         'preeminent_vat' => 'Aliquota IVA spese (preminente)',
         'interessi' => 'Interessi su IVA Trimestrale',
         'amm_min' => 'Tabella Ammortamenti Ministeriali',
+        'fae_tipo_cassa' => 'Tipo Cassa (fatture elettroniche)',
+        'ra_cassa' => 'Ritenuta su cassa previdenziale'		
     ),
     "report_aziend.php" =>
     array('title' => 'Lista delle aziende installate',

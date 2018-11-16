@@ -53,6 +53,7 @@ if (isset($_POST['Insert']) || isset($_POST['Update'])) {   //se non e' il primo
     $form['intermediary_code'] = intval($_POST['intermediary_code']);
     $form['intermediary_descr'] = substr($_POST['intermediary_descr'], 0, 50);
     $form['amm_min'] = filter_input(INPUT_POST, 'amm_min');
+    $form['fae_tipo_cassa'] = filter_input(INPUT_POST, 'fae_tipo_cassa');
     if (isset($_POST['Submit'])) { // conferma tutto
         require("../../library/include/check.inc.php");
         $chk = new check_VATno_TAXcode();
@@ -207,6 +208,7 @@ $script_transl = HeadMain(0, array('calendarpopup/CalendarPopup', 'custom/autoco
 <script>
     $(function () {
         $('#amm_min').selectmenu();
+        $('#fae_tipo_cassa').selectmenu();
         $('#causale_pagam_770').selectmenu();
         $('#fiscal_reg').selectmenu();
         $("#datnas, #virtual_stamp_auth_date").datepicker({showButtonPanel: true, showOtherMonths: true, selectOtherMonths: true});
@@ -520,6 +522,26 @@ if (count($msg['err']) > 0) { // ho un errore
                         <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['amm_min']; ?></label>
                         <?php
                         $gForm->selSpecieAmmortamentoMin('ammortamenti_ministeriali.xml', 'amm_min', $form["amm_min"]);
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['fae_tipo_cassa']; ?></label>
+                        <?php
+						$gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'fae_tipo_cassa', 'fae_tipo_cassa', $form["fae_tipo_cassa"], true, '', 'col-sm-6');
+                        ?>
+                    </div>
+                </div>
+            </div><!-- chiude row  -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="amm_min" class="col-sm-4 control-label"><?php echo $script_transl['ra_cassa']; ?></label>
+                        <?php
+						$gForm->selectNumber('ra_cassa', $form["ra_cassa"],true, 0, 1, "col-sm-8", '', 'style="max-width: 100px;"');
                         ?>
                     </div>
                 </div>

@@ -12,6 +12,7 @@ UPDATE `gaz_menu_script` SET `id_menu`=(SELECT MIN(id) FROM `gaz_menu_module` WH
 UPDATE `gaz_menu_script` SET `id_menu`=(SELECT MIN(id) FROM `gaz_menu_module` WHERE `link`='report_broacq.php?flt_tipo=AOR') WHERE  `link`='prop_ordine.php';
 UPDATE `gaz_menu_script` SET `weight`='10' WHERE  `link`='admin_docacq.php?Insert&tipdoc=AFC';
 ALTER TABLE `gaz_aziend` ADD COLUMN `fae_tipo_cassa` VARCHAR(4) NOT NULL COMMENT 'eventualmente con uno dei valori dell\'elemento <TipoCassa> della fattura elettronica TC01,TC02,ecc' AFTER `amm_min`;
+ALTER TABLE `gaz_aziend` ADD COLUMN `ra_cassa` TINYINT(1) NULL COMMENT 'scelta se applicare o meno la ritenuta d\'acconto sulla cassa previdenziale' AFTER `fae_tipo_cassa`;
 -- START_WHILE ( questo e' un tag che serve per istruire install.php ad INIZIARE ad eseguire le query seguenti su tutte le aziende dell'installazione)
 ALTER TABLE `gaz_XXXtesmov`	ADD COLUMN `notess` TEXT NULL DEFAULT '' COMMENT 'Note che NON vengono stampate sui registri contabili' AFTER `descri`;
 ALTER TABLE `gaz_XXXrigbro`	ADD COLUMN `id_orderman` INT(9) NULL COMMENT 'Per avere riferimenti uno a molti, e viceversa, con le produzioni (orderman)' AFTER `id_mag`;

@@ -1181,7 +1181,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
                 $form['rows'][$next_row]['ritenuta'] = 0;
             } elseif ($form['in_tiprig'] == 4) { // cassa previdenziale
-                $form['rows'][$next_row]['codart'] = "";
+                $form['rows'][$next_row]['codart'] = $admin_aziend['fae_tipo_cassa'];// propongo quella aziendale uso il codice articolo
                 $form['rows'][$next_row]['annota'] = "";
                 $form['rows'][$next_row]['pesosp'] = "";
                 $form['rows'][$next_row]['gooser'] = 0;
@@ -1200,7 +1200,20 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['rows'][$next_row]['pervat'] = $iva_row['aliquo'];
                     $form['rows'][$next_row]['tipiva'] = $iva_row['tipiva'];
                 }
-                $form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
+				if ($form['in_ritenuta']<0.01 && $admin_aziend['ra_cassa']>=1){ // in azienda ho configurato di avere la ritenuta anche sulla cassa previdenziale
+					$form['rows'][$next_row]['ritenuta'] = $admin_aziend['ritenuta'];
+				} else {
+					$form['rows'][$next_row]['ritenuta'] = $form['in_ritenuta'];
+				}
+				// carico anche la descrizione corrispondente dal file xml
+	            $xml = simplexml_load_file('../../library/include/fae_tipo_cassa.xml');
+				foreach ($xml->record as $v) {
+					$selected = '';
+					if ($v->field[0] == $form['rows'][$next_row]['codart']) {
+						$form['rows'][$next_row]['descri']= 'Contributo '.strtolower($v->field[1]);
+					}
+				}
+
             } elseif ($form['in_tiprig'] > 5 && $form['in_tiprig'] < 9) { //testo
                 $form["row_$next_row"] = "";
                 $form['rows'][$next_row]['codart'] = "";
@@ -1975,10 +1988,10 @@ $show_artico_composit = gaz_dbi_get_row($gTables['company_config'], 'var', 'show
 foreach ($form['rows'] as $k => $v) {
     //creo il castelletto IVA
     $imprig = 0;
-    if ($v['tiprig'] <= 1) {
+    if ($v['tiprig'] <= 1 || $v['tiprig'] == 4) { // calcolo per tipi righi normale, forfait e cassa previdenziale
         $imprig = CalcolaImportoRigo($v['quanti'], $v['prelis'], $v['sconto']);
         $v_for_castle = CalcolaImportoRigo($v['quanti'], $v['prelis'], array($v['sconto'], $form['sconto']));      
-        if ($v['tiprig'] == 1) {//ma se del tipo forfait
+        if ($v['tiprig'] == 1 || $v['tiprig'] == 4) {//ma se del tipo forfait o cassa previdenziale
             $imprig = CalcolaImportoRigo(1, $v['prelis'], 0);
             $v_for_castle = CalcolaImportoRigo(1, $v['prelis'], $form['sconto']);
         }
@@ -2209,7 +2222,7 @@ foreach ($form['rows'] as $k => $v) {
 					</td>
 					<td title="' . $script_transl['update'] . $script_transl['thisrow'] . '! ">';
 					// al posto 
-                     $gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'rows[' . $k . '][codart]', 'rows[' . $k . '][codart]', $v["codart"], true, '', 'col-sm-12');
+                     $gForm->selectFromXML('../../library/include/fae_tipo_cassa.xml', 'rows[' . $k . '][codart]', 'rows[' . $k . '][codart]', $v["codart"], true, 'fae_tipo_cassa', 'col-sm-12');
 
 			echo '					  <td>
 						<input type="text"   name="rows[' . $k . '][descri]" value="' . $descrizione . '" maxlength="100" size="50" />

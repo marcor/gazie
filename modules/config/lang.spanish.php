@@ -195,7 +195,9 @@ $strScript = array("admin_aziend.php" =>
         'ivam_t_value' => array('M' => 'Mensualmente', 'T' => 'Trimestralmente'),
         'preeminent_vat' => 'Generalmente porcentaje IVA',
         'interessi' => 'Interes sobre IVA Trimestral',
-        'amm_min' => 'Tabella Ammortamenti Ministeriali'
+        'amm_min' => 'Tabella Ammortamenti Ministeriali',
+        'fae_tipo_cassa' => 'Tipo Cassa (fatture elettroniche)',
+        'ra_cassa' => 'Ritenuta su cassa previdenziale'
     ),
     "report_aziend.php" =>
     array('title' => 'Lista de las empresa(s) instalada(s)',

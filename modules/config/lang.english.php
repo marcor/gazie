@@ -192,6 +192,8 @@ $strScript = array("admin_aziend.php" =>
         'preeminent_vat' => 'Usually VAT rate',
         'interessi' => 'Interest on Quarterly VAT',
         'amm_min' => 'Tabella Ammortamenti Ministeriali',
+        'fae_tipo_cassa' => 'Tipo Cassa (fatture elettroniche)',
+        'ra_cassa' => 'Ritenuta su cassa previdenziale'
     ),
     "report_aziend.php" =>
     array('title' => 'List of installed enterprise',
