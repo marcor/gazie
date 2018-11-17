@@ -760,6 +760,8 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
 require("../../library/include/header.php");
 require("./lang." . $admin_aziend['lang'] . ".php");
 $script_transl = $strScript["admin_docacq.php"] + HeadMain(0, array('calendarpopup/CalendarPopup','custom/autocomplete'));
+$gForm = new acquisForm();
+
 if ($form['id_tes'] > 0) {
     $title = ucfirst($script_transl[$toDo] . $script_transl[0][$form['tipdoc']]) . " n." . $form['numdoc'];
 } else {
@@ -944,16 +946,9 @@ echo '  </td>
 	   </tr>';
 /** ENRICO FEDELE */
 echo "</td></tr>\n";
-echo "<tr><td class=\"FacetColumnTD\">$script_transl[17]: <select name=\"in_tiprig\" class=\"FacetSelect\">\n";
-$selArray = array(0 => 'Normale', 1 => 'Forfait', 2 => 'Descrittivo', 50=> 'Documento allegato' );
-foreach ($selArray as $key => $value) {
-    $selected = "";
-    if (isset($form["in_tiprig"]) and $form["in_tiprig"] == $key) {
-        $selected = " selected ";
-    }
-    echo "<option value=\"" . $key . "\"" . $selected . ">" . $key . '-' . $value . "</option>";
-}
-echo "</select> $script_transl[18]: ";
+echo "<tr><td class=\"FacetColumnTD\">$script_transl[17]:\n";
+$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+echo $script_transl[18].": ";
 $select_codric = new selectconven("in_codric");
 $select_codric->addSelected($form['in_codric']);
 $select_codric->output(substr($form['in_codric'], 0, 1));
