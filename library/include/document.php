@@ -262,7 +262,7 @@ class DocContabVars {
         $this->ritenuta = 0.00;
         $results = array();
         while ($rigo = gaz_dbi_fetch_array($rs_rig)) {
-            if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 90) {
+            if ($rigo['tiprig'] <= 1 || $rigo['tiprig'] == 4 || $rigo['tiprig'] == 50 || $rigo['tiprig'] == 90) {
                 $tipodoc = substr($this->tesdoc["tipdoc"], 0, 1);
                 $rigo['importo'] = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], $rigo['sconto']);
                 $v_for_castle = CalcolaImportoRigo($rigo['quanti'], $rigo['prelis'], array($rigo['sconto'], $this->tesdoc['sconto']));
@@ -363,6 +363,30 @@ class DocContabVars {
         $this->ritenute = 0;
         $this->castel = array();
     }
+
+    function getExtDoc() {
+        /* con questa funzione faccio il push sull'accumulatore dei righi contenenti "documenti esterni" da allegare al pdf
+		  riprendo il nome del file relativo al documento e lo aggiungo alla matrice solo se il file esiste, prima di chiamare 
+		  questo metodo dovrò settare $this->id_rig
+        */
+        if (!isset($this->ExternalDoc)) {
+            $this->ExternalDoc = array();
+        }
+		$r=false;
+		$r['file']= $this->azienda['codice'].'/';
+        $r['ext'] = '';
+        $dh = opendir('../../data/files/' . $this->azienda['codice']);
+        while (false !== ($filename = readdir($dh))) {
+            $fd = pathinfo($filename);
+            if ($fd['filename'] == 'rigbrodoc_' . $this->id_rig) {
+                $r['file'] .= $filename;
+                $r['ext'] = $fd['extension'];
+				$this->ExternalDoc[] = $r;
+            }
+        }
+        return $r; // in ExternalDocs troverò gli eventuali documenti da allegare
+    }
+	
 
 }
 

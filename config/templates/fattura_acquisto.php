@@ -64,6 +64,14 @@ class FatturaAcquisto extends Template
         $this->Cell(8, 6,'%Sc.',1,0,'C',1);
         $this->Cell(20,6,'Importo',1,0,'C',1);
         $this->Cell(12,6,'%IVA',1,1,'C',1);
+        $this->SetFont('helvetica','B',18);
+        $this->SetTextColor(255,150,150);
+        $this->StartTransform();
+		$this->Rotate(-30);
+		$this->Cell(186,0,$this->tipdoc,0,1,'C');
+		$this->StopTransform();
+        $this->SetFont('helvetica','',9);
+        $this->SetTextColor(0,0,0);
     }
 
     function pageHeader() {
@@ -75,14 +83,6 @@ class FatturaAcquisto extends Template
 
     function compose()
     {
-        $this->SetFont('helvetica','B',18);
-        $this->SetTextColor(255,150,150);
-        $this->StartTransform();
-		$this->Rotate(-30);
-		$this->Cell(186,0,$this->tipdoc,0,1,'C');
-		$this->StopTransform();
-        $this->SetFont('helvetica','',9);
-        $this->SetTextColor(0,0,0);
         $this->body();
     }
 

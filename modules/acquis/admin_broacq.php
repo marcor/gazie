@@ -302,8 +302,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 //qualora i nuovi righi fossero di più dei vecchi inserisco l'eccedenza
                 for ($i = $i; $i <= $count; $i++) {
                     $form['righi'][$i]['id_tes'] = $form['id_tes'];
-                    rigbroInsert($form['righi'][$i]);
-                    $last_rigbro_id = gaz_dbi_last_id();
+                    $last_rigbro_id =rigbroInsert($form['righi'][$i]);
                     if (!empty($form['righi'][$i]['extdoc'])) {
                         $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['righi'][$i]['extdoc'];
 // sposto e rinomino il relativo file temporaneo    
@@ -361,7 +360,15 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                 //inserisco i righi
                 foreach ($form['righi'] as $i => $value) {
                     $form['righi'][$i]['id_tes'] = $ultimo_id;
-                    rigbroInsert($form['righi'][$i]);
+                    $last_rigbro_id =rigbroInsert($form['righi'][$i]);
+					// INIZIO INSERIMENTO DOCUMENTI ALLEGATI
+                    if (!empty($form['righi'][$i]['extdoc'])) {
+                        $tmp_file = "../../data/files/tmp/" . $admin_aziend['adminid'] . '_' . $admin_aziend['company_id'] . '_' . $i . '_' . $form['righi'][$i]['extdoc'];
+						// sposto e rinomino il relativo file temporaneo    
+                        $fd = pathinfo($form['righi'][$i]['extdoc']);
+                        rename($tmp_file, "../../data/files/" . $admin_aziend['company_id'] . "/rigbrodoc_" . $last_rigbro_id . '.' . $fd['extension']);
+                    }
+					// FINE INSERIMENTO DOCUMENTI ALLEGATI
                 }
                 $_SESSION['print_request'] = $ultimo_id;
                 header("Location: invsta_broacq.php");
@@ -491,7 +498,7 @@ if ((isset($_POST['Insert'])) or ( isset($_POST['Update']))) {   //se non e' il 
                     $form['righi'][$next_row]['codric'] = $artico['id_cost'];
                     $form['in_codric'] = $artico['id_cost'];
                 }
-            } elseif ($form['in_tiprig'] == 2) { //descrittivo
+            } elseif ($form['in_tiprig'] == 2 || $form['in_tiprig'] == 51) { //descrittivo o descrittivo con allegato
                 $form['righi'][$next_row]['codart'] = "";
                 $form['righi'][$next_row]['annota'] = "";
                 $form['righi'][$next_row]['pesosp'] = "";
@@ -912,26 +919,12 @@ echo "<input type=\"hidden\" value=\"{$form['in_id_mag']}\" name=\"in_id_mag\" /
 echo "<input type=\"hidden\" value=\"{$form['in_annota']}\" name=\"in_annota\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_pesosp']}\" name=\"in_pesosp\" />\n";
 echo "<input type=\"hidden\" value=\"{$form['in_status']}\" name=\"in_status\" />\n";
-echo "<tr><td class=\"FacetColumnTD\">$script_transl[15]: ";
+echo '<tr><td class="FacetColumnTD">'.$script_transl[17].": ";
+$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+echo $script_transl[15].': ';
 $select_artico = new selectartico("in_codart");
 $select_artico->addSelected($form['in_codart']);
-//$select_artico -> output($form['cosear'],$form['in_artsea']);
 $select_artico->output($form['cosear']);
-/** ENRICO FEDELE */
-/* Completata traduzione */
-/* echo $script_transl['search_for']." <select name=\"in_artsea\" class=\"FacetDataTDsmall\">\n";
-  $selArray = array('C'=>$script_transl['art_code'], 'B'=>$script_transl['art_barcode'],'D'=>$script_transl['art_descr']);
-
-  foreach ($selArray as $key => $value) {
-  $selected="";
-  if(isset($form["in_artsea"]) and $form["in_artsea"] == $key) {
-  $selected = " selected ";
-  }
-  echo "<option value=\"$key\" $selected > $value </option>";
-  }
-  echo "</select>\n";
- */
-/* Aggiunto link per finestra modale aggiunta articolo */
 echo '&nbsp;<a href="#" id="addmodal" href="#myModal" data-toggle="modal" data-target="#edit-modal" class="btn btn-xs btn-default"><i class="glyphicon glyphicon-export"></i> ' . $script_transl['add_article'] . '</a>';
 /** ENRICO FEDELE */
 echo "</td><td class=\"FacetColumnTD\">$script_transl[16]: <input type=\"text\" value=\"{$form['in_quanti']}\" maxlength=\"11\" size=\"7\" name=\"in_quanti\" tabindex=\"5\" accesskey=\"q\">\n";
@@ -946,8 +939,7 @@ echo '  </td>
 	   </tr>';
 /** ENRICO FEDELE */
 echo "</td></tr>\n";
-echo "<tr><td class=\"FacetColumnTD\">$script_transl[17]:\n";
-$gForm->selTypeRow('in_tiprig', $form['in_tiprig']);
+echo '<tr><td class="FacetColumnTD">';
 echo $script_transl[18].": ";
 $select_codric = new selectconven("in_codric");
 $select_codric->addSelected($form['in_codric']);
@@ -1157,6 +1149,38 @@ foreach ($form['righi'] as $key => $value) {
             echo "<td class=\"text-right\">" . gaz_format_number($imprig) . "</td>\n";
             echo "<td>{$value['pervat']}%</td>\n";
             echo "<td>" . $value['codric'] . "</td>\n";
+            $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
+            break;
+        case "51":
+			echo "<td><button type=\"image\" name=\"upper_row[" . $key . "]\" class=\"btn btn-default btn-sm\" title=\"" . $script_transl['3'] . "!\"><i class=\"glyphicon glyphicon-arrow-up\"></i></button></td>";
+            echo "<td title=\"" . $script_transl['update'] . $script_transl['thisrow'] . "!\"><input class=\"FacetDataTDsmall\" type=\"submit\" name=\"upd_row[{$key}]\" value=\"* documento allegato *\" /></td>\n";
+                echo '<td>';
+                if (empty($form['righi'][$key]['extdoc'])) {
+                    echo '<div><button class="btn btn-xs btn-danger" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
+                    . $script_transl['insert'] . ' documento esterno <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                } else {
+                    echo '<div>documento esterno:<button class="btn btn-xs btn-success" type="image" data-toggle="collapse" href="#extdoc_dialog' . $key . '">'
+                    . $form['righi'][$key]['extdoc'] . ' <i class="glyphicon glyphicon-tag"></i>'
+                    . '</button></div>';
+                }
+				echo '<div id="extdoc_dialog' . $key . '" class="collapse" >
+                        <div class="form-group">
+                          <div>';
+
+                echo '<input type="file" onchange="this.form.submit();" name="docfile_' . $key . '"> 
+                            <label>' . $script_transl['extdoc'] . '</label><input type="text" name="righi[' . $key . '][extdoc]" value="' . $form['righi'][$key]['extdoc'] . '" >
+			</div>
+		     </div>
+              </div>' . "</td>\n";
+            echo "<td><input type=\"text\"   name=\"righi[{$key}][descri]\" value=\"$descrizione\" maxlength=\"50\" size=\"50\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"righi[{$key}][unimis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"righi[{$key}][quanti]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"righi[{$key}][prelis]\" value=\"\" /></td>\n";
+            echo "<td><input type=\"hidden\" name=\"righi[{$key}][sconto]\" value=\"\" /></td>\n";
+            echo "<td></td>\n";
+            echo "<td></td>\n";
+            echo "<td></td>\n";
             $last_row[] = array_unshift($last_row, $script_transl['typerow'][$value['tiprig']]);
             break;
     }

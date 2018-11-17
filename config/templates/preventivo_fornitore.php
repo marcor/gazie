@@ -77,8 +77,8 @@ class PreventivoFornitore extends Template
             }
                 switch($rigo['tiprig']) {
                 case "0":
-                    $this->Cell(25, 6, $rigo['codart'],1,0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],1,0,'L');
+                    $this->Cell(25, 6, $rigo['codart'],1,0,'L',0,'',1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
                     $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
                     $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
                     if ($rigo['prelis'] > 0) {
@@ -100,22 +100,55 @@ class PreventivoFornitore extends Template
                     break;
                 case "1":
                     $this->Cell(25, 6, '','LBR',0,'L');
-                    $this->Cell(80, 6, $rigo['descri'],'LBR',0,'L');
+                    $this->Cell(80, 6, $rigo['descri'],'LBR',0,'L',0,'',1);
                     $this->Cell(49, 6,'',1);
                     $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
                     $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
                     break;
                 case "2":
                     $this->Cell(25,6,'','L');
-                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L');
+                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L',0,'',1);
                     $this->Cell(81,6,'','R',1);
                     break;
                 case "3":
                     $this->Cell(25,6,'',1,0,'L');
-                    $this->Cell(80,6,$rigo['descri'],'B',0,'L');
+                    $this->Cell(80,6,$rigo['descri'],'B',0,'L',0,'',1);
                     $this->Cell(49,6,'','B',0,'L');
                     $this->Cell(20,6,gaz_format_number($rigo['prelis']),1,0,'R');
                     $this->Cell(12,6,'',1,1,'R');
+                    break;
+                case "50":
+					// accumulo il file da allegare e lo indico al posto del codice articolo
+					$this->docVars->id_rig=$rigo['id_rig'];
+					$file=$this->docVars->getExtDoc();
+                    $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
+                    $this->Cell(80, 6, $rigo['descri'],1,0,'L',0,'',1);
+                    $this->Cell(7,  6, $rigo['unimis'],1,0,'C');
+                    $this->Cell(16, 6, gaz_format_quantity($rigo['quanti'],1,$this->decimal_quantity),1,0,'R');
+                    if ($rigo['prelis'] > 0) {
+                       $this->Cell(18, 6, number_format($rigo['prelis'],$this->decimal_price,',',''),1,0,'R');
+                    } else {
+                       $this->Cell(18, 6, '',1);
+                    }
+                    if ($rigo['sconto']> 0) {
+                       $this->Cell(8, 6,  number_format($rigo['sconto'],1,',',''),1,0,'C');
+                    } else {
+                       $this->Cell(8, 6, '',1);
+                    }
+                    if ($rigo['importo'] > 0) {
+                       $this->Cell(20, 6, gaz_format_number($rigo['importo']),1,0,'R');
+                    } else {
+                       $this->Cell(20, 6, '',1);
+                    }
+                    $this->Cell(12, 6, gaz_format_number($rigo['pervat']),1,1,'R');
+                    break;
+                case "51":
+					// accumulo il file da allegare e lo indico al posto del codice articolo
+					$this->docVars->id_rig=$rigo['id_rig'];
+					$file=$this->docVars->getExtDoc();
+                    $this->Cell(25, 6, $file['file'],1,0,'L',0,'',1);
+                    $this->Cell(80,6,$rigo['descri'],'LR',0,'L',0,'',1);
+                    $this->Cell(81,6,'','R',1);
                     break;
                 }
        }
@@ -201,6 +234,45 @@ class PreventivoFornitore extends Template
         } else {
             $this->Cell(28, 6,'','LRB',1);
         }
+		
+		if (isset($this->docVars->ExternalDoc)){ // se ho dei documenti esterni allegati
+			$this->print_header = false;
+			$this->extdoc_acc=$this->docVars->ExternalDoc;
+            reset($this->extdoc_acc);
+			foreach ($this->extdoc_acc AS $key => $rigo) {
+                $this->SetTextColor(255, 50, 50);
+                $this->SetFont('helvetica', '', 6);
+                if ($rigo['ext'] == 'pdf') {
+                    $this->numPages = $this->setSourceFile('../../data/files/' . $rigo['file']);
+                    if ($this->numPages >= 1) {
+                        for ($i = 1; $i <= $this->numPages; $i++) {
+                            $this->_tplIdx = $this->importPage($i);
+                            $specs = $this->getTemplateSize($this->_tplIdx);
+                            $this->AddPage($specs['h'] > $specs['w'] ? 'P' : 'L');
+                            $this->useTemplate($this->_tplIdx);
+                            $this->SetXY(10, 0);
+                            $this->Cell(190, 3,$this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc , 1, 0, 'C', 0, '', 1);
+                        }
+                    }
+                    $this->print_footer = false;
+                } elseif (!empty($rigo['ext'])) {
+                    list($w, $h) = getimagesize('../../data/files/' . $rigo['file']);
+					$this->SetAutoPageBreak(false, 0);
+                    if ($w > $h) { //landscape
+                        $this->AddPage('L');
+                        $this->SetXY(10, 0);
+                        $this->Cell(280, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
+						$this->image('../../data/files/' . $rigo['file'], 5, 3,290 );
+                    } else { // portrait
+                        $this->AddPage('P');
+                        $this->SetXY(10, 0);
+                        $this->Cell(190, 3, $this->intesta1 . ' ' . $this->intesta1bis." - documento allegato a: " . $this->tipdoc, 1, 0, 'C', 0, '', 1);
+						$this->image('../../data/files/' . $rigo['file'], 5, 3,190 );
+                    }
+                    $this->print_footer = false;
+                }
+            }
+		}
     }
     function Footer()
     {
