@@ -25,7 +25,286 @@
  */
 
 class ordermanForm extends GAzieForm {
+	
+	// Antonio Germani - Come select selectFromDB ma con in più preleva $key4 da $table2, dove $key3 è uguale a $key2, e lo visualizza nella scelta del select. Cioè nelle scelte del select ci sarà $key e $key4
+	function selectFrom2DB($table,$table2,$key3,$key4, $name, $key, $val, $order = false, $empty = false, $bridge = '', $key2 = '', $val_hiddenReq = '', $class = 'FacetSelect', $addOption = null, $style = '', $where = false, $echo=false) {
+        global $gTables;
+		$acc='';
+        $refresh = '';
+		
+        if (!$order) {
+            $order = $key;
+        }
+		
+        $query = 'SELECT * FROM `' . $gTables[$table] . '` ';
+        if ($where) {
+            $query .= ' WHERE ' . $where;
+        }
+        $query .= ' ORDER BY `' . $order . '`'; 
+        if (!empty($val_hiddenReq)) {
+            $refresh = "onchange=\"this.form.hidden_req.value='$val_hiddenReq'; this.form.submit();\"";
+        }
+        $acc .= "\t <select id=\"$name\" name=\"$name\" class=\"$class\" $refresh $style>\n";
+        if ($empty) {
+            $acc .= "\t\t <option value=\"\"></option>\n";
+        }
+		
+        $result = gaz_dbi_query($query);
+        while ($r = gaz_dbi_fetch_array($result)) {
+            $selected = '';
+            if ($r[$key] == $val) {
+                $selected = "selected";
+            }
+						
+			$r2 = gaz_dbi_get_row($gTables[$table2], $key3, $r[$key2]);
+			
+            $acc .= "\t\t <option value=\"" . $r[$key] . "\" $selected >";
+            if (empty($key2)) {
+                $acc .= substr($r[$key], 0, 43) . "</option>\n";
+            } else {
+                $acc .= substr($r[$key], 0, 28) . $bridge . substr($r2[$key4], 0, 35) . "</option>\n";
+            }
+        }
+        if ($addOption) {
+            $acc .= "\t\t <option value=\"" . $addOption['value'] . "\"";
+            if ($addOption['value'] == $val) {
+                $acc .= " selected ";
+            }
+            $acc .= ">" . $addOption['descri'] . "</option>\n";
+        }
+        $acc .= "\t </select>\n";
+		if ($echo){
+			return $acc;
+		} else {
+			echo $acc;
+		}
+    }
+	
+	function getStockValue($id_mov = false, $item_code = null, $date = null, $stock_eval_method = null, $decimal_price = 2)
+    /* Questa funzione serve per restituire la valorizzazione dello scarico
+      a seconda del metodo (WMA,LIFO,FIFO) scelto per ottenerla.
+      Puo' essere sufficiente valorizzare il solo $id_mov, ma questo costringe
+      la funzione ad una query per ottenere gli altri valori; oppure il solo
+      codice dell'articolo, in questo caso si prende in considerazione l'ultimo
+      movimento riferito all'articolo
+     */ {
+        global $gTables;
+        if (!$id_mov && empty($item_code)) { // non ho nulla!
+            return array('q' => 0, 'v' => 0, 'q_g' => 0, 'v_g' => 0);
+        } elseif (!$id_mov && !empty($item_code)) {    // ho il codice articolo  senza id
+            if ($date) { // ho anche la data
+                $rs_last_mov = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '" . $item_code . "' AND datreg <= '$date'", "datreg DESC, id_mov DESC", 0, 1);
+            } else {   // non ho la data limite
+                $rs_last_mov = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '" . $item_code . "'", "datreg DESC, id_mov DESC", 0, 1);
+            }
+            $last_mov = gaz_dbi_fetch_array($rs_last_mov);
+            if ($last_mov) {
+                $id_mov = $last_mov['id_mov'];
+                $date = $last_mov['datreg'];
+            } else {
+                return array('q' => 0, 'v' => 0, 'q_g' => 0, 'v_g' => 0);
+            }
+        } elseif (!$date || empty($item_code)) {    //ho il solo id_mov
+            $mm = gaz_dbi_get_row($gTables['movmag'], "id_mov", $id_mov);
+            $date = $mm['datreg'];
+            $item_code = $mm['artico'];
+        }
+        if (!$stock_eval_method) {
+            $stock_eval_method = $this->getStockEvalMethod();
+        }
+        $rs_last_inventory = gaz_dbi_dyn_query("*", $gTables['movmag'], "artico = '$item_code' AND caumag = 99 AND (datreg < '" . $date . "' OR (datreg = '" . $date . "' AND id_mov <= $id_mov ))", "datreg DESC, id_mov DESC", 0, 1);
+        $last_inventory = gaz_dbi_fetch_array($rs_last_inventory);
+        if ($last_inventory) {
+            $last_invDate = $last_inventory['datreg'];
+            $last_invPrice = $last_inventory['prezzo'];
+            $last_invQuanti = $last_inventory['quanti'];
+        } else {
+            $last_invDate = '2000-01-01';
+            $last_invPrice = 0;
+            $last_invQuanti = 0;
+        }
+        $utsdatePrev = mktime(0, 0, 0, intval(substr($date, 5, 2)), intval(substr($date, 8, 2)) - 1, intval(substr($date, 0, 4)));
+        $datePrev = date("Y-m-d", $utsdatePrev);
+        $where = "artico = '$item_code' AND (datreg BETWEEN '$last_invDate' AND '$datePrev' OR (datreg = '$date' AND id_mov <= $id_mov))";
+        $orderby = "datreg ASC, id_mov ASC"; //ordino in base alle date 
+        $return_val = array();
+        $accumulatore = array();
+        switch ($stock_eval_method) { //calcolo il nuovo valore in base al metodo scelto in configurazione azienda
+            case "0": //standard
+            case "3": // FIFO
+                $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], "caumag < 98 AND " . $where, $orderby);
+                // Qui metto i valori dell'ultimo inventario
+                $accumulatore[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice);
+                $giacenza = array('q_g' => $last_invQuanti, 'v_g' => $last_invPrice * $last_invQuanti);
+                $return_val[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice,
+                    'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                // Fine valorizzazione con ultimo inventario
+                while ($r = gaz_dbi_fetch_array($rs_movmag)) {
+                    // questo e' il prezzo che usero' solo per gli acquisti
+                    $row_val = CalcolaImportoRigo(1, $r['prezzo'], array($r['scorig'], $r['scochi']), $decimal_price);
+                    if ($r['operat'] == 1) { //carico
+                        $accumulatore[] = array('q' => $r['quanti'], 'v' => $row_val);
+                        $giacenza['q_g']+=$r['quanti'];
+                        $giacenza['v_g']+=$r['quanti'] * $row_val;
+                        if ($r['id_mov'] == $id_mov) { // e' il movimento di riferimento
+                            $return_val[0] = array('q' => $r['quanti'], 'v' => $row_val,
+                                'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                        }
+                    } elseif ($r['operat'] == -1) { //scarico
+                        $return_val = array(); //azzero l'accumulatore per il ritorno
+                        foreach ($accumulatore as $k => $acc_val) {   //attraverso l'accumulatore
+                            if ($acc_val['q'] > $r['quanti']) { // la quantita' nell'accumulatore e' sufficiente per coprire lo scarico
+                                $accumulatore[$k]['q'] -= $r['quanti'];
+                                $giacenza['q_g']-=$r['quanti'];
+                                $giacenza['v_g']-=$r['quanti'] * $acc_val['v'];
+                                if ($r['id_mov'] == $id_mov) { // e' il movimento di riferimento
+                                    $return_val[] = array('q' => $r['quanti'], 'v' => $acc_val['v'],
+                                        'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                                }
+                                $r['quanti'] = 0;
+                                break;
+                            } elseif ($acc_val['q'] == $r['quanti']) {  // la quantita' da scaricare e' la stessa nell'accumulatore
+                                $giacenza['q_g']-=$r['quanti'];
+                                $giacenza['v_g']-=$r['quanti'] * $acc_val['v'];
+                                if ($r['id_mov'] == $id_mov) { // e' il movimento di riferimento
+                                    $return_val[] = array('q' => $r['quanti'], 'v' => $acc_val['v'],
+                                        'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                                }
+                                unset($accumulatore[$k]);
+                                $r['quanti'] = 0;
+                                break;
+                            } else {  // la quantita' da scaricare e' maggiore di quella nell'accumulatore
+                                $r['quanti'] -= $acc_val['q'];
+                                $giacenza['q_g']-=$acc_val['q'];
+                                $giacenza['v_g']-=$acc_val['q'] * $acc_val['v'];
+                                if ($r['id_mov'] == $id_mov) { // e' il movimento che voglio valorizzare: lo accumulo
+                                    $return_val[] = array('q' => $acc_val['q'], 'v' => $acc_val['v'],
+                                        'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                                }
+                                unset($accumulatore[$k]);
+                            }
+                        }
+                        // esco dal loop ma potrebbe accadere che i carichi non erano sufficienti a coprire lo scarico
+                        if ($r['quanti'] > 0) { // e' il movimento che voglio valorizzare: lo accumulo
+                            $giacenza['q_g']-=$r['quanti'];
+                            $giacenza['v_g']-=0;
+                            if ($r['id_mov'] == $id_mov) { // e' il movimento che voglio valorizzare: lo accumulo
+                                $return_val[] = array('q' => -$r['quanti'], 'v' => 0,
+                                    'q_g' => $giacenza['q_g'], 'v_g' => 0);
+                            }
+                        }
+                    }
+                }
+                break;
+            case "1": // WMA
+                $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where . " AND caumag < 98", $orderby);
+                $giacenza = array('q_g' => $last_invQuanti, 'v_g' => $last_invPrice * $last_invQuanti);
+                $return_val[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice,
+                    'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                while ($r = gaz_dbi_fetch_array($rs_movmag)) {
+                    if ($r['operat'] == 1) { //carico
+                        $row_val = CalcolaImportoRigo(1, $r['prezzo'], array($r['scorig'], $r['scochi']), $decimal_price);
+                        $giacenza['q_g']+=$r['quanti'];
+                        $giacenza['v_g']+=$r['quanti'] * $row_val;
+                    } elseif ($r['operat'] == -1) { //scarico
+                        if ($giacenza['q_g'] <= 0) { // se la quantità è già sotto zero forzo anche il valore a 0
+                            $giacenza['v_g'] = 0;
+                            $row_val = 0;
+                        } else {
+                            $row_val = $giacenza['v_g'] / $giacenza['q_g'];
+                        }
+                        if ($giacenza['q_g'] <= $r['quanti']) { // se la quantità è andata sotto zero forzo anche il valore a 0
+                            $giacenza['v_g'] = 0;
+                            $row_val = 0;
+                        }
+                        $giacenza['q_g']-=$r['quanti'];
+                        $giacenza['v_g']-=$r['quanti'] * $row_val;
+                    }
+                    if ($r['id_mov'] == $id_mov) { // e' il movimento che voglio valorizzare
+                        $return_val[0] = array('q' => $r['quanti'], 'v' => $row_val,
+                            'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                    }
+                }
+                break;
+            case "2": // LIFO
+                $rs_movmag = gaz_dbi_dyn_query("*", $gTables['movmag'], $where . " AND caumag < 98", $orderby);
+                // Qui metto i valori dell'ultimo inventario
+                $accumulatore[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice);
+                $giacenza = array('q_g' => $last_invQuanti, 'v_g' => $last_invPrice * $last_invQuanti);
+                $return_val[0] = array('q' => $last_invQuanti, 'v' => $last_invPrice,
+                    'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                // Fine valorizzazione con ultimo inventario
+                while ($r = gaz_dbi_fetch_array($rs_movmag)) {
+                    // questo e' il prezzo che usero' solo per gli acquisti
+                    $row_val = CalcolaImportoRigo(1, $r['prezzo'], array($r['scorig'], $r['scochi']));
+                    if ($r['operat'] == 1) { //carico
+                        $accumulatore[] = array('q' => $r['quanti'], 'v' => $row_val);
+                        $giacenza['q_g']+=$r['quanti'];
+                        $giacenza['v_g']+=$r['quanti'] * $row_val;
+                        if ($r['id_mov'] == $id_mov) { // e' il movimento di riferimento
+                            $return_val[0] = array('q' => $r['quanti'], 'v' => $row_val,
+                                'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                        }
+                    } elseif ($r['operat'] == -1) { //scarico
+                        $return_val = array(); //azzero l'accumulatore per il ritorno
+                        $accumulatore = array_reverse($accumulatore);
+                        foreach ($accumulatore as $k => $acc_val) {   //attraverso l'accumulatore
+                            if ($acc_val['q'] > $r['quanti']) { // la quantita' nell'accumulatore e' sufficiente per coprire lo scarico
+                                $accumulatore[$k]['q'] -= $r['quanti'];
+                                $giacenza['q_g']-=$r['quanti'];
+                                $giacenza['v_g']-=$r['quanti'] * $acc_val['v'];
+                                if ($r['id_mov'] == $id_mov) { // e' il movimento di riferimento
+                                    $return_val[] = array('q' => $r['quanti'], 'v' => $acc_val['v'],
+                                        'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                                }
+                                $r['quanti'] = 0;
+                                break;
+                            } elseif ($acc_val['q'] == $r['quanti']) {  // la quantita' da scaricare e' la stessa nell'accumulatore
+                                $giacenza['q_g']-=$r['quanti'];
+                                $giacenza['v_g']-=$r['quanti'] * $acc_val['v'];
+                                if ($r['id_mov'] == $id_mov) { // e' il movimento di riferimento
+                                    $return_val[] = array('q' => $r['quanti'], 'v' => $acc_val['v'],
+                                        'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                                }
+                                unset($accumulatore[$k]);
+                                $r['quanti'] = 0;
+                                break;
+                            } else {  // la quantita' da scaricare e' maggiore di quella nell'accumulatore
+                                $r['quanti'] -= $acc_val['q'];
+                                $giacenza['q_g']-=$acc_val['q'];
+                                $giacenza['v_g']-=$acc_val['q'] * $acc_val['v'];
+                                if ($r['id_mov'] == $id_mov) { // e' il movimento che voglio valorizzare: lo accumulo
+                                    $return_val[] = array('q' => $acc_val['q'], 'v' => $acc_val['v'],
+                                        'q_g' => $giacenza['q_g'], 'v_g' => $giacenza['v_g']);
+                                }
+                                unset($accumulatore[$k]);
+                            }
+                        }
+                        $accumulatore = array_reverse($accumulatore);
+                        // esco dal loop ma potrebbe accadere che i carichi non erano sufficienti a coprire lo scarico
+                        if ($r['quanti'] > 0) { // e' il movimento che voglio valorizzare: lo accumulo
+                            $giacenza['q_g']-=$r['quanti'];
+                            $giacenza['v_g']-=0;
+                            if ($r['id_mov'] == $id_mov) { // e' il movimento che voglio valorizzare: lo accumulo
+                                $return_val[] = array('q' => -$r['quanti'], 'v' => 0,
+                                    'q_g' => $giacenza['q_g'], 'v_g' => 0);
+                            }
+                        }
+                    }
+                }
 
+                break;
+            default:
+        }
+        return $return_val;
+    }
+	
+	function getStockEvalMethod() {  // Prendo il metodo di valorizzazione del magazzino impostato in configurazione azienda
+        global $gTables;
+        $enterprise = gaz_dbi_get_row($gTables['aziend'], 'codice', $_SESSION['company_id']);
+        return $enterprise['stock_eval_method'];
+    }
+	
 }
 
 
